@@ -71,11 +71,7 @@ class ModuleQuery:
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def module(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        module: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, module: strawberry.ID
     ) -> ModuleType:
         fav_subquery = UserFavorite.objects.filter(
             workspace__slug=slug,
@@ -119,11 +115,7 @@ class ModuleIssueUserPropertyQuery:
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def moduleIssueUserProperties(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        module: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, module: strawberry.ID
     ) -> ModuleUserPropertyType:
         def get_module_issue_user_property():
             module_properties, _ = ModuleUserProperties.objects.get_or_create(
@@ -160,10 +152,7 @@ class ModuleIssuesInformationQuery:
         filters = issue_filters(filters, "POST")
 
         # all issues tab information
-        (
-            all_issue_count,
-            all_issue_group_info,
-        ) = await issue_information_query_execute(
+        (all_issue_count, all_issue_group_info) = await issue_information_query_execute(
             user=info.context.user,
             slug=slug,
             project=project,
@@ -208,12 +197,10 @@ class ModuleIssuesInformationQuery:
                 totalIssues=all_issue_count, groupInfo=all_issue_group_info
             ),
             active=IssuesInformationObjectType(
-                totalIssues=active_issue_count,
-                groupInfo=active_issue_group_info,
+                totalIssues=active_issue_count, groupInfo=active_issue_group_info
             ),
             backlog=IssuesInformationObjectType(
-                totalIssues=backlog_issue_count,
-                groupInfo=backlog_issue_group_info,
+                totalIssues=backlog_issue_count, groupInfo=backlog_issue_group_info
             ),
         )
 
@@ -247,9 +234,7 @@ class ModuleIssueQuery:
 
         module_issues = await sync_to_async(list)(
             Issue.issue_objects.filter(
-                workspace__slug=slug,
-                project_id=project,
-                issue_module__module_id=module,
+                workspace__slug=slug, project_id=project, issue_module__module_id=module
             )
             .filter(
                 project__project_projectmember__member=info.context.user,

@@ -32,10 +32,7 @@ class Command(BaseCommand):
                     "X-Api-Key": str(license_key),
                     "X-Machine-Signature": str(machine_signature),
                 },
-                json={
-                    "machine_signature": str(machine_signature),
-                    "domain": domain,
-                },
+                json={"machine_signature": str(machine_signature), "domain": domain},
             )
 
             # Check if status code is 204

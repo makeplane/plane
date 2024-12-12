@@ -198,14 +198,10 @@ class InstanceEndpoint(BaseAPIView):
         data["app_base_url"] = settings.APP_BASE_URL
         #
         data["payment_server_base_url"] = (
-            settings.PAYMENT_SERVER_BASE_URL
-            if settings.IS_MULTI_TENANT
-            else ""
+            settings.PAYMENT_SERVER_BASE_URL if settings.IS_MULTI_TENANT else ""
         )
         data["prime_server_base_url"] = settings.PRIME_SERVER_BASE_URL
-        data["feature_flag_server_base_url"] = (
-            settings.FEATURE_FLAG_SERVER_BASE_URL
-        )
+        data["feature_flag_server_base_url"] = settings.FEATURE_FLAG_SERVER_BASE_URL
         data["silo_base_url"] = SILO_BASE_URL
         data["instance_changelog_url"] = settings.INSTANCE_CHANGELOG_URL
 

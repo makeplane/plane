@@ -20,13 +20,8 @@ class IssueLinkQuery:
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def issueLink(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        issue: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
     ) -> list[IssueLinkType]:
-
         issue_links = await sync_to_async(list)(
             IssueLink.objects.filter(
                 issue_id=issue, workspace__slug=slug, project_id=project

@@ -23,7 +23,6 @@ from plane.authentication.utils.host import base_host
 
 
 class OIDCAuthInitiateEndpoint(View):
-
     def get(self, request):
         request.session["host"] = base_host(request=request, is_app=True)
         next_path = request.GET.get("next_path")
@@ -34,9 +33,7 @@ class OIDCAuthInitiateEndpoint(View):
             instance = Instance.objects.first()
             if instance is None or not instance.is_setup_done:
                 raise AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES[
-                        "INSTANCE_NOT_CONFIGURED"
-                    ],
+                    error_code=AUTHENTICATION_ERROR_CODES["INSTANCE_NOT_CONFIGURED"],
                     error_message="INSTANCE_NOT_CONFIGURED",
                 )
 
@@ -50,14 +47,12 @@ class OIDCAuthInitiateEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "?" + urlencode(params),
+                base_host(request=request, is_app=True), "?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
 
 class OIDCallbackEndpoint(View):
-
     def get(self, request):
         code = request.GET.get("code")
         state = request.GET.get("state")
@@ -75,10 +70,7 @@ class OIDCallbackEndpoint(View):
                     error_message="OIDC_PROVIDER_ERROR",
                 )
 
-            provider = OIDCOAuthProvider(
-                request=request,
-                code=code,
-            )
+            provider = OIDCOAuthProvider(request=request, code=code)
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user)
@@ -90,15 +82,11 @@ class OIDCallbackEndpoint(View):
             url = urljoin(host, path)
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
-            url = urljoin(
-                host,
-                "?" + urlencode(e.get_error_dict()),
-            )
+            url = urljoin(host, "?" + urlencode(e.get_error_dict()))
             return HttpResponseRedirect(url)
 
 
 class OIDCLogoutEndpoint(View):
-
     def get(self, request):
         logout(request=request)
         return HttpResponseRedirect(base_host(request=request, is_app=True))

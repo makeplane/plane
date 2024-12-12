@@ -2,9 +2,7 @@
 from django.core.management import BaseCommand
 
 # Module imports
-from plane.payment.bgtasks.free_seat_sync import (
-    schedule_workspace_license_free_seats,
-)
+from plane.payment.bgtasks.free_seat_sync import schedule_workspace_license_free_seats
 
 
 class Command(BaseCommand):
@@ -21,8 +19,6 @@ class Command(BaseCommand):
 
         # Print the success message
         self.stdout.write(
-            self.style.SUCCESS(
-                "Successfully triggered the free seat sync task"
-            )
+            self.style.SUCCESS("Successfully triggered the free seat sync task")
         )
         return

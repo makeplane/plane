@@ -9,9 +9,7 @@ from strawberry.types import Info
 from strawberry.permission import PermissionExtension
 
 # Module Imports
-from plane.db.models import (
-    IssueLink,
-)
+from plane.db.models import IssueLink
 from plane.graphql.types.link import IssueLinkType
 from plane.graphql.permissions.project import ProjectBasePermission
 # from plane.graphql.utils.issue import issue_activity
@@ -31,23 +29,16 @@ class IssueLinkMutation:
         url: str,
         title: str,
     ) -> IssueLinkType:
-
         if not url.startswith(("http://", "https://")):
             raise ValueError("Invalid URL")
 
         if await sync_to_async(
-            IssueLink.objects.filter(
-                url=url,
-                issue_id=issue,
-            ).exists
+            IssueLink.objects.filter(url=url, issue_id=issue).exists
         )():
             raise ValueError("Issue link already exists")
 
         issue_links = await sync_to_async(IssueLink.objects.create)(
-            issue_id=issue,
-            project_id=project,
-            url=url,
-            title=title,
+            issue_id=issue, project_id=project, url=url, title=title
         )
 
         # await sync_to_async(

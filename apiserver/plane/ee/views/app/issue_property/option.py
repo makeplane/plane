@@ -15,9 +15,7 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class IssuePropertyOptionEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
     def get(self, request, slug, project_id, issue_property_id=None, pk=None):
@@ -52,9 +50,7 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
             property__issue_type__is_epic=False,
         )
 
-        serializer = IssuePropertyOptionSerializer(
-            issue_property_options, many=True
-        )
+        serializer = IssuePropertyOptionSerializer(issue_property_options, many=True)
 
         response_map = {}
         for option in serializer.data:

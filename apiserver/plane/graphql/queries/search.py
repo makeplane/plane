@@ -27,10 +27,7 @@ from plane.graphql.permissions.workspace import WorkspaceBasePermission
 
 
 async def filter_projects(
-    query: str,
-    slug: str,
-    user,
-    project: Optional[strawberry.ID] = None,
+    query: str, slug: str, user, project: Optional[strawberry.ID] = None
 ) -> list[ProjectLiteType]:
     if project is not None:
         return []
@@ -76,19 +73,13 @@ async def filter_issues(
         else:
             q |= Q(**{f"{field}__icontains": query})
 
-    issue_query = Issue.issue_objects.filter(
-        workspace__slug=slug,
-    )
+    issue_query = Issue.issue_objects.filter(workspace__slug=slug)
     if project:
         issue_query = issue_query.filter(project=project)
     if module:
-        issue_query = issue_query.filter(
-            issue_module__module_id=module,
-        )
+        issue_query = issue_query.filter(issue_module__module_id=module)
     if cycle:
-        issue_query = issue_query.filter(
-            issue_cycle__cycle_id=cycle,
-        )
+        issue_query = issue_query.filter(issue_cycle__cycle_id=cycle)
 
     issues = await sync_to_async(
         lambda: list(
@@ -99,13 +90,7 @@ async def filter_issues(
                 project__archived_at__isnull=True,
             )
             .distinct()
-            .values(
-                "id",
-                "sequence_id",
-                "name",
-                "project",
-                "project__identifier",
-            )
+            .values("id", "sequence_id", "name", "project", "project__identifier")
         )
     )()
 
@@ -132,10 +117,7 @@ async def filter_modules(
     for field in fields:
         q |= Q(**{f"{field}__icontains": query})
 
-    module_query = Module.objects.filter(
-        workspace__slug=slug,
-        archived_at__isnull=True,
-    )
+    module_query = Module.objects.filter(workspace__slug=slug, archived_at__isnull=True)
     if project:
         module_query = module_query.filter(project=project)
 
@@ -170,10 +152,7 @@ async def filter_cycles(
     for field in fields:
         q |= Q(**{f"{field}__icontains": query})
 
-    cycle_query = Cycle.objects.filter(
-        workspace__slug=slug,
-        archived_at__isnull=True,
-    )
+    cycle_query = Cycle.objects.filter(workspace__slug=slug, archived_at__isnull=True)
     if project:
         cycle_query = cycle_query.filter(project=project)
 
@@ -209,9 +188,7 @@ async def filter_pages(
         q |= Q(**{f"{field}__icontains": query})
 
     page_query = Page.objects.filter(
-        workspace__slug=slug,
-        projects__archived_at__isnull=True,
-        projects__isnull=False,
+        workspace__slug=slug, projects__archived_at__isnull=True, projects__isnull=False
     )
     if project:
         page_query = page_query.filter(projects=project)
@@ -231,9 +208,7 @@ async def filter_pages(
 @strawberry.type
 class GlobalSearchQuery:
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def globalSearch(
         self,
@@ -252,9 +227,7 @@ class GlobalSearchQuery:
 
         projects = await filter_projects(query, slug, user, project)
         issues = await filter_issues(query, slug, user, project, module, cycle)
-        modules = await filter_modules(
-            query, slug, user, project, module, cycle
-        )
+        modules = await filter_modules(query, slug, user, project, module, cycle)
         cycles = await filter_cycles(query, slug, user, project, module, cycle)
         pages = await filter_pages(query, slug, user, project, module, cycle)
 

@@ -20,30 +20,21 @@ from plane.graphql.types.users import (
     UserFavoriteType,
     UserRecentVisitType,
 )
-from plane.graphql.permissions.workspace import (
-    IsAuthenticated,
-    WorkspaceBasePermission,
-)
+from plane.graphql.permissions.workspace import IsAuthenticated, WorkspaceBasePermission
 
 
 @strawberry.type
 class UserQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[IsAuthenticated()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[IsAuthenticated()])])
     async def user(self, info: Info) -> UserType:
         return info.context.user
 
 
 @strawberry.type
 class ProfileQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[IsAuthenticated()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[IsAuthenticated()])])
     async def profile(self, info: Info) -> ProfileType:
-        profile = await sync_to_async(Profile.objects.get)(
-            user=info.context.user
-        )
+        profile = await sync_to_async(Profile.objects.get)(user=info.context.user)
         return profile
 
 
@@ -51,29 +42,19 @@ class ProfileQuery:
 @strawberry.type
 class UserFavoritesQuery:
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def userFavorites(
-        self,
-        info: Info,
-        slug: str,
-        limit: Optional[int] = None,
+        self, info: Info, slug: str, limit: Optional[int] = None
     ) -> list[UserFavoriteType]:
         favorites = await sync_to_async(list)(
-            UserFavorite.objects.filter(
-                user=info.context.user,
-                workspace__slug=slug,
-            )
+            UserFavorite.objects.filter(user=info.context.user, workspace__slug=slug)
             .filter(
                 Q(parent__isnull=True),
                 Q(project__isnull=True)
                 | (
                     Q(project__isnull=False)
-                    & Q(
-                        project__project_projectmember__member=info.context.user
-                    )
+                    & Q(project__project_projectmember__member=info.context.user)
                     & Q(project__project_projectmember__is_active=True)
                 ),
                 ~Q(entity_type="view"),
@@ -91,15 +72,10 @@ class UserFavoritesQuery:
 @strawberry.type
 class UserRecentVisitQuery:
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def userRecentVisit(
-        self,
-        info: Info,
-        slug: str,
-        limit: Optional[int] = None,
+        self, info: Info, slug: str, limit: Optional[int] = None
     ) -> list[UserRecentVisitType]:
         recent_visits = await sync_to_async(list)(
             UserRecentVisit.objects.filter(

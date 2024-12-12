@@ -20,11 +20,7 @@ from .views import (
 )
 
 urlpatterns = [
-    path(
-        "workspaces/<str:slug>/products/",
-        ProductEndpoint.as_view(),
-        name="products",
-    ),
+    path("workspaces/<str:slug>/products/", ProductEndpoint.as_view(), name="products"),
     path(
         "workspaces/<str:slug>/current-plan/",
         WorkspaceProductEndpoint.as_view(),
@@ -61,9 +57,7 @@ urlpatterns = [
         name="subscription",
     ),
     path(
-        "workspaces/<str:slug>/flags/",
-        FeatureFlagProxyEndpoint.as_view(),
-        name="flags",
+        "workspaces/<str:slug>/flags/", FeatureFlagProxyEndpoint.as_view(), name="flags"
     ),
     path(
         "workspaces/<str:slug>/license-refresh/",

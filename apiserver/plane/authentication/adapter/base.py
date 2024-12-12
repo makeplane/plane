@@ -136,9 +136,7 @@ class Adapter:
         # check if the user is authenticated via mobile
         if is_signup and self.is_mobile:
             raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "MOBILE_SIGNUP_DISABLED"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["MOBILE_SIGNUP_DISABLED"],
                 error_message="MOBILE_SIGNUP_DISABLED",
             )
 

@@ -15,16 +15,9 @@ from plane.graphql.types.external import ProjectCovers
 @strawberry.type
 class ProjectCoversQuery:
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
-    async def project_covers(
-        self,
-        slug: str,
-        info: Info,
-    ) -> ProjectCovers:
-
+    async def project_covers(self, slug: str, info: Info) -> ProjectCovers:
         project_cover_files = [
             "https://cover-images.plane.so/project-covers/f2ea49f1-1a23-46c3-99e4-1f6185bff8fc.webp",
             "https://cover-images.plane.so/project-covers/0fec1f5e-3a54-4260-beb1-25eb5de8fd87.webp",

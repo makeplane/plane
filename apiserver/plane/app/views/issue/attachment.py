@@ -95,10 +95,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
         # Check if the request is valid
         if not name or not size:
             return Response(
-                {
-                    "error": "Invalid request.",
-                    "status": False,
-                },
+                {"error": "Invalid request.", "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

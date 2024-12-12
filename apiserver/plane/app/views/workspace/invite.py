@@ -104,9 +104,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
 
         if not allowed:
             return Response(
-                {
-                    "error": "Reached seat limit - Upgrade to add more members",
-                },
+                {"error": "Reached seat limit - Upgrade to add more members"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -256,9 +254,7 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                         "user": {"email": email, "id": str(user)},
                         "device_ctx": {
                             "ip": request.META.get("REMOTE_ADDR", None),
-                            "user_agent": request.META.get(
-                                "HTTP_USER_AGENT", None
-                            ),
+                            "user_agent": request.META.get("HTTP_USER_AGENT", None),
                         },
                         "accepted_from": "EMAIL",
                     },

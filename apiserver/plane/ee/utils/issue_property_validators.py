@@ -137,7 +137,7 @@ def save_text(
                 issue_id=issue_id,
                 project_id=project_id,
                 workspace_id=workspace_id,
-            ),
+            )
         ]
     else:
         # Case 3 - The property is deleted
@@ -310,11 +310,7 @@ VALIDATOR_MAPPER = {
 }
 
 
-def property_validators(
-    properties,
-    property_values,
-    existing_prop_values,
-):
+def property_validators(properties, property_values, existing_prop_values):
     # Validate the property values
     for property in properties:
         # Fetch the validator
@@ -331,9 +327,7 @@ def property_validators(
 
         # Validate the value
         if property.is_required and not values:
-            raise ValidationError(
-                f"{property.display_name} is a required property"
-            )
+            raise ValidationError(f"{property.display_name} is a required property")
 
         # Validate the value
         for value in values:

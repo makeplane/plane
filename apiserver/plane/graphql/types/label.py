@@ -27,7 +27,7 @@ class LabelType:
     @strawberry.field
     def project(self) -> int:
         return self.project_id
-    
+
     @strawberry.field
     def parent(self) -> int:
         return self.parent_id

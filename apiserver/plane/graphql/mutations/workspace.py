@@ -29,46 +29,26 @@ from plane.bgtasks.workspace_invitation_task import workspace_invitation
 
 @strawberry.type
 class WorkspaceMutation:
-
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[(WorkspaceBasePermission())])
-        ]
+        extensions=[PermissionExtension(permissions=[(WorkspaceBasePermission())])]
     )
     async def createWorkspace(
-        self,
-        info: Info,
-        name: str,
-        slug: str,
-        organizationSize: str,
-        owner: str,
+        self, info: Info, name: str, slug: str, organizationSize: str, owner: str
     ) -> WorkspaceType:
         workspace = await sync_to_async(Workspace.objects.create)(
-            name=name,
-            slug=slug,
-            organization_size=organizationSize,
-            owner_id=owner,
+            name=name, slug=slug, organization_size=organizationSize, owner_id=owner
         )
         # add the user as a admin of the workspace
         _ = await sync_to_async(WorkspaceMember.objects.create)(
-            workspace=workspace,
-            member=info.context.user,
-            role=20,
+            workspace=workspace, member=info.context.user, role=20
         )
         return workspace
 
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceMemberPermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceMemberPermission()])]
     )
     async def updateWorkspace(
-        self,
-        id: strawberry.ID,
-        name: str,
-        slug: str,
-        organizationSize: str,
-        owner: str,
+        self, id: strawberry.ID, name: str, slug: str, organizationSize: str, owner: str
     ) -> WorkspaceType:
         workspace = await sync_to_async(Workspace.objects.get)(id=id)
         workspace.name = name
@@ -79,9 +59,7 @@ class WorkspaceMutation:
         return workspace
 
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceAdminPermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceAdminPermission()])]
     )
     async def deleteWorkspace(self, id: strawberry.ID) -> bool:
         workspace = await sync_to_async(Workspace.objects.get)(id=id)
@@ -91,21 +69,13 @@ class WorkspaceMutation:
 
 @strawberry.type
 class WorkspaceInviteMutation:
-
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceMemberPermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceMemberPermission()])]
     )
-    async def inviteWorkspaceMembers(
-        self, info: Info, slug: str, emails: JSON
-    ) -> bool:
-
+    async def inviteWorkspaceMembers(self, info: Info, slug: str, emails: JSON) -> bool:
         # check for role level of the requesting user
         requesting_user = await sync_to_async(WorkspaceMember.objects.get)(
-            workspace__slug=slug,
-            member=info.context.user,
-            is_active=True,
+            workspace__slug=slug, member=info.context.user, is_active=True
         )
 
         # Check if any invited user has an higher role
@@ -122,16 +92,10 @@ class WorkspaceInviteMutation:
         workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
 
         # Check if user is already a member of workspace
-        emails_list = await sync_to_async(
-            [email.get("email") for email in emails]
-        )()
+        emails_list = await sync_to_async([email.get("email") for email in emails])()
 
-        workspace_members = await sync_to_async(
-            WorkspaceMember.objects.filter
-        )(
-            workspace_id=workspace.id,
-            member__email__in=emails_list,
-            is_active=True,
+        workspace_members = await sync_to_async(WorkspaceMember.objects.filter)(
+            workspace_id=workspace.id, member__email__in=emails_list, is_active=True
         )
 
         if workspace_members:
@@ -146,10 +110,7 @@ class WorkspaceInviteMutation:
                         email=email.get("email").strip().lower(),
                         workspace_id=workspace.id,
                         token=jwt.encode(
-                            {
-                                "email": email,
-                                "timestamp": datetime.now().timestamp(),
-                            },
+                            {"email": email, "timestamp": datetime.now().timestamp()},
                             settings.SECRET_KEY,
                             algorithm="HS256",
                         ),

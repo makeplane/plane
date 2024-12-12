@@ -7,10 +7,7 @@ from plane.db.models import IssueType, ProjectIssueType
 
 
 class IssueTypeAPISerializer(BaseSerializer):
-    project_ids = serializers.ListField(
-        child=serializers.UUIDField(),
-        required=False,
-    )
+    project_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
 
     class Meta:
         model = IssueType

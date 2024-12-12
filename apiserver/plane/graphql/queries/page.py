@@ -26,15 +26,10 @@ from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
 @strawberry.type
 class WorkspacePageQuery:
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def workspacePage(
-        self,
-        info: Info,
-        slug: str,
-        page: strawberry.ID,
+        self, info: Info, slug: str, page: strawberry.ID
     ) -> PageType:
         user = info.context.user
 
@@ -58,15 +53,10 @@ class WorkspacePageQuery:
 
         # Fetch the page asynchronously
         try:
-            page_result = await sync_to_async(
-                query.get, thread_sensitive=True
-            )()
+            page_result = await sync_to_async(query.get, thread_sensitive=True)()
         except Exception:
             message = "Page not found."
-            error_extensions = {
-                "code": "PAGE_NOT_FOUND",
-                "statusCode": 404,
-            }
+            error_extensions = {"code": "PAGE_NOT_FOUND", "statusCode": 404}
             raise GraphQLError(message, extensions=error_extensions)
 
         # Background task to update recent visited project
@@ -86,15 +76,10 @@ class WorkspacePageQuery:
 @strawberry.type
 class UserPageQuery:
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def userPages(
-        self,
-        info: Info,
-        slug: str,
-        cursor: Optional[str] = None,
+        self, info: Info, slug: str, cursor: Optional[str] = None
     ) -> PaginatorResponse[PageType]:
         subquery = UserFavorite.objects.filter(
             user=info.context.user,
@@ -123,9 +108,7 @@ class UserPageQuery:
 @strawberry.type
 class PageQuery:
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def pages(
         self,
@@ -157,16 +140,10 @@ class PageQuery:
         return paginate(results_object=pages, cursor=cursor)
 
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def page(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        page: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, page: strawberry.ID
     ) -> PageType:
         user = info.context.user
 
@@ -180,9 +157,7 @@ class PageQuery:
 
         # Build the query
         query = (
-            Page.objects.filter(
-                workspace__slug=slug, projects__id=project, pk=page
-            )
+            Page.objects.filter(workspace__slug=slug, projects__id=project, pk=page)
             .filter(
                 projects__project_projectmember__member=user,
                 projects__project_projectmember__is_active=True,
@@ -197,15 +172,10 @@ class PageQuery:
 
         # Fetch the page asynchronously
         try:
-            page_result = await sync_to_async(
-                query.get, thread_sensitive=True
-            )()
+            page_result = await sync_to_async(query.get, thread_sensitive=True)()
         except Exception:
             message = "Page not found."
-            error_extensions = {
-                "code": "PAGE_NOT_FOUND",
-                "statusCode": 404,
-            }
+            error_extensions = {"code": "PAGE_NOT_FOUND", "statusCode": 404}
             raise GraphQLError(message, extensions=error_extensions)
 
         # Background task to update recent visited project

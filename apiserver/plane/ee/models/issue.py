@@ -3,11 +3,7 @@ from django.db import models
 from django.conf import settings
 
 # Module imports
-from plane.db.models import (
-    ProjectBaseModel,
-    Issue,
-    BaseModel,
-)
+from plane.db.models import ProjectBaseModel, Issue, BaseModel
 
 
 def get_default_properties():
@@ -74,14 +70,10 @@ def get_default_display_properties():
 
 
 class IssueWorkLog(ProjectBaseModel):
-    issue = models.ForeignKey(
-        Issue, on_delete=models.CASCADE, related_name="worklogs"
-    )
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="worklogs")
     description = models.TextField(blank=True)
     logged_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="worklogs",
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="worklogs"
     )
     duration = models.IntegerField(default=0)
 
@@ -135,25 +127,17 @@ class EntityIssueStateActivity(BaseModel):
         null=True,
         blank=True,
     )
-    entity_type = models.CharField(
-        max_length=30,
-        choices=EntityTypeEnum.choices,
-    )
+    entity_type = models.CharField(max_length=30, choices=EntityTypeEnum.choices)
     state = models.ForeignKey(
         "db.State",
         on_delete=models.DO_NOTHING,
         related_name="entity_issue_state_progress",
     )
     issue = models.ForeignKey(
-        "db.Issue",
-        on_delete=models.DO_NOTHING,
-        related_name="issue_state_progress",
+        "db.Issue", on_delete=models.DO_NOTHING, related_name="issue_state_progress"
     )
     state_group = models.CharField(max_length=255)
-    action = models.CharField(
-        max_length=30,
-        choices=ActionTypeEnum.choices,
-    )
+    action = models.CharField(max_length=30, choices=ActionTypeEnum.choices)
     estimate_point = models.ForeignKey(
         "db.EstimatePoint",
         on_delete=models.DO_NOTHING,
@@ -175,9 +159,7 @@ class EntityIssueStateActivity(BaseModel):
 
 class EntityProgress(BaseModel):
     workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="workspace_progress",
+        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_progress"
     )
     cycle = models.ForeignKey(
         "db.Cycle",
@@ -200,10 +182,7 @@ class EntityProgress(BaseModel):
         null=True,
         blank=True,
     )
-    entity_type = models.CharField(
-        max_length=30,
-        choices=EntityTypeEnum.choices,
-    )
+    entity_type = models.CharField(max_length=30, choices=EntityTypeEnum.choices)
 
     progress_date = models.DateTimeField()
     data = models.JSONField(default=dict)
@@ -247,9 +226,7 @@ class UpdatesEnum(models.TextChoices):
 
 class EntityUpdates(BaseModel):
     workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="workspace_updates",
+        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_updates"
     )
     cycle = models.ForeignKey(
         "db.Cycle",
@@ -272,15 +249,9 @@ class EntityUpdates(BaseModel):
         null=True,
         blank=True,
     )
-    entity_type = models.CharField(
-        max_length=30,
-        choices=EntityTypeEnum.choices,
-    )
+    entity_type = models.CharField(max_length=30, choices=EntityTypeEnum.choices)
     description = models.TextField(blank=True)
-    status = models.CharField(
-        max_length=30,
-        choices=UpdatesEnum.choices,
-    )
+    status = models.CharField(max_length=30, choices=UpdatesEnum.choices)
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -306,9 +277,7 @@ class EntityUpdates(BaseModel):
 
 class UpdateReaction(ProjectBaseModel):
     update = models.ForeignKey(
-        "ee.EntityUpdates",
-        on_delete=models.CASCADE,
-        related_name="update_reactions",
+        "ee.EntityUpdates", on_delete=models.CASCADE, related_name="update_reactions"
     )
     reaction = models.CharField(max_length=20)
     actor = models.ForeignKey(
@@ -336,9 +305,7 @@ class EpicUserProperties(ProjectBaseModel):
     )
     filters = models.JSONField(default=get_default_filters)
     display_filters = models.JSONField(default=get_default_display_filters)
-    display_properties = models.JSONField(
-        default=get_default_display_properties
-    )
+    display_properties = models.JSONField(default=get_default_display_properties)
 
     class Meta:
         verbose_name = "Epic User Property"

@@ -14,9 +14,7 @@ from rest_framework.exceptions import Throttled
 
 # Module imports
 from .base import BaseAPIView
-from plane.app.permissions.workspace import (
-    WorkspaceUserPermission,
-)
+from plane.app.permissions.workspace import WorkspaceUserPermission
 from plane.db.models import WorkspaceMember, Workspace
 from plane.ee.models import WorkspaceLicense
 from plane.utils.exception_logger import log_exception
@@ -29,9 +27,7 @@ from plane.payment.rate_limit import WorkspaceRateThrottle
 
 
 class ProductEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceUserPermission,
-    ]
+    permission_classes = [WorkspaceUserPermission]
 
     """
     Get the product details for the workspace based on the number of paid users and free users
@@ -99,26 +95,17 @@ class WebsiteUserWorkspaceEndpoint(BaseAPIView):
             # Get all the workspaces where the user is admin
             workspaces = (
                 WorkspaceMember.objects.filter(
-                    member=request.user,
-                    is_active=True,
-                    role=20,
+                    member=request.user, is_active=True, role=20
                 )
                 .annotate(
                     slug=F("workspace__slug"),
                     logo=F("workspace__logo"),
                     name=F("workspace__name"),
                 )
-                .values(
-                    "workspace_id",
-                    "slug",
-                    "name",
-                    "logo",
-                )
+                .values("workspace_id", "slug", "name", "logo")
             )
 
-            workspace_ids = [
-                workspace["workspace_id"] for workspace in workspaces
-            ]
+            workspace_ids = [workspace["workspace_id"] for workspace in workspaces]
 
             # Fetch the workspaces from the workspace license
             workspace_licenses = WorkspaceLicense.objects.filter(
@@ -129,16 +116,13 @@ class WebsiteUserWorkspaceEndpoint(BaseAPIView):
                 licenses = [
                     license
                     for license in workspace_licenses
-                    if str(license.workspace_id)
-                    == str(workspace["workspace_id"])
+                    if str(license.workspace_id) == str(workspace["workspace_id"])
                 ]
 
                 if licenses:
                     workspace["product"] = licenses[0].plan
                     workspace["is_on_trial"] = is_on_trial(licenses[0])
-                    workspace["is_billing_active"] = is_billing_active(
-                        licenses[0]
-                    )
+                    workspace["is_billing_active"] = is_billing_active(licenses[0])
                 else:
                     workspace["product"] = "FREE"
                     workspace["is_on_trial"] = False
@@ -149,9 +133,7 @@ class WebsiteUserWorkspaceEndpoint(BaseAPIView):
 
         except requests.exceptions.RequestException as e:
             if e.response.status_code == 400:
-                return Response(
-                    e.response.json(), status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             log_exception(e)
             return Response(
                 {"error": "error in fetching workspace products"},
@@ -160,9 +142,7 @@ class WebsiteUserWorkspaceEndpoint(BaseAPIView):
 
 
 class WorkspaceProductEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceUserPermission,
-    ]
+    permission_classes = [WorkspaceUserPermission]
 
     """
     Get the product details for the workspace
@@ -188,11 +168,8 @@ class WorkspaceProductEndpoint(BaseAPIView):
 
 
 class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
-
     # Throttle classes
-    throttle_classes = [
-        WorkspaceRateThrottle,
-    ]
+    throttle_classes = [WorkspaceRateThrottle]
 
     # Throttle rate
     def throttled(self, request, wait):
@@ -222,11 +199,7 @@ class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
                     user_id=F("member__id"),
                     user_role=F("role"),
                 )
-                .values(
-                    "user_email",
-                    "user_id",
-                    "user_role",
-                )
+                .values("user_email", "user_id", "user_role")
             )
 
             for member in workspace_members:
@@ -249,27 +222,19 @@ class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
             response.raise_for_status()
 
             # Return the response
-            return Response(
-                status=status.HTTP_204_NO_CONTENT,
-            )
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class WorkspaceLicenseSyncEndpoint(BaseAPIView):
     """This endpoint is used to sync the workspace license from the payment server: - This is used by the payment server"""
 
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = [AllowAny]
 
     def post(self, request):
         # Check if the request is authorized
-        if (
-            request.headers.get("x-api-key")
-            != settings.PAYMENT_SERVER_AUTH_TOKEN
-        ):
+        if request.headers.get("x-api-key") != settings.PAYMENT_SERVER_AUTH_TOKEN:
             return Response(
-                {"error": "Unauthorized"},
-                status=status.HTTP_401_UNAUTHORIZED,
+                {"error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
             )
 
         # Get the workspace ID from the request
@@ -289,12 +254,8 @@ class WorkspaceLicenseSyncEndpoint(BaseAPIView):
 
         # If the workspace license is present, then fetch the license from the payment server and update it
         if workspace_license:
-            workspace_license.is_cancelled = request.data.get(
-                "is_cancelled", False
-            )
-            workspace_license.purchased_seats = request.data.get(
-                "purchased_seats", 0
-            )
+            workspace_license.is_cancelled = request.data.get("is_cancelled", False)
+            workspace_license.purchased_seats = request.data.get("purchased_seats", 0)
             workspace_license.free_seats = request.data.get("free_seats", 12)
             workspace_license.current_period_end_date = request.data.get(
                 "current_period_end_date"
@@ -302,9 +263,7 @@ class WorkspaceLicenseSyncEndpoint(BaseAPIView):
             workspace_license.recurring_interval = request.data.get("interval")
             workspace_license.plan = request.data.get("plan")
             workspace_license.last_synced_at = timezone.now()
-            workspace_license.trial_end_date = request.data.get(
-                "trial_end_date"
-            )
+            workspace_license.trial_end_date = request.data.get("trial_end_date")
             workspace_license.has_activated_free_trial = request.data.get(
                 "has_activated_free_trial", False
             )
@@ -324,9 +283,7 @@ class WorkspaceLicenseSyncEndpoint(BaseAPIView):
                 is_cancelled=request.data.get("is_cancelled", False),
                 purchased_seats=request.data.get("purchased_seats", 0),
                 free_seats=request.data.get("free_seats", 12),
-                current_period_end_date=request.data.get(
-                    "current_period_end_date"
-                ),
+                current_period_end_date=request.data.get("current_period_end_date"),
                 recurring_interval=request.data.get("interval"),
                 plan=request.data.get("plan"),
                 last_synced_at=timezone.now(),
@@ -338,9 +295,7 @@ class WorkspaceLicenseSyncEndpoint(BaseAPIView):
                     "has_added_payment_method", False
                 ),
                 subscription=request.data.get("subscription"),
-                current_period_start_date=request.data.get(
-                    "current_period_start_date"
-                ),
+                current_period_start_date=request.data.get("current_period_start_date"),
             )
 
         # Return the response

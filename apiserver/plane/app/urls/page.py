@@ -33,12 +33,7 @@ urlpatterns = [
     # Lock
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/lock/",
-        PageViewSet.as_view(
-            {
-                "post": "lock",
-                "delete": "unlock",
-            }
-        ),
+        PageViewSet.as_view({"post": "lock", "delete": "unlock"}),
         name="project-page-lock-unlock",
     ),
     # archived pages

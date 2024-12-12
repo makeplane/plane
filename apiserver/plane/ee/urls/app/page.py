@@ -21,63 +21,37 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/pages/",
-        WorkspacePageViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
+        WorkspacePageViewSet.as_view({"get": "list", "post": "create"}),
         name="workspace-pages",
     ),
     path(
         "workspaces/<str:slug>/pages/<uuid:pk>/",
         WorkspacePageViewSet.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
         ),
         name="workspace-pages",
     ),
     path(
         "workspaces/<str:slug>/pages/<uuid:pk>/archive/",
-        WorkspacePageViewSet.as_view(
-            {
-                "post": "archive",
-                "delete": "unarchive",
-            }
-        ),
+        WorkspacePageViewSet.as_view({"post": "archive", "delete": "unarchive"}),
         name="workspace-page-archive-unarchive",
     ),
     # private and public page
     path(
         "workspaces/<str:slug>/pages/<uuid:pk>/access/",
-        WorkspacePageViewSet.as_view(
-            {
-                "post": "access",
-            }
-        ),
+        WorkspacePageViewSet.as_view({"post": "access"}),
         name="project-pages-access",
     ),
     # lock and unlock
     path(
         "workspaces/<str:slug>/pages/<uuid:pk>/lock/",
-        WorkspacePageViewSet.as_view(
-            {
-                "post": "lock",
-                "delete": "unlock",
-            }
-        ),
+        WorkspacePageViewSet.as_view({"post": "lock", "delete": "unlock"}),
         name="workspace-pages-lock-unlock",
     ),
     path(
         "workspaces/<str:slug>/pages/<uuid:pk>/description/",
         WorkspacePagesDescriptionViewSet.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-            }
+            {"get": "retrieve", "patch": "partial_update"}
         ),
         name="page-description",
     ),

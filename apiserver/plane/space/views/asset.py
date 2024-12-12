@@ -84,8 +84,7 @@ class EntityAssetEndpoint(BaseAPIView):
                 ).exists()
             ):
                 return Response(
-                    {"error": "Intake is not enabled"},
-                    status=status.HTTP_404_NOT_FOUND,
+                    {"error": "Intake is not enabled"}, status=status.HTTP_404_NOT_FOUND
                 )
 
         # Get the asset
@@ -152,9 +151,7 @@ class EntityAssetEndpoint(BaseAPIView):
 
     def patch(self, request, anchor, pk):
         # Get the deploy board
-        deploy_board = DeployBoard.objects.filter(
-            anchor=anchor
-        ).first()
+        deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
         # Check if the project is published
         if not deploy_board:
             return Response(

@@ -12,9 +12,7 @@ from plane.authentication.utils.mobile.login import (
     ValidateAuthToken,
     mobile_validate_user_onboarding,
 )
-from plane.authentication.utils.user_auth_workflow import (
-    post_user_auth_workflow,
-)
+from plane.authentication.utils.user_auth_workflow import post_user_auth_workflow
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
 from plane.authentication.adapter.error import (
@@ -32,15 +30,12 @@ class MobileGitHubOauthInitiateEndpoint(View):
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "INSTANCE_NOT_CONFIGURED"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["INSTANCE_NOT_CONFIGURED"],
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
             params = exc.get_error_dict()
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "m/auth/?" + urlencode(params),
+                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
         try:
@@ -51,7 +46,9 @@ class MobileGitHubOauthInitiateEndpoint(View):
                 if request.is_secure()
                 else "http"
             )
-            redirect_uri = f"""{scheme}://{request.get_host()}/auth/mobile/github/callback/"""
+            redirect_uri = (
+                f"""{scheme}://{request.get_host()}/auth/mobile/github/callback/"""
+            )
 
             state = uuid.uuid4().hex
             provider = GitHubOAuthProvider(
@@ -63,8 +60,7 @@ class MobileGitHubOauthInitiateEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "m/auth/?" + urlencode(params),
+                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
@@ -77,30 +73,20 @@ class MobileGitHubCallbackEndpoint(View):
 
         if state != request.session.get("state", ""):
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "GITHUB_OAUTH_PROVIDER_ERROR"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
                 error_message="GITHUB_OAUTH_PROVIDER_ERROR",
             )
             params = exc.get_error_dict()
-            url = urljoin(
-                base_host,
-                "m/auth/?" + urlencode(params),
-            )
+            url = urljoin(base_host, "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)
 
         if not code:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "GITHUB_OAUTH_PROVIDER_ERROR"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
                 error_message="GITHUB_OAUTH_PROVIDER_ERROR",
             )
             params = exc.get_error_dict()
-            url = urljoin(
-                base_host,
-                "m/auth/?" + urlencode(params),
-            )
+            url = urljoin(base_host, "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)
 
         try:
@@ -111,7 +97,9 @@ class MobileGitHubCallbackEndpoint(View):
                 if request.is_secure()
                 else "http"
             )
-            redirect_uri = f"""{scheme}://{request.get_host()}/auth/mobile/github/callback/"""
+            redirect_uri = (
+                f"""{scheme}://{request.get_host()}/auth/mobile/github/callback/"""
+            )
             provider = GitHubOAuthProvider(
                 request=request,
                 code=code,
@@ -126,16 +114,11 @@ class MobileGitHubCallbackEndpoint(View):
             is_onboarded = mobile_validate_user_onboarding(user=user)
             if not is_onboarded:
                 exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES[
-                        "USER_NOT_ONBOARDED"
-                    ],
+                    error_code=AUTHENTICATION_ERROR_CODES["USER_NOT_ONBOARDED"],
                     error_message="USER_NOT_ONBOARDED",
                 )
                 params = exc.get_error_dict()
-                url = urljoin(
-                    base_host,
-                    "m/auth/?" + urlencode(params),
-                )
+                url = urljoin(base_host, "m/auth/?" + urlencode(params))
                 return HttpResponseRedirect(url)
 
             # Login the user and record his device info
@@ -144,15 +127,11 @@ class MobileGitHubCallbackEndpoint(View):
 
             # redirect to referrer path
             url = urljoin(
-                base_host,
-                "m/auth/?" + urlencode({"token": session_token.token}),
+                base_host, "m/auth/?" + urlencode({"token": session_token.token})
             )
 
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
-            url = urljoin(
-                base_host,
-                "m/auth/?" + urlencode(params),
-            )
+            url = urljoin(base_host, "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)

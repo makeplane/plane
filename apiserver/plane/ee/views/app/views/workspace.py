@@ -3,15 +3,9 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import (
-    WorkspaceEntityPermission,
-)
-from plane.app.serializers import (
-    IssueViewSerializer,
-)
-from plane.db.models import (
-    IssueView,
-)
+from plane.app.permissions import WorkspaceEntityPermission
+from plane.app.serializers import IssueViewSerializer
+from plane.db.models import IssueView
 from plane.ee.views.base import BaseViewSet
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -20,14 +14,10 @@ from plane.payment.flags.flag import FeatureFlag
 class WorkspaceViewEEViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
     model = IssueView
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
+    permission_classes = [WorkspaceEntityPermission]
 
     def lock(self, request, slug, pk):
-        workspace_view = IssueView.objects.filter(
-            pk=pk, workspace__slug=slug
-        ).first()
+        workspace_view = IssueView.objects.filter(pk=pk, workspace__slug=slug).first()
 
         if workspace_view.owned_by != request.user:
             return Response(
@@ -40,9 +30,7 @@ class WorkspaceViewEEViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def unlock(self, request, slug, pk):
-        workspace_view = IssueView.objects.filter(
-            pk=pk, workspace__slug=slug
-        ).first()
+        workspace_view = IssueView.objects.filter(pk=pk, workspace__slug=slug).first()
 
         if workspace_view.owned_by != request.user:
             return Response(
@@ -59,10 +47,7 @@ class WorkspaceViewEEViewSet(BaseViewSet):
     def access(self, request, slug, pk):
         access = request.data.get("access", 1)
 
-        workspace_view = IssueView.objects.filter(
-            pk=pk,
-            workspace__slug=slug,
-        ).first()
+        workspace_view = IssueView.objects.filter(pk=pk, workspace__slug=slug).first()
 
         if workspace_view.owned_by != request.user:
             return Response(

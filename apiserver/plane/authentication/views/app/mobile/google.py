@@ -14,9 +14,7 @@ from plane.authentication.utils.mobile.login import (
     ValidateAuthToken,
     mobile_validate_user_onboarding,
 )
-from plane.authentication.utils.user_auth_workflow import (
-    post_user_auth_workflow,
-)
+from plane.authentication.utils.user_auth_workflow import post_user_auth_workflow
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
 from plane.authentication.adapter.error import (
@@ -33,15 +31,12 @@ class MobileGoogleOauthInitiateEndpoint(View):
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "INSTANCE_NOT_CONFIGURED"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["INSTANCE_NOT_CONFIGURED"],
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
             params = exc.get_error_dict()
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "m/auth/?" + urlencode(params),
+                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
@@ -53,13 +48,13 @@ class MobileGoogleOauthInitiateEndpoint(View):
                 if request.is_secure()
                 else "http"
             )
-            redirect_uri = f"""{scheme}://{request.get_host()}/auth/mobile/google/callback/"""
+            redirect_uri = (
+                f"""{scheme}://{request.get_host()}/auth/mobile/google/callback/"""
+            )
 
             state = uuid.uuid4().hex
             provider = GoogleOAuthProvider(
-                request=request,
-                state=state,
-                redirect_uri=redirect_uri,
+                request=request, state=state, redirect_uri=redirect_uri
             )
             request.session["state"] = state
             auth_url = provider.get_auth_url()
@@ -67,8 +62,7 @@ class MobileGoogleOauthInitiateEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "m/auth/?" + urlencode(params),
+                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
@@ -82,31 +76,21 @@ class MobileGoogleCallbackEndpoint(View):
         # validating the session state is matching or not
         if state != request.session.get("state", ""):
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "GOOGLE_OAUTH_PROVIDER_ERROR"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["GOOGLE_OAUTH_PROVIDER_ERROR"],
                 error_message="GOOGLE_OAUTH_PROVIDER_ERROR",
             )
             params = exc.get_error_dict()
-            url = urljoin(
-                base_host,
-                "m/auth/?" + urlencode(params),
-            )
+            url = urljoin(base_host, "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)
 
         #  validating the code that have given by google provider
         if not code:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "GOOGLE_OAUTH_PROVIDER_ERROR"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["GOOGLE_OAUTH_PROVIDER_ERROR"],
                 error_message="GOOGLE_OAUTH_PROVIDER_ERROR",
             )
             params = exc.get_error_dict()
-            url = urljoin(
-                base_host,
-                "m/auth/?" + urlencode(params),
-            )
+            url = urljoin(base_host, "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)
 
         try:
@@ -117,7 +101,9 @@ class MobileGoogleCallbackEndpoint(View):
                 if request.is_secure()
                 else "http"
             )
-            redirect_uri = f"""{scheme}://{request.get_host()}/auth/mobile/google/callback/"""
+            redirect_uri = (
+                f"""{scheme}://{request.get_host()}/auth/mobile/google/callback/"""
+            )
             provider = GoogleOAuthProvider(
                 request=request,
                 code=code,
@@ -133,16 +119,11 @@ class MobileGoogleCallbackEndpoint(View):
             is_onboarded = mobile_validate_user_onboarding(user=user)
             if not is_onboarded:
                 exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES[
-                        "USER_NOT_ONBOARDED"
-                    ],
+                    error_code=AUTHENTICATION_ERROR_CODES["USER_NOT_ONBOARDED"],
                     error_message="USER_NOT_ONBOARDED",
                 )
                 params = exc.get_error_dict()
-                url = urljoin(
-                    base_host,
-                    "m/auth/?" + urlencode(params),
-                )
+                url = urljoin(base_host, "m/auth/?" + urlencode(params))
                 return HttpResponseRedirect(url)
 
             # Login the user and record his device info
@@ -151,15 +132,11 @@ class MobileGoogleCallbackEndpoint(View):
 
             # redirect to referrer path
             url = urljoin(
-                base_host,
-                "m/auth/?" + urlencode({"token": session_token.token}),
+                base_host, "m/auth/?" + urlencode({"token": session_token.token})
             )
 
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
-            url = urljoin(
-                base_host,
-                "m/auth/?" + urlencode(params),
-            )
+            url = urljoin(base_host, "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)

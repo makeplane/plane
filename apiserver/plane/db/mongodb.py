@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 
+
 def singleton(cls):
     instances = {}
 
@@ -10,6 +11,7 @@ def singleton(cls):
 
     return wrapper
 
+
 @singleton
 class Database:
     db = None
@@ -18,6 +20,6 @@ class Database:
     def __init__(self, mongo_uri, database_name):
         self.client = MongoClient(mongo_uri)
         self.db = self.client[database_name]
-    
+
     def get_db(self):
         return self.db

@@ -15,11 +15,8 @@ from plane.graphql.permissions.workspace import WorkspaceBasePermission
 
 @strawberry.type
 class WorkspaceLabelQuery:
-
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def workspace_labels(self, info: Info, slug: str) -> list[LabelType]:
         labels = await sync_to_async(list)(
@@ -34,7 +31,6 @@ class WorkspaceLabelQuery:
 
 @strawberry.type
 class LabelQuery:
-
     @strawberry.field(
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
@@ -42,9 +38,7 @@ class LabelQuery:
         self, info: Info, slug: str, project: strawberry.ID
     ) -> list[LabelType]:
         labels = await sync_to_async(list)(
-            Label.objects.filter(
-                workspace__slug=slug, project_id=project
-            ).filter(
+            Label.objects.filter(workspace__slug=slug, project_id=project).filter(
                 project__project_projectmember__member=info.context.user,
                 project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,

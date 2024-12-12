@@ -6,12 +6,8 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.serializers import (
-    NotificationSerializer,
-)
-from plane.db.models import (
-    Notification,
-)
+from plane.app.serializers import NotificationSerializer
+from plane.db.models import Notification
 from plane.utils.paginator import BasePaginator
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.views.base import BaseViewSet
@@ -39,7 +35,6 @@ class InboxViewSet(BaseViewSet, BasePaginator):
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
     def partial_update(self, request, slug):
-
         notification_ids = request.data.get("notification_ids")
         if notification_ids:
             notifications = Notification.objects.filter(
@@ -65,9 +60,7 @@ class InboxViewSet(BaseViewSet, BasePaginator):
             workspace__slug=slug, receiver=request.user
         )
         # Only read_at and snoozed_till can be updated
-        notification_data = {
-            "snoozed_till": request.data.get("snoozed_till", None)
-        }
+        notification_data = {"snoozed_till": request.data.get("snoozed_till", None)}
         serializer = NotificationSerializer(
             notification, data=notification_data, partial=True
         )

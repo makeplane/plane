@@ -46,14 +46,9 @@ def get_instance_release_notes(machine_signature, license_key, prime_host):
 
 
 def update_instance(instance, data):
-
     instance.last_checked_at = timezone.now()
-    instance.current_version = data.get(
-        "user_version", instance.current_version
-    )
-    instance.latest_version = data.get(
-        "latest_version", instance.latest_version
-    )
+    instance.current_version = data.get("user_version", instance.current_version)
+    instance.latest_version = data.get("latest_version", instance.latest_version)
     instance.save()
 
 

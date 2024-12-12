@@ -9,12 +9,7 @@ class UpdateReactionSerializer(BaseSerializer):
     class Meta:
         model = UpdateReaction
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "update",
-            "actor",
-        ]
+        read_only_fields = ["workspace", "project", "update", "actor"]
 
 
 class UpdatesSerializer(BaseSerializer):
@@ -24,11 +19,4 @@ class UpdatesSerializer(BaseSerializer):
     class Meta:
         model = EntityUpdates
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "cycle",
-            "issue",
-            "status"
-        ]
-
+        read_only_fields = ["workspace", "project", "cycle", "issue", "status"]

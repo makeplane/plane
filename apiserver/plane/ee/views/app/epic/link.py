@@ -20,9 +20,7 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class EpicLinkViewSet(BaseViewSet):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     model = IssueLink
     serializer_class = EpicLinkSerializer
@@ -47,15 +45,10 @@ class EpicLinkViewSet(BaseViewSet):
     def create(self, request, slug, project_id, epic_id):
         serializer = EpicLinkSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(
-                project_id=project_id,
-                issue_id=epic_id,
-            )
+            serializer.save(project_id=project_id, issue_id=epic_id)
             issue_activity.delay(
                 type="link.activity.created",
-                requested_data=json.dumps(
-                    serializer.data, cls=DjangoJSONEncoder
-                ),
+                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("epic_id")),
                 project_id=str(self.kwargs.get("project_id")),
@@ -70,19 +63,13 @@ class EpicLinkViewSet(BaseViewSet):
     @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
     def partial_update(self, request, slug, project_id, epic_id, pk):
         epic_link = IssueLink.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            issue_id=epic_id,
-            pk=pk,
+            workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk
         )
         requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(
-            EpicLinkSerializer(epic_link).data,
-            cls=DjangoJSONEncoder,
+            EpicLinkSerializer(epic_link).data, cls=DjangoJSONEncoder
         )
-        serializer = EpicLinkSerializer(
-            epic_link, data=request.data, partial=True
-        )
+        serializer = EpicLinkSerializer(epic_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             issue_activity.delay(
@@ -102,14 +89,10 @@ class EpicLinkViewSet(BaseViewSet):
     @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
     def destroy(self, request, slug, project_id, epic_id, pk):
         epic_link = IssueLink.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            issue_id=epic_id,
-            pk=pk,
+            workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk
         )
         current_instance = json.dumps(
-            EpicLinkSerializer(epic_link).data,
-            cls=DjangoJSONEncoder,
+            EpicLinkSerializer(epic_link).data, cls=DjangoJSONEncoder
         )
         issue_activity.delay(
             type="link.activity.deleted",

@@ -32,9 +32,7 @@ class Command(BaseCommand):
 
         if created:
             # Save the profile
-            self.stdout.write(
-                self.style.SUCCESS("User profile created succesfully")
-            )
+            self.stdout.write(self.style.SUCCESS("User profile created succesfully"))
             return
         self.stdout.write(self.style.SUCCESS("User profile already exists"))
         return

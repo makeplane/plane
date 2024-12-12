@@ -15,15 +15,11 @@ from plane.app.permissions.workspace import WorkspaceOwnerPermission
 from plane.db.models import WorkspaceMember, Workspace, WorkspaceMemberInvite
 from plane.authentication.utils.host import base_host
 from plane.utils.exception_logger import log_exception
-from plane.payment.utils.workspace_license_request import (
-    resync_workspace_license,
-)
+from plane.payment.utils.workspace_license_request import resync_workspace_license
 
 
 class PaymentLinkEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceOwnerPermission,
-    ]
+    permission_classes = [WorkspaceOwnerPermission]
 
     def post(self, request, slug):
         try:
@@ -37,11 +33,7 @@ class PaymentLinkEndpoint(BaseAPIView):
                     user_id=F("member__id"),
                     user_role=F("role"),
                 )
-                .values(
-                    "user_email",
-                    "user_id",
-                    "user_role",
-                )
+                .values("user_email", "user_id", "user_role")
             )
 
             for member in workspace_members:
@@ -92,12 +84,9 @@ class PaymentLinkEndpoint(BaseAPIView):
                         member__gt=10,
                     ).count()
 
-                    invited_member_count = (
-                        WorkspaceMemberInvite.objects.filter(
-                            workspace__slug=slug,
-                            role__gt=10,
-                        ).count()
-                    )
+                    invited_member_count = WorkspaceMemberInvite.objects.filter(
+                        workspace__slug=slug, role__gt=10
+                    ).count()
 
                     # Create the payment link
                     response = requests.post(
@@ -129,10 +118,7 @@ class PaymentLinkEndpoint(BaseAPIView):
                 )
         except requests.exceptions.RequestException as e:
             if e.response.status_code == 400:
-                return Response(
-                    e.response.json(),
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             log_exception(e)
             return Response(
                 {"error": "error fetching payment link"},
@@ -141,7 +127,6 @@ class PaymentLinkEndpoint(BaseAPIView):
 
 
 class WebsitePaymentLinkEndpoint(BaseAPIView):
-
     def post(self, request):
         try:
             # Get the workspace slug
@@ -149,16 +134,12 @@ class WebsitePaymentLinkEndpoint(BaseAPIView):
             # Check if slug is present
             if not slug:
                 return Response(
-                    {"error": "slug is required"},
-                    status=status.HTTP_400_BAD_REQUEST,
+                    {"error": "slug is required"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
             # The user should be workspace admin
             if not WorkspaceMember.objects.filter(
-                workspace__slug=slug,
-                member=request.user,
-                role=20,
-                is_active=True,
+                workspace__slug=slug, member=request.user, role=20, is_active=True
             ).exists():
                 return Response(
                     {"error": "You are not a admin of workspace"},
@@ -178,11 +159,7 @@ class WebsitePaymentLinkEndpoint(BaseAPIView):
                     user_id=F("member__id"),
                     user_role=F("role"),
                 )
-                .values(
-                    "user_email",
-                    "user_id",
-                    "user_role",
-                )
+                .values("user_email", "user_id", "user_role")
                 .values("user_email", "user_id", "user_role")
             )
 
@@ -217,10 +194,7 @@ class WebsitePaymentLinkEndpoint(BaseAPIView):
         except requests.exceptions.RequestException as e:
             log_exception(e)
             if e.response.status_code == 400:
-                return Response(
-                    e.response.json(),
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             return Response(
                 {"error": "error fetching payment link"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -228,10 +202,7 @@ class WebsitePaymentLinkEndpoint(BaseAPIView):
 
 
 class WorkspaceFreeTrialEndpoint(BaseAPIView):
-
-    permission_classes = [
-        WorkspaceOwnerPermission,
-    ]
+    permission_classes = [WorkspaceOwnerPermission]
 
     def post(self, request, slug):
         try:
@@ -259,11 +230,7 @@ class WorkspaceFreeTrialEndpoint(BaseAPIView):
                     user_id=F("member__id"),
                     user_role=F("role"),
                 )
-                .values(
-                    "user_email",
-                    "user_id",
-                    "user_role",
-                )
+                .values("user_email", "user_id", "user_role")
                 .values("user_email", "user_id", "user_role")
             )
 
@@ -300,10 +267,7 @@ class WorkspaceFreeTrialEndpoint(BaseAPIView):
                 )
         except requests.exceptions.RequestException as e:
             if e.response.status_code == 400:
-                return Response(
-                    e.response.json(),
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             log_exception(e)
             return Response(
                 {"error": "error creating trial subscriptions"},
@@ -312,10 +276,7 @@ class WorkspaceFreeTrialEndpoint(BaseAPIView):
 
 
 class WorkspaceTrialUpgradeEndpoint(BaseAPIView):
-
-    permission_classes = [
-        WorkspaceOwnerPermission,
-    ]
+    permission_classes = [WorkspaceOwnerPermission]
 
     def post(self, request, slug):
         try:
@@ -339,11 +300,7 @@ class WorkspaceTrialUpgradeEndpoint(BaseAPIView):
                     user_id=F("member__id"),
                     user_role=F("role"),
                 )
-                .values(
-                    "user_email",
-                    "user_id",
-                    "user_role",
-                )
+                .values("user_email", "user_id", "user_role")
                 .values("user_email", "user_id", "user_role")
             )
 
@@ -381,10 +338,7 @@ class WorkspaceTrialUpgradeEndpoint(BaseAPIView):
                 )
         except requests.exceptions.RequestException as e:
             if e.response.status_code == 400:
-                return Response(
-                    e.response.json(),
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             log_exception(e)
             return Response(
                 {"error": "error upgrading trial subscriptions"},

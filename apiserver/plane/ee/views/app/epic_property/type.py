@@ -10,18 +10,14 @@ from rest_framework.response import Response
 # Module imports
 from plane.ee.views.base import BaseAPIView
 from plane.db.models import IssueType, Issue, ProjectIssueType
-from plane.ee.permissions import (
-    WorkspaceEntityPermission,
-)
+from plane.ee.permissions import WorkspaceEntityPermission
 from plane.ee.serializers import EpicTypeSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
 
 class WorkspaceEpicEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
+    permission_classes = [WorkspaceEntityPermission]
 
     @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
     def get(self, request, slug):
@@ -35,9 +31,7 @@ class WorkspaceEpicEndpoint(BaseAPIView):
             )
             .annotate(
                 issue_exists=Exists(
-                    Issue.objects.filter(
-                        workspace__slug=slug, type_id=OuterRef("pk")
-                    )
+                    Issue.objects.filter(workspace__slug=slug, type_id=OuterRef("pk"))
                 )
             )
             .annotate(
@@ -47,9 +41,7 @@ class WorkspaceEpicEndpoint(BaseAPIView):
                             issue_type=OuterRef("pk"), workspace__slug=slug
                         )
                         .values("issue_type")
-                        .annotate(
-                            project_ids=ArrayAgg("project_id", distinct=True)
-                        )
+                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                         .values("project_ids")
                     ),
                     [],

@@ -19,9 +19,7 @@ class WorkspaceSearchEndpoint(BaseAPIView):
     also show related workspace if found
     """
 
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
+    permission_classes = [WorkspaceEntityPermission]
 
     def filter_workspaces(self, query, slug):
         """Filter workspaces based on the query"""
@@ -30,9 +28,7 @@ class WorkspaceSearchEndpoint(BaseAPIView):
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
         return (
-            Workspace.objects.filter(
-                q, workspace_member__member=self.request.user
-            )
+            Workspace.objects.filter(q, workspace_member__member=self.request.user)
             .distinct()
             .values("name", "id", "slug")
         )
@@ -45,17 +41,9 @@ class WorkspaceSearchEndpoint(BaseAPIView):
             q |= Q(**{f"{field}__icontains": query})
         return (
             Page.objects.filter(
-                q,
-                workspace__slug=slug,
-                archived_at__isnull=True,
-                is_global=True,
+                q, workspace__slug=slug, archived_at__isnull=True, is_global=True
             )
-            .filter(
-                Q(
-                    owned_by=self.request.user,
-                )
-                | Q(access=0)
-            )
+            .filter(Q(owned_by=self.request.user) | Q(access=0))
             .distinct()
             .values("name", "id", "workspace__slug")
         )
@@ -68,10 +56,7 @@ class WorkspaceSearchEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        MODELS_MAPPER = {
-            "workspace": self.filter_workspaces,
-            "page": self.filter_pages,
-        }
+        MODELS_MAPPER = {"workspace": self.filter_workspaces, "page": self.filter_pages}
 
         results = {}
 
@@ -82,10 +67,7 @@ class WorkspaceSearchEndpoint(BaseAPIView):
 
 
 class WorkspaceEntitySearchEndpoint(BaseAPIView):
-
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
+    permission_classes = [WorkspaceEntityPermission]
 
     def filter_issues(self, slug, query, count):
         """Filter issues based on the query"""
@@ -130,9 +112,7 @@ class WorkspaceEntitySearchEndpoint(BaseAPIView):
         query_type = request.query_params.get("query_type", "issue")
         count = int(request.query_params.get("count", 5))
 
-        MODELS_MAPPER = {
-            "issue": self.filter_issues,
-        }
+        MODELS_MAPPER = {"issue": self.filter_issues}
 
         func = MODELS_MAPPER.get(query_type, None)
         results = func(slug, query, count)

@@ -16,51 +16,29 @@ from plane.app.views import (
 urlpatterns = [
     path(
         "integrations/",
-        IntegrationViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
+        IntegrationViewSet.as_view({"get": "list", "post": "create"}),
         name="integrations",
     ),
     path(
         "integrations/<uuid:pk>/",
         IntegrationViewSet.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
         ),
         name="integrations",
     ),
     path(
         "workspaces/<str:slug>/workspace-integrations/",
-        WorkspaceIntegrationViewSet.as_view(
-            {
-                "get": "list",
-            }
-        ),
+        WorkspaceIntegrationViewSet.as_view({"get": "list"}),
         name="workspace-integrations",
     ),
     path(
         "workspaces/<str:slug>/workspace-integrations/<str:provider>/",
-        WorkspaceIntegrationViewSet.as_view(
-            {
-                "post": "create",
-            }
-        ),
+        WorkspaceIntegrationViewSet.as_view({"post": "create"}),
         name="workspace-integrations",
     ),
     path(
         "workspaces/<str:slug>/workspace-integrations/<uuid:pk>/provider/",
-        WorkspaceIntegrationViewSet.as_view(
-            {
-                "get": "retrieve",
-                "delete": "destroy",
-            }
-        ),
+        WorkspaceIntegrationViewSet.as_view({"get": "retrieve", "delete": "destroy"}),
         name="workspace-integrations",
     ),
     # Github Integrations
@@ -70,30 +48,15 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/workspace-integrations/<uuid:workspace_integration_id>/github-repository-sync/",
-        GithubRepositorySyncViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
+        GithubRepositorySyncViewSet.as_view({"get": "list", "post": "create"}),
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/workspace-integrations/<uuid:workspace_integration_id>/github-repository-sync/<uuid:pk>/",
-        GithubRepositorySyncViewSet.as_view(
-            {
-                "get": "retrieve",
-                "delete": "destroy",
-            }
-        ),
+        GithubRepositorySyncViewSet.as_view({"get": "retrieve", "delete": "destroy"}),
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-issue-sync/",
-        GithubIssueSyncViewSet.as_view(
-            {
-                "post": "create",
-                "get": "list",
-            }
-        ),
+        GithubIssueSyncViewSet.as_view({"post": "create", "get": "list"}),
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/bulk-create-github-issue-sync/",
@@ -101,50 +64,25 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-issue-sync/<uuid:pk>/",
-        GithubIssueSyncViewSet.as_view(
-            {
-                "get": "retrieve",
-                "delete": "destroy",
-            }
-        ),
+        GithubIssueSyncViewSet.as_view({"get": "retrieve", "delete": "destroy"}),
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-issue-sync/<uuid:issue_sync_id>/github-comment-sync/",
-        GithubCommentSyncViewSet.as_view(
-            {
-                "post": "create",
-                "get": "list",
-            }
-        ),
+        GithubCommentSyncViewSet.as_view({"post": "create", "get": "list"}),
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-issue-sync/<uuid:issue_sync_id>/github-comment-sync/<uuid:pk>/",
-        GithubCommentSyncViewSet.as_view(
-            {
-                "get": "retrieve",
-                "delete": "destroy",
-            }
-        ),
+        GithubCommentSyncViewSet.as_view({"get": "retrieve", "delete": "destroy"}),
     ),
     ## End Github Integrations
     # Slack Integration
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/workspace-integrations/<uuid:workspace_integration_id>/project-slack-sync/",
-        SlackProjectSyncViewSet.as_view(
-            {
-                "post": "create",
-                "get": "list",
-            }
-        ),
+        SlackProjectSyncViewSet.as_view({"post": "create", "get": "list"}),
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/workspace-integrations/<uuid:workspace_integration_id>/project-slack-sync/<uuid:pk>/",
-        SlackProjectSyncViewSet.as_view(
-            {
-                "delete": "destroy",
-                "get": "retrieve",
-            }
-        ),
+        SlackProjectSyncViewSet.as_view({"delete": "destroy", "get": "retrieve"}),
     ),
     ## End Slack Integration
 ]

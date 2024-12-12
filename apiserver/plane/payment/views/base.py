@@ -33,13 +33,9 @@ class TimezoneMixin:
 
 
 class BaseAPIView(TimezoneMixin, APIView):
-    permission_classes = [
-        IsAuthenticated,
-    ]
+    permission_classes = [IsAuthenticated]
 
-    authentication_classes = [
-        BaseSessionAuthentication,
-    ]
+    authentication_classes = [BaseSessionAuthentication]
 
     filterset_fields = []
 
@@ -116,17 +112,13 @@ class BaseAPIView(TimezoneMixin, APIView):
     @property
     def fields(self):
         fields = [
-            field
-            for field in self.request.GET.get("fields", "").split(",")
-            if field
+            field for field in self.request.GET.get("fields", "").split(",") if field
         ]
         return fields if fields else None
 
     @property
     def expand(self):
         expand = [
-            expand
-            for expand in self.request.GET.get("expand", "").split(",")
-            if expand
+            expand for expand in self.request.GET.get("expand", "").split(",") if expand
         ]
         return expand if expand else None

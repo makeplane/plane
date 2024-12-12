@@ -29,9 +29,7 @@ class UserMutation:
         user_timezone: Optional[str] = None,
         cover_image: Optional[str] = None,
     ) -> UserType:
-        current_user = await sync_to_async(User.objects.get)(
-            id=info.context.user.id
-        )
+        current_user = await sync_to_async(User.objects.get)(id=info.context.user.id)
 
         if first_name is not None:
             current_user.first_name = first_name
@@ -57,12 +55,8 @@ class ProfileMutation:
     @strawberry.mutation(
         extensions=[PermissionExtension(permissions=[IsAuthenticated()])]
     )
-    async def update_last_workspace(
-        self, info: Info, workspace: strawberry.ID
-    ) -> bool:
-        profile = await sync_to_async(Profile.objects.get)(
-            user=info.context.user
-        )
+    async def update_last_workspace(self, info: Info, workspace: strawberry.ID) -> bool:
+        profile = await sync_to_async(Profile.objects.get)(user=info.context.user)
 
         # Wrap the synchronous call to `exists()` with `sync_to_async`
         workspace_member_exists = await sync_to_async(

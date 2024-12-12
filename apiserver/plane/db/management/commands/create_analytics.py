@@ -31,7 +31,6 @@ class Command(BaseCommand):
     help = "Create custom analytics"
 
     def handle(self, *args, **options):
-
         workspace_slug = input("Workspace slug: ")
 
         if workspace_slug == "":
@@ -75,21 +74,17 @@ class Command(BaseCommand):
             end_date=end_date,
             name="New Cycle Analytics",
             owned_by_id=project.created_by_id,
-            version=2
+            version=2,
         )
 
         states = (
-            State.objects.filter(
-                workspace__slug=workspace_slug, project=project
-            )
+            State.objects.filter(workspace__slug=workspace_slug, project=project)
             .exclude(group="Triage")
             .values_list("id", flat=True)
         )
 
         # Get the maximum sequence_id
-        last_id = IssueSequence.objects.filter(
-            project=project,
-        ).aggregate(
+        last_id = IssueSequence.objects.filter(project=project).aggregate(
             largest=Max("sequence")
         )["largest"]
 
@@ -97,8 +92,7 @@ class Command(BaseCommand):
 
         # Get the maximum sort order
         largest_sort_order = Issue.objects.filter(
-            project=project,
-            state_id=states[random.randint(0, len(states) - 1)],
+            project=project, state_id=states[random.randint(0, len(states) - 1)]
         ).aggregate(largest=Max("sort_order"))["largest"]
 
         largest_sort_order = (
@@ -145,10 +139,7 @@ class Command(BaseCommand):
         CycleIssue.objects.bulk_create(
             [
                 CycleIssue(
-                    issue=issue,
-                    cycle=cycle,
-                    project=project,
-                    workspace=workspace,
+                    issue=issue, cycle=cycle, project=project, workspace=workspace
                 )
                 for issue in issues
             ],
@@ -256,5 +247,5 @@ class Command(BaseCommand):
         # Bulk create the records at once
         if analytics_records:
             EntityProgress.objects.bulk_create(analytics_records)
-        
+
         self.stdout.write(self.style.SUCCESS("Cycle created successfully"))

@@ -35,14 +35,12 @@ from plane.utils.grouper import (
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
-from plane.utils.paginator import (
-    GroupedOffsetPaginator,
-    SubGroupedOffsetPaginator,
-)
+from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.error_codes import ERROR_CODES
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
+
 
 class EpicArchiveViewSet(BaseViewSet):
     serializer_class = IssueFlatSerializer
@@ -86,9 +84,7 @@ class EpicArchiveViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -122,9 +118,7 @@ class EpicArchiveViewSet(BaseViewSet):
 
         # issue queryset
         issue_queryset = issue_queryset_grouper(
-            queryset=issue_queryset,
-            group_by=group_by,
-            sub_group_by=sub_group_by,
+            queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by
         )
 
         if group_by:
@@ -144,9 +138,7 @@ class EpicArchiveViewSet(BaseViewSet):
                         order_by=order_by_param,
                         queryset=issue_queryset,
                         on_results=lambda issues: issue_on_results(
-                            group_by=group_by,
-                            issues=issues,
-                            sub_group_by=sub_group_by,
+                            group_by=group_by, issues=issues, sub_group_by=sub_group_by
                         ),
                         paginator_cls=SubGroupedOffsetPaginator,
                         group_by_fields=issue_group_values(
@@ -180,9 +172,7 @@ class EpicArchiveViewSet(BaseViewSet):
                     order_by=order_by_param,
                     queryset=issue_queryset,
                     on_results=lambda issues: issue_on_results(
-                        group_by=group_by,
-                        issues=issues,
-                        sub_group_by=sub_group_by,
+                        group_by=group_by, issues=issues, sub_group_by=sub_group_by
                     ),
                     paginator_cls=GroupedOffsetPaginator,
                     group_by_fields=issue_group_values(
@@ -221,9 +211,7 @@ class EpicArchiveViewSet(BaseViewSet):
             .prefetch_related(
                 Prefetch(
                     "issue_reactions",
-                    queryset=IssueReaction.objects.select_related(
-                        "issue", "actor"
-                    ),
+                    queryset=IssueReaction.objects.select_related("issue", "actor"),
                 )
             )
             .prefetch_related(
@@ -268,10 +256,7 @@ class EpicArchiveViewSet(BaseViewSet):
         issue_activity.delay(
             type="issue.activity.updated",
             requested_data=json.dumps(
-                {
-                    "archived_at": str(timezone.now().date()),
-                    "automation": False,
-                }
+                {"archived_at": str(timezone.now().date()), "automation": False}
             ),
             actor_id=str(request.user.id),
             issue_id=str(issue.id),

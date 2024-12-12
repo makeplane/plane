@@ -13,9 +13,7 @@ from celery import shared_task
 from plane.db.models import WorkspaceMember
 from plane.ee.models import WorkspaceLicense
 from plane.utils.exception_logger import log_exception
-from plane.payment.utils.workspace_license_request import (
-    resync_workspace_license,
-)
+from plane.payment.utils.workspace_license_request import resync_workspace_license
 
 
 @shared_task
@@ -41,9 +39,7 @@ def workspace_billing_task(batch_size=1000, offset=0):
             # Get all active workspace members
             workspace_members = (
                 WorkspaceMember.objects.filter(
-                    workspace_id=workspace_id,
-                    is_active=True,
-                    member__is_bot=False,
+                    workspace_id=workspace_id, is_active=True, member__is_bot=False
                 )
                 .annotate(
                     user_email=F("member__email"),

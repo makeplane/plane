@@ -5,9 +5,7 @@ from rest_framework import status
 # Module imports
 from plane.db.models import IssueType, ProjectIssueType
 from plane.ee.views.base import BaseAPIView
-from plane.ee.permissions import (
-    ProjectMemberPermission,
-)
+from plane.ee.permissions import ProjectMemberPermission
 from plane.ee.models import ProjectFeature
 
 from plane.ee.serializers.app.project import ProjectFeatureSerializer
@@ -20,8 +18,7 @@ class ProjectFeatureEndpoint(BaseAPIView):
 
     def get(self, request, slug, pk):
         project_feature, _ = ProjectFeature.objects.get_or_create(
-            project_id=pk,
-            workspace__slug=slug,
+            project_id=pk, workspace__slug=slug
         )
         serializer = ProjectFeatureSerializer(project_feature)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -39,9 +36,7 @@ class ProjectFeatureEndpoint(BaseAPIView):
                 is_active=True,
             )
             if is_created:
-                ProjectIssueType.objects.get_or_create(
-                    project_id=pk, issue_type=epic
-                )
+                ProjectIssueType.objects.get_or_create(project_id=pk, issue_type=epic)
 
         serializer = ProjectFeatureSerializer(
             project_feature, data=request.data, partial=True

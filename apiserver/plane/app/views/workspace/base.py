@@ -44,7 +44,6 @@ from plane.payment.bgtasks.member_sync_task import member_sync_task
 from django.conf import settings
 
 
-
 class WorkSpaceViewSet(BaseViewSet):
     model = Workspace
     serializer_class = WorkSpaceSerializer

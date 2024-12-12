@@ -14,10 +14,7 @@ from rest_framework.response import Response
 from plane.api.views.base import BaseAPIView
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import Workspace, Project, IssueType, ProjectIssueType
-from plane.api.serializers import (
-    IssueTypeAPISerializer,
-    ProjectIssueTypeAPISerializer,
-)
+from plane.api.serializers import IssueTypeAPISerializer, ProjectIssueTypeAPISerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
@@ -85,9 +82,7 @@ class IssueTypeAPIEndpoint(BaseAPIView):
         return {
             "in_use": "icon",
             "icon": {
-                "name": self.logo_icons[
-                    random.randint(0, len(self.logo_icons) - 1)
-                ],
+                "name": self.logo_icons[random.randint(0, len(self.logo_icons) - 1)],
                 "background_color": self.logo_backgrounds[
                     random.randint(0, len(self.logo_backgrounds) - 1)
                 ],
@@ -111,11 +106,7 @@ class IssueTypeAPIEndpoint(BaseAPIView):
                                 issue_type=OuterRef("pk"), workspace__slug=slug
                             )
                             .values("issue_type")
-                            .annotate(
-                                project_ids=ArrayAgg(
-                                    "project_id", distinct=True
-                                )
-                            )
+                            .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                             .values("project_ids")
                         ),
                         [],
@@ -135,8 +126,7 @@ class IssueTypeAPIEndpoint(BaseAPIView):
                 request=request,
                 queryset=(issue_types),
                 on_results=lambda issues: IssueTypeAPISerializer(
-                    issues,
-                    many=True,
+                    issues, many=True
                 ).data,
             )
 
@@ -194,15 +184,10 @@ class IssueTypeAPIEndpoint(BaseAPIView):
 
             # adding the issue type to the project
             project_issue_type_serializer = ProjectIssueTypeAPISerializer(
-                data={
-                    "issue_type": issue_type_serializer.data["id"],
-                }
+                data={"issue_type": issue_type_serializer.data["id"]}
             )
             project_issue_type_serializer.is_valid(raise_exception=True)
-            project_issue_type_serializer.save(
-                project=project,
-                level=0,
-            )
+            project_issue_type_serializer.save(project=project, level=0)
 
             # getting the issue type
             issue_type = self.model.objects.get(
@@ -262,17 +247,12 @@ class IssueTypeAPIEndpoint(BaseAPIView):
                     )
 
                 issue_type_serializer.save()
-                return Response(
-                    issue_type_serializer.data, status=status.HTTP_200_OK
-                )
+                return Response(issue_type_serializer.data, status=status.HTTP_200_OK)
 
     # delete issue type by id
     @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
     def delete(self, request, slug, project_id, type_id):
         if self.workspace_slug and self.project_id and self.type_id:
-            issue_type = self.model.objects.get(
-                pk=self.type_id,
-                is_epic=False,
-            )
+            issue_type = self.model.objects.get(pk=self.type_id, is_epic=False)
             issue_type.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)

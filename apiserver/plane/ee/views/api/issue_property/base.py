@@ -43,45 +43,27 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
     type_logo_props = {
         PropertyTypeEnum.TEXT: {
             "in_use": "icon",
-            "icon": {
-                "name": "AlignLeft",
-                "color": "#6d7b8a",
-            },
+            "icon": {"name": "AlignLeft", "color": "#6d7b8a"},
         },
         PropertyTypeEnum.DECIMAL: {
             "in_use": "icon",
-            "icon": {
-                "name": "Hash",
-                "color": "#6d7b8a",
-            },
+            "icon": {"name": "Hash", "color": "#6d7b8a"},
         },
         PropertyTypeEnum.OPTION: {
             "in_use": "icon",
-            "icon": {
-                "name": "CircleChevronDown",
-                "color": "#6d7b8a",
-            },
+            "icon": {"name": "CircleChevronDown", "color": "#6d7b8a"},
         },
         PropertyTypeEnum.BOOLEAN: {
             "in_use": "icon",
-            "icon": {
-                "name": "ToggleLeft",
-                "color": "#6d7b8a",
-            },
+            "icon": {"name": "ToggleLeft", "color": "#6d7b8a"},
         },
         PropertyTypeEnum.DATETIME: {
             "in_use": "icon",
-            "icon": {
-                "name": "Calendar",
-                "color": "#6d7b8a",
-            },
+            "icon": {"name": "Calendar", "color": "#6d7b8a"},
         },
         f"{PropertyTypeEnum.RELATION}_{RelationTypeEnum.USER}": {
             "in_use": "icon",
-            "icon": {
-                "name": "UsersRound",
-                "color": "#6d7b8a",
-            },
+            "icon": {"name": "UsersRound", "color": "#6d7b8a"},
         },
     }
 
@@ -231,9 +213,7 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
 
             issue_property_serializer.save()
 
-            return Response(
-                issue_property_serializer.data, status=status.HTTP_200_OK
-            )
+            return Response(issue_property_serializer.data, status=status.HTTP_200_OK)
 
     # delete issue property by id
     @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)

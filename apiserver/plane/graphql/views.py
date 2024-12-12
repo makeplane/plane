@@ -66,16 +66,11 @@ class CustomGraphQLView(AsyncGraphQLView):
         result: ExecutionResult,
         context: Optional[ExecutionContext] = None,
     ) -> Dict[str, Any]:
-        processed_result = {
-            "data": result.data,
-        }
+        processed_result = {"data": result.data}
 
         if result.errors:
             processed_result["errors"] = [
-                {
-                    "message": error.message,
-                    "extensions": error.extensions or {},
-                }
+                {"message": error.message, "extensions": error.extensions or {}}
                 for error in result.errors
             ]
 

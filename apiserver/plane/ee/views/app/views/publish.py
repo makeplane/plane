@@ -4,10 +4,7 @@ from rest_framework import status
 
 # Module imports
 from plane.ee.views.base import BaseAPIView
-from plane.ee.permissions import (
-    ProjectMemberPermission,
-    WorkSpaceAdminPermission,
-)
+from plane.ee.permissions import ProjectMemberPermission, WorkSpaceAdminPermission
 from plane.db.models import DeployBoard, Workspace, IssueView
 from plane.app.serializers import DeployBoardSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -15,19 +12,13 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class WorkspaceViewsPublishEndpoint(BaseAPIView):
-
-    permission_classes = [
-        WorkSpaceAdminPermission,
-    ]
+    permission_classes = [WorkSpaceAdminPermission]
 
     @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
     def post(self, request, slug, view_id):
         workspace = Workspace.objects.get(slug=slug)
         # Fetch the view
-        issue_view = IssueView.objects.get(
-            pk=view_id,
-            workspace=workspace,
-        )
+        issue_view = IssueView.objects.get(pk=view_id, workspace=workspace)
 
         if request.user != issue_view.owned_by:
             return Response(
@@ -76,14 +67,10 @@ class WorkspaceViewsPublishEndpoint(BaseAPIView):
             "is_votes_enabled": request.data.get(
                 "is_votes_enabled", deploy_board.is_votes_enabled
             ),
-            "view_props": request.data.get(
-                "view_props", deploy_board.view_props
-            ),
+            "view_props": request.data.get("view_props", deploy_board.view_props),
         }
 
-        serializer = DeployBoardSerializer(
-            deploy_board, data=data, partial=True
-        )
+        serializer = DeployBoardSerializer(deploy_board, data=data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -108,18 +95,13 @@ class WorkspaceViewsPublishEndpoint(BaseAPIView):
 
 
 class IssueViewsPublishEndpoint(BaseAPIView):
-
-    permission_classes = [
-        ProjectMemberPermission,
-    ]
+    permission_classes = [ProjectMemberPermission]
 
     @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
     def post(self, request, slug, project_id, pk):
         # Fetch the view
         issue_view = IssueView.objects.get(
-            pk=pk,
-            workspace__slug=slug,
-            project_id=project_id,
+            pk=pk, workspace__slug=slug, project_id=project_id
         )
 
         if request.user != issue_view.owned_by:
@@ -173,14 +155,10 @@ class IssueViewsPublishEndpoint(BaseAPIView):
             "is_votes_enabled": request.data.get(
                 "is_votes_enabled", deploy_board.is_votes_enabled
             ),
-            "view_props": request.data.get(
-                "view_props", deploy_board.view_props
-            ),
+            "view_props": request.data.get("view_props", deploy_board.view_props),
         }
 
-        serializer = DeployBoardSerializer(
-            deploy_board, data=data, partial=True
-        )
+        serializer = DeployBoardSerializer(deploy_board, data=data, partial=True)
 
         if serializer.is_valid():
             serializer.save()

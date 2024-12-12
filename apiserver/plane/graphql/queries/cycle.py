@@ -75,9 +75,7 @@ class CycleQuery:
 
         # get cycles those are current and upcoming cycles based on the start_date and end_date
         cycles = await sync_to_async(list)(
-            cycle_query.order_by("start_date").annotate(
-                is_favorite=Exists(subquery)
-            )
+            cycle_query.order_by("start_date").annotate(is_favorite=Exists(subquery))
         )
         return cycles
 
@@ -85,11 +83,7 @@ class CycleQuery:
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def cycle(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        cycle: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, cycle: strawberry.ID
     ) -> CycleType:
         fav_subquery = UserFavorite.objects.filter(
             workspace__slug=slug,
@@ -133,11 +127,7 @@ class CycleIssueUserPropertyQuery:
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def cycleIssueUserProperties(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        cycle: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, cycle: strawberry.ID
     ) -> CycleUserPropertyType:
         def get_cycle_issue_user_property():
             cycle_properties, _ = CycleUserProperties.objects.get_or_create(
@@ -174,10 +164,7 @@ class CycleIssuesInformationQuery:
         filters = issue_filters(filters, "POST")
 
         # all issues tab information
-        (
-            all_issue_count,
-            all_issue_group_info,
-        ) = await issue_information_query_execute(
+        (all_issue_count, all_issue_group_info) = await issue_information_query_execute(
             user=info.context.user,
             slug=slug,
             project=project,
@@ -222,12 +209,10 @@ class CycleIssuesInformationQuery:
                 totalIssues=all_issue_count, groupInfo=all_issue_group_info
             ),
             active=IssuesInformationObjectType(
-                totalIssues=active_issue_count,
-                groupInfo=active_issue_group_info,
+                totalIssues=active_issue_count, groupInfo=active_issue_group_info
             ),
             backlog=IssuesInformationObjectType(
-                totalIssues=backlog_issue_count,
-                groupInfo=backlog_issue_group_info,
+                totalIssues=backlog_issue_count, groupInfo=backlog_issue_group_info
             ),
         )
 
@@ -261,9 +246,7 @@ class CycleIssueQuery:
 
         cycles_issues = await sync_to_async(list)(
             Issue.issue_objects.filter(
-                workspace__slug=slug,
-                project_id=project,
-                issue_cycle__cycle_id=cycle,
+                workspace__slug=slug, project_id=project, issue_cycle__cycle_id=cycle
             )
             .filter(
                 project__project_projectmember__member=info.context.user,

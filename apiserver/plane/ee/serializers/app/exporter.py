@@ -4,7 +4,6 @@ from plane.db.models import ExporterHistory
 
 
 class ExporterHistorySerializer(BaseSerializer):
-
     class Meta:
         model = ExporterHistory
         fields = [

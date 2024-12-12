@@ -7,16 +7,12 @@ from django.views import View
 
 
 # Module imports
-from plane.authentication.provider.credentials.magic_code import (
-    MagicCodeProvider,
-)
+from plane.authentication.provider.credentials.magic_code import MagicCodeProvider
 from plane.authentication.utils.mobile.login import (
     ValidateAuthToken,
     mobile_validate_user_onboarding,
 )
-from plane.authentication.utils.user_auth_workflow import (
-    post_user_auth_workflow,
-)
+from plane.authentication.utils.user_auth_workflow import post_user_auth_workflow
 from plane.authentication.utils.host import base_host
 from plane.db.models import User
 from plane.license.models import Instance
@@ -34,16 +30,13 @@ class MobileMagicSignInEndpoint(View):
         if instance is None or not instance.is_setup_done:
             # Redirection params
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "INSTANCE_NOT_CONFIGURED"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["INSTANCE_NOT_CONFIGURED"],
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
             params = exc.get_error_dict()
             # Base URL join
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "m/auth/?" + urlencode(params),
+                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
@@ -61,8 +54,7 @@ class MobileMagicSignInEndpoint(View):
             )
             params = exc.get_error_dict()
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "m/auth/?" + urlencode(params),
+                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
@@ -78,8 +70,7 @@ class MobileMagicSignInEndpoint(View):
             )
             params = exc.get_error_dict()
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "m/auth/?" + urlencode(params),
+                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
@@ -95,9 +86,7 @@ class MobileMagicSignInEndpoint(View):
             is_onboarded = mobile_validate_user_onboarding(user=user)
             if not is_onboarded:
                 exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES[
-                        "USER_NOT_ONBOARDED"
-                    ],
+                    error_code=AUTHENTICATION_ERROR_CODES["USER_NOT_ONBOARDED"],
                     error_message="USER_NOT_ONBOARDED",
                     payload={"email": str(email)},
                 )
@@ -122,8 +111,7 @@ class MobileMagicSignInEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "m/auth/?" + urlencode(params),
+                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
         except ValueError as e:
@@ -135,7 +123,6 @@ class MobileMagicSignInEndpoint(View):
             )
             params = exc.get_error_dict()
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "m/auth/?" + urlencode(params),
+                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
             )
             return HttpResponseRedirect(url)

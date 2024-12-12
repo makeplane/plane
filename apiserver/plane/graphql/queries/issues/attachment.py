@@ -20,11 +20,7 @@ class IssueAttachmentQuery:
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def issue_attachment(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        issue: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
     ) -> list[IssueAttachmentType]:
         issue_attachments = await sync_to_async(list)(
             FileAsset.objects.filter(

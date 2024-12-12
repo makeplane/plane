@@ -24,9 +24,7 @@ class Task(Enum):
 
 
 class RephraseGrammarEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
+    permission_classes = [WorkspaceEntityPermission]
 
     # Function to get system prompt based on task
     def get_system_prompt(self, task, casual_score=5, formal_score=5):
@@ -276,9 +274,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
             )
 
         else:
-            return False, {
-                "error": "Invalid task. Please provide a correct task name."
-            }
+            return False, {"error": "Invalid task. Please provide a correct task name."}
 
     def post(self, request, slug):
         # Get the task
@@ -351,9 +347,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
         # Create the client
         client = OpenAI(api_key=OPENAI_API_KEY)
 
-        processed, response = self.get_system_prompt(
-            task, casual_score, formal_score
-        )
+        processed, response = self.get_system_prompt(task, casual_score, formal_score)
 
         # If error
         if not processed:
@@ -362,22 +356,11 @@ class RephraseGrammarEndpoint(BaseAPIView):
         # Create the completion
         completion = client.chat.completions.create(
             model=GPT_ENGINE,
-            messages=[
-                {
-                    "role": "system",
-                    "content": response,
-                },
-                *message_list,
-            ],
+            messages=[{"role": "system", "content": response}, *message_list],
             temperature=0.1,
         )
 
         # Get the response
         response = completion.choices[0].message.content.strip()
 
-        return Response(
-            {
-                "response": response,
-            },
-            status=status.HTTP_200_OK,
-        )
+        return Response({"response": response}, status=status.HTTP_200_OK)

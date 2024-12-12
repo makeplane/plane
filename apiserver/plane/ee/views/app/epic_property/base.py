@@ -10,18 +10,13 @@ from plane.db.models import Issue, IssueType
 from plane.ee.views.base import BaseAPIView
 from plane.ee.models import IssueProperty, IssuePropertyOption
 from plane.ee.permissions import ProjectEntityPermission
-from plane.ee.serializers import (
-    IssuePropertySerializer,
-    IssuePropertyOptionSerializer,
-)
+from plane.ee.serializers import IssuePropertySerializer, IssuePropertyOptionSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
 
 class EpicPropertyEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     def create_options(self, issue_property, options):
         workspace_id = issue_property.workspace_id
@@ -51,14 +46,9 @@ class EpicPropertyEndpoint(BaseAPIView):
             if not option.get("id")
         ]
 
-        IssuePropertyOption.objects.bulk_create(
-            bulk_create_options,
-            batch_size=100,
-        )
+        IssuePropertyOption.objects.bulk_create(bulk_create_options, batch_size=100)
 
-    def handle_options_create_update(
-        self, issue_property, options, slug, project_id
-    ):
+    def handle_options_create_update(self, issue_property, options, slug, project_id):
         bulk_create_options = []
         bulk_update_options = []
 
@@ -147,12 +137,7 @@ class EpicPropertyEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.EPICS_SETTINGS)
-    def post(
-        self,
-        request,
-        slug,
-        project_id,
-    ):
+    def post(self, request, slug, project_id):
         try:
             # Get the epic
             epic_id = (
@@ -227,7 +212,7 @@ class EpicPropertyEndpoint(BaseAPIView):
                 except IntegrityError:
                     return Response(
                         {
-                            "error": "An option with the same name already exists in this property",
+                            "error": "An option with the same name already exists in this property"
                         },
                         status=status.HTTP_409_CONFLICT,
                     )
@@ -236,15 +221,13 @@ class EpicPropertyEndpoint(BaseAPIView):
             # generate the response with the new data and options
             response = {
                 **serializer.data,
-                "options": self.get_options_response(
-                    issue_property, slug, project_id
-                ),
+                "options": self.get_options_response(issue_property, slug, project_id),
             }
             return Response(response, status=status.HTTP_201_CREATED)
         except IntegrityError:
             return Response(
                 {
-                    "error": "A Property with the same name already exists in this issue type",
+                    "error": "A Property with the same name already exists in this issue type"
                 },
                 status=status.HTTP_409_CONFLICT,
             )
@@ -286,8 +269,7 @@ class EpicPropertyEndpoint(BaseAPIView):
         # if property type is being changed, reset the defaults
         if (
             request.data.get("property_type")
-            and request.data.get("property_type")
-            != issue_property.property_type
+            and request.data.get("property_type") != issue_property.property_type
         ):
             defaults = {
                 "relation_type": None,
@@ -350,16 +332,14 @@ class EpicPropertyEndpoint(BaseAPIView):
             except IntegrityError:
                 return Response(
                     {
-                        "error": "An option with the same name already exists in this property",
+                        "error": "An option with the same name already exists in this property"
                     },
                     status=status.HTTP_409_CONFLICT,
                 )
 
         response = {
             **serializer.data,
-            "options": self.get_options_response(
-                issue_property, slug, project_id
-            ),
+            "options": self.get_options_response(issue_property, slug, project_id),
         }
         return Response(response, status=status.HTTP_200_OK)
 

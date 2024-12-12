@@ -44,9 +44,7 @@ class EpicReactionViewSet(BaseViewSet):
     def create(self, request, slug, project_id, epic_id):
         serializer = EpicReactionSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(
-                issue_id=epic_id, project_id=project_id, actor=request.user
-            )
+            serializer.save(issue_id=epic_id, project_id=project_id, actor=request.user)
             issue_activity.delay(
                 type="issue_reaction.activity.created",
                 requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
@@ -78,10 +76,7 @@ class EpicReactionViewSet(BaseViewSet):
             issue_id=str(self.kwargs.get("issue_id", None)),
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=json.dumps(
-                {
-                    "reaction": str(reaction_code),
-                    "identifier": str(epic_reaction.id),
-                }
+                {"reaction": str(reaction_code), "identifier": str(epic_reaction.id)}
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,

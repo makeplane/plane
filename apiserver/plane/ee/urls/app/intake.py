@@ -2,10 +2,7 @@
 from django.urls import path
 
 # Module imports
-from plane.ee.views.app.intake import (
-    ProjectInTakePublishViewSet,
-    IntakeSettingEndpoint,
-)
+from plane.ee.views.app.intake import ProjectInTakePublishViewSet, IntakeSettingEndpoint
 
 urlpatterns = [
     path(

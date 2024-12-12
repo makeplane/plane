@@ -15,9 +15,7 @@ class Initiative(BaseModel):
         DONE = "DONE", "Done"
 
     workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="initiatives",
+        "db.Workspace", on_delete=models.CASCADE, related_name="initiatives"
     )
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
@@ -34,9 +32,7 @@ class Initiative(BaseModel):
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
     status = models.CharField(
-        max_length=100,
-        choices=StatusContext.choices,
-        default=StatusContext.PLANNED,
+        max_length=100, choices=StatusContext.choices, default=StatusContext.PLANNED
     )
 
     class Meta:
@@ -47,14 +43,10 @@ class Initiative(BaseModel):
 
 class InitiativeProject(BaseModel):
     initiative = models.ForeignKey(
-        "ee.Initiative",
-        on_delete=models.CASCADE,
-        related_name="projects",
+        "ee.Initiative", on_delete=models.CASCADE, related_name="projects"
     )
     project = models.ForeignKey(
-        "db.Project",
-        on_delete=models.CASCADE,
-        related_name="initiatives",
+        "db.Project", on_delete=models.CASCADE, related_name="initiatives"
     )
     workspace = models.ForeignKey(
         "db.Workspace",
@@ -84,14 +76,10 @@ class InitiativeProject(BaseModel):
 
 class InitiativeLabel(BaseModel):
     initiative = models.ForeignKey(
-        "ee.Initiative",
-        on_delete=models.CASCADE,
-        related_name="labels",
+        "ee.Initiative", on_delete=models.CASCADE, related_name="labels"
     )
     label = models.ForeignKey(
-        "db.Label",
-        on_delete=models.CASCADE,
-        related_name="initiatives",
+        "db.Label", on_delete=models.CASCADE, related_name="initiatives"
     )
     workspace = models.ForeignKey(
         "db.Workspace",
@@ -123,15 +111,11 @@ class InitiativeLink(BaseModel):
     title = models.CharField(max_length=255, null=True, blank=True)
     url = models.TextField()
     initiative = models.ForeignKey(
-        "ee.Initiative",
-        on_delete=models.CASCADE,
-        related_name="initiative_link",
+        "ee.Initiative", on_delete=models.CASCADE, related_name="initiative_link"
     )
     metadata = models.JSONField(default=dict)
     workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="initiative_links",
+        "db.Workspace", on_delete=models.CASCADE, related_name="initiative_links"
     )
 
     class Meta:
@@ -146,9 +130,7 @@ class InitiativeLink(BaseModel):
 
 class InitiativeReaction(BaseModel):
     workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="initiative_reactions",
+        "db.Workspace", on_delete=models.CASCADE, related_name="initiative_reactions"
     )
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -156,9 +138,7 @@ class InitiativeReaction(BaseModel):
         related_name="initiative_reactions",
     )
     initiative = models.ForeignKey(
-        Initiative,
-        on_delete=models.CASCADE,
-        related_name="initiative_reactions",
+        Initiative, on_delete=models.CASCADE, related_name="initiative_reactions"
     )
     reaction = models.CharField(max_length=20)
 
@@ -182,17 +162,13 @@ class InitiativeReaction(BaseModel):
 
 class InitiativeComment(BaseModel):
     workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="initiative_comments",
+        "db.Workspace", on_delete=models.CASCADE, related_name="initiative_comments"
     )
     comment_stripped = models.TextField(verbose_name="Comment", blank=True)
     comment_json = models.JSONField(blank=True, default=dict)
     comment_html = models.TextField(blank=True, default="<p></p>")
     initiative = models.ForeignKey(
-        "ee.Initiative",
-        on_delete=models.CASCADE,
-        related_name="initiative_comments",
+        "ee.Initiative", on_delete=models.CASCADE, related_name="initiative_comments"
     )
     # System can also create comment
     actor = models.ForeignKey(
@@ -202,10 +178,7 @@ class InitiativeComment(BaseModel):
         null=True,
     )
     access = models.CharField(
-        choices=(
-            ("INTERNAL", "INTERNAL"),
-            ("EXTERNAL", "EXTERNAL"),
-        ),
+        choices=(("INTERNAL", "INTERNAL"), ("EXTERNAL", "EXTERNAL")),
         default="INTERNAL",
         max_length=100,
     )
@@ -270,18 +243,12 @@ class InitiativeActivity(BaseModel):
         null=True,
         related_name="initiative_activities",
     )
-    verb = models.CharField(
-        max_length=255, verbose_name="Action", default="created"
-    )
+    verb = models.CharField(max_length=255, verbose_name="Action", default="created")
     field = models.CharField(
         max_length=255, verbose_name="Field Name", blank=True, null=True
     )
-    old_value = models.TextField(
-        verbose_name="Old Value", blank=True, null=True
-    )
-    new_value = models.TextField(
-        verbose_name="New Value", blank=True, null=True
-    )
+    old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
+    new_value = models.TextField(verbose_name="New Value", blank=True, null=True)
     comment = models.TextField(verbose_name="Comment", blank=True)
     initiative_comment = models.ForeignKey(
         "ee.InitiativeComment",

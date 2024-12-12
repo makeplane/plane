@@ -15,9 +15,7 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class EpicPropertyOptionEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
     def get(self, request, slug, project_id, epic_property_id=None, pk=None):
@@ -40,9 +38,7 @@ class EpicPropertyOptionEndpoint(BaseAPIView):
                 property_id=epic_property_id,
                 property__issue_type__is_epic=True,
             )
-            serializer = IssuePropertyOptionSerializer(
-                epic_property_options, many=True
-            )
+            serializer = IssuePropertyOptionSerializer(epic_property_options, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         # Get all epic property options for the project_id in the form of property_id: options[]
@@ -52,9 +48,7 @@ class EpicPropertyOptionEndpoint(BaseAPIView):
             property__issue_type__is_epic=True,
         )
 
-        serializer = IssuePropertyOptionSerializer(
-            epic_property_options, many=True
-        )
+        serializer = IssuePropertyOptionSerializer(epic_property_options, many=True)
 
         response_map = {}
         for option in serializer.data:

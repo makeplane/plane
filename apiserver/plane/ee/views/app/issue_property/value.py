@@ -2,11 +2,7 @@
 from django.db.models import F, Value, Case, When
 from django.utils import timezone
 from django.core.exceptions import ValidationError
-from django.db.models import (
-    Q,
-    CharField,
-    Func,
-)
+from django.db.models import Q, CharField, Func
 from django.db.models.functions import Cast
 from django.contrib.postgres.aggregates import ArrayAgg
 
@@ -26,17 +22,13 @@ from plane.ee.utils.issue_property_validators import (
     SAVE_MAPPER,
     VALIDATOR_MAPPER,
 )
-from plane.ee.bgtasks.issue_property_activity_task import (
-    issue_property_activity,
-)
+from plane.ee.bgtasks.issue_property_activity_task import issue_property_activity
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
 
 class IssuePropertyValueEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     def query_annotator(self, query):
         return query.values("property_id").annotate(
@@ -62,15 +54,11 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                     ),
                     When(
                         property__property_type=PropertyTypeEnum.DECIMAL,
-                        then=Cast(
-                            F("value_decimal"), output_field=CharField()
-                        ),
+                        then=Cast(F("value_decimal"), output_field=CharField()),
                     ),
                     When(
                         property__property_type=PropertyTypeEnum.BOOLEAN,
-                        then=Cast(
-                            F("value_boolean"), output_field=CharField()
-                        ),
+                        then=Cast(F("value_boolean"), output_field=CharField()),
                     ),
                     When(
                         property__property_type=PropertyTypeEnum.RELATION,
@@ -80,14 +68,12 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                         property__property_type=PropertyTypeEnum.OPTION,
                         then=Cast(F("value_option"), output_field=CharField()),
                     ),
-                    default=Value(
-                        ""
-                    ),  # Default value if none of the conditions match
+                    default=Value(""),  # Default value if none of the conditions match
                     output_field=CharField(),
                 ),
                 filter=Q(property_id=F("property_id")),
                 distinct=True,
-            ),
+            )
         )
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
@@ -102,9 +88,9 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                 property__issue_type__is_epic=False,
             )
 
-            issue_property_value = self.query_annotator(
-                issue_property_value
-            ).values("property_id", "value")
+            issue_property_value = self.query_annotator(issue_property_value).values(
+                "property_id", "value"
+            )
 
             return Response(issue_property_value, status=status.HTTP_200_OK)
 
@@ -118,15 +104,13 @@ class IssuePropertyValueEndpoint(BaseAPIView):
         )
 
         # Annotate the query
-        issue_property_values = self.query_annotator(
-            issue_property_values
-        ).values("property_id", "values")
+        issue_property_values = self.query_annotator(issue_property_values).values(
+            "property_id", "values"
+        )
 
         # Create dictionary of property_id and values
         response = {
-            str(issue_property_value["property_id"]): issue_property_value[
-                "values"
-            ]
+            str(issue_property_value["property_id"]): issue_property_value["values"]
             for issue_property_value in issue_property_values
         }
 
@@ -150,9 +134,9 @@ class IssuePropertyValueEndpoint(BaseAPIView):
             )
 
             # Get all issue property values
-            existing_prop_values = self.query_annotator(
-                existing_prop_queryset
-            ).values("property_id", "values")
+            existing_prop_values = self.query_annotator(existing_prop_queryset).values(
+                "property_id", "values"
+            )
 
             # Get issue
             issue = Issue.objects.get(pk=issue_id)
@@ -191,8 +175,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
 
             # Delete the old values
             existing_prop_queryset.filter(
-                property_id__in=issue_property_ids,
-                issue__type_id=issue_type_id,
+                property_id__in=issue_property_ids, issue__type_id=issue_type_id
             ).delete()
             # Bulk create the issue property values
             IssuePropertyValue.objects.bulk_create(
@@ -212,10 +195,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
             )
             return Response(status=status.HTTP_201_CREATED)
         except (ValidationError, ValueError) as e:
-            return Response(
-                {"error": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
     def patch(self, request, slug, project_id, issue_id, property_id):
@@ -236,9 +216,9 @@ class IssuePropertyValueEndpoint(BaseAPIView):
             )
 
             # Get all issue property values
-            existing_prop_values = self.query_annotator(
-                existing_prop_queryset
-            ).values("property_id", "values")
+            existing_prop_values = self.query_annotator(existing_prop_queryset).values(
+                "property_id", "values"
+            )
 
             # existing values
             existing_values = {
@@ -254,10 +234,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                 not values or not [v for v in values if v]
             ):
                 return Response(
-                    {
-                        "error": issue_property.display_name
-                        + " is a required property"
-                    },
+                    {"error": issue_property.display_name + " is a required property"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -285,9 +262,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                 # Delete the old values
                 existing_prop_queryset.filter(property_id=property_id).delete()
                 # Bulk create the issue property values
-                IssuePropertyValue.objects.bulk_create(
-                    property_values, batch_size=10
-                )
+                IssuePropertyValue.objects.bulk_create(property_values, batch_size=10)
 
             else:
                 raise ValidationError("Invalid property type")
@@ -303,7 +278,4 @@ class IssuePropertyValueEndpoint(BaseAPIView):
 
             return Response(status=status.HTTP_204_NO_CONTENT)
         except (ValidationError, ValueError) as e:
-            return Response(
-                {"error": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

@@ -13,9 +13,7 @@ from plane.ee.models import WorkspaceLicense
 
 
 @shared_task
-def sync_workspace_license_free_seats(
-    batch_size=1000, offset=0, countdown=300
-):
+def sync_workspace_license_free_seats(batch_size=1000, offset=0, countdown=300):
     # Get total count of workspaces
     total_workspaces = WorkspaceLicense.objects.count()
 
@@ -23,9 +21,9 @@ def sync_workspace_license_free_seats(
     end_offset = min(offset + batch_size, total_workspaces)
 
     # Loop through the workspace licenses
-    for workspace_license in WorkspaceLicense.objects.order_by(
-        "-created_at"
-    ).all()[offset:end_offset]:
+    for workspace_license in WorkspaceLicense.objects.order_by("-created_at").all()[
+        offset:end_offset
+    ]:
         # Get the workspace member count
         workspace_member_count = WorkspaceMember.objects.filter(
             workspace_id=workspace_license.workspace_id,
@@ -35,13 +33,11 @@ def sync_workspace_license_free_seats(
 
         # Get the workspace invite count
         workspace_invite_count = WorkspaceMemberInvite.objects.filter(
-            workspace_id=workspace_license.workspace_id,
+            workspace_id=workspace_license.workspace_id
         ).count()
 
         # Calculate the total required seats
-        total_required_free_seats = (
-            workspace_member_count + workspace_invite_count
-        )
+        total_required_free_seats = workspace_member_count + workspace_invite_count
 
         try:
             # Hit the sync endpoint on disco to update the free seats
@@ -58,9 +54,7 @@ def sync_workspace_license_free_seats(
             response.raise_for_status()
 
             # Update the free seats
-            workspace_license.free_seats = response.json().get(
-                "free_seats", 12
-            )
+            workspace_license.free_seats = response.json().get("free_seats", 12)
             workspace_license.save()
         except requests.exceptions.RequestException:
             pass
@@ -68,8 +62,7 @@ def sync_workspace_license_free_seats(
     # Schedule the next batch if there are more workspaces to process
     if end_offset < total_workspaces:
         sync_workspace_license_free_seats.apply_async(
-            args=[batch_size, end_offset],
-            countdown=countdown,
+            args=[batch_size, end_offset], countdown=countdown
         )
 
     return
@@ -78,6 +71,4 @@ def sync_workspace_license_free_seats(
 # Initial task to start the batch processing
 @shared_task
 def schedule_workspace_license_free_seats(batch_size=5000, countdown=300):
-    sync_workspace_license_free_seats.delay(
-        batch_size=batch_size, countdown=countdown
-    )
+    sync_workspace_license_free_seats.delay(batch_size=batch_size, countdown=countdown)

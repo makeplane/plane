@@ -92,7 +92,6 @@ class GlobalSearchEndpoint(BaseAPIView):
             "type_id",
         )[:100]
 
-
     def filter_cycles(self, query, slug, project_id, workspace_search):
         fields = ["name"]
         q = Q()
@@ -291,9 +290,7 @@ class SearchEndpoint(BaseAPIView):
                 .order_by("-created_at")
                 .values("name", "id")[:count]
             )
-            return Response(
-                {"users": users, "pages": pages}, status=status.HTTP_200_OK
-            )
+            return Response({"users": users, "pages": pages}, status=status.HTTP_200_OK)
 
         if query_type == "project":
             fields = ["name", "identifier"]
@@ -305,8 +302,7 @@ class SearchEndpoint(BaseAPIView):
             projects = (
                 Project.objects.filter(
                     q,
-                    Q(project_projectmember__member=self.request.user)
-                    | Q(network=2),
+                    Q(project_projectmember__member=self.request.user) | Q(network=2),
                     workspace__slug=slug,
                 )
                 .order_by("-created_at")
@@ -370,11 +366,7 @@ class SearchEndpoint(BaseAPIView):
                 .order_by("-created_at")
                 .distinct()
                 .values(
-                    "name",
-                    "id",
-                    "project_id",
-                    "project__identifier",
-                    "workspace__slug",
+                    "name", "id", "project_id", "project__identifier", "workspace__slug"
                 )[:count]
             )
             return Response(cycles, status=status.HTTP_200_OK)
@@ -397,11 +389,7 @@ class SearchEndpoint(BaseAPIView):
                 .order_by("-created_at")
                 .distinct()
                 .values(
-                    "name",
-                    "id",
-                    "project_id",
-                    "project__identifier",
-                    "workspace__slug",
+                    "name", "id", "project_id", "project__identifier", "workspace__slug"
                 )[:count]
             )
             return Response(modules, status=status.HTTP_200_OK)

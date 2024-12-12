@@ -59,10 +59,7 @@ class IssuesInformationQuery:
         filters = issue_filters(filters, "POST")
 
         # all issues tab information
-        (
-            all_issue_count,
-            all_issue_group_info,
-        ) = await issue_information_query_execute(
+        (all_issue_count, all_issue_group_info) = await issue_information_query_execute(
             user=info.context.user,
             slug=slug,
             project=project,
@@ -104,12 +101,10 @@ class IssuesInformationQuery:
                 totalIssues=all_issue_count, groupInfo=all_issue_group_info
             ),
             active=IssuesInformationObjectType(
-                totalIssues=active_issue_count,
-                groupInfo=active_issue_group_info,
+                totalIssues=active_issue_count, groupInfo=active_issue_group_info
             ),
             backlog=IssuesInformationObjectType(
-                totalIssues=backlog_issue_count,
-                groupInfo=backlog_issue_group_info,
+                totalIssues=backlog_issue_count, groupInfo=backlog_issue_group_info
             ),
         )
 
@@ -151,9 +146,7 @@ class IssueQuery:
             filters["state__group__in"] = ["unstarted", "started"]
 
         issues = await sync_to_async(list)(
-            Issue.issue_objects.filter(
-                workspace__slug=slug, project_id=project
-            )
+            Issue.issue_objects.filter(workspace__slug=slug, project_id=project)
             .filter(
                 project__project_projectmember__member=info.context.user,
                 project__project_projectmember__is_active=True,
@@ -171,11 +164,7 @@ class IssueQuery:
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def issue(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        issue: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
     ) -> IssuesType:
         try:
             issue_detail = await sync_to_async(Issue.issue_objects.get)(
@@ -187,10 +176,7 @@ class IssueQuery:
             )
         except Exception:
             message = "Issue not found."
-            error_extensions = {
-                "code": "ISSUE_NOT_FOUND",
-                "statusCode": 404,
-            }
+            error_extensions = {"code": "ISSUE_NOT_FOUND", "statusCode": 404}
             raise GraphQLError(message, extensions=error_extensions)
 
         # Background task to update recent visited project
@@ -208,16 +194,12 @@ class IssueQuery:
 @strawberry.type
 class RecentIssuesQuery:
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def recent_issues(self, info: Info, slug: str) -> list[IssuesType]:
         # Fetch the top 5 recent issue IDs from the activity table
         issue_ids_coroutine = sync_to_async(list)(
-            IssueActivity.objects.filter(
-                workspace__slug=slug, actor=info.context.user
-            )
+            IssueActivity.objects.filter(workspace__slug=slug, actor=info.context.user)
             .filter(
                 project__project_projectmember__member=info.context.user,
                 project__project_projectmember__is_active=True,
@@ -231,9 +213,7 @@ class RecentIssuesQuery:
 
         # Fetch the actual issues using the filtered issue IDs
         issues = await sync_to_async(list)(
-            Issue.issue_objects.filter(
-                workspace__slug=slug, pk__in=issue_ids
-            ).filter(
+            Issue.issue_objects.filter(workspace__slug=slug, pk__in=issue_ids).filter(
                 project__project_projectmember__member=info.context.user,
                 project__project_projectmember__is_active=True,
             )[:5]
@@ -248,22 +228,15 @@ class IssueUserPropertyQuery:
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def issue_user_properties(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID
     ) -> IssueUserPropertyType:
         def get_issue_user_property():
             issue_properties, _ = IssueUserProperty.objects.get_or_create(
-                workspace__slug=slug,
-                project_id=project,
-                user=info.context.user,
+                workspace__slug=slug, project_id=project, user=info.context.user
             )
             return issue_properties
 
-        issue_property = await sync_to_async(
-            lambda: get_issue_user_property()
-        )()
+        issue_property = await sync_to_async(lambda: get_issue_user_property())()
 
         return issue_property
 
@@ -274,11 +247,7 @@ class IssuePropertiesActivityQuery:
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def issue_property_activities(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        issue: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
     ) -> list[IssuePropertyActivityType]:
         issue_activities = await sync_to_async(list)(
             IssueActivity.objects.filter(
@@ -304,11 +273,7 @@ class IssueCommentActivityQuery:
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def issue_comment_activities(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        issue: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
     ) -> list[IssueCommentActivityType]:
         issue_comments = await sync_to_async(list)(
             IssueComment.objects.filter(
@@ -336,9 +301,7 @@ class IssueCommentActivityQuery:
 @strawberry.type
 class WorkspaceIssuesQuery:
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def workspace_issues(
         self,
@@ -365,9 +328,7 @@ class WorkspaceIssuesQuery:
 @strawberry.type
 class IssueTypesTypeQuery:
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def issueTypes(self, info: Info, slug: str) -> list[IssueTypesType]:
         issue_types = await sync_to_async(list)(

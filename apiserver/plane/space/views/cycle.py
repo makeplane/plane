@@ -5,13 +5,7 @@ from rest_framework.response import Response
 
 # Django imports
 from django.utils import timezone
-from django.db.models import (
-    Case,
-    CharField,
-    Q,
-    Value,
-    When,
-)
+from django.db.models import Case, CharField, Q, Value, When
 
 # Module imports
 from .base import BaseAPIView
@@ -40,9 +34,7 @@ class ProjectCyclesEndpoint(BaseAPIView):
                         & Q(end_date__gte=timezone.now()),
                         then=Value("CURRENT"),
                     ),
-                    When(
-                        start_date__gt=timezone.now(), then=Value("UPCOMING")
-                    ),
+                    When(start_date__gt=timezone.now(), then=Value("UPCOMING")),
                     When(end_date__lt=timezone.now(), then=Value("COMPLETED")),
                     When(
                         Q(start_date__isnull=True) & Q(end_date__isnull=True),

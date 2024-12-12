@@ -12,16 +12,9 @@ from rest_framework import status
 
 # Module imports
 from plane.ee.views.base import BaseViewSet
-from plane.ee.serializers import (
-    EpicCommentSerializer,
-)
+from plane.ee.serializers import EpicCommentSerializer
 from plane.app.permissions import allow_permission, ROLE
-from plane.db.models import (
-    IssueComment,
-    ProjectMember,
-    Project,
-    Issue,
-)
+from plane.db.models import IssueComment, ProjectMember, Project, Issue
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -31,10 +24,7 @@ class EpicCommentViewSet(BaseViewSet):
     serializer_class = EpicCommentSerializer
     model = IssueComment
 
-    filterset_fields = [
-        "issue__id",
-        "workspace__id",
-    ]
+    filterset_fields = ["issue__id", "workspace__id"]
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -64,13 +54,7 @@ class EpicCommentViewSet(BaseViewSet):
             .distinct()
         )
 
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-            ROLE.GUEST,
-        ]
-    )
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
     def create(self, request, slug, project_id, epic_id):
         project = Project.objects.get(pk=project_id)
@@ -92,16 +76,10 @@ class EpicCommentViewSet(BaseViewSet):
             )
         serializer = EpicCommentSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(
-                project_id=project_id,
-                issue_id=epic_id,
-                actor=request.user,
-            )
+            serializer.save(project_id=project_id, issue_id=epic_id, actor=request.user)
             issue_activity.delay(
                 type="comment.activity.created",
-                requested_data=json.dumps(
-                    serializer.data, cls=DjangoJSONEncoder
-                ),
+                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("epic_id")),
                 project_id=str(self.kwargs.get("project_id")),
@@ -113,23 +91,15 @@ class EpicCommentViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN],
-        creator=True,
-        model=IssueComment,
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueComment)
     @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
     def partial_update(self, request, slug, project_id, epic_id, pk):
         epic_comment = IssueComment.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            issue_id=epic_id,
-            pk=pk,
+            workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk
         )
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(
-            EpicCommentSerializer(epic_comment).data,
-            cls=DjangoJSONEncoder,
+            EpicCommentSerializer(epic_comment).data, cls=DjangoJSONEncoder
         )
         serializer = EpicCommentSerializer(
             epic_comment, data=request.data, partial=True
@@ -150,20 +120,14 @@ class EpicCommentViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN], creator=True, model=IssueComment
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueComment)
     @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
     def destroy(self, request, slug, project_id, epic_id, pk):
         epic_comment = IssueComment.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            issue_id=epic_id,
-            pk=pk,
+            workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk
         )
         current_instance = json.dumps(
-            EpicCommentSerializer(epic_comment).data,
-            cls=DjangoJSONEncoder,
+            EpicCommentSerializer(epic_comment).data, cls=DjangoJSONEncoder
         )
         epic_comment.delete()
         issue_activity.delay(

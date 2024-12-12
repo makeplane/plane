@@ -24,7 +24,6 @@ class WorkspaceFeature(BaseModel):
 
 
 class WorkspaceLicense(BaseModel):
-
     class PlanChoice(models.TextChoices):
         FREE = "FREE", "Free"
         PRO = "PRO", "Pro"
@@ -42,10 +41,7 @@ class WorkspaceLicense(BaseModel):
         "db.Workspace", on_delete=models.CASCADE, related_name="license"
     )
     recurring_interval = models.CharField(
-        choices=RecurringIntervalChoice.choices,
-        max_length=255,
-        blank=True,
-        null=True,
+        choices=RecurringIntervalChoice.choices, max_length=255, blank=True, null=True
     )
     current_period_end_date = models.DateTimeField(null=True, blank=True)
     current_period_start_date = models.DateTimeField(null=True, blank=True)
@@ -79,18 +75,12 @@ class WorkspaceLicense(BaseModel):
 
 
 class WorkspaceActivity(WorkspaceBaseModel):
-    verb = models.CharField(
-        max_length=255, verbose_name="Action", default="created"
-    )
+    verb = models.CharField(max_length=255, verbose_name="Action", default="created")
     field = models.CharField(
         max_length=255, verbose_name="Field Name", blank=True, null=True
     )
-    old_value = models.TextField(
-        verbose_name="Old Value", blank=True, null=True
-    )
-    new_value = models.TextField(
-        verbose_name="New Value", blank=True, null=True
-    )
+    old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
+    new_value = models.TextField(verbose_name="New Value", blank=True, null=True)
     comment = models.TextField(verbose_name="Comment", blank=True)
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,

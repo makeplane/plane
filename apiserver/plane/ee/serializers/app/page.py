@@ -3,14 +3,7 @@ from rest_framework import serializers
 
 # Module imports
 from plane.app.serializers.base import BaseSerializer
-from plane.db.models import (
-    Project,
-    Page,
-    Label,
-    ProjectPage,
-    PageLabel,
-    PageVersion,
-)
+from plane.db.models import Project, Page, Label, ProjectPage, PageLabel, PageVersion
 
 
 class WorkspacePageSerializer(BaseSerializer):
@@ -21,9 +14,7 @@ class WorkspacePageSerializer(BaseSerializer):
         required=False,
     )
     projects = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(
-            queryset=Project.objects.all()
-        ),
+        child=serializers.PrimaryKeyRelatedField(queryset=Project.objects.all()),
         write_only=True,
         required=False,
     )
@@ -52,18 +43,12 @@ class WorkspacePageSerializer(BaseSerializer):
             "projects",
             "anchor",
         ]
-        read_only_fields = [
-            "workspace",
-            "owned_by",
-            "anchor",
-        ]
+        read_only_fields = ["workspace", "owned_by", "anchor"]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data["labels"] = [str(label.id) for label in instance.labels.all()]
-        data["projects"] = [
-            str(project.id) for project in instance.projects.all()
-        ]
+        data["projects"] = [str(project.id) for project in instance.projects.all()]
         return data
 
     def create(self, validated_data):
@@ -160,10 +145,7 @@ class WorkspacePageDetailSerializer(BaseSerializer):
     anchor = serializers.CharField(read_only=True)
 
     class Meta(WorkspacePageSerializer.Meta):
-        fields = WorkspacePageSerializer.Meta.fields + [
-            "description_html",
-            "anchor",
-        ]
+        fields = WorkspacePageSerializer.Meta.fields + ["description_html", "anchor"]
 
 
 class WorkspacePageVersionSerializer(BaseSerializer):
@@ -180,10 +162,7 @@ class WorkspacePageVersionSerializer(BaseSerializer):
             "created_by",
             "updated_by",
         ]
-        read_only_fields = [
-            "workspace",
-            "page",
-        ]
+        read_only_fields = ["workspace", "page"]
 
 
 class WorkspacePageVersionDetailSerializer(BaseSerializer):
@@ -203,7 +182,4 @@ class WorkspacePageVersionDetailSerializer(BaseSerializer):
             "created_by",
             "updated_by",
         ]
-        read_only_fields = [
-            "workspace",
-            "page",
-        ]
+        read_only_fields = ["workspace", "page"]

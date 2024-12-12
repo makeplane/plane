@@ -7,9 +7,7 @@ from rest_framework import status
 
 # Module imports
 from plane.ee.views.base import BaseViewSet
-from plane.ee.permissions import (
-    ProjectMemberPermission,
-)
+from plane.ee.permissions import ProjectMemberPermission
 from plane.db.models import DeployBoard, Intake
 from plane.app.serializers import DeployBoardSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -17,10 +15,7 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class ProjectInTakePublishViewSet(BaseViewSet):
-
-    permission_classes = [
-        ProjectMemberPermission,
-    ]
+    permission_classes = [ProjectMemberPermission]
 
     models = Intake
 
@@ -28,9 +23,7 @@ class ProjectInTakePublishViewSet(BaseViewSet):
     def regenerate(self, request, slug, project_id):
         # Get the deploy board
         deploy_board = DeployBoard.objects.get(
-            entity_name="intake",
-            project_id=project_id,
-            workspace__slug=slug,
+            entity_name="intake", project_id=project_id, workspace__slug=slug
         )
         new_anchor = uuid4().hex
         # Update the anchor

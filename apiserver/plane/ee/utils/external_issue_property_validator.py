@@ -143,9 +143,7 @@ class PropertySaver:
 
     def _save_value(self, value, field_name):
         if value:
-            return IssuePropertyValue(
-                **self.base_params, **{field_name: value}
-            )
+            return IssuePropertyValue(**self.base_params, **{field_name: value})
 
     # text
     def save_text(self, value):
@@ -210,9 +208,7 @@ def externalIssuePropertyValueValidator(issue_property, value):
 
     # Check if the property is required
     if issue_property.is_required and not value:
-        raise ValidationError(
-            f"{issue_property.display_name} is a required property"
-        )
+        raise ValidationError(f"{issue_property.display_name} is a required property")
 
     validator(value=value)
 
@@ -231,12 +227,7 @@ def externalIssuePropertyValueSaver(
 ):
     # property saver initialization
     property_saver = PropertySaver(
-        workspace_id,
-        project_id,
-        issue_id,
-        issue_property,
-        external_id,
-        external_source,
+        workspace_id, project_id, issue_id, issue_property, external_id, external_source
     )
     PROPERTY_SAVER_MAPPER = {
         PropertyTypeEnum.TEXT: property_saver.save_text,

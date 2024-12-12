@@ -10,13 +10,7 @@ from plane.utils.exception_logger import log_exception
 
 
 @shared_task
-def recent_visited_task(
-    slug,
-    project_id,
-    user_id,
-    entity_name,
-    entity_identifier,
-):
+def recent_visited_task(slug, project_id, user_id, entity_name, entity_identifier):
     try:
         workspace = Workspace.objects.get(slug=slug)
         recent_visited = UserRecentVisit.objects.filter(
@@ -54,9 +48,7 @@ def recent_visited_task(
             )
             recent_activity.created_by_id = user_id
             recent_activity.updated_by_id = user_id
-            recent_activity.save(
-                update_fields=["created_by_id", "updated_by_id"]
-            )
+            recent_activity.save(update_fields=["created_by_id", "updated_by_id"])
 
         return
     except Exception as e:

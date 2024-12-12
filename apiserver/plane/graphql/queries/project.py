@@ -25,15 +25,10 @@ from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
 @strawberry.type
 class ProjectQuery:
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def all_projects(
-        self,
-        info: Info,
-        slug: str,
-        type: Optional[str] = "all",
+        self, info: Info, slug: str, type: Optional[str] = "all"
     ) -> list[ProjectType]:
         project_query = Project.objects.filter(
             workspace__slug=slug, archived_at__isnull=True
@@ -51,9 +46,7 @@ class ProjectQuery:
         return projects
 
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def projects(
         self,
@@ -112,12 +105,8 @@ class ProjectQuery:
             )
 
             # Convert querysets to lists
-            included_projects_list = await sync_to_async(list)(
-                included_projects_qs
-            )
-            excluded_projects_list = await sync_to_async(list)(
-                excluded_projects_qs
-            )
+            included_projects_list = await sync_to_async(list)(included_projects_qs)
+            excluded_projects_list = await sync_to_async(list)(excluded_projects_qs)
 
             # Combine the lists
             project_list = included_projects_list + excluded_projects_list
@@ -154,15 +143,10 @@ class ProjectQuery:
         return paginate(results_object=project_list, cursor=cursor)
 
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def project(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID
     ) -> Optional[ProjectType]:
         def get_project() -> Optional[ProjectType]:
             return (
@@ -212,10 +196,7 @@ class ProjectQuery:
             return project_detail
         except Project.DoesNotExist:
             message = "Project not found"
-            error_extensions = {
-                "code": "NOT_FOUND",
-                "statusCode": 404,
-            }
+            error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
             raise GraphQLError(message, extensions=error_extensions)
 
 

@@ -57,9 +57,7 @@ urlpatterns = [
         "users/me/activities/", UserActivityEndpoint.as_view(), name="user-activities"
     ),
     path(
-        "users/me/verify/",
-        UserTokenVerificationEndpoint.as_view(),
-        name="user-verify",
+        "users/me/verify/", UserTokenVerificationEndpoint.as_view(), name="user-verify"
     ),
     # user workspaces
     path(

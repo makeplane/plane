@@ -56,9 +56,7 @@ class ModuleType:
     @strawberry.field
     async def total_issues(self, info: Info) -> int:
         total_issues = await sync_to_async(
-            lambda: Issue.issue_objects.filter(
-                issue_module__module_id=self.id
-            ).count()
+            lambda: Issue.issue_objects.filter(issue_module__module_id=self.id).count()
         )()
         return total_issues
 

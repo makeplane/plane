@@ -31,5 +31,5 @@ from plane.ee.views.app.epic_property import (
     EpicPropertyOptionEndpoint,
     EpicPropertyValueEndpoint,
     EpicPropertyActivityEndpoint,
-    WorkspaceEpicEndpoint
+    WorkspaceEpicEndpoint,
 )

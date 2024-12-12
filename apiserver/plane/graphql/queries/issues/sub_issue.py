@@ -11,12 +11,8 @@ from strawberry.permission import PermissionExtension
 
 
 # Module Imports
-from plane.graphql.types.issue import (
-    IssuesType,
-)
-from plane.db.models import (
-    Issue,
-)
+from plane.graphql.types.issue import IssuesType
+from plane.db.models import Issue
 
 
 from plane.graphql.permissions.project import ProjectBasePermission
@@ -38,10 +34,7 @@ class SubIssuesQuery:
         cursor: Optional[str] = None,
     ) -> PaginatorResponse[IssuesType]:
         sub_issues = await sync_to_async(list)(
-            Issue.issue_objects.filter(
-                workspace__slug=slug,
-                parent_id=issue,
-            )
+            Issue.issue_objects.filter(workspace__slug=slug, parent_id=issue)
             .filter(
                 project__project_projectmember__member=info.context.user,
                 project__project_projectmember__is_active=True,

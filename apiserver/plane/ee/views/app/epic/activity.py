@@ -2,10 +2,7 @@
 from itertools import chain
 
 # Django imports
-from django.db.models import (
-    Prefetch,
-    Q,
-)
+from django.db.models import Prefetch, Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 
@@ -15,16 +12,8 @@ from rest_framework import status
 
 # Module imports
 from plane.ee.views.base import BaseAPIView
-from plane.app.permissions import (
-    ProjectEntityPermission,
-    allow_permission,
-    ROLE,
-)
-from plane.db.models import (
-    IssueActivity,
-    IssueComment,
-    CommentReaction,
-)
+from plane.app.permissions import ProjectEntityPermission, allow_permission, ROLE
+from plane.db.models import IssueActivity, IssueComment, CommentReaction
 from plane.payment.flags.flag_decorator import (
     check_workspace_feature_flag,
     check_feature_flag,
@@ -34,18 +23,10 @@ from plane.ee.serializers import EpicCommentSerializer, EpicActivitySerializer
 
 
 class EpicActivityEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     @method_decorator(gzip_page)
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-            ROLE.GUEST,
-        ]
-    )
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
     def get(self, request, slug, project_id, epic_id):
         filters = {}
@@ -66,8 +47,7 @@ class EpicActivityEndpoint(BaseAPIView):
         ).order_by("created_at")
 
         if not check_workspace_feature_flag(
-            feature_key=FeatureFlag.EPICS_DISPLAY,
-            slug=slug,
+            feature_key=FeatureFlag.EPICS_DISPLAY, slug=slug
         ):
             epic_activities = epic_activities.filter(~Q(field="type"))
 
@@ -89,9 +69,7 @@ class EpicActivityEndpoint(BaseAPIView):
                 )
             )
         )
-        epic_activities = EpicActivitySerializer(
-            epic_activities, many=True
-        ).data
+        epic_activities = EpicActivitySerializer(epic_activities, many=True).data
         epic_comments = EpicCommentSerializer(epic_comments, many=True).data
 
         if request.GET.get("activity_type", None) == "epic-property":

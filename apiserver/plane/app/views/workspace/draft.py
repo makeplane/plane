@@ -314,8 +314,8 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 draft_issue_id=None,
             )
 
-            draft_issue_property_values = (
-                DraftIssuePropertyValue.objects.filter(draft_issue=draft_issue)
+            draft_issue_property_values = DraftIssuePropertyValue.objects.filter(
+                draft_issue=draft_issue
             )
             IssuePropertyValue.objects.bulk_create(
                 [
@@ -339,7 +339,6 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             # TODO: Log the activity for issue property
 
             draft_issue_property_values.delete()
-
 
             # delete the draft issue
             draft_issue.delete()

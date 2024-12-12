@@ -18,10 +18,7 @@ from plane.db.models import (
     WorkspaceMember,
     APIToken,
 )
-from plane.app.serializers import (
-    IntegrationSerializer,
-    WorkspaceIntegrationSerializer,
-)
+from plane.app.serializers import IntegrationSerializer, WorkspaceIntegrationSerializer
 from plane.utils.integrations.github import (
     get_github_metadata,
     delete_github_installation,
@@ -49,9 +46,7 @@ class IntegrationViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = IntegrationSerializer(
-            integration, data=request.data, partial=True
-        )
+        serializer = IntegrationSerializer(integration, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -74,9 +69,7 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
     serializer_class = WorkspaceIntegrationSerializer
     model = WorkspaceIntegration
 
-    permission_classes = [
-        WorkSpaceAdminPermission,
-    ]
+    permission_classes = [WorkSpaceAdminPermission]
 
     def get_queryset(self):
         return (
@@ -105,8 +98,7 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
 
             if not code:
                 return Response(
-                    {"error": "Code is required"},
-                    status=status.HTTP_400_BAD_REQUEST,
+                    {"error": "Code is required"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
             slack_response = slack_oauth(code=code)
@@ -116,9 +108,7 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
             team_id = metadata.get("team", {}).get("id", False)
             if not metadata or not access_token or not team_id:
                 return Response(
-                    {
-                        "error": "Slack could not be installed. Please try again later"
-                    },
+                    {"error": "Slack could not be installed. Please try again later"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             config = {"team_id": team_id, "access_token": access_token}
@@ -132,9 +122,7 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
             is_bot=True,
             first_name=integration.title,
             avatar=(
-                integration.avatar_url
-                if integration.avatar_url is not None
-                else ""
+                integration.avatar_url if integration.avatar_url is not None else ""
             ),
         )
 
@@ -156,9 +144,7 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
 
         # Add bot user as a member of workspace
         _ = WorkspaceMember.objects.create(
-            workspace=workspace_integration.workspace,
-            member=bot_user,
-            role=20,
+            workspace=workspace_integration.workspace, member=bot_user, role=20
         )
         return Response(
             WorkspaceIntegrationSerializer(workspace_integration).data,
@@ -171,9 +157,7 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
         )
 
         if workspace_integration.integration.provider == "github":
-            installation_id = workspace_integration.config.get(
-                "installation_id", False
-            )
+            installation_id = workspace_integration.config.get("installation_id", False)
             if installation_id:
                 delete_github_installation(installation_id=installation_id)
 

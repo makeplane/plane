@@ -10,19 +10,14 @@ from rest_framework.response import Response
 # Module imports
 from plane.ee.views.base import BaseAPIView
 from plane.db.models import IssueType, Issue, Project, ProjectIssueType
-from plane.ee.permissions import (
-    ProjectEntityPermission,
-    WorkspaceEntityPermission,
-)
+from plane.ee.permissions import ProjectEntityPermission, WorkspaceEntityPermission
 from plane.ee.serializers import IssueTypeSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
 
 class WorkspaceIssueTypeEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
+    permission_classes = [WorkspaceEntityPermission]
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
     def get(self, request, slug):
@@ -36,9 +31,7 @@ class WorkspaceIssueTypeEndpoint(BaseAPIView):
             )
             .annotate(
                 issue_exists=Exists(
-                    Issue.objects.filter(
-                        workspace__slug=slug, type_id=OuterRef("pk")
-                    )
+                    Issue.objects.filter(workspace__slug=slug, type_id=OuterRef("pk"))
                 )
             )
             .annotate(
@@ -48,9 +41,7 @@ class WorkspaceIssueTypeEndpoint(BaseAPIView):
                             issue_type=OuterRef("pk"), workspace__slug=slug
                         )
                         .values("issue_type")
-                        .annotate(
-                            project_ids=ArrayAgg("project_id", distinct=True)
-                        )
+                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                         .values("project_ids")
                     ),
                     [],
@@ -62,9 +53,7 @@ class WorkspaceIssueTypeEndpoint(BaseAPIView):
 
 
 class IssueTypeEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
     def get(self, request, slug, project_id, pk=None):
@@ -75,9 +64,7 @@ class IssueTypeEndpoint(BaseAPIView):
                     Issue.objects.filter(project_id=project_id, type_id=pk)
                 )
             ).get(
-                workspace__slug=slug,
-                project_issue_types__project_id=project_id,
-                pk=pk,
+                workspace__slug=slug, project_issue_types__project_id=project_id, pk=pk
             )
             serializer = IssueTypeSerializer(issue_type)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -91,9 +78,7 @@ class IssueTypeEndpoint(BaseAPIView):
             )
             .annotate(
                 issue_exists=Exists(
-                    Issue.objects.filter(
-                        project_id=project_id, type_id=OuterRef("pk")
-                    )
+                    Issue.objects.filter(project_id=project_id, type_id=OuterRef("pk"))
                 )
             )
             .annotate(
@@ -103,9 +88,7 @@ class IssueTypeEndpoint(BaseAPIView):
                             issue_type=OuterRef("pk"), workspace__slug=slug
                         )
                         .values("issue_type")
-                        .annotate(
-                            project_ids=ArrayAgg("project_id", distinct=True)
-                        )
+                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                         .values("project_ids")
                     ),
                     [],
@@ -132,9 +115,7 @@ class IssueTypeEndpoint(BaseAPIView):
 
         # Bridge the issue type with the project
         ProjectIssueType.objects.create(
-            project_id=project_id,
-            issue_type_id=serializer.data["id"],
-            level=0,
+            project_id=project_id, issue_type_id=serializer.data["id"], level=0
         )
 
         # Refetch the data
@@ -147,9 +128,7 @@ class IssueTypeEndpoint(BaseAPIView):
             )
             .annotate(
                 issue_exists=Exists(
-                    Issue.objects.filter(
-                        project_id=project_id, type_id=OuterRef("pk")
-                    )
+                    Issue.objects.filter(project_id=project_id, type_id=OuterRef("pk"))
                 )
             )
             .annotate(
@@ -159,9 +138,7 @@ class IssueTypeEndpoint(BaseAPIView):
                             issue_type=OuterRef("pk"), workspace__slug=slug
                         )
                         .values("issue_type")
-                        .annotate(
-                            project_ids=ArrayAgg("project_id", distinct=True)
-                        )
+                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                         .values("project_ids")
                     ),
                     [],
@@ -191,9 +168,7 @@ class IssueTypeEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = IssueTypeSerializer(
-            issue_type, data=request.data, partial=True
-        )
+        serializer = IssueTypeSerializer(issue_type, data=request.data, partial=True)
         # Validate the data
         serializer.is_valid(raise_exception=True)
         # Save the data
@@ -209,9 +184,7 @@ class IssueTypeEndpoint(BaseAPIView):
             )
             .annotate(
                 issue_exists=Exists(
-                    Issue.objects.filter(
-                        project_id=project_id, type_id=OuterRef("pk")
-                    )
+                    Issue.objects.filter(project_id=project_id, type_id=OuterRef("pk"))
                 )
             )
             .annotate(
@@ -221,9 +194,7 @@ class IssueTypeEndpoint(BaseAPIView):
                             issue_type=OuterRef("pk"), workspace__slug=slug
                         )
                         .values("issue_type")
-                        .annotate(
-                            project_ids=ArrayAgg("project_id", distinct=True)
-                        )
+                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                         .values("project_ids")
                     ),
                     [],
@@ -265,9 +236,7 @@ class IssueTypeEndpoint(BaseAPIView):
 
 
 class DefaultIssueTypeEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
     def post(self, request, slug, project_id):
@@ -303,18 +272,13 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
             description="Default issue type with the option to add new properties",
             logo_props={
                 "in_use": "icon",
-                "icon": {
-                    "color": "#ffffff",
-                    "background_color": "#6695FF",
-                },
+                "icon": {"color": "#ffffff", "background_color": "#6695FF"},
             },
         )
 
         # Update existing issues to use the new default issue type
         Issue.objects.filter(
-            project_id=project_id,
-            workspace__slug=slug,
-            type_id__isnull=True,
+            project_id=project_id, workspace__slug=slug, type_id__isnull=True
         ).update(type_id=issue_type.id)
 
         # Update the project
@@ -323,10 +287,7 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
 
         # Bridge the issue type with the project
         ProjectIssueType.objects.create(
-            project_id=project_id,
-            issue_type_id=issue_type.id,
-            level=0,
-            is_default=True,
+            project_id=project_id, issue_type_id=issue_type.id, level=0, is_default=True
         )
 
         # Refetch the data
@@ -339,9 +300,7 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
             )
             .annotate(
                 issue_exists=Exists(
-                    Issue.objects.filter(
-                        project_id=project_id, type_id=OuterRef("pk")
-                    )
+                    Issue.objects.filter(project_id=project_id, type_id=OuterRef("pk"))
                 )
             )
             .annotate(
@@ -351,9 +310,7 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
                             issue_type=OuterRef("pk"), workspace__slug=slug
                         )
                         .values("issue_type")
-                        .annotate(
-                            project_ids=ArrayAgg("project_id", distinct=True)
-                        )
+                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                         .values("project_ids")
                     ),
                     [],

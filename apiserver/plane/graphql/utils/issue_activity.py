@@ -5,8 +5,7 @@ from asgiref.sync import sync_to_async
 @sync_to_async
 def get_issue_labels(issue):
     return [
-        str(label_id)
-        for label_id in list(issue.labels.values_list("id", flat=True))
+        str(label_id) for label_id in list(issue.labels.values_list("id", flat=True))
     ]
 
 
@@ -28,9 +27,7 @@ async def convert_issue_properties_to_activity_dict(issue):
         "description_html": issue.description_html,
         "priority": issue.priority,
         "state_id": str(issue.state_id),
-        "parent_id": str(issue.parent_id)
-        if issue.parent_id is not None
-        else None,
+        "parent_id": str(issue.parent_id) if issue.parent_id is not None else None,
         "estimate_point": str(issue.estimate_point)
         if issue.estimate_point is not NotImplementedError
         else None,

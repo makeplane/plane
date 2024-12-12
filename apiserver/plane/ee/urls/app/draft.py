@@ -2,9 +2,7 @@
 from django.urls import path
 
 # Module imports
-from plane.ee.views.app.issue_property import (
-    DraftIssuePropertyValueEndpoint,
-)
+from plane.ee.views.app.issue_property import DraftIssuePropertyValueEndpoint
 
 urlpatterns = [
     # Issue property values

@@ -23,9 +23,7 @@ from plane.license.utils.encryption import decrypt_data
 
 @sync_to_async
 def get_instance_configuration():
-    return list(
-        InstanceConfiguration.objects.values("key", "value", "is_encrypted")
-    )
+    return list(InstanceConfiguration.objects.values("key", "value", "is_encrypted"))
 
 
 async def get_configuration_value(keys):
@@ -38,9 +36,7 @@ async def get_configuration_value(keys):
                 if key.get("key") == item.get("key"):
                     if item.get("is_encrypted", False):
                         environment_list.append(
-                            await sync_to_async(
-                                decrypt_data(item.get("value"))
-                            )
+                            await sync_to_async(decrypt_data(item.get("value")))
                         )
                     else:
                         environment_list.append(item.get("value"))
@@ -50,9 +46,7 @@ async def get_configuration_value(keys):
     else:
         # Get the configuration from os
         for key in keys:
-            environment_list.append(
-                os.environ.get(key.get("key"), key.get("default"))
-            )
+            environment_list.append(os.environ.get(key.get("key"), key.get("default")))
 
     return tuple(environment_list)
 
@@ -65,9 +59,7 @@ def unsplash_request(url, headers):
 @strawberry.type
 class UnsplashImagesQuery:
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def unsplash_images(
         self,
@@ -99,9 +91,7 @@ class UnsplashImagesQuery:
         unsplash_headers = {"Content-Type": "application/json"}
 
         # make a request to unsplash api
-        unsplash_response = await unsplash_request(
-            unsplash_url, unsplash_headers
-        )
+        unsplash_response = await unsplash_request(unsplash_url, unsplash_headers)
         unsplash_response_data = unsplash_response.json()
 
         total = None
@@ -124,6 +114,4 @@ class UnsplashImagesQuery:
                 )
             )
 
-        return UnsplashImages(
-            total=total, total_pages=total_pages, urls=unsplash_data
-        )
+        return UnsplashImages(total=total, total_pages=total_pages, urls=unsplash_data)

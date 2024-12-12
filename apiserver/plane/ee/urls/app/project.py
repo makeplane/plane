@@ -7,5 +7,5 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:pk>/features/",
         ProjectFeatureEndpoint.as_view(),
         name="project-features",
-    ),
+    )
 ]

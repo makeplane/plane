@@ -159,9 +159,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                     property__issue_type__is_epic=False,
                 )
                 serializer = self.serializer_class(property_option)
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED
-                )
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(
                 {"error": "Issue Property type is not OPTION"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -235,10 +233,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
 
             property_option_serializer.save()
 
-            return Response(
-                property_option_serializer.data,
-                status=status.HTTP_200_OK,
-            )
+            return Response(property_option_serializer.data, status=status.HTTP_200_OK)
 
     # delete issue property option by id
     @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)

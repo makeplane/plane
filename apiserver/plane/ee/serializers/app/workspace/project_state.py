@@ -15,7 +15,4 @@ class ProjectStateSerializer(serializers.ModelSerializer):
             "description",
             "sequence",
         ]
-        read_only_fields = [
-            "workspace",
-            "project",
-        ]
+        read_only_fields = ["workspace", "project"]

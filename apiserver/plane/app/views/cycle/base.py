@@ -974,9 +974,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 }
             )
 
-        _ = CycleIssue.objects.bulk_update(
-            updated_cycles, ["cycle_id"], batch_size=100
-        )
+        _ = CycleIssue.objects.bulk_update(updated_cycles, ["cycle_id"], batch_size=100)
 
         estimate_type = Project.objects.filter(
             workspace__slug=slug,
@@ -998,8 +996,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         estimate_point_id=cycle_issue.issue.estimate_point_id,
                         estimate_value=(
                             cycle_issue.issue.estimate_point.value
-                            if estimate_type
-                            and cycle_issue.issue.estimate_point
+                            if estimate_type and cycle_issue.issue.estimate_point
                             else None
                         ),
                         workspace_id=cycle_issue.workspace_id,
@@ -1024,8 +1021,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         estimate_point_id=cycle_issue.issue.estimate_point_id,
                         estimate_value=(
                             cycle_issue.issue.estimate_point.value
-                            if estimate_type
-                            and cycle_issue.issue.estimate_point
+                            if estimate_type and cycle_issue.issue.estimate_point
                             else None
                         ),
                         workspace_id=cycle_issue.workspace_id,
@@ -1481,22 +1477,17 @@ class CycleAnalyticsEndpoint(BaseAPIView):
 
 
 class CycleIssueStateAnalyticsEndpoint(BaseAPIView):
-
     @check_feature_flag(FeatureFlag.ACTIVE_CYCLE_PRO)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, cycle_id):
         workspace = Workspace.objects.get(slug=slug)
         cycle_state_progress = EntityProgress.objects.filter(
-            cycle_id=cycle_id,
-            entity_type="CYCLE",
-            workspace__slug=slug,
+            cycle_id=cycle_id, entity_type="CYCLE", workspace__slug=slug
         ).order_by("progress_date")
 
         # Generate today's data
         today_data = track_entity_issue_state_progress(
-            current_date=timezone.now(),
-            cycles=[(cycle_id, workspace.id)],
-            save=False,
+            current_date=timezone.now(), cycles=[(cycle_id, workspace.id)], save=False
         )
 
         # Combine existing data with today's data

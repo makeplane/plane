@@ -41,10 +41,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
         # Check if the request is valid
         if not name or not size:
             return Response(
-                {
-                    "error": "Invalid request.",
-                    "status": False,
-                },
+                {"error": "Invalid request.", "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -60,10 +57,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
 
         if not type or type not in settings.ATTACHMENT_MIME_TYPES:
             return Response(
-                {
-                    "error": "Invalid file type.",
-                    "status": False,
-                },
+                {"error": "Invalid file type.", "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -75,11 +69,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
 
         # Create a File Asset
         asset = FileAsset.objects.create(
-            attributes={
-                "name": name,
-                "type": type,
-                "size": size_limit,
-            },
+            attributes={"name": name, "type": type, "size": size_limit},
             asset=asset_key,
             size=size_limit,
             workspace_id=workspace.id,
@@ -93,9 +83,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
         presigned_url = storage.generate_presigned_post(
-            object_name=asset_key,
-            file_type=type,
-            file_size=size_limit,
+            object_name=asset_key, file_type=type, file_size=size_limit
         )
         # Return the presigned URL
         return Response(
@@ -132,13 +120,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-            ROLE.GUEST,
-        ]
-    )
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
     def get(self, request, slug, project_id, epic_id, pk=None):
         if pk:
@@ -150,10 +132,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
             # Check if the asset is uploaded
             if not asset.is_uploaded:
                 return Response(
-                    {
-                        "error": "The asset is not uploaded.",
-                        "status": False,
-                    },
+                    {"error": "The asset is not uploaded.", "status": False},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -177,13 +156,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
         serializer = EpicAttachmentSerializer(epic_attachments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-            ROLE.GUEST,
-        ]
-    )
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
     def patch(self, request, slug, project_id, epic_id, pk):
         epic_attachment = FileAsset.objects.get(
@@ -199,10 +172,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("epic_id", None)),
                 project_id=str(self.kwargs.get("project_id", None)),
-                current_instance=json.dumps(
-                    serializer.data,
-                    cls=DjangoJSONEncoder,
-                ),
+                current_instance=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),

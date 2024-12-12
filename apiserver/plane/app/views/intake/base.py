@@ -241,15 +241,10 @@ class IntakeIssueViewSet(BaseViewSet):
         ).first()
 
         intake_settings = IntakeSetting.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            intake=intake,
+            workspace__slug=slug, project_id=project_id, intake=intake
         ).first()
 
-        if (
-            intake_settings is not None
-            and not intake_settings.is_in_app_enabled
-        ):
+        if intake_settings is not None and not intake_settings.is_in_app_enabled:
             return Response(
                 {"error": "Creating intake issues is disabled"},
                 status=status.HTTP_400_BAD_REQUEST,

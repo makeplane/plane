@@ -24,10 +24,7 @@ from plane.graphql.types.issue import (
     IssuesInformationObjectType,
     IssuesType,
 )
-from plane.graphql.permissions.workspace import (
-    WorkspaceBasePermission,
-    IsAuthenticated,
-)
+from plane.graphql.permissions.workspace import WorkspaceBasePermission, IsAuthenticated
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.paginator import paginate
 from plane.graphql.utils.issue import issue_information_query_execute
@@ -35,9 +32,7 @@ from plane.graphql.utils.issue import issue_information_query_execute
 
 @strawberry.type
 class WorkspaceQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[IsAuthenticated()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[IsAuthenticated()])])
     async def workspaces(self, info: Info) -> list[WorkspaceType]:
         workspaces = await sync_to_async(list)(
             Workspace.objects.filter(
@@ -52,18 +47,13 @@ class WorkspaceQuery:
 @strawberry.type
 class WorkspaceMembersQuery:
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def workspaceMembers(
         self, info: Info, slug: str
     ) -> list[WorkspaceMemberType]:
         workspace_members = await sync_to_async(list)(
-            WorkspaceMember.objects.filter(
-                workspace__slug=slug,
-                is_active=True,
-            )
+            WorkspaceMember.objects.filter(workspace__slug=slug, is_active=True)
         )
         return workspace_members
 
@@ -72,9 +62,7 @@ class WorkspaceMembersQuery:
 @strawberry.type
 class WorkspaceIssuesInformationQuery:
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def workspaceIssuesInformation(
         self,
@@ -86,10 +74,7 @@ class WorkspaceIssuesInformationQuery:
     ) -> IssuesInformationType:
         filters = issue_filters(filters, "POST")
 
-        (
-            issue_count,
-            issue_group_info,
-        ) = await issue_information_query_execute(
+        (issue_count, issue_group_info) = await issue_information_query_execute(
             user=info.context.user,
             slug=slug,
             filters=filters,
@@ -112,9 +97,7 @@ class WorkspaceIssuesInformationQuery:
 @strawberry.type
 class WorkspaceIssuesQuery:
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def workspaceIssues(
         self,
@@ -145,15 +128,9 @@ class WorkspaceIssuesQuery:
 @strawberry.type
 class YourWorkQuery:
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
-    async def yourWork(
-        self,
-        info: Info,
-        slug: str,
-    ) -> WorkspaceYourWorkType:
+    async def yourWork(self, info: Info, slug: str) -> WorkspaceYourWorkType:
         # projects
         projects = await sync_to_async(list)(
             Project.objects.filter(
@@ -171,7 +148,7 @@ class YourWorkQuery:
                     project__project_projectmember__member=info.context.user,
                     project__project_projectmember__is_active=True,
                     assignees__in=[info.context.user],
-                ),
+                )
             )
             .values_list("id", flat=True)
         )
@@ -185,7 +162,7 @@ class YourWorkQuery:
                     projects__project_projectmember__is_active=True,
                     archived_at__isnull=True,
                     owned_by=info.context.user,
-                ),
+                )
             )
             .values_list("id", flat=True)
         )

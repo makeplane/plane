@@ -6,12 +6,7 @@ from urllib.parse import urlparse, urljoin
 
 
 def is_allowed_hostname(hostname):
-    allowed_domains = [
-        "atl-paas.net",
-        "atlassian.com",
-        "atlassian.net",
-        "jira.com",
-    ]
+    allowed_domains = ["atl-paas.net", "atlassian.com", "atlassian.net", "jira.com"]
     parsed_uri = urlparse(f"https://{hostname}")
     domain = parsed_uri.netloc.split(":")[0]  # Ensures no port is included
     base_domain = ".".join(domain.split(".")[-2:])
@@ -66,8 +61,7 @@ def jira_project_issue_summary(email, api_token, project_key, hostname):
 
         # modules
         module_url = generate_url(
-            hostname,
-            f"/rest/api/3/search?jql=project={project_key} AND issuetype=Epic",
+            hostname, f"/rest/api/3/search?jql=project={project_key} AND issuetype=Epic"
         )
         module_response = requests.request(
             "GET", module_url, headers=headers, auth=auth
@@ -112,6 +106,4 @@ def jira_project_issue_summary(email, api_token, project_key, hostname):
         }
     except Exception as e:
         capture_exception(e)
-        return {
-            "error": "Something went wrong could not fetch information from jira"
-        }
+        return {"error": "Something went wrong could not fetch information from jira"}

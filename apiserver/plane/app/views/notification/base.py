@@ -146,9 +146,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
                 notifications = notifications.none()
             else:
                 issue_ids = Issue.objects.filter(
-                    workspace__slug=slug,
-                    created_by=request.user,
-                    type__is_epic=False,
+                    workspace__slug=slug, created_by=request.user, type__is_epic=False
                 ).values_list("pk", flat=True)
                 q_filters |= Q(entity_identifier__in=issue_ids)
 
@@ -327,9 +325,7 @@ class MarkAllReadNotificationViewSet(BaseViewSet):
                 notifications = Notification.objects.none()
             else:
                 issue_ids = Issue.objects.filter(
-                    workspace__slug=slug,
-                    created_by=request.user,
-                    type__is_epic=False,
+                    workspace__slug=slug, created_by=request.user, type__is_epic=False
                 ).values_list("pk", flat=True)
                 notifications = notifications.filter(entity_identifier__in=issue_ids)
 

@@ -10,19 +10,14 @@ from asgiref.sync import sync_to_async
 from typing import Optional
 
 # Module imports
-from plane.graphql.permissions.workspace import (
-    WorkspaceBasePermission,
-)
+from plane.graphql.permissions.workspace import WorkspaceBasePermission
 from plane.db.models import Workspace, UserFavorite
 
 
 @strawberry.type
 class UserFavoriteMutation:
-
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def createUserFavorite(
         self,
@@ -46,15 +41,10 @@ class UserFavoriteMutation:
         extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def deleteUserFavorite(
-        self,
-        info: Info,
-        slug: str,
-        favorite: strawberry.ID,
+        self, info: Info, slug: str, favorite: strawberry.ID
     ) -> bool:
         user_favorite = await sync_to_async(UserFavorite.objects.get)(
-            pk=favorite,
-            user=info.context.user,
-            workspace__slug=slug,
+            pk=favorite, user=info.context.user, workspace__slug=slug
         )
         await sync_to_async(user_favorite.delete)()
 
