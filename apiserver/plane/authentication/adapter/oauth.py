@@ -1,5 +1,6 @@
 # Python imports
 import requests
+import os
 
 # Django imports
 from django.utils import timezone
@@ -30,8 +31,11 @@ class OauthAdapter(Adapter):
         client_secret=None,
         code=None,
         callback=None,
+        is_mobile=False,
     ):
-        super().__init__(request=request, provider=provider, callback=callback)
+        super().__init__(
+            request=request, provider=provider, callback=callback, is_mobile=is_mobile
+        )
         self.client_id = client_id
         self.scope = scope
         self.redirect_uri = redirect_uri
@@ -48,6 +52,8 @@ class OauthAdapter(Adapter):
             return "GITHUB_OAUTH_PROVIDER_ERROR"
         elif self.provider == "gitlab":
             return "GITLAB_OAUTH_PROVIDER_ERROR"
+        elif self.provider == "oidc":
+            return "OIDC_PROVIDER_ERROR"
         else:
             return "OAUTH_NOT_CONFIGURED"
 
@@ -68,7 +74,12 @@ class OauthAdapter(Adapter):
     def get_user_token(self, data, headers=None):
         try:
             headers = headers or {}
-            response = requests.post(self.get_token_url(), data=data, headers=headers)
+            response = requests.post(
+                self.get_token_url(),
+                data=data,
+                headers=headers,
+                verify=os.environ.get("SSL_VERIFY", "1") == "1",
+            )
             response.raise_for_status()
             return response.json()
         except requests.RequestException:
@@ -80,7 +91,11 @@ class OauthAdapter(Adapter):
     def get_user_response(self):
         try:
             headers = {"Authorization": f"Bearer {self.token_data.get('access_token')}"}
-            response = requests.get(self.get_user_info_url(), headers=headers)
+            response = requests.get(
+                self.get_user_info_url(),
+                headers=headers,
+                verify=os.environ.get("SSL_VERIFY", "1") == "1",
+            )
             response.raise_for_status()
             return response.json()
         except requests.RequestException:

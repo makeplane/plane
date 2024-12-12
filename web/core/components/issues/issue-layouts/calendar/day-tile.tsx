@@ -23,9 +23,15 @@ import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 import { TRenderQuickActions } from "../list/list-view-types";
+import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 
 type Props = {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProjectEpicsFilter;
   date: ICalendarDate;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
@@ -45,6 +51,7 @@ type Props = {
   readOnly?: boolean;
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
+  isEpic?: boolean;
 };
 
 export const CalendarDayTile: React.FC<Props> = observer((props) => {
@@ -65,6 +72,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     selectedDate,
     handleDragAndDrop,
     setSelectedDate,
+    isEpic = false,
   } = props;
 
   const [isDraggingOver, setIsDraggingOver] = useState(false);
@@ -176,6 +184,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               enableQuickIssueCreate={enableQuickIssueCreate}
               quickAddCallback={quickAddCallback}
               readOnly={readOnly}
+              isEpic={isEpic}
             />
           </div>
         </div>

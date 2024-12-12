@@ -23,6 +23,7 @@ type Props = {
   title: string;
   quickAdd?: React.JSX.Element | undefined;
   selectionHelpers: TSelectionHelper;
+  isEpic?: boolean;
 };
 
 export const GanttChartSidebar: React.FC<Props> = observer((props) => {
@@ -38,6 +39,7 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
     title,
     quickAdd,
     selectionHelpers,
+    isEpic = false,
   } = props;
 
   const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(GANTT_SELECT_GROUP) === "empty";
@@ -90,6 +92,7 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
             ganttContainerRef,
             loadMoreBlocks,
             selectionHelpers,
+            isEpic,
           })}
       </Row>
       {quickAdd ? quickAdd : null}

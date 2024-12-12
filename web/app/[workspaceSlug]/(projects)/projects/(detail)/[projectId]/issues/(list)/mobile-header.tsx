@@ -17,7 +17,7 @@ import {
   EIssueFilterType,
   EIssueLayoutTypes,
   EIssuesStoreType,
-  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
+  ISSUE_STORE_TO_FILTERS_MAP,
   ISSUE_LAYOUTS,
 } from "@/constants/issue";
 // helpers
@@ -25,29 +25,38 @@ import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 
-export const ProjectIssuesMobileHeader = observer(() => {
+type TProjectIssuesMobileHeaderProps = {
+  storeType?: EIssuesStoreType.PROJECT | EIssuesStoreType.EPIC;
+  showAnalytics?: boolean;
+};
+
+export const ProjectIssuesMobileHeader = observer((props: TProjectIssuesMobileHeaderProps) => {
+  const { storeType = EIssuesStoreType.PROJECT, showAnalytics = true } = props;
+  // router
+  const { workspaceSlug, projectId } = useParams() as {
+    workspaceSlug: string;
+    projectId: string;
+  };
+  // states
+  const [analyticsModal, setAnalyticsModal] = useState(false);
+  // store hooks
+  const { currentProjectDetails } = useProject();
+  const { projectStates } = useProjectState();
+  const { projectLabels } = useLabel();
+  const {
+    issuesFilter: { issueFilters, updateFilters },
+  } = useIssues(storeType);
+  const {
+    project: { projectMemberIds },
+  } = useMember();
+  // derived values
+  const activeLayout = issueFilters?.displayFilters?.layout;
+  const layoutDisplayFiltersOptions = ISSUE_STORE_TO_FILTERS_MAP[storeType]?.[activeLayout];
   const layouts = [
     { key: "list", title: "List", icon: List },
     { key: "kanban", title: "Board", icon: Kanban },
     { key: "calendar", title: "Calendar", icon: Calendar },
   ];
-  const [analyticsModal, setAnalyticsModal] = useState(false);
-  const { workspaceSlug, projectId } = useParams() as {
-    workspaceSlug: string;
-    projectId: string;
-  };
-  const { currentProjectDetails } = useProject();
-  const { projectStates } = useProjectState();
-  const { projectLabels } = useLabel();
-
-  // store hooks
-  const {
-    issuesFilter: { issueFilters, updateFilters },
-  } = useIssues(EIssuesStoreType.PROJECT);
-  const {
-    project: { projectMemberIds },
-  } = useMember();
-  const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
@@ -96,11 +105,13 @@ export const ProjectIssuesMobileHeader = observer(() => {
 
   return (
     <>
-      <ProjectAnalyticsModal
-        isOpen={analyticsModal}
-        onClose={() => setAnalyticsModal(false)}
-        projectDetails={currentProjectDetails ?? undefined}
-      />
+      {showAnalytics && (
+        <ProjectAnalyticsModal
+          isOpen={analyticsModal}
+          onClose={() => setAnalyticsModal(false)}
+          projectDetails={currentProjectDetails ?? undefined}
+        />
+      )}
       <div className="md:hidden flex justify-evenly border-b border-custom-border-200 py-2 z-[13] bg-custom-background-100">
         <CustomMenu
           maxHeight={"md"}
@@ -145,9 +156,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
               handleFiltersUpdate={handleFiltersUpdate}
               displayFilters={issueFilters?.displayFilters ?? {}}
               handleDisplayFiltersUpdate={handleDisplayFilters}
-              layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
-              }
+              layoutDisplayFiltersOptions={layoutDisplayFiltersOptions}
               labels={projectLabels}
               memberIds={projectMemberIds ?? undefined}
               states={projectStates}
@@ -168,9 +177,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
             }
           >
             <DisplayFiltersSelection
-              layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
-              }
+              layoutDisplayFiltersOptions={layoutDisplayFiltersOptions}
               displayFilters={issueFilters?.displayFilters ?? {}}
               handleDisplayFiltersUpdate={handleDisplayFilters}
               displayProperties={issueFilters?.displayProperties ?? {}}
@@ -180,13 +187,14 @@ export const ProjectIssuesMobileHeader = observer(() => {
             />
           </FiltersDropdown>
         </div>
-
-        <button
-          onClick={() => setAnalyticsModal(true)}
-          className="flex flex-grow justify-center border-l border-custom-border-200 text-sm text-custom-text-200"
-        >
-          Analytics
-        </button>
+        {showAnalytics && (
+          <button
+            onClick={() => setAnalyticsModal(true)}
+            className="flex flex-grow justify-center border-l border-custom-border-200 text-sm text-custom-text-200"
+          >
+            Analytics
+          </button>
+        )}
       </div>
     </>
   );

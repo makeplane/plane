@@ -26,6 +26,7 @@ import { IssueIdentifier } from "@/plane-web/components/issues";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
 import { getIssueBlockId } from "../utils";
+import { EIssueServiceType } from "@plane/constants";
 
 interface IssueBlockProps {
   issueId: string;
@@ -40,6 +41,7 @@ interface IssueBlockProps {
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   shouldRenderByDefault?: boolean;
+  isEpic?: boolean;
 }
 
 interface IssueDetailsBlockProps {
@@ -49,10 +51,11 @@ interface IssueDetailsBlockProps {
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   isReadOnly: boolean;
+  isEpic?: boolean;
 }
 
 const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props) => {
-  const { cardRef, issue, updateIssue, quickActions, isReadOnly, displayProperties } = props;
+  const { cardRef, issue, updateIssue, quickActions, isReadOnly, displayProperties, isEpic = false } = props;
   // hooks
   const { isMobile } = usePlatformOS();
 
@@ -98,6 +101,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
         activeLayout="Kanban"
         updateIssue={updateIssue}
         isReadOnly={isReadOnly}
+        isEpic={isEpic}
       />
     </>
   );
@@ -116,6 +120,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
     canEditProperties,
     scrollableContainerRef,
     shouldRenderByDefault,
+    isEpic = false,
   } = props;
 
   const cardRef = useRef<HTMLAnchorElement | null>(null);
@@ -123,8 +128,8 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
   // hooks
-  const { getIsIssuePeeked } = useIssueDetail();
-  const { handleRedirection } = useIssuePeekOverviewRedirection();
+  const { getIsIssuePeeked } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
+  const { handleRedirection } = useIssuePeekOverviewRedirection(isEpic);
   const { isMobile } = usePlatformOS();
 
   // handlers
@@ -205,7 +210,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
       >
         <ControlLink
           id={getIssueBlockId(issueId, groupId, subGroupId)}
-          href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
+          href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}${isEpic ? "epics" : "issues"}/${
             issue.id
           }`}
           ref={cardRef}
@@ -233,6 +238,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
               updateIssue={updateIssue}
               quickActions={quickActions}
               isReadOnly={!canEditIssueProperties}
+              isEpic={isEpic}
             />
           </RenderIfVisible>
         </ControlLink>

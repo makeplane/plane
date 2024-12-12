@@ -1,5 +1,6 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { EIssueServiceType } from "@plane/constants";
 import {
   DeleteIssueModal,
   IssuePeekOverviewHeader,
@@ -62,6 +63,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     toggleArchiveIssueModal,
     issue: { getIssueById, getIsLocalDBIssueDescription },
   } = useIssueDetail();
+  const { isAnyModalOpen: isAnyEpicModalOpen } = useIssueDetail(EIssueServiceType.EPICS);
+
   const issue = getIssueById(issueId);
   // remove peek id
   const removeRoutePeekId = () => {
@@ -75,7 +78,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issuePeekOverviewRef,
     () => {
       if (!embedIssue) {
-        if (!isAnyModalOpen) {
+        if (!isAnyModalOpen && !isAnyEpicModalOpen) {
           removeRoutePeekId();
         }
       }

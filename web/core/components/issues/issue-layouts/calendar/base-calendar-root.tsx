@@ -23,17 +23,19 @@ export type CalendarStoreType =
   | EIssuesStoreType.PROJECT
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
-  | EIssuesStoreType.PROJECT_VIEW;
+  | EIssuesStoreType.PROJECT_VIEW
+  | EIssuesStoreType.EPIC;
 
 interface IBaseCalendarRoot {
   QuickActions: FC<IQuickActionProps>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   isCompletedCycle?: boolean;
   viewId?: string | undefined;
+  isEpic?: boolean;
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const { QuickActions, addIssuesToView, isCompletedCycle = false, viewId } = props;
+  const { QuickActions, addIssuesToView, isCompletedCycle = false, viewId, isEpic = false } = props;
 
   // router
   const { workspaceSlug, projectId } = useParams();
@@ -157,6 +159,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
           readOnly={!isEditingAllowed || isCompletedCycle}
           updateFilters={updateFilters}
           handleDragAndDrop={handleDragAndDrop}
+          isEpic={isEpic}
         />
       </div>
     </>

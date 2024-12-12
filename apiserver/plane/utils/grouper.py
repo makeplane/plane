@@ -87,6 +87,7 @@ def issue_on_results(issues, group_by, sub_group_by):
         "is_draft",
         "archived_at",
         "state__group",
+        "type_id",
     ]
 
     if group_by in FIELD_MAPPER:
