@@ -50,7 +50,7 @@ Getting started with Plane is simple. Choose the setup that works best for you:
 Sign up for a free account on [Plane Cloud](https://app.plane.so)—it's the fastest way to get up and running without worrying about infrastructure.
 
 - **Self-host Plane**  
-Prefer full control over your data and infrastructure? Install and run Plane on your own servers. Follow our detailed [deployment guides](https://docs.plane.so/docker-compose) to get started.
+Prefer full control over your data and infrastructure? Install and run Plane on your own servers. Follow our detailed [deployment guides](https://developers.plane.so/self-hosting/overview) to get started.
 
 | Installation methods | Docs link                                                                                                                                          |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -170,7 +170,6 @@ That’s it! You’re all set to begin coding. Remember to refresh your browser 
   </p>
 </p>
 <p>
-    Coming soon
     <a href="https://plane.so" target="_blank">
       <img
         src="https://ik.imagekit.io/w2okwbtu2/Drive_LlfeY4xn3.png?updatedAt=1709298837917"
