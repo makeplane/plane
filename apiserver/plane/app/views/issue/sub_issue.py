@@ -20,7 +20,7 @@ from plane.app.serializers import IssueSerializer
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import Issue, IssueLink, FileAsset, CycleIssue
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.utils.user_timezone_converter import user_timezone_converter
+from plane.utils.timezone_converter import user_timezone_converter
 from collections import defaultdict
 
 
