@@ -15,28 +15,36 @@ from plane.graphql.types.dashboard import UserInformationType
 from plane.graphql.permissions.workspace import IsAuthenticated
 
 
+@sync_to_async
+def get_workspace(user):
+    try:
+        return Workspace.objects.filter(
+            workspace_member__member=user, workspace_member__is_active=True
+        ).first()
+    except Exception:
+        return None
+
+
 @strawberry.type
 class userInformationQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[IsAuthenticated()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[IsAuthenticated()])])
     async def userInformation(
         self, info: Info, device_id: Optional[str] = None
     ) -> UserInformationType:
-        profile = await sync_to_async(Profile.objects.get)(
-            user=info.context.user
-        )
+        profile = await sync_to_async(Profile.objects.get)(user=info.context.user)
 
         # fetch workspace
         workspace = None
-        workspace_id = (
-            profile.last_workspace_id if profile.last_workspace_id else None
-        )
-        if workspace_id:
+        workspace_id = profile.last_workspace_id if profile.last_workspace_id else None
+        if workspace_id is not None:
             try:
-                workspace = await sync_to_async(Workspace.objects.get)(
-                    id=workspace_id
-                )
+                workspace = await sync_to_async(Workspace.objects.get)(id=workspace_id)
+            except Exception:
+                workspace = None
+
+        if workspace is None:
+            try:
+                workspace = await get_workspace(info.context.user)
             except Exception:
                 workspace = None
 
@@ -51,7 +59,5 @@ class userInformationQuery:
                 device_information = None
 
         return UserInformationType(
-            user=info.context.user,
-            workspace=workspace,
-            device_info=device_information,
+            user=info.context.user, workspace=workspace, device_info=device_information
         )
