@@ -57,7 +57,7 @@
     "@tiptap/react": "^2.1.13",
     "@tiptap/starter-kit": "^2.1.13",
     "@tiptap/suggestion": "^2.0.13",
-    "@todesktop/client-core": "^1.12.0",
+    "@todesktop/client-core": "^1.12.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^1.2.1",
     "highlight.js": "^11.8.0",
@@ -84,10 +84,13 @@
     "@types/node": "18.15.3",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.2.18",
-    "postcss": "^8.4.38",
+    "postcss": "^8.4.49",
     "tailwind-config-custom": "*",
     "tsup": "^7.2.0",
     "typescript": "5.3.3"
+  },
+  "resolutions": {
+    "nanoid": "^3.3.8"
   },
   "keywords": [
     "editor",
