@@ -2,9 +2,10 @@
 
 <p align="center">
 <a href="https://plane.so">
-  <img src="https://plane.so/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fplane-logo-with-text.31443952.png&w=640&q=75" alt="Plane Logo" width="300">
+  <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_logo_.webp" alt="Plane Logo" width="70">
 </a>
 </p>
+<h1 align="center"><b>Plane</b></h1>
 
 <p align="center">
 <a href="https://discord.com/invite/A92xrEGCge">
@@ -77,6 +78,8 @@ Capture and organize ideas using Plane Pages, complete with AI capabilities and 
 
 - **Analytics**  
 Access real-time insights across all your Plane data. Visualize trends, remove blockers, and keep your projects moving forward.
+
+- **Drive** (_coming soon_): The drive helps you share documents, images, videos, or any other files that make sense to you or your team and align on the problem/solution.
 
 
 ## 🛠️ Local development
@@ -166,6 +169,16 @@ That’s it! You’re all set to begin coding. Remember to refresh your browser 
     </a>
   </p>
 </p>
+<p>
+    Coming soon
+    <a href="https://plane.so" target="_blank">
+      <img
+        src="https://ik.imagekit.io/w2okwbtu2/Drive_LlfeY4xn3.png?updatedAt=1709298837917"
+        alt="Plane Command Menu"
+        width="100%"
+      />
+    </a>
+  </p>
 </p>
 
 ## 📝 Documentation
