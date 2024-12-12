@@ -28,7 +28,17 @@ import PlaneLogger from "@plane/logger";
 Use this for general application logs.
 
 ```typescript
-const logger: Logger = PlaneLogger.getLogger("info", "log-file-prefix")
+const loggerOptions: ILoggerOptions = { logLevel:"info", logFilePrefix: "log-file-prefix" }
+
+import ClientLogger from "@plane/logger/client"
+const logger = ClientLogger.getLogger(loggerOptions);
+logger.log("test logs on web")
+
+
+import ServerLogger from "@plane/logger/server"
+const logger = ServerLogger.getLogger(loggerOptions);
+logger.log("test logs on server")
+
 logger.info("This is an info log");
 logger.warn("This is a warning");
 logger.error("This is an error");

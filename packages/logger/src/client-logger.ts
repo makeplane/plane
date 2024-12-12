@@ -1,53 +1,55 @@
-import { createLogger, format, transports, Logger as WinstonLogger } from "winston";
-
+import { IClientLogMethods, ILoggerOptions } from "index";
 
 export default class ClientLogger {
-  private static instance: ClientLogger;
-  private logger: WinstonLogger;
   private logLevel: string;
+  private logLevels: string[];
+  logMethods: IClientLogMethods;
+  static instance: any;
 
-  private constructor(logLevel: string = "info") {
-
-    this.logLevel = logLevel;
-
-    this.logger = createLogger({
-      level: this.logLevel,
-      format: format.combine(
-        format.colorize(),
-        format.timestamp({
-          format: "DD/MMM/YYYY HH:mm:ss",
-        }),
-        format.printf(({ timestamp, level, message, ...metadata }) => {
-          const msg = `[${timestamp}] "${level}" ${message}`;
-          const metaString = Object.keys(metadata).length ? ` ${JSON.stringify(metadata)}` : "";
-          return msg + metaString;
-        })
-      ),
-      transports: [
-        new transports.Console({ handleExceptions: true })
-      ],
-    });
-
-    this.logger.transports.forEach((transport) => {
-        transport.on("error", (err) => {
-          // Handle the error, log it, or notify as necessary
-          console.error(`Logging transport error: Console`, err);
-        });
-    });
-
+  constructor(loggerOptions: ILoggerOptions = { logLevel: "info", logFilePrefix: "log" }) {    
+    this.logLevel = loggerOptions.logLevel || 'info';
+    this.logMethods = {
+      error: this.logWithLevel.bind(this, "error"),
+      warn: this.logWithLevel.bind(this, "warn"),
+      info: this.logWithLevel.bind(this, "info"),
+      debug: this.logWithLevel.bind(this, "debug"),
+    };
+    this.logLevels = ["error", "warn", "info", "debug"];
   }
 
-  private static getInstance(logLevel?: string) {
+  static getInstance(loggerOptions?: ILoggerOptions) {
     if (!ClientLogger.instance) {
-      ClientLogger.instance = new ClientLogger(logLevel);
-    } 
+      ClientLogger.instance = new ClientLogger(loggerOptions);
+    }
     return ClientLogger.instance;
   }
 
-  public static getLogger(logLevel?: string) {
-    const instance = ClientLogger.getInstance(logLevel);
-    return instance.logger
+  public static getLogger(loggerOptions?: ILoggerOptions): IClientLogMethods {
+    const instance = this.getInstance(loggerOptions);
+    return instance.logMethods;
   }
 
+  logWithLevel(level: string, message: string, ...metadata: any[]) {
+    if (this.logLevels.indexOf(level) <= this.logLevels.indexOf(this.logLevel)) {
+      const timestamp = new Date().toISOString();
+      const formattedMessage = `[${timestamp}] "${level.toUpperCase()}" ${message}`;
+      const metaString = metadata.length ? ` ${JSON.stringify(metadata)}` : "";
+
+      // Override to console.log equivalent
+      switch (level) {
+        case "error":
+          console.error(formattedMessage + metaString);
+          break;
+        case "warn":
+          console.warn(formattedMessage + metaString);
+          break;
+        case "info":
+          console.info(formattedMessage + metaString);
+          break;
+        case "debug":
+          console.log(formattedMessage + metaString);
+          break;
+      }
+    }
+  }
 }
-  

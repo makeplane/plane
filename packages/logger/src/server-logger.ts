@@ -1,8 +1,9 @@
-import { createLogger, format, transports, Logger as WinstonLogger } from "winston";
+import { createLogger, format, LoggerOptions, transports, Logger as WinstonLogger } from "winston";
 import winstonRotate from "winston-daily-rotate-file";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import fs from 'fs';
+import { ILoggerOptions } from "index";
 
 // Get current directory
 const __filename = fileURLToPath(import.meta.url);
@@ -18,14 +19,14 @@ if (!fs.existsSync(logDirectory)) {
 
 
 export default class Logger {
-  private static instance: Logger;
+  static instance?: Logger;
   private logger: WinstonLogger;
-  private logLevel: string;
-  private logFilePrefix: string;
+  private logLevel?: string;
+  private logFilePrefix?: string;
 
-  private constructor(logLevel: string = "info", logFilePrefix: string = "plane-log") {
-    this.logLevel = logLevel;
-    this.logFilePrefix = logFilePrefix;
+  private constructor(loggerOptions: ILoggerOptions = { logLevel: "info", logFilePrefix: "plane-log" }) {
+    this.logLevel = loggerOptions.logLevel;
+    this.logFilePrefix = loggerOptions.logFilePrefix;
 
     this.logger = createLogger({
       level: this.logLevel,
@@ -71,15 +72,15 @@ export default class Logger {
     }
   }
 
-  private static getInstance(logLevel?: string, logFilePrefix?: string) {
+  private static getInstance(loggerOptions?: ILoggerOptions) {
     if (!Logger.instance) {
-      Logger.instance = new Logger(logLevel, logFilePrefix);
+      Logger.instance = new Logger(loggerOptions);
     } 
     return Logger.instance;
   }
 
-  public static getLogger(logLevel?: string, logFilePrefix?: string) {
-    const instance = Logger.getInstance(logLevel, logFilePrefix);
+  public static getLogger(loggerOptions?: ILoggerOptions) {
+    const instance = Logger.getInstance(loggerOptions);
     return instance.logger
   }
 

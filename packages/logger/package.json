@@ -3,13 +3,23 @@
   "version": "1.0.0",
   "description": "Logger shared across multiple apps internally",
   "private": true,
-  "main": "./dist/index.js",
+  "main": "./dist/server-logger.js",
+  "browser": "./dist/client-logger.js",
   "type":"module",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
   ],
+  "exports": {
+    ".": {
+      "require": "./dist/server-logger.js",  
+      "import": "./dist/index.js",  
+      "browser": "./dist/client-logger.js"
+    },
+    "./client": "./dist/client-logger.js",  
+    "./server": "./dist/server-logger.js"
+  },
   "scripts": {
     "build": "tsup ./src/index.ts --format esm,cjs --dts --external react --minify",
     "lint": "eslint src --ext .ts,.tsx",

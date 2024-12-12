@@ -1,24 +1,16 @@
-import { Logger as WinstonLogger } from 'winston';
-
-export interface ILogger {
-  logger: WinstonLogger; // The Winston logger instance
-  logLevel?: string; // The current logging level
-  logFilePrefix?: string;
-
-  // Method to get the logger instance
-  getLogger(logLevel?: string, logFilePrefix?: string): WinstonLogger;
-}
-
+import { ILogger } from 'index';
 
 let Logger: ILogger;
 
 if (typeof window !== "undefined") {
   // Client-side logic
-  console.log("inside client logger import")
-  Logger = require('./client-logger').default;
+  console.log("inside client logger import");
+  const { default: ClientLogger } = require('./client-logger');
+  Logger = ClientLogger;
 } else {
   // Server-side logic
-  Logger = require('./server-logger').default;
+  const { default: ServerLogger } = require('./server-logger');
+  Logger = ServerLogger;
 }
 
 export default Logger;
