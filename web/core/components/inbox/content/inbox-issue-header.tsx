@@ -15,6 +15,7 @@ import {
   MoveRight,
   Copy,
 } from "lucide-react";
+import { TNameDescriptionLoader } from "@plane/types";
 import { Button, ControlLink, CustomMenu, Row, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
@@ -25,7 +26,7 @@ import {
   InboxIssueStatus,
   SelectDuplicateInboxIssueModal,
 } from "@/components/inbox";
-import { CreateUpdateIssueModal, IssueUpdateStatus } from "@/components/issues";
+import { CreateUpdateIssueModal, NameDescriptionUpdateStatus } from "@/components/issues";
 // helpers
 import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
 import { EInboxIssueStatus } from "@/helpers/inbox.helper";
@@ -41,7 +42,7 @@ type TInboxIssueActionsHeader = {
   workspaceSlug: string;
   projectId: string;
   inboxIssue: IInboxIssueStore | undefined;
-  isSubmitting: "submitting" | "submitted" | "saved";
+  isSubmitting: TNameDescriptionLoader;
   isMobileSidebar: boolean;
   setIsMobileSidebar: (value: boolean) => void;
   isNotificationEmbed: boolean;
@@ -282,7 +283,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           )}
           <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />
           <div className="flex items-center justify-end w-full">
-            <IssueUpdateStatus isSubmitting={isSubmitting} />
+            <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
           </div>
         </div>
 

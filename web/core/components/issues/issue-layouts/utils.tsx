@@ -37,6 +37,9 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // store
 import { store } from "@/lib/store-context";
+// plane web store
+import { getTeamProjectColumns } from "@/plane-web/components/issues/issue-layouts/utils";
+// store
 import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.store";
 
 export const HIGHLIGHT_CLASS = "highlight";
@@ -100,6 +103,7 @@ export const getGroupByColumns = ({
     labels: () => getLabelsColumns(isWorkspaceLevel),
     assignees: getAssigneeColumns,
     created_by: getCreatedByColumns,
+    team_project: getTeamProjectColumns,
   };
 
   // Get and return the columns for the specified group by option

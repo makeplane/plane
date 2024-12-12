@@ -13,7 +13,6 @@ import { CustomMenu, Tooltip } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
 // constants
-import { SIDEBAR_WORKSPACE_MENU_ITEMS } from "@/constants/dashboard";
 import { SIDEBAR_CLICKED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -23,22 +22,26 @@ import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { UpgradeBadge } from "@/plane-web/components/workspace";
+// plane web constants
+import { SIDEBAR_WORKSPACE_MENU_ITEMS } from "@/plane-web/constants/dashboard";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// plane web hooks
+import { isWorkspaceFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
 
 export const SidebarWorkspaceMenu = observer(() => {
   // state
   const [isMenuActive, setIsMenuActive] = useState(false);
   // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
+  // router params
+  const { workspaceSlug } = useParams();
+  // pathname
+  const pathname = usePathname();
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const { captureEvent } = useEventTracker();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
-  // router params
-  const { workspaceSlug } = useParams();
-  // pathname
-  const pathname = usePathname();
   // local storage
   const { setValue: toggleWorkspaceMenu, storedValue } = useLocalStorage<boolean>("is_workspace_menu_open", true);
   // derived values
@@ -158,8 +161,9 @@ export const SidebarWorkspaceMenu = observer(() => {
             })}
             static
           >
-            {SIDEBAR_WORKSPACE_MENU_ITEMS.map(
-              (link) =>
+            {SIDEBAR_WORKSPACE_MENU_ITEMS.map((link) => {
+              if (!isWorkspaceFeatureEnabled(link.key, workspaceSlug.toString())) return null;
+              return (
                 allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString()) && (
                   <Tooltip
                     key={link.key}
@@ -188,7 +192,8 @@ export const SidebarWorkspaceMenu = observer(() => {
                     </Link>
                   </Tooltip>
                 )
-            )}
+              );
+            })}
           </Disclosure.Panel>
         )}
       </Transition>
