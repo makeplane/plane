@@ -35,19 +35,13 @@ from plane.db.models import (
     IssueType,
 )
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
-from plane.graphql.utils.issue_activity import (
-    convert_issue_properties_to_activity_dict,
-)
+from plane.graphql.utils.issue_activity import convert_issue_properties_to_activity_dict
 
 
 @sync_to_async
 def get_feature_flag(workspace_slug: str, user_id: str, flag_key: str):
     url = f"{settings.FEATURE_FLAG_SERVER_BASE_URL}/api/feature-flags/"
-    json = {
-        "workspace_slug": workspace_slug,
-        "user_id": user_id,
-        "flag_key": flag_key,
-    }
+    json = {"workspace_slug": workspace_slug, "user_id": user_id, "flag_key": flag_key}
     headers = {
         "content-type": "application/json",
         "x-api-key": settings.FEATURE_FLAG_SERVER_AUTH_TOKEN,
@@ -60,9 +54,7 @@ def get_feature_flag(workspace_slug: str, user_id: str, flag_key: str):
 @strawberry.type
 class IssueMutation:
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[ProjectMemberPermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
     )
     async def createIssue(
         self,
@@ -85,9 +77,7 @@ class IssueMutation:
         issue_type_id = None
         # validating issue type and assigning thr default issue type
         is_feature_flagged = await get_feature_flag(
-            workspace.slug,
-            str(info.context.user.id),
-            "ISSUE_TYPE_DISPLAY",
+            workspace.slug, str(info.context.user.id), "ISSUE_TYPE_DISPLAY"
         )
 
         if is_feature_flagged:
@@ -190,9 +180,7 @@ class IssueMutation:
         return issue
 
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[ProjectMemberPermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
     )
     async def updateIssue(
         self,
@@ -214,9 +202,7 @@ class IssueMutation:
         issue = await sync_to_async(Issue.objects.get)(id=id)
 
         # activity tacking data
-        current_issue_activity = (
-            await convert_issue_properties_to_activity_dict(issue)
-        )
+        current_issue_activity = await convert_issue_properties_to_activity_dict(issue)
         activity_payload = {}
 
         if name is not None:
@@ -252,9 +238,7 @@ class IssueMutation:
         # creating or updating the assignees
         if assignees is not None:
             activity_payload["assignee_ids"] = assignees
-            await sync_to_async(
-                IssueAssignee.objects.filter(issue=issue).delete
-            )()
+            await sync_to_async(IssueAssignee.objects.filter(issue=issue).delete)()
             if len(assignees) > 0:
                 await sync_to_async(IssueAssignee.objects.bulk_create)(
                     [
@@ -307,16 +291,10 @@ class IssueMutation:
         return issue
 
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[ProjectMemberPermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
     )
     async def deleteIssue(
-        self,
-        info: Info,
-        slug: str,
-        project: str,
-        issue: str,
+        self, info: Info, slug: str, project: str, issue: str
     ) -> bool:
         issue = await sync_to_async(Issue.issue_objects.get)(
             id=issue, project_id=project, workspace__slug=slug
@@ -326,9 +304,7 @@ class IssueMutation:
             raise Exception("You are not authorized to delete this issue")
 
         # activity tracking data
-        current_issue_activity = (
-            await convert_issue_properties_to_activity_dict(issue)
-        )
+        current_issue_activity = await convert_issue_properties_to_activity_dict(issue)
         await sync_to_async(issue.delete)()
 
         # Track the issue
@@ -419,11 +395,7 @@ class IssueSubscriptionMutation:
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def subscribeIssue(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        issue: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
     ) -> bool:
         issue = await sync_to_async(IssueSubscriber.objects.create)(
             issue_id=issue, project_id=project, subscriber=info.context.user
@@ -434,11 +406,7 @@ class IssueSubscriptionMutation:
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def unSubscribeIssue(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        issue: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
     ) -> bool:
         issue_subscriber = await sync_to_async(IssueSubscriber.objects.get)(
             issue_id=issue,

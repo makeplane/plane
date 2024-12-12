@@ -83,6 +83,8 @@ from .mutations.issues import (
     IssueRelationMutation,
     IssueCommentMutation,
     SubIssueMutation,
+    IssueModuleMutation,
+    IssueCycleMutation,
 )
 from .mutations.device import DeviceInformationMutation
 from .mutations.asset import UserAssetMutation, ProjectAssetMutation
@@ -170,6 +172,8 @@ class Mutation(
     PageMutation,
     DeviceInformationMutation,
     WorkspacePageMutation,
+    IssueModuleMutation,
+    IssueCycleMutation,
     UserAssetMutation,
     UserMutation,
     ProjectAssetMutation,

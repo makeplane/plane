@@ -16,26 +16,15 @@ from django.utils import timezone
 from django.core import serializers
 
 # Module imports
-from plane.graphql.permissions.project import (
-    ProjectMemberPermission,
-    ProjectBasePermission,
-)
-from plane.db.models import (
-    CycleIssue,
-    Cycle,
-    UserFavorite,
-    CycleUserProperties,
-)
-from plane.graphql.types.cycle import CycleUserPropertyType
+from plane.graphql.permissions.project import ProjectMemberPermission
+from plane.db.models import CycleIssue, Cycle
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
 
 
 @strawberry.type
 class CycleIssueMutation:
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[ProjectMemberPermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
     )
     async def create_cycle_issue(
         self,
@@ -53,9 +42,7 @@ class CycleIssueMutation:
         # Fetch existing CycleIssues for the given issues asynchronously
         existing_cycle_issues = await sync_to_async(
             lambda: list(
-                CycleIssue.objects.filter(
-                    ~Q(cycle_id=cycle), issue_id__in=issues
-                ).all()
+                CycleIssue.objects.filter(~Q(cycle_id=cycle), issue_id__in=issues).all()
             )
         )()
 
@@ -125,9 +112,7 @@ class CycleIssueMutation:
         return True
 
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[ProjectMemberPermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
     )
     async def delete_cycle_issue(
         self,
@@ -138,19 +123,11 @@ class CycleIssueMutation:
         issue: strawberry.ID,
     ) -> bool:
         cycle_issue = await sync_to_async(CycleIssue.objects.filter)(
-            cycle_id=cycle,
-            project_id=project,
-            workspace__slug=slug,
-            issue_id=issue,
+            cycle_id=cycle, project_id=project, workspace__slug=slug, issue_id=issue
         )
         await sync_to_async(issue_activity.delay)(
             type="cycle.activity.deleted",
-            requested_data=json.dumps(
-                {
-                    "cycle_id": str(cycle),
-                    "issues": [str(issue)],
-                }
-            ),
+            requested_data=json.dumps({"cycle_id": str(cycle), "issues": [str(issue)]}),
             actor_id=str(info.context.user.id),
             issue_id=str(issue),
             project_id=str(project),
@@ -162,76 +139,3 @@ class CycleIssueMutation:
         await sync_to_async(cycle_issue.delete)()
 
         return True
-
-
-@strawberry.type
-class CycleFavoriteMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def favoriteCycle(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        cycle: strawberry.ID,
-    ) -> bool:
-        _ = await sync_to_async(UserFavorite.objects.create)(
-            entity_identifier=cycle,
-            entity_type="cycle",
-            user=info.context.user,
-            project_id=project,
-        )
-        return True
-
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def unFavoriteCycle(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        cycle: strawberry.ID,
-    ) -> bool:
-        cycle_favorite = await sync_to_async(UserFavorite.objects.get)(
-            entity_identifier=cycle,
-            entity_type="cycle",
-            user=info.context.user,
-            workspace__slug=slug,
-            project_id=project,
-        )
-        await sync_to_async(cycle_favorite.delete)()
-
-        return True
-
-
-@strawberry.type
-class CycleIssueUserPropertyMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def updateCycleUserProperties(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        cycle: strawberry.ID,
-        filters: JSON,
-        display_filters: JSON,
-        display_properties: JSON,
-    ) -> CycleUserPropertyType:
-        cycle_issue_properties = await sync_to_async(
-            CycleUserProperties.objects.get
-        )(
-            workspace__slug=slug,
-            project_id=project,
-            cycle_id=cycle,
-            user=info.context.user,
-        )
-        cycle_issue_properties.filters = filters
-        cycle_issue_properties.display_filters = display_filters
-        cycle_issue_properties.display_properties = display_properties
-
-        await sync_to_async(cycle_issue_properties.save)()
-        return cycle_issue_properties
