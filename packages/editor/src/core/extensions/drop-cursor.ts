@@ -1,4 +1,4 @@
-import { Plugin, EditorState, PluginKey } from "@tiptap/pm/state";
+import { Plugin, EditorState, PluginKey, NodeSelection } from "@tiptap/pm/state";
 import { EditorView } from "@tiptap/pm/view";
 import { dropPoint } from "@tiptap/pm/transform";
 import { Editor, Extension } from "@tiptap/core";
@@ -44,10 +44,14 @@ export function dropCursor(options: DropCursorOptions = {}, tiptapEditorOptions:
     },
     props: {
       handleDrop(view, event, slice, moved) {
-        const { isBetweenFlatLists } = isBetweenFlatListsFn(event, tiptapEditorOptions.editor);
+        const { isBetweenFlatLists, isNestedList, hasNestedLists, pos, isHoveringOverListContent } =
+          isBetweenFlatListsFn(event, tiptapEditorOptions.editor);
 
         const state = pluginKey.getState(view.state);
         let dropPosByDropCursorPos = state?.dropPosByDropCursorPos;
+        if (isHoveringOverListContent) {
+          dropPosByDropCursorPos -= 1;
+        }
 
         if (isBetweenFlatLists && dropPosByDropCursorPos) {
           const tr = view.state.tr;
@@ -65,7 +69,18 @@ export function dropCursor(options: DropCursorOptions = {}, tiptapEditorOptions:
             tr.deleteSelection();
           }
 
+          // Insert the content
           tr.insert(dropPosByDropCursorPos, slice.content);
+
+          // Create a NodeSelection on the newly inserted content
+          const $pos = tr.doc.resolve(dropPosByDropCursorPos);
+          const node = $pos.nodeAfter;
+
+          if (node) {
+            const nodeSelection = NodeSelection.create(tr.doc, dropPosByDropCursorPos);
+            tr.setSelection(nodeSelection);
+          }
+
           view.dispatch(tr);
           return true;
         }
@@ -206,7 +221,14 @@ class DropCursorView {
     if (!this.editorView.editable) return;
     const pos = this.editorView.posAtCoords({ left: event.clientX, top: event.clientY });
 
-    const { isBetweenFlatLists, pos: posList } = isBetweenFlatListsFn(event, this.editor);
+    const {
+      isBetweenFlatLists,
+      pos: posList,
+      isNestedList,
+      hasNestedLists,
+      listLevel,
+      isHoveringOverListContent,
+    } = isBetweenFlatListsFn(event, this.editor);
     if (isBetweenFlatLists) {
       pos.pos = posList;
     }
@@ -216,6 +238,14 @@ class DropCursorView {
       const disableDropCursor = node && node.type.spec.disableDropCursor;
       const disabled =
         typeof disableDropCursor == "function" ? disableDropCursor(this.editorView, pos, event) : disableDropCursor;
+
+      if (isHoveringOverListContent) {
+        this.element.style.backgroundColor = "black";
+      } else {
+        if (this.element) {
+          this.element.style.backgroundColor = "red";
+        }
+      }
 
       if (!disabled) {
         let target = pos.pos;
@@ -273,22 +303,58 @@ export const DropCursorExtension = Extension.create({
 
 function isBetweenFlatListsFn(event: DragEvent, editor: Editor) {
   const elementUnderDrag = document.elementFromPoint(event.clientX, event.clientY);
+  console.log("elementUnderDrag", elementUnderDrag);
 
   let pos = editor.view.posAtCoords({ left: event.clientX, top: event.clientY });
-  // Check if element or any of its ancestors has the class
-  const hasFlatListAncestor = elementUnderDrag?.closest(".prosemirror-flat-list");
-  if (hasFlatListAncestor) {
-    const sibling = hasFlatListAncestor.nextElementSibling;
-    const rect = sibling.getBoundingClientRect();
+  const currentFlatList = elementUnderDrag?.closest(".prosemirror-flat-list");
+
+  let level = null;
+  let hasNestedLists = false;
+  let isHoveringOverListContent = false;
+
+  // if the element under drag is a not a flat list but a child of a flat listLevel
+  if (currentFlatList && !elementUnderDrag.classList.contains("prosemirror-flat-list")) {
+    isHoveringOverListContent = true;
+  }
+
+  if (currentFlatList) {
+    const sibling = currentFlatList.nextElementSibling;
+    const rect = sibling?.getBoundingClientRect();
 
     pos = editor.view.posAtCoords({
       left: rect.left,
       top: rect.top,
     });
+
+    level = getListLevel(currentFlatList);
+    hasNestedLists = currentFlatList.querySelectorAll(".prosemirror-flat-list").length > 0;
   }
 
   return {
-    isBetweenFlatLists: hasFlatListAncestor,
+    isHoveringOverListContent,
+    isBetweenFlatLists: currentFlatList,
     pos: pos.pos - 1,
+    listLevel: level,
+    isNestedList: level >= 1,
+    hasNestedLists,
   };
 }
+
+function getListLevel(element: Element): number {
+  let level = 0;
+  let current = element.parentElement;
+
+  while (current && current !== document.body) {
+    if (current.matches(".prosemirror-flat-list")) {
+      level++;
+    }
+    current = current.parentElement;
+  }
+
+  return level;
+}
+
+// handle the case where the list has a child list, we need to show drop cursor
+// above the first child of the list and not the nextListItem to the list
+
+// handle the case where there's only one list in the list i.e. no sibling list
