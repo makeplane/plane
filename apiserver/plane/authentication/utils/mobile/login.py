@@ -15,8 +15,7 @@ from plane.authentication.utils.host import base_host
 def generate_random_string(length=64):
     return "".join(
         random.choices(
-            string.ascii_uppercase + string.ascii_lowercase + string.digits,
-            k=length,
+            string.ascii_uppercase + string.ascii_lowercase + string.digits, k=length
         )
     )
 
@@ -43,9 +42,7 @@ class ValidateAuthToken:
     def set_value(self, session_key):
         if self.token and self.ri:
             self.ri.set(
-                self.token,
-                json.dumps({"session_id": session_key}),
-                ex=self.expiry,
+                self.token, json.dumps({"session_id": session_key}), ex=self.expiry
             )
         else:
             raise ValueError("Token or Redis instance not set")
@@ -67,14 +64,20 @@ class ValidateAuthToken:
 def mobile_validate_user_onboarding(user):
     profile, _ = Profile.objects.get_or_create(user=user)
 
-    if not profile.is_onboarded:
-        return False
-    return True
+    if profile.is_onboarded:
+        return True
+    else:
+        if (
+            profile.onboarding_step.profile_complete
+            and profile.onboarding_step.workspace_create
+            and profile.onboarding_step.workspace_invite
+            and profile.onboarding_step.workspace_join
+        ):
+            return True
+    return False
 
 
-def mobile_user_login(
-    request, user, is_app=False, is_admin=False, is_space=False
-):
+def mobile_user_login(request, user, is_app=False, is_admin=False, is_space=False):
     login(request=request, user=user)
 
     # If is admin cookie set the custom age
@@ -85,10 +88,7 @@ def mobile_user_login(
         "user_agent": request.META.get("HTTP_USER_AGENT", ""),
         "ip_address": request.META.get("REMOTE_ADDR", ""),
         "domain": base_host(
-            request=request,
-            is_app=is_app,
-            is_admin=is_admin,
-            is_space=is_space,
+            request=request, is_app=is_app, is_admin=is_admin, is_space=is_space
         ),
     }
     request.session["device_info"] = device_info
