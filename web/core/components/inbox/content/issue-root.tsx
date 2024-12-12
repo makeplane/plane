@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // plane types
-import { TIssue } from "@plane/types";
+import { TIssue, TNameDescriptionLoader } from "@plane/types";
 // plane ui
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -34,8 +34,8 @@ type Props = {
   projectId: string;
   inboxIssue: IInboxIssueStore;
   isEditable: boolean;
-  isSubmitting: "submitting" | "submitted" | "saved";
-  setIsSubmitting: Dispatch<SetStateAction<"submitting" | "submitted" | "saved">>;
+  isSubmitting: TNameDescriptionLoader;
+  setIsSubmitting: Dispatch<SetStateAction<TNameDescriptionLoader>>;
 };
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {

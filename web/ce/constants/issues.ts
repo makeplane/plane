@@ -1,4 +1,6 @@
 import { TIssueActivityComment } from "@plane/types";
+// constants
+import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
 
 export enum EActivityFilterType {
   ACTIVITY = "ACTIVITY",
@@ -32,3 +34,7 @@ export const filterActivityOnSelectedFilters = (
   activity.filter((activity) => filter.includes(activity.activity_type as TActivityFilters));
 
 export const ENABLE_ISSUE_DEPENDENCIES = false;
+
+export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
+  [pageType: string]: { [layoutType: string]: ILayoutDisplayFiltersOptions };
+} = {};

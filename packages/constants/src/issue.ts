@@ -11,6 +11,7 @@ export enum EIssueGroupByToServerOptions {
   "target_date" = "target_date",
   "project" = "project_id",
   "created_by" = "created_by",
+  "team_project" = "project_id",
 }
 
 export enum EIssueGroupBYServerToProperty {

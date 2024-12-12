@@ -42,5 +42,7 @@ export * from "./pending-icon";
 export * from "./slack-icon";
 export * from "./pi-chat";
 export * from "./workspace-icon";
+export * from "./teams";
+export * from "./lead-icon";
 export * from "./plane-ai-icon";
 export * from "./epic-icon";

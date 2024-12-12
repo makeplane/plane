@@ -15,10 +15,11 @@ import {
   PanelLeft,
   MoveRight,
 } from "lucide-react";
+import { TNameDescriptionLoader } from "@plane/types";
 import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
 // components
 import { InboxIssueStatus } from "@/components/inbox";
-import { IssueUpdateStatus } from "@/components/issues";
+import { NameDescriptionUpdateStatus } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
@@ -30,7 +31,7 @@ import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 type Props = {
   workspaceSlug: string;
   inboxIssue: IInboxIssueStore | undefined;
-  isSubmitting: "submitting" | "submitted" | "saved";
+  isSubmitting: TNameDescriptionLoader;
   handleInboxIssueNavigation: (direction: "next" | "prev") => void;
   canMarkAsAccepted: boolean;
   canMarkAsDeclined: boolean;
@@ -117,7 +118,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
         <div className="flex items-center gap-4">
           <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />
           <div className="flex items-center justify-end w-full">
-            <IssueUpdateStatus isSubmitting={isSubmitting} />
+            <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
           </div>
         </div>
         <div className="ml-auto">

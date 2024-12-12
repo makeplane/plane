@@ -16,28 +16,25 @@ interface RichTextEditorWrapperProps
   extends Omit<IRichTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
   workspaceId: string;
-  projectId: string;
+  memberIds: string[];
+  projectId?: string;
   uploadFile: (file: File) => Promise<string>;
 }
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
-  const { containerClassName, workspaceSlug, workspaceId, projectId, uploadFile, ...rest } = props;
+  const { containerClassName, workspaceSlug, workspaceId, projectId, memberIds, uploadFile, ...rest } = props;
   // store hooks
   const { data: currentUser } = useUser();
-  const {
-    getUserDetails,
-    project: { getProjectMemberIds },
-  } = useMember();
+  const { getUserDetails } = useMember();
   // editor flaggings
   const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // derived values
-  const projectMemberIds = getProjectMemberIds(projectId);
-  const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
+  const memberDetails = memberIds?.map((id) => getUserDetails(id) as IUserLite);
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug,
     projectId,
-    members: projectMemberDetails,
+    members: memberDetails,
     user: currentUser ?? undefined,
   });
   // file size

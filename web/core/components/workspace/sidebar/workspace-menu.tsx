@@ -13,7 +13,6 @@ import { CustomMenu, Tooltip } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
 // constants
-import { SIDEBAR_WORKSPACE_MENU_ITEMS } from "@/constants/dashboard";
 import { SIDEBAR_CLICKED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -23,8 +22,13 @@ import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { UpgradeBadge } from "@/plane-web/components/workspace";
+// plane web constants
+import { SIDEBAR_WORKSPACE_MENU_ITEMS } from "@/plane-web/constants/dashboard";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// plane web hooks
+import { isWorkspaceFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+
 
 export const SidebarWorkspaceMenu = observer(() => {
   // state
@@ -159,7 +163,7 @@ export const SidebarWorkspaceMenu = observer(() => {
             static
           >
             {SIDEBAR_WORKSPACE_MENU_ITEMS.map((link) => {
-              if (link.key === "active-cycles" && hideWorkspaceActiveCycle) return null;
+              if (!isWorkspaceFeatureEnabled(link.key, workspaceSlug.toString())) return null;
               return (
                 allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString()) && (
                   <Tooltip

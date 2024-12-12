@@ -211,7 +211,8 @@ export type GroupByColumnTypes =
   | "priority"
   | "labels"
   | "assignees"
-  | "created_by";
+  | "created_by"
+  | "team_project";
 
 export interface IGroupByColumn {
   id: string;
