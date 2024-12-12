@@ -11,16 +11,7 @@ import { API_BASE_URL } from "@plane/constants";
 // services
 import APIService from "./api.service";
 
-/**
- * Service class for handling workspace analytics operations
- * Provides methods for fetching, saving, and exporting analytics data
- * @extends {APIService}
- */
-export default class AnalyticsService extends APIService {
-  /**
-   * Creates an instance of AnalyticsService
-   * Initializes with the base API URL
-   */
+export class AnalyticsService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }

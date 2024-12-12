@@ -1,17 +1,10 @@
+import { API_BASE_URL } from "@plane/constants";
 // types
 import { THomeDashboardResponse, TWidget, TWidgetStatsResponse, TWidgetStatsRequestParams } from "@plane/types";
-// helpers
-import { API_BASE_URL } from "@plane/constants";
+
 import APIService from "./api.service";
-/**
- * Service class for managing dashboard operations and widget data
- * @extends {APIService}
- */
+
 export default class DashboardService extends APIService {
-  /**
-   * Creates an instance of DashboardService
-   * Initializes the service with the base API URL
-   */
   constructor() {
     super(API_BASE_URL);
   }

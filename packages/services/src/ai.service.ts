@@ -23,7 +23,7 @@ export type TTaskPayload = {
  * Extends the base APIService class to interact with AI endpoints
  * @extends {APIService}
  */
-export default class AIService extends APIService {
+export class AIService extends APIService {
   /**
    * Creates an instance of AIService
    * Initializes with the base API URL

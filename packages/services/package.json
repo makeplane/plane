@@ -1,0 +1,6 @@
+{
+  "name": "@plane/services",
+  "version": "0.24.1",
+  "private": true,
+  "main": "./src/index.ts"
+}

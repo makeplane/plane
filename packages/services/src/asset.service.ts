@@ -3,7 +3,7 @@ import { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
 // helpers
 import { generateFileUploadPayload, getAssetIdFromUrl, getFileMetaDataForUpload } from "@/helpers/file.helper";
 // services
-import APIService from "../api.service";
+import APIService from "./api.service";
 
 export interface UnSplashImage {
   id: string;

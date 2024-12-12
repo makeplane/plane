@@ -1,17 +1,9 @@
-import { IApiToken } from "@plane/types";
 import { API_BASE_URL } from "@plane/constants";
+import { IApiToken } from "@plane/types";
+
 import APIService from "./api.service";
 
-/**
- * Service class for managing API tokens in a workspace
- * Provides methods for creating, retrieving, and managing API authentication tokens
- * @extends {APIService}
- */
-export default class APITokenService extends APIService {
-  /**
-   * Creates an instance of APITokenService
-   * Initializes with the base API URL
-   */
+export class APITokenService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
