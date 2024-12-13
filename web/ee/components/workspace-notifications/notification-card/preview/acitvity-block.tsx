@@ -15,11 +15,12 @@ import {
 } from "lucide-react";
 import { IUserLite } from "@plane/types";
 import { DiceIcon, LayersIcon, Tooltip, ContrastIcon, ArchiveIcon, Intake, Avatar } from "@plane/ui";
+import { getValidKeysFromObject } from "@/helpers/array.helper";
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// ui
-// components
+import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
+import { TIssueRelationTypes } from "@/plane-web/types";
 // helpers
 
 type TIssueActivityBlock = {
@@ -52,6 +53,8 @@ export const acitvityIconsMap: Record<string, ReactElement> = {
 
 export const IssueActivityBlock: FC<TIssueActivityBlock> = (props) => {
   const { ends, children, createdAt, notificationField, triggeredBy } = props;
+  const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
+  const activityRelations = getValidKeysFromObject(ISSUE_RELATION_OPTIONS);
 
   const { isMobile } = usePlatformOS();
   return (
@@ -62,11 +65,11 @@ export const IssueActivityBlock: FC<TIssueActivityBlock> = (props) => {
         <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-custom-background-80" aria-hidden />
       )}
       <div className="flex-shrink-0 ring-6 w-7 h-7 rounded-full overflow-hidden flex justify-center items-center z-[4] bg-custom-background-80 text-custom-text-200">
-        {notificationField !== "comment"
-          ? acitvityIconsMap[notificationField]
-          : triggeredBy && (
-              <Avatar src={getFileURL(triggeredBy.avatar_url)} name={triggeredBy.display_name} size={28} />
-            )}
+        {notificationField === "comment"
+          ? triggeredBy && <Avatar src={getFileURL(triggeredBy.avatar_url)} name={triggeredBy.display_name} size={28} />
+          : activityRelations.find((field) => field === notificationField)
+            ? ISSUE_RELATION_OPTIONS[notificationField as TIssueRelationTypes]?.icon(14)
+            : acitvityIconsMap[notificationField]}
       </div>
       <div className="w-full text-custom-text-200 flex gap-2">
         <span className="truncate"> {children} </span>

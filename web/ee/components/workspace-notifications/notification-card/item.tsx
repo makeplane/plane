@@ -14,6 +14,7 @@ import { calculateTimeAgo, convertToEpoch } from "@/helpers/date-time.helper";
 //store
 import { useIssueDetail, useWorkspaceNotifications } from "@/hooks/store";
 //components
+import { IssueTypeIdentifier } from "@/plane-web/components/issues";
 import { NotificationCardPreview, NotificationOption } from "@/plane-web/components/workspace-notifications";
 export interface INotificationItem {
   issueId: string;
@@ -84,66 +85,71 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
 
   return (
     <Popover as="div" className={""}>
-      <Popover.Button as={Fragment}>
-        <div
-          className={cn(
-            "border-b relative transition-all py-4 border-custom-border-200 cursor-pointer group w-full",
-            getIsIssuePeeked(issue.id) && "bg-custom-background-80/30",
-            unreadCount > 0 ? "bg-custom-primary-100/5" : ""
-          )}
-          ref={setReferenceElement}
-          onClick={(e) => {
-            e.preventDefault();
-            handleNotificationIssuePeekOverview();
-          }}
+      <div
+        className={cn(
+          "border-b relative transition-all py-4 border-custom-border-200 cursor-pointer group w-full",
+          getIsIssuePeeked(issue.id) && "bg-custom-background-80/30",
+          unreadCount > 0 ? "bg-custom-primary-100/5" : ""
+        )}
+        ref={setReferenceElement}
+        onClick={(e) => {
+          e.preventDefault();
+          handleNotificationIssuePeekOverview();
+        }}
+      >
+        {/* Issue card header */}
+        <Popover.Button
+          as="div"
+          className="flex items-center gap-1 justify-between px-4"
           onMouseEnter={() => setShowPreview(true)}
           onMouseLeave={() => setShowPreview(false)}
         >
-          {/* Issue card header */}
-          <Row className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
+            {issue.type_id && <IssueTypeIdentifier issueTypeId={issue.type_id} />}
             <span className="text-sm font-medium break-words">
-              {issue.sequence_id}-{issue.identifier}
+              {issue.identifier}-{issue.sequence_id}
             </span>
-            <div className="flex-1 flex gap-2 justify-between items-center">
-              <span className="overflow-hidden whitespace-normal text-sm break-all truncate line-clamp-1 text-custom-text-00">
-                {issue.name}
-              </span>
-            </div>
-            <NotificationOption
-              workspaceSlug={workspaceSlug}
-              issueId={issueId}
-              unreadCount={unreadCount}
-              notificationList={notificationList}
-              isSnoozeStateModalOpen={isSnoozeStateModalOpen}
-              setIsSnoozeStateModalOpen={setIsSnoozeStateModalOpen}
-              customSnoozeModal={customSnoozeModal}
-              setCustomSnoozeModal={setCustomSnoozeModal}
-            />
-            {unreadCount > 0 && (
-              <span className="text-xs px-[5px] font-medium group-hover:hidden py-[1px] text-white bg-custom-primary-300 rounded-md">
-                {unreadCount <= 20 ? unreadCount : `20+`}
-              </span>
-            )}
-          </Row>
-          <Row className="flex items-center justify-between mt-2">
-            {/* Author avatars */}
-            <MemberDropdown
-              value={authorIds}
-              onChange={() => {}}
-              disabled
-              multiple
-              buttonVariant={authorIds?.length > 0 ? "transparent-without-text" : "border-without-text"}
-              buttonClassName={authorIds?.length > 0 ? "hover:bg-transparent px-0" : ""}
-              showTooltip={authorIds?.length === 0}
-              placeholder="Assignees"
-              optionsClassName="z-10"
-              tooltipContent=""
-            />
-            <div />
-            <span className="text-xs text-custom-text-100">{latestNotificationTime}</span>
-          </Row>
+          </div>
+          <div className="flex-1 flex gap-2 justify-between items-center">
+            <span className="overflow-hidden whitespace-normal text-sm break-all truncate line-clamp-1 text-custom-text-00">
+              {issue.name}
+            </span>
+          </div>
+          <NotificationOption
+            workspaceSlug={workspaceSlug}
+            issueId={issueId}
+            unreadCount={unreadCount}
+            notificationList={notificationList}
+            isSnoozeStateModalOpen={isSnoozeStateModalOpen}
+            setIsSnoozeStateModalOpen={setIsSnoozeStateModalOpen}
+            customSnoozeModal={customSnoozeModal}
+            setCustomSnoozeModal={setCustomSnoozeModal}
+          />
+          {unreadCount > 0 && (
+            <span className="text-xs px-[5px] font-medium group-hover:hidden py-[1px] text-white bg-custom-primary-300 rounded-md">
+              {unreadCount <= 20 ? unreadCount : `20+`}
+            </span>
+          )}
+        </Popover.Button>
+        <div className="flex items-center justify-between mt-2 px-4">
+          {/* Author avatars */}
+          <MemberDropdown
+            value={authorIds}
+            onChange={() => {}}
+            disabled
+            multiple
+            buttonVariant={authorIds?.length > 0 ? "transparent-without-text" : "border-without-text"}
+            buttonClassName={authorIds?.length > 0 ? "hover:bg-transparent px-0" : ""}
+            showTooltip={authorIds?.length === 0}
+            placeholder="Assignees"
+            optionsClassName="z-10"
+            tooltipContent=""
+          />
+          <div />
+          <span className="text-xs text-custom-text-100">{latestNotificationTime}</span>
         </div>
-      </Popover.Button>
+      </div>
+
       <Transition
         as={"div"}
         show={showPreview}
@@ -151,7 +157,7 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
         onMouseLeave={() => setShowPreview(false)}
       >
         <Popover.Panel {...attributes.popper} className={""}>
-          <div ref={setPopperElement} className={"absolute z-10"} style={styles.popper}>
+          <div ref={setPopperElement} className={"absolute z-10 max-w-[600px]"} style={styles.popper}>
             <NotificationCardPreview
               notificationList={notificationList}
               workspaceSlug={workspaceSlug}

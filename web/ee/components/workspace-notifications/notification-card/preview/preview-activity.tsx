@@ -16,10 +16,80 @@ export type TNotificationPreviewActivity = {
   workspaceSlug: string;
   projectId: string;
 };
+
+const NotificationContent: FC<{
+  notification: TNotification;
+  workspaceSlug: string;
+  projectId: string;
+}> = ({ notification, workspaceSlug, projectId }) => {
+  const { data, triggered_by_details: triggeredBy } = notification;
+  const notificationField = data?.issue_activity.field;
+  const newValue = data?.issue_activity.new_value;
+  const verb = data?.issue_activity.verb;
+
+  const renderTriggerName = () => (
+    <span className="text-custom-text-100 font-medium">
+      {triggeredBy?.is_bot ? triggeredBy.first_name : triggeredBy?.display_name}{" "}
+    </span>
+  );
+
+  const renderAction = () => {
+    if (!notificationField) return "";
+    if (notificationField === "duplicate")
+      return verb === "created"
+        ? "marked that this issue is a duplicate of"
+        : "marked that this issue is not a duplicate";
+    if (notificationField === "relates_to") return "marked that this issue is related to";
+    if (notificationField === "comment") return "commented";
+    if (notificationField === "archived_at") {
+      return newValue === "restore" ? "restored the issue" : "archived the issue";
+    }
+    if (notificationField === "None") return null;
+
+    const baseAction = !["comment", "archived_at"].includes(notificationField) ? verb : "";
+    return `${baseAction} ${replaceUnderscoreIfSnakeCase(notificationField)}`;
+  };
+
+  const renderValue = () => {
+    if (notificationField === "None") return "the issue and assigned it to you.";
+    if (notificationField === "comment") return null;
+    if (notificationField === "target_date" || notificationField === "start_date") return renderFormattedDate(newValue);
+    if (notificationField === "attachment") return "the issue";
+    if (notificationField === "description") return stripAndTruncateHTML(newValue || "", 55);
+    if (notificationField === "archived_at") return null;
+    return newValue;
+  };
+
+  const shouldShowConnector = !["comment", "archived_at", "None"].includes(notificationField || "");
+
+  return (
+    <>
+      {renderTriggerName()}
+      <span className="text-custom-text-300">{renderAction()} </span>
+      {verb !== "deleted" && (
+        <>
+          {shouldShowConnector && <span className="text-custom-text-300">to </span>}
+          <span className="text-custom-text-100 font-medium">{renderValue()}</span>.
+          {notificationField === "comment" && (
+            <div className="scale-75 origin-left">
+              <LiteTextReadOnlyEditor
+                id=""
+                initialValue={newValue ?? ""}
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+              />
+            </div>
+          )}
+        </>
+      )}
+    </>
+  );
+};
+
 export const NotificationPreviewActivity: FC<TNotificationPreviewActivity> = (props) => {
   const { notification, workspaceSlug, ends, projectId } = props;
   const notificationField = notification?.data?.issue_activity.field || undefined;
-  const notificationTriggeredBy = notification.triggered_by_details || undefined;
+  // const notificationTriggeredBy = notification.triggered_by_details || undefined;
   const triggeredBy = notification.triggered_by_details;
 
   if (!workspaceSlug || !notification.id || !notification?.id || !notificationField) return <></>;
@@ -33,62 +103,7 @@ export const NotificationPreviewActivity: FC<TNotificationPreviewActivity> = (pr
         triggeredBy={triggeredBy}
       >
         <div className="w-full whitespace-normal truncate text-sm">
-          <>
-            <span className="text-custom-text-100 font-medium">
-              {notificationTriggeredBy?.is_bot
-                ? notificationTriggeredBy?.first_name
-                : notificationTriggeredBy?.display_name}{" "}
-            </span>
-            <span className="text-custom-text-300">
-              {!["comment", "archived_at"].includes(notificationField) && notification?.data?.issue_activity.verb}{" "}
-              {notificationField === "comment"
-                ? "commented"
-                : notificationField === "archived_at"
-                  ? notification?.data?.issue_activity.new_value === "restore"
-                    ? "restored the issue"
-                    : "archived the issue"
-                  : notificationField === "None"
-                    ? null
-                    : replaceUnderscoreIfSnakeCase(notificationField)}{" "}
-            </span>
-            {notification?.data?.issue_activity.verb !== "deleted" && (
-              <>
-                <span className="text-custom-text-300">
-                  {!["comment", "archived_at", "None"].includes(notificationField) ? "to" : ""}
-                </span>
-                <span className="text-custom-text-100 font-medium">
-                  {" "}
-                  {notificationField !== "None" ? (
-                    notificationField !== "comment" ? (
-                      notificationField === "target_date" ? (
-                        renderFormattedDate(notification?.data?.issue_activity.new_value)
-                      ) : notificationField === "attachment" ? (
-                        "the issue"
-                      ) : notificationField === "description" ? (
-                        stripAndTruncateHTML(notification?.data?.issue_activity.new_value || "", 55)
-                      ) : notificationField === "archived_at" ? null : (
-                        notification?.data?.issue_activity.new_value
-                      )
-                    ) : (
-                      <></>
-                    )
-                  ) : (
-                    "the issue and assigned it to you."
-                  )}
-                </span>
-                {notificationField === "comment" && (
-                  <div className="scale-75 origin-left">
-                    <LiteTextReadOnlyEditor
-                      id={""}
-                      initialValue={notification.data?.issue_activity.new_value ?? ""}
-                      workspaceSlug={workspaceSlug}
-                      projectId={projectId}
-                    />
-                  </div>
-                )}
-              </>
-            )}
-          </>
+          <NotificationContent notification={notification} workspaceSlug={workspaceSlug} projectId={projectId} />
         </div>
       </IssueActivityBlock>
     </div>
