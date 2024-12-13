@@ -804,13 +804,17 @@ class IssueDescriptionVersion(ProjectBaseModel):
             Log the issue description version
             """
             cls.objects.create(
-                issue=issue,
+                workspace_id=issue.workspace_id,
+                project_id=issue.project_id,
+                created_by_id=issue.created_by_id,
+                updated_by_id=issue.updated_by_id,
+                owned_by_id=user,
+                last_saved_at=timezone.now(),
+                issue_id=issue.id,
                 description_binary=issue.description_binary,
                 description_html=issue.description_html,
                 description_stripped=issue.description_stripped,
                 description_json=issue.description,
-                last_saved_at=timezone.now(),
-                owned_by=user,
             )
             return True
         except Exception as e:
