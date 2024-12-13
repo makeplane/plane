@@ -42,8 +42,8 @@ const transports = [
     filename: path.join(process.cwd(), "logs", "error-%DATE%.log"),
     datePattern: "YYYY-MM-DD",
     zippedArchive: true,
-    maxSize: "20m",
-    maxFiles: "7d",
+    maxSize: process.env.LOG_MAX_SIZE || "20m",
+    maxFiles: process.env.LOG_RETENTION || "7d",
     level: "error",
   }),
 
@@ -52,8 +52,8 @@ const transports = [
     filename: path.join(process.cwd(), "logs", "combined-%DATE%.log"),
     datePattern: "YYYY-MM-DD",
     zippedArchive: true,
-    maxSize: "20m",
-    maxFiles: "7d",
+    maxSize: process.env.LOG_MAX_SIZE || "20m",
+    maxFiles: process.env.LOG_RETENTION || "7d",
   }),
 ];
 
