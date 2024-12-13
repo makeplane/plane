@@ -65,8 +65,9 @@ export const FocusFilter = observer(() => {
       buttonClassName={cn("rounded-[28px] h-full px-2 border-custom-border-200 max-h-[36px]", {
         "border-none bg-pi-100": isInWorkspaceContext,
       })}
+      optionsClassName="max-h-[70vh] overflow-y-auto"
     >
-      <div className="flex flex-col divide-y divide-custom-border-100 space-y-2 max-w-[192px]">
+      <div className="flex flex-col divide-y divide-custom-border-100 space-y-2 max-w-[192px] max-h-full">
         <div>
           <span className="text-custom-text-350 font-medium">Ask Pi to use data from:</span>
           <CustomSelect.Option

@@ -29,8 +29,8 @@ export const PiMentionNodeView = (props) => {
       <a
         href={props.node.attrs.redirect_uri}
         target="_blank"
-        className={cn("mention rounded px-1 py-0.5 font-medium text-orange-500 bg-orange-100/40 text-base", {
-          "bg-yellow-500/20 text-orange-500": highlightsState
+        className={cn("mention rounded px-1 py-0.5 font-medium bg-yellow-500/20 text-yellow-500 text-base", {
+          "bg-yellow-500/20 text-yellow-500": highlightsState
             ? highlightsState.includes(props.node.attrs.entity_identifier)
             : false,
           "cursor-pointer": !props.extension.options.readonly,

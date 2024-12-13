@@ -75,7 +75,7 @@ const Suggestions = ({ type, data, onClick, key, selectedIndex, isSectionSelecte
                 )}
               >
                 <span className="my-auto"> {d.icon}</span>
-                <span className="truncate max-w-[180px] h-[16px]">{d.title}</span>
+                <span className="truncate h-[16px]">{d.title}</span>
               </div>
             ))}
           {data && data.length === 0 && <div className="text-xs text-custom-text-400">No results found</div>}

@@ -55,7 +55,7 @@ export const InputBox = (props: TProps) => {
             projectId={item.project_id || ""}
             projectIdentifier={item.project__identifier || ""}
             issueSequenceId={item.sequence_id || ""}
-            textContainerClassName="text-custom-sidebar-text-400 text-xs"
+            textContainerClassName="text-custom-sidebar-text-400 text-xs whitespace-nowrap"
           />
         );
       case "cycle":

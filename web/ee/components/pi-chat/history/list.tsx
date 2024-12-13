@@ -44,7 +44,7 @@ const HistoryList = observer((props: TProps) => {
             {threads && threads.length > 0 ? (
               threads.map((thread) => (
                 <ControlLink
-                  key={thread.chat_id}
+                  key={`${thread.chat_id}-${thread.last_modified}`}
                   href={`/${workspaceSlug}/pi-chat?chat_id=${thread.chat_id}`}
                   onClick={() => handleThreadClick(thread.chat_id)}
                   className="p-2 rounded-lg hover:text-custom-text-200 hover:bg-custom-background-90"
