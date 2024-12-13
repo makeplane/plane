@@ -1,7 +1,6 @@
 import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { EditorView } from "@tiptap/pm/view";
-import { isDesktopApp } from "@todesktop/client-core/platform/todesktop";
 // plugins
 import { AIHandlePlugin } from "@/plugins/ai-handle";
 import { DragHandlePlugin, nodeDOMAtCoords } from "@/plugins/drag-handle";
@@ -112,13 +111,8 @@ const SideMenu = (options: SideMenuPluginProps) => {
 
           const rect = absoluteRect(node);
 
-          // TODO: Remove this after drag-drop revamp.
-          const topOffsetForDesktop = isDesktopApp() ? 37 : 0;
-          const leftOffsetForDesktop = isDesktopApp() ? 9 : 0;
-
           rect.top += (lineHeight - 20) / 2;
-          rect.top += paddingTop - topOffsetForDesktop;
-          rect.left -= leftOffsetForDesktop;
+          rect.top += paddingTop;
 
           if (handlesConfig.ai) {
             rect.left -= 20;
