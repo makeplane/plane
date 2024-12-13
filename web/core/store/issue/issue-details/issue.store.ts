@@ -1,7 +1,8 @@
 import { makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
+import { EIssueServiceType } from "@plane/constants";
 // types
-import { TIssue } from "@plane/types";
+import { TIssue, TIssueServiceType } from "@plane/types";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // services
@@ -46,11 +47,12 @@ export class IssueStore implements IIssueStore {
   // root store
   rootIssueDetailStore: IIssueDetail;
   // services
+  serviceType;
   issueService;
   issueArchiveService;
   issueDraftService;
 
-  constructor(rootStore: IIssueDetail) {
+  constructor(rootStore: IIssueDetail, serviceType: TIssueServiceType) {
     makeObservable(this, {
       fetchingIssueDetails: observable.ref,
       localDBIssueDescription: observable.ref,
@@ -58,8 +60,9 @@ export class IssueStore implements IIssueStore {
     // root store
     this.rootIssueDetailStore = rootStore;
     // services
-    this.issueService = new IssueService();
-    this.issueArchiveService = new IssueArchiveService();
+    this.serviceType = serviceType;
+    this.issueService = new IssueService(serviceType);
+    this.issueArchiveService = new IssueArchiveService(serviceType);
     this.issueDraftService = new IssueDraftService();
   }
 
@@ -190,15 +193,32 @@ export class IssueStore implements IIssueStore {
   };
 
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
-    await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
-    await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
+    const currentStore =
+      this.serviceType === EIssueServiceType.EPICS
+        ? this.rootIssueDetailStore.rootIssueStore.projectEpics
+        : this.rootIssueDetailStore.rootIssueStore.projectIssues;
+
+    await Promise.all([
+      currentStore.updateIssue(workspaceSlug, projectId, issueId, data),
+      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId),
+    ]);
   };
 
-  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
-    this.rootIssueDetailStore.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    const currentStore =
+      this.serviceType === EIssueServiceType.EPICS
+        ? this.rootIssueDetailStore.rootIssueStore.projectEpics
+        : this.rootIssueDetailStore.rootIssueStore.projectIssues;
+    currentStore.removeIssue(workspaceSlug, projectId, issueId);
+  };
 
-  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
-    this.rootIssueDetailStore.rootIssueStore.projectIssues.archiveIssue(workspaceSlug, projectId, issueId);
+  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    const currentStore =
+      this.serviceType === EIssueServiceType.EPICS
+        ? this.rootIssueDetailStore.rootIssueStore.projectEpics
+        : this.rootIssueDetailStore.rootIssueStore.projectIssues;
+    currentStore.archiveIssue(workspaceSlug, projectId, issueId);
+  };
 
   addCycleToIssue = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
     await this.rootIssueDetailStore.rootIssueStore.cycleIssues.addCycleToIssue(

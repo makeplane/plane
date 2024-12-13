@@ -21,10 +21,11 @@ import { GanttStoreType } from "./base-gantt-root";
 
 type Props = {
   issueId: string;
+  isEpic?: boolean;
 };
 
 export const IssueGanttBlock: React.FC<Props> = observer((props) => {
-  const { issueId } = props;
+  const { issueId, isEpic } = props;
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
@@ -35,7 +36,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
   } = useIssueDetail();
   // hooks
   const { isMobile } = usePlatformOS();
-  const { handleRedirection } = useIssuePeekOverviewRedirection();
+  const { handleRedirection } = useIssuePeekOverviewRedirection(isEpic);
 
   // derived values
   const issueDetails = getIssueById(issueId);
@@ -78,7 +79,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
 
 // rendering issues on gantt sidebar
 export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
-  const { issueId } = props;
+  const { issueId, isEpic = false } = props;
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
@@ -91,7 +92,7 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
   const { issuesFilter } = useIssues(storeType);
 
   // handlers
-  const { handleRedirection } = useIssuePeekOverviewRedirection();
+  const { handleRedirection } = useIssuePeekOverviewRedirection(isEpic);
 
   // derived values
   const issueDetails = getIssueById(issueId);
@@ -105,7 +106,7 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
   return (
     <ControlLink
       id={`issue-${issueId}`}
-      href={`/${workspaceSlug}/projects/${issueDetails?.project_id}/issues/${issueDetails?.id}`}
+      href={`/${workspaceSlug}/projects/${issueDetails?.project_id}/${isEpic ? "epics" : "issues"}/${issueDetails?.id}`}
       onClick={handleIssuePeekOverview}
       className="line-clamp-1 w-full cursor-pointer text-sm text-custom-text-100"
       disabled={!!issueDetails?.tempId}

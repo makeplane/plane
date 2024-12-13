@@ -76,7 +76,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             )
             if isinstance(e, IntegrityError):
                 return Response(
-                    {"error": "The payload is not valid"},
+                    {"error": "The payload is not valid", "exception": str(e)},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -175,6 +175,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
             return response
         except Exception as e:
             if isinstance(e, IntegrityError):
+                log_exception(e)
                 return Response(
                     {"error": "The payload is not valid"},
                     status=status.HTTP_400_BAD_REQUEST,

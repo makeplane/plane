@@ -5,3 +5,4 @@ export * from "./issue-details";
 export * from "./quick-add";
 export * from "./filters";
 export * from "./header";
+export * from "./issue-layouts";

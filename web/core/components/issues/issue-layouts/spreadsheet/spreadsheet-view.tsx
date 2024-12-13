@@ -34,6 +34,7 @@ type Props = {
   enableQuickCreateIssue?: boolean;
   disableIssueCreation?: boolean;
   isWorkspaceLevel?: boolean;
+  isEpic?: boolean;
 };
 
 export const SpreadsheetView: React.FC<Props> = observer((props) => {
@@ -51,6 +52,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     canLoadMoreIssues,
     loadMoreIssues,
     isWorkspaceLevel = false,
+    isEpic = false,
   } = props;
   // refs
   const containerRef = useRef<HTMLTableElement | null>(null);
@@ -85,7 +87,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
         entities={{
           [SPREADSHEET_SELECT_GROUP]: issueIds,
         }}
-        disabled={!isBulkOperationsEnabled}
+        disabled={!isBulkOperationsEnabled || isEpic}
       >
         {(helpers) => (
           <>
@@ -105,6 +107,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                 loadMoreIssues={loadMoreIssues}
                 spreadsheetColumnsList={spreadsheetColumnsList}
                 selectionHelpers={helpers}
+                isEpic={isEpic}
               />
             </div>
             <div className="border-t border-custom-border-100">

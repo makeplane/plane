@@ -27,6 +27,8 @@ import { SIDEBAR_WORKSPACE_MENU_ITEMS } from "@/plane-web/constants/dashboard";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { isWorkspaceFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+
 
 export const SidebarWorkspaceMenu = observer(() => {
   // state
@@ -41,7 +43,8 @@ export const SidebarWorkspaceMenu = observer(() => {
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const { captureEvent } = useEventTracker();
   const { isMobile } = usePlatformOS();
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, workspaceUserInfo } = useUserPermissions();
+  const { currentWorkspaceSubscribedPlanDetail } = useWorkspaceSubscription();
   // local storage
   const { setValue: toggleWorkspaceMenu, storedValue } = useLocalStorage<boolean>("is_workspace_menu_open", true);
   // derived values
@@ -62,11 +65,9 @@ export const SidebarWorkspaceMenu = observer(() => {
   }, [sidebarCollapsed, toggleWorkspaceMenu]);
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
-  const indicatorElement = (
-    <div className="flex-shrink-0">
-      <UpgradeBadge />
-    </div>
-  );
+  const hideWorkspaceActiveCycle =
+    workspaceUserInfo[workspaceSlug.toString()]?.active_cycles_count <= 0 &&
+    currentWorkspaceSubscribedPlanDetail?.product !== "FREE";
 
   return (
     <Disclosure as="div" defaultOpen>
@@ -187,7 +188,11 @@ export const SidebarWorkspaceMenu = observer(() => {
                           />
                           {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}
                         </div>
-                        {!sidebarCollapsed && link.key === "active-cycles" && indicatorElement}
+                        {!sidebarCollapsed && link.key === "active-cycles" && (
+                          <div className="flex-shrink-0">
+                            <UpgradeBadge flag="WORKSPACE_ACTIVE_CYCLES" />
+                          </div>
+                        )}
                       </SidebarNavItem>
                     </Link>
                   </Tooltip>
