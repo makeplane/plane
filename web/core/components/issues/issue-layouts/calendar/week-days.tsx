@@ -11,9 +11,15 @@ import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { ICalendarDate, ICalendarWeek } from "./types";
+import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 
 type Props = {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProjectEpicsFilter;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
   week: ICalendarWeek | undefined;
@@ -33,6 +39,7 @@ type Props = {
   readOnly?: boolean;
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
+  isEpic?: boolean;
 };
 
 export const CalendarWeekDays: React.FC<Props> = observer((props) => {
@@ -53,6 +60,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
     readOnly = false,
     selectedDate,
     setSelectedDate,
+    isEpic = false,
   } = props;
 
   const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
@@ -88,6 +96,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
             addIssuesToView={addIssuesToView}
             readOnly={readOnly}
             handleDragAndDrop={handleDragAndDrop}
+            isEpic={isEpic}
           />
         );
       })}

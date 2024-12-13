@@ -3,6 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Trash } from "lucide-react";
+import { EIssueServiceType } from "@plane/constants";
+import { TIssueServiceType } from "@plane/types";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components
@@ -19,17 +21,18 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 type TIssueAttachmentsListItem = {
   attachmentId: string;
   disabled?: boolean;
+  issueServiceType?: TIssueServiceType;
 };
 
 export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer((props) => {
   // props
-  const { attachmentId, disabled } = props;
+  const { attachmentId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
   // store hooks
   const { getUserDetails } = useMember();
   const {
     attachment: { getAttachmentById },
     toggleDeleteAttachmentModal,
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
   // derived values
   const attachment = attachmentId ? getAttachmentById(attachmentId) : undefined;
   const fileName = getFileName(attachment?.attributes.name ?? "");

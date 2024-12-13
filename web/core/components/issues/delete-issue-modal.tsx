@@ -11,7 +11,6 @@ import { PROJECT_ERROR_MESSAGES } from "@/constants/project";
 import { useIssues, useProject, useUser, useUserPermissions } from "@/hooks/store";
 // plane-web
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-
 type Props = {
   isOpen: boolean;
   handleClose: () => void;

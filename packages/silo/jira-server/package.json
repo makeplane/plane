@@ -1,0 +1,29 @@
+{
+  "name": "@silo/jira-server",
+  "version": "0.23.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc && tsc-alias",
+    "lint": "eslint src --ext .ts"
+  },
+  "description": "Jira Self hosted package used by silo for importers and integrations",
+  "author": "Plane Engineering",
+  "license": "AGPL",
+  "dependencies": {
+    "@plane/constants": "*",
+    "@plane/sdk": "*",
+    "@silo/core": "*",
+    "axios": "^1.7.8",
+    "csv-string": "^4.1.1",
+    "jira.js": "^4.0.1"
+  },
+  "devDependencies": {
+    "@plane/eslint-config": "*",
+    "@plane/typescript-config": "*",
+    "tsc-alias": "^1.8.10",
+    "typescript": "^5.3.3"
+  }
+}

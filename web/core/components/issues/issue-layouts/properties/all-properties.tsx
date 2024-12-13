@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, SyntheticEvent } from "react";
 import xor from "lodash/xor";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
@@ -42,10 +42,11 @@ export interface IIssueProperties {
   isReadOnly: boolean;
   className: string;
   activeLayout: string;
+  isEpic?: boolean;
 }
 
 export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
-  const { issue, updateIssue, displayProperties, activeLayout, isReadOnly, className } = props;
+  const { issue, updateIssue, displayProperties, activeLayout, isReadOnly, className, isEpic = false } = props;
   // store hooks
   const { getProjectById } = useProject();
   const { labelMap } = useLabel();
@@ -264,7 +265,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const maxDate = getDate(issue.target_date);
   maxDate?.setDate(maxDate.getDate());
 
-  const handleEventPropagation = (e: React.MouseEvent) => {
+  const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();
     e.preventDefault();
   };
@@ -274,7 +275,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* basic properties */}
       {/* state */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
-        <div className="h-5" onClick={handleEventPropagation}>
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <StateDropdown
             buttonContainerClassName="truncate max-w-40"
             value={issue.state_id}
@@ -290,7 +291,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* priority */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="priority">
-        <div className="h-5" onClick={handleEventPropagation}>
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <PriorityDropdown
             value={issue?.priority}
             onChange={handlePriority}
@@ -305,7 +306,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* label */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
-        <div className="h-5" onClick={handleEventPropagation}>
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <IssuePropertyLabels
             projectId={issue?.project_id || null}
             value={issue?.label_ids || null}
@@ -320,7 +321,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* start date */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_date">
-        <div className="h-5" onClick={handleEventPropagation}>
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <DateDropdown
             value={issue.start_date ?? null}
             onChange={handleStartDate}
@@ -338,7 +339,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* target/due date */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="due_date">
-        <div className="h-5" onClick={handleEventPropagation}>
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <DateDropdown
             value={issue?.target_date ?? null}
             onChange={handleTargetDate}
@@ -358,7 +359,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* assignee */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">
-        <div className="h-5" onClick={handleEventPropagation}>
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <MemberDropdown
             projectId={issue?.project_id}
             value={issue?.assignee_ids}
@@ -376,48 +377,52 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         </div>
       </WithDisplayPropertiesHOC>
 
-      {/* modules */}
-      {projectDetails?.module_view && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
-          <div className="h-5" onClick={handleEventPropagation}>
-            <ModuleDropdown
-              buttonContainerClassName="truncate max-w-40"
-              projectId={issue?.project_id}
-              value={issue?.module_ids ?? []}
-              onChange={handleModule}
-              disabled={isReadOnly}
-              renderByDefault={isMobile}
-              multiple
-              buttonVariant="border-with-text"
-              showCount
-              showTooltip
-            />
-          </div>
-        </WithDisplayPropertiesHOC>
-      )}
+      {!isEpic && (
+        <>
+          {/* modules */}
+          {projectDetails?.module_view && (
+            <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
+              <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+                <ModuleDropdown
+                  buttonContainerClassName="truncate max-w-40"
+                  projectId={issue?.project_id}
+                  value={issue?.module_ids ?? []}
+                  onChange={handleModule}
+                  disabled={isReadOnly}
+                  renderByDefault={isMobile}
+                  multiple
+                  buttonVariant="border-with-text"
+                  showCount
+                  showTooltip
+                />
+              </div>
+            </WithDisplayPropertiesHOC>
+          )}
 
-      {/* cycles */}
-      {projectDetails?.cycle_view && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
-          <div className="h-5" onClick={handleEventPropagation}>
-            <CycleDropdown
-              buttonContainerClassName="truncate max-w-40"
-              projectId={issue?.project_id}
-              value={issue?.cycle_id}
-              onChange={handleCycle}
-              disabled={isReadOnly}
-              buttonVariant="border-with-text"
-              renderByDefault={isMobile}
-              showTooltip
-            />
-          </div>
-        </WithDisplayPropertiesHOC>
+          {/* cycles */}
+          {projectDetails?.cycle_view && (
+            <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
+              <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+                <CycleDropdown
+                  buttonContainerClassName="truncate max-w-40"
+                  projectId={issue?.project_id}
+                  value={issue?.cycle_id}
+                  onChange={handleCycle}
+                  disabled={isReadOnly}
+                  buttonVariant="border-with-text"
+                  renderByDefault={isMobile}
+                  showTooltip
+                />
+              </div>
+            </WithDisplayPropertiesHOC>
+          )}
+        </>
       )}
 
       {/* estimates */}
       {projectId && areEstimateEnabledByProjectId(projectId?.toString()) && (
         <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
-          <div className="h-5" onClick={handleEventPropagation}>
+          <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
             <EstimateDropdown
               value={issue.estimate_point ?? undefined}
               onChange={handleEstimate}
@@ -445,6 +450,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           renderByDefault={false}
         >
           <div
+            onFocus={handleEventPropagation}
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
@@ -477,6 +483,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         >
           <div
             className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1"
+            onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
             <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
@@ -499,6 +506,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         >
           <div
             className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1"
+            onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
             <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />

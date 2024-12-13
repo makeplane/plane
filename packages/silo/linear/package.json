@@ -1,0 +1,24 @@
+{
+  "name": "@silo/linear",
+  "version": "1.0.0",
+  "repository": "https://github.com/makeplane/plane-ee",
+  "author": "Plane Engineering",
+  "license": "AGPL",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc && tsc-alias",
+    "lint": "eslint --ext .ts src"
+  },
+  "dependencies": {
+    "@linear/sdk": "^30.0.0",
+    "@plane/sdk": "*"
+  },
+  "devDependencies": {
+    "@plane/eslint-config": "*",
+    "@plane/typescript-config": "*",
+    "tsc-alias": "^1.8.10"
+  }
+}
