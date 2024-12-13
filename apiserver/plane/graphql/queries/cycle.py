@@ -246,7 +246,10 @@ class CycleIssueQuery:
 
         cycles_issues = await sync_to_async(list)(
             Issue.issue_objects.filter(
-                workspace__slug=slug, project_id=project, issue_cycle__cycle_id=cycle
+                workspace__slug=slug,
+                project_id=project,
+                issue_cycle__cycle_id=cycle,
+                issue_cycle__deleted_at__isnull=True,
             )
             .filter(
                 project__project_projectmember__member=info.context.user,
@@ -256,5 +259,6 @@ class CycleIssueQuery:
             .prefetch_related("assignees", "labels")
             .order_by(orderBy, "-created_at")
             .filter(**filters)
+            .distinct()
         )
         return paginate(results_object=cycles_issues, cursor=cursor)

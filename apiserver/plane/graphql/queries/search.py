@@ -205,21 +205,15 @@ async def filter_pages(
     for field in fields:
         q |= Q(**{f"{field}__icontains": query})
 
-    page_query = Page.objects.filter(
-        workspace__slug=slug, projects__archived_at__isnull=True, projects__isnull=False
-    )
+    page_query = Page.objects.filter(workspace__slug=slug, archived_at__isnull=True)
     if project:
-        page_query = page_query.filter(projects=project)
-
-    pages = await sync_to_async(
-        lambda: list(
-            page_query.filter(
-                q,
-                projects__project_projectmember__member=user,
-                projects__project_projectmember__is_active=True,
-            ).distinct()
+        page_query = page_query.filter(
+            projects=project,
+            projects__project_projectmember__member=user,
+            projects__project_projectmember__is_active=True,
         )
-    )()
+
+    pages = await sync_to_async(lambda: list(page_query.filter(q).distinct()))()
     return pages
 
 

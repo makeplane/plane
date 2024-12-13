@@ -54,7 +54,9 @@ class CycleType:
     @strawberry.field
     async def total_issues(self, info: Info) -> int:
         total_issues = await sync_to_async(
-            lambda: Issue.issue_objects.filter(issue_cycle__cycle_id=self.id).count()
+            lambda: Issue.issue_objects.filter(
+                issue_cycle__cycle_id=self.id, issue_cycle__deleted_at__isnull=True
+            ).count()
         )()
         return total_issues
 
@@ -62,7 +64,9 @@ class CycleType:
     async def completed_issues(self, info: Info) -> int:
         completed_issues = await sync_to_async(
             lambda: Issue.issue_objects.filter(
-                issue_cycle__cycle_id=self.id, state__group="completed"
+                issue_cycle__cycle_id=self.id,
+                issue_cycle__deleted_at__isnull=True,
+                state__group="completed",
             ).count()
         )()
         return completed_issues

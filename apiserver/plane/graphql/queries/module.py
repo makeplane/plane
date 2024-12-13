@@ -234,7 +234,10 @@ class ModuleIssueQuery:
 
         module_issues = await sync_to_async(list)(
             Issue.issue_objects.filter(
-                workspace__slug=slug, project_id=project, issue_module__module_id=module
+                workspace__slug=slug,
+                project_id=project,
+                issue_module__module_id=module,
+                issue_module__deleted_at__isnull=True,
             )
             .filter(
                 project__project_projectmember__member=info.context.user,
@@ -244,6 +247,7 @@ class ModuleIssueQuery:
             .prefetch_related("assignees", "labels")
             .order_by(orderBy, "-created_at")
             .filter(**filters)
+            .distinct()
         )
 
         return paginate(results_object=module_issues, cursor=cursor)
