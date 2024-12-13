@@ -202,9 +202,6 @@ def sync_issue_version(batch_size=5000, offset=0, countdown=300):
             if total_issues_count == 0:
                 return
 
-            print(f"Offset: {offset}")
-            print(f"Total Issues: {total_issues_count}")
-
             end_offset = min(offset + batch_size, total_issues_count)
 
             # Get issues batch with optimized queries
