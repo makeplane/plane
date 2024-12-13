@@ -288,7 +288,7 @@ class UpdateReaction(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["actor", "reaction", "update"]
+        unique_together = ["actor", "reaction", "update", "deleted_at"]
         constraints = [
             models.UniqueConstraint(
                 fields=["actor", "reaction", "update"],
