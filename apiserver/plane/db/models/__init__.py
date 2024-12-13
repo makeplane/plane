@@ -68,15 +68,6 @@ from .workspace import (
     WorkspaceUserProperties,
 )
 
-
-
-
-
-
-
-
-
-
 from .favorite import UserFavorite
 
 from .issue_type import IssueType
@@ -86,3 +77,5 @@ from .recent_visit import UserRecentVisit
 from .label import Label
 
 from .device import Device, DeviceSession
+
+from .sticky import Sticky
