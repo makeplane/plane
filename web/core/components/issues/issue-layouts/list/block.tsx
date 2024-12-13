@@ -85,8 +85,11 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
       isArchived: !!issue.archived_at,
     });
 
+  // derived values
   const issue = issuesMap[issueId];
   const subIssuesCount = issue?.sub_issues_count ?? 0;
+  const canEditIssueProperties = canEditProperties(issue?.project_id ?? undefined);
+  const isDraggingAllowed = canDrag && canEditIssueProperties;
 
   const { isMobile } = usePlatformOS();
 
@@ -98,7 +101,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     return combine(
       draggable({
         element,
-        canDrag: () => canDrag,
+        canDrag: () => isDraggingAllowed,
         getInitialData: () => ({ id: issueId, type: "ISSUE", groupId }),
         onDragStart: () => {
           setIsCurrentBlockDragging(true);
@@ -108,11 +111,10 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
         },
       })
     );
-  }, [canDrag, issueId, groupId, setIsCurrentBlockDragging]);
+  }, [isDraggingAllowed, issueId, groupId, setIsCurrentBlockDragging]);
 
   if (!issue) return null;
 
-  const canEditIssueProperties = canEditProperties(issue.project_id ?? undefined);
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issue.id);
   const isIssueActive = selectionHelpers.getIsEntityActive(issue.id);
@@ -161,11 +163,13 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
           }
         )}
         onDragStart={() => {
-          if (!canDrag) {
+          if (!isDraggingAllowed) {
             setToast({
               type: TOAST_TYPE.WARNING,
               title: "Cannot move issue",
-              message: "Drag and drop is disabled for the current grouping",
+              message: !canEditIssueProperties
+                ? "You are not allowed to move this issue"
+                : "Drag and drop is disabled for the current grouping",
             });
           }
         }}

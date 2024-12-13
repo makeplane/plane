@@ -23,20 +23,23 @@ export type CalendarStoreType =
   | EIssuesStoreType.PROJECT
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
-  | EIssuesStoreType.PROJECT_VIEW;
+  | EIssuesStoreType.PROJECT_VIEW
+  | EIssuesStoreType.TEAM
+  | EIssuesStoreType.TEAM_VIEW;
 
 interface IBaseCalendarRoot {
   QuickActions: FC<IQuickActionProps>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   isCompletedCycle?: boolean;
   viewId?: string | undefined;
+  canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const { QuickActions, addIssuesToView, isCompletedCycle = false, viewId } = props;
+  const { QuickActions, addIssuesToView, isCompletedCycle = false, viewId, canEditPropertiesBasedOnProject } = props;
 
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug } = useParams();
 
   // hooks
   const storeType = useIssueStoreType() as CalendarStoreType;
@@ -61,6 +64,8 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
     EUserPermissionsLevel.PROJECT
   );
 
+  const { enableInlineEditing } = issues?.viewFlags || {};
+
   const displayFilters = issuesFilter.issueFilters?.displayFilters;
 
   const groupedIssueIds = (issues.groupedIssueIds ?? {}) as TGroupedIssues;
@@ -69,9 +74,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   const { startDate, endDate } = issueCalendarView.getStartAndEndDate(layout) ?? {};
 
   useEffect(() => {
-    startDate &&
-      endDate &&
-      layout &&
+    if (startDate && endDate && layout) {
       fetchIssues(
         "init-loader",
         {
@@ -83,21 +86,23 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
         },
         viewId
       );
+    }
   }, [fetchIssues, storeType, startDate, endDate, layout, viewId]);
 
   const handleDragAndDrop = async (
     issueId: string | undefined,
+    issueProjectId: string | undefined,
     sourceDate: string | undefined,
     destinationDate: string | undefined
   ) => {
-    if (!issueId || !destinationDate || !sourceDate) return;
+    if (!issueId || !destinationDate || !sourceDate || !issueProjectId) return;
 
     await handleDragDrop(
       issueId,
       sourceDate,
       destinationDate,
       workspaceSlug?.toString(),
-      projectId?.toString(),
+      issueProjectId,
       updateIssue
     ).catch((err) => {
       setToast({
@@ -125,6 +130,16 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
     [issues?.getGroupIssueCount]
   );
 
+  const canEditProperties = useCallback(
+    (projectId: string | undefined) => {
+      const isEditingAllowedBasedOnProject =
+        canEditPropertiesBasedOnProject && projectId ? canEditPropertiesBasedOnProject(projectId) : isEditingAllowed;
+
+      return enableInlineEditing && isEditingAllowedBasedOnProject;
+    },
+    [canEditPropertiesBasedOnProject, enableInlineEditing, isEditingAllowed]
+  );
+
   return (
     <>
       <div className="h-full w-full overflow-hidden bg-custom-background-100 pt-4">
@@ -145,7 +160,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
               handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
               handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
               handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
-              readOnly={!isEditingAllowed || isCompletedCycle}
+              readOnly={!canEditProperties(issue.project_id ?? undefined) || isCompletedCycle}
               placements={placement}
             />
           )}
@@ -154,9 +169,10 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
           getGroupIssueCount={getGroupIssueCount}
           addIssuesToView={addIssuesToView}
           quickAddCallback={quickAddIssue}
-          readOnly={!isEditingAllowed || isCompletedCycle}
+          readOnly={isCompletedCycle}
           updateFilters={updateFilters}
           handleDragAndDrop={handleDragAndDrop}
+          canEditProperties={canEditProperties}
         />
       </div>
     </>
