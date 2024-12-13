@@ -5,17 +5,31 @@ import { action, computed, makeObservable } from "mobx";
 // store
 import { ProjectStore as CeProjectStore, IProjectStore as ICeProjectStore } from "@/store/project/project.store";
 import { CoreRootStore } from "@/store/root.store";
+import { IProjectAttachmentStore, ProjectAttachmentStore } from "./project-details/attachment.store";
+import { IProjectLinkStore, ProjectLinkStore } from "./project-details/link.store";
+import { IProjectReactionStore, ProjectReactionStore } from "./project-details/project_reaction.store";
+import { IProjectUpdateStore, ProjectUpdateStore } from "./project-details/updates.store";
 
 export interface IProjectStore extends ICeProjectStore {
+  reactionStore: IProjectReactionStore;
+  attachmentStore: IProjectAttachmentStore;
   //computed
   publicProjectIds: string[];
   privateProjectIds: string[];
   myProjectIds: string[];
   // actions
   filteredProjectCount: (filter: string) => number | undefined;
+  // store
+  linkStore: IProjectLinkStore;
+  updatesStore: IProjectUpdateStore;
 }
 
 export class ProjectStore extends CeProjectStore implements IProjectStore {
+  //store
+  linkStore: IProjectLinkStore;
+  attachmentStore: IProjectAttachmentStore;
+  updatesStore: IProjectUpdateStore;
+  reactionStore: IProjectReactionStore;
   constructor(public store: CoreRootStore) {
     super(store);
     makeObservable(this, {
@@ -26,6 +40,10 @@ export class ProjectStore extends CeProjectStore implements IProjectStore {
       // actions
       filteredProjectCount: action,
     });
+    this.linkStore = new ProjectLinkStore(this);
+    this.attachmentStore = new ProjectAttachmentStore(this);
+    this.updatesStore = new ProjectUpdateStore();
+    this.reactionStore = new ProjectReactionStore();
   }
 
   // computed

@@ -50,7 +50,7 @@ from plane.ee.utils.workspace_feature import (
 from plane.ee.serializers.app.project import ProjectAttributeSerializer
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
-
+from plane.ee.bgtasks.project_activites_task import project_activity
 
 class ProjectViewSet(BaseViewSet):
     serializer_class = ProjectListSerializer
@@ -432,6 +432,17 @@ class ProjectViewSet(BaseViewSet):
                     origin=request.META.get("HTTP_ORIGIN"),
                 )
 
+                project_activity.delay(
+                    type="project.activity.created",
+                    requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                    actor_id=str(request.user.id),
+                    project_id=str(project.id),
+                    current_instance=None,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
+
                 serializer = ProjectListSerializer(project)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -556,6 +567,17 @@ class ProjectViewSet(BaseViewSet):
                     slug=slug,
                     origin=request.META.get("HTTP_ORIGIN"),
                 )
+                project_activity.delay(
+                    type="project.activity.updated",
+                    requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                    actor_id=str(request.user.id),
+                    project_id=str(pk),
+                    current_instance=current_instance,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
+
                 serializer = ProjectListSerializer(project)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -16,7 +16,6 @@ from plane.ee.views.app.initiative import (
     InitiativeProjectEndpoint,
     InitiativeLabelEndpoint,
 )
-
 from plane.ee.views.app.project import ProjectFeatureEndpoint
 from plane.ee.views.app.epic import (
     EpicViewSet,

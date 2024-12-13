@@ -8,9 +8,10 @@ type Props = {
   buttonClassName?: string;
   className?: string;
   disabled?: boolean;
+  button?: React.ReactNode;
 };
 const MembersDropdown: React.FC<Props> = (props) => {
-  const { value, onChange, disabled = false, buttonClassName = "", className = "" } = props;
+  const { value, onChange, disabled = false, buttonClassName = "", className = "", button } = props;
   const DropdownLabel = () => (
     <div
       className={cn(
@@ -30,7 +31,7 @@ const MembersDropdown: React.FC<Props> = (props) => {
       }}
       buttonClassName={cn({ "hover:bg-transparent": value?.length > 0 }, buttonClassName)}
       placeholder="Members"
-      button={<DropdownLabel />}
+      button={button || <DropdownLabel />}
       className={className}
       disabled={disabled}
       buttonVariant="border-with-text"

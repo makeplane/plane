@@ -264,6 +264,7 @@ class EntityUpdates(BaseModel):
     total_estimate_points = models.FloatField(default=0)
     completed_estimate_points = models.FloatField(default=0)
     scope_change = models.FloatField(default=0)
+    metadata = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "Entity Updates"
@@ -288,6 +289,13 @@ class UpdateReaction(ProjectBaseModel):
 
     class Meta:
         unique_together = ["actor", "reaction", "update"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["actor", "reaction", "update"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="update_reaction_unique_update_actor_reaction_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Update Reaction"
         verbose_name_plural = "Update Reactions"
         db_table = "update_reactions"

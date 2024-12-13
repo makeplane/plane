@@ -16,9 +16,19 @@ export type TStateDropdown = {
   value: string;
   disabled: boolean;
   optionsClassName?: string;
+  labelIconSize?: string;
 };
 export const StateDropdown: FC<TStateDropdown> = observer((props) => {
-  const { workspaceId, onChange, value, disabled, buttonClassName = "", className = "", optionsClassName = "" } = props;
+  const {
+    workspaceId,
+    onChange,
+    value,
+    disabled,
+    buttonClassName = "",
+    className = "",
+    optionsClassName = "",
+    labelIconSize = "12",
+  } = props;
   // hooks
   const { getProjectStateById, getProjectStateIdsWithGroupingByWorkspaceId } = useWorkspaceProjectStates();
 
@@ -27,13 +37,19 @@ export const StateDropdown: FC<TStateDropdown> = observer((props) => {
   const dropdownLabel = () => (
     <Tooltip tooltipContent="State" position={"top"} className="ml-4">
       <div className="flex items-center gap-2 truncate max-w-[100px] ">
-        <ProjectStateIcon
-          projectStateGroup={selectedState?.group}
-          color={selectedState?.color}
-          width="12"
-          height="12"
-        />{" "}
-        <span className="flex-grow truncate">{selectedState?.name}</span>
+        {selectedState?.group && (
+          <ProjectStateIcon
+            projectStateGroup={selectedState?.group}
+            color={selectedState?.color}
+            width={labelIconSize}
+            height={labelIconSize}
+          />
+        )}{" "}
+        {selectedState ? (
+          <span className="flex-grow truncate">{selectedState?.name}</span>
+        ) : (
+          <span className="flex-grow text-custom-text-350">None</span>
+        )}
       </div>
     </Tooltip>
   );

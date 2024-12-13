@@ -160,7 +160,6 @@ from .page.version import PageVersionEndpoint
 
 from .search.base import GlobalSearchEndpoint, SearchEndpoint
 
-from .search.base import GlobalSearchEndpoint
 from .search.issue import IssueSearchEndpoint
 from .search.workspace import WorkspaceSearchEndpoint, WorkspaceEntitySearchEndpoint
 
@@ -223,7 +222,6 @@ from .integration.github import (
 )
 
 from .integration.slack import SlackProjectSyncViewSet
-from .exporter.base import ExportIssuesEndpoint
 
 from .notification.base import MarkAllReadNotificationViewSet
 from .user.base import (

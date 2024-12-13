@@ -7,6 +7,16 @@ from plane.ee.views.api import (
 )
 
 # App imports
+from plane.ee.views.app.project import (
+    ProjectLinkViewSet,
+    ProjectAnalyticsEndpoint,
+    ProjectUpdatesViewSet,
+    ProjectAttachmentV2Endpoint,
+    ProjectReactionViewSet,
+    ProjectActivityEndpoint,
+)
+from plane.ee.views.app.update import UpdatesReactionViewSet
+
 from plane.ee.views.app.ai import RephraseGrammarEndpoint
 from plane.ee.views.app.cycle import WorkspaceActiveCycleEndpoint
 from plane.ee.views.app.issue import (

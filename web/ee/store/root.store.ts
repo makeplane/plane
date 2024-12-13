@@ -13,7 +13,6 @@ import {
 } from "@/plane-web/store/notifications/notifications.store";
 import { IPublishPageStore, PublishPageStore } from "@/plane-web/store/pages/publish-page.store";
 import { IWorkspacePageStore, WorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
-import { IPiChatStore, PiChatStore } from "@/plane-web/store/pi-chat/pi-chat";
 import {
   ISelfHostedSubscriptionStore,
   SelfHostedSubscriptionStore,
@@ -52,6 +51,11 @@ import {
 } from "./importers";
 // integrations
 import { ISlackStore, SlackStore } from "./integrations";
+// pi chat
+import { IPiChatStore, PiChatStore } from "./pi-chat/pi-chat";
+// timeline
+import { IProjectStore, ProjectStore } from "./projects/projects";
+import { ITimelineStore, TimeLineStore } from "./timeline";
 
 export class RootStore extends CoreRootStore {
   workspacePages: IWorkspacePageStore;
@@ -69,6 +73,7 @@ export class RootStore extends CoreRootStore {
   cycle: ICycleStore;
   piChat: IPiChatStore;
   timelineStore: ITimelineStore;
+  projectDetails: IProjectStore;
   teamRoot: ITeamRootStore;
   workspaceNotification: IWorkspaceNotificationStore;
   // importers
@@ -96,6 +101,7 @@ export class RootStore extends CoreRootStore {
     this.cycle = new CycleStore(this);
     this.piChat = new PiChatStore(this);
     this.timelineStore = new TimeLineStore(this);
+    this.projectDetails = new ProjectStore(this);
     this.teamRoot = new TeamRootStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     // importers
@@ -124,6 +130,7 @@ export class RootStore extends CoreRootStore {
     this.cycle = new CycleStore(this);
     this.piChat = new PiChatStore(this);
     this.timelineStore = new TimeLineStore(this);
+    this.projectDetails = new ProjectStore(this);
     this.teamRoot = new TeamRootStore(this);
     // importers
     this.jiraImporter = new JiraStore(this);

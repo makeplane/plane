@@ -1,4 +1,8 @@
-from plane.app.serializers import BaseSerializer, ProjectLiteSerializer, IssueSerializer
+from plane.app.serializers import (
+    BaseSerializer,
+    ProjectLiteSerializer,
+    IssueSerializer,
+)
 
 from .app.issue import IssueLiteSerializer
 from .app.active_cycle import WorkspaceActiveCycleSerializer
@@ -20,8 +24,13 @@ from .app.exporter import ExporterHistorySerializer
 
 from .app.workspace.feature import WorkspaceFeatureSerializer
 from .app.workspace.project_state import ProjectStateSerializer
-from .app.project import ProjectFeatureSerializer
-from .app.intake import IntakeSettingSerializer
+from .app.project import (
+    ProjectLinkSerializer,
+    ProjectAttachmentSerializer,
+    ProjectReactionSerializer,
+    ProjectFeatureSerializer,
+    ProjectActivitySerializer
+)
 
 from .app.initiative import InitiativeSerializer
 

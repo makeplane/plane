@@ -63,7 +63,6 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.webhook_task import model_activity
 from plane.utils.timezone_converter import (
-    convert_utc_to_project_timezone,
     convert_to_utc,
     user_timezone_converter,
 )

@@ -44,6 +44,8 @@ class FeatureFlag(Enum):
     EPICS_SETTINGS = "EPICS_SETTINGS"
     # Workflows
     WORKFLOWS = "WORKFLOWS"
+    # Project Overview
+    PROJECT_OVERVIEW = "PROJECT_OVERVIEW"
     # Inbox Stacking
     INBOX_STACKING = "INBOX_STACKING"
 

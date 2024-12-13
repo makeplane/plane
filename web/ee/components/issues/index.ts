@@ -6,3 +6,4 @@ export * from "./quick-add";
 export * from "./filters";
 export * from "./header";
 export * from "./issue-layouts";
+export * from "./header";

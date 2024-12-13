@@ -3,8 +3,8 @@ from django.urls import path
 from plane.ee.views.app.cycle import (
     WorkspaceActiveCycleEndpoint,
     CycleUpdatesViewSet,
-    CycleUpdatesReactionViewSet,
 )
+from plane.ee.views.app.update import UpdatesReactionViewSet
 
 urlpatterns = [
     path(
@@ -34,12 +34,21 @@ urlpatterns = [
     # Updates Reactions
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/updates/<uuid:update_id>/reactions/",
-        CycleUpdatesReactionViewSet.as_view({"get": "list", "post": "create"}),
+        UpdatesReactionViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
         name="project-update-reactions",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/updates/<uuid:update_id>/reactions/<str:reaction_code>/",
-        CycleUpdatesReactionViewSet.as_view({"delete": "destroy"}),
+        UpdatesReactionViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
         name="project-update-reactions",
     ),
     ## End Updates Reactions

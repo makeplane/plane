@@ -19,4 +19,4 @@ class UpdatesSerializer(BaseSerializer):
     class Meta:
         model = EntityUpdates
         fields = "__all__"
-        read_only_fields = ["workspace", "project", "cycle", "issue", "status"]
+        read_only_fields = ["workspace", "project", "cycle", "issue", "status", "entity_type" ]

@@ -12,7 +12,7 @@ from rest_framework.response import Response
 # Module Imports
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.settings.storage import S3Storage
-from plane.db.models import FileAsset, Workspace, Project, User
+from plane.db.models import FileAsset, User
 from plane.api.views.base import BaseAPIView
 
 

@@ -42,7 +42,6 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,
-    issue_queryset_grouper,
 )
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 
