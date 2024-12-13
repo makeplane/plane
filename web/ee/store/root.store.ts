@@ -22,7 +22,7 @@ import {
   WorkspaceSubscriptionStore,
 } from "@/plane-web/store/subscription/subscription.store";
 import { ITeamRootStore, TeamRootStore } from "@/plane-web/store/team";
-import { ITimelineStore, TimeLineStore } from "@/plane-web/store/timeline";
+import { TimeLineStore } from "@/plane-web/store/timeline";
 import { IWorkspaceFeatureStore, WorkspaceFeatureStore } from "@/plane-web/store/workspace-feature.store";
 import {
   IProjectFilterStore,
@@ -55,7 +55,7 @@ import { ISlackStore, SlackStore } from "./integrations";
 import { IPiChatStore, PiChatStore } from "./pi-chat/pi-chat";
 // timeline
 import { IProjectStore, ProjectStore } from "./projects/projects";
-import { ITimelineStore, TimeLineStore } from "./timeline";
+import { ITimelineStore } from "./timeline";
 
 export class RootStore extends CoreRootStore {
   workspacePages: IWorkspacePageStore;
