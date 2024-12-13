@@ -119,6 +119,7 @@ class WorkspaceIssuesQuery:
             .prefetch_related("assignees", "labels")
             .order_by(orderBy, "-created_at")
             .filter(**filters)
+            .distinct()
         )
 
         return paginate(results_object=issues, cursor=cursor)
