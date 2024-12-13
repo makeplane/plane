@@ -1,10 +1,5 @@
-import {
-  chainCommands,
-  createParagraphNear,
-  newlineInCode,
-  splitBlock,
-} from 'prosemirror-commands'
-import { type Command } from "@tiptap/pm/state"
+import { chainCommands, createParagraphNear, newlineInCode, splitBlock } from "@tiptap/pm/commands";
+import { type Command } from "@tiptap/pm/state";
 
 /**
  * This command has the same behavior as the `Enter` keybinding from
@@ -12,8 +7,4 @@ import { type Command } from "@tiptap/pm/state"
  *
  * @internal
  */
-export const enterWithoutLift: Command = chainCommands(
-  newlineInCode,
-  createParagraphNear,
-  splitBlock,
-)
+export const enterWithoutLift: Command = chainCommands(newlineInCode, createParagraphNear, splitBlock);

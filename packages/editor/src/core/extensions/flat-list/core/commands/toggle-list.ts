@@ -1,10 +1,10 @@
-import { chainCommands } from 'prosemirror-commands'
-import { type Command } from "@tiptap/pm/state"
+import { chainCommands } from "@tiptap/pm/commands";
+import { type Command } from "@tiptap/pm/state";
 
-import { type ListAttributes } from '../types'
+import { type ListAttributes } from "../types";
 
-import { createUnwrapListCommand } from './unwrap-list'
-import { createWrapInListCommand } from './wrap-in-list'
+import { createUnwrapListCommand } from "./unwrap-list";
+import { createWrapInListCommand } from "./wrap-in-list";
 
 /**
  * Returns a command function that wraps the selection in a list with the given
@@ -13,17 +13,15 @@ import { createWrapInListCommand } from './wrap-in-list'
  *
  * @public
  */
-export function createToggleListCommand<
-  T extends ListAttributes = ListAttributes,
->(
+export function createToggleListCommand<T extends ListAttributes = ListAttributes>(
   /**
    * The list node attributes to toggle.
    *
    * @public
    */
-  attrs: T,
+  attrs: T
 ): Command {
-  const unwrapList = createUnwrapListCommand({ kind: attrs.kind })
-  const wrapInList = createWrapInListCommand(attrs)
-  return chainCommands(unwrapList, wrapInList)
+  const unwrapList = createUnwrapListCommand({ kind: attrs.kind });
+  const wrapInList = createWrapInListCommand(attrs);
+  return chainCommands(unwrapList, wrapInList);
 }

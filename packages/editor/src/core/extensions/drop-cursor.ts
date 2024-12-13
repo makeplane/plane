@@ -349,11 +349,14 @@ function isBetweenFlatListsFn(event: DragEvent, editor: Editor) {
   if (level >= 1) {
     const sibling = currentFlatList.nextElementSibling;
     if (!sibling) {
-      console.log("isNestedList but no sibling", sibling);
-      const rect = currentFlatList.getBoundingClientRect();
-      pos = {
-        pos: 100,
-      };
+      const currentFlatListParentSibling = currentFlatList.parentElement;
+      // __AUTO_GENERATED_PRINT_VAR_START__
+      console.log("isBetweenFlatListsFn#if#if currentFlatListParentSibling: ", currentFlatListParentSibling); // __AUTO_GENERATED_PRINT_VAR_END__
+      const rect = currentFlatListParentSibling.getBoundingClientRect();
+      pos = editor.view.posAtCoords({
+        left: rect.left,
+        top: rect.top,
+      });
       console.log("pos", pos);
     }
   }

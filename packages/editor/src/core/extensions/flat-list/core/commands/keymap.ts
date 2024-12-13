@@ -5,7 +5,7 @@ import {
   joinTextblockForward,
   selectNodeBackward,
   selectNodeForward,
-} from "prosemirror-commands";
+} from "@tiptap/pm/commands";
 
 import { createDedentListCommand } from "./dedent-list";
 import { createIndentListCommand } from "./indent-list";

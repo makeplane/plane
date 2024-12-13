@@ -76,21 +76,16 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
           class: "editor-heading-block",
         },
       },
-      dropcursor: {
-        class: "text-custom-text-300",
-      },
+      // dropcursor: {
+      //   class: "text-custom-text-300",
+      // },
+      dropcursor: false,
       ...(enableHistory ? {} : { history: false }),
     }),
     DropCursorExtension,
     BulletList.extend({
       addInputRules() {
         return [];
-      },
-      addPasteRules() {
-        return [];
-      },
-      addKeyboardShortcuts() {
-        return {};
       },
     }).configure({
       HTMLAttributes: {
@@ -101,22 +96,12 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       addInputRules() {
         return [];
       },
-      addPasteRules() {
-        return [];
-      },
-      addKeyboardShortcuts() {
-        return {};
-      },
     }).configure({
       HTMLAttributes: {
         class: "list-decimal pl-7 space-y-2",
       },
     }),
-    ListItem.extend({
-      addPasteRules() {
-        return [];
-      },
-    }).configure({
+    ListItem.configure({
       HTMLAttributes: {
         class: "not-prose space-y-2",
       },
