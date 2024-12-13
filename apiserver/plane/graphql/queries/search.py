@@ -13,11 +13,11 @@ from strawberry.types import Info
 from strawberry.permission import PermissionExtension
 
 # Django Imports
-from django.db.models import Q
+from django.db.models import Exists, OuterRef, Q
 
 # Module Imports
 from plane.graphql.types.search import GlobalSearchType
-from plane.db.models import Issue, Project, Page, Module, Cycle
+from plane.db.models import Issue, Project, Page, Module, Cycle, ProjectMember
 from plane.graphql.types.project import ProjectLiteType
 from plane.graphql.types.issue import IssueLiteType
 from plane.graphql.types.page import PageLiteType
@@ -27,7 +27,11 @@ from plane.graphql.permissions.workspace import WorkspaceBasePermission
 
 
 async def filter_projects(
-    query: str, slug: str, user, project: Optional[strawberry.ID] = None
+    query: str,
+    slug: str,
+    user,
+    project: Optional[strawberry.ID] = None,
+    include_unjoined_projects=False,
 ) -> list[ProjectLiteType]:
     if project is not None:
         return []
@@ -37,17 +41,31 @@ async def filter_projects(
     for field in fields:
         q |= Q(**{f"{field}__icontains": query})
 
+    project_query = Project.objects.filter(
+        q, workspace__slug=slug, archived_at__isnull=True
+    )
+
+    if include_unjoined_projects is False:
+        project_query = project_query.filter(
+            project_projectmember__member=user, project_projectmember__is_active=True
+        )
+
+    project_query = project_query.annotate(
+        is_member=Exists(
+            ProjectMember.objects.filter(
+                member=user,
+                project_id=OuterRef("pk"),
+                workspace__slug=slug,
+                is_active=True,
+            )
+        )
+    )
+
     projects = await sync_to_async(
         lambda: list(
-            Project.objects.filter(
-                q,
-                project_projectmember__member=user,
-                project_projectmember__is_active=True,
-                archived_at__isnull=True,
-                workspace__slug=slug,
+            project_query.distinct().values(
+                "id", "name", "identifier", "is_member", "logo_props"
             )
-            .distinct()
-            .values("id", "name", "identifier")
         )
     )()
 
@@ -218,6 +236,7 @@ class GlobalSearchQuery:
         module: Optional[strawberry.ID] = None,
         cycle: Optional[strawberry.ID] = None,
         query: Optional[str] = None,
+        include_unjoined_projects: Optional[bool] = False,
     ) -> GlobalSearchType:
         user = info.context.user
         if not query:
@@ -225,7 +244,9 @@ class GlobalSearchQuery:
                 projects=[], issues=[], modules=[], cycles=[], pages=[]
             )
 
-        projects = await filter_projects(query, slug, user, project)
+        projects = await filter_projects(
+            query, slug, user, project, include_unjoined_projects
+        )
         issues = await filter_issues(query, slug, user, project, module, cycle)
         modules = await filter_modules(query, slug, user, project, module, cycle)
         cycles = await filter_cycles(query, slug, user, project, module, cycle)

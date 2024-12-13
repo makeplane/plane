@@ -17,8 +17,10 @@ from plane.graphql.permissions.project import (
     ProjectAdminPermission,
 )
 from plane.graphql.types.project import ProjectType
+from plane.graphql.utils.roles import Roles
 from plane.db.models import (
     Workspace,
+    WorkspaceMember,
     Project,
     ProjectMember,
     UserFavorite,
@@ -196,6 +198,53 @@ class ProjectInviteMutation:
             _ = await sync_to_async(ProjectMember.objects.create)(
                 project=project, member=email.get("user"), role=email.get("role")
             )
+        return True
+
+
+@strawberry.type
+class JoinProjectMutation:
+    @strawberry.mutation(
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
+    )
+    async def joinProject(self, info: Info, slug: str, project: strawberry.ID) -> bool:
+        workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
+        project = await sync_to_async(Project.objects.get)(id=project)
+
+        # validating is the user is in the workspace or not
+        try:
+            workspace_member = await sync_to_async(WorkspaceMember.objects.get)(
+                workspace=workspace, member=info.context.user
+            )
+        except WorkspaceMember.DoesNotExist:
+            message = "User is not part of the workspace"
+            error_extensions = {"code": "USER_NOT_PART_OF_WORKSPACE", "statusCode": 400}
+            raise GraphQLError(message, extensions=error_extensions)
+
+        workspace_role = workspace_member.role
+
+        # validating the workspace role
+        if workspace_role not in [Roles.ADMIN.value, Roles.MEMBER.value]:
+            message = "User does not have permission to join the project"
+            error_extensions = {
+                "code": "USER_DOES_NOT_HAVE_PERMISSION",
+                "statusCode": 400,
+            }
+            raise GraphQLError(message, extensions=error_extensions)
+
+        # add the user as a admin of the project
+        user = info.context.user
+        _ = await sync_to_async(ProjectMember.objects.create)(
+            workspace=workspace,
+            project=project,
+            member=user,
+            role=workspace_role,
+            created_by=user,
+        )
+        # creating the issue property for the user
+        _ = await sync_to_async(IssueUserProperty.objects.create)(
+            workspace=workspace, project=project, user=user, created_by=user
+        )
+
         return True
 
 

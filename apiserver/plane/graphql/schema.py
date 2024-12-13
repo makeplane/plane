@@ -57,6 +57,7 @@ from .mutations.project import (
     ProjectMutation,
     ProjectInviteMutation,
     ProjectFavoriteMutation,
+    JoinProjectMutation,
 )
 from .mutations.issue import (
     IssueMutation,
@@ -172,6 +173,7 @@ class Mutation(
     PageMutation,
     DeviceInformationMutation,
     WorkspacePageMutation,
+    JoinProjectMutation,
     IssueModuleMutation,
     IssueCycleMutation,
     UserAssetMutation,
