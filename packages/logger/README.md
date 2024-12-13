@@ -1,11 +1,11 @@
 # Logger Package
 
-This package provides a singleton-based logger utility built using [Winston](https://github.com/winstonjs/winston). It offers customizable log levels and supports structured logging for general application logs and HTTP requests.
+This package provides a logger and a request logger utility built using [Winston](https://github.com/winstonjs/winston). It offers customizable log levels using env and supports structured logging for general application logs and HTTP requests.
 
-## Features
-- Singleton pattern ensures a single logger instance.
-- Dynamic log level configuration and log filename prefix.
+## Features.
+- Dynamic log level configuration using env.
 - Pre-configured winston logger for general usage (`logger`).
+- Request logger middleware that logs incoming request
 
 ## Usage
 
@@ -21,27 +21,24 @@ dependency: {
 
 ### Importing the Logger
 ```typescript
-import PlaneLogger from "@plane/logger";
+import { logger, requestLogger } from '@plane/logger'
 ```
-
+### Usage
 ### `logger`: General Logger
 Use this for general application logs.
 
 ```typescript
-const loggerOptions: ILoggerOptions = { logLevel:"info", logFilePrefix: "log-file-prefix" }
-
-import ClientLogger from "@plane/logger/client"
-const logger = ClientLogger.getLogger(loggerOptions);
-logger.log("test logs on web")
-
-
-import ServerLogger from "@plane/logger/server"
-const logger = ServerLogger.getLogger(loggerOptions);
-logger.log("test logs on server")
-
 logger.info("This is an info log");
 logger.warn("This is a warning");
 logger.error("This is an error");
+```
+
+### `requestLogger`: Request Logger Middleware
+Use this as a middleware for incoming requests
+
+```typescript
+const app = express()
+app.use(requestLogger)
 ```
 
 ## Available Log Levels
@@ -53,6 +50,10 @@ logger.error("This is an error");
 - `debug`
 - `silly`
 
+## Log file
+- Log files are stored in logs folder of current working directory. Error logs are stored in files with format `error-%DATE%.log` and combined logs are stored with format `combined-%DATE%.log`. 
+- Log files have a 7 day rotation period defined.
+
 ## Configuration
 - By default, the log level is set to `info`. 
-- You can specify a log level during the first import of logger by passing optional logLevel param in getLogger function.
+- You can specify a log level by adding a LOG_LEVEL in .env.
