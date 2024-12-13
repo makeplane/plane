@@ -13,6 +13,7 @@ from django.conf import settings
 from celery import shared_task
 import firebase_admin
 from firebase_admin import credentials, messaging
+from bs4 import BeautifulSoup
 
 # Module imports
 from plane.db.models import Workspace, Device
@@ -267,6 +268,11 @@ def issue_push_notifications(notification):
             f"{'start' if property_key == 'start_date' else 'due'} date "
             f"{f'to {new_value}' if new_value else ''}"
         )
+    elif property_key == "comment":
+        soup = BeautifulSoup(new_value, "html.parser")
+        new_value = soup.get_text()
+        title = f"{actor_name} commented on {title}"
+        body = f"{new_value}"
     else:
         body = f"{actor_name} set the {property_key} to {new_value}"
 
