@@ -1,4 +1,4 @@
-import { observable, action, makeObservable, computed } from "mobx";
+import { observable, action, makeObservable } from "mobx";
 // services
 import { EIssuesStoreType, TCreateModalStoreTypes } from "@/constants/issue";
 // types / constants
@@ -9,9 +9,8 @@ export interface ModalData {
   viewId: string;
 }
 
-export interface ICommandPaletteStore {
+export interface IBaseCommandPaletteStore {
   // observables
-
   isCommandPaletteOpen: boolean;
   isShortcutModalOpen: boolean;
   isCreateProjectModalOpen: boolean;
@@ -22,8 +21,7 @@ export interface ICommandPaletteStore {
   isCreateIssueModalOpen: boolean;
   isDeleteIssueModalOpen: boolean;
   isBulkDeleteIssueModalOpen: boolean;
-  // computed
-  isAnyModalOpen: boolean;
+  createIssueStoreType: TCreateModalStoreTypes;
   // toggle actions
   toggleCommandPaletteModal: (value?: boolean) => void;
   toggleShortcutModal: (value?: boolean) => void;
@@ -35,11 +33,9 @@ export interface ICommandPaletteStore {
   toggleCreateModuleModal: (value?: boolean) => void;
   toggleDeleteIssueModal: (value?: boolean) => void;
   toggleBulkDeleteIssueModal: (value?: boolean) => void;
-
-  createIssueStoreType: TCreateModalStoreTypes;
 }
 
-export class CommandPaletteStore implements ICommandPaletteStore {
+export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStore {
   // observables
   isCommandPaletteOpen: boolean = false;
   isShortcutModalOpen: boolean = false;
@@ -51,7 +47,6 @@ export class CommandPaletteStore implements ICommandPaletteStore {
   isDeleteIssueModalOpen: boolean = false;
   isBulkDeleteIssueModalOpen: boolean = false;
   createPageModal: TCreatePageModal = DEFAULT_CREATE_PAGE_MODAL_DATA;
-
   createIssueStoreType: TCreateModalStoreTypes = EIssuesStoreType.PROJECT;
 
   constructor() {
@@ -67,8 +62,7 @@ export class CommandPaletteStore implements ICommandPaletteStore {
       isDeleteIssueModalOpen: observable.ref,
       isBulkDeleteIssueModalOpen: observable.ref,
       createPageModal: observable,
-      // computed
-      isAnyModalOpen: computed,
+      createIssueStoreType: observable,
       // projectPages: computed,
       // toggle actions
       toggleCommandPaletteModal: action,
@@ -85,20 +79,20 @@ export class CommandPaletteStore implements ICommandPaletteStore {
   }
 
   /**
-   * Checks whether any modal is open or not.
-   * @returns boolean
+   * Returns whether any base modal is open
+   * @protected - allows access from child classes
    */
-  get isAnyModalOpen() {
+  protected getCoreModalsState(): boolean {
     return Boolean(
       this.isCreateIssueModalOpen ||
-        this.isCreateCycleModalOpen ||
-        this.isCreateProjectModalOpen ||
-        this.isCreateModuleModalOpen ||
-        this.isCreateViewModalOpen ||
-        this.isShortcutModalOpen ||
-        this.isBulkDeleteIssueModalOpen ||
-        this.isDeleteIssueModalOpen ||
-        this.createPageModal.isOpen
+      this.isCreateCycleModalOpen ||
+      this.isCreateProjectModalOpen ||
+      this.isCreateModuleModalOpen ||
+      this.isCreateViewModalOpen ||
+      this.isShortcutModalOpen ||
+      this.isBulkDeleteIssueModalOpen ||
+      this.isDeleteIssueModalOpen ||
+      this.createPageModal.isOpen
     );
   }
 

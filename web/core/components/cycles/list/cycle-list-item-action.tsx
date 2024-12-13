@@ -14,10 +14,9 @@ import { CycleQuickActions } from "@/components/cycles";
 import { DateRangeDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // constants
-import { CYCLE_STATUS } from "@/constants/cycle";
 import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
 // helpers
-import { findHowManyDaysLeft, getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { generateQueryParams } from "@/helpers/router.helper";
@@ -69,11 +68,11 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   const cycleStatus = cycleDetails.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug,
+    projectId
   );
   const renderIcon = Boolean(cycleDetails.start_date) || Boolean(cycleDetails.end_date);
-  const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
-  const daysLeft = findHowManyDaysLeft(cycleDetails.end_date) ?? 0;
 
   // handlers
   const handleAddToFavorites = (e: MouseEvent<HTMLButtonElement>) => {
@@ -201,9 +200,9 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
 
     const query = generateQueryParams(searchParams, ["peekCycle"]);
     if (searchParams.has("peekCycle") && searchParams.get("peekCycle") === cycleId) {
-      router.push(`${pathname}?${query}`);
+      router.push(`${pathname}?${query}`, {}, { showProgressBar: false });
     } else {
-      router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`);
+      router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`, {}, { showProgressBar: false });
     }
   };
 

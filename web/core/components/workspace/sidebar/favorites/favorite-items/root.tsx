@@ -131,7 +131,7 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
       })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [elementRef?.current, isDragging]);
+  }, [elementRef?.current, isDragging, isLastChild, favorite.id]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
