@@ -60,7 +60,8 @@ export class BaseTimeLineStore extends ExtendableTimelineStore implements IBaseT
 
     autorun(() => {
       this.isDependencyEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace(
-        E_FEATURE_FLAGS.TIMELINE_DEPENDENCY
+        E_FEATURE_FLAGS.TIMELINE_DEPENDENCY,
+        false
       );
     });
 

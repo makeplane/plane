@@ -522,6 +522,25 @@ def filter_issue_type(params, issue_filter, method, prefix=""):
             issue_filter[f"{prefix}type__in"] = params.get("issue_type")
     return issue_filter
 
+def filter_team_project(params, issue_filter, method, prefix=""):
+    if method == "GET":
+        projects = [
+            item
+            for item in params.get("team_project").split(",")
+            if item != "null"
+        ]
+        projects = filter_valid_uuids(projects)
+        if len(projects) and "" not in projects:
+            issue_filter[f"{prefix}project__in"] = projects
+    else:
+        if (
+            params.get("team_project", None)
+            and len(params.get("team_project"))
+            and params.get("team_project") != "null"
+        ):
+            issue_filter[f"{prefix}project__in"] = params.get("team_project")
+    return issue_filter
+
 
 def issue_filters(query_params, method, prefix=""):
     issue_filter = {}
@@ -553,6 +572,7 @@ def issue_filters(query_params, method, prefix=""):
         "subscriber": filter_subscribed_issues,
         "start_target_date": filter_start_target_date_issues,
         "issue_type": filter_issue_type,
+        "team_project": filter_team_project,
     }
 
     for key, value in ISSUE_FILTER.items():

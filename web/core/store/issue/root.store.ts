@@ -1,8 +1,10 @@
 import isEmpty from "lodash/isEmpty";
 import { autorun, makeObservable, observable } from "mobx";
 // types
+import { EIssueServiceType } from "@plane/constants";
 import { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite, TIssueServiceType } from "@plane/types";
 // plane web store
+import { IProjectEpics, IProjectEpicsFilter, ProjectEpics, ProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import { ITeamIssuesFilter, ITeamIssues, TeamIssues, TeamIssuesFilter } from "@/plane-web/store/issue/team";
 import {
   ITeamViewIssues,
@@ -10,8 +12,6 @@ import {
   TeamViewIssues,
   TeamViewIssuesFilter,
 } from "@/plane-web/store/issue/team-views";
-import { IProjectEpics, IProjectEpicsFilter, ProjectEpics, ProjectEpicsFilter } from "@/plane-web/store/issue/epic";
-import { EIssueServiceType } from "@plane/constants";
 // root store
 import { RootStore } from "@/plane-web/store/root.store";
 import { IWorkspaceMembership } from "@/store/member/workspace-member.store";

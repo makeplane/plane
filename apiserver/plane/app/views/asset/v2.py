@@ -209,7 +209,10 @@ class UserAssetsV2Endpoint(BaseAPIView):
 
 
 class WorkspaceFileAssetEndpoint(BaseAPIView):
-    """This endpoint is used to upload cover images/logos etc for workspace, projects and users."""
+    """
+    This endpoint is used to upload cover images/logos
+    etc for workspace, projects and users.
+    """
 
     def get_entity_id_field(self, entity_type, entity_id):
         # Workspace Logo
@@ -241,6 +244,10 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         # Comment Description
         if entity_type == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION:
             return {"comment_id": entity_id}
+
+        if entity_type == FileAsset.EntityTypeContext.TEAM_SPACE_DESCRIPTION:
+            return {"entity_identifier": entity_id}
+
         return {}
 
     def asset_delete(self, asset_id):

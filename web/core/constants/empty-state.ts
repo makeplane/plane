@@ -29,6 +29,7 @@ export enum EmptyStateType {
   WORKSPACE_DASHBOARD = "workspace-dashboard",
   WORKSPACE_ANALYTICS = "workspace-analytics",
   WORKSPACE_PROJECTS = "workspace-projects",
+  WORKSPACE_TEAMS = "workspace-teams",
   WORKSPACE_ALL_ISSUES = "workspace-all-issues",
   WORKSPACE_ASSIGNED = "workspace-assigned",
   WORKSPACE_CREATED = "workspace-created",
@@ -165,6 +166,17 @@ const emptyStateDetails = {
     },
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+  },
+  [EmptyStateType.WORKSPACE_TEAMS]: {
+    key: EmptyStateType.WORKSPACE_TEAMS,
+    title: "Teams",
+    description: "Teams are groups of people who collaborate on projects. Create a team to get started.",
+    path: "/empty-state/teams/teams",
+    primaryButton: {
+      text: "Create new team",
+    },
+    accessType: "workspace",
+    access: [EUserPermissions.ADMIN],
   },
   // all-issues
   [EmptyStateType.WORKSPACE_ALL_ISSUES]: {
@@ -369,8 +381,7 @@ const emptyStateDetails = {
   [EmptyStateType.PROJECT_CYCLE_ALL]: {
     key: EmptyStateType.PROJECT_CYCLE_ALL,
     title: "No cycles",
-    description:
-      "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
+    description: "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
     path: "/empty-state/cycle/active",
   },
   // empty filters

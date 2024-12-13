@@ -75,6 +75,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
                 else print("Server Error")
             )
             if isinstance(e, IntegrityError):
+                log_exception(e)
                 return Response(
                     {"error": "The payload is not valid", "exception": str(e)},
                     status=status.HTTP_400_BAD_REQUEST,

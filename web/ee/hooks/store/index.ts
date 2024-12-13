@@ -10,3 +10,4 @@ export * from "./use-self-hosted-subscription";
 export * from "./use-workspace-features";
 export * from "./workspace-project-states";
 export * from "./importers";
+export * from "./teams";

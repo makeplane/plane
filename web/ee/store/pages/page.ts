@@ -1,7 +1,7 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // types
-import { TDocumentPayload, TLogoProps, TPage } from "@plane/types";
+import { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
 // constants
 import { EPageAccess } from "@/constants/page";
 // plane web constants
@@ -11,11 +11,9 @@ import { WorkspacePageService } from "@/plane-web/services/page";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 
-export type TLoader = "submitting" | "submitted" | "saved";
-
 export interface IWorkspacePageDetails extends TPage {
   // observables
-  isSubmitting: TLoader;
+  isSubmitting: TNameDescriptionLoader;
   // computed
   asJSON: TPage | undefined;
   isCurrentUserOwner: boolean; // it will give the user is the owner of the page or not
@@ -29,7 +27,7 @@ export interface IWorkspacePageDetails extends TPage {
   isContentEditable: boolean;
   // helpers
   oldName: string;
-  setIsSubmitting: (value: TLoader) => void;
+  setIsSubmitting: (value: TNameDescriptionLoader) => void;
   cleanup: () => void;
   // actions
   update: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
@@ -48,7 +46,7 @@ export interface IWorkspacePageDetails extends TPage {
 
 export class WorkspacePageDetails implements IWorkspacePageDetails {
   // loaders
-  isSubmitting: TLoader = "saved";
+  isSubmitting: TNameDescriptionLoader = "saved";
   // page properties
   id: string | undefined;
   name: string | undefined;
@@ -313,7 +311,7 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
    * @description update the submitting state
    * @param value
    */
-  setIsSubmitting = (value: TLoader) => {
+  setIsSubmitting = (value: TNameDescriptionLoader) => {
     runInAction(() => {
       this.isSubmitting = value;
     });

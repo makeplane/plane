@@ -25,6 +25,19 @@ from .app.intake import IntakeSettingSerializer
 
 from .app.initiative import InitiativeSerializer
 
+from .app.team import (
+    TeamSpaceSerializer,
+    TeamSpaceMemberSerializer,
+    TeamSpaceCommentSerializer,
+    TeamSpaceViewSerializer,
+    TeamSpacePageSerializer,
+    TeamSpacePageDetailSerializer,
+    TeamSpacePageVersionSerializer,
+    TeamSpacePageVersionDetailSerializer,
+    TeamSpaceCommentReactionSerializer,
+    TeamSpaceUserPropertySerializer,
+)
+
 from .app.epic import (
     EpicSerializer,
     EpicDetailSerializer,
@@ -37,6 +50,7 @@ from .app.epic import (
     EpicUserPropertySerializer,
     EpicReactionSerializer,
 )
+
 from .app.workflow import (
     WorkflowSerializer,
     WorkflowTransitionSerializer,

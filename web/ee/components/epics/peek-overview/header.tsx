@@ -20,7 +20,7 @@ import {
 } from "@plane/ui";
 import { EUserPermissions, EUserPermissionsLevel } from "@/ce/constants";
 // components
-import { IssueUpdateStatus } from "@/components/issues";
+import { NameDescriptionUpdateStatus } from "@/components/issues";
 // constants
 import { EIssuesStoreType } from "@/constants/issue";
 // helpers
@@ -181,7 +181,7 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
         )}
       </div>
       <div className="flex items-center gap-x-4">
-        <IssueUpdateStatus isSubmitting={isSubmitting} />
+        <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
         <div className="flex items-center gap-4">
           <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
             <button type="button" onClick={handleCopyText}>

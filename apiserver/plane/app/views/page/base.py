@@ -2,9 +2,9 @@
 import json
 import base64
 from datetime import datetime
-from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import connection
 from django.db.models import Exists, OuterRef, Q, Value, UUIDField
 from django.utils.decorators import method_decorator

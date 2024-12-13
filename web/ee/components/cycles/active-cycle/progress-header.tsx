@@ -36,7 +36,7 @@ export const CycleProgressHeader: FC<Props> = (props: Props) => {
   const progressToday = progress && progress.find((d) => d.date === format(startOfToday(), "yyyy-MM-dd"));
   // handlers
   const handleControlLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`);
+    router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`, {}, { showProgressBar: false });
   };
 
   return (

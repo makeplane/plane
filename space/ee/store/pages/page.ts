@@ -11,8 +11,6 @@ import { CoreRootStore } from "@/store/root.store";
 // types
 import { IIssue } from "@/types/issue";
 
-export type TLoader = "submitting" | "submitted" | "saved";
-
 export interface IPage extends TPageResponse {
   // observables
   issueEmbedError: boolean;

@@ -8,7 +8,6 @@ import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 import useSWRImmutable from "swr/immutable";
-
 import { LogOut } from "lucide-react";
 // hooks
 import { Button, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
@@ -21,7 +20,13 @@ import { persistence } from "@/local-db/storage.sqlite";
 // constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
-import { useFlag, useIssueTypes, useWorkspaceFeatures, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
+import {
+  useFlag,
+  useIssueTypes,
+  useTeams,
+  useWorkspaceFeatures,
+  useWorkspaceProjectStates,
+} from "@/plane-web/hooks/store";
 import { useFeatureFlags } from "@/plane-web/hooks/store/use-feature-flags";
 // images
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
@@ -50,6 +55,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { fetchFeatureFlags } = useFeatureFlags();
   const { fetchWorkspaceFeatures, workspaceFeatures } = useWorkspaceFeatures();
   const { fetchProjectStates } = useWorkspaceProjectStates();
+  const { isTeamsFeatureEnabled, fetchTeams } = useTeams();
 
   const { fetchAll } = useIssueTypes();
   const { isMobile } = usePlatformOS();
@@ -145,6 +151,13 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
       ? `WORKSPACE_ISSUE_TYPES_${workspaceSlug}_${isIssueTypesEnabled}_${isEpicsEnabled}`
       : null,
     workspaceSlug && (isIssueTypesEnabled || isEpicsEnabled) ? () => fetchAll(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // fetching teams
+  useSWR(
+    workspaceSlug && isTeamsFeatureEnabled ? `WORKSPACE_TEAMS_${workspaceSlug}` : null,
+    workspaceSlug && isTeamsFeatureEnabled ? () => fetchTeams(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

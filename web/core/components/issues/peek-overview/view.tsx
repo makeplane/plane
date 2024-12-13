@@ -1,5 +1,6 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
+// constants
 import { EIssueServiceType } from "@plane/constants";
 // types
 import { TNameDescriptionLoader } from "@plane/types";

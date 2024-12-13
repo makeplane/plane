@@ -8,6 +8,7 @@ export type TWorkspaceFeatureLoader = EWorkspaceFeatureLoader | undefined;
 // workspace feature
 export enum EWorkspaceFeatures {
   IS_PROJECT_GROUPING_ENABLED = "is_project_grouping_enabled",
+  IS_TEAMS_ENABLED = "is_teams_enabled",
 }
 
 export type TWorkspaceFeature = { [key in EWorkspaceFeatures]: boolean | undefined };

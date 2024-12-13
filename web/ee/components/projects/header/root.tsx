@@ -59,13 +59,16 @@ export const ProjectsListHeader = observer(() => {
         </div>
         <div className="flex items-center gap-4">
           {/* search */}
-          <ProjectSearch workspaceSlug={workspaceSlug.toString()} />
-
+          <ProjectSearch />
           <div className="hidden md:flex gap-4">
             {/* layout selection */}
             {!isArchived && <ProjectLayoutSelection workspaceSlug={workspaceSlug.toString()} />}{" "}
             {/* attributes dropdown */}
-            <ProjectAttributesDropdown workspaceSlug={workspaceSlug.toString()} workspaceId={workspaceId} isArchived={isArchived}/>
+            <ProjectAttributesDropdown
+              workspaceSlug={workspaceSlug.toString()}
+              workspaceId={workspaceId}
+              isArchived={isArchived}
+            />
             {/* display filters dropdown */}
             <ProjectDisplayFiltersDropdown workspaceSlug={workspaceSlug.toString()} isArchived={isArchived} />
           </div>

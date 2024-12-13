@@ -315,7 +315,7 @@ export class IssueTypes implements IIssueTypesStore {
    */
   isEpicEnabledForProject = computedFn(
     (workspaceSlug: string, projectId: string, epicFlagKey: EpicIssueTypeFlagKeys): boolean => {
-      const epicFlagEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace(epicFlagKey);
+      const epicFlagEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace(epicFlagKey, false);
       // const projectDetails = this.rootStore.projectRoot.project.getProjectById(projectId);
       return epicFlagEnabled ?? false;
       // return (epicFlagEnabled && projectDetails?.is_epic_enabled) ?? false;
@@ -610,7 +610,7 @@ export class IssueTypes implements IIssueTypesStore {
    */
   fetchAllIssueTypes = async (workspaceSlug: string) => {
     if (!workspaceSlug) return Promise.resolve([]);
-    const isIssueTypesEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("ISSUE_TYPE_DISPLAY");
+    const isIssueTypesEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("ISSUE_TYPE_DISPLAY", false);
     if (!isIssueTypesEnabled) return Promise.resolve([]);
     return this.issueTypesService.fetchAll({ workspaceSlug });
   };
@@ -621,7 +621,7 @@ export class IssueTypes implements IIssueTypesStore {
    */
   fetchAllEpics = async (workspaceSlug: string) => {
     if (!workspaceSlug) return Promise.resolve([]);
-    const isEpicsEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("EPICS_DISPLAY");
+    const isEpicsEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("EPICS_DISPLAY", false);
     if (!isEpicsEnabled) return Promise.resolve([]);
     return this.epicIssueTypesService.fetchAll({ workspaceSlug });
   };
