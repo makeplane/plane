@@ -41,7 +41,7 @@ def update_existing_version(version: IssueDescriptionVersion, issue) -> None:
 
 @shared_task
 def issue_description_version_task(
-    updated_issue, issue_id, user_id, is_creating
+    updated_issue, issue_id, user_id, is_creating=False
 ) -> Optional[bool]:
     try:
         # Parse updated issue data
