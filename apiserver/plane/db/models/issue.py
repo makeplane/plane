@@ -671,9 +671,6 @@ class IssueVersion(ProjectBaseModel):
 
     parent = models.UUIDField(blank=True, null=True)
     state = models.UUIDField(blank=True, null=True)
-    point = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(12)], null=True, blank=True
-    )
     estimate_point = models.UUIDField(blank=True, null=True)
     name = models.CharField(max_length=255, verbose_name="Issue Name")
     priority = models.CharField(
@@ -742,7 +739,6 @@ class IssueVersion(ProjectBaseModel):
                 issue=issue,
                 parent=issue.parent_id,
                 state=issue.state_id,
-                point=issue.point,
                 estimate_point=issue.estimate_point_id,
                 name=issue.name,
                 priority=issue.priority,

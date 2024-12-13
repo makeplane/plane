@@ -38,11 +38,6 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='versions', to='db.issueactivity'),
         ),
         migrations.AddField(
-            model_name='issueversion',
-            name='point',
-            field=models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(12)]),
-        ),
-        migrations.AddField(
             model_name='profile',
             name='is_mobile_onboarded',
             field=models.BooleanField(default=False),
