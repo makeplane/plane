@@ -20,7 +20,7 @@ import { KanbanQuickAddIssueButton, QuickAddIssueRoot } from "@/components/issue
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 import { KanbanIssueBlockLoader } from "@/components/ui";
 // helpers
-import { EIssueLayoutTypes } from "@/constants/issue";
+import { DRAG_ALLOWED_GROUPS, EIssueLayoutTypes } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
@@ -258,6 +258,10 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   const shouldLoadMore = nextPageResults === undefined ? issueIds?.length < groupIssueCount : !!nextPageResults;
   const canOverlayBeVisible = isWorkflowDropDisabled || orderBy !== "sort_order" || isDropDisabled;
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
+  const canDragIssuesInCurrentGrouping =
+    !!group_by &&
+    DRAG_ALLOWED_GROUPS.includes(group_by) &&
+    (!!sub_group_by ? DRAG_ALLOWED_GROUPS.includes(sub_group_by) : true);
 
   return (
     <div
@@ -289,6 +293,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         canEditProperties={canEditProperties}
         scrollableContainerRef={scrollableContainerRef}
         canDropOverIssue={!canOverlayBeVisible}
+        canDragIssuesInCurrentGrouping={canDragIssuesInCurrentGrouping}
       />
 
       {shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={setIntersectionElement} />)}

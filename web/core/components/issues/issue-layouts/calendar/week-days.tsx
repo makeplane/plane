@@ -26,6 +26,7 @@ type Props = {
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   handleDragAndDrop: (
     issueId: string | undefined,
+    issueProjectId: string | undefined,
     sourceDate: string | undefined,
     destinationDate: string | undefined
   ) => Promise<void>;
@@ -33,6 +34,7 @@ type Props = {
   readOnly?: boolean;
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
+  canEditProperties: (projectId: string | undefined) => boolean;
 };
 
 export const CalendarWeekDays: React.FC<Props> = observer((props) => {
@@ -53,6 +55,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
     readOnly = false,
     selectedDate,
     setSelectedDate,
+    canEditProperties,
   } = props;
 
   const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
@@ -88,6 +91,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
             addIssuesToView={addIssuesToView}
             readOnly={readOnly}
             handleDragAndDrop={handleDragAndDrop}
+            canEditProperties={canEditProperties}
           />
         );
       })}

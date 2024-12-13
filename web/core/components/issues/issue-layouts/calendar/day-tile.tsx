@@ -38,6 +38,7 @@ type Props = {
   quickActions: TRenderQuickActions;
   handleDragAndDrop: (
     issueId: string | undefined,
+    issueProjectId: string | undefined,
     sourceDate: string | undefined,
     destinationDate: string | undefined
   ) => Promise<void>;
@@ -45,6 +46,7 @@ type Props = {
   readOnly?: boolean;
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
+  canEditProperties: (projectId: string | undefined) => boolean;
 };
 
 export const CalendarDayTile: React.FC<Props> = observer((props) => {
@@ -65,6 +67,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     selectedDate,
     handleDragAndDrop,
     setSelectedDate,
+    canEditProperties,
   } = props;
 
   const [isDraggingOver, setIsDraggingOver] = useState(false);
@@ -111,7 +114,12 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
             }
           }
 
-          handleDragAndDrop(sourceData?.id, sourceData?.date, destinationData?.date);
+          handleDragAndDrop(
+            sourceData?.id,
+            issueDetails?.project_id ?? undefined,
+            sourceData?.date,
+            destinationData?.date
+          );
           highlightIssueOnDrop(source?.element?.id, false);
         },
       })
@@ -176,6 +184,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               enableQuickIssueCreate={enableQuickIssueCreate}
               quickAddCallback={quickAddCallback}
               readOnly={readOnly}
+              canEditProperties={canEditProperties}
             />
           </div>
         </div>
