@@ -1,6 +1,9 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { EIssueServiceType } from "@plane/constants";
+// types
+import { TNameDescriptionLoader } from "@plane/types";
+// components
 import {
   DeleteIssueModal,
   IssuePeekOverviewHeader,
@@ -50,7 +53,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   } = props;
   // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
-  const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
+  const [isSubmitting, setIsSubmitting] = useState<TNameDescriptionLoader>("saved");
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   // store hooks

@@ -22,6 +22,7 @@ type Props = {
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   readOnly?: boolean;
   isMobileView?: boolean;
+  canEditProperties: (projectId: string | undefined) => boolean;
   isEpic?: boolean;
 };
 
@@ -38,6 +39,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
     addIssuesToView,
     readOnly,
     isMobileView = false,
+    canEditProperties,
     isEpic = false,
   } = props;
   const formattedDatePayload = renderFormattedPayloadDate(date);
@@ -65,6 +67,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
             issueId={issueId}
             quickActions={quickActions}
             isDragDisabled={isDragDisabled || isMobileView}
+            canEditProperties={canEditProperties}
             isEpic={isEpic}
           />
         </div>

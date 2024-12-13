@@ -27,6 +27,8 @@ type ListStoreType =
   | EIssuesStoreType.PROFILE
   | EIssuesStoreType.ARCHIVED
   | EIssuesStoreType.WORKSPACE_DRAFT
+  | EIssuesStoreType.TEAM
+  | EIssuesStoreType.TEAM_VIEW
   | EIssuesStoreType.EPIC;
 
 interface IBaseListRoot {
@@ -110,11 +112,11 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
         handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
         handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
         handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
-        readOnly={!isEditingAllowed || isCompletedCycle}
+        readOnly={!canEditProperties(issue.project_id ?? undefined) || isCompletedCycle}
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isEditingAllowed, isCompletedCycle, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
+    [isCompletedCycle, canEditProperties, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
   );
 
   const loadMoreIssues = useCallback(

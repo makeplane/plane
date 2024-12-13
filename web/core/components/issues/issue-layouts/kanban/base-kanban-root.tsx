@@ -6,6 +6,7 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
+import { EIssueServiceType } from "@plane/constants";
 import { DeleteIssueModal } from "@/components/issues";
 //constants
 import { ISSUE_DELETED } from "@/constants/event-tracker";
@@ -25,7 +26,6 @@ import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types"
 import { getSourceFromDropPayload } from "../utils";
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
-import { EIssueServiceType } from "@plane/constants";
 
 export type KanbanStoreType =
   | EIssuesStoreType.PROJECT
@@ -34,6 +34,8 @@ export type KanbanStoreType =
   | EIssuesStoreType.PROJECT_VIEW
   | EIssuesStoreType.DRAFT
   | EIssuesStoreType.PROFILE
+  | EIssuesStoreType.TEAM
+  | EIssuesStoreType.TEAM_VIEW
   | EIssuesStoreType.EPIC;
 
 export interface IBaseKanBanLayout {
@@ -187,11 +189,11 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
         handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
         handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
-        readOnly={!isEditingAllowed || isCompletedCycle}
+        readOnly={!canEditProperties(issue.project_id ?? undefined) || isCompletedCycle}
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isEditingAllowed, isCompletedCycle, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
+    [isCompletedCycle, canEditProperties, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
   );
 
   const handleDeleteIssue = async () => {

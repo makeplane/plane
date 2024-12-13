@@ -18,12 +18,12 @@ import { MONTHS_LIST } from "@/constants/calendar";
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // types
+import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 import { TRenderQuickActions } from "../list/list-view-types";
-import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 
 type Props = {
   issuesFilterStore:
@@ -44,6 +44,7 @@ type Props = {
   quickActions: TRenderQuickActions;
   handleDragAndDrop: (
     issueId: string | undefined,
+    issueProjectId: string | undefined,
     sourceDate: string | undefined,
     destinationDate: string | undefined
   ) => Promise<void>;
@@ -51,6 +52,7 @@ type Props = {
   readOnly?: boolean;
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
+  canEditProperties: (projectId: string | undefined) => boolean;
   isEpic?: boolean;
 };
 
@@ -72,6 +74,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     selectedDate,
     handleDragAndDrop,
     setSelectedDate,
+    canEditProperties,
     isEpic = false,
   } = props;
 
@@ -119,7 +122,12 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
             }
           }
 
-          handleDragAndDrop(sourceData?.id, sourceData?.date, destinationData?.date);
+          handleDragAndDrop(
+            sourceData?.id,
+            issueDetails?.project_id ?? undefined,
+            sourceData?.date,
+            destinationData?.date
+          );
           highlightIssueOnDrop(source?.element?.id, false);
         },
       })
@@ -184,6 +192,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               enableQuickIssueCreate={enableQuickIssueCreate}
               quickAddCallback={quickAddCallback}
               readOnly={readOnly}
+              canEditProperties={canEditProperties}
               isEpic={isEpic}
             />
           </div>

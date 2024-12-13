@@ -25,6 +25,8 @@ export type SpreadsheetStoreType =
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
   | EIssuesStoreType.PROJECT_VIEW
+  | EIssuesStoreType.TEAM
+  | EIssuesStoreType.TEAM_VIEW
   | EIssuesStoreType.EPIC;
 
 interface IBaseSpreadsheetRoot {
@@ -102,11 +104,11 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
         handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
         handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
         portalElement={portalElement}
-        readOnly={!isEditingAllowed || isCompletedCycle}
+        readOnly={!canEditProperties(issue.project_id ?? undefined) || isCompletedCycle}
         placements={placement}
       />
     ),
-    [isEditingAllowed, isCompletedCycle, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
+    [isCompletedCycle, canEditProperties, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
   );
 
   if (!Array.isArray(issueIds)) return null;
