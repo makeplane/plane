@@ -66,6 +66,16 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
       codeBlock: false,
       horizontalRule: false,
       blockquote: false,
+      paragraph: {
+        HTMLAttributes: {
+          class: "editor-paragraph-block",
+        },
+      },
+      heading: {
+        HTMLAttributes: {
+          class: "editor-heading-block",
+        },
+      },
       dropcursor: false,
       gapcursor: false,
     }),

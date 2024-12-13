@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { CircleDashed, Plus } from "lucide-react";
 // types
-import { TIssue, ISearchIssueResponse } from "@plane/types";
+import { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types";
 // ui
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -18,9 +18,12 @@ import { cn } from "@/helpers/common.helper";
 import { useEventTracker } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
+// Plane-web
+import { WorkFlowGroupTree } from "@/plane-web/components/workflow";
 
 interface IHeaderGroupByCard {
   groupID: string;
+  groupBy: TIssueGroupByOptions;
   icon?: React.ReactNode;
   title: string;
   count: number;
@@ -35,6 +38,7 @@ interface IHeaderGroupByCard {
 export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
   const {
     groupID,
+    groupBy,
     icon,
     title,
     count,
@@ -43,7 +47,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
     disableIssueCreation,
     addIssuesToView,
     selectionHelpers,
-    handleCollapsedGroups
+    handleCollapsedGroups,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -112,6 +116,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
         >
           <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
           <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
+          <WorkFlowGroupTree groupBy={groupBy} groupId={groupID} />
         </div>
 
         {!disableIssueCreation &&

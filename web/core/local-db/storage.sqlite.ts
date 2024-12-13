@@ -294,7 +294,14 @@ export class Storage {
         log(`Project ${projectId} is loading, falling back to server`);
       }
       const issueService = new IssueService();
-      return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries, config);
+
+      // Ignore projectStatus if projectId is not provided
+      if (projectId) {
+        return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries, config);
+      }
+      if (this.status !== "ready" && !rootStore.user.localDBEnabled) {
+        return;
+      }
     }
 
     const { cursor, group_by, sub_group_by } = queries;

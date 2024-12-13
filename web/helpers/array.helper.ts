@@ -102,3 +102,18 @@ export const getValidKeysFromObject = (obj: any) => {
 
   return Object.keys(obj).filter((key) => !!obj[key]);
 };
+
+/**
+ * Convert an array into an object of keys and boolean strue
+ * @param arrayStrings
+ * @returns
+ */
+export const convertStringArrayToBooleanObject = (arrayStrings: string[]) => {
+  const obj: { [key: string]: boolean } = {};
+
+  for (const arrayString of arrayStrings) {
+    obj[arrayString] = true;
+  }
+
+  return obj;
+};

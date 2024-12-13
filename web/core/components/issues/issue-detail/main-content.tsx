@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import { TNameDescriptionLoader } from "@plane/types";
 // components
 import {
   IssueActivity,
-  IssueUpdateStatus,
+  NameDescriptionUpdateStatus,
   IssueReaction,
   IssueParentDetail,
   IssueTitleInput,
@@ -38,7 +39,7 @@ type Props = {
 export const IssueMainContent: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived } = props;
   // states
-  const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
+  const [isSubmitting, setIsSubmitting] = useState<TNameDescriptionLoader>("saved");
   // hooks
   const windowSize = useSize();
   const { data: currentUser } = useUser();
@@ -87,7 +88,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         <div className="mb-2.5 flex items-center justify-between gap-4">
           <IssueTypeSwitcher issueId={issueId} disabled={isArchived || !isEditable} />
           <div className="flex items-center gap-3">
-            <IssueUpdateStatus isSubmitting={isSubmitting} />
+            <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
             {duplicateIssues?.length > 0 && (
               <DeDupeIssuePopoverRoot
                 workspaceSlug={workspaceSlug}

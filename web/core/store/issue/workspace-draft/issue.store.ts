@@ -352,7 +352,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
         }
 
         // sync issue to local db
-        addIssueToPersistanceLayer(response);
+        addIssueToPersistanceLayer({ ...payload, ...response });
 
         // Update draft issue count in workspaceUserInfo
         this.updateWorkspaceUserDraftIssueCount(workspaceSlug, -1);
