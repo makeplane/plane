@@ -1,5 +1,6 @@
 # Python imports
 from typing import Optional
+import logging
 
 # Django imports
 from django.utils import timezone
@@ -69,13 +70,15 @@ def sync_issue_description_version(batch_size=5000, offset=0, countdown=300):
             for issue in issues_batch:
                 # Validate required fields
                 if not issue.workspace_id or not issue.project_id:
-                    print(f"Skipping {issue.id} - missing workspace_id or project_id")
+                    logging.warning(
+                        f"Skipping {issue.id} - missing workspace_id or project_id"
+                    )
                     continue
 
                 # Determine owned_by_id
                 owned_by_id = get_owner_id(issue)
                 if owned_by_id is None:
-                    print(f"Skipping issue {issue.id} - missing owned_by")
+                    logging.warning(f"Skipping issue {issue.id} - missing owned_by")
                     continue
 
                 # Create version object

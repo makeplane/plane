@@ -3,6 +3,7 @@ import json
 from typing import Optional, List, Dict
 from uuid import UUID
 from itertools import groupby
+import logging
 
 # Django imports
 from django.utils import timezone
@@ -146,12 +147,14 @@ def create_issue_version(issue: Issue, related_data: Dict) -> Optional[IssueVers
 
     try:
         if not issue.workspace_id or not issue.project_id:
-            print(f"Skipping issue {issue.id} - missing workspace_id or project_id")
+            logging.warning(
+                f"Skipping issue {issue.id} - missing workspace_id or project_id"
+            )
             return None
 
         owned_by_id = get_owner_id(issue)
         if owned_by_id is None:
-            print(f"Skipping issue {issue.id} - missing owned_by")
+            logging.warning(f"Skipping issue {issue.id} - missing owned_by")
             return None
 
         return IssueVersion(
@@ -239,7 +242,7 @@ def sync_issue_version(batch_size=5000, offset=0, countdown=300):
                     countdown=countdown,
                 )
 
-            print(f"Processed Issues: {end_offset}")
+            logging.info(f"Processed Issues: {end_offset}")
             return
     except Exception as e:
         log_exception(e)
