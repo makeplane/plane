@@ -126,7 +126,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
                     "member__avatar": member.member.avatar,
                     "member__avatar_url": member.member.avatar_url,
                 }
-                for member in project_members
+                for member in project_members if member.is_active
             ]
         return []
 
