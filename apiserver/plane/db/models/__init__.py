@@ -41,6 +41,8 @@ from .issue import (
     IssueSequence,
     IssueSubscriber,
     IssueVote,
+    IssueVersion,
+    IssueDescriptionVersion,
 )
 from .module import Module, ModuleIssue, ModuleLink, ModuleMember, ModuleUserProperties
 from .notification import EmailNotificationLog, Notification, UserNotificationPreference
@@ -77,3 +79,5 @@ from .recent_visit import UserRecentVisit
 from .label import Label
 
 from .device import Device, DeviceSession
+
+from .sticky import Sticky
