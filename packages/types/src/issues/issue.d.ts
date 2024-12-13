@@ -1,3 +1,4 @@
+import { EIssueServiceType } from "@plane/constants";
 import { TIssuePriorities } from "../issues";
 import { TIssueAttachment } from "./issue_attachment";
 import { TIssueLink } from "./issue_link";
@@ -39,6 +40,7 @@ export type TBaseIssue = {
   updated_by: string;
 
   is_draft: boolean;
+  is_epic?: boolean;
 };
 
 export type IssueRelation = {
@@ -121,3 +123,7 @@ export type TIssueDetailWidget =
   | "relations"
   | "links"
   | "attachments";
+
+export type TIssueServiceType =
+  | EIssueServiceType.ISSUES
+  | EIssueServiceType.EPICS;
