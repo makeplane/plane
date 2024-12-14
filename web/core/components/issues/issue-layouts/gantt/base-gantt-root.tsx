@@ -27,16 +27,18 @@ import { IssueLayoutHOC } from "../issue-layout-HOC";
 interface IBaseGanttRoot {
   viewId?: string | undefined;
   isCompletedCycle?: boolean;
+  isEpic?: boolean;
 }
 
 export type GanttStoreType =
   | EIssuesStoreType.PROJECT
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
-  | EIssuesStoreType.PROJECT_VIEW;
+  | EIssuesStoreType.PROJECT_VIEW
+  | EIssuesStoreType.EPIC;
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
-  const { viewId, isCompletedCycle = false } = props;
+  const { viewId, isCompletedCycle = false, isEpic = false } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
 
@@ -123,8 +125,8 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
             loaderTitle="Issues"
             blockIds={issuesIds}
             blockUpdateHandler={updateIssueBlockStructure}
-            blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} />}
-            sidebarToRender={(props) => <IssueGanttSidebar {...props} showAllBlocks />}
+            blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} isEpic={isEpic} />}
+            sidebarToRender={(props) => <IssueGanttSidebar {...props} showAllBlocks isEpic={isEpic} />}
             enableBlockLeftResize={isAllowed}
             enableBlockRightResize={isAllowed}
             enableBlockMove={isAllowed}
@@ -136,6 +138,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
             canLoadMoreBlocks={nextPageResults}
             updateBlockDates={updateBlockDates}
             showAllBlocks
+            isEpic={isEpic}
           />
         </div>
       </TimeLineTypeContext.Provider>

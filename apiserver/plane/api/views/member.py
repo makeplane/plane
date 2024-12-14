@@ -109,6 +109,7 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
                 password=make_password(uuid.uuid4().hex),
                 is_password_autoset=True,
                 is_active=False,
+                avatar_asset_id=request.data.get("avatar_asset_id", None),
             )
             user.save()
 

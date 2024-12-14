@@ -46,8 +46,18 @@ export const groupReactions: (reactions: any[], key: string) => { [key: string]:
   reactions: any,
   key: string
 ) => {
+  if (!Array.isArray(reactions)) {
+    console.error("Expected an array of reactions, but got:", reactions);
+    return {};
+  }
+
   const groupedReactions = reactions.reduce(
     (acc: any, reaction: any) => {
+      if (!reaction || typeof reaction !== "object" || !Object.prototype.hasOwnProperty.call(reaction, key)) {
+        console.warn("Skipping undefined reaction or missing key:", reaction);
+        return acc; // Skip undefined reactions or those without the specified key
+      }
+
       if (!acc[reaction[key]]) {
         acc[reaction[key]] = [];
       }

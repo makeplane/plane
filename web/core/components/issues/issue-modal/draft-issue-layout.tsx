@@ -16,51 +16,15 @@ import { isEmptyHtmlString } from "@/helpers/string.helper";
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useEventTracker, useWorkspaceDraftIssues } from "@/hooks/store";
 // local components
-import { IssueFormRoot } from "./form";
+import { IssueFormRoot, type IssueFormProps } from "./form";
 
-export interface DraftIssueProps {
+export interface DraftIssueProps extends IssueFormProps {
   changesMade: Partial<TIssue> | null;
-  data?: Partial<TIssue>;
-  issueTitleRef: React.MutableRefObject<HTMLInputElement | null>;
-  isCreateMoreToggleEnabled: boolean;
-  onAssetUpload: (assetId: string) => void;
-  onCreateMoreToggleChange: (value: boolean) => void;
   onChange: (formData: Partial<TIssue> | null) => void;
-  onClose: (saveDraftIssueInLocalStorage?: boolean) => void;
-  onSubmit: (formData: Partial<TIssue>, is_draft_issue?: boolean) => Promise<void>;
-  projectId: string;
-  isDraft: boolean;
-  moveToIssue?: boolean;
-  modalTitle?: string;
-  primaryButtonText?: {
-    default: string;
-    loading: string;
-  };
-  isDuplicateModalOpen: boolean;
-  handleDuplicateIssueModal: (isOpen: boolean) => void;
-  isProjectSelectionDisabled?: boolean;
 }
 
 export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
-  const {
-    changesMade,
-    data,
-    issueTitleRef,
-    onAssetUpload,
-    onChange,
-    onClose,
-    onSubmit,
-    projectId,
-    isCreateMoreToggleEnabled,
-    onCreateMoreToggleChange,
-    isDraft,
-    moveToIssue = false,
-    modalTitle,
-    primaryButtonText,
-    isDuplicateModalOpen,
-    handleDuplicateIssueModal,
-    isProjectSelectionDisabled = false,
-  } = props;
+  const { changesMade, data, onChange, onClose, projectId } = props;
   // states
   const [issueDiscardModal, setIssueDiscardModal] = useState(false);
   // router params
@@ -74,7 +38,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
 
   const handleClose = () => {
     if (data?.id) {
-      onClose(false);
+      onClose();
       setIssueDiscardModal(false);
     } else {
       if (changesMade) {
@@ -93,11 +57,11 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
             delete changesMade.description_html;
         });
         if (isEmpty(changesMade)) {
-          onClose(false);
+          onClose();
           setIssueDiscardModal(false);
         } else setIssueDiscardModal(true);
       } else {
-        onClose(false);
+        onClose();
         setIssueDiscardModal(false);
       }
     }
@@ -126,7 +90,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         });
         onChange(null);
         setIssueDiscardModal(false);
-        onClose(false);
+        onClose();
         return res;
       })
       .catch(() => {
@@ -162,27 +126,10 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         onDiscard={() => {
           onChange(null);
           setIssueDiscardModal(false);
-          onClose(false);
+          onClose();
         }}
       />
-      <IssueFormRoot
-        isCreateMoreToggleEnabled={isCreateMoreToggleEnabled}
-        onCreateMoreToggleChange={onCreateMoreToggleChange}
-        data={data}
-        issueTitleRef={issueTitleRef}
-        onAssetUpload={onAssetUpload}
-        onChange={onChange}
-        onClose={handleClose}
-        onSubmit={onSubmit}
-        projectId={projectId}
-        isDraft={isDraft}
-        moveToIssue={moveToIssue}
-        modalTitle={modalTitle}
-        primaryButtonText={primaryButtonText}
-        isDuplicateModalOpen={isDuplicateModalOpen}
-        handleDuplicateIssueModal={handleDuplicateIssueModal}
-        isProjectSelectionDisabled={isProjectSelectionDisabled}
-      />
+      <IssueFormRoot {...props} onClose={handleClose} />
     </>
   );
 });

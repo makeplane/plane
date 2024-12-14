@@ -18,6 +18,9 @@ export interface IProjectStore {
   projectMap: {
     [projectId: string]: TProject; // projectId: project Info
   };
+  projectEpicPropertiesMap: {
+    [projectId: string]: any;
+  };
   // computed
   filteredProjectIds: string[] | undefined;
   workspaceProjectIds: string[] | undefined;
@@ -29,7 +32,9 @@ export interface IProjectStore {
   // actions
   getProjectById: (projectId: string | undefined | null) => TProject | undefined;
   getProjectIdentifierById: (projectId: string | undefined | null) => string;
+  getProjectEpicPropertiesById: (projectId: string | undefined | null) => any;
   // fetch actions
+  fetchProjectEpicProperties: (workspaceSlug: string, projectId: string) => Promise<any>;
   fetchProjects: (workspaceSlug: string) => Promise<TProject[]>;
   fetchProjectDetails: (workspaceSlug: string, projectId: string) => Promise<TProject>;
   // favorites actions
@@ -52,6 +57,9 @@ export class ProjectStore implements IProjectStore {
   loader: boolean = false;
   projectMap: {
     [projectId: string]: TProject; // projectId: project Info
+  } = {};
+  projectEpicPropertiesMap: {
+    [projectId: string]: any;
   } = {};
   // root store
   rootStore: CoreRootStore;
@@ -77,6 +85,7 @@ export class ProjectStore implements IProjectStore {
       joinedProjectIds: computed,
       favoriteProjectIds: computed,
       // fetch actions
+      fetchProjectEpicProperties: action,
       fetchProjects: action,
       fetchProjectDetails: action,
       // favorites actions
@@ -204,6 +213,24 @@ export class ProjectStore implements IProjectStore {
       .map((project) => project.id);
     return projectIds;
   }
+
+  fetchProjectEpicProperties = async (workspaceSlug: string, projectId: string) => {
+    try {
+      const response = await this.projectService.fetchProjectEpicProperties(workspaceSlug, projectId);
+      runInAction(() => {
+        set(this.projectEpicPropertiesMap, [projectId], response);
+      });
+      return response;
+    } catch (error) {
+      console.log("Failed to fetch epic properties from project store");
+      throw error;
+    }
+  };
+
+  getProjectEpicPropertiesById = computedFn((projectId: string | undefined | null) => {
+    const projectEpicProperties = this.projectEpicPropertiesMap[projectId ?? ""];
+    return projectEpicProperties;
+  });
 
   /**
    * get Workspace projects using workspace slug

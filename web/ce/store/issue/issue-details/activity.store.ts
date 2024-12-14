@@ -7,7 +7,14 @@ import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { TIssueActivityComment, TIssueActivity, TIssueActivityMap, TIssueActivityIdMap } from "@plane/types";
+import { EIssueServiceType } from "@plane/constants";
+import {
+  TIssueActivityComment,
+  TIssueActivity,
+  TIssueActivityMap,
+  TIssueActivityIdMap,
+  TIssueServiceType,
+} from "@plane/types";
 // plane web constants
 import { EActivityFilterType } from "@/plane-web/constants/issues";
 // services
@@ -48,9 +55,13 @@ export class IssueActivityStore implements IIssueActivityStore {
   activityMap: TIssueActivityMap = {};
 
   // services
+  serviceType;
   issueActivityService;
 
-  constructor(protected store: CoreRootStore) {
+  constructor(
+    protected store: CoreRootStore,
+    serviceType: TIssueServiceType = EIssueServiceType.ISSUES
+  ) {
     makeObservable(this, {
       // observables
       sortOrder: observable.ref,
@@ -61,8 +72,9 @@ export class IssueActivityStore implements IIssueActivityStore {
       fetchActivities: action,
       toggleSortOrder: action
     });
+    this.serviceType = serviceType;
     // services
-    this.issueActivityService = new IssueActivityService();
+    this.issueActivityService = new IssueActivityService(this.serviceType);
   }
 
   // helper methods
@@ -81,8 +93,10 @@ export class IssueActivityStore implements IIssueActivityStore {
 
     let activityComments: TIssueActivityComment[] = [];
 
+    const currentStore = this.serviceType === EIssueServiceType.EPICS ? this.store.epic : this.store.issue;
+
     const activities = this.getActivitiesByIssueId(issueId) || [];
-    const comments = this.store.issue.issueDetail.comment.getCommentsByIssueId(issueId) || [];
+    const comments = currentStore.issueDetail.comment.getCommentsByIssueId(issueId) || [];
 
     activities.forEach((activityId) => {
       const activity = this.getActivityById(activityId);
@@ -95,7 +109,7 @@ export class IssueActivityStore implements IIssueActivityStore {
     });
 
     comments.forEach((commentId) => {
-      const comment = this.store.issue.issueDetail.comment.getCommentById(commentId);
+      const comment = currentStore.issueDetail.comment.getCommentById(commentId);
       if (!comment) return;
       activityComments.push({
         id: comment.id,
