@@ -275,6 +275,9 @@ CELERY_IMPORTS = (
     "plane.payment.bgtasks.free_seat_sync",
     # management tasks
     "plane.bgtasks.dummy_data_task",
+    # issue version tasks
+    "plane.bgtasks.issue_version_sync",
+    "plane.bgtasks.issue_description_version_sync",
 )
 
 # Sentry Settings
