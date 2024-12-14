@@ -64,6 +64,7 @@ interface Props {
   selectionHelpers: TSelectionHelper;
   handleCollapsedGroups: (value: string) => void;
   collapsedGroups: TIssueKanbanFilters;
+  isEpic?: boolean;
 }
 
 export const ListGroup = observer((props: Props) => {
@@ -90,6 +91,7 @@ export const ListGroup = observer((props: Props) => {
     selectionHelpers,
     handleCollapsedGroups,
     collapsedGroups,
+    isEpic = false,
   } = props;
 
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
@@ -266,6 +268,7 @@ export const ListGroup = observer((props: Props) => {
           addIssuesToView={addIssuesToView}
           selectionHelpers={selectionHelpers}
           handleCollapsedGroups={handleCollapsedGroups}
+          isEpic={isEpic}
         />
       </Row>
       {shouldExpand && (
@@ -292,6 +295,7 @@ export const ListGroup = observer((props: Props) => {
               isDragAllowed={isDragAllowed}
               canDropOverIssue={!canOverlayBeVisible}
               selectionHelpers={selectionHelpers}
+              isEpic={isEpic}
             />
           )}
 

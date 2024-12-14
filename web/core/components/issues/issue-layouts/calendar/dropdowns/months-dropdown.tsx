@@ -9,6 +9,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { MONTHS_LIST } from "@/constants/calendar";
 import { getDate } from "@/helpers/date-time.helper";
 import { useCalendarView } from "@/hooks/store";
+import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
@@ -16,7 +17,12 @@ import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 // helpers
 
 interface Props {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProjectEpicsFilter;
 }
 export const CalendarMonthsDropdown: React.FC<Props> = observer((props: Props) => {
   const { issuesFilterStore } = props;

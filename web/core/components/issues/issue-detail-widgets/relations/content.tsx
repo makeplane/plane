@@ -1,7 +1,8 @@
 "use client";
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { TIssue, TIssueRelationIdMap } from "@plane/types";
+import { EIssueServiceType } from "@plane/constants";
+import { TIssue, TIssueRelationIdMap, TIssueServiceType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 // components
 import { RelationIssueList } from "@/components/issues";
@@ -20,6 +21,7 @@ type Props = {
   projectId: string;
   issueId: string;
   disabled: boolean;
+  issueServiceType?: TIssueServiceType;
 };
 
 type TIssueCrudState = { toggle: boolean; issueId: string | undefined; issue: TIssue | undefined };
@@ -33,7 +35,7 @@ export type TRelationObject = {
 };
 
 export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, disabled = false } = props;
+  const { workspaceSlug, projectId, issueId, disabled = false, issueServiceType = EIssueServiceType.ISSUES } = props;
   // state
   const [issueCrudState, setIssueCrudState] = useState<{
     update: TIssueCrudState;
@@ -56,7 +58,7 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
     relation: { getRelationsByIssueId },
     toggleDeleteIssueModal,
     toggleCreateIssueModal,
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
 
   // helper
   const issueOperations = useRelationOperations();
@@ -129,6 +131,7 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
                 disabled={disabled}
                 issueOperations={issueOperations}
                 handleIssueCrudState={handleIssueCrudState}
+                issueServiceType={issueServiceType}
               />
             </Collapsible>
           </div>
