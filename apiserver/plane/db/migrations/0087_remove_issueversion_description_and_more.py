@@ -52,6 +52,11 @@ class Migration(migrations.Migration):
             name='mobile_timezone_auto_set',
             field=models.BooleanField(default=False),
         ),
+        migrations.AddField(
+            model_name='profile',
+            name='language',
+            field=models.CharField(default='en', max_length=255),
+        ),
         migrations.AlterField(
             model_name='issueversion',
             name='owned_by',
