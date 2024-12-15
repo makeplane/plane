@@ -7,9 +7,9 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { LogOut } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
+import { API_BASE_URL } from "@plane/constants";
 import { Avatar, Button } from "@plane/ui";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
 import { getFileURL } from "@/helpers/file.helper";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
