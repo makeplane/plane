@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ChevronDown, CircleUserRound } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { useTranslation } from "@plane/i18n";
 import type { IUser } from "@plane/types";
 import {
   Button,
@@ -45,6 +46,8 @@ const ProfileSettingsPage = observer(() => {
   const [isLoading, setIsLoading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const [deactivateAccountModal, setDeactivateAccountModal] = useState(false);
+  // language support
+  const { t } = useTranslation();
   // form info
   const {
     handleSubmit,
@@ -224,7 +227,8 @@ const ProfileSettingsPage = observer(() => {
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-4">
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm font-medium text-custom-text-200">
-                    First name<span className="text-red-500">*</span>
+                    {t("first_name")}
+                    <span className="text-red-500">*</span>
                   </h4>
                   <Controller
                     control={control}
@@ -251,7 +255,7 @@ const ProfileSettingsPage = observer(() => {
                   {errors.first_name && <span className="text-xs text-red-500">{errors.first_name.message}</span>}
                 </div>
                 <div className="flex flex-col gap-1">
-                  <h4 className="text-sm font-medium text-custom-text-200">Last name</h4>
+                  <h4 className="text-sm font-medium text-custom-text-200">{t("last_name")}</h4>
                   <Controller
                     control={control}
                     name="last_name"
@@ -274,7 +278,8 @@ const ProfileSettingsPage = observer(() => {
                 </div>
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm font-medium text-custom-text-200">
-                    Display name<span className="text-red-500">*</span>
+                    {t("display_name")}
+                    <span className="text-red-500">*</span>
                   </h4>
                   <Controller
                     control={control}
@@ -312,7 +317,8 @@ const ProfileSettingsPage = observer(() => {
                 </div>
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm font-medium text-custom-text-200">
-                    Email<span className="text-red-500">*</span>
+                    {t("email")}
+                    <span className="text-red-500">*</span>
                   </h4>
                   <Controller
                     control={control}
@@ -340,7 +346,8 @@ const ProfileSettingsPage = observer(() => {
                 </div>
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm font-medium text-custom-text-200">
-                    Role<span className="text-red-500">*</span>
+                    {t("role")}
+                    <span className="text-red-500">*</span>
                   </h4>
                   <Controller
                     name="role"
@@ -372,7 +379,8 @@ const ProfileSettingsPage = observer(() => {
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-4">
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm font-medium text-custom-text-200">
-                    Timezone<span className="text-red-500">*</span>
+                    {t("timezone")}
+                    <span className="text-red-500">*</span>
                   </h4>
                   <Controller
                     name="user_timezone"
@@ -399,7 +407,7 @@ const ProfileSettingsPage = observer(() => {
                 </div>
                 <Tooltip tooltipContent="Coming soon" position="bottom">
                   <div className="flex flex-col gap-1">
-                    <h4 className="text-sm font-medium text-custom-text-200">Language</h4>
+                    <h4 className="text-sm font-medium text-custom-text-200">{t("language")}</h4>
                     <CustomSearchSelect
                       value="English (US)"
                       label="English (US)"
