@@ -6,6 +6,20 @@ http {
 
     server {
         listen 80;
+        server_name base.xsiadron.com;
+
+        return 301 https://$host$request_uri;
+    }
+
+    server {
+        listen 443 ssl;
+        server_name base.xsiadron.com;
+
+        ssl_certificate /etc/letsencrypt/live/base.xsiadron.com/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/base.xsiadron.com/privkey.pem;
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_prefer_server_ciphers on;
+
         root /www/data/;
         access_log /var/log/nginx/access.log;
 
