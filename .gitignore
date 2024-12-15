@@ -85,3 +85,4 @@ deploy/selfhost/plane-app/
 ## Storybook
 *storybook.log
 output.css
+nginx.conf.template
