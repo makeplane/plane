@@ -1,12 +1,13 @@
 import { FC } from "react";
 import Link from "next/link";
+import { TProjectActivity } from "@/plane-web/types";
 
-type TProjectUser = {
-  activity: any;
+type TUser = {
+  activity: TProjectActivity;
   customUserName?: string;
 };
 
-export const ProjectUser: FC<TProjectUser> = (props) => {
+export const User: FC<TUser> = (props) => {
   const { activity, customUserName } = props;
 
   return (

@@ -9,7 +9,7 @@ type TProps = {
 export const Actions = (props: TProps) => {
   const { toggleLinkModalOpen, workspaceSlug, projectId } = props;
   return (
-    <div className="text-base font-medium flex gap-4 text-custom-text-350 my-auto">
+    <div className="text-base font-medium flex gap-4 text-custom-text-200 my-auto">
       <button className="flex gap-1" onClick={() => toggleLinkModalOpen(true)}>
         <Link2 className="rotate-[135deg] my-auto" size={16} />
         <div>Add link</div>

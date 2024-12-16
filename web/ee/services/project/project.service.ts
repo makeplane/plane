@@ -2,7 +2,7 @@
 
 // ce services
 import { TProjectLink } from "@plane/types";
-import { TProjectAnalytics } from "@/plane-web/types";
+import { TProject, TProjectAnalytics, TProjectFeatures } from "@/plane-web/types";
 import { ProjectService as CeProjectService } from "@/services/project";
 
 export class ProjectService extends CeProjectService {
@@ -60,6 +60,22 @@ export class ProjectService extends CeProjectService {
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
+      });
+  }
+
+  async getFeatures(workspaceSlug: string, projectId: string): Promise<TProjectFeatures> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/features/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async toggleFeatures(workspaceSlug: string, projectId: string, data: Partial<TProject>): Promise<TProject> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/features/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
       });
   }
 }

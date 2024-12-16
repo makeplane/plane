@@ -173,7 +173,15 @@ class ProjectViewSet(BaseViewSet):
                     ).values("is_epic_enabled")
                 )
             )
-                # EE: project_grouping ends
+            .annotate(
+                is_project_updates_enabled=Exists(
+                    ProjectFeature.objects.filter(
+                        workspace__slug=self.kwargs.get("slug"),
+                        project_id=OuterRef("pk"),
+                    ).values("is_project_updates_enabled")
+                )
+            )
+            # EE: project_grouping ends
             .prefetch_related(
                 Prefetch(
                     "project_projectmember",

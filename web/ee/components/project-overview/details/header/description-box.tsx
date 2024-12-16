@@ -20,7 +20,7 @@ export const DescriptionBox = (props: TProps) => {
 
   return (
     <div>
-      <div className="text-2xl font-semibold text-custom-text-300 w-full rounded-md pb-2">
+      <div className="text-2xl w-full rounded-md pb-2">
         <ProjectDescriptionInput
           workspaceSlug={workspaceSlug}
           project={project}

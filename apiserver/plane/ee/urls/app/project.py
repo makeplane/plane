@@ -90,7 +90,7 @@ urlpatterns = [
         name="project-reactions",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:pk>/features/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/features/",
         ProjectFeatureEndpoint.as_view(),
         name="project-features",
     ),

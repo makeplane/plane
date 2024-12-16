@@ -15,7 +15,7 @@ export const NewUpdate = (props: TProps) => {
   const [selectedStatus, setSelectedStatus] = useState(initialValues?.status ?? EProjectUpdateStatus.ON_TRACK);
 
   return (
-    <div className="border border-custom-border-80 rounded-md p-4 flex flex-col gap-4">
+    <div className="border border-custom-border-100 rounded-md p-4 flex flex-col gap-4 mb-4">
       {/* Type */}
       <StatusDropdown selectedStatus={selectedStatus} setStatus={setSelectedStatus} />
 

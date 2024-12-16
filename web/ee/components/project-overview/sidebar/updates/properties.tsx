@@ -10,20 +10,10 @@ export const Properties = (props: TProps) => {
     <div
       className={cn(
         "overflow-hidden transition-all duration-500 ease-in-out ",
-        !isCollapsed ? "max-h-[800px] border-t border-custom-border-80" : "max-h-0"
+        !isCollapsed ? "max-h-[800px] border-t border-custom-border-100" : "max-h-0"
       )}
     >
       <div className="my-4">
-        {/* Progress */}
-        <div className="text-xs text-custom-text-350 ">Since last update</div>
-        <div className="flex text-custom-text-300 text-xs gap-4 mb-3">
-          <div className="flex font-medium mr-2">
-            <Rocket size={12} className="my-auto mr-1" />
-            <span>Progress 13%</span>{" "}
-          </div>
-          <div>20 / 150 done</div>
-        </div>
-
         {/* Properties */}
         <div>
           <div className="flex">

@@ -101,22 +101,11 @@ export const CommentList = observer((props: TProps) => {
     <div
       className={cn(
         "overflow-hidden transition-all duration-500 ease-in-out ",
-        !isCollapsed ? "max-h-[800px] border-t border-custom-border-80" : "max-h-0"
+        !isCollapsed ? "max-h-[800px] border-t border-custom-border-100" : "max-h-0"
       )}
     >
       <div className="mt-4">
-        <form onSubmit={updateCommentOperations.create}>
-          <Input
-            placeholder="Write your comment"
-            value={newComment}
-            onChange={(e) => {
-              console.log(e.target.value);
-              setNewComment(e.target.value);
-            }}
-            className="w-full shadow border-custom-border-80 mb-4"
-          />
-        </form>
-        <div className="max-h-[500px] overflow-scroll pb-2">
+        <div className="max-h-[300px] overflow-scroll pb-2">
           {comments &&
             comments.map((item, id) => {
               const commentData = getCommentById(item);
@@ -133,6 +122,17 @@ export const CommentList = observer((props: TProps) => {
               );
             })}
         </div>
+        <form onSubmit={updateCommentOperations.create}>
+          <Input
+            placeholder="Write your comment"
+            value={newComment}
+            onChange={(e) => {
+              console.log(e.target.value);
+              setNewComment(e.target.value);
+            }}
+            className="w-full shadow border-custom-border-100 mb-4"
+          />
+        </form>
       </div>
     </div>
   );

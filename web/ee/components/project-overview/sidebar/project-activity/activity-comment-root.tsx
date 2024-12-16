@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 // components
 import useSWR from "swr";
 import { Loader } from "@plane/ui";
+import { ActivityItem } from "@/plane-web/components/common/activity/actions/helpers/activity-item";
 import { ProjectActivityService } from "@/plane-web/services";
-import { ProjectActivityItem } from "./activity/activity-list";
+import { iconsMap, messages } from "./helper";
 
 const projectActivityService = new ProjectActivityService();
 
@@ -37,10 +38,12 @@ export const ProjectActivityCommentRoot: FC<TProjectActivityCommentRoot> = obser
     <div>
       {activity &&
         activity.map((activityComment, index) => (
-          <ProjectActivityItem
+          <ActivityItem
             key={activityComment.id}
             activity={activityComment}
             ends={index === 0 ? "top" : index === activity.length - 1 ? "bottom" : undefined}
+            iconsMap={iconsMap}
+            messages={messages}
           />
         ))}
     </div>

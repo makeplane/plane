@@ -57,7 +57,7 @@ export const ProjectUpdates = observer(() => {
 
       {/* Updates */}
       {projectUpdates.length > 0 && (
-        <div className="flex flex-col gap-4 pb-4">
+        <div className="flex flex-col gap-4 pb-20">
           {projectUpdates.map((updateId) => (
             <UpdateBlock
               updateId={updateId}

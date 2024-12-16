@@ -58,7 +58,7 @@ export const ProjectAttachmentsDetail: FC<TProjectAttachmentsDetail> = observer(
         attachmentId={attachmentId}
       />
 
-      <div className="w-full flex items-center justify-between gap-1 rounded-md border border-custom-border-80 bg-custom-background-100 px-4 py-2 text-sm">
+      <div className="w-full flex items-center justify-between gap-1 rounded-md border border-custom-border-100 bg-custom-background-100 px-4 py-2 text-sm">
         <Link href={fileURL ?? ""} target="_blank" rel="noopener noreferrer">
           <div className="flex items-center gap-3">
             <div className="h-7 w-7">{fileIcon}</div>

@@ -78,10 +78,11 @@ export const StatsToday = (props: TStatsTodayProps) => {
       <Loader.Item height="125px" width="100%" />
     </Loader>
   ) : (
-    <>
+    <div className="mt-4 mx-2 border-y border-custom-border-200 py-4">
+      <div className="text-base text-custom-text-100 font-medium">Metrics as of today</div>
       {(!analytics || project.total_issues === 0) && <NoStats workspaceSlug={workspaceSlug} projectId={project?.id} />}
       {analytics && project.total_issues > 0 && (
-        <div className="text-custom-text-300 mt-4 mx-2">
+        <div className="text-custom-text-300 mt-4">
           {/* Progress bar */}
           <div className="flex w-full h-[14px] rounded gap-[2px]">
             {stats.map((stat) => (
@@ -89,9 +90,9 @@ export const StatsToday = (props: TStatsTodayProps) => {
                 key={stat.title}
                 className={cn(`h-full rounded`)}
                 style={{
-                  width: `${stat.stat ? Math.round(stat.stat / project.total_issues) * 100 : 0}%`,
+                  width: `${stat.stat ? Math.round((stat.stat * 100) / project.total_issues) : 0}%`,
                   backgroundColor: `${stat.color}`,
-                  opacity: 0.4,
+                  opacity: 0.5,
                 }}
               />
             ))}
@@ -138,6 +139,6 @@ export const StatsToday = (props: TStatsTodayProps) => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };

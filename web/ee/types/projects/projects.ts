@@ -9,7 +9,7 @@ export type TProject = IProject & {
   target_date: string | undefined;
   description_html: string | undefined;
   is_epic_enabled: boolean;
-
+  is_project_updates_enabled: boolean;
 };
 
 export type TProjectAnalytics = {
@@ -19,4 +19,8 @@ export type TProjectAnalytics = {
   started_issues: number;
   cancelled_issues: number;
   overdue_issues: number;
+};
+
+export type TProjectFeatures = {
+  is_project_updates_enabled: boolean;
 };

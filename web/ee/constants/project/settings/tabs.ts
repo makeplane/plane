@@ -27,6 +27,14 @@ export const PROJECT_SETTINGS = {
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/epics/`,
     Icon: EpicIcon,
   },
+  project_updates: {
+    key: "project-updates",
+    label: "Project Updates",
+    href: `/settings/project-updates/`,
+    access: [EUserPermissions.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/updates/`,
+    Icon: SettingIcon,
+  },
 };
 
 export const PROJECT_SETTINGS_LINKS: {
@@ -46,4 +54,5 @@ export const PROJECT_SETTINGS_LINKS: {
   PROJECT_SETTINGS["automations"],
   PROJECT_SETTINGS["issue-types"],
   PROJECT_SETTINGS["epics"],
+  PROJECT_SETTINGS["project_updates"],
 ];

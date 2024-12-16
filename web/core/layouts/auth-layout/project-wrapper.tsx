@@ -31,6 +31,8 @@ import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 import { persistence } from "@/local-db/storage.sqlite";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// plane web hooks
+import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 
 interface IProjectAuthWrapper {
   children: ReactNode;
@@ -46,6 +48,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { setTrackElement } = useEventTracker();
   const { fetchUserProjectInfo, allowPermissions, projectUserInfo } = useUserPermissions();
   const { loader, getProjectById, fetchProjectDetails } = useProject();
+  const { fetchFeatures } = useProjectAdvanced();
   const { fetchAllCycles } = useCycle();
   const { fetchModulesSlim, fetchModules } = useModule();
   const { initGantt } = useTimeLineChart(ETimeLineTypeType.MODULE);
@@ -85,6 +88,16 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
       revalidateOnReconnect: true,
       refreshInterval: 5 * 60 * 1000,
     }
+  );
+
+  // features
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_ADVANCED_FEATURES_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId
+      ? () => {
+          fetchFeatures(workspaceSlug.toString(), projectId.toString());
+        }
+      : null
   );
 
   // fetching project details

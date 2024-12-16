@@ -6,20 +6,18 @@ import { Network } from "lucide-react";
 import { Tooltip } from "@plane/ui";
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// ui
-// components
-import { ProjectUser } from "..";
-// helpers
+import { TProjectActivity } from "@/plane-web/types";
+import { User } from "./user";
 
-type TProjectActivityBlockComponent = {
+type TActivityBlockComponent = {
   icon?: ReactNode;
-  activity: any;
+  activity: TProjectActivity;
   ends: "top" | "bottom" | undefined;
   children: ReactNode;
   customUserName?: string;
 };
 
-export const ProjectActivityBlockComponent: FC<TProjectActivityBlockComponent> = (props) => {
+export const ActivityBlockComponent: FC<TActivityBlockComponent> = (props) => {
   const { icon, activity, ends, children, customUserName } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -36,15 +34,17 @@ export const ProjectActivityBlockComponent: FC<TProjectActivityBlockComponent> =
         {icon ? icon : <Network className="w-3.5 h-3.5" />}
       </div>
       <div className="w-full truncate text-custom-text-200">
-        <ProjectUser activity={activity} customUserName={customUserName} /> {children}
-        <span>
+        <User activity={activity} customUserName={customUserName} /> {children}
+        <div className="mt-1">
           <Tooltip
             isMobile={isMobile}
             tooltipContent={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
           >
-            <span className="whitespace-nowrap"> {calculateTimeAgo(activity.created_at)}</span>
+            <span className="whitespace-nowrap text-custom-text-350 font-medium">
+              {calculateTimeAgo(activity.created_at)}
+            </span>
           </Tooltip>
-        </span>
+        </div>
       </div>
     </div>
   );

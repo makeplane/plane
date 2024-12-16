@@ -109,7 +109,7 @@ export const ProjectPropertiesSidebar: React.FC<Props> = observer((props) => {
       <div className="flex h-8 items-center gap-2">
         <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
           <Users className="h-4 w-4 flex-shrink-0" />
-          <span>Assignees</span>
+          <span>Members</span>
         </div>
         <MembersDropdown
           value={projectMembersIds}

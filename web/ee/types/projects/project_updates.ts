@@ -13,4 +13,7 @@ export type TProjectUpdate = {
   created_by: string;
   updated_at: string;
   update_reactions: TProjectUpdateReaction[];
+  comments_count: number;
+  completed_issues: number;
+  total_issues: number;
 };

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Rocket } from "lucide-react";
 import { cn } from "@plane/editor";
 import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/ui";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
@@ -69,7 +69,7 @@ export const UpdateBlock = observer((props: TProps) => {
     updateData && (
       <div
         key={updateData.id}
-        className="relative flex updateDatas-center gap-2 border border-custom-border-80 rounded-md p-4 pb-0"
+        className="relative flex updateDatas-center gap-2 border border-custom-border-100 rounded-md p-4 pb-0"
       >
         <div className="flex-1">
           <div className="flex flex-1">
@@ -102,6 +102,24 @@ export const UpdateBlock = observer((props: TProps) => {
           {/* Update */}
           <div className="text-base my-3">{updateData.description}</div>
 
+          {/* Progress */}
+          <div className="text-xs text-custom-text-350 ">Since last update</div>
+          <div className="flex text-custom-text-300 text-xs gap-4 mb-3">
+            <div className="flex font-medium mr-2">
+              <Rocket size={12} className="my-auto mr-1" />
+              <span>
+                Progress{" "}
+                {updateData.total_issues > 0
+                  ? Math.round((updateData.completed_issues / updateData.total_issues) * 100)
+                  : 0}
+                %
+              </span>
+            </div>
+            <div>
+              {updateData.completed_issues} / {updateData.total_issues} done
+            </div>
+          </div>
+
           {/* Actions */}
           <div className="flex gap-2 mb-3 justify-between mt-4 ">
             <div className="flex gap-2 flex-wrap">
@@ -112,10 +130,15 @@ export const UpdateBlock = observer((props: TProps) => {
                 currentUser={currentUser}
               />
               <button
-                className="text-custom-text-350 bg-custom-background-80 rounded h-7 w-7"
+                className="text-custom-text-350 bg-custom-background-80 rounded h-7 flex px-2 gap-2 text-xs font-medium items-center"
                 onClick={() => setShowComment(!showComment)}
               >
                 <MessageCircle className="h-3.5 w-3.5 m-auto" />
+                {updateData.comments_count > 0 && (
+                  <span>
+                    {updateData.comments_count} {updateData.comments_count === 1 ? "Comment" : "Comments"}
+                  </span>
+                )}
               </button>
             </div>
             {/* <button
