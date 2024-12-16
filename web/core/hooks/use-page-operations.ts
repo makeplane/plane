@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 import { useParams } from "next/navigation";
+// plane editor
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // plane ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
@@ -19,32 +21,34 @@ export type TPageOperations = {
   toggleArchive: () => void;
 };
 
+type Props = {
+  editorRef?: EditorRefApi | EditorReadOnlyRefApi | null;
+  page: IPage;
+};
+
 export const usePageOperations = (
-  page: IPage
+  props: Props
 ): {
   pageOperations: TPageOperations;
 } => {
+  const { page } = props;
   // params
   const { workspaceSlug, projectId } = useParams();
   // derived values
   const {
     access,
     addToFavorites,
-    archive,
     archived_at,
     duplicate,
     id,
     is_favorite,
     is_locked,
-    lock,
     makePrivate,
     makePublic,
     removePageFromFavorites,
-    restore,
-    unlock,
   } = page;
   // collaborative actions
-  const { executeCollaborativeAction } = useCollaborativePageActions(undefined, page);
+  const { executeCollaborativeAction } = useCollaborativePageActions(props);
   // page operations
   const pageOperations: TPageOperations = useMemo(() => {
     const pageLink = projectId ? `${workspaceSlug}/projects/${projectId}/pages/${id}` : `${workspaceSlug}/pages/${id}`;

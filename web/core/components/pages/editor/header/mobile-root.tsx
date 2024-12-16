@@ -9,42 +9,34 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 import { IPage } from "@/store/pages/page";
 
 type Props = {
-  editorReady: boolean;
-  editorRef: React.RefObject<EditorRefApi>;
+  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
   page: IPage;
-  readOnlyEditorReady: boolean;
-  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   setSidePeekVisible: (sidePeekState: boolean) => void;
   sidePeekVisible: boolean;
 };
 
 export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
-  const { editorReady, editorRef, page, readOnlyEditorReady, readOnlyEditorRef, setSidePeekVisible, sidePeekVisible } =
-    props;
+  const { editorRef, page, setSidePeekVisible, sidePeekVisible } = props;
   // derived values
   const { isContentEditable } = page;
   // page filters
   const { isFullWidth } = usePageFilters();
-
-  if (!editorRef.current && !readOnlyEditorRef.current) return null;
 
   return (
     <>
       <Header variant={EHeaderVariant.SECONDARY}>
         <div className="flex-shrink-0 my-auto">
           <PageSummaryPopover
-            editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
+            editorRef={editorRef}
             isFullWidth={isFullWidth}
             sidePeekVisible={sidePeekVisible}
             setSidePeekVisible={setSidePeekVisible}
           />
         </div>
-        <PageExtraOptions editorRef={editorRef} page={page} readOnlyEditorRef={readOnlyEditorRef} />
+        <PageExtraOptions editorRef={editorRef} page={page} />
       </Header>
       <Header variant={EHeaderVariant.TERNARY}>
-        {(editorReady || readOnlyEditorReady) && isContentEditable && editorRef.current && (
-          <PageToolbar editorRef={editorRef?.current} />
-        )}
+        {isContentEditable && editorRef && <PageToolbar editorRef={editorRef as EditorRefApi} />}
       </Header>
     </>
   );

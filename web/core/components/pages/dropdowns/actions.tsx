@@ -14,6 +14,8 @@ import {
   LockKeyholeOpen,
   Trash2,
 } from "lucide-react";
+// plane editor
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // plane ui
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // components
@@ -44,6 +46,7 @@ export type TPageActions =
   | "move";
 
 type Props = {
+  editorRef?: EditorRefApi | EditorReadOnlyRefApi | null;
   extraOptions?: (TContextMenuItem & { key: TPageActions })[];
   optionsOrder: TPageActions[];
   page: IPage;
@@ -51,12 +54,15 @@ type Props = {
 };
 
 export const PageActions: React.FC<Props> = observer((props) => {
-  const { extraOptions, optionsOrder, page, parentRef } = props;
+  const { editorRef, extraOptions, optionsOrder, page, parentRef } = props;
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
   const [movePageModal, setMovePageModal] = useState(false);
   // page operations
-  const { pageOperations } = usePageOperations(page);
+  const { pageOperations } = usePageOperations({
+    editorRef,
+    page,
+  });
   // derived values
   const {
     access,

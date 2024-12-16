@@ -27,8 +27,10 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
   const { isContentEditable } = page;
   // page filters
   const { isFullWidth } = usePageFilters();
+  // derived values
+  const resolvedEditorRef = isContentEditable ? editorRef.current : readOnlyEditorRef.current;
 
-  if (!editorRef.current && !readOnlyEditorRef.current) return null;
+  if (!resolvedEditorRef) return null;
 
   return (
     <>
@@ -53,14 +55,11 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
             <PageToolbar editorRef={editorRef?.current} />
           )}
         </Header.LeftItem>
-        <PageExtraOptions editorRef={editorRef} page={page} readOnlyEditorRef={readOnlyEditorRef} />
+        <PageExtraOptions editorRef={resolvedEditorRef} page={page} />
       </Header>
       <div className="md:hidden">
         <PageEditorMobileHeaderRoot
-          editorRef={editorRef}
-          readOnlyEditorRef={readOnlyEditorRef}
-          editorReady={editorReady}
-          readOnlyEditorReady={readOnlyEditorReady}
+          editorRef={resolvedEditorRef}
           page={page}
           sidePeekVisible={sidePeekVisible}
           setSidePeekVisible={setSidePeekVisible}

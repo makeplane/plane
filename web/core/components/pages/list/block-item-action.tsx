@@ -25,7 +25,9 @@ export const BlockItemAction: FC<Props> = observer((props) => {
   const page = usePage(pageId);
   const { getUserDetails } = useMember();
   // page operations
-  const { pageOperations } = usePageOperations(page);
+  const { pageOperations } = usePageOperations({
+    page,
+  });
   // derived values
   const { access, created_at, is_favorite, owned_by, canCurrentUserFavoritePage } = page;
   const ownerDetails = owned_by ? getUserDetails(owned_by) : undefined;

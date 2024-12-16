@@ -33,8 +33,8 @@ export interface IPage extends TPage {
   update: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   updateTitle: (title: string) => void;
   updateDescription: (document: TDocumentPayload) => Promise<void>;
-  makePublic: () => Promise<void>;
-  makePrivate: () => Promise<void>;
+  makePublic: (shouldSync?: boolean) => Promise<void>;
+  makePrivate: (shouldSync?: boolean) => Promise<void>;
   lock: (shouldSync?: boolean) => Promise<void>;
   unlock: (shouldSync?: boolean) => Promise<void>;
   archive: (shouldSync?: boolean) => Promise<void>;
@@ -415,44 +415,48 @@ export class Page implements IPage {
   /**
    * @description make the page public
    */
-  makePublic = async () => {
+  makePublic = async (shouldSync: boolean = true) => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     const pageAccess = this.access;
     runInAction(() => (this.access = EPageAccess.PUBLIC));
 
-    try {
-      await this.pageService.updateAccess(workspaceSlug, projectId, this.id, {
-        access: EPageAccess.PUBLIC,
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.access = pageAccess;
-      });
-      throw error;
+    if (shouldSync) {
+      try {
+        await this.pageService.updateAccess(workspaceSlug, projectId, this.id, {
+          access: EPageAccess.PUBLIC,
+        });
+      } catch (error) {
+        runInAction(() => {
+          this.access = pageAccess;
+        });
+        throw error;
+      }
     }
   };
 
   /**
    * @description make the page private
    */
-  makePrivate = async () => {
+  makePrivate = async (shouldSync: boolean = true) => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     const pageAccess = this.access;
     runInAction(() => (this.access = EPageAccess.PRIVATE));
 
-    try {
-      await this.pageService.updateAccess(workspaceSlug, projectId, this.id, {
-        access: EPageAccess.PRIVATE,
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.access = pageAccess;
-      });
-      throw error;
+    if (shouldSync) {
+      try {
+        await this.pageService.updateAccess(workspaceSlug, projectId, this.id, {
+          access: EPageAccess.PRIVATE,
+        });
+      } catch (error) {
+        runInAction(() => {
+          this.access = pageAccess;
+        });
+        throw error;
+      }
     }
   };
 
