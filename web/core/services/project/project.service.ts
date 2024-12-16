@@ -172,7 +172,7 @@ export class ProjectService extends APIService {
       query: string;
     }
   ): Promise<TSearchResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/search/`, {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/entity-search/`, {
       params: {
         ...params,
         query_type: params.query_type.join(","),

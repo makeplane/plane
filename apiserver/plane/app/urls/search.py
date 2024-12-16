@@ -16,8 +16,8 @@ urlpatterns = [
         name="project-issue-search",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/search/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/entity-search/",
         SearchEndpoint.as_view(),
-        name="search",
+        name="entity-search",
     ),
 ]
