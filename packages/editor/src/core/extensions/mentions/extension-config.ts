@@ -1,7 +1,5 @@
 import { mergeAttributes } from "@tiptap/core";
 import Mention, { MentionOptions } from "@tiptap/extension-mention";
-import { MarkdownSerializerState } from "@tiptap/pm/markdown";
-import { Node } from "@tiptap/pm/model";
 // types
 import { TMentionHandler } from "@/types";
 // local types
@@ -45,16 +43,6 @@ export const CustomMentionExtensionConfig = Mention.extend<TMentionExtensionOpti
   addStorage(this) {
     return {
       mentionsOpen: false,
-      markdown: {
-        serialize(state: MarkdownSerializerState, node: Node) {
-          const { attrs } = node;
-          const label = `@${state.esc(attrs.label)}`;
-          const originUrl = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-          const safeRedirectionPath = state.esc(attrs.redirect_uri);
-          const url = `${originUrl}${safeRedirectionPath}`;
-          state.write(`[${label}](${url})`);
-        },
-      },
     };
   },
 });
