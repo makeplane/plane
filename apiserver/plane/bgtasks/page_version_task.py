@@ -10,20 +10,14 @@ from plane.utils.exception_logger import log_exception
 
 
 @shared_task
-def page_version(
-    page_id,
-    existing_instance,
-    user_id,
-):
+def page_version(page_id, existing_instance, user_id):
     try:
         # Get the page
         page = Page.objects.get(id=page_id)
 
         # Get the current instance
         current_instance = (
-            json.loads(existing_instance)
-            if existing_instance is not None
-            else {}
+            json.loads(existing_instance) if existing_instance is not None else {}
         )
 
         # Create a version if description_html is updated

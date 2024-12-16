@@ -74,6 +74,11 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
     // Upper case identifier
     formData.identifier = formData.identifier?.toUpperCase();
     const coverImage = formData.cover_image_url;
+    // if unsplash or a pre-defined image is uploaded, delete the old uploaded asset
+    if (coverImage?.startsWith("http")) {
+      formData.cover_image = coverImage;
+      formData.cover_image_asset = null;
+    }
 
     return createProject(workspaceSlug.toString(), formData)
       .then(async (res) => {

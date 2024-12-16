@@ -45,7 +45,7 @@ export const translateQueryParams = (queries: any) => {
   }
 
   // Fix invalid orderby when switching from spreadsheet layout
-  if (layout === "spreadsheet" && Object.keys(SPECIAL_ORDER_BY).includes(order_by)) {
+  if (layout !== "spreadsheet" && Object.keys(SPECIAL_ORDER_BY).includes(order_by)) {
     otherProps.order_by = "sort_order";
   }
   // For each property value, replace None with empty string
@@ -161,8 +161,11 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
     if (otherProps.state_group) {
       sql += `LEFT JOIN states ON i.state_id = states.id `;
     }
-    sql += `WHERE i.project_id = '${projectId}'
-    `;
+    sql += `WHERE 1=1 `;
+    if (projectId) {
+      sql += ` AND i.project_id = '${projectId}'
+      `;
+    }
     sql += `${singleFilterConstructor(otherProps)}) 
     `;
     return sql;
@@ -212,8 +215,11 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
     `;
   }
 
-  sql += ` WHERE i.project_id = '${projectId}'
-  `;
+  sql += ` WHERE 1=1  `;
+  if (projectId) {
+    sql += ` AND i.project_id = '${projectId}'
+    `;
+  }
   sql += singleFilterConstructor(otherProps);
 
   sql += `)
@@ -335,6 +341,9 @@ const getSingleFilterFields = (queries: any) => {
   }
   if (state_group) {
     fields.add("states.'group' as state_group");
+  }
+  if (order_by?.includes("estimate_point__key")) {
+    fields.add("estimate_point");
   }
   return Array.from(fields);
 };

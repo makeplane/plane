@@ -52,24 +52,19 @@ class ProjectInvitationsViewset(BaseViewSet):
         # Check if email is provided
         if not emails:
             return Response(
-                {"error": "Emails are required"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         for email in emails:
             workspace_role = WorkspaceMember.objects.filter(
-                workspace__slug=slug,
-                member__email=email.get("email"),
-                is_active=True,
+                workspace__slug=slug, member__email=email.get("email"), is_active=True
             ).role
 
-            if workspace_role in [5, 20] and workspace_role != email.get(
-                "role", 5
-            ):
+            if workspace_role in [5, 20] and workspace_role != email.get("role", 5):
                 return Response(
                     {
                         "error": "You cannot invite a user with different role than workspace role"
-                    },
+                    }
                 )
 
         workspace = Workspace.objects.get(slug=slug)
@@ -84,10 +79,7 @@ class ProjectInvitationsViewset(BaseViewSet):
                         project_id=project_id,
                         workspace_id=workspace.id,
                         token=jwt.encode(
-                            {
-                                "email": email,
-                                "timestamp": datetime.now().timestamp(),
-                            },
+                            {"email": email, "timestamp": datetime.now().timestamp()},
                             settings.SECRET_KEY,
                             algorithm="HS256",
                         ),
@@ -120,10 +112,7 @@ class ProjectInvitationsViewset(BaseViewSet):
             )
 
         return Response(
-            {
-                "message": "Email sent successfully",
-            },
-            status=status.HTTP_200_OK,
+            {"message": "Email sent successfully"}, status=status.HTTP_200_OK
         )
 
 
@@ -144,19 +133,21 @@ class UserProjectInvitationsViewset(BaseViewSet):
 
         # Get the workspace user role
         workspace_member = WorkspaceMember.objects.get(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
+            member=request.user, workspace__slug=slug, is_active=True
         )
+
+        if workspace_member.role not in [ROLE.ADMIN.value, ROLE.MEMBER.value]:
+            return Response(
+                {"error": "You do not have permission to join the project"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         workspace_role = workspace_member.role
         workspace = workspace_member.workspace
 
         # If the user was already part of workspace
         _ = ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id__in=project_ids,
-            member=request.user,
+            workspace__slug=slug, project_id__in=project_ids, member=request.user
         ).update(is_active=True)
 
         ProjectMember.objects.bulk_create(
@@ -187,21 +178,16 @@ class UserProjectInvitationsViewset(BaseViewSet):
         )
 
         return Response(
-            {"message": "Projects joined successfully"},
-            status=status.HTTP_201_CREATED,
+            {"message": "Projects joined successfully"}, status=status.HTTP_201_CREATED
         )
 
 
 class ProjectJoinEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = [AllowAny]
 
     def post(self, request, slug, project_id, pk):
         project_invite = ProjectMemberInvite.objects.get(
-            pk=pk,
-            project_id=project_id,
-            workspace__slug=slug,
+            pk=pk, project_id=project_id, workspace__slug=slug
         )
 
         email = request.data.get("email", "")
@@ -230,11 +216,7 @@ class ProjectJoinEndpoint(BaseAPIView):
                     _ = WorkspaceMember.objects.create(
                         workspace_id=project_invite.workspace_id,
                         member=user,
-                        role=(
-                            15
-                            if project_invite.role >= 15
-                            else project_invite.role
-                        ),
+                        role=(15 if project_invite.role >= 15 else project_invite.role),
                     )
                 else:
                     # Else make him active

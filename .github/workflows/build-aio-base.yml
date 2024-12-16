@@ -83,7 +83,7 @@ jobs:
           endpoint: ${{ env.BUILDX_ENDPOINT }}
 
       - name: Build and Push to Docker Hub
-        uses: docker/build-push-action@v5.1.0
+        uses: docker/build-push-action@v6.9.0
         with:
           context: ./aio
           file: ./aio/Dockerfile-base-full
@@ -124,7 +124,7 @@ jobs:
           endpoint: ${{ env.BUILDX_ENDPOINT }}
 
       - name: Build and Push to Docker Hub
-        uses: docker/build-push-action@v5.1.0
+        uses: docker/build-push-action@v6.9.0
         with:
           context: ./aio
           file: ./aio/Dockerfile-base-slim

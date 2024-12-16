@@ -1,5 +1,5 @@
 // plane helpers
-import { convertHexEmojiToDecimal } from "@plane/helpers";
+import { convertHexEmojiToDecimal } from "@plane/utils";
 // plane ui
 import { EmojiIconPicker, EmojiIconPickerTypes, Logo, TEmojiLogoProps } from "@plane/ui";
 // helpers

@@ -3,13 +3,18 @@ import { ReactRenderer } from "@tiptap/react";
 import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
 import tippy from "tippy.js";
 // types
-import { ISlashCommandItem } from "@/types";
+import { ISlashCommandItem, TEditorCommands, TExtensions, TSlashCommandSectionKeys } from "@/types";
 // components
 import { getSlashCommandFilteredSections } from "./command-items-list";
-import { SlashCommandsMenu } from "./command-menu";
+import { SlashCommandsMenu, SlashCommandsMenuProps } from "./command-menu";
 
 export type SlashCommandOptions = {
   suggestion: Omit<SuggestionOptions, "editor">;
+};
+
+export type TSlashCommandAdditionalOption = ISlashCommandItem & {
+  section: TSlashCommandSectionKeys;
+  pushAfter: TEditorCommands;
 };
 
 const Command = Extension.create<SlashCommandOptions>({
@@ -55,7 +60,7 @@ interface CommandListInstance {
 }
 
 const renderItems = () => {
-  let component: ReactRenderer<CommandListInstance, typeof SlashCommandsMenu> | null = null;
+  let component: ReactRenderer<CommandListInstance, SlashCommandsMenuProps> | null = null;
   let popup: any | null = null;
   return {
     onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
@@ -102,10 +107,15 @@ const renderItems = () => {
   };
 };
 
-export const SlashCommands = (additionalOptions?: ISlashCommandItem[]) =>
+type TExtensionProps = {
+  additionalOptions?: TSlashCommandAdditionalOption[];
+  disabledExtensions: TExtensions[];
+};
+
+export const SlashCommands = (props: TExtensionProps) =>
   Command.configure({
     suggestion: {
-      items: getSlashCommandFilteredSections(additionalOptions),
+      items: getSlashCommandFilteredSections(props),
       render: renderItems,
     },
   });

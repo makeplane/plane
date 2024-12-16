@@ -13,7 +13,8 @@ export type TProperties = {
   renderChildren?: (
     currentProjectDetails: IProject,
     isAdmin: boolean,
-    handleSubmit: (featureKey: string, featureProperty: string) => Promise<void>
+    handleSubmit: (featureKey: string, featureProperty: string) => Promise<void>,
+    workspaceSlug: string
   ) => ReactNode;
 };
 export type TFeatureList = {

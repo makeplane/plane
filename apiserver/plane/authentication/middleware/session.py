@@ -17,9 +17,7 @@ class SessionMiddleware(MiddlewareMixin):
 
     def process_request(self, request):
         if "instances" in request.path:
-            session_key = request.COOKIES.get(
-                settings.ADMIN_SESSION_COOKIE_NAME
-            )
+            session_key = request.COOKIES.get(settings.ADMIN_SESSION_COOKIE_NAME)
         else:
             session_key = request.COOKIES.get(settings.SESSION_COOKIE_NAME)
         request.session = self.SessionStore(session_key)

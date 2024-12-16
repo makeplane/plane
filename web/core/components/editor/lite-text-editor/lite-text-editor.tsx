@@ -1,6 +1,6 @@
 import React from "react";
 // editor
-import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef, TNonColorEditorCommands } from "@plane/editor";
+import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
 // components
@@ -14,9 +14,11 @@ import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useMember, useMention, useUser } from "@/hooks/store";
 // plane web hooks
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 
-interface LiteTextEditorWrapperProps extends Omit<ILiteTextEditor, "fileHandler" | "mentionHandler"> {
+interface LiteTextEditorWrapperProps
+  extends Omit<ILiteTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
   workspaceId: string;
   projectId: string;
@@ -49,6 +51,8 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     getUserDetails,
     project: { getProjectMemberIds },
   } = useMember();
+  // editor flaggings
+  const { liteTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // derived values
   const projectMemberIds = getProjectMemberIds(projectId);
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
@@ -61,17 +65,18 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   });
   // file size
   const { maxFileSize } = useFileSize();
-
-  const isEmpty = isCommentEmpty(props.initialValue);
-
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
     return !!ref && typeof ref === "object" && "current" in ref;
   }
+  // derived values
+  const isEmpty = isCommentEmpty(props.initialValue);
+  const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
 
   return (
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
       <LiteTextEditorWithRef
         ref={ref}
+        disabledExtensions={disabledExtensions}
         fileHandler={getEditorFileHandlers({
           maxFileSize,
           projectId,
@@ -89,19 +94,20 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
       />
       <IssueCommentToolbar
         accessSpecifier={accessSpecifier}
-        executeCommand={(key) => {
-          if (isMutableRefObject<EditorRefApi>(ref)) {
-            ref.current?.executeMenuItemCommand({
-              itemKey: key as TNonColorEditorCommands,
-            });
-          }
+        executeCommand={(item) => {
+          // TODO: update this while toolbar homogenization
+          // @ts-expect-error type mismatch here
+          editorRef?.executeMenuItemCommand({
+            itemKey: item.itemKey,
+            ...item.extraProps,
+          });
         }}
         handleAccessChange={handleAccessChange}
         handleSubmit={(e) => rest.onEnterKeyPress?.(e)}
         isCommentEmpty={isEmpty}
         isSubmitting={isSubmitting}
         showAccessSpecifier={showAccessSpecifier}
-        editorRef={isMutableRefObject<EditorRefApi>(ref) ? ref : null}
+        editorRef={editorRef}
         showSubmitButton={showSubmitButton}
       />
     </div>

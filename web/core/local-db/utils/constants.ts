@@ -1,5 +1,7 @@
 export const ARRAY_FIELDS = ["label_ids", "assignee_ids", "module_ids"];
 
+export const BOOLEAN_FIELDS = ["is_draft"];
+
 export const GROUP_BY_MAP = {
   state_id: "state_id",
   priority: "priority",

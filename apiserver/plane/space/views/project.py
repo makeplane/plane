@@ -1,8 +1,5 @@
 # Django imports
-from django.db.models import (
-    Exists,
-    OuterRef,
-)
+from django.db.models import Exists, OuterRef
 
 # Third Party imports
 from rest_framework.response import Response
@@ -16,9 +13,7 @@ from plane.db.models import Project, DeployBoard, ProjectMember
 
 
 class ProjectDeployBoardPublicSettingsEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = [AllowAny]
 
     def get(self, request, anchor):
         project_deploy_board = DeployBoard.objects.get(
@@ -29,9 +24,7 @@ class ProjectDeployBoardPublicSettingsEndpoint(BaseAPIView):
 
 
 class WorkspaceProjectDeployBoardEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = [AllowAny]
 
     def get(self, request, anchor):
         deploy_board = DeployBoard.objects.filter(
@@ -42,9 +35,7 @@ class WorkspaceProjectDeployBoardEndpoint(BaseAPIView):
             .annotate(
                 is_public=Exists(
                     DeployBoard.objects.filter(
-                        anchor=anchor,
-                        project_id=OuterRef("pk"),
-                        entity_name="project",
+                        anchor=anchor, project_id=OuterRef("pk"), entity_name="project"
                     )
                 )
             )
@@ -63,9 +54,7 @@ class WorkspaceProjectDeployBoardEndpoint(BaseAPIView):
 
 
 class WorkspaceProjectAnchorEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = [AllowAny]
 
     def get(self, request, slug, project_id):
         project_deploy_board = DeployBoard.objects.get(
@@ -76,9 +65,7 @@ class WorkspaceProjectAnchorEndpoint(BaseAPIView):
 
 
 class ProjectMembersEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = [AllowAny]
 
     def get(self, request, anchor):
         deploy_board = DeployBoard.objects.filter(anchor=anchor).first()

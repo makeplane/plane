@@ -9,31 +9,32 @@ import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMember, useMention, useUser } from "@/hooks/store";
 // plane web hooks
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 
-interface RichTextEditorWrapperProps extends Omit<IRichTextEditor, "fileHandler" | "mentionHandler"> {
+interface RichTextEditorWrapperProps
+  extends Omit<IRichTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
   workspaceId: string;
-  projectId: string;
+  memberIds: string[];
+  projectId?: string;
   uploadFile: (file: File) => Promise<string>;
 }
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
-  const { containerClassName, workspaceSlug, workspaceId, projectId, uploadFile, ...rest } = props;
+  const { containerClassName, workspaceSlug, workspaceId, projectId, memberIds, uploadFile, ...rest } = props;
   // store hooks
   const { data: currentUser } = useUser();
-  const {
-    getUserDetails,
-    project: { getProjectMemberIds },
-  } = useMember();
+  const { getUserDetails } = useMember();
+  // editor flaggings
+  const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // derived values
-  const projectMemberIds = getProjectMemberIds(projectId);
-  const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
+  const memberDetails = memberIds?.map((id) => getUserDetails(id) as IUserLite);
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug,
     projectId,
-    members: projectMemberDetails,
+    members: memberDetails,
     user: currentUser ?? undefined,
   });
   // file size
@@ -42,6 +43,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   return (
     <RichTextEditorWithRef
       ref={ref}
+      disabledExtensions={disabledExtensions}
       fileHandler={getEditorFileHandlers({
         maxFileSize,
         projectId,
@@ -54,7 +56,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         suggestions: mentionSuggestions,
       }}
       {...rest}
-      containerClassName={cn("relative pl-3 pb-3", containerClassName)}
+      containerClassName={cn("relative pl-3", containerClassName)}
     />
   );
 });

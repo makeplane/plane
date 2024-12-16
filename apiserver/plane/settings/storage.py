@@ -12,7 +12,6 @@ from storages.backends.s3boto3 import S3Boto3Storage
 
 
 class S3Storage(S3Boto3Storage):
-
     def url(self, name, parameters=None, expire=None, http_method=None):
         return name
 
@@ -61,9 +60,7 @@ class S3Storage(S3Boto3Storage):
         self, object_name, file_type, file_size, expiration=3600
     ):
         """Generate a presigned URL to upload an S3 object"""
-        fields = {
-            "Content-Type": file_type,
-        }
+        fields = {"Content-Type": file_type}
 
         conditions = [
             {"bucket": self.aws_storage_bucket_name},
@@ -113,9 +110,7 @@ class S3Storage(S3Boto3Storage):
         disposition="inline",
         filename=None,
     ):
-        content_disposition = self._get_content_disposition(
-            disposition, filename
-        )
+        content_disposition = self._get_content_disposition(disposition, filename)
         """Generate a presigned URL to share an S3 object"""
         try:
             response = self.s3_client.generate_presigned_url(

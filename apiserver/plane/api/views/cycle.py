@@ -25,10 +25,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.api.serializers import (
-    CycleIssueSerializer,
-    CycleSerializer,
-)
+from plane.api.serializers import CycleIssueSerializer, CycleSerializer
 from plane.app.permissions import ProjectEntityPermission
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
@@ -57,9 +54,7 @@ class CycleAPIEndpoint(BaseAPIView):
     serializer_class = CycleSerializer
     model = Cycle
     webhook_event = "cycle"
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     def get_queryset(self):
         return (
@@ -143,26 +138,18 @@ class CycleAPIEndpoint(BaseAPIView):
 
     def get(self, request, slug, project_id, pk=None):
         if pk:
-            queryset = (
-                self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
-            )
+            queryset = self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
             data = CycleSerializer(
-                queryset,
-                fields=self.fields,
-                expand=self.expand,
+                queryset, fields=self.fields, expand=self.expand
             ).data
-            return Response(
-                data,
-                status=status.HTTP_200_OK,
-            )
+            return Response(data, status=status.HTTP_200_OK)
         queryset = self.get_queryset().filter(archived_at__isnull=True)
         cycle_view = request.GET.get("cycle_view", "all")
 
         # Current Cycle
         if cycle_view == "current":
             queryset = queryset.filter(
-                start_date__lte=timezone.now(),
-                end_date__gte=timezone.now(),
+                start_date__lte=timezone.now(), end_date__gte=timezone.now()
             )
             data = CycleSerializer(
                 queryset, many=True, fields=self.fields, expand=self.expand
@@ -176,10 +163,7 @@ class CycleAPIEndpoint(BaseAPIView):
                 request=request,
                 queryset=(queryset),
                 on_results=lambda cycles: CycleSerializer(
-                    cycles,
-                    many=True,
-                    fields=self.fields,
-                    expand=self.expand,
+                    cycles, many=True, fields=self.fields, expand=self.expand
                 ).data,
             )
 
@@ -190,53 +174,38 @@ class CycleAPIEndpoint(BaseAPIView):
                 request=request,
                 queryset=(queryset),
                 on_results=lambda cycles: CycleSerializer(
-                    cycles,
-                    many=True,
-                    fields=self.fields,
-                    expand=self.expand,
+                    cycles, many=True, fields=self.fields, expand=self.expand
                 ).data,
             )
 
         # Draft Cycles
         if cycle_view == "draft":
-            queryset = queryset.filter(
-                end_date=None,
-                start_date=None,
-            )
+            queryset = queryset.filter(end_date=None, start_date=None)
             return self.paginate(
                 request=request,
                 queryset=(queryset),
                 on_results=lambda cycles: CycleSerializer(
-                    cycles,
-                    many=True,
-                    fields=self.fields,
-                    expand=self.expand,
+                    cycles, many=True, fields=self.fields, expand=self.expand
                 ).data,
             )
 
         # Incomplete Cycles
         if cycle_view == "incomplete":
             queryset = queryset.filter(
-                Q(end_date__gte=timezone.now()) | Q(end_date__isnull=True),
+                Q(end_date__gte=timezone.now()) | Q(end_date__isnull=True)
             )
             return self.paginate(
                 request=request,
                 queryset=(queryset),
                 on_results=lambda cycles: CycleSerializer(
-                    cycles,
-                    many=True,
-                    fields=self.fields,
-                    expand=self.expand,
+                    cycles, many=True, fields=self.fields, expand=self.expand
                 ).data,
             )
         return self.paginate(
             request=request,
             queryset=(queryset),
             on_results=lambda cycles: CycleSerializer(
-                cycles,
-                many=True,
-                fields=self.fields,
-                expand=self.expand,
+                cycles, many=True, fields=self.fields, expand=self.expand
             ).data,
         )
 
@@ -273,10 +242,7 @@ class CycleAPIEndpoint(BaseAPIView):
                         },
                         status=status.HTTP_409_CONFLICT,
                     )
-                serializer.save(
-                    project_id=project_id,
-                    owned_by=request.user,
-                )
+                serializer.save(project_id=project_id, owned_by=request.user)
                 # Send the model activity
                 model_activity.delay(
                     model_name="cycle",
@@ -287,12 +253,8 @@ class CycleAPIEndpoint(BaseAPIView):
                     slug=slug,
                     origin=request.META.get("HTTP_ORIGIN"),
                 )
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED
-                )
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(
                 {
@@ -302,9 +264,7 @@ class CycleAPIEndpoint(BaseAPIView):
             )
 
     def patch(self, request, slug, project_id, pk):
-        cycle = Cycle.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        )
+        cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
 
         current_instance = json.dumps(
             CycleSerializer(cycle).data, cls=DjangoJSONEncoder
@@ -322,9 +282,7 @@ class CycleAPIEndpoint(BaseAPIView):
             if "sort_order" in request_data:
                 # Can only change sort order
                 request_data = {
-                    "sort_order": request_data.get(
-                        "sort_order", cycle.sort_order
-                    )
+                    "sort_order": request_data.get("sort_order", cycle.sort_order)
                 }
             else:
                 return Response(
@@ -371,9 +329,7 @@ class CycleAPIEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, slug, project_id, pk):
-        cycle = Cycle.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        )
+        cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         if cycle.owned_by_id != request.user.id and (
             not ProjectMember.objects.filter(
                 workspace__slug=slug,
@@ -389,9 +345,9 @@ class CycleAPIEndpoint(BaseAPIView):
             )
 
         cycle_issues = list(
-            CycleIssue.objects.filter(
-                cycle_id=self.kwargs.get("pk")
-            ).values_list("issue", flat=True)
+            CycleIssue.objects.filter(cycle_id=self.kwargs.get("pk")).values_list(
+                "issue", flat=True
+            )
         )
 
         issue_activity.delay(
@@ -413,17 +369,13 @@ class CycleAPIEndpoint(BaseAPIView):
         cycle.delete()
         # Delete the user favorite cycle
         UserFavorite.objects.filter(
-            entity_type="cycle",
-            entity_identifier=pk,
-            project_id=project_id,
+            entity_type="cycle", entity_identifier=pk, project_id=project_id
         ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     def get_queryset(self):
         return (
@@ -502,9 +454,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                     ),
                 )
             )
-            .annotate(
-                total_estimates=Sum("issue_cycle__issue__estimate_point")
-            )
+            .annotate(total_estimates=Sum("issue_cycle__issue__estimate_point"))
             .annotate(
                 completed_estimates=Sum(
                     "issue_cycle__issue__estimate_point",
@@ -536,10 +486,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             request=request,
             queryset=(self.get_queryset()),
             on_results=lambda cycles: CycleSerializer(
-                cycles,
-                many=True,
-                fields=self.fields,
-                expand=self.expand,
+                cycles, many=True, fields=self.fields, expand=self.expand
             ).data,
         )
 
@@ -582,16 +529,12 @@ class CycleIssueAPIEndpoint(BaseAPIView):
     model = CycleIssue
     webhook_event = "cycle_issue"
     bulk = True
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     def get_queryset(self):
         return (
             CycleIssue.objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("issue_id")
-                )
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("issue_id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -630,13 +573,10 @@ class CycleIssueAPIEndpoint(BaseAPIView):
         order_by = request.GET.get("order_by", "created_at")
         issues = (
             Issue.issue_objects.filter(
-                issue_cycle__cycle_id=cycle_id,
-                issue_cycle__deleted_at__isnull=True,
+                issue_cycle__cycle_id=cycle_id, issue_cycle__deleted_at__isnull=True
             )
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -672,10 +612,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             request=request,
             queryset=(issues),
             on_results=lambda issues: CycleSerializer(
-                issues,
-                many=True,
-                fields=self.fields,
-                expand=self.expand,
+                issues, many=True, fields=self.fields, expand=self.expand
             ).data,
         )
 
@@ -684,8 +621,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
 
         if not issues:
             return Response(
-                {"error": "Issues are required"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         cycle = Cycle.objects.get(
@@ -694,9 +630,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
 
         # Get all CycleIssues already created
         cycle_issues = list(
-            CycleIssue.objects.filter(
-                ~Q(cycle_id=cycle_id), issue_id__in=issues
-            )
+            CycleIssue.objects.filter(~Q(cycle_id=cycle_id), issue_id__in=issues)
         )
 
         existing_issues = [
@@ -741,9 +675,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             )
 
         # Update the cycle issues
-        CycleIssue.objects.bulk_update(
-            updated_records, ["cycle_id"], batch_size=100
-        )
+        CycleIssue.objects.bulk_update(updated_records, ["cycle_id"], batch_size=100)
 
         # Capture Issue Activity
         issue_activity.delay(
@@ -802,9 +734,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
 
     """
 
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     def post(self, request, slug, project_id, cycle_id):
         new_cycle_id = request.data.get("new_cycle_id", False)
@@ -930,9 +860,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                 )
                 .values("display_name", "assignee_id", "avatar", "avatar_url")
                 .annotate(
-                    total_estimates=Sum(
-                        Cast("estimate_point__value", FloatField())
-                    )
+                    total_estimates=Sum(Cast("estimate_point__value", FloatField()))
                 )
                 .annotate(
                     completed_estimates=Sum(
@@ -961,9 +889,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                 {
                     "display_name": item["display_name"],
                     "assignee_id": (
-                        str(item["assignee_id"])
-                        if item["assignee_id"]
-                        else None
+                        str(item["assignee_id"]) if item["assignee_id"] else None
                     ),
                     "avatar": item.get("avatar", None),
                     "avatar_url": item.get("avatar_url", None),
@@ -986,9 +912,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                 .annotate(label_id=F("labels__id"))
                 .values("label_name", "color", "label_id")
                 .annotate(
-                    total_estimates=Sum(
-                        Cast("estimate_point__value", FloatField())
-                    )
+                    total_estimates=Sum(Cast("estimate_point__value", FloatField()))
                 )
                 .annotate(
                     completed_estimates=Sum(
@@ -1025,9 +949,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                 {
                     "label_name": item["label_name"],
                     "color": item["color"],
-                    "label_id": (
-                        str(item["label_id"]) if item["label_id"] else None
-                    ),
+                    "label_id": (str(item["label_id"]) if item["label_id"] else None),
                     "total_estimates": item["total_estimates"],
                     "completed_estimates": item["completed_estimates"],
                     "pending_estimates": item["pending_estimates"],
@@ -1059,8 +981,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                     ),
                     # If `avatar_asset` is None, fall back to using `avatar` field directly
                     When(
-                        assignees__avatar_asset__isnull=True,
-                        then="assignees__avatar",
+                        assignees__avatar_asset__isnull=True, then="assignees__avatar"
                     ),
                     default=Value(None),
                     output_field=models.CharField(),
@@ -1069,12 +990,8 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             .values("display_name", "assignee_id", "avatar_url")
             .annotate(
                 total_issues=Count(
-                    "id",
-                    filter=Q(
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                ),
+                    "id", filter=Q(archived_at__isnull=True, is_draft=False)
+                )
             )
             .annotate(
                 completed_issues=Count(
@@ -1128,12 +1045,8 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             .values("label_name", "color", "label_id")
             .annotate(
                 total_issues=Count(
-                    "id",
-                    filter=Q(
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                ),
+                    "id", filter=Q(archived_at__isnull=True, is_draft=False)
+                )
             )
             .annotate(
                 completed_issues=Count(
@@ -1163,9 +1076,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             {
                 "label_name": item["label_name"],
                 "color": item["color"],
-                "label_id": (
-                    str(item["label_id"]) if item["label_id"] else None
-                ),
+                "label_id": (str(item["label_id"]) if item["label_id"] else None),
                 "total_issues": item["total_issues"],
                 "completed_issues": item["completed_issues"],
                 "pending_issues": item["pending_issues"],
@@ -1210,10 +1121,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
         }
         current_cycle.save(update_fields=["progress_snapshot"])
 
-        if (
-            new_cycle.end_date is not None
-            and new_cycle.end_date < timezone.now()
-        ):
+        if new_cycle.end_date is not None and new_cycle.end_date < timezone.now():
             return Response(
                 {
                     "error": "The cycle where the issues are transferred is already completed"

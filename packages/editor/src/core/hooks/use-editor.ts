@@ -6,7 +6,7 @@ import { EditorProps } from "@tiptap/pm/view";
 import { useEditor as useTiptapEditor, Editor } from "@tiptap/react";
 import * as Y from "yjs";
 // components
-import { getEditorMenuItems } from "@/components/menus";
+import { EditorMenuItem, getEditorMenuItems } from "@/components/menus";
 // extensions
 import { CoreEditorExtensions } from "@/extensions";
 // helpers
@@ -16,12 +16,21 @@ import { IMarking, scrollSummary, scrollToNodeViaDOMCoordinates } from "@/helper
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TEditorCommands, TFileHandler } from "@/types";
+import type {
+  TDocumentEventsServer,
+  EditorRefApi,
+  IMentionHighlight,
+  IMentionSuggestion,
+  TEditorCommands,
+  TFileHandler,
+  TExtensions,
+} from "@/types";
 
 export interface CustomEditorProps {
   editorClassName: string;
   editorProps?: EditorProps;
   enableHistory: boolean;
+  disabledExtensions: TExtensions[];
   extensions?: any;
   fileHandler: TFileHandler;
   forwardedRef?: MutableRefObject<EditorRefApi | null>;
@@ -45,6 +54,7 @@ export interface CustomEditorProps {
 
 export const useEditor = (props: CustomEditorProps) => {
   const {
+    disabledExtensions,
     editorClassName,
     editorProps = {},
     enableHistory,
@@ -58,9 +68,9 @@ export const useEditor = (props: CustomEditorProps) => {
     onChange,
     onTransaction,
     placeholder,
-    provider,
     tabIndex,
     value,
+    provider,
     autofocus = false,
   } = props;
   // states
@@ -79,6 +89,7 @@ export const useEditor = (props: CustomEditorProps) => {
     },
     extensions: [
       ...CoreEditorExtensions({
+        disabledExtensions,
         enableHistory,
         fileHandler,
         mentionConfig: {
@@ -155,11 +166,11 @@ export const useEditor = (props: CustomEditorProps) => {
         const item = getEditorMenuItem(itemKey);
         if (item) {
           if (item.key === "image") {
-            item.command(savedSelectionRef.current);
-          } else if (itemKey === "text-color" || itemKey === "background-color") {
-            item.command(props.color);
+            (item as EditorMenuItem<"image">).command({
+              savedSelection: savedSelectionRef.current,
+            });
           } else {
-            item.command();
+            item.command(props);
           }
         } else {
           console.warn(`No command found for item: ${itemKey}`);
@@ -173,11 +184,7 @@ export const useEditor = (props: CustomEditorProps) => {
         const item = getEditorMenuItem(itemKey);
         if (!item) return false;
 
-        if (itemKey === "text-color" || itemKey === "background-color") {
-          return item.isActive(props.color);
-        } else {
-          return item.isActive("");
-        }
+        return item.isActive(props);
       },
       onHeadingChange: (callback: (headings: IMarking[]) => void) => {
         // Subscribe to update event emitted from headers extension
@@ -251,7 +258,7 @@ export const useEditor = (props: CustomEditorProps) => {
         if (empty) return null;
 
         const nodesArray: string[] = [];
-        state.doc.nodesBetween(from, to, (node, pos, parent) => {
+        state.doc.nodesBetween(from, to, (node, _pos, parent) => {
           if (parent === state.doc && editorRef.current) {
             const serializer = DOMSerializer.fromSchema(editorRef.current?.schema);
             const dom = serializer.serializeNode(node);
@@ -292,6 +299,8 @@ export const useEditor = (props: CustomEditorProps) => {
         if (!document) return;
         Y.applyUpdate(document, value);
       },
+      emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
+      listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
     }),
     [editorRef, savedSelection]
   );

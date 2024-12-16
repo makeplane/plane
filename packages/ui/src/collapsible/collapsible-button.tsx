@@ -8,12 +8,27 @@ type Props = {
   hideChevron?: boolean;
   indicatorElement?: React.ReactNode;
   actionItemElement?: React.ReactNode;
+  className?: string;
+  titleClassName?: string;
 };
 
 export const CollapsibleButton: FC<Props> = (props) => {
-  const { isOpen, title, hideChevron = false, indicatorElement, actionItemElement } = props;
+  const {
+    isOpen,
+    title,
+    hideChevron = false,
+    indicatorElement,
+    actionItemElement,
+    className = "",
+    titleClassName = "",
+  } = props;
   return (
-    <div className="flex items-center justify-between gap-3 h-12 px-2.5 py-3 border-b border-custom-border-200">
+    <div
+      className={cn(
+        "flex items-center justify-between gap-3 h-12 px-2.5 py-3 border-b border-custom-border-200",
+        className
+      )}
+    >
       <div className="flex items-center gap-3.5">
         <div className="flex items-center gap-3">
           {!hideChevron && (
@@ -23,7 +38,7 @@ export const CollapsibleButton: FC<Props> = (props) => {
               })}
             />
           )}
-          <span className="text-base text-custom-text-100 font-medium">{title}</span>
+          <span className={cn("text-base text-custom-text-100 font-medium", titleClassName)}>{title}</span>
         </div>
         {indicatorElement && indicatorElement}
       </div>

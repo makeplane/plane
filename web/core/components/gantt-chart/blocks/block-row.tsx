@@ -68,7 +68,7 @@ export const BlockRow: React.FC<Props> = observer((props) => {
   // hide the block if it doesn't have start and target dates and showAllBlocks is false
   if (!block || !block.data || (!showAllBlocks && !(block.start_date && block.target_date))) return null;
 
-  const isBlockVisibleOnChart = block.start_date && block.target_date;
+  const isBlockVisibleOnChart = block.start_date || block.target_date;
   const isBlockSelected = selectionHelpers.getIsEntitySelected(block.id);
   const isBlockFocused = selectionHelpers.getIsEntityActive(block.id);
   const isBlockHoveredOn = isBlockActive(block.id);

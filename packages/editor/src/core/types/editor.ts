@@ -1,4 +1,5 @@
 import { JSONContent } from "@tiptap/core";
+import { Selection } from "@tiptap/pm/state";
 // helpers
 import { IMarking } from "@/helpers/scroll-to-node";
 // types
@@ -6,14 +7,66 @@ import {
   IMentionHighlight,
   IMentionSuggestion,
   TAIHandler,
-  TColorEditorCommands,
   TDisplayConfig,
+  TDocumentEventEmitter,
+  TDocumentEventsServer,
   TEmbedConfig,
   TExtensions,
   TFileHandler,
-  TNonColorEditorCommands,
   TServerHandler,
 } from "@/types";
+import { TTextAlign } from "@/extensions";
+
+export type TEditorCommands =
+  | "text"
+  | "h1"
+  | "h2"
+  | "h3"
+  | "h4"
+  | "h5"
+  | "h6"
+  | "bold"
+  | "italic"
+  | "underline"
+  | "strikethrough"
+  | "bulleted-list"
+  | "numbered-list"
+  | "to-do-list"
+  | "quote"
+  | "code"
+  | "table"
+  | "image"
+  | "divider"
+  | "issue-embed"
+  | "text-color"
+  | "background-color"
+  | "text-align"
+  | "callout";
+
+export type TCommandExtraProps = {
+  image: {
+    savedSelection: Selection | null;
+  };
+  "text-color": {
+    color: string | undefined;
+  };
+  "background-color": {
+    color: string | undefined;
+  };
+  "text-align": {
+    alignment: TTextAlign;
+  };
+};
+
+// Create a utility type that maps a command to its extra props or an empty object if none are defined
+export type TCommandWithProps<T extends TEditorCommands> = T extends keyof TCommandExtraProps
+  ? TCommandExtraProps[T] // If the command has extra props, include them
+  : object; // Otherwise, just return the command type with no extra props
+
+type TCommandWithPropsWithItemKey<T extends TEditorCommands> = T extends keyof TCommandExtraProps
+  ? { itemKey: T } & TCommandExtraProps[T]
+  : { itemKey: T };
+
 // editor refs
 export type EditorReadOnlyRefApi = {
   getMarkDown: () => string;
@@ -32,6 +85,8 @@ export type EditorReadOnlyRefApi = {
   };
   onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
   getHeadings: () => IMarking[];
+  emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
+  listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
@@ -39,26 +94,8 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
   getCurrentCursorPosition: () => number | undefined;
   setEditorValueAtCursorPosition: (content: string) => void;
-  executeMenuItemCommand: (
-    props:
-      | {
-          itemKey: TNonColorEditorCommands;
-        }
-      | {
-          itemKey: TColorEditorCommands;
-          color: string | undefined;
-        }
-  ) => void;
-  isMenuItemActive: (
-    props:
-      | {
-          itemKey: TNonColorEditorCommands;
-        }
-      | {
-          itemKey: TColorEditorCommands;
-          color: string | undefined;
-        }
-  ) => boolean;
+  executeMenuItemCommand: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => void;
+  isMenuItemActive: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => boolean;
   onStateChange: (callback: () => void) => () => void;
   setFocusAtPosition: (position: number) => void;
   isEditorReadyToDiscard: () => boolean;
@@ -71,7 +108,7 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
 export interface IEditorProps {
   containerClassName?: string;
   displayConfig?: TDisplayConfig;
-  disabledExtensions?: TExtensions[];
+  disabledExtensions: TExtensions[];
   editorClassName?: string;
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
@@ -88,7 +125,7 @@ export interface IEditorProps {
   onEnterKeyPress?: (e?: any) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
-  value?: string | null; 
+  value?: string | null;
 }
 export interface ILiteTextEditor extends IEditorProps {
   extensions?: any[];
@@ -113,6 +150,7 @@ export interface ICollaborativeDocumentEditor
 // read only editor props
 export interface IReadOnlyEditorProps {
   containerClassName?: string;
+  disabledExtensions: TExtensions[];
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
   fileHandler: Pick<TFileHandler, "getAssetSrc">;

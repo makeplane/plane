@@ -18,7 +18,11 @@ export interface IProject {
   close_in: number;
   created_at: Date;
   created_by: string;
-  cover_image_url: string;
+  // only for uploading the cover image
+  cover_image_asset?: null;
+  cover_image?: string;
+  // only for rendering the cover image
+  cover_image_url: readonly string;
   cycle_view: boolean;
   issue_views_view: boolean;
   module_view: boolean;

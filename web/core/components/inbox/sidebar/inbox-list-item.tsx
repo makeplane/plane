@@ -4,7 +4,7 @@ import { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Tooltip, PriorityIcon, Row } from "@plane/ui";
+import { Tooltip, PriorityIcon, Row, Avatar } from "@plane/ui";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { InboxIssueStatus } from "@/components/inbox";
@@ -12,6 +12,7 @@ import { InboxIssueStatus } from "@/components/inbox";
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
+import { getFileURL } from "@/helpers/file.helper";
 import { useLabel, useMember, useProjectInbox } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -116,7 +117,11 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
               )}
             </div>
             {/* created by */}
-            {createdByDetails && <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />}
+            {createdByDetails && createdByDetails.email?.includes("intake@plane.so") ? (
+              <Avatar src={getFileURL("")} name={"Plane"} size="md" showTooltip />
+            ) : createdByDetails ? (
+              <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />
+            ) : null}
           </div>
         </Row>
       </Link>

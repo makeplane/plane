@@ -11,19 +11,9 @@ VALID_KEY_CHARS = string.ascii_lowercase + string.digits
 
 
 class Session(AbstractBaseSession):
-    device_info = models.JSONField(
-        null=True,
-        blank=True,
-        default=None,
-    )
-    session_key = models.CharField(
-        max_length=128,
-        primary_key=True,
-    )
-    user_id = models.CharField(
-        null=True,
-        max_length=50,
-    )
+    device_info = models.JSONField(null=True, blank=True, default=None)
+    session_key = models.CharField(max_length=128, primary_key=True)
+    user_id = models.CharField(null=True, max_length=50)
 
     @classmethod
     def get_session_store_class(cls):
@@ -34,7 +24,6 @@ class Session(AbstractBaseSession):
 
 
 class SessionStore(DBSessionStore):
-
     @classmethod
     def get_model_class(cls):
         return Session
@@ -59,7 +48,5 @@ class SessionStore(DBSessionStore):
 
         # Save the device info
         device_info = data.get("device_info")
-        obj.device_info = (
-            device_info if isinstance(device_info, dict) else None
-        )
+        obj.device_info = device_info if isinstance(device_info, dict) else None
         return obj

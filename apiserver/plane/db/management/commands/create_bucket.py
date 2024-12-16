@@ -15,9 +15,7 @@ class Command(BaseCommand):
         try:
             s3_client = boto3.client(
                 "s3",
-                endpoint_url=os.environ.get(
-                    "AWS_S3_ENDPOINT_URL"
-                ),  # MinIO endpoint
+                endpoint_url=os.environ.get("AWS_S3_ENDPOINT_URL"),  # MinIO endpoint
                 aws_access_key_id=os.environ.get(
                     "AWS_ACCESS_KEY_ID"
                 ),  # MinIO access key
@@ -33,9 +31,7 @@ class Command(BaseCommand):
             # Check if the bucket exists
             s3_client.head_bucket(Bucket=bucket_name)
             # If the bucket exists, print a success message
-            self.stdout.write(
-                self.style.SUCCESS(f"Bucket '{bucket_name}' exists.")
-            )
+            self.stdout.write(self.style.SUCCESS(f"Bucket '{bucket_name}' exists."))
             return
         except ClientError as e:
             error_code = int(e.response["Error"]["Code"])
@@ -58,9 +54,7 @@ class Command(BaseCommand):
                 # Handle the exception if the bucket creation fails
                 except ClientError as create_error:
                     self.stdout.write(
-                        self.style.ERROR(
-                            f"Failed to create bucket: {create_error}"
-                        )
+                        self.style.ERROR(f"Failed to create bucket: {create_error}")
                     )
 
             # Handle the exception if access to the bucket is forbidden
@@ -73,9 +67,7 @@ class Command(BaseCommand):
                 )
             else:
                 # Another ClientError occurred
-                self.stdout.write(
-                    self.style.ERROR(f"Failed to check bucket: {e}")
-                )
+                self.stdout.write(self.style.ERROR(f"Failed to check bucket: {e}"))
         except Exception as ex:
             # Handle any other exception
             self.stdout.write(self.style.ERROR(f"An error occurred: {ex}"))

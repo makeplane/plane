@@ -11,11 +11,7 @@ from plane.db.mixins import AuditModel
 
 class Integration(AuditModel):
     id = models.UUIDField(
-        default=uuid.uuid4,
-        unique=True,
-        editable=False,
-        db_index=True,
-        primary_key=True,
+        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
     )
     title = models.CharField(max_length=400)
     provider = models.CharField(max_length=400, unique=True)
@@ -44,18 +40,14 @@ class Integration(AuditModel):
 
 class WorkspaceIntegration(BaseModel):
     workspace = models.ForeignKey(
-        "db.Workspace",
-        related_name="workspace_integrations",
-        on_delete=models.CASCADE,
+        "db.Workspace", related_name="workspace_integrations", on_delete=models.CASCADE
     )
     # Bot user
     actor = models.ForeignKey(
         "db.User", related_name="integrations", on_delete=models.CASCADE
     )
     integration = models.ForeignKey(
-        "db.Integration",
-        related_name="integrated_workspaces",
-        on_delete=models.CASCADE,
+        "db.Integration", related_name="integrated_workspaces", on_delete=models.CASCADE
     )
     api_token = models.ForeignKey(
         "db.APIToken", related_name="integrations", on_delete=models.CASCADE

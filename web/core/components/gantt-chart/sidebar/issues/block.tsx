@@ -27,8 +27,8 @@ export const IssuesSidebarBlock = observer((props: Props) => {
   const { updateActiveBlockId, isBlockActive, getNumberOfDaysFromPosition } = useTimeLineChartStore();
   const { getIsIssuePeeked } = useIssueDetail();
 
-  const isBlockVisibleOnChart = !!block?.start_date && !!block?.target_date;
-  const duration = isBlockVisibleOnChart ? getNumberOfDaysFromPosition(block?.position?.width) : undefined;
+  const isBlockComplete = !!block?.start_date && !!block?.target_date;
+  const duration = isBlockComplete ? getNumberOfDaysFromPosition(block?.position?.width) : undefined;
 
   if (!block?.data) return null;
 

@@ -25,7 +25,7 @@ export const MonthChartView: FC<any> = observer(() => {
   const marginLeftDays = getNumberOfDaysBetweenTwoDates(monthsStartDate, weeksStartDate);
 
   return (
-    <div className={`absolute top-0 left-0 h-max w-max flex`} style={{ minHeight: `calc(100% + ${HEADER_HEIGHT}px` }}>
+    <div className={`absolute top-0 left-0 min-h-full h-max w-max flex`}>
       {currentViewData && (
         <div className="relative flex flex-col outline-[0.25px] outline outline-custom-border-200">
           {/** Header Div */}

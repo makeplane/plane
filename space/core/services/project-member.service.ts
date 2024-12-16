@@ -1,6 +1,5 @@
-// types
+import { API_BASE_URL } from "@plane/constants";
 import type { IProjectMember, IProjectMembership } from "@plane/types";
-import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 

@@ -30,9 +30,13 @@ export const InstanceHeader: FC = observer(() => {
       case "google":
         return "Google";
       case "github":
-        return "Github";
+        return "GitHub";
       case "gitlab":
         return "GitLab";
+      case "workspace":
+        return "Workspace";
+      case "create":
+        return "Create";
       default:
         return pathName.toUpperCase();
     }

@@ -19,19 +19,11 @@ class StateSerializer(BaseSerializer):
             "description",
             "sequence",
         ]
-        read_only_fields = [
-            "workspace",
-            "project",
-        ]
+        read_only_fields = ["workspace", "project"]
 
 
 class StateLiteSerializer(BaseSerializer):
     class Meta:
         model = State
-        fields = [
-            "id",
-            "name",
-            "color",
-            "group",
-        ]
+        fields = ["id", "name", "color", "group"]
         read_only_fields = fields

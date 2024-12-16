@@ -10,6 +10,7 @@ import {
   TIssuePriorities,
   TIssueGroupingFilters,
 } from "@plane/types";
+import { ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/plane-web/constants";
 
 export const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = [
   "state",
@@ -23,9 +24,11 @@ export const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = [
 export enum EIssuesStoreType {
   GLOBAL = "GLOBAL",
   PROFILE = "PROFILE",
+  TEAM = "TEAM",
   PROJECT = "PROJECT",
   CYCLE = "CYCLE",
   MODULE = "MODULE",
+  TEAM_VIEW = "TEAM_VIEW",
   PROJECT_VIEW = "PROJECT_VIEW",
   ARCHIVED = "ARCHIVED",
   DRAFT = "DRAFT",
@@ -42,7 +45,9 @@ export enum EIssueLayoutTypes {
 }
 
 export type TCreateModalStoreTypes =
+  | EIssuesStoreType.TEAM
   | EIssuesStoreType.PROJECT
+  | EIssuesStoreType.TEAM_VIEW
   | EIssuesStoreType.PROJECT_VIEW
   | EIssuesStoreType.PROFILE
   | EIssuesStoreType.CYCLE
@@ -78,6 +83,7 @@ export const ISSUE_GROUP_BY_OPTIONS: {
   { key: "state", title: "States" },
   { key: "state_detail.group", title: "State Groups" },
   { key: "priority", title: "Priority" },
+  { key: "team_project", title: "Team Project" }, // required this on team issues
   { key: "project", title: "Project" }, // required this on my issues
   { key: "cycle", title: "Cycle" }, // required this on my issues
   { key: "module", title: "Module" }, // required this on my issues
@@ -463,6 +469,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       },
     },
   },
+  ...ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
 };
 
 export enum EIssueListRow {

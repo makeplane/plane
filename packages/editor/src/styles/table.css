@@ -27,10 +27,18 @@
   }
 }
 
-.table-wrapper table th {
-  font-weight: 500;
-  text-align: left;
-  background-color: rgba(var(--color-background-90));
+.table-wrapper table {
+  th {
+    font-weight: 500;
+    text-align: left;
+  }
+
+  tr[background="none"],
+  tr:not([background]) {
+    th {
+      background-color: rgba(var(--color-background-90));
+    }
+  }
 }
 
 .table-wrapper table .selectedCell {

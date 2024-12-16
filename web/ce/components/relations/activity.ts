@@ -13,7 +13,7 @@ export const getRelationActivityContent = (activity: TIssueActivity | undefined)
     case "duplicate":
       return activity.old_value === "" ? `marked this issue as duplicate of ` : `removed this issue as a duplicate of `;
     case "relates_to":
-      activity.old_value === "" ? `marked that this issue relates to ` : `removed the relation from `;
+      return activity.old_value === "" ? `marked that this issue relates to ` : `removed the relation from `;
   }
 
   return;

@@ -19,9 +19,7 @@ def delete_unuploaded_file_asset():
     FileAsset.objects.filter(
         Q(
             created_at__lt=timezone.now()
-            - timedelta(
-                days=int(os.environ.get("UNUPLOADED_ASSET_DELETE_DAYS", "7"))
-            )
+            - timedelta(days=int(os.environ.get("UNUPLOADED_ASSET_DELETE_DAYS", "7")))
         )
         & Q(is_uploaded=False)
     ).delete()

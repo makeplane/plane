@@ -6,16 +6,12 @@ from django.db import models
 from .base import BaseModel
 
 
-
 class Notification(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", related_name="notifications", on_delete=models.CASCADE
     )
     project = models.ForeignKey(
-        "db.Project",
-        related_name="notifications",
-        on_delete=models.CASCADE,
-        null=True,
+        "db.Project", related_name="notifications", on_delete=models.CASCADE, null=True
     )
     data = models.JSONField(null=True)
     entity_identifier = models.UUIDField(null=True)
@@ -32,9 +28,7 @@ class Notification(BaseModel):
         null=True,
     )
     receiver = models.ForeignKey(
-        "db.User",
-        related_name="received_notifications",
-        on_delete=models.CASCADE,
+        "db.User", related_name="received_notifications", on_delete=models.CASCADE
     )
     read_at = models.DateTimeField(null=True)
     snoozed_till = models.DateTimeField(null=True)
@@ -53,18 +47,10 @@ class Notification(BaseModel):
 
 def get_default_preference():
     return {
-        "property_change": {
-            "email": True,
-        },
-        "state": {
-            "email": True,
-        },
-        "comment": {
-            "email": True,
-        },
-        "mentions": {
-            "email": True,
-        },
+        "property_change": {"email": True},
+        "state": {"email": True},
+        "comment": {"email": True},
+        "mentions": {"email": True},
     }
 
 

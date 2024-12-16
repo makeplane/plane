@@ -10,11 +10,7 @@ from django.db import models
 from .base import BaseModel
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
-ROLE_CHOICES = (
-    (20, "Admin"),
-    (15, "Member"),
-    (5, "Guest"),
-)
+ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
 
 
 def get_default_props():
@@ -81,7 +77,7 @@ def get_default_display_filters():
             "show_empty_groups": True,
             "layout": "list",
             "calendar_date_range": "",
-        },
+        }
     }
 
 
@@ -101,17 +97,12 @@ def get_default_display_properties():
             "state": True,
             "sub_issue_count": True,
             "updated_on": True,
-        },
+        }
     }
 
 
 def get_issue_props():
-    return {
-        "subscribed": True,
-        "assigned": True,
-        "created": True,
-        "all_issues": True,
-    }
+    return {"subscribed": True, "assigned": True, "created": True, "all_issues": True}
 
 
 def slug_validator(value):
@@ -137,17 +128,10 @@ class Workspace(BaseModel):
         related_name="owner_workspace",
     )
     slug = models.SlugField(
-        max_length=48,
-        db_index=True,
-        unique=True,
-        validators=[
-            slug_validator,
-        ],
+        max_length=48, db_index=True, unique=True, validators=[slug_validator]
     )
     organization_size = models.CharField(max_length=20, blank=True, null=True)
-    timezone = models.CharField(
-        max_length=255, default="UTC", choices=TIMEZONE_CHOICES
-    )
+    timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
 
     def __str__(self):
         """Return name of the Workspace"""
@@ -176,10 +160,7 @@ class WorkspaceBaseModel(BaseModel):
         "db.Workspace", models.CASCADE, related_name="workspace_%(class)s"
     )
     project = models.ForeignKey(
-        "db.Project",
-        models.CASCADE,
-        related_name="project_%(class)s",
-        null=True,
+        "db.Project", models.CASCADE, related_name="project_%(class)s", null=True
     )
 
     class Meta:
@@ -193,9 +174,7 @@ class WorkspaceBaseModel(BaseModel):
 
 class WorkspaceMember(BaseModel):
     workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="workspace_member",
+        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_member"
     )
     member = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -230,9 +209,7 @@ class WorkspaceMember(BaseModel):
 
 class WorkspaceMemberInvite(BaseModel):
     workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="workspace_member_invite",
+        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_member_invite"
     )
     email = models.CharField(max_length=255)
     accepted = models.BooleanField(default=False)
@@ -262,13 +239,6 @@ class WorkspaceMemberInvite(BaseModel):
 class Team(BaseModel):
     name = models.CharField(max_length=255, verbose_name="Team Name")
     description = models.TextField(verbose_name="Team Description", blank=True)
-    members = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
-        blank=True,
-        related_name="members",
-        through="TeamMember",
-        through_fields=("team", "member"),
-    )
     workspace = models.ForeignKey(
         Workspace, on_delete=models.CASCADE, related_name="workspace_team"
     )
@@ -293,46 +263,13 @@ class Team(BaseModel):
         ordering = ("-created_at",)
 
 
-class TeamMember(BaseModel):
-    workspace = models.ForeignKey(
-        Workspace, on_delete=models.CASCADE, related_name="team_member"
-    )
-    team = models.ForeignKey(
-        Team, on_delete=models.CASCADE, related_name="team_member"
-    )
-    member = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="team_member",
-    )
-
-    def __str__(self):
-        return self.team.name
-
-    class Meta:
-        unique_together = ["team", "member", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["team", "member"],
-                condition=models.Q(deleted_at__isnull=True),
-                name="team_member_unique_team_member_when_deleted_at_null",
-            )
-        ]
-        verbose_name = "Team Member"
-        verbose_name_plural = "Team Members"
-        db_table = "team_members"
-        ordering = ("-created_at",)
-
-
 class WorkspaceTheme(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="themes"
     )
     name = models.CharField(max_length=300)
     actor = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="themes",
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="themes"
     )
     colors = models.JSONField(default=dict)
 
@@ -367,9 +304,7 @@ class WorkspaceUserProperties(BaseModel):
     )
     filters = models.JSONField(default=get_default_filters)
     display_filters = models.JSONField(default=get_default_display_filters)
-    display_properties = models.JSONField(
-        default=get_default_display_properties
-    )
+    display_properties = models.JSONField(default=get_default_display_properties)
 
     class Meta:
         unique_together = ["workspace", "user", "deleted_at"]

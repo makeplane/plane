@@ -5,9 +5,7 @@ from .user import UserLiteSerializer
 
 
 class ExporterHistorySerializer(BaseSerializer):
-    initiated_by_detail = UserLiteSerializer(
-        source="initiated_by", read_only=True
-    )
+    initiated_by_detail = UserLiteSerializer(source="initiated_by", read_only=True)
 
     class Meta:
         model = ExporterHistory

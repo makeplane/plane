@@ -37,13 +37,9 @@ class TimezoneMixin:
 
 
 class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
-    authentication_classes = [
-        APIKeyAuthentication,
-    ]
+    authentication_classes = [APIKeyAuthentication]
 
-    permission_classes = [
-        IsAuthenticated,
-    ]
+    permission_classes = [IsAuthenticated]
 
     def filter_queryset(self, queryset):
         for backend in list(self.filter_backends):
@@ -56,8 +52,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
         if api_key:
             service_token = APIToken.objects.filter(
-                token=api_key,
-                is_service=True,
+                token=api_key, is_service=True
             ).first()
 
             if service_token:
@@ -123,9 +118,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
     def finalize_response(self, request, response, *args, **kwargs):
         # Call super to get the default response
-        response = super().finalize_response(
-            request, response, *args, **kwargs
-        )
+        response = super().finalize_response(request, response, *args, **kwargs)
 
         # Add custom headers if they exist in the request META
         ratelimit_remaining = request.META.get("X-RateLimit-Remaining")
@@ -154,17 +147,13 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
     @property
     def fields(self):
         fields = [
-            field
-            for field in self.request.GET.get("fields", "").split(",")
-            if field
+            field for field in self.request.GET.get("fields", "").split(",") if field
         ]
         return fields if fields else None
 
     @property
     def expand(self):
         expand = [
-            expand
-            for expand in self.request.GET.get("expand", "").split(",")
-            if expand
+            expand for expand in self.request.GET.get("expand", "").split(",") if expand
         ]
         return expand if expand else None

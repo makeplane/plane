@@ -3,7 +3,7 @@
 import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // components
 import { HelpSection, SidebarMenu, SidebarDropdown } from "@/components/admin-sidebar";
 // hooks

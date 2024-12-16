@@ -1,3 +1,4 @@
+import { Extensions } from "@tiptap/core";
 import CharacterCount from "@tiptap/extension-character-count";
 import Placeholder from "@tiptap/extension-placeholder";
 import TaskItem from "@tiptap/extension-task-item";
@@ -19,6 +20,7 @@ import {
   CustomLinkExtension,
   CustomMention,
   CustomQuoteExtension,
+  CustomTextAlignExtension,
   CustomTypographyExtension,
   DropHandlerExtension,
   ImageExtension,
@@ -31,9 +33,12 @@ import {
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 // types
-import { IMentionHighlight, IMentionSuggestion, TFileHandler } from "@/types";
+import { IMentionHighlight, IMentionSuggestion, TExtensions, TFileHandler } from "@/types";
+// plane editor extensions
+import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 
 type TArguments = {
+  disabledExtensions: TExtensions[];
   enableHistory: boolean;
   fileHandler: TFileHandler;
   mentionConfig: {
@@ -44,8 +49,8 @@ type TArguments = {
   tabIndex?: number;
 };
 
-export const CoreEditorExtensions = (args: TArguments) => {
-  const { enableHistory, fileHandler, mentionConfig, placeholder, tabIndex } = args;
+export const CoreEditorExtensions = (args: TArguments): Extensions => {
+  const { disabledExtensions, enableHistory, fileHandler, mentionConfig, placeholder, tabIndex } = args;
 
   return [
     StarterKit.configure({
@@ -68,6 +73,16 @@ export const CoreEditorExtensions = (args: TArguments) => {
       codeBlock: false,
       horizontalRule: false,
       blockquote: false,
+      paragraph: {
+        HTMLAttributes: {
+          class: "editor-paragraph-block",
+        },
+      },
+      heading: {
+        HTMLAttributes: {
+          class: "editor-heading-block",
+        },
+      },
       dropcursor: {
         class: "text-custom-text-300",
       },
@@ -77,7 +92,7 @@ export const CoreEditorExtensions = (args: TArguments) => {
     DropHandlerExtension(),
     CustomHorizontalRule.configure({
       HTMLAttributes: {
-        class: "my-4 border-custom-border-400",
+        class: "py-4 border-custom-border-400",
       },
     }),
     CustomKeymap,
@@ -158,7 +173,11 @@ export const CoreEditorExtensions = (args: TArguments) => {
       includeChildren: true,
     }),
     CharacterCount,
+    CustomTextAlignExtension,
     CustomCalloutExtension,
     CustomColorExtension,
+    ...CoreEditorAdditionalExtensions({
+      disabledExtensions,
+    }),
   ];
 };

@@ -20,7 +20,6 @@ from plane.authentication.adapter.error import (
 
 
 class SignInAuthSpaceEndpoint(View):
-
     def post(self, request):
         next_path = request.POST.get("next_path")
         # Check instance configuration
@@ -28,9 +27,7 @@ class SignInAuthSpaceEndpoint(View):
         if instance is None or not instance.is_setup_done:
             # Redirection params
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "INSTANCE_NOT_CONFIGURED"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["INSTANCE_NOT_CONFIGURED"],
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
             params = exc.get_error_dict()
@@ -108,7 +105,6 @@ class SignInAuthSpaceEndpoint(View):
 
 
 class SignUpAuthSpaceEndpoint(View):
-
     def post(self, request):
         next_path = request.POST.get("next_path")
         # Check instance configuration
@@ -116,9 +112,7 @@ class SignUpAuthSpaceEndpoint(View):
         if instance is None or not instance.is_setup_done:
             # Redirection params
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "INSTANCE_NOT_CONFIGURED"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["INSTANCE_NOT_CONFIGURED"],
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
             params = exc.get_error_dict()

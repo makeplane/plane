@@ -22,8 +22,8 @@ export const ModulesSidebarBlock: React.FC<Props> = observer((props) => {
 
   if (!block) return <></>;
 
-  const isBlockVisibleOnChart = !!block.start_date && !!block.target_date;
-  const duration = isBlockVisibleOnChart ? getNumberOfDaysFromPosition(block?.position?.width) : undefined;
+  const isBlockComplete = !!block.start_date && !!block.target_date;
+  const duration = isBlockComplete ? getNumberOfDaysFromPosition(block?.position?.width) : undefined;
 
   return (
     <div

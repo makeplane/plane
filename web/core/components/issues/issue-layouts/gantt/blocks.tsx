@@ -4,6 +4,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { Tooltip, ControlLink } from "@plane/ui";
+// components
+import { SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
@@ -13,7 +15,8 @@ import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-red
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
-// local types
+//
+import { getBlockViewDetails } from "../utils";
 import { GanttStoreType } from "./base-gantt-root";
 
 type Props = {
@@ -39,36 +42,37 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
   const stateDetails =
     issueDetails && getProjectStates(issueDetails?.project_id)?.find((state) => state?.id == issueDetails?.state_id);
 
+  const { message, blockStyle } = getBlockViewDetails(issueDetails, stateDetails?.color ?? "");
+
   const handleIssuePeekOverview = () => handleRedirection(workspaceSlug, issueDetails, isMobile);
 
   return (
-    <div
-      id={`issue-${issueId}`}
-      className="relative flex h-full w-full cursor-pointer items-center rounded"
-      style={{
-        backgroundColor: stateDetails?.color,
-      }}
-      onClick={handleIssuePeekOverview}
+    <Tooltip
+      isMobile={isMobile}
+      tooltipContent={
+        <div className="space-y-1">
+          <h5>{issueDetails?.name}</h5>
+          <div>{message}</div>
+        </div>
+      }
+      position="top-left"
+      disabled={!message}
     >
-      <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
-      <Tooltip
-        isMobile={isMobile}
-        tooltipContent={
-          <div className="space-y-1">
-            <h5>{issueDetails?.name}</h5>
-            <div>
-              {renderFormattedDate(issueDetails?.start_date ?? "")} to{" "}
-              {renderFormattedDate(issueDetails?.target_date ?? "")}
-            </div>
-          </div>
-        }
-        position="top-left"
+      <div
+        id={`issue-${issueId}`}
+        className="relative flex h-full w-full cursor-pointer items-center rounded"
+        style={blockStyle}
+        onClick={handleIssuePeekOverview}
       >
-        <div className="relative w-full overflow-hidden truncate px-2.5 py-1 text-sm text-custom-text-100">
+        <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
+        <div
+          className="sticky w-auto overflow-hidden truncate px-2.5 py-1 text-sm text-custom-text-100"
+          style={{ left: `${SIDEBAR_WIDTH}px` }}
+        >
           {issueDetails?.name}
         </div>
-      </Tooltip>
-    </div>
+      </div>
+    </Tooltip>
   );
 });
 
@@ -92,7 +96,11 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
   // derived values
   const issueDetails = getIssueById(issueId);
 
-  const handleIssuePeekOverview = () => handleRedirection(workspaceSlug, issueDetails, isMobile);
+  const handleIssuePeekOverview = (e: any) => {
+    e.stopPropagation(true);
+    e.preventDefault();
+    handleRedirection(workspaceSlug, issueDetails, isMobile);
+  };
 
   return (
     <ControlLink

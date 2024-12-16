@@ -28,7 +28,7 @@ import { IssueBulkOperationsRoot } from "@/plane-web/components/issues";
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 //
 import { GanttChartRowList } from "../blocks/block-row-list";
-import { GANTT_SELECT_GROUP, HEADER_HEIGHT } from "../constants";
+import { DEFAULT_BLOCK_WIDTH, GANTT_SELECT_GROUP, HEADER_HEIGHT } from "../constants";
 import { getItemPositionWidth } from "../views";
 import { TimelineDragHelper } from "./timeline-drag-helper";
 
@@ -108,14 +108,20 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
 
     const approxRangeLeft = scrollLeft;
     const approxRangeRight = scrollWidth - (scrollLeft + clientWidth);
+    const calculatedRangeRight = itemsContainerWidth - (scrollLeft + clientWidth);
 
-    if (approxRangeRight < clientWidth) updateCurrentViewRenderPayload("right", currentView);
-    if (approxRangeLeft < clientWidth) updateCurrentViewRenderPayload("left", currentView);
+    if (approxRangeRight < clientWidth || calculatedRangeRight < clientWidth) {
+      updateCurrentViewRenderPayload("right", currentView);
+    }
+    if (approxRangeLeft < clientWidth) {
+      updateCurrentViewRenderPayload("left", currentView);
+    }
   };
 
   const handleScrollToBlock = (block: IGanttBlock) => {
     const scrollContainer = ganttContainerRef.current as HTMLDivElement;
-    const scrollToDate = getDate(block.start_date);
+    const scrollToEndDate = !block.start_date && block.target_date;
+    const scrollToDate = block.start_date ? getDate(block.start_date) : getDate(block.target_date);
     let chartData;
 
     if (!scrollContainer || !currentViewData || !scrollToDate) return;
@@ -129,7 +135,8 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
     const updatedPosition = getItemPositionWidth(chartData ?? currentViewData, block);
 
     setTimeout(() => {
-      if (updatedPosition) scrollContainer.scrollLeft = updatedPosition.marginLeft - 4;
+      if (updatedPosition)
+        scrollContainer.scrollLeft = updatedPosition.marginLeft - 4 - (scrollToEndDate ? DEFAULT_BLOCK_WIDTH : 0);
     });
   };
 
@@ -189,6 +196,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
                     style={{
                       width: `${itemsContainerWidth}px`,
                       transform: `translateY(${HEADER_HEIGHT}px)`,
+                      paddingBottom: `${HEADER_HEIGHT}px`,
                     }}
                   >
                     <GanttChartRowList

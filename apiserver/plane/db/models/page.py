@@ -26,9 +26,7 @@ class Page(BaseModel):
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
     owned_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="pages",
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="pages"
     )
     access = models.PositiveSmallIntegerField(
         choices=((0, "Public"), (1, "Private")), default=0
@@ -51,9 +49,6 @@ class Page(BaseModel):
     is_global = models.BooleanField(default=False)
     projects = models.ManyToManyField(
         "db.Project", related_name="pages", through="db.ProjectPage"
-    )
-    teams = models.ManyToManyField(
-        "db.Team", related_name="pages", through="db.TeamPage"
     )
 
     class Meta:
@@ -92,19 +87,13 @@ class PageLog(BaseModel):
         ("user_mention", "User Mention"),
     )
     transaction = models.UUIDField(default=uuid.uuid4)
-    page = models.ForeignKey(
-        Page, related_name="page_log", on_delete=models.CASCADE
-    )
+    page = models.ForeignKey(Page, related_name="page_log", on_delete=models.CASCADE)
     entity_identifier = models.UUIDField(null=True)
     entity_name = models.CharField(
-        max_length=30,
-        choices=TYPE_CHOICES,
-        verbose_name="Transaction Type",
+        max_length=30, choices=TYPE_CHOICES, verbose_name="Transaction Type"
     )
     workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="workspace_page_log",
+        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_log"
     )
 
     class Meta:
@@ -126,9 +115,7 @@ class PageLabel(BaseModel):
         "db.Page", on_delete=models.CASCADE, related_name="page_labels"
     )
     workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="workspace_page_label",
+        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_label"
     )
 
     class Meta:
@@ -170,48 +157,16 @@ class ProjectPage(BaseModel):
         return f"{self.project.name} {self.page.name}"
 
 
-class TeamPage(BaseModel):
-    team = models.ForeignKey(
-        "db.Team", on_delete=models.CASCADE, related_name="team_pages"
-    )
-    page = models.ForeignKey(
-        "db.Page", on_delete=models.CASCADE, related_name="team_pages"
-    )
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="team_pages"
-    )
-
-    class Meta:
-        unique_together = ["team", "page", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["team", "page"],
-                condition=models.Q(deleted_at__isnull=True),
-                name="team_page_unique_team_page_when_deleted_at_null",
-            )
-        ]
-        verbose_name = "Team Page"
-        verbose_name_plural = "Team Pages"
-        db_table = "team_pages"
-        ordering = ("-created_at",)
-
-
 class PageVersion(BaseModel):
     workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="page_versions",
+        "db.Workspace", on_delete=models.CASCADE, related_name="page_versions"
     )
     page = models.ForeignKey(
-        "db.Page",
-        on_delete=models.CASCADE,
-        related_name="page_versions",
+        "db.Page", on_delete=models.CASCADE, related_name="page_versions"
     )
     last_saved_at = models.DateTimeField(default=timezone.now)
     owned_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="page_versions",
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="page_versions"
     )
     description_binary = models.BinaryField(null=True)
     description_html = models.TextField(blank=True, default="<p></p>")

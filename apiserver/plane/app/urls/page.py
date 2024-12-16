@@ -14,66 +14,38 @@ from plane.app.views import (
 urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/",
-        PageViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
+        PageViewSet.as_view({"get": "list", "post": "create"}),
         name="project-pages",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/",
         PageViewSet.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
         ),
         name="project-pages",
     ),
     # favorite pages
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/favorite-pages/<uuid:pk>/",
-        PageFavoriteViewSet.as_view(
-            {
-                "post": "create",
-                "delete": "destroy",
-            }
-        ),
+        PageFavoriteViewSet.as_view({"post": "create", "delete": "destroy"}),
         name="user-favorite-pages",
     ),
     # archived pages
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/archive/",
-        PageViewSet.as_view(
-            {
-                "post": "archive",
-                "delete": "unarchive",
-            }
-        ),
+        PageViewSet.as_view({"post": "archive", "delete": "unarchive"}),
         name="project-page-archive-unarchive",
     ),
     # lock and unlock
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/lock/",
-        PageViewSet.as_view(
-            {
-                "post": "lock",
-                "delete": "unlock",
-            }
-        ),
+        PageViewSet.as_view({"post": "lock", "delete": "unlock"}),
         name="project-pages-lock-unlock",
     ),
     # private and public page
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/access/",
-        PageViewSet.as_view(
-            {
-                "post": "access",
-            }
-        ),
+        PageViewSet.as_view({"post": "access"}),
         name="project-pages-access",
     ),
     path(
@@ -93,12 +65,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/description/",
-        PagesDescriptionViewSet.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-            }
-        ),
+        PagesDescriptionViewSet.as_view({"get": "retrieve", "patch": "partial_update"}),
         name="page-description",
     ),
     path(

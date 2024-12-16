@@ -1,5 +1,3 @@
-import { startSpan } from "@sentry/nextjs";
-import isEmpty from "lodash/isEmpty";
 // types
 import type {
   IIssueDisplayProperties,
@@ -12,6 +10,7 @@ import type {
 } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
+import { getIssuesShouldFallbackToServer } from "@/helpers/issue.helper";
 import { persistence } from "@/local-db/storage.sqlite";
 // services
 
@@ -68,7 +67,7 @@ export class IssueService extends APIService {
   }
 
   async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
-    if (!isEmpty(queries.expand as string) && !queries.group_by)
+    if (getIssuesShouldFallbackToServer(queries))
       return await this.getIssuesFromServer(workspaceSlug, projectId, queries, config);
 
     const response = await persistence.getIssues(workspaceSlug, projectId, queries, config);

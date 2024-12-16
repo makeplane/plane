@@ -25,9 +25,6 @@ on:
         required: false
         default: false
         type: boolean
-  # push:
-  #   branches:
-  #     - master
 
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
@@ -317,8 +314,8 @@ jobs:
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
   attach_assets_to_build:
-    if: ${{ needs.branch_build_setup.outputs.build_type == 'Build' }}
-    name: Attach Assets to Build
+    if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
+    name: Attach Assets to Release
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     steps:
@@ -354,6 +351,7 @@ jobs:
         branch_build_push_live,
         branch_build_push_apiserver,
         branch_build_push_proxy,
+        attach_assets_to_build,
       ]
     env:
       REL_VERSION: ${{ needs.branch_build_setup.outputs.release_version }}
@@ -367,7 +365,7 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: softprops/action-gh-release@v2.0.8
+        uses: softprops/action-gh-release@v2.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
