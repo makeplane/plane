@@ -34,5 +34,7 @@
   "invite_members": "Inviter des membres",
   "invite_new_members": "Inviter des nouveaux membres",
   "change_cover": "Changer la couverture",
-  "language": "Langue"
+  "language": "Langue",
+  "saving": "Enregistrement...",
+  "save_changes": "Enregistrer les modifications"
 }

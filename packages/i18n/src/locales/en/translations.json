@@ -31,5 +31,7 @@
   "cover_image": "Cover image",
   "password": "Password",
   "change_cover": "Change cover",
-  "language": "Language"
+  "language": "Language",
+  "saving": "Saving...",
+  "save_changes": "Save changes"
 }
