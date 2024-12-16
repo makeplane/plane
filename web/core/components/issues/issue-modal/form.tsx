@@ -24,7 +24,7 @@ import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getTextContent } from "@/helpers/editor.helper";
-import { getChangedIssuefields } from "@/helpers/issue.helper";
+import { getChangedIssuefields } from "@/helpers/issue-modal.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";

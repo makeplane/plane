@@ -29,6 +29,9 @@ export enum EmptyStateType {
   WORKSPACE_DASHBOARD = "workspace-dashboard",
   WORKSPACE_ANALYTICS = "workspace-analytics",
   WORKSPACE_PROJECTS = "workspace-projects",
+  WORKSPACE_TEAMS = "workspace-teams",
+  WORKSPACE_INITIATIVES = "workspace-initiatives",
+  WORKSPACE_INITIATIVES_EMPTY_SEARCH = "workspace-initiatives-empty-search",
   WORKSPACE_ALL_ISSUES = "workspace-all-issues",
   WORKSPACE_ASSIGNED = "workspace-assigned",
   WORKSPACE_CREATED = "workspace-created",
@@ -96,6 +99,7 @@ export enum EmptyStateType {
   ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE = "active-cycle-assignee-empty-state",
   ACTIVE_CYCLE_LABEL_EMPTY_STATE = "active-cycle-label-empty-state",
 
+  WORKSPACE_ACTIVE_CYCLES = "workspace-active-cycles",
   DISABLED_PROJECT_INBOX = "disabled-project-inbox",
   DISABLED_PROJECT_CYCLE = "disabled-project-cycle",
   DISABLED_PROJECT_MODULE = "disabled-project-module",
@@ -164,6 +168,35 @@ const emptyStateDetails = {
     },
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+  },
+  [EmptyStateType.WORKSPACE_TEAMS]: {
+    key: EmptyStateType.WORKSPACE_TEAMS,
+    title: "Teams",
+    description: "Teams are groups of people who collaborate on projects. Create a team to get started.",
+    path: "/empty-state/teams/teams",
+    primaryButton: {
+      text: "Create new team",
+    },
+    accessType: "workspace",
+    access: [EUserPermissions.ADMIN],
+  },
+  [EmptyStateType.WORKSPACE_INITIATIVES]: {
+    key: EmptyStateType.WORKSPACE_TEAMS,
+    title: "Organize work at the highest level with Initiatives",
+    description:
+      "When you need to organize work spanning several projects and teams, Initiatives come in handy. Connect projects and epics to initiatives, see automatically rolled up updates, and see the forests before you get to the trees.",
+    path: "/empty-state/initiatives/initiatives",
+    primaryButton: {
+      text: "Create an initiative",
+    },
+    accessType: "workspace",
+    access: [EUserPermissions.ADMIN],
+  },
+  [EmptyStateType.WORKSPACE_INITIATIVES_EMPTY_SEARCH]: {
+    key: EmptyStateType.WORKSPACE_INITIATIVES_EMPTY_SEARCH,
+    title: "No matching initiatives",
+    description: "No initiatives detected with the matching criteria. \n Create a new initiative instead.",
+    path: "/empty-state/search/project",
   },
   // all-issues
   [EmptyStateType.WORKSPACE_ALL_ISSUES]: {
@@ -694,6 +727,13 @@ const emptyStateDetails = {
     key: EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE,
     title: "Add labels to issues to see the \n breakdown of work by labels.",
     path: "/empty-state/active-cycle/label",
+  },
+  [EmptyStateType.WORKSPACE_ACTIVE_CYCLES]: {
+    key: EmptyStateType.WORKSPACE_ACTIVE_CYCLES,
+    title: "No active cycles",
+    description:
+      "Cycles of your projects that includes any period that encompasses today's date within its range. Find the progress and details of all your active cycle here.",
+    path: "/empty-state/onboarding/workspace-active-cycles",
   },
   [EmptyStateType.DISABLED_PROJECT_INBOX]: {
     key: EmptyStateType.DISABLED_PROJECT_INBOX,
