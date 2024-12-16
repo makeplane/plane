@@ -9,7 +9,7 @@ import { TIssue } from "@plane/types";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/common";
-import { IssuePeekOverview } from "@/components/issues";
+import { IssueDetailsSidebar, IssuePeekOverview } from "@/components/issues";
 // constants
 import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
@@ -21,7 +21,6 @@ import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/u
 import emptyIssue from "@/public/empty-state/issue.svg";
 // local components
 import { IssueMainContent } from "./main-content";
-import { IssueDetailsSidebar } from "./sidebar";
 
 export type TIssueOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string, loader?: boolean) => Promise<void>;

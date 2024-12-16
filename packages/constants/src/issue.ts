@@ -39,3 +39,8 @@ export enum EServerGroupByToFilterOptions {
   "project_id" = "project",
   "created_by" = "created_by",
 }
+
+export enum EIssueServiceType {
+  ISSUES = "issues",
+  EPICS = "epics",
+}

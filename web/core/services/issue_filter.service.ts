@@ -48,6 +48,26 @@ export class IssueFiltersService extends APIService {
       });
   }
 
+  // epic issue filters
+  async fetchProjectEpicFilters(workspaceSlug: string, projectId: string): Promise<IIssueFiltersResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/epics-user-properties/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+  async patchProjectEpicFilters(
+    workspaceSlug: string,
+    projectId: string,
+    data: Partial<IIssueFiltersResponse>
+  ): Promise<any> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/epics-user-properties/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   // cycle issue filters
   async fetchCycleIssueFilters(
     workspaceSlug: string,
