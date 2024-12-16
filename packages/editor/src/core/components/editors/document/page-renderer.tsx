@@ -139,12 +139,12 @@ export const PageRenderer = (props: IPageRenderer) => {
           id={id}
         >
           <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
-          {/* {editor.isEditable && ( */}
-          {/*   <> */}
-          {/*     <BlockMenu editor={editor} /> */}
-          {/*     <AIFeaturesMenu menu={aiHandler?.menu} /> */}
-          {/*   </> */}
-          {/* )} */}
+          {editor.isEditable && (
+            <div>
+              <BlockMenu editor={editor} />
+              <AIFeaturesMenu menu={aiHandler?.menu} />
+            </div>
+          )}
         </EditorContainer>
       </div>
       {isOpen && linkViewProps && coordinates && (
