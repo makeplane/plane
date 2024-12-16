@@ -316,9 +316,8 @@ export class IssueTypes implements IIssueTypesStore {
   isEpicEnabledForProject = computedFn(
     (workspaceSlug: string, projectId: string, epicFlagKey: EpicIssueTypeFlagKeys): boolean => {
       const epicFlagEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace(epicFlagKey, false);
-      // const projectDetails = this.rootStore.projectRoot.project.getProjectById(projectId);
-      return epicFlagEnabled ?? false;
-      // return (epicFlagEnabled && projectDetails?.is_epic_enabled) ?? false;
+      const projectDetails = this.rootStore.projectRoot.project.getProjectById(projectId);
+      return (epicFlagEnabled && projectDetails?.is_epic_enabled) ?? false;
     }
   );
 
