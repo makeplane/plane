@@ -2,26 +2,65 @@
 
 import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
+import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { Spinner } from "@plane/ui";
 import { LogoSpinner } from "@/components/common";
-import {
-  ListLayout,
-  CalendarLayout,
-  BaseGanttRoot,
-  KanBanLayout,
-  ProjectAppliedFiltersRoot,
-  ProjectSpreadsheetLayout,
-  IssuePeekOverview,
-} from "@/components/issues";
+
 // constants
 import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssues } from "@/hooks/store";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 
+const ProjectAppliedFiltersRoot = dynamic(
+  () =>
+    import("@/components/issues/issue-layouts/filters/applied-filters/roots/project-root").then(
+      (m) => m.ProjectAppliedFiltersRoot
+    ),
+  {
+    ssr: false,
+    loading: () => <LogoSpinner />,
+  }
+);
+const ListLayout = dynamic(
+  () => import("@/components/issues/issue-layouts/list/roots/project-root").then((m) => m.ListLayout),
+  {
+    ssr: false,
+    loading: () => <LogoSpinner />,
+  }
+);
+const KanBanLayout = dynamic(
+  () => import("@/components/issues/issue-layouts/kanban/roots/project-root").then((m) => m.KanBanLayout),
+  {
+    ssr: false,
+    loading: () => <LogoSpinner />,
+  }
+);
+const CalendarLayout = dynamic(
+  () => import("@/components/issues/issue-layouts/calendar/roots/project-root").then((m) => m.CalendarLayout),
+  {
+    ssr: false,
+    loading: () => <LogoSpinner />,
+  }
+);
+const BaseGanttRoot = dynamic(
+  () => import("@/components/issues/issue-layouts/gantt/base-gantt-root").then((m) => m.BaseGanttRoot),
+  {
+    ssr: false,
+    loading: () => <LogoSpinner />,
+  }
+);
+const ProjectSpreadsheetLayout = dynamic(
+  () =>
+    import("@/components/issues/issue-layouts/spreadsheet/roots/project-root").then((m) => m.ProjectSpreadsheetLayout),
+  {
+    ssr: false,
+    loading: () => <LogoSpinner />,
+  }
+);
 const ProjectIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
   switch (props.activeLayout) {
     case EIssueLayoutTypes.LIST:
@@ -38,6 +77,13 @@ const ProjectIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined
       return null;
   }
 };
+const IssuePeekOverview = dynamic(
+  () => import("@/components/issues/peek-overview/root").then((m) => m.IssuePeekOverview),
+  {
+    ssr: false,
+    loading: () => <LogoSpinner />,
+  }
+);
 
 export const ProjectLayoutRoot: FC = observer(() => {
   // router

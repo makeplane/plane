@@ -93,6 +93,66 @@ const nextConfig = {
     }
     return rewrites;
   },
+
+  experimental: {
+    optimizePackageImports: [
+      // Components
+      "@/components/account",
+      "@/components/analytics",
+      "@/components/api-token",
+      "@/components/archives",
+      "@/components/auth-screens",
+      "@/components/automation",
+      "@/components/command-palette",
+      "@/components/common",
+      "@/components/core",
+      "@/components/cycles",
+      "@/components/dashboard",
+      "@/components/dropdowns",
+      "@/components/editor",
+      "@/components/empty-state",
+      "@/components/estimates",
+      "@/components/exporter",
+      "@/components/gantt-chart",
+      "@/components/global",
+      "@/components/graphs",
+      "@/components/icons",
+      "@/components/inbox",
+      "@/components/instance",
+      "@/components/integration",
+      "@/components/issues",
+      "@/components/labels",
+      "@/components/modules",
+      "@/components/onboarding",
+      "@/components/page-views",
+      "@/components/pages",
+      "@/components/profile",
+      "@/components/project",
+      "@/components/project-states",
+      "@/components/sidebar",
+      "@/components/ui",
+      "@/components/user",
+      "@/components/views",
+      "@/components/web-hooks",
+      "@/components/workspace",
+      "@/components/workspace-notifications",
+
+      // lib
+      "@/lib/store-context",
+      "@/lib/wrappers",
+      "@/lib/n-progress",
+      "@/lib/local-storage",
+
+      // Services
+      "@/plane-web/services",
+
+      //
+      "@headlessui/react",
+      "axios",
+
+      "@/hooks/store",
+    ],
+  },
 };
 
 const sentryConfig = {
