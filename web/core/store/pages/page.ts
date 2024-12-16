@@ -1,7 +1,7 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // types
-import { TDocumentPayload, TLogoProps, TPage } from "@plane/types";
+import { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
 // constants
 import { EPageAccess } from "@/constants/page";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
@@ -10,11 +10,9 @@ import { ProjectPageService } from "@/services/page";
 // store
 import { CoreRootStore } from "../root.store";
 
-export type TLoader = "submitting" | "submitted" | "saved";
-
 export interface IPage extends TPage {
   // observables
-  isSubmitting: TLoader;
+  isSubmitting: TNameDescriptionLoader;
   // computed
   asJSON: TPage | undefined;
   isCurrentUserOwner: boolean; // it will give the user is the owner of the page or not
@@ -28,7 +26,7 @@ export interface IPage extends TPage {
   isContentEditable: boolean;
   // helpers
   oldName: string;
-  setIsSubmitting: (value: TLoader) => void;
+  setIsSubmitting: (value: TNameDescriptionLoader) => void;
   cleanup: () => void;
   // actions
   update: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
@@ -47,7 +45,7 @@ export interface IPage extends TPage {
 
 export class Page implements IPage {
   // loaders
-  isSubmitting: TLoader = "saved";
+  isSubmitting: TNameDescriptionLoader = "saved";
   // page properties
   id: string | undefined;
   name: string | undefined;
@@ -324,7 +322,7 @@ export class Page implements IPage {
    * @description update the submitting state
    * @param value
    */
-  setIsSubmitting = (value: TLoader) => {
+  setIsSubmitting = (value: TNameDescriptionLoader) => {
     runInAction(() => {
       this.isSubmitting = value;
     });

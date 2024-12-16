@@ -35,6 +35,7 @@ interface IssueBlockProps {
   displayProperties: IIssueDisplayProperties | undefined;
   draggableId: string;
   canDropOverIssue: boolean;
+  canDragIssuesInCurrentGrouping: boolean;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
@@ -111,6 +112,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
     issuesMap,
     displayProperties,
     canDropOverIssue,
+    canDragIssuesInCurrentGrouping,
     updateIssue,
     quickActions,
     canEditProperties,
@@ -139,7 +141,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
 
   const canEditIssueProperties = canEditProperties(issue?.project_id ?? undefined);
 
-  const isDragAllowed = !issue?.tempId && canEditIssueProperties;
+  const isDragAllowed = canDragIssuesInCurrentGrouping && !issue?.tempId && canEditIssueProperties;
 
   useOutsideClickDetector(cardRef, () => {
     cardRef?.current?.classList?.remove(HIGHLIGHT_CLASS);
@@ -195,12 +197,15 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
         className={cn("group/kanban-block relative mb-2", { "z-[1]": isCurrentBlockDragging })}
         onDragStart={() => {
           if (isDragAllowed) setIsCurrentBlockDragging(true);
-          else
+          else {
             setToast({
               type: TOAST_TYPE.WARNING,
               title: "Cannot move issue",
-              message: "Drag and drop is disabled for the current grouping",
+              message: !canEditIssueProperties
+                ? "You are not allowed to move this issue"
+                : "Drag and drop is disabled for the current grouping",
             });
+          }
         }}
       >
         <ControlLink

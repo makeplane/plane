@@ -16,7 +16,7 @@ interface RichTextEditorWrapperProps
   extends Omit<IRichTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
   workspaceId: string;
-  projectId: string;
+  projectId?: string;
   uploadFile: (file: File) => Promise<string>;
 }
 

@@ -150,7 +150,7 @@ export const syncIssuesWithDeletedModules = async (deletedModuleIds: string[]) =
     return;
   }
 
-  const issues = await persistence.getIssues("", "", { modules: deletedModuleIds.join(","), cursor: "10000:0:0" }, {});
+  const issues = await persistence.getIssues("", "", { module: deletedModuleIds.join(","), cursor: "10000:0:0" }, {});
   if (issues?.results && Array.isArray(issues.results)) {
     const promises = issues.results.map(async (issue: TIssue) => {
       const updatedIssue = {
@@ -177,7 +177,7 @@ export const syncIssuesWithDeletedCycles = async (deletedCycleIds: string[]) => 
     return;
   }
 
-  const issues = await persistence.getIssues("", "", { cycles: deletedCycleIds.join(","), cursor: "10000:0:0" }, {});
+  const issues = await persistence.getIssues("", "", { cycle: deletedCycleIds.join(","), cursor: "10000:0:0" }, {});
   if (issues?.results && Array.isArray(issues.results)) {
     const promises = issues.results.map(async (issue: TIssue) => {
       const updatedIssue = {
@@ -204,7 +204,7 @@ export const syncIssuesWithDeletedStates = async (deletedStateIds: string[]) => 
     return;
   }
 
-  const issues = await persistence.getIssues("", "", { states: deletedStateIds.join(","), cursor: "10000:0:0" }, {});
+  const issues = await persistence.getIssues("", "", { state: deletedStateIds.join(","), cursor: "10000:0:0" }, {});
   if (issues?.results && Array.isArray(issues.results)) {
     const promises = issues.results.map(async (issue: TIssue) => {
       const updatedIssue = {

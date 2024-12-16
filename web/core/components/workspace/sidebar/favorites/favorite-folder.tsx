@@ -27,6 +27,7 @@ import { CustomMenu, Tooltip, DropIndicator, FavoriteFolderIcon, DragHandle } fr
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
+import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
 import { FavoriteRoot } from "./favorite-items";
@@ -45,7 +46,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
   const { favorite, handleRemoveFromFavorites, isLastChild, handleDrop } = props;
   // store hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
-
+  const { getGroupedFavorites } = useFavorite();
   const { isMobile } = usePlatformOS();
   const { workspaceSlug } = useParams();
   // states
@@ -57,6 +58,12 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
   // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   const elementRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (favorite.children === undefined && workspaceSlug) {
+      getGroupedFavorites(workspaceSlug.toString(), favorite.id);
+    }
+  }, [favorite.id, favorite.children, workspaceSlug, getGroupedFavorites]);
 
   useEffect(() => {
     const element = elementRef.current;
@@ -123,7 +130,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
       })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDragging, favorite.id]);
+  }, [isDragging, favorite.id, isLastChild, favorite.id]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 

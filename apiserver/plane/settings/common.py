@@ -262,6 +262,9 @@ CELERY_IMPORTS = (
     "plane.license.bgtasks.tracer",
     # management tasks
     "plane.bgtasks.dummy_data_task",
+    # issue version tasks
+    "plane.bgtasks.issue_version_sync",
+    "plane.bgtasks.issue_description_version_sync",
 )
 
 # Sentry Settings

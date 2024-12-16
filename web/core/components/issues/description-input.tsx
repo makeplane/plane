@@ -5,7 +5,7 @@ import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // types
-import { TIssue } from "@plane/types";
+import { TIssue, TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // ui
 import { Loader } from "@plane/ui";
@@ -29,7 +29,7 @@ export type IssueDescriptionInputProps = {
   disabled?: boolean;
   issueOperations: TIssueOperations;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
-  setIsSubmitting: (initialValue: "submitting" | "submitted" | "saved") => void;
+  setIsSubmitting: (initialValue: TNameDescriptionLoader) => void;
   swrIssueDescription?: string | null | undefined;
 };
 

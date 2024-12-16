@@ -211,12 +211,13 @@ export type GroupByColumnTypes =
   | "priority"
   | "labels"
   | "assignees"
-  | "created_by";
+  | "created_by"
+  | "team_project";
 
 export interface IGroupByColumn {
   id: string;
   name: string;
-  icon: ReactElement | undefined;
+  icon?: ReactElement | undefined;
   payload: Partial<TIssue>;
   isDropDisabled?: boolean;
   dropErrorMessage?: string;
