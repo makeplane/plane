@@ -1,1 +1,1 @@
-export * from "./issue-modal";
+export * from "./issue-modal-context";

@@ -1,7 +1,10 @@
 import isEmpty from "lodash/isEmpty";
 import { autorun, makeObservable, observable } from "mobx";
-import { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite } from "@plane/types";
+// types
+import { EIssueServiceType } from "@plane/constants";
+import { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite, TIssueServiceType } from "@plane/types";
 // plane web store
+import { IProjectEpics, IProjectEpicsFilter, ProjectEpics, ProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import { ITeamIssuesFilter, ITeamIssues, TeamIssues, TeamIssuesFilter } from "@/plane-web/store/issue/team";
 import {
   ITeamViewIssues,
@@ -59,6 +62,7 @@ export interface IIssueRootStore {
   cycleMap: Record<string, ICycle> | undefined;
 
   rootStore: RootStore;
+  serviceType: TIssueServiceType;
 
   issues: IIssueStore;
 
@@ -99,6 +103,9 @@ export interface IIssueRootStore {
 
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
+
+  projectEpicsFilter: IProjectEpicsFilter;
+  projectEpics: IProjectEpics;
 }
 
 export class IssueRootStore implements IIssueRootStore {
@@ -122,6 +129,7 @@ export class IssueRootStore implements IIssueRootStore {
   cycleMap: Record<string, ICycle> | undefined = undefined;
 
   rootStore: RootStore;
+  serviceType: TIssueServiceType;
 
   issues: IIssueStore;
 
@@ -163,7 +171,10 @@ export class IssueRootStore implements IIssueRootStore {
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
 
-  constructor(rootStore: RootStore) {
+  projectEpicsFilter: IProjectEpicsFilter;
+  projectEpics: IProjectEpics;
+
+  constructor(rootStore: RootStore, serviceType: TIssueServiceType = EIssueServiceType.ISSUES) {
     makeObservable(this, {
       workspaceSlug: observable.ref,
       teamId: observable.ref,
@@ -184,6 +195,7 @@ export class IssueRootStore implements IIssueRootStore {
       cycleMap: observable,
     });
 
+    this.serviceType = serviceType;
     this.rootStore = rootStore;
 
     autorun(() => {
@@ -209,9 +221,9 @@ export class IssueRootStore implements IIssueRootStore {
       if (!isEmpty(rootStore?.cycle?.cycleMap)) this.cycleMap = rootStore?.cycle?.cycleMap;
     });
 
-    this.issues = new IssueStore();
+    this.issues = new IssueStore(this.serviceType);
 
-    this.issueDetail = new IssueDetail(this);
+    this.issueDetail = new IssueDetail(this, this.serviceType);
 
     this.workspaceIssuesFilter = new WorkspaceIssuesFilter(this);
     this.workspaceIssues = new WorkspaceIssues(this, this.workspaceIssuesFilter);
@@ -248,5 +260,8 @@ export class IssueRootStore implements IIssueRootStore {
 
     this.issueKanBanView = new IssueKanBanViewStore(this);
     this.issueCalendarView = new CalendarStore();
+
+    this.projectEpicsFilter = new ProjectEpicsFilter(this);
+    this.projectEpics = new ProjectEpics(this, this.projectEpicsFilter);
   }
 }
