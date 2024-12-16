@@ -6,7 +6,7 @@ import { Activity } from "lucide-react";
 import { EIssueServiceType } from "@plane/constants";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { CommentFillIcon, InfoFillIcon, setToast, TOAST_TYPE, Tabs } from "@plane/ui";
-import { TActivityOperations, TIssueOperations } from "@/components/issues";
+import { ActivitySortRoot, TActivityOperations, TIssueOperations } from "@/components/issues";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useIssueDetail } from "@/hooks/store";
@@ -32,7 +32,12 @@ export const EpicDetailsSidebar: FC<TEpicDetailsSidebarProps> = observer((props)
   // store hooks
   const { epicDetailSidebarCollapsed } = useAppTheme();
 
-  const { createComment, updateComment, removeComment } = useIssueDetail(EIssueServiceType.EPICS);
+  const {
+    createComment,
+    updateComment,
+    removeComment,
+    activity: { sortOrder, toggleSortOrder },
+  } = useIssueDetail(EIssueServiceType.EPICS);
 
   const activityOperations: TActivityOperations = useMemo(
     () => ({
@@ -149,7 +154,14 @@ export const EpicDetailsSidebar: FC<TEpicDetailsSidebarProps> = observer((props)
       key: "activity",
       icon: Activity,
       content: (
-        <SidebarTabContent title="Activity">
+        <SidebarTabContent
+          title="Activity"
+          actionElement={
+            <span className="size-5">
+              <ActivitySortRoot sortOrder={sortOrder} toggleSort={toggleSortOrder} className="size-3.5" />
+            </span>
+          }
+        >
           <EpicSidebarActivityRoot
             workspaceSlug={workspaceSlug}
             projectId={projectId}

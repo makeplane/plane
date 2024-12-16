@@ -2,7 +2,7 @@ import React, { FC } from "react";
 // types
 import { TLogoProps } from "@plane/types";
 // ui
-import { LayersIcon, LUCIDE_ICONS_LIST } from "@plane/ui";
+import { EpicIcon, LayersIcon, LUCIDE_ICONS_LIST } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 
@@ -13,6 +13,7 @@ type Props = {
   size?: TIssueTypeLogoSize;
   containerClassName?: string;
   isDefault?: boolean;
+  isEpic?: boolean;
 };
 
 const iconSizeMap = {
@@ -32,13 +33,13 @@ const containerSizeMap = {
 };
 
 export const IssueTypeLogo: FC<Props> = (props) => {
-  const { icon_props, size = "sm", containerClassName, isDefault = false } = props;
+  const { icon_props, size = "sm", containerClassName, isDefault = false, isEpic = false } = props;
   // derived values
   const LucideIcon = LUCIDE_ICONS_LIST.find((item) => item.name === icon_props?.name);
   const renderDefaultIcon = isDefault && (!icon_props?.name || !icon_props?.background_color);
 
   // if no value, return empty fragment
-  if (!icon_props?.name && !isDefault) return <></>;
+  if (!icon_props?.name && !isDefault && !isEpic) return <></>;
 
   return (
     <>
@@ -48,9 +49,21 @@ export const IssueTypeLogo: FC<Props> = (props) => {
           width: containerSizeMap[size],
           backgroundColor: icon_props?.background_color,
         }}
-        className={cn("flex-shrink-0 grid place-items-center rounded bg-custom-background-80", containerClassName)} // fallback background color
+        className={cn(
+          "flex-shrink-0 grid place-items-center rounded bg-custom-background-80",
+          {
+            "bg-transparent": isEpic,
+          },
+          containerClassName
+        )} 
       >
-        {renderDefaultIcon ? (
+        {isEpic ? (
+          <EpicIcon
+            width={containerSizeMap[size]}
+            height={containerSizeMap[size]}
+            className="text-custom-text-300 group-hover:text-custom-text-200"
+          />
+        ) : renderDefaultIcon ? (
           <LayersIcon
             width={iconSizeMap[size]}
             height={iconSizeMap[size]}

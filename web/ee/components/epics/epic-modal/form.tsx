@@ -21,7 +21,7 @@ import { CreateLabelModal } from "@/components/labels";
 import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { getChangedIssuefields } from "@/helpers/issue-modal.helper";
+import { getChangedIssuefields } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";

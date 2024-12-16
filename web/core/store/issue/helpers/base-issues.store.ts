@@ -601,7 +601,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       const oldState = this.rootIssueStore.rootStore.state.getStateById(issueBeforeUpdate?.state_id)?.group;
       if (oldState && epicId) {
         // Check if parent_id is changed if yes then decrement the epic analytics count
-        if (data.parent_id !== issueBeforeUpdate?.parent_id) {
+        if (data.parent_id && issueBeforeUpdate?.parent_id && data.parent_id !== issueBeforeUpdate?.parent_id) {
           this.rootIssueStore.rootStore.issueTypes.updateEpicAnalytics(workspaceSlug, projectId, epicId, {
             decrementStateGroupCount: `${oldState}_issues`,
           });
@@ -610,7 +610,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         // Check if state_id is changed if yes then decrement the old state group count and increment the new state group count
         if (data.state_id) {
           const newState = this.rootIssueStore.rootStore.state.getStateById(data.state_id)?.group;
-
           if (oldState && newState && oldState !== newState) {
             this.rootIssueStore.rootStore.issueTypes.updateEpicAnalytics(workspaceSlug, projectId, epicId, {
               decrementStateGroupCount: `${oldState}_issues`,

@@ -1,10 +1,10 @@
 "use client";
 
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import { omit } from "lodash";
 import { observer } from "mobx-react";
 import { EIssueServiceType } from "@plane/constants";
-import { Collapsible, CollapsibleButton, LinearProgressIndicator } from "@plane/ui";
+import { LinearProgressIndicator } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 import { TEpicAnalytics } from "@/plane-web/types";
@@ -54,8 +54,6 @@ export const EPIC_PROGRESS_STATE_GROUPS_DETAILS: {
 
 export const EpicProgressRoot: FC<TEpicProgressRootProps> = observer((props) => {
   const { workspaceSlug, projectId, epicId } = props;
-  // states
-  const [isCollapsibleOpen, setIsCollapsibleOpen] = useState(true);
   // store hooks
   const { getEpicAnalyticsById } = useIssueTypes();
   const {
@@ -82,20 +80,11 @@ export const EpicProgressRoot: FC<TEpicProgressRootProps> = observer((props) => 
 
   return (
     <div className="py-4 border-y border-custom-border-200">
-      <Collapsible
-        isOpen={isCollapsibleOpen}
-        onToggle={() => setIsCollapsibleOpen(!isCollapsibleOpen)}
-        title={
-          <CollapsibleButton
-            isOpen={isCollapsibleOpen}
-            title="Progress"
-            className="border-none py-0 h-auto"
-            titleClassName="text-custom-text-300"
-          />
-        }
-        buttonClassName="w-full"
-      >
-        <div className="flex flex-col gap-3 pt-4">
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center ">
+          <span className="text-base text-custom-text-300 font-medium w-">Progress</span>
+        </div>
+        <div className="flex flex-col gap-3">
           <LinearProgressIndicator
             size="xl"
             data={progressIndicatorData}
@@ -127,7 +116,7 @@ export const EpicProgressRoot: FC<TEpicProgressRootProps> = observer((props) => 
             ))}
           </div>
         </div>
-      </Collapsible>
+      </div>
     </div>
   );
 });

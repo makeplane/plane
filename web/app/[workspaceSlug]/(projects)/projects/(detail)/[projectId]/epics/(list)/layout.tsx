@@ -2,19 +2,14 @@
 
 // components
 import { AppHeader, ContentWrapper } from "@/components/core";
-// constants
-import { EIssuesStoreType } from "@/constants/issue";
 // local components
-import { ProjectIssuesMobileHeader as EpicsMobileHeader } from "../../issues/(list)/mobile-header";
 import { EpicsHeader } from "./header";
+import { ProjectEpicMobileHeader } from "./mobile-header";
 
 export default function ProjectEpicsLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <AppHeader
-        header={<EpicsHeader />}
-        mobileHeader={<EpicsMobileHeader storeType={EIssuesStoreType.EPIC} showAnalytics={false} />}
-      />
+      <AppHeader header={<EpicsHeader />} mobileHeader={<ProjectEpicMobileHeader />} />
       <ContentWrapper>{children}</ContentWrapper>
     </>
   );
