@@ -1,3 +1,6 @@
+# python imports
+import json
+
 # Strawberry imports
 import strawberry
 from strawberry.types import Info
@@ -6,10 +9,13 @@ from strawberry.permission import PermissionExtension
 # Third-party imports
 from asgiref.sync import sync_to_async
 
+# Django imports
+from django.utils import timezone
 
 # Module imports
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.db.models import Workspace, IssueComment
+from plane.graphql.bgtasks.issue_activity_task import issue_activity
 
 
 @strawberry.type
@@ -32,7 +38,7 @@ class IssueCommentMutation:
         if not workspace_details:
             return False
 
-        await sync_to_async(
+        issue_comment = await sync_to_async(
             lambda: IssueComment.objects.create(
                 workspace_id=workspace_details.id,
                 project_id=project,
@@ -43,5 +49,23 @@ class IssueCommentMutation:
                 updated_by=info.context.user,
             )
         )()
+
+        comment_activity_payload = {
+            "id": str(issue_comment.id),
+            "comment_html": comment_html,
+        }
+
+        # update the issue comment activity
+        await sync_to_async(issue_activity.delay)(
+            type="comment.activity.created",
+            requested_data=json.dumps(comment_activity_payload),
+            actor_id=str(info.context.user.id),
+            issue_id=str(issue),
+            project_id=str(project),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=info.context.request.META.get("HTTP_ORIGIN"),
+        )
 
         return True
