@@ -15,7 +15,7 @@ from plane.db.models import Issue, Project, State
 from plane.utils.exception_logger import log_exception
 
 
-@shared_task
+@shared_task(queue="scheduled")
 def archive_and_close_old_issues():
     archive_old_issues()
     close_old_issues()

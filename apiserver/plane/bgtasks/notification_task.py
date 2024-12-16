@@ -204,7 +204,7 @@ def create_mention_notification(
     )
 
 
-@shared_task
+@shared_task(queue="notifications")
 def notifications(
     type,
     issue_id,

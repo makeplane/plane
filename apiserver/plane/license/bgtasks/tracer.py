@@ -19,7 +19,7 @@ from plane.db.models import (
 from plane.utils.telemetry import init_tracer, shutdown_tracer
 
 
-@shared_task
+@shared_task(queue="low")
 def instance_traces():
     try:
         init_tracer()

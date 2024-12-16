@@ -86,6 +86,7 @@ def get_model_data(event, event_id, many=False):
     retry_backoff=600,
     max_retries=5,
     retry_jitter=True,
+    queue="notifications",
 )
 def webhook_task(self, webhook, slug, event, event_data, action, current_site):
     try:

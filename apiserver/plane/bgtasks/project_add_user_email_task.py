@@ -17,7 +17,7 @@ from plane.db.models import ProjectMember
 from plane.db.models import User
 
 
-@shared_task
+@shared_task(queue="high")
 def project_add_user_email(current_site, project_member_id, invitor_id):
     try:
         # Get the invitor

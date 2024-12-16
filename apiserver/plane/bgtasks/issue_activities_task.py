@@ -1548,7 +1548,7 @@ def create_intake_activity(
 
 
 # Receive message from room group
-@shared_task
+@shared_task(queue="high")
 def issue_activity(
     type,
     requested_data,

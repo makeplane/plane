@@ -3,7 +3,7 @@
 # Python imports
 import os
 from urllib.parse import urlparse
-
+from kombu import Queue, Exchange
 
 # Third party imports
 import dj_database_url
@@ -268,6 +268,32 @@ CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_RESULT_EXPIRES = int(
     os.environ.get("CELERY_RESULT_EXPIRES", 60 * 60 * 24)
 )  # Expire results after 24 hours
+
+
+# Define queues with their exchanges
+CELERY_TASK_QUEUES = (
+    Queue("high", Exchange("high_exchange", type="direct"), routing_key="high.#"),
+    Queue(
+        "default", Exchange("default_exchange", type="direct"), routing_key="default.#"
+    ),
+    Queue("low", Exchange("low_exchange", type="direct"), routing_key="low.#"),
+    Queue(
+        "scheduled",
+        Exchange("scheduled_exchange", type="direct"),
+        routing_key="scheduled.#",
+    ),
+    Queue(
+        "notifications",
+        Exchange("notifications_exchange", type="direct"),
+        routing_key="notifications.#",
+    ),
+)
+
+# Default queue settings
+CELERY_TASK_DEFAULT_QUEUE = "default"
+CELERY_TASK_DEFAULT_EXCHANGE = "default_exchange"
+CELERY_TASK_DEFAULT_ROUTING_KEY = "default.#"
+
 CELERY_IMPORTS = (
     # scheduled tasks
     "plane.bgtasks.issue_automation_task",

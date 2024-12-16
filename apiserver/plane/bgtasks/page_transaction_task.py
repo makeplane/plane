@@ -33,7 +33,7 @@ def extract_components(value, tag):
         return []
 
 
-@shared_task
+@shared_task(queue="low")
 def page_transaction(new_value, old_value, page_id):
     try:
         page = Page.objects.get(pk=page_id)

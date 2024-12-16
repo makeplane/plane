@@ -7,7 +7,7 @@ from plane.settings.storage import S3Storage
 from plane.utils.exception_logger import log_exception
 
 
-@shared_task
+@shared_task(queue="default")
 def get_asset_object_metadata(asset_id):
     try:
         # Get the asset

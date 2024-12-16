@@ -10,7 +10,7 @@ from django.db.models.fields.related import OneToOneRel
 from celery import shared_task
 
 
-@shared_task
+@shared_task(queue="default")
 def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
     """
     Soft delete related objects for a given model instance
@@ -111,7 +111,7 @@ def restore_related_objects(app_label, model_name, instance_pk, using=None):
     pass
 
 
-@shared_task
+@shared_task(queue="scheduled")
 def hard_delete():
     from plane.db.models import (
         Workspace,

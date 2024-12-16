@@ -9,7 +9,7 @@ from plane.db.models import Page, PageVersion
 from plane.utils.exception_logger import log_exception
 
 
-@shared_task
+@shared_task(queue="default")
 def page_version(page_id, existing_instance, user_id):
     try:
         # Get the page

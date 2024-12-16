@@ -4,7 +4,7 @@ from plane.db.models import APIActivityLog
 from celery import shared_task
 
 
-@shared_task
+@shared_task(queue="scheduled")
 def delete_api_logs():
     # Get the logs older than 30 days to delete
     logs_to_delete = APIActivityLog.objects.filter(

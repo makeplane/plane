@@ -39,7 +39,7 @@ def update_existing_version(version: IssueDescriptionVersion, issue) -> None:
     )
 
 
-@shared_task
+@shared_task(queue="high")
 def issue_description_version_task(
     updated_issue, issue_id, user_id, is_creating=False
 ) -> Optional[bool]:

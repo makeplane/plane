@@ -9,7 +9,7 @@ from plane.db.models import UserRecentVisit, Workspace
 from plane.utils.exception_logger import log_exception
 
 
-@shared_task
+@shared_task(queue="low")
 def recent_visited_task(entity_name, entity_identifier, user_id, project_id, slug):
     try:
         workspace = Workspace.objects.get(slug=slug)

@@ -531,7 +531,7 @@ def create_module_issues(workspace, project, user_id, issue_count):
     )
 
 
-@shared_task
+@shared_task(queue="low")
 def create_dummy_data(
     slug,
     email,

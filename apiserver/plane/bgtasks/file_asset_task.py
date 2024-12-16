@@ -13,7 +13,7 @@ from celery import shared_task
 from plane.db.models import FileAsset
 
 
-@shared_task
+@shared_task(queue="scheduled")
 def delete_unuploaded_file_asset():
     """This task deletes unuploaded file assets older than a certain number of days."""
     FileAsset.objects.filter(

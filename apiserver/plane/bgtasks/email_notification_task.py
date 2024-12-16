@@ -168,7 +168,7 @@ def process_html_content(content):
     return processed_content_list
 
 
-@shared_task
+@shared_task(queue="notifications")
 def send_email_notification(
     issue_id, notification_data, receiver_id, email_notification_ids
 ):
