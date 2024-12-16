@@ -35,5 +35,15 @@
   "saving": "Saving...",
   "save_changes": "Save changes",
   "deactivate_account": "Deactivate account",
-  "deactivate_account_description": "When deactivating an account, all of the data and resources within that account will be permanently removed and cannot be recovered."
+  "deactivate_account_description": "When deactivating an account, all of the data and resources within that account will be permanently removed and cannot be recovered.",
+  "profile_settings": "Profile settings",
+  "your_account": "Your account",
+  "profile": "Profile",
+  "security": "Security",
+  "activity": "Activity",
+  "appearance": "Appearance",
+  "notifications": "Notifications",
+  "workspaces": "Workspaces",
+  "create_workspace": "Create workspace",
+  "invitations": "Invitations"
 }
