@@ -29,6 +29,7 @@ type Props = {
   enableSelection: boolean;
   showAllBlocks?: boolean;
   selectionHelpers?: TSelectionHelper;
+  isEpic?: boolean;
 };
 
 export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
@@ -42,6 +43,7 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
     ganttContainerRef,
     showAllBlocks = false,
     selectionHelpers,
+    isEpic = false,
   } = props;
 
   const { getBlockById } = useTimeLineChart(ETimeLineTypeType.ISSUE);
@@ -101,6 +103,7 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
                       enableSelection={enableSelection}
                       isDragging={isDragging}
                       selectionHelpers={selectionHelpers}
+                      isEpic={isEpic}
                     />
                   )}
                 </GanttDnDHOC>

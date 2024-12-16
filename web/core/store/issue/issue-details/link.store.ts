@@ -1,7 +1,7 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // services
-import { TIssueLink, TIssueLinkMap, TIssueLinkIdMap } from "@plane/types";
+import { TIssueLink, TIssueLinkMap, TIssueLinkIdMap, TIssueServiceType } from "@plane/types";
 import { IssueService } from "@/services/issue";
 // types
 import { IIssueDetail } from "./root.store";
@@ -44,8 +44,9 @@ export class IssueLinkStore implements IIssueLinkStore {
   rootIssueDetailStore: IIssueDetail;
   // services
   issueService;
+  serviceType;
 
-  constructor(rootStore: IIssueDetail) {
+  constructor(rootStore: IIssueDetail, serviceType: TIssueServiceType) {
     makeObservable(this, {
       // observables
       links: observable,
@@ -59,10 +60,11 @@ export class IssueLinkStore implements IIssueLinkStore {
       updateLink: action,
       removeLink: action,
     });
+    this.serviceType = serviceType;
     // root store
     this.rootIssueDetailStore = rootStore;
     // services
-    this.issueService = new IssueService();
+    this.issueService = new IssueService(serviceType);
   }
 
   // computed

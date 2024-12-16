@@ -1,8 +1,4 @@
-import type {
-  GithubRepositoriesResponse,
-  ISearchIssueResponse,
-  TProjectIssuesSearchParams,
-} from "@plane/types";
+import type { GithubRepositoriesResponse, ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // plane web types
@@ -61,6 +57,14 @@ export class ProjectService extends APIService {
 
   async deleteProject(workspaceSlug: string, projectId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchProjectEpicProperties(workspaceSlug: string, projectId: string): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/epic-properties/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

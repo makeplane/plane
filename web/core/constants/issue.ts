@@ -34,6 +34,7 @@ export enum EIssuesStoreType {
   DRAFT = "DRAFT",
   DEFAULT = "DEFAULT",
   WORKSPACE_DRAFT = "WORKSPACE_DRAFT",
+  EPIC = "EPIC",
 }
 
 export enum EIssueLayoutTypes {
@@ -51,7 +52,8 @@ export type TCreateModalStoreTypes =
   | EIssuesStoreType.PROJECT_VIEW
   | EIssuesStoreType.PROFILE
   | EIssuesStoreType.CYCLE
-  | EIssuesStoreType.MODULE;
+  | EIssuesStoreType.MODULE
+  | EIssuesStoreType.EPIC;
 
 export enum EIssueFilterType {
   FILTERS = "filters",
@@ -134,6 +136,10 @@ export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = 
   "issue_type",
 ];
 
+export const EPICS_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = ISSUE_DISPLAY_PROPERTIES_KEYS.filter(
+  (key) => !["cycle", "modules"].includes(key)
+);
+
 export const ISSUE_DISPLAY_PROPERTIES: {
   key: keyof IIssueDisplayProperties;
   title: string;
@@ -206,9 +212,15 @@ export interface ILayoutDisplayFiltersOptions {
   };
 }
 
-export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
-  [pageType: string]: { [layoutType: string]: ILayoutDisplayFiltersOptions };
-} = {
+export type TFiltersByLayout = {
+  [layoutType: string]: ILayoutDisplayFiltersOptions;
+};
+
+export type TIssueFiltersToDisplayByPageType = {
+  [pageType: string]: TFiltersByLayout;
+};
+
+export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: TIssueFiltersToDisplayByPageType = {
   profile_issues: {
     list: {
       filters: ["priority", "state_group", "labels", "start_date", "target_date"],
@@ -469,7 +481,76 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       },
     },
   },
+  epics: {
+    list: {
+      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date", "target_date"],
+      display_properties: EPICS_DISPLAY_PROPERTIES_KEYS,
+      display_filters: {
+        group_by: ["state", "priority", "labels", "assignees", "created_by", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: true,
+        values: ["show_empty_groups", "sub_issue"],
+      },
+    },
+    kanban: {
+      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date", "target_date"],
+      display_properties: EPICS_DISPLAY_PROPERTIES_KEYS,
+      display_filters: {
+        group_by: ["state", "priority", "labels", "assignees", "created_by"],
+        sub_group_by: ["state", "priority", "labels", "assignees", "created_by", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
+        type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: true,
+        values: ["show_empty_groups", "sub_issue"],
+      },
+    },
+    calendar: {
+      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date"],
+      display_properties: ["key", "issue_type"],
+      display_filters: {
+        type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: true,
+        values: ["sub_issue"],
+      },
+    },
+    spreadsheet: {
+      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date", "target_date"],
+      display_properties: EPICS_DISPLAY_PROPERTIES_KEYS,
+      display_filters: {
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: true,
+        values: ["sub_issue"],
+      },
+    },
+    gantt_chart: {
+      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date", "target_date"],
+      display_properties: ["key", "issue_type"],
+      display_filters: {
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: true,
+        values: ["sub_issue"],
+      },
+    },
+  },
   ...ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
+};
+
+export const ISSUE_STORE_TO_FILTERS_MAP: Partial<Record<EIssuesStoreType, TFiltersByLayout>> = {
+  [EIssuesStoreType.PROJECT]: ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues,
+  [EIssuesStoreType.EPIC]: ISSUE_DISPLAY_FILTERS_BY_LAYOUT.epics,
 };
 
 export enum EIssueListRow {
