@@ -17,7 +17,7 @@ type Props = {
   page: IPage;
   setSidePeekVisible: (sidePeekState: boolean) => void;
   sidePeekVisible: boolean;
-  syncState: boolean | null;
+  syncState: boolean;
 };
 
 export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
@@ -65,6 +65,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
           page={page}
           sidePeekVisible={sidePeekVisible}
           setSidePeekVisible={setSidePeekVisible}
+          syncState={syncState}
         />
       </div>
     </>

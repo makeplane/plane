@@ -101,15 +101,15 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   const handleServerConnect = useCallback(() => {
     handleConnectionStatus(false);
-  }, []);
+  }, [handleConnectionStatus]);
 
   const handleServerError = useCallback(() => {
     handleConnectionStatus(true);
-  }, []);
+  }, [handleConnectionStatus]);
 
   const handleServerSynced = useCallback(() => {
-    setSyncing(true);
-  }, []);
+    setSyncing(false);
+  }, [setSyncing]);
 
   const serverHandler: TServerHandler = useMemo(
     () => ({

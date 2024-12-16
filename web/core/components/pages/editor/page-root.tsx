@@ -33,7 +33,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
   const [editorReady, setEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
   const [sidePeekVisible, setSidePeekVisible] = useState(window.innerWidth >= 768);
-  const [syncState, setSyncing] = useState<boolean | null>(null);
+  const [syncState, setSyncing] = useState<boolean>(true);
   const [isVersionsOverlayOpen, setIsVersionsOverlayOpen] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);

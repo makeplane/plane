@@ -61,7 +61,7 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
   return (
     <div className="flex items-center justify-end gap-3">
       {is_locked && <LockedComponent />}
-      {!syncState && <SyncingComponent />}
+      {syncState && <SyncingComponent />}
       {archived_at && (
         <div className="flex-shrink-0 flex h-7 items-center gap-2 rounded-full bg-blue-500/20 px-3 py-0.5 text-xs font-medium text-blue-500">
           <ArchiveIcon className="flex-shrink-0 size-3" />
