@@ -35,5 +35,15 @@
   "saving": "Guardando...",
   "save_changes": "Guardar cambios",
   "deactivate_account": "Desactivar cuenta",
-  "deactivate_account_description": "Al desactivar una cuenta, todos los datos y recursos dentro de esa cuenta se eliminarán permanentemente y no se podrán recuperar."
+  "deactivate_account_description": "Al desactivar una cuenta, todos los datos y recursos dentro de esa cuenta se eliminarán permanentemente y no se podrán recuperar.",
+  "profile_settings": "Configuración de perfil",
+  "your_account": "Tu cuenta",
+  "profile": "Perfil",
+  "security": "Seguridad",
+  "activity": "Actividad",
+  "appearance": "Apariencia",
+  "notifications": "Notificaciones",
+  "workspaces": "Workspaces",
+  "create_workspace": "Crear workspace",
+  "invitations": "Invitaciones"
 }

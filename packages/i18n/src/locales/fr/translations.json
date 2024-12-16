@@ -35,5 +35,15 @@
   "saving": "Enregistrement...",
   "save_changes": "Enregistrer les modifications",
   "deactivate_account": "Désactiver le compte",
-  "deactivate_account_description": "Lors de la désactivation d'un compte, toutes les données et ressources de ce compte seront définitivement supprimées et ne pourront pas être récupérées."
+  "deactivate_account_description": "Lors de la désactivation d'un compte, toutes les données et ressources de ce compte seront définitivement supprimées et ne pourront pas être récupérées.",
+  "profile_settings": "Paramètres du profil",
+  "your_account": "Votre compte",
+  "profile": "Profil",
+  "security": " Sécurité",
+  "activity": "Activité",
+  "appearance": "Apparence",
+  "notifications": "Notifications",
+  "workspaces": "Workspaces",
+  "create_workspace": "Créer un workspace",
+  "invitations": "Invitations"
 }

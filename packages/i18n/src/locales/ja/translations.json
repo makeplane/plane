@@ -35,5 +35,15 @@
   "saving": "保存中...",
   "save_changes": "変更を保存",
   "deactivate_account": "アカウントを無効化",
-  "deactivate_account_description": "アカウントを無効化すると、そのアカウント内のすべてのデータとリソースが完全に削除され、復元することはできません。"
+  "deactivate_account_description": "アカウントを無効化すると、そのアカウント内のすべてのデータとリソースが完全に削除され、復元することはできません。",
+  "profile_settings": "プロフィール設定",
+  "your_account": "アカウント",
+  "profile": "プロフィール",
+  "security": "セキュリティ",
+  "activity": "アクティビティ",
+  "appearance": "アピアンス",
+  "notifications": "通知",
+  "workspaces": "ワークスペース",
+  "create_workspace": "ワークスペースを作成",
+  "invitations": "招待"
 }
