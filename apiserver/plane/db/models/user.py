@@ -190,6 +190,8 @@ class Profile(TimeAuditModel):
     is_mobile_onboarded = models.BooleanField(default=False)
     mobile_onboarding_step = models.JSONField(default=get_mobile_default_onboarding)
     mobile_timezone_auto_set = models.BooleanField(default=False)
+    # language
+    language = models.CharField(max_length=255, default="en")
 
     class Meta:
         verbose_name = "Profile"
