@@ -29,6 +29,7 @@ export enum EmptyStateType {
   WORKSPACE_DASHBOARD = "workspace-dashboard",
   WORKSPACE_ANALYTICS = "workspace-analytics",
   WORKSPACE_PROJECTS = "workspace-projects",
+  WORKSPACE_TEAMS = "workspace-teams",
   WORKSPACE_ALL_ISSUES = "workspace-all-issues",
   WORKSPACE_ASSIGNED = "workspace-assigned",
   WORKSPACE_CREATED = "workspace-created",
@@ -96,6 +97,7 @@ export enum EmptyStateType {
   ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE = "active-cycle-assignee-empty-state",
   ACTIVE_CYCLE_LABEL_EMPTY_STATE = "active-cycle-label-empty-state",
 
+  WORKSPACE_ACTIVE_CYCLES = "workspace-active-cycles",
   DISABLED_PROJECT_INBOX = "disabled-project-inbox",
   DISABLED_PROJECT_CYCLE = "disabled-project-cycle",
   DISABLED_PROJECT_MODULE = "disabled-project-module",
@@ -164,6 +166,17 @@ const emptyStateDetails = {
     },
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+  },
+  [EmptyStateType.WORKSPACE_TEAMS]: {
+    key: EmptyStateType.WORKSPACE_TEAMS,
+    title: "Teams",
+    description: "Teams are groups of people who collaborate on projects. Create a team to get started.",
+    path: "/empty-state/teams/teams",
+    primaryButton: {
+      text: "Create new team",
+    },
+    accessType: "workspace",
+    access: [EUserPermissions.ADMIN],
   },
   // all-issues
   [EmptyStateType.WORKSPACE_ALL_ISSUES]: {
@@ -368,8 +381,7 @@ const emptyStateDetails = {
   [EmptyStateType.PROJECT_CYCLE_ALL]: {
     key: EmptyStateType.PROJECT_CYCLE_ALL,
     title: "No cycles",
-    description:
-      "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
+    description: "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
     path: "/empty-state/cycle/active",
   },
   // empty filters
@@ -694,6 +706,13 @@ const emptyStateDetails = {
     key: EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE,
     title: "Add labels to issues to see the \n breakdown of work by labels.",
     path: "/empty-state/active-cycle/label",
+  },
+  [EmptyStateType.WORKSPACE_ACTIVE_CYCLES]: {
+    key: EmptyStateType.WORKSPACE_ACTIVE_CYCLES,
+    title: "No active cycles",
+    description:
+      "Cycles of your projects that includes any period that encompasses today's date within its range. Find the progress and details of all your active cycle here.",
+    path: "/empty-state/onboarding/workspace-active-cycles",
   },
   [EmptyStateType.DISABLED_PROJECT_INBOX]: {
     key: EmptyStateType.DISABLED_PROJECT_INBOX,

@@ -1,7 +1,10 @@
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { MessageCircle } from "lucide-react";
+// ui
+import { GithubIcon, SlackIcon } from "@plane/ui";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
@@ -45,8 +48,21 @@ export const IssueCommentBlock: FC<TIssueCommentBlock> = observer((props) => {
               : comment.actor_detail.display_name.charAt(0)}
           </>
         )}
-        <div className="absolute top-2 left-4 w-5 h-5 rounded-full overflow-hidden flex justify-center items-center bg-custom-background-80">
-          <MessageCircle className="w-3 h-3 text-custom-text-200" />
+        <div
+          className={cn(
+            "absolute top-2 left-4 w-5 h-5 rounded-full overflow-hidden flex justify-center items-center bg-custom-background-90",
+            {
+              "bg-custom-background-80": !comment.external_source,
+            }
+          )}
+        >
+          {comment.external_source === "GITHUB" ? (
+            <GithubIcon className="w-4 h-4 absolute left-1 top-1" color="white" />
+          ) : comment.external_source?.includes("SLACK") ? (
+            <SlackIcon className="size-3 absolute left-1 top-1" />
+          ) : (
+            <MessageCircle className="w-3 h-3 text-custom-text-200" />
+          )}
         </div>
       </div>
       <div className="w-full truncate relative flex ">

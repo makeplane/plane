@@ -1,5 +1,7 @@
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
 import { ImageIcon } from "lucide-react";
+// constants
+import { ACCEPTED_FILE_EXTENSIONS } from "@/constants/config";
 // helpers
 import { cn } from "@/helpers/common";
 // hooks
@@ -164,7 +166,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         ref={fileInputRef}
         hidden
         type="file"
-        accept=".jpg,.jpeg,.png,.webp"
+        accept={ACCEPTED_FILE_EXTENSIONS.join(",")}
         onChange={onFileChange}
         multiple
       />
