@@ -7,6 +7,7 @@ import { IProjectAuthWrapper } from "@/ce/layouts/project-wrapper";
 import { ProjectAuthWrapper as CoreProjectAuthWrapper } from "@/layouts/auth-layout";
 // plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 
 export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // props
@@ -15,6 +16,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { isIssueTypeOrEpicEnabledForProject, fetchAllPropertiesAndOptions } = useIssueTypes();
+  const { fetchFeatures } = useProjectAdvanced();
   // derived values
   const isIssueTypeEnabled = isIssueTypeOrEpicEnabledForProject(
     workspaceSlug?.toString(),
@@ -32,6 +34,16 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
       ? () => fetchAllPropertiesAndOptions(workspaceSlug.toString(), projectId.toString())
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // features
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_ADVANCED_FEATURES_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId
+      ? () => {
+          fetchFeatures(workspaceSlug.toString(), projectId.toString());
+        }
+      : null
   );
 
   return <CoreProjectAuthWrapper>{children}</CoreProjectAuthWrapper>;
