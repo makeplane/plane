@@ -225,14 +225,11 @@ export class Storage {
     const response = await issueService.getIssuesForSync(this.workspaceSlug, projectId, queryParams);
 
     await addIssuesBulk(response.results, BATCH_SIZE);
+
     if (response.total_pages > 1) {
-      const promiseArray = [];
       for (let i = 1; i < response.total_pages; i++) {
         queryParams.cursor = `${PAGE_SIZE}:${i}:0`;
-        promiseArray.push(issueService.getIssuesForSync(this.workspaceSlug, projectId, queryParams));
-      }
-      const pages = await Promise.all(promiseArray);
-      for (const page of pages) {
+        const page = await issueService.getIssuesForSync(this.workspaceSlug, projectId, queryParams);
         await addIssuesBulk(page.results, BATCH_SIZE);
       }
     }
