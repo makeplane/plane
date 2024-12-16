@@ -1,10 +1,18 @@
-from django.utils import timezone
+# Python imports
 from datetime import timedelta
-from plane.db.models import APIActivityLog
+
+# Django imports
+from django.utils import timezone
+from django.conf import settings
+
+# Third party imports
 from celery import shared_task
 
+# Module imports
+from plane.db.models import APIActivityLog
 
-@shared_task(queue="scheduled")
+
+@shared_task(queue=settings.TASK_SCHEDULER_QUEUE)
 def delete_api_logs():
     # Get the logs older than 30 days to delete
     logs_to_delete = APIActivityLog.objects.filter(

@@ -3,6 +3,9 @@ import json
 import uuid
 from uuid import UUID
 
+# Django imports
+from django.conf import settings
+
 
 # Module imports
 from plane.db.models import (
@@ -204,7 +207,7 @@ def create_mention_notification(
     )
 
 
-@shared_task(queue="notifications")
+@shared_task(queue=settings.TASK_NOTIFICATION_QUEUE)
 def notifications(
     type,
     issue_id,

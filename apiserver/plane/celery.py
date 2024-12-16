@@ -14,6 +14,39 @@ app = Celery("plane")
 # pickle the object when using Windows.
 app.config_from_object("django.conf:settings", namespace="CELERY")
 
+# Add additional configurations
+CELERY_CONFIGURATIONS = {
+    "worker_prefetch_multiplier": int(os.environ.get("WORKER_PREFETCH_MULTIPLIER", 1)),
+    "worker_max_tasks_per_child": int(
+        os.environ.get("WORKER_MAX_TASKS_PER_CHILD", 100)
+    ),
+    "worker_max_memory_per_child": int(
+        os.environ.get("WORKER_MAX_MEMORY_PER_CHILD", 150000)
+    ),
+    "task_time_limit": int(os.environ.get("TASK_TIME_LIMIT", 3600)),  # Hard time limit
+    "task_soft_time_limit": int(
+        os.environ.get("TASK_SOFT_TIME_LIMIT", 1800)
+    ),  # Soft time limit (30 minutes)
+    "worker_send_task_events": bool(
+        os.environ.get("WORKER_SEND_TASK_EVENTS", "0") == "1"
+    ),
+    "task_ignore_result": bool(
+        os.environ.get("TASK_IGNORE_RESULT", "1") == "1"
+    ),  # Ignore results unless explicitly needed
+    "task_store_errors_even_if_ignored": bool(
+        os.environ.get("TASK_STORE_ERRORS_EVEN_IF_IGNORED", "1") == "1"
+    ),  # Store errors even if results are ignored
+    "task_acks_late": bool(
+        os.environ.get("TASK_ACKS_LATE", "1") == "1"
+    ),  # Acknowledge tasks after completion
+    "task_reject_on_worker_lost": bool(
+        os.environ.get("TASK_REJECT_ON_WORKER_LOST", "1") == "1"
+    ),  # Reject tasks if worker is lost
+}
+
+app.conf.update(**CELERY_CONFIGURATIONS)
+
+
 app.conf.beat_schedule = {
     # Executes every day at 12 AM
     "check-every-day-to-archive-and-close": {

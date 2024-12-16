@@ -2,12 +2,13 @@
 import json
 from datetime import timedelta
 
+# Django imports
+from django.db.models import Q
+from django.utils import timezone
+from django.conf import settings
+
 # Third party imports
 from celery import shared_task
-from django.db.models import Q
-
-# Django imports
-from django.utils import timezone
 
 # Module imports
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -15,7 +16,7 @@ from plane.db.models import Issue, Project, State
 from plane.utils.exception_logger import log_exception
 
 
-@shared_task(queue="scheduled")
+@shared_task(queue=settings.TASK_SCHEDULER_QUEUE)
 def archive_and_close_old_issues():
     archive_old_issues()
     close_old_issues()

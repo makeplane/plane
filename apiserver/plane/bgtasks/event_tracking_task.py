@@ -1,5 +1,9 @@
+# Python imports
 import os
 import uuid
+
+# Django imports
+from django.conf import settings
 
 # third party imports
 from celery import shared_task
@@ -49,7 +53,7 @@ def auth_events(user, email, user_agent, ip, event_name, medium, first_time):
         return
 
 
-@shared_task(queue="low")
+@shared_task(queue=settings.TASK_LOW_QUEUE)
 def workspace_invite_event(user, email, user_agent, ip, event_name, accepted_from):
     try:
         POSTHOG_API_KEY, POSTHOG_HOST = posthogConfiguration()

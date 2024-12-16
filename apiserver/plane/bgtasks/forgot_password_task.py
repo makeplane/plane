@@ -1,21 +1,22 @@
 # Python imports
 import logging
 
-# Third party imports
-from celery import shared_task
 
 # Django imports
-# Third party imports
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.conf import settings
+
+# Third party imports
+from celery import shared_task
 
 # Module imports
 from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.exception_logger import log_exception
 
 
-@shared_task(queue="high")
+@shared_task(queue=settings.TASK_HIGH_QUEUE)
 def forgot_password(first_name, email, uidb64, token, current_site):
     try:
         relative_link = (

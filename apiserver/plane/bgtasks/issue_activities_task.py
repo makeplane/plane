@@ -2,17 +2,17 @@
 import json
 
 
-# Third Party imports
-from celery import shared_task
-
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
+from django.conf import settings
 
-from plane.app.serializers import IssueActivitySerializer
-from plane.bgtasks.notification_task import notifications
+# Third Party imports
+from celery import shared_task
 
 # Module imports
+from plane.app.serializers import IssueActivitySerializer
+from plane.bgtasks.notification_task import notifications
 from plane.db.models import (
     CommentReaction,
     Cycle,
@@ -1548,7 +1548,7 @@ def create_intake_activity(
 
 
 # Receive message from room group
-@shared_task(queue="high")
+@shared_task(queue=settings.TASK_HIGH_QUEUE)
 def issue_activity(
     type,
     requested_data,

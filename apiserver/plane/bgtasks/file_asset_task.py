@@ -5,6 +5,7 @@ from datetime import timedelta
 # Django imports
 from django.utils import timezone
 from django.db.models import Q
+from django.conf import settings
 
 # Third party imports
 from celery import shared_task
@@ -13,7 +14,7 @@ from celery import shared_task
 from plane.db.models import FileAsset
 
 
-@shared_task(queue="scheduled")
+@shared_task(queue=settings.TASK_HIGH_QUEUE)
 def delete_unuploaded_file_asset():
     """This task deletes unuploaded file assets older than a certain number of days."""
     FileAsset.objects.filter(

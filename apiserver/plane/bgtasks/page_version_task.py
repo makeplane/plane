@@ -4,12 +4,15 @@ import json
 # Third party imports
 from celery import shared_task
 
+# Django imports
+from django.conf import settings
+
 # Module imports
 from plane.db.models import Page, PageVersion
 from plane.utils.exception_logger import log_exception
 
 
-@shared_task(queue="default")
+@shared_task(queue=settings.TASK_DEFAULT_QUEUE)
 def page_version(page_id, existing_instance, user_id):
     try:
         # Get the page

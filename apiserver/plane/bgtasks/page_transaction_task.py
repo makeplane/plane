@@ -3,13 +3,14 @@ import json
 
 # Django imports
 from django.utils import timezone
+from django.conf import settings
 
 # Third-party imports
 from bs4 import BeautifulSoup
+from celery import shared_task
 
 # Module imports
 from plane.db.models import Page, PageLog
-from celery import shared_task
 from plane.utils.exception_logger import log_exception
 
 
@@ -33,7 +34,7 @@ def extract_components(value, tag):
         return []
 
 
-@shared_task(queue="low")
+@shared_task(queue=settings.TASK_LOW_QUEUE)
 def page_transaction(new_value, old_value, page_id):
     try:
         page = Page.objects.get(pk=page_id)

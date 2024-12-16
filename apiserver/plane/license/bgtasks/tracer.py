@@ -1,3 +1,6 @@
+# Django imports
+from django.conf import settings
+
 # Third party imports
 from celery import shared_task
 from opentelemetry import trace
@@ -19,7 +22,7 @@ from plane.db.models import (
 from plane.utils.telemetry import init_tracer, shutdown_tracer
 
 
-@shared_task(queue="low")
+@shared_task(queue=settings.TASK_LOW_QUEUE)
 def instance_traces():
     try:
         init_tracer()

@@ -1,9 +1,16 @@
-from celery import shared_task
-from django.db import transaction
-from django.utils import timezone
+# Python imports
 from typing import Optional, Dict
 import json
 
+# Django imports
+from django.db import transaction
+from django.utils import timezone
+from django.conf import settings
+
+# Third party imports
+from celery import shared_task
+
+# Module imports
 from plane.db.models import Issue, IssueDescriptionVersion
 from plane.utils.exception_logger import log_exception
 
@@ -39,7 +46,7 @@ def update_existing_version(version: IssueDescriptionVersion, issue) -> None:
     )
 
 
-@shared_task(queue="high")
+@shared_task(queue=settings.TASK_HIGH_QUEUE)
 def issue_description_version_task(
     updated_issue, issue_id, user_id, is_creating=False
 ) -> Optional[bool]:

@@ -7,12 +7,13 @@ import zipfile
 import boto3
 from botocore.client import Config
 
-# Third party imports
-from celery import shared_task
 
 # Django imports
 from django.conf import settings
 from django.utils import timezone
+
+# Third party imports
+from celery import shared_task
 from openpyxl import Workbook
 
 # Module imports
@@ -299,7 +300,7 @@ def generate_xlsx(header, project_id, issues, files):
     files.append((f"{project_id}.xlsx", xlsx_file))
 
 
-@shared_task(queue="low")
+@shared_task(queue=settings.TASK_LOW_QUEUE)
 def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, slug):
     try:
         exporter_instance = ExporterHistory.objects.get(token=token_id)

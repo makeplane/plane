@@ -1,14 +1,15 @@
 # Python imports
 import logging
 
-# Third party imports
-from celery import shared_task
 
 # Django imports
-# Third party imports
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.conf import settings
+
+# Third party imports
+from celery import shared_task
 
 # Module imports
 from plane.db.models import Project, ProjectMemberInvite, User
@@ -16,7 +17,7 @@ from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.exception_logger import log_exception
 
 
-@shared_task(queue="high")
+@shared_task(queue=settings.TASK_DEFAULT_QUEUE)
 def project_invitation(email, project_id, token, current_site, invitor):
     try:
         user = User.objects.get(email=invitor)

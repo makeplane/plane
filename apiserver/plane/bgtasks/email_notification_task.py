@@ -2,16 +2,16 @@ import logging
 import re
 from datetime import datetime
 
-from bs4 import BeautifulSoup
-
-# Third party imports
-from celery import shared_task
+# Django imports
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
-
-# Django imports
 from django.utils import timezone
 from django.utils.html import strip_tags
+from django.conf import settings
+
+# Third party imports
+from bs4 import BeautifulSoup
+from celery import shared_task
 
 # Module imports
 from plane.db.models import EmailNotificationLog, Issue, User
@@ -168,7 +168,7 @@ def process_html_content(content):
     return processed_content_list
 
 
-@shared_task(queue="notifications")
+@shared_task(queue=settings.TASK_NOTIFICATION_QUEUE)
 def send_email_notification(
     issue_id, notification_data, receiver_id, email_notification_ids
 ):

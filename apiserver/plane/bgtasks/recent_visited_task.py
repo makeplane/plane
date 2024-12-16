@@ -1,5 +1,6 @@
 # Python imports
 from django.utils import timezone
+from django.conf import settings
 
 # Third party imports
 from celery import shared_task
@@ -9,7 +10,7 @@ from plane.db.models import UserRecentVisit, Workspace
 from plane.utils.exception_logger import log_exception
 
 
-@shared_task(queue="low")
+@shared_task(queue=settings.TASK_LOW_QUEUE)
 def recent_visited_task(entity_name, entity_identifier, user_id, project_id, slug):
     try:
         workspace = Workspace.objects.get(slug=slug)

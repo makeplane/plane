@@ -270,24 +270,48 @@ CELERY_RESULT_EXPIRES = int(
 )  # Expire results after 24 hours
 
 
+QUEUE_SUFFIX = os.environ.get("QUEUE_SUFFIX", "plane")
+
+TASK_HIGH_QUEUE = f"{QUEUE_SUFFIX}_high"
+TASK_DEFAULT_QUEUE = f"{QUEUE_SUFFIX}_default"
+TASK_LOW_QUEUE = f"{QUEUE_SUFFIX}_low"
+TASK_SCHEDULER_QUEUE = f"{QUEUE_SUFFIX}_schedule"
+TASK_NOTIFICATION_QUEUE = f"{QUEUE_SUFFIX}_notification"
+
 # Define queues with their exchanges
 CELERY_TASK_QUEUES = (
-    Queue("high", Exchange("high_exchange", type="direct"), routing_key="high.#"),
     Queue(
-        "default", Exchange("default_exchange", type="direct"), routing_key="default.#"
+        TASK_HIGH_QUEUE,
+        Exchange("high_exchange", type="direct"),
+        routing_key="high.#",
+        queue_arguments={"x-max-priority": 10, "x-queue-mode": "lazy"},
     ),
-    Queue("low", Exchange("low_exchange", type="direct"), routing_key="low.#"),
     Queue(
-        "scheduled",
+        TASK_DEFAULT_QUEUE,
+        Exchange("default_exchange", type="direct"),
+        routing_key="default.#",
+        queue_arguments={"x-max-priority": 5, "x-queue-mode": "lazy"},
+    ),
+    Queue(
+        TASK_LOW_QUEUE,
+        Exchange("low_exchange", type="direct"),
+        routing_key="low.#",
+        queue_arguments={"x-max-priority": 1, "x-queue-mode": "lazy"},
+    ),
+    Queue(
+        TASK_SCHEDULER_QUEUE,
         Exchange("scheduled_exchange", type="direct"),
         routing_key="scheduled.#",
+        queue_arguments={"x-max-priority": 3, "x-queue-mode": "lazy"},
     ),
     Queue(
-        "notifications",
+        TASK_NOTIFICATION_QUEUE,
         Exchange("notifications_exchange", type="direct"),
         routing_key="notifications.#",
+        queue_arguments={"x-max-priority": 4, "x-queue-mode": "lazy"},
     ),
 )
+
 
 # Default queue settings
 CELERY_TASK_DEFAULT_QUEUE = "default"

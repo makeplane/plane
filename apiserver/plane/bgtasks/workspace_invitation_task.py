@@ -8,6 +8,7 @@ from celery import shared_task
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.conf import settings
 
 # Module imports
 from plane.db.models import User, Workspace, WorkspaceMemberInvite
@@ -15,7 +16,7 @@ from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.exception_logger import log_exception
 
 
-@shared_task(queue="default")
+@shared_task(queue=settings.TASK_DEFAULT_QUEUE)
 def workspace_invitation(email, workspace_id, token, current_site, invitor):
     try:
         user = User.objects.get(email=invitor)

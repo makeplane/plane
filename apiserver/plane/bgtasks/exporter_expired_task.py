@@ -15,7 +15,7 @@ from botocore.client import Config
 from plane.db.models import ExporterHistory
 
 
-@shared_task(queue="scheduled")
+@shared_task(queue=settings.TASK_SCHEDULER_QUEUE)
 def delete_old_s3_link():
     # Get a list of keys and IDs to process
     expired_exporter_history = ExporterHistory.objects.filter(

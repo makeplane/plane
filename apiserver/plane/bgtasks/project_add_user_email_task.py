@@ -1,13 +1,15 @@
 # Python imports
 import logging
 
-# Third party imports
-from celery import shared_task
 
-# Third party imports
+# Django  imports
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.conf import settings
+
+# Third party imports
+from celery import shared_task
 
 
 # Module imports
@@ -17,7 +19,7 @@ from plane.db.models import ProjectMember
 from plane.db.models import User
 
 
-@shared_task(queue="high")
+@shared_task(queue=settings.TASK_DEFAULT_QUEUE)
 def project_add_user_email(current_site, project_member_id, invitor_id):
     try:
         # Get the invitor

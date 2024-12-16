@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 # Django imports
 from django.db.models import Max
+from django.conf import settings
 
 # Third party imports
 from celery import shared_task
@@ -531,7 +532,7 @@ def create_module_issues(workspace, project, user_id, issue_count):
     )
 
 
-@shared_task(queue="low")
+@shared_task(queue=settings.TASK_LOW_QUEUE)
 def create_dummy_data(
     slug,
     email,
