@@ -221,7 +221,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               menu: getAIMenu,
             }}
           />
-          )
         </div>
       </div>
       <div

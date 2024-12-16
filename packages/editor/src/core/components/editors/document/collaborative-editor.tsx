@@ -88,10 +88,13 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
 
   if (!editor) return null;
 
-  // Wait until we know about IndexedDB status
-  if (hasIndexedDbEntry === null) return null;
-
-  if (hasServerConnectionFailed || (!hasIndexedDbEntry && !hasServerSynced) || !hasIndexedDbSynced) {
+  if (
+    hasServerConnectionFailed ||
+    (!hasIndexedDbEntry && !hasServerSynced) ||
+    !hasIndexedDbSynced ||
+    !hasIndexedDbEntry
+  ) {
+    console.log("syncing indexedDB");
     return <DocumentContentLoader />;
   }
 

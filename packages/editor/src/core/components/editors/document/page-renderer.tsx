@@ -129,7 +129,6 @@ export const PageRenderer = (props: IPageRenderer) => {
     [editor, cleanup]
   );
 
-  console.log("rendered");
   return (
     <>
       <div className="frame-renderer flex-grow w-full -mx-5" onMouseOver={handleLinkHover}>
