@@ -3,7 +3,7 @@
 import { MutableRefObject, useRef, useState } from "react";
 import { LucideIcon, X } from "lucide-react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { IIssueLabel } from "@plane/types";
 // ui

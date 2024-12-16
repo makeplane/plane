@@ -7,7 +7,7 @@ import { ArrowUpToLine, Clipboard, History } from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // ui
-import { TContextMenuItem, TOAST_TYPE, setToast, ToggleSwitch } from "@plane/ui";
+import { TContextMenuItem, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
 import { ExportPageModal, PageActions, TPageActions } from "@/components/pages";
 // helpers
@@ -29,7 +29,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   // router
   const router = useRouter();
-  // derived values
+  // store values
   const { name } = page;
   // page filters
   const { isFullWidth, handleFullWidth } = usePageFilters();

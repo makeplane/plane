@@ -7,7 +7,7 @@ import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
 // plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
+import { EUserPermissions } from "@/plane-web/constants";
 // services
 import { ProjectPageService } from "@/services/page";
 // store
@@ -18,11 +18,7 @@ type TLoader = "init-loader" | "mutation-loader" | undefined;
 
 type TError = { title: string; description: string };
 
-export const ROLE_PERMISSIONS_TO_CREATE_PAGE = [
-  EUserPermissions.ADMIN,
-  EUserPermissions.MEMBER,
-  EUserPermissions.GUEST,
-];
+export const ROLE_PERMISSIONS_TO_CREATE_PAGE = [EUserPermissions.ADMIN, EUserPermissions.MEMBER];
 
 export interface IProjectPageStore {
   // observables
@@ -107,7 +103,7 @@ export class ProjectPageStore implements IProjectPageStore {
   }
 
   /**
-   * @description check if the current user can create a page
+   * @description returns true if the current logged in user can create a page
    */
   get canCurrentUserCreatePage() {
     const { workspaceSlug, projectId } = this.store.router;

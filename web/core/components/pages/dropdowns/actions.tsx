@@ -75,7 +75,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
       {
         key: "toggle-lock",
         action: pageOperations.toggleLock,
-        title: is_locked ? "Unlock page" : "Lock page",
+        title: is_locked ? "Unlock" : "Lock",
         icon: is_locked ? LockKeyholeOpen : LockKeyhole,
         shouldRender: canCurrentUserLockPage,
       },

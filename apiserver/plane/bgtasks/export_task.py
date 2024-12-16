@@ -157,8 +157,8 @@ def generate_table_row(issue):
         issue["name"],
         issue["description_stripped"],
         issue["state__name"],
-        dateTimeConverter(issue["start_date"]),
-        dateTimeConverter(issue["target_date"]),
+        dateConverter(issue["start_date"]),
+        dateConverter(issue["target_date"]),
         issue["priority"],
         (
             f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
@@ -191,6 +191,8 @@ def generate_json_row(issue):
         "Name": issue["name"],
         "Description": issue["description_stripped"],
         "State": issue["state__name"],
+        "Start Date": dateConverter(issue["start_date"]),
+        "Target Date": dateConverter(issue["target_date"]),
         "Priority": issue["priority"],
         "Created By": (
             f"{issue['created_by__first_name']} {issue['created_by__last_name']}"

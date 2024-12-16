@@ -99,7 +99,7 @@ export const getItemPositionWidth = (chartData: ChartDataType, itemData: IGanttB
   // get scroll position from the number of days and width of each day
   scrollPosition = itemStartDate
     ? getPositionFromDate(chartData, itemStartDate, 0)
-    : getPositionFromDate(chartData, itemTargetDate!, -1 * DEFAULT_BLOCK_WIDTH);
+    : getPositionFromDate(chartData, itemTargetDate!, -1 * DEFAULT_BLOCK_WIDTH + chartData.data.dayWidth);
 
   if (itemStartDate && itemTargetDate) {
     // get width of block

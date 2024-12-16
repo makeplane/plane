@@ -1,14 +1,8 @@
 "use client";
 
 import { linearGradientDef } from "@nivo/core";
-// icons
-import { BarChart2, Briefcase, Layers } from "lucide-react";
 // types
 import { TIssuesListTypes, TStateGroups } from "@plane/types";
-// ui
-import { ContrastIcon } from "@plane/ui";
-import { Props } from "@/components/icons/types";
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // assets
 import CompletedIssuesDark from "@/public/empty-state/dashboard/dark/completed-issues.svg";
 import OverdueIssuesDark from "@/public/empty-state/dashboard/dark/overdue-issues.svg";
@@ -249,48 +243,6 @@ export const CREATED_ISSUES_EMPTY_STATES = {
     lightImage: CompletedIssuesLight,
   },
 };
-
-export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
-  key: string;
-  label: string;
-  href: string;
-  access: EUserPermissions[];
-  highlight: (pathname: string, baseUrl: string) => boolean;
-  Icon: React.FC<Props>;
-}[] = [
-  {
-    key: "projects",
-    label: "Projects",
-    href: `/projects`,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/projects/`,
-    Icon: Briefcase,
-  },
-  {
-    key: "all-issues",
-    label: "Views",
-    href: `/workspace-views/all-issues`,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/workspace-views/`),
-    Icon: Layers,
-  },
-  {
-    key: "active-cycles",
-    label: "Cycles",
-    href: `/active-cycles`,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/active-cycles/`,
-    Icon: ContrastIcon,
-  },
-  {
-    key: "analytics",
-    label: "Analytics",
-    href: `/analytics`,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/analytics/`),
-    Icon: BarChart2,
-  },
-];
 
 export type TLinkOptions = {
   userId: string | undefined;

@@ -176,6 +176,10 @@ class ProjectViewSet(BaseViewSet):
     def retrieve(self, request, slug, pk):
         project = (
             self.get_queryset()
+            .filter(
+                project_projectmember__member=self.request.user,
+                project_projectmember__is_active=True,
+            )
             .filter(archived_at__isnull=True)
             .filter(pk=pk)
             .annotate(
@@ -380,11 +384,9 @@ class ProjectViewSet(BaseViewSet):
                 )
 
             workspace = Workspace.objects.get(slug=slug)
-            intake_view = request.data.get(
-                "inbox_view", request.data.get("intake_view", False)
-            )
 
             project = Project.objects.get(pk=pk)
+            intake_view = request.data.get("inbox_view", project.intake_view)
             current_instance = json.dumps(
                 ProjectSerializer(project).data, cls=DjangoJSONEncoder
             )

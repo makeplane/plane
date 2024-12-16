@@ -15,7 +15,7 @@ export interface IIssueStoreActions {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    issueStatus?: "DEFAULT" | "DRAFT",
+    issueStatus?: "DEFAULT" | "DRAFT"
   ) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
@@ -146,7 +146,7 @@ export class IssueStore implements IIssueStore {
 
     // fetching states
     // TODO: check if this function is required
-    this.rootIssueDetailStore.rootIssueStore.state.fetchProjectStates(workspaceSlug, projectId);
+    this.rootIssueDetailStore.rootIssueStore.rootStore.state.fetchProjectStates(workspaceSlug, projectId);
 
     return issue;
   };

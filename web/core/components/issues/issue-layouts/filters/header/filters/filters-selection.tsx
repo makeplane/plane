@@ -25,7 +25,7 @@ import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { FilterIssueTypes } from "@/plane-web/components/issues";
+import { FilterIssueTypes, FilterTeamProjects } from "@/plane-web/components/issues";
 
 type Props = {
   filters: IIssueFilterOptions;
@@ -208,6 +208,18 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             />
           </div>
         )}
+
+        {/* team project */}
+        {isFilterEnabled("team_project") && (
+          <div className="py-2">
+            <FilterTeamProjects
+              appliedFilters={filters.team_project ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("team_project", val)}
+              searchQuery={filtersSearchQuery}
+            />
+          </div>
+        )}
+
         {/* issue type */}
         {isDisplayFilterEnabled("type") && displayFilters && handleDisplayFiltersUpdate && (
           <div className="py-2">

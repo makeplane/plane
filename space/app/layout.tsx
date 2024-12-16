@@ -1,12 +1,10 @@
 import { Metadata } from "next";
 // helpers
-import { ASSET_PREFIX } from "@/helpers/common.helper";
-// components
-import { InstanceProvider } from "@/lib/instance-provider";
-import { StoreProvider } from "@/lib/store-provider";
+import { SPACE_BASE_PATH } from "@plane/constants";
 // styles
 import "@/styles/globals.css";
-import { ToastProvider } from "@/lib/toast-provider";
+// components
+import { AppProvider } from "./provider";
 
 export const metadata: Metadata = {
   title: "Plane Publish | Make your Plane boards public with one-click",
@@ -27,18 +25,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        <link rel="apple-touch-icon" sizes="180x180" href={`${ASSET_PREFIX}/favicon/apple-touch-icon.png`} />
-        <link rel="icon" type="image/png" sizes="32x32" href={`${ASSET_PREFIX}/favicon/favicon-32x32.png`} />
-        <link rel="icon" type="image/png" sizes="16x16" href={`${ASSET_PREFIX}/favicon/favicon-16x16.png`} />
-        <link rel="manifest" href={`${ASSET_PREFIX}/site.webmanifest.json`} />
-        <link rel="shortcut icon" href={`${ASSET_PREFIX}/favicon/favicon.ico`} />
+        <link rel="apple-touch-icon" sizes="180x180" href={`${SPACE_BASE_PATH}/favicon/apple-touch-icon.png`} />
+        <link rel="icon" type="image/png" sizes="32x32" href={`${SPACE_BASE_PATH}/favicon/favicon-32x32.png`} />
+        <link rel="icon" type="image/png" sizes="16x16" href={`${SPACE_BASE_PATH}/favicon/favicon-16x16.png`} />
+        <link rel="manifest" href={`${SPACE_BASE_PATH}/site.webmanifest.json`} />
+        <link rel="shortcut icon" href={`${SPACE_BASE_PATH}/favicon/favicon.ico`} />
       </head>
       <body>
-        <StoreProvider>
-          <ToastProvider>
-            <InstanceProvider>{children}</InstanceProvider>
-          </ToastProvider>
-        </StoreProvider>
+        <AppProvider>{children}</AppProvider>
       </body>
     </html>
   );

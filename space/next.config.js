@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 /* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import('next').NextConfig} */
 require("dotenv").config({ path: ".env" });
@@ -27,7 +28,6 @@ const nextConfig = {
     unoptimized: true,
   },
 };
-
 
 const sentryConfig = {
   // For all available options, see:
@@ -62,12 +62,10 @@ const sentryConfig = {
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
   automaticVercelMonitors: true,
-}
-
+};
 
 if (parseInt(process.env.SENTRY_MONITORING_ENABLED || "0", 10)) {
   module.exports = withSentryConfig(nextConfig, sentryConfig);
 } else {
   module.exports = nextConfig;
 }
-

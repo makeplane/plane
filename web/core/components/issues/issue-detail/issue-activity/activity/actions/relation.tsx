@@ -29,6 +29,11 @@ export const IssueRelationActivity: FC<TIssueRelationActivity> = observer((props
       ends={ends}
     >
       {activityContent}
+      {activity.old_value === "" ? (
+        <span className="font-medium text-custom-text-100">{activity.new_value}.</span>
+      ) : (
+        <span className="font-medium text-custom-text-100">{activity.old_value}.</span>
+      )}
     </IssueActivityBlockComponent>
   );
 });

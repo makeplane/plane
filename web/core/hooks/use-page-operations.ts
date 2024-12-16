@@ -4,6 +4,8 @@ import { useParams } from "next/navigation";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";
+// hooks
+import { useCollaborativePageActions } from "@/hooks/use-collaborative-page-actions";
 // store types
 import { IPage } from "@/store/pages/page";
 
@@ -23,7 +25,8 @@ export const usePageOperations = (
   pageOperations: TPageOperations;
 } => {
   // params
-  const { workspaceSlug, projectId } = useParams(); // derived values
+  const { workspaceSlug, projectId } = useParams();
+  // derived values
   const {
     access,
     addToFavorites,
@@ -40,6 +43,9 @@ export const usePageOperations = (
     restore,
     unlock,
   } = page;
+  // collaborative actions
+  const { executeCollaborativeAction } = useCollaborativePageActions(undefined, page);
+  // page operations
   const pageOperations: TPageOperations = useMemo(() => {
     const pageLink = projectId ? `${workspaceSlug}/projects/${projectId}/pages/${id}` : `${workspaceSlug}/pages/${id}`;
 
@@ -93,7 +99,7 @@ export const usePageOperations = (
       toggleArchive: async () => {
         if (archived_at) {
           try {
-            await restore();
+            await executeCollaborativeAction({ type: "sendMessageToServer", message: "unarchive" });
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: "Success!",
@@ -108,7 +114,7 @@ export const usePageOperations = (
           }
         } else {
           try {
-            await archive();
+            await executeCollaborativeAction({ type: "sendMessageToServer", message: "archive" });
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: "Success!",
@@ -145,7 +151,7 @@ export const usePageOperations = (
       toggleLock: async () => {
         if (is_locked) {
           try {
-            await unlock();
+            await executeCollaborativeAction({ type: "sendMessageToServer", message: "unlock" });
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: "Success!",
@@ -160,7 +166,7 @@ export const usePageOperations = (
           }
         } else {
           try {
-            await lock();
+            await executeCollaborativeAction({ type: "sendMessageToServer", message: "lock" });
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: "Success!",
@@ -179,19 +185,16 @@ export const usePageOperations = (
   }, [
     access,
     addToFavorites,
-    archive,
     archived_at,
     duplicate,
+    executeCollaborativeAction,
     id,
     is_favorite,
     is_locked,
-    lock,
     makePrivate,
     makePublic,
     projectId,
     removePageFromFavorites,
-    restore,
-    unlock,
     workspaceSlug,
   ]);
   return {
