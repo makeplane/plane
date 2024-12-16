@@ -8,10 +8,12 @@ import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 import useSWRImmutable from "swr/immutable";
+// ui
 import { LogOut } from "lucide-react";
-// hooks
 import { Button, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+// components
 import { LogoSpinner } from "@/components/common";
+// hooks
 import { useMember, useProject, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -19,27 +21,18 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { persistence } from "@/local-db/storage.sqlite";
 // constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-// plane web hooks
-import {
-  useFlag,
-  useIssueTypes,
-  useTeams,
-  useWorkspaceFeatures,
-  useWorkspaceProjectStates,
-} from "@/plane-web/hooks/store";
-import { useFeatureFlags } from "@/plane-web/hooks/store/use-feature-flags";
 // images
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
 import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
 import WorkSpaceNotAvailable from "@/public/workspace/workspace-not-available.png";
 
-export interface IWorkspaceAuthWrapper {
+interface IWorkspaceAuthWrapper {
   children: ReactNode;
+  isLoading?: boolean;
 }
 
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
-  const { children } = props;
+  const { children, isLoading: isParentLoading = false } = props;
   // router params
   const { workspaceSlug } = useParams();
   // next themes
@@ -52,12 +45,6 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspace: { fetchWorkspaceMembers },
   } = useMember();
   const { workspaces } = useWorkspace();
-  const { fetchFeatureFlags } = useFeatureFlags();
-  const { fetchWorkspaceFeatures, workspaceFeatures } = useWorkspaceFeatures();
-  const { fetchProjectStates } = useWorkspaceProjectStates();
-  const { isTeamsFeatureEnabled, fetchTeams } = useTeams();
-
-  const { fetchAll } = useIssueTypes();
   const { isMobile } = usePlatformOS();
   const { loader, workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
     useUserPermissions();
@@ -66,34 +53,12 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-
   const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
   const allWorkspaces = workspaces ? Object.values(workspaces) : undefined;
   const currentWorkspace =
     (allWorkspaces && allWorkspaces.find((workspace) => workspace?.slug === workspaceSlug)) || undefined;
-  const isProjectStateEnabled =
-    workspaceFeatures[workspaceSlug.toString()] &&
-    workspaceFeatures[workspaceSlug.toString()][EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED];
+  const currentWorkspaceInfo = workspaceSlug && workspaceInfoBySlug(workspaceSlug.toString());
 
-  // fetching feature flags
-  const { isLoading: flagsLoader, error: flagsError } = useSWR(
-    workspaceSlug ? `WORKSPACE_FLAGS_${workspaceSlug}` : null,
-    workspaceSlug ? () => fetchFeatureFlags(workspaceSlug.toString()) : null,
-    { revalidateOnFocus: false, errorRetryCount: 1 }
-  );
-  // fetching workspace features
-  useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_FEATURES_${workspaceSlug}` : null,
-    workspaceSlug && currentWorkspace ? () => fetchWorkspaceFeatures(workspaceSlug.toString()) : null,
-    { revalidateOnFocus: false }
-  );
-  // fetch project states
-  useSWR(
-    workspaceSlug && currentWorkspace && isProjectStateEnabled ? `WORKSPACE_PROJECT_STATES_${workspaceSlug}` : null,
-    () =>
-      workspaceSlug && currentWorkspace && isProjectStateEnabled ? fetchProjectStates(workspaceSlug.toString()) : null,
-    { revalidateOnFocus: false }
-  );
   // fetching user workspace information
   useSWR(
     workspaceSlug && currentWorkspace ? `WORKSPACE_MEMBER_ME_INFORMATION_${workspaceSlug}` : null,
@@ -131,8 +96,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
 
   // initialize the local database
   const { isLoading: isDBInitializing } = useSWRImmutable(
-    workspaceSlug && !flagsLoader ? `WORKSPACE_DB_${workspaceSlug}` : null,
-    workspaceSlug && !flagsLoader
+    workspaceSlug ? `WORKSPACE_DB_${workspaceSlug}` : null,
+    workspaceSlug
       ? async () => {
           // persistence.reset();
           await persistence.initialize(workspaceSlug.toString());
@@ -141,24 +106,6 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
           return true;
         }
       : null
-  );
-
-  const isIssueTypesEnabled = useFlag(workspaceSlug?.toString(), "ISSUE_TYPE_DISPLAY", false);
-  const isEpicsEnabled = useFlag(workspaceSlug?.toString(), "EPICS_DISPLAY", false);
-  // fetching all issue types and epics for the workspace
-  useSWR(
-    workspaceSlug && (isIssueTypesEnabled || isEpicsEnabled)
-      ? `WORKSPACE_ISSUE_TYPES_${workspaceSlug}_${isIssueTypesEnabled}_${isEpicsEnabled}`
-      : null,
-    workspaceSlug && (isIssueTypesEnabled || isEpicsEnabled) ? () => fetchAll(workspaceSlug.toString()) : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
-
-  // fetching teams
-  useSWR(
-    workspaceSlug && isTeamsFeatureEnabled ? `WORKSPACE_TEAMS_${workspaceSlug}` : null,
-    workspaceSlug && isTeamsFeatureEnabled ? () => fetchTeams(workspaceSlug.toString()) : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   const handleSignOut = async () => {
@@ -171,11 +118,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     );
   };
 
-  // derived values
-  const currentWorkspaceInfo = workspaceSlug && workspaceInfoBySlug(workspaceSlug.toString());
-
   // if list of workspaces are not there then we have to render the spinner
-  if ((flagsLoader && !flagsError) || allWorkspaces === undefined || loader || isDBInitializing) {
+  if (isParentLoading || allWorkspaces === undefined || loader || isDBInitializing) {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
