@@ -58,7 +58,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
   const projectDetails = issue?.project_id ? getProjectById(issue?.project_id) : undefined;
   // debounced duplicate issues swr
   const { duplicateIssues } = useDebouncedDuplicateIssues(
-    workspaceSlug?.toString(),
+    workspaceSlug,
     projectDetails?.workspace.toString(),
     projectDetails?.id,
     {

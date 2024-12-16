@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // types
@@ -12,7 +12,6 @@ import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issu
 import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
-import { getModalTitle } from "@/helpers/issue-modal.helper";
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useEventTracker, useCycle, useIssues, useModule, useIssueDetail, useUser } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
@@ -353,7 +352,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     onCreateMoreToggleChange: handleCreateMoreToggleChange,
     isDraft: isDraft,
     moveToIssue: moveToIssue,
-    modalTitle: modalTitle ?? getModalTitle(data?.id, storeType, isDraft),
+    modalTitle: modalTitle,
     primaryButtonText: primaryButtonText,
     isDuplicateModalOpen: isDuplicateModalOpen,
     handleDuplicateIssueModal: handleDuplicateIssueModal,

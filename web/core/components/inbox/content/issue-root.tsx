@@ -66,7 +66,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
 
   // debounced duplicate issues swr
   const { duplicateIssues } = useDebouncedDuplicateIssues(
-    workspaceSlug?.toString(),
+    workspaceSlug,
     projectDetails?.workspace.toString(),
     projectId,
     {

@@ -23,11 +23,11 @@ import { CALENDAR_LAYOUTS } from "@/constants/calendar";
 import { EIssueFilterType } from "@/constants/issue";
 import { useCalendarView } from "@/hooks/store";
 import useSize from "@/hooks/use-window-size";
+import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
-import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 
 interface ICalendarHeader {
   issuesFilterStore:

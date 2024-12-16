@@ -36,7 +36,7 @@ export interface IIssueActivityStoreActions {
 
 export interface IIssueActivityStore extends IIssueActivityStoreActions {
   // observables
-  sortOrder: 'asc' | 'desc'
+  sortOrder: "asc" | "desc";
   loader: TActivityLoader;
   activities: TIssueActivityIdMap;
   activityMap: TIssueActivityMap;
@@ -44,12 +44,12 @@ export interface IIssueActivityStore extends IIssueActivityStoreActions {
   getActivitiesByIssueId: (issueId: string) => string[] | undefined;
   getActivityById: (activityId: string) => TIssueActivity | undefined;
   getActivityCommentByIssueId: (issueId: string) => TIssueActivityComment[] | undefined;
-  toggleSortOrder: ()=>void;
+  toggleSortOrder: () => void;
 }
 
 export class IssueActivityStore implements IIssueActivityStore {
   // observables
-  sortOrder: "asc" | "desc" = 'asc';
+  sortOrder: "asc" | "desc" = "asc";
   loader: TActivityLoader = "fetch";
   activities: TIssueActivityIdMap = {};
   activityMap: TIssueActivityMap = {};
@@ -70,7 +70,7 @@ export class IssueActivityStore implements IIssueActivityStore {
       activityMap: observable,
       // actions
       fetchActivities: action,
-      toggleSortOrder: action
+      toggleSortOrder: action,
     });
     this.serviceType = serviceType;
     // services
@@ -118,14 +118,14 @@ export class IssueActivityStore implements IIssueActivityStore {
       });
     });
 
-    activityComments = orderBy(activityComments, (e)=>new Date(e.created_at || 0), this.sortOrder);
+    activityComments = orderBy(activityComments, (e) => new Date(e.created_at || 0), this.sortOrder);
 
     return activityComments;
   });
 
-  toggleSortOrder = ()=>{
-    this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
-  }
+  toggleSortOrder = () => {
+    this.sortOrder = this.sortOrder === "asc" ? "desc" : "asc";
+  };
 
   // actions
   public async fetchActivities(

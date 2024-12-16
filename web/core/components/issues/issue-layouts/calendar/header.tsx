@@ -13,11 +13,11 @@ import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "@/components/is
 // icons
 import { EIssueFilterType } from "@/constants/issue";
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
+import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
-import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 
 interface ICalendarHeader {
   issuesFilterStore:

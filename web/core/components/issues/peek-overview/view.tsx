@@ -68,7 +68,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issue: { getIssueById, getIsLocalDBIssueDescription },
   } = useIssueDetail();
   const { isAnyModalOpen: isAnyEpicModalOpen } = useIssueDetail(EIssueServiceType.EPICS);
-
   const issue = getIssueById(issueId);
   // remove peek id
   const removeRoutePeekId = () => {
