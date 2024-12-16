@@ -459,7 +459,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
         {({ open }) => (
           <>
             <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
-              <span className="text-lg font-medium tracking-tight">Deactivate account</span>
+              <span className="text-lg font-medium tracking-tight">{t("deactivate_account")}</span>
               <ChevronDown className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
             </Disclosure.Button>
             <Transition
@@ -473,13 +473,10 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
             >
               <Disclosure.Panel>
                 <div className="flex flex-col gap-8">
-                  <span className="text-sm tracking-tight">
-                    When deactivating an account, all of the data and resources within that account will be permanently
-                    removed and cannot be recovered.
-                  </span>
+                  <span className="text-sm tracking-tight">{t("deactivate_account_description")}</span>
                   <div>
                     <Button variant="danger" onClick={() => setDeactivateAccountModal(true)}>
-                      Deactivate account
+                      {t("deactivate_account")}
                     </Button>
                   </div>
                 </div>

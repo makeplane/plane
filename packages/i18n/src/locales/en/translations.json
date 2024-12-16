@@ -33,5 +33,7 @@
   "change_cover": "Change cover",
   "language": "Language",
   "saving": "Saving...",
-  "save_changes": "Save changes"
+  "save_changes": "Save changes",
+  "deactivate_account": "Deactivate account",
+  "deactivate_account_description": "When deactivating an account, all of the data and resources within that account will be permanently removed and cannot be recovered."
 }
