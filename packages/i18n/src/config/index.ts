@@ -14,3 +14,14 @@ export const translations: Translations = {
   en,
   fr,
 };
+
+export const SUPPORTED_LANGUAGES = [
+  {
+    label: "English",
+    value: "en",
+  },
+  {
+    label: "French",
+    value: "fr",
+  },
+];
