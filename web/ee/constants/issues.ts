@@ -6,6 +6,8 @@ import {
   EActivityFilterType,
   ACTIVITY_FILTER_TYPE_OPTIONS as ACTIVITY_FILTER_TYPE_OPTIONS_CE,
 } from "@/ce/constants/issues";
+//
+import { TInitiativeActivityComment } from "../types/initiative";
 // constants
 import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
 
@@ -42,9 +44,9 @@ const shouldRenderActivity = (activity: TIssueActivityComment, filter: TActivity
     activity.activity_type === EActivityFilterTypeEE.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY);
 
 export const filterActivityOnSelectedFilters = (
-  activity: TIssueActivityComment[],
+  activity: (TIssueActivityComment | TInitiativeActivityComment)[],
   filters: TActivityFilters[]
-): TIssueActivityComment[] =>
+): (TIssueActivityComment | TInitiativeActivityComment)[] =>
   activity.filter((activity) => filters.some((filter) => shouldRenderActivity(activity, filter)));
 
 export { EActivityFilterType };

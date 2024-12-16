@@ -53,25 +53,23 @@ class ProjectAnalyticsEndpoint(BaseAPIView):
         return Response(issues, status=status.HTTP_200_OK)
 
 class ProjectFeatureEndpoint(BaseAPIView):
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-            ROLE.GUEST,
-        ],
-    )
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, pk):
         project_feature, _ = ProjectFeature.objects.get_or_create(
-            project_id=pk, workspace__slug=slug
+            project_id=pk,
+            workspace__slug=slug,
         )
         serializer = ProjectFeatureSerializer(project_feature)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN])
+
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def patch(self, request, slug, pk):
         project_feature = ProjectFeature.objects.get(
             project_id=pk, workspace__slug=slug
         )
+
         current_instance = json.dumps(
             ProjectFeatureSerializer(project_feature).data, cls=DjangoJSONEncoder
         )

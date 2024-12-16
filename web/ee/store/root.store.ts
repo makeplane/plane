@@ -49,6 +49,9 @@ import {
   IAsanaStore,
   AsanaStore,
 } from "./importers";
+// initiative
+import { IInitiativeFilterStore, InitiativeFilterStore } from "./initiatives/initiatives-filter.store";
+import { IInitiativeStore, InitiativeStore } from "./initiatives/initiatives.store";
 // integrations
 import { ISlackStore, SlackStore } from "./integrations";
 // pi chat
@@ -83,6 +86,8 @@ export class RootStore extends CoreRootStore {
   asanaImporter: IAsanaStore;
   // integrations
   slackIntegration: ISlackStore;
+  initiativeFilterStore: IInitiativeFilterStore;
+  initiativeStore: IInitiativeStore;
 
   constructor() {
     super();
@@ -111,6 +116,8 @@ export class RootStore extends CoreRootStore {
     this.asanaImporter = new AsanaStore(this);
     // integrations
     this.slackIntegration = new SlackStore(this);
+    this.initiativeFilterStore = new InitiativeFilterStore(this);
+    this.initiativeStore = new InitiativeStore(this, this.initiativeFilterStore);
   }
 
   resetOnSignOut() {
@@ -139,5 +146,7 @@ export class RootStore extends CoreRootStore {
     this.asanaImporter = new AsanaStore(this);
     // integrations
     this.slackIntegration = new SlackStore(this);
+    this.initiativeFilterStore = new InitiativeFilterStore(this);
+    this.initiativeStore = new InitiativeStore(this, this.initiativeFilterStore);
   }
 }

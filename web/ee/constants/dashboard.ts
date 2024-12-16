@@ -1,7 +1,7 @@
 // ee types
 import { TSidebarWorkspaceMenuItemKeys } from "ee/types/dashboard";
 // ui
-import { PiChatLogo, TeamsIcon } from "@plane/ui";
+import { InitiativeIcon, PiChatLogo, TeamsIcon } from "@plane/ui";
 // ce constants
 import {
   SIDEBAR_USER_MENU_ITEMS,
@@ -30,6 +30,14 @@ export const SIDEBAR_WORKSPACE_MENU: Partial<Record<TSidebarWorkspaceMenuItemKey
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/teams/`,
     Icon: TeamsIcon,
   },
+  initiatives: {
+    key: "initiatives",
+    label: "Initiatives",
+    href: `/initiatives`,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/initiatives/`,
+    Icon: InitiativeIcon,
+  },
 };
 
 export const SIDEBAR_WORKSPACE_MENU_ITEMS: TSidebarWorkspaceMenuItems[] = [
@@ -38,7 +46,7 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: TSidebarWorkspaceMenuItems[] = [
   SIDEBAR_WORKSPACE_MENU?.["all-issues"],
   SIDEBAR_WORKSPACE_MENU?.["active-cycles"],
   SIDEBAR_WORKSPACE_MENU?.analytics,
+  SIDEBAR_WORKSPACE_MENU?.initiatives,
 ].filter((item): item is TSidebarWorkspaceMenuItems => item !== undefined);
 
 export { SIDEBAR_USER_MENU_ITEMS };
-

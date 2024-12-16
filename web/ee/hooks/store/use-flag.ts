@@ -53,6 +53,8 @@ export enum E_FEATURE_FLAGS {
   // PI
   PI_CHAT = "PI_CHAT",
   PI_DEDUPE = "PI_DEDUPE",
+  // initiatives
+  INITIATIVES = "INITIATIVES",
 }
 
 export const useFlag = (

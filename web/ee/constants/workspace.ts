@@ -1,3 +1,4 @@
+import { InitiativeIcon } from "@plane/ui";
 // ce constants
 import { WORKSPACE_SETTINGS as WORKSPACE_SETTINGS_CE } from "@/ce/constants/workspace";
 // components
@@ -47,6 +48,14 @@ export const WORKSPACE_SETTINGS = {
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/teams/`,
     Icon: SettingIcon,
   },
+  initiatives: {
+    key: "initiatives",
+    label: "Initiatives",
+    href: `/settings/initiatives`,
+    access: [EUserPermissions.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/initiatives`,
+    Icon: InitiativeIcon,
+  },
 };
 
 export const WORKSPACE_SETTINGS_LINKS = [
@@ -61,4 +70,5 @@ export const WORKSPACE_SETTINGS_LINKS = [
   WORKSPACE_SETTINGS["api-tokens"],
   WORKSPACE_SETTINGS["worklogs"],
   WORKSPACE_SETTINGS["teams"],
+  WORKSPACE_SETTINGS["initiatives"],
 ];

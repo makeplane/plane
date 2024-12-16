@@ -47,6 +47,7 @@ from plane.ee.views.app.workspace import (
     WorkspaceProjectStatesDefaultEndpoint,
     WorkspaceInviteCheckEndpoint,
 )
+from plane.ee.views.app.project import ProjectFeatureEndpoint
 
 from plane.ee.views.app.issue_property import IssuePropertyEndpoint
 from plane.ee.views.app.intake import IntakeSettingEndpoint

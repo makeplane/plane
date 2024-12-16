@@ -10,13 +10,12 @@ from plane.ee.views.app.issue import (
 
 from plane.ee.views.app.intake import ProjectInTakePublishViewSet
 from plane.ee.views.app.intake.base import IntakeSettingEndpoint
-
+from plane.ee.views.app.project import ProjectFeatureEndpoint
 from plane.ee.views.app.initiative import (
     InitiativeEndpoint,
     InitiativeProjectEndpoint,
     InitiativeLabelEndpoint,
 )
-from plane.ee.views.app.project import ProjectFeatureEndpoint
 from plane.ee.views.app.epic import (
     EpicViewSet,
     EpicLinkViewSet,

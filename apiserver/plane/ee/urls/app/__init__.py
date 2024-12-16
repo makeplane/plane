@@ -26,6 +26,7 @@ urlpatterns = [
     *views_patterns,
     *inbox_patterns,
     *intake_patterns,
+    *project_patterns,
     *issue_property_patterns,
     *workspace_patterns,
     *initiative_patterns,

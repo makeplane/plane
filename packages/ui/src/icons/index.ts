@@ -19,6 +19,7 @@ export * from "./github-icon";
 export * from "./gitlab-icon";
 export * from "./info-fill-icon";
 export * from "./info-icon";
+export * from "./initiative-icon";
 export * from "./layer-stack";
 export * from "./layers-icon";
 export * from "./monospace-icon";

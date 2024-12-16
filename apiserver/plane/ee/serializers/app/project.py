@@ -1,7 +1,8 @@
 # Module imports
 from plane.app.serializers.base import BaseSerializer
+from plane.ee.models import ProjectAttribute, ProjectFeature
 from plane.db.models import FileAsset
-from plane.ee.models import ProjectAttribute, ProjectLink, ProjectReaction, ProjectFeature, WorkspaceActivity
+from plane.ee.models import ProjectLink, ProjectReaction, WorkspaceActivity
 from rest_framework import serializers
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError

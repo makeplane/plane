@@ -36,6 +36,8 @@ class FeatureFlag(Enum):
     INTAKE_PUBLISH = "INTAKE_PUBLISH"
     # Intake settings
     INTAKE_SETTINGS = "INTAKE_SETTINGS"
+    # Initiatives
+    INITIATIVES = "INITIATIVES"
     # Team space
     TEAMS = "TEAMS"
     # Epic display

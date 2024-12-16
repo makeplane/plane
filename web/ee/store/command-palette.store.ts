@@ -1,28 +1,32 @@
 import { action, computed, makeObservable, observable } from "mobx";
 // types / constants
-import { TCreateUpdateTeamModal, TCreateUpdateTeamViewModal } from "@plane/types";
+import { TCreateUpdateInitiativeModal, TCreateUpdateTeamModal, TCreateUpdateTeamViewModal } from "@plane/types";
 import {
   DEFAULT_CREATE_UPDATE_TEAM_MODAL_DATA,
   DEFAULT_CREATE_UPDATE_TEAM_VIEW_MODAL_DATA,
 } from "@/plane-web/constants/teams";
 // store
 import { BaseCommandPaletteStore, IBaseCommandPaletteStore } from "@/store/base-command-palette.store";
+import { DEFAULT_CREATE_UPDATE_INITIATIVE_MODAL_DATA } from "../constants/initiative";
 
 export interface ICommandPaletteStore extends IBaseCommandPaletteStore {
   // observables
   createUpdateTeamModal: TCreateUpdateTeamModal;
   createUpdateTeamViewModal: TCreateUpdateTeamViewModal;
+  createUpdateInitiativeModal: TCreateUpdateInitiativeModal;
   // computed
   isAnyModalOpen: boolean;
   // actions
   toggleCreateTeamModal: (value?: TCreateUpdateTeamModal) => void;
   toggleCreateTeamViewModal: (value?: TCreateUpdateTeamViewModal) => void;
+  toggleCreateInitiativeModal: (value?: TCreateUpdateInitiativeModal) => void;
 }
 
 export class CommandPaletteStore extends BaseCommandPaletteStore implements ICommandPaletteStore {
   // observables
   createUpdateTeamModal: TCreateUpdateTeamModal = DEFAULT_CREATE_UPDATE_TEAM_MODAL_DATA;
   createUpdateTeamViewModal: TCreateUpdateTeamViewModal = DEFAULT_CREATE_UPDATE_TEAM_VIEW_MODAL_DATA;
+  createUpdateInitiativeModal: TCreateUpdateInitiativeModal = DEFAULT_CREATE_UPDATE_INITIATIVE_MODAL_DATA;
 
   constructor() {
     super();
@@ -30,11 +34,13 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
       // observables
       createUpdateTeamModal: observable,
       createUpdateTeamViewModal: observable,
+      createUpdateInitiativeModal: observable,
       // computed
       isAnyModalOpen: computed,
       // actions
       toggleCreateTeamModal: action,
       toggleCreateTeamViewModal: action,
+      toggleCreateInitiativeModal: action,
     });
   }
 
@@ -44,7 +50,10 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
    */
   get isAnyModalOpen(): boolean {
     return Boolean(
-      super.getCoreModalsState() || this.createUpdateTeamModal.isOpen || this.createUpdateTeamViewModal.isOpen
+      super.getCoreModalsState() ||
+        this.createUpdateTeamModal.isOpen ||
+        this.createUpdateTeamViewModal.isOpen ||
+        this.createUpdateInitiativeModal.isOpen
     );
   }
 
@@ -82,6 +91,25 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
       this.createUpdateTeamViewModal = {
         isOpen: !this.createUpdateTeamViewModal.isOpen,
         teamId: undefined,
+      };
+    }
+  };
+
+  /**
+   * Toggles the create initiative modal
+   * @param value
+   * @returns
+   */
+  toggleCreateInitiativeModal = (value?: TCreateUpdateInitiativeModal) => {
+    if (value) {
+      this.createUpdateInitiativeModal = {
+        isOpen: value.isOpen,
+        initiativeId: value.initiativeId,
+      };
+    } else {
+      this.createUpdateInitiativeModal = {
+        isOpen: !this.createUpdateInitiativeModal.isOpen,
+        initiativeId: undefined,
       };
     }
   };

@@ -106,6 +106,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
               workspaceSlug={workspaceSlug.toString()}
               currentWorkspace={currentWorkspace}
               dateClassname="block"
+              displayProperties={{ state: true, priority: true, lead: true, members: true, date: true }}
             />
           </div>
         </>

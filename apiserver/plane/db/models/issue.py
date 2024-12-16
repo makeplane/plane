@@ -15,7 +15,6 @@ from django import apps
 from plane.utils.html_processor import strip_tags
 from plane.db.mixins import SoftDeletionManager
 from plane.utils.exception_logger import log_exception
-from .base import BaseModel
 from .project import ProjectBaseModel
 
 

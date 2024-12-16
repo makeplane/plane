@@ -150,6 +150,21 @@ class ProjectViewSet(BaseViewSet):
                     workspace__slug=self.kwargs.get("slug"), project_id=OuterRef("pk")
                 ).values("target_date")
             )
+            # EE: project extra details
+            .annotate(
+                total_issues=Issue.issue_objects.filter(project_id=OuterRef("pk"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                completed_issues=Issue.issue_objects.filter(
+                    project_id=OuterRef("pk"), state__group="completed"
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
             .annotate(
                 is_epic_enabled=Exists(
                     ProjectFeature.objects.filter(
@@ -158,7 +173,7 @@ class ProjectViewSet(BaseViewSet):
                     ).values("is_epic_enabled")
                 )
             )
-            # EE: project_grouping ends
+                # EE: project_grouping ends
             .prefetch_related(
                 Prefetch(
                     "project_projectmember",
@@ -241,8 +256,7 @@ class ProjectViewSet(BaseViewSet):
             )
             .annotate(
                 archived_issues=Issue.objects.filter(
-                    project_id=self.kwargs.get("pk"),
-                    archived_at__isnull=False,
+                    project_id=self.kwargs.get("pk"), archived_at__isnull=False
                 )
                 .filter(Q(type__isnull=True) | Q(type__is_epic=False))
                 .order_by()
@@ -262,8 +276,7 @@ class ProjectViewSet(BaseViewSet):
             )
             .annotate(
                 draft_issues=Issue.objects.filter(
-                    project_id=self.kwargs.get("pk"),
-                    is_draft=True,
+                    project_id=self.kwargs.get("pk"), is_draft=True
                 )
                 .filter(Q(type__isnull=True) | Q(type__is_epic=False))
                 .order_by()

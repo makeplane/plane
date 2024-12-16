@@ -1,0 +1,66 @@
+import { useRef } from "react";
+import { observer } from "mobx-react";
+// Plane
+import { cn } from "@plane/editor";
+import { Logo, Spinner } from "@plane/ui";
+// hooks
+import { ListItem } from "@/components/core/list";
+import { useProject, useWorkspace } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+// Plane-web
+import Attributes from "@/plane-web/components/projects/layouts/attributes";
+//
+import { QuickActions } from "./quick-actions";
+
+type Props = {
+  workspaceSlug: string;
+  projectId: string;
+  initiativeId: string;
+};
+
+export const ProjectItem = observer((props: Props) => {
+  const { workspaceSlug, initiativeId, projectId } = props;
+  const { getProjectById, updateProject } = useProject();
+  const { currentWorkspace } = useWorkspace();
+  const { isMobile } = usePlatformOS();
+
+  const parentRef = useRef(null);
+
+  const projectDetails = getProjectById(projectId);
+
+  if (!projectDetails || !currentWorkspace) return <Spinner />;
+
+  return (
+    <ListItem
+      title={projectDetails.name}
+      itemLink={`/${workspaceSlug}/projects/${projectId}/issues`}
+      prependTitleElement={
+        <div className="h-6 w-6 flex-shrink-0 grid place-items-center rounded bg-custom-background-90 mr-2">
+          <Logo logo={projectDetails.logo_props} size={14} />
+        </div>
+      }
+      quickActionElement={
+        <div className="flex shrink-0 items-center gap-2">
+          <Attributes
+            project={projectDetails}
+            isArchived={projectDetails.archived_at !== null}
+            handleUpdateProject={(data) => updateProject(workspaceSlug.toString(), projectDetails.id, data)}
+            workspaceSlug={workspaceSlug.toString()}
+            currentWorkspace={currentWorkspace}
+            containerClass="px-0 py-0 md:pb-4 lg:py-2"
+            displayProperties={{ state: true, priority: true, lead: true, date: true }}
+          />
+          <div className={cn("hidden md:flex")}>
+            <QuickActions
+              project={projectDetails}
+              workspaceSlug={workspaceSlug.toString()}
+              initiativeId={initiativeId}
+            />
+          </div>
+        </div>
+      }
+      isMobile={isMobile}
+      parentRef={parentRef}
+    />
+  );
+});

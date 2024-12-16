@@ -90,6 +90,7 @@ class ProjectLiteSerializer(BaseSerializer):
 
 class ProjectListSerializer(DynamicBaseSerializer):
     total_issues = serializers.IntegerField(read_only=True)
+    completed_issues = serializers.IntegerField(read_only=True)
     archived_issues = serializers.IntegerField(read_only=True)
     archived_sub_issues = serializers.IntegerField(read_only=True)
     draft_issues = serializers.IntegerField(read_only=True)

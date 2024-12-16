@@ -27,6 +27,7 @@ const WorkspaceFeatureKeyToFeatureFlagMap: Record<TSidebarWorkspaceMenuItemKeys,
   "all-issues": undefined,
   "active-cycles": E_FEATURE_FLAGS.WORKSPACE_ACTIVE_CYCLES,
   analytics: undefined,
+  initiatives: E_FEATURE_FLAGS.INITIATIVES,
 };
 
 export const isWorkspaceFeatureEnabled = (featureKey: TSidebarWorkspaceMenuItemKeys, workspaceSlug: string) => {
@@ -42,6 +43,11 @@ export const isWorkspaceFeatureEnabled = (featureKey: TSidebarWorkspaceMenuItemK
     case "teams":
       return (
         isFeatureFlagEnabled && store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_TEAMS_ENABLED)
+      );
+    case "initiatives":
+      return (
+        isFeatureFlagEnabled &&
+        store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_INITIATIVES_ENABLED)
       );
     default:
       return isFeatureFlagEnabled;

@@ -5,4 +5,4 @@ import {
 
 export type TSidebarUserMenuItemKeys = BaseTSidebarUserMenuItemKeys | "pi-chat";
 
-export type TSidebarWorkspaceMenuItemKeys = BaseTSidebarWorkspaceMenuItemKeys | "teams";
+export type TSidebarWorkspaceMenuItemKeys = BaseTSidebarWorkspaceMenuItemKeys | "initiatives" | "teams";

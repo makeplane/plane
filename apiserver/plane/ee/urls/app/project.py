@@ -1,5 +1,8 @@
+# Django imports
 from django.urls import path
 
+# Module imports
+from plane.ee.views import ProjectFeatureEndpoint
 from plane.ee.views import (
     ProjectLinkViewSet,
     ProjectAnalyticsEndpoint,
@@ -8,7 +11,6 @@ from plane.ee.views import (
     ProjectReactionViewSet,
     ProjectActivityEndpoint
 )
-
 from plane.ee.views.app import ProjectFeatureEndpoint
 
 
