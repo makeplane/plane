@@ -1,6 +1,7 @@
-import { observer } from "mobx-react";
-import Image from "next/image";
 import { FC } from "react";
+import { observer } from "mobx-react";
+import dynamic from "next/dynamic";
+import Image from "next/image";
 // components
 // ui
 import { CycleModuleListLayout } from "@/components/ui";
@@ -9,7 +10,6 @@ import { useCycle, useCycleFilter } from "@/hooks/store";
 // assets
 import AllFiltersImage from "@/public/empty-state/cycle/all-filters.svg";
 import NameFilterImage from "@/public/empty-state/cycle/name-filter.svg";
-import dynamic from "next/dynamic";
 
 export interface ICyclesView {
   workspaceSlug: string;

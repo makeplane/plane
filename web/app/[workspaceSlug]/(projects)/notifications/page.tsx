@@ -21,7 +21,7 @@ const IssuePeekOverview = dynamic(
   () => import("@/components/issues/peek-overview/root").then((m) => m.IssuePeekOverview),
   {
     ssr: false,
-    loading: () => <LogoSpinner />,
+    loading: () => null,
   }
 );
 
