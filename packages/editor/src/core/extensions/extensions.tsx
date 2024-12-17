@@ -138,6 +138,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomCodeInlineExtension,
     Markdown.configure({
       html: true,
+      transformCopiedText: true,
       transformPastedText: true,
       breaks: true,
     }),
@@ -152,6 +153,8 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     }),
     Placeholder.configure({
       placeholder: ({ editor, node }) => {
+        if (!editor.isEditable) return;
+
         if (node.type.name === "heading") return `Heading ${node.attrs.level}`;
 
         if (editor.storage.imageComponent.uploadInProgress) return "";

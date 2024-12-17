@@ -166,13 +166,13 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         {!isFullWidth && <PageContentBrowser editorRef={editorRef.current} />}
       </Row>
       <div
-        className={cn("h-full w-full pt-5 duration-200", {
+        className={cn("size-full pt-5 duration-200", {
           "md:w-[calc(100%-10rem)] xl:w-[calc(100%-28rem)]": !isFullWidth,
           "md:w-[90%]": isFullWidth,
         })}
       >
-        <div className="h-full w-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
-          <div className="relative w-full flex-shrink-0 md:pl-5 px-4">
+        <div className="size-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
+          <div className="relative w-full flex-shrink-0 md:pl-5 px-4 h-[38px]">
             <PageEditorTitle
               editorRef={editorRef}
               title={pageTitle}
