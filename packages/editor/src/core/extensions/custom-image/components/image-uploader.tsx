@@ -131,11 +131,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
       return "Drop image here";
     }
 
-    if (!editor.isEditable) {
-      return "Viewing Mode: Image Upload Disabled";
-    } else {
-      return "Add an image";
-    }
+    return "Add an image";
   }, [draggedInside, failedToLoadImage, isImageBeingUploaded]);
 
   return (
