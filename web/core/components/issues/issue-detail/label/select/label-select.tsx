@@ -185,11 +185,18 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
               ) : canCreateLabel ? (
                 <p
                   onClick={() => {
+                    if(!query.length) return
                     handleAddLabel(query);
                   }}
-                  className="text-left text-custom-text-200 cursor-pointer"
+                  className={`text-left text-custom-text-200 ${query.length ? "cursor-pointer" : "cursor-default"}`}
                 >
-                  + Add <span className="text-custom-text-100">&quot;{query}&quot;</span> to labels
+                  {query.length ? (
+                    <>
+                      + Add <span className="text-custom-text-100">&quot;{query}&quot;</span> to labels
+                    </>
+                  ) : (
+                    "Type to add a new label"
+                  )}
                 </p>
               ) : (
                 <p className="text-left text-custom-text-200 ">No matching results.</p>
