@@ -6,6 +6,7 @@ import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-d
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane helpers
+import { EIssueServiceType } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
@@ -26,7 +27,6 @@ import { IssueIdentifier } from "@/plane-web/components/issues";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
 import { getIssueBlockId } from "../utils";
-import { EIssueServiceType } from "@plane/constants";
 
 interface IssueBlockProps {
   issueId: string;

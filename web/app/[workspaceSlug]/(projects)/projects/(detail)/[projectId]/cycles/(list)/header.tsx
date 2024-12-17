@@ -2,7 +2,6 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // ui
 import { Breadcrumbs, Button, ContrastIcon, Header } from "@plane/ui";
 // components
@@ -17,7 +16,6 @@ import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/u
 export const CyclesListHeader: FC = observer(() => {
   // router
   const router = useAppRouter();
-  const { workspaceSlug } = useParams();
   // store hooks
   const { toggleCreateCycleModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
