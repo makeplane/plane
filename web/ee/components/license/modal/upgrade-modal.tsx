@@ -9,8 +9,6 @@ import { BUSINESS_PLAN_FEATURES, PRO_PLAN_FEATURES } from "@plane/constants";
 import { IPaymentProduct, TProductSubscriptionType } from "@plane/types";
 // ui
 import { EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-// ce components
-import { OnePlanUpgrade } from "@/ce/components/workspace/upgrade";
 // plane web components
 import { cn } from "@/helpers/common.helper";
 import { ProTrialButton } from "@/plane-web/components/license/modal/trial-button";

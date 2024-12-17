@@ -204,12 +204,15 @@ export const PlanUpgradeCard: FC<PlanUpgradeCardProps> = (props) => {
                       ? "Redirecting to Stripe..."
                       : (upgradeCTA ?? `Upgrade to ${planeName}`)}
                   </button>
-                  {isTrialAllowed &&
-                    renderTrialButton &&
-                    renderTrialButton({
-                      productId: product?.id,
-                      priceId: price.id,
-                    })}
+                  {isTrialAllowed && (
+                    <div className="mt-4 h-4">
+                      {renderTrialButton &&
+                        renderTrialButton({
+                          productId: product?.id,
+                          priceId: price.id,
+                        })}
+                    </div>
+                  )}
                 </div>
               )}
               <div className="px-2 pt-6 pb-2">

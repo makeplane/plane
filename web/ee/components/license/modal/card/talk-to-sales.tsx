@@ -37,6 +37,7 @@ export const TalkToSalesCard: FC<TalkToSalesCardProps> = (props) => {
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   // derived values
   const isSelfHosted = !!subscriptionDetail?.is_self_managed;
+  const isTrialAllowed = !!subscriptionDetail?.is_trial_allowed;
   const basePlan = getBasePlanName(planVariant, isSelfHosted);
   // Plane details
   const planeName = planVariant.charAt(0).toUpperCase() + planVariant.slice(1).toLowerCase();
@@ -73,6 +74,7 @@ export const TalkToSalesCard: FC<TalkToSalesCardProps> = (props) => {
           >
             Talk to sales
           </a>
+          {isTrialAllowed && <div className="mt-4 h-4" />}
         </div>
       )}
       <div className="px-2 pt-6 pb-2">

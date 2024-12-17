@@ -4,13 +4,13 @@ import { useState } from "react";
 import { AppSidebar } from "app/[workspaceSlug]/(projects)/sidebar";
 import { observer } from "mobx-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { CircleAlert } from "lucide-react";
 // hooks
-import { Button, getButtonStyling } from "@plane/ui";
+import { AlertModalCore, Button } from "@plane/ui";
 import { useUserPermissions } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components
 import { PaidPlanUpgradeModal } from "@/plane-web/components/license";
 // plane web constants
@@ -21,9 +21,11 @@ import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
 
 export const WorkspaceDisabledPage: React.FC = observer(() => {
   // router
+  const router = useAppRouter();
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   // state
   const [isPaidPlanModalOpen, togglePaidPlanModal] = useState(false);
+  const [isDowngradeModalOpen, toggleDowngradeModal] = useState(false);
   // hooks
   const { resolvedTheme } = useTheme();
   const { allowPermissions } = useUserPermissions();
@@ -31,8 +33,26 @@ export const WorkspaceDisabledPage: React.FC = observer(() => {
   const workspaceSlug = routerWorkspaceSlug?.toString();
   const isWorkspaceAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
 
+  const handleRemoveMembers = () => {
+    toggleDowngradeModal(false);
+    router.push(`/${workspaceSlug}/settings/members`);
+  };
+
   return (
     <>
+      <AlertModalCore
+        variant="danger"
+        isOpen={isDowngradeModalOpen}
+        title="You've more than 12 users in this workspace."
+        primaryButtonText={{
+          loading: "Redirecting",
+          default: "Remove members",
+        }}
+        content={<>The Free tier only lets you have 12 users. Remove users to continue using the Free tier. </>}
+        handleClose={() => toggleDowngradeModal(false)}
+        handleSubmit={handleRemoveMembers}
+        isSubmitting={false}
+      />
       <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
       <div className="relative flex h-full w-full overflow-hidden">
         <AppSidebar />
@@ -51,21 +71,21 @@ export const WorkspaceDisabledPage: React.FC = observer(() => {
               </div>
               <div className="text-center">
                 <p className="text-xl font-medium py-2.5">
-                  {isWorkspaceAdmin ? "Your payment has failed!" : "Something’s not okay"}
+                  {isWorkspaceAdmin ? "We couldn't collect your last invoiced payment." : "A payment is overdue."}
                 </p>
                 <p className="text-custom-text-300">
                   {isWorkspaceAdmin
-                    ? "We tried to bill your account but the payment method is facing issues. Please fix the issue to resume service."
-                    : "Your workspace is facing some issues. Please contact your admin."}
+                    ? "You have a payment due for your Pro workspace. Please clear it to continue using Pro features or downgrade to Free."
+                    : "Your have a payment due for your Pro workspace. Get in touch with one of your admins to fix this."}
                 </p>
               </div>
               {isWorkspaceAdmin && (
                 <div className="flex items-center justify-center gap-4 pt-8">
-                  <Link href={`/${workspaceSlug}/settings/members`} className={getButtonStyling("link-neutral", "md")}>
-                    Remove members
-                  </Link>
                   <Button size="md" onClick={() => togglePaidPlanModal(true)}>
-                    Upgrade plan
+                    Continue subscription
+                  </Button>
+                  <Button size="md" variant="link-neutral" onClick={() => toggleDowngradeModal(true)}>
+                    Downgrade
                   </Button>
                 </div>
               )}

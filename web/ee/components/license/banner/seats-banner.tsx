@@ -39,9 +39,9 @@ export const LicenseSeatsBanner: FC = observer(() => {
         : EPlanMessageKeys.NEAR_LIMIT;
 
   const planMessages = {
-    free_plan: `Your workspace has been grandfathered to ${freeSeats} over the 12-member limit on the Free plan. To add more members, upgrade to Pro.`,
-    near_limit: `You’ve already ${totalSeats} out of ${freeSeats} members allowed on the Free plan. You can only add ${freeSeats - totalSeats} more members. To remove the limit, upgrade to Pro.`,
-    limit_reached: `You’ve reached the members limit of ${freeSeats} on this plan. To add more members, upgrade to Pro`,
+    free_plan: `Your workspace has been grandfathered to ${freeSeats} over the 12-user limit on the Free plan. To add more users, upgrade to a paid plan.`,
+    near_limit: `You have ${totalSeats} out of ${freeSeats} users allowed on the Free plan. To remove the limit, upgrade to a paid plan.`,
+    limit_reached: `You have ${totalSeats} out of ${freeSeats} users allowed on the Free plan. To remove the limit, upgrade to a paid plan.`,
   };
   const currentVariant: "primary" | "danger" =
     currentPlanKey && [EPlanMessageKeys.NEAR_LIMIT, EPlanMessageKeys.LIMIT_REACHED].includes(currentPlanKey)

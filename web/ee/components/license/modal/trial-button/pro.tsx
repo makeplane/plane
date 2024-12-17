@@ -50,7 +50,7 @@ export const ProTrialButton: React.FC<TTrialButtonProps> = (props: TTrialButtonP
   return (
     <button
       disabled={trialLoader}
-      className="mt-4 text-center text-sm text-custom-text-300 hover:text-custom-text-100 font-medium transition-all flex justify-center items-center gap-2"
+      className="text-center text-sm text-custom-text-300 hover:text-custom-text-100 font-medium transition-all flex justify-center items-center gap-2"
       onClick={() => handleTrial(productId, priceId)}
     >
       <span>Start free trial</span>
