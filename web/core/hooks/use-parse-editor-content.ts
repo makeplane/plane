@@ -6,12 +6,16 @@ import { TSearchEntities } from "@plane/types";
 import { getBase64Image } from "@/helpers/file.helper";
 // hooks
 import { useMember } from "@/hooks/store";
+// plane web hooks
+import { useAdditionalEditorMention } from "@/plane-web/hooks/use-additional-editor-mention";
 
 export const useParseEditorContent = () => {
   // params
   const { workspaceSlug } = useParams();
   // store hooks
   const { getUserDetails } = useMember();
+  // parse additional content
+  const { parseAdditionalEditorContent } = useAdditionalEditorMention();
 
   /**
    * @description function to replace all the custom components from the html component to make it pdf compatible
@@ -38,6 +42,14 @@ export const useParseEditorContent = () => {
         if (entityType === "user_mention") {
           const userDetails = getUserDetails(id);
           textContent = userDetails?.display_name ?? "";
+        } else {
+          const mentionDetails = parseAdditionalEditorContent({
+            id,
+            entityType,
+          });
+          if (mentionDetails) {
+            textContent = mentionDetails.textContent;
+          }
         }
         span.textContent = `@${textContent}`;
         // replace the mention-component with the span element
@@ -160,8 +172,18 @@ export const useParseEditorContent = () => {
           const userDetails = getUserDetails(id);
           if (!userDetails) return "";
           return `[${userDetails.display_name}](${originUrl}/${workspaceSlug}/profile/${id})`;
+        } else {
+          const mentionDetails = parseAdditionalEditorContent({
+            id,
+            entityType,
+          });
+          if (!mentionDetails) {
+            return "";
+          } else {
+            const { redirectionPath, textContent } = mentionDetails;
+            return `[${textContent}](${originUrl}/${redirectionPath})`;
+          }
         }
-        return "";
       });
       // replace the matched image components with <img src={src} >
       const imageComponentRegex = /<image-component[^>]*src="([^"]+)"[^>]*>[^]*<\/image-component>/g;
