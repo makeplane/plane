@@ -109,7 +109,7 @@ const syncLabels = async (currentLabels: any) => {
   const currentIdList = currentLabels.map((label: any) => label.id);
   const existingLabels = await persistence.db.exec("SELECT id FROM labels;");
 
-  const existingIdList = existingLabels.map((label: any) => label.id);
+  const existingIdList = existingLabels ? existingLabels.map((label: any) => label.id) : [];
 
   const deletedIds = difference(existingIdList, currentIdList);
 
@@ -140,7 +140,7 @@ export const syncIssuesWithDeletedLabels = async (deletedLabelIds: string[]) => 
 const syncModules = async (currentModules: any) => {
   const currentIdList = currentModules.map((module: any) => module.id);
   const existingModules = await persistence.db.exec("SELECT id FROM modules;");
-  const existingIdList = existingModules.map((module: any) => module.id);
+  const existingIdList = existingModules ? existingModules.map((module: any) => module.id) : [];
   const deletedIds = difference(existingIdList, currentIdList);
   await syncIssuesWithDeletedModules(deletedIds as string[]);
 };
@@ -167,7 +167,7 @@ export const syncIssuesWithDeletedModules = async (deletedModuleIds: string[]) =
 const syncCycles = async (currentCycles: any) => {
   const currentIdList = currentCycles.map((cycle: any) => cycle.id);
   const existingCycles = await persistence.db.exec("SELECT id FROM cycles;");
-  const existingIdList = existingCycles.map((cycle: any) => cycle.id);
+  const existingIdList = existingCycles ? existingCycles.map((cycle: any) => cycle.id) : [];
   const deletedIds = difference(existingIdList, currentIdList);
   await syncIssuesWithDeletedCycles(deletedIds as string[]);
 };
@@ -194,7 +194,7 @@ export const syncIssuesWithDeletedCycles = async (deletedCycleIds: string[]) => 
 const syncStates = async (currentStates: any) => {
   const currentIdList = currentStates.map((state: any) => state.id);
   const existingStates = await persistence.db.exec("SELECT id FROM states;");
-  const existingIdList = existingStates.map((state: any) => state.id);
+  const existingIdList = existingStates ? existingStates.map((state: any) => state.id) : [];
   const deletedIds = difference(existingIdList, currentIdList);
   await syncIssuesWithDeletedStates(deletedIds as string[]);
 };
@@ -221,7 +221,7 @@ export const syncIssuesWithDeletedStates = async (deletedStateIds: string[]) => 
 const syncMembers = async (currentMembers: any) => {
   const currentIdList = currentMembers.map((member: any) => member.id);
   const existingMembers = await persistence.db.exec("SELECT id FROM members;");
-  const existingIdList = existingMembers.map((member: any) => member.id);
+  const existingIdList = existingMembers ? existingMembers.map((member: any) => member.id) : [];
   const deletedIds = difference(existingIdList, currentIdList);
   await syncIssuesWithDeletedMembers(deletedIds as string[]);
 };
