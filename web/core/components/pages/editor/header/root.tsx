@@ -19,14 +19,13 @@ type Props = {
 };
 
 export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
-  const { editorReady, editorRef, page, readOnlyEditorReady, readOnlyEditorRef, setSidePeekVisible, sidePeekVisible } =
-    props;
+  const { editorReady, editorRef, page, setSidePeekVisible, sidePeekVisible } = props;
   // derived values
   const { isContentEditable } = page;
   // page filters
   const { isFullWidth } = usePageFilters();
   // derived values
-  const resolvedEditorRef = isContentEditable ? editorRef.current : readOnlyEditorRef.current;
+  const resolvedEditorRef = editorRef.current;
 
   if (!resolvedEditorRef) return null;
 

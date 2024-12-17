@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import { EditorRefApi } from "@plane/editor";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
 import { PageExtraOptions, PageSummaryPopover, PageToolbar } from "@/components/pages";
@@ -9,7 +9,7 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 import { IPage } from "@/store/pages/page";
 
 type Props = {
-  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
+  editorRef: EditorRefApi | null;
   page: IPage;
   setSidePeekVisible: (sidePeekState: boolean) => void;
   sidePeekVisible: boolean;

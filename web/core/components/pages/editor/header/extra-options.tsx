@@ -16,7 +16,7 @@ import useOnlineStatus from "@/hooks/use-online-status";
 import { IPage } from "@/store/pages/page";
 
 type Props = {
-  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
+  editorRef: EditorRefApi | null;
   page: IPage;
 };
 

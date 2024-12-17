@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useParams } from "next/navigation";
 // plane editor
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import { EditorRefApi } from "@plane/editor";
 // plane ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
@@ -22,7 +22,7 @@ export type TPageOperations = {
 };
 
 type Props = {
-  editorRef?: EditorRefApi | EditorReadOnlyRefApi | null;
+  editorRef?: EditorRefApi | null;
   page: IPage;
 };
 

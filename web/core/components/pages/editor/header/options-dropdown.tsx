@@ -19,7 +19,7 @@ import { useQueryParams } from "@/hooks/use-query-params";
 import { IPage } from "@/store/pages/page";
 
 type Props = {
-  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
+  editorRef: EditorRefApi | null;
   page: IPage;
 };
 

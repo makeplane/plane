@@ -15,7 +15,7 @@ import {
   Trash2,
 } from "lucide-react";
 // plane editor
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import { EditorRefApi } from "@plane/editor";
 // plane ui
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // components
@@ -46,7 +46,7 @@ export type TPageActions =
   | "move";
 
 type Props = {
-  editorRef?: EditorRefApi | EditorReadOnlyRefApi | null;
+  editorRef?: EditorRefApi | null;
   extraOptions?: (TContextMenuItem & { key: TPageActions })[];
   optionsOrder: TPageActions[];
   page: IPage;

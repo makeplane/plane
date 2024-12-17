@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { EditorReadOnlyRefApi, EditorRefApi, TDocumentEventsServer } from "@plane/editor";
+import { EditorRefApi, TDocumentEventsServer } from "@plane/editor";
 import { DocumentCollaborativeEvents, TDocumentEventsClient, getServerEventName } from "@plane/editor/lib";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { IPage } from "@/store/pages/page";
@@ -15,7 +15,7 @@ type CollaborativeActionEvent =
   | { type: "receivedMessageFromServer"; message: TDocumentEventsClient };
 
 type Props = {
-  editorRef?: EditorRefApi | EditorReadOnlyRefApi | null;
+  editorRef?: EditorRefApi | null;
   page: IPage;
 };
 
@@ -82,8 +82,6 @@ export const useCollaborativePageActions = (props: Props) => {
   );
 
   useEffect(() => {
-    const realTimeStatelessMessageListener = editorRef?.listenToRealTimeUpdate();
-
     const realTimeStatelessMessageListener = editorRef?.listenToRealTimeUpdate();
     console.log(realTimeStatelessMessageListener);
     const handleStatelessMessage = (message: { payload: TDocumentEventsClient }) => {
