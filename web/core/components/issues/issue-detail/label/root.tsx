@@ -7,13 +7,12 @@ import { IIssueLabel, TIssue, TIssueServiceType } from "@plane/types";
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useIssueDetail, useLabel, useProjectInbox, useUserPermissions } from "@/hooks/store";
+import { useIssueDetail, useLabel, useProjectInbox } from "@/hooks/store";
 // ui
 // types
-import { LabelList, LabelCreate, IssueLabelSelectRoot } from "./";
+import { LabelList, IssueLabelSelectRoot } from "./";
 // TODO: Fix this import statement, as core should not import from ee
 // eslint-disable-next-line import/order
-import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
 
 export type TIssueLabel = {
   workspaceSlug: string;
@@ -47,9 +46,7 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
     issue: { getIssueById },
   } = useIssueDetail(issueServiceType);
   const { getIssueInboxByIssueId } = useProjectInbox();
-  const { allowPermissions } = useUserPermissions();
 
-  const canCreateLabel = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
   const issue = isInboxIssue ? getIssueInboxByIssueId(issueId)?.issue : getIssueById(issueId);
 
   const labelOperations: TLabelOperations = useMemo(
@@ -106,16 +103,6 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
 
       {!disabled && (
         <IssueLabelSelectRoot
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-          values={issue?.label_ids || []}
-          labelOperations={labelOperations}
-        />
-      )}
-
-      {!disabled && canCreateLabel && (
-        <LabelCreate
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           issueId={issueId}
