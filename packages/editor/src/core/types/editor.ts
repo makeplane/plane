@@ -106,7 +106,6 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
 
 // editor props
 export interface IEditorProps {
-  editable: boolean;
   containerClassName?: string;
   displayConfig?: TDisplayConfig;
   disabledExtensions: TExtensions[];
@@ -139,6 +138,7 @@ export interface IRichTextEditor extends IEditorProps {
 
 export interface ICollaborativeDocumentEditor
   extends Omit<IEditorProps, "initialValue" | "onChange" | "onEnterKeyPress" | "value"> {
+  editable: boolean;
   aiHandler?: TAIHandler;
   embedHandler: TEmbedConfig;
   handleEditorReady?: (value: boolean) => void;

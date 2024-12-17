@@ -47,7 +47,7 @@ type TArguments = {
   };
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
-  editable?: boolean;
+  editable: boolean;
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
