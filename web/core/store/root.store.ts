@@ -1,9 +1,9 @@
 import { enableStaticRendering } from "mobx-react";
 // plane web store
+import { CommandPaletteStore, ICommandPaletteStore } from "@/plane-web/store/command-palette.store";
 import { RootStore } from "@/plane-web/store/root.store";
 import { IStateStore, StateStore } from "@/plane-web/store/state.store";
 // stores
-import { CommandPaletteStore, ICommandPaletteStore } from "./command-palette.store";
 import { CycleStore, ICycleStore } from "./cycle.store";
 import { CycleFilterStore, ICycleFilterStore } from "./cycle_filter.store";
 import { DashboardStore, IDashboardStore } from "./dashboard.store";

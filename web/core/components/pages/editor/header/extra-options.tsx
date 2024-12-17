@@ -16,13 +16,12 @@ import useOnlineStatus from "@/hooks/use-online-status";
 import { IPage } from "@/store/pages/page";
 
 type Props = {
-  editorRef: React.RefObject<EditorRefApi>;
-  handleDuplicatePage: () => void;
+  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
   page: IPage;
 };
 
 export const PageExtraOptions: React.FC<Props> = observer((props) => {
-  const { editorRef, handleDuplicatePage, page } = props;
+  const { editorRef, page } = props;
   // derived values
   const {
     archived_at,
@@ -84,8 +83,8 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
           iconClassName="text-custom-text-100"
         />
       )}
-      <PageInfoPopover editorRef={editorRef?.current} />
-      <PageOptionsDropdown editorRef={editorRef?.current} handleDuplicatePage={handleDuplicatePage} page={page} />
+      <PageInfoPopover editorRef={editorRef} />
+      <PageOptionsDropdown editorRef={editorRef} page={page} />
     </div>
   );
 });

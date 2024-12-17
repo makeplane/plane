@@ -4,6 +4,8 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { ArchiveRestoreIcon, Link2, MoveDiagonal, MoveRight, Trash2 } from "lucide-react";
+// types
+import { TNameDescriptionLoader } from "@plane/types";
 // ui
 import {
   ArchiveIcon,
@@ -16,7 +18,7 @@ import {
   setToast,
 } from "@plane/ui";
 // components
-import { IssueSubscription, IssueUpdateStatus } from "@/components/issues";
+import { IssueSubscription, NameDescriptionUpdateStatus } from "@/components/issues";
 import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -58,7 +60,7 @@ export type PeekOverviewHeaderProps = {
   toggleDeleteIssueModal: (issueId: string | null) => void;
   toggleArchiveIssueModal: (issueId: string | null) => void;
   handleRestoreIssue: () => void;
-  isSubmitting: "submitting" | "submitted" | "saved";
+  isSubmitting: TNameDescriptionLoader;
 };
 
 export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((props) => {
@@ -157,7 +159,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
         )}
       </div>
       <div className="flex items-center gap-x-4">
-        <IssueUpdateStatus isSubmitting={isSubmitting} />
+        <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
         <div className="flex items-center gap-4">
           {currentUser && !isArchived && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />

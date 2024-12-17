@@ -14,9 +14,10 @@ import {
 } from "@plane/types";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { EDraftIssuePaginationType } from "@/constants/workspace-drafts";
+import { useTeamIssueActions, useTeamViewIssueActions } from "@/plane-web/helpers/issue-action-helper";
 import { useIssues } from "./store";
 
-interface IssueActions {
+export interface IssueActions {
   fetchIssues: (
     loadType: TLoader,
     options: IssuePaginationOptions,
@@ -38,9 +39,11 @@ interface IssueActions {
 }
 
 export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
+  const teamIssueActions = useTeamIssueActions();
   const projectIssueActions = useProjectIssueActions();
   const cycleIssueActions = useCycleIssueActions();
   const moduleIssueActions = useModuleIssueActions();
+  const teamViewIssueActions = useTeamViewIssueActions();
   const projectViewIssueActions = useProjectViewIssueActions();
   const globalIssueActions = useGlobalIssueActions();
   const profileIssueActions = useProfileIssueActions();
@@ -49,10 +52,14 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
   const workspaceDraftIssueActions = useWorkspaceDraftIssueActions();
 
   switch (storeType) {
+    case EIssuesStoreType.TEAM_VIEW:
+      return teamViewIssueActions;
     case EIssuesStoreType.PROJECT_VIEW:
       return projectViewIssueActions;
     case EIssuesStoreType.PROFILE:
       return profileIssueActions;
+    case EIssuesStoreType.TEAM:
+      return teamIssueActions;
     case EIssuesStoreType.ARCHIVED:
       return archivedIssueActions;
     case EIssuesStoreType.DRAFT:

@@ -4,7 +4,7 @@ import { Menu } from "@headlessui/react";
 import { usePopper } from "react-popper";
 import { ChevronDown, MoreHorizontal } from "lucide-react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 // helpers
@@ -54,7 +54,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     if (referenceElement) referenceElement.focus();
   };
   const closeDropdown = () => {
-    isOpen && onMenuClose && onMenuClose();
+    if (isOpen) onMenuClose?.();
     setIsOpen(false);
   };
 
@@ -216,7 +216,7 @@ const MenuItem: React.FC<ICustomMenuItemProps> = (props) => {
           )}
           onClick={(e) => {
             close();
-            onClick && onClick(e);
+            onClick?.(e);
           }}
           disabled={disabled}
         >

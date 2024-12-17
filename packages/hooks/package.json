@@ -1,0 +1,27 @@
+{
+  "name": "@plane/hooks",
+  "version": "0.24.1",
+  "description": "React hooks that are shared across multiple apps internally",
+  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsup ./src/index.ts --format esm,cjs --dts --external react --minify",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:errors": "eslint src --ext .ts,.tsx --quiet"
+  },
+  "dependencies": {
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@plane/eslint-config": "*",
+    "@types/node": "^22.5.4",
+    "@types/react": "^18.3.11",
+    "tsup": "^7.2.0",
+    "typescript": "^5.3.3"
+  }
+}

@@ -121,6 +121,8 @@ class PageViewSet(BaseViewSet):
             context={
                 "project_id": project_id,
                 "owned_by_id": request.user.id,
+                "description": request.data.get("description", {}),
+                "description_binary": request.data.get("description_binary", None),
                 "description_html": request.data.get("description_html", "<p></p>"),
             },
         )
@@ -553,3 +555,33 @@ class PagesDescriptionViewSet(BaseViewSet):
             return Response({"message": "Updated successfully"})
         else:
             return Response({"error": "No binary data provided"})
+
+
+class PageDuplicateEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def post(self, request, slug, project_id, page_id):
+        page = Page.objects.filter(
+            pk=page_id, workspace__slug=slug, projects__id=project_id
+        ).values()
+        new_page_data = list(page)[0]
+        new_page_data.name = f"{new_page_data.name} (Copy)"
+
+        serializer = PageSerializer(
+            data=new_page_data,
+            context={
+                "project_id": project_id,
+                "owned_by_id": request.user.id,
+                "description": new_page_data.description,
+                "description_binary": new_page_data.description_binary,
+                "description_html": new_page_data.description_html,
+            },
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            # capture the page transaction
+            page_transaction.delay(request.data, None, serializer.data["id"])
+            page = Page.objects.get(pk=serializer.data["id"])
+            serializer = PageDetailSerializer(page)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

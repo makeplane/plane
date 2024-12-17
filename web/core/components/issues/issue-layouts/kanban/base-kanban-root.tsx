@@ -32,7 +32,10 @@ export type KanbanStoreType =
   | EIssuesStoreType.CYCLE
   | EIssuesStoreType.PROJECT_VIEW
   | EIssuesStoreType.DRAFT
-  | EIssuesStoreType.PROFILE;
+  | EIssuesStoreType.PROFILE
+  | EIssuesStoreType.TEAM
+  | EIssuesStoreType.TEAM_VIEW;
+
 export interface IBaseKanBanLayout {
   QuickActions: FC<IQuickActionProps>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
@@ -176,11 +179,11 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
         handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
         handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
-        readOnly={!isEditingAllowed || isCompletedCycle}
+        readOnly={!canEditProperties(issue.project_id ?? undefined) || isCompletedCycle}
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isEditingAllowed, isCompletedCycle, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
+    [isCompletedCycle, canEditProperties, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
   );
 
   const handleDeleteIssue = async () => {
