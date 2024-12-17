@@ -20,12 +20,15 @@ import { KanbanQuickAddIssueButton, QuickAddIssueRoot } from "@/components/issue
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 import { KanbanIssueBlockLoader } from "@/components/ui";
 // helpers
-import { EIssueLayoutTypes } from "@/constants/issue";
+import { DRAG_ALLOWED_GROUPS, EIssueLayoutTypes } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
+// Plane-web
+import { useWorkFlowFDragNDrop } from "@/plane-web/components/workflow";
+//
 import { GroupDragOverlay } from "../group-drag-overlay";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { GroupDropLocation, getSourceFromDropPayload, getDestinationFromDropPayload, getIssueBlockId } from "../utils";
@@ -53,6 +56,7 @@ interface IKanbanGroup {
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   orderBy: TIssueOrderByOptions | undefined;
+  isEpic?: boolean;
 }
 
 export const KanbanGroup = observer((props: IKanbanGroup) => {
@@ -76,6 +80,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     quickAddCallback,
     scrollableContainerRef,
     handleOnDrop,
+    isEpic =false
   } = props;
   // hooks
   const projectState = useProjectState();
@@ -103,6 +108,11 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   );
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
 
+  const { workflowDisabledSource, isWorkflowDropDisabled, handleWorkFlowState } = useWorkFlowFDragNDrop(
+    group_by,
+    sub_group_by
+  );
+
   // Enable Kanban Columns as Drop Targets
   useEffect(() => {
     const element = columnRef.current;
@@ -113,14 +123,24 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
       dropTargetForElements({
         element,
         getData: () => ({ groupId, subGroupId: sub_group_id, columnId: `${groupId}__${sub_group_id}`, type: "COLUMN" }),
-        onDragEnter: () => {
+        onDragEnter: (payload) => {
+          const source = getSourceFromDropPayload(payload);
           setIsDraggingOverColumn(true);
+          // handle if dragging a workflowState
+          if (source) {
+            handleWorkFlowState(source?.groupId, groupId, source?.subGroupId, sub_group_id);
+          }
         },
         onDragLeave: () => {
           setIsDraggingOverColumn(false);
         },
-        onDragStart: () => {
+        onDragStart: (payload) => {
+          const source = getSourceFromDropPayload(payload);
           setIsDraggingOverColumn(true);
+          // handle if dragging a workflowState
+          if (source) {
+            handleWorkFlowState(source?.groupId, groupId, source?.subGroupId, sub_group_id);
+          }
         },
         onDrop: (payload) => {
           setIsDraggingOverColumn(false);
@@ -129,7 +149,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
 
           if (!source || !destination) return;
 
-          if (isDropDisabled) {
+          if (isWorkflowDropDisabled || isDropDisabled) {
             dropErrorMessage &&
               setToast({
                 type: TOAST_TYPE.WARNING,
@@ -158,6 +178,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     setIsDraggingOverColumn,
     orderBy,
     isDropDisabled,
+    isWorkflowDropDisabled,
     dropErrorMessage,
     handleOnDrop,
   ]);
@@ -237,8 +258,12 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   );
 
   const shouldLoadMore = nextPageResults === undefined ? issueIds?.length < groupIssueCount : !!nextPageResults;
-  const canOverlayBeVisible = orderBy !== "sort_order" || isDropDisabled;
+  const canOverlayBeVisible = isWorkflowDropDisabled || orderBy !== "sort_order" || isDropDisabled;
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
+  const canDragIssuesInCurrentGrouping =
+    !!group_by &&
+    DRAG_ALLOWED_GROUPS.includes(group_by) &&
+    (!!sub_group_by ? DRAG_ALLOWED_GROUPS.includes(sub_group_by) : true);
 
   return (
     <div
@@ -253,7 +278,8 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
       <GroupDragOverlay
         dragColumnOrientation={sub_group_by ? "justify-start" : "justify-center"}
         canOverlayBeVisible={canOverlayBeVisible}
-        isDropDisabled={isDropDisabled}
+        isDropDisabled={isWorkflowDropDisabled || isDropDisabled}
+        workflowDisabledSource={workflowDisabledSource}
         dropErrorMessage={dropErrorMessage}
         orderBy={orderBy}
         isDraggingOverColumn={isDraggingOverColumn}
@@ -269,6 +295,8 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         canEditProperties={canEditProperties}
         scrollableContainerRef={scrollableContainerRef}
         canDropOverIssue={!canOverlayBeVisible}
+        canDragIssuesInCurrentGrouping={canDragIssuesInCurrentGrouping}
+        isEpic={isEpic}
       />
 
       {shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={setIntersectionElement} />)}

@@ -1,6 +1,9 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
+// constants
+import { EIssueServiceType } from "@plane/constants";
 // types
+import { TIssueServiceType } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // helper
@@ -17,17 +20,18 @@ type Props = {
   onClose: () => void;
   attachmentId: string;
   attachmentOperations: TAttachmentOperationsRemoveModal;
+  issueServiceType?: TIssueServiceType;
 };
 
 export const IssueAttachmentDeleteModal: FC<Props> = observer((props) => {
-  const { isOpen, onClose, attachmentId, attachmentOperations } = props;
+  const { isOpen, onClose, attachmentId, attachmentOperations, issueServiceType = EIssueServiceType.ISSUES } = props;
   // states
   const [loader, setLoader] = useState(false);
 
   // store hooks
   const {
     attachment: { getAttachmentById },
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
 
   // derived values
   const attachment = attachmentId ? getAttachmentById(attachmentId) : undefined;

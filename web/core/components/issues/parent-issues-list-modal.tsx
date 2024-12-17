@@ -29,6 +29,7 @@ type Props = {
   onChange: (issue: ISearchIssueResponse) => void;
   projectId: string | undefined;
   issueId?: string;
+  searchEpic?: boolean;
 };
 
 // services
@@ -41,6 +42,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   onChange,
   projectId,
   issueId,
+  searchEpic = false,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -72,6 +74,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
         parent: true,
         issue_id: issueId,
         workspace_search: isWorkspaceLevel,
+        epic: searchEpic ? true : undefined,
       })
       .then((res) => setIssues(res))
       .finally(() => {

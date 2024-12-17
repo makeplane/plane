@@ -8,6 +8,7 @@ import {
   TIssueLink,
   TIssueReaction,
   TIssueDetailWidget,
+  TIssueServiceType,
 } from "@plane/types";
 // plane web store
 import {
@@ -140,6 +141,8 @@ export class IssueDetail implements IIssueDetail {
   isRelationModalOpen: TIssueRelationModal | null = null;
   isSubIssuesModalOpen: string | null = null;
   attachmentDeleteModalId: string | null = null;
+  // service type
+  serviceType: TIssueServiceType;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -153,7 +156,7 @@ export class IssueDetail implements IIssueDetail {
   comment: IIssueCommentStore;
   commentReaction: IIssueCommentReactionStore;
 
-  constructor(rootStore: IIssueRootStore) {
+  constructor(rootStore: IIssueRootStore, serviceType: TIssueServiceType) {
     makeObservable(this, {
       // observables
       peekIssue: observable,
@@ -191,15 +194,16 @@ export class IssueDetail implements IIssueDetail {
     });
 
     // store
+    this.serviceType = serviceType;
     this.rootIssueStore = rootStore;
-    this.issue = new IssueStore(this);
-    this.reaction = new IssueReactionStore(this);
-    this.attachment = new IssueAttachmentStore(rootStore);
-    this.activity = new IssueActivityStore(rootStore.rootStore as RootStore);
-    this.comment = new IssueCommentStore(this);
+    this.issue = new IssueStore(this, serviceType);
+    this.reaction = new IssueReactionStore(this, serviceType);
+    this.attachment = new IssueAttachmentStore(rootStore, serviceType);
+    this.activity = new IssueActivityStore(rootStore.rootStore as RootStore, serviceType);
+    this.comment = new IssueCommentStore(this, serviceType);
     this.commentReaction = new IssueCommentReactionStore(this);
-    this.subIssues = new IssueSubIssuesStore(this);
-    this.link = new IssueLinkStore(this);
+    this.subIssues = new IssueSubIssuesStore(this, serviceType);
+    this.link = new IssueLinkStore(this, serviceType);
     this.subscription = new IssueSubscriptionStore(this);
     this.relation = new IssueRelationStore(this);
   }

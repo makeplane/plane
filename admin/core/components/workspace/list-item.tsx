@@ -1,5 +1,4 @@
 import { observer } from "mobx-react";
-import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 // helpers
 import { Tooltip } from "@plane/ui";
@@ -20,9 +19,9 @@ export const WorkspaceListItem = observer(({ workspaceId }: TWorkspaceListItemPr
 
   if (!workspace) return null;
   return (
-    <Link
+    <a
       key={workspaceId}
-      href={encodeURI(WEB_BASE_URL + "/" + workspace.slug)}
+      href={`${WEB_BASE_URL}/${encodeURIComponent(workspace.slug)}`}
       target="_blank"
       className="group flex items-center justify-between p-4 gap-2.5 truncate border border-custom-border-200/70 hover:border-custom-border-200 hover:bg-custom-background-90 rounded-md"
     >
@@ -77,6 +76,6 @@ export const WorkspaceListItem = observer(({ workspaceId }: TWorkspaceListItemPr
       <div className="flex-shrink-0">
         <ExternalLink size={14} className="text-custom-text-400 group-hover:text-custom-text-200" />
       </div>
-    </Link>
+    </a>
   );
 });

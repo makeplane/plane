@@ -10,18 +10,24 @@ import { EIssueLayoutTypes, ISSUE_LAYOUT_MAP } from "@/constants/issue";
 type TLayoutDropDown = {
   onChange: (value: EIssueLayoutTypes) => void;
   value: EIssueLayoutTypes;
+  disabledLayouts?: EIssueLayoutTypes[];
 };
 
 export const LayoutDropDown = observer((props: TLayoutDropDown) => {
-  const { onChange, value = EIssueLayoutTypes.LIST } = props;
+  const { onChange, value = EIssueLayoutTypes.LIST, disabledLayouts = [] } = props;
+  // derived values
+  const availableLayouts = useMemo(
+    () => Object.values(ISSUE_LAYOUT_MAP).filter((layout) => !disabledLayouts.includes(layout.key)),
+    [disabledLayouts]
+  );
 
   const options = useMemo(
     () =>
-      Object.values(ISSUE_LAYOUT_MAP).map((issueLayout) => ({
+      availableLayouts.map((issueLayout) => ({
         data: issueLayout.key,
         value: issueLayout.key,
       })),
-    []
+    [availableLayouts]
   );
 
   const buttonContent = useCallback((isOpen: boolean, buttonValue: string | string[] | undefined) => {

@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
 // Plane
-import { setToast } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
-import { SIDEBAR_WIDTH } from "../../constants";
+import { DEFAULT_BLOCK_WIDTH, SIDEBAR_WIDTH } from "../../constants";
 import { IBlockUpdateDependencyData, IGanttBlock } from "../../types";
 
 export const useGanttResizable = (
@@ -75,10 +75,19 @@ export const useGanttResizable = (
         const prevWidth = parseFloat(resizableDiv.style.width.slice(0, -2));
         // calculate new width
         const marginDelta = prevMarginLeft - marginLeft;
-        width = prevWidth + marginDelta;
+        // If target date does not exist while dragging with left handle the revert to default width
+        width = block.target_date ? prevWidth + marginDelta : DEFAULT_BLOCK_WIDTH;
       } else if (dragDirection === "right") {
         // calculate new width and update the initialMarginLeft using +=
         width = Math.round(mouseX / dayWidth) * dayWidth - marginLeft;
+
+        // If start date does not exist while dragging with right handle the revert to default width and adjust marginLeft accordingly
+        if (!block.start_date) {
+          // calculate new right and update the marginLeft to the newly calculated one
+          const marginRight = Math.round(mouseX / dayWidth) * dayWidth;
+          marginLeft = marginRight - DEFAULT_BLOCK_WIDTH;
+          width = DEFAULT_BLOCK_WIDTH;
+        }
       } else if (dragDirection === "move") {
         // calculate new marginLeft and update the initial marginLeft using -=
         marginLeft = Math.round((mouseX - initialPositionRef.current.offsetX) / dayWidth) * dayWidth;
@@ -94,7 +103,7 @@ export const useGanttResizable = (
       const deltaWidth = Math.round((width - (block.position?.width ?? 0)) / dayWidth) * dayWidth;
 
       // call update blockPosition
-      if (deltaWidth || deltaLeft) updateBlockPosition(block.id, deltaLeft, deltaWidth, dragDirection !== "move");
+      if (deltaWidth || deltaLeft) updateBlockPosition(block.id, deltaLeft, deltaWidth);
     };
 
     // remove event listeners and call updateBlockDates
@@ -105,11 +114,19 @@ export const useGanttResizable = (
       ganttContainerElement.removeEventListener("scroll", handleOnScroll);
       document.removeEventListener("mouseup", handleMouseUp);
 
+      // update half blocks only when the missing side of the block is directly dragged
+      const shouldUpdateHalfBlock =
+        (dragDirection === "left" && !block.start_date) || (dragDirection === "right" && !block.target_date);
+
       try {
-        const blockUpdates = getUpdatedPositionAfterDrag(block.id, dragDirection !== "move");
-        updateBlockDates && updateBlockDates(blockUpdates);
-      } catch (e) {
-        setToast;
+        const blockUpdates = getUpdatedPositionAfterDrag(block.id, shouldUpdateHalfBlock);
+        if (updateBlockDates) updateBlockDates(blockUpdates);
+      } catch {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error",
+          message: "Something went wrong while updating block dates",
+        });
       }
 
       setIsDragging(false);

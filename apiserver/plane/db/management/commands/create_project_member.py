@@ -13,28 +13,14 @@ from plane.db.models import (
 
 
 class Command(BaseCommand):
-
     help = "Add a member to a project. If present in the workspace"
 
     def add_arguments(self, parser):
         # Positional argument
+        parser.add_argument("--project_id", type=str, nargs="?", help="Project ID")
+        parser.add_argument("--user_email", type=str, nargs="?", help="User Email")
         parser.add_argument(
-            "--project_id",
-            type=str,
-            nargs="?",
-            help="Project ID",
-        )
-        parser.add_argument(
-            "--user_email",
-            type=str,
-            nargs="?",
-            help="User Email",
-        )
-        parser.add_argument(
-            "--role",
-            type=int,
-            nargs="?",
-            help="Role of the user in the project",
+            "--role", type=int, nargs="?", help="Role of the user in the project"
         )
 
     def handle(self, *args: Any, **options: Any):
@@ -67,9 +53,7 @@ class Command(BaseCommand):
 
             # Get the smallest sort order
             smallest_sort_order = (
-                ProjectMember.objects.filter(
-                    workspace_id=project.workspace_id,
-                )
+                ProjectMember.objects.filter(workspace_id=project.workspace_id)
                 .order_by("sort_order")
                 .first()
             )
@@ -79,22 +63,15 @@ class Command(BaseCommand):
             else:
                 sort_order = 65535
 
-            if ProjectMember.objects.filter(
-                project=project,
-                member=user,
-            ).exists():
+            if ProjectMember.objects.filter(project=project, member=user).exists():
                 # Update the project member
-                ProjectMember.objects.filter(
-                    project=project,
-                    member=user,
-                ).update(is_active=True, sort_order=sort_order, role=role)
+                ProjectMember.objects.filter(project=project, member=user).update(
+                    is_active=True, sort_order=sort_order, role=role
+                )
             else:
                 # Create the project member
                 ProjectMember.objects.create(
-                    project=project,
-                    member=user,
-                    role=role,
-                    sort_order=sort_order,
+                    project=project, member=user, role=role, sort_order=sort_order
                 )
 
             # Issue Property
@@ -102,9 +79,7 @@ class Command(BaseCommand):
 
             # Success message
             self.stdout.write(
-                self.style.SUCCESS(
-                    f"User {user_email} added to project {project_id}"
-                )
+                self.style.SUCCESS(f"User {user_email} added to project {project_id}")
             )
             return
         except CommandError as e:

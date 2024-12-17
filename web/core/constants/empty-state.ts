@@ -108,6 +108,8 @@ export enum EmptyStateType {
   INBOX_DETAIL_EMPTY_STATE = "inbox-detail-empty-state",
 
   WORKSPACE_DRAFT_ISSUES = "workspace-draft-issues",
+
+  PROJECT_NO_EPICS = "project-no-epics",
 }
 
 const emptyStateDetails = {
@@ -212,7 +214,7 @@ const emptyStateDetails = {
   [EmptyStateType.WORKSPACE_PROJECT_NOT_FOUND]: {
     key: EmptyStateType.WORKSPACE_PROJECT_NOT_FOUND,
     title: "No such project exists",
-    description: 'To create issues or manage your work, you need to create a project or be a part of one.',
+    description: "To create issues or manage your work, you need to create a project or be a part of one.",
     path: "/empty-state/onboarding/projects",
     primaryButton: {
       text: "Create Project",
@@ -521,7 +523,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.PROJECT_PAGE_PRIVATE]: {
     key: EmptyStateType.PROJECT_PAGE_PRIVATE,
@@ -532,7 +534,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.PROJECT_PAGE_PUBLIC]: {
     key: EmptyStateType.PROJECT_PAGE_PUBLIC,
@@ -543,7 +545,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.PROJECT_PAGE_ARCHIVED]: {
     key: EmptyStateType.PROJECT_PAGE_ARCHIVED,
@@ -561,7 +563,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "workspace",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.WORKSPACE_PAGE_PRIVATE]: {
     key: EmptyStateType.WORKSPACE_PAGE_PRIVATE,
@@ -572,7 +574,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "workspace",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.WORKSPACE_PAGE_PUBLIC]: {
     key: EmptyStateType.WORKSPACE_PAGE_PUBLIC,
@@ -583,7 +585,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "workspace",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.WORKSPACE_PAGE_ARCHIVED]: {
     key: EmptyStateType.WORKSPACE_PAGE_ARCHIVED,
@@ -785,6 +787,15 @@ const emptyStateDetails = {
       text: "Create your first draft",
     },
     accessType: "workspace",
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+  },
+  [EmptyStateType.PROJECT_NO_EPICS]: {
+    key: EmptyStateType.PROJECT_NO_EPICS,
+    title: "Create an epic and assign it to someone, even yourself",
+    description:
+      "For larger bodies of work that span several cycles and can live across modules, create an epic. Link issues and sub-issues in a project to an epic and jump into an issue from the overview.",
+    path: "/empty-state/onboarding/issues",
+    accessType: "project",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
 } as const;
