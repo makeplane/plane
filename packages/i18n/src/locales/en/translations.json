@@ -267,5 +267,9 @@
   "no_pending_invites": "No pending invites",
   "you_can_see_here_if_someone_invites_you_to_a_workspace": "You can see here if someone invites you to a workspace",
   "back_to_home": "Back to home",
-  "workspace_name": "workspace-name"
+  "workspace_name": "workspace-name",
+  "deactivate_your_account": "Deactivate your account",
+  "deactivate_your_account_description": "Once deactivated, you can't be assigned issues and be billed for your workspace. To reactivate your account, you will need an invite to a workspace at this email address.",
+  "deactivating": "Deactivating",
+  "confirm": "Confirm"
 }

@@ -267,5 +267,9 @@
   "no_pending_invites": "保留中の招待はありません",
   "you_can_see_here_if_someone_invites_you_to_a_workspace": "誰かがワークスペースに招待した場合、ここで確認できます",
   "back_to_home": "ホームに戻る",
-  "workspace_name": "ワークスペース名"
+  "workspace_name": "ワークスペース名",
+  "deactivate_your_account": "アカウントを無効化",
+  "deactivate_your_account_description": "無効化すると、問題を割り当てられなくなり、ワークスペースの請求もされなくなります。アカウントを再有効化するには、このメールアドレスに招待されたワークスペースが必要です。",
+  "deactivating": "無効化中",
+  "confirm": "確認"
 }

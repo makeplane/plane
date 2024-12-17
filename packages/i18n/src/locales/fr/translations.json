@@ -267,5 +267,9 @@
   "no_pending_invites": "Aucune invitation en attente",
   "you_can_see_here_if_someone_invites_you_to_a_workspace": "Vous pouvez voir ici si quelqu'un vous invite à rejoindre un espace de travail",
   "back_to_home": "Retour à l'accueil",
-  "workspace_name": "espace-de-travail"
+  "workspace_name": "espace-de-travail",
+  "deactivate_your_account": "Désactiver votre compte",
+  "deactivate_your_account_description": "Une fois désactivé, vous ne pourrez pas être assigné à des problèmes et être facturé pour votre espace de travail. Pour réactiver votre compte, vous aurez besoin d'une invitation à un espace de travail à cette adresse email.",
+  "deactivating": "Désactivation",
+  "confirm": "Confirmer"
 }
