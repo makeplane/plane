@@ -144,10 +144,5 @@ export type TEpicAnalytics = {
 };
 
 export interface IEpicService {
-  createIssue(workspaceSlug: string, projectId: string, data: any): Promise<any>;
-  patchIssue(workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>): Promise<any>;
-  deleteIssue(workspaceSlug: string, projectId: string, issuesId: string): Promise<any>;
-  getIssues(workspaceSlug: string, projectId: string, queries?: any, config?: {}): Promise<TIssuesResponse>;
-  retrieve(workspaceSlug: string, projectId: string, issueId: string, queries?: any): Promise<TIssue>;
   getIssueProgressAnalytics(workspaceSlug: string, projectId: string, issueId: string): Promise<TEpicAnalytics>;
 }

@@ -1,5 +1,6 @@
 import clone from "lodash/clone";
 import { action, makeObservable, runInAction } from "mobx";
+import { EIssueServiceType } from "@plane/constants";
 // types
 import {
   TIssue,
@@ -12,8 +13,7 @@ import {
   TIssueResponseResults,
 } from "@plane/types";
 // store
-import { updatePersistentLayer } from "@/local-db/utils/utils";
-import { EpicService } from "@/plane-web/services/issue-types";
+import { IssueService } from "@/services/issue";
 import { BaseIssuesStore, IBaseIssuesStore } from "@/store/issue/helpers/base-issues.store";
 import { IIssueRootStore } from "@/store/issue/root.store";
 // local store
@@ -59,12 +59,12 @@ export class ProjectEpics extends BaseIssuesStore implements IProjectEpics {
   router;
 
   // services
-  epicService;
+  issueService;
   // filter store
   issueFilterStore: IProjectEpicsFilter;
 
   constructor(_rootStore: IIssueRootStore, issueFilterStore: IProjectEpicsFilter) {
-    super(_rootStore, issueFilterStore);
+    super(_rootStore, issueFilterStore, false, EIssueServiceType.EPICS);
     makeObservable(this, {
       fetchIssues: action,
       subscribeBulkIssues: action,
@@ -74,7 +74,7 @@ export class ProjectEpics extends BaseIssuesStore implements IProjectEpics {
       quickAddIssue: action,
     });
     // services
-    this.epicService = new EpicService();
+    this.issueService = new IssueService(EIssueServiceType.EPICS);
     // filter store
     this.issueFilterStore = issueFilterStore;
     this.router = _rootStore.rootStore.router;
@@ -147,7 +147,7 @@ export class ProjectEpics extends BaseIssuesStore implements IProjectEpics {
       // get params from pagination options
       const params = this.issueFilterStore?.getFilterParams(options, projectId, undefined, undefined, undefined);
       // call the fetch issues API with the params
-      const response = await this.epicService.getIssues(workspaceSlug, projectId, params, {
+      const response = await this.issueService.getIssues(workspaceSlug, projectId, params, {
         signal: this.controller.signal,
       });
 
@@ -197,7 +197,7 @@ export class ProjectEpics extends BaseIssuesStore implements IProjectEpics {
         subGroupId
       );
       // call the fetch issues API with the params for next page in issues
-      const response = await this.epicService.getIssues(workspaceSlug, projectId, params);
+      const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
       // after the next page of issues are fetched, call the base method to process the response
       this.onfetchNexIssues(response, groupId, subGroupId);
@@ -235,7 +235,7 @@ export class ProjectEpics extends BaseIssuesStore implements IProjectEpics {
    */
   override createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => {
     // perform an API call
-    const response = await this.epicService.createIssue(workspaceSlug, projectId, data);
+    const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
     const shouldUpdateList = projectId === this.router.projectId;
 
     // add Issue to Store
@@ -271,7 +271,7 @@ export class ProjectEpics extends BaseIssuesStore implements IProjectEpics {
       if (!shouldSync) return;
 
       // call API to update the issue
-      await this.epicService.patchIssue(workspaceSlug, projectId, issueId, data);
+      await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
 
       // call fetch Parent Stats
       this.fetchParentStats(workspaceSlug, projectId);
@@ -291,7 +291,7 @@ export class ProjectEpics extends BaseIssuesStore implements IProjectEpics {
    */
   override async removeIssue(workspaceSlug: string, projectId: string, issueId: string) {
     // Male API call
-    await this.epicService.deleteIssue(workspaceSlug, projectId, issueId);
+    await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
     // Remove from Respective issue Id list
     runInAction(() => {
       this.removeIssueFromList(issueId);
