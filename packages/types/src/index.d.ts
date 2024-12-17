@@ -28,6 +28,7 @@ export * from "./workspace-views";
 export * from "./common";
 export * from "./pragmatic";
 export * from "./publish";
+export * from "./search";
 export * from "./workspace-notifications";
 export * from "./favorite";
 export * from "./file";

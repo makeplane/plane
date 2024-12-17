@@ -17,7 +17,7 @@ import { ETabIndices } from "@/constants/tab-indices";
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
-import { useMember, useProjectInbox } from "@/hooks/store";
+import { useProjectInbox } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { FileService } from "@/services/file.service";
@@ -51,11 +51,6 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
   // hooks
   const { loader } = useProjectInbox();
   const { isMobile } = usePlatformOS();
-  const {
-    project: { getProjectMemberIds },
-  } = useMember();
-  // derived values
-  const memberIds = getProjectMemberIds(projectId) ?? [];
 
   const { getIndex } = getTabIndex(ETabIndices.INTAKE_ISSUE_FORM, isMobile);
 
@@ -73,7 +68,6 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
       ref={editorRef}
       workspaceSlug={workspaceSlug}
       workspaceId={workspaceId}
-      memberIds={memberIds}
       projectId={projectId}
       dragDropEnabled={false}
       onChange={(_description: object, description_html: string) => handleData("description_html", description_html)}
