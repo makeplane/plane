@@ -1,5 +1,5 @@
 // helpers
-import { cn } from "@plane/editor";
+import { cn } from "@/helpers/common.helper";
 import { getFileURL } from "@/helpers/file.helper";
 
 type Props = {

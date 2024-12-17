@@ -6,7 +6,6 @@ import { useParams } from "next/navigation";
 // icons
 import { ListFilter, Search, X } from "lucide-react";
 // editor
-import { cn } from "@plane/editor";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
@@ -18,6 +17,7 @@ import { FiltersDropdown } from "@/components/issues";
 import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules/dropdowns";
 // constants
 import { MODULE_VIEW_LAYOUTS } from "@/constants/module";
+import { cn } from "@/helpers/common.helper";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks

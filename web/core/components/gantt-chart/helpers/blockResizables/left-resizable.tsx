@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // Plane
-import { cn } from "@plane/editor";
+import { cn } from "@/helpers/common.helper";
 //helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 //hooks

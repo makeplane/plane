@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
+import { cn } from "@/helpers/common.helper";
 // Plane
-import { cn } from "@plane/editor";
 
 type Props = {
   workspaceSlug: string;

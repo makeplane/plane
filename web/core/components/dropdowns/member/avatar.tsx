@@ -3,8 +3,8 @@
 import { observer } from "mobx-react";
 import { LucideIcon, Users } from "lucide-react";
 // plane ui
-import { cn } from "@plane/editor";
 import { Avatar, AvatarGroup } from "@plane/ui";
+import { cn } from "@/helpers/common.helper";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks

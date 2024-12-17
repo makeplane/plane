@@ -1,7 +1,7 @@
 import { Fragment, forwardRef } from "react";
 import range from "lodash/range";
-import { cn } from "@plane/editor";
 import { Row } from "@plane/ui";
+import { cn } from "@/helpers/common.helper";
 import { getRandomInt, getRandomLength } from "../utils";
 
 export const ListLoaderItemRow = forwardRef<

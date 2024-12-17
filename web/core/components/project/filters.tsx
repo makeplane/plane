@@ -3,11 +3,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ListFilter } from "lucide-react";
 // types
-import { cn } from "@plane/editor";
 import { TProjectFilters } from "@plane/types";
 // components
 import { FiltersDropdown } from "@/components/issues";
 import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project";
+import { cn } from "@/helpers/common.helper";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
