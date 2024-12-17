@@ -275,8 +275,8 @@ class SearchEndpoint(BaseAPIView):
                 users = (
                     ProjectMember.objects.filter(
                         q,
-                        project__project_projectmember__member=self.request.user,
-                        project__project_projectmember__is_active=True,
+                        member=self.request.user,
+                        is_active=True,
                         project_id=project_id,
                         workspace__slug=slug,
                     )

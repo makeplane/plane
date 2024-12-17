@@ -52,8 +52,14 @@ export const renderMentionsDropdown =
           popup?.[0]?.hide();
           return true;
         }
-        if (component?.ref?.onKeyDown(props)) {
-          return true;
+
+        const navigationKeys = ["ArrowUp", "ArrowDown", "Enter"];
+
+        if (navigationKeys.includes(props.event.key)) {
+          props.event?.stopPropagation();
+          if (component?.ref?.onKeyDown(props)) {
+            return true;
+          }
         }
         return false;
       },

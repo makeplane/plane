@@ -11,6 +11,9 @@ import { useEditorMention } from "@/hooks/use-editor-mention";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
+// services
+import { ProjectService } from "@/services/project";
+const projectService = new ProjectService();
 
 interface RichTextEditorWrapperProps
   extends Omit<IRichTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
@@ -26,8 +29,8 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // use editor mention
   const { fetchMentions } = useEditorMention({
-    projectId: projectId?.toString() ?? "",
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    searchEntity: async (payload) =>
+      await projectService.searchEntity(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "", payload),
   });
   // file size
   const { maxFileSize } = useFileSize();

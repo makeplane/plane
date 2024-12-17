@@ -14,6 +14,9 @@ import { useEditorMention } from "@/hooks/use-editor-mention";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
+// services
+import { ProjectService } from "@/services/project";
+const projectService = new ProjectService();
 
 interface LiteTextEditorWrapperProps
   extends Omit<ILiteTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
@@ -47,8 +50,8 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   const { liteTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // use editor mention
   const { fetchMentions } = useEditorMention({
-    projectId: projectId?.toString() ?? "",
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    searchEntity: async (payload) =>
+      await projectService.searchEntity(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "", payload),
   });
   // file size
   const { maxFileSize } = useFileSize();

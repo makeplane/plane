@@ -2,7 +2,7 @@ import type {
   GithubRepositoriesResponse,
   ISearchIssueResponse,
   TProjectIssuesSearchParams,
-  TSearchEntities,
+  TSearchEntityRequestPayload,
   TSearchResponse,
 } from "@plane/types";
 // helpers
@@ -166,11 +166,7 @@ export class ProjectService extends APIService {
   async searchEntity(
     workspaceSlug: string,
     projectId: string,
-    params: {
-      query_type: TSearchEntities[];
-      count?: number;
-      query: string;
-    }
+    params: TSearchEntityRequestPayload
   ): Promise<TSearchResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/entity-search/`, {
       params: {

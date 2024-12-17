@@ -34,11 +34,12 @@ import { useFileSize } from "@/plane-web/hooks/use-file-size";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // services
 import { FileService } from "@/services/file.service";
+import { ProjectService } from "@/services/project";
 // store
 import { IPage } from "@/store/pages/page";
-
 // services init
 const fileService = new FileService();
+const projectService = new ProjectService();
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
@@ -73,8 +74,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { isContentEditable, updateTitle } = page;
   // use editor mention
   const { fetchMentions } = useEditorMention({
-    projectId: projectId?.toString() ?? "",
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    searchEntity: async (payload) =>
+      await projectService.searchEntity(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "", payload),
   });
   // editor flaggings
   const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());

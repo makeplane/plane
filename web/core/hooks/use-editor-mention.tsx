@@ -2,7 +2,7 @@ import { useCallback } from "react";
 // plane editor
 import { TMentionSection, TMentionSuggestion } from "@plane/editor";
 // plane types
-import { TSearchEntities, TUserSearchResponse } from "@plane/types";
+import { TSearchEntities, TSearchEntityRequestPayload, TSearchResponse, TUserSearchResponse } from "@plane/types";
 // plane ui
 import { Avatar } from "@plane/ui";
 // helpers
@@ -11,24 +11,20 @@ import { getFileURL } from "@/helpers/file.helper";
 import { EDITOR_MENTION_TYPES } from "@/plane-web/constants/editor";
 // plane web hooks
 import { useAdditionalEditorMention } from "@/plane-web/hooks/use-additional-editor-mention";
-// services
-import { ProjectService } from "@/services/project";
-const projectService = new ProjectService();
 
 type TArgs = {
-  projectId: string;
-  workspaceSlug: string;
+  searchEntity: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
 };
 
 export const useEditorMention = (args: TArgs) => {
-  const { projectId, workspaceSlug } = args;
+  const { searchEntity } = args;
   // additional mentions
   const { updateAdditionalSections } = useAdditionalEditorMention();
   // fetch mentions handler
   const fetchMentions = useCallback(
     async (query: string): Promise<TMentionSection[]> => {
       try {
-        const res = await projectService.searchEntity(workspaceSlug, projectId, {
+        const res = await searchEntity({
           count: 5,
           query_type: EDITOR_MENTION_TYPES,
           query,
@@ -71,7 +67,7 @@ export const useEditorMention = (args: TArgs) => {
         throw error;
       }
     },
-    [projectId, updateAdditionalSections, workspaceSlug]
+    [searchEntity, updateAdditionalSections]
   );
 
   return {

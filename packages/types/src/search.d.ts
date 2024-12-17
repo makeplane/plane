@@ -73,3 +73,9 @@ export type TSearchResponse = {
   project_mention?: TProjectSearchResponse[];
   user_mention?: TUserSearchResponse[];
 };
+
+export type TSearchEntityRequestPayload = {
+  count: number;
+  query_type: TSearchEntities[];
+  query: string;
+};
