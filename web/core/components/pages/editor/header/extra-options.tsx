@@ -7,7 +7,6 @@ import { EditorRefApi } from "@plane/editor";
 import { ArchiveIcon, FavoriteStar, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // components
 import { LockedComponent } from "@/components/icons/locked-component";
-import { SyncingComponent } from "@/components/icons/syncing-component";
 import { PageInfoPopover, PageOptionsDropdown } from "@/components/pages";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
