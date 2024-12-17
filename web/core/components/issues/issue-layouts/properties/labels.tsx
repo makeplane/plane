@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
-import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
@@ -19,6 +18,7 @@ import { getRandomLabelColor } from "@/constants/label";
 import { useLabel, useUserPermissions } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
 // constants
 
 export interface IIssuePropertyLabels {

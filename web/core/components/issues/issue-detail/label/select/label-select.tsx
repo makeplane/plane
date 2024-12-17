@@ -1,5 +1,4 @@
 import { Fragment, useState } from "react";
-import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Check, Loader, Search, Tag } from "lucide-react";
@@ -11,6 +10,7 @@ import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useLabel, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
 //constants
 export interface IIssueLabelSelect {
   workspaceSlug: string;
