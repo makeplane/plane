@@ -15,7 +15,7 @@ from rest_framework.exceptions import Throttled
 # Module imports
 from .base import BaseAPIView
 from plane.app.permissions.workspace import WorkspaceUserPermission
-from plane.db.models import WorkspaceMember, Workspace
+from plane.db.models import WorkspaceMember, Workspace, WorkspaceMemberInvite
 from plane.ee.models import WorkspaceLicense
 from plane.utils.exception_logger import log_exception
 from plane.payment.utils.workspace_license_request import (
@@ -37,12 +37,17 @@ class ProductEndpoint(BaseAPIView):
         try:
             if settings.PAYMENT_SERVER_BASE_URL:
                 # Get all the paid users in the workspace
-                paid_count = WorkspaceMember.objects.filter(
-                    workspace__slug=slug,
-                    is_active=True,
-                    member__is_bot=False,
-                    role__gt=10,
-                ).count()
+                paid_count = (
+                    WorkspaceMember.objects.filter(
+                        workspace__slug=slug,
+                        is_active=True,
+                        member__is_bot=False,
+                        role__gt=10,
+                    ).count()
+                    + WorkspaceMemberInvite.objects.filter(
+                        workspace__slug=slug, role__gt=10
+                    ).count()
+                )
 
                 # Get all the viewers and guests in the workspace
                 free_count = WorkspaceMember.objects.filter(

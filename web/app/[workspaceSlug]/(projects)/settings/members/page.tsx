@@ -53,12 +53,11 @@ const WorkspaceMembersSettingsPage = observer(() => {
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const {
-    currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
-    // updateSubscribedPlan
-  } = useWorkspaceSubscription();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   // derived values
-  const isSelfHostedProWorkspace = subscriptionDetail?.is_self_managed && subscriptionDetail?.product === "PRO";
+  const isOfflineSubscription = subscriptionDetail?.is_offline_payment;
+  const isProOrBusinessWorkspace =
+    subscriptionDetail && !isOfflineSubscription && ["PRO", "BUSINESS"].includes(subscriptionDetail?.product);
 
   const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {
     if (!workspaceSlug) return;
@@ -82,9 +81,6 @@ const WorkspaceMembersSettingsPage = observer(() => {
           title: "Success!",
           message: "Invitations sent successfully.",
         });
-        // updateSubscribedPlan(workspaceSlug?.toString(), {
-        //   total_seats: (subscriptionDetail?.total_seats ?? 1) + data.emails.length,
-        // });
       })
       .catch((err) => {
         captureEvent(MEMBER_INVITED, {
@@ -127,7 +123,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           setUpdateWorkspaceSeatsModal(true);
         }}
       />
-      {isSelfHostedProWorkspace && updateWorkspaceSeatVariant && (
+      {isProOrBusinessWorkspace && updateWorkspaceSeatVariant && (
         <UpdateWorkspaceSeatsModal
           isOpen={updateWorkspaceSeatsModal}
           variant={updateWorkspaceSeatVariant}
@@ -137,7 +133,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           }}
         />
       )}
-      {isSelfHostedProWorkspace && (
+      {isProOrBusinessWorkspace && (
         <RemoveUnusedSeatsModal
           isOpen={removeUnusedSeatsConfirmationModal}
           handleClose={() => setRemoveUnusedSeatsConfirmationModal(false)}
@@ -165,7 +161,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
               Add member
             </Button>
           )}
-          {isSelfHostedProWorkspace && canPerformWorkspaceAdminActions && (
+          {isProOrBusinessWorkspace && canPerformWorkspaceAdminActions && (
             <CustomMenu
               customButton={
                 <Button variant="neutral-primary" size="sm" className="flex items-center justify-center gap-1">

@@ -7,6 +7,27 @@ from plane.ee.models import WorkspaceLicense
 from plane.payment.utils.workspace_license_request import resync_workspace_license
 
 
+def count_member_payments(members_list):
+    # Calculate the quantity of admin and member users based on the members list that is roles greater than 10
+    admin_member_users = len(
+        [member for member in members_list if member.get("user_role") > 10]
+    )
+    # Calculate the quantity of viewers and guest users based on the members list that is roles less than or equal to 10
+    viewers_guest_users = len(
+        [member for member in members_list if member.get("user_role") <= 10]
+    )
+
+    # Get the workspace paid quantity that is the quantity of admin and member users
+    workspace_paid_quantity = admin_member_users
+
+    # If the viewers and guest users are more than 5 times the workspace paid quantity then increase the workspace paid quantity by the difference
+    if viewers_guest_users > 5 * workspace_paid_quantity:
+        # Increase the workspace paid quantity by the difference
+        workspace_paid_quantity += viewers_guest_users - 5 * workspace_paid_quantity
+
+    return workspace_paid_quantity
+
+
 def handle_free_plan_invite_case(slug, requested_invite_list, workspace_license):
     """This function handles the free plan invite case"""
 
@@ -151,12 +172,12 @@ def handle_member_invite_case(requested_invite_list, slug, workspace_license):
 
         # Allowed admin members and guest viewers
         allowed_admin_members = (
-            workspace_license.purchased_seats <= total_admin_member_seats
+            total_admin_member_seats <= workspace_license.purchased_seats
         )
 
         # Allowed guest viewers
         allowed_guest_viewers = (
-            5 * workspace_license.purchased_seats <= total_guest_viewer_seats
+            total_guest_viewer_seats <= 5 * workspace_license.purchased_seats
         )
 
         # Return the allowed admin members and guest viewers
@@ -259,8 +280,7 @@ def handle_cloud_payments(
         b. Update case - requested_role is a role and requested_invite_list is None
             - Allowed for all roles since the total count of current members and invited members is less than or equal to workspace_license.free_seats
     Case2: Paid Plan
-        a. Online Payment case - all allowed - sync back to payment server for calculation
-        b. Offline Payment case
+        a. Online/Offline Payment case
             i. Invitation case - requested_role is None and requested_invite_list is a list of invite emails with roles
                 - Allowed only if the total count of paid current users and paid invited users and paid requested invite users is less than or equal to workspace_license.purchased_seats
             ii. Update case - requested_role is a role and requested_invite_list is None
@@ -269,8 +289,7 @@ def handle_cloud_payments(
 
     # Check the plan of the workspace license and trial
     if workspace_license.plan == WorkspaceLicense.PlanChoice.FREE:
-        # FREE or Trial Case
-
+        # FREE Plan Case
         # Check Case 1a or Case 1b
         if requested_invite_list and not requested_role:
             return handle_free_plan_invite_case(
@@ -288,11 +307,6 @@ def handle_cloud_payments(
             )
 
     else:
-        # Paid Plan Case - PRO Plan
-        if not workspace_license.is_offline_payment:
-            # Online Payment Case
-            return True, 0, 0
-
         # Case 2b i. or Case 2b ii.
         if requested_invite_list and not requested_role:
             return handle_member_invite_case(
@@ -342,7 +356,11 @@ def handle_self_managed_payments(
         return True, 0, 0
 
     # Subscription Plan Case
-    if workspace_license.plan == WorkspaceLicense.PlanChoice.PRO:
+    if workspace_license.plan in [
+        WorkspaceLicense.PlanChoice.PRO.value,
+        WorkspaceLicense.PlanChoice.BUSINESS.value,
+        WorkspaceLicense.PlanChoice.ENTERPRISE.value,
+    ]:
         if requested_invite_list and not requested_role:
             return handle_member_invite_case(
                 requested_invite_list=requested_invite_list,
@@ -382,14 +400,13 @@ def workspace_member_check(slug, requested_invite_list, requested_role, current_
 
     # Get the workspace license
     if settings.IS_MULTI_TENANT:
-        # return handle_cloud_payments(
-        #     slug=slug,
-        #     requested_invite_list=requested_invite_list,
-        #     requested_role=requested_role,
-        #     current_role=current_role,
-        #     workspace_license=workspace_license,
-        # )
-        return True, 0, 0
+        return handle_cloud_payments(
+            slug=slug,
+            requested_invite_list=requested_invite_list,
+            requested_role=requested_role,
+            current_role=current_role,
+            workspace_license=workspace_license,
+        )
     else:
         return handle_self_managed_payments(
             slug=slug,

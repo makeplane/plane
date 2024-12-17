@@ -13,7 +13,7 @@ func GetInstanceLicenses(api prime_api.IPrimeMonitorApi, key string) func(*fiber
 
 		// Check if the product type is PRO or ONE on any of the licenses
 		record := db.Db.Model(&db.License{}).
-			Where("product_type IN ?", []string{"PRO", "ONE"}).Select("1").Limit(1).Find(&exists)
+			Where("product_type IN ?", []string{"PRO", "ONE", "BUSINESS", "ENTERPRISE"}).Select("1").Limit(1).Find(&exists)
 
 		// If there is an error, return false
 		if record.Error != nil {

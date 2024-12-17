@@ -1,12 +1,14 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 // store hooks
 import { IWorkspaceAuthWrapper } from "@/ce/layouts/workspace-wrapper";
 import { useWorkspace } from "@/hooks/store";
 // layouts
 import { WorkspaceAuthWrapper as CoreWorkspaceAuthWrapper } from "@/layouts/auth-layout";
+// plane web components
+import { WorkspaceDisabledPage } from "@/plane-web/components/license";
 // plane web hooks
 import {
   useFlag,
@@ -25,6 +27,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { children } = props;
   // router
   const { workspaceSlug } = useParams();
+  const pathname = usePathname();
   // hooks
   const { currentWorkspace } = useWorkspace();
   // store hooks
@@ -32,9 +35,12 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { fetchWorkspaceFeatures, workspaceFeatures } = useWorkspaceFeatures();
   const { fetchProjectStates } = useWorkspaceProjectStates();
   const { isTeamsFeatureEnabled, fetchTeams } = useTeams();
-  const { fetchWorkspaceSubscribedPlan } = useWorkspaceSubscription();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, fetchWorkspaceSubscribedPlan } =
+    useWorkspaceSubscription();
   const { fetchAll } = useIssueTypes();
   // derived values
+  const isFreeMemberCountExceeded = subscriptionDetail?.is_free_member_count_exceeded;
+  const isWorkspaceSettingsRoute = pathname.includes(`/${workspaceSlug}/settings`);
   const isIssueTypesEnabled = useFlag(workspaceSlug?.toString(), "ISSUE_TYPE_DISPLAY", false);
   const isEpicsEnabled = useFlag(workspaceSlug?.toString(), "EPICS_DISPLAY", false);
   const isProjectStateEnabled =
@@ -88,6 +94,15 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
 
   // loading state
   const isLoading = flagsLoader && !flagsError;
+
+  // if workspace has exceeded the free member count
+  if (isFreeMemberCountExceeded && !isWorkspaceSettingsRoute) {
+    return (
+      <CoreWorkspaceAuthWrapper isLoading={isLoading}>
+        <WorkspaceDisabledPage />
+      </CoreWorkspaceAuthWrapper>
+    );
+  }
 
   return <CoreWorkspaceAuthWrapper isLoading={isLoading}>{children}</CoreWorkspaceAuthWrapper>;
 });

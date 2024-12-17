@@ -113,11 +113,7 @@ class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
 
     def post(self, request, slug):
         try:
-            if settings.IS_MULTI_TENANT:
-                return Response(
-                    {"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN
-                )
-
+            # Get the workspace
             workspace = Workspace.objects.get(slug=slug)
 
             quantity = request.data.get(
@@ -132,10 +128,7 @@ class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
 
             # Check the active paid users in the workspace
             workspace_member_count = WorkspaceMember.objects.filter(
-                workspace__slug=slug,
-                is_active=True,
-                member__is_bot=False,
-                member__gt=10,
+                workspace__slug=slug, is_active=True, member__is_bot=False, role__gt=10
             ).count()
 
             invited_member_count = WorkspaceMemberInvite.objects.filter(
@@ -204,19 +197,12 @@ class RemoveUnusedSeatsEndpoint(BaseAPIView):
 
     def post(self, request, slug):
         try:
-            if settings.IS_MULTI_TENANT:
-                return Response(
-                    {"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN
-                )
-
+            # Get the workspace
             workspace = Workspace.objects.get(slug=slug)
 
             # Check the active paid users in the workspace
             workspace_member_count = WorkspaceMember.objects.filter(
-                workspace__slug=slug,
-                is_active=True,
-                member__is_bot=False,
-                member__gt=10,
+                workspace__slug=slug, is_active=True, member__is_bot=False, role__gt=10
             ).count()
 
             invited_member_count = WorkspaceMemberInvite.objects.filter(

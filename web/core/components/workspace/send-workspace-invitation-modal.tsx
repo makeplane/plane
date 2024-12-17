@@ -9,7 +9,7 @@ import { Info, Plus, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
-import { Button, CustomSelect, Input, Loader } from "@plane/ui";
+import { Button, CustomSelect, getButtonStyling, Input, Loader, Tooltip } from "@plane/ui";
 // constants
 import { ROLE } from "@/constants/workspace";
 // helpers
@@ -20,7 +20,9 @@ import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web services
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web services
-import selfHostedSubscriptionService from "@/plane-web/services/self-hosted-subscription.service";
+import { PaymentService } from "@/plane-web/services/payment.service";
+
+const paymentService = new PaymentService();
 
 type Props = {
   isOpen: boolean;
@@ -56,14 +58,15 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
   // plane web hooks
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   // derived values
-  const isSelfHostedProWorkspace = subscriptionDetail?.is_self_managed && subscriptionDetail?.product === "PRO";
+  const isOfflineSubscription = subscriptionDetail?.is_offline_payment;
+  const isProOrBusinessWorkspace = subscriptionDetail && ["PRO", "BUSINESS"].includes(subscriptionDetail.product);
   // swr
   const {
     isLoading: isMemberInviteCheckLoading,
     data: memberInviteCheckData,
     mutate: mutateMemberInviteCheck,
-  } = useSWR(workspaceSlug ? `SELF_HOSTED_MEMBER_INVITE_CHECK_${workspaceSlug}` : null, () =>
-    workspaceSlug ? selfHostedSubscriptionService.memberInviteCheck(workspaceSlug?.toString()) : null
+  } = useSWR(workspaceSlug ? `MEMBER_INVITE_CHECK_${workspaceSlug}` : null, () =>
+    workspaceSlug ? paymentService.memberInviteCheck(workspaceSlug?.toString()) : null
   );
   // form info
   const {
@@ -126,12 +129,12 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
     (memberInviteCheckData?.allowed_admin_members === 0 && memberInviteCheckData?.allowed_guests === 0);
   // check if the invitation limit is reached
   const isInvitationLimitReached =
-    isSelfHostedProWorkspace &&
+    isProOrBusinessWorkspace &&
     (isInviteStatusDisabled ||
       totalAdminAndMembers > (memberInviteCheckData?.allowed_admin_members ?? 0) ||
       totalGuests > (memberInviteCheckData?.allowed_guests ?? 0));
 
-  const isInviteDisabled = isSelfHostedProWorkspace ? isMemberInviteCheckLoading || isInvitationLimitReached : false;
+  const isInviteDisabled = isProOrBusinessWorkspace ? isMemberInviteCheckLoading || isInvitationLimitReached : false;
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -171,7 +174,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                       Add coworkers, clients, and consultants
                     </Dialog.Title>
                     <div>
-                      {isSelfHostedProWorkspace ? (
+                      {isProOrBusinessWorkspace ? (
                         <>
                           {isMemberInviteCheckLoading ? (
                             <Loader className="w-full h-10">
@@ -285,14 +288,28 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                           </p>
                         </div>
                         <div className="flex-shirk-0 flex items-end pl-2">
-                          <Button
-                            variant="primary"
-                            size="sm"
-                            className="py-1 px-2"
-                            onClick={handleToggleUpdateWorkspaceSeatsModal}
-                          >
-                            Add more seats
-                          </Button>
+                          {isOfflineSubscription ? (
+                            <Tooltip
+                              tooltipContent="You have an offline subscription. Please contact support to add more seats."
+                              position="right"
+                            >
+                              <a
+                                href="mailto:support@plane.so"
+                                className={cn(getButtonStyling("primary", "sm"), "py-1 px-2")}
+                              >
+                                Contact support
+                              </a>
+                            </Tooltip>
+                          ) : (
+                            <Button
+                              variant="primary"
+                              size="sm"
+                              className="py-1 px-2"
+                              onClick={handleToggleUpdateWorkspaceSeatsModal}
+                            >
+                              Add more seats
+                            </Button>
+                          )}
                         </div>
                       </div>
                     )}

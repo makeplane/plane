@@ -5,7 +5,9 @@ import { AlertModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web services
-import selfHostedSubscriptionService from "@/plane-web/services/self-hosted-subscription.service";
+import { PaymentService } from "@/plane-web/services/payment.service";
+
+const paymentService = new PaymentService();
 
 type TRemoveUnusedSeatsProps = {
   isOpen: boolean;
@@ -23,7 +25,7 @@ export const RemoveUnusedSeatsModal: FC<TRemoveUnusedSeatsProps> = (props) => {
 
   const handleSubmit = () => {
     setIsSubmitting(true);
-    selfHostedSubscriptionService
+    paymentService
       .removeUnusedSeats(workspaceSlug?.toString())
       .then((response) => {
         setToast({

@@ -227,7 +227,7 @@ func GetSyncFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(
 			db.Db.Delete(&user)
 		}
 
-		if license.ProductType == "PRO" {
+		if license.ProductType == "PRO" || license.ProductType == "BUSINESS" || license.ProductType == "ENTERPRISE" {
 			for _, user := range addedUsers {
 				userUUID, _ := uuid.Parse(user.UserId)
 				// A user can be added in active mode, if there are seats available

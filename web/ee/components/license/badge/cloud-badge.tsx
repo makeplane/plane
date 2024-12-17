@@ -10,7 +10,7 @@ import { Button } from "@plane/ui";
 import { useEventTracker } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components
-import { CloudUpgradeModal } from "@/plane-web/components/license";
+import { PaidPlanUpgradeModal } from "@/plane-web/components/license";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // assets
@@ -67,12 +67,7 @@ export const CloudEditionBadge = observer(() => {
 
   return (
     <>
-      <CloudUpgradeModal
-        isOpen={isPaidPlanModalOpen}
-        handleClose={() => togglePaidPlanModal(false)}
-        handleSuccessModal={() => handleSuccessModalToggle(true)}
-      />
-
+      <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
       {subscriptionDetail.show_payment_button && (
         <Button
           tabIndex={-1}

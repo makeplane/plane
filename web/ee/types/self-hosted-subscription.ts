@@ -12,9 +12,3 @@ export type TSelfHostedSubscription = {
   message: "string";
   status: boolean;
 };
-
-export type TSelfHostedMemberInviteCheck = {
-  invite_allowed: boolean;
-  allowed_admin_members: number;
-  allowed_guests: number;
-};

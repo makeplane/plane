@@ -25,8 +25,8 @@ export const LicenseSeatsBanner: FC = observer(() => {
   const { currentWorkspace } = useWorkspace();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
-  const showBanner = subscriptionDetail?.show_cloud_seats_banner;
-  const totalSeats = subscriptionDetail?.total_seats ?? 1;
+  const showBanner = subscriptionDetail?.show_seats_banner;
+  const totalSeats = subscriptionDetail?.occupied_seats ?? 1;
   const freeSeats = subscriptionDetail?.free_seats ?? 1;
 
   if (!currentWorkspace || !subscriptionDetail || !showBanner) return <></>;

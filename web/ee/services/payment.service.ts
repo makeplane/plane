@@ -1,4 +1,4 @@
-import { IPaymentProduct, IWorkspaceProductSubscription } from "@plane/types";
+import { IPaymentProduct, IWorkspaceProductSubscription, TMemberInviteCheck } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -59,6 +59,48 @@ export class PaymentService extends APIService {
 
   async getFreeTrialSubscription(workspaceSlug: string, payload: { product_id: string; price_id: string }) {
     return this.post(`/api/payments/workspaces/${workspaceSlug}/trial-subscriptions/`, payload)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description checking if the member invite is allowed
+   * @param { string } workspaceSlug
+   * @returns { TMemberInviteCheck }
+   */
+  async memberInviteCheck(workspaceSlug: string): Promise<TMemberInviteCheck> {
+    return await this.get(`/api/workspaces/${workspaceSlug}/invite-check/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description updating the workspace seats
+   * @param { string } workspaceSlug
+   * @param { number } quantity
+   * @returns { Promise<{ seats: number }> }
+   */
+  async updateWorkspaceSeats(workspaceSlug: string, quantity: number): Promise<{ seats: number }> {
+    return this.post(`/api/payments/workspaces/${workspaceSlug}/subscriptions/seats/`, {
+      quantity,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description removing unused seats
+   * @param { string } workspaceSlug
+   * @returns { Promise<{ seats: number }> }
+   */
+  async removeUnusedSeats(workspaceSlug: string): Promise<{ seats: number }> {
+    return this.post(`/api/payments/workspaces/${workspaceSlug}/subscriptions/seats/remove-unused/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

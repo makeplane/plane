@@ -100,6 +100,7 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
                 # Return the response
                 return Response(response.json(), status=status.HTTP_200_OK)
             except requests.exceptions.RequestException as e:
+                print(e)
                 if e.response.status_code == 400:
                     return Response(
                         e.response.json(), status=status.HTTP_400_BAD_REQUEST
