@@ -23,4 +23,5 @@ export type TProjectAnalytics = {
 
 export type TProjectFeatures = {
   is_project_updates_enabled: boolean;
+  is_epic_enabled: boolean;
 };

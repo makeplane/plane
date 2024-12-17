@@ -835,6 +835,9 @@ const emptyStateDetails = {
     description:
       "For larger bodies of work that span several cycles and can live across modules, create an epic. Link issues and sub-issues in a project to an epic and jump into an issue from the overview.",
     path: "/empty-state/onboarding/issues",
+    primaryButton: {
+      text: "Create an Epic",
+    },
     accessType: "project",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },

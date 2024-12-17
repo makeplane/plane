@@ -37,7 +37,7 @@ export const EpicsHeader = observer(() => {
   const { allowPermissions } = useUserPermissions();
   const { isMobile } = usePlatformOS();
   // derived values
-  const issuesCount = getGroupIssueCount(undefined, undefined, false);
+  const issuesCount = getGroupIssueCount(undefined, undefined, false) || 0;
   const canUserCreateIssue = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
@@ -85,7 +85,7 @@ export const EpicsHeader = observer(() => {
                 link={<BreadcrumbLink label="Epics" icon={<EpicIcon className="h-4 w-4 text-custom-text-300" />} />}
               />
             </Breadcrumbs>
-            {issuesCount && issuesCount > 0 ? (
+            {issuesCount > 0 ? (
               <Tooltip
                 isMobile={isMobile}
                 tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "epics" : "epic"} in this project`}
@@ -97,15 +97,17 @@ export const EpicsHeader = observer(() => {
           </div>
         </Header.LeftItem>
         <Header.RightItem>
-          <div className="hidden gap-3 md:flex">
-            <HeaderFilters
-              storeType={EIssuesStoreType.EPIC}
-              projectId={projectId?.toString()}
-              currentProjectDetails={currentProjectDetails}
-              workspaceSlug={workspaceSlug?.toString()}
-              canUserCreateIssue={canUserCreateIssue}
-            />
-          </div>
+          {issuesCount > 0 && (
+            <div className="hidden gap-3 md:flex">
+              <HeaderFilters
+                storeType={EIssuesStoreType.EPIC}
+                projectId={projectId?.toString()}
+                currentProjectDetails={currentProjectDetails}
+                workspaceSlug={workspaceSlug?.toString()}
+                canUserCreateIssue={canUserCreateIssue}
+              />
+            </div>
+          )}
           {canUserCreateIssue && (
             <Button
               onClick={() => {

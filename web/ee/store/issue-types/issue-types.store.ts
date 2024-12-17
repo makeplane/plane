@@ -532,7 +532,7 @@ export class IssueTypes implements IIssueTypesStore {
       const issueType = await this.issueTypesService.enable({ workspaceSlug, projectId });
       runInAction(() => {
         // enable `is_issue_type_enabled` in project details
-        set(this.rootStore.projectRoot.project.projectMap, [projectId, "is_issue_type_enabled"], true);
+        set(this.rootStore.projectDetails.features, [projectId, "is_issue_type_enabled"], true);
         // add issue type to the store
         this.addOrUpdateIssueTypes([issueType]);
         // get all issues
@@ -564,7 +564,7 @@ export class IssueTypes implements IIssueTypesStore {
       const epic = await this.epicIssueTypesService.enable({ workspaceSlug, projectId });
       runInAction(() => {
         // enable `is_epic_enabled` in project details
-        set(this.rootStore.projectRoot.project.projectMap, [projectId, "is_epic_enabled"], true);
+        set(this.rootStore.projectDetails.features, [projectId, "is_epic_enabled"], true);
         // add epic issue type to the store
         set(this.projectEpics, projectId, epic);
         this.loader = "loaded";
@@ -588,7 +588,7 @@ export class IssueTypes implements IIssueTypesStore {
     try {
       runInAction(() => {
         // disable `is_epic_enabled` in project details
-        set(this.rootStore.projectRoot.project.projectMap, [projectId, "is_epic_enabled"], false);
+        set(this.rootStore.projectDetails.features, [projectId, "is_epic_enabled"], false);
         // remove epic issue type from the store
         set(this.projectEpics, projectId, undefined);
       });
@@ -596,7 +596,7 @@ export class IssueTypes implements IIssueTypesStore {
     } catch (error) {
       runInAction(() => {
         // revert the changes
-        set(this.rootStore.projectRoot.project.projectMap, [projectId, "is_epic_enabled"], true);
+        set(this.rootStore.projectDetails.features, [projectId, "is_epic_enabled"], true);
         set(this.projectEpics, projectId, epic);
       });
       throw error;
@@ -609,7 +609,10 @@ export class IssueTypes implements IIssueTypesStore {
    */
   fetchAllIssueTypes = async (workspaceSlug: string) => {
     if (!workspaceSlug) return Promise.resolve([]);
-    const isIssueTypesEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("ISSUE_TYPE_DISPLAY", false);
+    const isIssueTypesEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace(
+      "ISSUE_TYPE_DISPLAY",
+      false
+    );
     if (!isIssueTypesEnabled) return Promise.resolve([]);
     return this.issueTypesService.fetchAll({ workspaceSlug });
   };

@@ -10,6 +10,7 @@ import { ProjectNavigation, TNavigationItem } from "@/components/workspace";
 import { useProject } from "@/hooks/store";
 // plane-web constants
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
+import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 // local components
 import { WithFeatureFlagHOC } from "../feature-flags";
 
@@ -22,9 +23,11 @@ export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = observer((props
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getProjectById } = useProject();
+  const { features } = useProjectAdvanced();
   // derived values
   const project = getProjectById(projectId);
-  const isEpicsEnabled = project?.is_epic_enabled;
+  const currentProjectDetails = features[projectId?.toString()];
+  const isEpicsEnabled = currentProjectDetails?.is_epic_enabled;
 
   if (!project) return null;
 

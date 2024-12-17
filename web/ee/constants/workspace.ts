@@ -53,7 +53,7 @@ export const WORKSPACE_SETTINGS = {
     label: "Initiatives",
     href: `/settings/initiatives`,
     access: [EUserPermissions.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/initiatives`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/initiatives/`,
     Icon: InitiativeIcon,
   },
 };

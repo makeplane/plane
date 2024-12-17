@@ -157,9 +157,12 @@ export const EpicDetailsSidebar: FC<TEpicDetailsSidebarProps> = observer((props)
         <SidebarTabContent
           title="Activity"
           actionElement={
-            <span className="size-5">
-              <ActivitySortRoot sortOrder={sortOrder} toggleSort={toggleSortOrder} className="size-3.5" />
-            </span>
+            <ActivitySortRoot
+              sortOrder={sortOrder}
+              toggleSort={toggleSortOrder}
+              className="flex-shrink-0"
+              iconClassName="size-3"
+            />
           }
         >
           <EpicSidebarActivityRoot

@@ -4,11 +4,9 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronRight } from "lucide-react";
 // ui
-import { Collapsible, setPromiseToast, ToggleSwitch, Tooltip } from "@plane/ui";
+import { Collapsible } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
-// hooks
-import { useProject } from "@/hooks/store";
 // plane web components
 import { IssuePropertiesRoot } from "@/plane-web/components/issue-types";
 // plane web hooks
@@ -22,40 +20,13 @@ type EpicPropertiesProps = {
 
 export const EpicPropertiesRoot = observer((props: EpicPropertiesProps) => {
   // props
-  const { epicId, workspaceSlug, projectId } = props;
+  const { epicId, projectId } = props;
   // states
   const [isOpen, setIsOpen] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
   // store hooks
-  const { getProjectById } = useProject();
-  const { enableEpics, disableEpics, projectEpics } = useIssueTypes();
+  const { projectEpics } = useIssueTypes();
   // derived values
-  const project = getProjectById(projectId);
   const epicDetail = projectId ? projectEpics[projectId?.toString()] : undefined;
-  const isEpicEnabled = project?.is_epic_enabled;
-
-  const handleEnableDisableEpic = async () => {
-    setIsLoading(true);
-    const epicStatusPromise = isEpicEnabled
-      ? disableEpics(workspaceSlug, projectId)
-      : enableEpics(workspaceSlug, projectId);
-    if (!epicStatusPromise) return;
-    setPromiseToast(epicStatusPromise, {
-      loading: `${isEpicEnabled ? "Disabling" : "Enabling"} ${epicDetail?.name} epic`,
-      success: {
-        title: "Success!",
-        message: () => `Epic ${isEpicEnabled ? "disabled" : "enabled"} successfully.`,
-      },
-      error: {
-        title: "Error!",
-        message: () =>
-          `${epicDetail?.name} epic could not be ${isEpicEnabled ? "disabled" : "enabled"}. Please try again.`,
-      },
-    });
-    await epicStatusPromise.finally(() => {
-      setIsLoading(false);
-    });
-  };
 
   if (!epicDetail) return null;
 
@@ -95,17 +66,6 @@ export const EpicPropertiesRoot = observer((props: EpicPropertiesProps) => {
                     Add custom properties to your epic.
                   </div>
                 </div>
-              </div>
-              <div className="flex-shrink-0 flex">
-                <Tooltip
-                  className="shadow"
-                  tooltipContent={!!isEpicEnabled ? "Click to disable" : "Click to enable"}
-                  position="bottom"
-                >
-                  <div className="w-12">
-                    <ToggleSwitch value={!!isEpicEnabled} onChange={handleEnableDisableEpic} disabled={isLoading} />
-                  </div>
-                </Tooltip>
               </div>
             </div>
           }
