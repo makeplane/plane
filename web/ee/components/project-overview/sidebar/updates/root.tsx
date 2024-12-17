@@ -9,6 +9,7 @@ import { UpdateBlock } from "./block";
 import { EmptyUpdates } from "./empty";
 import { NewUpdate } from "./new-update";
 import { useUpdates } from "./use-updates";
+import { UpdatesLoader } from "./loader";
 
 export const ProjectUpdates = observer(() => {
   const { workspaceSlug, projectId } = useParams();
@@ -31,11 +32,7 @@ export const ProjectUpdates = observer(() => {
   };
 
   return loader ? (
-    <Loader className="flex flex-col gap-4 py-4">
-      <Loader.Item height="125px" width="100%" />
-      <Loader.Item height="125px" width="100%" />
-      <Loader.Item height="125px" width="100%" />
-    </Loader>
+    <UpdatesLoader />
   ) : (
     <>
       {/* New Update */}

@@ -116,7 +116,7 @@ export const ProjectDescriptionInput: FC<ProjectDescriptionInputProps> = observe
                     project.id,
                     {
                       entity_identifier: project.id,
-                      entity_type: EFileAssetType.ISSUE_DESCRIPTION,
+                      entity_type: EFileAssetType.PROJECT_DESCRIPTION,
                     },
                     file
                   );

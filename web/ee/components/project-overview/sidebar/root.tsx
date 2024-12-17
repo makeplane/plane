@@ -22,6 +22,8 @@ import { UpgradeProperties } from "./properties/upgrade";
 import { SidebarTabContent } from "./sidebar-tab-content";
 import { ProjectUpdates } from "./updates/root";
 import { UpgradeUpdates } from "./updates/upgrade";
+import { isEmpty } from "lodash";
+import { UpdatesLoader } from "./updates/loader";
 
 type TEpicDetailsSidebarProps = {
   project: TProject;
@@ -77,10 +79,12 @@ export const ProjectDetailsSidebar: FC<TEpicDetailsSidebarProps> = observer((pro
     {
       key: "updates",
       icon: UpdatesIcon,
-      content: isProjectUpdatesEnabled ? (
-        <ProjectUpdates />
-      ) : (
+      content: isEmpty(features[project.id]) ? (
+        <UpdatesLoader />
+      ) : !isProjectUpdatesEnabled ? (
         <UpgradeUpdates workspaceSlug={workspaceSlug.toString()} projectId={project.id} />
+      ) : (
+        <ProjectUpdates />
       ),
     },
     {
