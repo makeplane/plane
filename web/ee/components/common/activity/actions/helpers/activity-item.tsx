@@ -27,7 +27,7 @@ export const ActivityItem: FC<TActivityItem> = observer((props) => {
     <ActivityBlockComponent icon={icon} activity={activity} ends={ends} customUserName={customUserName}>
       <>
         {message}
-        {showProject && " for project "}
+        {activityType !== "project" && showProject && " for project "}
         <span className="font-normal">{activity.project_detail?.name}</span>
       </>
     </ActivityBlockComponent>

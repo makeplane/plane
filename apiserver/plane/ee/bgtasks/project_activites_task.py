@@ -365,6 +365,7 @@ def create_project_activity(
         workspace_id=workspace_id,
         comment="created the project",
         verb="created",
+        field="project",
         actor_id=actor_id,
         epoch=epoch,
     )

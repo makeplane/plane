@@ -42,6 +42,7 @@ export const ProjectDetailsSidebar: FC<TEpicDetailsSidebarProps> = observer((pro
     features[project.id] &&
     features[project.id].is_project_updates_enabled &&
     useFlag(workspaceSlug.toString(), "PROJECT_UPDATES");
+
   const isProjectGroupingEnabled =
     isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
     useFlag(workspaceSlug.toString(), "PROJECT_GROUPING");
@@ -59,7 +60,7 @@ export const ProjectDetailsSidebar: FC<TEpicDetailsSidebarProps> = observer((pro
       icon: InfoFillIcon,
       content: (
         <SidebarTabContent title="Properties">
-          {!isProjectGroupingEnabled ? (
+          {isProjectGroupingEnabled ? (
             <ProjectPropertiesSidebar
               project={project}
               isArchived={project.archived_at !== null}

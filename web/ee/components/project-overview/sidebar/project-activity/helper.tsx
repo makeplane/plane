@@ -207,12 +207,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       };
     case "inbox":
       return {
-        message: (
-          <>
-            {newValue ? "enabled" : "disabled"} inbox for{" "}
-            <span className="font-medium text-custom-text-100">{activity.project_detail?.name || "this project"}</span>
-          </>
-        ),
+        message: <>{newValue ? "enabled" : "disabled"} inbox</>,
       };
     case "page":
       return {
@@ -225,12 +220,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       };
     case "network":
       return {
-        message: (
-          <>
-            {newValue ? "enabled" : "disabled"} network access for{" "}
-            <span className="font-medium text-custom-text-100">{activity.project_detail?.name || "this project"}</span>
-          </>
-        ),
+        message: <>{newValue ? "enabled" : "disabled"} network access</>,
       };
     case "identifier":
       return {
@@ -257,59 +247,33 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       return {
         message: (
           <>
-            {getBooleanActionText(newValue)} {activityType.replace(/_view$/, "").replace(/_/g, " ")} view for{" "}
-            <span className="font-medium text-custom-text-100">{activity.project_detail?.name || "this project"}</span>
+            {getBooleanActionText(newValue)} {activityType.replace(/_view$/, "").replace(/_/g, " ")} view
           </>
         ),
       };
     case "is_project_updates_enabled":
       return {
-        message: (
-          <>
-            {getBooleanActionText(newValue)} project updates for{" "}
-            <span className="font-medium text-custom-text-100">{activity.project_detail?.name || "this project"}</span>
-          </>
-        ),
+        message: <>{getBooleanActionText(newValue)} project updates</>,
       };
     case "is_epic_enabled":
       return {
-        message: (
-          <>
-            {getBooleanActionText(newValue)} epics for{" "}
-            <span className="font-medium text-custom-text-100">{activity.project_detail?.name || "this project"}</span>
-          </>
-        ),
+        message: <>{getBooleanActionText(newValue)} epics</>,
       };
     case "is_workflow_enabled":
       return {
-        message: (
-          <>
-            {getBooleanActionText(newValue)} custom workflow for{" "}
-            <span className="font-medium text-custom-text-100">{activity.project_detail?.name || "this project"}</span>
-          </>
-        ),
+        message: <>{getBooleanActionText(newValue)} custom workflow</>,
       };
     case "is_time_tracking_enabled":
       return {
-        message: (
-          <>
-            {getBooleanActionText(newValue)} time tracking for{" "}
-            <span className="font-medium text-custom-text-100">{activity.project_detail?.name || "this project"}</span>
-          </>
-        ),
+        message: <>{getBooleanActionText(newValue)} time tracking</>,
       };
     case "is_issue_type_enabled":
       return {
-        message: (
-          <>
-            {getBooleanActionText(newValue)} issue types for{" "}
-            <span className="font-medium text-custom-text-100">{activity.project_detail?.name || "this project"}</span>
-          </>
-        ),
+        message: <>{getBooleanActionText(newValue)} issue types</>,
       };
     default:
       return {
-        message: `${verb} ${activityType.replace(/_/g, " ")}`,
+        message: `${verb} ${activityType.replace(/_/g, " ")} `,
       };
   }
 };

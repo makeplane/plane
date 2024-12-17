@@ -12,7 +12,7 @@ export const UpgradeProperties = (props: TProps) => {
   const { workspaceSlug, projectId } = props;
   return (
     <div className="flex h-full">
-      <div className="m-auto">
+      <div className="m-auto mt-[50%]">
         <Image src={ImagelLight} alt="No updates" className="w-[161px] m-auto" />
         <div className="w-fit m-auto text-lg font-medium items-center">Project Properties</div>
         <div className="w-fit m-auto font-medium text-base text-custom-text-350 text-center my-2">
