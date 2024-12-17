@@ -224,7 +224,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                 name="cover_image_url"
                 render={({ field: { value, onChange } }) => (
                   <ImagePickerPopover
-                    label={"Change cover"}
+                    label={t("change_cover")}
                     onChange={(imageUrl) => onChange(imageUrl)}
                     control={control}
                     value={value ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}

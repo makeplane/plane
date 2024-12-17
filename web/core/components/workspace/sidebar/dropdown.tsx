@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, Ref, useState } from "react";
+import { Fragment, Ref, useState, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -10,6 +10,7 @@ import { Check, ChevronDown, LogOut, Mails, PlusSquare, Settings } from "lucide-
 // ui
 import { Menu, Transition } from "@headlessui/react";
 // types
+import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 // plane ui
 import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
@@ -25,25 +26,29 @@ import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.hel
 // components
 import { WorkspaceLogo } from "../logo";
 
-// Static Data
-const userLinks = (workspaceSlug: string) => [
-  {
-    key: "workspace_invites",
-    name: "Workspace invites",
-    href: "/invitations",
-    icon: Mails,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-  },
-  {
-    key: "settings",
-    name: "Workspace settings",
-    href: `/${workspaceSlug}/settings`,
-    icon: Settings,
-    access: [EUserPermissions.ADMIN],
-  },
-];
+
 
 export const SidebarDropdown = observer(() => {
+  const { t } = useTranslation();
+  const userLinks = useMemo(
+    () => (workspaceSlug: string) => [
+      {
+        key: "workspace_invites",
+        name: t("workspace_invites"),
+        href: "/invitations",
+        icon: Mails,
+        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+      },
+      {
+        key: "settings",
+        name: t("workspace_settings"),
+        href: `/${workspaceSlug}/settings`,
+        icon: Settings,
+        access: [EUserPermissions.ADMIN],
+      },
+    ],
+    [t]
+  );
   // router params
   const { workspaceSlug } = useParams();
   // store hooks
@@ -86,8 +91,8 @@ export const SidebarDropdown = observer(() => {
     await signOut().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Failed to sign out. Please try again.",
+        title: t("error"),
+        message: t("failed_to_sign_out_please_try_again"),
       })
     );
   };
@@ -121,7 +126,7 @@ export const SidebarDropdown = observer(() => {
                 <WorkspaceLogo logo={activeWorkspace?.logo_url} name={activeWorkspace?.name} />
                 {!sidebarCollapsed && (
                   <h4 className="truncate text-base font-medium text-custom-text-100">
-                    {activeWorkspace?.name ?? "Loading..."}
+                    {activeWorkspace?.name ?? t("loading")}
                   </h4>
                 )}
               </div>
@@ -177,7 +182,7 @@ export const SidebarDropdown = observer(() => {
                                     <img
                                       src={getFileURL(workspace.logo_url)}
                                       className="absolute left-0 top-0 h-full w-full rounded object-cover"
-                                      alt="Workspace Logo"
+                                      alt={t("workspace_logo")}
                                     />
                                   ) : (
                                     (workspace?.name?.[0] ?? "...")
@@ -217,7 +222,7 @@ export const SidebarDropdown = observer(() => {
                           className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                         >
                           <PlusSquare strokeWidth={1.75} className="h-4 w-4 flex-shrink-0" />
-                          Create workspace
+                          {t("create_workspace")}
                         </Menu.Item>
                       </Link>
                     )}
@@ -251,7 +256,7 @@ export const SidebarDropdown = observer(() => {
                       onClick={handleSignOut}
                     >
                       <LogOut className="size-4 flex-shrink-0" />
-                      Sign out
+                      {t("sign_out")}
                     </Menu.Item>
                   </div>
                 </div>
@@ -293,7 +298,7 @@ export const SidebarDropdown = observer(() => {
                   <Menu.Item as="div">
                     <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
                       <Settings className="h-4 w-4 stroke-[1.5]" />
-                      <span>Settings</span>
+                      <span>{t("settings")}</span>
                     </span>
                   </Menu.Item>
                 </Link>
@@ -306,7 +311,7 @@ export const SidebarDropdown = observer(() => {
                   onClick={handleSignOut}
                 >
                   <LogOut className="size-4 stroke-[1.5]" />
-                  Sign out
+                  {t("sign_out")}
                 </Menu.Item>
               </div>
               {isUserInstanceAdmin && (
@@ -314,7 +319,7 @@ export const SidebarDropdown = observer(() => {
                   <Link href={GOD_MODE_URL}>
                     <Menu.Item as="button" type="button" className="w-full">
                       <span className="flex w-full items-center justify-center rounded bg-custom-primary-100/20 px-2 py-1 text-sm font-medium text-custom-primary-100 hover:bg-custom-primary-100/30 hover:text-custom-primary-200">
-                        Enter God Mode
+                        {t("enter_god_mode")}
                       </span>
                     </Menu.Item>
                   </Link>

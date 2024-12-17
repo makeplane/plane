@@ -1,6 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 // components
 import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
@@ -9,6 +10,7 @@ import { ProfileSettingContentWrapper, ProfileForm } from "@/components/profile"
 import { useUser } from "@/hooks/store";
 
 const ProfileSettingsPage = observer(() => {
+  const { t } = useTranslation();
   // store hooks
   const { data: currentUser, userProfile } = useUser();
 
@@ -21,7 +23,7 @@ const ProfileSettingsPage = observer(() => {
 
   return (
     <>
-      <PageHead title="Profile - General Settings" />
+      <PageHead title={`${t("profile")} - ${t("general_settings")}`} />
       <ProfileSettingContentWrapper>
         <ProfileForm user={currentUser} profile={userProfile.data} />
       </ProfileSettingContentWrapper>
