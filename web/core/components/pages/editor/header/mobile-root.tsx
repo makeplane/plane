@@ -15,11 +15,10 @@ type Props = {
   page: IPage;
   setSidePeekVisible: (sidePeekState: boolean) => void;
   sidePeekVisible: boolean;
-  syncState: boolean;
 };
 
 export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
-  const { editorReady, editorRef, handleDuplicatePage, page, setSidePeekVisible, sidePeekVisible, syncState } = props;
+  const { editorReady, editorRef, handleDuplicatePage, page, setSidePeekVisible, sidePeekVisible } = props;
   // derived values
   const { isContentEditable } = page;
   // page filters
@@ -38,12 +37,7 @@ export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
             setSidePeekVisible={setSidePeekVisible}
           />
         </div>
-        <PageExtraOptions
-          editorRef={editorRef}
-          handleDuplicatePage={handleDuplicatePage}
-          page={page}
-          syncState={syncState}
-        />
+        <PageExtraOptions editorRef={editorRef} handleDuplicatePage={handleDuplicatePage} page={page} />
       </Header>
       <Header variant={EHeaderVariant.TERNARY}>
         {editorReady && isContentEditable && editorRef.current && <PageToolbar editorRef={editorRef?.current} />}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 // components
 import { DocumentContentLoader, PageRenderer } from "@/components/editors";
 // constants
@@ -44,25 +44,24 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   }
 
   // use document editor
-  const { editor, hasServerConnectionFailed, hasServerSynced, localProvider, hasIndexedDbSynced } =
-    useCollaborativeEditor({
-      disabledExtensions,
-      editable,
-      editorClassName,
-      embedHandler,
-      extensions,
-      fileHandler,
-      forwardedRef,
-      handleEditorReady,
-      id,
-      mentionHandler,
-      onTransaction,
-      placeholder,
-      realtimeConfig,
-      serverHandler,
-      tabIndex,
-      user,
-    });
+  const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeEditor({
+    disabledExtensions,
+    editable,
+    editorClassName,
+    embedHandler,
+    extensions,
+    fileHandler,
+    forwardedRef,
+    handleEditorReady,
+    id,
+    mentionHandler,
+    onTransaction,
+    placeholder,
+    realtimeConfig,
+    serverHandler,
+    tabIndex,
+    user,
+  });
 
   const editorContainerClassNames = getEditorClassNames({
     noBorder: true,
@@ -70,33 +69,9 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     containerClassName,
   });
 
-  const [hasIndexedDbEntry, setHasIndexedDbEntry] = useState(null);
-
-  useEffect(() => {
-    async function documentIndexedDbEntry(dbName: string) {
-      try {
-        const databases = await indexedDB.databases();
-        const hasEntry = databases.some((db) => db.name === dbName);
-        setHasIndexedDbEntry(hasEntry);
-      } catch (error) {
-        console.error("Error checking database existence:", error);
-        return false;
-      }
-    }
-    documentIndexedDbEntry(id);
-  }, [id, localProvider]);
-
   if (!editor) return null;
 
-  if (
-    hasServerConnectionFailed ||
-    (!hasIndexedDbEntry && !hasServerSynced) ||
-    !hasIndexedDbSynced ||
-    !hasIndexedDbEntry
-  ) {
-    console.log("syncing indexedDB");
-    return <DocumentContentLoader />;
-  }
+  if (!hasServerSynced && !hasServerConnectionFailed) return <DocumentContentLoader />;
 
   return (
     <PageRenderer

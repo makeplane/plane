@@ -34,7 +34,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   // states
   const [hasServerConnectionFailed, setHasServerConnectionFailed] = useState(false);
   const [hasServerSynced, setHasServerSynced] = useState(false);
-  const [hasIndexedDbSynced, setHasIndexedDbSynced] = useState(false);
   // initialize Hocuspocus provider
   const provider = useMemo(
     () =>
@@ -55,10 +54,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
             setHasServerConnectionFailed(true);
           }
         },
-        onSynced: () => {
-          serverHandler?.onServerSync?.();
-          setHasServerSynced(true);
-        },
+        onSynced: () => setHasServerSynced(true),
       }),
     [id, realtimeConfig, serverHandler, user]
   );
@@ -67,10 +63,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     () => (id ? new IndexeddbPersistence(id, provider.document) : undefined),
     [id, provider]
   );
-
-  localProvider?.on("synced", () => {
-    setHasIndexedDbSynced(true);
-  });
 
   // destroy and disconnect all providers connection on unmount
   useEffect(
@@ -119,7 +111,5 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     editor,
     hasServerConnectionFailed,
     hasServerSynced,
-    hasIndexedDbSynced,
-    localProvider,
   };
 };

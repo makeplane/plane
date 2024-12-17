@@ -44,11 +44,10 @@ type Props = {
   handleEditorReady: Dispatch<SetStateAction<boolean>>;
   page: IPage;
   sidePeekVisible: boolean;
-  setSyncing: (value: boolean) => void;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
-  const { editorRef, handleConnectionStatus, handleEditorReady, page, sidePeekVisible, setSyncing } = props;
+  const { editorRef, handleConnectionStatus, handleEditorReady, page, sidePeekVisible } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
@@ -107,17 +106,12 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     handleConnectionStatus(true);
   }, [handleConnectionStatus]);
 
-  const handleServerSynced = useCallback(() => {
-    setSyncing(false);
-  }, [setSyncing]);
-
   const serverHandler: TServerHandler = useMemo(
     () => ({
       onConnect: handleServerConnect,
       onServerError: handleServerError,
-      onServerSync: handleServerSynced,
     }),
-    [handleServerConnect, handleServerError, handleServerSynced]
+    [handleServerConnect, handleServerError]
   );
 
   const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {

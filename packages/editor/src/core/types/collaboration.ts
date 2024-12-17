@@ -17,7 +17,6 @@ import {
 export type TServerHandler = {
   onConnect?: () => void;
   onServerError?: () => void;
-  onServerSync?: () => void;
 };
 
 type TCollaborativeEditorHookProps = {
