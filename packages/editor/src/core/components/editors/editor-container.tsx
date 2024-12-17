@@ -1,9 +1,9 @@
 import { FC, ReactNode } from "react";
 import { Editor } from "@tiptap/react";
+// plane utils
+import { cn } from "@plane/utils";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
-// helpers
-import { cn } from "@/helpers/common";
 // types
 import { TDisplayConfig } from "@/types";
 

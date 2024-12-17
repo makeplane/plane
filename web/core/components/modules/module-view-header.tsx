@@ -3,10 +3,9 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// icons
 import { ListFilter, Search, X } from "lucide-react";
-// editor
-import { cn } from "@plane/editor";
+// plane utils
+import { cn } from "@plane/utils";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
