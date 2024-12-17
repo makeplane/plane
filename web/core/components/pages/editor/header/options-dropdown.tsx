@@ -105,6 +105,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
           "copy-markdown",
           "copy-link",
           "toggle-lock",
+          "toggle-access",
           "make-a-copy",
           "move",
           "archive-restore",
