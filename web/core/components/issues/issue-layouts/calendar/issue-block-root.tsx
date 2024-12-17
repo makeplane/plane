@@ -15,11 +15,12 @@ type Props = {
   issueId: string;
   quickActions: TRenderQuickActions;
   isDragDisabled: boolean;
+  isEpic?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
 };
 
 export const CalendarIssueBlockRoot: React.FC<Props> = observer((props) => {
-  const { issueId, quickActions, isDragDisabled, canEditProperties } = props;
+  const { issueId, quickActions, isDragDisabled, isEpic = false, canEditProperties } = props;
 
   const issueRef = useRef<HTMLAnchorElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -58,5 +59,13 @@ export const CalendarIssueBlockRoot: React.FC<Props> = observer((props) => {
 
   if (!issue) return null;
 
-  return <CalendarIssueBlock isDragging={isDragging} issue={issue} quickActions={quickActions} ref={issueRef} />;
+  return (
+    <CalendarIssueBlock
+      isDragging={isDragging}
+      issue={issue}
+      quickActions={quickActions}
+      ref={issueRef}
+      isEpic={isEpic}
+    />
+  );
 });

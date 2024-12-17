@@ -1,33 +1,40 @@
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check, Search, Tag } from "lucide-react";
+import { Check, Loader, Search, Tag } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // helpers
+import { IIssueLabel } from "@plane/types";
+import { getRandomLabelColor } from "@/constants/label";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
-import { useLabel } from "@/hooks/store";
+import { useLabel, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// components
-
+import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
+//constants
 export interface IIssueLabelSelect {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
   values: string[];
   onSelect: (_labelIds: string[]) => void;
+  onAddLabel: (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => Promise<any>;
 }
 
 export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, values, onSelect } = props;
+  const { workspaceSlug, projectId, issueId, values, onSelect, onAddLabel } = props;
   // store hooks
   const { isMobile } = usePlatformOS();
   const { fetchProjectLabels, getProjectLabels } = useLabel();
+  const { allowPermissions } = useUserPermissions();
   // states
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [query, setQuery] = useState("");
+  const [submitting, setSubmitting] = useState<boolean>(false);
+
+  const canCreateLabel = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   const projectLabels = getProjectLabels(projectId);
 
@@ -83,11 +90,25 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
     </div>
   );
 
-  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const searchInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (query !== "" && e.key === "Escape") {
       e.stopPropagation();
       setQuery("");
     }
+
+    if (query !== "" && e.key === "Enter") {
+      e.stopPropagation();
+      e.preventDefault();
+      await handleAddLabel(query);
+    }
+  };
+
+  const handleAddLabel = async (labelName: string) => {
+    setSubmitting(true);
+    const label = await onAddLabel(workspaceSlug, projectId, { name: labelName, color: getRandomLabelColor() });
+    onSelect([...values, label.id]);
+    setQuery("");
+    setSubmitting(false);
   };
 
   if (!issueId || !values) return <></>;
@@ -159,10 +180,19 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
                     )}
                   </Combobox.Option>
                 ))
+              ) : submitting ? (
+                <Loader className="spin  h-3.5 w-3.5" />
+              ) : canCreateLabel ? (
+                <p
+                  onClick={() => {
+                    handleAddLabel(query);
+                  }}
+                  className="text-left text-custom-text-200 cursor-pointer"
+                >
+                  + Add <span className="text-custom-text-100">&quot;{query}&quot;</span> to labels
+                </p>
               ) : (
-                <span className="flex items-center gap-2 p-1">
-                  <p className="text-left text-custom-text-200 ">No matching results</p>
-                </span>
+                <p className="text-left text-custom-text-200 ">No matching results.</p>
               )}
             </div>
           </div>

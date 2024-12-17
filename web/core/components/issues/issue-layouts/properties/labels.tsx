@@ -1,11 +1,11 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
-import { Check, ChevronDown, Search, Tags } from "lucide-react";
+import { Check, ChevronDown, Loader, Search, Tags } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -14,9 +14,12 @@ import { IIssueLabel } from "@plane/types";
 // ui
 import { ComboDropDown, Tooltip } from "@plane/ui";
 // hooks
-import { useLabel } from "@/hooks/store";
+import { getRandomLabelColor } from "@/constants/label";
+import { useLabel, useUserPermissions } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
+// constants
 
 export interface IIssuePropertyLabels {
   projectId: string | null;
@@ -62,6 +65,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   // states
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [submitting, setSubmitting] = useState<boolean>(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -70,9 +74,12 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   // store hooks
-  const { fetchProjectLabels, getProjectLabels } = useLabel();
+  const { fetchProjectLabels, getProjectLabels, createLabel } = useLabel();
   const { isMobile } = usePlatformOS();
   const storeLabels = getProjectLabels(projectId);
+  const { allowPermissions } = useUserPermissions();
+
+  const canCreateLabel = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   const onOpen = () => {
     if (!storeLabels && workspaceSlug && projectId)
@@ -102,10 +109,16 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
 
   useOutsideClickDetector(dropdownRef, handleClose);
 
-  const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const searchInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (query !== "" && e.key === "Escape") {
       e.stopPropagation();
       setQuery("");
+    }
+
+    if (query !== "" && e.key === "Enter") {
+      e.stopPropagation();
+      e.preventDefault();
+      await handleAddLabel(query);
     }
   };
 
@@ -249,6 +262,15 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     </button>
   );
 
+  const handleAddLabel = async (labelName: string) => {
+    if (!projectId) return;
+    setSubmitting(true);
+    const label = await createLabel(workspaceSlug, projectId, { name: labelName, color: getRandomLabelColor() });
+    onChange([...value, label.id]);
+    setQuery("");
+    setSubmitting(false);
+  };
+
   return (
     <ComboDropDown
       as="div"
@@ -314,10 +336,19 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                     )}
                   </Combobox.Option>
                 ))
+              ) : submitting ? (
+                <Loader className="spin  h-3.5 w-3.5" />
+              ) : canCreateLabel ? (
+                <p
+                  onClick={() => {
+                    handleAddLabel(query);
+                  }}
+                  className="text-left text-custom-text-200 cursor-pointer"
+                >
+                  + Add <span className="text-custom-text-100">&quot;{query}&quot;</span> to labels
+                </p>
               ) : (
-                <span className="flex items-center gap-2 p-1">
-                  <p className="text-left text-custom-text-200 ">No matching results</p>
-                </span>
+                <p className="text-left text-custom-text-200 ">No matching results.</p>
               )}
             </div>
           </div>

@@ -1,14 +1,20 @@
 "use client";
 import { useMemo } from "react";
-import { TIssueLink } from "@plane/types";
+import { EIssueServiceType } from "@plane/constants";
+import { TIssueLink, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // types
 import { TLinkOperations } from "../../issue-detail/links";
 
-export const useLinkOperations = (workspaceSlug: string, projectId: string, issueId: string): TLinkOperations => {
-  const { createLink, updateLink, removeLink } = useIssueDetail();
+export const useLinkOperations = (
+  workspaceSlug: string,
+  projectId: string,
+  issueId: string,
+  issueServiceType: TIssueServiceType = EIssueServiceType.ISSUES
+): TLinkOperations => {
+  const { createLink, updateLink, removeLink } = useIssueDetail(issueServiceType);
 
   const handleLinkOperations: TLinkOperations = useMemo(
     () => ({

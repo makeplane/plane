@@ -69,6 +69,14 @@ export class ProjectService extends APIService {
       });
   }
 
+  async fetchProjectEpicProperties(workspaceSlug: string, projectId: string): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/epic-properties/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async setProjectView(
     workspaceSlug: string,
     projectId: string,

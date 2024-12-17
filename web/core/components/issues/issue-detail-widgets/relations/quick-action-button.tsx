@@ -2,6 +2,8 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
+import { EIssueServiceType } from "@plane/constants";
+import { TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
@@ -13,12 +15,13 @@ type Props = {
   issueId: string;
   customButton?: React.ReactNode;
   disabled?: boolean;
+  issueServiceType?: TIssueServiceType;
 };
 
 export const RelationActionButton: FC<Props> = observer((props) => {
-  const { customButton, issueId, disabled = false } = props;
+  const { customButton, issueId, disabled = false, issueServiceType = EIssueServiceType.ISSUES } = props;
   // store hooks
-  const { toggleRelationModal, setRelationKey } = useIssueDetail();
+  const { toggleRelationModal, setRelationKey } = useIssueDetail(issueServiceType);
 
   const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
 
