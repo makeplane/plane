@@ -112,7 +112,8 @@ export class IssueService extends APIService {
       params: queries,
     })
       .then((response) => {
-        if (response.data) {
+        // skip issue update when the service type is epic
+        if (response.data && this.serviceType !== EIssueServiceType.EPICS) {
           updateIssue({ ...response.data, is_local_update: 1 });
         }
         return response?.data;
@@ -127,7 +128,7 @@ export class IssueService extends APIService {
       params: { issues: issueIds.join(",") },
     })
       .then((response) => {
-        if (response?.data && Array.isArray(response?.data)) {
+        if (response?.data && Array.isArray(response?.data) && this.serviceType !== EIssueServiceType.EPICS) {
           addIssuesBulk(response.data);
         }
         return response?.data;

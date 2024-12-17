@@ -22,9 +22,9 @@ export const EpicsUpgrade: FC = observer(() => {
   const isSelfManagedUpgradeDisabled = subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== "FREE";
 
   return (
-    <div className="pr-10 w-full">
+    <div className="h-full w-full max-w-5xl  flex px-10 items-center justify-center">
       <div
-        className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
+        className={cn("flex flex-col rounded-xl mt-5 xl:flex-row w-full", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),
           "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": !resolvedTheme?.includes("dark"),
         })}

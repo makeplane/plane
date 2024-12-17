@@ -134,7 +134,7 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
 
   const existingIssuesModalSearchParams = {
     sub_issue: true,
-    // issue_id: issueCrudOperationState?.existing?.parentIssueId,
+    issue_id: issueCrudOperationState?.existing?.parentIssueId,
   };
 
   // render conditions

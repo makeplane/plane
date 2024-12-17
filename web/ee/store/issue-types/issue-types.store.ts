@@ -83,8 +83,7 @@ export interface IIssueTypesStore {
     epicFlagKey: EpicIssueTypeFlagKeys
   ) => boolean;
   // helper actions
-  addOrUpdateIssueTypes: (issueTypes: TIssueType[]) => void;
-  addOrUpdateEpicIssueTypes: (issueTypes: TIssueType[]) => void;
+  addOrUpdateIssueTypes: (issueTypes: TIssueType[], projectId?: string) => void;
   fetchAllPropertyData: (workspaceSlug: string, projectId: string) => Promise<TIssueTypesPropertiesOptions>;
   fetchAllIssueTypes: (workspaceSlug: string) => Promise<TIssueType[]>;
   fetchAllEpics: (workspaceSlug: string) => Promise<TIssueType[]>;
@@ -384,7 +383,7 @@ export class IssueTypes implements IIssueTypesStore {
    * @param issueTypes
    * @returns void
    */
-  addOrUpdateIssueTypes = (issueTypes: TIssueType[]) => {
+  addOrUpdateIssueTypes = (issueTypes: TIssueType[], projectId?: string) => {
     for (const issueType of issueTypes) {
       if (!issueType.id) continue;
 
@@ -406,7 +405,9 @@ export class IssueTypes implements IIssueTypesStore {
       });
 
       // Add to store
-      set(this.issueTypes, issueType.id, issueTypeInstance);
+      if (issueType.is_epic && projectId) {
+        set(this.projectEpics, projectId, issueTypeInstance);
+      } else set(this.issueTypes, issueType.id, issueTypeInstance);
     }
   };
 
@@ -566,7 +567,7 @@ export class IssueTypes implements IIssueTypesStore {
         // enable `is_epic_enabled` in project details
         set(this.rootStore.projectDetails.features, [projectId, "is_epic_enabled"], true);
         // add epic issue type to the store
-        set(this.projectEpics, projectId, epic);
+        this.addOrUpdateIssueTypes([epic], projectId);
         this.loader = "loaded";
       });
     } catch (error) {

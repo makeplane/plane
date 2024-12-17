@@ -15,7 +15,7 @@ const EpicsLayout = observer(({ children }: { children: ReactNode }) => {
   const { projectId } = useParams();
   // store hooks
   const { getProjectById } = useProject();
-  const { features } = useProjectAdvanced();
+  const { features, loader } = useProjectAdvanced();
   // derived values
   const project = getProjectById(projectId?.toString());
   const currentProjectDetails = features[projectId?.toString()];
@@ -23,7 +23,7 @@ const EpicsLayout = observer(({ children }: { children: ReactNode }) => {
 
   const pageTitle = project?.name ? `${project?.name} - Epics` : undefined;
 
-  if (!isEpicsEnabled)
+  if (!isEpicsEnabled && !loader)
     return (
       <div className="h-full w-full max-w-5xl mx-auto flex items-center justify-center">
         <EpicsUpgrade />

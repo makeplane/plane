@@ -1,7 +1,7 @@
 // services
 import { TIssue, TIssuesResponse } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
-import { deleteIssueFromLocal, updateIssue } from "@/local-db/utils/load-issues";
+import { deleteIssueFromLocal } from "@/local-db/utils/load-issues";
 import { TEpicAnalytics } from "@/plane-web/types";
 import { APIService } from "@/services/api.service";
 
@@ -49,12 +49,7 @@ export class EpicService extends APIService {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/epics/${issueId}/`, {
       params: queries,
     })
-      .then((response) => {
-        if (response.data) {
-          updateIssue({ ...response.data, is_local_update: 1 });
-        }
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

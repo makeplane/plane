@@ -71,7 +71,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
     projectService
       .projectIssuesSearch(workspaceSlug as string, projectId as string, {
         search: debouncedSearchTerm,
-        parent: true,
+        parent: searchEpic ? undefined : true,
         issue_id: issueId,
         workspace_search: isWorkspaceLevel,
         epic: searchEpic ? true : undefined,

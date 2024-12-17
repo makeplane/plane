@@ -38,7 +38,7 @@ class IssueSearchEndpoint(BaseAPIView):
         if query:
             issues = search_issues(query, issues)
 
-        if parent == "true" and epic == "true" and issue_id:
+        if epic == "true" and issue_id:
             issues = (
                 Issue.objects.filter(
                     workspace__slug=slug,
@@ -81,7 +81,7 @@ class IssueSearchEndpoint(BaseAPIView):
                     ),
                 )
         if sub_issue == "true" and issue_id:
-            issue = Issue.issue_objects.filter(pk=issue_id).first()
+            issue = Issue.objects.filter(pk=issue_id).first()
             if issue:
                 issues = issues.filter(~Q(pk=issue_id), parent__isnull=True)
             if issue.parent:
