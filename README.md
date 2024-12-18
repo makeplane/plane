@@ -81,7 +81,6 @@ Access real-time insights across all your Plane data. Visualize trends, remove b
 
 - **Drive** (_coming soon_): The drive helps you share documents, images, videos, or any other files that make sense to you or your team and align on the problem/solution.
 
-
 ## 🛠️ Local development
 
 ### Pre-requisites
