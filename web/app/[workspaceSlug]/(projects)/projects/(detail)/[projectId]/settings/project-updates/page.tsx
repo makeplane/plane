@@ -60,36 +60,38 @@ const UpdatesSettingsPage = observer(() => {
 
   return (
     <>
-      <div className="border-b border-custom-border-200 pb-3 tracking-tight">
-        <h3 className="text-xl font-medium">Projects Updates</h3>
-        <span className="text-custom-sidebar-text-400 text-sm font-medium">Toggle this on or off this project. </span>
-      </div>
       <WithFeatureFlagHOC
         flag="PROJECT_UPDATES"
         fallback={<ProjectUpdatesUpgrade />}
         workspaceSlug={workspaceSlug?.toString()}
       >
-        <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-custom-border-100">
-          <div className="flex items-center gap-4">
-            <div className="size-10 bg-custom-background-90 rounded-md flex items-center justify-center">
-              <UpdatesIcon className="size-5 text-custom-text-300" />
-            </div>
-            <div className="leading-tight">
-              <h5 className="font-medium">Turn on Project Updates</h5>
-              <span className="text-custom-sidebar-text-400 text-sm">
-                See all updates on demand from anyone in this project. Easily track updates across four preset
-                categories.
-              </span>
-            </div>
-          </div>
-          {currentProjectDetails && (
-            <ToggleSwitch
-              value={currentProjectDetails?.["is_project_updates_enabled"]}
-              onChange={toggleUpdatesFeature}
-              size="sm"
-            />
-          )}
+        <div className="border-b border-custom-border-200 pb-3 tracking-tight">
+          <h3 className="text-xl font-medium">Projects Updates</h3>
+          <span className="text-custom-sidebar-text-400 text-sm font-medium">Toggle this on or off this project. </span>
         </div>
+        <>
+          <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-custom-border-100">
+            <div className="flex items-center gap-4">
+              <div className="size-10 bg-custom-background-90 rounded-md flex items-center justify-center">
+                <UpdatesIcon className="size-5 text-custom-text-300" />
+              </div>
+              <div className="leading-tight">
+                <h5 className="font-medium">Turn on Project Updates</h5>
+                <span className="text-custom-sidebar-text-400 text-sm">
+                  See all updates on demand from anyone in this project. Easily track updates across four preset
+                  categories.
+                </span>
+              </div>
+            </div>
+            {currentProjectDetails && (
+              <ToggleSwitch
+                value={currentProjectDetails?.["is_project_updates_enabled"]}
+                onChange={toggleUpdatesFeature}
+                size="sm"
+              />
+            )}
+          </div>
+        </>
       </WithFeatureFlagHOC>
     </>
   );

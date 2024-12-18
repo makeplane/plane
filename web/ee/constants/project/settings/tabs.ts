@@ -32,7 +32,7 @@ export const PROJECT_SETTINGS = {
     label: "Project Updates",
     href: `/settings/project-updates/`,
     access: [EUserPermissions.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/updates/`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/project-updates/`,
     Icon: SettingIcon,
   },
 };

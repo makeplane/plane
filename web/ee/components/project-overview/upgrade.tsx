@@ -2,21 +2,15 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
 import { useTheme } from "next-themes";
-import { Crown } from "lucide-react";
 // ui
-import { Button, getButtonStyling } from "@plane/ui";
+import { Button } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
-// plane web hooks
-import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 const Upgrade = observer(() => {
+  // store hooks
   const { resolvedTheme } = useTheme();
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
-  // derived values
-  const isSelfManagedUpgradeDisabled = subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== "FREE";
 
   return (
     <div
@@ -31,7 +25,7 @@ const Upgrade = observer(() => {
           <div className="text-sm">
             Group Projects like you group issues—by state, priority, or any other—and track their progress in one click.
           </div>
-          <div className="flex mt-6 gap-4 flex-wrap">
+          {/* <div className="flex mt-6 gap-4 flex-wrap">
             {isSelfManagedUpgradeDisabled ? (
               <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
                 <Crown className="h-3.5 w-3.5" />
@@ -51,6 +45,9 @@ const Upgrade = observer(() => {
             >
               Get custom quote
             </Link>
+          </div> */}
+          <div className="flex mt-6 gap-4 flex-wrap">
+            <Button disabled>Coming Soon</Button>
           </div>
         </div>
       </div>
