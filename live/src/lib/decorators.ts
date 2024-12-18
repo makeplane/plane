@@ -49,3 +49,10 @@ export const Middleware = (middleware: RequestHandler): MethodDecorator => {
     Reflect.defineMetadata("middlewares", middlewares, target, propertyKey);
   };
 };
+
+export const WebSocket = (route: string): MethodDecorator => {
+  return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
+    Reflect.defineMetadata("route", route, target, propertyKey);
+    Reflect.defineMetadata("method", "ws", target, propertyKey);
+  };
+};
