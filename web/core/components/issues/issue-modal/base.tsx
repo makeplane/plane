@@ -21,7 +21,7 @@ import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 // local components
 import { DraftIssueLayout } from "./draft-issue-layout";
-import { IssueFormRoot } from "./form";
+import { type IssueFormProps, IssueFormRoot } from "./form";
 
 export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((props) => {
   const {
@@ -41,7 +41,9 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   } = props;
   const issueStoreType = useIssueStoreType();
 
-  const storeType = issueStoreFromProps ?? issueStoreType;
+  const storeType = (issueStoreFromProps ? issueStoreFromProps : issueStoreType === EIssuesStoreType.EPIC)
+    ? EIssuesStoreType.PROJECT
+    : issueStoreType;
   // ref
   const issueTitleRef = useRef<HTMLInputElement>(null);
   // states
@@ -333,6 +335,30 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   // don't open the modal if there are no projects
   if (!projectIdsWithCreatePermissions || projectIdsWithCreatePermissions.length === 0 || !activeProjectId) return null;
 
+  const commonIssueModalProps: IssueFormProps = {
+    issueTitleRef: issueTitleRef,
+    data: {
+      ...data,
+      description_html: description,
+      cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId.toString() : null,
+      module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId.toString()] : null,
+    },
+    onAssetUpload: handleUpdateUploadedAssetIds,
+    onClose: handleClose,
+    onSubmit: (payload) => handleFormSubmit(payload, isDraft),
+    projectId: activeProjectId,
+    isCreateMoreToggleEnabled: createMore,
+    onCreateMoreToggleChange: handleCreateMoreToggleChange,
+    isDraft: isDraft,
+    moveToIssue: moveToIssue,
+    modalTitle: modalTitle,
+    primaryButtonText: primaryButtonText,
+    isDuplicateModalOpen: isDuplicateModalOpen,
+    handleDuplicateIssueModal: handleDuplicateIssueModal,
+    isProjectSelectionDisabled: isProjectSelectionDisabled,
+    storeType: storeType,
+  };
+
   return (
     <ModalCore
       isOpen={isOpen}
@@ -342,51 +368,9 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       className="!bg-transparent rounded-lg shadow-none transition-[width] ease-linear"
     >
       {withDraftIssueWrapper ? (
-        <DraftIssueLayout
-          changesMade={changesMade}
-          data={{
-            ...data,
-            description_html: description,
-            cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId.toString() : null,
-            module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId.toString()] : null,
-          }}
-          issueTitleRef={issueTitleRef}
-          onAssetUpload={handleUpdateUploadedAssetIds}
-          onChange={handleFormChange}
-          onClose={handleClose}
-          onSubmit={(payload) => handleFormSubmit(payload, isDraft)}
-          projectId={activeProjectId}
-          isCreateMoreToggleEnabled={createMore}
-          onCreateMoreToggleChange={handleCreateMoreToggleChange}
-          isDraft={isDraft}
-          moveToIssue={moveToIssue}
-          isDuplicateModalOpen={isDuplicateModalOpen}
-          handleDuplicateIssueModal={handleDuplicateIssueModal}
-          isProjectSelectionDisabled={isProjectSelectionDisabled}
-        />
+        <DraftIssueLayout {...commonIssueModalProps} changesMade={changesMade} onChange={handleFormChange} />
       ) : (
-        <IssueFormRoot
-          issueTitleRef={issueTitleRef}
-          data={{
-            ...data,
-            description_html: description,
-            cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId.toString() : null,
-            module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId.toString()] : null,
-          }}
-          onAssetUpload={handleUpdateUploadedAssetIds}
-          onClose={handleClose}
-          isCreateMoreToggleEnabled={createMore}
-          onCreateMoreToggleChange={handleCreateMoreToggleChange}
-          onSubmit={(payload) => handleFormSubmit(payload, isDraft)}
-          projectId={activeProjectId}
-          isDraft={isDraft}
-          moveToIssue={moveToIssue}
-          modalTitle={modalTitle}
-          primaryButtonText={primaryButtonText}
-          isDuplicateModalOpen={isDuplicateModalOpen}
-          handleDuplicateIssueModal={handleDuplicateIssueModal}
-          isProjectSelectionDisabled={isProjectSelectionDisabled}
-        />
+        <IssueFormRoot {...commonIssueModalProps} />
       )}
     </ModalCore>
   );

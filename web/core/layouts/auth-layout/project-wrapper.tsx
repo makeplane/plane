@@ -34,12 +34,14 @@ import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/u
 
 interface IProjectAuthWrapper {
   children: ReactNode;
+  isLoading?: boolean;
 }
 
 export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
-  const { children } = props;
-  // store
-  // const { fetchInboxes } = useInbox();
+  const { children, isLoading: isParentLoading = false } = props;
+  // router
+  const { workspaceSlug, projectId } = useParams();
+  // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const { fetchUserProjectInfo, allowPermissions, projectUserInfo } = useUserPermissions();
@@ -54,14 +56,20 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { fetchProjectStates, fetchProjectStateTransitions } = useProjectState();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
-  // router
-  const { workspaceSlug, projectId } = useParams();
-
+  // derived values
+  const projectExists = projectId ? getProjectById(projectId.toString()) : null;
   const projectMemberInfo = projectUserInfo?.[workspaceSlug?.toString()]?.[projectId?.toString()];
+  const hasPermissionToCurrentProject = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug.toString(),
+    projectId?.toString()
+  );
 
   // Initialize module timeline chart
   useEffect(() => {
     initGantt();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useSWR(
@@ -143,17 +151,8 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  // derived values
-  const projectExists = projectId ? getProjectById(projectId.toString()) : null;
-  const hasPermissionToCurrentProject = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
-    projectId?.toString()
-  );
-
   // check if the project member apis is loading
-  if (!projectMemberInfo && projectId && hasPermissionToCurrentProject === null)
+  if (isParentLoading || (!projectMemberInfo && projectId && hasPermissionToCurrentProject === null))
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">

@@ -1,7 +1,8 @@
 "use client";
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { TIssue } from "@plane/types";
+import { EIssueServiceType } from "@plane/constants";
+import { TIssue, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // helper
 import { copyTextToClipboard } from "@/helpers/string.helper";
@@ -16,15 +17,17 @@ export type TRelationIssueOperations = {
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 };
 
-export const useSubIssueOperations = (): TSubIssueOperations => {
+export const useSubIssueOperations = (
+  issueServiceType: TIssueServiceType = EIssueServiceType.ISSUES
+): TSubIssueOperations => {
   const {
     subIssues: { setSubIssueHelpers },
     fetchSubIssues,
     createSubIssues,
     updateSubIssue,
-    removeSubIssue,
     deleteSubIssue,
   } = useIssueDetail();
+  const { removeSubIssue } = useIssueDetail(issueServiceType);
   const { captureIssueEvent } = useEventTracker();
   const pathname = usePathname();
 
