@@ -19,7 +19,7 @@ import { HealthController } from "./controllers/health.controller.js";
 import { CollaborationController } from "./controllers/collaboration.controller.js";
 
 interface WebSocketRouter extends Router {
-  ws: (path: string, handler: (ws: ws.WebSocket, req: Request) => void) => void;
+  ws: (_path: string, _handler: (ws: ws.WebSocket, req: Request) => void) => void;
 }
 
 export class Server {
