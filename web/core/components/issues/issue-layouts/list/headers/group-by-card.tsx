@@ -18,6 +18,8 @@ import { cn } from "@/helpers/common.helper";
 import { useEventTracker } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
+// plane-web
+import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 // Plane-web
 import { WorkFlowGroupTree } from "@/plane-web/components/workflow";
 
@@ -33,6 +35,7 @@ interface IHeaderGroupByCard {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   selectionHelpers: TSelectionHelper;
   handleCollapsedGroups: (value: string) => void;
+  isEpic?: boolean;
 }
 
 export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
@@ -48,6 +51,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
     addIssuesToView,
     selectionHelpers,
     handleCollapsedGroups,
+    isEpic = false,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -157,13 +161,17 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
             </div>
           ))}
 
-        <CreateUpdateIssueModal
-          isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
-          data={issuePayload}
-          storeType={storeType}
-          isDraft={isDraftIssue}
-        />
+        {isEpic ? (
+          <CreateUpdateEpicModal isOpen={isOpen} onClose={() => setIsOpen(false)} data={issuePayload} />
+        ) : (
+          <CreateUpdateIssueModal
+            isOpen={isOpen}
+            onClose={() => setIsOpen(false)}
+            data={issuePayload}
+            storeType={storeType}
+            isDraft={isDraftIssue}
+          />
+        )}
 
         {renderExistingIssueModal && (
           <ExistingIssuesListModal

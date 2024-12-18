@@ -1,7 +1,9 @@
 import { forwardRef } from "react";
 import range from "lodash/range";
+// plane ui
 import { ContentWrapper } from "@plane/ui";
-import { cn } from "@/helpers/common.helper";
+// plane utils
+import { cn } from "@plane/utils";
 
 export const KanbanIssueBlockLoader = forwardRef<HTMLSpanElement, { cardHeight?: number; shouldAnimate?: boolean }>(
   ({ cardHeight = 100, shouldAnimate = true }, ref) => (

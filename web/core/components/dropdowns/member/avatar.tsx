@@ -4,7 +4,8 @@ import { observer } from "mobx-react";
 import { LucideIcon, Users } from "lucide-react";
 // plane ui
 import { Avatar, AvatarGroup } from "@plane/ui";
-import { cn } from "@/helpers/common.helper";
+// plane utils
+import { cn } from "@plane/utils";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks

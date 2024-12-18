@@ -42,10 +42,11 @@ export interface IIssueProperties {
   isReadOnly: boolean;
   className: string;
   activeLayout: string;
+  isEpic?: boolean;
 }
 
 export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
-  const { issue, updateIssue, displayProperties, activeLayout, isReadOnly, className } = props;
+  const { issue, updateIssue, displayProperties, activeLayout, isReadOnly, className, isEpic = false } = props;
   // store hooks
   const { getProjectById } = useProject();
   const { labelMap } = useLabel();
@@ -376,42 +377,46 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         </div>
       </WithDisplayPropertiesHOC>
 
-      {/* modules */}
-      {projectDetails?.module_view && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
-          <div className="h-5" onClick={handleEventPropagation}>
-            <ModuleDropdown
-              buttonContainerClassName="truncate max-w-40"
-              projectId={issue?.project_id}
-              value={issue?.module_ids ?? []}
-              onChange={handleModule}
-              disabled={isReadOnly}
-              renderByDefault={isMobile}
-              multiple
-              buttonVariant="border-with-text"
-              showCount
-              showTooltip
-            />
-          </div>
-        </WithDisplayPropertiesHOC>
-      )}
+      {!isEpic && (
+        <>
+          {/* modules */}
+          {projectDetails?.module_view && (
+            <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
+              <div className="h-5" onClick={handleEventPropagation}>
+                <ModuleDropdown
+                  buttonContainerClassName="truncate max-w-40"
+                  projectId={issue?.project_id}
+                  value={issue?.module_ids ?? []}
+                  onChange={handleModule}
+                  disabled={isReadOnly}
+                  renderByDefault={isMobile}
+                  multiple
+                  buttonVariant="border-with-text"
+                  showCount
+                  showTooltip
+                />
+              </div>
+            </WithDisplayPropertiesHOC>
+          )}
 
-      {/* cycles */}
-      {projectDetails?.cycle_view && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
-          <div className="h-5" onClick={handleEventPropagation}>
-            <CycleDropdown
-              buttonContainerClassName="truncate max-w-40"
-              projectId={issue?.project_id}
-              value={issue?.cycle_id}
-              onChange={handleCycle}
-              disabled={isReadOnly}
-              buttonVariant="border-with-text"
-              renderByDefault={isMobile}
-              showTooltip
-            />
-          </div>
-        </WithDisplayPropertiesHOC>
+          {/* cycles */}
+          {projectDetails?.cycle_view && (
+            <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
+              <div className="h-5" onClick={handleEventPropagation}>
+                <CycleDropdown
+                  buttonContainerClassName="truncate max-w-40"
+                  projectId={issue?.project_id}
+                  value={issue?.cycle_id}
+                  onChange={handleCycle}
+                  disabled={isReadOnly}
+                  buttonVariant="border-with-text"
+                  renderByDefault={isMobile}
+                  showTooltip
+                />
+              </div>
+            </WithDisplayPropertiesHOC>
+          )}
+        </>
       )}
 
       {/* estimates */}

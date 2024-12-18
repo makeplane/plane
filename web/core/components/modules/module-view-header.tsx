@@ -3,9 +3,9 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// icons
 import { ListFilter, Search, X } from "lucide-react";
-// editor
+// plane utils
+import { cn } from "@plane/utils";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
@@ -17,7 +17,6 @@ import { FiltersDropdown } from "@/components/issues";
 import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules/dropdowns";
 // constants
 import { MODULE_VIEW_LAYOUTS } from "@/constants/module";
-import { cn } from "@/helpers/common.helper";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks

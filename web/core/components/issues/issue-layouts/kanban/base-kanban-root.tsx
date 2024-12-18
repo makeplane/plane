@@ -6,6 +6,7 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
+import { EIssueServiceType } from "@plane/constants";
 import { DeleteIssueModal } from "@/components/issues";
 //constants
 import { ISSUE_DELETED } from "@/constants/event-tracker";
@@ -34,7 +35,8 @@ export type KanbanStoreType =
   | EIssuesStoreType.DRAFT
   | EIssuesStoreType.PROFILE
   | EIssuesStoreType.TEAM
-  | EIssuesStoreType.TEAM_VIEW;
+  | EIssuesStoreType.TEAM_VIEW
+  | EIssuesStoreType.EPIC;
 
 export interface IBaseKanBanLayout {
   QuickActions: FC<IQuickActionProps>;
@@ -42,10 +44,18 @@ export interface IBaseKanBanLayout {
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
   viewId?: string | undefined;
+  isEpic?: boolean;
 }
 
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
-  const { QuickActions, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false, viewId } = props;
+  const {
+    QuickActions,
+    addIssuesToView,
+    canEditPropertiesBasedOnProject,
+    isCompletedCycle = false,
+    viewId,
+    isEpic = false,
+  } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
@@ -56,7 +66,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const { issueMap, issuesFilter, issues } = useIssues(storeType);
   const {
     issue: { getIssueById },
-  } = useIssueDetail();
+  } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const {
     fetchIssues,
     fetchNextIssues,
@@ -275,6 +285,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               scrollableContainerRef={scrollableContainerRef}
               handleOnDrop={handleOnDrop}
               loadMoreIssues={fetchMoreIssues}
+              isEpic={isEpic}
             />
           </div>
         </div>

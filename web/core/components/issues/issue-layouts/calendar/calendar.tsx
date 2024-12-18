@@ -29,6 +29,7 @@ import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { useIssues } from "@/hooks/store";
 import useSize from "@/hooks/use-window-size";
 // store
+import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { ICalendarStore } from "@/store/issue/issue_calendar_view.store";
 import { IModuleIssuesFilter } from "@/store/issue/module";
@@ -39,7 +40,12 @@ import { TRenderQuickActions } from "../list/list-view-types";
 import type { ICalendarWeek } from "./types";
 
 type Props = {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProjectEpicsFilter;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
   layout: "month" | "week" | undefined;
@@ -64,6 +70,7 @@ type Props = {
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
   ) => Promise<void>;
   canEditProperties: (projectId: string | undefined) => boolean;
+  isEpic?: boolean;
 };
 
 export const CalendarChart: React.FC<Props> = observer((props) => {
@@ -84,6 +91,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
     updateFilters,
     canEditProperties,
     readOnly = false,
+    isEpic = false,
   } = props;
   // states
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -167,6 +175,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                         addIssuesToView={addIssuesToView}
                         readOnly={readOnly}
                         canEditProperties={canEditProperties}
+                        isEpic={isEpic}
                       />
                     ))}
                 </div>
@@ -190,6 +199,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                   addIssuesToView={addIssuesToView}
                   readOnly={readOnly}
                   canEditProperties={canEditProperties}
+                  isEpic={isEpic}
                 />
               )}
             </div>
@@ -216,6 +226,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                 canEditProperties={canEditProperties}
                 isDragDisabled
                 isMobileView
+                isEpic={isEpic}
               />
             </div>
           </div>
@@ -243,6 +254,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
             canEditProperties={canEditProperties}
             isDragDisabled
             isMobileView
+            isEpic={isEpic}
           />
         </div>
       </div>

@@ -59,10 +59,10 @@ export class Storage {
     this.workspaceSlug = "";
   };
 
-  clearStorage = async () => {
+  clearStorage = async (force = false) => {
     try {
-      await this.db.close();
-      await clearOPFS();
+      await this.db?.close();
+      await clearOPFS(force);
       this.reset();
     } catch (e) {
       console.error("Error clearing sqlite sync storage", e);
