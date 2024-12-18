@@ -1,12 +1,11 @@
 import "@/core/config/sentry-config.js";
-
 import express from "express";
+import type { Application, Request, Response, Router } from "express";
 import expressWs from "express-ws";
+import type * as ws from "ws";
 import * as Sentry from "@sentry/node";
 import compression from "compression";
 import helmet from "helmet";
-
-// cors
 import cors from "cors";
 
 // core hocuspocus server
@@ -15,104 +14,107 @@ import { getHocusPocusServer } from "@/core/hocuspocus-server.js";
 // helpers
 import { logger, manualLogger } from "@/core/helpers/logger.js";
 import { errorHandler } from "@/core/helpers/error-handler.js";
+import { registerControllers } from "./lib/controller.js";
+import { HealthController } from "./controllers/health.controller.js";
+import { CollaborationController } from "./controllers/collaboration.controller.js";
 
-const app = express();
-expressWs(app);
+interface WebSocketRouter extends Router {
+  ws: (path: string, handler: (ws: ws.WebSocket, req: Request) => void) => void;
+}
 
-app.set("port", process.env.PORT || 3000);
+export class Server {
+  private app: Application;
+  private port: number;
+  private hocusPocusServer: any;
 
-// Security middleware
-app.use(helmet());
+  constructor() {
+    this.app = express();
+    expressWs(this.app as any);
+    this.port = Number(process.env.PORT || 3000);
 
-// Middleware for response compression
-app.use(
-  compression({
-    level: 6,
-    threshold: 5 * 1000,
-  }),
-);
-
-// Logging middleware
-app.use(logger);
-
-// Body parsing middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// cors middleware
-app.use(cors());
-
-const router = express.Router();
-
-const HocusPocusServer = await getHocusPocusServer().catch((err) => {
-  manualLogger.error("Failed to initialize HocusPocusServer:", err);
-  process.exit(1);
-});
-
-router.get("/health", (_req, res) => {
-  res.status(200).json({ status: "OK" });
-});
-
-router.ws("/collaboration", (ws, req) => {
-  try {
-    HocusPocusServer.handleConnection(ws, req);
-  } catch (err) {
-    manualLogger.error("WebSocket connection error:", err);
-    ws.close();
+    this.setupMiddleware();
   }
-});
 
-app.use(process.env.LIVE_BASE_PATH || "/live", router);
+  private setupMiddleware() {
+    this.app.use(helmet());
+    this.app.use(compression({ level: 6, threshold: 5 * 1000 }));
+    this.app.use(logger);
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(cors());
+  }
 
-app.use((_req, res) => {
-  res.status(404).send("Not Found");
-});
+  async initialize() {
+    try {
+      this.hocusPocusServer = await getHocusPocusServer();
+      await this.setupControllers();
+      this.setupErrorHandlers();
+      return this;
+    } catch (err) {
+      manualLogger.error("Failed to initialize server:", err);
+      throw err;
+    }
+  }
 
-Sentry.setupExpressErrorHandler(app);
+  private async setupControllers() {
+    const router = express.Router() as WebSocketRouter;
+    const collaborationController = new CollaborationController(this.hocusPocusServer);
 
-app.use(errorHandler);
+    registerControllers(router, HealthController);
 
-const liveServer = app.listen(app.get("port"), () => {
-  manualLogger.info(`Plane Live server has started at port ${app.get("port")}`);
-});
-
-const gracefulShutdown = async () => {
-  manualLogger.info("Starting graceful shutdown...");
-
-  try {
-    // Close the HocusPocus server WebSocket connections
-    await HocusPocusServer.destroy();
-    manualLogger.info(
-      "HocusPocus server WebSocket connections closed gracefully.",
-    );
-
-    // Close the Express server
-    liveServer.close(() => {
-      manualLogger.info("Express server closed gracefully.");
-      process.exit(1);
+    router.ws("/collaboration", (ws: ws.WebSocket, req: Request) => {
+      collaborationController.handleConnection(ws, req);
     });
-  } catch (err) {
-    manualLogger.error("Error during shutdown:", err);
-    process.exit(1);
+
+    this.app.use(process.env.LIVE_BASE_PATH || "/live", router);
+    this.app.use((_req: Request, res: Response) => res.status(404).send("Not Found"));
   }
 
-  // Forcefully shut down after 10 seconds if not closed
-  setTimeout(() => {
-    manualLogger.error("Forcing shutdown...");
-    process.exit(1);
-  }, 10000);
-};
+  private setupErrorHandlers() {
+    Sentry.setupExpressErrorHandler(this.app);
+    this.app.use(errorHandler);
+  }
 
-// Graceful shutdown on unhandled rejection
-process.on("unhandledRejection", (err: any) => {
-  manualLogger.info("Unhandled Rejection: ", err);
-  manualLogger.info(`UNHANDLED REJECTION! 💥 Shutting down...`);
-  gracefulShutdown();
-});
+  async start() {
+    const server = this.app.listen(this.port, () => {
+      manualLogger.info(`Plane Live server has started at port ${this.port}`);
+    });
 
-// Graceful shutdown on uncaught exception
-process.on("uncaughtException", (err: any) => {
-  manualLogger.info("Uncaught Exception: ", err);
-  manualLogger.info(`UNCAUGHT EXCEPTION! 💥 Shutting down...`);
-  gracefulShutdown();
-});
+    this.setupGracefulShutdown(server);
+  }
+
+  private setupGracefulShutdown(server: any) {
+    const gracefulShutdown = async () => {
+      manualLogger.info("Starting graceful shutdown...");
+      try {
+        await this.hocusPocusServer.destroy();
+        manualLogger.info("HocusPocus server WebSocket connections closed gracefully.");
+
+        server.close(() => {
+          manualLogger.info("Express server closed gracefully.");
+          process.exit(1);
+        });
+      } catch (err) {
+        manualLogger.error("Error during shutdown:", err);
+        process.exit(1);
+      }
+
+      setTimeout(() => {
+        manualLogger.error("Forcing shutdown...");
+        process.exit(1);
+      }, 10000);
+    };
+
+    process.on("unhandledRejection", (err: any) => {
+      manualLogger.info("Unhandled Rejection: ", err);
+      manualLogger.info(`UNHANDLED REJECTION! 💥 Shutting down...`);
+      gracefulShutdown();
+    });
+
+    process.on("uncaughtException", (err: any) => {
+      manualLogger.info("Uncaught Exception: ", err);
+      manualLogger.info(`UNCAUGHT EXCEPTION! 💥 Shutting down...`);
+      gracefulShutdown();
+    });
+  }
+}
