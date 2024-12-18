@@ -13,4 +13,4 @@ class TeamSpacePermission(BasePermission):
             workspace__slug=view.workspace_slug,
             team_space_id=view.team_space_id,
             member_id=request.user.id,
-        )
+        ).exists()

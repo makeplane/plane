@@ -3,11 +3,12 @@
 import { FormEvent, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { InfoIcon } from "lucide-react";
 // types
 import { TTeam } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // ui
-import { Button, CustomEmojiIconPicker, Input, Logo } from "@plane/ui";
+import { Button, CustomEmojiIconPicker, Input, Logo, Tooltip } from "@plane/ui";
 // components
 import { MemberDropdown, ProjectDropdown } from "@/components/dropdowns";
 import { RichTextEditor } from "@/components/editor";
@@ -106,7 +107,7 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
               type="text"
               value={formData.name}
               onChange={(e) => handleNameChange(e.target.value)}
-              placeholder="Title"
+              placeholder="Team name"
               className="w-full resize-none text-base"
               hasError={Boolean(errors.name)}
               tabIndex={1}
@@ -131,7 +132,7 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
             }}
             placeholder={getDescriptionPlaceholder}
             editorClassName="text-xs"
-            containerClassName="resize-none min-h-24 max-h-64 overflow-y-scroll vertical-scrollbar scrollbar-sm text-xs border-[0.5px] border-custom-border-200 rounded-md px-3 py-2"
+            containerClassName="resize-none min-h-24 text-xs border-[0.5px] border-custom-border-200 rounded-md px-3 py-2"
             tabIndex={2}
             uploadFile={async (file) => {
               try {
@@ -152,7 +153,7 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
           />
         )}
         <div className="space-y-0.5">
-          <p className="text-sm text-custom-text-400">Team lead</p>
+          <p className="text-sm text-custom-text-300">Team lead</p>
           <MemberDropdown
             value={formData.lead_id ?? ""}
             onChange={(val) => {
@@ -174,7 +175,15 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
           />
         </div>
         <div className="space-y-0.5">
-          <p className="text-sm text-custom-text-400">Team members</p>
+          <p className="flex gap-1.5 items-center text-sm text-custom-text-300">
+            <span>{teamDetail?.id ? "Add team members" : "Team members"}</span>
+            <Tooltip
+              position="right"
+              tooltipContent="Team members cannot be removed directly from here. Please visit the team details page sidebar to manage removals."
+            >
+              <InfoIcon className="size-3.5 text-custom-text-400 hover:text-custom-text-300 cursor-help outline-none" />
+            </Tooltip>
+          </p>
           <MemberDropdown
             value={formData.member_ids ?? []}
             onChange={(val) => {
@@ -193,7 +202,7 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
           />
         </div>
         <div className="space-y-0.5">
-          <p className="text-sm text-custom-text-400">Projects</p>
+          <p className="text-sm text-custom-text-300">Projects</p>
           <ProjectDropdown
             value={formData.project_ids ?? []}
             onChange={(val) => {

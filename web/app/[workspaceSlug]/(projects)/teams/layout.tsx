@@ -14,11 +14,11 @@ const TeamsLayout = observer(({ children }: { children: ReactNode }) => {
   // store
   const { currentWorkspace } = useWorkspace();
   // plane web stores
-  const { isTeamsFeatureEnabled } = useTeams();
+  const { loader, isTeamsFeatureEnabled } = useTeams();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Teams` : undefined;
 
-  if (!isTeamsFeatureEnabled)
+  if (isTeamsFeatureEnabled !== undefined && isTeamsFeatureEnabled === false && loader !== "init-loader")
     return (
       <div className="h-full w-full max-w-5xl mx-auto flex items-center justify-center">
         <TeamsUpgrade />

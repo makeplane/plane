@@ -87,7 +87,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   );
   // fetching teams
   useSWR(
-    workspaceSlug && isTeamsFeatureEnabled ? `WORKSPACE_TEAMS_${workspaceSlug}` : null,
+    workspaceSlug && isTeamsFeatureEnabled ? `WORKSPACE_TEAMS_${workspaceSlug}_${isTeamsFeatureEnabled}` : null,
     workspaceSlug && isTeamsFeatureEnabled ? () => fetchTeams(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );

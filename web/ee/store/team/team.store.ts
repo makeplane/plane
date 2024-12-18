@@ -3,13 +3,14 @@ import update from "lodash/update";
 import xor from "lodash/xor";
 import { makeObservable, action, computed, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { TLoader, TTeam, TTeamMember, TTeamEntities, TNameDescriptionLoader } from "@plane/types";
-import { shouldFilterTeam, orderTeams } from "@plane/utils";
 // types
+import { TLoader, TTeam, TTeamMember, TTeamEntities, TNameDescriptionLoader } from "@plane/types";
+// utils
+import { shouldFilterTeam, orderTeams } from "@plane/utils";
 // plane web services
 import { TeamService } from "@/plane-web/services/teams/team.service";
 // plane web types
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatureLoader, EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 // root store
 import { RootStore } from "../root.store";
 
@@ -24,8 +25,9 @@ export interface ITeamStore {
   // computed
   currentTeamProjectIds: string[] | undefined;
   allTeamIds: string[];
+  joinedTeamIds: string[];
   filteredTeamIds: string[];
-  isTeamsFeatureEnabled: boolean;
+  isTeamsFeatureEnabled: boolean | undefined;
   // computed functions
   getTeamById: (teamId: string) => TTeam | undefined;
   getTeamEntitiesLoaderById: (teamId: string) => TLoader | undefined;
@@ -33,6 +35,7 @@ export interface ITeamStore {
   getTeamEntitiesById: (teamId: string) => TTeamEntities | undefined;
   getTeamProjectIds: (teamId: string) => string[] | undefined;
   getTeamMemberIds: (teamId: string) => string[] | undefined;
+  isUserMemberOfTeam: (teamId: string) => boolean;
   // helper actions
   updateTeamNameDescriptionLoader: (teamId: string, loaderType: TNameDescriptionLoader) => void;
   toggleTeamsSidebar: (collapsed?: boolean) => void;
@@ -50,12 +53,13 @@ export interface ITeamStore {
     updateTeamDetails?: boolean
   ) => Promise<TTeamMember[]>;
   removeTeamMember: (workspaceSlug: string, teamId: string, memberId: string) => Promise<void>;
+  joinTeam: (workspaceSlug: string, teamId: string) => Promise<void>;
   deleteTeam: (workspaceSlug: string, teamId: string) => Promise<void>;
 }
 
 export class TeamStore implements ITeamStore {
   // observables
-  loader: TLoader = "init-loader";
+  loader: TLoader = undefined;
   teamEntitiesLoader: Record<string, TLoader> = {};
   teamNameDescriptionLoader: Record<string, TNameDescriptionLoader> = {};
   teamMap: Record<string, TTeam> = {};
@@ -78,6 +82,7 @@ export class TeamStore implements ITeamStore {
       // computed
       currentTeamProjectIds: computed,
       allTeamIds: computed,
+      joinedTeamIds: computed,
       filteredTeamIds: computed,
       isTeamsFeatureEnabled: computed,
       // helper actions
@@ -91,6 +96,7 @@ export class TeamStore implements ITeamStore {
       updateTeam: action,
       addTeamMembers: action,
       removeTeamMember: action,
+      joinTeam: action,
       deleteTeam: action,
     });
     // service
@@ -110,16 +116,35 @@ export class TeamStore implements ITeamStore {
    * Returns all workspace team IDs
    */
   get allTeamIds() {
-    return Object.keys(this.teamMap);
+    const currentWorkspace = this.rootStore.workspaceRoot.currentWorkspace;
+    if (!currentWorkspace) return [];
+    // Get all team IDs for current workspace
+    const teams = Object.values(this.teamMap ?? {});
+    const teamIds = teams.filter((team) => team.workspace === currentWorkspace.id).map((team) => team.id);
+    return teamIds;
+  }
+
+  /**
+   * Returns joined team IDs
+   */
+  get joinedTeamIds() {
+    return this.allTeamIds.filter((teamId) => this.isUserMemberOfTeam(teamId));
   }
 
   /**
    * Returns filtered team IDs based on the team filter store
    */
   get filteredTeamIds() {
+    // get current workspace
+    const currentWorkspace = this.rootStore.workspaceRoot.currentWorkspace;
+    if (!currentWorkspace) return [];
+    // get applied team filters
     const { displayFilters, filters, searchQuery } = this.rootStore.teamRoot.teamFilter;
     const filteredTeams = Object.values(this.teamMap).filter(
-      (team) => team.name.toLowerCase().includes(searchQuery.toLowerCase()) && shouldFilterTeam(team, filters)
+      (team) =>
+        team.workspace === currentWorkspace.id &&
+        team.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        shouldFilterTeam(team, filters)
     );
     const orderedTeams = orderTeams(filteredTeams, displayFilters.order_by);
     return orderedTeams.map((team: TTeam) => team.id);
@@ -129,8 +154,10 @@ export class TeamStore implements ITeamStore {
    * Returns whether the teams feature is enabled for the current workspace
    */
   get isTeamsFeatureEnabled() {
-    const { isWorkspaceFeatureEnabled } = this.rootStore.workspaceFeatures;
+    const { loader, isWorkspaceFeatureEnabled } = this.rootStore.workspaceFeatures;
     const { getFeatureFlagForCurrentWorkspace } = this.rootStore.featureFlags;
+    // handle workspace feature init loader
+    if (loader === EWorkspaceFeatureLoader.INIT_LOADER) return undefined;
     return (
       isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_TEAMS_ENABLED) &&
       getFeatureFlagForCurrentWorkspace("TEAMS", false)
@@ -179,6 +206,17 @@ export class TeamStore implements ITeamStore {
    * @returns string[] | undefined
    */
   getTeamMemberIds = computedFn((teamId: string) => this.teamMap[teamId]?.member_ids);
+
+  /**
+   * Returns whether the user is a member of the team
+   * @param teamId
+   * @returns boolean
+   */
+  isUserMemberOfTeam = computedFn((teamId: string) => {
+    const currentUserId = this.rootStore.user.data?.id;
+    if (!currentUserId) return false;
+    return this.getTeamMemberIds(teamId)?.includes(currentUserId) ?? false;
+  });
 
   // helper actions
   /**
@@ -247,7 +285,11 @@ export class TeamStore implements ITeamStore {
    */
   fetchTeamDetails = async (workspaceSlug: string, teamId: string) => {
     try {
-      this.loader = "init-loader";
+      if (this.teamMap[teamId]) {
+        this.loader = "mutation";
+      } else {
+        this.loader = "init-loader";
+      }
       // Fetch team details and team members
       const [team, teamMembers] = await Promise.all([
         this.teamService.getTeam(workspaceSlug, teamId),
@@ -310,6 +352,7 @@ export class TeamStore implements ITeamStore {
    */
   createTeam = async (workspaceSlug: string, data: Partial<TTeam>) => {
     try {
+      this.loader = "mutation";
       // create team
       const team = await this.teamService.createTeam(workspaceSlug, data);
       // add team members
@@ -438,6 +481,33 @@ export class TeamStore implements ITeamStore {
   };
 
   /**
+   * Joins a team and updates the store
+   * @param workspaceSlug
+   * @param teamId
+   * @returns Promise<void>
+   */
+  joinTeam: (workspaceSlug: string, teamId: string) => Promise<void> = async (
+    workspaceSlug: string,
+    teamId: string
+  ) => {
+    try {
+      const currentUserId = this.rootStore.user.data?.id;
+      if (!currentUserId) {
+        console.error("Current user not found");
+        return;
+      }
+      this.loader = "mutation";
+      // join team
+      await this.addTeamMembers(workspaceSlug, teamId, [currentUserId]);
+      this.loader = "loaded";
+    } catch (error) {
+      console.error("Failed to join team", error);
+      this.loader = "loaded";
+      throw error;
+    }
+  };
+
+  /**
    * Deletes a team and updates the store
    * @param workspaceSlug
    * @param teamId
@@ -445,6 +515,7 @@ export class TeamStore implements ITeamStore {
    */
   deleteTeam = async (workspaceSlug: string, teamId: string) => {
     try {
+      this.loader = "mutation";
       // delete team
       await this.teamService.deleteTeam(workspaceSlug, teamId);
       // delete team map and related observables

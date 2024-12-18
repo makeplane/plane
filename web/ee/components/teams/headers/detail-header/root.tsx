@@ -3,7 +3,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Rss, BriefcaseIcon, FileText, Layers } from "lucide-react";
+import { Rss, BriefcaseIcon, FileText, Layers, Loader as Spinner } from "lucide-react";
 // ui
 import {
   Breadcrumbs,
@@ -14,6 +14,7 @@ import {
   ContrastIcon,
   TContextMenuItem,
   Header,
+  Loader,
 } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
@@ -43,12 +44,13 @@ export const TeamDetailHeader = observer((props: TTeamDetailHeaderProps) => {
   const { workspaceSlug, teamId } = useParams();
   // hooks
   const { currentWorkspace } = useWorkspace();
-  const { getTeamById } = useTeams();
+  const { loader, isUserMemberOfTeam, getTeamById } = useTeams();
   // hooks
   const { allowPermissions } = useUserPermissions();
   // derived values
   const workspaceId = currentWorkspace?.id || undefined;
   const team = getTeamById(teamId?.toString());
+  const isTeamMember = isUserMemberOfTeam(teamId?.toString());
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN],
     EUserPermissionsLevel.WORKSPACE,
@@ -129,7 +131,7 @@ export const TeamDetailHeader = observer((props: TTeamDetailHeaderProps) => {
 
   const currentHeaderAction = TEAMS_HEADER_ACTIONS_MAP.get(selectedNavigationKey);
 
-  if (!workspaceSlug || !workspaceId || !team) return <></>;
+  if (!workspaceSlug || !workspaceId) return <></>;
   return (
     <Header>
       <Header.LeftItem>
@@ -149,11 +151,17 @@ export const TeamDetailHeader = observer((props: TTeamDetailHeaderProps) => {
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
-                <BreadcrumbLink
-                  href={`/${workspaceSlug}/teams/${teamId}`}
-                  label={team.name}
-                  icon={team.logo_props && <Logo logo={team.logo_props} />}
-                />
+                <>
+                  {loader === "init-loader" ? (
+                    <Loader.Item height="20px" width="140px" />
+                  ) : team ? (
+                    <BreadcrumbLink
+                      href={`/${workspaceSlug}/teams/${teamId}`}
+                      label={team.name}
+                      icon={team.logo_props && <Logo logo={team.logo_props} />}
+                    />
+                  ) : null}
+                </>
               }
             />
             <Breadcrumbs.BreadcrumbItem
@@ -162,14 +170,17 @@ export const TeamDetailHeader = observer((props: TTeamDetailHeaderProps) => {
                 <BreadcrumbNavigationDropdown
                   selectedItemKey={selectedNavigationKey}
                   navigationItems={TEAM_NAVIGATION_ITEMS}
-                  navigationDisabled={!team.id || !team.project_ids?.length}
+                  navigationDisabled={team ? !isTeamMember || !team.id || !team.project_ids?.length : false}
                 />
               }
             />
           </Breadcrumbs>
         </div>
       </Header.LeftItem>
-      <Header.RightItem>{currentHeaderAction}</Header.RightItem>
+      <Header.RightItem className="flex items-center">
+        {loader === "mutation" && <Spinner size={14} className="flex-shrink-0 animate-spin" />}
+        {currentHeaderAction}
+      </Header.RightItem>
     </Header>
   );
 });

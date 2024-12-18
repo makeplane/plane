@@ -10,6 +10,8 @@ import { useUserPermissions } from "@/hooks/store";
 import { TeamsOverviewContent } from "@/plane-web/components/teams/overview";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// plane web hooks
+import { useTeams } from "@/plane-web/hooks/store";
 // components
 import { TeamsOverviewSidebar } from "./sidebar/root";
 
@@ -23,7 +25,9 @@ export const TeamsOverviewRoot = observer((props: TTeamsOverviewRootProps) => {
   const { workspaceSlug } = useParams();
   // hooks
   const { allowPermissions } = useUserPermissions();
+  const { isUserMemberOfTeam } = useTeams();
   // derived values
+  const isTeamMember = isUserMemberOfTeam(teamId);
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN],
     EUserPermissionsLevel.WORKSPACE,
@@ -33,8 +37,8 @@ export const TeamsOverviewRoot = observer((props: TTeamsOverviewRootProps) => {
   return (
     <ContentWrapper variant={ERowVariant.HUGGING}>
       <div className="flex w-full h-full">
-        <TeamsOverviewContent teamId={teamId} isEditingAllowed={isEditingAllowed} />
-        <TeamsOverviewSidebar teamId={teamId} isEditingAllowed={isEditingAllowed} />
+        <TeamsOverviewContent teamId={teamId} isEditingAllowed={isEditingAllowed && isTeamMember} />
+        {isTeamMember && <TeamsOverviewSidebar teamId={teamId} isEditingAllowed={isEditingAllowed && isTeamMember} />}
       </div>
     </ContentWrapper>
   );

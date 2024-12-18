@@ -30,7 +30,7 @@ export const SidebarTeamsList = observer(() => {
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const { allowPermissions } = useUserPermissions();
   const { toggleCreateTeamModal } = useCommandPalette();
-  const { allTeamIds, isTeamsFeatureEnabled, getTeamById } = useTeams();
+  const { joinedTeamIds, isTeamsFeatureEnabled, getTeamById } = useTeams();
   // local storage
   const { setValue: toggleTeamMenu, storedValue } = useLocalStorage<boolean>("is_teams_list_open", true);
   // derived values
@@ -48,7 +48,7 @@ export const SidebarTeamsList = observer(() => {
   }, [sidebarCollapsed, toggleTeamMenu]);
 
   // Return if teams are not enabled or available
-  if (!isTeamsFeatureEnabled || allTeamIds.length === 0) return null;
+  if (!isTeamsFeatureEnabled || joinedTeamIds.length === 0) return null;
 
   return (
     <>
@@ -125,7 +125,7 @@ export const SidebarTeamsList = observer(() => {
               })}
               static
             >
-              {allTeamIds.map((teamId) => {
+              {joinedTeamIds.map((teamId) => {
                 const team = getTeamById(teamId);
                 if (!team) return null;
                 return (
@@ -134,9 +134,9 @@ export const SidebarTeamsList = observer(() => {
                       className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
                       isActive={pathname.includes(`/${workspaceSlug}/teams/${teamId}`)}
                     >
-                      <div className="flex items-center gap-1.5 py-[1px]">
+                      <div className="flex items-center gap-1.5 py-[1px] truncate">
                         <Logo logo={team.logo_props} size={16} />
-                        {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{team.name}</p>}
+                        {!sidebarCollapsed && <p className="text-sm leading-5 font-medium truncate">{team.name}</p>}
                       </div>
                     </SidebarNavItem>
                   </Link>

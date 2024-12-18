@@ -26,7 +26,6 @@ const defaultTeamData: Partial<TTeam> = {
   project_ids: [],
 };
 
-
 export const CreateOrUpdateTeamModal: FC<TCreateOrUpdateTeamModalProps> = observer((props) => {
   const { teamId, isModalOpen, handleModalClose } = props;
   // router
@@ -58,6 +57,20 @@ export const CreateOrUpdateTeamModal: FC<TCreateOrUpdateTeamModalProps> = observ
     }
   }, [teamId, teamDetail, isModalOpen]);
 
+  // helpers
+  const parseError: (
+    error: Partial<Record<keyof TTeam, string[] | undefined>>,
+    isUpdate?: boolean,
+    teamName?: string
+  ) => string = (error, isUpdate) => {
+    const fallbackErrorMessage = `Failed to ${isUpdate ? "update" : "create"} team. Please try again!`;
+    // check if the error is empty
+    if (!error || Object.keys(error).length === 0) return fallbackErrorMessage;
+    // get the first error message in the format field: error message
+    const [key, errors] = Object.entries(error)[0];
+    return key && errors?.[0] ? `${key.charAt(0).toUpperCase() + key.slice(1)}: ${errors?.[0]}` : fallbackErrorMessage;
+  };
+
   // handlers
   const handleFormDataChange = <T extends keyof TTeam>(key: T, value: TTeam[T] | undefined) =>
     setTeamFormData((prev) => ({ ...prev, [key]: value }));
@@ -83,7 +96,7 @@ export const CreateOrUpdateTeamModal: FC<TCreateOrUpdateTeamModalProps> = observ
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: error?.error ?? `Failed to create team. Please try again!`,
+          message: parseError(error?.data ?? undefined),
         });
       })
       .finally(() => {
@@ -108,7 +121,7 @@ export const CreateOrUpdateTeamModal: FC<TCreateOrUpdateTeamModalProps> = observ
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: error?.error ?? `Failed to update team. Please try again!`,
+          message: parseError(error?.data ?? undefined, true),
         });
       })
       .finally(() => {

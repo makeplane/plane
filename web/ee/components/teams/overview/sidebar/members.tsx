@@ -11,6 +11,7 @@ import { cn } from "@/helpers/common.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember, useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components
 import AddTeamMembersButton from "@/plane-web/components/teams/actions/members/button";
 // plane web hooks
@@ -24,6 +25,7 @@ export type TTeamsOverviewSidebarMembersProps = {
 export const TeamsOverviewSidebarMembers = observer((props: TTeamsOverviewSidebarMembersProps) => {
   const { team, isEditingAllowed } = props;
   // router
+  const router = useAppRouter();
   const { workspaceSlug } = useParams();
   // hooks
   const { getUserDetails } = useMember();
@@ -52,7 +54,9 @@ export const TeamsOverviewSidebarMembers = observer((props: TTeamsOverviewSideba
         message: () => "Failed to remove member from team",
       },
     });
-    await removeTeamMemberPromise;
+    await removeTeamMemberPromise.then(() => {
+      if (currentUser?.id === memberId) router.push(`/${workspaceSlug}/teams`);
+    });
   };
 
   return (

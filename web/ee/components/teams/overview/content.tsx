@@ -17,12 +17,22 @@ type TTeamsOverviewContentProps = {
 export const TeamsOverviewContent = observer((props: TTeamsOverviewContentProps) => {
   const { teamId, isEditingAllowed } = props;
   // hooks
-  const { getTeamById } = useTeams();
+  const { getTeamById, isUserMemberOfTeam } = useTeams();
   // derived values
   const team = getTeamById(teamId?.toString());
+  const isTeamMember = isUserMemberOfTeam(teamId);
   const areProjectsLinked = team?.project_ids && team.project_ids.length > 0;
 
   if (!team) return <></>;
+
+  // If user is not a member of the team, return
+  if (!isTeamMember)
+    return (
+      <ContentWrapper variant={ERowVariant.REGULAR}>
+        <TeamsOverviewProperties teamId={teamId} isEditingAllowed={false} />
+      </ContentWrapper>
+    );
+
   return (
     <ContentWrapper variant={ERowVariant.REGULAR}>
       <div className="flex flex-col gap-y-2">

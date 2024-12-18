@@ -10,6 +10,7 @@ import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web components
+import { JoinTeamButton } from "@/plane-web/components/teams/actions";
 import AddTeamMembersButton from "@/plane-web/components/teams/actions/members/button";
 import UpdateTeamProjectsButton from "@/plane-web/components/teams/actions/projects/button";
 import { TeamDescriptionInput, TeamNameInput } from "@/plane-web/components/teams/overview";
@@ -29,9 +30,10 @@ export const TeamsOverviewProperties = observer((props: TTeamsOverviewProperties
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   // hooks
   const { getUserDetails } = useMember();
-  const { getTeamById, updateTeam } = useTeams();
+  const { isUserMemberOfTeam, getTeamById, updateTeam } = useTeams();
   // derived values
   const team = getTeamById(teamId?.toString());
+  const isTeamMember = isUserMemberOfTeam(teamId);
   const teamLead = team?.lead_id ? getUserDetails(team.lead_id) : undefined;
   const teamDescription =
     team?.description_html !== undefined || team?.description_html !== null
@@ -115,7 +117,11 @@ export const TeamsOverviewProperties = observer((props: TTeamsOverviewProperties
           <AddTeamMembersButton teamId={teamId?.toString()} variant="icon" isEditingAllowed={isEditingAllowed} />
         </div>
         <div className="flex items-center gap-x-2">
-          <UpdateTeamProjectsButton teamId={teamId?.toString()} isEditingAllowed={isEditingAllowed} />
+          {isTeamMember ? (
+            <UpdateTeamProjectsButton teamId={teamId?.toString()} isEditingAllowed={isEditingAllowed} />
+          ) : (
+            <JoinTeamButton teamId={teamId?.toString()} />
+          )}
         </div>
       </div>
     </div>

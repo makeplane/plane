@@ -29,7 +29,7 @@ export const FilterTeamProjects: React.FC<Props> = observer((props) => {
   // plane web hooks
   const { currentTeamProjectIds } = useTeams();
   // derived values
-  const projects = currentTeamProjectIds?.map((projectId) => getProjectById(projectId)!) ?? null;
+  const projects = currentTeamProjectIds?.map((projectId) => getProjectById(projectId)!).filter(Boolean) ?? null;
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
   const sortedOptions = useMemo(() => {

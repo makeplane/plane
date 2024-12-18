@@ -19,11 +19,13 @@ export const TeamOverviewHeaderActions = observer((props: TeamOverviewHeaderActi
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { isTeamSidebarCollapsed, toggleTeamsSidebar, getTeamNameDescriptionLoaderById } = useTeams();
+  const { isTeamSidebarCollapsed, isUserMemberOfTeam, toggleTeamsSidebar, getTeamNameDescriptionLoaderById } =
+    useTeams();
   // derived values
+  const isTeamMember = isUserMemberOfTeam(teamId);
   const isSubmitting = getTeamNameDescriptionLoaderById(teamId);
 
-  if (!workspaceSlug) return;
+  if (!workspaceSlug || !isTeamMember) return;
 
   return (
     <>
@@ -32,7 +34,7 @@ export const TeamOverviewHeaderActions = observer((props: TeamOverviewHeaderActi
         teamId={teamId?.toString()}
         workspaceSlug={workspaceSlug?.toString()}
         parentRef={null}
-        isEditingAllowed={isEditingAllowed}
+        isEditingAllowed={isEditingAllowed && isTeamMember}
         hideEdit
       />
       <Sidebar

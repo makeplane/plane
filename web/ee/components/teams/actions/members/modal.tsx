@@ -41,10 +41,15 @@ export const AddTeamMembersModal: FC<Props> = observer((props) => {
   // derived values
   const teamDetail = teamId ? getTeamById(teamId) : undefined;
   const memberIds = teamId ? getTeamMemberIds(teamId) : [];
-  const uninvitedPeople = workspaceMemberIds?.filter((userId) => {
-    const isInvited = memberIds?.find((u) => u === userId);
-    return !isInvited;
-  });
+  const uninvitedPeople = useMemo(
+    () =>
+      workspaceMemberIds?.filter((userId) => {
+        const isInvited = memberIds?.find((u) => u === userId) || teamMemberIds?.find((u) => u === userId);
+        return !isInvited;
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [teamMemberIds]
+  );
   const isButtonDisabled = useMemo(
     () => teamMemberIds.length === 0 || teamMemberIds.some((id) => !id),
     [teamMemberIds]

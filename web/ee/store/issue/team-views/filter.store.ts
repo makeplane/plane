@@ -213,10 +213,10 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
             _filters.displayFilters.sub_group_by = null;
             updatedDisplayFilters.sub_group_by = null;
           }
-          // set group_by to state if layout is switched to kanban and group_by is null
+          // set group_by to team_project if layout is switched to kanban and group_by is null
           if (_filters.displayFilters.layout === "kanban" && _filters.displayFilters.group_by === null) {
-            _filters.displayFilters.group_by = "state";
-            updatedDisplayFilters.group_by = "state";
+            _filters.displayFilters.group_by = "team_project";
+            updatedDisplayFilters.group_by = "team_project";
           }
 
           runInAction(() => {
@@ -230,7 +230,7 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
           });
 
           if (this.getShouldClearIssues(updatedDisplayFilters)) {
-            this.rootIssueStore.teamIssues.clear(true, true); // clear issues for local store when some filters like layout changes
+            this.rootIssueStore.teamViewIssues.clear(true, true); // clear issues for local store when some filters like layout changes
           }
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
