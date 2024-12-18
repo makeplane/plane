@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 // editor
 import { EditorRefApi } from "@plane/editor";
 // types
-import { TPage } from "@plane/types";
+import { TDocumentPayload, TPage, TPageVersion } from "@plane/types";
 // ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
@@ -14,21 +14,25 @@ import { useProjectPages } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";
 import { useQueryParams } from "@/hooks/use-query-params";
-// services
-import { ProjectPageService, ProjectPageVersionService } from "@/services/page";
-const projectPageService = new ProjectPageService();
-const projectPageVersionService = new ProjectPageVersionService();
 // store
 import { IPage } from "@/store/pages/page";
 
 type TPageRootProps = {
+  descriptionHandler: {
+    fetch: () => Promise<any>;
+    update: (data: TDocumentPayload) => Promise<void>;
+  };
   page: IPage;
   projectId: string;
+  versionHistoryHandler: {
+    fetchAll: (pageId: string) => Promise<TPageVersion[] | undefined>;
+    fetchDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
+  };
   workspaceSlug: string;
 };
 
 export const PageRoot = observer((props: TPageRootProps) => {
-  const { projectId, workspaceSlug, page } = props;
+  const { descriptionHandler, page, projectId, versionHistoryHandler, workspaceSlug } = props;
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
@@ -43,16 +47,13 @@ export const PageRoot = observer((props: TPageRootProps) => {
   // store hooks
   const { createPage } = useProjectPages();
   // derived values
-  const { access, description_html, name, isContentEditable, updateDescription } = page;
+  const { access, description_html, name, isContentEditable } = page;
   // page fallback
   usePageFallback({
     editorRef,
-    fetchPageDescription: async () => {
-      if (!page.id) return;
-      return await projectPageService.fetchDescriptionBinary(workspaceSlug, projectId, page.id);
-    },
+    fetchPageDescription: async () => await descriptionHandler.fetch(),
     hasConnectionFailed,
-    updatePageDescription: async (data) => await updateDescription(data),
+    updatePageDescription: async (data) => await descriptionHandler.update(data),
   });
   // update query params
   const { updateQueryParams } = useQueryParams();
@@ -105,23 +106,8 @@ export const PageRoot = observer((props: TPageRootProps) => {
         activeVersion={version}
         currentVersionDescription={currentVersionDescription ?? null}
         editorComponent={PagesVersionEditor}
-        fetchAllVersions={async (pageId) => {
-          if (!workspaceSlug || !projectId) return;
-          return await projectPageVersionService.fetchAllVersions(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            pageId
-          );
-        }}
-        fetchVersionDetails={async (pageId, versionId) => {
-          if (!workspaceSlug || !projectId) return;
-          return await projectPageVersionService.fetchVersionById(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            pageId,
-            versionId
-          );
-        }}
+        fetchAllVersions={async (pageId) => await versionHistoryHandler.fetchAll(pageId)}
+        fetchVersionDetails={async (pageId, versionId) => await versionHistoryHandler.fetchDetails(pageId, versionId)}
         handleRestore={handleRestoreVersion}
         isOpen={isVersionsOverlayOpen}
         onClose={handleCloseVersionsOverlay}
