@@ -14,11 +14,13 @@ import { useFlag, useIssueTypes, useWorkspaceSubscription } from "@/plane-web/ho
 type TIssueTypeEmptyState = {
   workspaceSlug: string;
   projectId: string;
+  redirect?: boolean;
+  className?: string;
 };
 
 export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
   // props
-  const { workspaceSlug, projectId } = props;
+  const { workspaceSlug, projectId, redirect = false, className = "" } = props;
   // theme
   const { resolvedTheme } = useTheme();
   // store hooks
@@ -55,7 +57,7 @@ export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
 
   return (
     <>
-      <div className="flex justify-center min-h-full overflow-y-auto py-10 px-5">
+      <div className={cn("flex justify-center min-h-full overflow-y-auto py-10 px-5", className)}>
         <div className={cn("flex flex-col gap-5 md:min-w-[24rem] max-w-[45rem]")}>
           <div className="flex flex-col gap-1.5 flex-shrink">
             <h3 className="text-xl font-semibold">
@@ -80,9 +82,18 @@ export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
           />
           <div className="relative flex items-center justify-center gap-2 flex-shrink-0 w-full">
             {isEpicsSettingsEnabled ? (
-              <Button disabled={isLoading} onClick={() => handleEnableEpic()}>
-                Enable
-              </Button>
+              redirect ? (
+                <a
+                  href={`/${workspaceSlug}/projects/${projectId}/settings/epics/`}
+                  className={getButtonStyling("primary", "md")}
+                >
+                  Enable
+                </a>
+              ) : (
+                <Button disabled={isLoading} onClick={() => handleEnableEpic()}>
+                  Enable
+                </Button>
+              )
             ) : isSelfManagedUpgradeDisabled ? (
               <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
                 Get Pro

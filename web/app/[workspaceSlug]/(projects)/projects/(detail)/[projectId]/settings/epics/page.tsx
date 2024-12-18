@@ -10,7 +10,6 @@ import { useProject, useUserPermissions } from "@/hooks/store";
 // plane-web components
 import { EpicsRoot } from "@/plane-web/components/epics";
 // constants
-import { EpicsUpgrade } from "@/plane-web/components/epics/upgrade";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
@@ -32,9 +31,7 @@ const EpicsSettingsPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <div className={`w-full h-full overflow-hidden `}>
-        <WithFeatureFlagHOC flag="EPICS_SETTINGS" fallback={<EpicsUpgrade />} workspaceSlug={workspaceSlug?.toString()}>
-          <EpicsRoot />
-        </WithFeatureFlagHOC>
+        <EpicsRoot />
       </div>
     </>
   );
