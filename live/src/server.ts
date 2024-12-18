@@ -7,6 +7,7 @@ import * as Sentry from "@sentry/node";
 import compression from "compression";
 import helmet from "helmet";
 import cors from "cors";
+import type { Hocuspocus } from "@hocuspocus/server";
 
 // core hocuspocus server
 import { getHocusPocusServer } from "@/core/hocuspocus-server.js";
@@ -25,10 +26,11 @@ interface WebSocketRouter extends Router {
 export class Server {
   private app: Application;
   private port: number;
-  private hocusPocusServer: any;
+  private hocusPocusServer!: Hocuspocus;
 
   constructor() {
     this.app = express();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expressWs(this.app as any);
     this.port = Number(process.env.PORT || 3000);
 
@@ -83,7 +85,7 @@ export class Server {
     this.setupGracefulShutdown(server);
   }
 
-  private setupGracefulShutdown(server: any) {
+  private setupGracefulShutdown(server: ReturnType<typeof this.app.listen>) {
     const gracefulShutdown = async () => {
       manualLogger.info("Starting graceful shutdown...");
       try {
@@ -105,14 +107,14 @@ export class Server {
       }, 10000);
     };
 
-    process.on("unhandledRejection", (err: any) => {
-      manualLogger.info("Unhandled Rejection: ", err);
+    process.on("unhandledRejection", (reason: unknown) => {
+      manualLogger.info("Unhandled Rejection: ", reason);
       manualLogger.info(`UNHANDLED REJECTION! 💥 Shutting down...`);
       gracefulShutdown();
     });
 
-    process.on("uncaughtException", (err: any) => {
-      manualLogger.info("Uncaught Exception: ", err);
+    process.on("uncaughtException", (error: Error) => {
+      manualLogger.info("Uncaught Exception: ", error);
       manualLogger.info(`UNCAUGHT EXCEPTION! 💥 Shutting down...`);
       gracefulShutdown();
     });
