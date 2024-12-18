@@ -22,12 +22,11 @@ export const useSubIssueOperations = (
 ): TSubIssueOperations => {
   const {
     subIssues: { setSubIssueHelpers },
-    fetchSubIssues,
     createSubIssues,
     updateSubIssue,
     deleteSubIssue,
   } = useIssueDetail();
-  const { removeSubIssue } = useIssueDetail(issueServiceType);
+  const { fetchSubIssues, removeSubIssue } = useIssueDetail(issueServiceType);
   const { captureIssueEvent } = useEventTracker();
   const pathname = usePathname();
 

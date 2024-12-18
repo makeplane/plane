@@ -93,7 +93,9 @@ export class IssueStore implements IIssueStore {
     let issue: TIssue | undefined;
 
     // fetch issue from local db
-    issue = await persistence.getIssue(issueId);
+    if (this.serviceType === EIssueServiceType.ISSUES) {
+      issue = await persistence.getIssue(issueId);
+    }
 
     this.fetchingIssueDetails = issueId;
 
@@ -115,7 +117,13 @@ export class IssueStore implements IIssueStore {
 
     // store handlers from issue detail
     // parent
-    if (issue && issue?.parent && issue?.parent?.id && issue?.parent?.project_id) {
+    if (
+      issue &&
+      issue?.parent &&
+      issue?.parent?.id &&
+      issue?.parent?.project_id &&
+      this.serviceType === EIssueServiceType.ISSUES
+    ) {
       this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
         this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
       });

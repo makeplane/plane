@@ -43,6 +43,7 @@ module.exports = {
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-useless-empty-export": "error",
     "@typescript-eslint/prefer-ts-expect-error": "warn",
+    "@typescript-eslint/ban-ts-comment": "warn",
     "@typescript-eslint/naming-convention": [
       "warn",
       {
@@ -73,6 +74,11 @@ module.exports = {
           },
           {
             pattern: "@plane/**",
+            group: "external",
+            position: "after",
+          },
+          {
+            pattern: "@silo/**",
             group: "external",
             position: "after",
           },
