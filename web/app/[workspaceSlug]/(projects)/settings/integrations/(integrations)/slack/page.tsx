@@ -13,7 +13,6 @@ import { SlackIntegrationRoot } from "@/plane-web/components/integrations/slack"
 import { useFlag } from "@/plane-web/hooks/store";
 // plane web constants
 import { useSlackIntegration } from "@/plane-web/hooks/store/integrations/use-slack";
-import { E_FEATURE_FLAGS } from "@/plane-web/types/feature-flag";
 
 const SlackIntegration: FC = observer(() => {
   // router
@@ -21,7 +20,7 @@ const SlackIntegration: FC = observer(() => {
   // store hooks
   const { fetchExternalApiToken, externalApiToken } = useSlackIntegration();
   // derived values
-  const isFeatureEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.SLACK_INTEGRATION);
+  const isFeatureEnabled = useFlag(workspaceSlug?.toString(), "SLACK_INTEGRATION");
 
   // fetching external api token
   const { isLoading: externalApiTokenIsLoading } = useSWR(

@@ -1,6 +1,6 @@
+import { E_FEATURE_FLAGS } from "@plane/constants";
+// store
 import { store } from "@/lib/store-context";
-// plane web hooks
-import { E_FEATURE_FLAGS } from "@/plane-web/hooks/store";
 // plane web types
 import { TSidebarUserMenuItemKeys, TSidebarWorkspaceMenuItemKeys } from "@/plane-web/types/dashboard";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";

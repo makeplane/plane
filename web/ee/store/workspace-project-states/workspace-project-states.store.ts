@@ -5,10 +5,9 @@ import orderBy from "lodash/orderBy";
 import set from "lodash/set";
 import unset from "lodash/unset";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 // plane web constants
 import { WORKSPACE_PROJECT_STATE_GROUPS } from "@/plane-web/constants/workspace-project-states";
-// plane web hooks
-import { E_FEATURE_FLAGS } from "@/plane-web/hooks/store/use-flag";
 // plane web services
 import projectStateService from "@/plane-web/services/workspace-project-states.service";
 // plane web store

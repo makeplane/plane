@@ -21,7 +21,6 @@ import { useIssueDetail, useMultipleSelectStore } from "@/hooks/store";
 import { DeDupeIssueButtonLabel } from "@/plane-web/components/de-dupe";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { DE_DUPE_SELECT_GROUP } from "@/plane-web/constants/de-dupe";
-import { E_FEATURE_FLAGS } from "@/plane-web/hooks/store";
 // local-components
 import { DeDupeIssueBlockRoot } from "./block-root";
 
@@ -99,7 +98,7 @@ export const DeDupeIssuePopoverRoot: FC<TDeDupeIssuePopoverRootProps> = observer
 
   if (!workspaceSlug || !projectId || !rootIssueId) return <></>;
   return (
-    <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag={E_FEATURE_FLAGS.PI_DEDUPE} fallback={<></>}>
+    <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="PI_DEDUPE" fallback={<></>}>
       <Popover as="div" className={cn("relative")}>
         <>
           <Popover.Button as={React.Fragment}>

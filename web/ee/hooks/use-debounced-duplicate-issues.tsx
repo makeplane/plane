@@ -8,7 +8,7 @@ import { getTextContent } from "@/helpers/editor.helper";
 import useDebounce from "@/hooks/use-debounce";
 // services
 import { PIService } from "@/plane-web/services";
-import { E_FEATURE_FLAGS, useFlag } from "./store";
+import { useFlag } from "./store";
 
 const piService = new PIService();
 
@@ -20,10 +20,8 @@ export const useDebouncedDuplicateIssues = (
 ) => {
   const [debouncedFormData, setDebouncedFormData] = useState(formData);
 
-  // TODO: Conditional rendering of hooks is not a good idea. This should be refactored.
   // Check if the feature flag is enabled
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const isFeatureEnabled = workspaceSlug ? useFlag(workspaceSlug, E_FEATURE_FLAGS.PI_DEDUPE) : false;
+  const isFeatureEnabled = useFlag(workspaceSlug, "PI_DEDUPE");
 
   // Debounce the name and description
   const debouncedName = useDebounce(formData?.name, 3000);

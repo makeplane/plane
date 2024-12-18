@@ -18,7 +18,6 @@ import {
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { E_FEATURE_FLAGS } from "@/plane-web/hooks/store/use-flag";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 
 const WorklogsPage = observer(() => {
@@ -28,7 +27,7 @@ const WorklogsPage = observer(() => {
   const { workspaceInfoBySlug } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const { isWorkspaceFeatureEnabled, updateWorkspaceFeature } = useWorkspaceFeatures();
-  const isFeatureEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.PROJECT_GROUPING);
+  const isFeatureEnabled = useFlag(workspaceSlug?.toString(), "PROJECT_GROUPING");
 
   // derived values
   const currentWorkspaceDetail = workspaceInfoBySlug(workspaceSlug.toString());
@@ -63,7 +62,7 @@ const WorklogsPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <WithFeatureFlagHOC
-        flag={E_FEATURE_FLAGS.PROJECT_GROUPING}
+        flag="PROJECT_GROUPING"
         fallback={<WorkspaceProjectStatesUpgrade />}
         workspaceSlug={workspaceSlug?.toString()}
       >

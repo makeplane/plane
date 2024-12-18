@@ -1,10 +1,9 @@
 import { set } from "lodash";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 // types
 import { TLoader } from "@plane/types";
-// plane web enums
-import { E_FEATURE_FLAGS } from "@/plane-web/hooks/store";
 // plane web services
 import {
   epicIssueTypeService,

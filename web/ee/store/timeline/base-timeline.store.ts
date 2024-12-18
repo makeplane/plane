@@ -16,7 +16,6 @@ import { getDateFromPositionOnGantt } from "@/components/gantt-chart/views";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // Plane-web
 import { EDependencyPosition } from "@/plane-web/constants";
-import { E_FEATURE_FLAGS } from "@/plane-web/hooks/store";
 import { DependencyDraggingDetails, Relation } from "@/plane-web/types";
 import { RootStore } from "../root.store";
 import { buildDependencyTree, getBlockUpdates, getNewRelationsMap, getPositionOfBlock, getRelationType } from "./utils";
@@ -60,7 +59,7 @@ export class BaseTimeLineStore extends ExtendableTimelineStore implements IBaseT
 
     autorun(() => {
       this.isDependencyEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace(
-        E_FEATURE_FLAGS.TIMELINE_DEPENDENCY,
+        "TIMELINE_DEPENDENCY",
         false
       );
     });

@@ -7,12 +7,11 @@ import unset from "lodash/unset";
 import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 // helpers
 import { convertToEpoch } from "@/helpers/date-time.helper";
 // plane web constants
 import { EWorklogLoader, EWorklogQueryParamType } from "@/plane-web/constants/workspace-worklog";
-// plane web hooks
-import { E_FEATURE_FLAGS } from "@/plane-web/hooks/store/use-flag";
 // plane web services
 import worklogService from "@/plane-web/services/workspace-worklog.service";
 // plane web store

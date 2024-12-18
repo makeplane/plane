@@ -1,12 +1,13 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // store
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web hooks
-import { E_FEATURE_FLAGS, useFlag } from "@/plane-web/hooks/store/use-flag";
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
 type TUpgradeBadge = {
   className?: string;

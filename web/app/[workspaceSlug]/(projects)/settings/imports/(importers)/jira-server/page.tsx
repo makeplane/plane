@@ -12,8 +12,6 @@ import {
 } from "@/plane-web/components/importers/jira-server";
 //  plane web hooks
 import { useFlag, useJiraServerImporter } from "@/plane-web/hooks/store";
-// plane web types
-import { E_FEATURE_FLAGS } from "@/plane-web/types/feature-flag";
 
 const JiraServerImporter: FC = observer(() => {
   const {
@@ -31,8 +29,7 @@ const JiraServerImporter: FC = observer(() => {
   const workspaceSlug = workspace?.slug || undefined;
   const workspaceId = workspace?.id || undefined;
   const userId = user?.id || undefined;
-  const isFeatureEnabled =
-    (workspaceSlug && useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.JIRA_SERVER_IMPORTER)) || false;
+  const isFeatureEnabled = useFlag(workspaceSlug?.toString(), "JIRA_SERVER_IMPORTER");
 
   // fetching external api token
   const { isLoading: externalApiTokenIsLoading } = useSWR(

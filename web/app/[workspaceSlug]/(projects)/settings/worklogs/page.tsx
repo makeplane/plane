@@ -12,8 +12,6 @@ import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { WorkspaceWorklogRoot, WorkspaceWorklogsUpgrade } from "@/plane-web/components/worklogs";
 // plane web constants
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
-// plane web hooks
-import { E_FEATURE_FLAGS } from "@/plane-web/hooks/store/use-flag";
 
 const WorklogsPage = observer(() => {
   // router
@@ -44,7 +42,7 @@ const WorklogsPage = observer(() => {
       <PageHead title={pageTitle} />
       <WithFeatureFlagHOC
         workspaceSlug={workspaceSlug?.toString()}
-        flag={E_FEATURE_FLAGS.ISSUE_WORKLOG}
+        flag="ISSUE_WORKLOG"
         fallback={<WorkspaceWorklogsUpgrade />}
       >
         <WorkspaceWorklogRoot workspaceSlug={workspaceSlug.toString()} workspaceId={currentWorkspace.id} />
