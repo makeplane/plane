@@ -5,7 +5,7 @@ import { Controller, WebSocket } from "../lib/decorators.js";
 
 @Controller("/collaboration")
 export class CollaborationController {
-  constructor(private hocusPocusServer: typeof Server) {}
+  constructor(private readonly hocusPocusServer: typeof Server) {}
 
   @WebSocket("/")
   handleConnection(ws: WS, req: Request) {
