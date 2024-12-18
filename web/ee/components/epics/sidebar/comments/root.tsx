@@ -27,28 +27,24 @@ export const EpicSidebarCommentsRoot: FC<TEpicSidebarCommentsRootProps> = observ
   if (!project) return <></>;
 
   return (
-    <div className="space-y-3">
-      <div className="min-h-[200px]">
-        <div className="space-y-3">
-          {!disabled && (
-            <EpicCommentCreate
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              epicId={epicId}
-              activityOperations={activityOperations}
-              showAccessSpecifier={!!project.anchor}
-            />
-          )}
-          <EpicCommentActivityRoot
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={epicId}
-            activityOperations={activityOperations}
-            showAccessSpecifier={!!project.anchor}
-            disabled={disabled}
-          />
-        </div>
-      </div>
+    <div className="space-y-5 min-h-[200px] w-full">
+      {!disabled && (
+        <EpicCommentCreate
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          epicId={epicId}
+          activityOperations={activityOperations}
+          showAccessSpecifier={!!project.anchor}
+        />
+      )}
+      <EpicCommentActivityRoot
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        issueId={epicId}
+        activityOperations={activityOperations}
+        showAccessSpecifier={!!project.anchor}
+        disabled={disabled}
+      />
     </div>
   );
 });
