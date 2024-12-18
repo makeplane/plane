@@ -253,7 +253,6 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
   return (
     <ModalCore
       isOpen={isOpen}
-      handleClose={() => handleClose()}
       position={EModalPosition.TOP}
       width={EModalWidth.XXXXL}
       className="!bg-transparent rounded-lg shadow-none transition-[width] ease-linear"

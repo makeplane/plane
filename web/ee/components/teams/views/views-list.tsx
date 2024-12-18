@@ -50,7 +50,7 @@ export const TeamViewsList = observer((props: Props) => {
         </div>
       ) : (
         <EmptyState
-          type={EmptyStateType.PROJECT_VIEW}
+          type={EmptyStateType.TEAM_VIEW}
           primaryButtonOnClick={() => toggleCreateTeamViewModal({ isOpen: true, teamId })}
         />
       )}

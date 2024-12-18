@@ -6,7 +6,7 @@ import { computedFn } from "mobx-utils";
 // types
 import { TLoader, TTeam, TTeamMember, TTeamEntities, TNameDescriptionLoader } from "@plane/types";
 // utils
-import { shouldFilterTeam, orderTeams } from "@plane/utils";
+import { ETeamScope, shouldFilterTeam, orderTeams } from "@plane/utils";
 // plane web services
 import { TeamService } from "@/plane-web/services/teams/team.service";
 // plane web types
@@ -26,9 +26,11 @@ export interface ITeamStore {
   currentTeamProjectIds: string[] | undefined;
   allTeamIds: string[];
   joinedTeamIds: string[];
+  currentScopeTeamIds: string[];
   filteredTeamIds: string[];
   isTeamsFeatureEnabled: boolean | undefined;
   // computed functions
+  getScopeTeamIds: (scope: ETeamScope) => string[];
   getTeamById: (teamId: string) => TTeam | undefined;
   getTeamEntitiesLoaderById: (teamId: string) => TLoader | undefined;
   getTeamNameDescriptionLoaderById: (teamId: string) => TNameDescriptionLoader | undefined;
@@ -83,10 +85,12 @@ export class TeamStore implements ITeamStore {
       currentTeamProjectIds: computed,
       allTeamIds: computed,
       joinedTeamIds: computed,
+      currentScopeTeamIds: computed,
       filteredTeamIds: computed,
       isTeamsFeatureEnabled: computed,
       // helper actions
       updateTeamNameDescriptionLoader: action,
+      toggleTeamsSidebar: action,
       // fetch actions
       fetchTeams: action,
       fetchTeamDetails: action,
@@ -132,6 +136,13 @@ export class TeamStore implements ITeamStore {
   }
 
   /**
+   * Returns current scope team IDs
+   */
+  get currentScopeTeamIds() {
+    return this.getScopeTeamIds(this.rootStore.teamRoot.teamFilter.scope);
+  }
+
+  /**
    * Returns filtered team IDs based on the team filter store
    */
   get filteredTeamIds() {
@@ -140,12 +151,10 @@ export class TeamStore implements ITeamStore {
     if (!currentWorkspace) return [];
     // get applied team filters
     const { displayFilters, filters, searchQuery } = this.rootStore.teamRoot.teamFilter;
-    const filteredTeams = Object.values(this.teamMap).filter(
-      (team) =>
-        team.workspace === currentWorkspace.id &&
-        team.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        shouldFilterTeam(team, filters)
-    );
+    const filteredTeams = this.currentScopeTeamIds
+      .map((teamId) => this.getTeamById(teamId))
+      .filter(Boolean)
+      .filter((team) => team.name.toLowerCase().includes(searchQuery.toLowerCase()) && shouldFilterTeam(team, filters));
     const orderedTeams = orderTeams(filteredTeams, displayFilters.order_by);
     return orderedTeams.map((team: TTeam) => team.id);
   }
@@ -165,6 +174,17 @@ export class TeamStore implements ITeamStore {
   }
 
   // helper actions
+  /**
+   * Returns team IDs by scope
+   * @param scope
+   * @returns string[]
+   */
+  getScopeTeamIds = computedFn((scope: ETeamScope) => {
+    if (scope === ETeamScope.YOUR_TEAMS) return this.joinedTeamIds;
+    if (scope === ETeamScope.ALL_TEAMS) return this.allTeamIds;
+    return [];
+  });
+
   /**
    * Returns team details by team ID
    * @param teamId

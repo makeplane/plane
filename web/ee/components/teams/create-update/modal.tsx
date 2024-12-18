@@ -132,12 +132,7 @@ export const CreateOrUpdateTeamModal: FC<TCreateOrUpdateTeamModalProps> = observ
   if (!isModalOpen) return null;
 
   return (
-    <ModalCore
-      isOpen={isModalOpen}
-      handleClose={handleModalClearAndClose}
-      position={EModalPosition.TOP}
-      width={EModalWidth.XXL}
-    >
+    <ModalCore isOpen={isModalOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <CreateOrUpdateTeamForm
         teamDetail={teamDetail}
         formData={teamFormData}

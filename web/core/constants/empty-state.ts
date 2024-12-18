@@ -114,6 +114,11 @@ export enum EmptyStateType {
   WORKSPACE_DRAFT_ISSUES = "workspace-draft-issues",
 
   PROJECT_NO_EPICS = "project-no-epics",
+  // Teams
+  TEAM_NO_ISSUES = "team-no-issues",
+  TEAM_EMPTY_FILTER = "team-empty-filter",
+  TEAM_VIEW = "team-view",
+  TEAM_PAGE = "team-page",
 }
 
 const emptyStateDetails = {
@@ -840,6 +845,62 @@ const emptyStateDetails = {
     },
     accessType: "project",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+  },
+  // Teams
+  [EmptyStateType.TEAM_NO_ISSUES]: {
+    key: EmptyStateType.TEAM_NO_ISSUES,
+    title: "Create an issue in your team projects and assign it to someone, even yourself",
+    description:
+      "Think of issues as jobs, tasks, work, or JTBD. Which we like. An issue and its sub-issues are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes issues to move your project towards its goal.",
+    path: "/empty-state/onboarding/issues",
+    primaryButton: {
+      text: "Create your first issue",
+      comicBox: {
+        title: "Issues are building blocks in Plane.",
+        description:
+          "Redesign the Plane UI, Rebrand the company, or Launch the new fuel injection system are examples of issues that likely have sub-issues.",
+      },
+    },
+    accessType: "workspace",
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+  },
+  [EmptyStateType.TEAM_EMPTY_FILTER]: {
+    key: EmptyStateType.TEAM_EMPTY_FILTER,
+    title: "No issues found matching the filters applied",
+    path: "/empty-state/empty-filters/",
+    secondaryButton: {
+      text: "Clear all filters",
+    },
+    accessType: "workspace",
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+  },
+  [EmptyStateType.TEAM_VIEW]: {
+    key: EmptyStateType.TEAM_VIEW,
+    title: "Save filtered views for your team. Create as many as you need",
+    description:
+      "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a team can see everyone’s views and choose whichever suits their needs best.",
+    path: "/empty-state/onboarding/views",
+    primaryButton: {
+      text: "Create your first view",
+      comicBox: {
+        title: "Views work atop Issue properties.",
+        description: "You can create a view from here with as many properties as filters as you see fit.",
+      },
+    },
+    accessType: "workspace",
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+  },
+  [EmptyStateType.TEAM_PAGE]: {
+    key: EmptyStateType.TEAM_PAGE,
+    title: "Team pages are coming soon!",
+    description:
+      "Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started. Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button.",
+    path: "/empty-state/onboarding/pages",
+    // primaryButton: {
+    //   text: "Create your first page",
+    // },
+    // accessType: "workspace",
+    // access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
 } as const;
 

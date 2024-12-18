@@ -1,10 +1,5 @@
 import sortBy from "lodash/sortBy";
-import {
-  TTeam,
-  TTeamDisplayFilters,
-  TTeamFilters,
-  TTeamOrderByOptions,
-} from "@plane/types";
+import { TTeam, TTeamDisplayFilters, TTeamFilters, TTeamOrderByOptions } from "@plane/types";
 
 /**
  * @description filters team based on the filters and display filters
@@ -12,15 +7,9 @@ import {
  * @param {TTeamFilters} filters
  * @returns {boolean}
  */
-export const shouldFilterTeam = (
-  team: TTeam,
-  filters: TTeamFilters
-): boolean => true;
+export const shouldFilterTeam = (team: TTeam, filters: TTeamFilters): boolean => true;
 
-export const orderTeams = (
-  teams: TTeam[],
-  orderByKey: TTeamOrderByOptions | undefined
-): TTeam[] => {
+export const orderTeams = (teams: TTeam[], orderByKey: TTeamOrderByOptions | undefined): TTeam[] => {
   let orderedTeams: TTeam[] = [];
   if (teams.length === 0) return orderedTeams;
 
@@ -44,3 +33,8 @@ export const orderTeams = (
 
   return orderedTeams;
 };
+
+export enum ETeamScope {
+  YOUR_TEAMS = "your-teams",
+  ALL_TEAMS = "all-teams",
+}

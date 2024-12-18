@@ -8,7 +8,7 @@ import { BreadcrumbLink } from "@/components/common";
 // hooks
 import { useWorkspace, useCommandPalette, useEventTracker, useUserPermissions } from "@/hooks/store";
 // plane web components
-import { TeamListSearch } from "@/plane-web/components/teams/headers/list-header";
+import { TeamListSearch, TeamScopeDropdown } from "@/plane-web/components/teams/headers/list-header";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
@@ -36,6 +36,7 @@ export const TeamsListHeader = observer(() => {
               link={<BreadcrumbLink label="Teams" icon={<TeamsIcon className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
+          <TeamScopeDropdown />
         </div>
         <div className="flex items-center gap-4">
           {/* search */}

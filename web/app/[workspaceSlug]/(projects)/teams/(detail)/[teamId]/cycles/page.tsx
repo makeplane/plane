@@ -75,9 +75,10 @@ const TeamCyclesPage = observer(() => {
         tabs={TEAM_CYCLES_TABS}
         storageKey={`teams-cycles-${teamId}`}
         defaultTab="current"
-        tabListContainerClassName="px-6 pt-4"
-        tabListClassName="max-w-64"
-        tabPanelClassName="py-2 h-full w-full overflow-hidden overflow-y-auto"
+        size="sm"
+        tabListContainerClassName="px-6 py-2 border-b border-custom-border-200 divide-x divide-custom-border-200"
+        tabListClassName="my-2 max-w-64"
+        tabPanelClassName="h-full w-full overflow-hidden overflow-y-auto"
       />
       <CyclePeekOverview workspaceSlug={workspaceSlug!.toString()} isArchived={false} />
     </div>

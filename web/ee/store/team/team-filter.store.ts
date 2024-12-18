@@ -1,15 +1,20 @@
 import set from "lodash/set";
-import { observable, action, makeObservable, runInAction } from "mobx";
+import { observable, action, makeObservable, runInAction, reaction } from "mobx";
 // types
 import { TTeamDisplayFilters, TTeamFilters } from "@plane/types";
-
+// utils
+import { ETeamScope } from "@plane/utils";
+// root store
+import { RootStore } from "../root.store";
 
 export interface ITeamFilterStore {
   // observables
+  scope: ETeamScope;
   displayFilters: TTeamDisplayFilters;
   filters: TTeamFilters;
   searchQuery: string;
   // actions
+  updateScope: (scope: ETeamScope) => void;
   updateDisplayFilters: (displayFilters: TTeamDisplayFilters) => void;
   updateFilters: (filters: TTeamFilters) => void;
   updateSearchQuery: (query: string) => void;
@@ -19,26 +24,47 @@ export interface ITeamFilterStore {
 
 export class TeamFilterStore implements ITeamFilterStore {
   // observables
+  scope: ETeamScope = ETeamScope.YOUR_TEAMS;
   displayFilters: TTeamDisplayFilters = {};
   filters: TTeamFilters = {};
   searchQuery: string = "";
 
-  constructor() {
+  constructor(private rootStore: RootStore) {
     makeObservable(this, {
       // observables
+      scope: observable,
       displayFilters: observable,
       filters: observable,
       searchQuery: observable.ref,
       // actions
+      updateScope: action,
       updateDisplayFilters: action,
       updateFilters: action,
       updateSearchQuery: action,
       clearAllFilters: action,
       clearAllAppliedDisplayFilters: action,
     });
+    // Reactions to update team scope on workspace change
+    reaction(
+      () => ({
+        workspaceSlug: this.rootStore.router.workspaceSlug,
+      }),
+      ({ workspaceSlug }) => {
+        if (!workspaceSlug) return;
+        if (this.scope !== ETeamScope.YOUR_TEAMS) this.updateScope(ETeamScope.YOUR_TEAMS);
+      }
+    );
   }
 
   // actions
+  /**
+   * Updates the scope
+   * @param scope
+   */
+  updateScope = action((scope: ETeamScope) => {
+    this.scope = scope;
+  });
+
   /**
    * @description Update display filters
    * @param {TTeamDisplayFilters} displayFilters

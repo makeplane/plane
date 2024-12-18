@@ -20,7 +20,7 @@ export class TeamRootStore implements ITeamRootStore {
   teamView: ITeamViewStore;
 
   constructor(root: RootStore) {
-    this.teamFilter = new TeamFilterStore();
+    this.teamFilter = new TeamFilterStore(root);
     this.team = new TeamStore(root);
     this.teamCycle = new TeamCycleStore(root);
     this.teamView = new TeamViewStore(root);
