@@ -2,7 +2,7 @@ import { Users } from "lucide-react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { Avatar, Tooltip } from "@plane/ui";
 // components
 import { DateRangeDropdown, MemberDropdown, ProjectDropdown } from "@/components/dropdowns";

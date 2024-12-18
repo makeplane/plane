@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
-import { cn, PiChatEditor } from "@plane/editor";
+import { PiChatEditor } from "@plane/editor";
 import { Avatar, Card, Loader } from "@plane/ui";
 import Typing from "./typing";
+import { cn } from "@plane/utils";
 
 type TProps = {
   id: string;

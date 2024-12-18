@@ -15,8 +15,9 @@ import MentionList from "./mention-list.js";
 import tippy from "tippy.js";
 import { IMentionHighlight } from "@/types/mention-suggestion.js";
 import { PiMentionNodeView } from "./mention-node-view.js";
-import { cn, getTrimmedHTML } from "@/helpers/common.js";
+import { getTrimmedHTML } from "@/helpers/common.js";
 import { EnterKeyExtension } from "./extensions/enter-key-extension.js";
+import { cn } from "@plane/utils";
 
 interface IItem {
   id: string;

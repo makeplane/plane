@@ -3,9 +3,9 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane
-import { cn } from "@plane/editor";
 import type { TGroupedIssues, TLoader, TPaginationData } from "@plane/types";
 import { Spinner } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { IssueLayoutHOC } from "@/components/issues/issue-layouts/issue-layout-HOC";
 // plane web

@@ -33,7 +33,6 @@ export const WorkspacePageRoot = observer((props: TPageRootProps) => {
   const { workspaceSlug, page } = props;
   // states
   const [editorReady, setEditorReady] = useState(false);
-  const [readOnlyEditorReady, setReadOnlyEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
   const [sidePeekVisible, setSidePeekVisible] = useState(window.innerWidth >= 768);
   const [isVersionsOverlayOpen, setIsVersionsOverlayOpen] = useState(false);
@@ -129,8 +128,6 @@ export const WorkspacePageRoot = observer((props: TPageRootProps) => {
         editorRef={editorRef}
         handleDuplicatePage={handleDuplicatePage}
         page={page}
-        readOnlyEditorReady={readOnlyEditorReady}
-        readOnlyEditorRef={readOnlyEditorRef}
         setSidePeekVisible={(state) => setSidePeekVisible(state)}
         sidePeekVisible={sidePeekVisible}
       />
@@ -138,7 +135,6 @@ export const WorkspacePageRoot = observer((props: TPageRootProps) => {
         editorRef={editorRef}
         handleConnectionStatus={(status) => setHasConnectionFailed(status)}
         handleEditorReady={(val) => setEditorReady(val)}
-        handleReadOnlyEditorReady={() => setReadOnlyEditorReady(true)}
         page={page}
         readOnlyEditorRef={readOnlyEditorRef}
         sidePeekVisible={sidePeekVisible}

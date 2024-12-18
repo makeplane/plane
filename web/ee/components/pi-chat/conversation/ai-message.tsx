@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import Markdown from "react-markdown";
 import { Copy, ThumbsDown, ThumbsUp } from "lucide-react";
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { Loader, PiChatLogo, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";

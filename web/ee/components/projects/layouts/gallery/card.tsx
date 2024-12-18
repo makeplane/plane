@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
 // hooks
 import { useProject, useWorkspace } from "@/hooks/store";

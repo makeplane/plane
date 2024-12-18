@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // Plane
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { Row } from "@plane/ui";
 // Plane-web
 import { TInitiativeGroupByOptions } from "@/plane-web/types/initiative";

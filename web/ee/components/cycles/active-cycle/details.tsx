@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { TCycleEstimateType, TCyclePlotType } from "@plane/types";
 import { Loader, Row } from "@plane/ui";
 import { EmptyState } from "@/components/empty-state";

@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 // icons
 import { ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
 // ui
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";

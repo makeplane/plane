@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { Input, setToast, TOAST_TYPE } from "@plane/ui";
 import { useProjectUpdates } from "@/plane-web/hooks/store/projects/use-project-updates";
 import { TProjectUpdatesComment } from "@/plane-web/types";

@@ -5,10 +5,9 @@
 // @ts-nocheck
 import { useEffect, useState } from "react";
 import { NodeViewWrapper } from "@tiptap/react";
-// helpers
-import { cn } from "@/helpers/common";
 // types
 import { IMentionHighlight } from "@/types";
+import { cn } from "@plane/utils";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export const PiMentionNodeView = (props) => {
@@ -17,11 +16,11 @@ export const PiMentionNodeView = (props) => {
 
   useEffect(() => {
     if (!props.extension.options.mentionHighlights) return;
-    const hightlights = async () => {
+    const highlights = async () => {
       const userId = await props.extension.options.mentionHighlights();
       setHighlightsState(userId);
     };
-    hightlights();
+    highlights();
   }, [props.extension.options]);
 
   return (

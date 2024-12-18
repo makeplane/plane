@@ -1,7 +1,7 @@
 import { SyntheticEvent } from "react";
 import { observer } from "mobx-react";
 import { Users } from "lucide-react";
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { IWorkspace } from "@plane/types";
 import { Avatar, PriorityIcon, Tooltip } from "@plane/ui";
 import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";

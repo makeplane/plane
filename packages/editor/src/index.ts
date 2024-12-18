@@ -14,8 +14,8 @@ export {
   LiteTextReadOnlyEditorWithRef,
   RichTextEditorWithRef,
   RichTextReadOnlyEditorWithRef,
-  PiChatEditor,
 } from "@/components/editors";
+export { PiChatEditor } from "./ee/components/editors";
 
 export { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
 

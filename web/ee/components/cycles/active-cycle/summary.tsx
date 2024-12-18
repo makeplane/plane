@@ -2,7 +2,7 @@ import { format, startOfToday } from "date-fns";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { Info, TrendingDown, TrendingUp } from "lucide-react";
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { IIssueFilterOptions, TCycleProgress } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { useProjectState } from "@/hooks/store";

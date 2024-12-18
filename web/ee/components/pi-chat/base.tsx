@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import useSWR from "swr";
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { generateQueryParams } from "@/helpers/router.helper";
 import { useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

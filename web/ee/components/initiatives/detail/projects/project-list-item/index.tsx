@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // Plane
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { Logo, Spinner } from "@plane/ui";
 // hooks
 import { ListItem } from "@/components/core/list";
