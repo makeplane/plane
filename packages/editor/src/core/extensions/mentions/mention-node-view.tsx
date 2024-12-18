@@ -5,8 +5,8 @@
 // @ts-nocheck
 import { useEffect, useState } from "react";
 import { NodeViewWrapper } from "@tiptap/react";
-// helpers
-import { cn } from "@/helpers/common";
+// plane utils
+import { cn } from "@plane/utils";
 // types
 import { IMentionHighlight } from "@/types";
 

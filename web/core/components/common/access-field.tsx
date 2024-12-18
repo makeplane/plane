@@ -1,6 +1,8 @@
 import { LucideIcon } from "lucide-react";
-import { cn } from "@plane/editor";
+// plane ui
 import { Tooltip } from "@plane/ui";
+// plane utils
+import { cn } from "@plane/utils";
 
 type Props = {
   onChange: (value: number) => void;

@@ -5,8 +5,8 @@ import { Editor } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
 // ui
 import { Avatar } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common";
+// plane utils
+import { cn } from "@plane/utils";
 // types
 import { IMentionSuggestion } from "@/types";
 
