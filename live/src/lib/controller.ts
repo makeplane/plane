@@ -1,9 +1,9 @@
 import "reflect-metadata";
-import { Router } from "express";
+import type { Router } from "express";
 
 type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
 
-export function registerControllers(router: Router, Controller: any) {
+export const registerControllers = (router: Router, Controller: any): void => {
   const instance = new Controller();
   const baseRoute = Reflect.getMetadata("baseRoute", Controller) || "";
 
@@ -21,4 +21,4 @@ export function registerControllers(router: Router, Controller: any) {
       router[method](baseRoute + route, ...middlewares, instance[methodName].bind(instance));
     }
   });
-}
+};
