@@ -15,6 +15,7 @@ import { IProjectUpdateStore, ProjectUpdateStore } from "./project-details/updat
 export interface IProjectStore extends ICeProjectStore {
   reactionStore: IProjectReactionStore;
   attachmentStore: IProjectAttachmentStore;
+  featuresLoader: boolean;
   features: Record<string, TProjectFeatures>;
   //computed
   publicProjectIds: string[];
@@ -31,6 +32,7 @@ export interface IProjectStore extends ICeProjectStore {
 
 export class ProjectStore extends CeProjectStore implements IProjectStore {
   features: Record<string, TProjectFeatures> = {};
+  featuresLoader: boolean = false;
   //store
   linkStore: IProjectLinkStore;
   attachmentStore: IProjectAttachmentStore;
@@ -42,6 +44,7 @@ export class ProjectStore extends CeProjectStore implements IProjectStore {
     super(store);
     makeObservable(this, {
       // observables
+      featuresLoader: observable.ref,
       features: observable,
       // computed
       publicProjectIds: computed,
@@ -125,10 +128,20 @@ export class ProjectStore extends CeProjectStore implements IProjectStore {
 
   // actions
   fetchFeatures = async (workspaceSlug: string, projectId: string): Promise<void> => {
-    const response = await this.projectService.getFeatures(workspaceSlug, projectId);
-    runInAction(() => {
-      this.features[projectId] = response;
-    });
+    try {
+      this.featuresLoader = true;
+      const response = await this.projectService.getFeatures(workspaceSlug, projectId);
+      runInAction(() => {
+        this.features[projectId] = response;
+      });
+    } catch (error) {
+      console.error("Error fetching project features", error);
+      throw error;
+    } finally {
+      runInAction(() => {
+        this.featuresLoader = false;
+      });
+    }
   };
 
   toggleFeatures = async (workspaceSlug: string, projectId: string, data: Partial<TProject>): Promise<void> => {
