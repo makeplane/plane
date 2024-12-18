@@ -15,6 +15,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const {
     onTransaction,
     disabledExtensions,
+    editable,
     editorClassName,
     editorProps = {},
     embedHandler,
@@ -75,7 +76,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const editor = useEditor({
     disabledExtensions,
     id,
-    onTransaction,
+    editable,
     editorProps,
     editorClassName,
     enableHistory: false,
@@ -97,9 +98,10 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
       }),
     ],
     fileHandler,
-    handleEditorReady,
     forwardedRef,
+    handleEditorReady,
     mentionHandler,
+    onTransaction,
     placeholder,
     provider,
     tabIndex,

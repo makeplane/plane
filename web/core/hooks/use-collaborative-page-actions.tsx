@@ -50,6 +50,10 @@ export const useCollaborativePageActions = (editorRef: EditorRefApi | EditorRead
       try {
         await actionDetails.execute(isPerformedByCurrentUser);
         if (isPerformedByCurrentUser) {
+          const serverEventName = getServerEventName(clientAction);
+          if (serverEventName) {
+            editorRef?.emitRealTimeUpdate(serverEventName);
+          }
           setCurrentActionBeingProcessed(clientAction);
         }
       } catch {
@@ -60,17 +64,8 @@ export const useCollaborativePageActions = (editorRef: EditorRefApi | EditorRead
         });
       }
     },
-    [actionHandlerMap]
+    [actionHandlerMap, editorRef]
   );
-
-  useEffect(() => {
-    if (currentActionBeingProcessed) {
-      const serverEventName = getServerEventName(currentActionBeingProcessed);
-      if (serverEventName) {
-        editorRef?.emitRealTimeUpdate(serverEventName);
-      }
-    }
-  }, [currentActionBeingProcessed, editorRef]);
 
   useEffect(() => {
     const realTimeStatelessMessageListener = editorRef?.listenToRealTimeUpdate();
@@ -95,6 +90,5 @@ export const useCollaborativePageActions = (editorRef: EditorRefApi | EditorRead
 
   return {
     executeCollaborativeAction,
-    EVENT_ACTION_DETAILS_MAP: actionHandlerMap,
   };
 };

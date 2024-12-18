@@ -4,8 +4,7 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
-import { cn } from "@plane/editor";
-// plane packages
+// plane ui
 import {
   IGroupByColumn,
   TIssueMap,
@@ -16,6 +15,8 @@ import {
   TIssueKanbanFilters,
 } from "@plane/types";
 import { Row, setToast, TOAST_TYPE } from "@plane/ui";
+// plane utils
+import { cn } from "@plane/utils";
 // components
 import { ListLoaderItemRow } from "@/components/ui";
 // constants
