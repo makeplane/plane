@@ -1,10 +1,11 @@
 import { ChangeEvent } from "react";
 import { Controller, useFormContext, UseFormSetValue } from "react-hook-form";
 import { Info } from "lucide-react";
-import { cn } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Input, TextArea, Tooltip } from "@plane/ui";
+// plane utils
+import { cn } from "@plane/utils";
 // constants
 import { ETabIndices } from "@/constants/tab-indices";
 // helpers
