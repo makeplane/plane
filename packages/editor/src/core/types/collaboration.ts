@@ -21,6 +21,7 @@ export type TServerHandler = {
 
 type TCollaborativeEditorHookProps = {
   disabledExtensions: TExtensions[];
+  editable?: boolean;
   editorClassName: string;
   editorProps?: EditorProps;
   extensions?: Extensions;

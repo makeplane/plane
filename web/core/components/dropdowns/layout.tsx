@@ -1,9 +1,10 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { Check } from "lucide-react";
-// plane packages
-import { cn } from "@plane/editor";
+// plane ui
 import { Dropdown } from "@plane/ui";
+// plane utils
+import { cn } from "@plane/utils";
 // constants
 import { EIssueLayoutTypes, ISSUE_LAYOUT_MAP } from "@/constants/issue";
 

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import tippy, { Instance } from "tippy.js";
-// helpers
-import { cn } from "@/helpers/common";
+// plane utils
+import { cn } from "@plane/utils";
 // types
 import { TAIHandler } from "@/types";
 

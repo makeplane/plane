@@ -1,11 +1,9 @@
-import { useCallback, useMemo } from "react";
+import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
 import {
   CollaborativeDocumentEditorWithRef,
-  CollaborativeDocumentReadOnlyEditorWithRef,
-  EditorReadOnlyRefApi,
   EditorRefApi,
   TAIMenuProps,
   TDisplayConfig,
@@ -20,7 +18,7 @@ import { Row } from "@plane/ui";
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
 import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
-import { getEditorFileHandlers, getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
+import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
@@ -42,24 +40,14 @@ const fileService = new FileService();
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   editorReady: boolean;
-  handleConnectionStatus: (status: boolean) => void;
-  handleEditorReady: (value: boolean) => void;
-  handleReadOnlyEditorReady: (value: boolean) => void;
+  handleConnectionStatus: Dispatch<SetStateAction<boolean>>;
+  handleEditorReady: Dispatch<SetStateAction<boolean>>;
   page: IPage;
-  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   sidePeekVisible: boolean;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
-  const {
-    editorRef,
-    handleConnectionStatus,
-    handleEditorReady,
-    handleReadOnlyEditorReady,
-    page,
-    readOnlyEditorRef,
-    sidePeekVisible,
-  } = props;
+  const { editorRef, handleConnectionStatus, handleEditorReady, page, sidePeekVisible } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
@@ -112,11 +100,11 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   const handleServerConnect = useCallback(() => {
     handleConnectionStatus(false);
-  }, []);
+  }, [handleConnectionStatus]);
 
   const handleServerError = useCallback(() => {
     handleConnectionStatus(true);
-  }, []);
+  }, [handleConnectionStatus]);
 
   const serverHandler: TServerHandler = useMemo(
     () => ({
@@ -169,18 +157,16 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           "w-[5%]": isFullWidth,
         })}
       >
-        {!isFullWidth && (
-          <PageContentBrowser editorRef={(isContentEditable ? editorRef : readOnlyEditorRef)?.current} />
-        )}
+        {!isFullWidth && <PageContentBrowser editorRef={editorRef.current} />}
       </Row>
       <div
-        className={cn("h-full w-full pt-5 duration-200", {
+        className={cn("size-full pt-5 duration-200", {
           "md:w-[calc(100%-10rem)] xl:w-[calc(100%-28rem)]": !isFullWidth,
           "md:w-[90%]": isFullWidth,
         })}
       >
-        <div className="h-full w-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
-          <div className="relative w-full flex-shrink-0 md:pl-5 px-4">
+        <div className="size-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
+          <div className="relative w-full flex-shrink-0 md:pl-5 px-4 h-[38px]">
             <PageEditorTitle
               editorRef={editorRef}
               title={pageTitle}
@@ -188,72 +174,47 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               readOnly={!isContentEditable}
             />
           </div>
-          {isContentEditable ? (
-            <CollaborativeDocumentEditorWithRef
-              id={pageId}
-              fileHandler={getEditorFileHandlers({
-                maxFileSize,
-                projectId: projectId?.toString() ?? "",
-                uploadFile: async (file) => {
-                  const { asset_id } = await fileService.uploadProjectAsset(
-                    workspaceSlug?.toString() ?? "",
-                    projectId?.toString() ?? "",
-                    {
-                      entity_identifier: pageId,
-                      entity_type: EFileAssetType.PAGE_DESCRIPTION,
-                    },
-                    file
-                  );
-                  return asset_id;
-                },
-                workspaceId,
-                workspaceSlug: workspaceSlug?.toString() ?? "",
-              })}
-              handleEditorReady={handleEditorReady}
-              ref={editorRef}
-              containerClassName="h-full p-0 pb-64"
-              displayConfig={displayConfig}
-              editorClassName="pl-10"
-              mentionHandler={{
-                highlights: mentionHighlights,
-                suggestions: mentionSuggestions,
-              }}
-              embedHandler={{
-                issue: issueEmbedProps,
-              }}
-              realtimeConfig={realtimeConfig}
-              serverHandler={serverHandler}
-              user={userConfig}
-              disabledExtensions={disabledExtensions}
-              aiHandler={{
-                menu: getAIMenu,
-              }}
-            />
-          ) : (
-            <CollaborativeDocumentReadOnlyEditorWithRef
-              id={pageId}
-              ref={readOnlyEditorRef}
-              disabledExtensions={disabledExtensions}
-              fileHandler={getReadOnlyEditorFileHandlers({
-                projectId: projectId?.toString() ?? "",
-                workspaceSlug: workspaceSlug?.toString() ?? "",
-              })}
-              handleEditorReady={handleReadOnlyEditorReady}
-              containerClassName="p-0 pb-64 border-none"
-              displayConfig={displayConfig}
-              editorClassName="pl-10"
-              mentionHandler={{
-                highlights: mentionHighlights,
-              }}
-              embedHandler={{
-                issue: {
-                  widgetCallback: issueEmbedProps.widgetCallback,
-                },
-              }}
-              realtimeConfig={realtimeConfig}
-              user={userConfig}
-            />
-          )}
+          <CollaborativeDocumentEditorWithRef
+            editable={isContentEditable}
+            id={pageId}
+            fileHandler={getEditorFileHandlers({
+              maxFileSize,
+              projectId: projectId?.toString() ?? "",
+              uploadFile: async (file) => {
+                const { asset_id } = await fileService.uploadProjectAsset(
+                  workspaceSlug?.toString() ?? "",
+                  projectId?.toString() ?? "",
+                  {
+                    entity_identifier: pageId,
+                    entity_type: EFileAssetType.PAGE_DESCRIPTION,
+                  },
+                  file
+                );
+                return asset_id;
+              },
+              workspaceId,
+              workspaceSlug: workspaceSlug?.toString() ?? "",
+            })}
+            handleEditorReady={handleEditorReady}
+            ref={editorRef}
+            containerClassName="h-full p-0 pb-64"
+            displayConfig={displayConfig}
+            editorClassName="pl-10"
+            mentionHandler={{
+              highlights: mentionHighlights,
+              suggestions: mentionSuggestions,
+            }}
+            embedHandler={{
+              issue: issueEmbedProps,
+            }}
+            realtimeConfig={realtimeConfig}
+            serverHandler={serverHandler}
+            user={userConfig}
+            disabledExtensions={disabledExtensions}
+            aiHandler={{
+              menu: getAIMenu,
+            }}
+          />
         </div>
       </div>
       <div
