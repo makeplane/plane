@@ -5,6 +5,7 @@ import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, SignalHigh } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+import { useTranslation } from "@plane/i18n";
 // types
 import { TIssuePriorities } from "@plane/types";
 // ui
@@ -71,11 +72,12 @@ const BorderButton = (props: ButtonProps) => {
   };
 
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
 
   return (
     <Tooltip
-      tooltipHeading="Priority"
-      tooltipContent={priorityDetails?.title ?? "None"}
+      tooltipHeading={t("priority")}
+      tooltipContent={t(priorityDetails?.key ?? "none")}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -119,7 +121,7 @@ const BorderButton = (props: ButtonProps) => {
           ) : (
             <SignalHigh className="size-3" />
           ))}
-        {!hideText && <span className="flex-grow truncate">{priorityDetails?.title ?? placeholder}</span>}
+        {!hideText && <span className="flex-grow truncate">{t(priorityDetails?.key ?? "priority") ?? placeholder}</span>}
         {dropdownArrow && (
           <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
@@ -153,11 +155,12 @@ const BackgroundButton = (props: ButtonProps) => {
   };
 
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
 
   return (
     <Tooltip
-      tooltipHeading="Priority"
-      tooltipContent={priorityDetails?.title ?? "None"}
+      tooltipHeading={t("priority")}
+      tooltipContent={t(priorityDetails?.key ?? "none")}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -201,7 +204,7 @@ const BackgroundButton = (props: ButtonProps) => {
           ) : (
             <SignalHigh className="size-3" />
           ))}
-        {!hideText && <span className="flex-grow truncate">{priorityDetails?.title ?? placeholder}</span>}
+        {!hideText && <span className="flex-grow truncate">{t(priorityDetails?.key ?? "priority") ?? placeholder}</span>}
         {dropdownArrow && (
           <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
@@ -236,11 +239,12 @@ const TransparentButton = (props: ButtonProps) => {
   };
 
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
 
   return (
     <Tooltip
-      tooltipHeading="Priority"
-      tooltipContent={priorityDetails?.title ?? "None"}
+      tooltipHeading={t("priority")}
+      tooltipContent={t(priorityDetails?.key ?? "none")}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -285,7 +289,7 @@ const TransparentButton = (props: ButtonProps) => {
           ) : (
             <SignalHigh className="size-3" />
           ))}
-        {!hideText && <span className="flex-grow truncate">{priorityDetails?.title ?? placeholder}</span>}
+        {!hideText && <span className="flex-grow truncate">{t(priorityDetails?.key ?? "priority") ?? placeholder}</span>}
         {dropdownArrow && (
           <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
@@ -336,6 +340,8 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
       },
     ],
   });
+  //hooks
+  const { t } = useTranslation();
   // next-themes
   // TODO: remove this after new theming implementation
   const { resolvedTheme } = useTheme();
@@ -346,7 +352,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     content: (
       <div className="flex items-center gap-2">
         <PriorityIcon priority={priority.key} size={14} withContainer />
-        <span className="flex-grow truncate">{priority.title}</span>
+        <span className="flex-grow truncate">{t(priority.key)}</span>
       </div>
     ),
   }));
@@ -456,7 +462,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
                 className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search"
+                placeholder={t("search")}
                 displayValue={(assigned: any) => assigned?.name}
                 onKeyDown={searchInputKeyDown}
               />
@@ -482,7 +488,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
                   </Combobox.Option>
                 ))
               ) : (
-                <p className="text-custom-text-400 italic py-1 px-1.5">No matching results</p>
+                <p className="text-custom-text-400 italic py-1 px-1.5">{t("no_matching_results")}</p>
               )}
             </div>
           </div>

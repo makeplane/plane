@@ -3,6 +3,7 @@
 import { useState, FC } from "react";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // constants
@@ -47,6 +48,7 @@ const defaultValues: Partial<TProject> = {
 export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) => {
   const { setToFavorite, workspaceSlug, onClose, handleNextStep, updateCoverImageStatus } = props;
   // store
+  const { t } = useTranslation();
   const { captureProjectEvent } = useEventTracker();
   const { addProjectToFavorites, createProject } = useProject();
   // states
@@ -64,8 +66,8 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
     addProjectToFavorites(workspaceSlug.toString(), projectId).catch(() => {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Couldn't remove the project from favorites. Please try again.",
+        title: t("error"),
+        message: t("failed_to_remove_project_from_favorites"),
       });
     });
   };
@@ -95,8 +97,8 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Project created successfully.",
+          title: t("success"),
+          message: t("project_created_successfully"),
         });
         if (setToFavorite) {
           handleAddToFavorites(res.id);
@@ -107,7 +109,7 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
         Object.keys(err.data).map((key) => {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
+            title: t("error"),
             message: err.data[key],
           });
           captureProjectEvent({

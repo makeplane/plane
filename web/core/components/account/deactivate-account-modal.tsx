@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
@@ -18,6 +19,7 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
   const router = useAppRouter();
   const { isOpen, onClose } = props;
   // hooks
+  const { t } = useTranslation();
   const { deactivateAccount, signOut } = useUser();
 
   // states
@@ -90,11 +92,10 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
                       </div>
                       <div>
                         <Dialog.Title as="h3" className="my-4 text-2xl font-medium leading-6 text-custom-text-100">
-                          Deactivate your account?
+                          {t("deactivate_your_account")}
                         </Dialog.Title>
                         <p className="mt-6 list-disc pr-4 text-base font-normal text-custom-text-200">
-                          Once deactivated, you can{"'"}t be assigned issues and be billed for your workspace.To
-                          reactivate your account, you will need an invite to a workspace at this email address.
+                          {t("deactivate_your_account_description")}
                         </p>
                       </div>
                     </div>
@@ -102,10 +103,10 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
                 </div>
                 <div className="mb-2 flex items-center justify-end gap-2 p-4 sm:px-6">
                   <Button variant="neutral-primary" onClick={onClose}>
-                    Cancel
+                    {t("cancel")}
                   </Button>
                   <Button variant="danger" onClick={handleDeleteAccount}>
-                    {isDeactivating ? "Deactivating..." : "Confirm"}
+                    {isDeactivating ? t("deactivating") : t("confirm")}
                   </Button>
                 </div>
               </Dialog.Panel>

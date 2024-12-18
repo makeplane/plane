@@ -13,8 +13,9 @@ import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 import { TSidebarUserMenuItemKeys, TSidebarWorkspaceMenuItemKeys } from "@/plane-web/types/dashboard";
 
 export type TSidebarMenuItems<T extends TSidebarUserMenuItemKeys | TSidebarWorkspaceMenuItemKeys> = {
-  key: T;
+  value: T;
   label: string;
+  key: string;
   href: string;
   access: EUserPermissions[];
   highlight: (pathname: string, baseUrl: string, options?: TLinkOptions) => boolean;
@@ -25,16 +26,18 @@ export type TSidebarUserMenuItems = TSidebarMenuItems<TSidebarUserMenuItemKeys>;
 
 export const SIDEBAR_USER_MENU_ITEMS: TSidebarUserMenuItems[] = [
   {
-    key: "home",
+    value: "home",
     label: "Home",
+    key: "home",
     href: ``,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/`,
     Icon: Home,
   },
   {
-    key: "your-work",
+    value: "your-work",
     label: "Your work",
+    key: "your_work",
     href: "/profile",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string, options?: TLinkOptions) =>
@@ -42,16 +45,18 @@ export const SIDEBAR_USER_MENU_ITEMS: TSidebarUserMenuItems[] = [
     Icon: UserActivityIcon,
   },
   {
-    key: "notifications",
+    value: "notifications",
     label: "Inbox",
+    key: "notifications",
     href: `/notifications`,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/notifications/`),
     Icon: Inbox,
   },
   {
-    key: "drafts",
+    value: "drafts",
     label: "Drafts",
+    key: "drafts",
     href: `/drafts`,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/drafts/`),
@@ -63,6 +68,7 @@ export type TSidebarWorkspaceMenuItems = TSidebarMenuItems<TSidebarWorkspaceMenu
 
 export const SIDEBAR_WORKSPACE_MENU: Partial<Record<TSidebarWorkspaceMenuItemKeys, TSidebarWorkspaceMenuItems>> = {
   projects: {
+    value: "projects",
     key: "projects",
     label: "Projects",
     href: `/projects`,
@@ -71,7 +77,8 @@ export const SIDEBAR_WORKSPACE_MENU: Partial<Record<TSidebarWorkspaceMenuItemKey
     Icon: Briefcase,
   },
   "all-issues": {
-    key: "all-issues",
+    value: "all-issues",
+    key: "views",
     label: "Views",
     href: `/workspace-views/all-issues`,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
@@ -79,7 +86,8 @@ export const SIDEBAR_WORKSPACE_MENU: Partial<Record<TSidebarWorkspaceMenuItemKey
     Icon: Layers,
   },
   "active-cycles": {
-    key: "active-cycles",
+    value: "active-cycles",
+    key: "active_cycles",
     label: "Cycles",
     href: `/active-cycles`,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -87,6 +95,7 @@ export const SIDEBAR_WORKSPACE_MENU: Partial<Record<TSidebarWorkspaceMenuItemKey
     Icon: ContrastIcon,
   },
   analytics: {
+    value: "analytics",
     key: "analytics",
     label: "Analytics",
     href: `/analytics`,

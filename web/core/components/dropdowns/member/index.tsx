@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, LucideIcon } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { ComboDropDown } from "@plane/ui";
 // helpers
@@ -26,6 +27,7 @@ type Props = {
 } & MemberDropdownProps;
 
 export const MemberDropdown: React.FC<Props> = observer((props) => {
+  const { t } = useTranslation();
   const {
     button,
     buttonClassName,
@@ -40,7 +42,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     multiple,
     onChange,
     onClose,
-    placeholder = "Members",
+    placeholder = t("members"),
     tooltipContent,
     placement,
     projectId,
@@ -86,7 +88,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
         if (value.length === 1) {
           return getUserDetails(value[0])?.display_name || placeholder;
         } else {
-          return showUserDetails ? `${value.length} members` : "";
+          return showUserDetails ? `${value.length} ${t("members").toLocaleLowerCase()}` : "";
         }
       } else {
         return placeholder;
@@ -131,7 +133,9 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
             className={cn("text-xs", buttonClassName)}
             isActive={isOpen}
             tooltipHeading={placeholder}
-            tooltipContent={tooltipContent ?? `${value?.length ?? 0} assignee${value?.length !== 1 ? "s" : ""}`}
+            tooltipContent={
+              tooltipContent ?? `${value?.length ?? 0} ${value?.length !== 1 ? t("assignees") : t("assignee")}`
+            }
             showTooltip={showTooltip}
             variant={buttonVariant}
             renderToolTipByDefault={renderByDefault}

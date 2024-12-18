@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { Control, Controller } from "react-hook-form";
 import { LayoutPanelTop } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // types
 import { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
@@ -65,6 +66,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
   // states
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
   // store hooks
+  const { t } = useTranslation();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
@@ -133,7 +135,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
               }}
               buttonVariant={value?.length > 0 ? "transparent-without-text" : "border-with-text"}
               buttonClassName={value?.length > 0 ? "hover:bg-transparent" : ""}
-              placeholder="Assignees"
+              placeholder={t("assignees")}
               multiple
               tabIndex={getIndex("assignee_ids")}
             />
@@ -172,7 +174,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
               }}
               buttonVariant="border-with-text"
               maxDate={maxDate ?? undefined}
-              placeholder="Start date"
+              placeholder={t("start_date")}
               tabIndex={getIndex("start_date")}
             />
           </div>
@@ -191,7 +193,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
               }}
               buttonVariant="border-with-text"
               minDate={minDate ?? undefined}
-              placeholder="Due date"
+              placeholder={t("due_date")}
               tabIndex={getIndex("target_date")}
             />
           </div>
@@ -209,7 +211,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                   onChange(cycleId);
                   handleFormChange();
                 }}
-                placeholder="Cycle"
+                placeholder={t("cycle")}
                 value={value}
                 buttonVariant="border-with-text"
                 tabIndex={getIndex("cycle_id")}
@@ -231,7 +233,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                   onChange(moduleIds);
                   handleFormChange();
                 }}
-                placeholder="Modules"
+                placeholder={t("modules")}
                 buttonVariant="border-with-text"
                 tabIndex={getIndex("module_ids")}
                 multiple
@@ -256,7 +258,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                 projectId={projectId}
                 buttonVariant="border-with-text"
                 tabIndex={getIndex("estimate_point")}
-                placeholder="Estimate"
+                placeholder={t("estimate")}
               />
             </div>
           )}
@@ -288,7 +290,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
           >
             <>
               <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
-                Change parent issue
+                {t("change_parent_issue")}
               </CustomMenu.MenuItem>
               <Controller
                 control={control}
@@ -301,7 +303,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                       handleFormChange();
                     }}
                   >
-                    Remove parent issue
+                    {t("remove_parent_issue")}
                   </CustomMenu.MenuItem>
                 )}
               />
@@ -314,7 +316,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
             onClick={() => setParentIssueListModalOpen(true)}
           >
             <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
-            <span className="whitespace-nowrap">Add parent</span>
+            <span className="whitespace-nowrap">{t("add_parent")}</span>
           </button>
         )}
       </div>

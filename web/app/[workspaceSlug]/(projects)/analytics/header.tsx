@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
-// icons
 import { BarChart2, PanelRight } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
@@ -13,8 +13,8 @@ import { BreadcrumbLink } from "@/components/common";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
-
 export const WorkspaceAnalyticsHeader = observer(() => {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const analytics_tab = searchParams.get("analytics_tab");
   // store hooks
@@ -41,7 +41,7 @@ export const WorkspaceAnalyticsHeader = observer(() => {
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
             type="text"
-            link={<BreadcrumbLink label="Analytics" icon={<BarChart2 className="h-4 w-4 text-custom-text-300" />} />}
+            link={<BreadcrumbLink label={t("analytics")} icon={<BarChart2 className="h-4 w-4 text-custom-text-300" />} />}
           />
         </Breadcrumbs>
         {analytics_tab === "custom" ? (

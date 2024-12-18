@@ -1,5 +1,5 @@
 export const ORGANIZATION_SIZE = [
-  "Just myself",
+  "Just myself", // TODO: translate
   "2-10",
   "11-50",
   "51-200",

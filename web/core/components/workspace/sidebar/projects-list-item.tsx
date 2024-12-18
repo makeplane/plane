@@ -14,6 +14,7 @@ import { LinkIcon, Star, Settings, Share2, LogOut, MoreHorizontal, ChevronRight 
 import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { CustomMenu, Tooltip, ArchiveIcon, setPromiseToast, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
 // components
@@ -49,6 +50,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
     props;
   // store hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
+  const { t } = useTranslation();
   const { setTrackElement } = useEventTracker();
   const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
@@ -88,14 +90,14 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
 
     const addToFavoritePromise = addProjectToFavorites(workspaceSlug.toString(), project.id);
     setPromiseToast(addToFavoritePromise, {
-      loading: "Adding project to favorites...",
+      loading: t("adding_project_to_favorites"),
       success: {
-        title: "Success!",
-        message: () => "Project added to favorites.",
+        title: t("success"),
+        message: () => t("project_added_to_favorites"),
       },
       error: {
-        title: "Error!",
-        message: () => "Couldn't add the project to favorites. Please try again.",
+        title: t("error"),
+        message: () => t("couldnt_add_the_project_to_favorites"),
       },
     });
   };
@@ -105,14 +107,14 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
 
     const removeFromFavoritePromise = removeProjectFromFavorites(workspaceSlug.toString(), project.id);
     setPromiseToast(removeFromFavoritePromise, {
-      loading: "Removing project from favorites...",
+      loading: t("removing_project_from_favorites"),
       success: {
-        title: "Success!",
-        message: () => "Project removed from favorites.",
+        title: t("success"),
+        message: () => t("project_removed_from_favorites"),
       },
       error: {
-        title: "Error!",
-        message: () => "Couldn't remove the project from favorites. Please try again.",
+        title: t("error"),
+        message: () => t("couldnt_remove_the_project_from_favorites"),
       },
     });
   };
@@ -251,7 +253,9 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
             {!disableDrag && (
               <Tooltip
                 isMobile={isMobile}
-                tooltipContent={project.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
+                tooltipContent={
+                  project.sort_order === null ? t("join_the_project_to_rearrange") : t("drag_to_rearrange")
+                }
                 position="top-right"
                 disabled={isDragging}
               >
@@ -343,7 +347,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                             "fill-yellow-500 stroke-yellow-500": project.is_favorite,
                           })}
                         />
-                        <span>{project.is_favorite ? "Remove from favorites" : "Add to favorites"}</span>
+                        <span>{project.is_favorite ? t("remove_from_favorites") : t("add_to_favorites")}</span>
                       </span>
                     </CustomMenu.MenuItem>
                   )}
@@ -355,7 +359,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                         <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-custom-sidebar-text-200 transition-all duration-300 hover:bg-custom-sidebar-background-80">
                           <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
                         </div>
-                        <div>{project.anchor ? "Publish settings" : "Publish"}</div>
+                        <div>{project.anchor ? t("publish_settings") : t("publish")}</div>
                       </div>
                     </CustomMenu.MenuItem>
                   )}
@@ -372,7 +376,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                   <CustomMenu.MenuItem onClick={handleCopyText}>
                     <span className="flex items-center justify-start gap-2">
                       <LinkIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                      <span>Copy link</span>
+                      <span>{t("copy_link")}</span>
                     </span>
                   </CustomMenu.MenuItem>
                   {isAuthorized && (
@@ -380,7 +384,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                       <Link href={`/${workspaceSlug}/projects/${project?.id}/archives/issues`}>
                         <div className="flex items-center justify-start gap-2">
                           <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                          <span>Archives</span>
+                          <span>{t("archives")}</span>
                         </div>
                       </Link>
                     </CustomMenu.MenuItem>
@@ -389,7 +393,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     <Link href={`/${workspaceSlug}/projects/${project?.id}/settings`}>
                       <div className="flex items-center justify-start gap-2">
                         <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
-                        <span>Settings</span>
+                        <span>{t("settings")}</span>
                       </div>
                     </Link>
                   </CustomMenu.MenuItem>
@@ -398,7 +402,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     <CustomMenu.MenuItem onClick={handleLeaveProject}>
                       <div className="flex items-center justify-start gap-2">
                         <LogOut className="h-3.5 w-3.5 stroke-[1.5]" />
-                        <span>Leave project</span>
+                        <span>{t("leave_project")}</span>
                       </div>
                     </CustomMenu.MenuItem>
                   )}

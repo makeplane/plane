@@ -6,9 +6,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 // icons
 import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
-// plane helpers
+// plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-// ui
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
@@ -23,7 +23,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const WORKSPACE_ACTION_LINKS = [
   {
-    key: "create-workspace",
+    key: "create_workspace",
     Icon: Plus,
     label: "Create workspace",
     href: "/create-workspace",
@@ -47,6 +47,7 @@ export const ProfileLayoutSidebar = observer(() => {
   const { data: currentUserSettings } = useUserSettings();
   const { workspaces } = useWorkspace();
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
 
   const workspacesList = Object.values(workspaces ?? {});
 
@@ -91,8 +92,8 @@ export const ProfileLayoutSidebar = observer(() => {
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Failed to sign out. Please try again.",
+          title: t("error"),
+          message: t("failed_to_sign_out_please_try_again"),
         })
       )
       .finally(() => setIsSigningOut(false));
@@ -117,13 +118,13 @@ export const ProfileLayoutSidebar = observer(() => {
               <ChevronLeft className="h-5 w-5" strokeWidth={1} />
             </span>
             {!sidebarCollapsed && (
-              <h4 className="truncate text-lg font-semibold text-custom-text-200">Profile settings</h4>
+              <h4 className="truncate text-lg font-semibold text-custom-text-200">{t("profile_settings")}</h4>
             )}
           </div>
         </Link>
         <div className="flex flex-shrink-0 flex-col overflow-x-hidden">
           {!sidebarCollapsed && (
-            <h6 className="rounded px-6 text-sm font-semibold text-custom-sidebar-text-400">Your account</h6>
+            <h6 className="rounded px-6 text-sm font-semibold text-custom-sidebar-text-400">{t("your_account")}</h6>
           )}
           <div className="vertical-scrollbar scrollbar-sm mt-2 px-4 h-full space-y-1 overflow-y-auto">
             {PROFILE_ACTION_LINKS.map((link) => {
@@ -132,7 +133,7 @@ export const ProfileLayoutSidebar = observer(() => {
               return (
                 <Link key={link.key} href={link.href} className="block w-full" onClick={handleItemClick}>
                   <Tooltip
-                    tooltipContent={link.label}
+                    tooltipContent={t(link.key)}
                     position="right"
                     className="ml-2"
                     disabled={!sidebarCollapsed}
@@ -145,7 +146,7 @@ export const ProfileLayoutSidebar = observer(() => {
                     >
                       <div className="flex items-center gap-1.5 py-[1px]">
                         <link.Icon className="size-4" />
-                        {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}
+                        {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{t(link.key)}</p>}
                       </div>
                     </SidebarNavItem>
                   </Tooltip>
@@ -156,7 +157,7 @@ export const ProfileLayoutSidebar = observer(() => {
         </div>
         <div className="flex flex-col overflow-x-hidden">
           {!sidebarCollapsed && (
-            <h6 className="rounded px-6 text-sm font-semibold text-custom-sidebar-text-400">Workspaces</h6>
+            <h6 className="rounded px-6 text-sm font-semibold text-custom-sidebar-text-400">{t("workspaces")}</h6>
           )}
           {workspacesList && workspacesList.length > 0 && (
             <div
@@ -206,7 +207,7 @@ export const ProfileLayoutSidebar = observer(() => {
             {WORKSPACE_ACTION_LINKS.map((link) => (
               <Link className="block w-full" key={link.key} href={link.href} onClick={handleItemClick}>
                 <Tooltip
-                  tooltipContent={link.label}
+                  tooltipContent={t(link.key)}
                   position="right"
                   className="ml-2"
                   disabled={!sidebarCollapsed}
@@ -218,7 +219,7 @@ export const ProfileLayoutSidebar = observer(() => {
                     }`}
                   >
                     {<link.Icon className="h-4 w-4" />}
-                    {!sidebarCollapsed && link.label}
+                    {!sidebarCollapsed && t(link.key)}
                   </div>
                 </Tooltip>
               </Link>
@@ -238,7 +239,7 @@ export const ProfileLayoutSidebar = observer(() => {
               disabled={isSigningOut}
             >
               <LogOut className="h-3.5 w-3.5" />
-              {!sidebarCollapsed && <span>{isSigningOut ? "Signing out..." : "Sign out"}</span>}
+              {!sidebarCollapsed && <span>{isSigningOut ? `${t("signing_out")}...` : t("sign_out")}</span>}
             </button>
             <button
               type="button"

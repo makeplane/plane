@@ -48,6 +48,7 @@ export const PROFILE_ACTION_LINKS: {
 
 export const PROFILE_VIEWER_TAB = [
   {
+    key: "summary",
     route: "",
     label: "Summary",
     selected: "/",
@@ -56,6 +57,7 @@ export const PROFILE_VIEWER_TAB = [
 
 export const PROFILE_ADMINS_TAB = [
   {
+    key: "assigned",
     route: "assigned",
     label: "Assigned",
     selected: "/assigned/",
@@ -66,11 +68,13 @@ export const PROFILE_ADMINS_TAB = [
     selected: "/created/",
   },
   {
+    key: "subscribed",
     route: "subscribed",
     label: "Subscribed",
     selected: "/subscribed/",
   },
   {
+    key: "activity",
     route: "activity",
     label: "Activity",
     selected: "/activity/",
