@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { ArchiveRestoreIcon, LinkIcon, Lock, MoreHorizontal, Settings, Trash2 } from "lucide-react";
 // ui
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { useOutsideClickDetector } from "@plane/hooks";
 import {
   TOAST_TYPE,

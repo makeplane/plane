@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { MessageCircle, Rocket } from "lucide-react";
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/ui";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { useMember, useUser } from "@/hooks/store";

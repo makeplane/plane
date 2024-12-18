@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { CustomMenu, PiChatLogo } from "@plane/ui";
 import { TAiModels } from "@/plane-web/types";
 

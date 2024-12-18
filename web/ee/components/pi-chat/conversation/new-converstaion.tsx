@@ -1,4 +1,4 @@
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { IUser } from "@plane/types";
 import { TTemplate } from "@/plane-web/types";
 import SystemPrompts from "../system-prompts";

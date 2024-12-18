@@ -1,5 +1,5 @@
 import { Users } from "lucide-react";
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { MemberDropdown } from "@/components/dropdowns";
 
 type Props = {

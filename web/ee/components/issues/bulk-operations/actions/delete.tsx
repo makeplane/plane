@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Trash2 } from "lucide-react";
 // ui
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // plane web components
 import { useUserPermissions } from "@/hooks/store";

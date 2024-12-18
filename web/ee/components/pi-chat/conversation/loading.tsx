@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { TChatHistory } from "@/plane-web/types";
 import { AiMessage } from "./ai-message";
 import { MyMessage } from "./my-message";

@@ -3,7 +3,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 // plane web components
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { ProjectBoardGroupItem } from "@/plane-web/components/projects/layouts/board";
 // plane web types
 import { TProjectsBoardLayoutStructure } from "@/plane-web/types/workspace-project-filters";

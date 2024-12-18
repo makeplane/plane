@@ -4,7 +4,6 @@ import { useParams } from "next/navigation";
 // document-editor
 import {
   CollaborativeDocumentEditorWithRef,
-  CollaborativeDocumentReadOnlyEditorWithRef,
   EditorReadOnlyRefApi,
   EditorRefApi,
   TAIMenuProps,
@@ -19,7 +18,7 @@ import { EFileAssetType } from "@plane/types/src/enums";
 import { PageContentBrowser, PageEditorTitle, PageContentLoader } from "@/components/pages";
 // helpers
 import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
-import { getEditorFileHandlers, getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
+import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useMember, useUser, useWorkspace } from "@/hooks/store";
@@ -42,22 +41,13 @@ type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   handleConnectionStatus: (status: boolean) => void;
   handleEditorReady: (value: boolean) => void;
-  handleReadOnlyEditorReady: (value: boolean) => void;
   page: IWorkspacePageDetails;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   sidePeekVisible: boolean;
 };
 
 export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
-  const {
-    editorRef,
-    handleConnectionStatus,
-    handleEditorReady,
-    handleReadOnlyEditorReady,
-    page,
-    readOnlyEditorRef,
-    sidePeekVisible,
-  } = props;
+  const { editorRef, handleConnectionStatus, handleEditorReady, page, sidePeekVisible } = props;
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -170,9 +160,7 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
           "w-[5%]": isFullWidth,
         })}
       >
-        {!isFullWidth && (
-          <PageContentBrowser editorRef={(isContentEditable ? editorRef : readOnlyEditorRef)?.current} />
-        )}
+        {!isFullWidth && <PageContentBrowser editorRef={editorRef.current} />}
       </div>
       <div
         className={cn("h-full w-full pt-5 duration-200", {
@@ -181,7 +169,7 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
         })}
       >
         <div className="h-full w-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
-          <div className="relative w-full flex-shrink-0 md:pl-5 px-4">
+          <div className="relative w-full flex-shrink-0 md:pl-5 px-4 h-[38px]">
             <PageEditorTitle
               editorRef={editorRef}
               title={pageTitle}
@@ -189,113 +177,69 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
               readOnly={!isContentEditable}
             />
           </div>
-          {isContentEditable ? (
-            <CollaborativeDocumentEditorWithRef
-              id={pageId}
-              fileHandler={getEditorFileHandlers({
-                maxFileSize,
-                uploadFile: async (file) => {
-                  const { asset_id } = await fileService.uploadWorkspaceAsset(
-                    workspaceSlug?.toString() ?? "",
-                    {
-                      entity_identifier: pageId,
-                      entity_type: EFileAssetType.PAGE_DESCRIPTION,
-                    },
-                    file
+          <CollaborativeDocumentEditorWithRef
+            editable={isContentEditable}
+            id={pageId}
+            fileHandler={getEditorFileHandlers({
+              maxFileSize,
+              uploadFile: async (file) => {
+                const { asset_id } = await fileService.uploadWorkspaceAsset(
+                  workspaceSlug?.toString() ?? "",
+                  {
+                    entity_identifier: pageId,
+                    entity_type: EFileAssetType.PAGE_DESCRIPTION,
+                  },
+                  file
+                );
+                return asset_id;
+              },
+              workspaceId,
+              workspaceSlug: workspaceSlug?.toString() ?? "",
+            })}
+            handleEditorReady={handleEditorReady}
+            ref={editorRef}
+            containerClassName="h-full p-0 pb-64"
+            displayConfig={displayConfig}
+            editorClassName="pl-10"
+            mentionHandler={{
+              highlights: mentionHighlights,
+              suggestions: mentionSuggestions,
+            }}
+            embedHandler={{
+              issue: {
+                searchCallback: async (query) =>
+                  new Promise((resolve) => {
+                    setTimeout(async () => {
+                      const response = await handleIssueSearch(query);
+                      const issueItemsWithIdentifiers = response?.map((issue) => ({
+                        ...issue,
+                        projectId: issue.projectId,
+                        workspaceSlug: workspaceSlug.toString(),
+                      }));
+                      resolve(issueItemsWithIdentifiers);
+                    }, 300);
+                  }),
+                widgetCallback: ({ issueId, projectId: projectIdFromEmbed, workspaceSlug: workspaceSlugFromEmbed }) => {
+                  const resolvedProjectId = projectIdFromEmbed ?? "";
+                  const resolvedWorkspaceSlug = workspaceSlugFromEmbed ?? workspaceSlug?.toString() ?? "";
+                  return (
+                    <IssueEmbedCard
+                      issueId={issueId}
+                      projectId={resolvedProjectId}
+                      workspaceSlug={resolvedWorkspaceSlug}
+                    />
                   );
-                  return asset_id;
                 },
-                workspaceId,
-                workspaceSlug: workspaceSlug?.toString() ?? "",
-              })}
-              handleEditorReady={handleEditorReady}
-              ref={editorRef}
-              containerClassName="h-full p-0 pb-64"
-              displayConfig={displayConfig}
-              editorClassName="pl-10"
-              mentionHandler={{
-                highlights: mentionHighlights,
-                suggestions: mentionSuggestions,
-              }}
-              embedHandler={{
-                issue: {
-                  searchCallback: async (query) =>
-                    new Promise((resolve) => {
-                      setTimeout(async () => {
-                        const response = await handleIssueSearch(query);
-                        const issueItemsWithIdentifiers = response?.map((issue) => ({
-                          ...issue,
-                          projectId: issue.projectId,
-                          workspaceSlug: workspaceSlug.toString(),
-                        }));
-                        resolve(issueItemsWithIdentifiers);
-                      }, 300);
-                    }),
-                  widgetCallback: ({
-                    issueId,
-                    projectId: projectIdFromEmbed,
-                    workspaceSlug: workspaceSlugFromEmbed,
-                  }) => {
-                    const resolvedProjectId = projectIdFromEmbed ?? "";
-                    const resolvedWorkspaceSlug = workspaceSlugFromEmbed ?? workspaceSlug?.toString() ?? "";
-                    return (
-                      <IssueEmbedCard
-                        issueId={issueId}
-                        projectId={resolvedProjectId}
-                        workspaceSlug={resolvedWorkspaceSlug}
-                      />
-                    );
-                  },
-                },
-              }}
-              realtimeConfig={realtimeConfig}
-              serverHandler={serverHandler}
-              user={userConfig}
-              disabledExtensions={disabledExtensions}
-              aiHandler={{
-                menu: getAIMenu,
-              }}
-            />
-          ) : (
-            <CollaborativeDocumentReadOnlyEditorWithRef
-              id={pageId}
-              ref={readOnlyEditorRef}
-              handleEditorReady={handleReadOnlyEditorReady}
-              containerClassName="p-0 pb-64 border-none"
-              displayConfig={displayConfig}
-              editorClassName="pl-10"
-              fileHandler={getReadOnlyEditorFileHandlers({
-                workspaceSlug: workspaceSlug?.toString() ?? "",
-              })}
-              mentionHandler={{
-                highlights: mentionHighlights,
-              }}
-              embedHandler={{
-                issue: {
-                  widgetCallback: ({
-                    issueId,
-                    projectId: projectIdFromEmbed,
-                    workspaceSlug: workspaceSlugFromEmbed,
-                  }) => {
-                    const resolvedProjectId = projectIdFromEmbed ?? "";
-                    const resolvedWorkspaceSlug = workspaceSlugFromEmbed ?? workspaceSlug?.toString() ?? "";
-
-                    return (
-                      <IssueEmbedCard
-                        issueId={issueId}
-                        projectId={resolvedProjectId}
-                        workspaceSlug={resolvedWorkspaceSlug}
-                      />
-                    );
-                  },
-                },
-              }}
-              disabledExtensions={disabledExtensions}
-              realtimeConfig={realtimeConfig}
-              serverHandler={serverHandler}
-              user={userConfig}
-            />
-          )}
+              },
+            }}
+            realtimeConfig={realtimeConfig}
+            serverHandler={serverHandler}
+            user={userConfig}
+            disabledExtensions={disabledExtensions}
+            aiHandler={{
+              menu: getAIMenu,
+            }}
+          />
         </div>
       </div>
       <div

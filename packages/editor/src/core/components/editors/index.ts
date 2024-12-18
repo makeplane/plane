@@ -5,4 +5,3 @@ export * from "./editor-container";
 export * from "./editor-content";
 export * from "./editor-wrapper";
 export * from "./read-only-editor-wrapper";
-export * from "./pi-chat-editor";

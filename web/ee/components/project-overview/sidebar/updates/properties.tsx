@@ -1,5 +1,5 @@
 import { Rocket } from "lucide-react";
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 
 type TProps = {
   isCollapsed: boolean;

@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock, Signal, UserCircle2, Users } from "lucide-react";
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { IWorkspace } from "@plane/types";
 import { DoubleCircleIcon } from "@plane/ui";
 import { DateDropdown, MemberDropdown } from "@/components/dropdowns";

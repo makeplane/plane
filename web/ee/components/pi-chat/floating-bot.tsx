@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useParams, usePathname } from "next/navigation";
 import { X } from "lucide-react";
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { PiChatLogo } from "@plane/ui";
 import { WithFeatureFlagHOC } from "../feature-flags";

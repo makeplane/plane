@@ -2,7 +2,7 @@
 
 import { Fragment, MutableRefObject, forwardRef, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 // plane
 import { TIssueGroupByOptions, IIssueDisplayProperties } from "@plane/types";
 //

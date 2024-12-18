@@ -1,6 +1,6 @@
-import { cn } from "@/helpers/common";
 import { IMentionSuggestion } from "@/types";
 import { Disclosure, Transition } from "@headlessui/react";
+import { cn } from "@plane/utils";
 import { Editor } from "@tiptap/core";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
