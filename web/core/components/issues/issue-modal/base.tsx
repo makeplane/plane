@@ -241,7 +241,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("error"),
-        message: `${is_draft_issue ? t("draft_issue") : t("issue")} ${t("could_not_be_created")} ${t("please_try_again")}`,
+        message: t(is_draft_issue ? "draft_creation_failed" : "issue_creation_failed"),
       });
       captureIssueEvent({
         eventName: ISSUE_CREATED,

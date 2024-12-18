@@ -274,8 +274,8 @@
   "confirm": "Confirm",
   "draft_created": "Draft created",
   "issue_created_successfully": "Issue created successfully",
-  "could_not_be_created": "could not be created",
-  "please_try_again": "Please try again",
+  "draft_creation_failed": "Draft creation failed",
+  "issue_creation_failed": "Issue creation failed",
   "draft_issue": "Draft issue",
   "issue_updated_successfully": "Issue updated successfully",
   "issue_could_not_be_updated": "Issue could not be updated",
@@ -313,5 +313,6 @@
   "estimate": "Estimate",
   "change_parent_issue": "Change parent issue",
   "remove_parent_issue": "Remove parent issue",
-  "add_parent": "Add parent"
+  "add_parent": "Add parent",
+  "loading_members": "Loading members..."
 }

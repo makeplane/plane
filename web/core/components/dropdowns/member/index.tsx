@@ -133,7 +133,9 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
             className={cn("text-xs", buttonClassName)}
             isActive={isOpen}
             tooltipHeading={placeholder}
-            tooltipContent={tooltipContent ?? `${value?.length ?? 0} ${t("assignee").toLocaleLowerCase()}${value?.length !== 1 ? "s" : ""}`}
+            tooltipContent={
+              tooltipContent ?? `${value?.length ?? 0} ${value?.length !== 1 ? t("assignees") : t("assignee")}`
+            }
             showTooltip={showTooltip}
             variant={buttonVariant}
             renderToolTipByDefault={renderByDefault}

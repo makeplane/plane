@@ -43,8 +43,8 @@
   "activity": "Actividad",
   "appearance": "Apariencia",
   "notifications": "Notificaciones",
-  "workspaces": "Workspaces",
-  "create_workspace": "Crear workspace",
+  "workspaces": "Espaces de travail",
+  "create_workspace": "Créer un espace de travail",
   "invitations": "Invitaciones",
   "summary": "Resumen",
   "assigned": "Asignado",
@@ -274,8 +274,8 @@
   "confirm": "Confirmar",
   "draft_created": "Borrador creado",
   "issue_created_successfully": "Problema creado con éxito",
-  "could_not_be_created": "no se pudo crear",
-  "please_try_again": "Por favor, inténtalo de nuevo",
+  "draft_creation_failed": "Creación del borrador fallida",
+  "issue_creation_failed": "Creación del problema fallida",
   "draft_issue": "Borrador de problema",
   "issue_updated_successfully": "Problema actualizado con éxito",
   "issue_could_not_be_updated": "No se pudo actualizar el problema",
@@ -313,5 +313,6 @@
   "estimate": "Estimación",
   "change_parent_issue": "Cambiar problema padre",
   "remove_parent_issue": "Eliminar problema padre",
-  "add_parent": "Agregar padre"
+  "add_parent": "Agregar padre",
+  "loading_members": "Cargando miembros..."
 }

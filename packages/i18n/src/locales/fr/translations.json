@@ -274,8 +274,8 @@
   "confirm": "Confirmer",
   "draft_created": "Brouillon créé",
   "issue_created_successfully": "Problème créé avec succès",
-  "could_not_be_created": "n'a pas pu être créé",
-  "please_try_again": "Veuillez réessayer",
+  "draft_creation_failed": "Création du brouillon échouée",
+  "issue_creation_failed": "Création du problème échouée",
   "draft_issue": "Problème en brouillon",
   "issue_updated_successfully": "Problème mis à jour avec succès",
   "issue_could_not_be_updated": "Le problème n'a pas pu être mis à jour",
@@ -313,5 +313,6 @@
   "estimate": "Estimation",
   "change_parent_issue": "Modifier le problème parent",
   "remove_parent_issue": "Supprimer le problème parent",
-  "add_parent": "Ajouter un parent"
+  "add_parent": "Ajouter un parent",
+  "loading_members": "Chargement des membres..."
 }

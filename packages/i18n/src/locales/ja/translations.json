@@ -274,8 +274,8 @@
   "confirm": "確認",
   "draft_created": "下書きが作成されました",
   "issue_created_successfully": "問題が正常に作成されました",
-  "could_not_be_created": "作成できませんでした",
-  "please_try_again": "もう一度お試しください",
+  "draft_creation_failed": "下書き作成に失敗しました",
+  "issue_creation_failed": "問題作成に失敗しました",
   "draft_issue": "下書き問題",
   "issue_updated_successfully": "問題が正常に更新されました",
   "issue_could_not_be_updated": "問題を更新できませんでした",
@@ -313,5 +313,6 @@
   "estimate": "見積もり",
   "change_parent_issue": "親問題を変更",
   "remove_parent_issue": "親問題を削除",
-  "add_parent": "親問題を追加"
+  "add_parent": "親問題を追加",
+  "loading_members": "メンバーを読み込んでいます..."
 }
