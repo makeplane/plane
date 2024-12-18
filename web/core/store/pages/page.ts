@@ -15,8 +15,8 @@ export interface IPage extends TPage {
   isSubmitting: TNameDescriptionLoader;
   // computed
   asJSON: TPage | undefined;
-  isCurrentUserOwner: boolean; // it will give the user is the owner of the page or not
-  canCurrentUserEditPage: boolean; // it will give the user permission to read the page or write the page
+  isCurrentUserOwner: boolean;
+  canCurrentUserAccessPage: boolean;
   canCurrentUserDuplicatePage: boolean;
   canCurrentUserLockPage: boolean;
   canCurrentUserChangeAccess: boolean;
@@ -128,7 +128,7 @@ export class Page implements IPage {
       // computed
       asJSON: computed,
       isCurrentUserOwner: computed,
-      canCurrentUserEditPage: computed,
+      canCurrentUserAccessPage: computed,
       canCurrentUserDuplicatePage: computed,
       canCurrentUserLockPage: computed,
       canCurrentUserChangeAccess: computed,
@@ -213,19 +213,11 @@ export class Page implements IPage {
   }
 
   /**
-   * @description returns true if the current logged in user can edit the page
+   * @description returns true if the current logged in user can access the page
    */
-  get canCurrentUserEditPage() {
-    const { workspaceSlug, projectId } = this.store.router;
-    const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
-      workspaceSlug?.toString() || "",
-      projectId?.toString() || ""
-    );
+  get canCurrentUserAccessPage() {
     const isPagePublic = this.access === EPageAccess.PUBLIC;
-    return (
-      (isPagePublic && !!currentUserProjectRole && currentUserProjectRole >= EUserPermissions.MEMBER) ||
-      (!isPagePublic && this.isCurrentUserOwner)
-    );
+    return isPagePublic || this.isCurrentUserOwner;
   }
 
   /**

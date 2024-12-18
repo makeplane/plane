@@ -84,8 +84,8 @@ export const usePageOperations = (
       toggleAccess: async () => {
         const changedPageType = access === 0 ? "private" : "public";
         try {
-          if (access === 0) await makePrivate();
-          else await makePublic();
+          if (access === 0) await executeCollaborativeAction({ type: "sendMessageToServer", message: "make-private" });
+          else await executeCollaborativeAction({ type: "sendMessageToServer", message: "make-public" });
 
           setToast({
             type: TOAST_TYPE.SUCCESS,
