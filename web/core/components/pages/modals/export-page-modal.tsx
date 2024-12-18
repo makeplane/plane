@@ -4,7 +4,7 @@ import { useState } from "react";
 import { PageProps, pdf } from "@react-pdf/renderer";
 import { Controller, useForm } from "react-hook-form";
 // plane editor
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import { EditorRefApi } from "@plane/editor";
 // plane ui
 import { Button, CustomSelect, EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // components
@@ -16,7 +16,7 @@ import {
 } from "@/helpers/editor.helper";
 
 type Props = {
-  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
+  editorRef: EditorRefApi | null;
   isOpen: boolean;
   onClose: () => void;
   pageTitle: string;
