@@ -129,15 +129,12 @@ export class IssueStore implements IIssueStore {
         this.rootIssueDetailStore.rootIssueStore.rootStore.issueTypes.projectEpics[projectId].id ===
         issue?.parent.type_id
       ) {
-        console.log("coming here 1");
         this.rootIssueDetailStore.rootIssueStore.rootStore.epic.issueDetail
           .fetchIssue(workspaceSlug, projectId, issue?.parent?.id)
           .then((res) => {
             this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
           });
       } else {
-        console.log("coming here 2");
-
         this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
           this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
         });
