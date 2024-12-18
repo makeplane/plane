@@ -127,7 +127,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
       return "Uploading...";
     }
 
-    if (draggedInside) {
+    if (draggedInside && editor.isEditable) {
       return "Drop image here";
     }
 
@@ -137,14 +137,16 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   return (
     <div
       className={cn(
-        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 hover:text-custom-text-200 bg-custom-background-90 hover:bg-custom-background-80 border border-dashed border-custom-border-300 transition-all duration-200 ease-in-out cursor-default",
+        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 bg-custom-background-90 border border-dashed border-custom-border-300 transition-all duration-200 ease-in-out cursor-default",
         {
-          "hover:text-custom-text-200 cursor-pointer": editor.isEditable,
-          "bg-custom-background-80 text-custom-text-200": draggedInside,
-          "text-custom-primary-200 bg-custom-primary-100/10 hover:bg-custom-primary-100/10 hover:text-custom-primary-200 border-custom-primary-200/10":
-            selected,
-          "text-red-500 cursor-default hover:text-red-500": failedToLoadImage,
-          "bg-red-500/10 hover:bg-red-500/10": failedToLoadImage && selected,
+          "hover:text-custom-text-200 hover:bg-custom-background-80 cursor-pointer": editor.isEditable,
+          "bg-custom-background-80 text-custom-text-200": draggedInside && editor.isEditable,
+          "text-custom-primary-200 bg-custom-primary-100/10 border-custom-primary-200/10 hover:bg-custom-primary-100/10 hover:text-custom-primary-200":
+            selected && editor.isEditable,
+          "text-red-500 cursor-default": failedToLoadImage,
+          "hover:text-red-500": failedToLoadImage && editor.isEditable,
+          "bg-red-500/10": failedToLoadImage && selected,
+          "hover:bg-red-500/10": failedToLoadImage && selected && editor.isEditable,
         }
       )}
       onDrop={onDrop}

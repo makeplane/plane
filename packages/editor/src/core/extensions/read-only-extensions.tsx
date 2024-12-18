@@ -20,7 +20,6 @@ import {
   TableRow,
   Table,
   CustomMention,
-  HeadingListExtension,
   CustomReadOnlyImageExtension,
   CustomTextAlignExtension,
   CustomCalloutReadOnlyExtension,
@@ -139,7 +138,6 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
     }),
     CharacterCount,
     CustomColorExtension,
-    HeadingListExtension,
     CustomTextAlignExtension,
     CustomCalloutReadOnlyExtension,
     ...CoreReadOnlyEditorAdditionalExtensions({
