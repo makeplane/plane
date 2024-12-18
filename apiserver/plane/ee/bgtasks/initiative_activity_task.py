@@ -120,8 +120,8 @@ def track_status(
         )
 
 
-# Track changes in initiative target date
-def track_target_date(
+# Track changes in initiative end date
+def track_end_date(
     requested_data,
     current_instance,
     initiative_id,
@@ -130,8 +130,8 @@ def track_target_date(
     initiative_activities,
     epoch,
 ):
-    if current_instance.get("target_date") != requested_data.get(
-        "target_date"
+    if current_instance.get("end_date") != requested_data.get(
+        "end_date"
     ):
         initiative_activities.append(
             InitiativeActivity(
@@ -139,18 +139,18 @@ def track_target_date(
                 actor_id=actor_id,
                 verb="updated",
                 old_value=(
-                    current_instance.get("target_date")
-                    if current_instance.get("target_date") is not None
+                    current_instance.get("end_date")
+                    if current_instance.get("end_date") is not None
                     else ""
                 ),
                 new_value=(
-                    requested_data.get("target_date")
-                    if requested_data.get("target_date") is not None
+                    requested_data.get("end_date")
+                    if requested_data.get("end_date") is not None
                     else ""
                 ),
-                field="target_date",
+                field="end_date",
                 workspace_id=workspace_id,
-                comment="updated the target date to",
+                comment="updated the end date to",
                 epoch=epoch,
             )
         )
@@ -259,6 +259,7 @@ def track_projects(
     initiative_activities,
     epoch,
 ):
+
     requested_projects = (
         set([str(asg) for asg in requested_data.get("project_ids", [])])
         if requested_data is not None
@@ -328,7 +329,7 @@ def track_lead(
                 new_value="",
                 field="lead",
                 comment="updated lead ",
-                old_identifier=current_instance.get("lead").id,
+                old_identifier=current_instance.get("lead"),
                 new_identifier=requested_data.get("lead"),
                 epoch=epoch,
             )
@@ -372,7 +373,7 @@ def update_initiative_activity(
         "name": track_name,
         "status": track_status,
         "description_html": track_description,
-        "target_date": track_target_date,
+        "end_date": track_end_date,
         "start_date": track_start_date,
         "lead": track_lead,
         "label_ids": track_labels,
