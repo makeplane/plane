@@ -66,6 +66,15 @@ class PaymentLinkEndpoint(BaseAPIView):
                 )
                 # Check if the workspace is on trial
                 if workspace_license_response.get("is_on_trial"):
+                    purchased_seats = workspace_license_response.get("purchased_seats")
+
+                    if purchased_seats > int(
+                        workspace_member_count + invited_member_count
+                    ):
+                        required_seats = purchased_seats
+                    else:
+                        required_seats = workspace_member_count + invited_member_count
+
                     response = requests.post(
                         f"{settings.PAYMENT_SERVER_BASE_URL}/api/trial-subscriptions/upgrade/",
                         headers={
@@ -77,9 +86,7 @@ class PaymentLinkEndpoint(BaseAPIView):
                             "stripe_price_id": price_id,
                             "members_list": list(workspace_members),
                             "slug": slug,
-                            "required_seats": (
-                                workspace_member_count + invited_member_count
-                            ),
+                            "required_seats": int(required_seats),
                         },
                     )
                     # Check if the response is successful
@@ -327,7 +334,6 @@ class WorkspaceTrialUpgradeEndpoint(BaseAPIView):
                     user_role=F("role"),
                 )
                 .values("user_email", "user_id", "user_role")
-                .values("user_email", "user_id", "user_role")
             )
 
             # Convert the user_id to string
@@ -336,6 +342,22 @@ class WorkspaceTrialUpgradeEndpoint(BaseAPIView):
 
             # Get the workspace
             workspace = Workspace.objects.get(slug=slug)
+            # Check the active paid users in the workspace - for self hosted plans
+            invited_member_count = WorkspaceMemberInvite.objects.filter(
+                workspace__slug=slug, role__gt=10
+            ).count()
+            # Calculate the workspace member count
+            workspace_member_count = count_member_payments(
+                members_list=list(workspace_members)
+            )
+            # Fetch the workspace license
+            workspace_license_response = resync_workspace_license(workspace_slug=slug)
+            purchased_seats = workspace_license_response.get("purchased_seats")
+
+            if purchased_seats > int(workspace_member_count + invited_member_count):
+                required_seats = purchased_seats
+            else:
+                required_seats = workspace_member_count + invited_member_count
 
             # Check if the payment server base url is present
             if settings.PAYMENT_SERVER_BASE_URL:
@@ -350,6 +372,7 @@ class WorkspaceTrialUpgradeEndpoint(BaseAPIView):
                         "stripe_price_id": price_id,
                         "members_list": list(workspace_members),
                         "slug": slug,
+                        "required_seats": int(required_seats),
                     },
                 )
                 # Check if the response is successful
