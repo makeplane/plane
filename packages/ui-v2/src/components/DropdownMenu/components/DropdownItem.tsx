@@ -1,6 +1,5 @@
 import * as RadixDropdownMenu from "@radix-ui/react-dropdown-menu";
-import React, { useContext } from "react";
-import { DropdownMenuContext } from "../DropdownMenu";
+import React from "react";
 
 export const DropdownItem = ({
   children,
@@ -14,10 +13,11 @@ export const DropdownItem = ({
   return (
     <RadixDropdownMenu.Item
       onSelect={(e) => onSelect(e)}
-      className="py-1 border-b border-border-subtle first:pt-0 last:border-b-0 last:pb-0 
+      className="p-1 first:pt-0 last:border-b-0 last:pb-0 
+      rounded
       hover:bg-bg-neutral-subtle
-      // focus:outline-none
-      active:bg-bg-neutral-emphasis
+      focus:bg-bg-neutral-subtle
+      focus:outline-none
       cursor-pointer
 
       data-[disabled]:pointer-events-none
