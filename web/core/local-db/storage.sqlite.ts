@@ -19,21 +19,34 @@ import { runQuery } from "./utils/query-executor";
 import { createTables } from "./utils/tables";
 import { clearOPFS, getGroupedIssueResults, getSubGroupedIssueResults, log, logError } from "./utils/utils";
 
+/** Database version for schema management */
 const DB_VERSION = 1;
+/** Number of items per page for pagination */
 const PAGE_SIZE = 500;
+/** Number of items to process in a single batch */
 const BATCH_SIZE = 50;
 
+/** Project status type definition */
 type TProjectStatus = {
-  issues: { status: undefined | "loading" | "ready" | "error" | "syncing"; sync: Promise<void> | undefined };
+  issues: {
+    status: undefined | "loading" | "ready" | "error" | "syncing";
+    sync: Promise<void> | undefined;
+  };
 };
 
+/** Database status type definition */
 type TDBStatus = "initializing" | "ready" | "error" | undefined;
+
+/**
+ * Storage class for managing local SQLite database operations
+ * Handles database initialization, synchronization, and CRUD operations for issues
+ */
 export class Storage {
-  db: any;
-  status: TDBStatus = undefined;
-  dbName = "plane";
-  projectStatus: Record<string, TProjectStatus> = {};
-  workspaceSlug: string = "";
+  private db: any;
+  private status: TDBStatus = undefined;
+  private dbName = "plane";
+  private projectStatus: Record<string, TProjectStatus> = {};
+  private workspaceSlug: string = "";
 
   constructor() {
     this.db = null;
@@ -43,13 +56,20 @@ export class Storage {
     }
   }
 
-  closeDBConnection = async () => {
+  /**
+   * Closes the database connection
+   * @returns Promise<void>
+   */
+  private closeDBConnection = async (): Promise<void> => {
     if (this.db) {
       await this.db.close();
     }
   };
 
-  reset = () => {
+  /**
+   * Resets the database state
+   */
+  public reset = (): void => {
     if (this.db) {
       this.db.close();
     }
@@ -59,17 +79,27 @@ export class Storage {
     this.workspaceSlug = "";
   };
 
-  clearStorage = async (force = false) => {
+  /**
+   * Clears the storage and resets the database
+   * @param force - Force clear storage
+   */
+  public clearStorage = async (force = false): Promise<void> => {
     try {
       await this.db?.close();
       await clearOPFS(force);
       this.reset();
-    } catch (e) {
-      console.error("Error clearing sqlite sync storage", e);
+    } catch (error) {
+      logError(error);
+      console.error("Error clearing sqlite sync storage", error);
     }
   };
 
-  initialize = async (workspaceSlug: string): Promise<boolean> => {
+  /**
+   * Initializes the database for a given workspace
+   * @param workspaceSlug - Workspace identifier
+   * @returns Promise<boolean> - True if initialization is successful
+   */
+  public initialize = async (workspaceSlug: string): Promise<boolean> => {
     if (!rootStore.user.localDBEnabled) return false; // return if the window gets hidden
 
     if (workspaceSlug !== this.workspaceSlug) {
@@ -86,7 +116,12 @@ export class Storage {
     }
   };
 
-  _initialize = async (workspaceSlug: string): Promise<boolean> => {
+  /**
+   * Initializes the database for a given workspace
+   * @param workspaceSlug - Workspace identifier
+   * @returns Promise<boolean> - True if initialization is successful
+   */
+  private _initialize = async (workspaceSlug: string): Promise<boolean> => {
     if (this.status === "initializing") {
       console.warn(`Initialization already in progress for workspace ${workspaceSlug}`);
       return false;
@@ -131,7 +166,10 @@ export class Storage {
     }
   };
 
-  syncWorkspace = async () => {
+  /**
+   * Synchronizes the workspace data
+   */
+  public syncWorkspace = async (): Promise<void> => {
     if (!rootStore.user.localDBEnabled) return;
     const syncInProgress = await this.getIsWriteInProgress("sync_workspace");
     if (syncInProgress) {
@@ -150,13 +188,17 @@ export class Storage {
     }
   };
 
-  syncProject = async (projectId: string) => {
+  /**
+   * Synchronizes the project data
+   * @param projectId - Project identifier
+   */
+  public syncProject = async (projectId: string): Promise<void> => {
     if (
       // document.hidden ||
       !rootStore.user.localDBEnabled
-    )
-      return false; // return if the window gets hidden
-
+    ) {
+      return; // return if the window gets hidden
+    }
     // Load labels, members, states, modules, cycles
     await this.syncIssues(projectId);
 
@@ -172,9 +214,13 @@ export class Storage {
     // this.setOption("workspace_synced_at", new Date().toISOString());
   };
 
-  syncIssues = async (projectId: string) => {
+  /**
+   * Synchronizes the issues for a project
+   * @param projectId - Project identifier
+   */
+  public syncIssues = async (projectId: string): Promise<void> => {
     if (!rootStore.user.localDBEnabled || !this.db) {
-      return false;
+      return;
     }
     try {
       const sync = startSpan({ name: `SYNC_ISSUES` }, () => this._syncIssues(projectId));
@@ -186,7 +232,11 @@ export class Storage {
     }
   };
 
-  _syncIssues = async (projectId: string) => {
+  /**
+   * Synchronizes the issues for a project
+   * @param projectId - Project identifier
+   */
+  private _syncIssues = async (projectId: string): Promise<void> => {
     const activeSpan = getActiveSpan();
 
     log("### Sync started");
@@ -255,23 +305,35 @@ export class Storage {
     });
   };
 
-  getIssueCount = async (projectId: string) => {
+  /**
+   * Gets the count of issues for a project
+   * @param projectId - Project identifier
+   * @returns Promise<number> - Count of issues
+   */
+  public getIssueCount = async (projectId: string): Promise<number> => {
     const count = await runQuery(`select count(*) as count from issues where project_id='${projectId}'`);
     return count[0]["count"];
   };
 
-  getLastUpdatedIssue = async (projectId: string) => {
+  /**
+   * Gets the last updated issue for a project
+   * @param projectId - Project identifier
+   * @returns Promise<any | undefined> - Last updated issue or undefined
+   */
+  public getLastUpdatedIssue = async (projectId: string): Promise<any | undefined> => {
     const lastUpdatedIssue = await runQuery(
-      `select id, name, updated_at , sequence_id from issues WHERE project_id='${projectId}' AND is_local_update IS NULL order by datetime(updated_at) desc limit 1 `
+      `select id, name, updated_at, sequence_id from issues WHERE project_id='${projectId}' AND is_local_update IS NULL order by datetime(updated_at) desc limit 1`
     );
 
-    if (lastUpdatedIssue.length) {
-      return lastUpdatedIssue[0];
-    }
-    return;
+    return lastUpdatedIssue.length ? lastUpdatedIssue[0] : undefined;
   };
 
-  getLastSyncTime = async (projectId: string) => {
+  /**
+   * Gets the last sync time for a project
+   * @param projectId - Project identifier
+   * @returns Promise<string | false> - Last sync time or false
+   */
+  public getLastSyncTime = async (projectId: string): Promise<string | false> => {
     const issue = await this.getLastUpdatedIssue(projectId);
     if (!issue) {
       return false;
@@ -279,7 +341,15 @@ export class Storage {
     return issue.updated_at;
   };
 
-  getIssues = async (workspaceSlug: string, projectId: string, queries: any, config: any) => {
+  /**
+   * Gets issues for a project
+   * @param workspaceSlug - Workspace identifier
+   * @param projectId - Project identifier
+   * @param queries - Query parameters
+   * @param config - Configuration options
+   * @returns Promise<any> - Issues data
+   */
+  public getIssues = async (workspaceSlug: string, projectId: string, queries: any, config: any): Promise<any> => {
     log("#### Queries", queries);
 
     const currentProjectStatus = this.getStatus(projectId);
@@ -387,7 +457,12 @@ export class Storage {
     return out;
   };
 
-  getIssue = async (issueId: string) => {
+  /**
+   * Gets an issue by ID
+   * @param issueId - Issue identifier
+   * @returns Promise<any | undefined> - Issue data or undefined
+   */
+  public getIssue = async (issueId: string): Promise<any | undefined> => {
     try {
       if (!rootStore.user.localDBEnabled || this.status !== "ready") return;
 
@@ -403,7 +478,14 @@ export class Storage {
     return;
   };
 
-  getSubIssues = async (workspaceSlug: string, projectId: string, issueId: string) => {
+  /**
+   * Gets sub-issues for an issue
+   * @param workspaceSlug - Workspace identifier
+   * @param projectId - Project identifier
+   * @param issueId - Issue identifier
+   * @returns Promise<any> - Sub-issues data
+   */
+  public getSubIssues = async (workspaceSlug: string, projectId: string, issueId: string): Promise<any> => {
     const workspace_synced_at = await this.getOption("workspace_synced_at");
     if (!workspace_synced_at) {
       const issueService = new IssueService();
@@ -412,17 +494,52 @@ export class Storage {
     return await getSubIssuesWithDistribution(issueId);
   };
 
-  getStatus = (projectId: string) => this.projectStatus[projectId]?.issues?.status || undefined;
-  setStatus = (projectId: string, status: "loading" | "ready" | "error" | "syncing" | undefined = undefined) => {
+  /**
+   * Gets the status of a project
+   * @param projectId - Project identifier
+   * @returns Project status or undefined
+   */
+  public getStatus = (projectId: string): "loading" | "ready" | "error" | "syncing" | undefined =>
+    this.projectStatus[projectId]?.issues?.status || undefined;
+
+  /**
+   * Sets the status of a project
+   * @param projectId - Project identifier
+   * @param status - New status
+   */
+  public setStatus = (
+    projectId: string,
+    status: "loading" | "ready" | "error" | "syncing" | undefined = undefined
+  ): void => {
     set(this.projectStatus, `${projectId}.issues.status`, status);
   };
 
-  getSync = (projectId: string) => this.projectStatus[projectId]?.issues?.sync;
-  setSync = (projectId: string, sync: Promise<void> | undefined) => {
+  /**
+   * Gets the sync promise for a project
+   * @param projectId - Project identifier
+   * @returns Sync promise or undefined
+   */
+  public getSync = (projectId: string): Promise<void> | undefined => this.projectStatus[projectId]?.issues?.sync;
+
+  /**
+   * Sets the sync promise for a project
+   * @param projectId - Project identifier
+   * @param sync - Sync promise
+   */
+  public setSync = (projectId: string, sync: Promise<void> | undefined): void => {
     set(this.projectStatus, `${projectId}.issues.sync`, sync);
   };
 
-  getOption = async (key: string, fallback?: string | boolean | number) => {
+  /**
+   * Gets an option value
+   * @param key - Option key
+   * @param fallback - Fallback value
+   * @returns Option value or fallback
+   */
+  public getOption = async (
+    key: string,
+    fallback?: string | boolean | number
+  ): Promise<string | boolean | number | undefined> => {
     try {
       const options = await runQuery(`select * from options where key='${key}'`);
       if (options.length) {
@@ -434,14 +551,30 @@ export class Storage {
       return fallback;
     }
   };
-  setOption = async (key: string, value: string) => {
+
+  /**
+   * Sets an option value
+   * @param key - Option key
+   * @param value - Option value
+   */
+  public setOption = async (key: string, value: string): Promise<void> => {
     await runQuery(`insert or replace into options (key, value) values ('${key}', '${value}')`);
   };
 
-  deleteOption = async (key: string) => {
+  /**
+   * Deletes an option
+   * @param key - Option key
+   */
+  public deleteOption = async (key: string): Promise<void> => {
     await runQuery(` DELETE FROM options where key='${key}'`);
   };
-  getOptions = async (keys: string[]) => {
+
+  /**
+   * Gets multiple options
+   * @param keys - Option keys
+   * @returns Options data
+   */
+  public getOptions = async (keys: string[]): Promise<Record<string, string | boolean | number>> => {
     const options = await runQuery(`select * from options where key in ('${keys.join("','")}')`);
     return options.reduce((acc: any, option: any) => {
       acc[option.key] = option.value;
@@ -449,17 +582,18 @@ export class Storage {
     }, {});
   };
 
-  getIsWriteInProgress = async (op: string) => {
+  /**
+   * Checks if a write operation is in progress
+   * @param op - Operation identifier
+   * @returns Promise<boolean> - True if write is in progress
+   */
+  public getIsWriteInProgress = async (op: string): Promise<boolean> => {
     const writeStartTime = await this.getOption(op, false);
     if (writeStartTime) {
-      // Check if it has been more than 5seconds
       const current = new Date();
       const start = new Date(writeStartTime);
 
-      if (current.getTime() - start.getTime() < 5000) {
-        return true;
-      }
-      return false;
+      return current.getTime() - start.getTime() < 5000;
     }
     return false;
   };
@@ -468,18 +602,24 @@ export class Storage {
 export const persistence = new Storage();
 
 /**
- * format the issue fetched from local db into an issue
- * @param issue
- * @returns
+ * Formats an issue fetched from local db into the required format
+ * @param issue - Raw issue data from database
+ * @returns Formatted issue with proper types
  */
-export const formatLocalIssue = (issue: any) => {
-  const currIssue = issue;
+export const formatLocalIssue = (
+  issue: any
+): TIssue & { group_id?: string; total_issues: number; sub_group_id?: string } => {
+  const currIssue = { ...issue };
+
+  // Parse array fields from JSON strings
   ARRAY_FIELDS.forEach((field: string) => {
     currIssue[field] = currIssue[field] ? JSON.parse(currIssue[field]) : [];
   });
+
   // Convert boolean fields to actual boolean values
   BOOLEAN_FIELDS.forEach((field: string) => {
     currIssue[field] = currIssue[field] === 1;
   });
-  return currIssue as TIssue & { group_id?: string; total_issues: number; sub_group_id?: string };
+
+  return currIssue;
 };
