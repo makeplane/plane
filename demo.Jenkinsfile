@@ -75,7 +75,7 @@ pipeline {
                         sh "echo ${secret}"
                         sh """
                             set +x
-                            mkdir -p ${configStoragePath}
+                            mkdir -p ${ENV}
                             echo \"\${ENV}\" > ${configStoragePath}/env.json
                         """
                     }
