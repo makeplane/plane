@@ -10,6 +10,7 @@ psycopg-binary==3.1.18
 psycopg-c==3.1.18
 dj-database-url==2.1.0
 # redis
+python-dotenv==1.0.0
 redis==5.0.4
 django-redis==5.4.0
 # cors
