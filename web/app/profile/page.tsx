@@ -20,9 +20,9 @@ import {
 import { DeactivateAccountModal } from "@/components/account";
 import { LogoSpinner } from "@/components/common";
 import { ImagePickerPopover, UserImageUploadModal, PageHead } from "@/components/core";
+import { TimezoneSelect } from "@/components/global";
 import { ProfileSettingContentWrapper } from "@/components/profile";
 // constants
-import { TIME_ZONES, TTimezone } from "@/constants/timezones";
 import { USER_ROLES } from "@/constants/workspace";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
@@ -119,22 +119,6 @@ const ProfileSettingsPage = observer(() => {
         setIsImageUploadModalOpen(false);
       });
   };
-
-  const getTimeZoneLabel = (timezone: TTimezone | undefined) => {
-    if (!timezone) return undefined;
-    return (
-      <div className="flex gap-1.5">
-        <span className="text-custom-text-400">{timezone.gmtOffset}</span>
-        <span className="text-custom-text-200">{timezone.name}</span>
-      </div>
-    );
-  };
-
-  const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
-    value: timeZone.value,
-    query: timeZone.name + " " + timeZone.gmtOffset + " " + timeZone.value,
-    content: getTimeZoneLabel(timeZone),
-  }));
 
   if (!currentUser)
     return (
@@ -379,19 +363,12 @@ const ProfileSettingsPage = observer(() => {
                     control={control}
                     rules={{ required: "Please select a timezone" }}
                     render={({ field: { value, onChange } }) => (
-                      <CustomSearchSelect
+                      <TimezoneSelect
                         value={value}
-                        label={
-                          value
-                            ? (getTimeZoneLabel(TIME_ZONES.find((t) => t.value === value)) ?? value)
-                            : "Select a timezone"
-                        }
-                        options={timeZoneOptions}
-                        onChange={onChange}
-                        buttonClassName={errors.user_timezone ? "border-red-500" : ""}
-                        className="rounded-md border-[0.5px] !border-custom-border-200"
-                        optionsClassName="w-72"
-                        input
+                        onChange={(value: string) => {
+                          onChange(value);
+                        }}
+                        error={Boolean(errors.user_timezone)}
                       />
                     )}
                   />
