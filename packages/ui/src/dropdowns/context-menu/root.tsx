@@ -11,7 +11,8 @@ import { usePlatformOS } from "../../hooks/use-platform-os";
 
 export type TContextMenuItem = {
   key: string;
-  title: string;
+  customContent?: React.ReactNode;
+  title?: string;
   description?: string;
   icon?: React.FC<any>;
   action: () => void;

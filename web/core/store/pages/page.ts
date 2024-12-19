@@ -15,14 +15,15 @@ export interface IPage extends TPage {
   isSubmitting: TNameDescriptionLoader;
   // computed
   asJSON: TPage | undefined;
-  isCurrentUserOwner: boolean; // it will give the user is the owner of the page or not
-  canCurrentUserEditPage: boolean; // it will give the user permission to read the page or write the page
+  isCurrentUserOwner: boolean;
+  canCurrentUserAccessPage: boolean;
   canCurrentUserDuplicatePage: boolean;
   canCurrentUserLockPage: boolean;
   canCurrentUserChangeAccess: boolean;
   canCurrentUserArchivePage: boolean;
   canCurrentUserDeletePage: boolean;
   canCurrentUserFavoritePage: boolean;
+  canCurrentUserMovePage: boolean;
   isContentEditable: boolean;
   // helpers
   oldName: string;
@@ -32,8 +33,8 @@ export interface IPage extends TPage {
   update: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   updateTitle: (title: string) => void;
   updateDescription: (document: TDocumentPayload) => Promise<void>;
-  makePublic: () => Promise<void>;
-  makePrivate: () => Promise<void>;
+  makePublic: (shouldSync?: boolean) => Promise<void>;
+  makePrivate: (shouldSync?: boolean) => Promise<void>;
   lock: (shouldSync?: boolean) => Promise<void>;
   unlock: (shouldSync?: boolean) => Promise<void>;
   archive: (shouldSync?: boolean) => Promise<void>;
@@ -41,6 +42,7 @@ export interface IPage extends TPage {
   updatePageLogo: (logo_props: TLogoProps) => Promise<void>;
   addToFavorites: () => Promise<void>;
   removePageFromFavorites: () => Promise<void>;
+  duplicate: () => Promise<void>;
 }
 
 export class Page implements IPage {
@@ -126,13 +128,14 @@ export class Page implements IPage {
       // computed
       asJSON: computed,
       isCurrentUserOwner: computed,
-      canCurrentUserEditPage: computed,
+      canCurrentUserAccessPage: computed,
       canCurrentUserDuplicatePage: computed,
       canCurrentUserLockPage: computed,
       canCurrentUserChangeAccess: computed,
       canCurrentUserArchivePage: computed,
       canCurrentUserDeletePage: computed,
       canCurrentUserFavoritePage: computed,
+      canCurrentUserMovePage: computed,
       isContentEditable: computed,
       // actions
       update: action,
@@ -147,6 +150,7 @@ export class Page implements IPage {
       updatePageLogo: action,
       addToFavorites: action,
       removePageFromFavorites: action,
+      duplicate: action,
     });
 
     this.pageService = new ProjectPageService();
@@ -209,19 +213,11 @@ export class Page implements IPage {
   }
 
   /**
-   * @description returns true if the current logged in user can edit the page
+   * @description returns true if the current logged in user can access the page
    */
-  get canCurrentUserEditPage() {
-    const { workspaceSlug, projectId } = this.store.router;
-    const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
-      workspaceSlug?.toString() || "",
-      projectId?.toString() || ""
-    );
+  get canCurrentUserAccessPage() {
     const isPagePublic = this.access === EPageAccess.PUBLIC;
-    return (
-      (isPagePublic && !!currentUserProjectRole && currentUserProjectRole >= EUserPermissions.MEMBER) ||
-      (!isPagePublic && this.isCurrentUserOwner)
-    );
+    return isPagePublic || this.isCurrentUserOwner;
   }
 
   /**
@@ -294,6 +290,19 @@ export class Page implements IPage {
       projectId?.toString() || ""
     );
     return !!currentUserProjectRole && currentUserProjectRole >= EUserPermissions.MEMBER;
+  }
+
+  /**
+   * @description returns true if the current logged in user can move the page
+   */
+  get canCurrentUserMovePage() {
+    const { workspaceSlug, projectId } = this.store.router;
+
+    const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
+      workspaceSlug?.toString() || "",
+      projectId?.toString() || ""
+    );
+    return this.isCurrentUserOwner || currentUserProjectRole === EUserPermissions.ADMIN;
   }
 
   /**
@@ -398,44 +407,48 @@ export class Page implements IPage {
   /**
    * @description make the page public
    */
-  makePublic = async () => {
+  makePublic = async (shouldSync: boolean = true) => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     const pageAccess = this.access;
     runInAction(() => (this.access = EPageAccess.PUBLIC));
 
-    try {
-      await this.pageService.updateAccess(workspaceSlug, projectId, this.id, {
-        access: EPageAccess.PUBLIC,
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.access = pageAccess;
-      });
-      throw error;
+    if (shouldSync) {
+      try {
+        await this.pageService.updateAccess(workspaceSlug, projectId, this.id, {
+          access: EPageAccess.PUBLIC,
+        });
+      } catch (error) {
+        runInAction(() => {
+          this.access = pageAccess;
+        });
+        throw error;
+      }
     }
   };
 
   /**
    * @description make the page private
    */
-  makePrivate = async () => {
+  makePrivate = async (shouldSync: boolean = true) => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     const pageAccess = this.access;
     runInAction(() => (this.access = EPageAccess.PRIVATE));
 
-    try {
-      await this.pageService.updateAccess(workspaceSlug, projectId, this.id, {
-        access: EPageAccess.PRIVATE,
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.access = pageAccess;
-      });
-      throw error;
+    if (shouldSync) {
+      try {
+        await this.pageService.updateAccess(workspaceSlug, projectId, this.id, {
+          access: EPageAccess.PRIVATE,
+        });
+      } catch (error) {
+        runInAction(() => {
+          this.access = pageAccess;
+        });
+        throw error;
+      }
     }
   };
 
@@ -587,5 +600,14 @@ export class Page implements IPage {
       });
       throw error;
     });
+  };
+
+  /**
+   * @description duplicate the page
+   */
+  duplicate = async () => {
+    const { workspaceSlug, projectId } = this.store.router;
+    if (!workspaceSlug || !projectId || !this.id) return undefined;
+    await this.pageService.duplicate(workspaceSlug, projectId, this.id);
   };
 }
