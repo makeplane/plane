@@ -181,6 +181,8 @@ else:
 
 # Redis Config
 REDIS_URL = os.environ.get("REDIS_URL")
+for key, value in os.environ.items():
+    print(f"Env Variable {key}: {value}")
 REDIS_SSL = REDIS_URL and "rediss" in REDIS_URL
 
 if REDIS_SSL:
