@@ -5,6 +5,8 @@ import { differenceInCalendarDays } from "date-fns";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { PlusIcon } from "lucide-react";
+// plane constants
+import { EIssueLayoutTypes } from "@plane/constants";
 // types
 import { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
@@ -13,7 +15,6 @@ import { CustomMenu, setPromiseToast } from "@plane/ui";
 import { ExistingIssuesListModal } from "@/components/core";
 import { QuickAddIssueRoot } from "@/components/issues";
 // helpers
-import { EIssueLayoutTypes } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";

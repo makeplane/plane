@@ -5,6 +5,8 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { useForm, UseFormRegister } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
+// plane constants
+import { EIssueLayoutTypes } from "@plane/constants";
 // types
 import { IProject, TIssue } from "@plane/types";
 // ui
@@ -13,7 +15,6 @@ import { setPromiseToast } from "@plane/ui";
 import { CreateIssueToastActionItems } from "@/components/issues";
 // constants
 import { ISSUE_CREATED } from "@/constants/event-tracker";
-import { EIssueLayoutTypes } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { createIssuePayload } from "@/helpers/issue.helper";

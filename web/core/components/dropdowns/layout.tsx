@@ -1,12 +1,14 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { Check } from "lucide-react";
+// plane constants
+import { EIssueLayoutTypes } from "@plane/constants";
 // plane ui
 import { Dropdown } from "@plane/ui";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
-import { EIssueLayoutTypes, ISSUE_LAYOUT_MAP } from "@/constants/issue";
+import { ISSUE_LAYOUT_MAP } from "@/constants/issue";
 
 type TLayoutDropDown = {
   onChange: (value: EIssueLayoutTypes) => void;

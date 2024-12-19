@@ -1,14 +1,16 @@
 // icons
 import { Calendar, GanttChartSquare, Kanban, List, Sheet } from "lucide-react";
+// plane constants
+import { EIssueLayoutTypes, EIssuesStoreType } from "@plane/constants";
 // types
 import {
-  IIssueFilterOptions,
   IIssueDisplayProperties,
   TIssueExtraOptions,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
   TIssuePriorities,
   TIssueGroupingFilters,
+  ILayoutDisplayFiltersOptions,
 } from "@plane/types";
 import { ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/plane-web/constants";
 
@@ -21,30 +23,6 @@ export const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = [
   "cycle",
 ];
 
-export enum EIssuesStoreType {
-  GLOBAL = "GLOBAL",
-  PROFILE = "PROFILE",
-  TEAM = "TEAM",
-  PROJECT = "PROJECT",
-  CYCLE = "CYCLE",
-  MODULE = "MODULE",
-  TEAM_VIEW = "TEAM_VIEW",
-  PROJECT_VIEW = "PROJECT_VIEW",
-  ARCHIVED = "ARCHIVED",
-  DRAFT = "DRAFT",
-  DEFAULT = "DEFAULT",
-  WORKSPACE_DRAFT = "WORKSPACE_DRAFT",
-  EPIC = "EPIC",
-}
-
-export enum EIssueLayoutTypes {
-  LIST = "list",
-  KANBAN = "kanban",
-  CALENDAR = "calendar",
-  GANTT = "gantt_chart",
-  SPREADSHEET = "spreadsheet",
-}
-
 export type TCreateModalStoreTypes =
   | EIssuesStoreType.TEAM
   | EIssuesStoreType.PROJECT
@@ -54,18 +32,6 @@ export type TCreateModalStoreTypes =
   | EIssuesStoreType.CYCLE
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.EPIC;
-
-export enum EIssueFilterType {
-  FILTERS = "filters",
-  DISPLAY_FILTERS = "display_filters",
-  DISPLAY_PROPERTIES = "display_properties",
-  KANBAN_FILTERS = "kanban_filters",
-}
-
-export enum EIssueCommentAccessSpecifier {
-  EXTERNAL = "EXTERNAL",
-  INTERNAL = "INTERNAL",
-}
 
 export const ISSUE_PRIORITIES: {
   key: TIssuePriorities;
@@ -196,21 +162,6 @@ export const ISSUE_LAYOUTS: {
   title: string;
   icon: any;
 }[] = Object.values(ISSUE_LAYOUT_MAP);
-
-export interface ILayoutDisplayFiltersOptions {
-  filters: (keyof IIssueFilterOptions)[];
-  display_properties: (keyof IIssueDisplayProperties)[];
-  display_filters: {
-    group_by?: TIssueGroupByOptions[];
-    sub_group_by?: TIssueGroupByOptions[];
-    order_by?: TIssueOrderByOptions[];
-    type?: TIssueGroupingFilters[];
-  };
-  extra_options: {
-    access: boolean;
-    values: TIssueExtraOptions[];
-  };
-}
 
 export type TFiltersByLayout = {
   [layoutType: string]: ILayoutDisplayFiltersOptions;
@@ -552,13 +503,6 @@ export const ISSUE_STORE_TO_FILTERS_MAP: Partial<Record<EIssuesStoreType, TFilte
   [EIssuesStoreType.PROJECT]: ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues,
   [EIssuesStoreType.EPIC]: ISSUE_DISPLAY_FILTERS_BY_LAYOUT.epics,
 };
-
-export enum EIssueListRow {
-  HEADER = "HEADER",
-  ISSUE = "ISSUE",
-  NO_ISSUES = "NO_ISSUES",
-  QUICK_ADD = "QUICK_ADD",
-}
 
 // issue reactions
 export const issueReactionEmojis = ["128077", "128078", "128516", "128165", "128533", "129505", "9992", "128064"];
