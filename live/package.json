@@ -6,8 +6,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"node esbuild.config.js --watch\" \"nodemon dist/start.js\"",
-    "build": "node esbuild.config.js",
+    "dev": "concurrently \"tsup src/start.ts --watch\" \"nodemon dist/start.js\"",
+    "build": "tsup src/start.ts",
     "start": "node dist/start.js",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:errors": "eslint src --ext .ts,.tsx --quiet"
@@ -53,9 +53,9 @@
     "@types/node": "^20.14.9",
     "@types/reflect-metadata": "^0.1.0",
     "concurrently": "^9.0.1",
-    "esbuild": "^0.20.1",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
+    "tsup": "^7.2.0",
     "typescript": "5.3.3"
   }
 }
