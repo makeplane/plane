@@ -63,14 +63,13 @@ pipeline {
             steps {
                 // define vault secret path and env var
                 script {
-                    
                     def secret = [
                     [
                         path: "${repository}/${projectEnv}", secretValues: [
                             [envVar: 'CONFIG', vaultKey: 'env.json']
                         ]]
                     ]
-                    sh "echo ${secret}"
+                    // sh "echo ${secret}"
                     withVault(configuration: configuration, vaultSecrets: secret) {
                         // sh "echo ${CONFIG}"
                         sh """
