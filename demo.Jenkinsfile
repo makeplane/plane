@@ -75,6 +75,7 @@ pipeline {
                     withVault(configuration: configuration, vaultSecrets: secret) {
                         sh """
                             set +x
+                            echo "Vault CONFIG: \${CONFIG}"   # Debugging, remove in production
                             mkdir -p ${configStoragePath}
                             echo "\${CONFIG}" > ${configStoragePath}/.env
                         """
