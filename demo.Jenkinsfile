@@ -50,14 +50,14 @@ pipeline {
     agent any
 
     stages {
-        stage ("Send Build started message") {
-            steps{
-                sendSlackMessage (
-                    messageType: "start",
-                    slackEnvironment: "demo"
-                )
-            }
-        }
+        // stage ("Send Build started message") {
+        //     steps{
+        //         sendSlackMessage (
+        //             messageType: "start",
+        //             slackEnvironment: "demo"
+        //         )
+        //     }
+        // }
 
         stage ("Generate configs from vault") {
             steps {
