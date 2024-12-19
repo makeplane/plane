@@ -30,7 +30,7 @@ def dockerBuildLevelArguments = [
     ENV_FILE_PATH: "${configStoragePath}/.env"
 ]
 
-def frontendImageName = "plane-frontend:latest"
+def webImageName = "plane-frontend:latest"
 def adminImageName = "plane-adminpanel:latest"
 def apiImageName = "plane-apiserver:latest"
 
@@ -128,22 +128,22 @@ pipeline {
 
         stage("Push to registry") {
             parallel {
-                // stage ("Push Web Image") {
-                //     steps {
-                //         pushDockerImage (
-                //             awsRegion : awsRegion,
-                //             imageName : webImageName
-                //         )
-                //     }
-                // }
-                // stage ("Push Admin Image") {
-                //     steps {
-                //         pushDockerImage (
-                //             awsRegion : awsRegion,
-                //             imageName : adminImageName
-                //         )
-                //     }
-                // }
+                stage ("Push Web Image") {
+                    steps {
+                        pushDockerImage (
+                            awsRegion : awsRegion,
+                            imageName : webImageName
+                        )
+                    }
+                }
+                stage ("Push Admin Image") {
+                    steps {
+                        pushDockerImage (
+                            awsRegion : awsRegion,
+                            imageName : adminImageName
+                        )
+                    }
+                }
                 stage ("Push API Image") {
                     steps {
                         pushDockerImage (
@@ -157,33 +157,33 @@ pipeline {
 
         stage("Deploy Plane") {
             parallel {
-                // stage("Deploy Frontend") {
-                //     steps {
-                //         script {
-                //             deployServiceOnECS (
-                //                 awsRegion : awsRegion,
-                //                 imageName : webImageName,
-                //                 ecsClusterName : clusterName,
-                //                 ecsServiceName : frontEndServiceName,
-                //                 timeout : 300
-                //             )
-                //         }
-                //     }
-                // }
+                stage("Deploy Frontend") {
+                    steps {
+                        script {
+                            deployServiceOnECS (
+                                awsRegion : awsRegion,
+                                imageName : webImageName,
+                                ecsClusterName : clusterName,
+                                ecsServiceName : frontEndServiceName,
+                                timeout : 300
+                            )
+                        }
+                    }
+                }
 
-                // stage("Deploy Admin") {
-                //     steps {
-                //         script {
-                //             deployServiceOnECS (
-                //                 awsRegion : awsRegion,
-                //                 imageName : adminImageName,
-                //                 ecsClusterName : clusterName,
-                //                 ecsServiceName : adminPanelServiceName,
-                //                 timeout : 300
-                //             )
-                //         }
-                //     }
-                // }
+                stage("Deploy Admin") {
+                    steps {
+                        script {
+                            deployServiceOnECS (
+                                awsRegion : awsRegion,
+                                imageName : adminImageName,
+                                ecsClusterName : clusterName,
+                                ecsServiceName : adminPanelServiceName,
+                                timeout : 300
+                            )
+                        }
+                    }
+                }
 
                 stage("Deploy API") {
                     steps {
