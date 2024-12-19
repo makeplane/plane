@@ -187,19 +187,21 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       if (!response) throw new Error();
 
       // check if we should add issue to cycle/module
-      if (
-        payload.cycle_id &&
-        payload.cycle_id !== "" &&
-        (payload.cycle_id !== cycleId || storeType !== EIssuesStoreType.CYCLE)
-      ) {
-        await addIssueToCycle(response, payload.cycle_id);
-      }
-      if (
-        payload.module_ids &&
-        payload.module_ids.length > 0 &&
-        (!payload.module_ids.includes(moduleId?.toString()) || storeType !== EIssuesStoreType.MODULE)
-      ) {
-        await addIssueToModule(response, payload.module_ids);
+      if (!is_draft_issue) {
+        if (
+          payload.cycle_id &&
+          payload.cycle_id !== "" &&
+          (payload.cycle_id !== cycleId || storeType !== EIssuesStoreType.CYCLE)
+        ) {
+          await addIssueToCycle(response, payload.cycle_id);
+        }
+        if (
+          payload.module_ids &&
+          payload.module_ids.length > 0 &&
+          (!payload.module_ids.includes(moduleId?.toString()) || storeType !== EIssuesStoreType.MODULE)
+        ) {
+          await addIssueToModule(response, payload.module_ids);
+        }
       }
 
       // add other property values
