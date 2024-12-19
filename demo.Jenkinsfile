@@ -27,7 +27,7 @@ vaultConfigFilesMap.each { envVariable, configFileName ->
 // Docker Based Configurations
 def awsRegion = "us-west-2"
 def dockerBuildLevelArguments = [
-    ENV_FILE_PATH: configStoragePath
+    ENV_FILE_PATH: "${configStoragePath}/.env"
 ]
 
 def frontendImageName = "plane-frontend:latest"
@@ -77,7 +77,7 @@ pipeline {
                             set +x
                             echo "Vault CONFIG: \${CONFIG}"   # Debugging, remove in production
                             mkdir -p ${configStoragePath}
-                            echo "\${CONFIG}" > ${configStoragePath}/config.json
+                            echo "\${CONFIG}" > ${configStoragePath}/.env
                         """
 
                         // Debugging: Show the contents of the .env file (optional for development only)
