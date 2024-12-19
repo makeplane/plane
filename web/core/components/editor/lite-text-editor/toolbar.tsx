@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { Globe2, Lock, LucideIcon } from "lucide-react";
+import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // editor
 import { EditorRefApi } from "@plane/editor";
 // ui
 import { Button, Tooltip } from "@plane/ui";
 // constants
 import { TOOLBAR_ITEMS, ToolbarMenuItem } from "@/constants/editor";
-import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 

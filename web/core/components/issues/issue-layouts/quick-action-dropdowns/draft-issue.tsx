@@ -6,13 +6,13 @@ import { observer } from "mobx-react";
 // icons
 import { Pencil, Trash2 } from "lucide-react";
 // types
+import { EIssuesStoreType } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // ui
 import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // components
 import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // constant
-import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks

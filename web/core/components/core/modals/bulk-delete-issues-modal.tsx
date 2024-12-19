@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
+import { EIssuesStoreType } from "@plane/constants";
 // types
 import { ISearchIssueResponse, IUser } from "@plane/types";
 // ui
@@ -14,7 +15,6 @@ import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssues } from "@/hooks/store";
 import useDebounce from "@/hooks/use-debounce";
