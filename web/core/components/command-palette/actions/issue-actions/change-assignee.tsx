@@ -4,12 +4,12 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Check } from "lucide-react";
+// plane constants
+import { EIssuesStoreType } from "@plane/constants";
 // plane types
 import { TIssue } from "@plane/types";
 // plane ui
 import { Avatar } from "@plane/ui";
-// constants
-import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks

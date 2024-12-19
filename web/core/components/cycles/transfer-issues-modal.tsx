@@ -8,8 +8,8 @@ import { Dialog, Transition } from "@headlessui/react";
 // hooks
 // ui
 //icons
+import { EIssuesStoreType } from "@plane/constants";
 import { ContrastIcon, TransferIcon, TOAST_TYPE, setToast } from "@plane/ui";
-import { EIssuesStoreType } from "@/constants/issue";
 import { useCycle, useIssues } from "@/hooks/store";
 //icons
 // constants
