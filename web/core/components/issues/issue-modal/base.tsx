@@ -322,6 +322,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       if (!data?.id) response = await handleCreateIssue(payload, is_draft_issue);
       else response = await handleUpdateIssue(payload);
     } catch (error) {
+      console.error(error);
       throw error;
     } finally {
       if (response != undefined && onSubmit) await onSubmit(response);

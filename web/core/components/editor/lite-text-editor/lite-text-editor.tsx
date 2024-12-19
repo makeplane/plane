@@ -20,7 +20,7 @@ interface LiteTextEditorWrapperProps
   extends Omit<ILiteTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
   workspaceId: string;
-  projectId: string;
+  projectId?: string;
   accessSpecifier?: EIssueCommentAccessSpecifier;
   handleAccessChange?: (accessKey: EIssueCommentAccessSpecifier) => void;
   showAccessSpecifier?: boolean;
@@ -53,12 +53,13 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   const {
     getUserDetails,
     project: { getProjectMemberIds },
+    workspace: { getWorkspaceMemberIds },
   } = useMember();
   // editor flaggings
   const { liteTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // derived values
-  const projectMemberIds = getProjectMemberIds(projectId);
-  const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
+  const memberIds = projectId ? getProjectMemberIds(projectId) : getWorkspaceMemberIds(workspaceSlug);
+  const projectMemberDetails = memberIds?.map((id) => getUserDetails(id) as IUserLite);
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useMention({
     workspaceSlug,
