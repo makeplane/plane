@@ -28,10 +28,10 @@ from opentelemetry.instrumentation.django import DjangoInstrumentor
 from dotenv import load_dotenv
 
 # Load environment variables from .env file if it exists
-load_dotenv(os.path.join(BASE_DIR, ".env"))
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+load_dotenv(os.path.join(BASE_DIR, ".env"))
 # Secret Key
 SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
 
