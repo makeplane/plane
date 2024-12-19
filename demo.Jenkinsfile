@@ -67,7 +67,7 @@ pipeline {
                     def secret = [
                     [
                         path: "${repository}/${projectEnv}", secretValues: [
-                            [envVar: 'ENV', vaultKey: 'env.json']
+                            [envVar: 'CONFIG', vaultKey: 'env.json']
                         ]]
                     ]
                     sh "echo ${secret}"
