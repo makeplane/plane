@@ -59,7 +59,7 @@ RUN export $(grep -v '^#' /app/.env | xargs) && \
     echo "Environment variables set successfully"
 
 # For demonstration: Print an environment variable
-RUN echo "Database host: $DB_HOST"
+RUN echo "Database host: $POSTGRES_USER"
 CMD gunicorn -w 2 -k uvicorn.workers.UvicornWorker plane.asgi:application --bind 0.0.0.0:8000 --max-requests 1200 --max-requests-jitter 1000 --access-logfile -
 # Expose container port and run entry point script
 
