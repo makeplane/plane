@@ -102,7 +102,7 @@ Setting up your local environment is simple and straightforward. Follow these st
    ```
    git checkout -b <feature-branch-name>
    ```
-4. Run the setup script in the terminal:
+4. Run the setup script in the terminal (this will set up your development environment and install dependencies):
    ```
    ./setup.sh
    ```
