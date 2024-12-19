@@ -204,3 +204,5 @@ from .error_404 import custom_404_view
 
 from .notification.base import MarkAllReadNotificationViewSet
 from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
+
+from .timezone.base import TimezoneEndpoint
