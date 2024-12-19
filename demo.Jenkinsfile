@@ -30,9 +30,9 @@ def dockerBuildLevelArguments = [
     CONFIG_FILES_PATH : configStoragePath
 ]
 
-def frontendImageName = "plane-demo-frontend:latest"
-def adminImageName = "plane-demo-admin:latest"
-def apiImageName = "plane-demo-api:latest"
+def frontendImageName = "plane-frontend:latest"
+def adminImageName = "plane-adminpanel:latest"
+def apiImageName = "plane-apiserver:latest"
 
 // ECS Based Configurations
 def clusterName = "demo-applications-fargate"
