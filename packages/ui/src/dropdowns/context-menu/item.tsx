@@ -36,19 +36,23 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
       onMouseEnter={handleActiveItem}
       disabled={item.disabled}
     >
-      {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
-      <div>
-        <h5>{item.title}</h5>
-        {item.description && (
-          <p
-            className={cn("text-custom-text-300 whitespace-pre-line", {
-              "text-custom-text-400": item.disabled,
-            })}
-          >
-            {item.description}
-          </p>
-        )}
-      </div>
+      {item.customContent ?? (
+        <>
+          {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
+          <div>
+            <h5>{item.title}</h5>
+            {item.description && (
+              <p
+                className={cn("text-custom-text-300 whitespace-pre-line", {
+                  "text-custom-text-400": item.disabled,
+                })}
+              >
+                {item.description}
+              </p>
+            )}
+          </div>
+        </>
+      )}
     </button>
   );
 };

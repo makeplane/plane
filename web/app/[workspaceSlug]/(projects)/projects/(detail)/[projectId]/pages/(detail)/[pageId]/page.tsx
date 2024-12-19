@@ -22,7 +22,7 @@ const PageDetailsPage = observer(() => {
   // store hooks
   const { getPageById } = useProjectPages();
   const page = usePage(pageId?.toString() ?? "");
-  const { id, name } = page;
+  const { canCurrentUserAccessPage, id, name } = page;
 
   // fetch page details
   const { error: pageDetailsError } = useSWR(
@@ -44,7 +44,7 @@ const PageDetailsPage = observer(() => {
       </div>
     );
 
-  if (pageDetailsError)
+  if (pageDetailsError || !canCurrentUserAccessPage)
     return (
       <div className="h-full w-full flex flex-col items-center justify-center">
         <h3 className="text-lg font-semibold text-center">Page not found</h3>
