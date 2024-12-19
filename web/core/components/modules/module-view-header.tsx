@@ -4,13 +4,13 @@ import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ListFilter, Search, X } from "lucide-react";
-// plane utils
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { TModuleFilters } from "@plane/types";
 // ui
 import { Tooltip } from "@plane/ui";
+// plane utils
 import { cn } from "@plane/utils";
 // components
 import { FiltersDropdown } from "@/components/issues";
