@@ -109,7 +109,7 @@ pipeline {
                             awsRegion : awsRegion,
                             dockerBuildArgs : dockerBuildLevelArguments,
                             imageName : apiImageName,
-                            directoryPath : "apiserver",
+                            directoryPath : "plane/apiserver",
                             dockerfilePath : "Dockerfile.api"
                         )
                     }
