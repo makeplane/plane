@@ -64,21 +64,26 @@ pipeline {
                 // define vault secret path and env var
                 script {
                     def secret = [
-                    [
-                        path: "${repository}/${projectEnv}", secretValues: [
-                            [envVar: 'CONFIG', vaultKey: 'env.json']
-                        ]]
+                        [
+                        path: "${repository}/${projectEnv}", 
+                        secretValues: [
+                                [envVar: 'CONFIG', vaultKey: 'env.json']
+                            ]
+                        ]
                     ]
                     // sh "echo ${secret}"
                     withVault(configuration: configuration, vaultSecrets: secret) {
                         sh """
                             set +x
                             mkdir -p ${configStoragePath}
-                            echo \"\${CONFIG}\" > ${configStoragePath}/.env
+                            echo "\${CONFIG}" > ${configStoragePath}/.env
                         """
-                        sh "echo ${CONFIG}"
+
+                        // Debugging: Show the contents of the .env file (optional for development only)
                         sh "cat ${configStoragePath}/.env"
-                        sh "ls -l config-files/.env"
+
+                        // Verify the file has been created
+                        sh "ls -l ${configStoragePath}/.env"
                     }
                 }
             }
