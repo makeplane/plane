@@ -1,5 +1,5 @@
 import orderBy from "lodash/orderBy";
-import { runInAction } from "mobx";
+import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { TNotification } from "@plane/types";
 import { ENotificationLoader } from "@/constants/notification";
@@ -18,6 +18,7 @@ import {
 export type TGroupedNotifications = Record<string, TNotification[]>;
 
 export interface IWorkspaceNotificationStore extends IWorkspaceNotificationStoreCore {
+  higlightedActivityIds: string[];
   getNotificationsGroupedByIssue: (workspaceId: string) => Record<string, INotification[]>;
   getIssueIdsSortedByLatestNotification: (workspaceId: string) => string[] | undefined;
   markBulkNotificationsAsRead: (notitificationList: INotification[], workspaceSlug: string) => Promise<void>;
@@ -31,11 +32,18 @@ export interface IWorkspaceNotificationStore extends IWorkspaceNotificationStore
   ) => Promise<void>;
   unSnoozeNotificationList: (notitificationList: INotification[], workspaceSlug: string) => Promise<void>;
   containsInboxIssue: (notitificationList: INotification[]) => boolean;
+  setHighlightedActivityIds: (activityIds: string[]) => void;
 }
 
 export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore implements IWorkspaceNotificationStore {
+  higlightedActivityIds: string[] = [];
+
   constructor(protected store: RootStore) {
     super(store);
+    makeObservable(this, {
+      higlightedActivityIds: observable,
+      setHighlightedActivityIds: action,
+    });
   }
 
   getNotificationsGroupedByIssue = computedFn((workspaceId: string) => {
@@ -205,5 +213,9 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
     const inbox_issue = notificationGroup.find((notification) => notification.is_inbox_issue);
     if (inbox_issue) return true;
     return false;
+  };
+
+  setHighlightedActivityIds = (activityIds: string[]) => {
+    this.higlightedActivityIds = activityIds;
   };
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 // components
 // constants
@@ -17,7 +17,7 @@ type TNotificationCardListRoot = {
 export const NotificationCardListRoot: FC<TNotificationCardListRoot> = observer((props) => {
   const { workspaceSlug, workspaceId } = props;
   // hooks
-  const { loader, paginationInfo, getNotifications, getIssueIdsSortedByLatestNotification } =
+  const { loader, paginationInfo, getNotifications, getIssueIdsSortedByLatestNotification, setHighlightedActivityIds } =
     useWorkspaceNotifications();
   const notificationIssueIds = getIssueIdsSortedByLatestNotification(workspaceId);
 
@@ -28,6 +28,11 @@ export const NotificationCardListRoot: FC<TNotificationCardListRoot> = observer(
       console.error(error);
     }
   };
+
+  // reset highlighted activity ids when notification list is updated
+  useEffect(() => {
+    setHighlightedActivityIds([]);
+  }, [notificationIssueIds]);
 
   if (!workspaceSlug || !workspaceId || !notificationIssueIds) return <></>;
   return (

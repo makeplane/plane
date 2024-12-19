@@ -5,8 +5,8 @@ import { uniq } from "lodash";
 import orderBy from "lodash/orderBy";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
+import { Dot, Icon } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
-import { Row } from "@plane/ui";
 import { MemberDropdown } from "@/components/dropdowns";
 //helpers
 import { cn } from "@/helpers/common.helper";
@@ -14,8 +14,10 @@ import { calculateTimeAgo, convertToEpoch } from "@/helpers/date-time.helper";
 //store
 import { useIssueDetail, useWorkspaceNotifications } from "@/hooks/store";
 //components
-import { IssueTypeIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues";
 import { NotificationCardPreview, NotificationOption } from "@/plane-web/components/workspace-notifications";
+// eslint-disable-next-line import/order
+import { TNotification } from "@plane/types";
 export interface INotificationItem {
   issueId: string;
   workspaceSlug: string;
@@ -35,6 +37,7 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
     markBulkNotificationsAsRead,
     containsInboxIssue,
     setCurrentSelectedNotificationId,
+    setHighlightedActivityIds,
   } = useWorkspaceNotifications();
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
 
@@ -58,6 +61,14 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
     placement: "right-start",
   });
 
+  const getUnreadActivityIds = (notificationList: TNotification[]): string[] =>
+    notificationList
+      .filter((e) => !e.read_at)
+      .map((e) =>
+        e.data?.issue_activity?.field === "comment" ? e.data?.issue_activity?.new_identifier : e.data?.issue_activity.id
+      )
+      .filter((id): id is string => id != undefined); // added "id is string" predicate to avoid type error
+
   const handleNotificationIssuePeekOverview = async () => {
     if (workspaceSlug && projectId && issueId && !isSnoozeStateModalOpen && !customSnoozeModal) {
       setPeekIssue(undefined);
@@ -66,6 +77,8 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
       // make the notification as read
       if (unreadCount > 0) {
         try {
+          setHighlightedActivityIds(getUnreadActivityIds(notificationList));
+          //filter unread notifications and set activity ids to higlight
           await markBulkNotificationsAsRead(notificationList, workspaceSlug);
         } catch (error) {
           console.error(error);
@@ -96,20 +109,11 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
           e.preventDefault();
           handleNotificationIssuePeekOverview();
         }}
+        onMouseEnter={() => setShowPreview(true)}
+        onMouseLeave={() => setShowPreview(false)}
       >
         {/* Issue card header */}
-        <Popover.Button
-          as="div"
-          className="flex items-center gap-1 justify-between px-4"
-          onMouseEnter={() => setShowPreview(true)}
-          onMouseLeave={() => setShowPreview(false)}
-        >
-          <div className="flex items-center gap-2">
-            {issue.type_id && <IssueTypeIdentifier issueTypeId={issue.type_id} />}
-            <span className="text-sm font-medium break-words">
-              {issue.identifier}-{issue.sequence_id}
-            </span>
-          </div>
+        <div className="flex items-center gap-1 justify-between px-4">
           <div className="flex-1 flex gap-2 justify-between items-center">
             <span className="overflow-hidden whitespace-normal text-sm break-all truncate line-clamp-1 text-custom-text-00">
               {issue.name}
@@ -130,21 +134,35 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
               {unreadCount <= 20 ? unreadCount : `20+`}
             </span>
           )}
-        </Popover.Button>
+        </div>
         <div className="flex items-center justify-between mt-2 px-4">
-          {/* Author avatars */}
-          <MemberDropdown
-            value={authorIds}
-            onChange={() => {}}
-            disabled
-            multiple
-            buttonVariant={authorIds?.length > 0 ? "transparent-without-text" : "border-without-text"}
-            buttonClassName={authorIds?.length > 0 ? "hover:bg-transparent px-0" : ""}
-            showTooltip={authorIds?.length === 0}
-            placeholder="Assignees"
-            optionsClassName="z-10"
-            tooltipContent=""
-          />
+          <div className="flex items-center gap-2">
+            {issue.sequence_id && issue.identifier && (
+              <>
+                <IssueIdentifier
+                  issueSequenceId={issue.sequence_id}
+                  projectIdentifier={issue.identifier}
+                  projectId={projectId}
+                  issueTypeId={issue.type_id}
+                  size="xs"
+                />
+              </>
+            )}
+            <div className="bg-custom-text-300 w-1 h-1 rounded-full" />
+            {/* Author avatars */}
+            <MemberDropdown
+              value={authorIds}
+              onChange={() => {}}
+              disabled
+              multiple
+              buttonVariant={authorIds?.length > 0 ? "transparent-without-text" : "border-without-text"}
+              buttonClassName={authorIds?.length > 0 ? "hover:bg-transparent px-0" : ""}
+              showTooltip={authorIds?.length === 0}
+              placeholder="Assignees"
+              optionsClassName="z-10"
+              tooltipContent=""
+            />
+          </div>
           <div />
           <span className="text-xs text-custom-text-100">{latestNotificationTime}</span>
         </div>
