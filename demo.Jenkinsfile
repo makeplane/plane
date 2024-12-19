@@ -102,17 +102,16 @@ pipeline {
                         )
                     }
                 }
-                // stage ("Build Admin Image") {
-                //     steps {
-                //         buildDockerImage (
-                //             awsRegion : awsRegion,
-                //             dockerBuildArgs : dockerBuildLevelArguments,
-                //             imageName : adminImageName,
-                //             directoryPath : "admin",
-                //             dockerfilePath : "admin/Dockerfile.admin"
-                //         )
-                //     }
-                // }
+                stage ("Build Admin Image") {
+                    steps {
+                        buildDockerImage (
+                            awsRegion : awsRegion,
+                            imageName : adminImageName,
+                            directoryPath : "admin",
+                            dockerfilePath : "admin/Dockerfile.admin"
+                        )
+                    }
+                }
                 stage ("Build API Image") {
                     steps {
                         buildDockerImage (
