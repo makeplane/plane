@@ -9,7 +9,7 @@ def configuration = [
 ]
 
 // Project Level Configurations
-def repository = "n8n"
+def repository = "plane"
 def projectEnv = "demo"
 
 // Config Based configurations
