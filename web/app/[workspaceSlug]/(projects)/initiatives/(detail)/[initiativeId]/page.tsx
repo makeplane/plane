@@ -27,7 +27,7 @@ const IssueDetailsPage = observer(() => {
   const { resolvedTheme } = useTheme();
   // store hooks
   const {
-    initiative: { getInitiativeById, fetchInitiativeDetails, fetchInitiativeAnalytics },
+    initiative: { getInitiativeById, fetchInitiativeDetails },
   } = useInitiatives();
   // fetching issue details
   const { isLoading, error } = useSWR(
@@ -37,12 +37,6 @@ const IssueDetailsPage = observer(() => {
       : null
   );
 
-  useSWR(
-    workspaceSlug && initiativeId ? `INITIATIVE_ANALYTICS_${workspaceSlug}_${initiativeId}` : null,
-    workspaceSlug && initiativeId
-      ? () => fetchInitiativeAnalytics(workspaceSlug.toString(), initiativeId.toString())
-      : null
-  );
   // derived values
   const initiativeDetails = getInitiativeById(initiativeId.toString());
   const loader = !initiativeDetails || isLoading;

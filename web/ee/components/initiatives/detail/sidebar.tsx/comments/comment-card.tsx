@@ -18,8 +18,8 @@ import { useUser } from "@/hooks/store";
 // Plane-web
 import { TInitiativeComment } from "@/plane-web/types/initiative";
 //
-import { IssueCommentBlock } from "./comment-block";
 import { TInitiativeActivityOperations } from "../comments";
+import { IssueCommentBlock } from "./comment-block";
 import { InitiativeCommentReactions } from "./comment-reaction";
 
 type TInitiativeCommentCard = {

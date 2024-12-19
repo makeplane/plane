@@ -117,7 +117,7 @@ export const InitiativeDescriptionInput: FC<InitiativeDescriptionInputProps> = o
                       workspaceSlug,
                       {
                         entity_identifier: initiativeId,
-                        entity_type: EFileAssetType.ISSUE_DESCRIPTION,
+                        entity_type: EFileAssetType.INITIATIVE_DESCRIPTION,
                       },
                       file
                     );

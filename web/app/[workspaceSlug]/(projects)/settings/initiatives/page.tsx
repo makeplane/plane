@@ -78,7 +78,7 @@ const InitiativesSettingsPage = observer(() => {
       </div>
       <WithFeatureFlagHOC
         flag="INITIATIVES"
-        fallback={<InitiativesUpgrade />}
+        fallback={<InitiativesUpgrade workspaceSlug={workspaceSlug?.toString()} redirect />}
         workspaceSlug={workspaceSlug?.toString()}
       >
         <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-custom-border-100">

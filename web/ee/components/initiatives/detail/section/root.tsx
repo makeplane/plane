@@ -1,16 +1,19 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Link } from "lucide-react";
+import { Link, Paperclip } from "lucide-react";
 import { ContentWrapper, ERowVariant } from "@plane/ui";
 // components
 import { cn } from "@/helpers/common.helper";
 import { useAppTheme } from "@/hooks/store";
 // Plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+import { AttachmentsCollapsible } from "../attachment/attachments-collapsible-root";
+import { InitiativeAttachmentActionButton } from "../attachment/quick-action-button";
 import { InitiativeLinksActionButton } from "../links/link-components/quick-action-button";
 import { LinksCollapsible } from "../links/link-components/root";
 import { IssueLinkCreateUpdateModal } from "../links/link-items/create-update-link-modal";
 import { useLinkOperations } from "../links/link-items/links-helper";
+import { InitiativeProgressRoot } from "../progress";
 import { ProjectsCollapsible } from "../projects/root";
 import { InitiativeDescriptionInput } from "./description-input";
 import { InitiativeReactions } from "./reactions";
@@ -28,7 +31,8 @@ export const InitiativeDetailSection = observer((props: Props) => {
   const {
     initiative: {
       getInitiativeById,
-      initiativeLinks: { isLinkModalOpen, setIsLinkModalOpen },
+      initiativeLinks: { isLinkModalOpen, setIsLinkModalOpen, getInitiativeLinks },
+      initiativeAttachments: { getAttachmentsByInitiativeId },
     },
   } = useInitiatives();
   const { initiativesSidebarCollapsed } = useAppTheme();
@@ -38,6 +42,9 @@ export const InitiativeDetailSection = observer((props: Props) => {
   const linkOperations = useLinkOperations(workspaceSlug.toString(), initiativeId);
 
   const initiative = getInitiativeById(initiativeId);
+
+  const initiativesLinks = getInitiativeLinks(initiativeId);
+  const initiativesAttachments = getAttachmentsByInitiativeId(initiativeId);
 
   if (!initiative) return <></>;
 
@@ -74,7 +81,7 @@ export const InitiativeDetailSection = observer((props: Props) => {
           />
           <div className="flex justify-between">
             <InitiativeReactions workspaceSlug={workspaceSlug.toString()} initiativeId={initiative.id} />
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
               <InitiativeLinksActionButton
                 customButton={
                   <div className="flex items-center gap-1 p-2 text-custom-text-300 hover:text-custom-text-100">
@@ -84,9 +91,26 @@ export const InitiativeDetailSection = observer((props: Props) => {
                 }
                 disabled={disabled}
               />
+              <InitiativeAttachmentActionButton
+                workspaceSlug={workspaceSlug.toString()}
+                initiativeId={initiative.id}
+                customButton={
+                  <div className="flex items-center gap-1 p-2 text-custom-text-300 hover:text-custom-text-100">
+                    <Paperclip className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />
+                    <span className="text-sm font-medium">Attach</span>
+                  </div>
+                }
+                disabled={disabled}
+              />
             </div>
           </div>
-          <LinksCollapsible workspaceSlug={workspaceSlug.toString()} initiativeId={initiative.id} />
+          <InitiativeProgressRoot workspaceSlug={workspaceSlug.toString()} initiativeId={initiative.id} />
+          {initiativesLinks && initiativesLinks.length > 0 && (
+            <LinksCollapsible workspaceSlug={workspaceSlug.toString()} initiativeId={initiative.id} />
+          )}
+          {initiativesAttachments && initiativesAttachments.length > 0 && (
+            <AttachmentsCollapsible workspaceSlug={workspaceSlug.toString()} initiativeId={initiative.id} />
+          )}
           <ProjectsCollapsible workspaceSlug={workspaceSlug.toString()} initiativeId={initiative.id} />
         </div>
       </ContentWrapper>

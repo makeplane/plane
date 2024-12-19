@@ -3,15 +3,17 @@ import orderBy from "lodash/orderBy";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+import { TLoader } from "@plane/types";
 // helpers
 import { convertToISODateString, getDate } from "@/helpers/date-time.helper";
 import { satisfiesDateFilter } from "@/helpers/filter.helper";
 // Plane-web
 import { InitiativeService } from "@/plane-web/services/initiative.service";
 import { TInitiativeFilters, TInitiativeGroupByOptions, TInitiativeOrderByOptions } from "@/plane-web/types/initiative";
-import { TInitiativeReaction, TInitiative } from "@/plane-web/types/initiative/initiative";
+import { TInitiativeReaction, TInitiative, TInitiativeAnalytics } from "@/plane-web/types/initiative/initiative";
 //
 import { RootStore } from "../root.store";
+import { IInitiativeAttachmentStore, InitiativeAttachmentStore } from "./initiative-attachment.store";
 import { IInitiativeLinkStore, InitiativeLinkStore } from "./initiative-links.store";
 import { IInitiativeCommentActivityStore, InitiativeCommentActivityStore } from "./initiatives-comment-activity.store";
 import { IInitiativeFilterStore } from "./initiatives-filter.store";
@@ -22,13 +24,17 @@ export interface IInitiativeStore {
   initiativesMap: Record<string, TInitiative> | undefined;
   initiativeLinks: IInitiativeLinkStore;
   initiativeCommentActivities: IInitiativeCommentActivityStore;
+  initiativeAttachments: IInitiativeAttachmentStore;
+  initiativeAnalyticsLoader: Record<string, TLoader>;
+  initiativeAnalyticsMap: Record<string, TInitiativeAnalytics>;
 
   currentGroupedInitiativeIds: { [key: string]: string[] } | undefined;
 
   getInitiativeById: (initiativeId: string) => TInitiative | undefined;
+  getInitiativeAnalyticsById: (initiativeId: string) => TInitiativeAnalytics | undefined;
 
   fetchInitiatives: (workspaceSlug: string) => Promise<TInitiative[] | undefined>;
-  fetchInitiativeAnalytics: (workspaceSlug: string, initiativeId: string) => Promise<any>;
+  fetchInitiativeAnalytics: (workspaceSlug: string, initiativeId: string) => Promise<TInitiativeAnalytics | undefined>;
   createInitiative: (workspaceSlug: string, payload: Partial<TInitiative>) => Promise<TInitiative | undefined>;
   fetchInitiativeDetails: (workspaceSlug: string, initiativeId: string) => Promise<TInitiative | undefined>;
   updateInitiative: (workspaceSlug: string, initiativeId: string, payload: Partial<TInitiative>) => Promise<void>;
@@ -49,9 +55,12 @@ export interface IInitiativeStore {
 
 export class InitiativeStore implements IInitiativeStore {
   initiativesMap: Record<string, TInitiative> | undefined = undefined;
+  initiativeAnalyticsLoader: Record<string, TLoader> = {};
+  initiativeAnalyticsMap: Record<string, TInitiativeAnalytics> = {};
 
   initiativeLinks: IInitiativeLinkStore;
   initiativeCommentActivities: IInitiativeCommentActivityStore;
+  initiativeAttachments: IInitiativeAttachmentStore;
 
   initiativeService: InitiativeService;
   rootStore: RootStore;
@@ -61,6 +70,8 @@ export class InitiativeStore implements IInitiativeStore {
     makeObservable(this, {
       // observables
       initiativesMap: observable,
+      initiativeAnalyticsLoader: observable,
+      initiativeAnalyticsMap: observable,
       // actions
       fetchInitiatives: action,
       fetchInitiativeAnalytics: action,
@@ -76,6 +87,7 @@ export class InitiativeStore implements IInitiativeStore {
     this.initiativeFilterStore = initiativeFilterStore;
     this.initiativeLinks = new InitiativeLinkStore(this);
     this.initiativeCommentActivities = new InitiativeCommentActivityStore(this);
+    this.initiativeAttachments = new InitiativeAttachmentStore(this);
 
     // services
     this.initiativeService = new InitiativeService();
@@ -98,18 +110,18 @@ export class InitiativeStore implements IInitiativeStore {
 
     if (!displayFilters || !filters || !this.initiativesMap) return;
 
-    const filteredInitiatives = Object.values(this.initiativesMap).filter((initiative) => {
-      return initiative.workspace === workspace.id && shouldFilterInitiative(initiative, filters ?? {});
-    });
+    const filteredInitiatives = Object.values(this.initiativesMap).filter(
+      (initiative) => initiative.workspace === workspace.id && shouldFilterInitiative(initiative, filters ?? {})
+    );
 
     const sortedInitiatives = sortInitiativesWithOrderBy(filteredInitiatives, displayFilters?.order_by);
 
     return getGroupedInitiativeIds(sortedInitiatives, displayFilters.group_by);
   });
 
-  getInitiativeById = computedFn((initiativeId: string) => {
-    return this.initiativesMap?.[initiativeId];
-  });
+  getInitiativeById = computedFn((initiativeId: string) => this.initiativesMap?.[initiativeId]);
+
+  getInitiativeAnalyticsById = computedFn((initiativeId: string) => this.initiativeAnalyticsMap[initiativeId]);
 
   fetchInitiatives = async (workspaceSlug: string): Promise<TInitiative[] | undefined> => {
     try {
@@ -164,6 +176,8 @@ export class InitiativeStore implements IInitiativeStore {
       });
 
       this.initiativeLinks.fetchInitiativeLinks(workspaceSlug, initiativeId);
+      this.initiativeAttachments.fetchAttachments(workspaceSlug, initiativeId);
+      this.fetchInitiativeAnalytics(workspaceSlug, initiativeId);
       this.initiativeCommentActivities.fetchInitiativeComments(workspaceSlug, initiativeId);
       this.initiativeCommentActivities.fetchActivities(workspaceSlug, initiativeId);
       return response;
@@ -172,12 +186,40 @@ export class InitiativeStore implements IInitiativeStore {
     }
   };
 
-  fetchInitiativeAnalytics = async (workspaceSlug: string, initiativeId: string): Promise<any> => {
+  fetchInitiativeAnalytics = async (
+    workspaceSlug: string,
+    initiativeId: string
+  ): Promise<TInitiativeAnalytics | undefined> => {
     try {
+      runInAction(() => {
+        this.initiativeAnalyticsLoader = {
+          ...this.initiativeAnalyticsLoader,
+          [initiativeId]: "init-loader",
+        };
+      });
+
       const response = await this.initiativeService.fetchInitiativeAnalytics(workspaceSlug, initiativeId);
+
+      runInAction(() => {
+        if (response) {
+          this.initiativeAnalyticsMap[initiativeId] = response;
+        }
+        this.initiativeAnalyticsLoader = {
+          ...this.initiativeAnalyticsLoader,
+          [initiativeId]: "loaded",
+        };
+      });
+
       return response;
     } catch (error) {
-      console.error("error while fetching initiative analytics", error);
+      console.error("Error while fetching initiative analytics", error);
+      runInAction(() => {
+        this.initiativeAnalyticsLoader = {
+          ...this.initiativeAnalyticsLoader,
+          [initiativeId]: undefined,
+        };
+      });
+      return undefined;
     }
   };
 
@@ -210,13 +252,12 @@ export class InitiativeStore implements IInitiativeStore {
 
   deleteInitiative = async (workspaceSlug: string, initiativeId: string): Promise<void> => {
     try {
-      const response = await this.initiativeService.deleteInitiative(workspaceSlug, initiativeId);
-
       if (!this.initiativesMap?.[initiativeId]) return;
 
       runInAction(() => {
         delete this.initiativesMap?.[initiativeId];
       });
+      await this.initiativeService.deleteInitiative(workspaceSlug, initiativeId);
     } catch (error) {
       console.error("error while updating initiative", error);
       throw error;
@@ -265,9 +306,9 @@ export class InitiativeStore implements IInitiativeStore {
         if (!this.initiativesMap[initiativeId].reactions || !Array.isArray(this.initiativesMap[initiativeId].reactions))
           return;
 
-        update(this.initiativesMap[initiativeId], "reactions", (reactions: TInitiativeReaction[]) => {
-          return reactions.filter((reaction) => reaction.id !== reactionId);
-        });
+        update(this.initiativesMap[initiativeId], "reactions", (reactions: TInitiativeReaction[]) =>
+          reactions.filter((reaction) => reaction.id !== reactionId)
+        );
       });
       return response;
     } catch (e) {

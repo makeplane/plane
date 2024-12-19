@@ -114,6 +114,7 @@ export const InitiativeCommentCreate: FC<TInitiativeCommentCreate> = (props) => 
                   setUploadedAssetIds((prev) => [...prev, asset_id]);
                   return asset_id;
                 }}
+                showToolbarInitially={false}
               />
             )}
           />

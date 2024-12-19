@@ -73,12 +73,12 @@ urlpatterns = [
     ),
     # Initiative Attachment
     path(
-        "assets/workspaces/<str:slug>/initiatives/<uuid:initiative_id>/attachments/",
+        "assets/v2/workspaces/<str:slug>/initiatives/<uuid:initiative_id>/attachments/",
         InitiativeAttachmentEndpoint.as_view(),
         name="initiative-attachments",
     ),
     path(
-        "assets/workspaces/<str:slug>/initiatives/<uuid:initiative_id>/attachments/<uuid:pk>/",
+        "assets/v2/workspaces/<str:slug>/initiatives/<uuid:initiative_id>/attachments/<uuid:pk>/",
         InitiativeAttachmentEndpoint.as_view(),
         name="initiative-attachments",
     ),

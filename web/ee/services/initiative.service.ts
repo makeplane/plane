@@ -7,6 +7,7 @@ import {
   TInitiative,
   TInitiativeActivity,
   TInitiativeProject,
+  TInitiativeAnalytics,
 } from "../types/initiative/initiative";
 
 export class InitiativeService extends APIService {
@@ -274,7 +275,7 @@ export class InitiativeService extends APIService {
       });
   }
 
-  async fetchInitiativeAnalytics(workspaceSlug: string, initiativeId: string): Promise<any> {
+  async fetchInitiativeAnalytics(workspaceSlug: string, initiativeId: string): Promise<TInitiativeAnalytics> {
     return this.get(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/analytics/`)
       .then((response) => response?.data)
       .catch((error) => {
