@@ -14,7 +14,7 @@ def projectEnv = "demo"
 
 // Config Based configurations
 def vaultConfigFilesMap = [
-    "ENV" : "env.json",
+    "CONFIG" : "env.json",
 ]
 def configStoragePath = "config-files"
 
