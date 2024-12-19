@@ -224,9 +224,15 @@ from .integration.github import (
 from .integration.slack import SlackProjectSyncViewSet
 
 from .notification.base import MarkAllReadNotificationViewSet
+
+from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
+
+from .timezone.base import TimezoneEndpoint
+
 from .user.base import (
     AccountEndpoint,
     ProfileEndpoint,
     UserSessionEndpoint,
     UserTokenVerificationEndpoint,
 )
+

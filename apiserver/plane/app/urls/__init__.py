@@ -17,6 +17,7 @@ from .user import urlpatterns as user_urls
 from .views import urlpatterns as view_urls
 from .webhook import urlpatterns as webhook_urls
 from .workspace import urlpatterns as workspace_urls
+from .timezone import urlpatterns as timezone_urls
 
 # Integrations URLS
 from .importer import urlpatterns as importer_urls
@@ -45,6 +46,7 @@ urlpatterns = [
     *workspace_urls,
     *api_urls,
     *webhook_urls,
+    *timezone_urls,
     # ee
     *integration_urls,
     *importer_urls,
