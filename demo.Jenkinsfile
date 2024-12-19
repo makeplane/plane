@@ -97,7 +97,7 @@ pipeline {
                         buildDockerImage (
                             awsRegion : awsRegion,
                             imageName : webImageName,
-                            directoryPath : "web",
+                            directoryPath : ".",
                             dockerfilePath : "web/Dockerfile.web"
                         )
                     }
@@ -107,7 +107,7 @@ pipeline {
                         buildDockerImage (
                             awsRegion : awsRegion,
                             imageName : adminImageName,
-                            directoryPath : "admin",
+                            directoryPath : ".",
                             dockerfilePath : "admin/Dockerfile.admin"
                         )
                     }
