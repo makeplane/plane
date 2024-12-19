@@ -81,17 +81,17 @@ pipeline {
         }
         stage ("Build docker image") {
             parallel {
-                stage ("Build Web Image") {
-                    steps {
-                        buildDockerImage (
-                            awsRegion : awsRegion,
-                            dockerBuildArgs : dockerBuildLevelArguments,
-                            imageName : webImageName,
-                            directoryPath : "web",
-                            dockerfilePath : "web/Dockerfile.web"
-                        )
-                    }
-                }
+                // stage ("Build Web Image") {
+                //     steps {
+                //         buildDockerImage (
+                //             awsRegion : awsRegion,
+                //             dockerBuildArgs : dockerBuildLevelArguments,
+                //             imageName : webImageName,
+                //             directoryPath : "web",
+                //             dockerfilePath : "web/Dockerfile.web"
+                //         )
+                //     }
+                // }
                 // stage ("Build Admin Image") {
                 //     steps {
                 //         buildDockerImage (
@@ -119,14 +119,14 @@ pipeline {
 
         stage("Push to registry") {
             parallel {
-                stage ("Push Web Image") {
-                    steps {
-                        pushDockerImage (
-                            awsRegion : awsRegion,
-                            imageName : webImageName
-                        )
-                    }
-                }
+                // stage ("Push Web Image") {
+                //     steps {
+                //         pushDockerImage (
+                //             awsRegion : awsRegion,
+                //             imageName : webImageName
+                //         )
+                //     }
+                // }
                 // stage ("Push Admin Image") {
                 //     steps {
                 //         pushDockerImage (
