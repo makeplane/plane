@@ -5,12 +5,14 @@ import { TStateGroups } from "./state";
 import { TIssueRelationTypes } from "@/plane-web/types";
 
 export type TWidgetKeys =
+  | "quick_links"
   | "overview_stats"
   | "assigned_issues"
   | "created_issues"
   | "issues_by_state_groups"
   | "issues_by_priority"
   | "recent_activity"
+  | "recent_pages"
   | "recent_projects"
   | "recent_collaborators";
 

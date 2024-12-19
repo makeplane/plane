@@ -1,26 +1,64 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { IssueIdentifier } from "ee/components/issues";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { History } from "lucide-react";
 // types
 import { TRecentActivityWidgetResponse } from "@plane/types";
 // components
-import { Card, Avatar, getButtonStyling } from "@plane/ui";
-import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
+import { getButtonStyling, PriorityIcon } from "@plane/ui";
+import { ListItem } from "@/components/core/list";
 import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useDashboard, useUser } from "@/hooks/store";
 
 const WIDGET_KEY = "recent_activity";
 
+type BlockProps = {
+  activity: TRecentActivityWidgetResponse;
+  ref: React.RefObject<HTMLDivElement>;
+};
+const Block = (props: BlockProps) => {
+  const { activity, ref } = props;
+  console.log({ ...activity.issue_detail });
+  return (
+    <ListItem
+      key={activity.id}
+      itemLink=""
+      title={""}
+      prependTitleElement={
+        <div className="flex flex-shrink-0 items-center justify-center rounded-md gap-4 ">
+          <IssueIdentifier
+            issueTypeId={activity.issue_detail?.type_id}
+            projectId={activity?.project || ""}
+            projectIdentifier={activity.project_detail?.identifier || ""}
+            issueSequenceId={activity.issue_detail?.sequence_id || ""}
+            textContainerClassName="text-custom-sidebar-text-400 text-sm whitespace-nowrap"
+          />
+          <div className="text-custom-text-200 font-medium text-sm whitespace-nowrap">
+            {activity.issue_detail?.name}
+          </div>
+        </div>
+      }
+      quickActionElement={
+        <div>
+          <PriorityIcon priority={activity.issue_detail?.priority} withContainer size={12} />
+        </div>
+      }
+      parentRef={ref}
+      disableLink={false}
+      className="bg-transparent my-auto !px-2 border-custom-border-200/40 py-3"
+    />
+  );
+};
+
 export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
+  const ref = useRef<HTMLDivElement>(null);
   // store hooks
   const { data: currentUser } = useUser();
   // derived values
@@ -38,72 +76,29 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <Card>
-      <Link href={redirectionLink} className="text-lg font-semibold text-custom-text-300 hover:underline mb-4">
-        Your issue activities
-      </Link>
+    <div ref={ref}>
+      <div className="flex items-center justify-between">
+        <Link href={redirectionLink} className="text-base font-semibold text-custom-text-350 hover:underline">
+          Recent issues{" "}
+        </Link>
+        <Link
+          href={redirectionLink}
+          className="text-sm font-medium text-custom-primary-100 group-hover:text-custom-text-100 group-hover:underline"
+        >
+          View all
+        </Link>
+      </div>
       {widgetStats.length > 0 ? (
-        <div className="mt-4 space-y-6">
+        <div className="mt-2">
           {widgetStats.map((activity) => (
-            <div key={activity.id} className="flex gap-5">
-              <div className="flex-shrink-0">
-                {activity.field ? (
-                  activity.new_value === "restore" ? (
-                    <History className="h-3.5 w-3.5 text-custom-text-200" />
-                  ) : (
-                    <div className="flex h-6 w-6 justify-center">
-                      <ActivityIcon activity={activity} />
-                    </div>
-                  )
-                ) : activity.actor_detail.avatar_url && activity.actor_detail.avatar_url !== "" ? (
-                  <Avatar
-                    src={getFileURL(activity.actor_detail.avatar_url)}
-                    name={activity.actor_detail.display_name}
-                    size={24}
-                    className="h-full w-full rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs text-white">
-                    {activity.actor_detail.is_bot
-                      ? activity.actor_detail.first_name.charAt(0)
-                      : activity.actor_detail.display_name.charAt(0)}
-                  </div>
-                )}
-              </div>
-              <div className="-mt-2 break-words">
-                <p className="inline text-sm text-custom-text-200">
-                  <span className="font-medium text-custom-text-100">
-                    {currentUser?.id === activity.actor_detail.id ? "You" : activity.actor_detail?.display_name}{" "}
-                  </span>
-                  {activity.field ? (
-                    <ActivityMessage activity={activity} showIssue />
-                  ) : (
-                    <span>
-                      created <IssueLink activity={activity} />
-                    </span>
-                  )}
-                </p>
-                <p className="text-xs text-custom-text-200 whitespace-nowrap">
-                  {calculateTimeAgo(activity.created_at)}
-                </p>
-              </div>
-            </div>
+            <Block key={activity.id} activity={activity} ref={ref} />
           ))}
-          <Link
-            href={redirectionLink}
-            className={cn(
-              getButtonStyling("link-primary", "sm"),
-              "mx-auto w-min px-2 py-1 text-xs hover:bg-custom-primary-100/20"
-            )}
-          >
-            View all
-          </Link>
         </div>
       ) : (
         <div className="grid h-full place-items-center">
           <RecentActivityEmptyState />
         </div>
       )}
-    </Card>
+    </div>
   );
 });

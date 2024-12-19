@@ -1,33 +1,22 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { TWidgetKeys } from "@plane/types";
+import { TWidgetKeys, WidgetProps } from "@plane/types";
 // components
-import {
-  AssignedIssuesWidget,
-  CreatedIssuesWidget,
-  IssuesByPriorityWidget,
-  IssuesByStateGroupWidget,
-  OverviewStatsWidget,
-  RecentActivityWidget,
-  RecentCollaboratorsWidget,
-  RecentProjectsWidget,
-  WidgetProps,
-} from "@/components/dashboard";
+import { RecentActivityWidget, RecentProjectsWidget, RecentPagesWidget, EmptyWorkspace } from "@/components/dashboard";
 // hooks
 import { useDashboard } from "@/hooks/store";
+import { StickiesWidget } from "@/plane-web/components/stickies";
+import { DashboardQuickLinks } from "./links";
 
 const WIDGETS_LIST: {
   [key in TWidgetKeys]: { component: React.FC<WidgetProps>; fullWidth: boolean };
 } = {
-  overview_stats: { component: OverviewStatsWidget, fullWidth: true },
-  assigned_issues: { component: AssignedIssuesWidget, fullWidth: false },
-  created_issues: { component: CreatedIssuesWidget, fullWidth: false },
-  issues_by_state_groups: { component: IssuesByStateGroupWidget, fullWidth: false },
-  issues_by_priority: { component: IssuesByPriorityWidget, fullWidth: false },
   recent_activity: { component: RecentActivityWidget, fullWidth: false },
+  recent_pages: { component: RecentPagesWidget, fullWidth: false },
   recent_projects: { component: RecentProjectsWidget, fullWidth: false },
-  recent_collaborators: { component: RecentCollaboratorsWidget, fullWidth: true },
+  // recent_collaborators: { component: RecentCollaboratorsWidget, fullWidth: true },
+  my_stickies: { component: StickiesWidget, fullWidth: false },
 };
 
 export const DashboardWidgets = observer(() => {
@@ -42,12 +31,15 @@ export const DashboardWidgets = observer(() => {
   if (!workspaceSlug || !homeDashboardId) return null;
 
   return (
-    <div className="relative flex flex-col lg:grid lg:grid-cols-2 gap-7">
+    <div className="relative flex flex-col gap-7">
+      <DashboardQuickLinks workspaceSlug={workspaceSlug.toString()} />
+      <EmptyWorkspace />
       {Object.entries(WIDGETS_LIST).map(([key, widget]) => {
         const WidgetComponent = widget.component;
         // if the widget doesn't exist, return null
-        if (!doesWidgetExist(key as TWidgetKeys)) return null;
+        // if (!doesWidgetExist(key as TWidgetKeys)) return null;
         // if the widget is full width, return it in a 2 column grid
+        console.log({ widget, key });
         if (widget.fullWidth)
           return (
             <div key={key} className="lg:col-span-2">

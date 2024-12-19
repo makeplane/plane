@@ -65,9 +65,9 @@ export const WorkspaceDashboardView = observer(() => {
         <>
           {joinedProjectIds.length > 0 || loader ? (
             <>
-              <IssuePeekOverview />
+              {/* <IssuePeekOverview /> */}
               <ContentWrapper
-                className={cn("gap-7 bg-custom-background-90", {
+                className={cn("gap-7 bg-custom-background-90/20", {
                   "vertical-scrollbar scrollbar-lg": windowWidth >= 768,
                 })}
               >

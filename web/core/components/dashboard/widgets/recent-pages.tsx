@@ -20,42 +20,41 @@ import { useEventTracker, useDashboard, useProject, useCommandPalette, useUserPe
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
+import Tiles from "./my-stickies";
+
 const WIDGET_KEY = "recent_projects";
 
-type ProjectListItemProps = {
-  projectId: string;
+type PageListItemProps = {
+  pageId: string;
   workspaceSlug: string;
 };
 
-const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
-  const { projectId, workspaceSlug } = props;
+const PageListItem: React.FC<PageListItemProps> = observer((props) => {
+  const { pageId, workspaceSlug } = props;
   // store hooks
   const { getProjectById } = useProject();
-  const projectDetails = getProjectById(projectId);
+  const pageDetails = getProjectById(pageId);
 
   const randomBgColor = PROJECT_BACKGROUND_COLORS[Math.floor(Math.random() * PROJECT_BACKGROUND_COLORS.length)];
 
-  if (!projectDetails) return null;
+  if (!pageDetails) return null;
 
   return (
-    <Link
-      href={`/${workspaceSlug}/projects/${projectId}/issues`}
-      className="group flex items-center gap-4 border-[0.5px] border-custom-border-200 bg-custom-background-100 hover:shadow-sm rounded-md p-2 w-[290px]"
+    <div
+      href={`/${workspaceSlug}/projects/${pageId}/issues`}
+      className="w-[290px] border-[0.5px] border-custom-border-200 bg-custom-background-100 hover:shadow-sm rounded-md p-3"
     >
-      <div
-        className={`grid h-[3.375rem] w-[3.375rem] flex-shrink-0 place-items-center rounded border border-transparent ${randomBgColor}`}
-      >
-        <div className="grid h-7 w-7 place-items-center">
-          <Logo logo={projectDetails.logo_props} size={20} />
-        </div>
+      {/* <Logo logo={projectDetails.logo_props} size={20} /> */}
+
+      <div className="text-xs font-medium text-custom-text-300">Pulse</div>
+      <div className="text-base font-medium my-2">Plane Check point meetings - December 2025</div>
+      <div className="text-[11px] text-custom-text-400 border-b border-custom-border-100/80 pb-2">
+        The below are the required design components. @sibira @shivangi @shrabani @bhavesh please take a look at them.{" "}
       </div>
-      <div className="flex-grow truncate">
-        <h6 className="truncate text-sm font-medium text-custom-text-300 group-hover:text-custom-text-100 group-hover:underline">
-          {projectDetails.name}
-        </h6>
-        <div className="mt-2">
+      <div className="flex-grow truncate flex justify-between mt-2">
+        <div className="my-auto">
           <AvatarGroup>
-            {projectDetails.members?.map((member) => (
+            {pageDetails.members?.map((member) => (
               <Avatar
                 key={member.member_id}
                 src={getFileURL(member.member__avatar_url)}
@@ -64,12 +63,13 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
             ))}
           </AvatarGroup>
         </div>
+        <div className="text-custom-text-400 text-xs my-auto">Last updated 2h ago</div>
       </div>
-    </Link>
+    </div>
   );
 });
 
-export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
+export const RecentPagesWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
@@ -99,7 +99,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
           href={`/${workspaceSlug}/projects`}
           className="text-base font-semibold text-custom-text-350 hover:underline my-auto"
         >
-          Recent projects
+          Recent pages
         </Link>
         <div className="flex gap-4">
           {canCreateProject && (
@@ -134,9 +134,10 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
           </button>
         </div>
       </div>
+
       <div className="mt-4 space-y-8">
-        {widgetStats.map((projectId) => (
-          <ProjectListItem key={projectId} projectId={projectId} workspaceSlug={workspaceSlug} />
+        {widgetStats.map((pageId) => (
+          <PageListItem key={pageId} pageId={pageId} workspaceSlug={workspaceSlug} />
         ))}
       </div>
     </div>

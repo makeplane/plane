@@ -8,6 +8,7 @@ import { WorkspaceService } from "@/plane-web/services";
 import { CoreRootStore } from "@/store/root.store";
 // sub-stores
 import { ApiTokenStore, IApiTokenStore } from "./api-token.store";
+import { IWorkspaceLinkStore, WorkspaceLinkStore } from "./link.store";
 import { IWebhookStore, WebhookStore } from "./webhook.store";
 
 export interface IWorkspaceRootStore {
@@ -30,6 +31,7 @@ export interface IWorkspaceRootStore {
   // sub-stores
   webhook: IWebhookStore;
   apiToken: IApiTokenStore;
+  links: IWorkspaceLinkStore;
 }
 
 export class WorkspaceRootStore implements IWorkspaceRootStore {
@@ -41,6 +43,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
   // root store
   router;
   user;
+  links;
   // sub-stores
   webhook: IWebhookStore;
   apiToken: IApiTokenStore;
@@ -69,6 +72,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
     // root store
     this.router = _rootStore.router;
     this.user = _rootStore.user;
+    this.links = new WorkspaceLinkStore();
     // sub-stores
     this.webhook = new WebhookStore(_rootStore);
     this.apiToken = new ApiTokenStore(_rootStore);

@@ -12,6 +12,7 @@ import {
   IUserProjectsRole,
   IWorkspaceView,
   TIssuesResponse,
+  TLink,
 } from "@plane/types";
 import { APIService } from "@/services/api.service";
 // helpers
@@ -272,6 +273,44 @@ export class WorkspaceService extends APIService {
 
   async getWorkspaceUserProjectsRole(workspaceSlug: string): Promise<IUserProjectsRole> {
     return this.get(`/api/users/me/workspaces/${workspaceSlug}/project-roles/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // quick links
+  async fetchWorkspaceLinks(workspaceSlug: string, projectId: string): Promise<TLink[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/links/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async createWorkspaceLink(workspaceSlug: string, projectId: string, data: Partial<TLink>): Promise<TLink> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/links/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async updateWorkspaceLink(
+    workspaceSlug: string,
+    projectId: string,
+    linkId: string,
+    data: Partial<TLink>
+  ): Promise<TLink> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/links/${linkId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async deleteWorkspaceLink(workspaceSlug: string, projectId: string, linkId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/links/${linkId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
