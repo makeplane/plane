@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useCallback, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { EIssueServiceType } from "@plane/constants";
 import { TIssue, TIssueServiceType } from "@plane/types";
@@ -79,26 +79,10 @@ export const SubIssuesCollapsibleContent: FC<Props> = observer((props) => {
     });
   };
 
-  const handleFetchSubIssues = useCallback(async () => {
-    if (!subIssueHelpers.issue_visibility.includes(parentIssueId)) {
-      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
-      await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
-      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
-    }
-    setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
-  }, [
-    parentIssueId,
-    projectId,
-    setSubIssueHelpers,
-    subIssueHelpers.issue_visibility,
-    subIssueOperations,
-    workspaceSlug,
-  ]);
-
   useEffect(() => {
-    handleFetchSubIssues();
+    setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
     return () => {
-      handleFetchSubIssues();
+      setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parentIssueId]);
