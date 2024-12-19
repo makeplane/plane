@@ -57,9 +57,9 @@ ARG ENV_FILE_PATH
 COPY ${ENV_FILE_PATH} /app/.env
 RUN cat /app/.env
 
-RUN pip install python-dotenv
-# For demonstration: Print an environment variable
-RUN python -c "from dotenv import load_dotenv; load_dotenv('/app/.env'); import os; print(f'Database host: {os.getenv('POSTGRES_USER')}')"
+# Export the environment file path as an image environment variable
+ENV ENV_FILE_PATH=${ENV_FILE_PATH}
+
 CMD gunicorn -w 2 -k uvicorn.workers.UvicornWorker plane.asgi:application --bind 0.0.0.0:8000 --max-requests 1200 --max-requests-jitter 1000 --access-logfile -
 # Expose container port and run entry point script
 
