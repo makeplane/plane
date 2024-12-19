@@ -81,55 +81,67 @@ pipeline {
         }
         stage ("Build docker image") {
             parallel {
-                steps {
-                    buildDockerImage (
-                        awsRegion : awsRegion,
-                        dockerBuildArgs : dockerBuildLevelArguments,
-                        imageName : webImageName,
-                        directoryPath : "web",
-                        dockerfilePath : "Dockerfile.web"
-                    )
+                stage ("Build Web Image") {
+                    steps {
+                        buildDockerImage (
+                            awsRegion : awsRegion,
+                            dockerBuildArgs : dockerBuildLevelArguments,
+                            imageName : webImageName,
+                            directoryPath : "web",
+                            dockerfilePath : "Dockerfile.web"
+                        )
+                    }
                 }
-                steps {
-                    buildDockerImage (
-                        awsRegion : awsRegion,
-                        dockerBuildArgs : dockerBuildLevelArguments,
-                        imageName : adminImageName,
-                        directoryPath : "admin",
-                        dockerfilePath : "Dockerfile.admin"
-                    )
+                stage ("Build Admin Image") {
+                    steps {
+                        buildDockerImage (
+                            awsRegion : awsRegion,
+                            dockerBuildArgs : dockerBuildLevelArguments,
+                            imageName : adminImageName,
+                            directoryPath : "admin",
+                            dockerfilePath : "Dockerfile.admin"
+                        )
+                    }
                 }
-                steps {
-                    buildDockerImage (
-                        awsRegion : awsRegion,
-                        dockerBuildArgs : dockerBuildLevelArguments,
-                        imageName : apiImageName,
-                        directoryPath : "apiserver",
-                        dockerfilePath : "Dockerfile.api"
-                    )
+                stage ("Build API Image") {
+                    steps {
+                        buildDockerImage (
+                            awsRegion : awsRegion,
+                            dockerBuildArgs : dockerBuildLevelArguments,
+                            imageName : apiImageName,
+                            directoryPath : "apiserver",
+                            dockerfilePath : "Dockerfile.api"
+                        )
+                    }
                 }
             }
         }
 
         stage("Push to registry") {
             parallel {
-                steps {
-                    pushDockerImage (
-                        awsRegion : awsRegion,
-                        imageName : webImageName
-                    )
+                stage ("Push Web Image") {
+                    steps {
+                        pushDockerImage (
+                            awsRegion : awsRegion,
+                            imageName : webImageName
+                        )
+                    }
                 }
-                steps {
-                    pushDockerImage (
-                        awsRegion : awsRegion,
-                        imageName : adminImageName
-                    )
+                stage ("Push Admin Image") {
+                    steps {
+                        pushDockerImage (
+                            awsRegion : awsRegion,
+                            imageName : adminImageName
+                        )
+                    }
                 }
-                steps {
-                    pushDockerImage (
-                        awsRegion : awsRegion,
-                        imageName : apiImageName
-                    )
+                stage ("Push API Image") {
+                    steps {
+                        pushDockerImage (
+                            awsRegion : awsRegion,
+                            imageName : apiImageName
+                        )
+                    }
                 }
             }
         }
@@ -141,9 +153,9 @@ pipeline {
                         script {
                             deployServiceOnECS (
                                 awsRegion : awsRegion,
-                                imageName : dockerImageName,
+                                imageName : webImageName,
                                 ecsClusterName : clusterName,
-                                ecsServiceName : mainServiceName,
+                                ecsServiceName : frontEndServiceName,
                                 timeout : 300
                             )
                         }
@@ -155,9 +167,9 @@ pipeline {
                         script {
                             deployServiceOnECS (
                                 awsRegion : awsRegion,
-                                imageName : dockerImageName,
+                                imageName : adminImageName,
                                 ecsClusterName : clusterName,
-                                ecsServiceName : workerServiceName,
+                                ecsServiceName : adminPanelServiceName,
                                 timeout : 300
                             )
                         }
@@ -169,9 +181,9 @@ pipeline {
                         script {
                             deployServiceOnECS (
                                 awsRegion : awsRegion,
-                                imageName : dockerImageName,
+                                imageName : apiImageName,
                                 ecsClusterName : clusterName,
-                                ecsServiceName : webhookServiceName,
+                                ecsServiceName : apiServiceName,
                                 timeout : 300
                             )
                         }
@@ -182,9 +194,9 @@ pipeline {
                         script {
                             deployServiceOnECS (
                                 awsRegion : awsRegion,
-                                imageName : dockerImageName,
+                                imageName : apiImageName,
                                 ecsClusterName : clusterName,
-                                ecsServiceName : webhookServiceName,
+                                ecsServiceName : celeryServiceName,
                                 timeout : 300
                             )
                         }
@@ -195,9 +207,9 @@ pipeline {
                         script {
                             deployServiceOnECS (
                                 awsRegion : awsRegion,
-                                imageName : dockerImageName,
+                                imageName : apiImageName,
                                 ecsClusterName : clusterName,
-                                ecsServiceName : webhookServiceName,
+                                ecsServiceName : cbeatServiceName,
                                 timeout : 300
                             )
                         }
