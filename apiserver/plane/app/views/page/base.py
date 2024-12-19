@@ -495,7 +495,6 @@ class PagesDescriptionViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk):
-        print("inside partial update")
         page = (
             Page.objects.filter(pk=pk, workspace__slug=slug, projects__id=project_id)
             .filter(Q(owned_by=self.request.user) | Q(access=0))
@@ -528,7 +527,6 @@ class PagesDescriptionViewSet(BaseViewSet):
             {"description_html": page.description_html}, cls=DjangoJSONEncoder
         )
 
-        print("before base  64")
         # Get the base64 data from the request
         base64_data = request.data.get("description_binary")
 

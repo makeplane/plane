@@ -12,7 +12,7 @@ const createDragHandleElement = (): HTMLElement => {
   const dragHandleElement = document.createElement("button");
   dragHandleElement.type = "button";
   dragHandleElement.id = "drag-handle";
-  dragHandleElement.draggable = false;
+  dragHandleElement.draggable = true;
   dragHandleElement.dataset.dragHandle = "";
   dragHandleElement.classList.value =
     "hidden sm:flex items-center size-5 aspect-square rounded-sm cursor-grab outline-none hover:bg-custom-background-80 active:bg-custom-background-80 active:cursor-grabbing transition-[background-color,_opacity] duration-200 ease-linear";
@@ -128,14 +128,16 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   let listType = "";
   let isDragging = false;
   let lastClientY = 0;
+  let lastClientX = 0;
   let scrollAnimationFrame = null;
-  let ghostElement: HTMLElement | null = null;
-  let mouseDownTime = 0;
 
-  const handleMouseDown = (event: MouseEvent, view: EditorView) => {
-    if (event.button !== 0) return;
-
-    mouseDownTime = Date.now();
+  const handleDragStart = (event: DragEvent, view: EditorView) => {
+    view.focus();
+    isDragging = true;
+    lastClientY = event.clientY;
+    lastClientX = event.clientX;
+    scroll();
+    if (!event.dataTransfer) return;
 
     const node = nodeDOMAtCoords({
       x: event.clientX + 50 + options.dragHandleWidth,
@@ -144,180 +146,122 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
 
     if (!(node instanceof Element)) return;
 
-    // Get initial position for selection
     let draggedNodePos = nodePosAtDOM(node, view, options);
     if (draggedNodePos == null || draggedNodePos < 0) return;
     draggedNodePos = calcNodePos(draggedNodePos, view, node);
 
-    // Start scroll handling when drag begins
-    const scroll = () => {
-      if (!isDragging) return;
+    const { from, to } = view.state.selection;
+    const diff = from - to;
 
-      const scrollableParent = getScrollParent(view.dom);
-      const scrollThreshold = {
-        up: 100,
-        down: 100,
-      };
-      const maxScrollSpeed = 50; // Increased max scroll speed
-      let scrollAmount = 0;
+    const fromSelectionPos = calcNodePos(from, view, node);
+    let differentNodeSelected = false;
 
-      const scrollRegionUp = scrollThreshold.up;
-      const scrollRegionDown = window.innerHeight - scrollThreshold.down;
+    const nodePos = view.state.doc.resolve(fromSelectionPos);
 
-      // Calculate scroll amount based on mouse position
-      if (lastClientY < scrollRegionUp) {
-        const overflow = scrollRegionUp - lastClientY;
-        const ratio = Math.min(Math.pow(overflow / scrollThreshold.up, 1.5), 1); // Use a power of 1.5 for smoother acceleration
-        const speed = maxScrollSpeed * ratio;
-        scrollAmount = -speed;
-      } else if (lastClientY > scrollRegionDown) {
-        const overflow = lastClientY - scrollRegionDown;
-        const ratio = Math.min(Math.pow(overflow / scrollThreshold.down, 1.5), 1);
-        const speed = maxScrollSpeed * ratio;
-        scrollAmount = speed;
-      }
-
-      // Handle cases when mouse is outside the window
-      if (lastClientY <= 0) {
-        const overflow = scrollThreshold.up + Math.abs(lastClientY);
-        const ratio = Math.min(Math.pow(overflow / (scrollThreshold.up + 100), 1.5), 1);
-        const speed = maxScrollSpeed * 2 * ratio; // Double the speed when outside the window
-        scrollAmount = -speed;
-      } else if (lastClientY >= window.innerHeight) {
-        const overflow = lastClientY - window.innerHeight + scrollThreshold.down;
-        const ratio = Math.min(Math.pow(overflow / (scrollThreshold.down + 100), 1.5), 1);
-        const speed = maxScrollSpeed * 2 * ratio; // Double the speed when outside the window
-        scrollAmount = speed;
-      }
-
-      if (scrollAmount !== 0) {
-        // Use smooth scrolling for a more fluid animation
-        scrollableParent.scrollBy({
-          top: scrollAmount,
-          behavior: "smooth",
-        });
-      }
-
-      scrollAnimationFrame = requestAnimationFrame(scroll);
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (Date.now() - mouseDownTime < 200) return;
-
-      if (!isDragging) {
-        isDragging = true;
-        event.preventDefault();
-
-        // Apply the same selection logic as in original code
-        const { from, to } = view.state.selection;
-        const diff = from - to;
-
-        const fromSelectionPos = calcNodePos(from, view, node);
-        let differentNodeSelected = false;
-
-        const nodePos = view.state.doc.resolve(fromSelectionPos);
-
-        if (nodePos.node().type.name === "doc") differentNodeSelected = true;
-        else {
-          const nodeSelection = NodeSelection.create(view.state.doc, nodePos.before());
-          differentNodeSelected = !(
-            draggedNodePos + 1 >= nodeSelection.$from.pos && draggedNodePos <= nodeSelection.$to.pos
-          );
-        }
-
-        if (!differentNodeSelected && diff !== 0 && !(view.state.selection instanceof NodeSelection)) {
-          const endSelection = NodeSelection.create(view.state.doc, to - 1);
-          const multiNodeSelection = TextSelection.create(view.state.doc, draggedNodePos, endSelection.$to.pos);
-          view.dispatch(view.state.tr.setSelection(multiNodeSelection));
-        } else {
-          const nodeSelection = NodeSelection.create(view.state.doc, draggedNodePos);
-          view.dispatch(view.state.tr.setSelection(nodeSelection));
-        }
-
-        // Handle special cases
-        if (view.state.selection instanceof NodeSelection && view.state.selection.node.type.name === "listItem") {
-          listType = node.parentElement!.tagName;
-        }
-
-        if (node.matches("blockquote")) {
-          let nodePosForBlockQuotes = nodePosAtDOMForBlockQuotes(node, view);
-          if (nodePosForBlockQuotes !== null && nodePosForBlockQuotes !== undefined) {
-            const docSize = view.state.doc.content.size;
-            nodePosForBlockQuotes = Math.max(0, Math.min(nodePosForBlockQuotes, docSize));
-
-            if (nodePosForBlockQuotes >= 0 && nodePosForBlockQuotes <= docSize) {
-              const nodeSelection = NodeSelection.create(view.state.doc, nodePosForBlockQuotes);
-              view.dispatch(view.state.tr.setSelection(nodeSelection));
-            }
-          }
-        }
-
-        // Create ghost after selection is set
-        const slice = view.state.selection.content();
-        ghostElement = createGhostElement(view, slice);
-        document.body.appendChild(ghostElement);
-
-        // Set dragging state for ProseMirror
-        view.dragging = { slice, move: event.ctrlKey };
-
-        // Start scroll handling when drag begins
-        scroll();
-      }
-
-      if (!ghostElement) return;
-
-      ghostElement.style.left = `${e.clientX}px`;
-      ghostElement.style.top = `${e.clientY}px`;
-
-      lastClientY = e.clientY;
-
-      view.dom.dispatchEvent(
-        new DragEvent("dragover", {
-          clientX: e.clientX,
-          clientY: e.clientY,
-          bubbles: true,
-          dataTransfer: new DataTransfer(),
-        })
+    // Check if nodePos points to the top level node
+    if (nodePos.node().type.name === "doc") differentNodeSelected = true;
+    else {
+      const nodeSelection = NodeSelection.create(view.state.doc, nodePos.before());
+      // Check if the node where the drag event started is part of the current selection
+      differentNodeSelected = !(
+        draggedNodePos + 1 >= nodeSelection.$from.pos && draggedNodePos <= nodeSelection.$to.pos
       );
-    };
+    }
 
-    const handleMouseUp = (e: MouseEvent) => {
-      // Cancel scroll animation
-      if (scrollAnimationFrame) {
-        cancelAnimationFrame(scrollAnimationFrame);
-        scrollAnimationFrame = null;
+    // if (node.className.includes("prosemirror-flat-list")) {
+    //   draggedNodePos = draggedNodePos - 1;
+    //   console.log("draggedNodePos", draggedNodePos);
+    // }
+
+    if (!differentNodeSelected && diff !== 0 && !(view.state.selection instanceof NodeSelection)) {
+      const endSelection = NodeSelection.create(view.state.doc, to - 1);
+      const multiNodeSelection = TextSelection.create(view.state.doc, draggedNodePos, endSelection.$to.pos);
+      view.dispatch(view.state.tr.setSelection(multiNodeSelection));
+    } else {
+      // TODO FIX ERROR
+      const nodeSelection = NodeSelection.create(view.state.doc, draggedNodePos);
+      view.dispatch(view.state.tr.setSelection(nodeSelection));
+    }
+
+    // If the selected node is a list item, we need to save the type of the wrapping list e.g. OL or UL
+    if (view.state.selection instanceof NodeSelection && view.state.selection.node.type.name === "listItem") {
+      listType = node.parentElement!.tagName;
+    }
+
+    if (node.matches("blockquote")) {
+      let nodePosForBlockQuotes = nodePosAtDOMForBlockQuotes(node, view);
+      if (nodePosForBlockQuotes === null || nodePosForBlockQuotes === undefined) return;
+
+      const docSize = view.state.doc.content.size;
+      nodePosForBlockQuotes = Math.max(0, Math.min(nodePosForBlockQuotes, docSize));
+
+      if (nodePosForBlockQuotes >= 0 && nodePosForBlockQuotes <= docSize) {
+        // TODO FIX ERROR
+        const nodeSelection = NodeSelection.create(view.state.doc, nodePosForBlockQuotes);
+        view.dispatch(view.state.tr.setSelection(nodeSelection));
       }
-      if (isDragging) {
-        // Create drop event with proper data transfer
-        const dropEvent = new DragEvent("drop", {
-          clientX: e.clientX,
-          clientY: e.clientY,
-          bubbles: true,
-          dataTransfer: new DataTransfer(),
-        });
+    }
 
-        // Set the same data that we set in the initial selection
-        const slice = view.state.selection.content();
-        const { dom, text } = __serializeForClipboard(view, slice);
-        dropEvent.dataTransfer?.setData("text/html", dom.innerHTML);
-        dropEvent.dataTransfer?.setData("text/plain", text);
-        // Trigger ProseMirror's drop handling
-        view.dom.dispatchEvent(dropEvent);
-      }
+    const slice = view.state.selection.content();
+    const { dom, text } = __serializeForClipboard(view, slice);
 
-      // Cleanup
-      isDragging = false;
-      ghostElement?.remove();
-      ghostElement = null;
+    event.dataTransfer.clearData();
+    event.dataTransfer.setData("text/html", dom.innerHTML);
+    event.dataTransfer.setData("text/plain", text);
+    event.dataTransfer.effectAllowed = "copyMove";
 
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
+    event.dataTransfer.setDragImage(node, 0, 0);
 
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
+    view.dragging = { slice, move: event.ctrlKey };
   };
 
+  let isMouseInsideWhileDragging = false;
+  const handleDragEnd = <TEvent extends DragEvent | FocusEvent>(event: TEvent, view?: EditorView, message?: any) => {
+    console.log("ran", message);
+    event.preventDefault();
+    isDragging = false;
+    isMouseInsideWhileDragging = false;
+    if (scrollAnimationFrame) {
+      console.log("ran the clean  ");
+      cancelAnimationFrame(scrollAnimationFrame);
+      scrollAnimationFrame = null;
+    }
+
+    view?.dom.classList.remove("dragging");
+  };
+
+  function scroll() {
+    if (!isDragging) {
+      return;
+    }
+
+    const scrollableParent = getScrollParent(dragHandleElement);
+    if (!scrollableParent) return;
+    const scrollThreshold = options.scrollThreshold;
+
+    const maxScrollSpeed = 20;
+    let scrollAmount = 0;
+
+    // Normal scroll behavior when mouse is inside viewport
+    const scrollRegionUp = scrollThreshold.up;
+    const scrollRegionDown = window.innerHeight - scrollThreshold.down;
+
+    if (lastClientY < scrollRegionUp) {
+      const ratio = Math.min(Math.pow((scrollRegionUp - lastClientY) / scrollThreshold.up, 3), 1);
+      scrollAmount = -maxScrollSpeed * ratio;
+    } else if (lastClientY > scrollRegionDown) {
+      // More gradual downward scroll with higher power and dampening
+      const ratio = Math.min(Math.pow((lastClientY - scrollRegionDown) / scrollThreshold.down, 4), 1) * 0.8;
+      scrollAmount = maxScrollSpeed * ratio;
+    }
+
+    if (scrollAmount !== 0) {
+      scrollableParent.scrollBy({ top: scrollAmount });
+    }
+
+    // Continue the scrolling loop
+    scrollAnimationFrame = requestAnimationFrame(scroll);
+  }
   const handleClick = (event: MouseEvent, view: EditorView) => {
     view.focus();
 
@@ -350,7 +294,6 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     // Adjust the nodePos to point to the start of the node, ensuring NodeSelection can be applied
     nodePos = calcNodePos(nodePos, view, node);
 
-    // TODO FIX ERROR
     // Use NodeSelection to select the node at the calculated position
     const nodeSelection = NodeSelection.create(view.state.doc, nodePos);
 
@@ -366,33 +309,34 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       dragHandleElement?.classList.add("drag-handle-hidden");
   };
 
-  const handleCleanup = (event: MouseEvent | FocusEvent, view: EditorView) => {
-    event.preventDefault();
-    isDragging = false;
-    ghostElement?.remove();
-    ghostElement = null;
-
-    if (scrollAnimationFrame) {
-      cancelAnimationFrame(scrollAnimationFrame);
-      scrollAnimationFrame = null;
-    }
-
-    view.dom.classList.remove("dragging");
-  };
+  document.addEventListener("mouseenter", (e) => {
+    console.log("ran mouseenter  ");
+    handleDragEnd(e);
+  });
 
   const view = (view: EditorView, sideMenu: HTMLDivElement | null) => {
     dragHandleElement = createDragHandleElement();
-    dragHandleElement.addEventListener("mousedown", (e) => handleMouseDown(e, view));
-    dragHandleElement.addEventListener("click", (e) => handleClick(e, view));
-    dragHandleElement.addEventListener("contextmenu", (e) => handleClick(e, view));
-
-    // Replace dragend/blur handlers with cleanup
-    window.addEventListener("blur", (e) => handleCleanup(e, view));
+    dragHandleElement.addEventListener("dragstart", (e) => handleDragStart(e, view));
+    dragHandleElement.addEventListener("dragend", (e) => handleDragEnd(e, view));
+    window.addEventListener("dragleave", (e) => {
+      if (e.clientY <= 0 || e.clientX <= 0 || e.clientX >= window.innerWidth || e.clientY >= window.innerHeight) {
+        console.log("set to true");
+        isMouseInsideWhileDragging = true;
+      }
+    });
 
     document.addEventListener("dragover", (event) => {
       event.preventDefault();
       if (isDragging) {
         lastClientY = event.clientY;
+      }
+    });
+
+    dragHandleElement.addEventListener("click", (e) => handleClick(e, view));
+    dragHandleElement.addEventListener("contextmenu", (e) => handleClick(e, view));
+    document.addEventListener("mousemove", (e) => {
+      if (isMouseInsideWhileDragging) {
+        handleDragEnd(e, view);
       }
     });
 
@@ -405,8 +349,6 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
         dragHandleElement?.remove?.();
         dragHandleElement = null;
         isDragging = false;
-        ghostElement?.remove();
-        ghostElement = null;
         if (scrollAnimationFrame) {
           cancelAnimationFrame(scrollAnimationFrame);
           scrollAnimationFrame = null;
@@ -475,88 +417,3 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     domEvents,
   };
 };
-
-const createGhostElement = (view: EditorView, slice: Slice) => {
-  console.log("asfd");
-  const { dom: domNodeForSlice, text } = __serializeForClipboard(view, slice);
-  let contentNode: HTMLElement;
-
-  let parentNode: Element | null = null;
-  let closestValidNode: Element | null = null;
-  let closestEditorContainer: Element;
-  let closestProseMirrorContainer: Element;
-  if (view.state.selection instanceof NodeSelection) {
-    const dom = getSelectedDOMNode(view);
-
-    const parent = dom.closest("ul, ol, blockquote");
-    console.log("parent", parent);
-
-    switch (parent?.tagName.toLowerCase()) {
-      case "ul":
-      case "ol":
-        parentNode = parent.cloneNode(false) as HTMLElement;
-        console.log("parentNode", parentNode);
-        closestValidNode = parent.querySelector("li").cloneNode(true) as HTMLElement;
-        console.log("closestValidNode", closestValidNode);
-        break;
-      case "blockquote":
-        parentNode = parent.cloneNode() as HTMLElement;
-        break;
-      default:
-        break;
-    }
-    // console.log("parent", parentNode);
-    closestProseMirrorContainer = dom.closest(".ProseMirror") || document.querySelector(".ProseMirror-focused");
-    closestEditorContainer = closestProseMirrorContainer.closest(".editor-container");
-    contentNode = dom.cloneNode(true) as HTMLElement;
-    console.log("contentNode", contentNode);
-  } else if (domNodeForSlice) {
-    console.log("slice", domNodeForSlice);
-  }
-
-  const ghostParent = document.createElement("div");
-  ghostParent.classList.value = closestEditorContainer?.classList.value;
-  const ghost = document.createElement("div");
-  ghost.classList.value = closestProseMirrorContainer?.classList.value;
-  if (parentNode) {
-    const parentWrapper = parentNode;
-    parentWrapper.appendChild(closestValidNode);
-    ghost.appendChild(parentWrapper);
-  } else if (contentNode) {
-    ghost.appendChild(contentNode);
-  } else if (domNodeForSlice) {
-    ghost.appendChild(domNodeForSlice);
-  }
-  ghostParent.appendChild(ghost);
-  ghostParent.style.position = "fixed";
-  ghostParent.style.pointerEvents = "none";
-  ghostParent.style.zIndex = "1000";
-  ghostParent.style.opacity = "0.8";
-  ghostParent.style.padding = "8px";
-  ghostParent.style.width = closestProseMirrorContainer?.clientWidth + "px";
-  console.log("ghostParent", ghostParent);
-
-  return ghostParent;
-};
-
-function getSelectedDOMNode(editorView: EditorView): HTMLElement | null {
-  const { selection } = editorView.state;
-
-  if (selection instanceof NodeSelection) {
-    const coords = editorView.coordsAtPos(selection.from);
-
-    // Use the center point of the node's bounding rectangle
-    const x = Math.round((coords.left + coords.right) / 2);
-    const y = Math.round((coords.top + coords.bottom) / 2);
-
-    // Use document.elementFromPoint to get the element at these coordinates
-    const element = document.elementFromPoint(x, y);
-
-    // If element is found and it's within the editor's DOM, return it
-    if (element && editorView.dom.contains(element)) {
-      return element as HTMLElement;
-    }
-  }
-
-  return null;
-}
