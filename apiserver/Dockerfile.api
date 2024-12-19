@@ -55,7 +55,8 @@ ARG ENV_FILE_PATH
 
 # Use the build argument
 COPY ${ENV_FILE_PATH} /app/.env
-RUN export $(cat /app/.env | xargs) && \
+RUN cat /app/.env && \
+    export $(cat /app/.env | xargs) && \
     echo "Environment ${ENV_FILE_PATH} variables set successfully"
 
 # For demonstration: Print an environment variable
