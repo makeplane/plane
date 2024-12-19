@@ -130,7 +130,6 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   let lastClientY = 0;
   let scrollAnimationFrame = null;
   let ghostElement: HTMLElement | null = null;
-  const initialMouseOffset = { x: 0, y: 0 };
   let mouseDownTime = 0;
 
   const handleMouseDown = (event: MouseEvent, view: EditorView) => {
@@ -159,7 +158,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
         up: 100,
         down: 100,
       };
-      const maxScrollSpeed = 10;
+      const maxScrollSpeed = 50; // Increased max scroll speed
       let scrollAmount = 0;
 
       const scrollRegionUp = scrollThreshold.up;
@@ -168,12 +167,12 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       // Calculate scroll amount based on mouse position
       if (lastClientY < scrollRegionUp) {
         const overflow = scrollRegionUp - lastClientY;
-        const ratio = Math.min(Math.pow(overflow / scrollThreshold.up, 2), 1);
+        const ratio = Math.min(Math.pow(overflow / scrollThreshold.up, 1.5), 1); // Use a power of 1.5 for smoother acceleration
         const speed = maxScrollSpeed * ratio;
         scrollAmount = -speed;
       } else if (lastClientY > scrollRegionDown) {
         const overflow = lastClientY - scrollRegionDown;
-        const ratio = Math.min(Math.pow(overflow / scrollThreshold.down, 2), 1);
+        const ratio = Math.min(Math.pow(overflow / scrollThreshold.down, 1.5), 1);
         const speed = maxScrollSpeed * ratio;
         scrollAmount = speed;
       }
@@ -181,18 +180,22 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       // Handle cases when mouse is outside the window
       if (lastClientY <= 0) {
         const overflow = scrollThreshold.up + Math.abs(lastClientY);
-        const ratio = Math.min(Math.pow(overflow / (scrollThreshold.up + 100), 2), 1);
-        const speed = maxScrollSpeed * ratio;
+        const ratio = Math.min(Math.pow(overflow / (scrollThreshold.up + 100), 1.5), 1);
+        const speed = maxScrollSpeed * 2 * ratio; // Double the speed when outside the window
         scrollAmount = -speed;
       } else if (lastClientY >= window.innerHeight) {
         const overflow = lastClientY - window.innerHeight + scrollThreshold.down;
-        const ratio = Math.min(Math.pow(overflow / (scrollThreshold.down + 100), 2), 1);
-        const speed = maxScrollSpeed * ratio;
+        const ratio = Math.min(Math.pow(overflow / (scrollThreshold.down + 100), 1.5), 1);
+        const speed = maxScrollSpeed * 2 * ratio; // Double the speed when outside the window
         scrollAmount = speed;
       }
 
       if (scrollAmount !== 0) {
-        scrollableParent.scrollBy({ top: scrollAmount });
+        // Use smooth scrolling for a more fluid animation
+        scrollableParent.scrollBy({
+          top: scrollAmount,
+          behavior: "smooth",
+        });
       }
 
       scrollAnimationFrame = requestAnimationFrame(scroll);
@@ -251,7 +254,6 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
 
         // Create ghost after selection is set
         const slice = view.state.selection.content();
-        console.log("slice", slice);
         ghostElement = createGhostElement(view, slice);
         document.body.appendChild(ghostElement);
 
@@ -483,7 +485,7 @@ const createGhostElement = (view: EditorView, slice: Slice) => {
   let closestValidNode: Element | null = null;
   let closestEditorContainer: Element;
   let closestProseMirrorContainer: Element;
-  if (true) {
+  if (view.state.selection instanceof NodeSelection) {
     const dom = getSelectedDOMNode(view);
 
     const parent = dom.closest("ul, ol, blockquote");
@@ -492,7 +494,7 @@ const createGhostElement = (view: EditorView, slice: Slice) => {
     switch (parent?.tagName.toLowerCase()) {
       case "ul":
       case "ol":
-        parentNode = parent.cloneNode() as HTMLElement;
+        parentNode = parent.cloneNode(false) as HTMLElement;
         console.log("parentNode", parentNode);
         closestValidNode = parent.querySelector("li").cloneNode(true) as HTMLElement;
         console.log("closestValidNode", closestValidNode);

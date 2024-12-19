@@ -485,7 +485,7 @@ const createGhostElement = (view: EditorView, slice: Slice) => {
   let closestValidNode: Element | null = null;
   let closestEditorContainer: Element;
   let closestProseMirrorContainer: Element;
-  if (true) {
+  if (view.state.selection instanceof NodeSelection) {
     const dom = getSelectedDOMNode(view);
 
     const parent = dom.closest("ul, ol, blockquote");
@@ -494,7 +494,7 @@ const createGhostElement = (view: EditorView, slice: Slice) => {
     switch (parent?.tagName.toLowerCase()) {
       case "ul":
       case "ol":
-        parentNode = parent.cloneNode() as HTMLElement;
+        parentNode = parent.cloneNode(false) as HTMLElement;
         console.log("parentNode", parentNode);
         closestValidNode = parent.querySelector("li").cloneNode(true) as HTMLElement;
         console.log("closestValidNode", closestValidNode);
