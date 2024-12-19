@@ -116,8 +116,8 @@ export const PageActions: React.FC<Props> = observer((props) => {
       {
         key: "archive-restore",
         action: pageOperations.toggleArchive,
-        title: !!archived_at ? "Restore" : "Archive",
-        icon: !!archived_at ? ArchiveRestoreIcon : ArchiveIcon,
+        title: archived_at ? "Restore" : "Archive",
+        icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
         shouldRender: canCurrentUserArchivePage,
       },
       {

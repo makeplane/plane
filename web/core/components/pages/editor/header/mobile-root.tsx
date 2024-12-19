@@ -36,7 +36,7 @@ export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
         <PageExtraOptions editorRef={editorRef} page={page} />
       </Header>
       <Header variant={EHeaderVariant.TERNARY}>
-        {isContentEditable && editorRef && <PageToolbar editorRef={editorRef as EditorRefApi} />}
+        {isContentEditable && editorRef && <PageToolbar editorRef={editorRef} />}
       </Header>
     </>
   );

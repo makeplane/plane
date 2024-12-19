@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { useParams } from "next/navigation";
 // plane editor
 import { EditorRefApi } from "@plane/editor";
+// plane types
+import { EPageAccess } from "@plane/types/src/enums";
 // plane ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
@@ -71,9 +73,10 @@ export const usePageOperations = (
       move: async () => {},
       openInNewTab: () => window.open(`/${pageLink}`, "_blank"),
       toggleAccess: async () => {
-        const changedPageType = access === 0 ? "private" : "public";
+        const changedPageType = access === EPageAccess.PUBLIC ? "private" : "public";
         try {
-          if (access === 0) await executeCollaborativeAction({ type: "sendMessageToServer", message: "make-private" });
+          if (access === EPageAccess.PUBLIC)
+            await executeCollaborativeAction({ type: "sendMessageToServer", message: "make-private" });
           else await executeCollaborativeAction({ type: "sendMessageToServer", message: "make-public" });
 
           setToast({
