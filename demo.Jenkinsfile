@@ -9,12 +9,12 @@ def configuration = [
 ]
 
 // Project Level Configurations
-def repository = "plane"
+def repository = "n8n"
 def projectEnv = "demo"
 
 // Config Based configurations
 def vaultConfigFilesMap = [
-    "CONFIG" : "env.json",
+    "CONFIG" : "config.json",
 ]
 def configStoragePath = "config-files"
 
@@ -67,7 +67,7 @@ pipeline {
                         [
                         path: "${repository}/${projectEnv}", 
                         secretValues: [
-                                [envVar: 'CONFIG', vaultKey: 'env.json']
+                                [envVar: 'CONFIG', vaultKey: 'config.json']
                             ]
                         ]
                     ]
@@ -77,7 +77,7 @@ pipeline {
                             set +x
                             echo "Vault CONFIG: \${CONFIG}"   # Debugging, remove in production
                             mkdir -p ${configStoragePath}
-                            echo "\${CONFIG}" > ${configStoragePath}/.env
+                            echo "\${CONFIG}" > ${configStoragePath}/config.json
                         """
 
                         // Debugging: Show the contents of the .env file (optional for development only)
