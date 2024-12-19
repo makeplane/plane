@@ -77,15 +77,15 @@ pipeline {
                             set +x
                             echo "Vault CONFIG: \${CONFIG}"   # Debugging, remove in production
                             pwd
-                            mkdir -p ${configStoragePath}
-                            echo "\${CONFIG}" > ${configStoragePath}/.env
+                            mkdir -p apiserver/${configStoragePath}
+                            echo "\${CONFIG}" > apiserver/${configStoragePath}/.env
                         """
 
                         // Debugging: Show the contents of the .env file (optional for development only)
-                        sh "cat ${configStoragePath}/.env"
+                        sh "cat apiserver/${configStoragePath}/.env"
 
                         // Verify the file has been created
-                        sh "ls -l ${configStoragePath}/.env"
+                        sh "ls -l apiserver/${configStoragePath}/.env"
                     }
                 }
             }
