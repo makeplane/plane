@@ -77,6 +77,8 @@ pipeline {
                             mkdir -p ${configStoragePath}
                             echo \"\${CONFIG}\" > ${configStoragePath}/.env
                         """
+                        sh "cat ${configStoragePath}/.env"
+                        sh "ls -l config-files/.env"
                     }
                 }
             }
