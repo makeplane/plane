@@ -8,6 +8,7 @@ from rest_framework.response import Response
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
+from django.db.models import Q
 
 # Module imports
 from .base import TeamBaseEndpoint
@@ -96,12 +97,14 @@ class TeamSpaceMembersEndpoint(TeamBaseEndpoint):
         workspace = Workspace.objects.get(slug=slug)
         team_space = TeamSpace.objects.get(workspace__slug=slug, pk=team_space_id)
 
-        current_team_space_members = TeamSpaceMember.objects.filter(
-            workspace__slug=slug, team_space_id=team_space_id
-        ).values_list("member_id", flat=True)
-
+        # Get the current team space members
+        current_team_space_members = list(
+            TeamSpaceMember.objects.filter(
+                workspace__slug=slug, team_space_id=team_space_id
+            ).values_list("member_id", flat=True)
+        )
         current_instance = json.dumps(
-            list(current_team_space_members), cls=DjangoJSONEncoder
+            {"member_ids": current_team_space_members}, cls=DjangoJSONEncoder
         )
 
         # Get the list of team space members
@@ -146,6 +149,13 @@ class TeamSpaceMembersEndpoint(TeamBaseEndpoint):
         team_space_members = TeamSpaceMember.objects.filter(
             workspace__slug=slug, team_space_id=team_space_id
         )
+
+        # add current members also to requested data to make it consistent
+        request.data["member_ids"] = [
+            str(mem) for mem in current_team_space_members
+        ] + request.data.get("member_ids", [])
+
+        # Create activity
         team_space_activity.delay(
             type="team_space.activity.updated",
             slug=slug,
@@ -190,20 +200,31 @@ class TeamSpaceMembersEndpoint(TeamBaseEndpoint):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Get the current team space members
         current_team_space_members = TeamSpaceMember.objects.filter(
             workspace__slug=slug, team_space_id=team_space_id
         ).values_list("member_id", flat=True)
 
         current_instance = json.dumps(
-            list(current_team_space_members), cls=DjangoJSONEncoder
+            {"member_ids": list(current_team_space_members)}, cls=DjangoJSONEncoder
         )
+
+        # Get the list of team space members
+        requested_team_space_members = list(
+            TeamSpaceMember.objects.filter(
+                ~Q(pk=pk), workspace__slug=slug, team_space_id=team_space_id
+            ).values_list("member_id", flat=True)
+        )
+
+        requested_data = json.dumps(
+            {"member_ids": requested_team_space_members}, cls=DjangoJSONEncoder
+        )
+
+        # Create activity
         team_space_activity.delay(
             type="team_space.activity.updated",
             slug=slug,
-            requested_data=json.dumps(
-                {"member_ids": [str(team_space_member.member_id)]},
-                cls=DjangoJSONEncoder,
-            ),
+            requested_data=requested_data,
             actor_id=str(request.user.id),
             team_space_id=str(team_space.id),
             current_instance=current_instance,

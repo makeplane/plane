@@ -120,12 +120,8 @@ def track_labels(
     team_space_activities,
     epoch,
 ):
-    requested_labels = set(
-        [str(lab) for lab in requested_data.get("label_ids", [])]
-    )
-    current_labels = set(
-        [str(lab) for lab in current_instance.get("label_ids", [])]
-    )
+    requested_labels = set([str(lab) for lab in requested_data.get("label_ids", [])])
+    current_labels = set([str(lab) for lab in current_instance.get("label_ids", [])])
 
     added_labels = requested_labels - current_labels
     dropped_labels = current_labels - requested_labels
@@ -237,20 +233,17 @@ def track_team_members(
     team_space_activities,
     epoch,
 ):
-    requested_members = (
-        set([str(member) for member in requested_data.get("member_ids", [])])
-        if requested_data is not None
-        else set()
-    )
-    current_members = (
-        set([str(member) for member in current_instance.get("member_ids", [])])
-        if current_instance is not None
-        else set()
-    )
+    # Set of newly added members and dropped members
+    current_members = current_instance.get("member_ids", [])
+    requested_members = requested_data.get("member_ids", [])
 
+    # Set of newly added members
     added_members = requested_members - current_members
+
+    # Set of dropped members
     dropped_members = current_members - requested_members
 
+    # Create team space activities for added members
     for added_member in added_members:
         member = User.objects.get(pk=added_member)
         team_space_activities.append(
@@ -268,6 +261,7 @@ def track_team_members(
             )
         )
 
+    # Create team space activities for dropped members
     for dropped_member in dropped_members:
         member = User.objects.get(pk=dropped_member)
         team_space_activities.append(
@@ -327,9 +321,7 @@ def update_team_space_activity(
         "member_ids": track_team_members,
     }
 
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -379,9 +371,7 @@ def create_comment_activity(
     team_space_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -411,16 +401,12 @@ def update_comment_activity(
     team_space_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
 
-    if current_instance.get("comment_html") != requested_data.get(
-        "comment_html"
-    ):
+    if current_instance.get("comment_html") != requested_data.get("comment_html"):
         team_space_activities.append(
             TeamSpaceActivity(
                 team_space_id=team_space_id,
@@ -470,9 +456,7 @@ def create_comment_reaction_activity(
     team_space_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     if requested_data and requested_data.get("reaction") is not None:
         comment_reaction_id, comment_id = (
             TeamSpaceCommentReaction.objects.filter(
@@ -523,8 +507,7 @@ def delete_comment_reaction_activity(
     if current_instance and current_instance.get("reaction") is not None:
         team_space_id = (
             TeamSpaceComment.objects.filter(
-                pk=current_instance.get("comment_id"),
-                team_space_id=team_space_id,
+                pk=current_instance.get("comment_id"), team_space_id=team_space_id
             )
             .values_list("team_space_id", flat=True)
             .first()
@@ -556,9 +539,7 @@ def create_page_activity(
     team_space_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     team_space_activities.append(
         TeamSpaceActivity(
             team_space_id=team_space_id,
@@ -607,9 +588,7 @@ def create_view_activity(
     team_space_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
 
     team_space_activities.append(
         TeamSpaceActivity(
@@ -656,13 +635,7 @@ def delete_view_activity(
 
 @shared_task
 def team_space_activity(
-    type,
-    requested_data,
-    team_space_id,
-    actor_id,
-    slug,
-    current_instance,
-    epoch,
+    type, requested_data, team_space_id, actor_id, slug, current_instance, epoch
 ):
     try:
         team_space_activities = []
@@ -702,6 +675,7 @@ def team_space_activity(
             team_space_activities, batch_size=100, ignore_conflicts=True
         )
         return
+
     except Exception as e:
         log_exception(e)
         return
