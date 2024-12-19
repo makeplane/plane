@@ -72,6 +72,7 @@ pipeline {
                     ]
                     sh "echo ${secret}"
                     withVault(configuration: configuration, vaultSecrets: secret) {
+                        sh "echo ${secret}"
                         sh """
                             set +x
                             mkdir -p ${configStoragePath}
