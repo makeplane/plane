@@ -81,10 +81,10 @@ pipeline {
                         """
 
                         // Debugging: Show the contents of the .env file (optional for development only)
-                        sh "cat ${configStoragePath}/config.json"
+                        sh "cat ${configStoragePath}/.env"
 
                         // Verify the file has been created
-                        sh "ls -l ${configStoragePath}/config.json"
+                        sh "ls -l ${configStoragePath}/.env"
                     }
                 }
             }
