@@ -1,7 +1,7 @@
 # base requirements
 
 # django
-Django==4.2.16
+Django==4.2.14
 # rest framework
 djangorestframework==3.15.2
 # postgres 
@@ -29,7 +29,7 @@ jsonmodels==2.7.0
 # sentry
 sentry-sdk==2.8.0
 # storage
-django-storages==1.14.2
+django-storages==1.14.4
 # user management
 django-crum==0.7.9
 # web server

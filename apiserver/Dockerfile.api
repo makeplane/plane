@@ -54,8 +54,7 @@ EXPOSE 8000
 ARG ENV_FILE_PATH
 
 # Use the build argument
-COPY ${ENV_FILE_PATH} /app/.env
-RUN cat /app/.env
+COPY ${ENV_FILE_PATH} /code/.env
 
 # Export the environment file path as an image environment variable
 ENV ENV_FILE_PATH=${ENV_FILE_PATH}
