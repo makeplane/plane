@@ -31,6 +31,7 @@ from dotenv import load_dotenv
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+print(f"BASE_DIR: {BASE_DIR}")
 load_dotenv(os.path.join(BASE_DIR, "file.env"))
 # Secret Key
 SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
