@@ -159,33 +159,33 @@ pipeline {
 
         stage("Deploy Plane") {
             parallel {
-                stage("Deploy Frontend") {
-                    steps {
-                        script {
-                            deployServiceOnECS (
-                                awsRegion : awsRegion,
-                                imageName : webImageName,
-                                ecsClusterName : clusterName,
-                                ecsServiceName : frontEndServiceName,
-                                timeout : 300
-                            )
-                        }
-                    }
-                }
+                // stage("Deploy Frontend") {
+                //     steps {
+                //         script {
+                //             deployServiceOnECS (
+                //                 awsRegion : awsRegion,
+                //                 imageName : webImageName,
+                //                 ecsClusterName : clusterName,
+                //                 ecsServiceName : frontEndServiceName,
+                //                 timeout : 300
+                //             )
+                //         }
+                //     }
+                // }
 
-                stage("Deploy Admin") {
-                    steps {
-                        script {
-                            deployServiceOnECS (
-                                awsRegion : awsRegion,
-                                imageName : adminImageName,
-                                ecsClusterName : clusterName,
-                                ecsServiceName : adminPanelServiceName,
-                                timeout : 300
-                            )
-                        }
-                    }
-                }
+                // stage("Deploy Admin") {
+                //     steps {
+                //         script {
+                //             deployServiceOnECS (
+                //                 awsRegion : awsRegion,
+                //                 imageName : adminImageName,
+                //                 ecsClusterName : clusterName,
+                //                 ecsServiceName : adminPanelServiceName,
+                //                 timeout : 300
+                //             )
+                //         }
+                //     }
+                // }
 
                 stage("Deploy API") {
                     steps {
