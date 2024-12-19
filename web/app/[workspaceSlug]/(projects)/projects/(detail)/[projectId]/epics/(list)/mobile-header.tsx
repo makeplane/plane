@@ -142,6 +142,7 @@ export const ProjectEpicMobileHeader = () => {
               states={projectStates}
               cycleViewDisabled={!currentProjectDetails?.cycle_view}
               moduleViewDisabled={!currentProjectDetails?.module_view}
+              isEpic
             />
           </FiltersDropdown>
         </div>
@@ -166,6 +167,7 @@ export const ProjectEpicMobileHeader = () => {
               handleDisplayPropertiesUpdate={handleDisplayProperties}
               cycleViewDisabled={!currentProjectDetails?.cycle_view}
               moduleViewDisabled={!currentProjectDetails?.module_view}
+              isEpic
             />
           </FiltersDropdown>
         </div>

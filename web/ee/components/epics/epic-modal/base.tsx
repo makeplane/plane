@@ -8,7 +8,7 @@ import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";
+import { IssuesModalProps } from "@/components/issues";
 // constants
 import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
 // hooks
@@ -35,7 +35,6 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
   // ref
   const issueTitleRef = useRef<HTMLInputElement>(null);
   // states
-  const [changesMade, setChangesMade] = useState<Partial<TIssue> | null>(null);
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [description, setDescription] = useState<string | undefined>(undefined);
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
@@ -95,14 +94,10 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
 
   const handleClose = () => {
     setActiveProjectId(null);
-    setChangesMade(null);
     onClose();
   };
 
-  const handleCreateIssue = async (
-    payload: Partial<TIssue>,
-    is_draft_issue: boolean = false
-  ): Promise<TIssue | undefined> => {
+  const handleCreateIssue = async (payload: Partial<TIssue>): Promise<TIssue | undefined> => {
     if (!workspaceSlug || !payload.project_id) return;
 
     try {
@@ -139,14 +134,7 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
-        message: `${is_draft_issue ? "Draft created." : "Issue created successfully."} `,
-        actionItems: !is_draft_issue && response?.project_id && (
-          <CreateIssueToastActionItems
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={response?.project_id}
-            issueId={response.id}
-          />
-        ),
+        message: "Epic created successfully.",
       });
       captureIssueEvent({
         eventName: ISSUE_CREATED,
@@ -154,13 +142,12 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
         path: pathname,
       });
       setDescription("<p></p>");
-      setChangesMade(null);
       return response;
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: `${is_draft_issue ? "Draft issue" : "Issue"} could not be created. Please try again.`,
+        message: "Epic could not be created. Please try again.",
       });
       captureIssueEvent({
         eventName: ISSUE_CREATED,
@@ -188,7 +175,7 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
-        message: "Issue updated successfully.",
+        message: "Epic updated successfully.",
       });
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
@@ -201,7 +188,7 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: "Issue could not be updated. Please try again.",
+        message: "Epic could not be updated. Please try again.",
       });
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
@@ -211,7 +198,7 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
     }
   };
 
-  const handleFormSubmit = async (payload: Partial<TIssue>, is_draft_issue: boolean = false) => {
+  const handleFormSubmit = async (payload: Partial<TIssue>) => {
     if (!workspaceSlug || !payload.project_id) return;
     // remove sourceIssueId from payload since it is not needed
     if (data?.sourceIssueId) delete data.sourceIssueId;
@@ -220,7 +207,7 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
 
     try {
       if (beforeFormSubmit) await beforeFormSubmit();
-      if (!data?.id) response = await handleCreateIssue(payload, is_draft_issue);
+      if (!data?.id) response = await handleCreateIssue(payload);
       else response = await handleUpdateIssue(payload);
     } catch (error) {
       console.error(error);

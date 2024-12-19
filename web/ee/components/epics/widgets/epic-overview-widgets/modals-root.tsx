@@ -44,14 +44,14 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Sub-issues added successfully",
+          message: "Issues added successfully",
         });
       });
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: "Error adding sub-issue",
+        message: "Error adding issue",
       });
     }
   };

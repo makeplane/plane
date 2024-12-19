@@ -49,9 +49,7 @@ export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
 
   const activityField = getActivityById(activityId)?.field;
   switch (activityField) {
-    case null: // default issue creation
-      return <IssueDefaultActivity {...componentDefaultProps} />;
-    case "epic": // epic creation
+    case "epic":
       return <IssueDefaultActivity {...componentDefaultProps} />;
     case "state":
       return <IssueStateActivity {...componentDefaultProps} showIssue={false} />;

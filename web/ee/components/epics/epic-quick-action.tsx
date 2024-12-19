@@ -48,7 +48,7 @@ export const ProjectEpicQuickActions: React.FC<IQuickActionProps> = observer((pr
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
-        message: "Issue link copied to clipboard",
+        message: "Epic link copied to clipboard",
       })
     );
   const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
@@ -96,6 +96,7 @@ export const ProjectEpicQuickActions: React.FC<IQuickActionProps> = observer((pr
         isOpen={deleteIssueModal}
         handleClose={() => setDeleteIssueModal(false)}
         onSubmit={handleDelete}
+        isEpic
       />
       <CreateUpdateEpicModal
         isOpen={createUpdateIssueModal}
