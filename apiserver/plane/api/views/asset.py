@@ -107,7 +107,6 @@ class UserAssetEndpoint(BaseAPIView):
         )
 
     def patch(self, request, asset_id):
-        print("ASSET", asset_id, request.data)
         # get the asset id
         asset = FileAsset.objects.get(id=asset_id, user_id=request.user.id)
         # get the storage metadata
@@ -119,7 +118,6 @@ class UserAssetEndpoint(BaseAPIView):
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
         asset.save(update_fields=["is_uploaded", "attributes"])
-        print("asset", asset.id, asset.is_uploaded)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, asset_id):
@@ -225,7 +223,6 @@ class UserServerAssetEndpoint(BaseAPIView):
         )
 
     def patch(self, request, asset_id):
-        print("ASSET", asset_id, request.data)
         # get the asset id
         asset = FileAsset.objects.get(id=asset_id, user_id=request.user.id)
         # get the storage metadata
@@ -237,7 +234,6 @@ class UserServerAssetEndpoint(BaseAPIView):
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
         asset.save(update_fields=["is_uploaded", "attributes"])
-        print("asset", asset.id, asset.is_uploaded)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, asset_id):

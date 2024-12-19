@@ -499,10 +499,10 @@ class ProjectViewSet(BaseViewSet):
 
             workspace = Workspace.objects.get(slug=slug)
 
-            project = Project.objects.get(pk=pk)
+            project = self.get_queryset().get(pk=pk)
             intake_view = request.data.get("inbox_view", project.intake_view)
             current_instance = json.dumps(
-                ProjectSerializer(project).data, cls=DjangoJSONEncoder
+                ProjectListSerializer(project).data, cls=DjangoJSONEncoder
             )
             if project.archived_at:
                 return Response(

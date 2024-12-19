@@ -8,15 +8,12 @@ from celery import shared_task
 # Django imports
 from django.utils import timezone
 
-# from plane.app.serializers import WorkspaceActivitySerializer
-
 # Module imports
-from plane.ee.models import WorkspaceActivity, ProjectReaction
+from plane.ee.models import WorkspaceActivity, ProjectReaction, ProjectState
 from plane.db.models import (
     CommentReaction,
     IssueComment,
     Project,
-    State,
 )
 from plane.utils.exception_logger import log_exception
 
@@ -124,11 +121,9 @@ def track_state(
     project_activities,
     epoch,
 ):
-    print(current_instance.get("state_id"), "state id")
-    print(requested_data.get("state_id"), "state id")
     if current_instance.get("state_id") != requested_data.get("state_id"):
-        new_state = State.objects.get(pk=requested_data.get("state_id", None))
-        old_state = State.objects.get(
+        new_state = ProjectState.objects.get(pk=requested_data.get("state_id", None))
+        old_state = ProjectState.objects.get(
             pk=current_instance.get("state_id", None)
         )
 
