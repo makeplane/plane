@@ -412,7 +412,9 @@ export class Page implements IPage {
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     const pageAccess = this.access;
-    runInAction(() => (this.access = EPageAccess.PUBLIC));
+    runInAction(() => {
+      this.access = EPageAccess.PUBLIC;
+    });
 
     if (shouldSync) {
       try {
@@ -436,7 +438,9 @@ export class Page implements IPage {
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     const pageAccess = this.access;
-    runInAction(() => (this.access = EPageAccess.PRIVATE));
+    runInAction(() => {
+      this.access = EPageAccess.PRIVATE;
+    });
 
     if (shouldSync) {
       try {
