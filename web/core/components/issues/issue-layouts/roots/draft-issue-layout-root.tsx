@@ -2,9 +2,11 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+// plane constants
+import { EIssueLayoutTypes, EIssuesStoreType } from "@plane/constants";
+// components
 import { LogoSpinner } from "@/components/common";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
-import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssues } from "@/hooks/store";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";

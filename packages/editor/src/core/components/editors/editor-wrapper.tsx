@@ -38,6 +38,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
   } = props;
 
   const editor = useEditor({
+    editable: true,
     disabledExtensions,
     editorClassName,
     enableHistory: true,

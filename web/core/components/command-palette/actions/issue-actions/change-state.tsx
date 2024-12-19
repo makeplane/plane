@@ -5,9 +5,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
 import { Check } from "lucide-react";
+import { EIssuesStoreType } from "@plane/constants";
 import { TIssue } from "@plane/types";
 import { Spinner, StateGroupIcon } from "@plane/ui";
-import { EIssuesStoreType } from "@/constants/issue";
 import { useProjectState, useIssues } from "@/hooks/store";
 // ui
 // icons

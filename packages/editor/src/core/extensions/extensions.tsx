@@ -44,6 +44,7 @@ type TArguments = {
   mentionHandler: TMentionHandler;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
+  editable: boolean;
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
@@ -86,7 +87,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       ...(enableHistory ? {} : { history: false }),
     }),
     CustomQuoteExtension,
-    DropHandlerExtension(),
+    DropHandlerExtension,
     CustomHorizontalRule.configure({
       HTMLAttributes: {
         class: "py-4 border-custom-border-400",
@@ -134,6 +135,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomCodeInlineExtension,
     Markdown.configure({
       html: true,
+      transformCopiedText: true,
       transformPastedText: true,
       breaks: true,
     }),
@@ -144,6 +146,8 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomMentionExtension(mentionHandler),
     Placeholder.configure({
       placeholder: ({ editor, node }) => {
+        if (!editor.isEditable) return;
+
         if (node.type.name === "heading") return `Heading ${node.attrs.level}`;
 
         if (editor.storage.imageComponent.uploadInProgress) return "";

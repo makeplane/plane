@@ -26,6 +26,7 @@ import type {
 } from "@/types";
 
 export interface CustomEditorProps {
+  editable: boolean;
   editorClassName: string;
   editorProps?: EditorProps;
   enableHistory: boolean;
@@ -51,6 +52,7 @@ export interface CustomEditorProps {
 export const useEditor = (props: CustomEditorProps) => {
   const {
     disabledExtensions,
+    editable = true,
     editorClassName,
     editorProps = {},
     enableHistory,
@@ -70,39 +72,43 @@ export const useEditor = (props: CustomEditorProps) => {
     autofocus = false,
   } = props;
   // states
-
   const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
   // refs
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   const savedSelectionRef = useRef(savedSelection);
-  const editor = useTiptapEditor({
-    autofocus,
-    editorProps: {
-      ...CoreEditorProps({
-        editorClassName,
-      }),
-      ...editorProps,
+  const editor = useTiptapEditor(
+    {
+      editable,
+      autofocus,
+      editorProps: {
+        ...CoreEditorProps({
+          editorClassName,
+        }),
+        ...editorProps,
+      },
+      extensions: [
+        ...CoreEditorExtensions({
+          editable,
+          disabledExtensions,
+          enableHistory,
+          fileHandler,
+          mentionHandler,
+          placeholder,
+          tabIndex,
+        }),
+        ...extensions,
+      ],
+      content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
+      onCreate: () => handleEditorReady?.(true),
+      onTransaction: ({ editor }) => {
+        setSavedSelection(editor.state.selection);
+        onTransaction?.();
+      },
+      onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
+      onDestroy: () => handleEditorReady?.(false),
     },
-    extensions: [
-      ...CoreEditorExtensions({
-        disabledExtensions,
-        enableHistory,
-        fileHandler,
-        mentionHandler,
-        placeholder,
-        tabIndex,
-      }),
-      ...extensions,
-    ],
-    content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
-    onCreate: () => handleEditorReady?.(true),
-    onTransaction: ({ editor }) => {
-      setSavedSelection(editor.state.selection);
-      onTransaction?.();
-    },
-    onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
-    onDestroy: () => handleEditorReady?.(false),
-  });
+    [editable]
+  );
 
   // Update the ref whenever savedSelection changes
   useEffect(() => {
