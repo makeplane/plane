@@ -2,7 +2,6 @@
 import pytz
 from datetime import datetime
 
-
 # Django imports
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -13,9 +12,14 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
+# Module imports
+from plane.authentication.rate_limit import AuthenticationThrottle
+
 
 class TimezoneEndpoint(APIView):
     permission_classes = [AllowAny]
+
+    throttle_classes = [AuthenticationThrottle]
 
     @method_decorator(cache_page(60 * 60 * 24))
     def get(self, request):
