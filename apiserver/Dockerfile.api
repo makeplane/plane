@@ -50,9 +50,9 @@ EXPOSE 8000
 
 ARG CONFIG_FILES_PATH
 
-COPY $CONFIG_FILES_PATH/config.json config/config.json
+COPY $CONFIG_FILES_PATH/env.json config/env.json
 
-ENV N8N_CONFIG_FILES=/home/node/config/config.json 
+ENV N8N_CONFIG_FILES=/home/node/config/env.json 
 
 CMD gunicorn -w 2 -k uvicorn.workers.UvicornWorker plane.asgi:application --bind 0.0.0.0:8000 --max-requests 1200 --max-requests-jitter 1000 --access-logfile -
 # Expose container port and run entry point script
