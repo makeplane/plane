@@ -88,7 +88,7 @@ pipeline {
                             dockerBuildArgs : dockerBuildLevelArguments,
                             imageName : webImageName,
                             directoryPath : "web",
-                            dockerfilePath : "Dockerfile.web"
+                            dockerfilePath : "web/Dockerfile.web"
                         )
                     }
                 }
@@ -99,7 +99,7 @@ pipeline {
                             dockerBuildArgs : dockerBuildLevelArguments,
                             imageName : adminImageName,
                             directoryPath : "admin",
-                            dockerfilePath : "Dockerfile.admin"
+                            dockerfilePath : "admin/Dockerfile.admin"
                         )
                     }
                 }
