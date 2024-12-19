@@ -35,18 +35,7 @@ export const usePageOperations = (
   // params
   const { workspaceSlug, projectId } = useParams();
   // derived values
-  const {
-    access,
-    addToFavorites,
-    archived_at,
-    duplicate,
-    id,
-    is_favorite,
-    is_locked,
-    makePrivate,
-    makePublic,
-    removePageFromFavorites,
-  } = page;
+  const { access, addToFavorites, archived_at, duplicate, id, is_favorite, is_locked, removePageFromFavorites } = page;
   // collaborative actions
   const { executeCollaborativeAction } = useCollaborativePageActions(props);
   // page operations
@@ -195,8 +184,6 @@ export const usePageOperations = (
     id,
     is_favorite,
     is_locked,
-    makePrivate,
-    makePublic,
     projectId,
     removePageFromFavorites,
     workspaceSlug,

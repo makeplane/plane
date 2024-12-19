@@ -76,8 +76,8 @@ export const PageActions: React.FC<Props> = observer((props) => {
     canCurrentUserMovePage,
   } = page;
   // menu items
-  const MENU_ITEMS: (TContextMenuItem & { key: TPageActions })[] = useMemo(
-    () => [
+  const MENU_ITEMS: (TContextMenuItem & { key: TPageActions })[] = useMemo(() => {
+    const menuItems: (TContextMenuItem & { key: TPageActions })[] = [
       {
         key: "toggle-lock",
         action: pageOperations.toggleLock,
@@ -127,7 +127,6 @@ export const PageActions: React.FC<Props> = observer((props) => {
         icon: Trash2,
         shouldRender: canCurrentUserDeletePage && !!archived_at,
       },
-
       {
         key: "move",
         action: () => setMovePageModal(true),
@@ -135,23 +134,24 @@ export const PageActions: React.FC<Props> = observer((props) => {
         icon: FileOutput,
         shouldRender: canCurrentUserMovePage,
       },
-    ],
-    [
-      access,
-      archived_at,
-      is_locked,
-      canCurrentUserArchivePage,
-      canCurrentUserChangeAccess,
-      canCurrentUserDeletePage,
-      canCurrentUserDuplicatePage,
-      canCurrentUserLockPage,
-      canCurrentUserMovePage,
-      pageOperations,
-    ]
-  );
-  if (extraOptions) {
-    MENU_ITEMS.push(...extraOptions);
-  }
+    ];
+    if (extraOptions) {
+      menuItems.push(...extraOptions);
+    }
+    return menuItems;
+  }, [
+    access,
+    archived_at,
+    extraOptions,
+    is_locked,
+    canCurrentUserArchivePage,
+    canCurrentUserChangeAccess,
+    canCurrentUserDeletePage,
+    canCurrentUserDuplicatePage,
+    canCurrentUserLockPage,
+    canCurrentUserMovePage,
+    pageOperations,
+  ]);
   // arrange options
   const arrangedOptions = useMemo(
     () =>
