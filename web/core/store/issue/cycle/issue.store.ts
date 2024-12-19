@@ -21,8 +21,8 @@ import {
 // helpers
 import { getDistributionPathsPostUpdate } from "@/helpers/distribution-update.helper";
 //local
-import { persistence } from "@/local-db/storage.sqlite";
 import { storage } from "@/lib/local-storage";
+import { persistence } from "@/local-db/storage.sqlite";
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 //
 import { IIssueRootStore } from "../root.store";

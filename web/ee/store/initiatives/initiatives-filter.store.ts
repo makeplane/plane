@@ -60,13 +60,9 @@ export class InitiativeFilterStore implements IInitiativeFilterStore {
     return this.getInitiativeDisplayFilters(workspaceSlug);
   }
 
-  getInitiativeDisplayFilters = computedFn((workspaceSlug: string) => {
-    return this.displayFilters[workspaceSlug];
-  });
+  getInitiativeDisplayFilters = computedFn((workspaceSlug: string) => this.displayFilters[workspaceSlug]);
 
-  getInitiativeFilters = computedFn((workspaceSlug: string) => {
-    return this.filters[workspaceSlug];
-  });
+  getInitiativeFilters = computedFn((workspaceSlug: string) => this.filters[workspaceSlug]);
 
   initInitiativeFilters = (workspaceSlug: string) => {
     runInAction(() => {

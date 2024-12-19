@@ -4,14 +4,13 @@ import { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
+import { EIssueCommentAccessSpecifier } from "@plane/constants";
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 import { TIssueComment } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 // components
 import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
-// constants
-import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks

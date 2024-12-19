@@ -1,4 +1,11 @@
-import { IUserLite, EIssueCommentAccessSpecifier } from "@plane/types";
+import {
+  IUserLite,
+  EIssueCommentAccessSpecifier,
+  InitiativeReaction,
+  TIssueActivityIssueDetail,
+  InitiativeComment,
+  TIssueActivityUserDetail,
+} from "@plane/types";
 
 export type TInitiative = {
   id: string;

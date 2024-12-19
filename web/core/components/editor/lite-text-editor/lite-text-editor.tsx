@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 // editor
+import { EIssueCommentAccessSpecifier } from "@plane/constants";
 import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
 // components
 import { IssueCommentToolbar } from "@/components/editor";
-// constants
-import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";

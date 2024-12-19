@@ -1,7 +1,7 @@
 import concat from "lodash/concat";
 import sortBy from "lodash/sortBy";
-import update from "lodash/update";
 import uniq from "lodash/uniq";
+import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // PLane-web

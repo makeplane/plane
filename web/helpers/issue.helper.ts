@@ -1,6 +1,8 @@
 import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
 import isEmpty from "lodash/isEmpty";
 import { v4 as uuidv4 } from "uuid";
+// plane constants
+import { EIssueLayoutTypes } from "@plane/constants";
 // types
 import {
   IIssueDisplayFilterOptions,
@@ -16,7 +18,7 @@ import {
 } from "@plane/types";
 import { IGanttBlock } from "@/components/gantt-chart";
 // constants
-import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { orderArrayBy } from "@/helpers/array.helper";
