@@ -158,7 +158,7 @@ from .page.base import (
 )
 from .page.version import PageVersionEndpoint
 
-from .search.base import GlobalSearchEndpoint
+from .search.base import GlobalSearchEndpoint, SearchEndpoint
 from .search.issue import IssueSearchEndpoint
 
 

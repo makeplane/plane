@@ -16,7 +16,6 @@ export * from "./use-issues";
 export * from "./use-kanban-view";
 export * from "./use-label";
 export * from "./use-member";
-export * from "./use-mention";
 export * from "./use-module";
 export * from "./use-module-filter";
 export * from "./use-multiple-select-store";

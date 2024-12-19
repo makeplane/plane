@@ -3,7 +3,7 @@ import { HocuspocusProvider } from "@hocuspocus/provider";
 import { DOMSerializer } from "@tiptap/pm/model";
 import { Selection } from "@tiptap/pm/state";
 import { EditorProps } from "@tiptap/pm/view";
-import { useEditor as useTiptapEditor, Editor } from "@tiptap/react";
+import { useEditor as useTiptapEditor, Editor, Extensions } from "@tiptap/react";
 import * as Y from "yjs";
 // components
 import { EditorMenuItem, getEditorMenuItems } from "@/components/menus";
@@ -19,11 +19,10 @@ import { CoreEditorProps } from "@/props";
 import type {
   TDocumentEventsServer,
   EditorRefApi,
-  IMentionHighlight,
-  IMentionSuggestion,
   TEditorCommands,
   TFileHandler,
   TExtensions,
+  TMentionHandler,
 } from "@/types";
 
 export interface CustomEditorProps {
@@ -32,16 +31,13 @@ export interface CustomEditorProps {
   editorProps?: EditorProps;
   enableHistory: boolean;
   disabledExtensions: TExtensions[];
-  extensions?: any;
+  extensions?: Extensions;
   fileHandler: TFileHandler;
   forwardedRef?: MutableRefObject<EditorRefApi | null>;
   handleEditorReady?: (value: boolean) => void;
   id?: string;
   initialValue?: string;
-  mentionHandler: {
-    highlights: () => Promise<IMentionHighlight[]>;
-    suggestions?: () => Promise<IMentionSuggestion[]>;
-  };
+  mentionHandler: TMentionHandler;
   onChange?: (json: object, html: string) => void;
   onTransaction?: () => void;
   autofocus?: boolean;
@@ -96,10 +92,7 @@ export const useEditor = (props: CustomEditorProps) => {
           disabledExtensions,
           enableHistory,
           fileHandler,
-          mentionConfig: {
-            mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
-            mentionHighlights: mentionHandler.highlights,
-          },
+          mentionHandler,
           placeholder,
           tabIndex,
         }),

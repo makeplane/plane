@@ -37,6 +37,7 @@
   "dependencies": {
     "@floating-ui/react": "^0.26.4",
     "@hocuspocus/provider": "^2.13.5",
+    "@plane/types": "*",
     "@plane/ui": "*",
     "@plane/utils": "*",
     "@tiptap/core": "^2.1.13",
