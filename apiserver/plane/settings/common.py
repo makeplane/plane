@@ -25,7 +25,10 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.instrumentation.django import DjangoInstrumentor
+from dotenv import load_dotenv
 
+# Load environment variables from .env file if it exists
+load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
