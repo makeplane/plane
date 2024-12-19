@@ -76,8 +76,8 @@ pipeline {
                         sh """
                             set +x
                             echo "Vault CONFIG: \${CONFIG}"   # Debugging, remove in production
-                            mkdir -p ${configStoragePath}
-                            echo "\${CONFIG}" > ${configStoragePath}/.env
+                            mkdir -p ../${configStoragePath}
+                            echo "\${CONFIG}" > ../${configStoragePath}/.env
                         """
 
                         // Debugging: Show the contents of the .env file (optional for development only)
