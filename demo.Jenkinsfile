@@ -96,7 +96,6 @@ pipeline {
                     steps {
                         buildDockerImage (
                             awsRegion : awsRegion,
-                            dockerBuildArgs : dockerBuildLevelArguments,
                             imageName : webImageName,
                             directoryPath : "web",
                             dockerfilePath : "web/Dockerfile.web"
