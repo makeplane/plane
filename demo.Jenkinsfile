@@ -75,7 +75,7 @@ pipeline {
                         sh """
                             set +x
                             mkdir -p ${configStoragePath}
-                            echo \"\${CONFIG}\" > ${configStoragePath}/env.json
+                            echo \"\${CONFIG}\" > ${configStoragePath}/.env
                         """
                     }
                 }
