@@ -50,7 +50,7 @@ EXPOSE 8000
 
 ARG CONFIG_FILES_PATH
 
-COPY $CONFIG_FILES_PATH/env.json config/env.json
+COPY $CONFIG_FILES_PATH/.env config/.env
 
 # ENV N8N_CONFIG_FILES=/home/node/config/env.json 
 
