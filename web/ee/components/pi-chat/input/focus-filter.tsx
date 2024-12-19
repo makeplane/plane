@@ -1,9 +1,9 @@
 import { isEmpty } from "lodash";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { cn } from "@plane/utils";
 import { EUserPermissions } from "@plane/types/src/enums";
 import { CustomSelect, Logo, ToggleSwitch, Tooltip } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { EUserPermissionsLevel } from "@/ce/constants";
 import { WorkspaceLogo } from "@/components/workspace";
 import { useProject, useUserPermissions, useWorkspace } from "@/hooks/store";

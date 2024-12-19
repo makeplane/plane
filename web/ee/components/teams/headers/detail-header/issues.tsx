@@ -1,9 +1,10 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane constants
+import { EIssuesStoreType } from "@plane/constants";
 // components
 import { Button } from "@plane/ui";
 // hooks
-import { EIssuesStoreType } from "@/constants/issue";
 import { useCommandPalette, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { TeamHeaderFilters } from "@/plane-web/components/teams/issues/filters";

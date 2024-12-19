@@ -1,9 +1,10 @@
 "use client";
+
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Sidebar } from "lucide-react";
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
 // types
 import { TIssue } from "@plane/types";
 // ui
@@ -11,8 +12,6 @@ import { Breadcrumbs, Header, EpicIcon } from "@plane/ui";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@/ce/constants";
 import { BreadcrumbLink, Logo } from "@/components/common";
-// constants
-import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks

@@ -3,8 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Rocket, TriangleAlert, CircleAlert } from "lucide-react";
-import { cn } from "@plane/utils";
 import { CustomMenu } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { EProjectUpdateStatus } from "@/plane-web/types";
 
 export const StatusOptions = [

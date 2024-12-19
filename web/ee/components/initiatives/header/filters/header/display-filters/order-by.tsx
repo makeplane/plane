@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
 // Plane-web
-import { TInitiativeOrderByOptions } from "@/plane-web/types/initiative";
 import { INITIATIVE_ORDER_BY_OPTIONS } from "@/plane-web/constants/initiative";
+import { TInitiativeOrderByOptions } from "@/plane-web/types/initiative";
 
 type Props = {
   selectedOrderBy: TInitiativeOrderByOptions | undefined;

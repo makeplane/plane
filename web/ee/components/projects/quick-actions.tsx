@@ -1,13 +1,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArchiveRestoreIcon, LinkIcon, MoreHorizontal, PenSquare, Settings, Trash2 } from "lucide-react";
+import { ArchiveRestoreIcon, LinkIcon, MoreHorizontal, Settings, Trash2 } from "lucide-react";
 import { ArchiveIcon, CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 import { TProject } from "@/plane-web/types/projects";
-import { cn } from "@plane/utils";
 
 type Props = {
   workspaceSlug: string;

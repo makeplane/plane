@@ -3,9 +3,9 @@ import { observer } from "mobx-react";
 // icons
 import { Users } from "lucide-react";
 // Plane
+import { useWorkspace } from "@/hooks/store";
 import { TInitiativeActivity } from "@/plane-web/types/initiative";
 // hooks;
-import { useWorkspace } from "@/hooks/store";
 // components
 import { InitiativeActivityBlockComponent } from "./common";
 

@@ -1,5 +1,5 @@
-import { cn } from "@plane/utils";
 import { IUser } from "@plane/types";
+import { cn } from "@plane/utils";
 import { TTemplate } from "@/plane-web/types";
 import SystemPrompts from "../system-prompts";
 

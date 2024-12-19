@@ -6,6 +6,8 @@ import useSWR from "swr";
 import { CalendarCheck } from "lucide-react";
 // headless ui
 import { Tab } from "@headlessui/react";
+// plane constants
+import { EIssuesStoreType } from "@plane/constants";
 // types
 import { IActiveCycle } from "@plane/types";
 // ui
@@ -17,7 +19,6 @@ import { StateDropdown } from "@/components/dropdowns";
 import { EmptyState } from "@/components/empty-state";
 import { EmptyStateType } from "@/constants/empty-state";
 import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
-import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";

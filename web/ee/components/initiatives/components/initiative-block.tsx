@@ -2,8 +2,8 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane
-import { cn } from "@plane/utils";
 import { InitiativeIcon } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
 // hooks

@@ -3,6 +3,8 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
 import { computedFn } from "mobx-utils";
+// plane constants
+import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 import {
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
@@ -12,8 +14,6 @@ import {
   TIssueParams,
   IssuePaginationOptions,
 } from "@plane/types";
-// constants
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
 // plane web services

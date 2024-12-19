@@ -2,7 +2,7 @@ import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// constants
+// plane constants
 import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 // types
 import {

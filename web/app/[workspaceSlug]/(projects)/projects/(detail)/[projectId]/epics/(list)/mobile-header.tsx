@@ -4,6 +4,8 @@ import { useCallback } from "react";
 import { useParams } from "next/navigation";
 // icons
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
+// plane constants
+import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
@@ -11,13 +13,7 @@ import { CustomMenu } from "@plane/ui";
 // components
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues/issue-layouts";
 // constants
-import {
-  EIssueFilterType,
-  EIssueLayoutTypes,
-  EIssuesStoreType,
-  ISSUE_LAYOUTS,
-  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
-} from "@/constants/issue";
+import { ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks

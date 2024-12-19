@@ -2,14 +2,13 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
-import { Loader } from "@plane/ui";
 import { useProjectUpdates } from "@/plane-web/hooks/store/projects/use-project-updates";
 import { TProjectUpdate } from "@/plane-web/types";
 import { UpdateBlock } from "./block";
 import { EmptyUpdates } from "./empty";
+import { UpdatesLoader } from "./loader";
 import { NewUpdate } from "./new-update";
 import { useUpdates } from "./use-updates";
-import { UpdatesLoader } from "./loader";
 
 export const ProjectUpdates = observer(() => {
   const { workspaceSlug, projectId } = useParams();

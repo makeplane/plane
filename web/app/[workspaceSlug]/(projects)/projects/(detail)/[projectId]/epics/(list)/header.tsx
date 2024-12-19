@@ -5,13 +5,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { Briefcase } from "lucide-react";
+// plane constants
+import { EIssuesStoreType } from "@plane/constants";
 // ui
 import { Breadcrumbs, Button, Tooltip, Header, EpicIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink, CountChip, Logo } from "@/components/common";
 import HeaderFilters from "@/components/issues/filters";
-// constants
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";

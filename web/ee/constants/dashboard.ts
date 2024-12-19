@@ -1,5 +1,3 @@
-// ee types
-import { TSidebarWorkspaceMenuItemKeys } from "ee/types/dashboard";
 // ui
 import { InitiativeIcon, PiChatLogo, TeamsIcon } from "@plane/ui";
 // ce constants
@@ -8,6 +6,8 @@ import {
   SIDEBAR_WORKSPACE_MENU as CE_SIDEBAR_WORKSPACE_MENU,
   TSidebarWorkspaceMenuItems,
 } from "@/ce/constants/dashboard";
+// plane web types
+import { TSidebarWorkspaceMenuItemKeys } from "@/plane-web/types/dashboard";
 // ee constants
 import { EUserPermissions } from "./user-permissions";
 

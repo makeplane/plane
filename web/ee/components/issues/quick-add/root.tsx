@@ -1,14 +1,14 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { UseFormRegister, UseFormSetFocus } from "react-hook-form";
+// plane constants
+import { EIssueLayoutTypes } from "@plane/constants";
 // types
 import { TIssue } from "@plane/types";
 // hooks
 import { QuickAddIssueFormRoot as BaseQuickAddIssueFormRoot } from "@/ce/components/issues/quick-add/";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues";
-// constants
-import { EIssueLayoutTypes } from "@/constants/issue";
 // plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
 

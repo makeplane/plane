@@ -5,6 +5,7 @@ import cloneDeep from "lodash/cloneDeep";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 // types
 import { IIssueFilterOptions, IProjectView } from "@plane/types";
 // components
@@ -13,7 +14,6 @@ import { AppliedFiltersList } from "@/components/issues";
 import { getAreFiltersEqual } from "@/components/issues/issue-layouts/utils";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { EViewAccess } from "@/constants/views";
 // hooks
 import { useIssues, useLabel, useUser, useUserPermissions } from "@/hooks/store";

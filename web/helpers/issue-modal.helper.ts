@@ -1,7 +1,8 @@
 import set from "lodash/set";
+// constants
+import { EIssuesStoreType } from "@plane/constants";
 // types
 import type { TIssue } from "@plane/types";
-import { EIssuesStoreType } from "@/constants/issue";
 
 export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { [key: string]: boolean | undefined }) {
   const changedFields = {};

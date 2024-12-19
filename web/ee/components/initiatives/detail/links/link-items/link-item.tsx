@@ -11,8 +11,8 @@ import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // Plane-web
-import { TInitiativeLink } from "@/plane-web/types/initiative";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+import { TInitiativeLink } from "@/plane-web/types/initiative";
 //
 import { TLinkOperationsModal } from "./links";
 

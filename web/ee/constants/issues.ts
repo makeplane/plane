@@ -1,5 +1,5 @@
 // types
-import { IIssueDisplayProperties, TIssueActivityComment } from "@plane/types";
+import { IIssueDisplayProperties, ILayoutDisplayFiltersOptions, TIssueActivityComment } from "@plane/types";
 // ce constants
 import {
   TActivityFilters as TActivityFiltersCe,
@@ -8,8 +8,6 @@ import {
 } from "@/ce/constants/issues";
 //
 import { TInitiativeActivityComment } from "../types/initiative";
-// constants
-import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
 
 export enum EActivityFilterTypeEE {
   WORKLOG = "WORKLOG",

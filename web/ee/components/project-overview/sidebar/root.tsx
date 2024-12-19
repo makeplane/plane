@@ -1,6 +1,7 @@
 "use client";
 
 import React, { FC } from "react";
+import { isEmpty } from "lodash";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Activity } from "lucide-react";
@@ -20,10 +21,9 @@ import { ProjectActivity } from "./project-activity";
 import { ProjectPropertiesSidebar } from "./properties";
 import { UpgradeProperties } from "./properties/upgrade";
 import { SidebarTabContent } from "./sidebar-tab-content";
+import { UpdatesLoader } from "./updates/loader";
 import { ProjectUpdates } from "./updates/root";
 import { UpgradeUpdates } from "./updates/upgrade";
-import { isEmpty } from "lodash";
-import { UpdatesLoader } from "./updates/loader";
 
 type TEpicDetailsSidebarProps = {
   project: TProject;

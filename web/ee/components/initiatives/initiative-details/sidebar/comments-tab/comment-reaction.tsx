@@ -103,9 +103,7 @@ export const InitiativeCommentReactions: FC<TInitiativeCommentReaction> = observ
 
   const getReactionUsers = (reactionEmoji: string): string => {
     const reactionUsers = (groupedReactionEmojis?.[reactionEmoji] || [])
-      .map((reaction) => {
-        return reaction ? getUserDetails(reaction.actor)?.display_name : null;
-      })
+      .map((reaction) => (reaction ? getUserDetails(reaction.actor)?.display_name : null))
       .filter((displayName): displayName is string => !!displayName);
 
     const formattedUsers = formatTextList(reactionUsers);

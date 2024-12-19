@@ -5,13 +5,14 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 // icons
 import { Briefcase, Circle, ExternalLink } from "lucide-react";
+// plane constants
+import { EIssuesStoreType } from "@plane/constants";
 // ui
 import { Breadcrumbs, Button, LayersIcon, Tooltip, Header, OverviewIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink, CountChip, Logo } from "@/components/common";
 // constants
 import HeaderFilters from "@/components/issues/filters";
-import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 // hooks

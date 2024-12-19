@@ -4,7 +4,7 @@ import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import useSWR from "swr";
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
 // types
 import { TIssue } from "@plane/types";
 // ui
@@ -14,7 +14,6 @@ import { EmptyState } from "@/components/common";
 import { IssuePeekOverview } from "@/components/issues";
 // constants
 import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "@/constants/event-tracker";
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
-import { cn } from "@plane/utils";
 import { CustomMenu } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { ProjectUpdateDeleteModal } from "./delete-update-modal";
 
 type TProps = {

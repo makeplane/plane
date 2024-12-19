@@ -7,8 +7,8 @@ import { Collapsible } from "@plane/ui";
 // Plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 //
-import { InitiativeProjectsCollapsibleTitle } from "./title";
 import { InitiativeProjectsCollapsibleContent } from "./content";
+import { InitiativeProjectsCollapsibleTitle } from "./title";
 
 type Props = {
   workspaceSlug: string;

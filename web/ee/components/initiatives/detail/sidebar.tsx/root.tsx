@@ -1,8 +1,8 @@
 "use client";
 
 import React, { FC, Fragment } from "react";
-import { Tab } from "@headlessui/react";
 import { Activity, Info, MessageSquare } from "lucide-react";
+import { Tab } from "@headlessui/react";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks

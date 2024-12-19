@@ -4,8 +4,8 @@ import { observer } from "mobx-react";
 // components
 import useSWR from "swr";
 import { Loader } from "@plane/ui";
-import { ProjectActivityService } from "@/plane-web/services";
 import { ActivityItem } from "@/components/common";
+import { ProjectActivityService } from "@/plane-web/services";
 // components
 
 type TProjectActivity = {

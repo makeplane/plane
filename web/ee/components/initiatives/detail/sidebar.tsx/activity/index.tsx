@@ -4,12 +4,12 @@ import { observer } from "mobx-react";
 import { TInitiativeActivity } from "@/plane-web/types/initiative";
 //
 import { InitiativeDefaultActivity } from "./default";
-import { InitiativeNameActivity } from "./name";
 import { InitiativeDescriptionActivity } from "./description";
+import { InitiativeLeadActivity } from "./lead";
+import { InitiativeLinkActivity } from "./link";
+import { InitiativeNameActivity } from "./name";
 import { InitiativeStartDateActivity } from "./start_date";
 import { InitiativeTargetDateActivity } from "./target_date";
-import { InitiativeLinkActivity } from "./link";
-import { InitiativeLeadActivity } from "./lead";
 
 type TInitiativeActivityItem = {
   activity: TInitiativeActivity;

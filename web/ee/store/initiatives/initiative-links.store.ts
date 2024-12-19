@@ -56,9 +56,7 @@ export class InitiativeLinkStore implements IInitiativeLinkStore {
     this.initiativeStore = _initiativeStore;
   }
 
-  getInitiativeLinks = computedFn((initiativeId: string) => {
-    return this.initiativeLinksMap[initiativeId];
-  });
+  getInitiativeLinks = computedFn((initiativeId: string) => this.initiativeLinksMap[initiativeId]);
 
   fetchInitiativeLinks = async (workspaceSlug: string, initiativeId: string): Promise<TInitiativeLink[]> => {
     try {
@@ -135,9 +133,7 @@ export class InitiativeLinkStore implements IInitiativeLinkStore {
       runInAction(() => {
         if (!this.initiativeLinksMap[initiativeId] || !Array.isArray(this.initiativeLinksMap[initiativeId])) return;
 
-        update(this.initiativeLinksMap, [initiativeId], (links: TInitiativeLink[]) => {
-          return links.filter((link) => link.id !== linkId);
-        });
+        update(this.initiativeLinksMap, [initiativeId], (links: TInitiativeLink[]) => links.filter((link) => link.id !== linkId));
       });
     } catch (e) {
       console.log("error while updating initiative Link", e);

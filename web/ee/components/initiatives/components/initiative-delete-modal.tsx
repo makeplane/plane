@@ -10,8 +10,8 @@ import { PROJECT_ERROR_MESSAGES } from "@/constants/project";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web
-import { TInitiative } from "@/plane-web/types/initiative";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+import { TInitiative } from "@/plane-web/types/initiative";
 
 interface IInitiativeDelete {
   initiative: TInitiative;

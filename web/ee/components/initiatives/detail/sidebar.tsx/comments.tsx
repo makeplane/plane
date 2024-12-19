@@ -4,12 +4,12 @@ import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 // Plane
 import { TFileSignedURLResponse } from "@plane/types";
+import { EFileAssetType } from "@plane/types/src/enums";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // Plane-web
-import { EFileAssetType } from "@plane/types/src/enums";
 import { EActivityFilterType } from "@/plane-web/constants";
-import { TInitiativeComment } from "@/plane-web/types/initiative";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+import { TInitiativeComment } from "@/plane-web/types/initiative";
 // services
 import { FileService } from "@/services/file.service";
 import { InitiativeActivityCommentRoot } from "./activity/activity-comment-root";

@@ -1,6 +1,6 @@
 import useSWR from "swr";
-import { cn } from "@plane/utils";
 import { Loader } from "@plane/ui";
+import { cn } from "@plane/utils";
 import projectService from "@/plane-web/services/project/project.service";
 import { TProject } from "@/plane-web/types";
 import { NoStats } from "./no-data";

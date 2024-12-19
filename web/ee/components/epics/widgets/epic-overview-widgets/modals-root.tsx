@@ -1,12 +1,11 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
 import { ISearchIssueResponse, TIssue } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "@/components/core";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web hooks

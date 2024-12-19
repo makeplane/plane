@@ -4,14 +4,14 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
+// plane constants
+import { EIssuesStoreType } from "@plane/constants";
 // types
 import { TIssue } from "@plane/types";
 // ui
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { DeleteIssueModal } from "@/components/issues";
-// constants
-import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";

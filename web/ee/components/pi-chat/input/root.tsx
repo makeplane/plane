@@ -3,13 +3,13 @@ import { useParams } from "next/navigation";
 import { ArrowUp, FileText } from "lucide-react";
 import { PiChatEditor } from "@plane/editor";
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { useUser } from "@/hooks/store";
 import { IssueIdentifier } from "@/plane-web/components/issues";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 
 import { IFormattedValue, IItem } from "@/plane-web/types";
 import { FocusFilter } from "./focus-filter";
-import { cn } from "@plane/utils";
 
 type TEditCommands = {
   getHTML: () => string;

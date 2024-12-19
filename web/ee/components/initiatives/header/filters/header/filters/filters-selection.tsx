@@ -2,12 +2,12 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 // components
+import { useMember } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+import { TInitiativeFilters } from "@/plane-web/types/initiative";
 import { FilterLead, FilterStartDate, FilterTargetDate } from "./";
 // hooks
-import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { TInitiativeFilters } from "@/plane-web/types/initiative";
-import { useMember } from "@/hooks/store";
 
 type Props = {
   filters: TInitiativeFilters;

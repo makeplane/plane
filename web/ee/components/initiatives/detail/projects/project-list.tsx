@@ -10,12 +10,12 @@ type ProjectListProps = {
 };
 
 export const ProjectList = observer((props: ProjectListProps) => {
-  const { workspaceSlug, projectIds, initiativeId, disabled } = props;
+  const { workspaceSlug, projectIds, initiativeId } = props;
 
   return (
     <>
       {projectIds.map((projectId) => (
-        <ProjectItem workspaceSlug={workspaceSlug} projectId={projectId} initiativeId={initiativeId} />
+        <ProjectItem key={projectId} workspaceSlug={workspaceSlug} projectId={projectId} initiativeId={initiativeId} />
       ))}
     </>
   );

@@ -2,11 +2,11 @@
 
 import { Fragment, MutableRefObject, forwardRef, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { cn } from "@plane/utils";
 // plane
 import { TIssueGroupByOptions, IIssueDisplayProperties } from "@plane/types";
 //
 import { Row } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { useMember, useWorkspace } from "@/hooks/store";
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { groupDetails } from "../board/utils";

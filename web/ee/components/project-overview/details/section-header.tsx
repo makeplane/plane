@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import { cn } from "@plane/utils";
 import { CollapsibleButton } from "@plane/ui";
+import { cn } from "@plane/utils";
 
 type TProps = {
   title: string;

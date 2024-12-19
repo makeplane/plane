@@ -77,9 +77,7 @@ export class InitiativeCommentActivityStore implements IInitiativeCommentActivit
     this.initiativeStore = _initiativeStore;
   }
 
-  getInitiativeComments = computedFn((initiativeId: string) => {
-    return this.initiativeCommentsMap[initiativeId];
-  });
+  getInitiativeComments = computedFn((initiativeId: string) => this.initiativeCommentsMap[initiativeId]);
 
   getActivityCommentByIssueId = computedFn((initiativeId: string) => {
     if (!initiativeId) return undefined;
@@ -196,9 +194,7 @@ export class InitiativeCommentActivityStore implements IInitiativeCommentActivit
         if (!this.initiativeCommentsMap[initiativeId] || !Array.isArray(this.initiativeCommentsMap[initiativeId]))
           return;
 
-        update(this.initiativeCommentsMap, [initiativeId], (comments: TInitiativeComment[]) => {
-          return comments.filter((comment) => comment.id !== commentId);
-        });
+        update(this.initiativeCommentsMap, [initiativeId], (comments: TInitiativeComment[]) => comments.filter((comment) => comment.id !== commentId));
       });
     } catch (e) {
       console.log("error while updating initiative Comment", e);
@@ -304,9 +300,7 @@ export class InitiativeCommentActivityStore implements IInitiativeCommentActivit
         update(
           this.initiativeCommentsMap[initiativeId][initiativeCommentIndex],
           ["comment_reactions"],
-          (reactions: TInitiativeReaction[]) => {
-            return reactions.filter((reaction) => reaction.id !== reactionId);
-          }
+          (reactions: TInitiativeReaction[]) => reactions.filter((reaction) => reaction.id !== reactionId)
         );
       });
     } catch (e) {

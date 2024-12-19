@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
 // types
 import type { TIssue } from "@plane/types";
 // ui
@@ -11,7 +11,6 @@ import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@p
 import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";
 // constants
 import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useEventTracker, useIssueDetail, useUser } from "@/hooks/store";

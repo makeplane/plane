@@ -1,23 +1,21 @@
 import { FC, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
+// plane constants
+import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
 import { EditorRefApi } from "@plane/editor";
-// types
-import { TIssueComment } from "@plane/types";
 // components
 import { LiteTextEditor } from "@/components/editor";
 // constants
-import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail, useWorkspace } from "@/hooks/store";
 // services
+import { TInitiativeComment } from "@/plane-web/types/initiative";
 import { FileService } from "@/services/file.service";
 // Plane-web
-import { TInitiativeComment } from "@/plane-web/types/initiative";
-//
 import { TInitiativeActivityOperations } from "../comments";
 
 const fileService = new FileService();

@@ -55,7 +55,7 @@ export const IssueTypeLogo: FC<Props> = (props) => {
             "bg-transparent": isEpic,
           },
           containerClassName
-        )} 
+        )}
       >
         {isEpic ? (
           <EpicIcon
