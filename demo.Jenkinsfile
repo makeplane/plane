@@ -42,7 +42,7 @@ def clusterName = "demo-applications-fargate"
 // def webhookServiceName = "demo-n8n-webhook"
 def apiServiceName = "demo-plane-apiserver"
 def celeryServiceName  = "demo-plane-celery"
-def cbeatServiceName  = "demo-plane-celerybeat"
+def cbeatServiceName  = "demo-plane-celery-beat"
 def frontEndServiceName  = "demo-plane-frontend"
 def adminPanelServiceName  = "demo-plane-admin-panel"
 
