@@ -52,7 +52,8 @@ EXPOSE 8000
 
 # Declare a build argument
 ARG ENV_FILE_PATH
-
+RUN echo "The value of ENV_FILE_PATH is: ${ENV_FILE_PATH}"
+RUN cat ${ENV_FILE_PATH}
 # Use the build argument
 COPY ${ENV_FILE_PATH} /app/.env
 
