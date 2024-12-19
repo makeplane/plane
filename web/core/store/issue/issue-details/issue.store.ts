@@ -49,6 +49,7 @@ export class IssueStore implements IIssueStore {
   // services
   serviceType;
   issueService;
+  epicService;
   issueArchiveService;
   issueDraftService;
 
@@ -62,6 +63,7 @@ export class IssueStore implements IIssueStore {
     // services
     this.serviceType = serviceType;
     this.issueService = new IssueService(serviceType);
+    this.epicService = new IssueService(EIssueServiceType.EPICS);
     this.issueArchiveService = new IssueArchiveService(serviceType);
     this.issueDraftService = new IssueDraftService();
   }
@@ -126,14 +128,12 @@ export class IssueStore implements IIssueStore {
     ) {
       // if typeId exists in epic projectEpics
       if (
-        this.rootIssueDetailStore.rootIssueStore.rootStore.issueTypes.projectEpics[projectId].id ===
+        this.rootIssueDetailStore.rootIssueStore.rootStore.issueTypes.projectEpics[projectId]?.id ===
         issue?.parent.type_id
       ) {
-        this.rootIssueDetailStore.rootIssueStore.rootStore.epic.issueDetail
-          .fetchIssue(workspaceSlug, projectId, issue?.parent?.id)
-          .then((res) => {
-            this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
-          });
+        this.epicService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
+          this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
+        });
       } else {
         this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
           this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
