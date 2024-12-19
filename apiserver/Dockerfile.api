@@ -46,7 +46,8 @@ RUN mkdir -p /code/plane/logs
 RUN chmod +x ./bin/*
 RUN chmod -R 777 /code
 
-# Expose container port and run entry point script
 EXPOSE 8000
+CMD gunicorn -w 2 -k uvicorn.workers.UvicornWorker plane.asgi:application --bind 0.0.0.0:8000 --max-requests 1200 --max-requests-jitter 1000 --access-logfile -
+# Expose container port and run entry point script
 
 
