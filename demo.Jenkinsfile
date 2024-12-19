@@ -27,7 +27,7 @@ vaultConfigFilesMap.each { envVariable, configFileName ->
 // Docker Based Configurations
 def awsRegion = "us-west-2"
 def dockerBuildLevelArguments = [
-    CONFIG_FILES_PATH : configStoragePath
+    ENV_FILE_PATH: configStoragePath
 ]
 
 def frontendImageName = "plane-frontend:latest"
