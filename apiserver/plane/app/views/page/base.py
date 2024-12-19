@@ -488,7 +488,7 @@ class PagesDescriptionViewSet(BaseViewSet):
                 yield b""
 
         response = StreamingHttpResponse(
-            page.description_binary, content_type="application/octet-stream"
+            stream_data(), content_type="application/octet-stream"
         )
         response["Content-Disposition"] = 'attachment; filename="page_description.bin"'
         return response
@@ -530,23 +530,21 @@ class PagesDescriptionViewSet(BaseViewSet):
 
         print("before base  64")
         # Get the base64 data from the request
-        base64_data = request.body
-        print("after base  64", base64_data)
+        base64_data = request.data.get("description_binary")
 
         # If base64 data is provided
         if base64_data:
             # Decode the base64 data to bytes
-            # new_binary_data = base64.b64decode(base64_data)
+            new_binary_data = base64.b64decode(base64_data)
             # capture the page transaction
             if request.data.get("description_html"):
                 page_transaction.delay(
                     new_value=request.data, old_value=existing_instance, page_id=pk
                 )
             # Store the updated binary data
-            page.description_binary = base64_data
-            # page.description_html = request.data.get("description_html")
-            # page.description = request.data.get("description")
-            print("before save")
+            page.description_binary = new_binary_data
+            page.description_html = request.data.get("description_html")
+            page.description = request.data.get("description")
             page.save()
             # Return a success response
             page_version.delay(

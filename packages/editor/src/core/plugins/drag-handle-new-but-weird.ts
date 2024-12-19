@@ -130,6 +130,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   let lastClientY = 0;
   let scrollAnimationFrame = null;
   let ghostElement: HTMLElement | null = null;
+  const initialMouseOffset = { x: 0, y: 0 };
   let mouseDownTime = 0;
 
   const handleMouseDown = (event: MouseEvent, view: EditorView) => {
@@ -158,7 +159,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
         up: 100,
         down: 100,
       };
-      const maxScrollSpeed = 50; // Increased max scroll speed
+      const maxScrollSpeed = 10;
       let scrollAmount = 0;
 
       const scrollRegionUp = scrollThreshold.up;
@@ -167,12 +168,12 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       // Calculate scroll amount based on mouse position
       if (lastClientY < scrollRegionUp) {
         const overflow = scrollRegionUp - lastClientY;
-        const ratio = Math.min(Math.pow(overflow / scrollThreshold.up, 1.5), 1); // Use a power of 1.5 for smoother acceleration
+        const ratio = Math.min(Math.pow(overflow / scrollThreshold.up, 2), 1);
         const speed = maxScrollSpeed * ratio;
         scrollAmount = -speed;
       } else if (lastClientY > scrollRegionDown) {
         const overflow = lastClientY - scrollRegionDown;
-        const ratio = Math.min(Math.pow(overflow / scrollThreshold.down, 1.5), 1);
+        const ratio = Math.min(Math.pow(overflow / scrollThreshold.down, 2), 1);
         const speed = maxScrollSpeed * ratio;
         scrollAmount = speed;
       }
@@ -180,22 +181,18 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       // Handle cases when mouse is outside the window
       if (lastClientY <= 0) {
         const overflow = scrollThreshold.up + Math.abs(lastClientY);
-        const ratio = Math.min(Math.pow(overflow / (scrollThreshold.up + 100), 1.5), 1);
-        const speed = maxScrollSpeed * 2 * ratio; // Double the speed when outside the window
+        const ratio = Math.min(Math.pow(overflow / (scrollThreshold.up + 100), 2), 1);
+        const speed = maxScrollSpeed * ratio;
         scrollAmount = -speed;
       } else if (lastClientY >= window.innerHeight) {
         const overflow = lastClientY - window.innerHeight + scrollThreshold.down;
-        const ratio = Math.min(Math.pow(overflow / (scrollThreshold.down + 100), 1.5), 1);
-        const speed = maxScrollSpeed * 2 * ratio; // Double the speed when outside the window
+        const ratio = Math.min(Math.pow(overflow / (scrollThreshold.down + 100), 2), 1);
+        const speed = maxScrollSpeed * ratio;
         scrollAmount = speed;
       }
 
       if (scrollAmount !== 0) {
-        // Use smooth scrolling for a more fluid animation
-        scrollableParent.scrollBy({
-          top: scrollAmount,
-          behavior: "smooth",
-        });
+        scrollableParent.scrollBy({ top: scrollAmount });
       }
 
       scrollAnimationFrame = requestAnimationFrame(scroll);
@@ -254,6 +251,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
 
         // Create ghost after selection is set
         const slice = view.state.selection.content();
+        console.log("slice", slice);
         ghostElement = createGhostElement(view, slice);
         document.body.appendChild(ghostElement);
 
