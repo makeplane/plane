@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useCallback, useEffect, useState } from "react";
+import React, { FC, useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { EIssueServiceType } from "@plane/constants";
 import { TIssue, TIssueServiceType } from "@plane/types";
@@ -97,9 +97,6 @@ export const SubIssuesCollapsibleContent: FC<Props> = observer((props) => {
 
   useEffect(() => {
     handleFetchSubIssues();
-    return () => {
-      handleFetchSubIssues();
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parentIssueId]);
 
