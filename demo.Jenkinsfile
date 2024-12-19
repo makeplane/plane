@@ -92,17 +92,17 @@ pipeline {
         }
         stage ("Build docker image") {
             parallel {
-                // stage ("Build Web Image") {
-                //     steps {
-                //         buildDockerImage (
-                //             awsRegion : awsRegion,
-                //             dockerBuildArgs : dockerBuildLevelArguments,
-                //             imageName : webImageName,
-                //             directoryPath : "web",
-                //             dockerfilePath : "web/Dockerfile.web"
-                //         )
-                //     }
-                // }
+                stage ("Build Web Image") {
+                    steps {
+                        buildDockerImage (
+                            awsRegion : awsRegion,
+                            dockerBuildArgs : dockerBuildLevelArguments,
+                            imageName : webImageName,
+                            directoryPath : "web",
+                            dockerfilePath : "web/Dockerfile.web"
+                        )
+                    }
+                }
                 // stage ("Build Admin Image") {
                 //     steps {
                 //         buildDockerImage (
