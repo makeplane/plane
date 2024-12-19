@@ -66,14 +66,14 @@ pipeline {
                     def secret = [
                     [
                         path: "${repository}/${projectEnv}", secretValues: [
-                            [envVar: 'CONFIG', vaultKey: 'config.json']
+                            [envVar: 'ENV', vaultKey: 'env.json']
                         ]]
                     ]
                     withVault(configuration: configuration, vaultSecrets: secret) {
                         sh """
                             set +x
                             mkdir -p ${configStoragePath}
-                            echo \"\${CONFIG}\" > ${configStoragePath}/config.json
+                            echo \"\${ENV}\" > ${configStoragePath}/env.json
                         """
                     }
                 }
