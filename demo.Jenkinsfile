@@ -72,11 +72,11 @@ pipeline {
                     ]
                     sh "echo ${secret}"
                     withVault(configuration: configuration, vaultSecrets: secret) {
-                        sh "echo ${secret}"
+                        sh "echo ${CONFIG}"
                         sh """
                             set +x
-                            mkdir -p ${ENV}
-                            echo \"\${ENV}\" > ${configStoragePath}/env.json
+                            mkdir -p ${configStoragePath}
+                            echo \"\${CONFIG}\" > ${configStoragePath}/env.json
                         """
                     }
                 }
