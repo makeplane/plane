@@ -56,7 +56,7 @@ ARG ENV_FILE_PATH
 # Use the build argument
 COPY ${ENV_FILE_PATH} /app/.env
 RUN export $(grep -v '^#' /app/.env | xargs) && \
-    echo "Environment variables set successfully"
+    echo "Environment ${ENV_FILE_PATH} variables set successfully"
 
 # For demonstration: Print an environment variable
 RUN echo "Database host: $POSTGRES_USER"
