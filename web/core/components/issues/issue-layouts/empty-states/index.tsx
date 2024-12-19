@@ -1,4 +1,4 @@
-import { EIssuesStoreType } from "@/constants/issue";
+import { EIssuesStoreType } from "@plane/constants";
 // plane web components
 import { TeamEmptyState, TeamViewEmptyState } from "@/plane-web/components/issues/issue-layouts/empty-states";
 // components
