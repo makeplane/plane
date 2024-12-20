@@ -170,11 +170,11 @@ class SubIssuesEndpoint(BaseAPIView):
         _ = [
             issue_activity.delay(
                 type="issue.activity.updated",
-                requested_data=json.dumps({"parent": str(issue_id)}),
+                requested_data=json.dumps({"parent_id": str(issue_id)}),
                 actor_id=str(request.user.id),
                 issue_id=str(sub_issue_id),
                 project_id=str(project_id),
-                current_instance=json.dumps({"parent": str(sub_issue_id)}),
+                current_instance=json.dumps({"parent_id": str(sub_issue_id)}),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),

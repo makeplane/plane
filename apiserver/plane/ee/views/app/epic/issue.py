@@ -169,11 +169,11 @@ class EpicIssuesEndpoint(BaseAPIView):
         _ = [
             issue_activity.delay(
                 type="issue.activity.updated",
-                requested_data=json.dumps({"epic_id": str(epic_id)}),
+                requested_data=json.dumps({"parent_id": str(epic_id)}),
                 actor_id=str(request.user.id),
-                issue_id=str(issue),
+                issue_id=str(issue.id),
                 project_id=str(project_id),
-                current_instance=json.dumps({"epic_id": str(issue)}),
+                current_instance=json.dumps({"parent_id": str(issue.id)}),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
