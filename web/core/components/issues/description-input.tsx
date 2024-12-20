@@ -18,7 +18,9 @@ import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { useWorkspace } from "@/hooks/store";
 // services
 import { FileService } from "@/services/file.service";
+import { ProjectService } from "@/services/project";
 const fileService = new FileService();
+const projectService = new ProjectService();
 
 export type IssueDescriptionInputProps = {
   containerClassName?: string;
@@ -117,6 +119,13 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                 }}
                 placeholder={
                   placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)
+                }
+                searchMentionCallback={async (payload) =>
+                  await projectService.searchEntity(
+                    workspaceSlug?.toString() ?? "",
+                    projectId?.toString() ?? "",
+                    payload
+                  )
                 }
                 containerClassName={containerClassName}
                 uploadFile={async (file) => {
