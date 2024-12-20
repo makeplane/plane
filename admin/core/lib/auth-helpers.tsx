@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { KeyRound, Mails } from "lucide-react";
 // plane packages
-import { SUPPORT_EMAIL, EAdminAuthErrorCodes } from "@plane/constants";
+import { SUPPORT_EMAIL, EAdminAuthErrorCodes, TAuthErrorInfo } from "@plane/constants";
 import { TGetBaseAuthenticationModeProps, TInstanceAuthenticationModes } from "@plane/types";
 import { resolveGeneralTheme } from "@plane/utils";
 // components
