@@ -3,8 +3,9 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { Editor } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
+// plane utils
+import { cn } from "@plane/utils";
 // helpers
-import { cn } from "@/helpers/common";
 import { DROPDOWN_NAVIGATION_KEYS, getNextValidIndex } from "@/helpers/tippy";
 // types
 import { TMentionHandler, TMentionSection, TMentionSuggestion } from "@/types";
