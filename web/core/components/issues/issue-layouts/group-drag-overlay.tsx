@@ -16,6 +16,7 @@ type Props = {
   dropErrorMessage?: string;
   orderBy: TIssueOrderByOptions | undefined;
   isDraggingOverColumn: boolean;
+  isEpic?: boolean;
 };
 
 export const GroupDragOverlay = (props: Props) => {
@@ -27,6 +28,7 @@ export const GroupDragOverlay = (props: Props) => {
     dropErrorMessage,
     orderBy,
     isDraggingOverColumn,
+    isEpic = false,
   } = props;
 
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
@@ -68,7 +70,7 @@ export const GroupDragOverlay = (props: Props) => {
                   The layout is ordered by <span className="font-semibold">{readableOrderBy}</span>.
                 </span>
               )}
-              <span>Drop here to move the issue.</span>
+              <span>{`Drop here to move the ${isEpic ? "epic" : "issue"}.`}</span>
             </>
           )}
         </div>

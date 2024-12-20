@@ -2,9 +2,9 @@
 import json
 import base64
 from datetime import datetime
-from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import connection
 from django.db.models import Exists, OuterRef, Q, Value, UUIDField
 from django.utils.decorators import method_decorator
@@ -33,6 +33,7 @@ from plane.db.models import (
     ProjectMember,
     ProjectPage,
     Project,
+    DeployBoard,
 )
 from plane.utils.error_codes import ERROR_CODES
 from ..base import BaseAPIView, BaseViewSet
@@ -111,6 +112,13 @@ class PageViewSet(BaseViewSet):
                 ),
             )
             .filter(project=True)
+            .annotate(
+                anchor=DeployBoard.objects.filter(
+                    entity_name="page",
+                    entity_identifier=OuterRef("pk"),
+                    workspace__slug=self.kwargs.get("slug"),
+                ).values("anchor")
+            )
             .distinct()
         )
 
@@ -384,6 +392,10 @@ class PageViewSet(BaseViewSet):
             workspace__slug=slug,
             entity_identifier=pk,
             entity_type="page",
+        ).delete()
+        # Delete the deploy board
+        DeployBoard.objects.filter(
+            entity_name="page", entity_identifier=pk, workspace__slug=slug
         ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

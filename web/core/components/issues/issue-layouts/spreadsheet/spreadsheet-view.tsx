@@ -117,6 +117,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                     layout={EIssueLayoutTypes.SPREADSHEET}
                     QuickAddButton={SpreadsheetAddIssueButton}
                     quickAddCallback={quickAddCallback}
+                    isEpic={isEpic}
                   />
                 )}
               </div>

@@ -1,5 +1,5 @@
 from .project import (
-    ProjectDeployBoardPublicSettingsEndpoint,
+    DeployBoardPublicSettingsEndpoint,
     WorkspaceProjectDeployBoardEndpoint,
     WorkspaceProjectAnchorEndpoint,
     ProjectMembersEndpoint,
