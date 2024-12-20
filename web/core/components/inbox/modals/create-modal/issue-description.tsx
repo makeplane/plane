@@ -21,7 +21,9 @@ import { useProjectInbox } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { FileService } from "@/services/file.service";
+import { ProjectService } from "@/services/project";
 const fileService = new FileService();
+const projectService = new ProjectService();
 
 type TInboxIssueDescription = {
   containerClassName?: string;
@@ -72,6 +74,9 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
       dragDropEnabled={false}
       onChange={(_description: object, description_html: string) => handleData("description_html", description_html)}
       placeholder={getDescriptionPlaceholder}
+      searchMentionCallback={async (payload) =>
+        await projectService.searchEntity(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "", payload)
+      }
       containerClassName={containerClassName}
       onEnterKeyPress={onEnterKeyPress}
       tabIndex={getIndex("description_html")}
