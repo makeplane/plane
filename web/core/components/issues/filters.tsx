@@ -2,6 +2,8 @@
 
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
+// plane constants
+import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { Button } from "@plane/ui";
@@ -9,7 +11,7 @@ import { Button } from "@plane/ui";
 import { ProjectAnalyticsModal } from "@/components/analytics";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
-import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType, ISSUE_STORE_TO_FILTERS_MAP } from "@/constants/issue";
+import { ISSUE_STORE_TO_FILTERS_MAP } from "@/constants/issue";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks

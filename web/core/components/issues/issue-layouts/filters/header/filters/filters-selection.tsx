@@ -3,7 +3,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Search, X } from "lucide-react";
 // types
-import { IIssueDisplayFilterOptions, IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueFilterOptions,
+  IIssueLabel,
+  ILayoutDisplayFiltersOptions,
+  IState,
+} from "@plane/types";
 // components
 import {
   FilterAssignees,
@@ -20,8 +26,6 @@ import {
   FilterModule,
   FilterIssueGrouping,
 } from "@/components/issues";
-// constants
-import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components

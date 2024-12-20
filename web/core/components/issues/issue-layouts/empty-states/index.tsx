@@ -1,4 +1,4 @@
-import { EIssuesStoreType } from "@/constants/issue";
+import { EIssuesStoreType } from "@plane/constants";
 // components
 import { ProjectArchivedEmptyState } from "./archived-issues";
 import { CycleEmptyState } from "./cycle";

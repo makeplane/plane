@@ -4,13 +4,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // types
+import { EIssuesStoreType } from "@plane/constants";
 import type { TBaseIssue, TIssue } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";
 // constants
 import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useEventTracker, useCycle, useIssues, useModule, useIssueDetail, useUser } from "@/hooks/store";
@@ -92,7 +92,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
 
   useEffect(() => {
     // fetching issue details
-    if (isOpen) fetchIssueDetail(data?.id);
+    if (isOpen) fetchIssueDetail(data?.id ?? data?.sourceIssueId);
 
     // if modal is closed, reset active project to null
     // and return to avoid activeProjectId being set to some other project
@@ -115,7 +115,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
 
     // clearing up the description state when we leave the component
     return () => setDescription(undefined);
-  }, [data, projectId, isOpen, activeProjectId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.project_id, data?.id, data?.sourceIssueId, projectId, isOpen, activeProjectId]);
 
   const addIssueToCycle = async (issue: TIssue, cycleId: string) => {
     if (!workspaceSlug || !issue.project_id) return;
@@ -187,19 +188,21 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       if (!response) throw new Error();
 
       // check if we should add issue to cycle/module
-      if (
-        payload.cycle_id &&
-        payload.cycle_id !== "" &&
-        (payload.cycle_id !== cycleId || storeType !== EIssuesStoreType.CYCLE)
-      ) {
-        await addIssueToCycle(response, payload.cycle_id);
-      }
-      if (
-        payload.module_ids &&
-        payload.module_ids.length > 0 &&
-        (!payload.module_ids.includes(moduleId?.toString()) || storeType !== EIssuesStoreType.MODULE)
-      ) {
-        await addIssueToModule(response, payload.module_ids);
+      if (!is_draft_issue) {
+        if (
+          payload.cycle_id &&
+          payload.cycle_id !== "" &&
+          (payload.cycle_id !== cycleId || storeType !== EIssuesStoreType.CYCLE)
+        ) {
+          await addIssueToCycle(response, payload.cycle_id);
+        }
+        if (
+          payload.module_ids &&
+          payload.module_ids.length > 0 &&
+          (!payload.module_ids.includes(moduleId?.toString()) || storeType !== EIssuesStoreType.MODULE)
+        ) {
+          await addIssueToModule(response, payload.module_ids);
+        }
       }
 
       // add other property values

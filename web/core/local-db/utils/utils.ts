@@ -174,7 +174,7 @@ export const clearOPFS = async (force = false) => {
     return;
   }
   // ts-ignore
-  for await (const entry of root.values()) {
+  for await (const entry of (root as any)?.values()) {
     if (entry.kind === "directory" && entry.name.startsWith(".ahp-")) {
       // A lock with the same name as the directory protects it from
       // being deleted.

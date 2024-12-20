@@ -2,12 +2,12 @@ import { useState } from "react";
 import { usePopper } from "react-popper";
 import { Info } from "lucide-react";
 // plane editor
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import { EditorRefApi } from "@plane/editor";
 // helpers
 import { getReadTimeFromWordsCount } from "@/helpers/date-time.helper";
 
 type Props = {
-  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
+  editorRef: EditorRefApi | null;
 };
 
 export const PageInfoPopover: React.FC<Props> = (props) => {

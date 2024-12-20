@@ -1,7 +1,12 @@
 import React from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueGroupByOptions } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  ILayoutDisplayFiltersOptions,
+  TIssueGroupByOptions,
+} from "@plane/types";
 // components
 import {
   FilterDisplayProperties,
@@ -10,8 +15,6 @@ import {
   FilterOrderBy,
   FilterSubGroupBy,
 } from "@/components/issues";
-// types
-import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions | undefined;
