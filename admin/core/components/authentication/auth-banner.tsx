@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Info, X } from "lucide-react";
-// helpers
-import { TAuthErrorInfo } from "@/helpers/authentication.helper";
+// plane constants
+import { TAuthErrorInfo } from "@plane/constants";
 
 type TAuthBanner = {
   bannerData: TAuthErrorInfo | undefined;

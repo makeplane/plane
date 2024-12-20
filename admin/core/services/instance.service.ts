@@ -1,4 +1,5 @@
-// types
+// plane internal packages
+import { API_BASE_URL } from "@plane/constants";
 import type {
   IFormattedInstanceConfiguration,
   IInstance,
@@ -7,7 +8,6 @@ import type {
   IInstanceInfo,
 } from "@plane/types";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 
 export class InstanceService extends APIService {
