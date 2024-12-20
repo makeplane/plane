@@ -114,7 +114,7 @@ class IntakeSettingEndpoint(BaseAPIView):
                 )
 
             user, new_user = User.objects.get_or_create(
-                email=f"{intake.id}-intake@plane.so",
+                email=f"{workspace.id}-intake@plane.so",
                 is_bot=True,
                 bot_type="INTAKE_BOT",
                 defaults={
