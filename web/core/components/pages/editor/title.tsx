@@ -31,9 +31,9 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
   });
 
   return (
-    <>
+    <div className="relative w-full flex-shrink-0 md:pl-5 px-4">
       {readOnly ? (
-        <h6 className={cn(titleClassName, "break-words")}>{title}</h6>
+        <h6 className={cn(titleClassName, "break-words pb-1.5")}>{title}</h6>
       ) : (
         <>
           <TextArea
@@ -71,6 +71,6 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
           </div>
         </>
       )}
-    </>
+    </div>
   );
 });
