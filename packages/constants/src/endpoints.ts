@@ -13,6 +13,14 @@ export const SITES_URL = encodeURI(`${SPACE_BASE_URL}${SPACE_BASE_PATH}/`);
 export const LIVE_BASE_URL = process.env.NEXT_PUBLIC_LIVE_BASE_URL || "";
 export const LIVE_BASE_PATH = process.env.NEXT_PUBLIC_LIVE_BASE_PATH || "";
 export const LIVE_URL = encodeURI(`${LIVE_BASE_URL}${LIVE_BASE_PATH}/`);
+// Web App Base Url
+export const WEB_BASE_URL = process.env.NEXT_PUBLIC_WEB_BASE_URL || "";
+export const WEB_BASE_PATH = process.env.NEXT_PUBLIC_WEB_BASE_PATH || "";
+export const WEB_URL = encodeURI(`${WEB_BASE_URL}${WEB_BASE_PATH}`);
 // plane website url
 export const WEBSITE_URL =
   process.env.NEXT_PUBLIC_WEBSITE_URL || "https://plane.so";
+
+// support email
+export const SUPPORT_EMAIL =
+  process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@plane.so";

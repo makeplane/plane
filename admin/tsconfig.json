@@ -5,7 +5,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["core/*"],
-      "@/helpers/*": ["helpers/*"],
       "@/public/*": ["public/*"],
       "@/plane-admin/*": ["ce/*"]
     }
