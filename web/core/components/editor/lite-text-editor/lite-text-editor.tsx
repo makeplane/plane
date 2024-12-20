@@ -1,20 +1,22 @@
 import React, { useState } from "react";
-// editor
+// plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
+// plane editor
 import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
-// types
-import { IUserLite } from "@plane/types";
 // components
-import { IssueCommentToolbar } from "@/components/editor";
+import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
-import { useMember, useMention, useUser } from "@/hooks/store";
+import { useEditorMention } from "@/hooks/use-editor-mention";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
+// services
+import { ProjectService } from "@/services/project";
+const projectService = new ProjectService();
 
 interface LiteTextEditorWrapperProps
   extends Omit<ILiteTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
@@ -48,23 +50,12 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   } = props;
   // states
   const [isFocused, setIsFocused] = useState(showToolbarInitially);
-  // store hooks
-  const { data: currentUser } = useUser();
-  const {
-    getUserDetails,
-    project: { getProjectMemberIds },
-  } = useMember();
   // editor flaggings
   const { liteTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
-  // derived values
-  const projectMemberIds = getProjectMemberIds(projectId);
-  const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
-  // use-mention
-  const { mentionHighlights, mentionSuggestions } = useMention({
-    workspaceSlug,
-    projectId,
-    members: projectMemberDetails,
-    user: currentUser ?? undefined,
+  // use editor mention
+  const { fetchMentions } = useEditorMention({
+    searchEntity: async (payload) =>
+      await projectService.searchEntity(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "", payload),
   });
   // file size
   const { maxFileSize } = useFileSize();
@@ -92,8 +83,12 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           workspaceSlug,
         })}
         mentionHandler={{
-          highlights: mentionHighlights,
-          suggestions: mentionSuggestions,
+          searchCallback: async (query) => {
+            const res = await fetchMentions(query);
+            if (!res) throw new Error("Failed in fetching mentions");
+            return res;
+          },
+          renderComponent: (props) => <EditorMentionsRoot {...props} />,
         }}
         placeholder={placeholder}
         containerClassName={cn(containerClassName, "relative")}
