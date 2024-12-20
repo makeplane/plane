@@ -12,11 +12,13 @@ import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
 // helpers
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 // hooks
-import { useMember, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store";
 // services
 import { TProject } from "@/plane-web/types";
 import { FileService } from "@/services/file.service";
+import { ProjectService } from "@/services/project";
 const fileService = new FileService();
+const projectService = new ProjectService();
 
 export type ProjectDescriptionInputProps = {
   containerClassName?: string;
@@ -59,9 +61,6 @@ export const ProjectDescriptionInput: FC<ProjectDescriptionInputProps> = observe
   );
 
   const { getWorkspaceBySlug } = useWorkspace();
-  const {
-    project: { projectMemberIds },
-  } = useMember();
   // computed values
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id as string;
 
@@ -95,10 +94,12 @@ export const ProjectDescriptionInput: FC<ProjectDescriptionInputProps> = observe
               id={project.id}
               initialValue={initialValue ?? ""}
               value={swrProjectDescription ?? null}
-              memberIds={projectMemberIds || []}
               workspaceSlug={workspaceSlug}
               workspaceId={workspaceId}
               projectId={project.id}
+              searchMentionCallback={async (payload) =>
+                await projectService.searchEntity(workspaceSlug?.toString() ?? "", project.id, payload)
+              }
               dragDropEnabled
               onChange={(_description: object, description_html: string) => {
                 setIsSubmitting("submitting");

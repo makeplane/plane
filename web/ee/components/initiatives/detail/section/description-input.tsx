@@ -16,6 +16,8 @@ import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { useMember, useWorkspace } from "@/hooks/store";
 // Plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
+// plane web types
 import { TInitiative } from "@/plane-web/types/initiative";
 // services
 import { FileService } from "@/services/file.service";
@@ -42,6 +44,10 @@ export const InitiativeDescriptionInput: FC<InitiativeDescriptionInputProps> = o
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
+  // use editor mention search
+  const { searchEntity } = useEditorMentionSearch({
+    memberIds: workspaceMemberIds ?? [],
+  });
 
   const { handleSubmit, reset, control } = useForm<TInitiative>({
     defaultValues: {
@@ -100,7 +106,6 @@ export const InitiativeDescriptionInput: FC<InitiativeDescriptionInputProps> = o
                 initialValue={localIssueDescription.description_html ?? "<p></p>"}
                 workspaceSlug={workspaceSlug}
                 workspaceId={workspaceId}
-                memberIds={workspaceMemberIds || []}
                 dragDropEnabled
                 onChange={(_description: object, description_html: string) => {
                   setIsSubmitting("submitting");
@@ -110,6 +115,7 @@ export const InitiativeDescriptionInput: FC<InitiativeDescriptionInputProps> = o
                 placeholder={
                   placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)
                 }
+                searchMentionCallback={searchEntity}
                 containerClassName={containerClassName}
                 uploadFile={async (file) => {
                   try {

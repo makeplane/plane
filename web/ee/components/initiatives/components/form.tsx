@@ -10,6 +10,8 @@ import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper"
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 // hooks
 import { useMember, useWorkspace } from "@/hooks/store";
+// plane web hooks
+import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
 // plane web components
 import { TInitiative } from "@/plane-web/types/initiative";
 // services
@@ -37,8 +39,10 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
-
-  // derived values
+  // use editor mention search
+  const { searchEntity } = useEditorMentionSearch({
+    memberIds: workspaceMemberIds ?? [],
+  });
 
   const validateForm = (data: Partial<TInitiative>) => {
     const newErrors: { name?: string; project_ids?: string } = {};
@@ -110,12 +114,12 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
               value={formData?.description_html}
               workspaceSlug={workspaceSlug.toString()}
               workspaceId={currentWorkspace.id}
-              memberIds={workspaceMemberIds || []}
               dragDropEnabled={false}
               onChange={(description_json: object, description_html: string) => {
                 handleFormDataChange("description_html", description_html);
               }}
               placeholder={getDescriptionPlaceholder}
+              searchMentionCallback={searchEntity}
               editorClassName="text-xs"
               containerClassName="resize-none min-h-24 max-h-64 overflow-y-scroll vertical-scrollbar scrollbar-sm text-xs border-[0.5px] border-custom-border-200 rounded-md px-3 py-2"
               tabIndex={2}

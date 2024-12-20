@@ -11,7 +11,7 @@ import {
   TRealtimeConfig,
   TServerHandler,
 } from "@plane/editor";
-// types
+// plane types
 import { EFileAssetType } from "@plane/types/src/enums";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
@@ -21,13 +21,14 @@ import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useMember, useUser, useWorkspace } from "@/hooks/store";
 import { useEditorMention } from "@/hooks/use-editor-mention";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { EditorAIMenu, IssueEmbedCard } from "@/plane-web/components/pages";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 import { useWorkspaceIssueEmbed } from "@/plane-web/hooks/use-workspace-issue-embed";
 // store
@@ -52,16 +53,23 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
+  const {
+    workspace: { workspaceMemberIds },
+  } = useMember();
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
-  const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
+  const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug?.toString())?.id ?? "") : "";
   const pageId = page?.id;
   const pageTitle = page?.name ?? "";
   const pageDescription = page?.description_html;
   const { isContentEditable, updateTitle } = page;
+  // use editor mention search
+  const { searchEntity } = useEditorMentionSearch({
+    memberIds: workspaceMemberIds ?? [],
+  });
   // use editor mention
   const { fetchMentions } = useEditorMention({
-    searchEntity: async (payload) => ({}),
+    searchEntity,
   });
   // editor flaggings
   const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());

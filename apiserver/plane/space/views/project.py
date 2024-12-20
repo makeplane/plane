@@ -9,7 +9,7 @@ from rest_framework.permissions import AllowAny
 # Module imports
 from .base import BaseAPIView
 from plane.app.serializers import DeployBoardSerializer
-from plane.db.models import Project, DeployBoard, ProjectMember
+from plane.db.models import Project, DeployBoard, ProjectMember, WorkspaceMember
 
 
 class DeployBoardPublicSettingsEndpoint(BaseAPIView):
@@ -72,18 +72,32 @@ class ProjectMembersEndpoint(BaseAPIView):
                 {"error": "Invalid anchor"}, status=status.HTTP_404_NOT_FOUND
             )
 
-        members = ProjectMember.objects.filter(
-            project=deploy_board.project,
-            workspace=deploy_board.workspace,
-            is_active=True,
-        ).values(
-            "id",
-            "member",
-            "member__first_name",
-            "member__last_name",
-            "member__display_name",
-            "member__avatar",
-            "project",
-            "workspace",
-        )
+        if deploy_board.project:
+            members = ProjectMember.objects.filter(
+                project=deploy_board.project,
+                workspace=deploy_board.workspace,
+                is_active=True,
+            ).values(
+                "id",
+                "member",
+                "member__first_name",
+                "member__last_name",
+                "member__display_name",
+                "member__avatar",
+                "project",
+                "workspace",
+            )
+        else:
+            members = WorkspaceMember.objects.filter(
+                workspace=deploy_board.workspace, is_active=True
+            ).values(
+                "id",
+                "member",
+                "member__first_name",
+                "member__last_name",
+                "member__display_name",
+                "member__avatar",
+                "workspace",
+            )
+
         return Response(members, status=status.HTTP_200_OK)

@@ -20,6 +20,7 @@ import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { useWorkspace } from "@/hooks/store";
 // plane web components
 import { useTeams } from "@/plane-web/hooks/store";
+import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
 // services
 import { FileService } from "@/services/file.service";
 
@@ -46,6 +47,10 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
   const { getTeamMemberIds } = useTeams();
   // derived values
   const teamMemberIds = teamDetail?.id ? (getTeamMemberIds(teamDetail.id) ?? []) : (formData?.member_ids ?? []);
+  // use editor mention search
+  const { searchEntity } = useEditorMentionSearch({
+    memberIds: teamMemberIds,
+  });
 
   const validateForm = (data: Partial<TTeam>) => {
     const newErrors: { name?: string } = {};
@@ -124,13 +129,13 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
             }
             workspaceSlug={workspaceSlug.toString()}
             workspaceId={currentWorkspace.id}
-            memberIds={teamMemberIds}
             dragDropEnabled={false}
             onChange={(description_json: object, description_html: string) => {
               handleFormDataChange("description_json", description_json);
               handleFormDataChange("description_html", description_html);
             }}
             placeholder={getDescriptionPlaceholder}
+            searchMentionCallback={searchEntity}
             editorClassName="text-xs"
             containerClassName="resize-none min-h-24 text-xs border-[0.5px] border-custom-border-200 rounded-md px-3 py-2"
             tabIndex={2}

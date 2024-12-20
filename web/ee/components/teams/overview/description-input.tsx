@@ -17,6 +17,7 @@ import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { useWorkspace } from "@/hooks/store";
 // plane web hooks
 import { useTeams } from "@/plane-web/hooks/store";
+import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
 // services
 import { FileService } from "@/services/file.service";
 
@@ -37,6 +38,10 @@ export const TeamDescriptionInput: FC<TeamDescriptionInputProps> = observer((pro
   const { getTeamMemberIds, updateTeamNameDescriptionLoader, updateTeam } = useTeams();
   // derived values
   const teamMemberIds = getTeamMemberIds(teamId) ?? [];
+  // use editor mention search
+  const { searchEntity } = useEditorMentionSearch({
+    memberIds: teamMemberIds,
+  });
 
   const { handleSubmit, reset, control, setValue } = useForm<TTeam>({
     defaultValues: {
@@ -102,7 +107,7 @@ export const TeamDescriptionInput: FC<TeamDescriptionInputProps> = observer((pro
                 initialValue={localTeamDescription.description_html ?? "<p></p>"}
                 workspaceSlug={workspaceSlug}
                 workspaceId={workspaceId}
-                memberIds={teamMemberIds}
+                searchMentionCallback={searchEntity}
                 dragDropEnabled
                 onChange={(description_json: object, description_html: string) => {
                   setIsSubmitting("submitting");
