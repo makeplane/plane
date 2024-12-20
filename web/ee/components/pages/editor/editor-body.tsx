@@ -12,16 +12,17 @@ import {
   TServerHandler,
 } from "@plane/editor";
 // types
-import { IUserLite } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // components
+import { EditorMentionsRoot } from "@/components/editor";
 import { PageContentBrowser, PageEditorTitle, PageContentLoader } from "@/components/pages";
 // helpers
 import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
-import { useMember, useUser, useWorkspace } from "@/hooks/store";
+import { useUser, useWorkspace } from "@/hooks/store";
+import { useEditorMention } from "@/hooks/use-editor-mention";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { EditorAIMenu, IssueEmbedCard } from "@/plane-web/components/pages";
@@ -29,7 +30,6 @@ import { EditorAIMenu, IssueEmbedCard } from "@/plane-web/components/pages";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 import { useWorkspaceIssueEmbed } from "@/plane-web/hooks/use-workspace-issue-embed";
-import { useWorkspaceMention } from "@/plane-web/hooks/use-workspace-mention";
 // store
 import { IWorkspacePageDetails } from "@/plane-web/store/pages/page";
 // services
@@ -53,22 +53,15 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
   // store hooks
   const { data: currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
-  const {
-    getUserDetails,
-    workspace: { workspaceMemberIds },
-  } = useMember();
   // derived values
   const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
   const pageId = page?.id;
   const pageTitle = page?.name ?? "";
   const pageDescription = page?.description_html;
   const { isContentEditable, updateTitle } = page;
-  const workspaceMemberDetails = workspaceMemberIds?.map((id) => getUserDetails(id) as IUserLite);
-  // use-mention
-  const { mentionHighlights, mentionSuggestions } = useWorkspaceMention({
-    workspaceSlug: workspaceSlug.toString(),
-    members: workspaceMemberDetails,
-    user: currentUser ?? undefined,
+  // use editor mention
+  const { fetchMentions } = useEditorMention({
+    searchEntity: async (payload) => ({}),
   });
   // editor flaggings
   const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
@@ -200,8 +193,12 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
             displayConfig={displayConfig}
             editorClassName="pl-10"
             mentionHandler={{
-              highlights: mentionHighlights,
-              suggestions: mentionSuggestions,
+              searchCallback: async (query) => {
+                const res = await fetchMentions(query);
+                if (!res) throw new Error("Failed in fetching mentions");
+                return res;
+              },
+              renderComponent: (props) => <EditorMentionsRoot {...props} />,
             }}
             embedHandler={{
               issue: {

@@ -13,7 +13,6 @@ import {
 } from "@tiptap/react";
 import MentionList from "./mention-list.js";
 import tippy from "tippy.js";
-import { IMentionHighlight } from "@/types/mention-suggestion.js";
 import { PiMentionNodeView } from "./mention-node-view.js";
 import { getTrimmedHTML } from "@/helpers/common.js";
 import { EnterKeyExtension } from "./extensions/enter-key-extension.js";
@@ -46,7 +45,7 @@ type PiChatEditorProps = {
 };
 
 interface CustomMentionOptions extends MentionOptions {
-  mentionHighlights: () => Promise<IMentionHighlight[]>;
+  mentionHighlights: () => Promise<string[]>;
   readonly?: boolean;
 }
 export const PiChatEditor = (props: PiChatEditorProps) => {

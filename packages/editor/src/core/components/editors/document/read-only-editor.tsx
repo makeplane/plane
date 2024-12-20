@@ -12,7 +12,7 @@ import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 // plane web types
 import { TReadOnlyEmbedConfig } from "@/plane-editor/types";
 // types
-import { EditorReadOnlyRefApi, IMentionHighlight, TDisplayConfig, TExtensions, TFileHandler } from "@/types";
+import { EditorReadOnlyRefApi, TDisplayConfig, TExtensions, TFileHandler, TReadOnlyMentionHandler } from "@/types";
 
 interface IDocumentReadOnlyEditor {
   disabledExtensions: TExtensions[];
@@ -25,9 +25,7 @@ interface IDocumentReadOnlyEditor {
   fileHandler: Pick<TFileHandler, "getAssetSrc">;
   tabIndex?: number;
   handleEditorReady?: (value: boolean) => void;
-  mentionHandler: {
-    highlights: () => Promise<IMentionHighlight[]>;
-  };
+  mentionHandler: TReadOnlyMentionHandler;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
 }
 

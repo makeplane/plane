@@ -5,14 +5,13 @@
 // @ts-nocheck
 import { useEffect, useState } from "react";
 import { NodeViewWrapper } from "@tiptap/react";
-// types
-import { IMentionHighlight } from "@/types";
+// plane utils
 import { cn } from "@plane/utils";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export const PiMentionNodeView = (props) => {
   // TODO: move it to web app
-  const [highlightsState, setHighlightsState] = useState<IMentionHighlight[]>();
+  const [highlightsState, setHighlightsState] = useState<string[]>();
 
   useEffect(() => {
     if (!props.extension.options.mentionHighlights) return;

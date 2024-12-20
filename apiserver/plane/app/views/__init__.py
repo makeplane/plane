@@ -159,8 +159,8 @@ from .page.base import (
 from .page.version import PageVersionEndpoint
 
 from .search.base import GlobalSearchEndpoint, SearchEndpoint
-
 from .search.issue import IssueSearchEndpoint
+
 from .search.workspace import WorkspaceSearchEndpoint, WorkspaceEntitySearchEndpoint
 
 from .external.base import (
@@ -225,10 +225,6 @@ from .integration.slack import SlackProjectSyncViewSet
 
 from .notification.base import MarkAllReadNotificationViewSet
 
-from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
-
-from .timezone.base import TimezoneEndpoint
-
 from .user.base import (
     AccountEndpoint,
     ProfileEndpoint,
@@ -236,3 +232,4 @@ from .user.base import (
     UserTokenVerificationEndpoint,
 )
 
+from .timezone.base import TimezoneEndpoint
