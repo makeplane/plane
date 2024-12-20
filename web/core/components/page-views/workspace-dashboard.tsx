@@ -19,11 +19,16 @@ import { cn } from "@/helpers/common.helper";
 import { useCommandPalette, useDashboard, useEventTracker, useProject, useUser, useUserProfile } from "@/hooks/store";
 import useSize from "@/hooks/use-window-size";
 
+//@to-do Add loader matching the layout
 const DashboardWidgets = dynamic(
   () => import("@/components/dashboard/home-dashboard-widgets").then((m) => m.DashboardWidgets),
   {
     ssr: false,
-    loading: () => <LogoSpinner />,
+    loading: () => (
+      <div className="h-full w-full flex items-center justify-center">
+        <LogoSpinner />
+      </div>
+    ),
   }
 );
 const IssuePeekOverview = dynamic(
