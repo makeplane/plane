@@ -1,6 +1,4 @@
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -12,14 +10,11 @@ type Props = {
 
 export const EditorUserMention: React.FC<Props> = observer((props) => {
   const { id } = props;
-  // params
-  const { workspaceSlug } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
   const { getMemberById } = useMember();
   // derived values
   const userDetails = getMemberById(id);
-  const profileLink = `/${workspaceSlug}/profile/${id}`;
 
   if (!userDetails) {
     return (
@@ -35,7 +30,7 @@ export const EditorUserMention: React.FC<Props> = observer((props) => {
         "bg-custom-primary-100/20 text-custom-primary-100": id === currentUser?.id,
       })}
     >
-      <Link href={profileLink}>@{userDetails?.member__display_name}</Link>
+      @{userDetails?.member__display_name}
     </div>
   );
 });
