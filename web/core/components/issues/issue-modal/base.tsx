@@ -92,7 +92,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
 
   useEffect(() => {
     // fetching issue details
-    if (isOpen) fetchIssueDetail(data?.id);
+    if (isOpen) fetchIssueDetail(data?.id ?? data?.sourceIssueId);
 
     // if modal is closed, reset active project to null
     // and return to avoid activeProjectId being set to some other project
@@ -115,7 +115,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
 
     // clearing up the description state when we leave the component
     return () => setDescription(undefined);
-  }, [data, projectId, isOpen, activeProjectId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.project_id, data?.id, data?.sourceIssueId, projectId, isOpen, activeProjectId]);
 
   const addIssueToCycle = async (issue: TIssue, cycleId: string) => {
     if (!workspaceSlug || !issue.project_id) return;
