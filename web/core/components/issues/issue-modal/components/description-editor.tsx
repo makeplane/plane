@@ -26,6 +26,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { AIService } from "@/services/ai.service";
 import { FileService } from "@/services/file.service";
+import { ProjectService } from "@/services/project";
 
 type TIssueDescriptionEditorProps = {
   control: Control<TIssue>;
@@ -49,6 +50,7 @@ type TIssueDescriptionEditorProps = {
 // services
 const aiService = new AIService();
 const fileService = new FileService();
+const projectService = new ProjectService();
 
 export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = observer((props) => {
   const {
@@ -188,6 +190,13 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                 ref={editorRef}
                 tabIndex={getIndex("description_html")}
                 placeholder={getDescriptionPlaceholder}
+                searchMentionCallback={async (payload) =>
+                  await projectService.searchEntity(
+                    workspaceSlug?.toString() ?? "",
+                    projectId?.toString() ?? "",
+                    payload
+                  )
+                }
                 containerClassName="pt-3 min-h-[120px]"
                 uploadFile={async (file) => {
                   try {
