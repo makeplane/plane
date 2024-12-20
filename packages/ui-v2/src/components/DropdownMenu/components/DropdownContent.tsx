@@ -76,7 +76,7 @@ export const DropdownContent = ({
               </div>
             )}
           </div>
-        )}{" "}
+        )}
         <ScrollArea.Root className=" ">
           <ScrollArea.Viewport className="h-full w-full max-h-[80vh]">
             {children}
@@ -88,12 +88,14 @@ export const DropdownContent = ({
                     {renderGroup ? renderGroup(group) : group}
                   </RadixDropdownMenu.Label>
                 )}
-                <DropdownItems
-                  items={groupedItems[group]}
-                  onSelect={(e, item) => onSelect && onSelect(e, item)}
-                  renderItem={renderItem}
-                  isItemDisabled={isItemDisabled}
-                />
+                {renderItem && (
+                  <DropdownItems
+                    items={groupedItems[group]}
+                    onSelect={(e, item) => onSelect && onSelect(e, item)}
+                    renderItem={renderItem}
+                    isItemDisabled={isItemDisabled}
+                  />
+                )}
               </RadixDropdownMenu.Group>
             ))}
           </ScrollArea.Viewport>
