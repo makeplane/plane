@@ -1,7 +1,6 @@
-// types
+// plane internal packages
+import { API_BASE_URL } from "@plane/constants";
 import type { IUser } from "@plane/types";
-// helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 

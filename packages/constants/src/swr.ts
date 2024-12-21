@@ -1,4 +1,4 @@
-export const SWR_CONFIG = {
+export const DEFAULT_SWR_CONFIG = {
   refreshWhenHidden: false,
   revalidateIfStale: false,
   revalidateOnFocus: false,
