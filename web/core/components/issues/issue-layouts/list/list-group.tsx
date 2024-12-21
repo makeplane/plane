@@ -284,6 +284,7 @@ export const ListGroup = observer((props: Props) => {
             dropErrorMessage={group.dropErrorMessage}
             orderBy={orderBy}
             isDraggingOverColumn={isDraggingOverColumn}
+            isEpic={isEpic}
           />
           {groupIssueIds && (
             <IssueBlocksList
@@ -312,6 +313,7 @@ export const ListGroup = observer((props: Props) => {
                 prePopulatedData={prePopulateQuickAddData(group_by, group.id)}
                 containerClassName="border-b border-t border-custom-border-200 bg-custom-background-100 "
                 quickAddCallback={quickAddCallback}
+                isEpic={isEpic}
               />
             </div>
           )}

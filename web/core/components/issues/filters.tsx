@@ -123,6 +123,7 @@ const HeaderFilters = observer((props: Props) => {
           states={projectStates}
           cycleViewDisabled={!currentProjectDetails?.cycle_view}
           moduleViewDisabled={!currentProjectDetails?.module_view}
+          isEpic={storeType === EIssuesStoreType.EPIC}
         />
       </FiltersDropdown>
       <FiltersDropdown title="Display" placement="bottom-end">
@@ -134,6 +135,7 @@ const HeaderFilters = observer((props: Props) => {
           handleDisplayPropertiesUpdate={handleDisplayProperties}
           cycleViewDisabled={!currentProjectDetails?.cycle_view}
           moduleViewDisabled={!currentProjectDetails?.module_view}
+          isEpic={storeType === EIssuesStoreType.EPIC}
         />
       </FiltersDropdown>
       {canUserCreateIssue ? (

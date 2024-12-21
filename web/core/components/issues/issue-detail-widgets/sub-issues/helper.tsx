@@ -22,12 +22,11 @@ export const useSubIssueOperations = (
 ): TSubIssueOperations => {
   const {
     subIssues: { setSubIssueHelpers },
-    fetchSubIssues,
     createSubIssues,
     updateSubIssue,
     deleteSubIssue,
   } = useIssueDetail();
-  const { removeSubIssue } = useIssueDetail(issueServiceType);
+  const { fetchSubIssues, removeSubIssue } = useIssueDetail(issueServiceType);
   const { captureIssueEvent } = useEventTracker();
   const pathname = usePathname();
 
@@ -39,7 +38,7 @@ export const useSubIssueOperations = (
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Link Copied!",
-            message: "Issue link copied to clipboard.",
+            message: `${issueServiceType === EIssueServiceType.ISSUES ? "Issue" : "Epic"} link copied to clipboard`,
           });
         });
       },
@@ -50,7 +49,7 @@ export const useSubIssueOperations = (
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
-            message: "Error fetching sub-issues",
+            message: `Error fetching ${issueServiceType === EIssueServiceType.ISSUES ? "issues" : "sub-issues"}`,
           });
         }
       },
@@ -60,13 +59,13 @@ export const useSubIssueOperations = (
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",
-            message: "Sub-issues added successfully",
+            message: `${issueServiceType === EIssueServiceType.ISSUES ? "Issues" : "Sub-issues"} added successfully`,
           });
         } catch (error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
-            message: "Error adding sub-issue",
+            message: `Error adding ${issueServiceType === EIssueServiceType.ISSUES ? "issues" : "sub-issues"}`,
           });
         }
       },
