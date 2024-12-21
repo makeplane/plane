@@ -9,3 +9,15 @@ export const SITE_KEYWORDS =
 export const SITE_URL = "https://app.plane.so/";
 export const TWITTER_USER_NAME =
   "Plane | Simple, extensible, open-source project management tool.";
+
+// Plane Sites Metadata
+export const SPACE_SITE_NAME =
+  "Plane Publish | Make your Plane boards and roadmaps pubic with just one-click. ";
+export const SPACE_SITE_TITLE =
+  "Plane Publish | Make your Plane boards public with one-click";
+export const SPACE_SITE_DESCRIPTION =
+  "Plane Publish is a customer feedback management tool built on top of plane.so";
+export const SPACE_SITE_KEYWORDS =
+  "software development, customer feedback, software, accelerate, code management, release management, project management, issue tracking, agile, scrum, kanban, collaboration";
+export const SPACE_SITE_URL = "https://app.plane.so/";
+export const SPACE_TWITTER_USER_NAME = "planepowers";

@@ -1,4 +1,9 @@
-import { TStateGroups } from "@plane/types";
+export type TStateGroups =
+  | "backlog"
+  | "unstarted"
+  | "started"
+  | "completed"
+  | "cancelled";
 
 export const STATE_GROUPS: {
   [key in TStateGroups]: {
@@ -34,4 +39,7 @@ export const STATE_GROUPS: {
   },
 };
 
-export const ARCHIVABLE_STATE_GROUPS = [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key];
+export const ARCHIVABLE_STATE_GROUPS = [
+  STATE_GROUPS.completed.key,
+  STATE_GROUPS.cancelled.key,
+];
