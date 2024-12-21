@@ -81,10 +81,10 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     editorClassName,
     enableHistory: false,
     extensions: [
-      SideMenuExtension({
-        aiEnabled: !disabledExtensions?.includes("ai"),
-        dragDropEnabled: true,
-      }),
+      // SideMenuExtension({
+      //   aiEnabled: !disabledExtensions?.includes("ai"),
+      //   dragDropEnabled: true,
+      // }),
       HeadingListExtension,
       Collaboration.configure({
         document: provider.document,
