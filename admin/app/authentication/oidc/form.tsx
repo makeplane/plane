@@ -1,10 +1,10 @@
 import { FC, useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-// types
+// plane internal packages
 import { IFormattedInstanceConfiguration, TInstanceOIDCAuthenticationConfigurationKeys } from "@plane/types";
-// ui
 import { Button, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import {
   ConfirmDiscardModal,
@@ -14,8 +14,6 @@ import {
   TCopyField,
   CodeBlock,
 } from "@/components/common";
-// helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -140,8 +138,7 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
       url: `${originURL}/auth/oidc/callback/`,
       description: (
         <>
-          We will generate this for you.Add this in the{" "}
-          <CodeBlock darkerShade>Sign-in redirect URI</CodeBlock> field of
+          We will generate this for you.Add this in the <CodeBlock darkerShade>Sign-in redirect URI</CodeBlock> field of
           your IdP.
         </>
       ),
@@ -152,8 +149,7 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
       url: `${originURL}/auth/oidc/logout/`,
       description: (
         <>
-          We will generate this for you. Add this in the{" "}
-          <CodeBlock darkerShade>Logout redirect URI</CodeBlock> field of
+          We will generate this for you. Add this in the <CodeBlock darkerShade>Logout redirect URI</CodeBlock> field of
           your IdP.
         </>
       ),

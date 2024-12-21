@@ -1,10 +1,10 @@
 import { FC, useState } from "react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
-// types
+// plane internal packages
 import { IFormattedInstanceConfiguration, TInstanceSAMLAuthenticationConfigurationKeys } from "@plane/types";
-// ui
 import { Button, TOAST_TYPE, TextArea, getButtonStyling, setToast } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import {
   ConfirmDiscardModal,
@@ -14,8 +14,6 @@ import {
   TCopyField,
   CodeBlock,
 } from "@/components/common";
-// helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useInstance } from "@/hooks/store";
 import { SAMLAttributeMappingTable } from "@/plane-admin/components/authentication";
@@ -112,10 +110,8 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
       url: `${originURL}/auth/saml/callback/`,
       description: (
         <>
-          We will generate this{" "}
-          <CodeBlock darkerShade>http-post request</CodeBlock> URL that you
-          should paste into your <CodeBlock darkerShade>ACS URL</CodeBlock>{" "}
-          or <CodeBlock darkerShade>Sign-in call back URL</CodeBlock> field
+          We will generate this <CodeBlock darkerShade>http-post request</CodeBlock> URL that you should paste into your{" "}
+          <CodeBlock darkerShade>ACS URL</CodeBlock> or <CodeBlock darkerShade>Sign-in call back URL</CodeBlock> field
           on your IdP.
         </>
       ),
@@ -126,11 +122,8 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
       url: `${originURL}/auth/saml/logout/`,
       description: (
         <>
-          We will generate this{" "}
-          <CodeBlock darkerShade>http-redirect request</CodeBlock> URL that
-          you should paste into your{" "}
-          <CodeBlock darkerShade>SLS URL</CodeBlock> or{" "}
-          <CodeBlock darkerShade>Logout URL</CodeBlock>
+          We will generate this <CodeBlock darkerShade>http-redirect request</CodeBlock> URL that you should paste into
+          your <CodeBlock darkerShade>SLS URL</CodeBlock> or <CodeBlock darkerShade>Logout URL</CodeBlock>
           field on your IdP.
         </>
       ),

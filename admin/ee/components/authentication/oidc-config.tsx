@@ -5,21 +5,16 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 // icons
 import { Settings2 } from "lucide-react";
-// types
+// plane internal packages
 import { TInstanceEnterpriseAuthenticationMethodKeys } from "@plane/types";
-// ui
 import { ToggleSwitch, getButtonStyling } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store";
 
 type Props = {
   disabled: boolean;
-  updateConfig: (
-    key: TInstanceEnterpriseAuthenticationMethodKeys,
-    value: string
-  ) => void;
+  updateConfig: (key: TInstanceEnterpriseAuthenticationMethodKeys, value: string) => void;
 };
 
 export const OIDCConfiguration: React.FC<Props> = observer((props) => {
@@ -28,20 +23,13 @@ export const OIDCConfiguration: React.FC<Props> = observer((props) => {
   const { formattedConfig } = useInstance();
   // derived values
   const enableOIDCConfig = formattedConfig?.IS_OIDC_ENABLED ?? "";
-  const isOIDCConfigured =
-    !!formattedConfig?.OIDC_CLIENT_ID && !!formattedConfig?.OIDC_CLIENT_SECRET;
+  const isOIDCConfigured = !!formattedConfig?.OIDC_CLIENT_ID && !!formattedConfig?.OIDC_CLIENT_SECRET;
 
   return (
     <>
       {isOIDCConfigured ? (
         <div className="flex items-center gap-4">
-          <Link
-            href="/authentication/oidc"
-            className={cn(
-              getButtonStyling("link-primary", "md"),
-              "font-medium"
-            )}
-          >
+          <Link href="/authentication/oidc" className={cn(getButtonStyling("link-primary", "md"), "font-medium")}>
             Edit
           </Link>
           <ToggleSwitch
@@ -58,10 +46,7 @@ export const OIDCConfiguration: React.FC<Props> = observer((props) => {
       ) : (
         <Link
           href="/authentication/oidc"
-          className={cn(
-            getButtonStyling("neutral-primary", "sm"),
-            "text-custom-text-300"
-          )}
+          className={cn(getButtonStyling("neutral-primary", "sm"), "text-custom-text-300")}
         >
           <Settings2 className="h-4 w-4 p-0.5 text-custom-text-300/80" />
           Configure

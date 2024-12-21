@@ -11,7 +11,7 @@ import { getAuthenticationModes as getCEAuthenticationModes } from "@/ce/compone
 // components
 import { AuthenticationMethodCard } from "@/components/authentication";
 // helpers
-import { getBaseAuthenticationModes } from "@/helpers/authentication.helper";
+import { getBaseAuthenticationModes } from "@/lib/auth-helpers";
 // plane admin components
 import { OIDCConfiguration, SAMLConfiguration } from "@/plane-admin/components/authentication";
 // images
