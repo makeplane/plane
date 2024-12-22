@@ -2,6 +2,7 @@ import set from "lodash/set";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+import { EIssueServiceType } from "@plane/constants";
 // types
 import { TIssue, TIssueServiceType } from "@plane/types";
 // helpers
@@ -28,6 +29,7 @@ export class IssueStore implements IIssueStore {
   // observables
   issuesMap: { [issue_id: string]: TIssue } = {};
   // service
+  serviceType;
   issueService;
 
   constructor(serviceType: TIssueServiceType) {
@@ -39,7 +41,7 @@ export class IssueStore implements IIssueStore {
       updateIssue: action,
       removeIssue: action,
     });
-
+    this.serviceType = serviceType;
     this.issueService = new IssueService(serviceType);
   }
 
@@ -85,7 +87,10 @@ export class IssueStore implements IIssueStore {
         set(this.issuesMap, [issueId, key], issue[key as keyof TIssue]);
       });
     });
-    updatePersistentLayer(issueId);
+
+    if (this.serviceType === EIssueServiceType.ISSUES) {
+      updatePersistentLayer(issueId);
+    }
   };
 
   /**

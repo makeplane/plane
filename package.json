@@ -1,4 +1,5 @@
 {
+  "name": "plane",
   "repository": "https://github.com/makeplane/plane.git",
   "version": "0.24.1",
   "license": "AGPL-3.0",
@@ -8,6 +9,8 @@
     "space",
     "admin",
     "live",
+    "silo",
+    "packages/silo/*",
     "packages/*"
   ],
   "scripts": {
@@ -19,11 +22,14 @@
     "clean": "turbo run clean",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
+  "resolutions": {
+    "nanoid": "^3.3.8",
+    "@todesktop/client-util/nanoid": "^3.3.8"
+  },
   "devDependencies": {
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "^0.5.4",
     "turbo": "^2.3.3"
   },
-  "packageManager": "yarn@1.22.22",
-  "name": "plane"
+  "packageManager": "yarn@1.22.22"
 }

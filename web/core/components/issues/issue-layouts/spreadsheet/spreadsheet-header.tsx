@@ -21,6 +21,7 @@ interface Props {
   isEstimateEnabled: boolean;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   selectionHelpers: TSelectionHelper;
+  isEpic?: boolean;
 }
 
 export const SpreadsheetHeader = observer((props: Props) => {
@@ -32,6 +33,7 @@ export const SpreadsheetHeader = observer((props: Props) => {
     isEstimateEnabled,
     spreadsheetColumnsList,
     selectionHelpers,
+    isEpic = false,
   } = props;
   // router
   const { projectId } = useParams();
@@ -62,7 +64,7 @@ export const SpreadsheetHeader = observer((props: Props) => {
                 />
               </div>
             )}
-            <span className="flex h-full w-full flex-grow items-center py-2.5">Issues</span>
+            <span className="flex h-full w-full flex-grow items-center py-2.5">{`${isEpic ? "Epics" : "Issues"}`}</span>
           </Row>
         </th>
 
@@ -74,6 +76,7 @@ export const SpreadsheetHeader = observer((props: Props) => {
             displayFilters={displayFilters}
             handleDisplayFilterUpdate={handleDisplayFilterUpdate}
             isEstimateEnabled={isEstimateEnabled}
+            isEpic={isEpic}
           />
         ))}
       </tr>
