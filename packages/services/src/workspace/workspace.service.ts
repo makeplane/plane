@@ -1,6 +1,6 @@
-// services
+import { API_BASE_URL } from "@plane/constants";
 import { IWorkspace, ILastActiveWorkspaceDetails, IWorkspaceSearchResults } from "@plane/types";
-import APIService from "../api.service";
+import { APIService } from "../api.service";
 
 /**
  * Service class for managing workspace operations
@@ -12,10 +12,9 @@ export class WorkspaceService extends APIService {
    * Creates an instance of WorkspaceService
    * @param {string} baseUrl - The base URL for API requests
    */
-  constructor(baseUrl: string) {
-    super(baseUrl);
+  constructor(BASE_URL?: string) {
+    super(BASE_URL || API_BASE_URL);
   }
-
   /**
    * Retrieves all workspaces for the current user
    * @returns {Promise<IWorkspace[]>} Promise resolving to an array of workspaces

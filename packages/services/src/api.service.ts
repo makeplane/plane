@@ -5,7 +5,7 @@ import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
  * Abstract base class for making HTTP requests using axios
  * @abstract
  */
-export default abstract class APIService {
+export abstract class APIService {
   protected baseURL: string;
   private axiosInstance: AxiosInstance;
 

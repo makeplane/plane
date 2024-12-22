@@ -1,8 +1,6 @@
-import type { IFavorite } from "@plane/types";
-// helpers
 import { API_BASE_URL } from "@plane/constants";
-// services
-import APIService from "../api.service";
+import type { IFavorite } from "@plane/types";
+import { APIService } from "@/api.service";
 
 /**
  * Service class for managing user favorites
@@ -10,12 +8,8 @@ import APIService from "../api.service";
  * @extends {APIService}
  */
 export class UserFavoriteService extends APIService {
-  /**
-   * Creates an instance of UserFavoriteService
-   * Initializes with the base API URL
-   */
-  constructor() {
-    super(API_BASE_URL);
+  constructor(BASE_URL?: string) {
+    super(BASE_URL || API_BASE_URL);
   }
 
   /**
