@@ -1,4 +1,4 @@
-import { EIssuesStoreType } from "@/constants/issue";
+import { EIssuesStoreType } from "@plane/constants";
 // components
 import { ProjectArchivedEmptyState } from "./archived-issues";
 import { CycleEmptyState } from "./cycle";
@@ -6,6 +6,7 @@ import { ProjectDraftEmptyState } from "./draft-issues";
 import { GlobalViewEmptyState } from "./global-view";
 import { ModuleEmptyState } from "./module";
 import { ProfileViewEmptyState } from "./profile-view";
+import { ProjectEpicsEmptyState } from "./project-epic";
 import { ProjectEmptyState } from "./project-issues";
 import { ProjectViewEmptyState } from "./project-view";
 
@@ -31,6 +32,8 @@ export const IssueLayoutEmptyState = (props: Props) => {
       return <GlobalViewEmptyState />;
     case EIssuesStoreType.PROFILE:
       return <ProfileViewEmptyState />;
+    case EIssuesStoreType.EPIC:
+      return <ProjectEpicsEmptyState />;
     default:
       return null;
   }

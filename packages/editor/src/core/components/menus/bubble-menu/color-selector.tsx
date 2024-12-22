@@ -1,10 +1,11 @@
 import { Dispatch, FC, SetStateAction } from "react";
 import { Editor } from "@tiptap/react";
 import { ALargeSmall, Ban } from "lucide-react";
+// plane utils
+import { cn } from "@plane/utils";
 // constants
 import { COLORS_LIST } from "@/constants/common";
 // helpers
-import { cn } from "@/helpers/common";
 import { BackgroundColorItem, TextColorItem } from "../menu-items";
 
 type Props = {

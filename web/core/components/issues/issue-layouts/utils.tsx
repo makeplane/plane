@@ -11,6 +11,7 @@ import uniq from "lodash/uniq";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { ContrastIcon } from "lucide-react";
 // plane types
+import { EIssuesStoreType } from "@plane/constants";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -30,13 +31,16 @@ import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "
 // components
 import { Logo } from "@/components/common";
 // constants
-import { ISSUE_PRIORITIES, EIssuesStoreType } from "@/constants/issue";
+import { ISSUE_PRIORITIES } from "@/constants/issue";
 import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // store
 import { store } from "@/lib/store-context";
+// plane web store
+import { getTeamProjectColumns } from "@/plane-web/components/issues/issue-layouts/utils";
+// store
 import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.store";
 
 export const HIGHLIGHT_CLASS = "highlight";
@@ -100,6 +104,7 @@ export const getGroupByColumns = ({
     labels: () => getLabelsColumns(isWorkspaceLevel),
     assignees: getAssigneeColumns,
     created_by: getCreatedByColumns,
+    team_project: getTeamProjectColumns,
   };
 
   // Get and return the columns for the specified group by option

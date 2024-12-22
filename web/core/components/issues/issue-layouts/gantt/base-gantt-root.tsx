@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
-import { ALL_ISSUES } from "@plane/constants";
+import { ALL_ISSUES, EIssueLayoutTypes, EIssuesStoreType } from "@plane/constants";
 import { TIssue } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
@@ -10,7 +10,6 @@ import { GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "@/component
 import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 import { QuickAddIssueRoot, IssueGanttBlock, GanttQuickAddIssueButton } from "@/components/issues";
 //constants
-import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 //hooks
@@ -27,16 +26,18 @@ import { IssueLayoutHOC } from "../issue-layout-HOC";
 interface IBaseGanttRoot {
   viewId?: string | undefined;
   isCompletedCycle?: boolean;
+  isEpic?: boolean;
 }
 
 export type GanttStoreType =
   | EIssuesStoreType.PROJECT
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
-  | EIssuesStoreType.PROJECT_VIEW;
+  | EIssuesStoreType.PROJECT_VIEW
+  | EIssuesStoreType.EPIC;
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
-  const { viewId, isCompletedCycle = false } = props;
+  const { viewId, isCompletedCycle = false, isEpic = false } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
 
@@ -123,8 +124,8 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
             loaderTitle="Issues"
             blockIds={issuesIds}
             blockUpdateHandler={updateIssueBlockStructure}
-            blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} />}
-            sidebarToRender={(props) => <IssueGanttSidebar {...props} showAllBlocks />}
+            blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} isEpic={isEpic} />}
+            sidebarToRender={(props) => <IssueGanttSidebar {...props} showAllBlocks isEpic={isEpic} />}
             enableBlockLeftResize={isAllowed}
             enableBlockRightResize={isAllowed}
             enableBlockMove={isAllowed}
@@ -136,6 +137,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
             canLoadMoreBlocks={nextPageResults}
             updateBlockDates={updateBlockDates}
             showAllBlocks
+            isEpic={isEpic}
           />
         </div>
       </TimeLineTypeContext.Provider>

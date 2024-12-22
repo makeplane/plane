@@ -61,7 +61,7 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
           <div className="grow">
             <div className="pb-1 text-base font-medium text-custom-text-100">Property changes</div>
             <div className="text-sm font-normal text-custom-text-300">
-              Notify me when issue's properties like assignees, priority, estimates or anything else changes.
+              Notify me when issue&apos;s properties like assignees, priority, estimates or anything else changes.
             </div>
           </div>
           <div className="shrink-0">

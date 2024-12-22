@@ -5,6 +5,7 @@ import size from "lodash/size";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
+import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 import { IIssueFilterOptions, ISearchIssueResponse } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
@@ -13,7 +14,6 @@ import { ExistingIssuesListModal } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useCommandPalette, useEventTracker, useIssues } from "@/hooks/store";
 

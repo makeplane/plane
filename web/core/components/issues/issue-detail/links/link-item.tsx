@@ -3,6 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Pencil, Trash2, LinkIcon, ExternalLink } from "lucide-react";
+import { EIssueServiceType } from "@plane/constants";
+import { TIssueServiceType } from "@plane/types";
 // ui
 import { Tooltip, TOAST_TYPE, setToast, CustomMenu } from "@plane/ui";
 // helpers
@@ -17,17 +19,18 @@ type TIssueLinkItem = {
   linkId: string;
   linkOperations: TLinkOperationsModal;
   isNotAllowed: boolean;
+  issueServiceType?: TIssueServiceType;
 };
 
 export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
   // props
-  const { linkId, linkOperations, isNotAllowed } = props;
+  const { linkId, linkOperations, isNotAllowed, issueServiceType = EIssueServiceType.ISSUES } = props;
   // hooks
   const {
     toggleIssueLinkModal: toggleIssueLinkModalStore,
     setIssueLinkData,
     link: { getLinkById },
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
   const { isMobile } = usePlatformOS();
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
