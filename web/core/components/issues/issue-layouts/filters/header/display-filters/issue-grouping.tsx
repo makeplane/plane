@@ -11,10 +11,11 @@ import { ISSUE_FILTER_OPTIONS } from "@/constants/issue";
 type Props = {
   selectedIssueType: TIssueGroupingFilters | undefined;
   handleUpdate: (val: TIssueGroupingFilters) => void;
+  isEpic?: boolean;
 };
 
 export const FilterIssueGrouping: React.FC<Props> = observer((props) => {
-  const { selectedIssueType, handleUpdate } = props;
+  const { selectedIssueType, handleUpdate, isEpic = false } = props;
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
@@ -23,7 +24,7 @@ export const FilterIssueGrouping: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title="Issue Grouping"
+        title={`${isEpic ? "Epic" : "Issue"} Grouping`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -34,7 +35,7 @@ export const FilterIssueGrouping: React.FC<Props> = observer((props) => {
               key={issueType?.key}
               isChecked={activeIssueType === issueType?.key ? true : false}
               onClick={() => handleUpdate(issueType?.key)}
-              title={issueType.title}
+              title={`${issueType.title} ${isEpic ? "Epics" : "Issues"}`}
               multiple={false}
             />
           ))}

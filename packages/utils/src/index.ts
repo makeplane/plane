@@ -6,3 +6,4 @@ export * from "./file";
 export * from "./issue";
 export * from "./string";
 export * from "./theme";
+export * from "./team";

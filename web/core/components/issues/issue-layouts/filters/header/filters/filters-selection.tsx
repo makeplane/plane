@@ -42,6 +42,7 @@ type Props = {
   states?: IState[] | undefined;
   cycleViewDisabled?: boolean;
   moduleViewDisabled?: boolean;
+  isEpic?: boolean;
 };
 
 export const FilterSelection: React.FC<Props> = observer((props) => {
@@ -56,6 +57,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
     states,
     cycleViewDisabled = false,
     moduleViewDisabled = false,
+    isEpic = false,
   } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -234,6 +236,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
                   type: val,
                 })
               }
+              isEpic={isEpic}
             />
           </div>
         )}

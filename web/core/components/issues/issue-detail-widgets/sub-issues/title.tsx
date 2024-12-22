@@ -38,7 +38,7 @@ export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
   return (
     <CollapsibleButton
       isOpen={isOpen}
-      title="Sub-issues"
+      title={`${issueServiceType === EIssueServiceType.EPICS ? "Issues" : "Sub-issues"}`}
       indicatorElement={
         <div className="flex items-center gap-1.5 text-custom-text-300 text-sm">
           <CircularProgressIndicator size={18} percentage={percentage} strokeWidth={3} />
