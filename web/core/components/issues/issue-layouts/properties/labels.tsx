@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { Tags } from "lucide-react";
@@ -11,15 +11,15 @@ import { IIssueLabel } from "@plane/types";
 // ui
 import { Tooltip } from "@plane/ui";
 // hooks
+import { cn } from "@plane/utils";
 import { useLabel } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { LabelDropdown } from "./label-dropdown";
-// constants
 
 export interface IIssuePropertyLabels {
   projectId: string | null;
   value: string[];
-  defaultOptions?: any;
+  defaultOptions?: unknown;
   onChange: (data: string[]) => void;
   disabled?: boolean;
   hideDropdownArrow?: boolean;
@@ -80,57 +80,111 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
 
   if (!value) return null;
 
-  let projectLabels: IIssueLabel[] = defaultOptions;
+  let projectLabels: IIssueLabel[] = defaultOptions as IIssueLabel[];
   if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
+
+  const NoLabel = useMemo(
+    () => (
+      <Tooltip position="top" tooltipHeading="Labels" tooltipContent="None" isMobile={isMobile} renderByDefault={false}>
+        <div
+          className={cn(
+            "flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
+            noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
+            fullWidth && "w-full"
+          )}
+        >
+          <Tags className="h-3.5 w-3.5" strokeWidth={2} />
+          {placeholderText}
+        </div>
+      </Tooltip>
+    ),
+    [placeholderText, fullWidth, noLabelBorder, isMobile]
+  );
+
+  const LabelSummary = useMemo(
+    () => (
+      <div
+        className={cn(
+          "flex h-5 flex-shrink-0 items-center justify-center rounded px-2.5 text-xs",
+          fullWidth && "w-full",
+          noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
+          disabled ? "cursor-not-allowed" : "cursor-pointer"
+        )}
+      >
+        <Tooltip
+          isMobile={isMobile}
+          position="top"
+          tooltipHeading="Labels"
+          tooltipContent={projectLabels
+            ?.filter((l) => value.includes(l?.id))
+            .map((l) => l?.name)
+            .join(", ")}
+          renderByDefault={false}
+        >
+          <div className="flex h-full items-center gap-1.5 text-custom-text-200">
+            <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
+            {`${value.length} Labels`}
+          </div>
+        </Tooltip>
+      </div>
+    ),
+    [fullWidth, disabled, noLabelBorder, isMobile, projectLabels, value]
+  );
+
+  const LabelItem = useCallback(
+    ({ label }: { label: IIssueLabel }) => (
+      <Tooltip
+        key={label.id}
+        position="top"
+        tooltipHeading="Labels"
+        tooltipContent={label?.name ?? ""}
+        isMobile={isMobile}
+        renderByDefault={renderByDefault}
+      >
+        <div
+          key={label?.id}
+          className={cn(
+            "flex overflow-hidden justify-center hover:bg-custom-background-80 max-w-full h-full flex-shrink-0 items-center rounded px-2.5 text-xs",
+            !disabled && "cursor-pointer",
+            fullWidth && "w-full",
+            noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300"
+          )}
+        >
+          <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-custom-text-200">
+            <span
+              className="h-2 w-2 flex-shrink-0 rounded-full"
+              style={{
+                backgroundColor: label?.color ?? "#000000",
+              }}
+            />
+            <div className="line-clamp-1 inline-block w-auto max-w-[200px] truncate">{label?.name}</div>
+          </div>
+        </div>
+      </Tooltip>
+    ),
+    [disabled, fullWidth, isMobile, noLabelBorder, renderByDefault]
+  );
 
   return (
     <>
       {value.length > 0 ? (
         value.length <= maxRender ? (
-          <>
-            {projectLabels
-              ?.filter((l) => value.includes(l?.id))
-              .map((label) => (
-                <LabelDropdown
-                  key={label.id}
-                  projectId={projectId}
-                  value={value}
-                  onChange={onChange}
-                  buttonClassName={buttonClassName}
-                  placement={placement}
-                  hideDropdownArrow={hideDropdownArrow}
-                  fullWidth={fullWidth}
-                  fullHeight={fullHeight}
-                  label={
-                    <Tooltip
-                      key={label.id}
-                      position="top"
-                      tooltipHeading="Labels"
-                      tooltipContent={label?.name ?? ""}
-                      isMobile={isMobile}
-                      renderByDefault={renderByDefault}
-                    >
-                      <div
-                        key={label?.id}
-                        className={`flex overflow-hidden justify-center hover:bg-custom-background-80 ${
-                          !disabled && "cursor-pointer"
-                        } h-full ${fullWidth && "w-full"} max-w-full flex-shrink-0 items-center rounded px-2.5 text-xs ${noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300"}`}
-                      >
-                        <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-custom-text-200">
-                          <span
-                            className="h-2 w-2 flex-shrink-0 rounded-full"
-                            style={{
-                              backgroundColor: label?.color ?? "#000000",
-                            }}
-                          />
-                          <div className="line-clamp-1 inline-block w-auto max-w-[200px] truncate">{label?.name}</div>
-                        </div>
-                      </div>
-                    </Tooltip>
-                  }
-                />
-              ))}
-          </>
+          projectLabels
+            ?.filter((l) => value.includes(l?.id))
+            .map((label) => (
+              <LabelDropdown
+                key={label.id}
+                projectId={projectId}
+                value={value}
+                onChange={onChange}
+                buttonClassName={buttonClassName}
+                placement={placement}
+                hideDropdownArrow={hideDropdownArrow}
+                fullWidth={fullWidth}
+                fullHeight={fullHeight}
+                label={<LabelItem label={label} />}
+              />
+            ))
         ) : (
           <LabelDropdown
             projectId={projectId}
@@ -141,29 +195,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             placement={placement}
             fullWidth={fullWidth}
             fullHeight={fullHeight}
-            label={
-              <div
-                className={`flex h-5 ${fullWidth && "w-full"} flex-shrink-0 items-center justify-center rounded px-2.5 text-xs ${
-                  disabled ? "cursor-not-allowed" : "cursor-pointer"
-                } ${noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300"}`}
-              >
-                <Tooltip
-                  isMobile={isMobile}
-                  position="top"
-                  tooltipHeading="Labels"
-                  tooltipContent={projectLabels
-                    ?.filter((l) => value.includes(l?.id))
-                    .map((l) => l?.name)
-                    .join(", ")}
-                  renderByDefault={false}
-                >
-                  <div className="flex h-full items-center gap-1.5 text-custom-text-200">
-                    <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
-                    {`${value.length} Labels`}
-                  </div>
-                </Tooltip>
-              </div>
-            }
+            label={LabelSummary}
           />
         )
       ) : (
@@ -176,24 +208,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           placement={placement}
           fullWidth={fullWidth}
           fullHeight={fullHeight}
-          label={
-            <Tooltip
-              position="top"
-              tooltipHeading="Labels"
-              tooltipContent="None"
-              isMobile={isMobile}
-              renderByDefault={false}
-            >
-              <div
-                className={`flex h-full ${fullWidth && "w-full"} items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
-                  noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300"
-                }`}
-              >
-                <Tags className="h-3.5 w-3.5" strokeWidth={2} />
-                {placeholderText}
-              </div>
-            </Tooltip>
-          }
+          label={NoLabel}
         />
       )}
     </>

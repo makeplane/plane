@@ -304,19 +304,6 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         </div>
       </WithDisplayPropertiesHOC>
 
-      {/* label */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
-        <IssuePropertyLabels
-          projectId={issue?.project_id || null}
-          value={issue?.label_ids || null}
-          defaultOptions={defaultLabelOptions}
-          onChange={handleLabel}
-          disabled={isReadOnly}
-          renderByDefault={isMobile}
-          hideDropdownArrow
-        />
-      </WithDisplayPropertiesHOC>
-
       {/* start date */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_date">
         <div className="h-5" onClick={handleEventPropagation}>
@@ -508,6 +495,20 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             <div className="text-xs">{issue.link_count}</div>
           </div>
         </Tooltip>
+      </WithDisplayPropertiesHOC>
+
+      {/* label */}
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
+        <IssuePropertyLabels
+          projectId={issue?.project_id || null}
+          value={issue?.label_ids || null}
+          defaultOptions={defaultLabelOptions}
+          onChange={handleLabel}
+          disabled={isReadOnly}
+          renderByDefault={isMobile}
+          hideDropdownArrow
+          maxRender={3}
+        />
       </WithDisplayPropertiesHOC>
     </div>
   );

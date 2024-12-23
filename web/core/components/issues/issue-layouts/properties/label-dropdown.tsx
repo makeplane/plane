@@ -4,10 +4,15 @@ import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Loader, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+// plane helper
 import { useOutsideClickDetector } from "@plane/hooks";
+// types
 import { IIssueLabel } from "@plane/types";
+// components
 import { ComboDropDown } from "@plane/ui";
+// constants
 import { getRandomLabelColor } from "@/constants/label";
+// hooks
 import { useLabel, useUserPermissions } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -81,24 +86,31 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
   let projectLabels: IIssueLabel[] = defaultOptions;
   if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
 
-  const options = projectLabels.map((label) => ({
-    value: label?.id,
-    query: label?.name,
-    content: (
-      <div className="flex items-center justify-start gap-2 overflow-hidden">
-        <span
-          className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
-          style={{
-            backgroundColor: label?.color,
-          }}
-        />
-        <div className="line-clamp-1 inline-block truncate">{label?.name}</div>
-      </div>
-    ),
-  }));
+  const options = useMemo(
+    () =>
+      projectLabels.map((label) => ({
+        value: label?.id,
+        query: label?.name,
+        content: (
+          <div className="flex items-center justify-start gap-2 overflow-hidden">
+            <span
+              className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
+              style={{
+                backgroundColor: label?.color,
+              }}
+            />
+            <div className="line-clamp-1 inline-block truncate">{label?.name}</div>
+          </div>
+        ),
+      })),
+    [projectLabels]
+  );
 
-  const filteredOptions =
-    query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
+  const filteredOptions = useMemo(
+    () =>
+      query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase())),
+    [options, query]
+  );
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
