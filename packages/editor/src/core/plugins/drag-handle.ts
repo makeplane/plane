@@ -1,5 +1,5 @@
-import { Fragment, Slice, Node } from "@tiptap/pm/model";
-import { NodeSelection, TextSelection } from "@tiptap/pm/state";
+import { Fragment, Slice, Node, Schema } from "@tiptap/pm/model";
+import { NodeSelection } from "@tiptap/pm/state";
 // @ts-expect-error __serializeForClipboard's is not exported
 import { __serializeForClipboard, EditorView } from "@tiptap/pm/view";
 // extensions
@@ -27,6 +27,10 @@ const acceleration = 0.2;
 const scrollDivisor = 1;
 
 const scrollParentCache = new WeakMap();
+
+function easeOutQuadAnimation(t: number) {
+  return t * (2 - t);
+}
 
 const createDragHandleElement = (): HTMLElement => {
   const dragHandleElement = document.createElement("button");
@@ -123,22 +127,6 @@ const nodePosAtDOMForBlockQuotes = (node: Element, view: EditorView) => {
   })?.inside;
 };
 
-const calcNodePos = (pos: number, view: EditorView, node: Element) => {
-  const maxPos = view.state.doc.content.size;
-  const safePos = Math.max(0, Math.min(pos, maxPos));
-  const $pos = view.state.doc.resolve(safePos);
-
-  if ($pos.depth > 1) {
-    if (node.matches("ul li, ol li")) {
-      // only for nested lists
-      const newPos = $pos.before($pos.depth);
-      return Math.max(0, Math.min(newPos, maxPos));
-    }
-  }
-
-  return safePos;
-};
-
 export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOptions => {
   let listType = "";
   let isDragging = false;
@@ -148,82 +136,16 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   let isMouseInsideWhileDragging = false;
   let currentScrollSpeed = 0;
 
+  const handleClick = (event: MouseEvent, view: EditorView) => {
+    handleNodeSelection(event, view, false, options);
+  };
+
   const handleDragStart = (event: DragEvent, view: EditorView) => {
-    view.focus();
+    const { listType: listTypeFromDragStart } = handleNodeSelection(event, view, true, options);
+    listType = listTypeFromDragStart;
     isDragging = true;
     lastClientY = event.clientY;
     scroll();
-    if (!event.dataTransfer) return;
-
-    const node = nodeDOMAtCoords({
-      x: event.clientX + 50 + options.dragHandleWidth,
-      y: event.clientY,
-    });
-
-    if (!(node instanceof Element)) return;
-
-    let draggedNodePos = nodePosAtDOM(node, view, options);
-    if (draggedNodePos == null || draggedNodePos < 0) return;
-    draggedNodePos = calcNodePos(draggedNodePos, view, node);
-
-    const { from, to } = view.state.selection;
-    const diff = from - to;
-
-    const fromSelectionPos = calcNodePos(from, view, node);
-    let differentNodeSelected = false;
-
-    const nodePos = view.state.doc.resolve(fromSelectionPos);
-
-    // Check if nodePos points to the top level node
-    if (nodePos.node().type.name === "doc") differentNodeSelected = true;
-    else {
-      const nodeSelection = NodeSelection.create(view.state.doc, nodePos.before());
-      // Check if the node where the drag event started is part of the current selection
-      differentNodeSelected = !(
-        draggedNodePos + 1 >= nodeSelection.$from.pos && draggedNodePos <= nodeSelection.$to.pos
-      );
-    }
-
-    if (!differentNodeSelected && diff !== 0 && !(view.state.selection instanceof NodeSelection)) {
-      const endSelection = NodeSelection.create(view.state.doc, to - 1);
-      const multiNodeSelection = TextSelection.create(view.state.doc, draggedNodePos, endSelection.$to.pos);
-      view.dispatch(view.state.tr.setSelection(multiNodeSelection));
-    } else {
-      // TODO FIX ERROR
-      const nodeSelection = NodeSelection.create(view.state.doc, draggedNodePos);
-      view.dispatch(view.state.tr.setSelection(nodeSelection));
-    }
-
-    // If the selected node is a list item, we need to save the type of the wrapping list e.g. OL or UL
-    if (view.state.selection instanceof NodeSelection && view.state.selection.node.type.name === "listItem") {
-      listType = node.parentElement!.tagName;
-    }
-
-    if (node.matches("blockquote")) {
-      let nodePosForBlockQuotes = nodePosAtDOMForBlockQuotes(node, view);
-      if (nodePosForBlockQuotes === null || nodePosForBlockQuotes === undefined) return;
-
-      const docSize = view.state.doc.content.size;
-      nodePosForBlockQuotes = Math.max(0, Math.min(nodePosForBlockQuotes, docSize));
-
-      if (nodePosForBlockQuotes >= 0 && nodePosForBlockQuotes <= docSize) {
-        // TODO FIX ERROR
-        const nodeSelection = NodeSelection.create(view.state.doc, nodePosForBlockQuotes);
-        view.dispatch(view.state.tr.setSelection(nodeSelection));
-      }
-    }
-
-    const slice = view.state.selection.content();
-    const { dom, text } = __serializeForClipboard(view, slice);
-
-    event.dataTransfer.clearData();
-    event.dataTransfer.setData("text/html", dom.innerHTML);
-    event.dataTransfer.setData("text/plain", text);
-    event.dataTransfer.effectAllowed = "copyMove";
-
-    event.dataTransfer.setDragImage(node, 0, 0);
-
-    view.dragging = { slice, move: event.ctrlKey };
   };
 
   const handleDragEnd = <TEvent extends DragEvent | FocusEvent>(event: TEvent, view?: EditorView) => {
@@ -258,10 +180,10 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     } else if (isDraggedOutsideWindow === "bottom") {
       targetScrollAmount = maxScrollSpeed * 5;
     } else if (lastClientY < scrollRegionUp) {
-      const ratio = easeOutQuad((scrollRegionUp - lastClientY) / scrollThreshold);
+      const ratio = easeOutQuadAnimation((scrollRegionUp - lastClientY) / scrollThreshold);
       targetScrollAmount = -maxScrollSpeed * ratio;
     } else if (lastClientY > scrollRegionDown) {
-      const ratio = easeOutQuad((lastClientY - scrollRegionDown) / scrollThreshold);
+      const ratio = easeOutQuadAnimation((lastClientY - scrollRegionDown) / scrollThreshold);
       targetScrollAmount = maxScrollSpeed * ratio;
     }
 
@@ -273,49 +195,6 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
 
     scrollAnimationFrame = requestAnimationFrame(scroll);
   }
-
-  function easeOutQuad(t) {
-    return t * (2 - t);
-  }
-
-  const handleClick = (event: MouseEvent, view: EditorView) => {
-    view.focus();
-
-    const node = nodeDOMAtCoords({
-      x: event.clientX + 50 + options.dragHandleWidth,
-      y: event.clientY,
-    });
-
-    if (!(node instanceof Element)) return;
-
-    if (node.matches("blockquote")) {
-      let nodePosForBlockQuotes = nodePosAtDOMForBlockQuotes(node, view);
-      if (nodePosForBlockQuotes === null || nodePosForBlockQuotes === undefined) return;
-
-      const docSize = view.state.doc.content.size;
-      nodePosForBlockQuotes = Math.max(0, Math.min(nodePosForBlockQuotes, docSize));
-
-      if (nodePosForBlockQuotes >= 0 && nodePosForBlockQuotes <= docSize) {
-        // TODO FIX ERROR
-        const nodeSelection = NodeSelection.create(view.state.doc, nodePosForBlockQuotes);
-        view.dispatch(view.state.tr.setSelection(nodeSelection));
-      }
-      return;
-    }
-
-    let nodePos = nodePosAtDOM(node, view, options);
-
-    if (nodePos === null || nodePos === undefined) return;
-
-    // Adjust the nodePos to point to the start of the node, ensuring NodeSelection can be applied
-    nodePos = calcNodePos(nodePos, view, node);
-
-    // Use NodeSelection to select the node at the calculated position
-    const nodeSelection = NodeSelection.create(view.state.doc, nodePos);
-
-    // Dispatch the transaction to update the selection
-    view.dispatch(view.state.tr.setSelection(nodeSelection));
-  };
 
   let dragHandleElement: HTMLElement | null = null;
   // drag handle view actions
@@ -333,7 +212,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     dragHandleElement.addEventListener("contextmenu", (e) => handleClick(e, view));
 
     const dragOverHandler = (e: DragEvent) => {
-      event.preventDefault();
+      e.preventDefault();
       if (isDragging) {
         lastClientY = e.clientY;
       }
@@ -414,29 +293,36 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
 
       const resolvedPos = view.state.doc.resolve(dropPos.pos);
       let isDroppedInsideList = false;
+      let dropDepth = 0;
 
       // Traverse up the document tree to find if we're inside a list item
       for (let i = resolvedPos.depth; i > 0; i--) {
         if (resolvedPos.node(i).type.name === "listItem") {
           isDroppedInsideList = true;
+          dropDepth = i;
           break;
         }
       }
 
-      // If the selected node is a list item and is not dropped inside a list, we need to wrap it inside <ol> tag otherwise ol list items will be transformed into ul list item when dropped
-      if (
-        view.state.selection instanceof NodeSelection &&
-        view.state.selection.node.type.name === "listItem" &&
-        !isDroppedInsideList &&
-        listType == "OL"
-      ) {
-        const text = droppedNode.textContent;
-        if (!text) return;
-        const paragraph = view.state.schema.nodes.paragraph?.createAndFill({}, view.state.schema.text(text));
-        const listItem = view.state.schema.nodes.listItem?.createAndFill({}, paragraph);
+      // Handle nested list items and task items
+      if (droppedNode.type.name === "listItem") {
+        let slice = view.state.selection.content();
+        let newFragment = slice.content;
 
-        const newList = view.state.schema.nodes.orderedList?.createAndFill(null, listItem);
-        const slice = new Slice(Fragment.from(newList), 0, 0);
+        // If dropping outside a list or at a different depth, adjust the structure
+        if (!isDroppedInsideList || dropDepth !== resolvedPos.depth) {
+          // Flatten the structure if needed
+          newFragment = flattenListStructure(newFragment, view.state.schema);
+        }
+
+        // Wrap in appropriate list type if dropped outside a list
+        if (!isDroppedInsideList) {
+          const listNodeType =
+            listType === "OL" ? view.state.schema.nodes.orderedList : view.state.schema.nodes.bulletList;
+          newFragment = Fragment.from(listNodeType.create(null, newFragment));
+        }
+
+        slice = new Slice(newFragment, slice.openStart, slice.openEnd);
         view.dragging = { slice, move: event.ctrlKey };
       }
     },
@@ -449,4 +335,91 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     view,
     domEvents,
   };
+};
+
+// Helper function to flatten nested list structure
+function flattenListStructure(fragment: Fragment, schema: Schema): Fragment {
+  const result: Node[] = [];
+  fragment.forEach((node) => {
+    if (node.type === schema.nodes.listItem || node.type === schema.nodes.taskItem) {
+      result.push(node);
+      if (
+        node.content.firstChild &&
+        (node.content.firstChild.type === schema.nodes.bulletList ||
+          node.content.firstChild.type === schema.nodes.orderedList)
+      ) {
+        const sublist = node.content.firstChild;
+        const flattened = flattenListStructure(sublist.content, schema);
+        flattened.forEach((subNode) => result.push(subNode));
+      }
+    }
+  });
+  return Fragment.from(result);
+}
+
+const handleNodeSelection = (
+  event: MouseEvent | DragEvent,
+  view: EditorView,
+  isDragStart: boolean,
+  options: SideMenuPluginProps
+) => {
+  let listType = "";
+  view.focus();
+
+  const node = nodeDOMAtCoords({
+    x: event.clientX + 50 + options.dragHandleWidth,
+    y: event.clientY,
+  });
+
+  if (!(node instanceof Element)) return;
+
+  let draggedNodePos = nodePosAtDOM(node, view, options);
+  if (draggedNodePos == null || draggedNodePos < 0) return;
+
+  // Handle blockquotes separately
+  if (node.matches("blockquote")) {
+    draggedNodePos = nodePosAtDOMForBlockQuotes(node, view);
+    if (draggedNodePos === null || draggedNodePos === undefined) return;
+  } else {
+    // Resolve the position to get the parent node
+    const $pos = view.state.doc.resolve(draggedNodePos);
+
+    // If it's a nested list item or task item, move up to the item level
+    if (($pos.parent.type.name === "listItem" || $pos.parent.type.name === "taskItem") && $pos.depth > 1) {
+      draggedNodePos = $pos.before($pos.depth);
+    }
+  }
+
+  const docSize = view.state.doc.content.size;
+  draggedNodePos = Math.max(0, Math.min(draggedNodePos, docSize));
+
+  // Use NodeSelection to select the node at the calculated position
+  const nodeSelection = NodeSelection.create(view.state.doc, draggedNodePos);
+
+  // Dispatch the transaction to update the selection
+  view.dispatch(view.state.tr.setSelection(nodeSelection));
+
+  if (isDragStart) {
+    // Additional logic for drag start
+    if (event instanceof DragEvent && !event.dataTransfer) return;
+
+    if (nodeSelection.node.type.name === "listItem" || nodeSelection.node.type.name === "taskItem") {
+      listType = node.closest("ol, ul")?.tagName || "";
+    }
+
+    const slice = view.state.selection.content();
+    const { dom, text } = __serializeForClipboard(view, slice);
+
+    if (event instanceof DragEvent) {
+      event.dataTransfer.clearData();
+      event.dataTransfer.setData("text/html", dom.innerHTML);
+      event.dataTransfer.setData("text/plain", text);
+      event.dataTransfer.effectAllowed = "copyMove";
+      event.dataTransfer.setDragImage(node, 0, 0);
+    }
+
+    view.dragging = { slice, move: event.ctrlKey };
+  }
+
+  return { listType };
 };
