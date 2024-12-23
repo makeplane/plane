@@ -1,4 +1,4 @@
-import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
+import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import isEmpty from "lodash/isEmpty";
 import { v4 as uuidv4 } from "uuid";
 // plane constants

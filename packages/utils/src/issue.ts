@@ -1,10 +1,5 @@
-import { differenceInCalendarDays } from "date-fns";
-import {
-  ISSUE_PRIORITY_FILTERS,
-  STATE_GROUPS,
-  TIssuePriorities,
-  TIssueFilterPriorityObject
-} from "@plane/constants";
+import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
+import { ISSUE_PRIORITY_FILTERS, STATE_GROUPS, TIssuePriorities, TIssueFilterPriorityObject } from "@plane/constants";
 import { TStateGroups } from "@plane/types";
 import { getDate } from "./datetime";
 
