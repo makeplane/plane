@@ -110,7 +110,7 @@ export const Dropdown: FC<ISingleSelectDropdown> = (props) => {
   // hooks
   const handleKeyDown = useDropdownKeyPressed(toggleDropdown, handleClose);
 
-  useOutsideClickDetector(dropdownRef, handleClose);
+  useOutsideClickDetector(dropdownRef, handleClose, true);
 
   return (
     <Combobox
