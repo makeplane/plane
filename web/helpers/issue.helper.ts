@@ -1,4 +1,4 @@
-import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
+import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import { v4 as uuidv4 } from "uuid";
