@@ -2,24 +2,18 @@
 
 import { FC, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-// services
 import { Eye, EyeOff } from "lucide-react";
+// plane internal packages
+import { API_BASE_URL, EAdminAuthErrorCodes, TAuthErrorInfo } from "@plane/constants";
 import { Button, Input, Spinner } from "@plane/ui";
 // components
 import { Banner } from "@/components/common";
 // helpers
-import {
-  authErrorHandler,
-  EAuthenticationErrorCodes,
-  EErrorAlertType,
-  TAuthErrorInfo,
-} from "@/helpers/authentication.helper";
-
-import { API_BASE_URL } from "@/helpers/common.helper";
+import { authErrorHandler } from "@/lib/auth-helpers";
+// services
 import { AuthService } from "@/services/auth.service";
+// local components
 import { AuthBanner } from "../authentication";
-// ui
-// icons
 
 // service initialization
 const authService = new AuthService();
@@ -102,7 +96,7 @@ export const InstanceSignInForm: FC = (props) => {
 
   useEffect(() => {
     if (errorCode) {
-      const errorDetail = authErrorHandler(errorCode?.toString() as EAuthenticationErrorCodes);
+      const errorDetail = authErrorHandler(errorCode?.toString() as EAdminAuthErrorCodes);
       if (errorDetail) {
         setErrorInfo(errorDetail);
       }

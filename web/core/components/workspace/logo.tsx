@@ -1,5 +1,6 @@
+// plane utils
+import { cn } from "@plane/utils";
 // helpers
-import { cn } from "@plane/editor";
 import { getFileURL } from "@/helpers/file.helper";
 
 type Props = {

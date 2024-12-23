@@ -1,5 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { BubbleMenu, BubbleMenuProps, Editor, isNodeSelection } from "@tiptap/react";
+// plane utils
+import { cn } from "@plane/utils";
 // components
 import {
   BoldItem,
@@ -13,8 +15,6 @@ import {
 } from "@/components/menus";
 // extensions
 import { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
-// helpers
-import { cn } from "@/helpers/common";
 // local components
 import { TextAlignmentSelector } from "./alignment-selector";
 

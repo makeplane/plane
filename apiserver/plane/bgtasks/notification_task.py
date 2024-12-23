@@ -1,6 +1,8 @@
 # Python imports
 import json
 import uuid
+from uuid import UUID
+
 
 # Module imports
 from plane.db.models import (
@@ -16,8 +18,9 @@ from plane.db.models import (
     IssueComment,
     IssueActivity,
     UserNotificationPreference,
-    ProjectMember
+    ProjectMember,
 )
+from django.db.models import Subquery
 
 # Third Party imports
 from celery import shared_task
@@ -29,7 +32,6 @@ from bs4 import BeautifulSoup
 
 def update_mentions_for_issue(issue, project, new_mentions, removed_mention):
     aggregated_issue_mentions = []
-
     for mention_id in new_mentions:
         aggregated_issue_mentions.append(
             IssueMention(
@@ -95,7 +97,8 @@ def extract_mentions_as_subscribers(project_id, issue_id, mentions):
             ).exists()
             and not Issue.objects.filter(
                 project_id=project_id, pk=issue_id, created_by_id=mention_id
-            ).exists() and ProjectMember.objects.filter(
+            ).exists()
+            and ProjectMember.objects.filter(
                 project_id=project_id, member_id=mention_id, is_active=True
             ).exists()
         ):
@@ -121,7 +124,9 @@ def extract_mentions(issue_instance):
         data = json.loads(issue_instance)
         html = data.get("description_html")
         soup = BeautifulSoup(html, "html.parser")
-        mention_tags = soup.find_all("mention-component", attrs={"target": "users"})
+        mention_tags = soup.find_all(
+            "mention-component", attrs={"entity_name": "user_mention"}
+        )
 
         mentions = [mention_tag["entity_identifier"] for mention_tag in mention_tags]
 
@@ -135,7 +140,9 @@ def extract_comment_mentions(comment_value):
     try:
         mentions = []
         soup = BeautifulSoup(comment_value, "html.parser")
-        mentions_tags = soup.find_all("mention-component", attrs={"target": "users"})
+        mentions_tags = soup.find_all(
+            "mention-component", attrs={"entity_name": "user_mention"}
+        )
         for mention_tag in mentions_tags:
             mentions.append(mention_tag["entity_identifier"])
         return list(set(mentions))
@@ -242,14 +249,18 @@ def notifications(
             2. From the latest set of mentions, extract the users which are not a subscribers & make them subscribers
             """
 
+            # get the list of active project members
+            project_members = ProjectMember.objects.filter(
+                project_id=project_id, is_active=True
+            ).values_list("member_id", flat=True)
+
             # Get new mentions from the newer instance
             new_mentions = get_new_mentions(
                 requested_instance=requested_data, current_instance=current_instance
             )
-            new_mentions = list(ProjectMember.objects.filter(
-                project_id=project_id, member_id__in=new_mentions, is_active=True
-            ).values_list("member_id", flat=True))
-            new_mentions = [str(member_id) for member_id in new_mentions]
+            new_mentions = list(
+                set(new_mentions) & {str(member) for member in project_members}
+            )
             removed_mention = get_removed_mentions(
                 requested_instance=requested_data, current_instance=current_instance
             )
@@ -280,6 +291,11 @@ def notifications(
                         new_value=issue_comment_new_value,
                     )
                     comment_mentions = comment_mentions + new_comment_mentions
+                    comment_mentions = [
+                        mention
+                        for mention in comment_mentions
+                        if UUID(mention) in set(project_members)
+                    ]
 
             comment_mention_subscribers = extract_mentions_as_subscribers(
                 project_id=project_id, issue_id=issue_id, mentions=all_comment_mentions
@@ -293,7 +309,11 @@ def notifications(
 
             # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- #
             issue_subscribers = list(
-                IssueSubscriber.objects.filter(project_id=project_id, issue_id=issue_id, project__project_projectmember__is_active=True,)
+                IssueSubscriber.objects.filter(
+                    project_id=project_id,
+                    issue_id=issue_id,
+                    subscriber__in=Subquery(project_members),
+                )
                 .exclude(
                     subscriber_id__in=list(new_mentions + comment_mentions + [actor_id])
                 )
@@ -314,7 +334,9 @@ def notifications(
             project = Project.objects.get(pk=project_id)
 
             issue_assignees = IssueAssignee.objects.filter(
-                issue_id=issue_id, project_id=project_id
+                issue_id=issue_id,
+                project_id=project_id,
+                assignee__in=Subquery(project_members),
             ).values_list("assignee", flat=True)
 
             issue_subscribers = list(set(issue_subscribers) - {uuid.UUID(actor_id)})

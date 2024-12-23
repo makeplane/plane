@@ -3,9 +3,9 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // ui
+import { ISSUE_PRIORITY_FILTERS } from "@plane/constants";
 import { PriorityIcon } from "@plane/ui";
 // components
-import { issuePriorityFilters } from "@/constants/issue";
 import { FilterHeader, FilterOption } from "./helpers";
 // constants
 
@@ -22,7 +22,7 @@ export const FilterPriority: React.FC<Props> = observer((props) => {
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = issuePriorityFilters.filter((p) => p.key.includes(searchQuery.toLowerCase()));
+  const filteredOptions = ISSUE_PRIORITY_FILTERS.filter((p) => p.key.includes(searchQuery.toLowerCase()));
 
   return (
     <>

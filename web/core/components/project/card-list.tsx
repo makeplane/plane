@@ -13,12 +13,26 @@ import { useCommandPalette, useEventTracker, useProject, useProjectFilter } from
 import AllFiltersImage from "@/public/empty-state/project/all-filters.svg";
 import NameFilterImage from "@/public/empty-state/project/name-filter.svg";
 
-export const ProjectCardList = observer(() => {
+type TProjectCardListProps = {
+  totalProjectIds?: string[];
+  filteredProjectIds?: string[];
+};
+
+export const ProjectCardList = observer((props: TProjectCardListProps) => {
+  const { totalProjectIds: totalProjectIdsProps, filteredProjectIds: filteredProjectIdsProps } = props;
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const { workspaceProjectIds, filteredProjectIds, getProjectById, loader } = useProject();
+  const {
+    workspaceProjectIds: storeWorkspaceProjectIds,
+    filteredProjectIds: storeFilteredProjectIds,
+    getProjectById,
+    loader,
+  } = useProject();
   const { searchQuery, currentWorkspaceDisplayFilters } = useProjectFilter();
+  // derived values
+  const workspaceProjectIds = totalProjectIdsProps ?? storeWorkspaceProjectIds;
+  const filteredProjectIds = filteredProjectIdsProps ?? storeFilteredProjectIds;
 
   if (!filteredProjectIds || !workspaceProjectIds || loader) return <ProjectsLoader />;
 

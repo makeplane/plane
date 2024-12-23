@@ -1,6 +1,7 @@
 "use client";
 
 import { FC } from "react";
+import range from "lodash/range";
 // components
 import { ListLoaderItemRow } from "@/components/ui";
 
@@ -12,7 +13,7 @@ export const WorkspaceDraftIssuesLoader: FC<TWorkspaceDraftIssuesLoader> = (prop
   const { items = 14 } = props;
   return (
     <div className="relative h-full w-full">
-      {[...Array(items)].map((_, index) => (
+      {range(items).map((index) => (
         <ListLoaderItemRow key={index} />
       ))}
     </div>

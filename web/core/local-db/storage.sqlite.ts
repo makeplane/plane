@@ -59,10 +59,10 @@ export class Storage {
     this.workspaceSlug = "";
   };
 
-  clearStorage = async () => {
+  clearStorage = async (force = false) => {
     try {
-      await this.db.close();
-      await clearOPFS();
+      await this.db?.close();
+      await clearOPFS(force);
       this.reset();
     } catch (e) {
       console.error("Error clearing sqlite sync storage", e);
@@ -251,7 +251,7 @@ export class Storage {
 
     activeSpan?.setAttributes({
       projectId: projectId,
-      count: response.total_count,
+      count: response?.total_results,
     });
   };
 
@@ -294,7 +294,14 @@ export class Storage {
         log(`Project ${projectId} is loading, falling back to server`);
       }
       const issueService = new IssueService();
-      return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries, config);
+
+      // Ignore projectStatus if projectId is not provided
+      if (projectId) {
+        return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries, config);
+      }
+      if (this.status !== "ready" && !rootStore.user.localDBEnabled) {
+        return;
+      }
     }
 
     const { cursor, group_by, sub_group_by } = queries;

@@ -3,23 +3,35 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
-import { ArchiveRestoreIcon, ArrowUpToLine, Clipboard, Copy, History, Link, Lock, LockOpen } from "lucide-react";
+import {
+  ArchiveRestoreIcon,
+  ArrowUpToLine,
+  Clipboard,
+  Copy,
+  History,
+  Link,
+  Lock,
+  LockOpen,
+  LucideIcon,
+} from "lucide-react";
 // document editor
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import { EditorRefApi } from "@plane/editor";
 // ui
-import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+import { ArchiveIcon, CustomMenu, type ISvgIcons, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
 import { ExportPageModal } from "@/components/pages";
 // helpers
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
+import { useCollaborativePageActions } from "@/hooks/use-collaborative-page-actions";
 import { usePageFilters } from "@/hooks/use-page-filters";
+import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 import { useQueryParams } from "@/hooks/use-query-params";
 // store
 import { IPage } from "@/store/pages/page";
 
 type Props = {
-  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
+  editorRef: EditorRefApi | null;
   handleDuplicatePage: () => void;
   page: IPage;
 };
@@ -34,13 +46,9 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     archived_at,
     is_locked,
     id,
-    archive,
-    lock,
-    unlock,
     canCurrentUserArchivePage,
     canCurrentUserDuplicatePage,
     canCurrentUserLockPage,
-    restore,
   } = page;
   // states
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -50,56 +58,28 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { isFullWidth, handleFullWidth } = usePageFilters();
   // update query params
   const { updateQueryParams } = useQueryParams();
-
-  const handleArchivePage = async () =>
-    await archive().catch(() =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be archived. Please try again later.",
-      })
-    );
-
-  const handleRestorePage = async () =>
-    await restore().catch(() =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be restored. Please try again later.",
-      })
-    );
-
-  const handleLockPage = async () =>
-    await lock().catch(() =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be locked. Please try again later.",
-      })
-    );
-
-  const handleUnlockPage = async () =>
-    await unlock().catch(() =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be unlocked. Please try again later.",
-      })
-    );
+  // collaborative actions
+  const { executeCollaborativeAction } = useCollaborativePageActions(editorRef, page);
+  // parse editor content
+  const { replaceCustomComponentsFromMarkdownContent } = useParseEditorContent();
 
   // menu items list
   const MENU_ITEMS: {
     key: string;
     action: () => void;
     label: string;
-    icon: React.FC<any>;
+    icon: LucideIcon | React.FC<ISvgIcons>;
     shouldRender: boolean;
   }[] = [
     {
       key: "copy-markdown",
       action: () => {
         if (!editorRef) return;
-        copyTextToClipboard(editorRef.getMarkDown()).then(() =>
+        const markdownContent = editorRef.getMarkDown();
+        const parsedMarkdownContent = replaceCustomComponentsFromMarkdownContent({
+          markdownContent,
+        });
+        copyTextToClipboard(parsedMarkdownContent).then(() =>
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",
@@ -138,14 +118,18 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     },
     {
       key: "lock-unlock-page",
-      action: is_locked ? handleUnlockPage : handleLockPage,
+      action: is_locked
+        ? () => executeCollaborativeAction({ type: "sendMessageToServer", message: "unlock" })
+        : () => executeCollaborativeAction({ type: "sendMessageToServer", message: "lock" }),
       label: is_locked ? "Unlock page" : "Lock page",
       icon: is_locked ? LockOpen : Lock,
       shouldRender: canCurrentUserLockPage,
     },
     {
       key: "archive-restore-page",
-      action: archived_at ? handleRestorePage : handleArchivePage,
+      action: archived_at
+        ? () => executeCollaborativeAction({ type: "sendMessageToServer", message: "unarchive" })
+        : () => executeCollaborativeAction({ type: "sendMessageToServer", message: "archive" }),
       label: archived_at ? "Restore page" : "Archive page",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: canCurrentUserArchivePage,

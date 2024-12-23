@@ -12,8 +12,9 @@ import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane constants
+import { EIssueLayoutTypes, ALL_ISSUES } from "@plane/constants";
 // types
-import { ALL_ISSUES } from "@plane/constants";
 import {
   TIssue,
   TIssueGroupByOptions,
@@ -32,7 +33,7 @@ import {
 // components
 import { IBlockUpdateDependencyData } from "@/components/gantt-chart";
 // constants
-import { EIssueLayoutTypes, ISSUE_PRIORITIES } from "@/constants/issue";
+import { ISSUE_PRIORITIES } from "@/constants/issue";
 // helpers
 import { convertToISODateString } from "@/helpers/date-time.helper";
 // local-db
@@ -129,6 +130,7 @@ const ISSUE_GROUP_BY_KEY: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
   target_date: "target_date",
   cycle: "cycle_id",
   module: "module_ids",
+  team_project: "project_id",
 };
 
 export const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
@@ -142,6 +144,7 @@ export const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof
   created_by: "created_by",
   assignees: "assignee_ids",
   target_date: "target_date",
+  team_project: "project_id",
 };
 
 // This constant maps the order by keys to the respective issue property that the key relies on

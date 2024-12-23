@@ -3,7 +3,7 @@ import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { TIssue } from "@plane/types";
+import { TIssue, TIssueServiceType } from "@plane/types";
 // helpers
 import { getCurrentDateTimeInISO } from "@/helpers/date-time.helper";
 // services
@@ -30,7 +30,7 @@ export class IssueStore implements IIssueStore {
   // service
   issueService;
 
-  constructor() {
+  constructor(serviceType: TIssueServiceType) {
     makeObservable(this, {
       // observable
       issuesMap: observable,
@@ -40,7 +40,7 @@ export class IssueStore implements IIssueStore {
       removeIssue: action,
     });
 
-    this.issueService = new IssueService();
+    this.issueService = new IssueService(serviceType);
   }
 
   // actions

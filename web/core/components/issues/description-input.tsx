@@ -5,7 +5,7 @@ import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // types
-import { TIssue } from "@plane/types";
+import { TIssue, TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // ui
 import { Loader } from "@plane/ui";
@@ -18,7 +18,9 @@ import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { useWorkspace } from "@/hooks/store";
 // services
 import { FileService } from "@/services/file.service";
+import { ProjectService } from "@/services/project";
 const fileService = new FileService();
+const projectService = new ProjectService();
 
 export type IssueDescriptionInputProps = {
   containerClassName?: string;
@@ -29,7 +31,7 @@ export type IssueDescriptionInputProps = {
   disabled?: boolean;
   issueOperations: TIssueOperations;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
-  setIsSubmitting: (initialValue: "submitting" | "submitted" | "saved") => void;
+  setIsSubmitting: (initialValue: TNameDescriptionLoader) => void;
   swrIssueDescription?: string | null | undefined;
 };
 
@@ -117,6 +119,13 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                 }}
                 placeholder={
                   placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)
+                }
+                searchMentionCallback={async (payload) =>
+                  await projectService.searchEntity(
+                    workspaceSlug?.toString() ?? "",
+                    projectId?.toString() ?? "",
+                    payload
+                  )
                 }
                 containerClassName={containerClassName}
                 uploadFile={async (file) => {

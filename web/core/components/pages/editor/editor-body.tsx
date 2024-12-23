@@ -1,11 +1,9 @@
-import { useCallback, useMemo } from "react";
+import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
 import {
   CollaborativeDocumentEditorWithRef,
-  CollaborativeDocumentReadOnlyEditorWithRef,
-  EditorReadOnlyRefApi,
   EditorRefApi,
   TAIMenuProps,
   TDisplayConfig,
@@ -13,17 +11,18 @@ import {
   TServerHandler,
 } from "@plane/editor";
 // types
-import { IUserLite } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // components
 import { Row } from "@plane/ui";
+import { EditorMentionsRoot } from "@/components/editor";
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
 import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
-import { getEditorFileHandlers, getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
+import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
-import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
+import { useUser, useWorkspace } from "@/hooks/store";
+import { useEditorMention } from "@/hooks/use-editor-mention";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
@@ -33,58 +32,41 @@ import { useFileSize } from "@/plane-web/hooks/use-file-size";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // services
 import { FileService } from "@/services/file.service";
+import { ProjectService } from "@/services/project";
 // store
 import { IPage } from "@/store/pages/page";
-
 // services init
 const fileService = new FileService();
+const projectService = new ProjectService();
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   editorReady: boolean;
-  handleConnectionStatus: (status: boolean) => void;
-  handleEditorReady: (value: boolean) => void;
-  handleReadOnlyEditorReady: (value: boolean) => void;
+  handleConnectionStatus: Dispatch<SetStateAction<boolean>>;
+  handleEditorReady: Dispatch<SetStateAction<boolean>>;
   page: IPage;
-  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   sidePeekVisible: boolean;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
-  const {
-    editorRef,
-    handleConnectionStatus,
-    handleEditorReady,
-    handleReadOnlyEditorReady,
-    page,
-    readOnlyEditorRef,
-    sidePeekVisible,
-  } = props;
+  const { editorRef, handleConnectionStatus, handleEditorReady, page, sidePeekVisible } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
-  const {
-    getUserDetails,
-    project: { getProjectMemberIds },
-  } = useMember();
   // derived values
   const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
   const pageId = page?.id;
   const pageTitle = page?.name ?? "";
   const { isContentEditable, updateTitle } = page;
-  const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
-  const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
-  // use-mention
-  const { mentionHighlights, mentionSuggestions } = useMention({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
-    projectId: projectId?.toString() ?? "",
-    members: projectMemberDetails,
-    user: currentUser ?? undefined,
+  // use editor mention
+  const { fetchMentions } = useEditorMention({
+    searchEntity: async (payload) =>
+      await projectService.searchEntity(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "", payload),
   });
   // editor flaggings
-  const { documentEditor } = useEditorFlagging();
+  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // issue-embed
@@ -112,18 +94,18 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   const handleServerConnect = useCallback(() => {
     handleConnectionStatus(false);
-  }, []);
+  }, [handleConnectionStatus]);
 
   const handleServerError = useCallback(() => {
     handleConnectionStatus(true);
-  }, []);
+  }, [handleConnectionStatus]);
 
   const serverHandler: TServerHandler = useMemo(
     () => ({
       onConnect: handleServerConnect,
       onServerError: handleServerError,
     }),
-    []
+    [handleServerConnect, handleServerError]
   );
 
   const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {
@@ -169,90 +151,66 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           "w-[5%]": isFullWidth,
         })}
       >
-        {!isFullWidth && (
-          <PageContentBrowser editorRef={(isContentEditable ? editorRef : readOnlyEditorRef)?.current} />
-        )}
+        {!isFullWidth && <PageContentBrowser editorRef={editorRef.current} />}
       </Row>
       <div
-        className={cn("h-full w-full pt-5 duration-200", {
+        className={cn("size-full pt-5 duration-200", {
           "md:w-[calc(100%-10rem)] xl:w-[calc(100%-28rem)]": !isFullWidth,
           "md:w-[90%]": isFullWidth,
         })}
       >
-        <div className="h-full w-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
-          <div className="relative w-full flex-shrink-0 md:pl-5 px-4">
-            <PageEditorTitle
-              editorRef={editorRef}
-              title={pageTitle}
-              updateTitle={updateTitle}
-              readOnly={!isContentEditable}
-            />
-          </div>
-          {isContentEditable ? (
-            <CollaborativeDocumentEditorWithRef
-              id={pageId}
-              fileHandler={getEditorFileHandlers({
-                maxFileSize,
-                projectId: projectId?.toString() ?? "",
-                uploadFile: async (file) => {
-                  const { asset_id } = await fileService.uploadProjectAsset(
-                    workspaceSlug?.toString() ?? "",
-                    projectId?.toString() ?? "",
-                    {
-                      entity_identifier: pageId,
-                      entity_type: EFileAssetType.PAGE_DESCRIPTION,
-                    },
-                    file
-                  );
-                  return asset_id;
-                },
-                workspaceId,
-                workspaceSlug: workspaceSlug?.toString() ?? "",
-              })}
-              handleEditorReady={handleEditorReady}
-              ref={editorRef}
-              containerClassName="h-full p-0 pb-64"
-              displayConfig={displayConfig}
-              editorClassName="pl-10"
-              mentionHandler={{
-                highlights: mentionHighlights,
-                suggestions: mentionSuggestions,
-              }}
-              embedHandler={{
-                issue: issueEmbedProps,
-              }}
-              realtimeConfig={realtimeConfig}
-              serverHandler={serverHandler}
-              user={userConfig}
-              disabledExtensions={documentEditor}
-              aiHandler={{
-                menu: getAIMenu,
-              }}
-            />
-          ) : (
-            <CollaborativeDocumentReadOnlyEditorWithRef
-              id={pageId}
-              ref={readOnlyEditorRef}
-              fileHandler={getReadOnlyEditorFileHandlers({
-                projectId: projectId?.toString() ?? "",
-                workspaceSlug: workspaceSlug?.toString() ?? "",
-              })}
-              handleEditorReady={handleReadOnlyEditorReady}
-              containerClassName="p-0 pb-64 border-none"
-              displayConfig={displayConfig}
-              editorClassName="pl-10"
-              mentionHandler={{
-                highlights: mentionHighlights,
-              }}
-              embedHandler={{
-                issue: {
-                  widgetCallback: issueEmbedProps.widgetCallback,
-                },
-              }}
-              realtimeConfig={realtimeConfig}
-              user={userConfig}
-            />
-          )}
+        <div className="size-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
+          <PageEditorTitle
+            editorRef={editorRef}
+            title={pageTitle}
+            updateTitle={updateTitle}
+            readOnly={!isContentEditable}
+          />
+          <CollaborativeDocumentEditorWithRef
+            editable={isContentEditable}
+            id={pageId}
+            fileHandler={getEditorFileHandlers({
+              maxFileSize,
+              projectId: projectId?.toString() ?? "",
+              uploadFile: async (file) => {
+                const { asset_id } = await fileService.uploadProjectAsset(
+                  workspaceSlug?.toString() ?? "",
+                  projectId?.toString() ?? "",
+                  {
+                    entity_identifier: pageId,
+                    entity_type: EFileAssetType.PAGE_DESCRIPTION,
+                  },
+                  file
+                );
+                return asset_id;
+              },
+              workspaceId,
+              workspaceSlug: workspaceSlug?.toString() ?? "",
+            })}
+            handleEditorReady={handleEditorReady}
+            ref={editorRef}
+            containerClassName="h-full p-0 pb-64"
+            displayConfig={displayConfig}
+            editorClassName="pl-10"
+            mentionHandler={{
+              searchCallback: async (query) => {
+                const res = await fetchMentions(query);
+                if (!res) throw new Error("Failed in fetching mentions");
+                return res;
+              },
+              renderComponent: (props) => <EditorMentionsRoot {...props} />,
+            }}
+            embedHandler={{
+              issue: issueEmbedProps,
+            }}
+            realtimeConfig={realtimeConfig}
+            serverHandler={serverHandler}
+            user={userConfig}
+            disabledExtensions={disabledExtensions}
+            aiHandler={{
+              menu: getAIMenu,
+            }}
+          />
         </div>
       </div>
       <div

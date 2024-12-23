@@ -1,7 +1,7 @@
 import { useImperativeHandle, useRef, MutableRefObject, useEffect } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { EditorProps } from "@tiptap/pm/view";
-import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
+import { useEditor as useCustomEditor, Editor, Extensions } from "@tiptap/react";
 import * as Y from "yjs";
 // extensions
 import { CoreReadOnlyEditorExtensions } from "@/extensions";
@@ -11,24 +11,30 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 // props
 import { CoreReadOnlyEditorProps } from "@/props";
 // types
-import { EditorReadOnlyRefApi, IMentionHighlight, TFileHandler } from "@/types";
+import type {
+  EditorReadOnlyRefApi,
+  TExtensions,
+  TDocumentEventsServer,
+  TFileHandler,
+  TReadOnlyMentionHandler,
+} from "@/types";
 
 interface CustomReadOnlyEditorProps {
-  initialValue?: string;
+  disabledExtensions: TExtensions[];
   editorClassName: string;
-  forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
-  extensions?: any;
   editorProps?: EditorProps;
+  extensions?: Extensions;
+  forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
+  initialValue?: string;
   fileHandler: Pick<TFileHandler, "getAssetSrc">;
   handleEditorReady?: (value: boolean) => void;
-  mentionHandler: {
-    highlights: () => Promise<IMentionHighlight[]>;
-  };
+  mentionHandler: TReadOnlyMentionHandler;
   provider?: HocuspocusProvider;
 }
 
 export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
   const {
+    disabledExtensions,
     initialValue,
     editorClassName,
     forwardedRef,
@@ -54,9 +60,8 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
     },
     extensions: [
       ...CoreReadOnlyEditorExtensions({
-        mentionConfig: {
-          mentionHighlights: mentionHandler.highlights,
-        },
+        disabledExtensions,
+        mentionHandler,
         fileHandler,
       }),
       ...extensions,
@@ -117,6 +122,8 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
         editorRef.current?.off("update");
       };
     },
+    emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
+    listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
     getHeadings: () => editorRef?.current?.storage.headingList.headings,
   }));
 

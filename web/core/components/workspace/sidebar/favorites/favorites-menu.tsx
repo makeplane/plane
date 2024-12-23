@@ -28,7 +28,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { FavoriteFolder } from "./favorite-folder";
 import { FavoriteRoot } from "./favorite-items";
-import { getDestinationStateSequence, getInstructionFromPayload, TargetData } from "./favorites.helpers";
+import { getInstructionFromPayload, TargetData } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
 
 export const SidebarFavoritesMenu = observer(() => {
@@ -87,35 +87,27 @@ export const SidebarFavoritesMenu = observer(() => {
     const sourceData = source.data as TargetData;
 
     if (!sourceData.id) return;
-
     if (isFolder) {
       // handle move to a new parent folder if dropped on a folder
       if (parentId && parentId !== sourceData.parentId) {
-        handleMoveToFolder(sourceData.id, parentId);
+        handleMoveToFolder(sourceData.id, parentId); /**parent id  */
       }
-      //handle remove from folder if dropped outside of the folder
-      if (parentId && sourceData.isChild) {
-        handleRemoveFromFavoritesFolder(sourceData.id);
-      }
-
       // handle reordering at root level
       if (droppedFavId) {
         if (instruction != "make-child") {
-          const destinationSequence = getDestinationStateSequence(groupedFavorites, droppedFavId, instruction);
-          handleReorder(sourceData.id, destinationSequence || 0);
+          handleReorder(sourceData.id, droppedFavId, instruction); /** sequence */
         }
       }
     } else {
       //handling reordering for favorites
       if (droppedFavId) {
-        const destinationSequence = getDestinationStateSequence(groupedFavorites, droppedFavId, instruction);
-        handleReorder(sourceData.id, destinationSequence || 0);
+        handleReorder(sourceData.id, droppedFavId, instruction); /** sequence */
       }
+    }
 
-      // handle removal from folder if dropped outside a folder
-      if (!parentId && sourceData.isChild) {
-        handleRemoveFromFavoritesFolder(sourceData.id);
-      }
+    /**remove if dropped outside and source is a child */
+    if (!parentId && sourceData.isChild) {
+      handleRemoveFromFavoritesFolder(sourceData.id); /**parent null */
     }
   };
 
@@ -147,10 +139,8 @@ export const SidebarFavoritesMenu = observer(() => {
   };
 
   const handleReorder = useCallback(
-    (favoriteId: string, sequence: number) => {
-      reOrderFavorite(workspaceSlug.toString(), favoriteId, {
-        sequence: sequence,
-      }).catch(() => {
+    (favoriteId: string, droppedFavId: string, edge: string | undefined) => {
+      reOrderFavorite(workspaceSlug.toString(), favoriteId, droppedFavId, edge).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -271,7 +261,6 @@ export const SidebarFavoritesMenu = observer(() => {
                           isLastChild={index === length - 1}
                           handleRemoveFromFavorites={handleRemoveFromFavorites}
                           handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
-                          handleReorder={handleReorder}
                           handleDrop={handleDrop}
                         />
                       ) : (

@@ -1,7 +1,6 @@
-// types
+// plane internal packages
+import { API_BASE_URL } from "@plane/constants";
 import type { IWorkspace, TWorkspacePaginationInfo } from "@plane/types";
-// helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -30,7 +29,8 @@ export class WorkspaceService extends APIService {
    * @returns Promise<any>
    */
   async workspaceSlugCheck(slug: string): Promise<any> {
-    return this.get(`/api/instances/workspace-slug-check/?slug=${slug}`)
+    const params = new URLSearchParams({ slug });
+    return this.get(`/api/instances/workspace-slug-check/?${params.toString()}`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

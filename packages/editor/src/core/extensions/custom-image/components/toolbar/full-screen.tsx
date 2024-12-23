@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { ExternalLink, Maximize, Minus, Plus, X } from "lucide-react";
-import { cn } from "@/helpers/common";
+// plane utils
+import { cn } from "@plane/utils";
 
 type Props = {
   image: {

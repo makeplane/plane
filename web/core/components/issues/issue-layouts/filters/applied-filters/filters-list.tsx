@@ -134,6 +134,13 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
                 values={value}
               />
             )}
+            {filterKey === "team_project" && (
+              <AppliedProjectFilters
+                editable={isEditingAllowed}
+                handleRemove={(val) => handleRemoveFilter("team_project", val)}
+                values={value}
+              />
+            )}
             {isEditingAllowed && (
               <button
                 type="button"
