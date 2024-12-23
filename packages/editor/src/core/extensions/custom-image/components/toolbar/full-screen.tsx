@@ -61,6 +61,7 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
     if (isDragging) return;
     toggleFullScreenMode(false);
     setMagnification(1);
+    setInitialMagnification(1);
   }, [isDragging, toggleFullScreenMode]);
 
   const handleMagnification = useCallback((direction: "increase" | "decrease") => {
