@@ -1,6 +1,6 @@
-import "./core/config/sentry-config.js";
-import { Server } from "./server.js";
-import { manualLogger } from "./core/helpers/logger.js";
+import "@/core/config/sentry-config";
+import { Server } from "@/server";
+import { manualLogger } from "@/core/helpers/logger";
 
 const startServer = async () => {
   try {

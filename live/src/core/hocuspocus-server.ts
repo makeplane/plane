@@ -1,9 +1,9 @@
 import { Server } from "@hocuspocus/server";
 import { v4 as uuidv4 } from "uuid";
 // lib
-import { handleAuthentication } from "@/core/lib/authentication.js";
+import { handleAuthentication } from "@/core/lib/authentication";
 // extensions
-import { getExtensions } from "@/core/extensions/index.js";
+import { getExtensions } from "@/core/extensions/index";
 import {
   DocumentCollaborativeEvents,
   TDocumentEventsServer,
@@ -11,7 +11,7 @@ import {
 // editor types
 import { TUserDetails } from "@plane/editor";
 // types
-import { type HocusPocusServerContext } from "@/core/types/common.js";
+import { type HocusPocusServerContext } from "@/core/types/common";
 
 export const getHocusPocusServer = async () => {
   const extensions = await getExtensions();

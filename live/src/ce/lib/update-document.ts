@@ -1,5 +1,5 @@
 // types
-import { TDocumentTypes } from "@/core/types/common.js";
+import { TDocumentTypes } from "@/core/types/common";
 
 type TArgs = {
   cookie: string | undefined;

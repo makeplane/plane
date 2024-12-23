@@ -1,4 +1,4 @@
-import "@/core/config/sentry-config.js";
+import "@/core/config/sentry-config";
 import express from "express";
 import type { Application, Request, Response, Router } from "express";
 import expressWs from "express-ws";
@@ -10,17 +10,20 @@ import cors from "cors";
 import type { Hocuspocus } from "@hocuspocus/server";
 
 // core hocuspocus server
-import { getHocusPocusServer } from "@/core/hocuspocus-server.js";
+import { getHocusPocusServer } from "@/core/hocuspocus-server";
 
 // helpers
-import { logger, manualLogger } from "@/core/helpers/logger.js";
-import { errorHandler } from "@/core/helpers/error-handler.js";
-import { registerControllers } from "./lib/controller.js";
-import { HealthController } from "./controllers/health.controller.js";
-import { CollaborationController } from "./controllers/collaboration.controller.js";
+import { logger, manualLogger } from "@/core/helpers/logger";
+import { errorHandler } from "@/core/helpers/error-handler";
+import { registerControllers } from "./lib/controller";
+import { HealthController } from "./controllers/health.controller";
+import { CollaborationController } from "./controllers/collaboration.controller";
 
 interface WebSocketRouter extends Router {
-  ws: (_path: string, _handler: (ws: ws.WebSocket, req: Request) => void) => void;
+  ws: (
+    _path: string,
+    _handler: (ws: ws.WebSocket, req: Request) => void,
+  ) => void;
 }
 
 export class Server {
@@ -30,7 +33,6 @@ export class Server {
 
   constructor() {
     this.app = express();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expressWs(this.app as any);
     this.port = Number(process.env.PORT || 3000);
 
@@ -60,7 +62,9 @@ export class Server {
 
   private async setupControllers() {
     const router = express.Router() as WebSocketRouter;
-    const collaborationController = new CollaborationController(this.hocusPocusServer);
+    const collaborationController = new CollaborationController(
+      this.hocusPocusServer,
+    );
 
     registerControllers(router, HealthController);
 
@@ -69,7 +73,9 @@ export class Server {
     });
 
     this.app.use(process.env.LIVE_BASE_PATH || "/live", router);
-    this.app.use((_req: Request, res: Response) => res.status(404).send("Not Found"));
+    this.app.use((_req: Request, res: Response) =>
+      res.status(404).send("Not Found"),
+    );
   }
 
   private setupErrorHandlers() {
@@ -90,7 +96,9 @@ export class Server {
       manualLogger.info("Starting graceful shutdown...");
       try {
         await this.hocusPocusServer.destroy();
-        manualLogger.info("HocusPocus server WebSocket connections closed gracefully.");
+        manualLogger.info(
+          "HocusPocus server WebSocket connections closed gracefully.",
+        );
 
         server.close(() => {
           manualLogger.info("Express server closed gracefully.");

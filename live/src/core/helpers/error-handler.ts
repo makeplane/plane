@@ -1,5 +1,5 @@
 import { ErrorRequestHandler } from "express";
-import { manualLogger } from "@/core/helpers/logger.js";
+import { manualLogger } from "@/core/helpers/logger";
 
 export const errorHandler: ErrorRequestHandler = (err, _req, res) => {
   // Log the error
@@ -9,7 +9,7 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res) => {
   res.status(err.status || 500);
 
   // Send the response
-  res.json({
+  reson({
     error: {
       message:
         process.env.NODE_ENV === "production"

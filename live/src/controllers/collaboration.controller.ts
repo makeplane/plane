@@ -1,7 +1,7 @@
 import type { Request } from "express";
 import type { WebSocket as WS } from "ws";
 import { Server } from "@hocuspocus/server";
-import { Controller, WebSocket } from "../lib/decorators.js";
+import { Controller, WebSocket } from "@/lib/decorators";
 
 @Controller("/collaboration")
 export class CollaborationController {

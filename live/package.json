@@ -6,9 +6,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"tsup src/start.ts --watch\" \"nodemon dist/start.js\"",
+    "dev": "concurrently \"tsup src/start.ts --watch\" \"nodemon --env-file=.env dist/start.js\"",
     "build": "tsup src/start.ts",
-    "start": "node dist/start.js",
+    "start": "node --env-file=.env dist/start.js",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:errors": "eslint src --ext .ts,.tsx --quiet"
   },
