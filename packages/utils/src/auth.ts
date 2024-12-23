@@ -1,8 +1,6 @@
 import { ReactNode } from "react";
 import zxcvbn from "zxcvbn";
-import { E_PASSWORD_STRENGTH, PASSWORD_CRITERIA, PASSWORD_MIN_LENGTH } from "@plane/constants";
-
-import { EPageTypes, EErrorAlertType, EAuthErrorCodes } from "@plane/constants";
+import { E_PASSWORD_STRENGTH, PASSWORD_CRITERIA, PASSWORD_MIN_LENGTH, EErrorAlertType, EAuthErrorCodes } from "@plane/constants";
 
 export type TAuthErrorInfo = {
   type: EErrorAlertType;
