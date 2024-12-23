@@ -26,6 +26,7 @@ import {
 
 // components
 import { ArchiveIcon, DoubleCircleIcon, ContrastIcon, DiceIcon, Intake } from "@plane/ui";
+import { store } from "@/lib/store-context";
 import { TProjectActivity } from "@/plane-web/types";
 
 type ActivityIconMap = {
@@ -70,8 +71,9 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
   const newValue = activity.new_value;
   const oldValue = activity.old_value;
   const verb = activity.verb;
+  const workspaceDetail = store.workspaceRoot.getWorkspaceById(activity.workspace);
 
-  const getBooleanActionText = (value: string) => {
+  const getBooleanActionText = (value: string | undefined) => {
     if (value === "true") return "enabled";
     if (value === "false") return "disabled";
     return verb;
@@ -170,7 +172,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
             </span>
             {verb !== "removed" ? (
               <a
-                href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
+                href={`/${workspaceDetail?.slug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex font-medium text-custom-text-100"
@@ -273,7 +275,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       };
     default:
       return {
-        message: `${verb} ${activityType.replace(/_/g, " ")} `,
+        message: `${verb} ${activityType?.replace(/_/g, " ")} `,
       };
   }
 };
