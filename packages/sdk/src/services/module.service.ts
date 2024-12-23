@@ -13,6 +13,20 @@ export class ModuleService extends APIService {
     super(options);
   }
 
+  async getModule(
+    slug: string,
+    projectId: string,
+    moduleId: string,
+  ): Promise<ExModule> {
+    return this.get(
+      `/api/v1/workspaces/${slug}/projects/${projectId}/modules/${moduleId}/`,
+    )
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async list(slug: string, projectId: string): Promise<Paginated<ExModule>> {
     return this.get(`/api/v1/workspaces/${slug}/projects/${projectId}/modules/`)
       .then((response) => response.data)
@@ -24,11 +38,11 @@ export class ModuleService extends APIService {
   async create(
     slug: string,
     projectId: string,
-    payload: Omit<Optional<ExModule>, ExcludedProps>
+    payload: Omit<Optional<ExModule>, ExcludedProps>,
   ): Promise<ExModule> {
     return this.post(
       `/api/v1/workspaces/${slug}/projects/${projectId}/modules/`,
-      payload
+      payload,
     )
       .then((response) => response.data)
       .catch((error) => {
@@ -40,11 +54,11 @@ export class ModuleService extends APIService {
     slug: string,
     projectId: string,
     moduleId: string,
-    payload: Omit<Optional<ExModule>, ExcludedProps>
+    payload: Omit<Optional<ExModule>, ExcludedProps>,
   ) {
     return this.patch(
       `/api/v1/workspaces/${slug}/projects/${projectId}/modules/${moduleId}/`,
-      payload
+      payload,
     )
       .then((response) => response.data)
       .catch((error) => {
@@ -54,7 +68,7 @@ export class ModuleService extends APIService {
 
   async destroy(slug: string, projectId: string, moduleId: string) {
     return this.delete(
-      `/api/v1/workspaces/${slug}/projects/${projectId}/modules/${moduleId}/`
+      `/api/v1/workspaces/${slug}/projects/${projectId}/modules/${moduleId}/`,
     )
       .then((response) => response.data)
       .catch((error) => {
@@ -67,11 +81,11 @@ export class ModuleService extends APIService {
     projectId: string,
     moduleId: string,
     moduleName: string,
-    issueIds: string[]
+    issueIds: string[],
   ) {
     return this.post(
       `/api/v1/workspaces/${slug}/projects/${projectId}/modules/${moduleId}/module-issues/`,
-      { name: moduleName, issues: issueIds }
+      { name: moduleName, issues: issueIds },
     )
       .then((response) => response.data)
       .catch((error) => {

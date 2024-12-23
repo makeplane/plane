@@ -5,10 +5,10 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import useSWR from "swr";
 import { Briefcase, CircleX, Loader, RefreshCcw } from "lucide-react";
+import { E_JOB_STATUS, TJobWithConfig } from "@plane/etl/core";
+import { JiraConfig } from "@plane/etl/jira";
 import { TLogoProps } from "@plane/types";
 import { Button, ModalCore } from "@plane/ui";
-import { E_JOB_STATUS, TJobWithConfig } from "@silo/core";
-import { JiraConfig } from "@silo/jira";
 // components
 import { Logo } from "@/components/common";
 // helpers
@@ -305,9 +305,9 @@ export const Dashboard: FC = observer(() => {
                             Re Run
                           </Button>
                         </td>
-                        <td className="p-3 whitespace-nowrap relative flex justify-center items-center">
+                        <td className="p-3 whitespace-nowrap text-center">
                           <Button
-                            variant="danger"
+                            variant="link-danger"
                             size="sm"
                             prependIcon={<CircleX className="w-3 h-3" />}
                             onClick={() => handleCancelOpen(job.id)}

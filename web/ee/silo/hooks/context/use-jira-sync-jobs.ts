@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { JiraConfig } from "@silo/jira";
+import { JiraConfig } from "@plane/etl/jira";
 // silo contexts
 import { ImporterSyncJobContext, TImporterCreateContext } from "@/plane-web/silo/contexts";
 

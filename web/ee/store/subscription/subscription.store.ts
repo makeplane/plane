@@ -19,6 +19,7 @@ export interface IWorkspaceSubscriptionStore {
   isPaidPlanModalOpen: boolean;
   isSuccessPlanModalOpen: boolean;
   currentWorkspaceSubscribedPlanDetail: IWorkspaceProductSubscription | undefined;
+  currentWorkspaceSubscriptionAvailableSeats: number;
   updateSubscribedPlan: (workspaceSlug: string, payload: Partial<IWorkspaceProductSubscription>) => void;
   togglePaidPlanModal: (value?: boolean) => void;
   handleSuccessModalToggle: (isOpen?: boolean) => void;
@@ -38,6 +39,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
       isPaidPlanModalOpen: observable.ref,
       isSuccessPlanModalOpen: observable,
       currentWorkspaceSubscribedPlanDetail: computed,
+      currentWorkspaceSubscriptionAvailableSeats: computed,
       updateSubscribedPlan: action,
       togglePaidPlanModal: action,
       fetchWorkspaceSubscribedPlan: action,
@@ -66,6 +68,14 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
   get currentWorkspaceSubscribedPlanDetail() {
     if (!this.rootStore.router.workspaceSlug) return undefined;
     return this.subscribedPlan[this.rootStore.router.workspaceSlug] || undefined;
+  }
+
+  get currentWorkspaceSubscriptionAvailableSeats() {
+    if (this.currentWorkspaceSubscribedPlanDetail?.product == 'FREE') {
+      return (this.currentWorkspaceSubscribedPlanDetail.free_seats || 12) - (this.currentWorkspaceSubscribedPlanDetail.occupied_seats || 0)
+    } else {
+      return (this.currentWorkspaceSubscribedPlanDetail?.purchased_seats || 12) - (this.currentWorkspaceSubscribedPlanDetail?.billable_members || 0)
+    }
   }
 
   updateSubscribedPlan = (workspaceSlug: string, payload: Partial<IWorkspaceProductSubscription>) => {

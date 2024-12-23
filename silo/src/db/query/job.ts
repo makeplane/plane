@@ -1,7 +1,7 @@
 import { db } from "@/db/config/db.config";
 import { and, eq, desc } from "drizzle-orm";
 import * as schema from "../schema";
-import { TImporterKeys, TIntegrationKeys } from "@silo/core";
+import { TImporterKeys, TIntegrationKeys } from "@plane/etl/core";
 
 /* ------------------- Create Job ------------------- */
 // Create the job based on the data that defined

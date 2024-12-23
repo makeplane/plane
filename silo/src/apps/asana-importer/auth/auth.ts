@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { createAsanaAuthService } from "@silo/asana";
+import { createAsanaAuthService } from "@plane/etl/asana";
 
 export const asanaAuth = createAsanaAuthService(
   env.ASANA_CLIENT_ID,

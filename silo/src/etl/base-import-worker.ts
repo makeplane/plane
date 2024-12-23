@@ -4,7 +4,7 @@ import { updateJob } from "@/db/query";
 import { wait } from "@/helpers/delay";
 import { logger } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
-import { TJobWithConfig, TJobStatus, PlaneEntities } from "@silo/core";
+import { TJobWithConfig, TJobStatus, PlaneEntities } from "@plane/etl/core";
 import { getJobForMigration, migrateToPlane } from "./migrator";
 import { Lock } from "@/apps/engine/worker/base/lock";
 
@@ -106,7 +106,6 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
             );
             await this.update(headers.jobId, "PUSHING", {});
             await migrateToPlane(job, data.data, data.meta);
-            await this.update(headers.jobId, "FINISHED", {});
             // Delete the workspace from the store, as we are done processing the
             // job, the worker is free to pick another job from the same workspace
             await batchLock.releaseLock();
@@ -192,21 +191,21 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
         }
         break;
 
-      case "FINISHED":
-        if (job.completed_batch_count != null && job.total_batch_count != null) {
-          if (job.completed_batch_count + 1 >= job.total_batch_count) {
-            await updateJob(jobId, {
-              status: "FINISHED",
-              end_time: new Date(),
-              completed_batch_count: job.completed_batch_count + 1,
-            });
-          } else {
-            await updateJob(jobId, {
-              completed_batch_count: job.completed_batch_count + 1,
-            });
-          }
-        }
-        break;
+      // case "FINISHED":
+      //   if (job.completed_batch_count != null && job.total_batch_count != null) {
+      //     if (job.completed_batch_count + 1 >= job.total_batch_count) {
+      //       await updateJob(jobId, {
+      //         status: "FINISHED",
+      //         end_time: new Date(),
+      //         completed_batch_count: job.completed_batch_count + 1,
+      //       });
+      //     } else {
+      //       await updateJob(jobId, {
+      //         completed_batch_count: job.completed_batch_count + 1,
+      //       });
+      //     }
+      //   }
+      //   break;
 
       case "ERROR":
         await updateJob(jobId, {

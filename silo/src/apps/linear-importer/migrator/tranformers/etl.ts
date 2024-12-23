@@ -1,6 +1,6 @@
 import { Issue, IssueLabel } from "@linear/sdk";
 import { ExCycle, ExIssueComment, ExIssueLabel, ExModule, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
-import { TJobWithConfig } from "@silo/core";
+import { TJobWithConfig } from "@plane/etl/core";
 import {
   transformComment,
   transformCycle,
@@ -8,7 +8,7 @@ import {
   transformUser,
   LinearConfig,
   LinearEntity,
-} from "@silo/linear";
+} from "@plane/etl/linear";
 import { getRandomColor } from "../../helpers/generic-helpers";
 
 /* ------------------ Transformers ----------------------

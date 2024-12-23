@@ -1,6 +1,7 @@
 import { protect } from "@/lib";
 import { logger } from "@/logger";
 import { ExIssueType, Client as PlaneClient } from "@plane/sdk";
+import { isAxiosError } from "axios";
 
 type TCreateOrUpdateIssueTypes = {
   jobId: string;
@@ -38,6 +39,22 @@ export const createOrUpdateIssueTypes = async (props: TCreateOrUpdateIssueTypes)
         createdUpdatedIssueTypes.push(createdUpdatedIssueType);
       }
     } catch (error) {
+
+      const isAxios = isAxiosError(error);
+      // If the error is an axios error, check for the status
+      if (isAxios) {
+        if (error.response?.status === 409) {
+          // refetch and issue type and return, the issue type
+          const fetchedIssueType = await protect(
+            planeClient.issueType.fetchById.bind(planeClient.issueType),
+            workspaceSlug,
+            projectId,
+            error.response.data.id
+          );
+          createdUpdatedIssueTypes.push(fetchedIssueType);
+        }
+      }
+
       logger.error(`[${jobId.slice(0, 7)}] Error while creating or updating the issue type: ${issueType.name}`, error);
     }
   });

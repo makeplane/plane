@@ -4,8 +4,8 @@ import { FC, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { IPriorityConfig, JiraPriority } from "@plane/etl/jira";
 import { Button, Loader } from "@plane/ui";
-import { IPriorityConfig, JiraPriority } from "@silo/jira";
 // plane web components
 import { MapPrioritiesSelection } from "@/plane-web/components/importers/jira";
 import { StepperNavigation } from "@/plane-web/components/importers/ui";

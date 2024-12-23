@@ -2,8 +2,8 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { AsanaCustomField } from "@plane/etl/asana";
 import { Loader } from "@plane/ui";
-import { AsanaCustomField } from "@silo/asana";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 

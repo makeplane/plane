@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from "axios";
-// import { GithubAuthorizeState } from "@silo/github";
+// import { GithubAuthorizeState } from "@plane/etl/github";
 
 export class GitHubService {
   protected baseURL: string;

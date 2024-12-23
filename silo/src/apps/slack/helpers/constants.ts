@@ -11,14 +11,22 @@ export const ACTIONS = {
   LINKBACK_SWITCH_CYCLE: "switch_cycle",
   LINKBACK_SWITCH_PRIORITY: "switch_priority",
   LINKBACK_COMMENT_SUBMIT: "comment_submit",
+  LINKBACK_ADD_WEB_LINK: "add_web_link",
+  LINKBACK_OVERFLOW_ACTIONS: "linkback_overflow_actions",
   ENABLE_THREAD_SYNC: "enable_thread_sync",
   ASSIGN_TO_ME: "assign_to_me",
 };
 
+export type EntityType = keyof typeof ENTITIES;
+export type EntityTypeValue = (typeof ENTITIES)[keyof typeof ENTITIES];
+
 export const ENTITIES = {
+  SHORTCUT_PROJECT_SELECTION: "shortcut_project_selection",
+  COMMAND_PROJECT_SELECTION: "command_project_selection",
   ISSUE_SUBMISSION: "issue_submission",
   ISSUE_COMMENT_SUBMISSION: "issue_comment_submission",
-};
+  ISSUE_WEBLINK_SUBMISSION: "issue_weblink_submission",
+} as const;
 
 export const PLANE_PRIORITIES = [
   {

@@ -2,7 +2,7 @@ import { Client as PlaneClient, PlaneUser, UserResponsePayload } from "@plane/sd
 import { protect } from "@/lib";
 import { logger } from "@/logger";
 import { AxiosError } from "axios";
-import { TServiceCredentials } from "@silo/core";
+import { TServiceCredentials } from "@plane/etl/core";
 import { downloadFile, uploadFile } from "@/helpers/utils";
 import { generateFileUploadPayload } from "./issues.migrator";
 

@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { E_JOB_STATUS, TJobStatus } from "@silo/core";
+import { E_JOB_STATUS, TJobStatus } from "@plane/etl/core";
 // helpers
 import { cn } from "@/helpers/common.helper";
 

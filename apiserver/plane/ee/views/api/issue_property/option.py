@@ -205,32 +205,6 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                 property_option, data=data, partial=True
             )
             property_option_serializer.is_valid(raise_exception=True)
-
-            # check if issue type with the same external id and external source already exists
-            external_id = request.data.get("external_id")
-            external_existing_property_option = self.model.objects.filter(
-                workspace__slug=self.workspace_slug,
-                project_id=self.project_id,
-                property_id=self.property_id,
-                external_source=request.data.get(
-                    "external_source", property_option.external_source
-                ),
-                external_id=external_id,
-                property__issue_type__is_epic=False,
-            )
-            if (
-                external_id
-                and (property_option.external_id != external_id)
-                and external_existing_property_option.exists()
-            ):
-                return Response(
-                    {
-                        "error": "Issue property with the same external id and external source already exists",
-                        "id": str(property_option.id),
-                    },
-                    status=status.HTTP_409_CONFLICT,
-                )
-
             property_option_serializer.save()
 
             return Response(property_option_serializer.data, status=status.HTTP_200_OK)

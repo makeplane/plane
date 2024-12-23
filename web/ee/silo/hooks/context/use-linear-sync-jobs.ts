@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { LinearConfig } from "@silo/linear";
+import { LinearConfig } from "@plane/etl/linear";
 // silo contexts
 import { ImporterSyncJobContext, TImporterCreateContext } from "@/plane-web/silo/contexts";
 

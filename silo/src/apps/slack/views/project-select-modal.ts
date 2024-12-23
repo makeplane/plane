@@ -1,9 +1,16 @@
-import { ACTIONS } from "../helpers/constants";
+import { ACTIONS, ENTITIES, EntityTypeValue } from "../helpers/constants";
 import { PlainTextOption } from "../helpers/slack-options";
 
-export const createProjectSelectionModal = (projects: Array<PlainTextOption>, privateMetadata: string = "{}") => ({
+export const createProjectSelectionModal = (
+  projects: Array<PlainTextOption>,
+  privateMetadata: any,
+  type: EntityTypeValue = ENTITIES.SHORTCUT_PROJECT_SELECTION
+) => ({
   type: "modal",
-  private_metadata: privateMetadata,
+  private_metadata: JSON.stringify({
+    entityType: type,
+    entityPayload: privateMetadata,
+  }),
   title: {
     type: "plain_text",
     text: "Create Issue",

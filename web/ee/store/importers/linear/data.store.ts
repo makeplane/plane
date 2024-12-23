@@ -2,7 +2,8 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { LinearOrganization, LinearTeam, LinearState } from "@silo/linear";
+import { LinearOrganization, LinearTeam, LinearState } from "@plane/etl/linear";
+import { IAdditionalUsersResponse } from "@plane/types";
 // plane web services
 import { LinearService } from "@/plane-web/services/importers/linear/data.service";
 // plane web store types
@@ -16,6 +17,7 @@ export interface ILinearDataStore {
   linearTeams: Record<string, LinearTeam>; // teamId -> team
   linearStates: Record<string, Record<string, LinearState>>; // teamId -> stateId -> state
   linearIssueCount: Record<string, number>; // teamId -> issueCount
+  additionalUsersData: IAdditionalUsersResponse;
   // computed
   linearOrganizationId: string;
   linearTeamIds: string[];
@@ -30,6 +32,12 @@ export interface ILinearDataStore {
   fetchLinearTeams: (workspaceId: string, userId: string) => Promise<LinearTeam[] | undefined>;
   fetchLinearTeamStates: (workspaceId: string, userId: string, teamId: string) => Promise<LinearState[] | undefined>;
   fetchLinearTeamIssueCount: (workspaceId: string, userId: string, teamId: string) => Promise<number | undefined>;
+  fetchAdditionalUsers: (
+    workspaceId: string,
+    userId: string,
+    workspaceSlug: string,
+    teamId: string
+  ) => Promise<IAdditionalUsersResponse | undefined>;
 }
 
 export class LinearDataStore implements ILinearDataStore {
@@ -40,6 +48,10 @@ export class LinearDataStore implements ILinearDataStore {
   linearTeams: Record<string, LinearTeam> = {}; // teamId -> team
   linearStates: Record<string, Record<string, LinearState>> = {}; // teamId -> stateId -> state
   linearIssueCount: Record<string, number> = {}; // teamId -> issueCount
+  additionalUsersData: IAdditionalUsersResponse = {
+    additionalUserCount: 0,
+    occupiedUserCount: 0,
+  };
   // service
   service: LinearService;
 
@@ -52,6 +64,7 @@ export class LinearDataStore implements ILinearDataStore {
       linearTeams: observable,
       linearStates: observable,
       linearIssueCount: observable,
+      additionalUsersData: observable,
       // computed
       linearOrganizationId: computed,
       linearTeamIds: computed,
@@ -60,6 +73,7 @@ export class LinearDataStore implements ILinearDataStore {
       fetchLinearTeams: action,
       fetchLinearTeamStates: action,
       fetchLinearTeamIssueCount: action,
+      fetchAdditionalUsers: action,
     });
 
     this.service = new LinearService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
@@ -240,6 +254,38 @@ export class LinearDataStore implements ILinearDataStore {
     } catch (error) {
       this.error = error as unknown as object;
       this.isLoading = false;
+    }
+  };
+
+  /**
+   * @description Fetches additional users on import
+   * @param { string } workspaceId
+   * @param { string } userId
+   * @param { string } workspaceSlug
+   * @param { string } teamId
+   * @returns { Promise<IAdditionalUsersResponse | undefined> }
+   */
+  fetchAdditionalUsers = async (
+    workspaceId: string,
+    userId: string,
+    workspaceSlug: string,
+    teamId: string
+  ): Promise<IAdditionalUsersResponse | undefined> => {
+    try {
+      const additionalUserResponse = (await this.service.getAdditionalUsers(
+        workspaceId,
+        userId,
+        workspaceSlug,
+        teamId
+      )) as IAdditionalUsersResponse;
+      if (additionalUserResponse?.additionalUserCount) {
+        runInAction(() => {
+          this.additionalUsersData = additionalUserResponse;
+        });
+      }
+      return additionalUserResponse;
+    } catch (error) {
+      this.error = error as unknown as object;
     }
   };
 }

@@ -2,7 +2,7 @@ import { FC, ReactNode, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { MessageCircle } from "lucide-react";
 // ui
-import { GithubIcon, SlackIcon } from "@plane/ui";
+import { GithubDarkIcon, SlackIcon } from "@plane/ui";
 // helpers
 import { ACTIVITY_HIGHLIGHT_TIMEOUT } from "@/constants/notification";
 import { cn } from "@/helpers/common.helper";
@@ -74,14 +74,14 @@ export const IssueCommentBlock: FC<TIssueCommentBlock> = observer((props) => {
         )}
         <div
           className={cn(
-            "absolute top-2 left-4 w-5 h-5 rounded-full overflow-hidden flex justify-center items-center bg-custom-background-90",
+            "absolute top-3 left-4 w-4 h-4 rounded-full overflow-hidden flex justify-center items-center bg-custom-background-90",
             {
               "bg-custom-background-80": !comment.external_source,
             }
           )}
         >
           {comment.external_source === "GITHUB" ? (
-            <GithubIcon className="w-4 h-4 absolute left-1 top-1" color="white" />
+            <GithubDarkIcon width={14} height={14} className="w-4 h-4 absolute left-1 top-1" color="white" />
           ) : comment.external_source?.includes("SLACK") ? (
             <SlackIcon className="size-3 absolute left-1 top-1" />
           ) : (

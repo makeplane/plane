@@ -1122,6 +1122,10 @@ class IssueAttachmentEndpoint(BaseAPIView):
             origin=request.META.get("HTTP_ORIGIN"),
         )
 
+        # Get the storage metadata
+        if not issue_attachment.storage_metadata:
+            get_asset_object_metadata.delay(str(issue_attachment.id))
+        issue_attachment.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def get(self, request, slug, project_id, issue_id, pk=None):

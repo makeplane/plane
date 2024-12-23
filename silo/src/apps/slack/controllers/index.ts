@@ -1,6 +1,12 @@
 import { Controller, Get, Post } from "@/lib";
 import { Request, Response } from "express";
-import { isUserMessage, SlackAuthState, TSlackPayload } from "@silo/slack";
+import {
+  isUserMessage,
+  SlackAuthState,
+  SlackUserAuthState,
+  TSlackCommandPayload,
+  TSlackPayload,
+} from "@plane/etl/slack";
 import { slackAuth } from "../auth/auth";
 import {
   createOrUpdateCredentials,
@@ -9,7 +15,7 @@ import {
   getCredentialsByWorkspaceId,
 } from "@/db/query";
 import { logger } from "@/logger";
-import taskManager from "@/apps/engine/worker";
+import { integrationTaskManager } from "@/apps/engine/worker";
 import {
   createWorkspaceConnection,
   deleteEntityConnectionByWorkspaceConnectionId,
@@ -18,6 +24,10 @@ import {
 } from "@/db/query/connection";
 import { PlaneWebhookData } from "@plane/sdk";
 import { env } from "@/env";
+import { ACTIONS } from "../helpers/constants";
+import { parseIssueFormData } from "../helpers/parse-issue-form";
+import { getConnectionDetails } from "../helpers/connection-details";
+import { convertToSlackOptions } from "../helpers/slack-options";
 
 @Controller("/api/slack")
 export class SlackController {
@@ -41,6 +51,7 @@ export class SlackController {
   @Post("/user/auth/url")
   async getUserAuthURL(req: Request, res: Response) {
     const body: SlackAuthState = req.body;
+    console.log(body);
     if (!body.userId) {
       return res.status(400).send({
         message: "Bad Request, expected userId to be present.",
@@ -78,6 +89,7 @@ export class SlackController {
           workspaceId: state.workspaceId,
           workspaceSlug: state.workspaceSlug,
           connectionId: response.team.id,
+          connectionSlug: response.team.name,
           connectionType: "SLACK",
           connectionData: response.team,
           credentialsId: credentials.id,
@@ -90,13 +102,12 @@ export class SlackController {
         error: error,
       });
     }
-    res.redirect(`${env.APP_BASE_URL}/${authState.workspaceSlug}/settings/integrations/slack/`);
   }
 
   @Get("/user/auth/callback")
   async getUserAuthCallback(req: Request, res: Response) {
     const { code, state } = req.query;
-    const authState = JSON.parse(Buffer.from(state as string, "base64").toString("utf-8")) as SlackAuthState;
+    const authState = JSON.parse(Buffer.from(state as string, "base64").toString("utf-8")) as SlackUserAuthState;
 
     try {
       const { state, response } = await slackAuth.getUserAuthToken({
@@ -116,7 +127,12 @@ export class SlackController {
       logger.error(error);
       res.sendStatus(500);
     }
-    res.redirect(`${env.APP_BASE_URL}/${authState.workspaceSlug}/settings/integrations/slack/`);
+
+    if (authState.profileRedirect) {
+      res.redirect(`${env.APP_BASE_URL}/profile/connections/?workspaceId=${authState.workspaceId}`);
+    } else {
+      res.redirect(`${env.APP_BASE_URL}/${authState.workspaceSlug}/settings/integrations/slack/`);
+    }
   }
 
   @Get("/app/status/:workspaceId")
@@ -220,7 +236,7 @@ export class SlackController {
     const payload: TSlackPayload = JSON.parse(payloadStr);
 
     // Pass the payload to the slack worker, to take action
-    taskManager.registerTask(
+    integrationTaskManager.registerTask(
       {
         route: "slack-interaction",
         jobId: payload.type,
@@ -232,24 +248,74 @@ export class SlackController {
     res.status(200).json({});
   }
 
+  @Post("/command")
+  async slackCommand(req: Request, res: Response) {
+    const payload = req.body as TSlackCommandPayload;
+    payload.type = "command";
+
+    integrationTaskManager.registerTask(
+      {
+        route: "slack-interaction",
+        jobId: payload.token,
+        type: "command",
+      },
+      payload
+    );
+
+    return res.json().status(200);
+  }
+
   @Post("/events")
   async slackEvents(req: Request, res: Response) {
     const payload = req.body;
 
-    if (isUserMessage(payload)) {
-      payload.type = "message";
+    if (payload.challenge) {
+      return res.status(200).json({ challenge: payload.challenge });
+    }
 
-      taskManager.registerTask(
+    if (isUserMessage(payload)) {
+      payload.type = "event";
+      integrationTaskManager.registerTask(
         {
           route: "slack-interaction",
           jobId: payload.event_id,
-          type: "message",
+          type: "event",
         },
         payload
       );
     }
 
-    res.sendStatus(200);
+    return res.sendStatus(200);
+  }
+
+  @Post("/options")
+  async slackOptions(req: Request, res: Response) {
+    const payload = JSON.parse(req.body.payload) as TSlackPayload;
+
+    // Check if the payload type is block_suggestion
+    if (payload.type === "block_suggestion") {
+      // Switch between the actions received
+      switch (payload.action_id) {
+        case ACTIONS.ISSUE_LABELS:
+          const text = payload.value;
+          // If the action is issue_labels, parse the view to be of type
+          // IssueModalViewFull and pass it to the slack worker
+          const { workspaceConnection, planeClient } = await getConnectionDetails(payload.team.id);
+          const values = parseIssueFormData(payload.view.state.values);
+          const labels = await planeClient.label.list(workspaceConnection.workspaceSlug, values.project);
+          const filteredLabels = labels.results
+            .filter((label) => label.name.toLowerCase().includes(text.toLowerCase()))
+            .sort((a, b) => a.name.localeCompare(b.name));
+          const labelOptions = convertToSlackOptions(filteredLabels);
+          return res.status(200).json({
+            options: labelOptions,
+          });
+        default:
+          logger.info("No action found for block_suggestion.");
+      }
+    }
+
+    return res.status(200).json({});
   }
 
   @Post("/plane/events")
@@ -257,7 +323,7 @@ export class SlackController {
     const payload = req.body as PlaneWebhookData;
 
     if (payload.event === "issue_comment") {
-      taskManager.registerTask(
+      integrationTaskManager.registerTask(
         {
           route: "plane-slack-webhook",
           jobId: payload.event,
@@ -267,6 +333,6 @@ export class SlackController {
       );
     }
 
-    res.sendStatus(200);
+    return res.sendStatus(200);
   }
 }

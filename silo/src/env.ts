@@ -7,15 +7,17 @@ const envSchema = z.object({
   // App Env Variables
   BATCH_SIZE: z.string().default("50"),
   PORT: z.string().default("3000"),
-  DEDUP_INTERVAL: z.string().optional().default("3"),
+  DEDUP_INTERVAL: z.string().optional().default("2"),
   DB_URL: z.string().default("postgres://postgres:password@localhost:5432/silo"),
   AMQP_URL: z.string().default("amqp://guest:guest@localhost:5672"),
+  CELERY_AMQP_URL: z.string().default("amqp://guest:guest@localhost:5672"),
   REDIS_URL: z.string().default("redis://localhost:6379"),
   SENTRY_DSN: z.string().optional(),
   PG_SCHEMA: z.string().optional(),
   APP_BASE_URL: z.string().default(""),
   API_BASE_URL: z.string().default(""),
   SILO_API_BASE_URL: z.string().default(""),
+  SILO_BASE_PATH: z.string().default("/"),
   WEBHOOK_SECRET: z.string().default("plane-silo"),
   MQ_PREFETCH_COUNT: z.string().default("5"),
   // Feature Flags Env Variables

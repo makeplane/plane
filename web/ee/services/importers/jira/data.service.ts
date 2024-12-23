@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
-import { JiraResource, JiraProject, JiraStates, JiraPriority, ILabelConfig } from "@silo/jira/";
+import { JiraResource, JiraProject, JiraStates, JiraPriority, ImportedJiraUser } from "@plane/etl/jira";
+import { IAdditionalUsersResponse } from "@plane/types";
 
 export class JiraService {
   protected baseURL: string;
@@ -102,7 +103,7 @@ export class JiraService {
     userId: string,
     resourceId: string | undefined,
     projectId: string
-  ): Promise<ILabelConfig[] | undefined> {
+  ): Promise<string[] | undefined> {
     return this.axiosInstance
       .post(`/api/jira/labels/`, { workspaceId, userId, cloudId: resourceId, projectId })
       .then((res) => res.data)
@@ -127,6 +128,27 @@ export class JiraService {
   ): Promise<number | undefined> {
     return this.axiosInstance
       .post(`/api/jira/issue-count/`, { workspaceId, userId, cloudId: resourceId, projectId })
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description get project issues count
+   * @property workspaceId: string
+   * @property userId: string
+   * @property workspaceSlug: string
+   * @property jiraEmails: string[]
+   */
+  async getAdditionalUsers(
+    workspaceId: string,
+    userId: string,
+    workspaceSlug: string,
+    userData: ImportedJiraUser[]
+  ): Promise<IAdditionalUsersResponse | undefined> {
+    return this.axiosInstance
+      .post(`/api/jira/additional-users/${workspaceId}/${workspaceSlug}/${userId}`, { userData })
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -1,4 +1,4 @@
-import { AsanaPATAuthState } from "@silo/asana";
+import { AsanaPATAuthState } from "@plane/etl/asana";
 // plane web types
 import { TStepperBlock } from "@/plane-web/silo/types/ui";
 

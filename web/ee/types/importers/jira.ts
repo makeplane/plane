@@ -1,4 +1,4 @@
-import { JiraPATAuthState } from "@silo/jira";
+import { JiraPATAuthState } from "@plane/etl/jira";
 // plane web types
 import { TStepperBlock } from "@/plane-web/types/importers";
 

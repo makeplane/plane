@@ -1,11 +1,11 @@
 "use client";
 
 import { FC, useState } from "react";
-import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // importer
-import { E_IMPORTER_KEYS } from "@silo/core";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 // jira
-import { JiraAuthState, JiraPATAuthState } from "@silo/jira";
+import { JiraAuthState, JiraPATAuthState } from "@plane/etl/jira";
+import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web hooks

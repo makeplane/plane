@@ -1,8 +1,8 @@
 import set from "lodash/set";
 import update from "lodash/update";
 import { computed, makeObservable, observable } from "mobx";
-import { E_IMPORTER_KEYS } from "@silo/core";
-import { JiraConfig } from "@silo/jira";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
+import { JiraConfig } from "@plane/etl/jira";
 // plane web constants
 import { IMPORTER_STEPS } from "@/plane-web/constants/importers/jira-server";
 // plane web store types

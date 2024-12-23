@@ -6,7 +6,7 @@ import {
 import { getCredentialsById } from "@/db/query";
 import { getEntityConnectionByWorkspaceAndProjectId, getWorkspaceConnectionById } from "@/db/query/connection";
 import { verifyEntityConnection, verifyWorkspaceConnection } from "@/types";
-import { TServiceCredentials } from "@silo/core";
+import { TServiceCredentials } from "@plane/etl/core";
 
 export const getConnectionDetailsForPlane = async (
   workspace: string,

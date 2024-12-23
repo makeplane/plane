@@ -1,8 +1,8 @@
 import set from "lodash/set";
 import update from "lodash/update";
 import { computed, makeObservable, observable } from "mobx";
-import { AsanaConfig } from "@silo/asana";
-import { E_IMPORTER_KEYS } from "@silo/core";
+import { AsanaConfig } from "@plane/etl/asana";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 // plane web constants
 import { IMPORTER_STEPS } from "@/plane-web/constants/importers/asana";
 // plane web store types

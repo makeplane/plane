@@ -173,10 +173,10 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
             and self.property_id
         ):
             issue_property = self.model.objects.get(
-                workspace__slug=self.workspace_slug,
-                project_id=self.project_id,
-                issue_type_id=self.type_id,
-                pk=self.property_id,
+                workspace__slug=slug,
+                project_id=project_id,
+                issue_type_id=type_id,
+                pk=property_id,
                 issue_type__is_epic=False,
             )
 
@@ -185,32 +185,6 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
                 issue_property, data=data, partial=True
             )
             issue_property_serializer.is_valid(raise_exception=True)
-
-            # check if issue type with the same external id and external source already exists
-            external_id = request.data.get("external_id")
-            external_existing_issue_property = self.model.objects.filter(
-                workspace__slug=self.workspace_slug,
-                project_id=self.project_id,
-                issue_type_id=self.type_id,
-                external_source=request.data.get(
-                    "external_source", issue_property.external_source
-                ),
-                external_id=external_id,
-                issue_type__is_epic=False,
-            )
-            if (
-                external_id
-                and (issue_property.external_id != external_id)
-                and external_existing_issue_property.exists()
-            ):
-                return Response(
-                    {
-                        "error": "Issue property with the same external id and external source already exists",
-                        "id": str(issue_property.id),
-                    },
-                    status=status.HTTP_409_CONFLICT,
-                )
-
             issue_property_serializer.save()
 
             return Response(issue_property_serializer.data, status=status.HTTP_200_OK)

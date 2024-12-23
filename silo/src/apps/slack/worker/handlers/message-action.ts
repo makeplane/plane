@@ -1,6 +1,6 @@
 import { convertToSlackOptions } from "@/apps/slack/helpers/slack-options";
 import { createProjectSelectionModal } from "@/apps/slack/views";
-import { TMessageActionPayload } from "@silo/slack";
+import { TMessageActionPayload } from "@plane/etl/slack";
 import { getConnectionDetails } from "../../helpers/connection-details";
 
 export const handleMessageAction = async (data: TMessageActionPayload) => {
@@ -11,7 +11,7 @@ export const handleMessageAction = async (data: TMessageActionPayload) => {
   const filteredProjects = projects.results.filter((project) => project.is_member === true);
   // @ts-ignore
   const plainTextOptions = convertToSlackOptions(filteredProjects);
-  const modal = createProjectSelectionModal(plainTextOptions, JSON.stringify(data));
+  const modal = createProjectSelectionModal(plainTextOptions, data);
 
   try {
     const res = await slackService.openModal(data.trigger_id, modal);

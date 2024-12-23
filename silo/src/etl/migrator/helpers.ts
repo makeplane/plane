@@ -1,5 +1,5 @@
 import { getCredentialsByWorkspaceId, getJobById } from "@/db/query";
-import { TServiceCredentials, TJobWithConfig } from "@silo/core";
+import { TServiceCredentials, TJobWithConfig } from "@plane/etl/core";
 
 export const getJobForMigration = async (jobId: string): Promise<TJobWithConfig> => {
   const jobs = await getJobById(jobId);

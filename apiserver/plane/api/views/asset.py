@@ -12,7 +12,7 @@ from rest_framework.response import Response
 # Module Imports
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.settings.storage import S3Storage
-from plane.db.models import FileAsset, User
+from plane.db.models import FileAsset, User, Workspace
 from plane.api.views.base import BaseAPIView
 
 
@@ -246,3 +246,169 @@ class UserServerAssetEndpoint(BaseAPIView):
         )
         asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class GenericAssetEndpoint(BaseAPIView):
+    """This endpoint is used to upload generic assets that can be later bound to entities."""
+
+    def get(self, request, slug, asset_id=None):
+        """Get a presigned URL for an asset"""
+        try:
+            # Get the workspace
+            workspace = Workspace.objects.get(slug=slug)
+
+            # If asset_id is not provided, return 400
+            if not asset_id:
+                return Response(
+                    {"error": "Asset ID is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Get the asset
+            asset = FileAsset.objects.get(
+                id=asset_id, workspace_id=workspace.id, is_deleted=False
+            )
+
+            # Check if the asset exists and is uploaded
+            if not asset.is_uploaded:
+                return Response(
+                    {"error": "Asset not yet uploaded"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            size_limit = settings.FILE_SIZE_LIMIT
+
+            # Generate presigned URL for GET
+            storage = S3Storage(request=request, is_server=True)
+            presigned_url = storage.generate_presigned_url(
+                object_name=asset.asset.name, filename=asset.attributes.get("name")
+            )
+
+            return Response(
+                {
+                    "asset_id": str(asset.id),
+                    "asset_url": presigned_url,
+                    "asset_name": asset.attributes.get("name", ""),
+                    "asset_type": asset.attributes.get("type", ""),
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        except Workspace.DoesNotExist:
+            return Response(
+                {"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+        except FileAsset.DoesNotExist:
+            return Response(
+                {"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    def post(self, request, slug):
+        name = request.data.get("name")
+        type = request.data.get("type")
+        size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        project_id = request.data.get("project_id")
+        external_id = request.data.get("external_id")
+        external_source = request.data.get("external_source")
+
+        # Check if the request is valid
+        if not name or not size:
+            return Response(
+                {"error": "Name and size are required fields.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if the file size is within the limit
+        size_limit = min(size, settings.FILE_SIZE_LIMIT)
+
+        # Check if the file type is allowed
+        if not type or type not in settings.ATTACHMENT_MIME_TYPES:
+            return Response(
+                {"error": "Invalid file type.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Get the workspace
+        workspace = Workspace.objects.get(slug=slug)
+
+        # asset key
+        asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"
+
+        # Check for existing asset with same external details if provided
+        if external_id and external_source:
+            existing_asset = FileAsset.objects.filter(
+                workspace__slug=slug,
+                external_source=external_source,
+                external_id=external_id,
+                is_deleted=False,
+            ).first()
+
+            if existing_asset:
+                return Response(
+                    {
+                        "message": "Asset with same external id and source already exists",
+                        "asset_id": str(existing_asset.id),
+                        "asset_url": existing_asset.asset_url,
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
+
+        # Create a File Asset
+        asset = FileAsset.objects.create(
+            attributes={"name": name, "type": type, "size": size_limit},
+            asset=asset_key,
+            size=size_limit,
+            workspace_id=workspace.id,
+            project_id=project_id,
+            created_by=request.user,
+            external_id=external_id,
+            external_source=external_source,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,  # Using ISSUE_ATTACHMENT since we'll bind it to issues
+        )
+
+        # Get the presigned URL
+        storage = S3Storage(request=request, is_server=True)
+        presigned_url = storage.generate_presigned_post(
+            object_name=asset_key,
+            file_type=type,
+            file_size=size_limit
+        )
+
+        return Response(
+            {
+                "upload_data": presigned_url,
+                "asset_id": str(asset.id),
+                "asset_url": asset.asset_url,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    def patch(self, request, slug, asset_id):
+        try:
+            asset = FileAsset.objects.get(
+                id=asset_id,
+                workspace__slug=slug,
+                is_deleted=False
+            )
+
+            # Update is_uploaded status
+            asset.is_uploaded = request.data.get("is_uploaded", asset.is_uploaded)
+
+            # Update storage metadata if not present
+            if not asset.storage_metadata:
+                get_asset_object_metadata.delay(asset_id=str(asset_id))
+
+            asset.save(update_fields=["is_uploaded"])
+
+            return Response(
+                status=status.HTTP_204_NO_CONTENT
+            )
+        except FileAsset.DoesNotExist:
+            return Response(
+                {"error": "Asset not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )

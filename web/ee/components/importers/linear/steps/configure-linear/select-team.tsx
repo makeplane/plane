@@ -3,8 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { LinearTeam } from "@plane/etl/linear";
 import { Loader } from "@plane/ui";
-import { LinearTeam } from "@silo/linear";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web hooks

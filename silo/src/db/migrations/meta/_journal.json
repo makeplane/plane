@@ -15,6 +15,13 @@
       "when": 1733824769246,
       "tag": "0001_jittery_norman_osborn",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1734517027583,
+      "tag": "0002_lazy_spyke",
+      "breakpoints": true
     }
   ]
 }

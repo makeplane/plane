@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from "axios";
-import { LinearAuthState } from "@silo/linear";
+import { LinearAuthState } from "@plane/etl/linear";
 
 export class ImporterAuthService {
   protected baseURL: string;

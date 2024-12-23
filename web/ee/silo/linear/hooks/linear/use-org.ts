@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import useSWR from "swr";
 // silo imports
-import { LinearOrganization } from "@silo/linear";
+import { LinearOrganization } from "@plane/etl/linear";
 // hooks
 import { useBaseImporter } from "@/plane-web/silo/hooks";
 import { useImporter } from "@/plane-web/silo/linear/hooks";

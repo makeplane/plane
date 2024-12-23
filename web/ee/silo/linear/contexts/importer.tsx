@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, Dispatch, ReactNode, SetStateAction, useState } from "react";
-import { LinearConfig } from "@silo/linear";
+import { LinearConfig } from "@plane/etl/linear";
 // silo hooks
 import { useBaseImporter } from "@/plane-web/silo/hooks";
 // silo constants

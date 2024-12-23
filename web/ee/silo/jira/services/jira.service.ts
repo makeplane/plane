@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from "axios";
-import { JiraResource, JiraProject, JiraStates, JiraPriority, ILabelConfig } from "@silo/jira/";
+import { JiraResource, JiraProject, JiraStates, JiraPriority, ILabelConfig } from "@plane/etl/jira";
 
 export class JiraService {
   protected baseURL: string;

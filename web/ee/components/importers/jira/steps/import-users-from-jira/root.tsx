@@ -2,14 +2,15 @@
 
 import { FC, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
-import { Button } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import useSWR from "swr";
+// plane packages imports
+import { pullUsers } from "@plane/etl/jira";
+import { Button, Loader } from "@plane/ui";
 // plane web components
 import { ImportUsersFromJiraUploader } from "@/plane-web/components/importers/jira";
-import { StepperNavigation } from "@/plane-web/components/importers/ui";
+import { AddSeatsAlertBanner, SkipUserImport, StepperNavigation } from "@/plane-web/components/importers/ui";
 // plane web hooks
-import { useJiraImporter } from "@/plane-web/hooks/store";
+import { useJiraImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web types
 import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers/jira";
 
@@ -20,13 +21,17 @@ const currentStepKey = E_IMPORTER_STEPS.IMPORT_USERS_FROM_JIRA;
 export const ImportUsersFromJira: FC = () => {
   // hooks
   const {
+    user,
+    workspace,
     auth: { currentAuth },
     importerData,
     handleImporterData,
     handleSyncJobConfig,
     currentStep,
     handleStepper,
+    data: { additionalUsersData, fetchAdditionalUsers },
   } = useJiraImporter();
+  const { currentWorkspaceSubscriptionAvailableSeats } = useWorkspaceSubscription();
 
   // states
   const [formData, setFormData] = useState<TFormData>({
@@ -35,24 +40,24 @@ export const ImportUsersFromJira: FC = () => {
   });
 
   // derived values
-  const isNextButtonDisabled = formData.userSkipToggle
-    ? false
-    : formData.userSkipToggle === false && formData?.userData
-      ? false
-      : true;
   const jiraResourceId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.resourceId;
   const isOAuthEnabled = currentAuth?.isOAuthEnabled;
   const isResourceFiledRequired = isOAuthEnabled ? !!jiraResourceId : true;
+  const workspaceSlug = workspace?.slug || undefined;
+  const workspaceId = workspace?.id || undefined;
+  const userId = user?.id || undefined;
 
   // handlers
   const handleFormData = <T extends keyof TFormData>(key: T, value: TFormData[T]) => {
     setFormData((prevData) => ({ ...prevData, [key]: value }));
 
-    if (key === "userSkipToggle") {
+    if (key === "userSkipToggle" && typeof value === "boolean") {
       handleSyncJobConfig("users", "");
+      handleSyncJobConfig("skipUserImport", value);
     }
     if (key === "userData" && !formData.userSkipToggle && typeof value === "string") {
       handleSyncJobConfig("users", value);
+      handleSyncJobConfig("skipUserImport", true);
     }
   };
 
@@ -71,38 +76,39 @@ export const ImportUsersFromJira: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [importerData]);
 
+  const { isLoading: isJiraAdditionalUsersDataLoading } = useSWR(
+    workspaceId && userId && workspaceSlug && formData.userData
+      ? `IMPORTER_JIRA_ADDITIONAL_USERS_${workspaceId}_${userId}_${workspaceSlug}`
+      : null,
+    workspaceId && userId && workspaceSlug && formData.userData
+      ? async () => fetchAdditionalUsers(workspaceId, userId, workspaceSlug, pullUsers(formData.userData || ""))
+      : null,
+    { errorRetryCount: 0 }
+  );
+
+  const extraSeatRequired = additionalUsersData?.additionalUserCount - currentWorkspaceSubscriptionAvailableSeats;
+  const isNextButtonDisabled = Boolean(extraSeatRequired > 0 && !formData.userSkipToggle);
+
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
       {/* content */}
       <div className="w-full min-h-44 max-h-full overflow-y-auto space-y-4">
-        {/* skipping users checkbox */}
-        <div className="space-y-2">
-          <div
-            className="inline-flex items-center gap-2 cursor-pointer"
-            onClick={() => handleFormData("userSkipToggle", !formData.userSkipToggle)}
-          >
-            <div
-              className={cn(
-                "flex-shrink-0 w-4 h-4 p-1 relative flex justify-center items-center border border-custom-border-300 overflow-hidden rounded-sm transition-all",
-                { "border-custom-primary-100": formData.userSkipToggle }
-              )}
-            >
-              <div
-                className={cn("w-full h-full bg-custom-background-80 transition-all", {
-                  "bg-custom-primary-100": formData.userSkipToggle,
-                })}
-              />
-            </div>
-            <div className="text-sm text-custom-text-100">Skip importing User data</div>
-          </div>
-          {/* when skipping we are showing the error below */}
-          {formData.userSkipToggle && (
-            <div className="text-sm text-red-500">
-              Skipping user import will result in issues, comments, and other data from Jira being created by the user
-              performing the migration in Plane. You can still manually add users later.
-            </div>
-          )}
-        </div>
+        {/* skipping users checkbox and alert */}
+        {isJiraAdditionalUsersDataLoading ? (
+          <Loader.Item height="35px" width="100%" />
+        ) : extraSeatRequired && formData.userData && !formData.userSkipToggle ? (
+          <AddSeatsAlertBanner
+            additionalUserCount={additionalUsersData?.additionalUserCount}
+            extraSeatRequired={extraSeatRequired}
+          />
+        ) : (
+          <></>
+        )}
+        <SkipUserImport
+          importSourceName="Jira"
+          userSkipToggle={formData.userSkipToggle}
+          handleUserSkipToggle={(value) => handleFormData("userSkipToggle", value)}
+        />
 
         {/* uploading the users from jira */}
         {!formData.userSkipToggle && isResourceFiledRequired && (

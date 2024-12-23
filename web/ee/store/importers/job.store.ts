@@ -3,7 +3,7 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { JobService, TImporterKeys, TJob, TJobConfigResponse, TJobWithConfig } from "@silo/core";
+import { JobService, TImporterKeys, TJob, TJobConfigResponse, TJobWithConfig } from "@plane/etl/core";
 
 export type TJobLoader = "fetch" | "re-fetch" | "fetch_by_id" | "create" | "start" | "create_config" | undefined;
 

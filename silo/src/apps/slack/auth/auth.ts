@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { createSlackAuth } from "@silo/slack";
+import { createSlackAuth } from "@plane/etl/slack";
 
 export const slackAuth = createSlackAuth(
   env.SLACK_CLIENT_ID,

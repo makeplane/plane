@@ -53,7 +53,16 @@ import {
 import { IInitiativeFilterStore, InitiativeFilterStore } from "./initiatives/initiatives-filter.store";
 import { IInitiativeStore, InitiativeStore } from "./initiatives/initiatives.store";
 // integrations
-import { ISlackStore, SlackStore } from "./integrations";
+import {
+  ISlackStore,
+  SlackStore,
+  IGithubStore,
+  GithubStore,
+  IGitlabStore,
+  GitlabStore,
+  IConnectionStore,
+  ConnectionStore,
+} from "./integrations";
 // pi chat
 import { IPiChatStore, PiChatStore } from "./pi-chat/pi-chat";
 // timeline
@@ -85,7 +94,10 @@ export class RootStore extends CoreRootStore {
   linearImporter: ILinearStore;
   asanaImporter: IAsanaStore;
   // integrations
+  connections: IConnectionStore;
   slackIntegration: ISlackStore;
+  githubIntegration: IGithubStore;
+  gitlabIntegration: IGitlabStore;
   initiativeFilterStore: IInitiativeFilterStore;
   initiativeStore: IInitiativeStore;
 
@@ -115,7 +127,10 @@ export class RootStore extends CoreRootStore {
     this.linearImporter = new LinearStore(this);
     this.asanaImporter = new AsanaStore(this);
     // integrations
+    this.connections = new ConnectionStore(this);
     this.slackIntegration = new SlackStore(this);
+    this.githubIntegration = new GithubStore(this);
+    this.gitlabIntegration = new GitlabStore(this);
     this.initiativeFilterStore = new InitiativeFilterStore(this);
     this.initiativeStore = new InitiativeStore(this, this.initiativeFilterStore);
   }
@@ -145,7 +160,10 @@ export class RootStore extends CoreRootStore {
     this.linearImporter = new LinearStore(this);
     this.asanaImporter = new AsanaStore(this);
     // integrations
+    this.connections = new ConnectionStore(this);
     this.slackIntegration = new SlackStore(this);
+    this.githubIntegration = new GithubStore(this);
+    this.gitlabIntegration = new GitlabStore(this);
     this.initiativeFilterStore = new InitiativeFilterStore(this);
     this.initiativeStore = new InitiativeStore(this, this.initiativeFilterStore);
   }

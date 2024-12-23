@@ -1,8 +1,8 @@
 "use client";
 
 import { FC } from "react";
+import { LinearAuthState } from "@plane/etl/linear";
 import { Button } from "@plane/ui";
-import { LinearAuthState } from "@silo/linear";
 // hooks
 import { useBaseImporter } from "@/plane-web/silo/hooks";
 import { useImporter } from "@/plane-web/silo/linear/hooks";

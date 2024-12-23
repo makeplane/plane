@@ -1,9 +1,9 @@
 "use client";
 
 import { FC } from "react";
+import { TJob } from "@plane/etl/core";
+import { LinearConfig } from "@plane/etl/linear";
 import { Button } from "@plane/ui";
-import { TJob } from "@silo/core";
-import { LinearConfig } from "@silo/linear";
 // silo hooks
 import { useBaseImporter } from "@/plane-web/silo/hooks";
 import { useLinearSyncJobs } from "@/plane-web/silo/hooks/context/use-linear-sync-jobs";
@@ -39,7 +39,7 @@ export const SummaryRoot: FC = () => {
           const syncJobPayload: Partial<TJob> = {
             workspace_slug: workspaceSlug,
             workspace_id: workspaceId,
-            // @ts-ignore
+            // @ts-expect-error
             status: "",
             project_id: planeProjectId,
             initiator_id: userId,

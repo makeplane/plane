@@ -2,9 +2,9 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { JiraStatus } from "@plane/etl/jira";
 import { IState } from "@plane/types";
 import { StateGroupIcon } from "@plane/ui";
-import { JiraStatus } from "@silo/jira";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 

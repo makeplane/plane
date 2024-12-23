@@ -1,8 +1,15 @@
 import { Controller, Get, Post } from "@/lib";
 import { Request, Response } from "express";
-import { createJiraService, JiraProject, JiraV2Service } from "@silo/jira-server";
+// etl
+import { createJiraService, JiraProject, JiraV2Service } from "@plane/etl/jira-server";
 import { createOrUpdateCredentials, getCredentialsByWorkspaceId } from "@/db/query";
-import { JiraResource } from "@silo/jira";
+import { JiraResource } from "@plane/etl/jira";
+// db
+import { createOrUpdateCredentials } from "@/db/query";
+// helpers
+import { createPlaneClient } from "@/helpers/utils";
+import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
+import { getValidCredentials } from "@/helpers/credential";
 
 @Controller("/api/jira-server")
 class JiraDataCenterController {
@@ -79,7 +86,6 @@ class JiraDataCenterController {
     }
   }
 
-  // Doesn't work
   @Post("/states")
   async getStates(req: Request, res: Response) {
     const { workspaceId, userId, projectId } = req.body;
@@ -147,28 +153,34 @@ class JiraDataCenterController {
     }
   }
 
-  @Post("/test")
-  async getFields(req: Request, res: Response) {
-    const { workspaceId, userId, projectId } = req.body;
+  @Get("/additional-users/:workspaceId/:workspaceSlug/:userId")
+  async getUserDifferential(req: Request, res: Response) {
+    const { workspaceId, workspaceSlug, userId } = req.params;
 
     try {
-      const jiraClient = await createJiraClient(workspaceId, userId);
-      const statuses = await jiraClient.getJiraUsers();
-      return res.json(statuses);
-    } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      const [planeClient, jiraClient] = await Promise.all([
+        createPlaneClient(workspaceId, userId, "JIRA_SERVER"),
+        createJiraClient(workspaceId, userId),
+      ]);
+      const [workspaceMembers, jiraActiveMembers] = await Promise.all([
+        planeClient.users.listAllUsers(workspaceSlug),
+        jiraClient.getJiraUsers(),
+      ]);
+      const billableMembers = workspaceMembers.filter((member) => member.role > 10);
+      const additionalUsers = compareAndGetAdditionalUsers(billableMembers, jiraActiveMembers);
+
+      return res.json({
+        additionalUserCount: additionalUsers.length,
+        occupiedUserCount: billableMembers.length,
+      });
+    } catch (error) {
+      return res.status(500).send({ message: error });
     }
   }
 }
 
 const createJiraClient = async (workspaceId: string, userId: string): Promise<JiraV2Service> => {
-  const credentials = await getCredentialsByWorkspaceId(workspaceId, userId, "JIRA_SERVER");
-
-  if (!credentials || credentials.length === 0) {
-    throw new Error("No jira credentials available for the given workspaceId and userId");
-  }
-
-  const jiraCredentials = credentials[0];
+  const jiraCredentials = await getValidCredentials(workspaceId, userId, "JIRA_SERVER");
 
   if (!jiraCredentials.source_hostname || !jiraCredentials.source_access_token || !jiraCredentials.user_email) {
     throw new Error("Invalid Jira credentials");

@@ -1,10 +1,12 @@
 import { env } from "@/env";
 import { Controller, Get, Post } from "@/lib";
 import { Request, Response } from "express";
-import { LinearTokenResponse, createLinearService, LinearAuthPayload, LinearAuthState } from "@silo/linear";
+import { LinearTokenResponse, createLinearService, LinearAuthPayload, LinearAuthState } from "@plane/etl/linear";
 import { createOrUpdateCredentials, getCredentialsByWorkspaceId } from "@/db/query";
 import { linearAuth } from "../auth/auth";
-import { TServiceCredentials } from "@silo/core";
+import { TServiceCredentials } from "@plane/etl/core";
+import { createPlaneClient } from "@/helpers/utils";
+import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
 
 @Controller("/api/linear")
 class LinearController {
@@ -185,6 +187,39 @@ class LinearController {
     } catch (error: any) {
       console.log(error);
       res.sendStatus(500).send(error);
+    }
+  }
+
+  @Get("/additional-users/:workspaceId/:workspaceSlug/:userId/:teamId")
+  async getUserDifferential(req: Request, res: Response) {
+    const { workspaceId, workspaceSlug, userId, teamId } = req.params;
+
+    try {
+      const [planeClient, linearClient] = await Promise.all([
+        createPlaneClient(workspaceId, userId, "LINEAR"),
+        linearService(workspaceId, userId),
+      ]);
+
+      const [workspaceMembers, linearUsers] = await Promise.all([
+        planeClient.users.listAllUsers(workspaceSlug),
+        linearClient.getTeamMembers(teamId),
+      ]);
+
+      const billableMembers = workspaceMembers.filter((member) => member.role > 10);
+      const additionalUsers = compareAndGetAdditionalUsers(
+        billableMembers,
+        linearUsers.nodes.map((user) => user.email)
+      );
+
+      return res.json({
+        additionalUserCount: additionalUsers.length,
+        occupiedUserCount: billableMembers.length,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        return res.status(401).json({ error: error.message });
+      }
+      return res.status(500).json({ error: "An unexpected error occurred" });
     }
   }
 }

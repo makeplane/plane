@@ -7,11 +7,11 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "module": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "target": "ESNext",
     "experimentalDecorators": true,
-    "sourceMap": true,
-    "moduleResolution": "NodeNext"
+    "sourceMap": true
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "build", "node_modules"]

@@ -186,3 +186,18 @@ export const deactivateCredentials = async (workspaceId: string, userId: string,
       )
     );
 };
+
+export const getCredentialsForUser = async (workspaceId: string, userId: string) => {
+  const credentials = await db
+    .select()
+    .from(schema.credentials)
+    .where(
+      and(
+        eq(schema.credentials.workspace_id, workspaceId),
+        eq(schema.credentials.user_id, userId),
+        eq(schema.credentials.is_active, true)
+      )
+    );
+
+  return credentials;
+};

@@ -1,7 +1,7 @@
 import { getEntityConnectionByEntitySlug } from "@/db/query/connection";
 import { WebhookIssueCommentPayload } from "@plane/sdk";
 import { getConnectionDetails } from "../../helpers/connection-details";
-import { SlackMessageResponse } from "@silo/slack";
+import { SlackMessageResponse } from "@plane/etl/slack";
 import { getCredentialsByWorkspaceId } from "@/db/query";
 
 export const handleIssueCommentWebhook = async (payload: WebhookIssueCommentPayload) => {

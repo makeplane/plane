@@ -437,3 +437,4 @@ class IssueExpandSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+

@@ -19,8 +19,9 @@ import {
   updateJob,
 } from "@/db/query";
 import { Request, Response } from "express";
-import taskManager from "@/apps/engine/worker";
-import { TImporterKeys, TIntegrationKeys } from "@silo/core";
+
+import { TImporterKeys, TIntegrationKeys } from "@plane/etl/core";
+import { importTaskManger } from "@/apps/engine/worker";
 
 @Controller("/api/jobs")
 export class JobController {
@@ -106,6 +107,36 @@ export class JobController {
 
       if (job) {
         res.status(200).json(job);
+      } else {
+        res.status(404).json({ message: "Job not found" });
+      }
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  @Post("/:id/batch-complete")
+  async updateJobBatchComplete(req: Request, res: Response) {
+    try {
+      const { jobId } = req.body;
+
+      const jobs = await getJobById(req.params.id);
+      if (jobs && jobs.length > 0) {
+        const job = jobs[0];
+        if (job.completed_batch_count != null && job.total_batch_count != null) {
+          if (job.completed_batch_count + 1 >= job.total_batch_count) {
+            await updateJob(jobId, {
+              status: "FINISHED",
+              end_time: new Date(),
+              completed_batch_count: job.completed_batch_count + 1,
+            });
+          } else {
+            await updateJob(jobId, {
+              completed_batch_count: job.completed_batch_count + 1,
+            });
+          }
+        }
+        res.status(200).json({ message: "Job updated successfully" });
       } else {
         res.status(404).json({ message: "Job not found" });
       }
@@ -219,7 +250,7 @@ export class JobController {
         error: "",
       });
 
-      await taskManager.registerTask(
+      await importTaskManger.registerTask(
         {
           route: job.migration_type.toLowerCase(),
           jobId: job.id,

@@ -1,19 +1,20 @@
-export function formatTimestampToNaturalLanguage(timestamp: string): string {
+export function formatTimestampToNaturalLanguage(timestamp: string, includeTime: boolean = true): string {
   const date = new Date(timestamp);
   const now = new Date();
 
-  // Calculate the difference in days
   const diffTime = Math.abs(now.getTime() - date.getTime());
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
+  const timeStr = includeTime ? ` at ${formatTime(date)}` : "";
+
   // Check if the date is today
   if (diffDays === 0 && now.getDate() === date.getDate()) {
-    return `Today at ${formatTime(date)}`;
+    return `Today${timeStr}`;
   }
 
   // Check if the date is yesterday
   if (diffDays === 1 || (diffDays === 0 && now.getDate() !== date.getDate())) {
-    return `Yesterday at ${formatTime(date)}`;
+    return `Yesterday${timeStr}`;
   }
 
   // Format the date as "Month Day, Year"
@@ -23,7 +24,7 @@ export function formatTimestampToNaturalLanguage(timestamp: string): string {
     day: "numeric",
   };
 
-  return `${date.toLocaleDateString(undefined, options)} at ${formatTime(date)}`;
+  return `${date.toLocaleDateString(undefined, options)}${timeStr}`;
 }
 
 function formatTime(date: Date): string {
@@ -34,4 +35,13 @@ function formatTime(date: Date): string {
   hours = hours ? hours : 12; // the hour '0' should be '12'
   const minutesStr = minutes < 10 ? `0${minutes}` : minutes;
   return `${hours}:${minutesStr} ${ampm}`;
+}
+
+export function formatDateToYYYYMMDD(timestamp: string): string {
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 }

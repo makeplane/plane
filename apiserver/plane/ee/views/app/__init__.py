@@ -16,6 +16,9 @@ from plane.ee.views.app.initiative import (
     InitiativeProjectEndpoint,
     InitiativeLabelEndpoint,
 )
+
+
+from plane.ee.views.app.webhook import InternalWebhookEndpoint
 from plane.ee.views.app.epic import (
     EpicViewSet,
     EpicLinkViewSet,

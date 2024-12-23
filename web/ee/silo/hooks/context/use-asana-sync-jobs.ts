@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { AsanaConfig } from "@silo/asana";
+import { AsanaConfig } from "@plane/etl/asana";
 // silo contexts
 import { ImporterSyncJobContext, TImporterCreateContext } from "@/plane-web/silo/contexts";
 

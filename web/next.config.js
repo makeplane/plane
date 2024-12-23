@@ -14,28 +14,13 @@ const nextConfig = {
     return [
       {
         source: "/(.*)?",
-        headers: [
-          { key: "X-Frame-Options", value: "SAMEORIGIN" },
-          // {
-          //   key: "Referrer-Policy",
-          //   value: "origin-when-cross-origin",
-          // },
-          // { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
-          // { key: "Cross-Origin-Embedder-Policy", value: "credentialless" },
-        ],
+        headers: [{ key: "X-Frame-Options", value: "SAMEORIGIN" }],
       },
     ];
   },
   images: {
     unoptimized: true,
   },
-  // webpack: (config, { isServer }) => {
-  //   if (!isServer) {
-  //     // Ensure that all imports of 'yjs' resolve to the same instance
-  //     config.resolve.alias["yjs"] = path.resolve(__dirname, "node_modules/yjs");
-  //   }
-  //   return config;
-  // },
   async redirects() {
     return [
       {

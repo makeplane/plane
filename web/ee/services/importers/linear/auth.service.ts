@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
-import { E_IMPORTER_KEYS, TServiceAuthConfiguration } from "@silo/core";
-import { LinearAuthState, LinearPATAuthState } from "@silo/linear";
+import { E_IMPORTER_KEYS, TServiceAuthConfiguration } from "@plane/etl/core";
+import { LinearAuthState, LinearPATAuthState } from "@plane/etl/linear";
 
 export class LinearAuthService {
   protected baseURL: string;

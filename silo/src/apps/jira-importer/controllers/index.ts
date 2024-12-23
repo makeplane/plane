@@ -11,10 +11,12 @@ import {
   JiraResource,
   JiraService,
   JiraTokenResponse,
-} from "@silo/jira";
+} from "@plane/etl/jira";
 import { createOrUpdateCredentials, getCredentialsByWorkspaceId } from "@/db/query";
 import axios, { AxiosInstance } from "axios";
 import { Credentials } from "@/types";
+import { createPlaneClient } from "@/helpers/utils";
+import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
 
 class JiraApiError extends Error {
   constructor(
@@ -146,8 +148,9 @@ class JiraController {
           hostname: hostname,
         });
 
-        await jiraService.getResourceProjects();
+        // await jiraService.getResourceProjects();
       } catch (error: any) {
+        console.log("error in jira upsertCredentials", error)
         return res.status(401).send({ message: "Invalid personal access token" });
       }
 
@@ -208,6 +211,7 @@ class JiraController {
       const resources = await fetchJiraResources(axiosInstance, credentials);
       return res.json(resources);
     } catch (error) {
+      console.error("error in get resources", error)
       handleError(error, res);
     }
   }
@@ -266,7 +270,7 @@ class JiraController {
     try {
       const jiraClient = await createJiraClient(workspaceId, userId, cloudId);
       const labels = await jiraClient.getResourceLabels();
-      return res.json(labels);
+      return res.json(labels?.values);
     } catch (error: any) {
       return res.status(401).send({ message: error.message });
     }
@@ -297,7 +301,41 @@ class JiraController {
       return res.status(401).send({ message: error.message });
     }
   }
+
+  @Post("/additional-users/:workspaceId/:workspaceSlug/:userId")
+  async getUserDifferential(req: Request, res: Response) {
+    const { workspaceId, workspaceSlug, userId } = req.params;
+    const { userData } = req.body;
+
+    if (!Array.isArray(userData) || userData.length === 0) {
+      return res.status(400).send({ message: "No emails provided" });
+    }
+
+    if (typeof userData[0]?.email !== "string") {
+      return res.status(400).send({ message: "Emails must be strings" });
+    }
+
+    const jiraEmails = userData?.map((x) => x.email)
+
+    try {
+      const planeClient = await createPlaneClient(workspaceId, userId, "JIRA")
+      const workspaceMembers = (await planeClient.users.listAllUsers(workspaceSlug))
+      const billableMembers = workspaceMembers.filter(member => member.role > 10);
+      const additionalUsers = compareAndGetAdditionalUsers(
+        billableMembers,
+        jiraEmails
+      );
+
+      return res.json({
+        additionalUserCount: additionalUsers.length,
+        occupiedUserCount: billableMembers.length,
+      });
+    } catch (error) {
+      return res.status(500).send({ message: error });
+    }
+  }
 }
+
 
 const createJiraClient = async (workspaceId: string, userId: string, cloudId?: string): Promise<JiraService> => {
   const credentials = await getCredentialsByWorkspaceId(workspaceId, userId, "JIRA");

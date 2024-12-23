@@ -20,6 +20,7 @@ export const workspaceConnections = schema.table(
 
     // The actual connection type such as GITHUB, GITLAB, INTERCOM, SLACK
     connectionType: varchar("connection_type", { length: 50 }).notNull(),
+    connectionSlug: varchar("connection_slug", { length: 255 }),
 
     // Connection Id is the actual connection id for the connection type, such
     // as the github organization id, or the slack organization id

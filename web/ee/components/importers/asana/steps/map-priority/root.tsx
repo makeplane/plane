@@ -5,9 +5,9 @@ import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // ui
+import { PriorityConfig, AsanaCustomField, AsanaEnumOption } from "@plane/etl/asana";
 import { Button } from "@plane/ui";
 // asana types
-import { PriorityConfig, AsanaCustomField, AsanaEnumOption } from "@silo/asana";
 // plane web components
 import { ConfigureAsanaSelectPriority, MapPrioritiesSelection } from "@/plane-web/components/importers/asana";
 // plane web components

@@ -20,7 +20,7 @@ export const createModules = async (
      * name won't be appropriate */
     const moduleName = module.name;
     try {
-      const createdModule: any = await protect(
+      const createdModule = await protect(
         planeClient.modules.create.bind(planeClient.modules),
         workspaceSlug,
         projectId,
@@ -82,4 +82,39 @@ export const createModules = async (
       }
     }
   }
+};
+
+export const createAllModules = async (
+  jobId: string,
+  modules: ExModule[],
+  planeClient: PlaneClient,
+  workspaceSlug: string,
+  projectId: string
+): Promise<{ id: string; issues: string[] }[]> => {
+  const createdModules: { id: string; issues: string[] }[] = [];
+
+  for (const module of modules) {
+    // Create the cycle and get the cycle id
+    try {
+      const createdModule = await protect(
+        planeClient.modules.create.bind(planeClient.modules),
+        workspaceSlug,
+        projectId,
+        module
+      );
+      createdModules.push({ id: createdModule.id, issues: module.issues });
+    } catch (error) {
+      if (AssertAPIErrorResponse(error)) {
+        if (error.error && error.error.includes("already exists")) {
+          logger.info(`[${jobId.slice(0, 7)}] Module "${module.name}" already exists. Skipping...`);
+          // Get the id from the module
+          createdModules.push({ id: error.id, issues: module.issues });
+        }
+      } else {
+        logger.error(`[${jobId.slice(0, 7)}] Error while creating the module: ${module.name}`, error);
+      }
+    }
+  }
+
+  return createdModules;
 };

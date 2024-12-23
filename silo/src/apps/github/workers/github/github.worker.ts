@@ -1,7 +1,7 @@
 import { MQ, Store } from "@/apps/engine/worker/base";
 import { logger } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
-import { GithubWebhookPayload } from "@silo/github";
+import { GithubWebhookPayload } from "@plane/etl/github";
 import { handleInstallationEvents } from "./event-handlers/installation.handler";
 import { handleIssueComment } from "./event-handlers/issue-comment.handler";
 import { handleIssueEvents } from "./event-handlers/issue.handler";
@@ -19,10 +19,6 @@ export class GithubWebhookWorker extends TaskHandler {
   async handleTask(headers: TaskHeaders, data: any): Promise<boolean> {
     data = data as GithubWebhookPayload;
     const eventType = headers.type;
-
-    logger.info(
-      `[GITHUB][${headers.type.toUpperCase()}] Received webhook event from github 🐱 --------- [${headers.route.toUpperCase()}]`
-    );
 
     switch (eventType) {
       case "installation": {

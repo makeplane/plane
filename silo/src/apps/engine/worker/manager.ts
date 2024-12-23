@@ -60,10 +60,12 @@ export class TaskManager {
   private mq: MQ | undefined;
   private store: Store | undefined;
   private config: JobWorkerConfig;
+  private key: string;
   private workers: Map<string, TaskHandler> = new Map();
 
   constructor(config: JobWorkerConfig) {
     this.config = config;
+    this.key = Math.random().toString(36).substring(10);
 
     process.on("SIGINT", this.cleanup.bind(this));
     process.on("SIGTERM", this.cleanup.bind(this));
@@ -74,17 +76,17 @@ export class TaskManager {
     try {
       this.mq = new MQ(options);
       await this.mq.connect();
-      logger.info("Message Queue connected successfully 🐇🐇🐰");
+      logger.info(`Message Queue ${options.queueName} connected successfully 🐇🐇🐰`);
     } catch (error) {
       throw error;
     }
   };
 
-  private initStore = async () => {
+  private initStore = async (name: string) => {
     try {
       this.store = new Store();
       await this.store.connect();
-      logger.info("Redis Store connected successfully 📚🫙🫙");
+      logger.info(`Redis Store for ${name} connected successfully 📚🫙🫙`);
     } catch (error) {
       throw error;
     }
@@ -139,27 +141,27 @@ export class TaskManager {
     if (props.type === "store") {
       // Validate the event recieved
       const chunks = props.event.split(":");
-      // For Issues: silo:{worker}:{type}:{action}:{entity}
-      // For Comments: silo:{worker}:{type}:{action}:{entity}
-      if (chunks.length >= 5) {
-        const worker = this.workers.get(chunks[1]);
+      // For Issues: silo:{key}:{worker}:{type}:{action}:{entity}
+      // For Comments: silo:{key}:{worker}:{type}:{action}:{entity}
+
+      if (chunks.length >= 6 && chunks[0] === "silo" && chunks[1] === this.key) {
+        const worker = this.workers.get(chunks[2]);
         if (!worker) {
-          throw new Error(`No worker found for route: ${chunks[1]}`);
+          throw new Error(`No worker found for route: ${chunks[2]}`);
         }
         const headers: TaskHeaders = {
-          route: chunks[1],
-          jobId: chunks[3],
-          type: chunks[2],
+          route: chunks[2],
+          type: chunks[3],
+          jobId: chunks[4],
         };
-        // Join the remaining chunks to get the entity
-        const entity = chunks.slice(4).join(":");
+        const entity = chunks.slice(5).join(":");
         const data = JSON.parse(entity);
         await worker.handleTask(headers, data);
       }
     } else {
       const worker = this.workers.get(props.headers.route);
       if (!worker) {
-        throw new Error(`No worker found for route: ${props.headers.route}`);
+        return console.error(`No worker found for route: ${props.headers.route}`);
       }
       await worker.handleTask(props.headers, props.data);
     }
@@ -179,10 +181,9 @@ export class TaskManager {
   }
 
   public start = async (options: TMQEntityOptions) => {
-    logger.info("Warming up worker instance, connecting services... ♨️");
     try {
       await this.initQueue(options);
-      await this.initStore();
+      await this.initStore(options.queueName);
       await this.startConsumer();
 
       for (const [jobType, workerType] of Object.entries(this.config.workerTypes)) {
@@ -205,7 +206,11 @@ export class TaskManager {
   public registerStoreTask = async (headers: TaskHeaders, data: any, ttl?: number) => {
     if (!this.store) return;
     try {
-      await this.store.set(`silo:${headers.route}:${headers.type}:${headers.jobId}:${JSON.stringify(data)}`, "1", ttl);
+      await this.store.set(
+        `silo:${this.key}:${headers.route}:${headers.type}:${headers.jobId}:${JSON.stringify(data)}`,
+        "1",
+        ttl
+      );
     } catch (error) {
       logger.error("Error pushing to job worker queue:", error);
     }

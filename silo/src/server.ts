@@ -10,7 +10,12 @@ import { registerControllers } from "./lib/controller";
 // controllers
 import { HomeController } from "@/controllers";
 import AsanaController from "@/apps/asana-importer/controllers";
-import { CredentialController, JobConfigController, JobController } from "@/apps/engine/controllers";
+import {
+  CredentialController,
+  EntityConnectionController,
+  JobConfigController,
+  JobController,
+} from "@/apps/engine/controllers";
 import { ConnectionsController } from "@/apps/engine/controllers/connection.controller";
 import GithubController from "@/apps/github/controllers";
 import JiraController from "@/apps/jira-importer/controllers";
@@ -21,16 +26,24 @@ import { env } from "./env";
 import { expressLogger, logger } from "./logger";
 import expressWinston from "express-winston";
 import JiraDataCenterController from "./apps/jira-server-importer/controllers";
+import { AssetsController } from "./apps/engine/controllers/assets.controller";
 
 const PING_CONTROLLERS = [HomeController];
-const ENGINE_CONTROLLERS = [JobController, JobConfigController, CredentialController, ConnectionsController];
+const ENGINE_CONTROLLERS = [
+  JobController,
+  JobConfigController,
+  CredentialController,
+  ConnectionsController,
+  AssetsController,
+  EntityConnectionController,
+];
 const APP_CONTROLLERS = [
   JiraController,
   LinearController,
-  GithubController,
   GitlabController,
   AsanaController,
   SlackController,
+  GithubController,
   JiraDataCenterController,
 ];
 

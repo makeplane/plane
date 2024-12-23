@@ -1,15 +1,18 @@
 import { env } from "@/env";
-import { ExCycle, ExIssue, ExProject, ExState } from "@plane/sdk";
+import { ExCycle, ExIssue, ExProject, ExState, PlaneUser } from "@plane/sdk";
 import { formatTimestampToNaturalLanguage } from "../helpers/format-date";
 import { ACTIONS, PLANE_PRIORITIES } from "../helpers/constants";
+import { convertUnicodeToSlackEmoji } from "../helpers/emoji-converter";
 
 export const createSlackLinkback = (
   workspaceSlug: string,
   project: ExProject,
+  members: PlaneUser[],
   state: ExState[],
   cycles: ExCycle[],
   issue: ExIssue
 ) => {
+  const today = new Date().toISOString().split("T")[0];
   const targetState = state.find((s) => s.id === issue.state);
 
   const stateList = state.map((s) => ({
@@ -40,62 +43,83 @@ export const createSlackLinkback = (
   }));
 
   // Create base blocks array
-  const blocks: any[] = [
-    {
-      type: "section",
-      text: {
-        type: "mrkdwn",
-        text: `<${env.APP_BASE_URL}/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}|[${project.identifier}-${issue.sequence_id}] ${issue.name}>`,
+  const blocks: any[] = [];
+
+  blocks.push({
+    type: "context",
+    elements: [
+      {
+        type: "image",
+        image_url: "https://res.cloudinary.com/ddglxo0l3/image/upload/v1732200793/xljpcpmftawmjkv4x61s.png",
+        alt_text: "Plane",
       },
+      {
+        type: "mrkdwn",
+        text: `*Plane*`,
+      },
+    ],
+  });
+
+  blocks.push({
+    type: "section",
+    text: {
+      type: "mrkdwn",
+      text: `<${env.APP_BASE_URL}/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}| ${project.identifier}-${issue.sequence_id} ${issue.name}>`,
     },
-  ];
+  });
 
   // Only add description if it exists
-  if (issue.description_stripped) {
-    blocks.push({
-      type: "rich_text",
-      elements: [
-        {
-          type: "rich_text_preformatted",
-          elements: [
-            {
-              type: "text",
-              text: issue.description_stripped,
-            },
-          ],
-        },
-      ],
-    });
-  }
+  // if (issue.description_stripped) {
+  //   blocks.push({
+  //     type: "rich_text",
+  //     elements: [
+  //       {
+  //         type: "rich_text_preformatted",
+  //         elements: [
+  //           {
+  //             type: "text",
+  //             text: issue.description_stripped,
+  //           },
+  //         ],
+  //       },
+  //     ],
+  //   });
+  // }
 
   // Create context elements array with only non-empty values
-  const contextElements: any[] = [
-    {
-      type: "image",
-      image_url: "https://res.cloudinary.com/ddglxo0l3/image/upload/v1729791794/i552wnxgd1qnbzpyzvst.gif",
-      alt_text: "Plane",
-    },
-  ];
+  const contextElements: any[] = [];
 
   if (project.name) {
     contextElements.push({
       type: "mrkdwn",
-      text: `<${env.APP_BASE_URL}/${workspaceSlug}/projects/${issue.project}/issues|${project.name}>`,
+      text: `${project.logo_props ? convertUnicodeToSlackEmoji(project.logo_props.emoji.value) : ""} <${env.APP_BASE_URL}/${workspaceSlug}/projects/${issue.project}/issues|${project.name}>`,
     });
   }
 
-  if (targetState?.name) {
+  // Add state and priority labels
+  const stateLabel = targetState ? `*State:* ${targetState.name}` : "*State:* Not set";
+  const priorityLabel = issue.priority ? `*Priority:* ${titleCaseWord(issue.priority)}` : "*Priority:* Not set";
+
+  contextElements.push({
+    type: "mrkdwn",
+    text: `${stateLabel}    ${priorityLabel}`,
+  });
+
+  if (issue.assignees && issue.assignees.length > 0) {
+    const uniqueAssignees = Array.from(new Set(issue.assignees));
+
+    const firstAssignee = members.find((m) => m.id === uniqueAssignees[0]);
+
     contextElements.push({
       type: "mrkdwn",
-      text: `*State*  ${targetState.name}`,
+      text: `*${uniqueAssignees.length > 1 ? "Assignees:" : "Assignee:"}*  ${firstAssignee?.display_name} ${uniqueAssignees.length > 1 ? `and ${uniqueAssignees.length - 1} others` : ""}`,
     });
   }
 
-  if (issue.created_at) {
+  if (issue.target_date) {
     contextElements.push({
       type: "plain_text",
-      text: formatTimestampToNaturalLanguage(issue.created_at),
-      emoji: true,
+      text: `Target Date: ${formatTimestampToNaturalLanguage(issue.target_date)}`,
     });
   }
 
@@ -114,13 +138,13 @@ export const createSlackLinkback = (
   // Create action elements array
   const actionElements: any[] = [];
 
-  // Add state select if states exist
+  // Add state select with label
   if (stateList.length > 0) {
     actionElements.push({
       type: "static_select",
       placeholder: {
         type: "plain_text",
-        text: targetState?.name || "Select state",
+        text: "Select state",
         emoji: true,
       },
       options: stateList,
@@ -128,37 +152,13 @@ export const createSlackLinkback = (
     });
   }
 
-  // Add assign to me button
-  actionElements.push({
-    type: "button",
-    text: {
-      type: "plain_text",
-      text: "Assign to me",
-      emoji: true,
-    },
-    value: `${issue.project}.${issue.id}`,
-    action_id: ACTIONS.ASSIGN_TO_ME,
-  });
-
-  // Add comment button
-  actionElements.push({
-    type: "button",
-    text: {
-      type: "plain_text",
-      text: "Comment",
-      emoji: true,
-    },
-    value: `${issue.project}.${issue.id}`,
-    action_id: ACTIONS.LINKBACK_CREATE_COMMENT,
-  });
-
-  // Add priority select if priority exists
+  // Add priority select with label
   if (issue.priority) {
     actionElements.push({
       type: "static_select",
       placeholder: {
         type: "plain_text",
-        text: titleCaseWord(issue.priority),
+        text: "Select priority",
         emoji: true,
       },
       options: priorityList,
@@ -166,19 +166,39 @@ export const createSlackLinkback = (
     });
   }
 
-  // Add cycles select only if cycles exist
-  if (cycles && cycles.length > 0) {
-    actionElements.push({
-      type: "static_select",
-      placeholder: {
-        type: "plain_text",
-        text: "Select cycle",
-        emoji: true,
+  // Add overflow menu for button actions
+  const overflowMenu = {
+    type: "overflow",
+    action_id: ACTIONS.LINKBACK_OVERFLOW_ACTIONS,
+    options: [
+      {
+        text: {
+          type: "plain_text",
+          text: "Add Link",
+          emoji: true,
+        },
+        value: `${issue.project}.${issue.id}`,
       },
-      options: cycleList,
-      action_id: ACTIONS.LINKBACK_SWITCH_CYCLE,
-    });
-  }
+      {
+        text: {
+          type: "plain_text",
+          text: "Comment",
+          emoji: true,
+        },
+        value: `${issue.project}.${issue.id}`,
+      },
+      {
+        text: {
+          type: "plain_text",
+          text: "Assign to me",
+          emoji: true,
+        },
+        value: `${issue.project}.${issue.id}`,
+      },
+    ],
+  };
+
+  actionElements.push(overflowMenu);
 
   // Add actions block if there are any elements
   if (actionElements.length > 0) {

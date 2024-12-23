@@ -8,9 +8,9 @@ export class MQ {
   private producer: MQProducer;
   private consumer: MQConsumer;
 
-  constructor(options: TMQEntityOptions) {
-    this.producer = new MQProducer(options);
-    this.consumer = new MQConsumer(options);
+  constructor(options: TMQEntityOptions, amqpUrl?: string) {
+    this.producer = new MQProducer(options, amqpUrl);
+    this.consumer = new MQConsumer(options, amqpUrl);
   }
 
   async connect() {

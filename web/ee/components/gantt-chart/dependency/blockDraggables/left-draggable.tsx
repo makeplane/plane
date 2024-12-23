@@ -104,7 +104,7 @@ export const LeftDependencyDraggable = observer((props: LeftDependencyDraggableP
             if (!sourceData || sourceData.id === block.id || sourceData.dragInstanceId !== "GANTT_DEPENDENCY")
               return false;
 
-            //@ts-ignore
+            //@ts-expect-error
             if (relatedBlockIds.includes(sourceData.id)) return false;
 
             return true;

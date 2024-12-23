@@ -3,13 +3,12 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { E_IMPORTER_KEYS, E_JOB_STATUS, TJob, TJobStatus } from "@plane/etl/core";
+import { JiraConfig } from "@plane/etl/jira";
 import { Button, Loader } from "@plane/ui";
-import { E_IMPORTER_KEYS, E_JOB_STATUS, TJob, TJobStatus } from "@silo/core";
-import { JiraConfig } from "@silo/jira";
 // plane web components
-import { StepperNavigation } from "@/plane-web/components/importers/ui";
-// plane web hooks
-import { useJiraServerImporter } from "@/plane-web/hooks/store";
+import { StepperNavigation, AddSeatsAlertBanner, SkipUserImport } from "@/plane-web/components/importers/ui";
+import { useJiraServerImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web types
 import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/jira-server";
 
@@ -28,18 +27,22 @@ export const SummaryRoot: FC = observer(() => {
     handleStepper,
     resetImporterData,
     data: {
+      jiraLabels,
       jiraStateIdsByProjectId,
       jiraPriorityIdsByProjectId,
-      jiraLabelIdsByProjectId,
       jiraIssueCount: jiraStoreIssueCount,
-      getJiraLabelById,
+      additionalUsersData,
       fetchJiraLabels,
       fetchJiraIssueCount,
+      fetchAdditionalUsers,
     },
     // setDashboardView,
   } = useJiraServerImporter();
+  const { currentWorkspaceSubscriptionAvailableSeats } = useWorkspaceSubscription();
+
   // states
   const [createConfigLoader, setCreateConfigLoader] = useState<boolean>(false);
+  const [userSkipToggle, setuserSkipToggle] = useState<boolean>(false);
   // derived values
   const workspaceSlug = workspace?.slug || undefined;
   const workspaceId = workspace?.id || undefined;
@@ -48,12 +51,15 @@ export const SummaryRoot: FC = observer(() => {
   const planeProjectId = importerData[E_IMPORTER_STEPS.SELECT_PLANE_PROJECT]?.projectId;
   const jiraResourceId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.resourceId;
   const jiraProjectId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.projectId;
-  const jiraProjectLabels = ((jiraProjectId && jiraLabelIdsByProjectId(jiraProjectId)) || [])
-    .map((id) => (jiraProjectId && getJiraLabelById(jiraProjectId, id)) || undefined)
-    .filter((jiraLabel) => jiraLabel != undefined && jiraLabel != null);
+  const jiraProjectLabels = jiraLabels.filter((jiraLabel) => jiraLabel != undefined && jiraLabel != null);
   const jiraStates = (jiraProjectId && jiraStateIdsByProjectId(jiraProjectId)) || [];
   const jiraPriorities = (jiraProjectId && jiraPriorityIdsByProjectId(jiraProjectId)) || [];
   const jiraIssueCount = (jiraProjectId && jiraStoreIssueCount[jiraProjectId]) || 0;
+
+  const handleUserSkipToggle = (flag: boolean) => {
+    setuserSkipToggle(flag);
+    handleSyncJobConfig("skipUserImport", flag);
+  };
 
   const handleOnClickNext = async () => {
     if (planeProjectId) {
@@ -97,7 +103,7 @@ export const SummaryRoot: FC = observer(() => {
     if (jiraProjectLabels && jiraProjectLabels.length > 0) {
       handleSyncJobConfig(
         "label",
-        jiraProjectLabels.filter((label) => label != undefined && label != null) as JiraConfig["label"]
+        jiraLabels.filter((label) => label != undefined && label != null) as JiraConfig["label"]
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -123,6 +129,19 @@ export const SummaryRoot: FC = observer(() => {
       : null,
     { errorRetryCount: 0 }
   );
+
+  const { isLoading: isJiraAdditionalUsersDataLoading } = useSWR(
+    workspaceId && userId && workspaceSlug
+      ? `IMPORTER_JIRA_ADDITIONAL_USERS_${workspaceId}_${userId}_${workspaceSlug}`
+      : null,
+    workspaceId && userId && workspaceSlug
+      ? async () => fetchAdditionalUsers(workspaceId, userId, workspaceSlug)
+      : null,
+    { errorRetryCount: 0 }
+  );
+
+  const extraSeatRequired = additionalUsersData?.additionalUserCount - currentWorkspaceSubscriptionAvailableSeats;
+  const isNextBtnDisabled = Boolean(extraSeatRequired > 0 && !userSkipToggle);
 
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
@@ -163,10 +182,31 @@ export const SummaryRoot: FC = observer(() => {
         )}
       </div>
 
+      {isJiraAdditionalUsersDataLoading ? (
+        <Loader.Item height="35px" width="100%" />
+      ) : extraSeatRequired && !userSkipToggle ? (
+        <AddSeatsAlertBanner
+          additionalUserCount={additionalUsersData?.additionalUserCount}
+          extraSeatRequired={extraSeatRequired}
+        />
+      ) : (
+        <></>
+      )}
+      <SkipUserImport
+        importSourceName="Jira"
+        userSkipToggle={userSkipToggle}
+        handleUserSkipToggle={handleUserSkipToggle}
+      />
+
       {/* stepper button */}
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
-          <Button variant="primary" size="sm" onClick={handleOnClickNext} disabled={createConfigLoader}>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={handleOnClickNext}
+            disabled={createConfigLoader || isNextBtnDisabled}
+          >
             {createConfigLoader ? "Configuring..." : "Confirm"}
           </Button>
         </StepperNavigation>

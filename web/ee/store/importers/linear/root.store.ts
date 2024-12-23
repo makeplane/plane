@@ -1,8 +1,8 @@
 import set from "lodash/set";
 import update from "lodash/update";
 import { computed, makeObservable, observable } from "mobx";
-import { E_IMPORTER_KEYS } from "@silo/core";
-import { LinearConfig } from "@silo/linear";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
+import { LinearConfig } from "@plane/etl/linear";
 // plane web constants
 import { IMPORTER_LINEAR_STEPS } from "@/plane-web/constants/importers/linear";
 // plane web store types

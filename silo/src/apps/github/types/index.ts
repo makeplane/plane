@@ -1,5 +1,5 @@
 import { EntityConnection, WorkspaceConnection } from "@/types";
-import { TServiceCredentials } from "@silo/core";
+import { TServiceCredentials } from "@plane/etl/core";
 import { z } from "zod";
 import { MergeRequestEvent } from "../helpers/helpers";
 
@@ -15,7 +15,7 @@ const webhooksUserSchema = z.object({
   html_url: z.string().url().optional(),
   id: z.number(),
   login: z.string(),
-  name: z.string().optional(),
+  name: z.string().optional().nullable(),
   node_id: z.string().optional(),
   organizations_url: z.string().url().optional(),
   received_events_url: z.string().url().optional(),
@@ -32,7 +32,7 @@ export const userMapSchema = z.array(
     planeUser: z.object({
       id: z.string(),
       email: z.string().email().nullable(),
-      name: z.string().optional(),
+      name: z.string().optional().nullable(),
       avatarUrl: z.string().url().optional(),
     }),
     githubUser: webhooksUserSchema,

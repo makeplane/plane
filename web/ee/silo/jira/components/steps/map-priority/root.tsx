@@ -2,8 +2,8 @@
 
 import { FC, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
+import { IPriorityConfig, JiraPriority } from "@plane/etl/jira";
 import { Button, Loader } from "@plane/ui";
-import { IPriorityConfig, JiraPriority } from "@silo/jira";
 // silo constants
 import { PLANE_PRIORITIES } from "@/plane-web/silo/constants/priority";
 // silo components

@@ -14,6 +14,7 @@ from .initiative import urlpatterns as initiative_patterns
 from .team import urlpatterns as team_patterns
 from .epic_property import urlpatterns as epic_property_patterns
 from .workflow import urlpatterns as workflow_patterns
+from .webhook import urlpatterns as webhook_patterns
 
 urlpatterns = [
     *ai_patterns,
@@ -34,4 +35,5 @@ urlpatterns = [
     *epic_property_patterns,
     *epic_patterns,
     *workflow_patterns,
+    *webhook_patterns
 ]

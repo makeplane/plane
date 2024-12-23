@@ -1,4 +1,8 @@
-import { gitlabEntityConnectionSchema, GitlabMergeRequestEvent, gitlabWorkspaceConnectionSchema } from "@silo/gitlab";
+import {
+  gitlabEntityConnectionSchema,
+  GitlabMergeRequestEvent,
+  gitlabWorkspaceConnectionSchema,
+} from "@plane/etl/gitlab";
 import { GitlabConnectionDetails } from "../types";
 import { getEntityConnectionByEntityId, getWorkspaceConnectionById } from "@/db/query/connection";
 import { logger } from "@/logger";

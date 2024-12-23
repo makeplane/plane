@@ -1,5 +1,12 @@
-import { TServiceCredentials, TJobWithConfig } from "@silo/core";
-import { IPriorityConfig, IStateConfig, JiraComponent, JiraConfig, JiraSprint, JiraV2Service } from "@silo/jira-server";
+import { TServiceCredentials, TJobWithConfig } from "@plane/etl/core";
+import {
+  IPriorityConfig,
+  IStateConfig,
+  JiraComponent,
+  JiraConfig,
+  JiraSprint,
+  JiraV2Service,
+} from "@plane/etl/jira-server";
 
 import { ExIssueAttachment, ExState } from "@plane/sdk";
 import { getCredentialsByWorkspaceId, getJobById, updateJob } from "@/db/query";

@@ -265,6 +265,7 @@ CELERY_IMPORTS = (
     # scheduled tasks
     "plane.bgtasks.issue_automation_task",
     "plane.bgtasks.exporter_expired_task",
+    "plane.bgtasks.data_import_task",
     "plane.bgtasks.file_asset_task",
     "plane.bgtasks.email_notification_task",
     "plane.bgtasks.api_logs_task",
@@ -466,6 +467,10 @@ SIMPLE_JWT = {
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
 }
+
+# silo settings
+SILO_HOSTNAME = os.environ.get("SILO_HOSTNAME", "")
+SILO_BASE_PATH = os.environ.get("SILO_BASE_PATH", "/silo")
 
 
 # firebase settings

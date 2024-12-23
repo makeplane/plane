@@ -3,9 +3,9 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { E_IMPORTER_KEYS, E_JOB_STATUS, TJob, TJobStatus } from "@plane/etl/core";
+import { JiraConfig } from "@plane/etl/jira";
 import { Button, Loader } from "@plane/ui";
-import { E_IMPORTER_KEYS, E_JOB_STATUS, TJob, TJobStatus } from "@silo/core";
-import { JiraConfig } from "@silo/jira";
 // plane web components
 import { StepperNavigation } from "@/plane-web/components/importers/ui";
 // plane web hooks
@@ -28,11 +28,10 @@ export const SummaryRoot: FC = observer(() => {
     handleStepper,
     resetImporterData,
     data: {
+      jiraLabels,
       jiraStateIdsByProjectId,
       jiraPriorityIdsByProjectId,
-      jiraLabelIdsByProjectId,
       jiraIssueCount: jiraStoreIssueCount,
-      getJiraLabelById,
       fetchJiraLabels,
       fetchJiraIssueCount,
     },
@@ -48,9 +47,6 @@ export const SummaryRoot: FC = observer(() => {
   const planeProjectId = importerData[E_IMPORTER_STEPS.SELECT_PLANE_PROJECT]?.projectId;
   const jiraResourceId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.resourceId;
   const jiraProjectId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.projectId;
-  const jiraProjectLabels = ((jiraProjectId && jiraLabelIdsByProjectId(jiraProjectId)) || [])
-    .map((id) => (jiraProjectId && getJiraLabelById(jiraProjectId, id)) || undefined)
-    .filter((jiraLabel) => jiraLabel != undefined && jiraLabel != null);
   const jiraStates = (jiraProjectId && jiraStateIdsByProjectId(jiraProjectId)) || [];
   const jiraPriorities = (jiraProjectId && jiraPriorityIdsByProjectId(jiraProjectId)) || [];
   const jiraIssueCount = (jiraProjectId && jiraStoreIssueCount[jiraProjectId]) || 0;
@@ -94,14 +90,14 @@ export const SummaryRoot: FC = observer(() => {
   };
 
   useEffect(() => {
-    if (jiraProjectLabels && jiraProjectLabels.length > 0) {
+    if (jiraLabels && jiraLabels.length > 0) {
       handleSyncJobConfig(
         "label",
-        jiraProjectLabels.filter((label) => label != undefined && label != null) as JiraConfig["label"]
+        jiraLabels.filter((label) => label != undefined && label != null) as JiraConfig["label"]
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jiraProjectLabels]);
+  }, [jiraLabels]);
 
   // fetching the jira labels and issue count
   const { isLoading: isJiraLabelsLoading } = useSWR(
@@ -149,7 +145,7 @@ export const SummaryRoot: FC = observer(() => {
             </div>
             <div className="relative grid grid-cols-2 items-center p-3 text-sm">
               <div className="text-custom-text-200">Labels</div>
-              <div>{jiraProjectLabels?.length || 0} labels</div>
+              <div>{jiraLabels?.length || 0} labels</div>
             </div>
             <div className="relative grid grid-cols-2 items-center p-3 text-sm">
               <div className="text-custom-text-200">States</div>

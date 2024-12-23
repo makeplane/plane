@@ -2,6 +2,7 @@ import { entityConnections, workspaceConnections } from "@/db/schema/connection.
 import { z } from "zod";
 import { Simplify } from "type-fest";
 import { credentials } from "@/db/schema";
+import { ExIssue, ExIssueComment, ExIssuePropertyValue } from "@plane/sdk";
 
 export const taskSchema = z.object({
   route: z.string(),
@@ -40,3 +41,14 @@ export function verifyEntityConnection<T extends z.ZodType>(schema: T, data: Ent
   return { ...data, config: parsedConfig };
 }
 export type Credentials = typeof credentials.$inferInsert;
+
+export type BulkIssuePayload = ExIssue & {
+  comments: ExIssueComment[];
+  cycles: string[];
+  modules: string[];
+  file_assets: string[];
+  issue_property_values: {
+    id: string;
+    values: ExIssuePropertyValue;
+  }[];
+};

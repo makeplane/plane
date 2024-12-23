@@ -2,8 +2,8 @@ import set from "lodash/set";
 import unset from "lodash/unset";
 import { action, computed, makeObservable, observable } from "mobx";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { TServiceAuthConfiguration } from "@silo/core";
-import { JiraAuthState, JiraPATAuthState } from "@silo/jira";
+import { TServiceAuthConfiguration } from "@plane/etl/core";
+import { JiraAuthState, JiraPATAuthState } from "@plane/etl/jira";
 // plane web services
 import { JiraAuthService } from "@/plane-web/services/importers/jira/auth.service";
 // store types

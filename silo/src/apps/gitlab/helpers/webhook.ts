@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { GitlabMergeRequestEvent, MergeRequestEvent } from "@silo/gitlab";
+import { GitlabMergeRequestEvent, MergeRequestEvent } from "@plane/etl/gitlab";
 
 // Implement this function to verify the GitLab webhook token
 export function verifyGitlabToken(token: string | string[] | undefined): boolean {

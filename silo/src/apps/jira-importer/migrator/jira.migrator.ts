@@ -1,5 +1,5 @@
 import { TBatch } from "@/apps/engine/worker/types";
-import { PlaneEntities, TJobWithConfig } from "@silo/core";
+import { PlaneEntities, TJobWithConfig } from "@plane/etl/core";
 import { updateJob } from "@/db/query";
 import { env } from "@/env";
 import { BaseDataMigrator } from "@/etl/base-import-worker";
@@ -16,7 +16,7 @@ import {
   pullLabels,
   pullSprints,
   pullUsers,
-} from "@silo/jira";
+} from "@plane/etl/jira";
 import { Issue as IJiraIssue } from "jira.js/out/version3/models";
 import {
   createJiraClient,
@@ -65,7 +65,7 @@ export class JiraDataMigrator extends BaseDataMigrator<JiraConfig, JiraEntity> {
     const projectKey = job.config.meta.project.key;
 
     /* -------------- Pull Jira Data --------------- */
-    const users = pullUsers(job.config.meta.users);
+    const users = job.config.meta.skipUserImport ? [] : pullUsers(job.config.meta.users);
     const [labels, sprints, components, issueTypes] = await Promise.all([
       pullLabels(client),
       pullSprints(client, projectId),

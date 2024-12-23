@@ -6,7 +6,7 @@ import { createOrUpdateCredentials, getCredentialsById } from "@/db/query";
 import { logger } from "@/logger";
 import { Credentials } from "@/types";
 import { Client } from "@plane/sdk";
-import { createGitLabService, GitlabMergeRequestEvent, GitlabNote, GitLabService } from "@silo/gitlab";
+import { createGitLabService, GitlabMergeRequestEvent, GitlabNote, GitLabService } from "@plane/etl/gitlab";
 import { env } from "@/env";
 
 const getConnectionAndCredentials = async (

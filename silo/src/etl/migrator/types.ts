@@ -7,7 +7,7 @@ import {
   ExIssueProperty,
   Client as PlaneClient,
 } from "@plane/sdk";
-import { TIssuePropertyValuesPayload, TServiceCredentials } from "@silo/core";
+import { TIssuePropertyValuesPayload, TServiceCredentials } from "@plane/etl/core";
 
 export type IssuePayload = {
   jobId: string;

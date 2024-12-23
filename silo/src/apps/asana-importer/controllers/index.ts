@@ -11,11 +11,14 @@ import {
   PaginationPayload,
   AsanaCustomFieldSettings,
   PaginatedResponse,
-} from "@silo/asana";
+  pullUsers,
+} from "@plane/etl/asana";
 // silo db
 import { createOrUpdateCredentials, deactivateCredentials, getCredentialsByWorkspaceId } from "@/db/query";
 // silo asana auth
 import { asanaAuth } from "../auth/auth";
+import { createPlaneClient } from "@/helpers/utils";
+import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
 
 @Controller("/api/asana")
 class AsanaController {
@@ -223,6 +226,42 @@ class AsanaController {
       res.send(taskCount.data);
     } catch (error: any) {
       res.status(500).send(error);
+    }
+  }
+
+  @Get("/additional-users/:workspaceId/:workspaceSlug/:userId/:workspaceGid")
+  async getUserDifferential(req: Request, res: Response) {
+    const { workspaceId, workspaceSlug, userId, workspaceGid } = req.params;
+
+    try {
+      const [planeClient, asanaClient] = await Promise.all([
+        createPlaneClient(workspaceId, userId, "ASANA"),
+        asanaService(workspaceId, userId),
+      ]);
+
+      const [workspaceMembers, asanaUsers] = await Promise.all([
+        planeClient.users.listAllUsers(workspaceSlug),
+        pullUsers(asanaClient, workspaceGid),
+      ]);
+
+      const billableMembers = workspaceMembers.filter((member) => member.role > 10);
+      const additionalUsers = compareAndGetAdditionalUsers(
+        billableMembers,
+        asanaUsers.map((user) => user.email)
+      );
+
+      return res.json({
+        asanaUsers,
+        billableMembers,
+        additionalUserCount: additionalUsers.length,
+        occupiedUserCount: billableMembers.length,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("error in asana getUserDifferential", error);
+        return res.status(401).json({ error: error.message });
+      }
+      return res.status(500).json({ error: "An unexpected error occurred" });
     }
   }
 }

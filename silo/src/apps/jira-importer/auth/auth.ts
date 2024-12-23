@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { createJiraAuth } from "@silo/jira";
+import { createJiraAuth } from "@plane/etl/jira";
 
 export const jiraAuth = createJiraAuth(
   env.JIRA_CLIENT_ID,

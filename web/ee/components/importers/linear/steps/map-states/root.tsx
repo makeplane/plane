@@ -4,10 +4,10 @@ import { FC, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { IStateConfig, LinearState } from "@plane/etl/linear";
 import { ExState } from "@plane/sdk";
 import { IState } from "@plane/types";
 import { Button, Loader } from "@plane/ui";
-import { IStateConfig, LinearState } from "@silo/linear";
 // silo components
 import { MapStatesSelection } from "@/plane-web/components/importers/linear";
 import { StepperNavigation } from "@/plane-web/components/importers/ui";

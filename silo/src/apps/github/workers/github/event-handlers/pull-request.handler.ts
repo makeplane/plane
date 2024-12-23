@@ -5,9 +5,9 @@ import { env } from "@/env";
 import { getReferredIssues, IssueReference, IssueWithReference } from "@/helpers/parser";
 import { logger } from "@/logger";
 import { Client, Client as PlaneClient } from "@plane/sdk";
-import { TServiceCredentials } from "@silo/core";
-import { createGithubService, GithubService, GithubWebhookPayload } from "@silo/github";
-import { MergeRequestEvent } from "@silo/gitlab";
+import { TServiceCredentials } from "@plane/etl/core";
+import { createGithubService, GithubService, GithubWebhookPayload } from "@plane/etl/github";
+import { MergeRequestEvent } from "@plane/etl/gitlab";
 
 export const handlePullRequestEvents = async (action: PullRequestWebhookActions, data: unknown) => {
   await handlePullRequestOpened(data as unknown as GithubWebhookPayload["webhook-pull-request-opened"]);
@@ -94,7 +94,17 @@ const handlePullRequestOpened = async (data: GithubWebhookPayload["webhook-pull-
         : [...closingReferences, ...nonClosingReferences];
 
       const updatedIssues = await Promise.all(
-        referredIssues.map((reference) => updateIssue(planeClient, entityConnection, reference, targetState))
+        referredIssues.map((reference) =>
+          updateIssue(
+            planeClient,
+            entityConnection,
+            reference,
+            targetState,
+            data.pull_request.title,
+            data.pull_request.number,
+            data.pull_request.html_url
+          )
+        )
       );
 
       const validIssues = updatedIssues.filter((issue): issue is IssueWithReference => issue !== null);
@@ -173,7 +183,10 @@ const updateIssue = async (
   planeClient: Client,
   entityConnection: any,
   reference: IssueReference,
-  targetState: any
+  targetState: any,
+  prTitle: string,
+  prNumber: number,
+  prUrl: string
 ): Promise<IssueWithReference | null> => {
   try {
     const issue = await planeClient.issue.getIssueByIdentifier(
@@ -185,6 +198,14 @@ const updateIssue = async (
     await planeClient.issue.update(entityConnection.workspaceSlug, issue.project, issue.id, {
       state: targetState.id,
     });
+
+    // create link to the pull request to the issue
+    const linkTitle = `[${prNumber}] ${prTitle}`;
+    try {
+      await planeClient.issue.createLink(entityConnection.workspaceSlug, issue.project, issue.id, linkTitle, prUrl);
+    } catch (error) {
+      console.log(error);
+    }
 
     logger.info(`[GITHUB] Issue ${reference.identifier} updated to state ${targetState.name}`);
     return { reference, issue };
