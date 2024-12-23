@@ -132,20 +132,8 @@ class Command(BaseCommand):
                 "is_encrypted": False,
             },
             {
-                "key": "OPENAI_API_KEY",
-                "value": os.environ.get("OPENAI_API_KEY"),
-                "category": "AI",
-                "is_encrypted": True,
-            },
-            {
-                "key": "ANTHROPIC_API_KEY",
-                "value": os.environ.get("ANTHROPIC_API_KEY"),
-                "category": "AI",
-                "is_encrypted": True,
-            },
-            {
-                "key": "GEMINI_API_KEY",
-                "value": os.environ.get("GEMINI_API_KEY"),
+                "key": "LLM_API_KEY",
+                "value": os.environ.get("LLM_API_KEY"),
                 "category": "AI",
                 "is_encrypted": True,
             },
@@ -161,8 +149,9 @@ class Command(BaseCommand):
                 "category": "AI",
                 "is_encrypted": False,
             },
+            # Deprecated, use LLM_MODEL
             {
-                "key": "GPT_ENGINE",
+                "key": "GPT_ENGINE",  
                 "value": os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"),
                 "category": "SMTP",
                 "is_encrypted": False,

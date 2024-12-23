@@ -24,7 +24,6 @@ class LLMProvider:
     """Base class for LLM provider configurations"""
     name: str = ""
     models: List[str] = []
-    api_key_env: str = ""
     default_model: str = ""
 
     @classmethod
@@ -38,7 +37,6 @@ class LLMProvider:
 class OpenAIProvider(LLMProvider):
     name = "OpenAI"
     models = ["gpt-3.5-turbo", "gpt-4o-mini", "gpt-4o", "o1-mini", "o1-preview"]
-    api_key_env = "OPENAI_API_KEY"
     default_model = "gpt-4o-mini"
 
 class AnthropicProvider(LLMProvider):
@@ -53,13 +51,11 @@ class AnthropicProvider(LLMProvider):
         "claude-instant-1.2",
         "claude-instant-1"
     ]
-    api_key_env = "ANTHROPIC_API_KEY"
     default_model = "claude-3-sonnet-20240229"
 
 class GeminiProvider(LLMProvider):
     name = "Gemini"
     models = ["gemini-pro", "gemini-1.5-pro-latest", "gemini-pro-vision"]
-    api_key_env = "GEMINI_API_KEY"
     default_model = "gemini-pro"
 
 SUPPORTED_PROVIDERS = {
@@ -73,14 +69,18 @@ def get_llm_config() -> Tuple[str | None, str | None, str | None]:
     Helper to get LLM configuration values, returns:
         - api_key, model, provider
     """
-    provider_key, model = get_configuration_value([
+    api_key, provider_key, model = get_configuration_value([
+        {
+            "key": "LLM_API_KEY",
+            "default": os.environ.get("LLM_API_KEY", None),
+        },
         {
             "key": "LLM_PROVIDER",
             "default": os.environ.get("LLM_PROVIDER", "openai"),
         },
         {
             "key": "LLM_MODEL",
-            "default": None,
+            "default": os.environ.get("LLM_MODEL", None),
         },
     ])
 
@@ -89,27 +89,22 @@ def get_llm_config() -> Tuple[str | None, str | None, str | None]:
         log_exception(ValueError(f"Unsupported provider: {provider_key}"))
         return None, None, None
 
-    api_key, _ = get_configuration_value([
-        {
-            "key": provider.api_key_env,
-            "default": os.environ.get(provider.api_key_env, None),
-        }
-    ])
-
     if not api_key:
         log_exception(ValueError(f"Missing API key for provider: {provider.name}"))
         return None, None, None
 
-     # If no model specified, use provider's default
+    # If no model specified, use provider's default
     if not model:
         model = provider.default_model
 
-     # Validate model is supported by provider
+    # Validate model is supported by provider
     if model not in provider.models:
         log_exception(ValueError(
             f"Model {model} not supported by {provider.name}. "
             f"Supported models: {', '.join(provider.models)}"
         ))
+        return None, None, None
+
     return api_key, model, provider_key
 
 
