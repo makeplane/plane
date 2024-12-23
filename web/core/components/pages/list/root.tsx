@@ -5,18 +5,16 @@ import { TPageNavigationTabs } from "@plane/types";
 // components
 import { ListLayout } from "@/components/core/list";
 // hooks
-import { useProjectPages } from "@/hooks/store";
+import { useProjectPage, useProjectPages } from "@/hooks/store";
 // components
 import { PageListBlock } from "./";
 
 type TPagesListRoot = {
   pageType: TPageNavigationTabs;
-  projectId: string;
-  workspaceSlug: string;
 };
 
 export const PagesListRoot: FC<TPagesListRoot> = observer((props) => {
-  const { pageType, projectId, workspaceSlug } = props;
+  const { pageType } = props;
   // store hooks
   const { getCurrentProjectFilteredPageIds } = useProjectPages();
   // derived values
@@ -26,7 +24,7 @@ export const PagesListRoot: FC<TPagesListRoot> = observer((props) => {
   return (
     <ListLayout>
       {filteredPageIds.map((pageId) => (
-        <PageListBlock key={pageId} workspaceSlug={workspaceSlug} projectId={projectId} pageId={pageId} />
+        <PageListBlock key={pageId} pageId={pageId} usePage={useProjectPage} />
       ))}
     </ListLayout>
   );

@@ -14,14 +14,14 @@ import { PageRoot } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { usePage, useProjectPages } from "@/hooks/store";
+import { useProjectPage, useProjectPages } from "@/hooks/store";
 
 const PageDetailsPage = observer(() => {
   const { workspaceSlug, projectId, pageId } = useParams();
 
   // store hooks
   const { getPageById } = useProjectPages();
-  const page = usePage(pageId?.toString() ?? "");
+  const page = useProjectPage(pageId?.toString() ?? "");
   const { id, name } = page;
 
   // fetch page details

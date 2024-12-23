@@ -60,6 +60,8 @@ export type TPageInstance = TBasePage &
     getRedirectionLink: () => string;
   };
 
+export type TUsePage = (pageId: string | undefined) => TPageInstance;
+
 export class BasePage implements TBasePage {
   // loaders
   isSubmitting: TNameDescriptionLoader = "saved";
