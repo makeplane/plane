@@ -15,6 +15,7 @@ import { useIssueDetail, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
+import { useIssueTypes } from "@/plane-web/hooks/store";
 // types
 import { TIssueOperations } from "./root";
 
@@ -40,12 +41,14 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
     removeSubIssue,
     subIssues: { setSubIssueHelpers, fetchSubIssues },
   } = useIssueDetail();
+  const { getIssueTypeById } = useIssueTypes();
 
   // derived values
   const issue = getIssueById(issueId);
   const parentIssue = issue?.parent_id ? getIssueById(issue.parent_id) : undefined;
   const parentIssueProjectDetails =
     parentIssue && parentIssue.project_id ? getProjectById(parentIssue.project_id) : undefined;
+  const isParentEpic = getIssueTypeById(parentIssue?.type_id || "")?.is_epic;
   const { isMobile } = usePlatformOS();
   const handleParentIssue = async (_issueId: string | null = null) => {
     try {
@@ -108,7 +111,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
           <div className="flex items-center gap-1 bg-green-500/20 rounded px-1.5 py-1">
             <Tooltip tooltipHeading="Title" tooltipContent={parentIssue.name} isMobile={isMobile}>
               <Link
-                href={`/${workspaceSlug}/projects/${parentIssue.project_id}/issues/${parentIssue?.id}`}
+                href={`/${workspaceSlug}/projects/${parentIssue.project_id}/${isParentEpic ? "epics" : "issues"}/${parentIssue?.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}

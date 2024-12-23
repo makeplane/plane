@@ -5,7 +5,7 @@ import { Row } from "@plane/ui";
 import { TQuickAddIssueButton } from "../root";
 
 export const GanttQuickAddIssueButton: FC<TQuickAddIssueButton> = observer((props) => {
-  const { onClick } = props;
+  const { onClick, isEpic = false } = props;
 
   return (
     <button
@@ -15,7 +15,7 @@ export const GanttQuickAddIssueButton: FC<TQuickAddIssueButton> = observer((prop
     >
       <Row className="flex py-2 gap-2">
         <PlusIcon className="h-3.5 w-3.5 stroke-2 my-auto" />
-        <span className="text-sm font-medium">New Issue</span>
+        <span className="text-sm font-medium">{`New ${isEpic ? "Epic" : "Issue"}`}</span>
       </Row>
     </button>
   );

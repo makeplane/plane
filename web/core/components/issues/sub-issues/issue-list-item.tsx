@@ -3,6 +3,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
+import { EIssueServiceType } from "@plane/constants";
 import { TIssue, TIssueServiceType } from "@plane/types";
 // ui
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
@@ -50,14 +51,14 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     disabled,
     handleIssueCrudState,
     subIssueOperations,
+    issueServiceType = EIssueServiceType.ISSUES,
   } = props;
 
   const {
     issue: { getIssueById },
     subIssues: { subIssueHelpersByIssueId, setSubIssueHelpers },
-    toggleCreateIssueModal,
-    toggleDeleteIssueModal,
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
+  const { toggleCreateIssueModal, toggleDeleteIssueModal } = useIssueDetail(issueServiceType);
   const project = useProject();
   const { getProjectStates } = useProjectState();
   const { handleRedirection } = useIssuePeekOverviewRedirection();
