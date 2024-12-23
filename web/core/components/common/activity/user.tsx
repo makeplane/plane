@@ -1,27 +1,37 @@
 import { FC } from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
-import { TProjectActivity } from "@/plane-web/types";
+// types
+import { TWorkspaceBaseActivity } from "@plane/types";
+// store hooks
+import { useMember, useWorkspace } from "@/hooks/store";
 
 type TUser = {
-  activity: TProjectActivity;
+  activity: TWorkspaceBaseActivity;
   customUserName?: string;
 };
 
-export const User: FC<TUser> = (props) => {
+export const User: FC<TUser> = observer((props) => {
   const { activity, customUserName } = props;
+  // store hooks
+  const { getUserDetails } = useMember();
+  const { getWorkspaceById } = useWorkspace();
+  // derived values
+  const actorDetail = getUserDetails(activity.actor);
+  const workspaceDetail = getWorkspaceById(activity.workspace);
 
   return (
     <>
-      {customUserName || activity.actor_detail?.display_name.includes("-intake") ? (
+      {customUserName || actorDetail?.display_name.includes("-intake") ? (
         <span className="text-custom-text-100 font-medium">{customUserName || "Plane"}</span>
       ) : (
         <Link
-          href={`/${activity?.workspace_detail?.slug}/profile/${activity?.actor_detail?.id}`}
+          href={`/${workspaceDetail?.slug}/profile/${actorDetail?.id}`}
           className="hover:underline text-custom-text-100 font-medium"
         >
-          {activity.actor_detail?.display_name}
+          {actorDetail?.display_name}
         </Link>
       )}
     </>
   );
-};
+});
