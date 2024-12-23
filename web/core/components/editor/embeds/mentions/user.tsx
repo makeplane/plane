@@ -58,9 +58,9 @@ export const EditorUserMention: React.FC<Props> = observer((props) => {
   return (
     <div
       className={cn(
-        "not-prose group/user-mention inline px-1 py-0.5 rounded bg-yellow-500/20 text-yellow-500 no-underline",
+        "not-prose group/user-mention inline px-1 py-0.5 rounded bg-custom-primary-100/20 text-custom-primary-100 no-underline",
         {
-          "bg-custom-primary-100/20 text-custom-primary-100": id === currentUser?.id,
+          "bg-yellow-500/20 text-yellow-500": id === currentUser?.id,
         }
       )}
     >
