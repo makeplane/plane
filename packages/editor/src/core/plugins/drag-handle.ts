@@ -8,6 +8,26 @@ import { SideMenuHandleOptions, SideMenuPluginProps } from "@/extensions";
 const verticalEllipsisIcon =
   '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>';
 
+const generalSelectors = [
+  "li",
+  "p:not(:first-child)",
+  ".code-block",
+  "blockquote",
+  "h1, h2, h3, h4, h5, h6",
+  "[data-type=horizontalRule]",
+  ".table-wrapper",
+  ".issue-embed",
+  ".image-component",
+  ".image-upload-component",
+  ".editor-callout-component",
+].join(", ");
+
+const maxScrollSpeed = 10;
+const acceleration = 0.2;
+const scrollDivisor = 1;
+
+const scrollParentCache = new WeakMap();
+
 const createDragHandleElement = (): HTMLElement => {
   const dragHandleElement = document.createElement("button");
   dragHandleElement.type = "button";
@@ -42,32 +62,27 @@ const isScrollable = (node: HTMLElement | SVGElement) => {
 };
 
 const getScrollParent = (node: HTMLElement | SVGElement) => {
+  if (scrollParentCache.has(node)) {
+    return scrollParentCache.get(node);
+  }
+
   let currentParent = node.parentElement;
 
   while (currentParent) {
     if (isScrollable(currentParent)) {
+      scrollParentCache.set(node, currentParent);
       return currentParent;
     }
     currentParent = currentParent.parentElement;
   }
-  return document.scrollingElement || document.documentElement;
+
+  const result = document.scrollingElement || document.documentElement;
+  scrollParentCache.set(node, result);
+  return result;
 };
 
 export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
   const elements = document.elementsFromPoint(coords.x, coords.y);
-  const generalSelectors = [
-    "li",
-    "p:not(:first-child)",
-    ".code-block",
-    "blockquote",
-    "h1, h2, h3, h4, h5, h6",
-    "[data-type=horizontalRule]",
-    ".table-wrapper",
-    ".issue-embed",
-    ".image-component",
-    ".image-upload-component",
-    ".editor-callout-component",
-  ].join(", ");
 
   for (const elem of elements) {
     if (elem.matches("p:first-child") && elem.parentElement?.matches(".ProseMirror")) {
@@ -130,6 +145,8 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   let lastClientY = 0;
   let scrollAnimationFrame = null;
   let isDraggedOutsideWindow: "top" | "bottom" | boolean = false;
+  let isMouseInsideWhileDragging = false;
+  let currentScrollSpeed = 0;
 
   const handleDragStart = (event: DragEvent, view: EditorView) => {
     view.focus();
@@ -209,8 +226,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     view.dragging = { slice, move: event.ctrlKey };
   };
 
-  let isMouseInsideWhileDragging = false;
-  const handleDragEnd = <TEvent extends DragEvent | FocusEvent>(event: TEvent, view?: EditorView, message?: any) => {
+  const handleDragEnd = <TEvent extends DragEvent | FocusEvent>(event: TEvent, view?: EditorView) => {
     event.preventDefault();
     isDragging = false;
     isMouseInsideWhileDragging = false;
@@ -221,11 +237,6 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
 
     view?.dom.classList.remove("dragging");
   };
-
-  let currentScrollSpeed = 0;
-  const maxScrollSpeed = 10; // Increased from 40
-  const acceleration = 0.2; // Reduced for faster response
-  const scrollDivisor = 1; // Reduced from 4 for faster scrolling
 
   function scroll() {
     if (!isDragging) {
@@ -318,28 +329,23 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     dragHandleElement = createDragHandleElement();
     dragHandleElement.addEventListener("dragstart", (e) => handleDragStart(e, view));
     dragHandleElement.addEventListener("dragend", (e) => handleDragEnd(e, view));
-    window.addEventListener("dragleave", (e) => {
-      if (e.clientY <= 0 || e.clientX <= 0 || e.clientX >= window.innerWidth || e.clientY >= window.innerHeight) {
-        isMouseInsideWhileDragging = true;
-      }
-    });
-
-    document.addEventListener("dragover", (event) => {
-      event.preventDefault();
-      if (isDragging) {
-        lastClientY = event.clientY;
-      }
-    });
-
     dragHandleElement.addEventListener("click", (e) => handleClick(e, view));
     dragHandleElement.addEventListener("contextmenu", (e) => handleClick(e, view));
-    document.addEventListener("mousemove", (e) => {
+
+    const dragOverHandler = (e: DragEvent) => {
+      event.preventDefault();
+      if (isDragging) {
+        lastClientY = e.clientY;
+      }
+    };
+
+    const mouseMoveHandler = (e: MouseEvent) => {
       if (isMouseInsideWhileDragging) {
         handleDragEnd(e, view);
       }
-    });
+    };
 
-    window.addEventListener("dragleave", (e) => {
+    const dragLeaveHandler = (e: DragEvent) => {
       if (e.clientY <= 0 || e.clientX <= 0 || e.clientX >= window.innerWidth || e.clientY >= window.innerHeight) {
         isMouseInsideWhileDragging = true;
 
@@ -351,11 +357,17 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
           isDraggedOutsideWindow = "bottom";
         }
       }
-    });
+    };
 
-    window.addEventListener("dragenter", (e) => {
+    const dragEnterHandler = () => {
       isDraggedOutsideWindow = false;
-    });
+    };
+
+    window.addEventListener("dragleave", dragLeaveHandler);
+    window.addEventListener("dragenter", dragEnterHandler);
+
+    document.addEventListener("dragover", dragOverHandler);
+    document.addEventListener("mousemove", mouseMoveHandler);
 
     hideDragHandle();
 
@@ -370,6 +382,10 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
           cancelAnimationFrame(scrollAnimationFrame);
           scrollAnimationFrame = null;
         }
+        window.removeEventListener("dragleave", dragLeaveHandler);
+        window.removeEventListener("dragenter", dragEnterHandler);
+        document.removeEventListener("dragover", dragOverHandler);
+        document.removeEventListener("mousemove", mouseMoveHandler);
       },
     };
   };
