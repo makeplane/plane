@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { AppSidebar } from "app/[workspaceSlug]/(projects)/sidebar";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -18,6 +17,7 @@ import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants";
 // assets
 import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
+import { AppSidebar } from "app/[workspaceSlug]/(projects)/sidebar";
 
 export const WorkspaceDisabledPage: React.FC = observer(() => {
   // router

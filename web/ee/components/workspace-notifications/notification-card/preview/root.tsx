@@ -28,6 +28,7 @@ export const NotificationCardPreview: FC<TNotificationCardPreview> = (props) => 
             projectId={projectId}
             issueTypeId={issueData.type_id}
             size="xs"
+            textContainerClassName="text-xs"
           />
         )}
         {unreadCount > 0 && (

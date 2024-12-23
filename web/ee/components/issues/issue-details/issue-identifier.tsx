@@ -140,7 +140,7 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
   }
 
   return (
-    <div className="flex flex-shrink-0 items-center space-x-2">
+    <div className={cn("flex flex-shrink-0 items-center", size === "xs" ? "space-x-1" : "space-x-2")}>
       {shouldRenderIssueTypeIcon && issueTypeId && <IssueTypeIdentifier issueTypeId={issueTypeId} size={size} />}
       {shouldRenderIssueID && (
         <IdentifierText

@@ -4,16 +4,16 @@ import { FC, ReactNode, useEffect, useRef } from "react";
 // ui
 import { Tooltip } from "@plane/ui";
 // helpers
+import { cn } from "@plane/utils";
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
 // hooks
+import { useWorkspaceNotifications } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssuePropertyLogo } from "@/plane-web/components/issue-types";
 import { IssueUser } from "@/plane-web/components/issues";
 // plane web hooks
 import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
-import { useWorkspaceNotifications } from "@/hooks/store";
-import { cn } from "@plane/utils";
 
 type TIssueActivityBlockComponent = {
   activityId: string;

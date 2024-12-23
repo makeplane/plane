@@ -70,6 +70,7 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
       .filter((id): id is string => id != undefined); // added "id is string" predicate to avoid type error
 
   const handleNotificationIssuePeekOverview = async () => {
+    setShowPreview(false);
     if (workspaceSlug && projectId && issueId && !isSnoozeStateModalOpen && !customSnoozeModal) {
       setPeekIssue(undefined);
       setCurrentSelectedNotificationId(notificationList[0].id);
@@ -145,10 +146,11 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
                   projectId={projectId}
                   issueTypeId={issue.type_id}
                   size="xs"
+                  textContainerClassName="text-xs text-custom-text-100/80"
                 />
               </>
             )}
-            <div className="bg-custom-text-300 w-1 h-1 rounded-full" />
+            <div className="bg-custom-text-300/70 w-1 h-1 rounded-full" />
             {/* Author avatars */}
             <MemberDropdown
               value={authorIds}
