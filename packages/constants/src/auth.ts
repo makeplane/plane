@@ -39,6 +39,14 @@ export enum EAuthPageTypes {
   AUTHENTICATED = "AUTHENTICATED",
 }
 
+export enum EPageTypes {
+  INIT = "INIT",
+  PUBLIC = "PUBLIC",
+  NON_AUTHENTICATED = "NON_AUTHENTICATED",
+  ONBOARDING = "ONBOARDING",
+  AUTHENTICATED = "AUTHENTICATED",
+}
+
 export enum EAuthModes {
   SIGN_IN = "SIGN_IN",
   SIGN_UP = "SIGN_UP",
@@ -50,9 +58,9 @@ export enum EAuthSteps {
   UNIQUE_CODE = "UNIQUE_CODE",
 }
 
-// TODO: remove this
 export enum EErrorAlertType {
   BANNER_ALERT = "BANNER_ALERT",
+  TOAST_ALERT = "TOAST_ALERT",
   INLINE_FIRST_NAME = "INLINE_FIRST_NAME",
   INLINE_EMAIL = "INLINE_EMAIL",
   INLINE_PASSWORD = "INLINE_PASSWORD",
@@ -127,7 +135,7 @@ export enum EAuthErrorCodes {
   INCORRECT_OLD_PASSWORD = "5135",
   MISSING_PASSWORD = "5138",
   INVALID_NEW_PASSWORD = "5140",
-  // set passowrd
+  // set password
   PASSWORD_ALREADY_SET = "5145",
   // Admin
   ADMIN_ALREADY_EXIST = "5150",
