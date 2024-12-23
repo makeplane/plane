@@ -169,7 +169,7 @@ export const PageDetailsHeader = observer(() => {
       </Header.LeftItem>
       <Header.RightItem>
         <PageEditInformationPopover page={page} />
-        <PageDetailsHeaderExtraActions />
+        <PageDetailsHeaderExtraActions page={page} />
       </Header.RightItem>
     </Header>
   );
