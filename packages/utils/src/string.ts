@@ -182,7 +182,31 @@ export const objToQueryParams = (obj: any) => {
  * const text = stripHTML(html);
  * console.log(text); // Some text
  */
+/**
+ * @description Sanitizes HTML string by removing tags and properly escaping entities
+ * @param {string} htmlString - HTML string to sanitize
+ * @returns {string} Sanitized string with escaped HTML entities
+ * @example
+ * sanitizeHTML("<p>Hello & 'world'</p>") // returns "Hello &amp; &apos;world&apos;"
+ */
 export const sanitizeHTML = (htmlString: string) => {
-  const sanitizedText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: [] }); // sanitize the string to remove all HTML tags
-  return sanitizedText.trim(); // trim the string to remove leading and trailing whitespaces
+  if (!htmlString) return "";
+
+  // First use DOMPurify to remove all HTML tags while preserving text content
+  const sanitizedText = DOMPurify.sanitize(htmlString, { 
+    ALLOWED_TAGS: [], 
+    ALLOWED_ATTR: [],
+    USE_PROFILES: {
+      html: false,
+      svg: false,
+      svgFilters: false,
+      mathMl: false
+    }
+  });
+
+  // Additional escaping for quotes and apostrophes
+  return sanitizedText
+    .trim()
+    .replace(/'/g, "&apos;")
+    .replace(/"/g, "&quot;");
 };
