@@ -42,7 +42,7 @@ export const SideMenuExtension = (props: Props) => {
             ai: aiEnabled,
             dragDrop: dragDropEnabled,
           },
-          scrollThreshold: { up: 250, down: 120 },
+          scrollThreshold: { up: 250, down: 150 },
         }),
       ];
     },

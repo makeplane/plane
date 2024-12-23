@@ -128,14 +128,14 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   let listType = "";
   let isDragging = false;
   let lastClientY = 0;
-  let lastClientX = 0;
   let scrollAnimationFrame = null;
+  let isDraggedOutsideWindow: "top" | "bottom" | boolean = false;
+  let isMouseInsideWhileDragging = false;
 
   const handleDragStart = (event: DragEvent, view: EditorView) => {
     view.focus();
     isDragging = true;
     lastClientY = event.clientY;
-    lastClientX = event.clientX;
     scroll();
     if (!event.dataTransfer) return;
 
@@ -167,11 +167,6 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
         draggedNodePos + 1 >= nodeSelection.$from.pos && draggedNodePos <= nodeSelection.$to.pos
       );
     }
-
-    // if (node.className.includes("prosemirror-flat-list")) {
-    //   draggedNodePos = draggedNodePos - 1;
-    //   console.log("draggedNodePos", draggedNodePos);
-    // }
 
     if (!differentNodeSelected && diff !== 0 && !(view.state.selection instanceof NodeSelection)) {
       const endSelection = NodeSelection.create(view.state.doc, to - 1);
@@ -215,14 +210,11 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     view.dragging = { slice, move: event.ctrlKey };
   };
 
-  let isMouseInsideWhileDragging = false;
   const handleDragEnd = <TEvent extends DragEvent | FocusEvent>(event: TEvent, view?: EditorView, message?: any) => {
-    console.log("ran", message);
     event.preventDefault();
     isDragging = false;
     isMouseInsideWhileDragging = false;
     if (scrollAnimationFrame) {
-      console.log("ran the clean  ");
       cancelAnimationFrame(scrollAnimationFrame);
       scrollAnimationFrame = null;
     }
@@ -230,38 +222,70 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     view?.dom.classList.remove("dragging");
   };
 
+  let currentScrollSpeed = 0;
+  const maxScrollSpeed = 10;
+  const acceleration = 0.2;
+
+  // Add variables to track scrolling state:
+  let isScrolling = false;
+  let wasScrolling = false;
+
   function scroll() {
+    const dropCursorElement = document.querySelector(".prosemirror-drop-cursor");
     if (!isDragging) {
+      currentScrollSpeed = 0;
       return;
     }
 
     const scrollableParent = getScrollParent(dragHandleElement);
     if (!scrollableParent) return;
-    const scrollThreshold = options.scrollThreshold;
 
-    const maxScrollSpeed = 20;
-    let scrollAmount = 0;
+    const scrollRegionUp = options.scrollThreshold.up;
+    const scrollRegionDown = window.innerHeight - options.scrollThreshold.down;
 
-    // Normal scroll behavior when mouse is inside viewport
-    const scrollRegionUp = scrollThreshold.up;
-    const scrollRegionDown = window.innerHeight - scrollThreshold.down;
+    let targetScrollAmount = 0;
 
-    if (lastClientY < scrollRegionUp) {
-      const ratio = Math.min(Math.pow((scrollRegionUp - lastClientY) / scrollThreshold.up, 3), 1);
-      scrollAmount = -maxScrollSpeed * ratio;
+    if (isDraggedOutsideWindow === "top") {
+      targetScrollAmount = -maxScrollSpeed * 5;
+    } else if (isDraggedOutsideWindow === "bottom") {
+      targetScrollAmount = maxScrollSpeed * 5;
+    } else if (lastClientY < scrollRegionUp) {
+      const ratio = easeOutQuad((scrollRegionUp - lastClientY) / options.scrollThreshold.up);
+      targetScrollAmount = -maxScrollSpeed * ratio;
     } else if (lastClientY > scrollRegionDown) {
-      // More gradual downward scroll with higher power and dampening
-      const ratio = Math.min(Math.pow((lastClientY - scrollRegionDown) / scrollThreshold.down, 4), 1) * 0.8;
-      scrollAmount = maxScrollSpeed * ratio;
+      const ratio = easeOutQuad((lastClientY - scrollRegionDown) / options.scrollThreshold.down);
+      targetScrollAmount = maxScrollSpeed * ratio;
     }
 
-    if (scrollAmount !== 0) {
-      scrollableParent.scrollBy({ top: scrollAmount });
+    currentScrollSpeed += (targetScrollAmount - currentScrollSpeed) * acceleration;
+
+    const maxSpeedLimit = 50;
+    currentScrollSpeed = Math.max(-maxSpeedLimit, Math.min(maxSpeedLimit, currentScrollSpeed));
+
+    // Determine if scrolling should be active:
+    isScrolling = Math.abs(currentScrollSpeed) > 0.1;
+
+    // Detect changes from wasScrolling to isScrolling:
+    if (!wasScrolling && isScrolling) {
+      dropCursorElement?.classList.add("text-transparent");
+    } else if (wasScrolling && !isScrolling) {
+      dropCursorElement?.classList.remove("text-transparent");
     }
 
-    // Continue the scrolling loop
+    // Track new state:
+    wasScrolling = isScrolling;
+
+    if (isScrolling) {
+      scrollableParent.scrollBy({ top: currentScrollSpeed });
+    }
+
     scrollAnimationFrame = requestAnimationFrame(scroll);
   }
+
+  function easeOutQuad(t) {
+    return t * (2 - t);
+  }
+
   const handleClick = (event: MouseEvent, view: EditorView) => {
     view.focus();
 
@@ -309,18 +333,12 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       dragHandleElement?.classList.add("drag-handle-hidden");
   };
 
-  document.addEventListener("mouseenter", (e) => {
-    console.log("ran mouseenter  ");
-    handleDragEnd(e);
-  });
-
   const view = (view: EditorView, sideMenu: HTMLDivElement | null) => {
     dragHandleElement = createDragHandleElement();
     dragHandleElement.addEventListener("dragstart", (e) => handleDragStart(e, view));
     dragHandleElement.addEventListener("dragend", (e) => handleDragEnd(e, view));
     window.addEventListener("dragleave", (e) => {
       if (e.clientY <= 0 || e.clientX <= 0 || e.clientX >= window.innerWidth || e.clientY >= window.innerHeight) {
-        console.log("set to true");
         isMouseInsideWhileDragging = true;
       }
     });
@@ -338,6 +356,24 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       if (isMouseInsideWhileDragging) {
         handleDragEnd(e, view);
       }
+    });
+
+    window.addEventListener("dragleave", (e) => {
+      if (e.clientY <= 0 || e.clientX <= 0 || e.clientX >= window.innerWidth || e.clientY >= window.innerHeight) {
+        isMouseInsideWhileDragging = true;
+
+        const windowMiddleY = window.innerHeight / 2;
+
+        if (lastClientY < windowMiddleY) {
+          isDraggedOutsideWindow = "top";
+        } else {
+          isDraggedOutsideWindow = "bottom";
+        }
+      }
+    });
+
+    window.addEventListener("dragenter", () => {
+      isDraggedOutsideWindow = false;
     });
 
     hideDragHandle();
