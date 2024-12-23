@@ -22,9 +22,8 @@ const generalSelectors = [
   ".editor-callout-component",
 ].join(", ");
 
-const maxScrollSpeed = 10;
-const acceleration = 0.2;
-const scrollDivisor = 1;
+const maxScrollSpeed = 20;
+const acceleration = 0.5;
 
 const scrollParentCache = new WeakMap();
 
@@ -169,9 +168,8 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     const scrollableParent = getScrollParent(dragHandleElement);
     if (!scrollableParent) return;
 
-    const scrollThreshold = Math.min(100, scrollableParent.clientHeight * 0.15);
-    const scrollRegionUp = scrollThreshold;
-    const scrollRegionDown = window.innerHeight - scrollThreshold;
+    const scrollRegionUp = options.scrollThreshold.up;
+    const scrollRegionDown = window.innerHeight - options.scrollThreshold.down;
 
     let targetScrollAmount = 0;
 
@@ -180,17 +178,17 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     } else if (isDraggedOutsideWindow === "bottom") {
       targetScrollAmount = maxScrollSpeed * 5;
     } else if (lastClientY < scrollRegionUp) {
-      const ratio = easeOutQuadAnimation((scrollRegionUp - lastClientY) / scrollThreshold);
+      const ratio = easeOutQuadAnimation((scrollRegionUp - lastClientY) / options.scrollThreshold.up);
       targetScrollAmount = -maxScrollSpeed * ratio;
     } else if (lastClientY > scrollRegionDown) {
-      const ratio = easeOutQuadAnimation((lastClientY - scrollRegionDown) / scrollThreshold);
+      const ratio = easeOutQuadAnimation((lastClientY - scrollRegionDown) / options.scrollThreshold.down);
       targetScrollAmount = maxScrollSpeed * ratio;
     }
 
     currentScrollSpeed += (targetScrollAmount - currentScrollSpeed) * acceleration;
 
     if (Math.abs(currentScrollSpeed) > 0.1) {
-      scrollableParent.scrollBy({ top: currentScrollSpeed / scrollDivisor });
+      scrollableParent.scrollBy({ top: currentScrollSpeed });
     }
 
     scrollAnimationFrame = requestAnimationFrame(scroll);
