@@ -118,6 +118,38 @@ export class FileService extends APIService {
       });
   }
 
+  async updateBulkInitiativeAssetsUploadStatus(
+    workspaceSlug: string,
+    initiativeId: string,
+    data: {
+      asset_ids: string[];
+    }
+  ): Promise<void> {
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/initiatives/${initiativeId}/attachments/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateBulkInitiativeCommentAssetsUploadStatus(
+    workspaceSlug: string,
+    initiativeId: string,
+    commentId: string,
+    data: {
+      asset_ids: string[];
+    }
+  ): Promise<void> {
+    return this.post(
+      `/api/assets/v2/workspaces/${workspaceSlug}/initiatives/${initiativeId}/comments/${commentId}/attachments/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async uploadProjectAsset(
     workspaceSlug: string,
     projectId: string,
