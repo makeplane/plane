@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { ExternalLink, Maximize, Minus, Plus, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 
@@ -62,8 +62,6 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
     toggleFullScreenMode(false);
     setMagnification(1);
   }, [isDragging, toggleFullScreenMode]);
-
-  const handleOpenInNewTab = () => window.open(src, "_blank");
 
   const handleMagnification = useCallback((direction: "increase" | "decrease") => {
     setMagnification((prev) => {
@@ -245,7 +243,7 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
             </div>
             <button
               type="button"
-              onClick={handleOpenInNewTab}
+              onClick={() => window.open(src, "_blank")}
               className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
             >
               <ExternalLink className="size-4" />
