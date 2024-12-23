@@ -5,6 +5,8 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
+// plane constants
+import { EIssueLayoutTypes } from "@plane/constants";
 //types
 import {
   TGroupedIssues,
@@ -20,7 +22,7 @@ import { KanbanQuickAddIssueButton, QuickAddIssueRoot } from "@/components/issue
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 import { KanbanIssueBlockLoader } from "@/components/ui";
 // helpers
-import { DRAG_ALLOWED_GROUPS, EIssueLayoutTypes } from "@/constants/issue";
+import { DRAG_ALLOWED_GROUPS } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";

@@ -6,11 +6,11 @@ import { useParams } from "next/navigation";
 // icons
 import { ArchiveRestoreIcon, ExternalLink, Link, Trash2 } from "lucide-react";
 // ui
+import { EIssuesStoreType } from "@plane/constants";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { DeleteIssueModal } from "@/components/issues";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";

@@ -5,12 +5,12 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
+// plane internal packages
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
+import { resolveGeneralTheme } from "@plane/utils";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication";
 import { PageHeader } from "@/components/common";
-// helpers
-import { resolveGeneralTheme } from "@/helpers/common.helper";
 // hooks
 import { useInstance } from "@/hooks/store";
 // icons

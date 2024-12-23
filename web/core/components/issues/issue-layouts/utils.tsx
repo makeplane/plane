@@ -11,6 +11,7 @@ import uniq from "lodash/uniq";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { ContrastIcon } from "lucide-react";
 // plane types
+import { EIssuesStoreType } from "@plane/constants";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -30,7 +31,7 @@ import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "
 // components
 import { Logo } from "@/components/common";
 // constants
-import { ISSUE_PRIORITIES, EIssuesStoreType } from "@/constants/issue";
+import { ISSUE_PRIORITIES } from "@/constants/issue";
 import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";

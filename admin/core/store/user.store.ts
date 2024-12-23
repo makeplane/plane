@@ -1,7 +1,7 @@
 import { action, observable, runInAction, makeObservable } from "mobx";
+// plane internal packages
+import { EUserStatus, TUserStatus } from "@plane/constants";
 import { IUser } from "@plane/types";
-// helpers
-import { EUserStatus, TUserStatus } from "@/helpers/user.helper";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";

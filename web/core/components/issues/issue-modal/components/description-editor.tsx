@@ -20,12 +20,13 @@ import { ETabIndices } from "@/constants/tab-indices";
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
-import { useInstance, useMember, useWorkspace } from "@/hooks/store";
+import { useInstance, useWorkspace } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { AIService } from "@/services/ai.service";
 import { FileService } from "@/services/file.service";
+import { ProjectService } from "@/services/project";
 
 type TIssueDescriptionEditorProps = {
   control: Control<TIssue>;
@@ -49,6 +50,7 @@ type TIssueDescriptionEditorProps = {
 // services
 const aiService = new AIService();
 const fileService = new FileService();
+const projectService = new ProjectService();
 
 export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = observer((props) => {
   const {
@@ -76,11 +78,6 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString())?.id as string;
   const { config } = useInstance();
   const { isMobile } = usePlatformOS();
-  const {
-    project: { getProjectMemberIds },
-  } = useMember();
-  // derived values
-  const memberIds = projectId ? (getProjectMemberIds(projectId) ?? []) : [];
 
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
 
@@ -184,7 +181,6 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                 value={descriptionHtmlData}
                 workspaceSlug={workspaceSlug?.toString() as string}
                 workspaceId={workspaceId}
-                memberIds={memberIds}
                 projectId={projectId}
                 onChange={(_description: object, description_html: string) => {
                   onChange(description_html);
@@ -194,6 +190,13 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                 ref={editorRef}
                 tabIndex={getIndex("description_html")}
                 placeholder={getDescriptionPlaceholder}
+                searchMentionCallback={async (payload) =>
+                  await projectService.searchEntity(
+                    workspaceSlug?.toString() ?? "",
+                    projectId?.toString() ?? "",
+                    payload
+                  )
+                }
                 containerClassName="pt-3 min-h-[120px]"
                 uploadFile={async (file) => {
                   try {

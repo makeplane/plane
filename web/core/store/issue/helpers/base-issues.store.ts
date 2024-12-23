@@ -12,8 +12,9 @@ import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane constants
+import { EIssueLayoutTypes, ALL_ISSUES } from "@plane/constants";
 // types
-import { ALL_ISSUES } from "@plane/constants";
 import {
   TIssue,
   TIssueGroupByOptions,
@@ -32,7 +33,7 @@ import {
 // components
 import { IBlockUpdateDependencyData } from "@/components/gantt-chart";
 // constants
-import { EIssueLayoutTypes, ISSUE_PRIORITIES } from "@/constants/issue";
+import { ISSUE_PRIORITIES } from "@/constants/issue";
 // helpers
 import { convertToISODateString } from "@/helpers/date-time.helper";
 // local-db

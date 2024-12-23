@@ -1,13 +1,13 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
+import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 import { IIssueFilterOptions } from "@plane/types";
 // ui
 import { Header, EHeaderVariant } from "@plane/ui";
 // components
 import { AppliedFiltersList, SaveFilterView } from "@/components/issues";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useLabel, useProjectState, useUserPermissions } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";

@@ -1,8 +1,7 @@
 import { differenceInCalendarDays } from "date-fns";
-// types
+// plane internal
+import { STATE_GROUPS } from "@plane/constants";
 import { TStateGroups } from "@plane/types";
-// constants
-import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { getDate } from "@/helpers/date-time.helper";
 

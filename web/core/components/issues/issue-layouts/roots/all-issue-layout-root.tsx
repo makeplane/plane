@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane constants
-import { ALL_ISSUES } from "@plane/constants";
+import { ALL_ISSUES, EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 import { IIssueDisplayFilterOptions } from "@plane/types";
 // hooks
 // components
@@ -13,12 +13,7 @@ import { SpreadsheetView } from "@/components/issues/issue-layouts";
 import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
 import { SpreadsheetLayoutLoader } from "@/components/ui";
 // constants
-import {
-  EIssueFilterType,
-  EIssueLayoutTypes,
-  EIssuesStoreType,
-  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
-} from "@/constants/issue";
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // hooks
 import { useGlobalView, useIssues, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
