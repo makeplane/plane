@@ -62,7 +62,6 @@ export const EpicsHeader = observer(() => {
                 type="text"
                 link={
                   <BreadcrumbLink
-                    href={`/${workspaceSlug}/projects`}
                     label={currentProjectDetails?.name ?? "Project"}
                     icon={
                       currentProjectDetails ? (
@@ -97,17 +96,15 @@ export const EpicsHeader = observer(() => {
           </div>
         </Header.LeftItem>
         <Header.RightItem>
-          {issuesCount > 0 && (
-            <div className="hidden gap-3 md:flex">
-              <HeaderFilters
-                storeType={EIssuesStoreType.EPIC}
-                projectId={projectId?.toString()}
-                currentProjectDetails={currentProjectDetails}
-                workspaceSlug={workspaceSlug?.toString()}
-                canUserCreateIssue={canUserCreateIssue}
-              />
-            </div>
-          )}
+          <div className="hidden gap-3 md:flex">
+            <HeaderFilters
+              storeType={EIssuesStoreType.EPIC}
+              projectId={projectId?.toString()}
+              currentProjectDetails={currentProjectDetails}
+              workspaceSlug={workspaceSlug?.toString()}
+              canUserCreateIssue={canUserCreateIssue}
+            />
+          </div>
           {canUserCreateIssue && (
             <Button
               onClick={() => {

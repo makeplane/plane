@@ -146,12 +146,14 @@ class EpicArchiveViewSet(BaseViewSet):
                             slug=slug,
                             project_id=project_id,
                             filters=filters,
+                            epic=True,
                         ),
                         sub_group_by_fields=issue_group_values(
                             field=sub_group_by,
                             slug=slug,
                             project_id=project_id,
                             filters=filters,
+                            epic=True,
                         ),
                         group_by_field_name=group_by,
                         sub_group_by_field_name=sub_group_by,
@@ -180,6 +182,7 @@ class EpicArchiveViewSet(BaseViewSet):
                         slug=slug,
                         project_id=project_id,
                         filters=filters,
+                        epic=True,
                     ),
                     group_by_field_name=group_by,
                     count_filter=Q(

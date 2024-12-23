@@ -6,7 +6,18 @@ from django.db import connection
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import F, Func, OuterRef, Q, UUIDField, Value, Case, When, Count
+from django.db.models import (
+    F,
+    Func,
+    OuterRef,
+    Q,
+    UUIDField,
+    Value,
+    Case,
+    When,
+    Count,
+    Subquery,
+)
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 
@@ -25,6 +36,7 @@ from plane.db.models import (
     Project,
     IssueType,
     Workspace,
+    CycleIssue,
     ProjectIssueType,
 )
 from plane.utils.issue_filters import issue_filters
@@ -39,10 +51,7 @@ from plane.ee.serializers import (
 )
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
-from plane.utils.grouper import (
-    issue_group_values,
-    issue_on_results,
-)
+from plane.utils.grouper import issue_group_values, issue_on_results
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 
 
@@ -79,9 +88,7 @@ class EpicViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -210,12 +217,14 @@ class EpicViewSet(BaseViewSet):
                             slug=slug,
                             project_id=project_id,
                             filters=filters,
+                            epic=True,
                         ),
                         sub_group_by_fields=issue_group_values(
                             field=sub_group_by,
                             slug=slug,
                             project_id=project_id,
                             filters=filters,
+                            epic=True,
                         ),
                         group_by_field_name=group_by,
                         sub_group_by_field_name=sub_group_by,
@@ -243,6 +252,7 @@ class EpicViewSet(BaseViewSet):
                         slug=slug,
                         project_id=project_id,
                         filters=filters,
+                        epic=True,
                     ),
                     group_by_field_name=group_by,
                     count_filter=Q(
@@ -354,6 +364,28 @@ class EpicViewSet(BaseViewSet):
                 project_id=project_id, issue_type_id=epic.id
             )
 
+            # Refetch the data
+            epic = (
+                IssueType.objects.filter(
+                    workspace__slug=slug,
+                    project_issue_types__project_id=project_id,
+                    is_epic=True,
+                    pk=epic.id,
+                ).annotate(
+                    project_ids=Coalesce(
+                        Subquery(
+                            ProjectIssueType.objects.filter(
+                                issue_type=OuterRef("pk"), workspace__slug=slug
+                            )
+                            .values("issue_type")
+                            .annotate(project_ids=ArrayAgg("project_id", distinct=True))
+                            .values("project_ids")
+                        ),
+                        [],
+                    )
+                )
+            ).first()
+
             return Response(IssueTypeSerializer(epic).data, status=status.HTTP_200_OK)
         else:
             project_feature, _ = ProjectFeature.objects.get_or_create(
@@ -455,3 +487,94 @@ class EpicAnalyticsEndpoint(BaseAPIView):
         )
 
         return Response(issues, status=status.HTTP_200_OK)
+
+
+class EpicDetailEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id):
+        filters = issue_filters(request.query_params, "GET")
+        epics = (
+            Issue.objects.filter(workspace__slug=slug, project_id=project_id)
+            .filter(Q(type__isnull=False) & Q(type__is_epic=True))
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels", "issue_module__module")
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(labels__id__isnull=True)
+                            & Q(label_issue__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(issue_assignee__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(issue_module__module_id__isnull=True)
+                            & Q(issue_module__module__archived_at__isnull=True)
+                            & Q(issue_module__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+        )
+        epics = epics.filter(**filters)
+        order_by_param = request.GET.get("order_by", "-created_at")
+        # Issue queryset
+        epics, order_by_param = order_issue_queryset(
+            issue_queryset=epics, order_by_param=order_by_param
+        )
+        return self.paginate(
+            request=request,
+            order_by=order_by_param,
+            queryset=(epics),
+            on_results=lambda epics: EpicSerializer(
+                epics, many=True, fields=self.fields, expand=self.expand
+            ).data,
+        )

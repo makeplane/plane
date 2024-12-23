@@ -210,7 +210,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                   >
                     <div className="flex items-center gap-2">
                       <X className="h-3.5 w-3.5" strokeWidth={2} />
-                      <span>Remove parent issue</span>
+                      <span>{`Remove ${issueServiceType === EIssueServiceType.ISSUES ? "parent" : ""} issue`}</span>
                     </div>
                   </CustomMenu.MenuItem>
                 )}

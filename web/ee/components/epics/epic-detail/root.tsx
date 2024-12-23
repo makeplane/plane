@@ -17,6 +17,7 @@ import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "@/constants/event-
 // hooks
 import { useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { EpicDetailsSidebar } from "@/plane-web/components/epics/sidebar/root";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { useIssueTypes } from "@/plane-web/hooks/store";
@@ -49,10 +50,8 @@ export const EpicDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
   const {
     issue: { getIssueById },
     fetchIssue,
-    updateIssue,
-    removeIssue,
-    archiveIssue,
   } = useIssueDetail(EIssueServiceType.EPICS);
+  const { updateIssue, removeIssue, archiveIssue } = useIssuesActions(EIssuesStoreType.EPIC);
   const {
     issues: { removeIssue: removeArchivedIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
@@ -63,7 +62,11 @@ export const EpicDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
     workspaceSlug && projectId && epicId ? `EPIC_ANALYTICS_${workspaceSlug}_${projectId}_${epicId}` : null,
     workspaceSlug && projectId && epicId
       ? () => fetchEpicAnalytics(workspaceSlug.toString(), projectId.toString(), epicId.toString())
-      : null
+      : null,
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+    }
   );
 
   const issueOperations: TIssueOperations = useMemo(
@@ -77,16 +80,18 @@ export const EpicDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       },
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
         try {
-          await updateIssue(workspaceSlug, projectId, issueId, data);
-          captureIssueEvent({
-            eventName: ISSUE_UPDATED,
-            payload: { ...data, issueId, state: "SUCCESS", element: "Issue detail page" },
-            updates: {
-              changed_property: Object.keys(data).join(","),
-              change_details: Object.values(data).join(","),
-            },
-            path: pathname,
-          });
+          if (updateIssue) {
+            await updateIssue(projectId, issueId, data);
+            captureIssueEvent({
+              eventName: ISSUE_UPDATED,
+              payload: { ...data, issueId, state: "SUCCESS", element: "Issue detail page" },
+              updates: {
+                changed_property: Object.keys(data).join(","),
+                change_details: Object.values(data).join(","),
+              },
+              path: pathname,
+            });
+          }
         } catch (error) {
           console.log("Error in updating issue:", error);
           captureIssueEvent({
@@ -108,7 +113,7 @@ export const EpicDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           if (is_archived) await removeArchivedIssue(workspaceSlug, projectId, issueId);
-          else await removeIssue(workspaceSlug, projectId, issueId);
+          else if (removeIssue) await removeIssue(projectId, issueId);
           setToast({
             title: "Success!",
             type: TOAST_TYPE.SUCCESS,
@@ -135,12 +140,14 @@ export const EpicDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       },
       archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          await archiveIssue(workspaceSlug, projectId, issueId);
-          captureIssueEvent({
-            eventName: ISSUE_ARCHIVED,
-            payload: { id: issueId, state: "SUCCESS", element: "Issue details page" },
-            path: pathname,
-          });
+          if (archiveIssue) {
+            await archiveIssue(projectId, issueId);
+            captureIssueEvent({
+              eventName: ISSUE_ARCHIVED,
+              payload: { id: issueId, state: "SUCCESS", element: "Issue details page" },
+              path: pathname,
+            });
+          }
         } catch (error) {
           console.log("Error in archiving issue:", error);
           captureIssueEvent({

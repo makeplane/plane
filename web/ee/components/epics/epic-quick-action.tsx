@@ -23,8 +23,23 @@ import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/u
 // types
 import { IQuickActionProps } from "../../../core/components/issues/issue-layouts/list/list-view-types";
 
-export const ProjectEpicQuickActions: React.FC<IQuickActionProps> = observer((props) => {
-  const { issue, handleDelete, handleUpdate, readOnly = false, parentRef } = props;
+type TProjectEpicQuickActionProps = IQuickActionProps & {
+  toggleEditEpicModal?: (value: boolean) => void;
+  toggleDeleteEpicModal?: (value: boolean) => void;
+  isPeekMode?: boolean;
+};
+
+export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = observer((props) => {
+  const {
+    issue,
+    handleDelete,
+    handleUpdate,
+    readOnly = false,
+    parentRef,
+    toggleEditEpicModal,
+    toggleDeleteEpicModal,
+    isPeekMode = false,
+  } = props;
   // router
   const { workspaceSlug } = useParams();
   // states
@@ -62,8 +77,9 @@ export const ProjectEpicQuickActions: React.FC<IQuickActionProps> = observer((pr
         setTrackElement(activeLayout);
         setIssueToEdit(issue);
         setCreateUpdateIssueModal(true);
+        if (toggleEditEpicModal) toggleEditEpicModal(true);
       },
-      shouldRender: isEditingAllowed,
+      shouldRender: isEditingAllowed && !isPeekMode,
     },
     {
       key: "open-in-new-tab",
@@ -76,6 +92,7 @@ export const ProjectEpicQuickActions: React.FC<IQuickActionProps> = observer((pr
       title: "Copy link",
       icon: Link,
       action: handleCopyIssueLink,
+      shouldRender: !isPeekMode,
     },
     {
       key: "delete",
@@ -84,6 +101,7 @@ export const ProjectEpicQuickActions: React.FC<IQuickActionProps> = observer((pr
       action: () => {
         setTrackElement(activeLayout);
         setDeleteIssueModal(true);
+        if (toggleDeleteEpicModal) toggleDeleteEpicModal(true);
       },
       shouldRender: isDeletingAllowed,
     },
@@ -94,7 +112,10 @@ export const ProjectEpicQuickActions: React.FC<IQuickActionProps> = observer((pr
       <DeleteIssueModal
         data={issue}
         isOpen={deleteIssueModal}
-        handleClose={() => setDeleteIssueModal(false)}
+        handleClose={() => {
+          setDeleteIssueModal(false);
+          if (toggleDeleteEpicModal) toggleDeleteEpicModal(false);
+        }}
         onSubmit={handleDelete}
         isEpic
       />
@@ -103,6 +124,7 @@ export const ProjectEpicQuickActions: React.FC<IQuickActionProps> = observer((pr
         onClose={() => {
           setCreateUpdateIssueModal(false);
           setIssueToEdit(undefined);
+          if (toggleEditEpicModal) toggleEditEpicModal(false);
         }}
         data={issueToEdit}
         onSubmit={async (data) => {

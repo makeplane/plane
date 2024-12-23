@@ -43,7 +43,7 @@ export class IssueService extends APIService {
   ): Promise<TIssuesResponse> {
     const path =
       (queries.expand as string)?.includes("issue_relation") && !queries.group_by
-        ? `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues-detail/`
+        ? `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}-detail/`
         : `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/`;
     return this.get(
       path,

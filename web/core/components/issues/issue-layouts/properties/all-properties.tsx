@@ -448,7 +448,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!subIssueCount}
       >
         <Tooltip
-          tooltipHeading="Sub-issues"
+          tooltipHeading={isEpic ? "Issues" : "Sub-issues"}
           tooltipContent={`${subIssueCount}`}
           isMobile={isMobile}
           renderByDefault={false}

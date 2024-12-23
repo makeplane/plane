@@ -11,6 +11,7 @@ from plane.ee.views.app.epic import (
     EpicUserDisplayPropertyEndpoint,
     EpicAnalyticsEndpoint,
     EpicIssuesEndpoint,
+    EpicDetailEndpoint,
 )
 from plane.ee.views.app.epic_property import WorkspaceEpicEndpoint
 
@@ -24,6 +25,11 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/epic-status/",
         EpicViewSet.as_view({"post": "epic_status"}),
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/epics-detail/",
+        EpicDetailEndpoint.as_view(),
+        name="epics-detail",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:pk>/",

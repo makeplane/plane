@@ -63,8 +63,8 @@ export type PeekOverviewHeaderProps = {
   isArchived: boolean;
   disabled: boolean;
   embedIssue: boolean;
-  toggleDeleteIssueModal: (issueId: string | null) => void;
-  toggleArchiveIssueModal: (issueId: string | null) => void;
+  toggleEditEpicModal: (value: boolean) => void;
+  toggleDeleteEpicModal: (value: boolean) => void;
   handleRestoreIssue: () => void;
   isSubmitting: "submitting" | "submitted" | "saved";
 };
@@ -77,6 +77,8 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
     projectId,
     issueId,
     isArchived,
+    toggleEditEpicModal,
+    toggleDeleteEpicModal,
     disabled,
     embedIssue = false,
     removeRoutePeekId,
@@ -195,6 +197,9 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
                 handleDelete={handleDelete}
                 handleUpdate={handleUpdate}
                 readOnly={!isEditingAllowed}
+                toggleEditEpicModal={toggleEditEpicModal}
+                toggleDeleteEpicModal={toggleDeleteEpicModal}
+                isPeekMode
               />
               <Sidebar
                 className={cn("size-4 cursor-pointer", {

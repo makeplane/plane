@@ -26,6 +26,7 @@ from plane.ee.views.app.epic import (
     EpicCommentViewSet,
     EpicActivityEndpoint,
     EpicReactionViewSet,
+    EpicDetailEndpoint,
 )
 from plane.ee.views.app.epic_property import (
     EpicPropertyEndpoint,

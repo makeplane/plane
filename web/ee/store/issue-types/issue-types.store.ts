@@ -382,7 +382,7 @@ export class IssueTypes implements IIssueTypesStore {
    * @param issueTypes
    * @returns void
    */
-  addOrUpdateIssueTypes = (issueTypes: TIssueType[], projectId?: string) => {
+  addOrUpdateIssueTypes = (issueTypes: TIssueType[]) => {
     for (const issueType of issueTypes) {
       if (!issueType.id) continue;
 
@@ -404,9 +404,7 @@ export class IssueTypes implements IIssueTypesStore {
       });
 
       // Add to store
-      if (issueType.is_epic && projectId) {
-        set(this.projectEpics, projectId, issueTypeInstance);
-      } else set(this.issueTypes, issueType.id, issueTypeInstance);
+      set(this.issueTypes, issueType.id, issueTypeInstance);
     }
   };
 
@@ -532,7 +530,7 @@ export class IssueTypes implements IIssueTypesStore {
       const issueType = await this.issueTypesService.enable({ workspaceSlug, projectId });
       runInAction(() => {
         // enable `is_issue_type_enabled` in project details
-        set(this.rootStore.projectDetails.features, [projectId, "is_issue_type_enabled"], true);
+        set(this.rootStore.projectRoot.project.projectMap, [projectId, "is_issue_type_enabled"], true);
         // add issue type to the store
         this.addOrUpdateIssueTypes([issueType]);
         // get all issues
@@ -566,7 +564,7 @@ export class IssueTypes implements IIssueTypesStore {
         // enable `is_epic_enabled` in project details
         set(this.rootStore.projectDetails.features, [projectId, "is_epic_enabled"], true);
         // add epic issue type to the store
-        this.addOrUpdateIssueTypes([epic], projectId);
+        this.addOrUpdateEpicIssueTypes([epic]);
         this.loader = "loaded";
       });
     } catch (error) {

@@ -44,22 +44,22 @@ export const EpicView: FC<IEpicView> = observer((props) => {
   // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
+  const [deleteEpicModal, setDeleteEpicModal] = useState(false);
+  const [editEpicModal, setEditEpicModal] = useState(false);
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   // store hooks
   const {
     setPeekIssue,
     isAnyModalOpen,
-    isDeleteIssueModalOpen,
-    isArchiveIssueModalOpen,
-    toggleDeleteIssueModal,
-    toggleArchiveIssueModal,
     issue: { getIssueById },
   } = useIssueDetail(EIssueServiceType.EPICS);
+  const { setPeekIssue: setIssuePeekIssue } = useIssueDetail();
   const { isAnyModalOpen: isAnyIssueModalOpen } = useIssueDetail();
   const issue = getIssueById(issueId);
   // remove peek id
   const removeRoutePeekId = () => {
+    setIssuePeekIssue(undefined);
     setPeekIssue(undefined);
     if (embedIssue && embedRemoveCurrentNotification) embedRemoveCurrentNotification();
   };
@@ -68,7 +68,7 @@ export const EpicView: FC<IEpicView> = observer((props) => {
     issuePeekOverviewRef,
     () => {
       if (!embedIssue) {
-        if (!isAnyModalOpen && !isAnyIssueModalOpen) {
+        if (!isAnyModalOpen && !isAnyIssueModalOpen && !deleteEpicModal && !editEpicModal) {
           removeRoutePeekId();
         }
       }
@@ -105,31 +105,11 @@ export const EpicView: FC<IEpicView> = observer((props) => {
     }
   );
 
+  const toggleEditEpicModal = (value: boolean) => setEditEpicModal(value);
+  const toggleDeleteEpicModal = (value: boolean) => setDeleteEpicModal(value);
+
   return (
     <>
-      {issue && !is_archived && (
-        <ArchiveIssueModal
-          isOpen={isArchiveIssueModalOpen === issueId}
-          handleClose={() => toggleArchiveIssueModal(null)}
-          data={issue}
-          onSubmit={async () => {
-            if (issueOperations.archive) await issueOperations.archive(workspaceSlug, projectId, issueId);
-            removeRoutePeekId();
-          }}
-        />
-      )}
-
-      {issue && isDeleteIssueModalOpen === issue.id && (
-        <DeleteIssueModal
-          isOpen={!!isDeleteIssueModalOpen}
-          handleClose={() => {
-            toggleDeleteIssueModal(null);
-          }}
-          data={issue}
-          onSubmit={async () => issueOperations.remove(workspaceSlug, projectId, issueId)}
-        />
-      )}
-
       <div className="w-full !text-base">
         {issueId && (
           <div
@@ -154,8 +134,8 @@ export const EpicView: FC<IEpicView> = observer((props) => {
                   peekMode={peekMode}
                   setPeekMode={(value) => setPeekMode(value)}
                   removeRoutePeekId={removeRoutePeekId}
-                  toggleDeleteIssueModal={toggleDeleteIssueModal}
-                  toggleArchiveIssueModal={toggleArchiveIssueModal}
+                  toggleEditEpicModal={toggleEditEpicModal}
+                  toggleDeleteEpicModal={toggleDeleteEpicModal}
                   handleRestoreIssue={handleRestore}
                   isArchived={is_archived}
                   issueId={issueId}
