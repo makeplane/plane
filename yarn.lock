@@ -833,7 +833,7 @@
     "@babel/plugin-transform-modules-commonjs" "^7.25.9"
     "@babel/plugin-transform-typescript" "^7.25.9"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.17.8", "@babel/runtime@^7.18.3", "@babel/runtime@^7.20.13", "@babel/runtime@^7.21.0", "@babel/runtime@^7.23.9", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.17.8", "@babel/runtime@^7.18.3", "@babel/runtime@^7.20.13", "@babel/runtime@^7.23.9", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7":
   version "7.26.0"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.26.0.tgz#8600c2f595f277c60815256418b85356a65173c1"
   integrity sha512-FDSOghenHTiToteC/QRlv2q3DhPZ/oOXTBoirfWNx1Cx3TMVcGWQtMMmQcSvb/JjpNeGzx8Pq/b4fKEJuWm1sw==
@@ -4921,7 +4921,7 @@ axe-core@^4.10.0:
   resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-4.10.2.tgz#85228e3e1d8b8532a27659b332e39b7fa0e022df"
   integrity sha512-RE3mdQ7P3FRSe7eqCWoeQ/Z9QXrtniSjp1wUjt5nRC3WIpz5rSCve6o3fsZ2aCpJtrZjSZgjwXAoTO5k4tEI0w==
 
-axios@^1.7.2, axios@^1.7.4:
+axios@^1.4.0, axios@^1.7.2, axios@^1.7.4:
   version "1.7.9"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.7.9.tgz#d7d071380c132a24accda1b2cfc1535b79ec650a"
   integrity sha512-LhLcE7Hbiryz8oMDdDptSrWowmB4Bl6RCt6sIJKpRB4XtVf0iEgewX3au/pJqm+Py1kCASkb/FFKjxQaLtxJvw==
@@ -5904,17 +5904,10 @@ data-view-byte-offset@^1.0.1:
     es-errors "^1.3.0"
     is-data-view "^1.0.1"
 
-date-fns@^2.30.0:
-  version "2.30.0"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.30.0.tgz#f367e644839ff57894ec6ac480de40cae4b0f4d0"
-  integrity sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==
-  dependencies:
-    "@babel/runtime" "^7.21.0"
-
-date-fns@^3.6.0:
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-3.6.0.tgz#f20ca4fe94f8b754951b24240676e8618c0206bf"
-  integrity sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==
+date-fns@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-4.1.0.tgz#64b3d83fff5aa80438f5b1a633c2e83b8a1c2d14"
+  integrity sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==
 
 dateformat@^4.6.3:
   version "4.6.3"
@@ -6968,9 +6961,9 @@ fast-uri@^3.0.1:
   integrity sha512-aLrHthzCjH5He4Z2H9YZ+v6Ujb9ocRuW6ZzkJQOrTxleEijANq4v1TsaPaVG1PZcuurEzrLcWRyYBYXD5cEiaw==
 
 fastq@^1.6.0:
-  version "1.17.1"
-  resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.17.1.tgz#2a523f07a4e7b1e81a42b91b8bf2254107753b47"
-  integrity sha512-sRVD3lWVIXWg6By68ZN7vho9a1pQcN/WBFaAAsDDFzlJjvoGx0P8z7V1t72grFJfJhu3YPZBuu25f7Kaw2jN1w==
+  version "1.18.0"
+  resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.18.0.tgz#d631d7e25faffea81887fe5ea8c9010e1b36fee0"
+  integrity sha512-QKHXPW0hD8g4UET03SdOdunzSouc9N4AuHdsX8XNcTsuz+yYFILVNIX4l9yHABMhiEI9Db0JTTIpu0wB+Y1QQw==
   dependencies:
     reusify "^1.0.4"
 
@@ -8253,9 +8246,9 @@ jsonfile@^6.0.1, jsonfile@^6.1.0:
     object.values "^1.1.6"
 
 jsx-dom-cjs@^8.0.3:
-  version "8.1.5"
-  resolved "https://registry.yarnpkg.com/jsx-dom-cjs/-/jsx-dom-cjs-8.1.5.tgz#8a45d3f0c59d94b60b98a8b60506bbfb9a8cf733"
-  integrity sha512-J024Gh5/f+6nY3t8FjUbJ0o0zV6iG4U39JcJFW6i475OcJWm1pxZ8ZInpF/up1ruPIYUbUqf1yPeAUGIqewJWQ==
+  version "8.1.6"
+  resolved "https://registry.yarnpkg.com/jsx-dom-cjs/-/jsx-dom-cjs-8.1.6.tgz#37ac60189fd0a99b63d0c2bb99f57fc563992b25"
+  integrity sha512-aeGqlIZ3IBKF2+B0cKXZGh10OHxxABuHD9tlS10suXDXXG0c4wMkJios9xVslduflSNEQJVlicME3EBCYgxGvA==
   dependencies:
     csstype "^3.1.3"
 
@@ -9644,9 +9637,9 @@ pino-std-serializers@^7.0.0:
   integrity sha512-e906FRY0+tV27iq4juKzSYPbUj2do2X2JX4EzSca1631EB2QJQUqGbDuERal7LCtOpxl6x3+nvo9NPZcmjkiFA==
 
 pino@^9.0.0:
-  version "9.5.0"
-  resolved "https://registry.yarnpkg.com/pino/-/pino-9.5.0.tgz#a7ef0fea868d22d52d8a4ce46e6e03c5dc46fdd6"
-  integrity sha512-xSEmD4pLnV54t0NOUN16yCl7RIB1c5UUOse5HSyEXtBp+FgFQyPeDutc+Q2ZO7/22vImV7VfEjH/1zV2QuqvYw==
+  version "9.6.0"
+  resolved "https://registry.yarnpkg.com/pino/-/pino-9.6.0.tgz#6bc628159ba0cc81806d286718903b7fc6b13169"
+  integrity sha512-i85pKRCt4qMjZ1+L7sy2Ag4t1atFcdbEt76+7iRJn1g2BvsnRMGu9p8pivl9fs63M2kF/A0OacFZhTub+m/qMg==
   dependencies:
     atomic-sleep "^1.0.0"
     fast-redact "^3.1.1"
