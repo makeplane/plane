@@ -182,12 +182,14 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
         <div className="space-y-0.5">
           <p className="flex gap-1.5 items-center text-sm text-custom-text-300">
             <span>{teamDetail?.id ? "Add team members" : "Team members"}</span>
-            <Tooltip
-              position="right"
-              tooltipContent="Team members cannot be removed directly from here. Please visit the team details page sidebar to manage removals."
-            >
-              <InfoIcon className="size-3.5 text-custom-text-400 hover:text-custom-text-300 cursor-help outline-none" />
-            </Tooltip>
+            {teamDetail?.id && (
+              <Tooltip
+                position="right"
+                tooltipContent="Team members cannot be removed directly from here. Please visit the team details page sidebar to manage removals."
+              >
+                <InfoIcon className="size-3.5 text-custom-text-400 hover:text-custom-text-300 cursor-help outline-none" />
+              </Tooltip>
+            )}
           </p>
           <MemberDropdown
             value={formData.member_ids ?? []}

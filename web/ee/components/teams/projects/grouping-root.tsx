@@ -7,7 +7,7 @@ import { WorkspaceProjectsRoot } from "@/plane-web/components/projects";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
 // plane web types
-import { EProjectLayouts, EProjectScope } from "@/plane-web/types/workspace-project-filters";
+import { EProjectFilters, EProjectLayouts, EProjectScope } from "@/plane-web/types/workspace-project-filters";
 
 export type TTeamProjectsWithGroupingRootProps = {
   workspaceSlug: string;
@@ -36,6 +36,7 @@ export const TeamProjectsWithGroupingRoot = observer((props: TTeamProjectsWithGr
         workspaceSlug={workspaceSlug.toString()}
         workspaceId={currentWorkspaceId}
         isArchived={false}
+        filtersToInit={[EProjectFilters.ATTRIBUTES, EProjectFilters.DISPLAY_FILTERS]}
       />
     </div>
   );

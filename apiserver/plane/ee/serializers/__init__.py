@@ -55,6 +55,7 @@ from .app.team import (
     TeamSpacePageVersionDetailSerializer,
     TeamSpaceCommentReactionSerializer,
     TeamSpaceUserPropertySerializer,
+    TeamSpaceActivitySerializer,
 )
 
 from .app.epic import (

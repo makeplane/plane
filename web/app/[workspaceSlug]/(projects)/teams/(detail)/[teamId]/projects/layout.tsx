@@ -2,15 +2,13 @@
 
 import { ReactNode } from "react";
 import { useParams } from "next/navigation";
-// types
+import { ETeamNavigationItem } from "@plane/constants";
 // components
 import { AppHeader, ContentWrapper, PageHead } from "@/components/core";
 // plane web components
 import { TeamDetailHeader } from "@/plane-web/components/teams/headers/detail-header";
 // plane web hooks
 import { useTeams } from "@/plane-web/hooks/store";
-// plane web types
-import { ETeamNavigationItem } from "@/plane-web/types";
 
 export default function TeamProjectsLayout({ children }: { children: ReactNode }) {
   const { teamId } = useParams();

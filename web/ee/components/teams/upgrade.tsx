@@ -32,8 +32,10 @@ export const TeamsUpgrade: FC = observer(() => {
       >
         <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>
           <div className="w-full xl:max-w-[300px]">
-            <div className="text-2xl font-semibold">Organize your workspace into teams.</div>
-            <div className="text-sm">Teams is a feature for organizing your workspace into teams.</div>
+            <div className="text-2xl font-semibold">Organize work even better with Teams.</div>
+            <div className="text-sm">
+              Get Teams with a Pro or higher subscription and organize people + their work into a separate space.
+            </div>
             <div className="flex mt-6 gap-4 flex-wrap">
               <Button disabled>Coming Soon</Button>
               {/* {isSelfManagedUpgradeDisabled ? (

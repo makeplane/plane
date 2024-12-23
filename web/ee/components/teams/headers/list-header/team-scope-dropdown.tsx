@@ -12,7 +12,7 @@ import { useTeamFilter, useTeams } from "@/plane-web/hooks/store";
 
 export const TeamScopeDropdown: FC = observer(() => {
   // hooks
-  const { currentScopeTeamIds, getScopeTeamIds } = useTeams();
+  const { loader, currentScopeTeamIds, getScopeTeamIds } = useTeams();
   const { scope, updateScope } = useTeamFilter();
   // derived values
   const selectedScopeCount = currentScopeTeamIds ? currentScopeTeamIds.length : null;
@@ -23,11 +23,9 @@ export const TeamScopeDropdown: FC = observer(() => {
       <div className="hidden md:flex relative items-center gap-2">
         <div className="flex gap-2 flex-1 my-auto">
           <div className="whitespace-nowrap font-medium my-auto">{selectedScope.label}</div>
-          {selectedScopeCount && selectedScopeCount > 0 && (
-            <div className="px-1.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
-              {selectedScopeCount}
-            </div>
-          )}
+          <div className="px-1.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+            {selectedScopeCount}
+          </div>
         </div>
         <ChevronDown className="h-3 w-3" strokeWidth={2} />
       </div>
@@ -52,7 +50,7 @@ export const TeamScopeDropdown: FC = observer(() => {
       </CustomMenu.MenuItem>
     ));
 
-  return selectedScope && selectedScopeCount ? (
+  return selectedScope && loader !== "init-loader" ? (
     <CustomMenu
       maxHeight={"md"}
       className={cn(

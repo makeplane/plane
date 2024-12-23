@@ -3,7 +3,6 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import { BriefcaseIcon, FileText, Layers, Loader as Spinner, Users } from "lucide-react";
-import { TTeam } from "@plane/types";
 // ui
 import { ContrastIcon, LayersIcon } from "@plane/ui";
 // components
@@ -18,7 +17,7 @@ import { TeamsPropertiesList } from "./list";
 import { TeamEntitiesLoader } from "./loader";
 
 type TTeamsOverviewSidebarPropertiesProps = {
-  team: TTeam;
+  teamId: string;
   isEditingAllowed: boolean;
 };
 
@@ -31,26 +30,29 @@ export type TPropertyListItem = {
 };
 
 export const TeamsOverviewSidebarProperties = observer((props: TTeamsOverviewSidebarPropertiesProps) => {
-  const { team, isEditingAllowed } = props;
+  const { teamId, isEditingAllowed } = props;
   // router
   const { workspaceSlug } = useParams();
   // hooks
-  const { getTeamEntitiesById, getTeamEntitiesLoaderById, updateTeam } = useTeams();
+  const { getTeamById, getTeamEntitiesById, getTeamEntitiesLoaderById, updateTeam } = useTeams();
   // derived values
-  const teamEntities = getTeamEntitiesById(team.id);
-  const teamEntitiesLoader = getTeamEntitiesLoaderById(team.id);
+  const team = getTeamById(teamId);
+  const teamEntities = getTeamEntitiesById(teamId);
+  const teamEntitiesLoader = getTeamEntitiesLoaderById(teamId);
   const linkedEntitiesCount = teamEntities?.linked_entities.total;
   const teamEntitiesCount = teamEntities?.team_entities.total;
+
+  if (!team) return null;
 
   const handleTeamLeadChange = useCallback(
     (val: string | null) => {
       if (val && val !== team.lead_id) {
-        updateTeam(workspaceSlug?.toString(), team.id, { lead_id: val });
+        updateTeam(workspaceSlug?.toString(), teamId, { lead_id: val });
       } else {
-        updateTeam(workspaceSlug?.toString(), team.id, { lead_id: undefined });
+        updateTeam(workspaceSlug?.toString(), teamId, { lead_id: undefined });
       }
     },
-    [team.id, team.lead_id, updateTeam, workspaceSlug]
+    [teamId, team.lead_id, updateTeam, workspaceSlug]
   );
 
   const TEAM_PROPERTIES: TPropertyListItem[] = useMemo(
@@ -86,38 +88,38 @@ export const TeamsOverviewSidebarProperties = observer((props: TTeamsOverviewSid
         label: "Projects",
         icon: BriefcaseIcon,
         value: teamEntities?.linked_entities.projects,
-        href: `/${workspaceSlug}/teams/${team.id}/projects`,
+        href: `/${workspaceSlug}/teams/${teamId}/projects`,
       },
       {
         key: "issues",
         label: "Issues",
         icon: LayersIcon,
         value: teamEntities?.linked_entities.issues,
-        href: `/${workspaceSlug}/teams/${team.id}/issues`,
+        href: `/${workspaceSlug}/teams/${teamId}/issues`,
       },
       {
         key: "cycles",
         label: "Cycles",
         icon: ContrastIcon,
         value: teamEntities?.linked_entities.cycles,
-        href: `/${workspaceSlug}/teams/${team.id}/cycles`,
+        href: `/${workspaceSlug}/teams/${teamId}/cycles`,
       },
       {
         key: "views",
         label: "Views",
         icon: Layers,
         value: teamEntities?.linked_entities.views,
-        href: `/${workspaceSlug}/teams/${team.id}/views`,
+        href: `/${workspaceSlug}/teams/${teamId}/views`,
       },
       {
         key: "pages",
         label: "Pages",
         icon: FileText,
         value: teamEntities?.linked_entities.pages,
-        href: `/${workspaceSlug}/teams/${team.id}/pages`,
+        href: `/${workspaceSlug}/teams/${teamId}/pages`,
       },
     ],
-    [team.id, teamEntities, workspaceSlug]
+    [teamId, teamEntities, workspaceSlug]
   );
 
   const TEAM_ENTITIES: TPropertyListItem[] = useMemo(
@@ -127,26 +129,26 @@ export const TeamsOverviewSidebarProperties = observer((props: TTeamsOverviewSid
         label: "Views",
         icon: Layers,
         value: teamEntities?.team_entities.views,
-        href: `/${workspaceSlug}/teams/${team.id}/views`,
+        href: `/${workspaceSlug}/teams/${teamId}/views`,
       },
       {
         key: "pages",
         label: "Pages",
         icon: FileText,
         value: teamEntities?.team_entities.pages,
-        href: `/${workspaceSlug}/teams/${team.id}/pages`,
+        href: `/${workspaceSlug}/teams/${teamId}/pages`,
       },
     ],
-    [team.id, teamEntities, workspaceSlug]
+    [teamId, teamEntities, workspaceSlug]
   );
 
   return (
-    <div className="relative flex flex-col gap-y-2 divide-y divide-custom-border-100">
+    <div className="relative flex flex-col gap-y-2 px-6 divide-y divide-custom-border-100">
       <div className="py-2 flex flex-col">
-        {teamEntitiesLoader === "mutation" ? (
-          <Spinner size={12} className="animate-spin absolute top-0 right-0" />
-        ) : null}
-        <div className="text-sm font-semibold">Properties</div>
+        <div className="flex gap-2 justify-between">
+          <span className="text-sm font-semibold">Properties</span>
+          {teamEntitiesLoader === "mutation" ? <Spinner size={12} className="animate-spin" /> : null}
+        </div>
         <TeamsPropertiesList>
           {TEAM_PROPERTIES.map((property) => (
             <TeamsPropertiesList.Item
@@ -196,6 +198,7 @@ export const TeamsOverviewSidebarProperties = observer((props: TTeamsOverviewSid
                 label={property.label}
                 icon={property.icon}
                 value={property.value}
+                href={property.href}
               />
             ))}
           </TeamsPropertiesList>

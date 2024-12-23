@@ -3,10 +3,12 @@ import update from "lodash/update";
 import xor from "lodash/xor";
 import { makeObservable, action, computed, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// constants
+import { ETeamScope } from "@plane/constants";
 // types
 import { TLoader, TTeam, TTeamMember, TTeamEntities, TNameDescriptionLoader } from "@plane/types";
 // utils
-import { ETeamScope, shouldFilterTeam, orderTeams } from "@plane/utils";
+import { shouldFilterTeam, orderTeams } from "@plane/utils";
 // plane web services
 import { TeamService } from "@/plane-web/services/teams/team.service";
 // plane web types
@@ -426,6 +428,8 @@ export class TeamStore implements ITeamStore {
       if (areProjectsUpdated) {
         await this.fetchTeamEntities(workspaceSlug, teamId);
       }
+      // Fetch team activity
+      this.rootStore.teamRoot.teamUpdates.fetchTeamActivities(workspaceSlug, teamId);
       return team;
     } catch (error) {
       console.error("Failed to update team", error);
@@ -466,6 +470,8 @@ export class TeamStore implements ITeamStore {
           }));
         }
       });
+      // Fetch team activity
+      this.rootStore.teamRoot.teamUpdates.fetchTeamActivities(workspaceSlug, teamId);
       return teamMembers;
     } catch (error) {
       console.error("Failed to add team members", error);
@@ -494,6 +500,8 @@ export class TeamStore implements ITeamStore {
           member_ids: team.member_ids.filter((id: string) => id !== memberId),
         }));
       });
+      // Fetch team activity
+      this.rootStore.teamRoot.teamUpdates.fetchTeamActivities(workspaceSlug, teamId);
     } catch (error) {
       console.error("Failed to remove team member", error);
       throw error;

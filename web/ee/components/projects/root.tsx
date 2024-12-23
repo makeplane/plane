@@ -20,10 +20,11 @@ type TWorkspaceProjectsRoot = {
   workspaceSlug: string;
   workspaceId: string;
   isArchived?: boolean;
+  filtersToInit?: EProjectFilters[];
 };
 
 export const WorkspaceProjectsRoot: FC<TWorkspaceProjectsRoot> = observer((props) => {
-  const { workspaceSlug, isArchived = false } = props;
+  const { workspaceSlug, isArchived = false, filtersToInit: filtersToInitFromProps = [] } = props;
   //pathname
   const pathname = usePathname();
   // hooks
@@ -50,6 +51,9 @@ export const WorkspaceProjectsRoot: FC<TWorkspaceProjectsRoot> = observer((props
     if (workspaceSlug) {
       let filtersToInit = [EProjectFilters.LAYOUT, EProjectFilters.ATTRIBUTES, EProjectFilters.DISPLAY_FILTERS];
       filtersToInit = loader ? filtersToInit : [EProjectFilters.SCOPE, ...filtersToInit];
+      if (filtersToInitFromProps.length > 0) {
+        filtersToInit = filtersToInitFromProps;
+      }
       initWorkspaceFilters(
         workspaceSlug,
         typeof showAllProjects === "string"
@@ -61,7 +65,7 @@ export const WorkspaceProjectsRoot: FC<TWorkspaceProjectsRoot> = observer((props
         isArchived
       );
     }
-  }, [workspaceSlug, initWorkspaceFilters, pathname, showAllProjects, loader, isArchived]);
+  }, [workspaceSlug, initWorkspaceFilters, pathname, showAllProjects, loader, isArchived, filtersToInitFromProps]);
 
   const handleClearAllFilters = useCallback(() => {
     if (!workspaceSlug) return;

@@ -19,6 +19,7 @@ from plane.ee.models import (
     TeamSpaceComment,
     TeamSpaceCommentReaction,
     TeamSpaceUserProperty,
+    TeamSpaceActivity,
 )
 from plane.utils.issue_filters import issue_filters
 
@@ -303,3 +304,11 @@ class TeamSpaceUserPropertySerializer(BaseSerializer):
         model = TeamSpaceUserProperty
         fields = "__all__"
         read_only_fields = ["workspace", "team_space", "user"]
+
+
+class TeamSpaceActivitySerializer(BaseSerializer):
+    team = serializers.UUIDField(read_only=True, source="team_space_id")
+
+    class Meta:
+        model = TeamSpaceActivity
+        fields = "__all__"

@@ -12,3 +12,4 @@ export * from "./payment";
 export * from "./workspace";
 export * from "./feature-flag";
 export * from "./plans";
+export * from "./teams";

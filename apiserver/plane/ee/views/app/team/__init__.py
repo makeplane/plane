@@ -14,3 +14,5 @@ from .page import (
     TeamSpacePageFavoriteEndpoint,
 )
 from .issue import TeamSpaceIssueEndpoint, TeamSpaceUserPropertiesEndpoint
+from .activity import TeamSpaceActivityEndpoint
+from .comment import TeamSpaceCommentEndpoint, TeamSpaceCommentReactionEndpoint

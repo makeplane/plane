@@ -23,7 +23,7 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 
 
-class TeamCommentEndpoint(TeamBaseEndpoint):
+class TeamSpaceCommentEndpoint(TeamBaseEndpoint):
 
     model = TeamSpaceComment
     permission_classes = [
@@ -41,18 +41,18 @@ class TeamCommentEndpoint(TeamBaseEndpoint):
 
         comments = TeamSpaceComment.objects.filter(
             workspace__slug=slug, team_space_id=team_space_id
-        )
+        ).order_by("-created_at")
         serializer = TeamSpaceCommentSerializer(comments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.TEAMS)
     def post(self, request, slug, team_space_id):
+        # Get workspace
+        workspace = Workspace.objects.get(slug=slug)
         serializer = TeamSpaceCommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(
-                workspace=self.workspace,
-                team_space_id=team_space_id,
-                actor=request.user,
+                workspace=workspace, team_space_id=team_space_id, actor=request.user
             )
 
             team_space_activity.delay(
@@ -138,7 +138,7 @@ class TeamSpaceCommentReactionEndpoint(TeamBaseEndpoint):
         )
 
     @check_feature_flag(FeatureFlag.TEAMS)
-    def create(self, request, slug, team_space_id, comment_id):
+    def post(self, request, slug, team_space_id, comment_id):
         workspace = Workspace.objects.get(slug=slug)
         serializer = TeamSpaceCommentReactionSerializer(data=request.data)
         if serializer.is_valid():
@@ -161,7 +161,7 @@ class TeamSpaceCommentReactionEndpoint(TeamBaseEndpoint):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.TEAMS)
-    def destroy(self, request, slug, team_space_id, comment_id, reaction_code):
+    def delete(self, request, slug, team_space_id, comment_id, reaction_code):
         team_space_comment_reaction = TeamSpaceCommentReaction.objects.get(
             workspace__slug=slug,
             team_space_id=team_space_id,

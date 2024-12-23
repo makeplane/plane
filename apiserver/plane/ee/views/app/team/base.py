@@ -291,15 +291,15 @@ class TeamSpaceEndpoint(TeamBaseEndpoint):
                         project_id__in=project_ids_to_be_removed,
                     ).delete()
 
-                    team_space_activity.delay(
-                        type="team_space.activity.updated",
-                        slug=slug,
-                        requested_data=requested_data,
-                        actor_id=str(request.user.id),
-                        team_space_id=str(team_space_id),
-                        current_instance=current_instance,
-                        epoch=int(timezone.now().timestamp()),
-                    )
+                team_space_activity.delay(
+                    type="team_space.activity.updated",
+                    slug=slug,
+                    requested_data=requested_data,
+                    actor_id=str(request.user.id),
+                    team_space_id=str(team_space_id),
+                    current_instance=current_instance,
+                    epoch=int(timezone.now().timestamp()),
+                )
 
                 # Refetch team space with project_ids
                 team_space = self.get_team_space(slug, team_space.pk)

@@ -4,6 +4,8 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Rss, BriefcaseIcon, FileText, Layers, Loader as Spinner } from "lucide-react";
+// constants
+import { ETeamNavigationItem } from "@plane/constants";
 // ui
 import {
   Breadcrumbs,
@@ -25,8 +27,6 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useTeams } from "@/plane-web/hooks/store";
-// plane web types
-import { ETeamNavigationItem } from "@/plane-web/types";
 // local components
 import { TeamIssueListHeaderActions } from "./issues";
 import { TeamOverviewHeaderActions } from "./overview";

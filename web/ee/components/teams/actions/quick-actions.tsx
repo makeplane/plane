@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // icons
-import { ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
+import { ExternalLink, Link2, Pencil, Trash2 } from "lucide-react";
 // ui
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
@@ -20,10 +20,11 @@ type Props = {
   parentRef: React.RefObject<HTMLDivElement> | null;
   isEditingAllowed: boolean;
   hideEdit?: boolean;
+  buttonClassName?: string;
 };
 
 export const TeamQuickActions: React.FC<Props> = observer((props) => {
-  const { teamId, workspaceSlug, parentRef, isEditingAllowed, hideEdit } = props;
+  const { teamId, workspaceSlug, parentRef, isEditingAllowed, hideEdit, buttonClassName } = props;
   // states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // store hooks
@@ -68,7 +69,8 @@ export const TeamQuickActions: React.FC<Props> = observer((props) => {
       key: "copy-link",
       action: handleCopyText,
       title: "Copy team link",
-      icon: LinkIcon,
+      icon: Link2,
+      iconClassName: "-rotate-45",
     },
     {
       key: "delete",
@@ -84,7 +86,7 @@ export const TeamQuickActions: React.FC<Props> = observer((props) => {
     <>
       <DeleteTeamModal teamId={teamId} isModalOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} />
       {parentRef && <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />}
-      <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
+      <CustomMenu ellipsis placement="bottom-end" closeOnSelect buttonClassName={buttonClassName}>
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (

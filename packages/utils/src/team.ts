@@ -33,8 +33,3 @@ export const orderTeams = (teams: TTeam[], orderByKey: TTeamOrderByOptions | und
 
   return orderedTeams;
 };
-
-export enum ETeamScope {
-  YOUR_TEAMS = "your-teams",
-  ALL_TEAMS = "all-teams",
-}

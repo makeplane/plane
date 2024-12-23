@@ -94,14 +94,33 @@ def track_lead(
     team_space_activities,
     epoch,
 ):
+
     if current_instance.get("lead_id") != requested_data.get("lead_id"):
+
+        # Get the current user
+        current_user = (
+            User.objects.get(pk=current_instance.get("lead_id"))
+            if current_instance.get("lead_id")
+            else None
+        )
+
+        # Get the requested user
+        requested_user = (
+            User.objects.get(pk=requested_data.get("lead_id"))
+            if requested_data.get("lead_id")
+            else None
+        )
+
+        # create team activity
         team_space_activities.append(
             TeamSpaceActivity(
                 team_space_id=team_space_id,
                 actor_id=actor_id,
                 verb="updated",
-                old_value=current_instance.get("lead_id"),
-                new_value=requested_data.get("lead_id"),
+                old_value=current_user.display_name if current_user else "",
+                new_value=requested_user.display_name if requested_user else "",
+                old_identifier=current_instance.get("lead_id"),
+                new_identifier=requested_data.get("lead_id"),
                 field="lead",
                 workspace_id=workspace_id,
                 comment="updated the team lead to",
@@ -234,14 +253,14 @@ def track_team_members(
     epoch,
 ):
     # Set of newly added members and dropped members
-    current_members = current_instance.get("member_ids", [])
-    requested_members = requested_data.get("member_ids", [])
+    current_members = set(current_instance.get("member_ids", []))
+    requested_members = set(requested_data.get("member_ids", []))
 
     # Set of newly added members
-    added_members = requested_members - current_members
+    added_members = set(requested_members) - set(current_members)
 
     # Set of dropped members
-    dropped_members = current_members - requested_members
+    dropped_members = set(current_members) - set(requested_members)
 
     # Create team space activities for added members
     for added_member in added_members:
@@ -294,9 +313,9 @@ def create_team_space_activity(
         team_space_id=team_space_id,
         workspace_id=workspace_id,
         comment="created the team_space",
-        field="team_space",
         verb="created",
         actor_id=actor_id,
+        field="team_space",
         epoch=epoch,
     )
     team_space_activity.actor_id = team_space.created_by_id
@@ -315,7 +334,7 @@ def update_team_space_activity(
     TEAM_SPACE_ACTIVITY_MAPPER = {
         "name": track_name,
         "description_html": track_description,
-        "lead": track_lead,
+        "lead_id": track_lead,
         "label_ids": track_labels,
         "project_ids": track_projects,
         "member_ids": track_team_members,
@@ -638,10 +657,20 @@ def team_space_activity(
     type, requested_data, team_space_id, actor_id, slug, current_instance, epoch
 ):
     try:
-        team_space_activities = []
-
+        # Get workspace
         workspace = Workspace.objects.get(slug=slug)
         workspace_id = workspace.id
+        # Get team space
+        team_space = TeamSpace.objects.filter(
+            workspace_id=workspace_id, pk=team_space_id
+        ).first()
+        if team_space is None:
+            return
+        # Update team space timestamp
+        team_space.updated_at = timezone.now()
+        team_space.save(update_fields=["updated_at"])
+
+        team_space_activities = []
 
         ACTIVITY_MAPPER = {
             "team_space.activity.created": create_team_space_activity,

@@ -1,9 +1,9 @@
 import set from "lodash/set";
 import { observable, action, makeObservable, runInAction, reaction } from "mobx";
+// constants
+import { ETeamScope } from "@plane/constants";
 // types
 import { TTeamDisplayFilters, TTeamFilters } from "@plane/types";
-// utils
-import { ETeamScope } from "@plane/utils";
 // root store
 import { RootStore } from "../root.store";
 

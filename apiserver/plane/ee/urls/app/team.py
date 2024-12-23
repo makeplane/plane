@@ -18,6 +18,9 @@ from plane.ee.views.app.team import (
     TeamSpacePageVersionEndpoint,
     TeamSpaceIssueEndpoint,
     TeamSpaceUserPropertiesEndpoint,
+    TeamSpaceActivityEndpoint,
+    TeamSpaceCommentEndpoint,
+    TeamSpaceCommentReactionEndpoint,
 )
 
 urlpatterns = [
@@ -121,5 +124,30 @@ urlpatterns = [
         "workspaces/<str:slug>/teams/<uuid:team_space_id>/user-properties/",
         TeamSpaceUserPropertiesEndpoint.as_view(),
         name="team-issues-user-properties",
+    ),
+    path(
+        "workspaces/<str:slug>/teams/<uuid:team_space_id>/history/",
+        TeamSpaceActivityEndpoint.as_view(),
+        name="team-activities",
+    ),
+    path(
+        "workspaces/<str:slug>/teams/<uuid:team_space_id>/comments/",
+        TeamSpaceCommentEndpoint.as_view(),
+        name="team-space-comments",
+    ),
+    path(
+        "workspaces/<str:slug>/teams/<uuid:team_space_id>/comments/<uuid:pk>/",
+        TeamSpaceCommentEndpoint.as_view(),
+        name="team-space-comments",
+    ),
+    path(
+        "workspaces/<str:slug>/teams/<uuid:team_space_id>/comments/<uuid:comment_id>/reactions/",
+        TeamSpaceCommentReactionEndpoint.as_view(),
+        name="team-space-comments-reactions",
+    ),
+    path(
+        "workspaces/<str:slug>/teams/<uuid:team_space_id>/comments/<uuid:comment_id>/reactions/<str:reaction_code>/",
+        TeamSpaceCommentReactionEndpoint.as_view(),
+        name="team-space-comments-reactions",
     ),
 ]

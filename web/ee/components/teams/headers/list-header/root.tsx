@@ -2,6 +2,7 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { Plus } from "lucide-react";
 import { Breadcrumbs, Button, TeamsIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
@@ -55,7 +56,8 @@ export const TeamsListHeader = observer(() => {
               }}
               className="items-center gap-1"
             >
-              <span className="hidden sm:inline-block">Add</span> Team
+              <Plus className="h-3 w-3 sm:mr-1" aria-hidden="true" />
+              <span className="hidden sm:inline-block">New</span> Team
             </Button>
           )}
         </div>

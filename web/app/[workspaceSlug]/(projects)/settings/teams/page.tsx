@@ -4,7 +4,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // component
-import { setPromiseToast, TeamsIcon, ToggleSwitch } from "@plane/ui";
+import { setPromiseToast, TeamsIcon, ToggleSwitch, Tooltip } from "@plane/ui";
 import { PageHead } from "@/components/core";
 // store hooks
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
@@ -87,7 +87,16 @@ const TeamsSettingsPage = observer(() => {
               <span className="text-custom-sidebar-text-400 text-sm">Set bigger goals to monitor the progress</span>
             </div>
           </div>
-          <ToggleSwitch value={isTeamsFeatureEnabled} onChange={toggleTeamsFeature} size="sm" />
+          <Tooltip tooltipContent={"Teams can't be disabled"} disabled={!isTeamsFeatureEnabled} position="left">
+            <div>
+              <ToggleSwitch
+                value={isTeamsFeatureEnabled}
+                onChange={toggleTeamsFeature}
+                size="sm"
+                disabled={isTeamsFeatureEnabled}
+              />
+            </div>
+          </Tooltip>
         </div>
       </WithFeatureFlagHOC>
     </>

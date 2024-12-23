@@ -2,8 +2,6 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Trash2 } from "lucide-react";
-// types
-import { TTeam } from "@plane/types";
 // ui
 import { Avatar, CustomMenu, LeadIcon, setPromiseToast } from "@plane/ui";
 // helpers
@@ -18,20 +16,23 @@ import AddTeamMembersButton from "@/plane-web/components/teams/actions/members/b
 import { useTeams } from "@/plane-web/hooks/store";
 
 export type TTeamsOverviewSidebarMembersProps = {
-  team: TTeam;
+  teamId: string;
   isEditingAllowed: boolean;
 };
 
 export const TeamsOverviewSidebarMembers = observer((props: TTeamsOverviewSidebarMembersProps) => {
-  const { team, isEditingAllowed } = props;
+  const { teamId, isEditingAllowed } = props;
   // router
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
   // hooks
   const { getUserDetails } = useMember();
   const { data: currentUser } = useUser();
-  const { removeTeamMember } = useTeams();
+  const { getTeamById, removeTeamMember } = useTeams();
   // derived values
+  const team = getTeamById(teamId);
+  if (!team) return null;
+
   const members = useMemo(
     () =>
       team.member_ids
@@ -60,7 +61,7 @@ export const TeamsOverviewSidebarMembers = observer((props: TTeamsOverviewSideba
   };
 
   return (
-    <div className="relative flex flex-col w-full h-full gap-y-2 pt-2">
+    <div className="relative flex flex-col w-full h-full gap-y-2 pt-2 px-6">
       <div className="text-sm font-semibold">Members</div>
       <div className="flex-1 flex flex-col py-2 px-0.5 gap-x-2 gap-y-5 overflow-y-auto">
         <AddTeamMembersButton teamId={team.id} variant="sidebar" isEditingAllowed={isEditingAllowed} />

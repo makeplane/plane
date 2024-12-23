@@ -10,6 +10,7 @@ import { CommentFillIcon, InfoFillIcon, Tabs } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 // plane web hooks
 import { useTeams } from "@/plane-web/hooks/store";
+import { useTeamUpdates } from "@/plane-web/hooks/store/teams/use-team-updates";
 // local components
 import { TeamsOverviewSidebarActivity } from "./activity";
 import { TeamsOverviewSidebarComments } from "./comments";
@@ -27,6 +28,7 @@ export const TeamsOverviewSidebar: FC<TTeamsOverviewSidebarProps> = observer((pr
   const { workspaceSlug } = useParams();
   // hooks
   const { isTeamSidebarCollapsed, getTeamById, fetchTeamEntities } = useTeams();
+  const { fetchTeamActivities, fetchTeamComments } = useTeamUpdates();
   // derived values
   const team = getTeamById(teamId);
   // fetch team entities
@@ -38,6 +40,24 @@ export const TeamsOverviewSidebar: FC<TTeamsOverviewSidebarProps> = observer((pr
       revalidateIfStale: false,
     }
   );
+  // fetching team activity
+  useSWR(
+    workspaceSlug && teamId ? ["teamActivity", workspaceSlug, teamId] : null,
+    workspaceSlug && teamId ? () => fetchTeamActivities(workspaceSlug!.toString(), teamId) : null,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
+  );
+  // fetching team comments
+  useSWR(
+    workspaceSlug && teamId ? ["teamComments", workspaceSlug, teamId] : null,
+    workspaceSlug && teamId ? () => fetchTeamComments(workspaceSlug!.toString(), teamId) : null,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
+  );
 
   // if team is not found, return null
   if (!teamId || !team) return null;
@@ -46,31 +66,29 @@ export const TeamsOverviewSidebar: FC<TTeamsOverviewSidebarProps> = observer((pr
     {
       key: "properties",
       icon: InfoFillIcon,
-      content: <TeamsOverviewSidebarProperties team={team} isEditingAllowed={isEditingAllowed} />,
+      content: <TeamsOverviewSidebarProperties teamId={teamId} isEditingAllowed={isEditingAllowed} />,
     },
     {
       key: "members",
       icon: UsersRound,
-      content: <TeamsOverviewSidebarMembers team={team} isEditingAllowed={isEditingAllowed} />,
+      content: <TeamsOverviewSidebarMembers teamId={teamId} isEditingAllowed={isEditingAllowed} />,
     },
     {
       key: "comments",
       icon: CommentFillIcon,
-      content: <TeamsOverviewSidebarComments />,
-      disabled: true,
+      content: <TeamsOverviewSidebarComments teamId={teamId} isEditingAllowed={isEditingAllowed} />,
     },
     {
       key: "activity",
       icon: Activity,
-      content: <TeamsOverviewSidebarActivity />,
-      disabled: true,
+      content: <TeamsOverviewSidebarActivity teamId={teamId} />,
     },
   ];
 
   return (
     <div
       className={cn(
-        `absolute right-0 z-[5] flex flex-col gap-4 p-6 h-full border-l border-custom-border-200 bg-custom-sidebar-background-100 py-5 sm:relative transition-[width] ease-linear overflow-hidden overflow-y-auto`,
+        `absolute right-0 z-[5] flex flex-col gap-4 h-full border-l border-custom-border-200 bg-custom-sidebar-background-100 py-5 sm:relative transition-[width] ease-linear`,
         {
           "w-0 hidden": isTeamSidebarCollapsed,
           "min-w-[300px] w-full sm:w-1/2  md:w-1/3 lg:min-w-80 xl:min-w-96": !isTeamSidebarCollapsed,
@@ -83,6 +101,8 @@ export const TeamsOverviewSidebar: FC<TTeamsOverviewSidebarProps> = observer((pr
         storageKey={`teams-overview-sidebar-${teamId}`}
         defaultTab="properties"
         containerClassName="gap-4"
+        tabListContainerClassName="px-6"
+        tabPanelClassName="overflow-hidden"
       />
     </div>
   );
