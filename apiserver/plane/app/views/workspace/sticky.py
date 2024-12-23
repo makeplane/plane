@@ -33,6 +33,15 @@ class StickyViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def list(self, request, slug):
+        return self.paginate(
+            request=request,
+            queryset=(self.get_queryset()),
+            on_results=lambda stickies: StickySerializer(
+                stickies, many=True
+            ).data,
+        )
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
