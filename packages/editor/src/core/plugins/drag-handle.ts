@@ -130,7 +130,6 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   let lastClientY = 0;
   let scrollAnimationFrame = null;
   let isDraggedOutsideWindow: "top" | "bottom" | boolean = false;
-  let isMouseInsideWhileDragging = false;
 
   const handleDragStart = (event: DragEvent, view: EditorView) => {
     view.focus();
@@ -210,6 +209,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     view.dragging = { slice, move: event.ctrlKey };
   };
 
+  let isMouseInsideWhileDragging = false;
   const handleDragEnd = <TEvent extends DragEvent | FocusEvent>(event: TEvent, view?: EditorView, message?: any) => {
     event.preventDefault();
     isDragging = false;
@@ -223,15 +223,11 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   };
 
   let currentScrollSpeed = 0;
-  const maxScrollSpeed = 10;
-  const acceleration = 0.2;
-
-  // Add variables to track scrolling state:
-  let isScrolling = false;
-  let wasScrolling = false;
+  const maxScrollSpeed = 10; // Increased from 40
+  const acceleration = 0.2; // Reduced for faster response
+  const scrollDivisor = 1; // Reduced from 4 for faster scrolling
 
   function scroll() {
-    const dropCursorElement = document.querySelector(".prosemirror-drop-cursor");
     if (!isDragging) {
       currentScrollSpeed = 0;
       return;
@@ -240,8 +236,9 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     const scrollableParent = getScrollParent(dragHandleElement);
     if (!scrollableParent) return;
 
-    const scrollRegionUp = options.scrollThreshold.up;
-    const scrollRegionDown = window.innerHeight - options.scrollThreshold.down;
+    const scrollThreshold = Math.min(100, scrollableParent.clientHeight * 0.15);
+    const scrollRegionUp = scrollThreshold;
+    const scrollRegionDown = window.innerHeight - scrollThreshold;
 
     let targetScrollAmount = 0;
 
@@ -250,33 +247,17 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     } else if (isDraggedOutsideWindow === "bottom") {
       targetScrollAmount = maxScrollSpeed * 5;
     } else if (lastClientY < scrollRegionUp) {
-      const ratio = easeOutQuad((scrollRegionUp - lastClientY) / options.scrollThreshold.up);
+      const ratio = easeOutQuad((scrollRegionUp - lastClientY) / scrollThreshold);
       targetScrollAmount = -maxScrollSpeed * ratio;
     } else if (lastClientY > scrollRegionDown) {
-      const ratio = easeOutQuad((lastClientY - scrollRegionDown) / options.scrollThreshold.down);
+      const ratio = easeOutQuad((lastClientY - scrollRegionDown) / scrollThreshold);
       targetScrollAmount = maxScrollSpeed * ratio;
     }
 
     currentScrollSpeed += (targetScrollAmount - currentScrollSpeed) * acceleration;
 
-    const maxSpeedLimit = 50;
-    currentScrollSpeed = Math.max(-maxSpeedLimit, Math.min(maxSpeedLimit, currentScrollSpeed));
-
-    // Determine if scrolling should be active:
-    isScrolling = Math.abs(currentScrollSpeed) > 0.1;
-
-    // Detect changes from wasScrolling to isScrolling:
-    if (!wasScrolling && isScrolling) {
-      dropCursorElement?.classList.add("text-transparent");
-    } else if (wasScrolling && !isScrolling) {
-      dropCursorElement?.classList.remove("text-transparent");
-    }
-
-    // Track new state:
-    wasScrolling = isScrolling;
-
-    if (isScrolling) {
-      scrollableParent.scrollBy({ top: currentScrollSpeed });
+    if (Math.abs(currentScrollSpeed) > 0.1) {
+      scrollableParent.scrollBy({ top: currentScrollSpeed / scrollDivisor });
     }
 
     scrollAnimationFrame = requestAnimationFrame(scroll);
@@ -372,7 +353,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       }
     });
 
-    window.addEventListener("dragenter", () => {
+    window.addEventListener("dragenter", (e) => {
       isDraggedOutsideWindow = false;
     });
 
