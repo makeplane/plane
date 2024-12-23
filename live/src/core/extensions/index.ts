@@ -6,21 +6,21 @@ import { Extension } from "@hocuspocus/server";
 import { Logger } from "@hocuspocus/extension-logger";
 import { Redis as HocusPocusRedis } from "@hocuspocus/extension-redis";
 // core helpers and utilities
-import { manualLogger } from "@/core/helpers/logger.js";
-import { getRedisUrl } from "@/core/lib/utils/redis-url.js";
+import { manualLogger } from "@/core/helpers/logger";
+import { getRedisUrl } from "@/core/lib/utils/redis-url";
 // core libraries
 import {
   fetchPageDescriptionBinary,
   updatePageDescription,
-} from "@/core/lib/page.js";
+} from "@/core/lib/page";
 // plane live libraries
-import { fetchDocument } from "@/plane-live/lib/fetch-document.js";
-import { updateDocument } from "@/plane-live/lib/update-document.js";
+import { fetchDocument } from "@/plane-live/lib/fetch-document";
+import { updateDocument } from "@/plane-live/lib/update-document";
 // types
 import {
   type HocusPocusServerContext,
   type TDocumentTypes,
-} from "@/core/types/common.js";
+} from "@/core/types/common";
 
 export const getExtensions: () => Promise<Extension[]> = async () => {
   const extensions: Extension[] = [

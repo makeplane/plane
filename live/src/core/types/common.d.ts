@@ -1,5 +1,5 @@
 // types
-import { TAdditionalDocumentTypes } from "@/plane-live/types/common.js";
+import { TAdditionalDocumentTypes } from "@/plane-live/types/common";
 
 export type TDocumentTypes = "project_page" | TAdditionalDocumentTypes;
 
