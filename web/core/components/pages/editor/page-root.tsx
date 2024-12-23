@@ -19,10 +19,10 @@ import { ProjectPageService, ProjectPageVersionService } from "@/services/page";
 const projectPageService = new ProjectPageService();
 const projectPageVersionService = new ProjectPageVersionService();
 // store
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
 
 type TPageRootProps = {
-  page: IPage;
+  page: TPageInstance;
   projectId: string;
   workspaceSlug: string;
 };

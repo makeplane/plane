@@ -34,7 +34,7 @@ import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 import { FileService } from "@/services/file.service";
 import { ProjectService } from "@/services/project";
 // store
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
 // services init
 const fileService = new FileService();
 const projectService = new ProjectService();
@@ -44,7 +44,7 @@ type Props = {
   editorReady: boolean;
   handleConnectionStatus: Dispatch<SetStateAction<boolean>>;
   handleEditorReady: Dispatch<SetStateAction<boolean>>;
-  page: IPage;
+  page: TPageInstance;
   sidePeekVisible: boolean;
 };
 

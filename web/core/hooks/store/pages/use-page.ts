@@ -1,14 +1,14 @@
 import { useContext } from "react";
 // mobx store
 import { StoreContext } from "@/lib/store-context";
-// mobx store
-import { IPage } from "@/store/pages/page";
+// store
+import { TProjectPage } from "@/store/pages/project-page";
 
-export const usePage = (pageId: string | undefined): IPage => {
+export const usePage = (pageId: string | undefined): TProjectPage => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("usePage must be used within StoreProvider");
 
-  if (!pageId) return {} as IPage;
+  if (!pageId) return {} as TProjectPage;
 
   return context.projectPages.data?.[pageId] ?? {};
 };

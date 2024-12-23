@@ -9,10 +9,10 @@ import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 // store
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
-  page: IPage;
+  page: TPageInstance;
 };
 
 export const PageEditInformationPopover: React.FC<Props> = observer((props) => {

@@ -9,10 +9,10 @@ import { DeletePageModal } from "@/components/pages";
 // helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // store
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
-  page: IPage;
+  page: TPageInstance;
   pageLink: string;
   parentRef: React.RefObject<HTMLElement>;
 };
@@ -60,7 +60,7 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
             title: "Success!",
             message: `The page has been marked ${changedPageType} and moved to the ${changedPageType} section.`,
           });
-        } catch (err) {
+        } catch {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
