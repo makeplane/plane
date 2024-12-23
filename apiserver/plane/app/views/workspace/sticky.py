@@ -1,0 +1,42 @@
+# Third party imports
+from rest_framework.response import Response
+from rest_framework import status
+
+# Module imports
+from .. import BaseViewSet
+from plane.app.permissions import WorkSpaceBasePermission, ROLE, allow_permission
+from plane.db.models import Sticky, Workspace
+from plane.app.serializers import StickySerializer
+
+
+class StickyViewSet(BaseViewSet):
+    serializer_class = StickySerializer
+    model = Sticky
+    permission_classes = [WorkSpaceBasePermission]
+
+    def get_queryset(self):
+        return self.filter_queryset(
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(owner_id=self.request.user.id)
+            .select_related("workspace", "owner")
+            .distinct()
+        )
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def create(self, request, slug):
+        workspace = Workspace.objects.get(slug=slug)
+        serializer = StickySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(workspace_id=workspace.id, owner_id=request.user.id)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], creator=True, level="WORKSPACE")
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)

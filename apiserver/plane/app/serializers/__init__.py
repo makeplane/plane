@@ -124,3 +124,5 @@ from .draft import (
     DraftIssueSerializer,
     DraftIssueDetailSerializer,
 )
+
+from .sticky import StickySerializer
