@@ -173,18 +173,6 @@ export const objToQueryParams = (obj: any) => {
   return params.toString();
 };
 
-
-
-/**
- * @description Capitalizes first letter of string
- * @param {string} str - String to capitalize
- * @returns {string} String with first letter capitalized
- * @example
- * capitalizeFirstLetter("hello") // returns "Hello"
- */
-export const capitalizeFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
-
->>>>>>> 428ed55a1 (chore(utils): copy helper functions from web/helpers)
 /**
  * @description: This function will remove all the HTML tags from the string
  * @param {string} html
