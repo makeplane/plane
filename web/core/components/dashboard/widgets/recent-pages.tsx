@@ -101,38 +101,6 @@ export const RecentPagesWidget: React.FC<WidgetProps> = observer((props) => {
         >
           Recent pages
         </Link>
-        <div className="flex gap-4">
-          {canCreateProject && (
-            <button
-              type="button"
-              className="group flex items-center gap-8"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setTrackElement("Sidebar");
-                toggleCreateProjectModal(true);
-              }}
-            >
-              <p className="text-sm font-medium text-custom-primary-100 group-hover:text-custom-text-100 group-hover:underline">
-                Add project{" "}
-              </p>
-            </button>
-          )}
-          <button
-            type="button"
-            className="group flex items-center gap-8"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setTrackElement("Sidebar");
-              toggleCreateProjectModal(true);
-            }}
-          >
-            <p className="text-sm font-medium text-custom-primary-100 group-hover:text-custom-text-100 group-hover:underline">
-              View all{" "}
-            </p>
-          </button>
-        </div>
       </div>
 
       <div className="mt-4 space-y-8">

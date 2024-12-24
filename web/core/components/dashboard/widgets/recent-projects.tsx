@@ -3,11 +3,10 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Plus } from "lucide-react";
 // plane types
 import { TRecentProjectsWidgetResponse } from "@plane/types";
 // plane ui
-import { Avatar, AvatarGroup, Card } from "@plane/ui";
+import { Avatar, AvatarGroup } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 import { WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
@@ -118,20 +117,11 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
               </p>
             </button>
           )}
-          <button
-            type="button"
-            className="group flex items-center gap-8"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setTrackElement("Sidebar");
-              toggleCreateProjectModal(true);
-            }}
-          >
+          <Link href={`/${workspaceSlug}/projects`}>
             <p className="text-sm font-medium text-custom-primary-100 group-hover:text-custom-text-100 group-hover:underline">
               View all{" "}
             </p>
-          </button>
+          </Link>
         </div>
       </div>
       <div className="mt-4 space-y-8">

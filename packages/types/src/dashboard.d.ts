@@ -4,6 +4,11 @@ import { TIssue } from "./issues/issue";
 import { TStateGroups } from "./state";
 import { TIssueRelationTypes } from "@/plane-web/types";
 
+export type WidgetProps = {
+  dashboardId: string;
+  workspaceSlug: string;
+};
+
 export type TWidgetKeys =
   | "quick_links"
   | "overview_stats"

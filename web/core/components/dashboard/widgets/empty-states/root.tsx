@@ -26,8 +26,6 @@ export const EmptyWorkspace = () => {
       icon: <Briefcase className="w-[40px] h-[40px] text-custom-primary-100" />,
       cta: {
         text: "Create Project",
-        link: "#",
-
         onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
           if (!canCreateProject) return;
           e.preventDefault();
@@ -44,7 +42,7 @@ export const EmptyWorkspace = () => {
       icon: <Users className="w-[40px] h-[40px] text-custom-primary-100" />,
       cta: {
         text: "Invite now",
-        link: "#",
+        link: "settings/members",
       },
     },
     {
@@ -54,7 +52,7 @@ export const EmptyWorkspace = () => {
       icon: <Hotel className="w-[40px] h-[40px] text-custom-primary-100" />,
       cta: {
         text: "Configure workspace",
-        link: "#",
+        link: "settings",
       },
     },
     {
@@ -81,7 +79,7 @@ export const EmptyWorkspace = () => {
         ),
       cta: {
         text: "Personalize account",
-        link: "#",
+        link: "/profile",
       },
     },
   ];
@@ -98,9 +96,21 @@ export const EmptyWorkspace = () => {
           <h3 className="text-lg font-medium text-custom-text-100 mb-2">{item.title}</h3>
           <p className="text-sm text-custom-text-200 mb-4 w-[80%] flex-1">{item.description}</p>
 
-          <button className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium">
-            {item.cta.text}
-          </button>
+          {item.cta.link ? (
+            <Link
+              href={item.cta.link}
+              className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium"
+            >
+              {item.cta.text}
+            </Link>
+          ) : (
+            <button
+              className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium"
+              onClick={item.cta.onClick}
+            >
+              {item.cta.text}
+            </button>
+          )}
         </div>
       ))}
     </div>

@@ -4,18 +4,12 @@ import { FC } from "react";
 // hooks
 // ui
 import { observer } from "mobx-react";
-import { Pencil, Trash2, LinkIcon, ExternalLink, Paperclip, EllipsisVertical, Link } from "lucide-react";
-import { Tooltip, TOAST_TYPE, setToast, CustomMenu, TContextMenuItem } from "@plane/ui";
-// icons
-// types
+import { Pencil, Trash2, ExternalLink, Paperclip, EllipsisVertical, Link } from "lucide-react";
+import { TOAST_TYPE, setToast, CustomMenu, TContextMenuItem } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
-import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
-import { useMember, useWorkspace } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
-
-import { TLinkOperationsModal } from "./create-update-link-modal";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { useWorkspace } from "@/hooks/store";
 import { TLinkOperations } from "./use-links";
 
 export type TProjectLinkDetail = {
@@ -31,15 +25,13 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
   const {
     links: { getLinkById, toggleLinkModal, setLinkData },
   } = useWorkspace();
-  const { getUserDetails } = useMember();
-  const { isMobile } = usePlatformOS();
 
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
 
   const viewLink = linkDetail.url;
 
-  const toggleProjectLinkModal = (modalToggle: boolean) => {
+  const handleEdit = (modalToggle: boolean) => {
     toggleLinkModal(modalToggle);
     setLinkData(linkDetail);
   };
@@ -57,7 +49,7 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "edit",
-      action: () => linkOperations.update(),
+      action: () => handleEdit(true),
       title: "Edit",
       icon: Pencil,
       shouldRender: isNotAllowed,

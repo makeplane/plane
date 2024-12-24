@@ -10,7 +10,7 @@ import { TRecentActivityWidgetResponse } from "@plane/types";
 // components
 import { getButtonStyling, PriorityIcon } from "@plane/ui";
 import { ListItem } from "@/components/core/list";
-import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
+import { WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -88,15 +88,11 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
           View all
         </Link>
       </div>
-      {widgetStats.length > 0 ? (
+      {widgetStats.length > 0 && (
         <div className="mt-2">
           {widgetStats.map((activity) => (
             <Block key={activity.id} activity={activity} ref={ref} />
           ))}
-        </div>
-      ) : (
-        <div className="grid h-full place-items-center">
-          <RecentActivityEmptyState />
         </div>
       )}
     </div>

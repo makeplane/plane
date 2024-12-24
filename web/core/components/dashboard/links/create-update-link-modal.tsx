@@ -66,10 +66,12 @@ export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) 
     <ModalCore isOpen={isModalOpen} handleClose={onClose}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-xl font-medium text-custom-text-200">{preloadedData?.id ? "Update" : "Add"} link</h3>
+          <h3 className="text-xl font-medium text-custom-text-200">
+            {preloadedData?.id ? "Update" : "Add"} quick link
+          </h3>
           <div className="mt-2 space-y-3">
             <div>
-              <label htmlFor="url" className="mb-2 text-custom-text-200">
+              <label htmlFor="url" className="mb-2 text-custom-text-200 text-base font-medium">
                 URL
               </label>
               <Controller
@@ -94,7 +96,7 @@ export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) 
               {errors.url && <span className="text-xs text-red-500">URL is invalid</span>}
             </div>
             <div>
-              <label htmlFor="title" className="mb-2 text-custom-text-200">
+              <label htmlFor="title" className="mb-2 text-custom-text-200 text-base font-medium">
                 Display title
                 <span className="text-[10px] block">Optional</span>
               </label>
@@ -122,7 +124,7 @@ export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) 
             Cancel
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-            {preloadedData?.id ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Adding" : "Add"} link
+            {preloadedData?.id ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Adding" : "Add"} quick link
           </Button>
         </div>
       </form>
