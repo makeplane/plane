@@ -67,3 +67,10 @@ export type TDocumentPayload = {
   description_html: string;
   description: object;
 };
+
+export type TWebhookConnectionQueryParams = {
+  documentType: "project_page" | "team_page" | "workspace_page";
+  projectId?: string;
+  teamId?: string;
+  workspaceSlug: string;
+};

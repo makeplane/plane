@@ -2,7 +2,6 @@ export * from "./auth";
 export * from "./color";
 export * from "./common";
 export * from "./datetime";
-export * from "./editor";
 export * from "./emoji";
 export * from "./file";
 export * from "./issue";
