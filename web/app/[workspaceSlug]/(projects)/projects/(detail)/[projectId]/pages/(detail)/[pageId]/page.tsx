@@ -43,7 +43,10 @@ const PageDetailsPage = observer(() => {
   const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
   const { id, name, updateDescription } = page;
   // issue-embed
-  const { issueEmbedProps } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
+  const { issueEmbedProps } = useIssueEmbed({
+    projectId: projectId?.toString() ?? "",
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: async (payload) =>
