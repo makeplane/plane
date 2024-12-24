@@ -83,10 +83,6 @@ export type EditorReadOnlyRefApi = {
     paragraphs: number;
     words: number;
   };
-  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
-  getHeadings: () => IMarking[];
-  emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
-  listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {

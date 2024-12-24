@@ -11,13 +11,7 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 // props
 import { CoreReadOnlyEditorProps } from "@/props";
 // types
-import type {
-  EditorReadOnlyRefApi,
-  TExtensions,
-  TDocumentEventsServer,
-  TFileHandler,
-  TReadOnlyMentionHandler,
-} from "@/types";
+import type { EditorReadOnlyRefApi, TExtensions, TFileHandler, TReadOnlyMentionHandler } from "@/types";
 
 interface CustomReadOnlyEditorProps {
   disabledExtensions: TExtensions[];
@@ -48,6 +42,8 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
 
   const editor = useCustomEditor({
     editable: false,
+    immediatelyRender: true,
+    shouldRerenderOnTransaction: false,
     content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
     editorProps: {
       ...CoreReadOnlyEditorProps({
@@ -111,21 +107,6 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
         words: editor.storage?.characterCount?.words?.() ?? 0,
       };
     },
-    onHeadingChange: (callback: (headings: IMarking[]) => void) => {
-      // Subscribe to update event emitted from headers extension
-      editor?.on("update", () => {
-        callback(editor?.storage.headingList.headings);
-      });
-      // Return a function to unsubscribe to the continuous transactions of
-      // the editor on unmounting the component that has subscribed to this
-      // method
-      return () => {
-        editor?.off("update");
-      };
-    },
-    emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
-    listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
-    getHeadings: () => editor?.storage.headingList.headings,
   }));
 
   if (!editor) {
