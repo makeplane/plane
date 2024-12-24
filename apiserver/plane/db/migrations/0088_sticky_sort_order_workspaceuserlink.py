@@ -109,4 +109,16 @@ class Migration(migrations.Migration):
             name="entity_name",
             field=models.CharField(max_length=30, verbose_name="Transaction Type"),
         ),
+        migrations.AlterUniqueTogether(
+            name="webhook",
+            unique_together={("workspace", "url", "deleted_at")},
+        ),
+        migrations.AddConstraint(
+            model_name="webhook",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(("deleted_at__isnull", True)),
+                fields=("workspace", "url"),
+                name="webhook_url_unique_url_when_deleted_at_null",
+            ),
+        ),
     ]
