@@ -259,6 +259,7 @@ class SearchEndpoint(BaseAPIView):
         query_types = [qt.strip() for qt in query_types]
         count = int(request.query_params.get("count", 5))
         project_id = request.query_params.get("project_id", None)
+        issue_id = request.query_params.get("issue_id", None)
 
         response_data = {}
 
@@ -275,14 +276,29 @@ class SearchEndpoint(BaseAPIView):
                     if query:
                         for field in fields:
                             q |= Q(**{f"{field}__icontains": query})
-                    users = (
-                        ProjectMember.objects.filter(
-                            q,
-                            is_active=True,
-                            workspace__slug=slug,
-                            member__is_bot=False,
-                            project_id=project_id,
+
+                    base_filters = Q(
+                        q,
+                        is_active=True,
+                        workspace__slug=slug,
+                        member__is_bot=False,
+                        project_id=project_id,
+                        role__gt=10,
+                    )
+                    if issue_id:
+                        issue_created_by = (
+                            Issue.objects.filter(id=issue_id)
+                            .values_list("created_by_id", flat=True)
+                            .first()
                         )
+                        # Add condition to include `issue_created_by` in the query
+                        filters = Q(member_id=issue_created_by) | base_filters
+                    else:
+                        filters = base_filters
+
+                    # Query to fetch users
+                    users = (
+                        ProjectMember.objects.filter(filters)
                         .annotate(
                             member__avatar_url=Case(
                                 When(
@@ -298,14 +314,17 @@ class SearchEndpoint(BaseAPIView):
                                     then="member__avatar",
                                 ),
                                 default=Value(None),
-                                output_field=models.CharField(),
+                                output_field=CharField(),
                             )
                         )
                         .order_by("-created_at")
                         .values(
-                            "member__avatar_url", "member__display_name", "member__id"
+                            "member__avatar_url",
+                            "member__display_name",
+                            "member__id",
                         )[:count]
                     )
+
                     response_data["user_mention"] = list(users)
 
                 elif query_type == "project":
