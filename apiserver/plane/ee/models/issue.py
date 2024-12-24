@@ -215,8 +215,8 @@ class EntityProgress(BaseModel):
 
 
 class UpdatesEnum(models.TextChoices):
-    ONTRACK = "ONTRACK", "On Track"
-    OFFTRACK = "OFFTRACK", "Off Track"
+    ON_TRACK = "ON_TRACK", "On Track"
+    OFF_TRACK = "OFF_TRACK", "Off Track"
     AT_RISK = "AT_RISK", "At Risk"
     STARTED = "STARTED", "Started"
     ENDED = "ENDED", "Ended"
@@ -251,7 +251,7 @@ class EntityUpdates(BaseModel):
     )
     entity_type = models.CharField(max_length=30, choices=EntityTypeEnum.choices)
     description = models.TextField(blank=True)
-    status = models.CharField(max_length=30, choices=UpdatesEnum.choices)
+    status = models.CharField(max_length=30)
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,

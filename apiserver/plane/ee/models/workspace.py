@@ -100,3 +100,82 @@ class WorkspaceActivity(WorkspaceBaseModel):
 
     def __str__(self):
         return f"{self.workspace.name} {self.verb}"
+
+
+class WorkspaceCredential(BaseModel):
+    source = models.CharField(max_length=20)  # importer type
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="credentials"
+    )
+    user = models.ForeignKey(
+        "db.User", on_delete=models.CASCADE, related_name="credentials"
+    )
+    # Source being the type of importer where issues are imported example: jira
+    source_access_token = models.TextField(null=True, blank=True)
+    source_refresh_token = models.TextField(null=True, blank=True)
+    source_hostname = models.TextField(null=True, blank=True)
+    # Target being Plane where issues are imported to.
+    target_access_token = models.TextField(null=True, blank=True)
+    target_refresh_token = models.TextField(null=True, blank=True)
+    target_hostname = models.TextField(null=True, blank=True)
+    # other values
+    is_pat = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Workspace Credential"
+        verbose_name_plural = "Workspace Credentials"
+        db_table = "workspace_credentials"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.workspace.name} {self.source}"
+
+
+class WorkspaceConnection(BaseModel):
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="connections"
+    )
+    target_hostname = models.TextField(null=True, blank=True)
+    source_hostname = models.TextField(null=True, blank=True)
+    # IntegrationType enum
+    connection_type = models.CharField(max_length=50)
+    # Id of the org from integrator
+    connection_id = models.CharField(max_length=255)
+    connection_data = models.JSONField(default=dict)
+    scopes = models.JSONField(default=list)
+    config = models.JSONField(default=dict)
+
+    class Meta:
+        verbose_name = "Workspace Connection"
+        verbose_name_plural = "Workspace Connections"
+        db_table = "workspace_connections"
+        ordering = ("-created_at",)
+
+
+class WorkspaceEntityConnection(BaseModel):
+    type = models.CharField(max_length=30, blank=True, null=True)
+    workspace_connection = models.ForeignKey(
+        "ee.WorkspaceConnection",
+        on_delete=models.CASCADE,
+        related_name="entity_connections",
+    )
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="entity_connections"
+    )
+    project = models.ForeignKey(
+        "db.Project", on_delete=models.CASCADE, related_name="entity_connections"
+    )
+    issue = models.ForeignKey(
+        "db.Issue", on_delete=models.CASCADE, related_name="entity_connections"
+    )
+    entity_type = models.CharField(max_length=30, blank=True, null=True)
+    entity_id = models.CharField(max_length=255, blank=True, null=True)
+    entity_slug = models.CharField(max_length=255, blank=True, null=True)
+    entity_data = models.JSONField(default=dict)
+    config = models.JSONField(default=dict)
+
+    class Meta:
+        verbose_name = "Workspace Entity Connection"
+        verbose_name_plural = "Workspace Entity Connections"
+        db_table = "workspace_entity_connections"

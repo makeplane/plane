@@ -27,7 +27,14 @@ from .project import (
     ProjectCommentReaction,
     ProjectFeature,
 )
-from .workspace import WorkspaceFeature, WorkspaceLicense, WorkspaceActivity
+from .workspace import (
+    WorkspaceFeature,
+    WorkspaceLicense,
+    WorkspaceActivity,
+    WorkspaceCredential,
+    WorkspaceConnection,
+    WorkspaceEntityConnection,
+)
 
 from .intake import IntakeSetting
 from .initiative import (
@@ -55,3 +62,5 @@ from .team import (
 )
 
 from .workflow import Workflow, WorkflowTransition, WorkflowTransitionActor
+
+from .job import ImportReport, ImportJob
