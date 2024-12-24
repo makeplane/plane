@@ -6,6 +6,7 @@ import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight } from "lucide-react";
+import { EIssueServiceType } from "@plane/constants";
 // types
 import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // ui
@@ -40,6 +41,7 @@ interface IssueBlockProps {
   isCurrentBlockDragging: boolean;
   setIsCurrentBlockDragging: React.Dispatch<React.SetStateAction<boolean>>;
   canDrag: boolean;
+  isEpic?: boolean;
 }
 
 export const IssueBlock = observer((props: IssueBlockProps) => {
@@ -59,6 +61,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     isCurrentBlockDragging,
     setIsCurrentBlockDragging,
     canDrag,
+    isEpic = false,
   } = props;
   // ref
   const issueRef = useRef<HTMLDivElement | null>(null);
@@ -69,7 +72,12 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   // hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { getProjectIdentifierById } = useProject();
-  const { getIsIssuePeeked, peekIssue, setPeekIssue, subIssues: subIssuesStore } = useIssueDetail();
+  const {
+    getIsIssuePeeked,
+    peekIssue,
+    setPeekIssue,
+    subIssues: subIssuesStore,
+  } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
@@ -143,7 +151,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   return (
     <ControlLink
       id={`issue-${issue.id}`}
-      href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${issue.id}`}
+      href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}${isEpic ? "epics" : "issues"}/${issue.id}`}
       onClick={() => handleIssuePeekOverview(issue)}
       className="w-full cursor-pointer"
       disabled={!!issue?.tempId || issue?.is_draft}
@@ -178,7 +186,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
           <div className="flex flex-grow items-center gap-0.5 truncate">
             <div className="flex items-center gap-1" style={isSubIssue ? { marginLeft } : {}}>
               {/* select checkbox */}
-              {projectId && canSelectIssues && (
+              {projectId && canSelectIssues && !isEpic && (
                 <Tooltip
                   tooltipContent={
                     <>
@@ -220,7 +228,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
 
               {/* sub-issues chevron */}
               <div className="size-4 grid place-items-center flex-shrink-0">
-                {subIssuesCount > 0 && (
+                {subIssuesCount > 0 && !isEpic && (
                   <button
                     type="button"
                     className="size-4 grid place-items-center rounded-sm text-custom-text-400 hover:text-custom-text-300"
@@ -275,6 +283,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 updateIssue={updateIssue}
                 displayProperties={displayProperties}
                 activeLayout="List"
+                isEpic={isEpic}
               />
               <div
                 className={cn("hidden", {

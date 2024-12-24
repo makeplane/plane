@@ -19,6 +19,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     containerClassName,
     disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
+    editable,
     editorClassName = "",
     embedHandler,
     fileHandler,
@@ -44,8 +45,8 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
 
   // use document editor
   const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeEditor({
-    onTransaction,
     disabledExtensions,
+    editable,
     editorClassName,
     embedHandler,
     extensions,
@@ -54,6 +55,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     handleEditorReady,
     id,
     mentionHandler,
+    onTransaction,
     placeholder,
     realtimeConfig,
     serverHandler,

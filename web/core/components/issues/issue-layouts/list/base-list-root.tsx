@@ -1,10 +1,11 @@
 import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
-// types
 import { useParams } from "next/navigation";
+// plane constants
+import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+// types
 import { GroupByColumnTypes, TGroupedIssues, TIssueKanbanFilters } from "@plane/types";
 // constants
-import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssues, useUserPermissions } from "@/hooks/store";
 // hooks
@@ -28,7 +29,8 @@ type ListStoreType =
   | EIssuesStoreType.ARCHIVED
   | EIssuesStoreType.WORKSPACE_DRAFT
   | EIssuesStoreType.TEAM
-  | EIssuesStoreType.TEAM_VIEW;
+  | EIssuesStoreType.TEAM_VIEW
+  | EIssuesStoreType.EPIC;
 
 interface IBaseListRoot {
   QuickActions: FC<IQuickActionProps>;
@@ -36,9 +38,17 @@ interface IBaseListRoot {
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   viewId?: string | undefined;
   isCompletedCycle?: boolean;
+  isEpic?: boolean;
 }
 export const BaseListRoot = observer((props: IBaseListRoot) => {
-  const { QuickActions, viewId, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false } = props;
+  const {
+    QuickActions,
+    viewId,
+    addIssuesToView,
+    canEditPropertiesBasedOnProject,
+    isCompletedCycle = false,
+    isEpic = false,
+  } = props;
   // router
   const storeType = useIssueStoreType() as ListStoreType;
   //stores
@@ -157,6 +167,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
           handleOnDrop={handleOnDrop}
           handleCollapsedGroups={handleCollapsedGroups}
           collapsedGroups={collapsedGroups}
+          isEpic={isEpic}
         />
       </div>
     </IssueLayoutHOC>

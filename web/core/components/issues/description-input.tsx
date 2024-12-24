@@ -15,10 +15,12 @@ import { TIssueOperations } from "@/components/issues/issue-detail";
 // helpers
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 // hooks
-import { useMember, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store";
 // services
 import { FileService } from "@/services/file.service";
+import { ProjectService } from "@/services/project";
 const fileService = new FileService();
+const projectService = new ProjectService();
 
 export type IssueDescriptionInputProps = {
   containerClassName?: string;
@@ -46,12 +48,6 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     setIsSubmitting,
     placeholder,
   } = props;
-  // store hooks
-  const {
-    project: { getProjectMemberIds },
-  } = useMember();
-  // derived values
-  const memberIds = getProjectMemberIds(projectId) ?? [];
 
   const { handleSubmit, reset, control } = useForm<TIssue>({
     defaultValues: {
@@ -114,7 +110,6 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                 value={swrIssueDescription ?? null}
                 workspaceSlug={workspaceSlug}
                 workspaceId={workspaceId}
-                memberIds={memberIds}
                 projectId={projectId}
                 dragDropEnabled
                 onChange={(_description: object, description_html: string) => {
@@ -124,6 +119,13 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                 }}
                 placeholder={
                   placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)
+                }
+                searchMentionCallback={async (payload) =>
+                  await projectService.searchEntity(
+                    workspaceSlug?.toString() ?? "",
+                    projectId?.toString() ?? "",
+                    payload
+                  )
                 }
                 containerClassName={containerClassName}
                 uploadFile={async (file) => {

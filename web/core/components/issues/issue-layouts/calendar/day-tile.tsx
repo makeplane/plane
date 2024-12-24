@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { differenceInCalendarDays } from "date-fns";
+import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
 // types
 import { TGroupedIssues, TIssue, TIssueMap, TPaginationData } from "@plane/types";
@@ -18,6 +18,7 @@ import { MONTHS_LIST } from "@/constants/calendar";
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // types
+import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
@@ -25,7 +26,12 @@ import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 import { TRenderQuickActions } from "../list/list-view-types";
 
 type Props = {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProjectEpicsFilter;
   date: ICalendarDate;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
@@ -47,6 +53,7 @@ type Props = {
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
   canEditProperties: (projectId: string | undefined) => boolean;
+  isEpic?: boolean;
 };
 
 export const CalendarDayTile: React.FC<Props> = observer((props) => {
@@ -68,6 +75,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     handleDragAndDrop,
     setSelectedDate,
     canEditProperties,
+    isEpic = false,
   } = props;
 
   const [isDraggingOver, setIsDraggingOver] = useState(false);
@@ -185,6 +193,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               quickAddCallback={quickAddCallback}
               readOnly={readOnly}
               canEditProperties={canEditProperties}
+              isEpic={isEpic}
             />
           </div>
         </div>

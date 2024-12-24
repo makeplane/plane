@@ -3,8 +3,10 @@ import isEmpty from "lodash/isEmpty";
 import pickBy from "lodash/pickBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-// base class
+// plane constants
 import { computedFn } from "mobx-utils";
+import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+// base class
 import {
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
@@ -15,7 +17,6 @@ import {
   TStaticViewTypes,
   IssuePaginationOptions,
 } from "@plane/types";
-import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // services
 import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
 import { WorkspaceService } from "@/plane-web/services";

@@ -15,7 +15,7 @@ import {
   LucideIcon,
 } from "lucide-react";
 // document editor
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import { EditorRefApi } from "@plane/editor";
 // ui
 import { ArchiveIcon, CustomMenu, type ISvgIcons, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
@@ -25,12 +25,13 @@ import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper
 // hooks
 import { useCollaborativePageActions } from "@/hooks/use-collaborative-page-actions";
 import { usePageFilters } from "@/hooks/use-page-filters";
+import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 import { useQueryParams } from "@/hooks/use-query-params";
 // store
 import { IPage } from "@/store/pages/page";
 
 type Props = {
-  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
+  editorRef: EditorRefApi | null;
   handleDuplicatePage: () => void;
   page: IPage;
 };
@@ -59,6 +60,8 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { updateQueryParams } = useQueryParams();
   // collaborative actions
   const { executeCollaborativeAction } = useCollaborativePageActions(editorRef, page);
+  // parse editor content
+  const { replaceCustomComponentsFromMarkdownContent } = useParseEditorContent();
 
   // menu items list
   const MENU_ITEMS: {
@@ -72,7 +75,11 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
       key: "copy-markdown",
       action: () => {
         if (!editorRef) return;
-        copyTextToClipboard(editorRef.getMarkDown()).then(() =>
+        const markdownContent = editorRef.getMarkDown();
+        const parsedMarkdownContent = replaceCustomComponentsFromMarkdownContent({
+          markdownContent,
+        });
+        copyTextToClipboard(parsedMarkdownContent).then(() =>
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",

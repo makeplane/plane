@@ -4,8 +4,9 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
-import { cn } from "@plane/editor";
-// plane packages
+// plane constants
+import { EIssueLayoutTypes } from "@plane/constants";
+// plane ui
 import {
   IGroupByColumn,
   TIssueMap,
@@ -16,10 +17,12 @@ import {
   TIssueKanbanFilters,
 } from "@plane/types";
 import { Row, setToast, TOAST_TYPE } from "@plane/ui";
+// plane utils
+import { cn } from "@plane/utils";
 // components
 import { ListLoaderItemRow } from "@/components/ui";
 // constants
-import { DRAG_ALLOWED_GROUPS, EIssueLayoutTypes } from "@/constants/issue";
+import { DRAG_ALLOWED_GROUPS } from "@/constants/issue";
 // hooks
 import { useProjectState } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
@@ -64,6 +67,7 @@ interface Props {
   selectionHelpers: TSelectionHelper;
   handleCollapsedGroups: (value: string) => void;
   collapsedGroups: TIssueKanbanFilters;
+  isEpic?: boolean;
 }
 
 export const ListGroup = observer((props: Props) => {
@@ -90,6 +94,7 @@ export const ListGroup = observer((props: Props) => {
     selectionHelpers,
     handleCollapsedGroups,
     collapsedGroups,
+    isEpic = false,
   } = props;
 
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
@@ -266,6 +271,7 @@ export const ListGroup = observer((props: Props) => {
           addIssuesToView={addIssuesToView}
           selectionHelpers={selectionHelpers}
           handleCollapsedGroups={handleCollapsedGroups}
+          isEpic={isEpic}
         />
       </Row>
       {shouldExpand && (
@@ -292,6 +298,7 @@ export const ListGroup = observer((props: Props) => {
               isDragAllowed={isDragAllowed}
               canDropOverIssue={!canOverlayBeVisible}
               selectionHelpers={selectionHelpers}
+              isEpic={isEpic}
             />
           )}
 

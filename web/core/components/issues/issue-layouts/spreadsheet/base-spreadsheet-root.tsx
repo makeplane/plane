@@ -2,10 +2,8 @@ import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
-import { ALL_ISSUES } from "@plane/constants";
+import { ALL_ISSUES, EIssueLayoutTypes, EIssuesStoreType, EIssueFilterType } from "@plane/constants";
 import { IIssueDisplayFilterOptions } from "@plane/types";
-// hooks
-import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssues, useUserPermissions } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
@@ -26,17 +24,19 @@ export type SpreadsheetStoreType =
   | EIssuesStoreType.CYCLE
   | EIssuesStoreType.PROJECT_VIEW
   | EIssuesStoreType.TEAM
-  | EIssuesStoreType.TEAM_VIEW;
+  | EIssuesStoreType.TEAM_VIEW
+  | EIssuesStoreType.EPIC;
 
 interface IBaseSpreadsheetRoot {
   QuickActions: FC<IQuickActionProps>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
   viewId?: string | undefined;
+  isEpic?: boolean;
 }
 
 export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
-  const { QuickActions, canEditPropertiesBasedOnProject, isCompletedCycle = false, viewId } = props;
+  const { QuickActions, canEditPropertiesBasedOnProject, isCompletedCycle = false, viewId, isEpic = false } = props;
   // router
   const { projectId } = useParams();
   // store hooks
@@ -126,6 +126,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
         disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
         canLoadMoreIssues={!!nextPageResults}
         loadMoreIssues={fetchNextIssues}
+        isEpic={isEpic}
       />
     </IssueLayoutHOC>
   );

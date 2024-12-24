@@ -42,10 +42,11 @@ export interface IIssueProperties {
   isReadOnly: boolean;
   className: string;
   activeLayout: string;
+  isEpic?: boolean;
 }
 
 export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
-  const { issue, updateIssue, displayProperties, activeLayout, isReadOnly, className } = props;
+  const { issue, updateIssue, displayProperties, activeLayout, isReadOnly, className, isEpic = false } = props;
   // store hooks
   const { getProjectById } = useProject();
   const { labelMap } = useLabel();
@@ -95,7 +96,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   );
 
   const handleState = (stateId: string) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { state_id: stateId }).then(() => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
@@ -110,7 +111,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const handlePriority = (value: TIssuePriorities) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { priority: value }).then(() => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
@@ -125,7 +126,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const handleLabel = (ids: string[]) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { label_ids: ids }).then(() => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
@@ -140,7 +141,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const handleAssignee = (ids: string[]) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { assignee_ids: ids }).then(() => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
@@ -194,7 +195,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   );
 
   const handleStartDate = (date: Date | null) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { start_date: date ? renderFormattedPayloadDate(date) : null }).then(
         () => {
           captureIssueEvent({
@@ -211,7 +212,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const handleTargetDate = (date: Date | null) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { target_date: date ? renderFormattedPayloadDate(date) : null }).then(
         () => {
           captureIssueEvent({
@@ -228,7 +229,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const handleEstimate = (value: string | undefined) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { estimate_point: value }).then(() => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
@@ -303,21 +304,6 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         </div>
       </WithDisplayPropertiesHOC>
 
-      {/* label */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
-        <div className="h-5" onClick={handleEventPropagation}>
-          <IssuePropertyLabels
-            projectId={issue?.project_id || null}
-            value={issue?.label_ids || null}
-            defaultOptions={defaultLabelOptions}
-            onChange={handleLabel}
-            disabled={isReadOnly}
-            renderByDefault={isMobile}
-            hideDropdownArrow
-          />
-        </div>
-      </WithDisplayPropertiesHOC>
-
       {/* start date */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_date">
         <div className="h-5" onClick={handleEventPropagation}>
@@ -376,42 +362,46 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         </div>
       </WithDisplayPropertiesHOC>
 
-      {/* modules */}
-      {projectDetails?.module_view && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
-          <div className="h-5" onClick={handleEventPropagation}>
-            <ModuleDropdown
-              buttonContainerClassName="truncate max-w-40"
-              projectId={issue?.project_id}
-              value={issue?.module_ids ?? []}
-              onChange={handleModule}
-              disabled={isReadOnly}
-              renderByDefault={isMobile}
-              multiple
-              buttonVariant="border-with-text"
-              showCount
-              showTooltip
-            />
-          </div>
-        </WithDisplayPropertiesHOC>
-      )}
+      {!isEpic && (
+        <>
+          {/* modules */}
+          {projectDetails?.module_view && (
+            <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
+              <div className="h-5" onClick={handleEventPropagation}>
+                <ModuleDropdown
+                  buttonContainerClassName="truncate max-w-40"
+                  projectId={issue?.project_id}
+                  value={issue?.module_ids ?? []}
+                  onChange={handleModule}
+                  disabled={isReadOnly}
+                  renderByDefault={isMobile}
+                  multiple
+                  buttonVariant="border-with-text"
+                  showCount
+                  showTooltip
+                />
+              </div>
+            </WithDisplayPropertiesHOC>
+          )}
 
-      {/* cycles */}
-      {projectDetails?.cycle_view && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
-          <div className="h-5" onClick={handleEventPropagation}>
-            <CycleDropdown
-              buttonContainerClassName="truncate max-w-40"
-              projectId={issue?.project_id}
-              value={issue?.cycle_id}
-              onChange={handleCycle}
-              disabled={isReadOnly}
-              buttonVariant="border-with-text"
-              renderByDefault={isMobile}
-              showTooltip
-            />
-          </div>
-        </WithDisplayPropertiesHOC>
+          {/* cycles */}
+          {projectDetails?.cycle_view && (
+            <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
+              <div className="h-5" onClick={handleEventPropagation}>
+                <CycleDropdown
+                  buttonContainerClassName="truncate max-w-40"
+                  projectId={issue?.project_id}
+                  value={issue?.cycle_id}
+                  onChange={handleCycle}
+                  disabled={isReadOnly}
+                  buttonVariant="border-with-text"
+                  renderByDefault={isMobile}
+                  showTooltip
+                />
+              </div>
+            </WithDisplayPropertiesHOC>
+          )}
+        </>
       )}
 
       {/* estimates */}
@@ -505,6 +495,20 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             <div className="text-xs">{issue.link_count}</div>
           </div>
         </Tooltip>
+      </WithDisplayPropertiesHOC>
+
+      {/* label */}
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
+        <IssuePropertyLabels
+          projectId={issue?.project_id || null}
+          value={issue?.label_ids || null}
+          defaultOptions={defaultLabelOptions}
+          onChange={handleLabel}
+          disabled={isReadOnly}
+          renderByDefault={isMobile}
+          hideDropdownArrow
+          maxRender={3}
+        />
       </WithDisplayPropertiesHOC>
     </div>
   );

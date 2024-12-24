@@ -8,7 +8,6 @@ import { CycleStore, ICycleStore } from "./cycle.store";
 import { IssueFilterStore, IIssueFilterStore } from "./issue-filters.store";
 import { IIssueLabelStore, LabelStore } from "./label.store";
 import { IIssueMemberStore, MemberStore } from "./members.store";
-import { IMentionsStore, MentionsStore } from "./mentions.store";
 import { IIssueModuleStore, ModuleStore } from "./module.store";
 import { IPublishListStore, PublishListStore } from "./publish/publish_list.store";
 import { IStateStore, StateStore } from "./state.store";
@@ -20,7 +19,6 @@ export class CoreRootStore {
   user: IUserStore;
   issue: IIssueStore;
   issueDetail: IIssueDetailStore;
-  mentionStore: IMentionsStore;
   state: IStateStore;
   label: IIssueLabelStore;
   module: IIssueModuleStore;
@@ -34,7 +32,6 @@ export class CoreRootStore {
     this.user = new UserStore(this);
     this.issue = new IssueStore(this);
     this.issueDetail = new IssueDetailStore(this);
-    this.mentionStore = new MentionsStore(this);
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
     this.module = new ModuleStore(this);
@@ -57,7 +54,6 @@ export class CoreRootStore {
     this.user = new UserStore(this);
     this.issue = new IssueStore(this);
     this.issueDetail = new IssueDetailStore(this);
-    this.mentionStore = new MentionsStore(this);
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
     this.module = new ModuleStore(this);

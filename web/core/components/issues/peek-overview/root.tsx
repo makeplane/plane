@@ -4,6 +4,7 @@ import { FC, useEffect, useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // plane types
+import { EIssuesStoreType } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // plane ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
@@ -11,10 +12,9 @@ import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 import { IssueView, TIssueOperations } from "@/components/issues";
 // constants
 import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "@/constants/event-tracker";
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
-import { useIssuesStore } from "@/hooks/use-issue-layout-store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
@@ -22,10 +22,16 @@ interface IIssuePeekOverview {
   embedIssue?: boolean;
   embedRemoveCurrentNotification?: () => void;
   is_draft?: boolean;
+  storeType?: EIssuesStoreType;
 }
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
-  const { embedIssue = false, embedRemoveCurrentNotification, is_draft = false } = props;
+  const {
+    embedIssue = false,
+    embedRemoveCurrentNotification,
+    is_draft = false,
+    storeType: issueStoreFromProps,
+  } = props;
   // router
   const pathname = usePathname();
   // store hook
@@ -40,8 +46,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     issue: { fetchIssue, getIsFetchingIssueDetails },
     fetchActivities,
   } = useIssueDetail();
-
-  const { issues } = useIssuesStore();
+  const issueStoreType = useIssueStoreType();
+  const storeType = issueStoreFromProps ?? issueStoreType;
+  const { issues } = useIssues(storeType);
   const { captureIssueEvent } = useEventTracker();
   // state
   const [error, setError] = useState(false);

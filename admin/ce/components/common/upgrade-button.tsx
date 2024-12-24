@@ -3,10 +3,9 @@
 import React from "react";
 // icons
 import { SquareArrowOutUpRight } from "lucide-react";
-// ui
+// plane internal packages
 import { getButtonStyling } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 export const UpgradeButton: React.FC = () => (
   <a href="https://plane.so/pricing?mode=self-hosted" target="_blank" className={cn(getButtonStyling("primary", "sm"))}>
