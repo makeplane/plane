@@ -11,6 +11,7 @@
     "moduleResolution": "Bundler",
     "target": "ESNext",
     "experimentalDecorators": true,
+    "esModuleInterop": true,
     "sourceMap": true
   },
   "include": ["src/**/*"],

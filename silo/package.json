@@ -8,14 +8,14 @@
   "scripts": {
     "dev": "turbo run develop",
     "develop": "nodemon --config \"./nodemon.json\"/",
-    "build": "rm -rf ./dist/ && tsup src/start.ts --dts --minify --format cjs --out-dir dist",
+    "build": "tsup src/start.ts --format cjs --dts",
     "start": "node dist/start.js -p 8080",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "eslint . --ext .ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate"
   },
-  "dependencies": {
+  "devDependencies": {
     "@linear/sdk": "^30.0.0",
     "@octokit/openapi-webhooks-types": "^8.3.0",
     "@plane/etl": "*",
@@ -41,7 +41,7 @@
     "winston": "^3.14.2",
     "zod": "^3.23.8"
   },
-  "devDependencies": {
+  "dependencies": {
     "@plane/eslint-config": "*",
     "@plane/typescript-config": "*",
     "@t3-oss/env-core": "^0.11.1",

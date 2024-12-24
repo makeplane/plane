@@ -35,6 +35,7 @@ RUN yarn turbo build --filter=silo
 FROM base AS runner
 WORKDIR /app
 
+COPY --from=installer /app/packages ./packages
 COPY --from=installer /app/silo/dist ./silo
 COPY --from=installer /app/silo/package.json ./silo/package.json
 COPY --from=installer /app/silo/src/db/migrations ./silo/src/db/migrations
