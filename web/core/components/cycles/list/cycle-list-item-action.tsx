@@ -8,7 +8,16 @@ import { Eye, Users } from "lucide-react";
 // types
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
-import { Avatar, AvatarGroup, FavoriteStar, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
+import {
+  Avatar,
+  AvatarGroup,
+  FavoriteStar,
+  LayersIcon,
+  TOAST_TYPE,
+  Tooltip,
+  setPromiseToast,
+  setToast,
+} from "@plane/ui";
 // components
 import { CycleQuickActions } from "@/components/cycles";
 import { DateRangeDropdown } from "@/components/dropdowns";
@@ -215,6 +224,13 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
         <Eye className="h-4 w-4 my-auto  text-custom-primary-200" />
         <span>More details</span>
       </button>
+
+      {(cycleStatus === "draft" || "upcoming") && (
+        <div className="flex items-center gap-1">
+          <LayersIcon className="h-4 w-4 text-custom-text-300" />
+          <span className="text-xs text-custom-text-300">{cycleDetails.total_issues}</span>
+        </div>
+      )}
 
       {!isActive && (
         <Controller
