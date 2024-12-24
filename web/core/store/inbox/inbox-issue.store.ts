@@ -5,7 +5,7 @@ import { TIssue, TInboxIssue, TInboxIssueStatus, TInboxDuplicateIssueDetails } f
 // helpers
 import { EInboxIssueStatus } from "@/helpers/inbox.helper";
 // local db
-import { addIssueToPersistanceLayer } from "@/local-db/utils/utils";
+import { addIssueToPersistenceLayer } from "@/local-db/utils/utils";
 // services
 import { InboxIssueService } from "@/services/inbox";
 import { IssueService } from "@/services/issue";
@@ -98,7 +98,7 @@ export class InboxIssueStore implements IInboxIssueStore {
 
       // If issue accepted sync issue to local db
       if (status === EInboxIssueStatus.ACCEPTED) {
-        addIssueToPersistanceLayer({ ...this.issue, ...inboxIssue.issue });
+        addIssueToPersistenceLayer({ ...this.issue, ...inboxIssue.issue });
       }
     } catch {
       runInAction(() => set(this, "status", previousData.status));

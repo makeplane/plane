@@ -72,6 +72,10 @@ export class DBClass {
   async exec(props: string | TQueryProps) {
     // @todo this will fail if the transaction is started any other way
     // eg:  BEGIN, OR BEGIN TRANSACTION
+
+    // Below code ensures the transactions are queued
+    // Ideally we should never have multiple transactions
+    // running at the same time, in rare cases, it shouldn't be waiting for more than 1ms
     if (props === "BEGIN;") {
       let promiseToAwait;
       if (this.tp.length > 0) {

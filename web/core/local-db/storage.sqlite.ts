@@ -42,7 +42,7 @@ type TDBStatus = "initializing" | "ready" | "error" | undefined;
  * Handles database initialization, synchronization, and CRUD operations for issues
  */
 export class Storage {
-  private db: any;
+  public db: any;
   private status: TDBStatus = undefined;
   private dbName = "plane";
   private projectStatus: Record<string, TProjectStatus> = {};

@@ -19,7 +19,7 @@ export const logError = (e: any) => {
 };
 export const logInfo = console.info;
 
-export const addIssueToPersistanceLayer = async (issue: TIssue) => {
+export const addIssueToPersistenceLayer = async (issue: TIssue) => {
   try {
     const issuePartial = pick({ ...JSON.parse(JSON.stringify(issue)) }, [
       "id",
@@ -66,7 +66,7 @@ export const updatePersistentLayer = async (issueIds: string | string[]) => {
     const issue = rootStore.issue.issues.getIssueById(issueId);
 
     if (issue) {
-      addIssueToPersistanceLayer(issue);
+      addIssueToPersistenceLayer(issue);
     }
   });
 };

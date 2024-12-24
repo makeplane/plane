@@ -23,7 +23,7 @@ import { EDraftIssuePaginationType } from "@/constants/workspace-drafts";
 // helpers
 import { getCurrentDateTimeInISO, convertToISODateString } from "@/helpers/date-time.helper";
 // local-db
-import { addIssueToPersistanceLayer } from "@/local-db/utils/utils";
+import { addIssueToPersistenceLayer } from "@/local-db/utils/utils";
 // services
 import workspaceDraftService from "@/services/issue/workspace_draft.service";
 // types
@@ -352,7 +352,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
         }
 
         // sync issue to local db
-        addIssueToPersistanceLayer({ ...payload, ...response });
+        addIssueToPersistenceLayer({ ...payload, ...response });
 
         // Update draft issue count in workspaceUserInfo
         this.updateWorkspaceUserDraftIssueCount(workspaceSlug, -1);
