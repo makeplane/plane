@@ -105,7 +105,7 @@ export const useDropZone = (args: TDropzoneArgs) => {
     async (e: DragEvent<HTMLDivElement>) => {
       e.preventDefault();
       setDraggedInside(false);
-      if (e.dataTransfer.files.length === 0) {
+      if (e.dataTransfer.files.length === 0 || !editor.isEditable) {
         return;
       }
       const filesList = e.dataTransfer.files;

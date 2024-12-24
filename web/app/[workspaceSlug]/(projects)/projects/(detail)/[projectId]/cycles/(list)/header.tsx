@@ -38,7 +38,6 @@ export const CyclesListHeader: FC = observer(() => {
             link={
               <BreadcrumbLink
                 label={currentProjectDetails?.name ?? "Project"}
-                href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                 icon={
                   currentProjectDetails && (
                     <span className="grid place-items-center flex-shrink-0 h-4 w-4">

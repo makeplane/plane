@@ -70,7 +70,7 @@
       "value": ""
     },
     "GITHUB_CLIENT_SECRET": {
-      "description": "Github Client Secret",
+      "description": "GitHub Client Secret",
       "value": ""
     },
     "NEXT_PUBLIC_API_BASE_URL": {

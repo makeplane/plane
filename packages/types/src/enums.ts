@@ -4,10 +4,7 @@ export enum EUserPermissions {
   GUEST = 5,
 }
 
-export type TUserPermissions =
-  | EUserPermissions.ADMIN
-  | EUserPermissions.MEMBER
-  | EUserPermissions.GUEST;
+export type TUserPermissions = EUserPermissions.ADMIN | EUserPermissions.MEMBER | EUserPermissions.GUEST;
 
 // project pages
 export enum EPageAccess {
@@ -59,4 +56,8 @@ export enum EFileAssetType {
   USER_AVATAR = "USER_AVATAR",
   USER_COVER = "USER_COVER",
   WORKSPACE_LOGO = "WORKSPACE_LOGO",
+  TEAM_SPACE_DESCRIPTION = "TEAM_SPACE_DESCRIPTION",
+  INITIATIVE_DESCRIPTION = "INITIATIVE_DESCRIPTION",
+  PROJECT_DESCRIPTION = "PROJECT_DESCRIPTION",
+  TEAM_SPACE_COMMENT_DESCRIPTION = "TEAM_SPACE_COMMENT_DESCRIPTION",
 }

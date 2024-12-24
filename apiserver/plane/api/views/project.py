@@ -259,7 +259,7 @@ class ProjectAPIEndpoint(BaseAPIView):
             )
 
             intake_view = request.data.get(
-                "inbox_view", request.data.get("intake_view", False)
+                "inbox_view", request.data.get("intake_view", project.intake_view)
             )
 
             if project.archived_at:

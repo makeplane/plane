@@ -4,10 +4,11 @@ import { FC, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-// types
+// plane internal packages
+import { API_BASE_URL } from "@plane/constants";
 import { IFormattedInstanceConfiguration, TInstanceGithubAuthenticationConfigurationKeys } from "@plane/types";
-// ui
 import { Button, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import {
   CodeBlock,
@@ -17,8 +18,6 @@ import {
   TControllerInputFormField,
   TCopyField,
 } from "@/components/common";
-// helpers
-import { API_BASE_URL, cn } from "@/helpers/common.helper";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -103,8 +102,7 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
       url: originURL,
       description: (
         <>
-          We will auto-generate this. Paste this into the{" "}
-          <CodeBlock darkerShade>Authorized origin URL</CodeBlock> field{" "}
+          We will auto-generate this. Paste this into the <CodeBlock darkerShade>Authorized origin URL</CodeBlock> field{" "}
           <a
             tabIndex={-1}
             href="https://github.com/settings/applications/new"
@@ -123,8 +121,8 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
       url: `${originURL}/auth/github/callback/`,
       description: (
         <>
-          We will auto-generate this. Paste this into your{" "}
-          <CodeBlock darkerShade>Authorized Callback URI</CodeBlock> field{" "}
+          We will auto-generate this. Paste this into your <CodeBlock darkerShade>Authorized Callback URI</CodeBlock>{" "}
+          field{" "}
           <a
             tabIndex={-1}
             href="https://github.com/settings/applications/new"
@@ -195,7 +193,7 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
                 </Button>
                 <Link
                   href="/authentication"
-                  className={cn(getButtonStyling("link-neutral", "md"), "font-medium")}
+                  className={cn(getButtonStyling("neutral-primary", "md"), "font-medium")}
                   onClick={handleGoBack}
                 >
                   Go back

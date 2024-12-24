@@ -1,5 +1,5 @@
 // plane helpers
-import { sanitizeHTML } from "@plane/helpers";
+import { sanitizeHTML } from "@plane/utils";
 // plane ui
 import { TEmojiLogoProps } from "@plane/ui";
 // types

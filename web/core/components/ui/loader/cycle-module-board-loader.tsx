@@ -1,8 +1,10 @@
+import range from "lodash/range";
+
 export const CycleModuleBoardLayout = () => (
   <div className="h-full w-full animate-pulse">
     <div className="flex h-full w-full justify-between">
       <div className="grid h-full w-full grid-cols-1 gap-6 overflow-y-auto p-8 lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 auto-rows-max transition-all">
-        {[...Array(5)].map((i) => (
+        {range(5).map((i) => (
           <div
             key={i}
             className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm"

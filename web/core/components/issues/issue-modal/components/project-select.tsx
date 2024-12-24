@@ -46,6 +46,7 @@ export const IssueProjectSelect: React.FC<TIssueProjectSelectProps> = observer((
                 onChange(projectId);
                 handleFormChange();
               }}
+              multiple={false}
               buttonVariant="border-with-text"
               renderCondition={(project) => shouldRenderProject(project)}
               tabIndex={getIndex("project_id")}

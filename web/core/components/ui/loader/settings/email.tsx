@@ -1,3 +1,5 @@
+import range from "lodash/range";
+
 export const EmailSettingsLoader = () => (
   <div className="mx-auto mt-8 h-full w-full overflow-y-auto px-6 lg:px-20 pb- animate-pulse">
     <div className="flex flex-col gap-2 pt-6 mb-2 pb-6 border-b border-custom-border-100">
@@ -8,7 +10,7 @@ export const EmailSettingsLoader = () => (
       <div className="flex items-center py-3">
         <span className="h-7 w-32 bg-custom-background-80 rounded" />
       </div>
-      {[...Array(4)].map((i) => (
+      {range(4).map((i) => (
         <div key={i} className="flex items-center justify-between">
           <div className="flex flex-col gap-2 py-3">
             <span className="h-6 w-28 bg-custom-background-80 rounded" />

@@ -3,13 +3,13 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { EIssuesStoreType } from "@plane/constants";
 // ui
 import { ArchiveIcon, Breadcrumbs, Tooltip, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
 import { PROJECT_ARCHIVES_BREADCRUMB_LIST } from "@/constants/archives";
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssues, useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -46,7 +46,6 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
               type="text"
               link={
                 <BreadcrumbLink
-                  href={`/${workspaceSlug}/projects`}
                   label={currentProjectDetails?.name ?? "Project"}
                   icon={
                     currentProjectDetails && (

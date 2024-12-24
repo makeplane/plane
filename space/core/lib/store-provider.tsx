@@ -9,13 +9,8 @@ let rootStore = new RootStore();
 
 export const StoreContext = createContext(rootStore);
 
-function initializeStore(initialData = {}) {
+function initializeStore() {
   const singletonRootStore = rootStore ?? new RootStore();
-  // If your page has Next.js data fetching methods that use a Mobx store, it will
-  // get hydrated here, check `pages/ssg.js` and `pages/ssr.js` for more details
-  if (initialData) {
-    singletonRootStore.hydrate(initialData);
-  }
   // For SSG and SSR always create a new store
   if (typeof window === "undefined") return singletonRootStore;
   // Create the store once in the client
@@ -29,8 +24,14 @@ export type StoreProviderProps = {
   initialState?: any;
 };
 
-export const StoreProvider = ({ children, initialState = {} }: StoreProviderProps) => {
-  const store = initializeStore(initialState);
+export const StoreProvider = ({ children, initialState = undefined }: StoreProviderProps) => {
+  const store = initializeStore();
+  // If your page has Next.js data fetching methods that use a Mobx store, it will
+  // get hydrated here, check `pages/ssg.js` and `pages/ssr.js` for more details
+  if (initialState) {
+    store.hydrate(initialState);
+  }
+
   return (
     <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
       <StoreContext.Provider value={store}>{children}</StoreContext.Provider>

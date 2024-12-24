@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // icons
 import { ListFilter, Search, X } from "lucide-react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks

@@ -25,12 +25,4 @@ export class InstanceService extends APIService {
         throw error;
       });
   }
-
-  async getInstanceChangeLog(): Promise<TPage> {
-    return this.get("/api/instances/changelog/")
-      .then((response) => response.data)
-      .catch((error) => {
-        throw error;
-      });
-  }
 }

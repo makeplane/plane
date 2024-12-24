@@ -21,7 +21,7 @@ import { clearOPFS, getGroupedIssueResults, getSubGroupedIssueResults, log, logE
 
 const DB_VERSION = 1;
 const PAGE_SIZE = 500;
-const BATCH_SIZE = 500;
+const BATCH_SIZE = 50;
 
 type TProjectStatus = {
   issues: { status: undefined | "loading" | "ready" | "error" | "syncing"; sync: Promise<void> | undefined };
@@ -59,10 +59,10 @@ export class Storage {
     this.workspaceSlug = "";
   };
 
-  clearStorage = async () => {
+  clearStorage = async (force = false) => {
     try {
-      await this.db.close();
-      await clearOPFS();
+      await this.db?.close();
+      await clearOPFS(force);
       this.reset();
     } catch (e) {
       console.error("Error clearing sqlite sync storage", e);
@@ -251,7 +251,7 @@ export class Storage {
 
     activeSpan?.setAttributes({
       projectId: projectId,
-      count: response.total_count,
+      count: response?.total_results,
     });
   };
 
@@ -294,7 +294,14 @@ export class Storage {
         log(`Project ${projectId} is loading, falling back to server`);
       }
       const issueService = new IssueService();
-      return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries, config);
+
+      // Ignore projectStatus if projectId is not provided
+      if (projectId) {
+        return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries, config);
+      }
+      if (this.status !== "ready" && !rootStore.user.localDBEnabled) {
+        return;
+      }
     }
 
     const { cursor, group_by, sub_group_by } = queries;
@@ -382,10 +389,10 @@ export class Storage {
 
   getIssue = async (issueId: string) => {
     try {
-      if (!rootStore.user.localDBEnabled) return;
+      if (!rootStore.user.localDBEnabled || this.status !== "ready") return;
 
       const issues = await runQuery(`select * from issues where id='${issueId}'`);
-      if (issues.length) {
+      if (Array.isArray(issues) && issues.length) {
         return formatLocalIssue(issues[0]);
       }
     } catch (err) {

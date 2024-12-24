@@ -1,4 +1,4 @@
-import { uniqBy } from "lodash";
+import { orderBy, result, uniqBy } from "lodash";
 import set from "lodash/set";
 import { action, observable, makeObservable, runInAction, computed } from "mobx";
 import { v4 as uuidv4 } from "uuid";
@@ -26,10 +26,15 @@ export interface IFavoriteStore {
   updateFavorite: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<IFavorite>;
   deleteFavorite: (workspaceSlug: string, favoriteId: string) => Promise<void>;
   getGroupedFavorites: (workspaceSlug: string, favoriteId: string) => Promise<IFavorite[]>;
-  moveFavorite: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<void>;
+  moveFavoriteToFolder: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<void>;
   removeFavoriteEntity: (workspaceSlug: string, entityId: string) => Promise<void>;
-  moveFavoriteFolder: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<void>;
-  removeFromFavoriteFolder: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<void>;
+  reOrderFavorite: (
+    workspaceSlug: string,
+    favoriteId: string,
+    destinationId: string,
+    edge: string | undefined
+  ) => Promise<void>;
+  removeFromFavoriteFolder: (workspaceSlug: string, favoriteId: string) => Promise<void>;
   removeFavoriteFromStore: (entity_identifier: string) => void;
 }
 
@@ -64,9 +69,9 @@ export class FavoriteStore implements IFavoriteStore {
       // CRUD actions
       addFavorite: action,
       getGroupedFavorites: action,
-      moveFavorite: action,
+      moveFavoriteToFolder: action,
       removeFavoriteEntity: action,
-      moveFavoriteFolder: action,
+      reOrderFavorite: action,
       removeFavoriteEntityFromStore: action,
       removeFromFavoriteFolder: action,
     });
@@ -168,60 +173,65 @@ export class FavoriteStore implements IFavoriteStore {
    * @param data
    * @returns Promise<void>
    */
-  moveFavorite = async (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => {
-    const oldParent = this.favoriteMap[favoriteId].parent;
+  moveFavoriteToFolder = async (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => {
     try {
+      await this.favoriteService.updateFavorite(workspaceSlug, favoriteId, data);
       runInAction(() => {
         // add parent of the favorite
         set(this.favoriteMap, [favoriteId, "parent"], data.parent);
       });
-      await this.favoriteService.updateFavorite(workspaceSlug, favoriteId, data);
     } catch (error) {
-      console.error("Failed to move favorite from favorite store");
-
-      // revert the changes
-      runInAction(() => {
-        if (!data.parent) return;
-
-        // revert the parent
-        set(this.favoriteMap, [favoriteId, "parent"], oldParent);
-      });
+      console.error("Failed to move favorite to folder", error);
       throw error;
     }
   };
 
-  moveFavoriteFolder = async (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => {
-    const initialSequence = this.favoriteMap[favoriteId].sequence;
+  reOrderFavorite = async (
+    workspaceSlug: string,
+    favoriteId: string,
+    destinationId: string,
+    edge: string | undefined
+  ) => {
     try {
-      runInAction(() => {
-        set(this.favoriteMap, [favoriteId, "sequence"], data.sequence);
-      });
+      let resultSequence = 10000;
+      if (edge) {
+        const sortedIds = orderBy(Object.values(this.favoriteMap), "sequence", "desc").map((fav: IFavorite) => fav.id);
+        const destinationSequence = this.favoriteMap[destinationId]?.sequence || undefined;
+        if (destinationSequence) {
+          const destinationIndex = sortedIds.findIndex((id) => id === destinationId);
+          if (edge === "reorder-above") {
+            const prevSequence = this.favoriteMap[sortedIds[destinationIndex - 1]]?.sequence || undefined;
+            if (prevSequence) {
+              resultSequence = (destinationSequence + prevSequence) / 2;
+            } else {
+              resultSequence = destinationSequence + resultSequence;
+            }
+          } else {
+            resultSequence = destinationSequence - resultSequence;
+          }
+        }
+      }
 
-      await this.favoriteService.updateFavorite(workspaceSlug, favoriteId, data);
+      await this.favoriteService.updateFavorite(workspaceSlug, favoriteId, { sequence: resultSequence });
+
+      runInAction(() => {
+        set(this.favoriteMap, [favoriteId, "sequence"], resultSequence);
+      });
     } catch (error) {
       console.error("Failed to move favorite folder");
-      runInAction(() => {
-        set(this.favoriteMap, [favoriteId, "sequence"], initialSequence);
-        throw error;
-      });
+      throw error;
     }
   };
 
-  removeFromFavoriteFolder = async (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => {
-    const parent = this.favoriteMap[favoriteId].parent;
+  removeFromFavoriteFolder = async (workspaceSlug: string, favoriteId: string) => {
     try {
+      await this.favoriteService.updateFavorite(workspaceSlug, favoriteId, { parent: null });
       runInAction(() => {
         //remove parent
         set(this.favoriteMap, [favoriteId, "parent"], null);
       });
-      await this.favoriteService.updateFavorite(workspaceSlug, favoriteId, data);
     } catch (error) {
       console.error("Failed to move favorite");
-      runInAction(() => {
-        set(this.favoriteMap, [favoriteId, "parent"], parent);
-
-        throw error;
-      });
       throw error;
     }
   };
@@ -356,7 +366,7 @@ export class FavoriteStore implements IFavoriteStore {
           set(this.favoriteMap, [favorite.id], favorite);
           this.favoriteIds.push(favorite.id);
           this.favoriteIds = uniqBy(this.favoriteIds, (id) => id);
-          favorite.entity_identifier && set(this.entityMap, [favorite.entity_identifier], favorite);
+          if (favorite.entity_identifier) set(this.entityMap, [favorite.entity_identifier], favorite);
         });
       });
 

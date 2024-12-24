@@ -1,9 +1,9 @@
 import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
 import { NodeSelection } from "@tiptap/pm/state";
+// plane utils
+import { cn } from "@plane/utils";
 // extensions
 import { CustoBaseImageNodeViewProps, ImageToolbarRoot } from "@/extensions/custom-image";
-// helpers
-import { cn } from "@/helpers/common";
 
 const MIN_SIZE = 100;
 
@@ -118,7 +118,6 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
         height: `${Math.round(initialHeight)}px` satisfies Pixel,
         aspectRatio: aspectRatioCalculated,
       };
-
       setSize(initialComputedSize);
       updateAttributesSafely(
         initialComputedSize,
