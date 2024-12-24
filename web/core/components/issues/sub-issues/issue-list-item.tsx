@@ -165,6 +165,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                 issueId={issueId}
                 disabled={disabled}
                 subIssueOperations={subIssueOperations}
+                issueServiceType={issueServiceType}
               />
             </div>
 
