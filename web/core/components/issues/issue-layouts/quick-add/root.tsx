@@ -33,6 +33,7 @@ export type TQuickAddIssueForm = {
 };
 
 export type TQuickAddIssueButton = {
+  isEpic?: boolean;
   onClick: () => void;
 };
 
@@ -45,6 +46,7 @@ type TQuickAddIssueRoot = {
   containerClassName?: string;
   setIsQuickAddOpen?: (isOpen: boolean) => void;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
+  isEpic?: boolean;
 };
 
 const defaultValues: Partial<TIssue> = {
@@ -61,6 +63,7 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
     containerClassName = "",
     setIsQuickAddOpen,
     quickAddCallback,
+    isEpic = false,
   } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
@@ -112,7 +115,7 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
         loading: "Adding issue...",
         success: {
           title: "Success!",
-          message: () => "Issue created successfully.",
+          message: () => `${isEpic ? "Epic" : "Issue"} created successfully.`,
           actionItems: (data) => (
             <CreateIssueToastActionItems
               workspaceSlug={workspaceSlug.toString()}
@@ -168,7 +171,7 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
         />
       ) : (
         <>
-          {QuickAddButton && <QuickAddButton onClick={() => handleIsOpen(true)} />}
+          {QuickAddButton && <QuickAddButton isEpic={isEpic} onClick={() => handleIsOpen(true)} />}
           {customQuickAddButton && <>{customQuickAddButton}</>}
           {!QuickAddButton && !customQuickAddButton && (
             <div
@@ -176,7 +179,7 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
               onClick={() => handleIsOpen(true)}
             >
               <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-              <span className="text-sm font-medium">New Issue</span>
+              <span className="text-sm font-medium">{`New ${isEpic ? "Epic" : "Issue"}`}</span>
             </div>
           )}
         </>

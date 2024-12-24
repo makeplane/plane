@@ -25,6 +25,7 @@ type Props = {
   ignoreGroupedFilters?: Partial<TIssueGroupByOptions>[];
   cycleViewDisabled?: boolean;
   moduleViewDisabled?: boolean;
+  isEpic?: boolean;
 };
 
 export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
@@ -37,6 +38,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
     ignoreGroupedFilters = [],
     cycleViewDisabled = false,
     moduleViewDisabled = false,
+    isEpic = false,
   } = props;
 
   const isDisplayFilterEnabled = (displayFilter: keyof IIssueDisplayFilterOptions) =>
@@ -61,6 +63,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
             handleUpdate={handleDisplayPropertiesUpdate}
             cycleViewDisabled={cycleViewDisabled}
             moduleViewDisabled={moduleViewDisabled}
+            isEpic={isEpic}
           />
         </div>
       )}
