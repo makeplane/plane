@@ -9,7 +9,7 @@
     "dev": "turbo run develop",
     "develop": "nodemon --config \"./nodemon.json\"/",
     "build": "tsup src/start.ts --format cjs --dts",
-    "start": "node dist/start.js -p 8080",
+    "start": "node dist/start.cjs -p 8080",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "eslint . --ext .ts",
     "db:generate": "drizzle-kit generate",

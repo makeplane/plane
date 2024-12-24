@@ -2,10 +2,9 @@ import { Controller, Get, Post } from "@/lib";
 import { Request, Response } from "express";
 // etl
 import { createJiraService, JiraProject, JiraV2Service } from "@plane/etl/jira-server";
-import { createOrUpdateCredentials, getCredentialsByWorkspaceId } from "@/db/query";
 import { JiraResource } from "@plane/etl/jira";
 // db
-import { createOrUpdateCredentials } from "@/db/query";
+import { createOrUpdateCredentials, getCredentialsByWorkspaceId } from "@/db/query";
 // helpers
 import { createPlaneClient } from "@/helpers/utils";
 import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
