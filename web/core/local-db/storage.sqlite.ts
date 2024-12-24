@@ -3,19 +3,18 @@ import * as Comlink from "comlink";
 import set from "lodash/set";
 // plane
 import { EIssueGroupBYServerToProperty } from "@plane/constants";
-import { TIssue } from "@plane/types";
 // lib
 import { rootStore } from "@/lib/store-context";
 // services
 import { IssueService } from "@/services/issue/issue.service";
 //
-import { ARRAY_FIELDS, BOOLEAN_FIELDS } from "./utils/constants";
 import { getSubIssuesWithDistribution } from "./utils/data.utils";
 import createIndexes from "./utils/indexes";
 import { addIssuesBulk, syncDeletesToLocal } from "./utils/load-issues";
 import { loadWorkSpaceData } from "./utils/load-workspace";
 import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from "./utils/query-constructor";
 import { runQuery } from "./utils/query-executor";
+import { deleteOption, formatLocalIssue, getLastSyncTime, getOption, setOption } from "./utils/storage.sqlite.utils";
 import { createTables } from "./utils/tables";
 import { clearOPFS, getGroupedIssueResults, getSubGroupedIssueResults, log, logError } from "./utils/utils";
 
@@ -157,7 +156,7 @@ export class Storage {
       // Your SQLite code here.
       await createTables();
 
-      await this.setOption("DB_VERSION", DB_VERSION.toString());
+      await setOption("DB_VERSION", DB_VERSION.toString());
       return true;
     } catch (error) {
       this.status = "error";
@@ -178,13 +177,13 @@ export class Storage {
     }
     try {
       await startSpan({ name: "LOAD_WS", attributes: { slug: this.workspaceSlug } }, async () => {
-        this.setOption("sync_workspace", new Date().toUTCString());
+        setOption("sync_workspace", new Date().toUTCString());
         await loadWorkSpaceData(this.workspaceSlug);
-        this.deleteOption("sync_workspace");
+        deleteOption("sync_workspace");
       });
     } catch (e) {
       logError(e);
-      this.deleteOption("sync_workspace");
+      deleteOption("sync_workspace");
     }
   };
 
@@ -257,8 +256,8 @@ export class Storage {
       description: true,
     };
 
-    const syncedAt = await this.getLastSyncTime(projectId);
-    const projectSync = await this.getOption(projectId);
+    const syncedAt = await getLastSyncTime(projectId);
+    const projectSync = await getOption(projectId);
 
     if (syncedAt) {
       queryParams["updated_at__gt"] = syncedAt;
@@ -295,7 +294,7 @@ export class Storage {
     if (status === "loading") {
       await createIndexes();
     }
-    this.setOption(projectId, "ready");
+    setOption(projectId, "ready");
     this.setStatus(projectId, "ready");
     this.setSync(projectId, undefined);
 
@@ -303,42 +302,6 @@ export class Storage {
       projectId: projectId,
       count: response?.total_results,
     });
-  };
-
-  /**
-   * Gets the count of issues for a project
-   * @param projectId - Project identifier
-   * @returns Promise<number> - Count of issues
-   */
-  public getIssueCount = async (projectId: string): Promise<number> => {
-    const count = await runQuery(`select count(*) as count from issues where project_id='${projectId}'`);
-    return count[0]["count"];
-  };
-
-  /**
-   * Gets the last updated issue for a project
-   * @param projectId - Project identifier
-   * @returns Promise<any | undefined> - Last updated issue or undefined
-   */
-  public getLastUpdatedIssue = async (projectId: string): Promise<any | undefined> => {
-    const lastUpdatedIssue = await runQuery(
-      `select id, name, updated_at, sequence_id from issues WHERE project_id='${projectId}' AND is_local_update IS NULL order by datetime(updated_at) desc limit 1`
-    );
-
-    return lastUpdatedIssue.length ? lastUpdatedIssue[0] : undefined;
-  };
-
-  /**
-   * Gets the last sync time for a project
-   * @param projectId - Project identifier
-   * @returns Promise<string | false> - Last sync time or false
-   */
-  public getLastSyncTime = async (projectId: string): Promise<string | false> => {
-    const issue = await this.getLastUpdatedIssue(projectId);
-    if (!issue) {
-      return false;
-    }
-    return issue.updated_at;
   };
 
   /**
@@ -486,7 +449,7 @@ export class Storage {
    * @returns Promise<any> - Sub-issues data
    */
   public getSubIssues = async (workspaceSlug: string, projectId: string, issueId: string): Promise<any> => {
-    const workspace_synced_at = await this.getOption("workspace_synced_at");
+    const workspace_synced_at = await getOption("workspace_synced_at");
     if (!workspace_synced_at) {
       const issueService = new IssueService();
       return await issueService.subIssues(workspaceSlug, projectId, issueId);
@@ -531,64 +494,12 @@ export class Storage {
   };
 
   /**
-   * Gets an option value
-   * @param key - Option key
-   * @param fallback - Fallback value
-   * @returns Option value or fallback
-   */
-  public getOption = async (
-    key: string,
-    fallback?: string | boolean | number
-  ): Promise<string | boolean | number | undefined> => {
-    try {
-      const options = await runQuery(`select * from options where key='${key}'`);
-      if (options.length) {
-        return options[0].value;
-      }
-
-      return fallback;
-    } catch (e) {
-      return fallback;
-    }
-  };
-
-  /**
-   * Sets an option value
-   * @param key - Option key
-   * @param value - Option value
-   */
-  public setOption = async (key: string, value: string): Promise<void> => {
-    await runQuery(`insert or replace into options (key, value) values ('${key}', '${value}')`);
-  };
-
-  /**
-   * Deletes an option
-   * @param key - Option key
-   */
-  public deleteOption = async (key: string): Promise<void> => {
-    await runQuery(` DELETE FROM options where key='${key}'`);
-  };
-
-  /**
-   * Gets multiple options
-   * @param keys - Option keys
-   * @returns Options data
-   */
-  public getOptions = async (keys: string[]): Promise<Record<string, string | boolean | number>> => {
-    const options = await runQuery(`select * from options where key in ('${keys.join("','")}')`);
-    return options.reduce((acc: any, option: any) => {
-      acc[option.key] = option.value;
-      return acc;
-    }, {});
-  };
-
-  /**
    * Checks if a write operation is in progress
    * @param op - Operation identifier
    * @returns Promise<boolean> - True if write is in progress
    */
   public getIsWriteInProgress = async (op: string): Promise<boolean> => {
-    const writeStartTime = await this.getOption(op, false);
+    const writeStartTime = (await getOption(op, "")) as string;
     if (writeStartTime) {
       const current = new Date();
       const start = new Date(writeStartTime);
@@ -600,26 +511,3 @@ export class Storage {
 }
 
 export const persistence = new Storage();
-
-/**
- * Formats an issue fetched from local db into the required format
- * @param issue - Raw issue data from database
- * @returns Formatted issue with proper types
- */
-export const formatLocalIssue = (
-  issue: any
-): TIssue & { group_id?: string; total_issues: number; sub_group_id?: string } => {
-  const currIssue = { ...issue };
-
-  // Parse array fields from JSON strings
-  ARRAY_FIELDS.forEach((field: string) => {
-    currIssue[field] = currIssue[field] ? JSON.parse(currIssue[field]) : [];
-  });
-
-  // Convert boolean fields to actual boolean values
-  BOOLEAN_FIELDS.forEach((field: string) => {
-    currIssue[field] = currIssue[field] === 1;
-  });
-
-  return currIssue;
-};
