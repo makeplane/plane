@@ -1,8 +1,8 @@
-import { useImperativeHandle, MutableRefObject, useEffect } from "react";
+import { useImperativeHandle, MutableRefObject, useEffect, useState } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { DOMSerializer } from "@tiptap/pm/model";
 import { EditorProps } from "@tiptap/pm/view";
-import { useEditor as useTiptapEditor } from "@tiptap/react";
+import { Editor, useEditorState, useEditor as useTiptapEditor } from "@tiptap/react";
 import * as Y from "yjs";
 // components
 import { getEditorMenuItems } from "@/components/menus";
@@ -106,6 +106,18 @@ export const useEditor = (props: CustomEditorProps) => {
     onDestroy: () => handleEditorReady?.(false),
   });
 
+  const editorState = useEditorState({
+    editor,
+    // This function will be called every time the editor state changes
+    selector: ({ editor: editorInstance }: { editor: Editor }) => ({
+      // It will only re-render if the bold or italic state changes
+      isBold: editorInstance.isActive("bold"),
+      isItalic: editorInstance.isActive("italic"),
+    }),
+  });
+
+  console.log("editorState", editorState);
+  const [currentEditorState, setCurrentEditorState] = useState(editorState);
   // Effect for syncing SWR data
   useEffect(() => {
     // value is null when intentionally passed where syncing is not yet
@@ -124,6 +136,9 @@ export const useEditor = (props: CustomEditorProps) => {
       }
     }
   }, [editor, value, id]);
+  useEffect(() => {
+    setCurrentEditorState(editorState);
+  }, [editorState]);
 
   useImperativeHandle(
     forwardedRef,
@@ -278,7 +293,7 @@ export const useEditor = (props: CustomEditorProps) => {
       emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
       listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
     }),
-    [editor]
+    [editor, currentEditorState]
   );
 
   if (!editor) {
