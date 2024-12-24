@@ -210,7 +210,7 @@ export const useEditor = (props: CustomEditorProps) => {
         };
       },
       scrollSummary: (marking: IMarking): void => {
-        if (editor) return;
+        if (!editor) return;
         scrollSummary(editor, marking);
       },
       isEditorReadyToDiscard: () => editor?.storage.imageComponent.uploadInProgress === false,
