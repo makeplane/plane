@@ -1,9 +1,8 @@
-import { useImperativeHandle, MutableRefObject, useEffect, useState } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { DOMSerializer } from "@tiptap/pm/model";
 import { EditorProps } from "@tiptap/pm/view";
-import { Editor, useEditorState, useEditor as useTiptapEditor } from "@tiptap/react";
-import { useEditor as useTiptapEditor, Editor, Extensions } from "@tiptap/react";
+import { useEditor as useTiptapEditor, Extensions } from "@tiptap/react";
+import { useImperativeHandle, MutableRefObject, useEffect } from "react";
 import * as Y from "yjs";
 // components
 import { getEditorMenuItems } from "@/components/menus";
@@ -72,46 +71,10 @@ export const useEditor = (props: CustomEditorProps) => {
     autofocus = false,
   } = props;
 
-  const editor = useTiptapEditor({
-    immediatelyRender: true,
-    shouldRerenderOnTransaction: false,
-    autofocus,
-    editorProps: {
-      ...CoreEditorProps({
-        editorClassName,
-      }),
-      ...editorProps,
-    },
-    extensions: [
-      ...CoreEditorExtensions({
-        disabledExtensions,
-        enableHistory,
-        fileHandler,
-        mentionConfig: {
-          mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
-          mentionHighlights: mentionHandler.highlights,
-        },
-        placeholder,
-        tabIndex,
-      }),
-      ...extensions,
-    ],
-    content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
-    onCreate: () => handleEditorReady?.(true),
-    onTransaction: () => {
-      onTransaction?.();
-    },
-    onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
-    onDestroy: () => handleEditorReady?.(false),
-  });
-  // states
-  const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
-  // refs
-  const editorRef: MutableRefObject<Editor | null> = useRef(null);
-  const savedSelectionRef = useRef(savedSelection);
   const editor = useTiptapEditor(
     {
-      editable,
+      immediatelyRender: true,
+      shouldRerenderOnTransaction: false,
       autofocus,
       editorProps: {
         ...CoreEditorProps({
@@ -133,8 +96,7 @@ export const useEditor = (props: CustomEditorProps) => {
       ],
       content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
       onCreate: () => handleEditorReady?.(true),
-      onTransaction: ({ editor }) => {
-        setSavedSelection(editor.state.selection);
+      onTransaction: () => {
         onTransaction?.();
       },
       onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
@@ -143,18 +105,6 @@ export const useEditor = (props: CustomEditorProps) => {
     [editable]
   );
 
-  const editorState = useEditorState({
-    editor,
-    // This function will be called every time the editor state changes
-    selector: ({ editor: editorInstance }: { editor: Editor }) => ({
-      // It will only re-render if the bold or italic state changes
-      isBold: editorInstance.isActive("bold"),
-      isItalic: editorInstance.isActive("italic"),
-    }),
-  });
-
-  console.log("editorState", editorState);
-  const [currentEditorState, setCurrentEditorState] = useState(editorState);
   // Effect for syncing SWR data
   useEffect(() => {
     // value is null when intentionally passed where syncing is not yet
@@ -173,9 +123,6 @@ export const useEditor = (props: CustomEditorProps) => {
       }
     }
   }, [editor, value, id]);
-  useEffect(() => {
-    setCurrentEditorState(editorState);
-  }, [editorState]);
 
   useImperativeHandle(
     forwardedRef,
@@ -330,7 +277,7 @@ export const useEditor = (props: CustomEditorProps) => {
       emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
       listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
     }),
-    [editor, currentEditorState]
+    [editor]
   );
 
   if (!editor) {
