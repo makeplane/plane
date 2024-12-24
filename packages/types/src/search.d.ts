@@ -76,6 +76,8 @@ export type TSearchResponse = {
 
 export type TSearchEntityRequestPayload = {
   count: number;
+  project_id?: string;
   query_type: TSearchEntities[];
   query: string;
+  team_id?: string;
 };
