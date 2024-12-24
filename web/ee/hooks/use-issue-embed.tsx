@@ -1,29 +1,26 @@
-// editor
+// plane editor
 import { TEmbedItem, TIssueEmbedConfig } from "@plane/editor";
-// types
-import { TPageEmbedResponse, TPageEmbedType } from "@plane/types";
-// ui
+// plane ui
 import { PriorityIcon } from "@plane/ui";
 // plane web components
 import { IssueEmbedCard, IssueEmbedUpgradeCard } from "@/plane-web/components/pages";
 // plane web hooks
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // services
-import { ProjectPageService } from "@/services/page";
+import { ProjectService } from "@/services/project";
+const projectService = new ProjectService();
 
-const pageService = new ProjectPageService();
-
-export const useIssueEmbed = (workspaceSlug: string, projectId: string, queryType: TPageEmbedType = "issue") => {
+export const useIssueEmbed = (workspaceSlug: string, projectId: string) => {
   // store hooks
   const isIssueEmbedEnabled = useFlag(workspaceSlug, "PAGE_ISSUE_EMBEDS");
 
   const fetchIssues = async (searchQuery: string): Promise<TEmbedItem[]> => {
-    const response = await pageService.searchEmbed<TPageEmbedResponse[]>(workspaceSlug, projectId, {
-      query_type: queryType,
+    const response = await projectService.searchEntity(workspaceSlug, projectId, {
+      query_type: ["issue"],
       query: searchQuery,
       count: 10,
     });
-    const structuredIssues: TEmbedItem[] = (response ?? []).map((issue) => ({
+    const structuredIssues: TEmbedItem[] = (response.issue ?? []).map((issue) => ({
       id: issue.id,
       subTitle: `${issue.project__identifier}-${issue.sequence_id}`,
       title: issue.name,
