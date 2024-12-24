@@ -132,20 +132,33 @@ class Command(BaseCommand):
                 "is_encrypted": False,
             },
             {
-                "key": "OPENAI_API_KEY",
-                "value": os.environ.get("OPENAI_API_KEY"),
-                "category": "OPENAI",
+                "key": "LLM_API_KEY",
+                "value": os.environ.get("LLM_API_KEY"),
+                "category": "AI",
                 "is_encrypted": True,
             },
             {
-                "key": "GPT_ENGINE",
+                "key": "LLM_PROVIDER",
+                "value": os.environ.get("LLM_PROVIDER", "openai"),
+                "category": "AI",
+                "is_encrypted": False,
+            },
+            {
+                "key": "LLM_MODEL",
+                "value": os.environ.get("LLM_MODEL", "gpt-4o-mini"),
+                "category": "AI",
+                "is_encrypted": False,
+            },
+            # Deprecated, use LLM_MODEL
+            {
+                "key": "GPT_ENGINE",  
                 "value": os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"),
                 "category": "SMTP",
                 "is_encrypted": False,
             },
             {
                 "key": "UNSPLASH_ACCESS_KEY",
-                "value": os.environ.get("UNSPLASH_ACESS_KEY", ""),
+                "value": os.environ.get("UNSPLASH_ACCESS_KEY", ""),
                 "category": "UNSPLASH",
                 "is_encrypted": True,
             },
