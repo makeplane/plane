@@ -35,7 +35,7 @@ class Sticky(BaseModel):
     def save(self, *args, **kwargs):
         if self._state.adding:
             # Get the maximum sequence value from the database
-            last_id = Sticky.objects.filter(project=self.workspace).aggregate(
+            last_id = Sticky.objects.filter(workspace=self.workspace).aggregate(
                 largest=models.Max("sort_order")
             )["largest"]
             # if last_id is not None
