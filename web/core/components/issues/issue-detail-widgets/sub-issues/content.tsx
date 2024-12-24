@@ -81,11 +81,16 @@ export const SubIssuesCollapsibleContent: FC<Props> = observer((props) => {
 
   const handleFetchSubIssues = useCallback(async () => {
     if (!subIssueHelpers.issue_visibility.includes(parentIssueId)) {
-      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
-      await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
-      setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
+      try {
+        setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
+        await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
+        setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
+      } catch (error) {
+        console.error("Error fetching sub-issues:", error);
+      } finally {
+        setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", "");
+      }
     }
-    setSubIssueHelpers(`${parentIssueId}_root`, "issue_visibility", parentIssueId);
   }, [
     parentIssueId,
     projectId,

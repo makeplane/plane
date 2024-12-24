@@ -13,7 +13,7 @@ import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane constants
-import { EIssueLayoutTypes, ALL_ISSUES } from "@plane/constants";
+import { EIssueLayoutTypes, ALL_ISSUES, EIssueServiceType } from "@plane/constants";
 // types
 import {
   TIssue,
@@ -203,7 +203,12 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   // API Abort controller
   controller: AbortController;
 
-  constructor(_rootStore: IIssueRootStore, issueFilterStore: IBaseIssueFilterStore, isArchived = false) {
+  constructor(
+    _rootStore: IIssueRootStore,
+    issueFilterStore: IBaseIssueFilterStore,
+    isArchived = false,
+    serviceType = EIssueServiceType.ISSUES
+  ) {
     makeObservable(this, {
       // observable
       loader: observable,
@@ -257,7 +262,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     this.isArchived = isArchived;
 
-    this.issueService = new IssueService();
+    this.issueService = new IssueService(serviceType);
     this.issueArchiveService = new IssueArchiveService();
     this.issueDraftService = new IssueDraftService();
     this.moduleService = new ModuleService();
