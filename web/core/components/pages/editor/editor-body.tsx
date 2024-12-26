@@ -30,14 +30,15 @@ import { EditorAIMenu } from "@/plane-web/components/pages";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
+// plane web services
+import { WorkspaceService } from "@/plane-web/services";
 // services
 import { FileService } from "@/services/file.service";
-import { ProjectService } from "@/services/project";
 // store
 import { IPage } from "@/store/pages/page";
 // services init
+const workspaceService = new WorkspaceService();
 const fileService = new FileService();
-const projectService = new ProjectService();
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
@@ -63,7 +64,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: async (payload) =>
-      await projectService.searchEntity(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "", payload),
+      await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+        ...payload,
+        project_id: projectId?.toString() ?? "",
+      }),
   });
   // editor flaggings
   const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());

@@ -1,13 +1,15 @@
 "use client";
 import { useMemo } from "react";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { EIssueServiceType } from "@plane/constants";
 import { TIssue, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // helper
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker, useIssueDetail } from "@/hooks/store";
+import { useEventTracker, useIssueDetail, useProjectState } from "@/hooks/store";
+// plane-web
+import { updateEpicAnalytics } from "@/plane-web/helpers/epic-analytics";
 // type
 import { TSubIssueOperations } from "../../sub-issues";
 
@@ -20,16 +22,26 @@ export type TRelationIssueOperations = {
 export const useSubIssueOperations = (
   issueServiceType: TIssueServiceType = EIssueServiceType.ISSUES
 ): TSubIssueOperations => {
+  // router
+  const { epicId: epicIdParam } = useParams();
+  const pathname = usePathname();
+  // store hooks
   const {
+    issue: { getIssueById },
     subIssues: { setSubIssueHelpers },
-    fetchSubIssues,
     createSubIssues,
     updateSubIssue,
     deleteSubIssue,
   } = useIssueDetail();
-  const { removeSubIssue } = useIssueDetail(issueServiceType);
+  const { getStateById } = useProjectState();
+  const { peekIssue: epicPeekIssue } = useIssueDetail(EIssueServiceType.EPICS);
+  // const { updateEpicAnalytics } = useIssueTypes();
+  const { updateAnalytics } = updateEpicAnalytics();
+  const { fetchSubIssues, removeSubIssue } = useIssueDetail(issueServiceType);
   const { captureIssueEvent } = useEventTracker();
-  const pathname = usePathname();
+
+  // derived values
+  const epicId = epicIdParam || epicPeekIssue?.issueId;
 
   const subIssueOperations: TSubIssueOperations = useMemo(
     () => ({
@@ -39,7 +51,7 @@ export const useSubIssueOperations = (
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Link Copied!",
-            message: "Issue link copied to clipboard.",
+            message: `${issueServiceType === EIssueServiceType.ISSUES ? "Issue" : "Epic"} link copied to clipboard`,
           });
         });
       },
@@ -50,7 +62,7 @@ export const useSubIssueOperations = (
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
-            message: "Error fetching sub-issues",
+            message: `Error fetching ${issueServiceType === EIssueServiceType.ISSUES ? "sub-issues" : "issues"}`,
           });
         }
       },
@@ -60,13 +72,13 @@ export const useSubIssueOperations = (
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",
-            message: "Sub-issues added successfully",
+            message: `${issueServiceType === EIssueServiceType.ISSUES ? "Sub-issues" : "Issues"} added successfully`,
           });
         } catch (error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
-            message: "Error adding sub-issue",
+            message: `Error adding ${issueServiceType === EIssueServiceType.ISSUES ? "sub-issues" : "issues"}`,
           });
         }
       },
@@ -82,6 +94,30 @@ export const useSubIssueOperations = (
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           await updateSubIssue(workspaceSlug, projectId, parentIssueId, issueId, issueData, oldIssue, fromModal);
+
+          if (issueServiceType === EIssueServiceType.EPICS) {
+            const oldState = getStateById(oldIssue?.state_id)?.group;
+
+            if (oldState && oldIssue && issueData && epicId) {
+              // Check if parent_id is changed if yes then decrement the epic analytics count
+              if (issueData.parent_id && oldIssue?.parent_id && issueData.parent_id !== oldIssue?.parent_id) {
+                updateAnalytics(workspaceSlug, projectId, epicId.toString(), {
+                  decrementStateGroupCount: `${oldState}_issues`,
+                });
+              }
+
+              // Check if state_id is changed if yes then decrement the old state group count and increment the new state group count
+              if (issueData.state_id) {
+                const newState = getStateById(issueData.state_id)?.group;
+                if (oldState && newState && oldState !== newState) {
+                  updateAnalytics(workspaceSlug, projectId, epicId.toString(), {
+                    decrementStateGroupCount: `${oldState}_issues`,
+                    incrementStateGroupCount: `${newState}_issues`,
+                  });
+                }
+              }
+            }
+          }
           captureIssueEvent({
             eventName: "Sub-issue updated",
             payload: { ...oldIssue, ...issueData, state: "SUCCESS", element: "Issue detail page" },
@@ -118,6 +154,16 @@ export const useSubIssueOperations = (
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           await removeSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
+          if (issueServiceType === EIssueServiceType.EPICS) {
+            const issueBeforeRemoval = getIssueById(issueId);
+            const oldState = getStateById(issueBeforeRemoval?.state_id)?.group;
+
+            if (epicId && oldState) {
+              updateAnalytics(workspaceSlug, projectId, epicId.toString(), {
+                decrementStateGroupCount: `${oldState}_issues`,
+              });
+            }
+          }
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",
