@@ -313,6 +313,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
               ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
             }}
             quickAddCallback={quickAddCallback}
+            isEpic={isEpic}
           />
         </div>
       )}

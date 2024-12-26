@@ -123,11 +123,12 @@ export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = o
                 </div>
               }
             >
-              <CustomMenu.MenuItem onClick={handleNewIssue}>New issue</CustomMenu.MenuItem>
+              <CustomMenu.MenuItem onClick={handleNewIssue}>{`New ${isEpic ? "Epic" : "Issue"}`}</CustomMenu.MenuItem>
               {!isEpic && <CustomMenu.MenuItem onClick={handleExistingIssue}>Add existing issue</CustomMenu.MenuItem>}
             </CustomMenu>
           </div>
         }
+        isEpic={isEpic}
       />
     </>
   );

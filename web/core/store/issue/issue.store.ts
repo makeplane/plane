@@ -4,7 +4,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { EIssueServiceType } from "@plane/constants";
 // types
-import { TIssue, TIssueServiceType } from "@plane/types";
+import { TIssue } from "@plane/types";
 // helpers
 import { getCurrentDateTimeInISO } from "@/helpers/date-time.helper";
 // services
@@ -32,7 +32,7 @@ export class IssueStore implements IIssueStore {
   serviceType;
   issueService;
 
-  constructor(serviceType: TIssueServiceType) {
+  constructor() {
     makeObservable(this, {
       // observable
       issuesMap: observable,
@@ -41,8 +41,7 @@ export class IssueStore implements IIssueStore {
       updateIssue: action,
       removeIssue: action,
     });
-    this.serviceType = serviceType;
-    this.issueService = new IssueService(serviceType);
+    this.issueService = new IssueService();
   }
 
   // actions
@@ -88,7 +87,7 @@ export class IssueStore implements IIssueStore {
       });
     });
 
-    if (this.serviceType === EIssueServiceType.ISSUES) {
+    if (!this.issuesMap[issueId]?.is_epic) {
       updatePersistentLayer(issueId);
     }
   };
