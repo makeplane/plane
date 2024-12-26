@@ -427,8 +427,8 @@ export class BasePage implements TBasePage {
    */
   addToFavorites = async () => {
     const { workspaceSlug } = this.store.router;
-    const projectId = this.project_ids?.[0];
-    if (!workspaceSlug || !projectId || !this.id) return undefined;
+    const projectId = this.project_ids?.[0] ?? null;
+    if (!workspaceSlug || !this.id) return undefined;
 
     const pageIsFavorite = this.is_favorite;
     runInAction(() => {
