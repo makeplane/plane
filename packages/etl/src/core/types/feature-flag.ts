@@ -1,0 +1,6 @@
+export enum E_FEATURE_FLAGS {
+  ISSUE_TYPE_DISPLAY = "ISSUE_TYPE_DISPLAY",
+  ISSUE_TYPE_SETTINGS = "ISSUE_TYPE_SETTINGS",
+}
+
+export type TFeatureFlags = keyof typeof E_FEATURE_FLAGS;

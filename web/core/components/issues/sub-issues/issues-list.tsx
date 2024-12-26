@@ -60,6 +60,7 @@ export const IssueList: FC<IIssueList> = observer((props) => {
               disabled={disabled}
               handleIssueCrudState={handleIssueCrudState}
               subIssueOperations={subIssueOperations}
+              issueServiceType={issueServiceType}
             />
           </Fragment>
         ))}

@@ -6,13 +6,7 @@ import { IProject } from "./project";
 import { IUser } from "./users";
 import { IWorkspace } from "./workspace";
 
-export type TSearchEntities =
-  | "user_mention"
-  | "issue_mention"
-  | "project_mention"
-  | "cycle_mention"
-  | "module_mention"
-  | "page_mention";
+export type TSearchEntities = "user_mention" | "issue" | "project" | "cycle" | "module" | "page";
 
 export type TUserSearchResponse = {
   member__avatar_url: IUser["avatar_url"];
@@ -66,11 +60,11 @@ export type TPageSearchResponse = {
 };
 
 export type TSearchResponse = {
-  cycle_mention?: TCycleSearchResponse[];
-  issue_mention?: TIssueSearchResponse[];
-  module_mention?: TModuleSearchResponse[];
-  page_mention?: TPageSearchResponse[];
-  project_mention?: TProjectSearchResponse[];
+  cycle?: TCycleSearchResponse[];
+  issue?: TIssueSearchResponse[];
+  module?: TModuleSearchResponse[];
+  page?: TPageSearchResponse[];
+  project?: TProjectSearchResponse[];
   user_mention?: TUserSearchResponse[];
 };
 
