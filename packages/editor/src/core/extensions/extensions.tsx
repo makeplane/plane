@@ -33,9 +33,10 @@ import {
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 // types
+import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
 // plane editor extensions
-import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
+import { multipleSelectionExtension } from "./selection/multi-selection-tracker";
 
 type TArguments = {
   disabledExtensions: TExtensions[];
@@ -177,5 +178,6 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,
     }),
+    multipleSelectionExtension,
   ];
 };

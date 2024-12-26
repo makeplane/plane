@@ -488,3 +488,7 @@ p.editor-paragraph-block + p.editor-paragraph-block {
   background-color: var(--editor-colors-purple-background);
 }
 /* end background colors */
+
+.custom-selection {
+  background-color: rgba(var(--color-primary-100), 0.2);
+}

@@ -15,6 +15,9 @@ const lastActiveSelection = {
   left: 0,
 };
 
+let isDragging = false;
+let selectNodesHandler: (event: MouseEvent) => void;
+
 const updateCursorPosition = (event: MouseEvent, view: EditorView) => {
   if (!activeCursor) return;
 
@@ -41,43 +44,18 @@ const updateCursorPosition = (event: MouseEvent, view: EditorView) => {
   activeCursor.style.height = `${newHeight}px`;
   activeCursor.style.width = `${newWidth}px`;
 
-  // Get the editor's container
   const editorContainer = view.dom.parentElement;
   if (editorContainer) {
     const containerRect = editorContainer.getBoundingClientRect();
     const mouseY = event.clientY;
 
-    // Check if mouse is near the bottom of the visible area
     if (mouseY > containerRect.bottom - 50) {
-      editorContainer.scrollBy(0, 10); // Scroll down
-    }
-    // Check if mouse is near the top of the visible area
-    else if (mouseY < containerRect.top + 50) {
-      editorContainer.scrollBy(0, -10); // Scroll up
+      editorContainer.scrollBy(0, 10);
+    } else if (mouseY < containerRect.top + 50) {
+      editorContainer.scrollBy(0, -10);
     }
   }
-}; //   if (!activeCursor) return;
-//
-//   let newHeight = event.y - lastActiveSelection.top;
-//   let newWidth = event.x - lastActiveSelection.left;
-//
-//   if (newHeight < 0) {
-//     activeCursor.style.marginTop = `${newHeight}px`;
-//     newHeight *= -1;
-//   } else {
-//     activeCursor.style.marginTop = "0px";
-//   }
-//
-//   if (newWidth < 0) {
-//     activeCursor.style.marginLeft = `${newWidth}px`;
-//     newWidth *= -1;
-//   } else {
-//     activeCursor.style.marginLeft = "0px";
-//   }
-//
-//   activeCursor.style.height = `${newHeight}px`;
-//   activeCursor.style.width = `${newWidth}px`;
-// };
+};
 
 const getNodesInRect = (view: EditorView, rect: DOMRect) => {
   const ranges: Array<[number, number]> = [];
@@ -97,7 +75,6 @@ const getNodesInRect = (view: EditorView, rect: DOMRect) => {
   doc.nodesBetween(0, doc.content.size, (node, pos) => {
     const resolvedPos = view.state.doc.resolve(pos);
 
-    // Only process nodes at depth 1 (direct children of the document)
     if (resolvedPos.depth === 1) {
       const start = resolvedPos.before(1);
       const end = resolvedPos.after(1);
@@ -106,7 +83,6 @@ const getNodesInRect = (view: EditorView, rect: DOMRect) => {
         ranges.push([start, end]);
       }
 
-      // Don't descend into this node's children
       return false;
     }
     return true;
@@ -115,8 +91,6 @@ const getNodesInRect = (view: EditorView, rect: DOMRect) => {
   return ranges;
 };
 
-// ... previous code remains the same ...
-
 const removeActiveUser = () => {
   if (!activeCursor) return;
 
@@ -124,50 +98,7 @@ const removeActiveUser = () => {
   activeCursor = null;
   document.removeEventListener("mousemove", selectNodesHandler);
   document.removeEventListener("mouseup", removeActiveUser);
-
-  // Get the current plugin state before clearing
-  if (lastView) {
-    const pluginState = MultipleSelectionPluginKey.getState(lastView.state);
-    const ranges = pluginState?.ranges;
-
-    if (ranges && ranges.length > 0) {
-      // Sort ranges by position to ensure we get the correct span
-      const sortedRanges = [...ranges].sort(([a], [b]) => a - b);
-      const from = sortedRanges[0][0]; // First position of first range
-      const to = sortedRanges[sortedRanges.length - 1][1]; // Last position of last range
-
-      const tr = lastView.state.tr;
-
-      // First set the plugin state
-      tr.setMeta(MultipleSelectionPluginKey, {
-        ranges: null,
-        lastSelectedRange: { from, to },
-      });
-
-      // Then create a selection that spans all selected nodes
-      const $from = lastView.state.doc.resolve(from);
-      const $to = lastView.state.doc.resolve(to);
-
-      // Create a node selection that spans the entire range
-      const selection = NodeSelection.create(lastView.state.doc, $from.pos);
-      tr.setSelection(selection);
-
-      lastView.dispatch(tr);
-    } else {
-      // Clear the selection if no ranges
-      lastView.dispatch(
-        lastView.state.tr.setMeta(MultipleSelectionPluginKey, {
-          ranges: null,
-          lastSelectedRange: undefined,
-        })
-      );
-    }
-  }
 };
-
-// ... rest of the code remains the same ...
-let selectNodesHandler: (event: MouseEvent) => void;
-let lastView: EditorView | null = null;
 
 const createMultipleSelectionPlugin = () =>
   new Plugin<BlockSelectionState>({
@@ -187,11 +118,23 @@ const createMultipleSelectionPlugin = () =>
     props: {
       handleDOMEvents: {
         mousedown(view: EditorView, event: MouseEvent) {
+          if (!isDragging) {
+            console.log("ran");
+            const pluginState = MultipleSelectionPluginKey.getState(view.state);
+            if (pluginState?.ranges?.length || pluginState?.lastSelectedRange) {
+              view.dispatch(
+                view.state.tr.setMeta(MultipleSelectionPluginKey, {
+                  ranges: null,
+                  lastSelectedRange: undefined,
+                })
+              );
+              return false;
+            }
+          }
+
           if (event.target !== view.dom) {
             return false;
           }
-
-          lastView = view;
           removeActiveUser();
 
           activeCursor = document.createElement("div");
@@ -202,19 +145,20 @@ const createMultipleSelectionPlugin = () =>
           activeCursor.style.border = "1px solid rgba(var(--color-primary-100), 0.2)";
           activeCursor.style.background = "rgba(var(--color-primary-100), 0.2)";
           activeCursor.style.opacity = "0.5";
-          activeCursor.style.position = "fixed"; // Change to fixed positioning
-          activeCursor.style.top = `${event.pageY}px`; // Use pageY
-          activeCursor.style.left = `${event.pageX}px`; // Use pageX
+          activeCursor.style.position = "fixed";
+          activeCursor.style.top = `${event.pageY}px`;
+          activeCursor.style.left = `${event.pageX}px`;
           activeCursor.style.pointerEvents = "none";
           activeCursor.style.zIndex = "1000";
 
-          lastActiveSelection.top = event.pageY; // Use pageY
-          lastActiveSelection.left = event.pageX; // Use pageX
+          lastActiveSelection.top = event.pageY;
+          lastActiveSelection.left = event.pageX;
 
           document.body.appendChild(activeCursor);
 
           selectNodesHandler = (e: MouseEvent) => {
-            updateCursorPosition(e);
+            isDragging = true;
+            updateCursorPosition(e, view);
             if (activeCursor) {
               const rect = activeCursor.getBoundingClientRect();
               const ranges = getNodesInRect(view, rect);
@@ -229,7 +173,10 @@ const createMultipleSelectionPlugin = () =>
           };
 
           document.addEventListener("mousemove", selectNodesHandler);
-          document.addEventListener("mouseup", removeActiveUser);
+          document.addEventListener("mouseup", () => {
+            removeActiveUser();
+            isDragging = false;
+          });
 
           event.preventDefault();
           return true;
@@ -238,7 +185,6 @@ const createMultipleSelectionPlugin = () =>
       decorations(state) {
         const pluginState = this.getState(state);
 
-        // If we have active ranges, show those
         if (pluginState?.ranges?.length) {
           return DecorationSet.create(
             state.doc,
@@ -250,7 +196,6 @@ const createMultipleSelectionPlugin = () =>
           );
         }
 
-        // If we have a last selected range, show that
         if (pluginState?.lastSelectedRange) {
           const { from, to } = pluginState.lastSelectedRange;
           return DecorationSet.create(state.doc, [
@@ -267,7 +212,6 @@ const createMultipleSelectionPlugin = () =>
       return {
         destroy() {
           removeActiveUser();
-          lastView = null;
         },
       };
     },
@@ -280,7 +224,3 @@ export const multipleSelectionExtension = Extension.create({
     return [createMultipleSelectionPlugin()];
   },
 });
-
-// ... keep all the imports and MultipleNodeSelection class ...
-
-// ... in the mousedown handler ...
