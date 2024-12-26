@@ -28,12 +28,14 @@ type TIssueCommentCard = {
   ends: "top" | "bottom" | undefined;
   showAccessSpecifier?: boolean;
   disabled?: boolean;
+  issueId?: string;
 };
 
 export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
   const {
     workspaceSlug,
     projectId,
+    issueId,
     commentId,
     activityOperations,
     ends,
@@ -144,6 +146,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
             <LiteTextEditor
               workspaceId={workspaceId}
               projectId={projectId}
+              issueId={issueId}
               workspaceSlug={workspaceSlug}
               ref={editorRef}
               id={comment.id}

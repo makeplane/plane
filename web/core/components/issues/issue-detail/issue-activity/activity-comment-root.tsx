@@ -46,6 +46,7 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
             projectId={projectId}
             key={activityComment.id}
             workspaceSlug={workspaceSlug}
+            issueId={issueId}
             commentId={activityComment.id}
             activityOperations={activityOperations}
             ends={index === 0 ? "top" : index === filteredActivityComments.length - 1 ? "bottom" : undefined}

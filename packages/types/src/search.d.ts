@@ -78,4 +78,5 @@ export type TSearchEntityRequestPayload = {
   count: number;
   query_type: TSearchEntities[];
   query: string;
+  issue_id?: string;
 };

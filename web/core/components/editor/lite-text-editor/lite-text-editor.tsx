@@ -30,6 +30,7 @@ interface LiteTextEditorWrapperProps
   isSubmitting?: boolean;
   showToolbarInitially?: boolean;
   uploadFile: (file: File) => Promise<string>;
+  issueId?: string;
 }
 
 export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
@@ -46,6 +47,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     showToolbarInitially = true,
     placeholder = "Add comment...",
     uploadFile,
+    issueId,
     ...rest
   } = props;
   // states
@@ -55,7 +57,10 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: async (payload) =>
-      await projectService.searchEntity(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "", payload),
+      await projectService.searchEntity(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "", {
+        ...payload,
+        issue_id: issueId,
+      }),
   });
   // file size
   const { maxFileSize } = useFileSize();

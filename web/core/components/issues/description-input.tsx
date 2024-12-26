@@ -121,11 +121,10 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                   placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)
                 }
                 searchMentionCallback={async (payload) =>
-                  await projectService.searchEntity(
-                    workspaceSlug?.toString() ?? "",
-                    projectId?.toString() ?? "",
-                    payload
-                  )
+                  await projectService.searchEntity(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "", {
+                    ...payload,
+                    issue_id: issueId,
+                  })
                 }
                 containerClassName={containerClassName}
                 uploadFile={async (file) => {

@@ -16,6 +16,7 @@ import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useUser, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
 interface Props {
   className?: string;
@@ -37,7 +38,7 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
   const { workspaceSlug } = useParams();
   const {
     getUserDetails,
-    project: { getProjectMemberIds, fetchProjectMembers },
+    project: { getProjectMemberIds, fetchProjectMembers, getProjectMemberDetails },
     workspace: { workspaceMemberIds },
   } = useMember();
   const { data: currentUser } = useUser();
@@ -59,7 +60,7 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
     if (isOpen) {
       onOpen();
       if (!isMobile) {
-        inputRef.current && inputRef.current.focus();
+        if (inputRef.current) inputRef.current.focus();
       }
     }
   }, [isOpen, isMobile]);
@@ -76,20 +77,27 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
     }
   };
 
-  const options = memberIds?.map((userId) => {
-    const userDetails = getUserDetails(userId);
-
-    return {
-      value: userId,
-      query: `${userDetails?.display_name} ${userDetails?.first_name} ${userDetails?.last_name}`,
-      content: (
-        <div className="flex items-center gap-2">
-          <Avatar name={userDetails?.display_name} src={getFileURL(userDetails?.avatar_url ?? "")} />
-          <span className="flex-grow truncate">{currentUser?.id === userId ? "You" : userDetails?.display_name}</span>
-        </div>
-      ),
-    };
-  });
+  const options = memberIds
+    ?.map((userId) => {
+      const userData = getProjectMemberDetails(userId);
+      const memeberDetails = userData?.member;
+      /**Restricting guest users from being shown in the dropdown */
+      const isGuest = (userData?.role ?? EUserPermissions.GUEST) === EUserPermissions.GUEST;
+      if (isGuest) return null;
+      return {
+        value: userId,
+        query: `${memeberDetails?.display_name} ${memeberDetails?.first_name} ${memeberDetails?.last_name}`,
+        content: (
+          <div className="flex items-center gap-2">
+            <Avatar name={memeberDetails?.display_name} src={getFileURL(memeberDetails?.avatar_url ?? "")} />
+            <span className="flex-grow truncate">
+              {currentUser?.id === userId ? "You" : memeberDetails?.display_name}
+            </span>
+          </div>
+        ),
+      };
+    })
+    .filter((option) => option !== null);
 
   const filteredOptions =
     query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
