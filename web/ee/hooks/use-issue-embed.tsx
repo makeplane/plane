@@ -7,18 +7,19 @@ import { IssueEmbedCard, IssueEmbedUpgradeCard } from "@/plane-web/components/pa
 // plane web hooks
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // services
-import { ProjectService } from "@/services/project";
-const projectService = new ProjectService();
+import { WorkspaceService } from "@/plane-web/services/workspace.service";
+const workspaceService = new WorkspaceService();
 
 export const useIssueEmbed = (workspaceSlug: string, projectId: string) => {
   // store hooks
   const isIssueEmbedEnabled = useFlag(workspaceSlug, "PAGE_ISSUE_EMBEDS");
 
   const fetchIssues = async (searchQuery: string): Promise<TEmbedItem[]> => {
-    const response = await projectService.searchEntity(workspaceSlug, projectId, {
+    const response = await workspaceService.searchEntity(workspaceSlug, {
       query_type: ["issue"],
       query: searchQuery,
       count: 10,
+      project_id: projectId,
     });
     const structuredIssues: TEmbedItem[] = (response.issue ?? []).map((issue) => ({
       id: issue.id,

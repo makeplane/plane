@@ -13,12 +13,14 @@ import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
-// services
+// plane web services
+import { WorkspaceService } from "@/plane-web/services/workspace.service";
+// plane web types
 import { TProject } from "@/plane-web/types";
+// services
 import { FileService } from "@/services/file.service";
-import { ProjectService } from "@/services/project";
 const fileService = new FileService();
-const projectService = new ProjectService();
+const workspaceService = new WorkspaceService();
 
 export type ProjectDescriptionInputProps = {
   containerClassName?: string;
@@ -98,7 +100,10 @@ export const ProjectDescriptionInput: FC<ProjectDescriptionInputProps> = observe
               workspaceId={workspaceId}
               projectId={project.id}
               searchMentionCallback={async (payload) =>
-                await projectService.searchEntity(workspaceSlug?.toString() ?? "", project.id, payload)
+                await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+                  ...payload,
+                  project_id: project.id,
+                })
               }
               dragDropEnabled
               onChange={(_description: object, description_html: string) => {
