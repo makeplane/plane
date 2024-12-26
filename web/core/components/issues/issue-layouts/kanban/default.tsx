@@ -98,6 +98,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     groupBy: group_by as GroupByColumnTypes,
     includeNone: true,
     isWorkspaceLevel: isWorkspaceLevel(storeType),
+    isEpic: isEpic,
   });
 
   if (!list) return null;

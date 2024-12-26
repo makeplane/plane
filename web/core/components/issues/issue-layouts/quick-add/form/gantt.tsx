@@ -4,7 +4,7 @@ import { cn } from "@/helpers/common.helper";
 import { TQuickAddIssueForm } from "../root";
 
 export const GanttQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) => {
-  const { ref, projectDetail, hasError, register, onSubmit } = props;
+  const { ref, projectDetail, hasError, register, onSubmit, isEpic } = props;
 
   return (
     <div className={cn("shadow-custom-shadow-sm", hasError && "border border-red-500/20 bg-red-500/10")}>
@@ -18,15 +18,15 @@ export const GanttQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) =
           <input
             type="text"
             autoComplete="off"
-            placeholder="Issue Title"
+            placeholder={isEpic ? "Epic Title" : "Issue Title"}
             {...register("name", {
-              required: "Issue title is required.",
+              required: `${isEpic ? "Epic" : "Issue"} title is required.`,
             })}
             className="w-full rounded-md bg-transparent px-2 py-3 text-sm font-medium leading-5 text-custom-text-200 outline-none"
           />
         </div>
       </form>
-      <div className="px-3 py-2 text-xs bg-custom-background-100 italic text-custom-text-200">{`Press 'Enter' to add another issue`}</div>
+      <div className="px-3 py-2 text-xs bg-custom-background-100 italic text-custom-text-200">{`Press 'Enter' to add another ${isEpic ? "epic" : "issue"}`}</div>
     </div>
   );
 });
