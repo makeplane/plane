@@ -9,6 +9,6 @@ import { IIssueDetail } from "@/store/issue/issue-details/root.store";
 export const useIssueDetail = (serviceType: TIssueServiceType = EIssueServiceType.ISSUES): IIssueDetail => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useIssueDetail must be used within StoreProvider");
-  if (serviceType === EIssueServiceType.EPICS) return context.epic.issueDetail;
+  if (serviceType === EIssueServiceType.EPICS) return context.issue.epicDetail;
   else return context.issue.issueDetail;
 };
