@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ChevronDown, CircleUserRound } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import type { IUser } from "@plane/types";
+import type { IUser, TUserProfile } from "@plane/types";
 import {
   Button,
   CustomSelect,
@@ -27,7 +27,7 @@ import { USER_ROLES } from "@/constants/workspace";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser, useUserProfile } from "@/hooks/store";
 
 const defaultValues: Partial<IUser> = {
   avatar_url: "",
@@ -59,29 +59,34 @@ const ProfileSettingsPage = observer(() => {
   const userCover = watch("cover_image_url");
   // store hooks
   const { data: currentUser, updateCurrentUser } = useUser();
+  const { updateUserProfile, data: currentUserProfile } = useUserProfile();
 
   useEffect(() => {
-    reset({ ...defaultValues, ...currentUser });
-  }, [currentUser, reset]);
+    reset({ ...defaultValues, ...currentUser, ...currentUserProfile });
+  }, [currentUser, currentUserProfile, reset]);
 
   const onSubmit = async (formData: IUser) => {
     setIsLoading(true);
-    const payload: Partial<IUser> = {
+    const userPayload: Partial<IUser> = {
       first_name: formData.first_name,
       last_name: formData.last_name,
       avatar_url: formData.avatar_url,
-      role: formData.role,
       display_name: formData?.display_name,
       user_timezone: formData.user_timezone,
     };
+    const userProfilePayload: Partial<TUserProfile> = {
+      role: formData.role ?? undefined,
+    };
     // if unsplash or a pre-defined image is uploaded, delete the old uploaded asset
     if (formData.cover_image_url?.startsWith("http")) {
-      payload.cover_image = formData.cover_image_url;
-      payload.cover_image_asset = null;
+      userPayload.cover_image = formData.cover_image_url;
+      userPayload.cover_image_asset = null;
     }
 
-    const updateCurrentUserDetail = updateCurrentUser(payload).finally(() => setIsLoading(false));
-    setPromiseToast(updateCurrentUserDetail, {
+    const updateUser = Promise.all([updateCurrentUser(userPayload), updateUserProfile(userProfilePayload)]).finally(
+      () => setIsLoading(false)
+    );
+    setPromiseToast(updateUser, {
       loading: "Updating...",
       success: {
         title: "Success!",
