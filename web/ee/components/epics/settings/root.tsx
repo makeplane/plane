@@ -9,7 +9,7 @@ import { setPromiseToast, ToggleSwitch, Tooltip } from "@plane/ui";
 import { EpicsEmptyState, EpicPropertiesRoot } from "@/plane-web/components/epics";
 // plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
-import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
+import { useProject } from "@/hooks/store";
 
 export const EpicsRoot = observer(() => {
   // router
@@ -18,11 +18,11 @@ export const EpicsRoot = observer(() => {
   const [isLoading, setIsLoading] = useState(false);
   // store hooks
   const { enableEpics, disableEpics, projectEpics } = useIssueTypes();
-  const { features } = useProjectAdvanced();
+  const { getProjectById } = useProject();
   // derived values
   const epicDetails = projectEpics[projectId?.toString()];
-  const currentProjectDetails = features[projectId?.toString()];
-  const isEpicsEnabled = currentProjectDetails?.is_epic_enabled;
+  const project = getProjectById(projectId?.toString());
+  const isEpicsEnabled = project?.is_epic_enabled;
 
   const handleEnableDisableEpic = async () => {
     setIsLoading(true);
@@ -47,7 +47,7 @@ export const EpicsRoot = observer(() => {
     });
   };
 
-  if (!isEpicsEnabled && currentProjectDetails) {
+  if (!isEpicsEnabled && project) {
     return <EpicsEmptyState workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />;
   }
 

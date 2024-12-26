@@ -556,18 +556,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // perform an API call
     const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
-    const routeEpicId = this.rootIssueStore.rootStore.router.epicId;
-    const isEpicPeek = this.rootIssueStore.rootStore.epic.issueDetail.peekIssue?.issueId;
-    const epicId = routeEpicId ?? isEpicPeek;
-    if (response && epicId) {
-      const oldState = this.rootIssueStore.rootStore.state.getStateById(response.state_id)?.group;
-      if (oldState) {
-        this.rootIssueStore.rootStore.issueTypes.updateEpicAnalytics(workspaceSlug, projectId, epicId, {
-          incrementStateGroupCount: `${oldState}_issues`,
-        });
-      }
-    }
-
     // add Issue to Store
     this.addIssue(response, shouldUpdateList);
 
@@ -601,29 +589,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       // Update the Respective Stores
       this.rootIssueStore.issues.updateIssue(issueId, data);
       this.updateIssueList({ ...issueBeforeUpdate, ...data } as TIssue, issueBeforeUpdate);
-      const routeEpicId = this.rootIssueStore.rootStore.router.epicId;
-      const isEpicPeek = this.rootIssueStore.rootStore.epic.issueDetail.peekIssue?.issueId;
-      const epicId = routeEpicId ?? isEpicPeek;
-      const oldState = this.rootIssueStore.rootStore.state.getStateById(issueBeforeUpdate?.state_id)?.group;
-      if (oldState && epicId) {
-        // Check if parent_id is changed if yes then decrement the epic analytics count
-        if (data.parent_id && issueBeforeUpdate?.parent_id && data.parent_id !== issueBeforeUpdate?.parent_id) {
-          this.rootIssueStore.rootStore.issueTypes.updateEpicAnalytics(workspaceSlug, projectId, epicId, {
-            decrementStateGroupCount: `${oldState}_issues`,
-          });
-        }
-
-        // Check if state_id is changed if yes then decrement the old state group count and increment the new state group count
-        if (data.state_id) {
-          const newState = this.rootIssueStore.rootStore.state.getStateById(data.state_id)?.group;
-          if (oldState && newState && oldState !== newState) {
-            this.rootIssueStore.rootStore.issueTypes.updateEpicAnalytics(workspaceSlug, projectId, epicId, {
-              decrementStateGroupCount: `${oldState}_issues`,
-              incrementStateGroupCount: `${newState}_issues`,
-            });
-          }
-        }
-      }
 
       // Check if should Sync
       if (!shouldSync) return;
@@ -706,17 +671,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const issueBeforeRemoval = clone(this.rootIssueStore.issues.getIssueById(issueId));
     // update parent stats optimistically
     this.updateParentStats(issueBeforeRemoval, undefined);
-    const routeEpicId = this.rootIssueStore.rootStore.router.epicId;
-    const isEpicPeek = this.rootIssueStore.rootStore.epic.issueDetail.peekIssue?.issueId;
-    const epicId = routeEpicId ?? isEpicPeek;
-    if (issueBeforeRemoval && epicId) {
-      const oldState = this.rootIssueStore.rootStore.state.getStateById(issueBeforeRemoval.state_id)?.group;
-      if (oldState) {
-        this.rootIssueStore.rootStore.issueTypes.updateEpicAnalytics(workspaceSlug, projectId, epicId, {
-          decrementStateGroupCount: `${oldState}_issues`,
-        });
-      }
-    }
 
     // Male API call
     await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);

@@ -43,12 +43,13 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
     const workspace = this.store.workspaceRoot.currentWorkspace;
     if (!workspace?.id || !issueId) return undefined;
 
-    const currentStore = this.serviceType === EIssueServiceType.EPICS ? this.store.epic : this.store.issue;
+    const currentStore =
+      this.serviceType === EIssueServiceType.EPICS ? this.store.issue.epicDetail : this.store.issue.issueDetail;
 
     let activityComments: TIssueActivityComment[] = [];
 
     const activities = this.getActivitiesByIssueId(issueId) || [];
-    const comments = currentStore.issueDetail.comment.getCommentsByIssueId(issueId) || [];
+    const comments = currentStore.comment.getCommentsByIssueId(issueId) || [];
     const worklogs = this.store.workspaceWorklogs.worklogIdsByIssueId(workspace?.id, issueId) || [];
     const additionalPropertiesActivities =
       this.store.issuePropertiesActivity.getPropertyActivityIdsByIssueId(issueId) || [];
@@ -64,7 +65,7 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
     });
 
     comments.forEach((commentId) => {
-      const comment = currentStore.issueDetail.comment.getCommentById(commentId);
+      const comment = currentStore.comment.getCommentById(commentId);
       if (!comment) return;
       activityComments.push({
         id: comment.id,
@@ -93,7 +94,7 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
       });
     });
 
-    activityComments = orderBy(activityComments, (e)=>new Date(e.created_at || 0), this.sortOrder);
+    activityComments = orderBy(activityComments, (e) => new Date(e.created_at || 0), this.sortOrder);
 
     return activityComments;
   });

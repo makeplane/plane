@@ -8,7 +8,7 @@ import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-import { IssuesModalProps } from "@/components/issues";
+import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";
 // constants
 import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
 // hooks
@@ -135,6 +135,14 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: "Epic created successfully.",
+        actionItems: response?.project_id && (
+          <CreateIssueToastActionItems
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={response?.project_id}
+            issueId={response.id}
+            isEpic
+          />
+        ),
       });
       captureIssueEvent({
         eventName: ISSUE_CREATED,

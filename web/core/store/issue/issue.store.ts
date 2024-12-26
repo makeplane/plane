@@ -2,7 +2,6 @@ import set from "lodash/set";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { EIssueServiceType } from "@plane/constants";
 // types
 import { TIssue } from "@plane/types";
 // helpers
@@ -29,7 +28,6 @@ export class IssueStore implements IIssueStore {
   // observables
   issuesMap: { [issue_id: string]: TIssue } = {};
   // service
-  serviceType;
   issueService;
 
   constructor() {

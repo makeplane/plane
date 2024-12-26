@@ -15,15 +15,13 @@ const EpicsLayout = observer(({ children }: { children: ReactNode }) => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { getProjectById } = useProject();
-  const { features, featuresLoader, loader } = useProjectAdvanced();
   // derived values
   const project = getProjectById(projectId?.toString());
-  const currentProjectDetails = features[projectId?.toString()];
-  const isEpicsEnabled = currentProjectDetails?.is_epic_enabled;
+  const isEpicsEnabled = project?.is_epic_enabled;
 
   const pageTitle = project?.name ? `${project?.name} - Epics` : undefined;
 
-  if (currentProjectDetails && !isEpicsEnabled && !featuresLoader && !loader)
+  if (project && !isEpicsEnabled)
     return (
       <div className="flex items-center justify-center h-full w-full">
         <EpicsEmptyState

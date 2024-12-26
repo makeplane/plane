@@ -52,6 +52,7 @@ from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.bgtasks.project_activites_task import project_activity
 
+
 class ProjectViewSet(BaseViewSet):
     serializer_class = ProjectListSerializer
     model = Project
@@ -170,7 +171,8 @@ class ProjectViewSet(BaseViewSet):
                     ProjectFeature.objects.filter(
                         workspace__slug=self.kwargs.get("slug"),
                         project_id=OuterRef("pk"),
-                    ).values("is_epic_enabled")
+                        is_epic_enabled=True,
+                    )
                 )
             )
             .annotate(
@@ -178,7 +180,8 @@ class ProjectViewSet(BaseViewSet):
                     ProjectFeature.objects.filter(
                         workspace__slug=self.kwargs.get("slug"),
                         project_id=OuterRef("pk"),
-                    ).values("is_project_updates_enabled")
+                        is_project_updates_enabled=True,
+                    )
                 )
             )
             # EE: project_grouping ends

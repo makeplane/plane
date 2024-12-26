@@ -22,7 +22,6 @@ import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { useIssueDetail, useMember, useProjectEstimates, useProjectState } from "@/hooks/store";
 // plane web components
 import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values";
-import { IssueWorklogProperty } from "@/plane-web/components/issues";
 
 type Props = {
   workspaceSlug: string;
@@ -220,8 +219,6 @@ export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
           />
         </div>
       </div>
-
-      <IssueWorklogProperty workspaceSlug={workspaceSlug} projectId={projectId} issueId={epicId} disabled={disabled} />
 
       {issue.type_id && (
         <IssueAdditionalPropertyValuesUpdate

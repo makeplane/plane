@@ -563,6 +563,7 @@ export class IssueTypes implements IIssueTypesStore {
       runInAction(() => {
         // enable `is_epic_enabled` in project details
         set(this.rootStore.projectDetails.features, [projectId, "is_epic_enabled"], true);
+        set(this.rootStore.projectRoot.project.projectMap, [projectId, "is_epic_enabled"], true);
         // add epic issue type to the store
         this.addOrUpdateEpicIssueTypes([epic]);
         this.loader = "loaded";
@@ -587,6 +588,7 @@ export class IssueTypes implements IIssueTypesStore {
       runInAction(() => {
         // disable `is_epic_enabled` in project details
         set(this.rootStore.projectDetails.features, [projectId, "is_epic_enabled"], false);
+        set(this.rootStore.projectRoot.project.projectMap, [projectId, "is_epic_enabled"], false);
         // remove epic issue type from the store
         set(this.projectEpics, projectId, undefined);
       });

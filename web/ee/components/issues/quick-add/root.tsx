@@ -22,6 +22,7 @@ export type TQuickAddIssueFormRoot = {
   register: UseFormRegister<TIssue>;
   onSubmit: () => void;
   onClose: () => void;
+  isEpic?: boolean;
 };
 
 export const QuickAddIssueFormRoot: FC<TQuickAddIssueFormRoot> = observer((props) => {
@@ -35,6 +36,7 @@ export const QuickAddIssueFormRoot: FC<TQuickAddIssueFormRoot> = observer((props
     register,
     onSubmit,
     onClose,
+    isEpic = false,
   } = props;
   // store hooks
   const { getProjectDefaultIssueType } = useIssueTypes();
@@ -56,6 +58,7 @@ export const QuickAddIssueFormRoot: FC<TQuickAddIssueFormRoot> = observer((props
           register={register}
           onSubmit={onSubmit}
           onClose={onClose}
+          isEpic={isEpic}
         />
       )}
     </>
