@@ -1,97 +1,85 @@
-.prosemirror-flat-list {
-  &:not(:first-child) {
-    padding-top: 4px !important;
-  }
+.ProseMirror {
+  .prosemirror-flat-list {
+    padding-bottom: 4px !important;
 
-  /* padding-bottom: 4px !important; */
-  margin: 0 0 0 24px !important;
+    &::before,
+    .list-marker {
+      height: 28px;
+      width: 28px;
+      display: grid;
+      place-items: center;
+      margin-top: 1px;
 
-  &::before {
-    position: absolute;
-    top: 2px;
-    right: 100%;
-  }
-
-  &::before,
-  .list-marker {
-    display: grid;
-    place-items: center;
-    width: 24px !important;
-    height: 28px !important;
-    aspect-ratio: 1 !important;
-  }
-
-  .list-content {
-    .prosemirror-flat-list:first-child {
-      padding-top: 0 !important;
+      label {
+        margin-top: 2px;
+      }
     }
 
-    .prosemirror-flat-list:last-child {
-      padding-bottom: 0 !important;
+    .list-content {
+      & > p {
+        margin: 0 !important;
+        padding: 4px 0 !important;
+      }
     }
 
-    & > *:first-child {
-      padding-bottom: 0 !important;
-    }
-  }
+    &[data-list-kind="ordered"] {
+      list-style: none;
 
-  &[data-list-kind="ordered"] {
-    list-style: none;
-
-    &::before {
-      font-variant-numeric: tabular-nums;
-      content: counter(prosemirror-flat-list-counter, decimal) ".";
-    }
-
-    /* Second level - lower-alpha */
-    & > .list-content > & {
       &::before {
-        content: counter(prosemirror-flat-list-counter, lower-alpha) ".";
+        font-variant-numeric: tabular-nums;
+        content: counter(prosemirror-flat-list-counter, decimal) ".";
       }
 
-      /* Third level - lower-roman */
+      /* Second level - lower-alpha */
       & > .list-content > & {
         &::before {
-          content: counter(prosemirror-flat-list-counter, lower-roman) ".";
+          content: counter(prosemirror-flat-list-counter, lower-alpha) ".";
         }
 
-        /* Start repeat pattern */
+        /* Third level - lower-roman */
         & > .list-content > & {
           &::before {
-            content: counter(prosemirror-flat-list-counter, decimal) ".";
+            content: counter(prosemirror-flat-list-counter, lower-roman) ".";
           }
 
-          /* Continue pattern */
+          /* Start repeat pattern */
           & > .list-content > & {
             &::before {
-              content: counter(prosemirror-flat-list-counter, lower-alpha) ".";
+              content: counter(prosemirror-flat-list-counter, decimal) ".";
             }
 
+            /* Continue pattern */
             & > .list-content > & {
               &::before {
-                content: counter(prosemirror-flat-list-counter, lower-roman) ".";
+                content: counter(prosemirror-flat-list-counter, lower-alpha) ".";
               }
 
-              /* Pattern repeats again */
               & > .list-content > & {
                 &::before {
-                  content: counter(prosemirror-flat-list-counter, decimal) ".";
+                  content: counter(prosemirror-flat-list-counter, lower-roman) ".";
                 }
 
+                /* Pattern repeats again */
                 & > .list-content > & {
                   &::before {
-                    content: counter(prosemirror-flat-list-counter, lower-alpha) ".";
+                    content: counter(prosemirror-flat-list-counter, decimal) ".";
                   }
 
                   & > .list-content > & {
                     &::before {
-                      content: counter(prosemirror-flat-list-counter, lower-roman) ".";
+                      content: counter(prosemirror-flat-list-counter, lower-alpha) ".";
                     }
-                  }
 
-                  & > .list-content > & {
-                    &::before {
-                      content: counter(prosemirror-flat-list-counter, decimal) ".";
+                    & > .list-content > & {
+                      &::before {
+                        content: counter(prosemirror-flat-list-counter, lower-roman) ".";
+                      }
+                    }
+
+                    & > .list-content > & {
+                      &::before {
+                        content: counter(prosemirror-flat-list-counter, decimal) ".";
+                      }
                     }
                   }
                 }
@@ -101,48 +89,48 @@
         }
       }
     }
-  }
 
-  &[data-list-kind="bullet"] {
-    list-style: none;
+    &[data-list-kind="bullet"] {
+      list-style: none;
 
-    &::before {
-      content: "•";
-    }
-
-    /* Second level - circle */
-    & > .list-content > & {
       &::before {
-        content: "⚬";
+        content: "•";
       }
 
-      /* Third level - square */
+      /* Second level - circle */
       & > .list-content > & {
         &::before {
-          content: "▪";
+          content: "⚬";
         }
 
-        /* Start repeat pattern */
+        /* Third level - square */
         & > .list-content > & {
           &::before {
-            content: "•";
+            content: "▪";
           }
 
-          /* Continue pattern */
+          /* Start repeat pattern */
           & > .list-content > & {
             &::before {
-              content: "⚬";
+              content: "•";
             }
 
+            /* Continue pattern */
             & > .list-content > & {
               &::before {
-                content: "▪";
+                content: "⚬";
               }
 
-              /* Pattern repeats again */
               & > .list-content > & {
                 &::before {
-                  content: "•";
+                  content: "▪";
+                }
+
+                /* Pattern repeats again */
+                & > .list-content > & {
+                  &::before {
+                    content: "•";
+                  }
                 }
               }
             }
@@ -151,24 +139,29 @@
       }
     }
   }
-}
 
-p + .prosemirror-flat-list {
-  &:not(:first-child) {
-    padding-top: 8px !important;
-
-    &::before {
-      top: 6px !important;
-    }
+  /* apply a top padding to every list item whose previous element is not a list item */
+  :not(.prosemirror-flat-list) + .prosemirror-flat-list {
+    padding-top: 4px;
   }
-}
 
-.list-content p + .prosemirror-flat-list {
-  &:not(:first-child) {
-    padding-top: 4px !important;
+  /* apply a larger top padding to every list item whose previous element is a paragraph */
+  p + .prosemirror-flat-list {
+    padding-top: 8px !important;
+  }
 
-    &::before {
-      top: 2px !important;
+  /* remove top padding from a list item if it's the first node of the editor */
+  .prosemirror-flat-list:first-child,
+  :not(.prosemirror-flat-list) + .prosemirror-flat-list {
+    &::before,
+    .list-marker {
+      margin-top: -2px;
+    }
+
+    .list-content {
+      & > p {
+        padding-top: 0 !important;
+      }
     }
   }
 }

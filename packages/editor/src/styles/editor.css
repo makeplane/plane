@@ -408,14 +408,7 @@ p.editor-paragraph-block {
     padding-top: 4px;
   }
 
-  &:last-child {
-    padding-bottom: 4px;
-  }
-
-  &:not(:last-child) {
-    padding-bottom: 8px;
-  }
-
+  padding-bottom: 4px;
   font-size: var(--font-size-regular);
   line-height: var(--line-height-regular);
 }
