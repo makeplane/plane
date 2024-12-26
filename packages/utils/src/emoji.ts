@@ -38,3 +38,27 @@ export const emojiCodeToUnicode = (emoji: string): string => {
 
   return uniCodeEmoji;
 };
+
+/**
+ * Groups reactions by a specified key
+ * @param {T[]} reactions - Array of reaction objects
+ * @param {string} key - Key to group reactions by
+ * @returns {Object} Object with reactions grouped by the specified key
+ * @example
+ * const reactions = [{ reaction: "👍", id: 1 }, { reaction: "👍", id: 2 }, { reaction: "❤️", id: 3 }];
+ * groupReactions(reactions, "reaction") // returns { "👍": [{ reaction: "👍", id: 1 }, { reaction: "👍", id: 2 }], "❤️": [{ reaction: "❤️", id: 3 }] }
+ */
+export const groupReactions = <T extends { reaction: string }>(reactions: T[], key: string): { [key: string]: T[] } => {
+  const groupedReactions = reactions.reduce(
+    (acc: { [key: string]: T[] }, reaction: T) => {
+      if (!acc[reaction[key as keyof T] as string]) {
+        acc[reaction[key as keyof T] as string] = [];
+      }
+      acc[reaction[key as keyof T] as string].push(reaction);
+      return acc;
+    },
+    {} as { [key: string]: T[] }
+  );
+
+  return groupedReactions;
+};

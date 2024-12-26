@@ -86,6 +86,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                       onChange(val);
                       setActiveProject(val);
                     }}
+                    multiple={false}
                     buttonVariant="border-with-text"
                     renderCondition={(project) => shouldRenderProject(project)}
                     tabIndex={getIndex("cover_image")}

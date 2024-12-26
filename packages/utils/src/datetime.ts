@@ -1,5 +1,4 @@
 import { differenceInDays, format, formatDistanceToNow, isAfter, isEqual, isValid, parseISO } from "date-fns";
-import isNumber from "lodash/isNumber";
 
 /**
  * This method returns a date from string of type yyyy-mm-dd

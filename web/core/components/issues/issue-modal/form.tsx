@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 // editor
+import { EIssuesStoreType } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 // types
 import type { TIssue, ISearchIssueResponse, TWorkspaceDraftIssue } from "@plane/types";
@@ -72,6 +73,7 @@ export interface IssueFormProps {
   isDuplicateModalOpen: boolean;
   handleDuplicateIssueModal: (isOpen: boolean) => void;
   isProjectSelectionDisabled?: boolean;
+  storeType: EIssuesStoreType;
 }
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
@@ -86,8 +88,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     isCreateMoreToggleEnabled,
     onCreateMoreToggleChange,
     isDraft,
-    moveToIssue,
-    modalTitle = `${data?.id ? "Update" : isDraft ? "Create a draft" : "Create new issue"}`,
+    moveToIssue = false,
+    modalTitle,
     primaryButtonText = {
       default: `${data?.id ? "Update" : isDraft ? "Save to Drafts" : "Save"}`,
       loading: `${data?.id ? "Updating" : "Saving"}`,
@@ -95,6 +97,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     isDuplicateModalOpen,
     handleDuplicateIssueModal,
     isProjectSelectionDisabled = false,
+    storeType,
   } = props;
 
   // states
@@ -280,6 +283,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   // debounced duplicate issues swr
   const { duplicateIssues } = useDebouncedDuplicateIssues(
+    workspaceSlug?.toString(),
     projectDetails?.workspace.toString(),
     projectId ?? undefined,
     {
@@ -373,7 +377,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     disabled={!!data?.id || !!data?.sourceIssueId || isProjectSelectionDisabled}
                     handleFormChange={handleFormChange}
                   />
-                  {projectId && (
+                  {projectId && storeType !== EIssuesStoreType.EPIC && (
                     <IssueTypeSelect
                       control={control}
                       projectId={projectId}

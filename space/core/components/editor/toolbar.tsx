@@ -2,11 +2,9 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 // editor
-import { EditorRefApi } from "@plane/editor";
+import { TOOLBAR_ITEMS, ToolbarMenuItem, EditorRefApi } from "@plane/editor";
 // ui
 import { Button, Tooltip } from "@plane/ui";
-// constants
-import { TOOLBAR_ITEMS, ToolbarMenuItem } from "@/constants/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
 

@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 // plane editor
-import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/editor";
+import { EditorRefApi, IMarking } from "@plane/editor";
 // components
 import { OutlineHeading1, OutlineHeading2, OutlineHeading3 } from "./heading-components";
 
 type Props = {
-  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
+  editorRef: EditorRefApi | null;
   setSidePeekVisible?: (sidePeekState: boolean) => void;
 };
 

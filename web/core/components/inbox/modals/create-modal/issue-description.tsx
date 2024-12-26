@@ -19,9 +19,12 @@ import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web services
+import { WorkspaceService } from "@/plane-web/services";
 // services
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
+const workspaceService = new WorkspaceService();
 
 type TInboxIssueDescription = {
   containerClassName?: string;
@@ -72,6 +75,12 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
       dragDropEnabled={false}
       onChange={(_description: object, description_html: string) => handleData("description_html", description_html)}
       placeholder={getDescriptionPlaceholder}
+      searchMentionCallback={async (payload) =>
+        await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+          ...payload,
+          project_id: projectId?.toString() ?? "",
+        })
+      }
       containerClassName={containerClassName}
       onEnterKeyPress={onEnterKeyPress}
       tabIndex={getIndex("description_html")}

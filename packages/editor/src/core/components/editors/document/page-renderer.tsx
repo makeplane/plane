@@ -140,10 +140,10 @@ export const PageRenderer = (props: IPageRenderer) => {
         >
           <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
           {editor.isEditable && (
-            <>
+            <div>
               <BlockMenu editor={editor} />
               <AIFeaturesMenu menu={aiHandler?.menu} />
-            </>
+            </div>
           )}
         </EditorContainer>
       </div>

@@ -82,6 +82,7 @@ export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
       return <IssueAttachmentActivity {...componentDefaultProps} showIssue={false} />;
     case "archived_at":
       return <IssueArchivedAtActivity {...componentDefaultProps} />;
+    case "intake":
     case "inbox":
       return <IssueInboxActivity {...componentDefaultProps} />;
     case "type":

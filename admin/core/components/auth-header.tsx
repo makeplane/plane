@@ -30,7 +30,7 @@ export const InstanceHeader: FC = observer(() => {
       case "google":
         return "Google";
       case "github":
-        return "Github";
+        return "GitHub";
       case "gitlab":
         return "GitLab";
       case "workspace":
