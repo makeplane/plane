@@ -5,7 +5,7 @@ import { format, parseISO, startOfToday } from "date-fns";
 // types
 import { ArrowRight, CalendarDays } from "lucide-react";
 // icons
-import { TCycleProgress } from "@plane/types";
+import { ICycle, TCycleProgress } from "@plane/types";
 import { ControlLink, Loader } from "@plane/ui";
 import { CycleListItemAction } from "@/components/cycles";
 // helpers
@@ -21,7 +21,7 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   cycleId: string;
-  cycleDetails: any;
+  cycleDetails: ICycle;
   progressLoader: boolean;
 };
 
@@ -35,7 +35,7 @@ export const CycleProgressHeader: FC<Props> = (props: Props) => {
   const createdByDetails = cycleDetails.created_by ? getUserDetails(cycleDetails.created_by) : undefined;
   const progressToday = progress && progress.find((d) => d.date === format(startOfToday(), "yyyy-MM-dd"));
   // handlers
-  const handleControlLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleControlLinkClick = () => {
     router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`, {}, { showProgressBar: false });
   };
 
@@ -59,10 +59,9 @@ export const CycleProgressHeader: FC<Props> = (props: Props) => {
             {/* Duration */}
             <div className="flex gap-1 text-xs text-custom-text-300 font-medium items-center">
               <CalendarDays className="h-3 w-3 flex-shrink-0 my-auto" />
-              <span>{format(parseISO(cycleDetails.start_date), "MMM dd, yyyy")}</span>
-
+              {cycleDetails.start_date && <span>{format(parseISO(cycleDetails.start_date), "MMM dd, yyyy")}</span>}
               <ArrowRight className="h-3 w-3 flex-shrink-0 my-auto" />
-              <span>{format(parseISO(cycleDetails.end_date), "MMM dd, yyyy")}</span>
+              {cycleDetails.end_date && <span>{format(parseISO(cycleDetails.end_date), "MMM dd, yyyy")}</span>}
             </div>
             {/* created by */}
             {createdByDetails && <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />}
