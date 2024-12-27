@@ -8,13 +8,13 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
 // store
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   editorReady: boolean;
   editorRef: React.RefObject<EditorRefApi>;
   handleDuplicatePage: () => void;
-  page: IPage;
+  page: TPageInstance;
   setSidePeekVisible: (sidePeekState: boolean) => void;
   sidePeekVisible: boolean;
 };

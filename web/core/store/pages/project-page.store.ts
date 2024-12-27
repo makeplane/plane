@@ -8,11 +8,13 @@ import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
 // plane web constants
 import { EUserPermissions } from "@/plane-web/constants";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectPageService } from "@/services/page";
 // store
-import { IPage, Page } from "@/store/pages/page";
 import { CoreRootStore } from "../root.store";
+import { ProjectPage, TProjectPage } from "./project-page";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;
 
@@ -21,7 +23,7 @@ type TError = { title: string; description: string };
 export interface IProjectPageStore {
   // observables
   loader: TLoader;
-  data: Record<string, IPage>; // pageId => Page
+  data: Record<string, TProjectPage>; // pageId => Page
   error: TError | undefined;
   filters: TPageFilters;
   // computed
@@ -30,7 +32,7 @@ export interface IProjectPageStore {
   // helper actions
   getCurrentProjectPageIds: (pageType: TPageNavigationTabs) => string[] | undefined;
   getCurrentProjectFilteredPageIds: (pageType: TPageNavigationTabs) => string[] | undefined;
-  pageById: (pageId: string) => IPage | undefined;
+  pageById: (pageId: string) => TProjectPage | undefined;
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   clearAllFilters: () => void;
   // actions
@@ -47,7 +49,7 @@ export interface IProjectPageStore {
 export class ProjectPageStore implements IProjectPageStore {
   // observables
   loader: TLoader = "init-loader";
-  data: Record<string, IPage> = {}; // pageId => Page
+  data: Record<string, TProjectPage> = {}; // pageId => Page
   error: TError | undefined = undefined;
   filters: TPageFilters = {
     searchQuery: "",
@@ -58,7 +60,7 @@ export class ProjectPageStore implements IProjectPageStore {
   service: ProjectPageService;
   rootStore: CoreRootStore;
 
-  constructor(private store: CoreRootStore) {
+  constructor(private store: RootStore) {
     makeObservable(this, {
       // observables
       loader: observable.ref,
@@ -184,7 +186,7 @@ export class ProjectPageStore implements IProjectPageStore {
 
       const pages = await this.service.fetchAll(workspaceSlug, projectId);
       runInAction(() => {
-        for (const page of pages) if (page?.id) set(this.data, [page.id], new Page(this.store, page));
+        for (const page of pages) if (page?.id) set(this.data, [page.id], new ProjectPage(this.store, page));
         this.loader = undefined;
       });
 
@@ -217,7 +219,7 @@ export class ProjectPageStore implements IProjectPageStore {
 
       const page = await this.service.fetchById(workspaceSlug, projectId, pageId);
       runInAction(() => {
-        if (page?.id) set(this.data, [page.id], new Page(this.store, page));
+        if (page?.id) set(this.data, [page.id], new ProjectPage(this.store, page));
         this.loader = undefined;
       });
 
@@ -250,7 +252,7 @@ export class ProjectPageStore implements IProjectPageStore {
 
       const page = await this.service.create(workspaceSlug, projectId, pageData);
       runInAction(() => {
-        if (page?.id) set(this.data, [page.id], new Page(this.store, page));
+        if (page?.id) set(this.data, [page.id], new ProjectPage(this.store, page));
         this.loader = undefined;
       });
 

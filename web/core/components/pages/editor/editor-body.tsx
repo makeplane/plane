@@ -1,87 +1,94 @@
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // document-editor
 import {
   CollaborativeDocumentEditorWithRef,
   EditorRefApi,
   TAIMenuProps,
   TDisplayConfig,
+  TFileHandler,
   TRealtimeConfig,
   TServerHandler,
 } from "@plane/editor";
-// types
-import { EFileAssetType } from "@plane/types/src/enums";
-// components
+// plane types
+import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
+// plane ui
 import { Row } from "@plane/ui";
+// components
 import { EditorMentionsRoot } from "@/components/editor";
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
 import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
-import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useUser } from "@/hooks/store";
 import { useEditorMention } from "@/hooks/use-editor-mention";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-import { useFileSize } from "@/plane-web/hooks/use-file-size";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
-// plane web services
-import { WorkspaceService } from "@/plane-web/services";
-// services
-import { FileService } from "@/services/file.service";
 // store
-import { IPage } from "@/store/pages/page";
-// services init
-const workspaceService = new WorkspaceService();
-const fileService = new FileService();
+import { TPageInstance } from "@/store/pages/base-page";
+
+export type TEditorBodyConfig = {
+  fileHandler: TFileHandler;
+  webhookConnectionParams: TWebhookConnectionQueryParams;
+};
+
+export type TEditorBodyHandlers = {
+  fetchEntity: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
+};
 
 type Props = {
+  config: TEditorBodyConfig;
   editorRef: React.RefObject<EditorRefApi>;
   editorReady: boolean;
   handleConnectionStatus: Dispatch<SetStateAction<boolean>>;
   handleEditorReady: Dispatch<SetStateAction<boolean>>;
-  page: IPage;
+  handlers: TEditorBodyHandlers;
+  page: TPageInstance;
   sidePeekVisible: boolean;
+  workspaceSlug: string;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
-  const { editorRef, handleConnectionStatus, handleEditorReady, page, sidePeekVisible } = props;
-  // router
-  const { workspaceSlug, projectId } = useParams();
+  const {
+    config,
+    editorRef,
+    handleConnectionStatus,
+    handleEditorReady,
+    handlers,
+    page,
+    sidePeekVisible,
+    workspaceSlug,
+  } = props;
   // store hooks
   const { data: currentUser } = useUser();
-  const { getWorkspaceBySlug } = useWorkspace();
   // derived values
-  const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
-  const pageId = page?.id;
-  const pageTitle = page?.name ?? "";
-  const { isContentEditable, updateTitle } = page;
+  const { id: pageId, name: pageTitle, isContentEditable, updateTitle } = page;
+  // issue-embed
+  const { issueEmbedProps } = useIssueEmbed({
+    fetchEmbedSuggestions: handlers.fetchEntity,
+    workspaceSlug,
+  });
   // use editor mention
   const { fetchMentions } = useEditorMention({
-    searchEntity: async (payload) =>
-      await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
-        ...payload,
-        project_id: projectId?.toString() ?? "",
-      }),
+    searchEntity: handlers.fetchEntity,
   });
   // editor flaggings
-  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug);
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
-  // issue-embed
-  const { issueEmbedProps } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
-  // file size
-  const { maxFileSize } = useFileSize();
-
-  const displayConfig: TDisplayConfig = {
-    fontSize,
-    fontStyle,
-  };
+  // derived values
+  const displayConfig: TDisplayConfig = useMemo(
+    () => ({
+      fontSize,
+      fontStyle,
+    }),
+    [fontSize, fontStyle]
+  );
 
   const getAIMenu = useCallback(
     ({ isOpen, onClose }: TAIMenuProps) => (
@@ -89,11 +96,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         editorRef={editorRef}
         isOpen={isOpen}
         onClose={onClose}
-        projectId={projectId?.toString() ?? ""}
         workspaceSlug={workspaceSlug?.toString() ?? ""}
       />
     ),
-    [editorRef, projectId, workspaceSlug]
+    [editorRef, workspaceSlug]
   );
 
   const handleServerConnect = useCallback(() => {
@@ -123,17 +129,13 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       // Construct realtime config
       return {
         url: WS_LIVE_URL.toString(),
-        queryParams: {
-          workspaceSlug: workspaceSlug?.toString(),
-          projectId: projectId?.toString(),
-          documentType: "project_page",
-        },
+        queryParams: config.webhookConnectionParams,
       };
     } catch (error) {
       console.error("Error creating realtime config", error);
       return undefined;
     }
-  }, [projectId, workspaceSlug]);
+  }, [config.webhookConnectionParams]);
 
   const userConfig = useMemo(
     () => ({
@@ -173,24 +175,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           <CollaborativeDocumentEditorWithRef
             editable={isContentEditable}
             id={pageId}
-            fileHandler={getEditorFileHandlers({
-              maxFileSize,
-              projectId: projectId?.toString() ?? "",
-              uploadFile: async (file) => {
-                const { asset_id } = await fileService.uploadProjectAsset(
-                  workspaceSlug?.toString() ?? "",
-                  projectId?.toString() ?? "",
-                  {
-                    entity_identifier: pageId,
-                    entity_type: EFileAssetType.PAGE_DESCRIPTION,
-                  },
-                  file
-                );
-                return asset_id;
-              },
-              workspaceId,
-              workspaceSlug: workspaceSlug?.toString() ?? "",
-            })}
+            fileHandler={config.fileHandler}
             handleEditorReady={handleEditorReady}
             ref={editorRef}
             containerClassName="h-full p-0 pb-64"

@@ -82,7 +82,7 @@ export class CoreRootStore {
     this.eventTracker = new EventTrackerStore(this);
     this.multipleSelect = new MultipleSelectStore();
     this.projectInbox = new ProjectInboxStore(this);
-    this.projectPages = new ProjectPageStore(this);
+    this.projectPages = new ProjectPageStore(this as unknown as RootStore);
     this.projectEstimate = new ProjectEstimateStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.favorite = new FavoriteStore(this);
@@ -112,7 +112,7 @@ export class CoreRootStore {
     this.dashboard = new DashboardStore(this);
     this.eventTracker = new EventTrackerStore(this);
     this.projectInbox = new ProjectInboxStore(this);
-    this.projectPages = new ProjectPageStore(this);
+    this.projectPages = new ProjectPageStore(this as unknown as RootStore);
     this.multipleSelect = new MultipleSelectStore();
     this.projectEstimate = new ProjectEstimateStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);

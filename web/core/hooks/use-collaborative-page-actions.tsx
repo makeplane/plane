@@ -1,8 +1,11 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+// plane editor
 import { EditorReadOnlyRefApi, EditorRefApi, TDocumentEventsServer } from "@plane/editor";
 import { DocumentCollaborativeEvents, TDocumentEventsClient, getServerEventName } from "@plane/editor/lib";
+// plane ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import { IPage } from "@/store/pages/page";
+// store
+import { TPageInstance } from "@/store/pages/base-page";
 
 // Better type naming and structure
 type CollaborativeAction = {
@@ -14,7 +17,10 @@ type CollaborativeActionEvent =
   | { type: "sendMessageToServer"; message: TDocumentEventsServer }
   | { type: "receivedMessageFromServer"; message: TDocumentEventsClient };
 
-export const useCollaborativePageActions = (editorRef: EditorRefApi | EditorReadOnlyRefApi | null, page: IPage) => {
+export const useCollaborativePageActions = (
+  editorRef: EditorRefApi | EditorReadOnlyRefApi | null,
+  page: TPageInstance
+) => {
   // currentUserAction local state to track if the current action is being processed, a
   // local action is basically the action performed by the current user to avoid double operations
   const [currentActionBeingProcessed, setCurrentActionBeingProcessed] = useState<TDocumentEventsClient | null>(null);

@@ -13,12 +13,12 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import useOnlineStatus from "@/hooks/use-online-status";
 // store
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   handleDuplicatePage: () => void;
-  page: IPage;
+  page: TPageInstance;
 };
 
 export const PageExtraOptions: React.FC<Props> = observer((props) => {
