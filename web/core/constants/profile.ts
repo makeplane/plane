@@ -1,6 +1,8 @@
 import React from "react";
 // icons
-import { Activity, Bell, CircleUser, KeyRound, LucideProps, Settings2 } from "lucide-react";
+import { Activity, Bell, CircleUser, KeyRound, LucideProps, Settings2, Blocks } from "lucide-react";
+import { GithubIcon, SlackIcon } from "@plane/ui";
+import { TPersonalAccountProvider } from "@/components/profile/connection/personal-account-view";
 
 export const PROFILE_ACTION_LINKS: {
   key: string;
@@ -44,6 +46,13 @@ export const PROFILE_ACTION_LINKS: {
     highlight: (pathname: string) => pathname === "/profile/notifications/",
     Icon: Bell,
   },
+  {
+    key: "connections",
+    label: "Connections",
+    href: `/profile/connections`,
+    highlight: (pathname: string) => pathname === "/profile/connections/",
+    Icon: Blocks,
+  },
 ];
 
 export const PROFILE_VIEWER_TAB = [
@@ -76,3 +85,21 @@ export const PROFILE_ADMINS_TAB = [
     selected: "/activity/",
   },
 ];
+
+export type TUserConnection = "GITHUB" | "SLACK";
+
+export const USER_CONNECTION_PROVIDERS: Record<TUserConnection, TPersonalAccountProvider> = {
+  GITHUB: {
+    key: "GITHUB",
+    name: "GitHub",
+    description: "Connect your GitHub account to Plane to get the most out of your development workflow.",
+    icon: GithubIcon,
+  },
+  SLACK: {
+    key: "SLACK",
+    name: "Slack",
+    description:
+      "Connect your Slack account to Plane to get the most out of your team collaboration and communication.",
+    icon: SlackIcon,
+  },
+} as const;
