@@ -3,6 +3,8 @@
 import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
+// plane types
+import { TNameDescriptionLoader } from "@plane/types";
 // plane ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -33,8 +35,8 @@ type Props = {
   projectId: string;
   inboxIssue: IInboxIssueStore;
   isEditable: boolean;
-  isSubmitting: "submitting" | "submitted" | "saved";
-  setIsSubmitting: Dispatch<SetStateAction<"submitting" | "submitted" | "saved">>;
+  isSubmitting: TNameDescriptionLoader;
+  setIsSubmitting: Dispatch<SetStateAction<TNameDescriptionLoader>>;
 };
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
@@ -63,11 +65,16 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const projectDetails = issue?.project_id ? getProjectById(issue?.project_id) : undefined;
 
   // debounced duplicate issues swr
-  const { duplicateIssues } = useDebouncedDuplicateIssues(projectDetails?.workspace.toString(), projectId, {
-    name: issue?.name,
-    description_html: getTextContent(issue?.description_html),
-    issueId: issue?.id,
-  });
+  const { duplicateIssues } = useDebouncedDuplicateIssues(
+    workspaceSlug,
+    projectDetails?.workspace.toString(),
+    projectId,
+    {
+      name: issue?.name,
+      description_html: getTextContent(issue?.description_html),
+      issueId: issue?.id,
+    }
+  );
 
   if (!issue) return <></>;
 

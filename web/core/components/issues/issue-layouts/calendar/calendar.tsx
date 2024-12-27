@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
+// plane constants
+import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 // types
 import type {
   IIssueDisplayFilterOptions,
@@ -21,15 +23,14 @@ import { Spinner } from "@plane/ui";
 import { CalendarHeader, CalendarIssueBlocks, CalendarWeekDays, CalendarWeekHeader } from "@/components/issues";
 // constants
 import { MONTHS_LIST } from "@/constants/calendar";
-import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
-import { useIssues, useUserPermissions } from "@/hooks/store";
+import { useIssues } from "@/hooks/store";
 import useSize from "@/hooks/use-window-size";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // store
+import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { ICalendarStore } from "@/store/issue/issue_calendar_view.store";
 import { IModuleIssuesFilter } from "@/store/issue/module";
@@ -40,7 +41,12 @@ import { TRenderQuickActions } from "../list/list-view-types";
 import type { ICalendarWeek } from "./types";
 
 type Props = {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProjectEpicsFilter;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
   layout: "month" | "week" | undefined;
@@ -53,6 +59,7 @@ type Props = {
   quickActions: TRenderQuickActions;
   handleDragAndDrop: (
     issueId: string | undefined,
+    issueProjectId: string | undefined,
     sourceDate: string | undefined,
     destinationDate: string | undefined
   ) => Promise<void>;
@@ -63,6 +70,8 @@ type Props = {
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
   ) => Promise<void>;
+  canEditProperties: (projectId: string | undefined) => boolean;
+  isEpic?: boolean;
 };
 
 export const CalendarChart: React.FC<Props> = observer((props) => {
@@ -81,7 +90,9 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
     getPaginationData,
     getGroupIssueCount,
     updateFilters,
+    canEditProperties,
     readOnly = false,
+    isEpic = false,
   } = props;
   // states
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -91,15 +102,10 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
   const {
     issues: { viewFlags },
   } = useIssues(EIssuesStoreType.PROJECT);
-  const { allowPermissions } = useUserPermissions();
 
   const [windowWidth] = useSize();
 
-  const { enableIssueCreation } = viewFlags || {};
-  const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
+  const { enableIssueCreation, enableQuickAdd } = viewFlags || {};
 
   const calendarPayload = issueCalendarView.calendarPayload;
 
@@ -163,12 +169,14 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                         loadMoreIssues={loadMoreIssues}
                         getPaginationData={getPaginationData}
                         getGroupIssueCount={getGroupIssueCount}
-                        enableQuickIssueCreate
-                        disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+                        enableQuickIssueCreate={enableQuickAdd}
+                        disableIssueCreation={!enableIssueCreation}
                         quickActions={quickActions}
                         quickAddCallback={quickAddCallback}
                         addIssuesToView={addIssuesToView}
                         readOnly={readOnly}
+                        canEditProperties={canEditProperties}
+                        isEpic={isEpic}
                       />
                     ))}
                 </div>
@@ -185,12 +193,14 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                   loadMoreIssues={loadMoreIssues}
                   getPaginationData={getPaginationData}
                   getGroupIssueCount={getGroupIssueCount}
-                  enableQuickIssueCreate
-                  disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+                  enableQuickIssueCreate={enableQuickAdd}
+                  disableIssueCreation={!enableIssueCreation}
                   quickActions={quickActions}
                   quickAddCallback={quickAddCallback}
                   addIssuesToView={addIssuesToView}
                   readOnly={readOnly}
+                  canEditProperties={canEditProperties}
+                  isEpic={isEpic}
                 />
               )}
             </div>
@@ -209,13 +219,15 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                 getPaginationData={getPaginationData}
                 getGroupIssueCount={getGroupIssueCount}
                 quickActions={quickActions}
-                enableQuickIssueCreate
-                disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+                enableQuickIssueCreate={enableQuickAdd}
+                disableIssueCreation={!enableIssueCreation}
                 quickAddCallback={quickAddCallback}
                 addIssuesToView={addIssuesToView}
                 readOnly={readOnly}
+                canEditProperties={canEditProperties}
                 isDragDisabled
                 isMobileView
+                isEpic={isEpic}
               />
             </div>
           </div>
@@ -235,13 +247,15 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
             loadMoreIssues={loadMoreIssues}
             getPaginationData={getPaginationData}
             getGroupIssueCount={getGroupIssueCount}
-            enableQuickIssueCreate
-            disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+            enableQuickIssueCreate={enableQuickAdd}
+            disableIssueCreation={!enableIssueCreation}
             quickAddCallback={quickAddCallback}
             addIssuesToView={addIssuesToView}
             readOnly={readOnly}
+            canEditProperties={canEditProperties}
             isDragDisabled
             isMobileView
+            isEpic={isEpic}
           />
         </div>
       </div>

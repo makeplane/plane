@@ -68,9 +68,7 @@ urlpatterns = [
     # user workspace invitations
     path(
         "users/me/workspaces/invitations/",
-        UserWorkspaceInvitationsViewSet.as_view(
-            {"get": "list", "post": "create"}
-        ),
+        UserWorkspaceInvitationsViewSet.as_view({"get": "list", "post": "create"}),
         name="user-workspace-invitations",
     ),
     path(

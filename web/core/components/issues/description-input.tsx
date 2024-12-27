@@ -5,7 +5,6 @@ import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 // plane editor
 import { convertBinaryDataToBase64String, EditorRefApi } from "@plane/editor";
-// types
 import { EFileAssetType } from "@plane/types/src/enums";
 // plane ui
 import { Loader } from "@plane/ui";

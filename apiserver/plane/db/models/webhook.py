@@ -29,9 +29,7 @@ def validate_domain(value):
 
 class Webhook(BaseModel):
     workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="workspace_webhooks",
+        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_webhooks"
     )
     url = models.URLField(
         validators=[validate_schema, validate_domain], max_length=1024
@@ -49,11 +47,18 @@ class Webhook(BaseModel):
         return f"{self.workspace.slug} {self.url}"
 
     class Meta:
-        unique_together = ["workspace", "url"]
+        unique_together = ["workspace", "url", "deleted_at"]
         verbose_name = "Webhook"
         verbose_name_plural = "Webhooks"
         db_table = "webhooks"
         ordering = ("-created_at",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "url"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="webhook_url_unique_url_when_deleted_at_null",
+            )
+        ]
 
 
 class WebhookLog(BaseModel):

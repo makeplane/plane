@@ -6,10 +6,10 @@ import { TEmbedConfig } from "@/plane-editor/types";
 import {
   EditorReadOnlyRefApi,
   EditorRefApi,
-  IMentionHighlight,
-  IMentionSuggestion,
   TExtensions,
   TFileHandler,
+  TMentionHandler,
+  TReadOnlyMentionHandler,
   TRealtimeConfig,
   TUserDetails,
 } from "@/types";
@@ -21,15 +21,15 @@ export type TServerHandler = {
 
 type TCollaborativeEditorHookCommonProps = {
   disabledExtensions: TExtensions[];
+  editable?: boolean;
   editorClassName: string;
   editorProps?: EditorProps;
   extensions?: Extensions;
   handleEditorReady?: (value: boolean) => void;
   id: string;
-  mentionHandler: {
-    highlights: () => Promise<IMentionHighlight[]>;
-    suggestions?: () => Promise<IMentionSuggestion[]>;
-  };
+  realtimeConfig: TRealtimeConfig;
+  serverHandler?: TServerHandler;
+  user: TUserDetails;
 };
 
 type TCollaborativeEditorHookProps = TCollaborativeEditorHookCommonProps & {
@@ -37,6 +37,7 @@ type TCollaborativeEditorHookProps = TCollaborativeEditorHookCommonProps & {
   embedHandler?: TEmbedConfig;
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
+  mentionHandler: TMentionHandler;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
 };
@@ -44,6 +45,7 @@ type TCollaborativeEditorHookProps = TCollaborativeEditorHookCommonProps & {
 type TCollaborativeReadOnlyEditorHookProps = TCollaborativeEditorHookCommonProps & {
   fileHandler: Pick<TFileHandler, "getAssetSrc">;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
+  mentionHandler: TReadOnlyMentionHandler;
 };
 
 export type TCollaborativeRichTextEditorHookProps = TCollaborativeEditorHookProps & {

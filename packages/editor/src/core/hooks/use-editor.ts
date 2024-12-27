@@ -3,7 +3,7 @@ import { HocuspocusProvider } from "@hocuspocus/provider";
 import { DOMSerializer } from "@tiptap/pm/model";
 import { Selection } from "@tiptap/pm/state";
 import { EditorProps } from "@tiptap/pm/view";
-import { useEditor as useTiptapEditor, Editor } from "@tiptap/react";
+import { useEditor as useTiptapEditor, Editor, Extensions } from "@tiptap/react";
 import * as Y from "yjs";
 // components
 import { EditorMenuItem, getEditorMenuItems } from "@/components/menus";
@@ -19,28 +19,25 @@ import { CoreEditorProps } from "@/props";
 import type {
   TDocumentEventsServer,
   EditorRefApi,
-  IMentionHighlight,
-  IMentionSuggestion,
   TEditorCommands,
   TFileHandler,
   TExtensions,
+  TMentionHandler,
 } from "@/types";
 
 export interface CustomEditorProps {
+  editable: boolean;
   editorClassName: string;
   editorProps?: EditorProps;
   enableHistory: boolean;
   disabledExtensions: TExtensions[];
-  extensions?: any;
+  extensions?: Extensions;
   fileHandler: TFileHandler;
   forwardedRef?: MutableRefObject<EditorRefApi | null>;
   handleEditorReady?: (value: boolean) => void;
   id?: string;
   initialValue?: string;
-  mentionHandler: {
-    highlights: () => Promise<IMentionHighlight[]>;
-    suggestions?: () => Promise<IMentionSuggestion[]>;
-  };
+  mentionHandler: TMentionHandler;
   onChange?: (json: object, html: string) => void;
   onTransaction?: () => void;
   autofocus?: boolean;
@@ -56,6 +53,7 @@ export interface CustomEditorProps {
 export const useEditor = (props: CustomEditorProps) => {
   const {
     disabledExtensions,
+    editable = true,
     editorClassName,
     editorProps = {},
     enableHistory,
@@ -76,42 +74,43 @@ export const useEditor = (props: CustomEditorProps) => {
     autofocus = false,
   } = props;
   // states
-
   const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
   // refs
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   const savedSelectionRef = useRef(savedSelection);
-  const editor = useTiptapEditor({
-    autofocus,
-    editorProps: {
-      ...CoreEditorProps({
-        editorClassName,
-      }),
-      ...editorProps,
+  const editor = useTiptapEditor(
+    {
+      editable,
+      autofocus,
+      editorProps: {
+        ...CoreEditorProps({
+          editorClassName,
+        }),
+        ...editorProps,
+      },
+      extensions: [
+        ...CoreEditorExtensions({
+          editable,
+          disabledExtensions,
+          enableHistory,
+          fileHandler,
+          mentionHandler,
+          placeholder,
+          tabIndex,
+        }),
+        ...extensions,
+      ],
+      content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
+      onCreate: () => handleEditorReady?.(true),
+      onTransaction: ({ editor }) => {
+        setSavedSelection(editor.state.selection);
+        onTransaction?.();
+      },
+      onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
+      onDestroy: () => handleEditorReady?.(false),
     },
-    extensions: [
-      ...CoreEditorExtensions({
-        disabledExtensions,
-        enableHistory,
-        fileHandler,
-        mentionConfig: {
-          mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
-          mentionHighlights: mentionHandler.highlights,
-        },
-        placeholder,
-        tabIndex,
-      }),
-      ...extensions,
-    ],
-    content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
-    onCreate: () => handleEditorReady?.(true),
-    onTransaction: ({ editor }) => {
-      setSavedSelection(editor.state.selection);
-      onTransaction?.();
-    },
-    onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
-    onDestroy: () => handleEditorReady?.(false),
-  });
+    [editable]
+  );
 
   // Update the ref whenever savedSelection changes
   useEffect(() => {

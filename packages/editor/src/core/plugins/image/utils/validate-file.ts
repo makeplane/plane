@@ -1,3 +1,6 @@
+// constants
+import { ACCEPTED_FILE_MIME_TYPES } from "@/constants/config";
+
 type TArgs = {
   file: File;
   maxFileSize: number;
@@ -11,9 +14,8 @@ export const isFileValid = (args: TArgs): boolean => {
     return false;
   }
 
-  const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-  if (!allowedTypes.includes(file.type)) {
-    alert("Invalid file type. Please select a JPEG, JPG, PNG, or WEBP image file.");
+  if (!ACCEPTED_FILE_MIME_TYPES.includes(file.type)) {
+    alert("Invalid file type. Please select a JPEG, JPG, PNG, WEBP or GIF file.");
     return false;
   }
 

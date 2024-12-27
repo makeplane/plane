@@ -39,7 +39,6 @@ export class IssueStore implements IIssueStore {
       updateIssue: action,
       removeIssue: action,
     });
-
     this.issueService = new IssueService();
   }
 
@@ -85,7 +84,10 @@ export class IssueStore implements IIssueStore {
         set(this.issuesMap, [issueId, key], issue[key as keyof TIssue]);
       });
     });
-    updatePersistentLayer(issueId);
+
+    if (!this.issuesMap[issueId]?.is_epic) {
+      updatePersistentLayer(issueId);
+    }
   };
 
   /**

@@ -6,13 +6,13 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 // types
+import { EIssuesStoreType } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // ui
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
 import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -53,7 +53,12 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
   const stateDetails = getStateById(issue.state_id);
   // auth
   const isEditingAllowed =
-    allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
+    allowPermissions(
+      [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+      EUserPermissionsLevel.PROJECT,
+      workspaceSlug?.toString(),
+      issue.project_id ?? undefined
+    ) && !readOnly;
   const isArchivingAllowed = handleArchive && isEditingAllowed;
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
   const isDeletingAllowed = isEditingAllowed;

@@ -11,6 +11,7 @@ import {
   TIssueSubIssuesStateDistributionMap,
   TIssueSubIssuesIdMap,
   TSubIssuesStateDistribution,
+  TIssueServiceType,
 } from "@plane/types";
 // services
 import { updatePersistentLayer } from "@/local-db/utils/utils";
@@ -65,7 +66,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
   // services
   issueService;
 
-  constructor(rootStore: IIssueDetail) {
+  constructor(rootStore: IIssueDetail, serviceType: TIssueServiceType) {
     makeObservable(this, {
       // observables
       subIssuesStateDistribution: observable,
@@ -83,7 +84,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
     // root store
     this.rootIssueDetailStore = rootStore;
     // services
-    this.issueService = new IssueService();
+    this.issueService = new IssueService(serviceType);
   }
 
   // helper methods
@@ -218,12 +219,12 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       let issueStateGroup: string | undefined = undefined;
 
       if (oldIssue.state_id) {
-        const state = this.rootIssueDetailStore.rootIssueStore.state.getStateById(oldIssue.state_id);
+        const state = this.rootIssueDetailStore.rootIssueStore.rootStore.state.getStateById(oldIssue.state_id);
         if (state?.group) oldIssueStateGroup = state.group;
       }
 
       if (issueData.state_id) {
-        const state = this.rootIssueDetailStore.rootIssueStore.state.getStateById(issueData.state_id);
+        const state = this.rootIssueDetailStore.rootIssueStore.rootStore.state.getStateById(issueData.state_id);
         if (state?.group) issueStateGroup = state.group;
       }
 
@@ -255,7 +256,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
     const issue = this.rootIssueDetailStore.issue.getIssueById(issueId);
     if (issue && issue.state_id) {
       let issueStateGroup: string | undefined = undefined;
-      const state = this.rootIssueDetailStore.rootIssueStore.state.getStateById(issue.state_id);
+      const state = this.rootIssueDetailStore.rootIssueStore.rootStore.state.getStateById(issue.state_id);
       if (state?.group) issueStateGroup = state.group;
 
       if (issueStateGroup) {
@@ -290,7 +291,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
     const issue = this.rootIssueDetailStore.issue.getIssueById(issueId);
     if (issue && issue.state_id) {
       let issueStateGroup: string | undefined = undefined;
-      const state = this.rootIssueDetailStore.rootIssueStore.state.getStateById(issue.state_id);
+      const state = this.rootIssueDetailStore.rootIssueStore.rootStore.state.getStateById(issue.state_id);
       if (state?.group) issueStateGroup = state.group;
 
       if (issueStateGroup) {

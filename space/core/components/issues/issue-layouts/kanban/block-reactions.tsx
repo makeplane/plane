@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-//plane
-import { cn } from "@plane/editor";
+// plane utils
+import { cn } from "@plane/utils";
 // components
 import { IssueEmojiReactions, IssueVotes } from "@/components/issues/reactions";
 // hooks

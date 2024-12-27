@@ -4,15 +4,15 @@ import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // types
+import { EIssuesStoreType } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/common";
-import { IssuePeekOverview } from "@/components/issues";
+import { IssueDetailsSidebar, IssuePeekOverview } from "@/components/issues";
 // constants
 import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "@/constants/event-tracker";
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useAppTheme, useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -21,7 +21,6 @@ import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/u
 import emptyIssue from "@/public/empty-state/issue.svg";
 // local components
 import { IssueMainContent } from "./main-content";
-import { IssueDetailsSidebar } from "./sidebar";
 
 export type TIssueOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string, loader?: boolean) => Promise<void>;

@@ -17,8 +17,6 @@ from django.db.models import (
     UUIDField,
     Value,
     Subquery,
-    Case,
-    When,
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -60,10 +58,11 @@ from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from .. import BaseAPIView, BaseViewSet
-from plane.utils.user_timezone_converter import user_timezone_converter
+from plane.utils.timezone_converter import user_timezone_converter
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.global_paginator import paginate
 from plane.bgtasks.webhook_task import model_activity
+from plane.bgtasks.issue_description_version_task import issue_description_version_task
 
 
 class IssueListEndpoint(BaseAPIView):
@@ -434,6 +433,13 @@ class IssueViewSet(BaseViewSet):
                 slug=slug,
                 origin=request.META.get("HTTP_ORIGIN"),
             )
+            # updated issue description version
+            issue_description_version_task.delay(
+                updated_issue=json.dumps(request.data, cls=DjangoJSONEncoder),
+                issue_id=str(serializer.data["id"]),
+                user_id=request.user.id,
+                is_creating=True,
+            )
             return Response(issue, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -449,12 +455,10 @@ class IssueViewSet(BaseViewSet):
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
-                cycle_id=Case(
-                    When(
-                        issue_cycle__cycle__deleted_at__isnull=True,
-                        then=F("issue_cycle__cycle_id"),
-                    ),
-                    default=None,
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(issue=OuterRef("id")).values("cycle_id")[
+                        :1
+                    ]
                 )
             )
             .annotate(
@@ -656,6 +660,12 @@ class IssueViewSet(BaseViewSet):
                 actor_id=request.user.id,
                 slug=slug,
                 origin=request.META.get("HTTP_ORIGIN"),
+            )
+            # updated issue description version
+            issue_description_version_task.delay(
+                updated_issue=current_instance,
+                issue_id=str(serializer.data.get("id", None)),
+                user_id=request.user.id,
             )
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

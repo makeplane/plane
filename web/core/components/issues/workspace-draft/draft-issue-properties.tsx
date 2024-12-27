@@ -160,16 +160,14 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
 
       {/* label */}
 
-      <div className="h-5" onClick={handleEventPropagation}>
-        <IssuePropertyLabels
-          projectId={issue?.project_id || null}
-          value={issue?.label_ids || null}
-          defaultOptions={defaultLabelOptions}
-          onChange={handleLabel}
-          renderByDefault={isMobile}
-          hideDropdownArrow
-        />
-      </div>
+      <IssuePropertyLabels
+        projectId={issue?.project_id || null}
+        value={issue?.label_ids || null}
+        defaultOptions={defaultLabelOptions}
+        onChange={handleLabel}
+        renderByDefault={isMobile}
+        hideDropdownArrow
+      />
 
       {/* start date */}
       <div className="h-5" onClick={handleEventPropagation}>

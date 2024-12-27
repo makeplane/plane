@@ -1,7 +1,8 @@
 import { makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
+import { EIssueServiceType } from "@plane/constants";
 // types
-import { TIssue } from "@plane/types";
+import { TIssue, TIssueServiceType } from "@plane/types";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // services
@@ -54,11 +55,12 @@ export class IssueStore implements IIssueStore {
   rootIssueStore: IIssueRootStore;
   rootIssueDetailStore: IIssueDetail;
   // services
+  serviceType;
   issueService;
   issueArchiveService;
   issueDraftService;
 
-  constructor(rootStore: IIssueRootStore, rootIssueDetailStore: IIssueDetail) {
+  constructor(rootStore: IIssueRootStore, rootIssueDetailStore: IIssueDetail, serviceType: TIssueServiceType) {
     makeObservable(this, {
       fetchingIssueDetails: observable.ref,
       localDBIssueDescription: observable.ref,
@@ -67,8 +69,9 @@ export class IssueStore implements IIssueStore {
     this.rootIssueStore = rootStore;
     this.rootIssueDetailStore = rootIssueDetailStore;
     // services
-    this.issueService = new IssueService();
-    this.issueArchiveService = new IssueArchiveService();
+    this.serviceType = serviceType;
+    this.issueService = new IssueService(serviceType);
+    this.issueArchiveService = new IssueArchiveService(serviceType);
     this.issueDraftService = new IssueDraftService();
   }
 
@@ -155,7 +158,7 @@ export class IssueStore implements IIssueStore {
 
     // fetching states
     // TODO: check if this function is required
-    this.rootIssueDetailStore.rootIssueStore.state.fetchProjectStates(workspaceSlug, projectId);
+    this.rootIssueDetailStore.rootIssueStore.rootStore.state.fetchProjectStates(workspaceSlug, projectId);
 
     return issue;
   };
@@ -200,8 +203,15 @@ export class IssueStore implements IIssueStore {
   };
 
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
-    await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
-    await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
+    const currentStore =
+      this.serviceType === EIssueServiceType.EPICS
+        ? this.rootIssueDetailStore.rootIssueStore.projectEpics
+        : this.rootIssueDetailStore.rootIssueStore.projectIssues;
+
+    await Promise.all([
+      currentStore.updateIssue(workspaceSlug, projectId, issueId, data),
+      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId),
+    ]);
   };
 
   updateIssueDescription = async (
@@ -218,11 +228,21 @@ export class IssueStore implements IIssueStore {
     return res;
   };
 
-  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
-    this.rootIssueDetailStore.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    const currentStore =
+      this.serviceType === EIssueServiceType.EPICS
+        ? this.rootIssueDetailStore.rootIssueStore.projectEpics
+        : this.rootIssueDetailStore.rootIssueStore.projectIssues;
+    currentStore.removeIssue(workspaceSlug, projectId, issueId);
+  };
 
-  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
-    this.rootIssueDetailStore.rootIssueStore.projectIssues.archiveIssue(workspaceSlug, projectId, issueId);
+  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    const currentStore =
+      this.serviceType === EIssueServiceType.EPICS
+        ? this.rootIssueDetailStore.rootIssueStore.projectEpics
+        : this.rootIssueDetailStore.rootIssueStore.projectIssues;
+    currentStore.archiveIssue(workspaceSlug, projectId, issueId);
+  };
 
   addCycleToIssue = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
     await this.rootIssueDetailStore.rootIssueStore.cycleIssues.addCycleToIssue(

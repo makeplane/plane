@@ -1,7 +1,7 @@
-// plane editor
+// plane internal
+import { MAX_FILE_SIZE } from "@plane/constants";
 import { TFileHandler } from "@plane/editor";
-// constants
-import { MAX_FILE_SIZE } from "@/constants/common";
+
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // services

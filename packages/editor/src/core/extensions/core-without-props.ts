@@ -13,7 +13,7 @@ import { CustomHorizontalRule } from "./horizontal-rule";
 import { ImageExtensionWithoutProps } from "./image";
 import { CustomImageComponentWithoutProps } from "./image/image-component-without-props";
 import { IssueWidgetWithoutProps } from "./issue-embed/issue-embed-without-props";
-import { CustomMentionWithoutProps } from "./mentions/mentions-without-props";
+import { CustomMentionExtensionConfig } from "./mentions/extension-config";
 import { CustomQuoteExtension } from "./quote";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
 import { CustomTextAlignExtension } from "./text-align";
@@ -43,6 +43,16 @@ export const CoreEditorExtensionsWithoutProps = [
     codeBlock: false,
     horizontalRule: false,
     blockquote: false,
+    paragraph: {
+      HTMLAttributes: {
+        class: "editor-paragraph-block",
+      },
+    },
+    heading: {
+      HTMLAttributes: {
+        class: "editor-heading-block",
+      },
+    },
     dropcursor: false,
   }),
   CustomQuoteExtension,
@@ -87,7 +97,7 @@ export const CoreEditorExtensionsWithoutProps = [
   TableHeader,
   TableCell,
   TableRow,
-  CustomMentionWithoutProps(),
+  CustomMentionExtensionConfig,
   CustomTextAlignExtension,
   CustomCalloutExtensionConfig,
   CustomColorExtension,

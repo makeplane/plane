@@ -1,5 +1,3 @@
-import { EIssueLayoutTypes } from "constants/issue";
-
 export type TIssueLayouts =
   | "list"
   | "kanban"
@@ -18,6 +16,7 @@ export type TIssueGroupByOptions =
   | "cycle"
   | "module"
   | "target_date"
+  | "team_project"
   | null;
 
 export type TIssueOrderByOptions =
@@ -69,6 +68,7 @@ export type TIssueParams =
   | "start_date"
   | "target_date"
   | "project"
+  | "team_project"
   | "group_by"
   | "sub_group_by"
   | "order_by"
@@ -92,6 +92,7 @@ export interface IIssueFilterOptions {
   cycle?: string[] | null;
   module?: string[] | null;
   project?: string[] | null;
+  team_project?: string[] | null;
   start_date?: string[] | null;
   state?: string[] | null;
   state_group?: string[] | null;
@@ -107,7 +108,7 @@ export interface IIssueDisplayFilterOptions {
   };
   group_by?: TIssueGroupByOptions;
   sub_group_by?: TIssueGroupByOptions;
-  layout?: EIssueLayoutTypes;
+  layout?: any; // TODO: Need to fix this and set it to enum EIssueLayoutTypes
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
   sub_issue?: boolean;

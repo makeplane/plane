@@ -3,16 +3,15 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// icons
 import { ListFilter, Search, X } from "lucide-react";
-// editor
-import { cn } from "@plane/editor";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { TModuleFilters } from "@plane/types";
 // ui
 import { Tooltip } from "@plane/ui";
+// plane utils
+import { cn } from "@plane/utils";
 // components
 import { FiltersDropdown } from "@/components/issues";
 import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules/dropdowns";

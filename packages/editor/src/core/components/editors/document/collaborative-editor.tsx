@@ -8,7 +8,7 @@ import { IssueWidget } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
-import { useCollaborativeDocumentEditor } from "@/hooks/use-collaborative-document-editor";
+import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
 // types
 import { EditorRefApi, ICollaborativeDocumentEditor } from "@/types";
 
@@ -19,6 +19,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     containerClassName,
     disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
+    editable,
     editorClassName = "",
     embedHandler,
     fileHandler,
@@ -43,9 +44,9 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   }
 
   // use document editor
-  const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeDocumentEditor({
-    onTransaction,
+  const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeEditor({
     disabledExtensions,
+    editable,
     editorClassName,
     embedHandler,
     extensions,
@@ -54,6 +55,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     handleEditorReady,
     id,
     mentionHandler,
+    onTransaction,
     placeholder,
     realtimeConfig,
     serverHandler,

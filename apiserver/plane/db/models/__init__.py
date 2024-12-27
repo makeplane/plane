@@ -41,6 +41,8 @@ from .issue import (
     IssueSequence,
     IssueSubscriber,
     IssueVote,
+    IssueVersion,
+    IssueDescriptionVersion,
 )
 from .module import Module, ModuleIssue, ModuleLink, ModuleMember, ModuleUserProperties
 from .notification import EmailNotificationLog, Notification, UserNotificationPreference
@@ -53,7 +55,6 @@ from .project import (
     ProjectMemberInvite,
     ProjectPublicMember,
 )
-from .deploy_board import DeployBoard
 from .session import Session
 from .social_connection import SocialLoginConnection
 from .state import State
@@ -67,25 +68,8 @@ from .workspace import (
     WorkspaceMemberInvite,
     WorkspaceTheme,
     WorkspaceUserProperties,
+    WorkspaceUserLink,
 )
-
-from .importer import Importer
-
-from .page import Page, PageLog, PageLabel
-
-from .estimate import Estimate, EstimatePoint
-
-from .intake import Intake, IntakeIssue
-
-from .analytic import AnalyticView
-
-from .notification import Notification, UserNotificationPreference, EmailNotificationLog
-
-from .exporter import ExporterHistory
-
-from .webhook import Webhook, WebhookLog
-
-from .dashboard import Dashboard, DashboardWidget, Widget
 
 from .favorite import UserFavorite
 
@@ -96,3 +80,5 @@ from .recent_visit import UserRecentVisit
 from .label import Label
 
 from .device import Device, DeviceSession
+
+from .sticky import Sticky

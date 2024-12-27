@@ -1,8 +1,10 @@
 import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { UseFormRegister, UseFormSetFocus } from "react-hook-form";
+// plane constants
+import { EIssueLayoutTypes } from "@plane/constants";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { TIssue } from "@plane/types";
 // components
@@ -14,8 +16,6 @@ import {
   SpreadsheetQuickAddIssueForm,
   TQuickAddIssueForm,
 } from "@/components/issues/issue-layouts";
-// constants
-import { EIssueLayoutTypes } from "@/constants/issue";
 // hooks
 import { useProject } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
@@ -30,10 +30,11 @@ export type TQuickAddIssueFormRoot = {
   register: UseFormRegister<TIssue>;
   onSubmit: () => void;
   onClose: () => void;
+  isEpic: boolean;
 };
 
 export const QuickAddIssueFormRoot: FC<TQuickAddIssueFormRoot> = observer((props) => {
-  const { isOpen, layout, projectId, hasError = false, setFocus, register, onSubmit, onClose } = props;
+  const { isOpen, layout, projectId, hasError = false, setFocus, register, onSubmit, onClose, isEpic } = props;
   // store hooks
   const { getProjectById } = useProject();
   // derived values
@@ -70,6 +71,7 @@ export const QuickAddIssueFormRoot: FC<TQuickAddIssueFormRoot> = observer((props
       hasError={hasError}
       register={register}
       onSubmit={onSubmit}
+      isEpic={isEpic}
     />
   );
 });
