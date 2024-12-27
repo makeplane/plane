@@ -8,6 +8,7 @@ import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/co
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { Button } from "@plane/ui";
 // components
+import { ProjectAnalyticsModal } from "@/components/analytics";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
 import { ISSUE_STORE_TO_FILTERS_MAP } from "@/constants/issue";
@@ -17,7 +18,7 @@ import { isIssueFilterActive } from "@/helpers/filter.helper";
 import { useLabel, useProjectState, useMember, useIssues } from "@/hooks/store";
 // plane web types
 import { TProject } from "@/plane-web/types";
-import { ProjectAnalyticsModal } from "../analytics";
+// local components
 
 type Props = {
   currentProjectDetails: TProject | undefined;

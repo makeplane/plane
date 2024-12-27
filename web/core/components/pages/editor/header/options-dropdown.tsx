@@ -19,7 +19,6 @@ import { EditorRefApi } from "@plane/editor";
 // ui
 import { ArchiveIcon, CustomMenu, type ISvgIcons, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
-import { ExportPageModal } from "@/components/pages";
 // helpers
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
@@ -29,6 +28,7 @@ import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 import { useQueryParams } from "@/hooks/use-query-params";
 // store
 import { IPage } from "@/store/pages/page";
+import dynamic from "next/dynamic";
 
 type Props = {
   editorRef: EditorRefApi | null;
@@ -36,6 +36,13 @@ type Props = {
   page: IPage;
 };
 
+const ExportPageModal = dynamic(
+  () => import("@/components/pages/modals/export-page-modal").then((m) => m.ExportPageModal),
+  {
+    ssr: false,
+    loading: () => null,
+  }
+);
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { editorRef, handleDuplicatePage, page } = props;
   // router

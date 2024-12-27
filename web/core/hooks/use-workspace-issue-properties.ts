@@ -1,5 +1,5 @@
+import { useCycle, useLabel, useModule, useProjectEstimates, useProjectState } from "@/hooks/store";
 import useSWR from "swr";
-import { useCycle, useProjectEstimates, useLabel, useModule, useProjectState } from "./store";
 
 export const useWorkspaceIssueProperties = (workspaceSlug: string | string[] | undefined) => {
   const { fetchWorkspaceLabels } = useLabel();

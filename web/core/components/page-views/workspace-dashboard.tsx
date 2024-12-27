@@ -1,11 +1,13 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
+import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 // components
 import { ContentWrapper } from "@plane/ui";
-import { DashboardWidgets } from "@/components/dashboard";
+// import { DashboardWidgets } from "@/components/dashboard";
+import { LogoSpinner } from "@/components/common";
 import { EmptyState } from "@/components/empty-state";
-import { IssuePeekOverview } from "@/components/issues";
+// import { IssuePeekOverview } from "@/components/issues";
 import { TourRoot } from "@/components/onboarding";
 import { UserGreetingsView } from "@/components/user";
 // constants
@@ -14,8 +16,28 @@ import { PRODUCT_TOUR_COMPLETED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useCommandPalette, useUserProfile, useEventTracker, useDashboard, useProject, useUser } from "@/hooks/store";
+import { useCommandPalette, useDashboard, useEventTracker, useProject, useUser, useUserProfile } from "@/hooks/store";
 import useSize from "@/hooks/use-window-size";
+
+//@to-do Add loader matching the layout
+const DashboardWidgets = dynamic(
+  () => import("@/components/dashboard/home-dashboard-widgets").then((m) => m.DashboardWidgets),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-full w-full flex items-center justify-center">
+        <LogoSpinner />
+      </div>
+    ),
+  }
+);
+const IssuePeekOverview = dynamic(
+  () => import("@/components/issues/peek-overview/root").then((m) => m.IssuePeekOverview),
+  {
+    ssr: false,
+    loading: () => null,
+  }
+);
 
 export const WorkspaceDashboardView = observer(() => {
   // store hooks
