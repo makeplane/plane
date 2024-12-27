@@ -82,7 +82,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     quickAddCallback,
     scrollableContainerRef,
     handleOnDrop,
-    isEpic =false
+    isEpic = false,
   } = props;
   // hooks
   const projectState = useProjectState();
@@ -285,6 +285,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         dropErrorMessage={dropErrorMessage}
         orderBy={orderBy}
         isDraggingOverColumn={isDraggingOverColumn}
+        isEpic={isEpic}
       />
       <KanbanIssueBlocksList
         sub_group_id={sub_group_id}
@@ -312,6 +313,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
               ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
             }}
             quickAddCallback={quickAddCallback}
+            isEpic={isEpic}
           />
         </div>
       )}

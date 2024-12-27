@@ -7,7 +7,7 @@ export enum E_PASSWORD_STRENGTH {
 
 export const PASSWORD_MIN_LENGTH = 8;
 
-export const PASSWORD_CRITERIA = [
+export const SPACE_PASSWORD_CRITERIA = [
   {
     key: "min_8_char",
     label: "Min 8 characters",

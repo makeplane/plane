@@ -297,6 +297,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // Temporary code to fix no load order by
     if (
       this.rootIssueStore.rootStore.user.localDBEnabled &&
+      this.rootIssueStore.rootStore.router.projectId &&
       layout !== EIssueLayoutTypes.SPREADSHEET &&
       orderBy &&
       Object.keys(SPECIAL_ORDER_BY).includes(orderBy)
@@ -671,6 +672,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const issueBeforeRemoval = clone(this.rootIssueStore.issues.getIssueById(issueId));
     // update parent stats optimistically
     this.updateParentStats(issueBeforeRemoval, undefined);
+
     // Male API call
     await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
     // Remove from Respective issue Id list

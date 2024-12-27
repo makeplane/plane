@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+// constant
+import { EIssueLayoutTypes } from "@plane/constants";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, IWorkspaceView } from "@plane/types";
 // ui
@@ -30,7 +32,9 @@ const defaultValues: Partial<IWorkspaceView> = {
   description: "",
   access: EViewAccess.PUBLIC,
   display_properties: getComputedDisplayProperties(),
-  display_filters: getComputedDisplayFilters(),
+  display_filters: getComputedDisplayFilters({
+    layout: EIssueLayoutTypes.SPREADSHEET,
+  }),
 };
 
 export const WorkspaceViewForm: React.FC<Props> = observer((props) => {

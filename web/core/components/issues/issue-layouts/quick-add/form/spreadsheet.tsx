@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { TQuickAddIssueForm } from "../root";
 
 export const SpreadsheetQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) => {
-  const { ref, projectDetail, register, onSubmit } = props;
+  const { ref, projectDetail, register, onSubmit, isEpic } = props;
 
   return (
     <div className="pb-2">
@@ -16,15 +16,15 @@ export const SpreadsheetQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((pr
         <input
           type="text"
           autoComplete="off"
-          placeholder="Issue Title"
+          placeholder={isEpic ? "Epic Title" : "Issue Title"}
           {...register("name", {
-            required: "Issue title is required.",
+            required: `${isEpic ? "Epic" : "Issue"} title is required.`,
           })}
           className="w-full rounded-md bg-transparent py-3 text-sm leading-5 text-custom-text-200 outline-none"
         />
       </form>
       <p className="ml-3 mt-3 text-xs italic text-custom-text-200">
-        Press {"'"}Enter{"'"} to add another issue
+        {`Press Enter to add another ${isEpic ? "epic" : "issue"}`}
       </p>
     </div>
   );
