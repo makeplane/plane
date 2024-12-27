@@ -9,9 +9,9 @@ import { useEditor } from "@/hooks/use-editor";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import { TCollaborativeEditorProps } from "@/types";
+import { TCollaborativeDocumentEditorHookProps } from "@/types";
 
-export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
+export const useCollaborativeDocumentEditor = (props: TCollaborativeDocumentEditorHookProps) => {
   const {
     onTransaction,
     disabledExtensions,
