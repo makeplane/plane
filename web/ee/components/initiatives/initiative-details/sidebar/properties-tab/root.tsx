@@ -3,6 +3,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { Briefcase, Calendar, UserCircle2 } from "lucide-react";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { DateRangeDropdown, MemberDropdown, ProjectDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
@@ -44,11 +45,36 @@ export const InitiativeSidebarPropertiesRoot: React.FC<TInitiativeSidebarPropert
       lead: id,
     });
 
-  const handleProjects = (ids: string | string[]) =>
-    updateInitiative &&
+  const handleProjects = (ids: string | string[]) => {
+    const projectIds = ids ? (Array.isArray(ids) ? ids : [ids]) : [];
+
+    if (projectIds.length === 0) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Please select at least one project.",
+      });
+      return;
+    }
+
     updateInitiative(workspaceSlug.toString(), initiative.id, {
-      project_ids: ids ? (Array.isArray(ids) ? ids : [ids]) : null,
-    });
+      project_ids: projectIds,
+    })
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Initiative projects updated successfully.",
+        });
+      })
+      .catch((error) => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: error?.error ?? "Failed to update initiative projects. Please try again!",
+        });
+      });
+  };
 
   return (
     <div className={`mb-2 space-y-2.5 ${disabled ? "opacity-60" : ""}`}>

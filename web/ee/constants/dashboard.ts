@@ -41,12 +41,12 @@ export const SIDEBAR_WORKSPACE_MENU: Partial<Record<TSidebarWorkspaceMenuItemKey
 };
 
 export const SIDEBAR_WORKSPACE_MENU_ITEMS: TSidebarWorkspaceMenuItems[] = [
+  SIDEBAR_WORKSPACE_MENU?.initiatives,
   SIDEBAR_WORKSPACE_MENU?.teams,
   SIDEBAR_WORKSPACE_MENU?.projects,
   SIDEBAR_WORKSPACE_MENU?.["all-issues"],
   SIDEBAR_WORKSPACE_MENU?.["active-cycles"],
   SIDEBAR_WORKSPACE_MENU?.analytics,
-  SIDEBAR_WORKSPACE_MENU?.initiatives,
 ].filter((item): item is TSidebarWorkspaceMenuItems => item !== undefined);
 
 export { SIDEBAR_USER_MENU_ITEMS };

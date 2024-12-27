@@ -237,7 +237,7 @@ export class InitiativeStore implements IInitiativeStore {
       });
 
       await this.initiativeService.updateInitiative(workspaceSlug, initiativeId, payload);
-
+      this.initiativeCommentActivities.fetchActivities(workspaceSlug, initiativeId);
       return;
     } catch (error) {
       runInAction(() => {

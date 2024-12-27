@@ -117,6 +117,17 @@ export const InitiativeActivityItem: FC<TInitiativeActivityItem> = observer((pro
           )}
         </>
       );
+    case "projects":
+      return (
+        <>
+          {activity.new_value === "" ? `removed a project` : `added a project`}{" "}
+          {activity.new_value === "" ? (
+            <span className="font-medium text-custom-text-100">{activity.old_value}</span>
+          ) : (
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+          )}
+        </>
+      );
     default:
       return <></>;
   }

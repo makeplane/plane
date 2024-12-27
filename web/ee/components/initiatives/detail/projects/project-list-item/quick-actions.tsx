@@ -17,13 +17,18 @@ type Props = {
 
 export const QuickActions: React.FC<Props> = observer((props: Props) => {
   const { workspaceSlug, initiativeId, project } = props;
-  // derived states
-  const projectLink = `${workspaceSlug}/projects/${project.id}/issues`;
-
+  // store hooks
   const {
-    initiative: { updateInitiative },
+    initiative: { getInitiativeById, updateInitiative },
   } = useInitiatives();
 
+  // derived states
+  const projectLink = `${workspaceSlug}/projects/${project.id}/issues`;
+  const initiative = initiativeId ? getInitiativeById(initiativeId) : undefined;
+
+  const shouldRenderRemove = (initiative?.project_ids || [])?.length > 1;
+
+  // handler
   const handleCopyText = () =>
     copyUrlToClipboard(projectLink).then(() =>
       setToast({
@@ -46,7 +51,7 @@ export const QuickActions: React.FC<Props> = observer((props: Props) => {
       action: () => updateInitiative(workspaceSlug, initiativeId, { project_ids: [project.id] }),
       title: "Remove",
       icon: Trash2,
-      shouldRender: true,
+      shouldRender: shouldRenderRemove,
     },
   ];
 

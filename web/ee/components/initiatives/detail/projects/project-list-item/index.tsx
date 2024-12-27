@@ -10,6 +10,8 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // Plane-web
 import Attributes from "@/plane-web/components/projects/layouts/attributes";
 //
+import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { QuickActions } from "./quick-actions";
 
 type Props = {
@@ -23,8 +25,11 @@ export const ProjectItem = observer((props: Props) => {
   const { getProjectById, updateProject } = useProject();
   const { currentWorkspace } = useWorkspace();
   const { isMobile } = usePlatformOS();
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
 
   const parentRef = useRef(null);
+
+  const isProjectGroupingEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED);
 
   const projectDetails = getProjectById(projectId);
 
@@ -41,6 +46,9 @@ export const ProjectItem = observer((props: Props) => {
       }
       quickActionElement={
         <div className="flex shrink-0 items-center gap-2">
+          {projectDetails.total_issues > 0 && (
+            <span className="text-sm font-medium text-custom-text-400 px-1">{`${projectDetails.completed_issues}/${projectDetails.total_issues}`}</span>
+          )}
           <Attributes
             project={projectDetails}
             isArchived={projectDetails.archived_at !== null}
@@ -48,7 +56,12 @@ export const ProjectItem = observer((props: Props) => {
             workspaceSlug={workspaceSlug.toString()}
             currentWorkspace={currentWorkspace}
             containerClass="px-0 py-0 md:pb-4 lg:py-2"
-            displayProperties={{ state: true, priority: true, lead: true, date: true }}
+            displayProperties={{
+              state: isProjectGroupingEnabled,
+              priority: isProjectGroupingEnabled,
+              lead: true,
+              date: true,
+            }}
           />
           <div className={cn("hidden md:flex")}>
             <QuickActions

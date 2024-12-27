@@ -1,6 +1,7 @@
 import React, { FC, useState } from "react";
 import { useParams } from "next/navigation";
 import { EFileAssetType } from "@plane/types/src/enums";
+import { cn } from "@plane/utils";
 import { Button, Input, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { DateRangeDropdown, MemberDropdown, ProjectDropdown } from "@/components/dropdowns";
@@ -79,114 +80,105 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
         }
       }}
     >
-      <div className="space-y-5 p-5">
-        <div className="flex items-center gap-x-3">
-          <h3 className="text-xl font-medium text-custom-text-200">
-            {initiativeDetail ? "Update" : "Create"} Initiative
-          </h3>
-        </div>
-        <div className="space-y-3">
-          <div className="space-y-1">
+      <div className="space-y-3 p-5 pb-4">
+        <h3 className="text-xl font-medium text-custom-text-200">{formData.id ? "Update" : "Create"} Initiative</h3>
+
+        <div className={cn("flex items-center gap-2 w-full", errors.name && "items-start")}>
+          <div className="space-y-1 flew-grow w-full">
             <Input
               id="name"
-              name="name"
               type="text"
-              value={formData?.name}
+              value={formData.name}
               onChange={(e) => handleNameChange(e.target.value)}
-              hasError={Boolean(errors?.name)}
-              placeholder="Title"
-              className="w-full text-base"
+              placeholder="Initiative name"
+              className="w-full resize-none text-base"
+              hasError={Boolean(errors.name)}
               tabIndex={1}
-              maxLength={255}
-              required
               autoFocus
             />
-            <span className="text-xs text-red-500">{errors?.name}</span>
+            {errors.name && <div className="text-red-500 text-xs">{errors.name}</div>}
           </div>
-          <div className="border-[0.5px] border-custom-border-200 rounded-lg relative">
-            <RichTextEditor
-              id="initiative-modal-editor"
-              initialValue={
-                !formData?.description_html || formData?.description_html === ""
-                  ? "<p></p>"
-                  : formData?.description_html
-              }
-              value={formData?.description_html}
-              workspaceSlug={workspaceSlug.toString()}
-              workspaceId={currentWorkspace.id}
-              dragDropEnabled={false}
-              onChange={(description_json: object, description_html: string) => {
-                handleFormDataChange("description_html", description_html);
+        </div>
+        <RichTextEditor
+          id="initiative-modal-editor"
+          initialValue={
+            !formData?.description_html || formData?.description_html === "" ? "<p></p>" : formData?.description_html
+          }
+          value={formData?.description_html}
+          workspaceSlug={workspaceSlug.toString()}
+          workspaceId={currentWorkspace.id}
+          dragDropEnabled={false}
+          onChange={(description_json: object, description_html: string) => {
+            handleFormDataChange("description_html", description_html);
+          }}
+          placeholder={getDescriptionPlaceholder}
+          searchMentionCallback={searchEntity}
+          editorClassName="text-xs"
+          containerClassName="resize-none min-h-24 text-xs border-[0.5px] border-custom-border-200 rounded-md px-3 py-2"
+          tabIndex={2}
+          uploadFile={async (file) => {
+            try {
+              const { asset_id } = await fileService.uploadWorkspaceAsset(
+                workspaceSlug.toString(),
+                {
+                  entity_identifier: initiativeDetail?.id ?? "",
+                  entity_type: EFileAssetType.INITIATIVE_DESCRIPTION,
+                },
+                file
+              );
+              return asset_id;
+            } catch (error) {
+              console.log("Error in uploading issue asset:", error);
+              throw new Error("Asset upload failed. Please try again later.");
+            }
+          }}
+        />
+
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="h-7">
+            <ProjectDropdown
+              buttonVariant={"border-with-text"}
+              onChange={(val) => {
+                handleFormDataChange("project_ids", val);
               }}
-              placeholder={getDescriptionPlaceholder}
-              searchMentionCallback={searchEntity}
-              editorClassName="text-xs"
-              containerClassName="resize-none min-h-24 max-h-64 overflow-y-scroll vertical-scrollbar scrollbar-sm text-xs border-[0.5px] border-custom-border-200 rounded-md px-3 py-2"
+              value={formData.project_ids || []}
+              multiple
+              showTooltip
               tabIndex={2}
-              uploadFile={async (file) => {
-                try {
-                  const { asset_id } = await fileService.uploadWorkspaceAsset(
-                    workspaceSlug.toString(),
-                    {
-                      entity_identifier: initiativeDetail?.id ?? "",
-                      entity_type: EFileAssetType.INITIATIVE_DESCRIPTION,
-                    },
-                    file
-                  );
-                  return asset_id;
-                } catch (error) {
-                  console.log("Error in uploading issue asset:", error);
-                  throw new Error("Asset upload failed. Please try again later.");
-                }
-              }}
             />
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="h-7">
-              <ProjectDropdown
-                buttonVariant={"border-with-text"}
-                onChange={(val) => {
-                  handleFormDataChange("project_ids", val);
-                }}
-                value={formData.project_ids || []}
-                multiple
-                showTooltip
-                tabIndex={2}
-              />
-            </div>
 
-            <DateRangeDropdown
+          <DateRangeDropdown
+            buttonVariant="border-with-text"
+            className="h-7"
+            value={{
+              from: getDate(formData?.start_date),
+              to: getDate(formData?.end_date),
+            }}
+            onSelect={(val) => {
+              handleFormDataChange("start_date", val?.from ? renderFormattedPayloadDate(val.from) : null);
+              handleFormDataChange("end_date", val?.to ? renderFormattedPayloadDate(val.to) : null);
+            }}
+            placeholder={{
+              from: "Start date",
+              to: "End date",
+            }}
+            hideIcon={{
+              to: true,
+            }}
+            tabIndex={3}
+          />
+
+          <div className="h-7">
+            <MemberDropdown
+              value={formData?.lead ?? ""}
+              onChange={(val) => handleFormDataChange("lead", val)}
+              multiple={false}
               buttonVariant="border-with-text"
-              className="h-7"
-              value={{
-                from: getDate(formData?.start_date),
-                to: getDate(formData?.end_date),
-              }}
-              onSelect={(val) => {
-                handleFormDataChange("start_date", val?.from ? renderFormattedPayloadDate(val.from) : null);
-                handleFormDataChange("end_date", val?.to ? renderFormattedPayloadDate(val.to) : null);
-              }}
-              placeholder={{
-                from: "Start date",
-                to: "End date",
-              }}
-              hideIcon={{
-                to: true,
-              }}
-              tabIndex={3}
+              placeholder="Lead"
+              tabIndex={4}
+              showUserDetails
             />
-
-            <div className="h-7">
-              <MemberDropdown
-                value={formData?.lead ?? ""}
-                onChange={(val) => handleFormDataChange("lead", val)}
-                multiple={false}
-                buttonVariant="border-with-text"
-                placeholder="Lead"
-                tabIndex={4}
-                showUserDetails
-              />
-            </div>
           </div>
         </div>
       </div>

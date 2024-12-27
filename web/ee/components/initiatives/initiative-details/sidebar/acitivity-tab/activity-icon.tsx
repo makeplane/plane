@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CalendarDays, Link, MessageSquare, Network, Paperclip, Users } from "lucide-react";
+import { Briefcase, CalendarDays, Link, MessageSquare, Network, Paperclip, Users } from "lucide-react";
 import { InitiativeIcon } from "@plane/ui";
 import { TInitiativeActivity } from "@/plane-web/types/initiative";
 
@@ -14,6 +14,7 @@ const iconMap = {
   end_date: CalendarDays,
   link: Link,
   attachment: Paperclip,
+  projects: Briefcase,
 } as const;
 
 interface InitiativeActivityIconProps {

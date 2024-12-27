@@ -203,7 +203,7 @@ export class InitiativeService extends APIService {
   }
 
   async deleteInitiativeComment(workspaceSlug: string, initiativeId: string, commentId: string): Promise<void> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/links/${commentId}/`)
+    return this.delete(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/comments/${commentId}/`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
