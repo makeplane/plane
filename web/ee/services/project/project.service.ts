@@ -14,7 +14,6 @@ export class ProjectService extends CeProjectService {
   async fetchProjectAnalytics(workspaceSlug: string, projectId: string): Promise<TProjectAnalytics> {
     try {
       const { data } = await this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/analytics/`);
-      console.log(data);
       return data || undefined;
     } catch (error) {
       throw error;

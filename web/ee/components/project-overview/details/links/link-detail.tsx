@@ -4,7 +4,7 @@ import { FC } from "react";
 // hooks
 // ui
 import { observer } from "mobx-react";
-import { Pencil, Trash2, LinkIcon, ExternalLink } from "lucide-react";
+import { Pencil, Trash2, LinkIcon, Copy } from "lucide-react";
 import { Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 // types
@@ -46,12 +46,7 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
         <div
           className="flex w-full cursor-pointer items-start justify-between gap-2"
           onClick={() => {
-            copyTextToClipboard(linkDetail.url);
-            setToast({
-              type: TOAST_TYPE.SUCCESS,
-              title: "Link copied!",
-              message: "Link copied to clipboard",
-            });
+            window.open(linkDetail.url, "_blank");
           }}
         >
           <div className="flex items-start gap-2 truncate">
@@ -81,14 +76,21 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
               >
                 <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
               </button>
-              <a
-                href={linkDetail.url}
-                target="_blank"
-                rel="noopener noreferrer"
+              <span
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  copyTextToClipboard(linkDetail.url);
+                  setToast({
+                    type: TOAST_TYPE.SUCCESS,
+                    title: "Link copied!",
+                    message: "Link copied to clipboard",
+                  });
+                }}
                 className="flex items-center justify-center p-1 hover:bg-custom-background-80"
               >
-                <ExternalLink className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
-              </a>
+                <Copy className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+              </span>
               <button
                 type="button"
                 className="flex items-center justify-center p-1 hover:bg-custom-background-80"
