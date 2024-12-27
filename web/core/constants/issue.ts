@@ -78,8 +78,8 @@ export const ISSUE_FILTER_OPTIONS: {
   title: string;
 }[] = [
   { key: null, title: "All" },
-  { key: "active", title: "Active Issues" },
-  { key: "backlog", title: "Backlog Issues" },
+  { key: "active", title: "Active" },
+  { key: "backlog", title: "Backlog" },
   // { key: "draft", title: "Draft Issues" },
 ];
 
