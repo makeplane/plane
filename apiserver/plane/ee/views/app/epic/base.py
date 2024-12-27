@@ -349,20 +349,29 @@ class EpicViewSet(BaseViewSet):
         workspace = Workspace.objects.get(slug=slug)
         is_epic_enabled = request.data.get("is_epic_enabled", False)
         if is_epic_enabled:
+            # get or create the project feature
             project_feature, _ = ProjectFeature.objects.get_or_create(
                 project_id=project_id
             )
-            if not project_feature.is_epic_enabled:
-                project_feature.is_epic_enabled = True
-                project_feature.save()
+            # Check if the epic issue type is already created for the project or not
+            project_issue_type = ProjectIssueType.objects.filter(
+                project_id=project_id, issue_type__is_epic=True
+            ).first()
 
-            epic, _ = IssueType.objects.get_or_create(
-                workspace_id=workspace.id, is_epic=True, level=1
-            )
+            if not project_issue_type:
+                # create the epic issue type
+                epic = IssueType.objects.create(
+                    workspace_id=workspace.id, is_epic=True, level=1
+                )
 
-            project_feature, _ = ProjectIssueType.objects.get_or_create(
-                project_id=project_id, issue_type_id=epic.id
-            )
+                # add it to the project epic issue type
+                _ = ProjectIssueType.objects.create(
+                    project_id=project_id, issue_type_id=epic.id
+                )
+
+            # enable epic issue type
+            project_feature.is_epic_enabled = True
+            project_feature.save()
 
             # Refetch the data
             epic = (
@@ -370,7 +379,6 @@ class EpicViewSet(BaseViewSet):
                     workspace__slug=slug,
                     project_issue_types__project_id=project_id,
                     is_epic=True,
-                    pk=epic.id,
                 ).annotate(
                     project_ids=Coalesce(
                         Subquery(

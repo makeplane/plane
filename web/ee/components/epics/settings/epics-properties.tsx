@@ -24,9 +24,9 @@ export const EpicPropertiesRoot = observer((props: EpicPropertiesProps) => {
   // states
   const [isOpen, setIsOpen] = useState(true);
   // store hooks
-  const { projectEpics } = useIssueTypes();
+  const { getProjectEpicDetails } = useIssueTypes();
   // derived values
-  const epicDetail = projectId ? projectEpics[projectId?.toString()] : undefined;
+  const epicDetail = projectId ? getProjectEpicDetails(projectId?.toString()) : undefined;
 
   if (!epicDetail) return null;
 

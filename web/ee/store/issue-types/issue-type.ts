@@ -35,7 +35,7 @@ export interface IIssueType extends TIssueType {
   // computed function
   getPropertyById: <T extends EIssuePropertyType>(propertyId: string) => IIssueProperty<T> | undefined;
   // actions
-  updateType: (issueTypeData: Partial<TIssueType>) => Promise<TIssueType | undefined>;
+  updateType: (issueTypeData: Partial<TIssueType>, shouldSync?: boolean) => Promise<TIssueType | undefined>;
   addOrUpdateProperty: (
     propertyData: TIssueProperty<EIssuePropertyType>,
     propertyOptions: TIssuePropertyOption[]
@@ -168,18 +168,22 @@ export class IssueType implements IIssueType {
   /**
    * @description Update issue type
    * @param issueTypeData Issue type data
+   * @param shouldSync If False then only issue type is to be updated in the store not call API to update
    */
-  updateType = async (issueTypeData: Partial<TIssueType>) => {
+  updateType = async (issueTypeData: Partial<TIssueType>, shouldSync: boolean = true) => {
     const { workspaceSlug, projectId } = this.rootStore.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
-    if (!this.service.update) throw new Error("Issue type update service not available.");
     try {
-      const issueType = await this.service.update({
-        workspaceSlug,
-        projectId,
-        issueTypeId: this.id,
-        data: issueTypeData,
-      });
+      let issueType: Partial<TIssueType> = issueTypeData;
+      if (shouldSync) {
+        if (!this.service.update) throw new Error("Issue type update service not available.");
+        issueType = await this.service.update({
+          workspaceSlug,
+          projectId,
+          issueTypeId: this.id,
+          data: issueTypeData,
+        });
+      }
       runInAction(() => {
         for (const key in issueType) {
           if (issueType.hasOwnProperty(key)) {

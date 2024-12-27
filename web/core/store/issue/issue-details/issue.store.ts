@@ -128,7 +128,7 @@ export class IssueStore implements IIssueStore {
     ) {
       // if typeId exists in epic projectEpics
       if (
-        this.rootIssueDetailStore.rootIssueStore.rootStore.issueTypes.projectEpics[projectId]?.id ===
+        this.rootIssueDetailStore.rootIssueStore.rootStore.issueTypes.getProjectEpicId(projectId) ===
         issue?.parent.type_id
       ) {
         this.epicService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {

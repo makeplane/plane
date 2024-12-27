@@ -5,11 +5,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { setPromiseToast, ToggleSwitch, Tooltip } from "@plane/ui";
+// hooks
+import { useProject } from "@/hooks/store";
 // plane web components
 import { EpicsEmptyState, EpicPropertiesRoot } from "@/plane-web/components/epics";
 // plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
-import { useProject } from "@/hooks/store";
 
 export const EpicsRoot = observer(() => {
   // router
@@ -17,10 +18,10 @@ export const EpicsRoot = observer(() => {
   // states
   const [isLoading, setIsLoading] = useState(false);
   // store hooks
-  const { enableEpics, disableEpics, projectEpics } = useIssueTypes();
+  const { getProjectEpicDetails, enableEpics, disableEpics } = useIssueTypes();
   const { getProjectById } = useProject();
   // derived values
-  const epicDetails = projectEpics[projectId?.toString()];
+  const epicDetails = getProjectEpicDetails(projectId?.toString());
   const project = getProjectById(projectId?.toString());
   const isEpicsEnabled = project?.is_epic_enabled;
 

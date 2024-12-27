@@ -53,7 +53,7 @@ export interface IIssueTypesStore {
   issuePropertiesLoader: Record<string, TLoader>; // project id -> TLoader
   propertiesFetchedMap: Record<string, boolean>; // project id -> boolean
   issueTypes: Record<string, IIssueType>; // issue type id -> issue type
-  projectEpics: Record<string, IIssueType>; // project id -> epic issue type
+  projectEpics: Record<string, IIssueType>; // epic issue type id -> epic issue type
   epicAnalyticsLoader: Record<string, TLoader>; // epic id -> TLoader
   epicAnalyticsMap: Record<string, TEpicAnalytics>; // epic id -> TEpicAnalytics
   // computed
@@ -66,6 +66,7 @@ export interface IIssueTypesStore {
   getProjectIssueTypeIds: (projectId: string) => string[];
   getProjectIssueTypes: (projectId: string, activeOnly: boolean) => Record<string, IIssueType>; // issue type id -> issue type
   getProjectEpicId: (projectId: string) => string | undefined;
+  getProjectEpicDetails: (projectId: string) => IIssueType | undefined;
   getProjectDefaultIssueType: (projectId: string) => IIssueType | undefined;
   getIssueTypeProperties: (issueTypeId: string) => IIssueProperty<EIssuePropertyType>[];
   getIssueTypeIdsWithMandatoryProperties: (projectId: string) => string[];
@@ -167,13 +168,7 @@ export class IssueTypes implements IIssueTypesStore {
   get data() {
     return {
       ...this.issueTypes,
-      ...Object.fromEntries(
-        Object.entries(this.projectEpics)
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          .filter(([_, epic]) => epic?.id)
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          .map(([_, epic]) => [epic.id, epic])
-      ),
+      ...this.projectEpics,
     };
   }
 
@@ -241,7 +236,22 @@ export class IssueTypes implements IIssueTypesStore {
    * @param projectId
    * @returns {string | undefined}
    */
-  getProjectEpicId = computedFn((projectId: string) => this.projectEpics[projectId]?.id ?? undefined);
+  getProjectEpicId = computedFn(
+    (projectId: string) =>
+      Object.values(this.projectEpics)
+        .filter(Boolean)
+        .find((issueType) => issueType.project_ids?.includes(projectId))?.id
+  );
+
+  /**
+   * @description Get project epic details
+   * @param projectId
+   * @returns {IIssueType | undefined}
+   */
+  getProjectEpicDetails = computedFn((projectId: string) => {
+    const projectEpicId = this.getProjectEpicId(projectId);
+    return projectEpicId ? this.getIssueTypeById(projectEpicId) : undefined;
+  });
 
   /**
    * @description Get project default issue type id of the project
@@ -388,7 +398,7 @@ export class IssueTypes implements IIssueTypesStore {
 
       // Update existing issue type if it exists
       if (this.issueTypes[issueType.id]) {
-        this.issueTypes[issueType.id].updateType(issueType);
+        this.issueTypes[issueType.id].updateType(issueType, false);
         continue;
       }
 
@@ -416,16 +426,13 @@ export class IssueTypes implements IIssueTypesStore {
   addOrUpdateEpicIssueTypes = (epicIssueTypes: TIssueType[]) => {
     for (const epicIssueType of epicIssueTypes) {
       if (!epicIssueType.id) continue;
-
       // Update existing epic issue type
       if (this.projectEpics[epicIssueType.id]) {
-        this.projectEpics[epicIssueType.id].updateType(epicIssueType);
+        this.projectEpics[epicIssueType.id].updateType(epicIssueType, false);
         continue;
       }
 
-      // Create new epic issue type for each project
-      if (!epicIssueType.project_ids?.length) continue;
-
+      // Create new epic issue type instance
       const epicIssueTypeInstance = new IssueType({
         root: this.rootStore,
         services: {
@@ -436,10 +443,8 @@ export class IssueTypes implements IIssueTypesStore {
         issueTypeData: epicIssueType,
       });
 
-      // Set the same issue type instance for each project
-      for (const projectId of epicIssueType.project_ids) {
-        set(this.projectEpics, [projectId], epicIssueTypeInstance);
-      }
+      // Add to store
+      set(this.projectEpics, epicIssueType.id, epicIssueTypeInstance);
     }
   };
 
@@ -581,23 +586,22 @@ export class IssueTypes implements IIssueTypesStore {
    */
   disableEpics = async (workspaceSlug: string, projectId: string) => {
     if (!workspaceSlug || !projectId) return;
-    const epic = this.projectEpics[projectId];
-    if (!epic) return;
+    const epic = this.getProjectEpicDetails(projectId);
+    const epicId = epic?.id;
+    if (!epic || !epicId) return;
     if (!this.epicIssueTypesService.disable) throw new Error("Disable epic issue type service not available.");
     try {
       runInAction(() => {
         // disable `is_epic_enabled` in project details
         set(this.rootStore.projectDetails.features, [projectId, "is_epic_enabled"], false);
         set(this.rootStore.projectRoot.project.projectMap, [projectId, "is_epic_enabled"], false);
-        // remove epic issue type from the store
-        set(this.projectEpics, projectId, undefined);
       });
       await this.epicIssueTypesService.disable({ workspaceSlug, projectId });
     } catch (error) {
       runInAction(() => {
         // revert the changes
         set(this.rootStore.projectDetails.features, [projectId, "is_epic_enabled"], true);
-        set(this.projectEpics, projectId, epic);
+        set(this.rootStore.projectRoot.project.projectMap, [projectId, "is_epic_enabled"], true);
       });
       throw error;
     }

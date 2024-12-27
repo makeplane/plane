@@ -15,22 +15,22 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
-  const { isIssueTypeOrEpicEnabledForProject, fetchAllPropertiesAndOptions } = useIssueTypes();
+  const { isIssueTypeEnabledForProject, isEpicEnabledForProject, fetchAllPropertiesAndOptions } = useIssueTypes();
   const { fetchFeatures } = useProjectAdvanced();
   // derived values
-  const isIssueTypeEnabled = isIssueTypeOrEpicEnabledForProject(
+  const isIssueTypeEnabled = isIssueTypeEnabledForProject(
     workspaceSlug?.toString(),
     projectId?.toString(),
-    "ISSUE_TYPE_DISPLAY",
-    "EPICS_DISPLAY"
+    "ISSUE_TYPE_DISPLAY"
   );
+  const isEpicEnabled = isEpicEnabledForProject(workspaceSlug?.toString(), projectId?.toString(), "EPICS_DISPLAY");
 
   // fetching all issue types and properties
   useSWR(
-    workspaceSlug && projectId && isIssueTypeEnabled
-      ? `ISSUE_TYPES_AND_PROPERTIES_${workspaceSlug}_${projectId}_${isIssueTypeEnabled}`
+    workspaceSlug && projectId && (isIssueTypeEnabled || isEpicEnabled)
+      ? `ISSUE_TYPES_AND_PROPERTIES_${workspaceSlug}_${projectId}_${isIssueTypeEnabled}_${isEpicEnabled}`
       : null,
-    workspaceSlug && projectId && isIssueTypeEnabled
+    workspaceSlug && projectId && (isIssueTypeEnabled || isEpicEnabled)
       ? () => fetchAllPropertiesAndOptions(workspaceSlug.toString(), projectId.toString())
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }

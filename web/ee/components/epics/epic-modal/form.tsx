@@ -93,14 +93,14 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
   const { getIssueTypeIdOnProjectChange, getActiveAdditionalPropertiesLength, handlePropertyValuesValidation } =
     useIssueModal();
   const { isMobile } = usePlatformOS();
-  const { projectEpics } = useIssueTypes();
+  const { getProjectEpicDetails } = useIssueTypes();
 
   const {
     issue: { getIssueById },
   } = useIssueDetail();
   const { getStateById } = useProjectState();
 
-  const epicDetails = projectEpics[routeProjectId?.toString()];
+  const epicDetails = getProjectEpicDetails(routeProjectId?.toString());
 
   // form info
   const {
