@@ -186,7 +186,7 @@ const emptyStateDetails = {
     access: [EUserPermissions.ADMIN],
   },
   [EmptyStateType.WORKSPACE_INITIATIVES]: {
-    key: EmptyStateType.WORKSPACE_TEAMS,
+    key: EmptyStateType.WORKSPACE_INITIATIVES,
     title: "Organize work at the highest level with Initiatives",
     description:
       "When you need to organize work spanning several projects and teams, Initiatives come in handy. Connect projects and epics to initiatives, see automatically rolled up updates, and see the forests before you get to the trees.",
