@@ -30,6 +30,7 @@ const CollaborativeRichTextEditor = (props: ICollaborativeRichTextEditor) => {
   const { editor } = useCollaborativeRichTextEditor({
     disabledExtensions,
     editorClassName,
+    editable: true,
     fileHandler,
     forwardedRef,
     id,

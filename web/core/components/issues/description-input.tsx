@@ -15,8 +15,11 @@ import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 import { useIssueDescription } from "@/hooks/use-issue-description";
+// plane web services
+import { WorkspaceService } from "@/plane-web/services";
 // services
 import { FileService } from "@/services/file.service";
+const workspaceService = new WorkspaceService();
 const fileService = new FileService();
 
 export type IssueDescriptionInputProps = {
@@ -109,6 +112,12 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
           placeholder={placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)}
           projectId={projectId}
           ref={editorRef}
+          searchMentionCallback={async (payload) =>
+            await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+              ...payload,
+              project_id: projectId?.toString() ?? "",
+            })
+          }
           uploadFile={async (file) => {
             try {
               const { asset_id } = await fileService.uploadProjectAsset(
