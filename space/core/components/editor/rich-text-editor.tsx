@@ -8,11 +8,13 @@ import { getEditorFileHandlers } from "@/helpers/editor.helper";
 
 interface RichTextEditorWrapperProps
   extends Omit<IRichTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
+  anchor: string;
   uploadFile: (file: File) => Promise<string>;
+  workspaceId: string;
 }
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
-  const { containerClassName, uploadFile, ...rest } = props;
+  const { anchor, containerClassName, uploadFile, workspaceId, ...rest } = props;
 
   return (
     <RichTextEditorWithRef
@@ -23,12 +25,12 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
       disabledExtensions={[]}
       fileHandler={getEditorFileHandlers({
         uploadFile,
-        workspaceId: "",
-        anchor: "",
+        workspaceId,
+        anchor,
       })}
       {...rest}
       containerClassName={containerClassName}
-      editorClassName="min-h-[100px] max-h-[50vh] border border-gray-100 rounded-md pl-3 pb-3 overflow-y-scroll"
+      editorClassName="min-h-[100px] max-h-[50vh] border-[0.5px] border-custom-border-200 rounded-md pl-3 pb-3 overflow-y-scroll"
     />
   );
 });

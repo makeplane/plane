@@ -50,7 +50,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   const { workspaceSlug } = useParams();
 
   // hooks
-  const storeType = useIssueStoreType() as CalendarStoreType;
+  const storeType = isEpic ? EIssuesStoreType.EPIC : (useIssueStoreType() as CalendarStoreType);
   const { allowPermissions } = useUserPermissions();
   const { issues, issuesFilter, issueMap } = useIssues(storeType);
   const {

@@ -22,7 +22,7 @@ interface LiteTextEditorWrapperProps
   extends Omit<ILiteTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
   workspaceId: string;
-  projectId: string;
+  projectId?: string;
   accessSpecifier?: EIssueCommentAccessSpecifier;
   handleAccessChange?: (accessKey: EIssueCommentAccessSpecifier) => void;
   showAccessSpecifier?: boolean;
