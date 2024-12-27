@@ -75,13 +75,3 @@ export type TWebhookConnectionQueryParams = {
   teamId?: string;
   workspaceSlug: string;
 };
-
-export type TPageEmbedResponse = {
-  id: string;
-  name: string;
-  priority: TIssuePriorities;
-  project__identifier: string;
-  project_id: string;
-  sequence_id: string;
-  state_id: string;
-};

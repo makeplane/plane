@@ -6,7 +6,6 @@ from plane.app.views import (
     IssueSearchEndpoint,
     SearchEndpoint,
     WorkspaceSearchEndpoint,
-    WorkspaceEntitySearchEndpoint,
 )
 
 
@@ -30,10 +29,5 @@ urlpatterns = [
         "workspaces/<str:slug>/app-search/",
         WorkspaceSearchEndpoint.as_view(),
         name="app-search",
-    ),
-    path(
-        "workspaces/<str:slug>/entity-search/",
-        WorkspaceEntitySearchEndpoint.as_view(),
-        name="entity-search",
-    ),
+    )
 ]

@@ -5,28 +5,21 @@ import { EIssuesStoreType } from "@plane/constants";
 // components
 import { Button } from "@plane/ui";
 // hooks
-import { useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store";
 // plane web components
 import { TeamHeaderFilters } from "@/plane-web/components/teams/issues/filters";
-// plane web hooks
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type TeamIssueListHeaderActionsProps = {
   teamId: string;
+  isEditingAllowed: boolean;
 };
 
 export const TeamIssueListHeaderActions = observer((props: TeamIssueListHeaderActionsProps) => {
-  const { teamId } = props;
+  const { teamId, isEditingAllowed } = props;
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const { toggleCreateIssueModal } = useCommandPalette();
-  // derived values
-  const canUserCreateIssue = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
 
   if (!workspaceSlug) return;
 
@@ -35,7 +28,7 @@ export const TeamIssueListHeaderActions = observer((props: TeamIssueListHeaderAc
       <div className="hidden gap-3 md:flex">
         <TeamHeaderFilters teamId={teamId} workspaceSlug={workspaceSlug.toString()} />
       </div>
-      {canUserCreateIssue ? (
+      {isEditingAllowed ? (
         <Button
           onClick={() => {
             toggleCreateIssueModal(true, EIssuesStoreType.TEAM);

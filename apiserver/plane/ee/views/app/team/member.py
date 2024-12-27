@@ -8,7 +8,7 @@ from rest_framework.response import Response
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
-from django.db.models import Q
+from django.db.models import Q, Case, When, Value, PositiveSmallIntegerField
 
 # Module imports
 from .base import TeamBaseEndpoint
@@ -40,7 +40,14 @@ class TeamSpaceMembersEndpoint(TeamBaseEndpoint):
             project_id__in=project_ids,
             workspace__slug=self.kwargs.get("slug"),
             member_id__in=member_ids,
-        ).update(is_active=True)
+        ).update(
+            is_active=True,
+            role=Case(
+                When(role=5, then=Value(15)),
+                default="role",
+                output_field=PositiveSmallIntegerField(),
+            ),
+        )
 
         # Create new project members
         ProjectMember.objects.bulk_create(

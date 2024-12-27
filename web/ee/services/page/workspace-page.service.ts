@@ -124,25 +124,8 @@ export class WorkspacePageService extends APIService {
       });
   }
 
-  async updateDescriptionBinary(workspaceSlug: string, pageId: string, data: TDocumentPayload): Promise<any> {
+  async updateDescription(workspaceSlug: string, pageId: string, data: TDocumentPayload): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/pages/${pageId}/description/`, data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async searchEmbed<T>(
-    workspaceSlug: string,
-    params: {
-      query_type: TPageEmbedType;
-      count?: number;
-      query: string;
-    }
-  ): Promise<T | undefined> {
-    return this.get(`/api/workspaces/${workspaceSlug}/entity-search/`, {
-      params,
-    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -31,7 +31,7 @@ from plane.db.models import (
 )
 from plane.ee.models import TeamSpacePage, TeamSpaceProject, TeamSpaceMember
 from plane.ee.serializers import (
-    WorkspacePageDetailSerializer,
+    TeamSpacePageDetailSerializer,
     TeamSpacePageSerializer,
     TeamSpacePageVersionSerializer,
     TeamSpacePageVersionDetailSerializer,
@@ -74,7 +74,7 @@ class TeamSpacePageEndpoint(TeamBaseEndpoint):
             workspace__slug=self.kwargs.get("slug"),
         )
         return (
-            Page.filter(workspace__slug=self.kwargs.get("slug"))
+            Page.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter()
             .filter(parent__isnull=True)
             .select_related("workspace")
@@ -96,7 +96,7 @@ class TeamSpacePageEndpoint(TeamBaseEndpoint):
                     ArrayAgg(
                         "projects__id",
                         distinct=True,
-                        filter=~Q(projects__id=True),
+                        filter=~Q(projects__id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -109,12 +109,10 @@ class TeamSpacePageEndpoint(TeamBaseEndpoint):
                 ).values("anchor")
             )
             .annotate(
-                is_team_space_page=Exists(
-                    TeamSpacePage.objects.filter(
-                        page_id=OuterRef("pk"),
-                        team_space_id=self.kwargs.get("team_space_id"),
-                    )
-                )
+                team=TeamSpacePage.objects.filter(
+                    page_id=OuterRef("pk"),
+                    team_space_id=self.kwargs.get("team_space_id"),
+                ).values("team_space_id")
             )
             .distinct()
         )
@@ -122,12 +120,14 @@ class TeamSpacePageEndpoint(TeamBaseEndpoint):
     @check_feature_flag(FeatureFlag.TEAMS)
     def get(self, request, slug, team_space_id, pk=None):
         if pk:
-            pass
+            page = self.get_queryset().get(workspace__slug=slug, pk=pk)
+            serializer = TeamSpacePageDetailSerializer(page)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         # Get all the page of the team space
-        tab = request.GET.get("tab", "teams")
+        scope = request.GET.get("scope", "teams")
         # Check if the user has access to the workspace
-        if tab == "projects":
+        if scope == "projects":
             # Get all the project ids
             project_ids = TeamSpaceProject.objects.filter(
                 team_space_id=team_space_id
@@ -164,7 +164,7 @@ class TeamSpacePageEndpoint(TeamBaseEndpoint):
             Q(
                 Q(pk__in=team_space_pages)
                 | Q(
-                    project_id__in=project_ids,
+                    project_ids__overlap=project_ids,
                     access=0,
                     owned_by_id__in=member_ids,
                 )
@@ -182,10 +182,9 @@ class TeamSpacePageEndpoint(TeamBaseEndpoint):
             data=request.data,
             context={
                 "owned_by_id": request.user.id,
-                "description_html": request.data.get(
-                    "description_html", "<p></p>"
-                ),
+                "description_html": request.data.get("description_html", "<p></p>"),
                 "workspace_id": workspace.id,
+                "team_space_id": team_space_id,
             },
         )
 
@@ -219,8 +218,58 @@ class TeamSpacePageEndpoint(TeamBaseEndpoint):
             # capture the page transaction
             page_transaction.delay(request.data, None, serializer.data["id"])
             page = self.get_queryset().filter(pk=serializer.data["id"]).first()
-            serializer = WorkspacePageDetailSerializer(page)
+            serializer = TeamSpacePageSerializer(page)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @check_feature_flag(FeatureFlag.TEAMS)
+    def patch(self, request, slug, team_space_id, pk):
+        team_space_page = TeamSpacePage.objects.filter(
+            page_id=pk, team_space_id=team_space_id
+        ).first()
+        if team_space_page is None:
+            return Response(
+                {"error": "The page is not part of the team space"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        page = Page.objects.filter(pk=pk, workspace__slug=slug).first()
+
+        # Check if the page exists
+        if page is None:
+            return Response(
+                {"error": "The page does not exist"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if page.is_locked:
+            return Response(
+                {"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Only update access if the page owner is the requesting  user
+        if page.access == 1:
+            return Response(
+                {"error": "Access cannot be updated to private for teams page"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = TeamSpacePageDetailSerializer(
+            page, data=request.data, partial=True
+        )
+        page_description = page.description_html
+        if serializer.is_valid():
+            serializer.save()
+            # capture the page transaction
+            if request.data.get("description_html"):
+                page_transaction.delay(
+                    new_value=request.data,
+                    old_value=json.dumps(
+                        {"description_html": page_description}, cls=DjangoJSONEncoder
+                    ),
+                    page_id=pk,
+                )
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.TEAMS)
@@ -391,15 +440,8 @@ class TeamSpacePageLockEndpoint(TeamBaseEndpoint):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
-class TeamSpacePageUnlockEndpoint(TeamBaseEndpoint):
-
-    permission_classes = [
-        TeamSpacePermission,
-    ]
-
     @check_feature_flag(FeatureFlag.TEAMS)
-    def post(self, request, slug, team_space_id, pk):
+    def delete(self, request, slug, team_space_id, pk):
         # Check the page is part of the team space
         if not TeamSpacePage.objects.filter(
             page_id=pk, workspace__slug=slug
@@ -431,10 +473,10 @@ class TeamSpacePagesDescriptionEndpoint(TeamBaseEndpoint):
     ]
 
     @check_feature_flag(FeatureFlag.TEAMS)
-    def get(self, request, slug, pk):
+    def get(self, request, slug, team_space_id, pk):
         # Get the team space page
         if not TeamSpacePage.objects.filter(
-            page_id=pk, workspace__slug=slug
+            page_id=pk, workspace__slug=slug, team_space_id=team_space_id
         ).exists():
             return Response(
                 {"error": "The page is not part of the team space"},
@@ -463,10 +505,10 @@ class TeamSpacePagesDescriptionEndpoint(TeamBaseEndpoint):
         return response
 
     @check_feature_flag(FeatureFlag.TEAMS)
-    def patch(self, request, slug, pk):
+    def patch(self, request, slug, team_space_id, pk):
         # Get the team space page
         if not TeamSpacePage.objects.filter(
-            page_id=pk, workspace__slug=slug
+            page_id=pk, workspace__slug=slug, team_space_id=team_space_id
         ).exists():
             return Response(
                 {"error": "The page is not part of the team space"},
@@ -536,8 +578,16 @@ class TeamSpacePageVersionEndpoint(TeamBaseEndpoint):
         TeamSpacePermission,
     ]
 
-    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
-    def get(self, request, slug, page_id, pk=None):
+    @check_feature_flag(FeatureFlag.TEAMS)
+    def get(self, request, slug, team_space_id, page_id, pk=None):
+        # Get the team space page
+        if not TeamSpacePage.objects.filter(
+            page_id=page_id, workspace__slug=slug, team_space_id=team_space_id
+        ).exists():
+            return Response(
+                {"error": "The page is not part of the team space"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         # Check if pk is provided
         if pk:
             # Return a single page version

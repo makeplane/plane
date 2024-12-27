@@ -88,7 +88,7 @@ export const TeamsOverviewSidebar: FC<TTeamsOverviewSidebarProps> = observer((pr
   return (
     <div
       className={cn(
-        `absolute right-0 z-[5] flex flex-col gap-4 h-full border-l border-custom-border-200 bg-custom-sidebar-background-100 py-5 sm:relative transition-[width] ease-linear`,
+        `absolute flex flex-col gap-4 h-full border-l border-custom-border-200 bg-custom-sidebar-background-100 py-5 sm:relative transition-[width] ease-linear`,
         {
           "w-0 hidden": isTeamSidebarCollapsed,
           "min-w-[300px] w-full sm:w-1/2  md:w-1/3 lg:min-w-80 xl:min-w-96": !isTeamSidebarCollapsed,

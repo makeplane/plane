@@ -10,7 +10,6 @@ from .page import (
     TeamSpacePageArchiveEndpoint,
     TeamSpacePageUnarchiveEndpoint,
     TeamSpacePageLockEndpoint,
-    TeamSpacePageUnlockEndpoint,
     TeamSpacePageFavoriteEndpoint,
 )
 from .issue import TeamSpaceIssueEndpoint, TeamSpaceUserPropertiesEndpoint

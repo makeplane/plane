@@ -68,20 +68,24 @@ class TeamSpaceEndpoint(TeamBaseEndpoint):
         """
         Get all team spaces in workspace
         """
-        return TeamSpace.objects.filter(
-            workspace__slug=slug, members__member_id=self.request.user.id
-        ).annotate(
-            project_ids=Coalesce(
-                Subquery(
-                    TeamSpaceProject.objects.filter(
-                        team_space=OuterRef("pk"), workspace__slug=slug
-                    )
-                    .values("team_space")
-                    .annotate(project_ids=ArrayAgg("project_id", distinct=True))
-                    .values("project_ids")
-                ),
-                [],
+        return (
+            TeamSpace.objects.filter(
+                workspace__slug=slug, members__member_id=self.request.user.id
             )
+            .annotate(
+                project_ids=Coalesce(
+                    Subquery(
+                        TeamSpaceProject.objects.filter(
+                            team_space=OuterRef("pk"), workspace__slug=slug
+                        )
+                        .values("team_space")
+                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
+                        .values("project_ids")
+                    ),
+                    [],
+                )
+            )
+            .distinct()
         )
 
     def get_add_remove_team_space_projects(

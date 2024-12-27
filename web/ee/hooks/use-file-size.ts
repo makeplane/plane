@@ -22,10 +22,12 @@ export const useFileSize = (): TReturnProps => {
   // derived values
   const isProPlanEnabled = useFlag(workspaceSlug?.toString() ?? "", "FILE_SIZE_LIMIT_PRO");
 
-  let maxFileSize: number | undefined = useMemo(() => config?.file_size_limit, [config?.file_size_limit]);
-  if (!planDetails?.is_self_managed && isProPlanEnabled) {
-    maxFileSize = MAX_PRO_FILE_SIZE;
-  }
+  const maxFileSize: number | undefined = useMemo(() => {
+    if (!planDetails?.is_self_managed && isProPlanEnabled) {
+      return MAX_PRO_FILE_SIZE;
+    }
+    return config?.file_size_limit;
+  }, [config?.file_size_limit, isProPlanEnabled, planDetails?.is_self_managed]);
 
   return {
     maxFileSize: maxFileSize ?? MAX_STATIC_FILE_SIZE,

@@ -4,6 +4,7 @@ import { ETeamScope } from "@plane/constants";
 import { TCreateUpdateTeamModal, TCreateUpdateTeamViewModal } from "@plane/types";
 import { TeamsIcon } from "@plane/ui";
 // store
+import { getPageName } from "@/helpers/page.helper";
 import { store } from "@/lib/store-context";
 // plane web types
 import { TTeamActivity, TTeamActivityDetailsHelperMap } from "@/plane-web/types";
@@ -142,7 +143,7 @@ export const TEAM_UPDATES_HELPER_MAP: Partial<TTeamActivityDetailsHelperMap> = {
     icon: <FileText className={commonIconClassName} />,
     message: (
       <>
-        created a team page <span className={commonTextClassName}>{activity.new_value}</span>.
+        created a team page <span className={commonTextClassName}>{getPageName(activity.new_value)}</span>.
       </>
     ),
   }),
@@ -150,7 +151,7 @@ export const TEAM_UPDATES_HELPER_MAP: Partial<TTeamActivityDetailsHelperMap> = {
     icon: <FileText className={commonIconClassName} />,
     message: (
       <>
-        removed the team page <span className={commonTextClassName}>{activity.old_value}</span>.
+        removed the team page <span className={commonTextClassName}>{getPageName(activity.old_value)}</span>.
       </>
     ),
   }),

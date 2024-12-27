@@ -1,90 +1,93 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane types
 import { TSearchEntityRequestPayload } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
-// ui
+// plane ui
 import { getButtonStyling } from "@plane/ui";
+// plane utils
+import { cn } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { IssuePeekOverview } from "@/components/issues";
 import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 // plane web hooks
-import { useWorkspacePageDetails, useWorkspacePages } from "@/plane-web/hooks/store";
+import { useTeamPage, useTeamPages } from "@/plane-web/hooks/store";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
-// plane web services
-import { WorkspaceService } from "@/plane-web/services";
-import { WorkspacePageService, WorkspacePageVersionService } from "@/plane-web/services/page";
-import { FileService } from "@/services/file.service";
 // services
-const fileService = new FileService();
+import { WorkspaceService } from "@/plane-web/services";
+import { TeamPageVersionService } from "@/plane-web/services/teams/team-page-version.service";
+import { TeamPageService } from "@/plane-web/services/teams/team-pages.service";
+import { FileService } from "@/services/file.service";
 const workspaceService = new WorkspaceService();
-const workspacePageService = new WorkspacePageService();
-const workspacePageVersionService = new WorkspacePageVersionService();
+const fileService = new FileService();
+const teamPageService = new TeamPageService();
+const teamPageVersionService = new TeamPageVersionService();
 
-const PageDetailsPage = observer(() => {
-  // router
-  const { workspaceSlug, pageId } = useParams();
+const TeamPageDetailsPage = observer(() => {
+  const { workspaceSlug: routerWorkspaceSlug, teamId: routerTeamId, pageId: routerPageId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const teamId = routerTeamId?.toString();
+  const pageId = routerPageId?.toString();
   // store hooks
+  const { createPage, fetchTeamPageDetails } = useTeamPages();
+  const page = useTeamPage(teamId, pageId);
   const { getWorkspaceBySlug } = useWorkspace();
-  const { createPage, fetchPageById } = useWorkspacePages();
-  const page = useWorkspacePageDetails(pageId?.toString() ?? "");
   // derived values
-  const workspaceId = useMemo(
-    () => (workspaceSlug ? (getWorkspaceBySlug(workspaceSlug?.toString())?.id ?? "") : ""),
-    [getWorkspaceBySlug, workspaceSlug]
-  );
+  const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug)?.id ?? "") : "";
   const { id, name, updateDescription } = page;
   // entity search handler
   const fetchEntityCallback = useCallback(
     async (payload: TSearchEntityRequestPayload) =>
-      await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", payload),
-    [workspaceSlug]
+      await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+        ...payload,
+        team_id: teamId?.toString() ?? "",
+      }),
+    [teamId, workspaceSlug]
   );
   // file size
   const { maxFileSize } = useFileSize();
   // fetch page details
   const { error: pageDetailsError } = useSWR(
-    pageId ? `PAGE_DETAILS_${pageId}` : null,
-    pageId ? () => fetchPageById(pageId.toString()) : null,
+    workspaceSlug && teamId && pageId ? `TEAM_PAGE_DETAILS_${pageId}` : null,
+    workspaceSlug && teamId && pageId ? () => fetchTeamPageDetails(workspaceSlug, teamId, pageId) : null,
     {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
+      revalidateIfStale: true,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
     }
   );
   // page root handlers
   const pageRootHandlers: TPageRootHandlers = useMemo(
     () => ({
-      create: createPage,
+      create: async (payload) => await createPage(workspaceSlug, teamId, payload),
       fetchAllVersions: async (pageId) => {
-        if (!workspaceSlug) return;
-        return await workspacePageVersionService.fetchAllVersions(workspaceSlug.toString(), pageId);
+        if (!workspaceSlug || !teamId) return;
+        return await teamPageVersionService.fetchAllVersions(workspaceSlug, teamId, pageId);
       },
       fetchDescriptionBinary: async () => {
-        if (!workspaceSlug || !page.id) return;
-        return await workspacePageService.fetchDescriptionBinary(workspaceSlug.toString(), page.id);
+        if (!workspaceSlug || !teamId || !page.id) return;
+        return await teamPageService.fetchDescriptionBinary(workspaceSlug, teamId, page.id);
       },
       fetchEntity: fetchEntityCallback,
       fetchVersionDetails: async (pageId, versionId) => {
-        if (!workspaceSlug) return;
-        return await workspacePageVersionService.fetchVersionById(workspaceSlug.toString(), pageId, versionId);
+        if (!workspaceSlug || !teamId) return;
+        return await teamPageVersionService.fetchVersionById(workspaceSlug, teamId, pageId, versionId);
       },
-      getRedirectionLink: (pageId) => `/${workspaceSlug}/pages/${pageId}`,
+      getRedirectionLink: (pageId) => `/${workspaceSlug}/teams/${teamId}/pages/${pageId}`,
       updateDescription,
     }),
-    [createPage, fetchEntityCallback, page.id, updateDescription, workspaceSlug]
+    [createPage, fetchEntityCallback, page.id, teamId, updateDescription, workspaceSlug]
   );
   // page root config
   const pageRootConfig: TPageRootConfig = useMemo(
@@ -93,7 +96,7 @@ const PageDetailsPage = observer(() => {
         maxFileSize,
         uploadFile: async (file) => {
           const { asset_id } = await fileService.uploadWorkspaceAsset(
-            workspaceSlug?.toString() ?? "",
+            workspaceSlug,
             {
               entity_identifier: id ?? "",
               entity_type: EFileAssetType.PAGE_DESCRIPTION,
@@ -103,14 +106,15 @@ const PageDetailsPage = observer(() => {
           return asset_id;
         },
         workspaceId,
-        workspaceSlug: workspaceSlug?.toString() ?? "",
+        workspaceSlug: workspaceSlug,
       }),
       webhookConnectionParams: {
-        documentType: "workspace_page",
-        workspaceSlug: workspaceSlug?.toString() ?? "",
+        documentType: "team_page",
+        teamId: teamId,
+        workspaceSlug: workspaceSlug,
       },
     }),
-    [id, maxFileSize, workspaceId, workspaceSlug]
+    [id, maxFileSize, teamId, workspaceId, workspaceSlug]
   );
 
   if ((!page || !id) && !pageDetailsError)
@@ -122,12 +126,15 @@ const PageDetailsPage = observer(() => {
 
   if (pageDetailsError)
     return (
-      <div className="size-full flex flex-col items-center justify-center">
+      <div className="h-full w-full flex flex-col items-center justify-center">
         <h3 className="text-lg font-semibold text-center">Page not found</h3>
         <p className="text-sm text-custom-text-200 text-center mt-3">
           The page you are trying to access doesn{"'"}t exist or you don{"'"}t have permission to view it.
         </p>
-        <Link href={`/${workspaceSlug}/pages`} className={cn(getButtonStyling("neutral-primary", "md"), "mt-5")}>
+        <Link
+          href={`/${workspaceSlug}/teams/${teamId}/pages`}
+          className={cn(getButtonStyling("neutral-primary", "md"), "mt-5")}
+        >
           View other Pages
         </Link>
       </div>
@@ -137,13 +144,8 @@ const PageDetailsPage = observer(() => {
     <>
       <PageHead title={name} />
       <div className="flex h-full flex-col justify-between">
-        <div className="size-full flex-shrink-0 flex flex-col overflow-hidden">
-          <PageRoot
-            config={pageRootConfig}
-            handlers={pageRootHandlers}
-            page={page}
-            workspaceSlug={workspaceSlug.toString()}
-          />
+        <div className="relative h-full w-full flex-shrink-0 flex flex-col overflow-hidden">
+          <PageRoot config={pageRootConfig} handlers={pageRootHandlers} page={page} workspaceSlug={workspaceSlug} />
           <IssuePeekOverview />
         </div>
       </div>
@@ -151,4 +153,4 @@ const PageDetailsPage = observer(() => {
   );
 });
 
-export default PageDetailsPage;
+export default TeamPageDetailsPage;

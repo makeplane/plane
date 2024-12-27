@@ -1,12 +1,14 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { Button } from "@plane/ui";
+// types
+import { TPageHeaderExtraActionsProps } from "@/ce/components/pages";
 // helpers
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 // hooks
-import { usePage, useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
 // plane web components
 import { PublishPageModal } from "@/plane-web/components/pages";
 // plane web constants
@@ -15,19 +17,20 @@ import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/u
 import { usePublishPage, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
-export const PageDetailsHeaderExtraActions = observer(() => {
+export const PageDetailsHeaderExtraActions: React.FC<TPageHeaderExtraActionsProps> = observer((props) => {
+  const { page } = props;
   // states
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   // params
   const { workspaceSlug, projectId, pageId } = useParams();
   // store hooks
   const { allowPermissions } = useUserPermissions();
-  const { anchor, isCurrentUserOwner } = usePage(pageId.toString());
   const { fetchProjectPagePublishSettings, getPagePublishSettings, publishProjectPage, unpublishProjectPage } =
     usePublishPage();
   const { togglePaidPlanModal } = useWorkspaceSubscription();
   const isPagePublishEnabled = useFlag(workspaceSlug?.toString(), "PAGE_PUBLISH");
   // derived values
+  const { anchor, isCurrentUserOwner } = page;
   const isDeployed = !!anchor;
   const pagePublishSettings = getPagePublishSettings(pageId.toString());
 

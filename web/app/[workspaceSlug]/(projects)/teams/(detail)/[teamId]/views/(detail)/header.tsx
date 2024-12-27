@@ -9,7 +9,7 @@ import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/co
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, Tooltip, Header, TeamsIcon } from "@plane/ui";
+import { Breadcrumbs, Button, Tooltip, Header, TeamsIcon, Loader } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
@@ -39,9 +39,10 @@ export const TeamViewIssuesHeader: React.FC = observer(() => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
-  const { getTeamById } = useTeams();
-  const { getViewById } = useTeamViews();
+  const { loader, getTeamById } = useTeams();
+  const { getTeamViewsLoader, getViewById } = useTeamViews();
   // derived values
+  const teamViewLoader = getTeamViewsLoader(teamId?.toString());
   const team = getTeamById(teamId?.toString());
   const view = team && viewId ? getViewById(team.id, viewId.toString()) : null;
   const activeLayout = issueFilters?.displayFilters?.layout;
@@ -121,8 +122,7 @@ export const TeamViewIssuesHeader: React.FC = observer(() => {
     [workspaceSlug, teamId, viewId, updateFilters]
   );
 
-  if (!team || !view) return null;
-
+  if (!workspaceSlug) return;
   return (
     <Header>
       <Header.LeftItem>
@@ -142,11 +142,17 @@ export const TeamViewIssuesHeader: React.FC = observer(() => {
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
-                <BreadcrumbLink
-                  href={`/${workspaceSlug}/teams/${teamId}`}
-                  label={team.name}
-                  icon={team.logo_props && <Logo logo={team.logo_props} />}
-                />
+                <>
+                  {loader === "init-loader" ? (
+                    <Loader.Item height="20px" width="140px" />
+                  ) : team ? (
+                    <BreadcrumbLink
+                      href={`/${workspaceSlug}/teams/${teamId}`}
+                      label={team.name}
+                      icon={team.logo_props && <Logo logo={team.logo_props} />}
+                    />
+                  ) : null}
+                </>
               }
             />
             <Breadcrumbs.BreadcrumbItem
@@ -162,16 +168,22 @@ export const TeamViewIssuesHeader: React.FC = observer(() => {
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
-                <BreadcrumbLink
-                  label={view.name}
-                  icon={
-                    view.logo_props?.in_use ? (
-                      <Logo logo={view.logo_props} />
-                    ) : (
-                      <Layers className="h-4 w-4 text-custom-text-300" />
-                    )
-                  }
-                />
+                <>
+                  {teamViewLoader === "init-loader" && !view ? (
+                    <Loader.Item height="20px" width="140px" />
+                  ) : view ? (
+                    <BreadcrumbLink
+                      label={view.name}
+                      icon={
+                        view.logo_props?.in_use ? (
+                          <Logo logo={view.logo_props} />
+                        ) : (
+                          <Layers className="h-4 w-4 text-custom-text-300" />
+                        )
+                      }
+                    />
+                  ) : null}
+                </>
               }
             />
           </Breadcrumbs>

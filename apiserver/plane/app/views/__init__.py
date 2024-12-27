@@ -161,7 +161,7 @@ from .page.version import PageVersionEndpoint
 from .search.base import GlobalSearchEndpoint, SearchEndpoint
 from .search.issue import IssueSearchEndpoint
 
-from .search.workspace import WorkspaceSearchEndpoint, WorkspaceEntitySearchEndpoint
+from .search.workspace import WorkspaceSearchEndpoint
 
 from .external.base import (
     GPTIntegrationEndpoint,

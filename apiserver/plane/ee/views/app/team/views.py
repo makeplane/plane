@@ -1,5 +1,6 @@
 # Python imports
 import random
+import json
 
 # Third party imports
 from rest_framework import status
@@ -9,6 +10,7 @@ from rest_framework.response import Response
 from django.db import transaction
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Module imports
 from plane.db.models import IssueView, Workspace, UserFavorite
@@ -168,13 +170,13 @@ class TeamSpaceViewEndpoint(TeamBaseEndpoint):
             team_space_activity.delay(
                 type="view.activity.created",
                 slug=slug,
-                requested_data={},
+                current_instance={},
                 actor_id=str(request.user.id),
                 team_space_id=str(team_space_id),
-                current_instance={
-                    "name": str(issue_view.name),
-                    "id": str(issue_view.id),
-                },
+                requested_data=json.dumps(
+                    {"name": str(issue_view.name), "id": str(issue_view.id)},
+                    cls=DjangoJSONEncoder,
+                ),
                 epoch=int(timezone.now().timestamp()),
             )
 

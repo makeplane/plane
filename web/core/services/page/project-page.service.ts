@@ -151,25 +151,7 @@ export class ProjectPageService extends APIService {
       });
   }
 
-  async searchEmbed<T>(
-    workspaceSlug: string,
-    projectId: string,
-    params: {
-      query_type: TPageEmbedType;
-      count?: number;
-      query: string;
-    }
-  ): Promise<T | undefined> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/search/`, {
-      params,
-    })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async updateDescriptionYJS(
+  async updateDescription(
     workspaceSlug: string,
     projectId: string,
     pageId: string,

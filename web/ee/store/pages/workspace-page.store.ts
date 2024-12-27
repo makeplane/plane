@@ -9,8 +9,8 @@ import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from
 // plane web services
 import { WorkspacePageService } from "@/plane-web/services/page";
 // plane web store
-import { IWorkspacePageDetails, WorkspacePageDetails } from "@/plane-web/store/pages/page";
 import { RootStore } from "@/plane-web/store/root.store";
+import { TWorkspacePage, WorkspacePage } from "./workspace-page";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;
 
@@ -19,7 +19,7 @@ type TError = { title: string; description: string };
 export interface IWorkspacePageStore {
   // observables
   loader: TLoader;
-  data: Record<string, IWorkspacePageDetails>; // pageId => PageStore
+  data: Record<string, TWorkspacePage>; // pageId => Page
   error: TError | undefined;
   filters: TPageFilters;
   // computed
@@ -28,7 +28,7 @@ export interface IWorkspacePageStore {
   // helper actions
   getCurrentWorkspacePageIdsByType: (pageType: TPageNavigationTabs) => string[] | undefined;
   getCurrentWorkspaceFilteredPageIdsByType: (pageType: TPageNavigationTabs) => string[] | undefined;
-  getPageById: (pageId: string) => IWorkspacePageDetails | undefined;
+  getPageById: (pageId: string) => TWorkspacePage | undefined;
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   clearAllFilters: () => void;
   // actions
@@ -41,7 +41,7 @@ export interface IWorkspacePageStore {
 export class WorkspacePageStore implements IWorkspacePageStore {
   // observables
   loader: TLoader = "init-loader";
-  data: Record<string, IWorkspacePageDetails> = {}; // pageId => PageStore
+  data: Record<string, TWorkspacePage> = {}; // pageId => Page
   error: TError | undefined = undefined;
   filters: TPageFilters = {
     searchQuery: "",
@@ -172,7 +172,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
           if (page?.id) {
             const pageInstance = page;
             set(page, "description_html", this.data?.[page.id]?.description_html);
-            set(this.data, [page.id], new WorkspacePageDetails(this.store, pageInstance));
+            set(this.data, [page.id], new WorkspacePage(this.store, pageInstance));
           }
         this.loader = undefined;
       });
@@ -207,7 +207,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
 
       const page = await this.pageService.fetchById(workspaceSlug, pageId);
       runInAction(() => {
-        if (page?.id) set(this.data, [page.id], new WorkspacePageDetails(this.store, page));
+        if (page?.id) set(this.data, [page.id], new WorkspacePage(this.store, page));
         this.loader = undefined;
       });
 
@@ -240,7 +240,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
 
       const page = await this.pageService.create(workspaceSlug, pageData);
       runInAction(() => {
-        if (page?.id) set(this.data, [page.id], new WorkspacePageDetails(this.store, page));
+        if (page?.id) set(this.data, [page.id], new WorkspacePage(this.store, page));
         this.loader = undefined;
       });
 

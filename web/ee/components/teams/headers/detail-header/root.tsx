@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Rss, BriefcaseIcon, FileText, Layers, Loader as Spinner } from "lucide-react";
@@ -21,7 +21,7 @@ import {
 // components
 import { BreadcrumbLink } from "@/components/common";
 // hooks
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
@@ -30,6 +30,7 @@ import { useTeams } from "@/plane-web/hooks/store";
 // local components
 import { TeamIssueListHeaderActions } from "./issues";
 import { TeamOverviewHeaderActions } from "./overview";
+import { TeamPagesListHeaderActions } from "./pages-list";
 import { TeamProjectListHeaderActions } from "./projects";
 import { TeamViewsListHeaderActions } from "./views-list";
 
@@ -43,95 +44,119 @@ export const TeamDetailHeader = observer((props: TTeamDetailHeaderProps) => {
   const router = useAppRouter();
   const { workspaceSlug, teamId } = useParams();
   // hooks
-  const { currentWorkspace } = useWorkspace();
   const { loader, isUserMemberOfTeam, getTeamById } = useTeams();
   // hooks
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const workspaceId = currentWorkspace?.id || undefined;
   const team = getTeamById(teamId?.toString());
   const isTeamMember = isUserMemberOfTeam(teamId?.toString());
-  const isEditingAllowed = allowPermissions(
+  const hasAdminLevelPermissions = allowPermissions(
     [EUserPermissions.ADMIN],
     EUserPermissionsLevel.WORKSPACE,
     workspaceSlug?.toString()
   );
+  const hasMemberLevelPermissions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE,
+    workspaceSlug?.toString()
+  );
 
-  const TEAM_NAVIGATION_ITEMS: TContextMenuItem[] = [
-    {
-      key: ETeamNavigationItem.OVERVIEW,
-      title: "Overview",
-      icon: Rss,
-      action: () => router.push(`/${workspaceSlug}/teams/${teamId}`),
-    },
-    {
-      key: ETeamNavigationItem.PROJECTS,
-      title: "Projects",
-      icon: BriefcaseIcon,
-      action: () => router.push(`/${workspaceSlug}/teams/${teamId}/projects`),
-    },
-    {
-      key: ETeamNavigationItem.ISSUES,
-      title: "Issues",
-      icon: LayersIcon,
-      action: () => router.push(`/${workspaceSlug}/teams/${teamId}/issues`),
-    },
-    {
-      key: ETeamNavigationItem.CYCLES,
-      title: "Cycles",
-      icon: ContrastIcon,
-      action: () => router.push(`/${workspaceSlug}/teams/${teamId}/cycles`),
-    },
-    {
-      key: ETeamNavigationItem.VIEWS,
-      title: "Views",
-      icon: Layers,
-      action: () => router.push(`/${workspaceSlug}/teams/${teamId}/views`),
-    },
-    {
-      key: ETeamNavigationItem.PAGES,
-      title: "Pages",
-      icon: FileText,
-      action: () => router.push(`/${workspaceSlug}/teams/${teamId}/pages`),
-    },
-  ];
+  const TEAM_NAVIGATION_ITEMS: TContextMenuItem[] = useMemo(
+    () => [
+      {
+        key: ETeamNavigationItem.OVERVIEW,
+        title: "Overview",
+        icon: Rss,
+        action: () => router.push(`/${workspaceSlug}/teams/${teamId}`),
+      },
+      {
+        key: ETeamNavigationItem.PROJECTS,
+        title: "Projects",
+        icon: BriefcaseIcon,
+        action: () => router.push(`/${workspaceSlug}/teams/${teamId}/projects`),
+      },
+      {
+        key: ETeamNavigationItem.ISSUES,
+        title: "Issues",
+        icon: LayersIcon,
+        action: () => router.push(`/${workspaceSlug}/teams/${teamId}/issues`),
+      },
+      {
+        key: ETeamNavigationItem.CYCLES,
+        title: "Cycles",
+        icon: ContrastIcon,
+        action: () => router.push(`/${workspaceSlug}/teams/${teamId}/cycles`),
+      },
+      {
+        key: ETeamNavigationItem.VIEWS,
+        title: "Views",
+        icon: Layers,
+        action: () => router.push(`/${workspaceSlug}/teams/${teamId}/views`),
+      },
+      {
+        key: ETeamNavigationItem.PAGES,
+        title: "Pages",
+        icon: FileText,
+        action: () => router.push(`/${workspaceSlug}/teams/${teamId}/pages`),
+      },
+    ],
+    [workspaceSlug, teamId, router]
+  );
 
-  const TEAMS_HEADER_ACTIONS_MAP = new Map<ETeamNavigationItem, React.ReactNode>([
-    [
-      ETeamNavigationItem.OVERVIEW,
-      <TeamOverviewHeaderActions
-        key={ETeamNavigationItem.OVERVIEW}
-        teamId={teamId?.toString()}
-        isEditingAllowed={isEditingAllowed}
-      />,
-    ],
-    [
-      ETeamNavigationItem.PROJECTS,
-      <TeamProjectListHeaderActions
-        key={ETeamNavigationItem.PROJECTS}
-        teamId={teamId?.toString()}
-        isEditingAllowed={isEditingAllowed}
-      />,
-    ],
-    [
-      ETeamNavigationItem.ISSUES,
-      <TeamIssueListHeaderActions key={ETeamNavigationItem.ISSUES} teamId={teamId?.toString()} />,
-    ],
-    [ETeamNavigationItem.CYCLES, undefined],
-    [
-      ETeamNavigationItem.VIEWS,
-      <TeamViewsListHeaderActions
-        key={ETeamNavigationItem.VIEWS}
-        teamId={teamId?.toString()}
-        isEditingAllowed={isEditingAllowed}
-      />,
-    ],
-    [ETeamNavigationItem.PAGES, undefined],
-  ]);
+  const TEAMS_HEADER_ACTIONS_MAP = useMemo(
+    () =>
+      new Map<ETeamNavigationItem, React.ReactNode>([
+        [
+          ETeamNavigationItem.OVERVIEW,
+          <TeamOverviewHeaderActions
+            key={ETeamNavigationItem.OVERVIEW}
+            teamId={teamId?.toString()}
+            isEditingAllowed={hasAdminLevelPermissions}
+          />,
+        ],
+        [
+          ETeamNavigationItem.PROJECTS,
+          <TeamProjectListHeaderActions
+            key={ETeamNavigationItem.PROJECTS}
+            teamId={teamId?.toString()}
+            isEditingAllowed={hasAdminLevelPermissions}
+          />,
+        ],
+        [
+          ETeamNavigationItem.ISSUES,
+          <TeamIssueListHeaderActions
+            key={ETeamNavigationItem.ISSUES}
+            teamId={teamId?.toString()}
+            isEditingAllowed={hasMemberLevelPermissions}
+          />,
+        ],
+        [ETeamNavigationItem.CYCLES, undefined],
+        [
+          ETeamNavigationItem.VIEWS,
+          <TeamViewsListHeaderActions
+            key={ETeamNavigationItem.VIEWS}
+            teamId={teamId?.toString()}
+            isEditingAllowed={hasMemberLevelPermissions}
+          />,
+        ],
+        [
+          ETeamNavigationItem.PAGES,
+          <TeamPagesListHeaderActions
+            key={ETeamNavigationItem.PAGES}
+            teamId={teamId?.toString()}
+            isEditingAllowed={hasMemberLevelPermissions}
+          />,
+        ],
+      ]),
+    [hasAdminLevelPermissions, hasMemberLevelPermissions, teamId]
+  );
 
-  const currentHeaderAction = TEAMS_HEADER_ACTIONS_MAP.get(selectedNavigationKey);
+  const currentHeaderAction = useMemo(
+    () => TEAMS_HEADER_ACTIONS_MAP.get(selectedNavigationKey),
+    [TEAMS_HEADER_ACTIONS_MAP, selectedNavigationKey]
+  );
 
-  if (!workspaceSlug || !workspaceId) return <></>;
+  if (!workspaceSlug) return <></>;
   return (
     <Header>
       <Header.LeftItem>

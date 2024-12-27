@@ -13,7 +13,6 @@ from plane.ee.views.app.team import (
     TeamSpacePageUnarchiveEndpoint,
     TeamSpacePagesDescriptionEndpoint,
     TeamSpacePageLockEndpoint,
-    TeamSpacePageUnlockEndpoint,
     TeamSpacePageFavoriteEndpoint,
     TeamSpacePageVersionEndpoint,
     TeamSpaceIssueEndpoint,
@@ -96,17 +95,12 @@ urlpatterns = [
         name="team-pages-lock",
     ),
     path(
-        "workspaces/<str:slug>/teams/<uuid:team_space_id>/pages/<uuid:pk>/unlock/",
-        TeamSpacePageUnlockEndpoint.as_view(),
-        name="team-pages-unlock",
-    ),
-    path(
         "workspaces/<str:slug>/teams/<uuid:team_space_id>/pages/<uuid:pk>/favorite/",
         TeamSpacePageFavoriteEndpoint.as_view(),
         name="team-pages-favorite",
     ),
     path(
-        "workspaces/<str:slug>/teams/<uuid:team_space_id>/pages/<uuid:pk>/versions/",
+        "workspaces/<str:slug>/teams/<uuid:team_space_id>/pages/<uuid:page_id>/versions/",
         TeamSpacePageVersionEndpoint.as_view(),
         name="team-pages-versions",
     ),

@@ -3,16 +3,7 @@ from rest_framework import serializers
 
 # Module imports
 from plane.ee.serializers import BaseSerializer
-from plane.db.models import (
-    User,
-    PageVersion,
-    IssueView,
-    Page,
-    Label,
-    PageLabel,
-    Project,
-    ProjectPage,
-)
+from plane.db.models import User, PageVersion, IssueView, Page, Label
 from plane.ee.models import (
     TeamSpace,
     TeamSpaceMember,
@@ -101,9 +92,6 @@ class TeamSpaceViewSerializer(BaseSerializer):
 
 
 class TeamSpacePageSerializer(BaseSerializer):
-    is_team_space_page = serializers.BooleanField(
-        read_only=True,
-    )
     is_favorite = serializers.BooleanField(read_only=True)
     labels = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
@@ -120,6 +108,7 @@ class TeamSpacePageSerializer(BaseSerializer):
         required=False,
     )
     anchor = serializers.CharField(read_only=True)
+    team = serializers.UUIDField(read_only=True)
 
     class Meta:
         model = Page
@@ -144,6 +133,7 @@ class TeamSpacePageSerializer(BaseSerializer):
             "label_ids",
             "project_ids",
             "anchor",
+            "team",
         ]
         read_only_fields = [
             "workspace",
@@ -152,72 +142,23 @@ class TeamSpacePageSerializer(BaseSerializer):
         ]
 
     def create(self, validated_data):
-        labels = validated_data.pop("labels", None)
-        project_id = self.context["project_id"]
+        workspace_id = self.context["workspace_id"]
         owned_by_id = self.context["owned_by_id"]
         description_html = self.context["description_html"]
 
-        # Get the workspace id from the project
-        project = Project.objects.get(pk=project_id)
-
         # Create the page
-        page = Page.objects.create(
+        return Page.objects.create(
             **validated_data,
             description_html=description_html,
             owned_by_id=owned_by_id,
-            workspace_id=project.workspace_id,
+            workspace_id=workspace_id,
         )
-
-        # Create the project page
-        ProjectPage.objects.create(
-            workspace_id=page.workspace_id,
-            project_id=project_id,
-            page_id=page.id,
-            created_by_id=page.created_by_id,
-            updated_by_id=page.updated_by_id,
-        )
-
-        # Create page labels
-        if labels is not None:
-            PageLabel.objects.bulk_create(
-                [
-                    PageLabel(
-                        label=label,
-                        page=page,
-                        workspace_id=page.workspace_id,
-                        created_by_id=page.created_by_id,
-                        updated_by_id=page.updated_by_id,
-                    )
-                    for label in labels
-                ],
-                batch_size=10,
-            )
-        return page
-
-    def update(self, instance, validated_data):
-        labels = validated_data.pop("labels", None)
-        if labels is not None:
-            PageLabel.objects.filter(page=instance).delete()
-            PageLabel.objects.bulk_create(
-                [
-                    PageLabel(
-                        label=label,
-                        page=instance,
-                        workspace_id=instance.workspace_id,
-                        created_by_id=instance.created_by_id,
-                        updated_by_id=instance.updated_by_id,
-                    )
-                    for label in labels
-                ],
-                batch_size=10,
-            )
-
-        return super().update(instance, validated_data)
 
 
 class TeamSpacePageDetailSerializer(TeamSpacePageSerializer):
 
     class Meta:
+        model = Page
         fields = TeamSpacePageSerializer.Meta.fields + [
             "description_html",
         ]
