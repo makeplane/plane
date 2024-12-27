@@ -53,11 +53,10 @@ export const SubIssuesCollapsibleContent: FC<Props> = observer((props) => {
     },
   });
   // store hooks
+  const { toggleCreateIssueModal, toggleDeleteIssueModal } = useIssueDetail();
   const {
     subIssues: { subIssueHelpersByIssueId, setSubIssueHelpers },
-    toggleCreateIssueModal,
-    toggleDeleteIssueModal,
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
 
   // helpers
   const subIssueOperations = useSubIssueOperations(issueServiceType);
