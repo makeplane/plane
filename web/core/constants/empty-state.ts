@@ -896,11 +896,6 @@ const emptyStateDetails = {
     description:
       "Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started. Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button.",
     path: "/empty-state/onboarding/pages",
-    // primaryButton: {
-    //   text: "Create your first page",
-    // },
-    // accessType: "workspace",
-    // access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
 } as const;
 
