@@ -1,5 +1,5 @@
 import * as RadixDropdownMenu from "@radix-ui/react-dropdown-menu";
-import React, { createContext, useState } from "react";
+import React, { createContext, useCallback, useState } from "react";
 import { DropdownContent } from "./components/DropdownContent";
 
 // Types
@@ -11,6 +11,7 @@ type DropdownMenuProps<T> = {
   defaultOpen?: boolean;
   onSearch?: (value: string) => void;
   isItemDisabled?: (item: T) => boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 type DropdownMenuContextType<T> = {
@@ -37,13 +38,16 @@ export const DropdownMenu = <T,>({
   defaultOpen = false,
   onSearch,
   isItemDisabled,
+  onOpenChange,
 }: DropdownMenuProps<T>) => {
   const [open, setOpen] = useState(defaultOpen);
-  const handleOpenChange = (open: boolean) => {
+
+  const handleOpenChange = useCallback((open: boolean) => {
+    if (onOpenChange) onOpenChange(open);
     setTimeout(() => {
       setOpen(open);
     }, 16);
-  };
+  }, []);
 
   return (
     <DropdownMenuContext.Provider

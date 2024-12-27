@@ -1,5 +1,5 @@
 import * as RadixDropdownMenu from "@radix-ui/react-dropdown-menu";
-import React from "react";
+import React, { useCallback } from "react";
 import { DropdownItem } from "./DropdownItem";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
 
@@ -15,12 +15,19 @@ type DropdownItemsProps<T> = {
   isItemDisabled?: (item: Item<T>) => boolean;
 };
 
-export const DropdownItems = <T,>({
+const DropdownItems_ = <T,>({
   items,
   onSelect,
   renderItem,
   isItemDisabled,
 }: DropdownItemsProps<T>) => {
+  const handleSelect = useCallback(
+    (e: any, item: Item<T>) => {
+      onSelect(e, item);
+    },
+    [onSelect]
+  );
+
   return (
     <>
       {items.map((item, index) => {
@@ -48,7 +55,7 @@ export const DropdownItems = <T,>({
                     <ScrollArea.Viewport className="h-full w-full max-h-[80vh]">
                       <DropdownItems
                         items={item.children}
-                        onSelect={(e) => onSelect(e, item)}
+                        onSelect={handleSelect}
                         renderItem={renderItem}
                         isItemDisabled={isItemDisabled}
                       />
@@ -62,8 +69,9 @@ export const DropdownItems = <T,>({
         return (
           <DropdownItem
             key={index}
-            onSelect={(e) => onSelect(e, item)}
+            onSelect={handleSelect}
             disabled={isItemDisabled ? isItemDisabled(item) : item?.disabled}
+            item={item}
           >
             {renderItem(item)}
           </DropdownItem>
@@ -72,3 +80,7 @@ export const DropdownItems = <T,>({
     </>
   );
 };
+
+const DropdownItems = React.memo(DropdownItems_);
+
+export { DropdownItems };

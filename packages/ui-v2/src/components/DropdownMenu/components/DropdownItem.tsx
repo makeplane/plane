@@ -1,18 +1,26 @@
 import * as RadixDropdownMenu from "@radix-ui/react-dropdown-menu";
-import React from "react";
+import React, { useCallback } from "react";
 
 export const DropdownItem = ({
   children,
   onSelect,
   disabled,
+  item,
 }: {
   children: React.ReactNode;
-  onSelect: (e: any) => void;
+  onSelect: (e: any, item: any) => void;
   disabled?: boolean;
+  item?: any;
 }) => {
+  const handleSelect = useCallback(
+    (e: any) => {
+      onSelect(e, item);
+    },
+    [onSelect]
+  );
   return (
     <RadixDropdownMenu.Item
-      onSelect={(e) => onSelect(e)}
+      onSelect={handleSelect}
       className="p-1 first:pt-0 last:border-b-0 last:pb-0 
       rounded
       hover:bg-bg-neutral-subtle

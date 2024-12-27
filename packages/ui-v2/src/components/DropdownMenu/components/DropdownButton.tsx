@@ -6,11 +6,13 @@ import { DropdownMenuContext } from "../DropdownMenu";
 type DropdownButtonProps = {
   children: React.ReactNode;
   showIcon?: boolean;
+  label: string;
 };
 
 export const DropdownButton = ({
   children,
   showIcon = false,
+  label,
 }: DropdownButtonProps) => {
   const { setOpen } = useContext(DropdownMenuContext);
 
@@ -18,9 +20,8 @@ export const DropdownButton = ({
     <RadixDropdownMenu.Trigger
       className="inline-flex h-[35px]  
     items-center justify-between gap-[5px] rounded bg-white px-[15px] text-[13px] leading-none"
-      aria-label="Food"
+      aria-label={label}
       asChild
-      //   onClick={() => setOpen(true)}
     >
       <div>
         {children}

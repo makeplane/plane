@@ -1,4 +1,10 @@
 /** @type {import('tailwindcss').Config} */
+/*
+@todo @aaryan 
+Do not extend the colors
+Explicitly add all the colors we need
+ 
+*/
 module.exports = {
   content: ["./src/**/*.tsx"],
   theme: {
@@ -19,20 +25,19 @@ module.exports = {
           950: "var(--grey-950)",
         },
         black: "var(--black)",
-
-        border: {
-          neutral: {
-            subtle: "var(--grey-100)",
-            DEFAULT: "var(--grey-200)",
-            emphasis: "var(--grey-300)",
-          },
+      },
+      borderColor: {
+        neutral: {
+          subtle: "var(--grey-100)",
+          DEFAULT: "var(--grey-200)",
+          emphasis: "var(--grey-300)",
         },
-        bg: {
-          neutral: {
-            subtle: "var(--grey-100)",
-            DEFAULT: "var(--grey-200)",
-            emphasis: "var(--grey-300)",
-          },
+      },
+      backgroundColor: {
+        neutral: {
+          subtle: "var(--grey-100)",
+          DEFAULT: "var(--grey-200)",
+          emphasis: "var(--grey-300)",
         },
       },
     },

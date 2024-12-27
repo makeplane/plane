@@ -1,7 +1,7 @@
 import * as RadixDropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { DropdownMenuContext } from "../DropdownMenu";
 import { DropdownItems } from "./DropdownItems";
 
@@ -20,6 +20,7 @@ export const DropdownContent = ({
   }>({});
 
   const [showSearchLoading, setShowSearchLoading] = useState(false);
+
   useEffect(() => {
     if (!items) return;
     let groupedItems: { [key: string]: any[] } = {};
@@ -43,15 +44,20 @@ export const DropdownContent = ({
       setShowSearchLoading(false);
     }
   };
+
+  const handleSelect = (e: any, item: any) => {
+    onSelect && onSelect(e, item);
+  };
+
   return (
     <RadixDropdownMenu.Portal container={container}>
-      <RadixDropdownMenu.Content className="p-3 rounded-md bg-white border border-border-neutral">
+      <RadixDropdownMenu.Content className="p-3 rounded-md bg-white border border-neutral">
         {onSearch && (
           <div className="relative">
             <input
               type="text"
               placeholder="Search"
-              className="w-full p-1 border border-border-neutral rounded-md mb-3 sticky top-0 bg-white z-10"
+              className="w-full p-1 border border-neutral rounded-md mb-3 sticky top-0 bg-white z-10"
               onChange={(e) => handleSearch(e.target.value)}
             />
             {showSearchLoading && (
@@ -91,7 +97,7 @@ export const DropdownContent = ({
                 {renderItem && (
                   <DropdownItems
                     items={groupedItems[group]}
-                    onSelect={(e, item) => onSelect && onSelect(e, item)}
+                    onSelect={handleSelect}
                     renderItem={renderItem}
                     isItemDisabled={isItemDisabled}
                   />
