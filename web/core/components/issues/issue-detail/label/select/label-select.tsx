@@ -183,9 +183,12 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
               ) : submitting ? (
                 <Loader className="spin  h-3.5 w-3.5" />
               ) : canCreateLabel ? (
-                <p
-                  onClick={() => {
-                    if(!query.length) return
+                <Combobox.Option
+                  value={query}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!query.length) return;
                     handleAddLabel(query);
                   }}
                   className={`text-left text-custom-text-200 ${query.length ? "cursor-pointer" : "cursor-default"}`}
@@ -197,7 +200,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
                   ) : (
                     "Type to add a new label"
                   )}
-                </p>
+                </Combobox.Option>
               ) : (
                 <p className="text-left text-custom-text-200 ">No matching results.</p>
               )}

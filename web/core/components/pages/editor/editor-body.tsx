@@ -7,13 +7,11 @@ import {
   TAIMenuProps,
   TDisplayConfig,
   TFileHandler,
-  TIssueEmbedConfig,
-  TMentionSection,
   TRealtimeConfig,
   TServerHandler,
 } from "@plane/editor";
 // plane types
-import { TWebhookConnectionQueryParams } from "@plane/types";
+import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
 // plane ui
 import { Row } from "@plane/ui";
 // components
@@ -24,22 +22,23 @@ import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useUser } from "@/hooks/store";
+import { useEditorMention } from "@/hooks/use-editor-mention";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 
 export type TEditorBodyConfig = {
   fileHandler: TFileHandler;
-  issueEmbedConfig: TIssueEmbedConfig;
   webhookConnectionParams: TWebhookConnectionQueryParams;
 };
 
 export type TEditorBodyHandlers = {
-  fetchMentions: (query: string) => Promise<TMentionSection[]>;
+  fetchEntity: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
 };
 
 type Props = {
@@ -69,6 +68,15 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { data: currentUser } = useUser();
   // derived values
   const { id: pageId, name: pageTitle, isContentEditable, updateTitle } = page;
+  // issue-embed
+  const { issueEmbedProps } = useIssueEmbed({
+    fetchEmbedSuggestions: handlers.fetchEntity,
+    workspaceSlug,
+  });
+  // use editor mention
+  const { fetchMentions } = useEditorMention({
+    searchEntity: handlers.fetchEntity,
+  });
   // editor flaggings
   const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug);
   // page filters
@@ -175,14 +183,14 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             editorClassName="pl-10"
             mentionHandler={{
               searchCallback: async (query) => {
-                const res = await handlers.fetchMentions(query);
+                const res = await fetchMentions(query);
                 if (!res) throw new Error("Failed in fetching mentions");
                 return res;
               },
               renderComponent: (props) => <EditorMentionsRoot {...props} />,
             }}
             embedHandler={{
-              issue: config.issueEmbedConfig,
+              issue: issueEmbedProps,
             }}
             realtimeConfig={realtimeConfig}
             serverHandler={serverHandler}

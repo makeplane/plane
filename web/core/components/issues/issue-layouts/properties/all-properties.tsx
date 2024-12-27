@@ -96,7 +96,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   );
 
   const handleState = (stateId: string) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { state_id: stateId }).then(() => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
@@ -111,7 +111,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const handlePriority = (value: TIssuePriorities) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { priority: value }).then(() => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
@@ -126,7 +126,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const handleLabel = (ids: string[]) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { label_ids: ids }).then(() => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
@@ -141,7 +141,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const handleAssignee = (ids: string[]) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { assignee_ids: ids }).then(() => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
@@ -195,7 +195,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   );
 
   const handleStartDate = (date: Date | null) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { start_date: date ? renderFormattedPayloadDate(date) : null }).then(
         () => {
           captureIssueEvent({
@@ -212,7 +212,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const handleTargetDate = (date: Date | null) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { target_date: date ? renderFormattedPayloadDate(date) : null }).then(
         () => {
           captureIssueEvent({
@@ -229,7 +229,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const handleEstimate = (value: string | undefined) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { estimate_point: value }).then(() => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
@@ -300,21 +300,6 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             buttonClassName="border"
             renderByDefault={isMobile}
             showTooltip
-          />
-        </div>
-      </WithDisplayPropertiesHOC>
-
-      {/* label */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
-        <div className="h-5" onClick={handleEventPropagation}>
-          <IssuePropertyLabels
-            projectId={issue?.project_id || null}
-            value={issue?.label_ids || null}
-            defaultOptions={defaultLabelOptions}
-            onChange={handleLabel}
-            disabled={isReadOnly}
-            renderByDefault={isMobile}
-            hideDropdownArrow
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -510,6 +495,20 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             <div className="text-xs">{issue.link_count}</div>
           </div>
         </Tooltip>
+      </WithDisplayPropertiesHOC>
+
+      {/* label */}
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
+        <IssuePropertyLabels
+          projectId={issue?.project_id || null}
+          value={issue?.label_ids || null}
+          defaultOptions={defaultLabelOptions}
+          onChange={handleLabel}
+          disabled={isReadOnly}
+          renderByDefault={isMobile}
+          hideDropdownArrow
+          maxRender={3}
+        />
       </WithDisplayPropertiesHOC>
     </div>
   );

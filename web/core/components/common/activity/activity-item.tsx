@@ -19,6 +19,8 @@ export const ActivityItem: FC<TActivityItem> = observer((props) => {
   if (!activity) return null;
 
   const activityType = activity.field;
+  if (!activityType) return null;
+
   const { message, customUserName } = messages(activity);
   const icon = iconsMap[activityType] || iconsMap.default;
 

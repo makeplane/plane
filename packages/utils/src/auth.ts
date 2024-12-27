@@ -1,8 +1,71 @@
 import { ReactNode } from "react";
 import zxcvbn from "zxcvbn";
-import { E_PASSWORD_STRENGTH, PASSWORD_CRITERIA, PASSWORD_MIN_LENGTH } from "@plane/constants";
+import {
+  E_PASSWORD_STRENGTH,
+  SPACE_PASSWORD_CRITERIA,
+  PASSWORD_MIN_LENGTH,
+  EErrorAlertType,
+  EAuthErrorCodes,
+} from "@plane/constants";
 
-import { EPageTypes, EErrorAlertType, EAuthErrorCodes } from "@plane/constants";
+/**
+ * @description Password strength levels
+ */
+export enum PasswordStrength {
+  EMPTY = "empty",
+  WEAK = "weak",
+  FAIR = "fair",
+  GOOD = "good",
+  STRONG = "strong",
+}
+
+/**
+ * @description Password strength criteria type
+ */
+export type PasswordCriterion = {
+  regex: RegExp;
+  description: string;
+};
+
+/**
+ * @description Password strength criteria
+ */
+export const PASSWORD_CRITERIA: PasswordCriterion[] = [
+  { regex: /[a-z]/, description: "lowercase" },
+  { regex: /[A-Z]/, description: "uppercase" },
+  { regex: /[0-9]/, description: "number" },
+  { regex: /[^a-zA-Z0-9]/, description: "special character" },
+];
+
+/**
+ * @description Checks if password meets all criteria
+ * @param {string} password - Password to check
+ * @returns {boolean} Whether password meets all criteria
+ */
+export const checkPasswordCriteria = (password: string): boolean =>
+  PASSWORD_CRITERIA.every((criterion) => criterion.regex.test(password));
+
+/**
+ * @description Checks password strength against criteria
+ * @param {string} password - Password to check
+ * @returns {PasswordStrength} Password strength level
+ * @example
+ * checkPasswordStrength("abc") // returns PasswordStrength.WEAK
+ * checkPasswordStrength("Abc123!@#") // returns PasswordStrength.STRONG
+ */
+export const checkPasswordStrength = (password: string): PasswordStrength => {
+  if (!password || password.length === 0) return PasswordStrength.EMPTY;
+  if (password.length < PASSWORD_MIN_LENGTH) return PasswordStrength.WEAK;
+
+  const criteriaCount = PASSWORD_CRITERIA.filter((criterion) => criterion.regex.test(password)).length;
+
+  const zxcvbnScore = zxcvbn(password).score;
+
+  if (criteriaCount <= 1 || zxcvbnScore <= 1) return PasswordStrength.WEAK;
+  if (criteriaCount === 2 || zxcvbnScore === 2) return PasswordStrength.FAIR;
+  if (criteriaCount === 3 || zxcvbnScore === 3) return PasswordStrength.GOOD;
+  return PasswordStrength.STRONG;
+};
 
 export type TAuthErrorInfo = {
   type: EErrorAlertType;
@@ -26,9 +89,9 @@ export const getPasswordStrength = (password: string): E_PASSWORD_STRENGTH => {
     return passwordStrength;
   }
 
-  const passwordCriteriaValidation = PASSWORD_CRITERIA.map((criteria) => criteria.isCriteriaValid(password)).every(
-    (criterion) => criterion
-  );
+  const passwordCriteriaValidation = SPACE_PASSWORD_CRITERIA.map((criteria) =>
+    criteria.isCriteriaValid(password)
+  ).every((criterion) => criterion);
   const passwordStrengthScore = zxcvbn(password).score;
 
   if (passwordCriteriaValidation === false || passwordStrengthScore <= 2) {
@@ -76,7 +139,7 @@ const errorCodeMessages: {
   // sign up
   [EAuthErrorCodes.USER_ALREADY_EXIST]: {
     title: `User already exists`,
-    message: (email = undefined) => `Your account is already registered. Sign in now.`,
+    message: () => `Your account is already registered. Sign in now.`,
   },
   [EAuthErrorCodes.REQUIRED_EMAIL_PASSWORD_SIGN_UP]: {
     title: `Email and password required`,

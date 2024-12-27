@@ -32,7 +32,6 @@ from bs4 import BeautifulSoup
 
 def update_mentions_for_issue(issue, project, new_mentions, removed_mention):
     aggregated_issue_mentions = []
-
     for mention_id in new_mentions:
         aggregated_issue_mentions.append(
             IssueMention(
@@ -125,7 +124,9 @@ def extract_mentions(issue_instance):
         data = json.loads(issue_instance)
         html = data.get("description_html")
         soup = BeautifulSoup(html, "html.parser")
-        mention_tags = soup.find_all("mention-component", attrs={"target": "users"})
+        mention_tags = soup.find_all(
+            "mention-component", attrs={"entity_name": "user_mention"}
+        )
 
         mentions = [mention_tag["entity_identifier"] for mention_tag in mention_tags]
 
@@ -139,7 +140,9 @@ def extract_comment_mentions(comment_value):
     try:
         mentions = []
         soup = BeautifulSoup(comment_value, "html.parser")
-        mentions_tags = soup.find_all("mention-component", attrs={"target": "users"})
+        mentions_tags = soup.find_all(
+            "mention-component", attrs={"entity_name": "user_mention"}
+        )
         for mention_tag in mentions_tags:
             mentions.append(mention_tag["entity_identifier"])
         return list(set(mentions))
@@ -255,12 +258,9 @@ def notifications(
             new_mentions = get_new_mentions(
                 requested_instance=requested_data, current_instance=current_instance
             )
-
-            new_mentions = [
-                str(mention)
-                for mention in new_mentions
-                if mention in set(project_members)
-            ]
+            new_mentions = list(
+                set(new_mentions) & {str(member) for member in project_members}
+            )
             removed_mention = get_removed_mentions(
                 requested_instance=requested_data, current_instance=current_instance
             )

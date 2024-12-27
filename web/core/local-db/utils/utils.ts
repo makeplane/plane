@@ -64,9 +64,10 @@ export const updatePersistentLayer = async (issueIds: string | string[]) => {
   issueIds.forEach(async (issueId) => {
     const dbIssue = await persistence.getIssue(issueId);
     const issue = rootStore.issue.issues.getIssueById(issueId);
+    const updatedIssue = dbIssue ? { ...dbIssue, ...issue } : issue;
 
-    if (issue) {
-      addIssueToPersistanceLayer(issue);
+    if (updatedIssue) {
+      addIssueToPersistanceLayer(updatedIssue);
     }
   });
 };
