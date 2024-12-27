@@ -362,51 +362,49 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         </div>
       </WithDisplayPropertiesHOC>
 
-      {!isEpic && (
-        <>
-          {!isEpic && (
-            <>
-              {/* modules */}
-              {projectDetails?.module_view && (
-                <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
-                  <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-                    <ModuleDropdown
-                      buttonContainerClassName="truncate max-w-40"
-                      projectId={issue?.project_id}
-                      value={issue?.module_ids ?? []}
-                      onChange={handleModule}
-                      disabled={isReadOnly}
-                      renderByDefault={isMobile}
-                      multiple
-                      buttonVariant="border-with-text"
-                      showCount
-                      showTooltip
-                    />
-                  </div>
-                </WithDisplayPropertiesHOC>
-              )}
+      <>
+        {!isEpic && (
+          <>
+            {/* modules */}
+            {projectDetails?.module_view && (
+              <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
+                <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+                  <ModuleDropdown
+                    buttonContainerClassName="truncate max-w-40"
+                    projectId={issue?.project_id}
+                    value={issue?.module_ids ?? []}
+                    onChange={handleModule}
+                    disabled={isReadOnly}
+                    renderByDefault={isMobile}
+                    multiple
+                    buttonVariant="border-with-text"
+                    showCount
+                    showTooltip
+                  />
+                </div>
+              </WithDisplayPropertiesHOC>
+            )}
 
-              {/* cycles */}
-              {projectDetails?.cycle_view && (
-                <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
-                  <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-                    <CycleDropdown
-                      buttonContainerClassName="truncate max-w-40"
-                      projectId={issue?.project_id}
-                      value={issue?.cycle_id}
-                      onChange={handleCycle}
-                      disabled={isReadOnly}
-                      buttonVariant="border-with-text"
-                      renderByDefault={isMobile}
-                      showTooltip
-                    />
-                  </div>
-                </WithDisplayPropertiesHOC>
-              )}
-            </>
-          )}
-        </>
-      )}
+            {/* cycles */}
+            {projectDetails?.cycle_view && (
+              <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
+                <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+                  <CycleDropdown
+                    buttonContainerClassName="truncate max-w-40"
+                    projectId={issue?.project_id}
+                    value={issue?.cycle_id}
+                    onChange={handleCycle}
+                    disabled={isReadOnly}
+                    buttonVariant="border-with-text"
+                    renderByDefault={isMobile}
+                    showTooltip
+                  />
+                </div>
+              </WithDisplayPropertiesHOC>
+            )}
+          </>
+        )}
+      </>
 
       {/* estimates */}
       {projectId && areEstimateEnabledByProjectId(projectId?.toString()) && (
