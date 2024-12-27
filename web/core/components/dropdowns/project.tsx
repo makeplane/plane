@@ -1,7 +1,7 @@
 import { ReactNode, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check, ChevronDown, Search } from "lucide-react";
+import { Briefcase, Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
 import { ComboDropDown } from "@plane/ui";
@@ -143,10 +143,14 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
     if (Array.isArray(value)) {
       return (
         <div className="flex items-center gap-0.5">
-          {value.map((projectId) => {
-            const projectDetails = getProjectById(projectId);
-            return projectDetails ? renderIcon(projectDetails) : null;
-          })}
+          {value.length > 0 ? (
+            value.map((projectId) => {
+              const projectDetails = getProjectById(projectId);
+              return projectDetails ? renderIcon(projectDetails) : null;
+            })
+          ) : (
+            <Briefcase className="size-3 text-custom-text-300" />
+          )}
         </div>
       );
     } else {
