@@ -37,7 +37,6 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
   // store hooks
   const { workspaceSlug } = useParams();
   const {
-    getUserDetails,
     project: { getProjectMemberIds, fetchProjectMembers, getProjectMemberDetails },
     workspace: { workspaceMemberIds },
   } = useMember();
@@ -83,7 +82,7 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
       const memeberDetails = userData?.member;
       /**Restricting guest users from being shown in the dropdown */
       const isGuest = (userData?.role ?? EUserPermissions.GUEST) === EUserPermissions.GUEST;
-      if (isGuest) return null;
+      if (isGuest) return;
       return {
         value: userId,
         query: `${memeberDetails?.display_name} ${memeberDetails?.first_name} ${memeberDetails?.last_name}`,
@@ -97,10 +96,10 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
         ),
       };
     })
-    .filter((option) => option !== null);
+    .filter((option) => option !== undefined);
 
   const filteredOptions =
-    query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
+    query === "" ? options : options?.filter((option) => option?.query.toLowerCase().includes(query.toLowerCase()));
 
   return createPortal(
     <Combobox.Options data-prevent-outside-click static>
@@ -133,8 +132,8 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
             filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <Combobox.Option
-                  key={option.value}
-                  value={option.value}
+                  key={option?.value}
+                  value={option?.value}
                   className={({ active, selected }) =>
                     `flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
                       active ? "bg-custom-background-80" : ""
@@ -143,7 +142,7 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
                 >
                   {({ selected }) => (
                     <>
-                      <span className="flex-grow truncate">{option.content}</span>
+                      <span className="flex-grow truncate">{option?.content}</span>
                       {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
                     </>
                   )}
