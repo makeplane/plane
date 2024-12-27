@@ -47,7 +47,12 @@ export class ProjectPageService extends APIService {
       });
   }
 
-  async updateAccess(workspaceSlug: string, projectId: string, pageId: string, data: Partial<TPage>): Promise<void> {
+  async updateAccess(
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+    data: Pick<TPage, "access">
+  ): Promise<void> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/access/`, data)
       .then((response) => response?.data)
       .catch((error) => {

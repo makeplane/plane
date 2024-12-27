@@ -1,5 +1,9 @@
 import { Extensions, JSONContent } from "@tiptap/core";
 import { Selection } from "@tiptap/pm/state";
+// plane types
+import { TWebhookConnectionQueryParams } from "@plane/types";
+// extension types
+import { TTextAlign } from "@/extensions";
 // helpers
 import { IMarking } from "@/helpers/scroll-to-node";
 // types
@@ -15,7 +19,6 @@ import {
   TReadOnlyMentionHandler,
   TServerHandler,
 } from "@/types";
-import { TTextAlign } from "@/extensions";
 
 export type TEditorCommands =
   | "text"
@@ -185,7 +188,5 @@ export type TUserDetails = {
 
 export type TRealtimeConfig = {
   url: string;
-  queryParams: {
-    [key: string]: string;
-  };
+  queryParams: TWebhookConnectionQueryParams;
 };
