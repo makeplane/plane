@@ -11,9 +11,9 @@ from plane.db.models import (
     WorkspaceMemberInvite,
     WorkspaceTheme,
     WorkspaceUserProperties,
+    WorkspaceUserLink
 )
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
-
 
 class WorkSpaceSerializer(DynamicBaseSerializer):
     owner = UserLiteSerializer(read_only=True)
@@ -106,3 +106,9 @@ class WorkspaceUserPropertiesSerializer(BaseSerializer):
         model = WorkspaceUserProperties
         fields = "__all__"
         read_only_fields = ["workspace", "user"]
+
+class WorkspaceUserLinkSerializer(BaseSerializer):
+    class Meta:
+        model = WorkspaceUserLink
+        fields = "__all__"
+        read_only_fields = ["workspace", "owner"]
