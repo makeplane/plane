@@ -4,7 +4,7 @@
     .list-marker {
       position: absolute;
       right: 100%;
-      top: -2px;
+      top: 2px;
       height: 28px;
       width: 28px;
       display: grid;
@@ -15,30 +15,23 @@
       }
     }
 
-    /* select the first list item of every list,
-      except the-
-        1. first item of a nested list
-        2. first item of the editor
-    */
-    &:not(.prosemirror-flat-list + .prosemirror-flat-list):not(.prosemirror-flat-list .prosemirror-flat-list):not(
-        :first-of-type:first-child
-      ) {
-      padding-top: 4px;
-
-      &::before,
-      .list-marker {
-        top: 1px;
+    .list-content {
+      & > *:first-child:not(.prosemirror-flat-list) {
+        padding: 4px 0;
       }
     }
 
-    .list-content {
-      & > *:first-child:not(.prosemirror-flat-list) {
-        padding-bottom: 4px;
+    /* select the first item of the editor */
+    &:first-of-type:first-child {
+      .list-content {
+        & > *:first-child:not(.prosemirror-flat-list) {
+          padding-top: 0 !important;
+        }
       }
 
-      & > p {
-        margin: 0 !important;
-        /* padding: 4px 0 !important; */
+      &::before,
+      .list-marker {
+        top: -2px;
       }
     }
 
