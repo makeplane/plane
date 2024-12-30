@@ -16,16 +16,15 @@ import {
   CustomEmojiIconPicker,
   EmojiIconPickerTypes,
   Tooltip,
-  CustomSearchSelect,
 } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 import { ImagePickerPopover } from "@/components/core";
+import { TimezoneSelect } from "@/components/global";
 // constants
 import { PROJECT_UPDATED } from "@/constants/event-tracker";
 import { NETWORK_CHOICES } from "@/constants/project";
 // helpers
-import { TTimezone, TIME_ZONES } from "@/constants/timezones";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getFileURL } from "@/helpers/file.helper";
@@ -34,6 +33,7 @@ import { useEventTracker, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { ProjectService } from "@/services/project";
+
 export interface IProjectDetailsForm {
   project: IProject;
   workspaceSlug: string;
@@ -68,20 +68,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   });
   // derived values
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
-  const getTimeZoneLabel = (timezone: TTimezone | undefined) => {
-    if (!timezone) return undefined;
-    return (
-      <div className="flex gap-1.5">
-        <span className="text-custom-text-400">{timezone.gmtOffset}</span>
-        <span className="text-custom-text-200">{timezone.name}</span>
-      </div>
-    );
-  };
-  const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
-    value: timeZone.value,
-    query: timeZone.name + " " + timeZone.gmtOffset + " " + timeZone.value,
-    content: getTimeZoneLabel(timeZone),
-  }));
   const coverImage = watch("cover_image_url");
 
   useEffect(() => {
@@ -393,20 +379,16 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               control={control}
               rules={{ required: "Please select a timezone" }}
               render={({ field: { value, onChange } }) => (
-                <CustomSearchSelect
-                  value={value}
-                  label={
-                    value
-                      ? (getTimeZoneLabel(TIME_ZONES.find((t) => t.value === value)) ?? value)
-                      : "Select a timezone"
-                  }
-                  options={timeZoneOptions}
-                  onChange={onChange}
-                  buttonClassName={errors.timezone ? "border-red-500" : "border-none"}
-                  className="rounded-md border-[0.5px] !border-custom-border-200"
-                  optionsClassName="w-72"
-                  input
-                />
+                <>
+                  <TimezoneSelect
+                    value={value}
+                    onChange={(value: string) => {
+                      onChange(value);
+                    }}
+                    error={Boolean(errors.timezone)}
+                    buttonClassName="border-none"
+                  />
+                </>
               )}
             />
             {errors.timezone && <span className="text-xs text-red-500">{errors.timezone.message}</span>}

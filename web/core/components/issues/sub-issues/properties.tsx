@@ -17,11 +17,11 @@ export interface IIssueProperty {
 }
 
 export const IssueProperty: React.FC<IIssueProperty> = (props) => {
-  const { workspaceSlug, parentIssueId, issueId, disabled, subIssueOperations } = props;
+  const { workspaceSlug, parentIssueId, issueId, disabled, subIssueOperations, issueServiceType } = props;
   // hooks
   const {
     issue: { getIssueById },
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
 
   const issue = getIssueById(issueId);
 

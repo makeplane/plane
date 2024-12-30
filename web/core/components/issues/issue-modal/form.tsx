@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 // editor
+import { EIssuesStoreType } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 // types
 import type { TIssue, ISearchIssueResponse, TWorkspaceDraftIssue } from "@plane/types";
@@ -19,7 +20,6 @@ import {
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
 import { CreateLabelModal } from "@/components/labels";
-import { EIssuesStoreType } from "@/constants/issue";
 import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { cn } from "@/helpers/common.helper";

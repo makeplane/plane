@@ -3,27 +3,44 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // editor
 import { EditorRefApi } from "@plane/editor";
+// types
+import { TDocumentPayload, TPage, TPageVersion } from "@plane/types";
 // components
-import { PageEditorHeaderRoot, PageEditorBody, PageVersionsOverlay, PagesVersionEditor } from "@/components/pages";
+import {
+  PageEditorHeaderRoot,
+  PageEditorBody,
+  PageVersionsOverlay,
+  PagesVersionEditor,
+  TEditorBodyHandlers,
+  TEditorBodyConfig,
+} from "@/components/pages";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";
 import { useQueryParams } from "@/hooks/use-query-params";
-// services
-import { ProjectPageService, ProjectPageVersionService } from "@/services/page";
-const projectPageService = new ProjectPageService();
-const projectPageVersionService = new ProjectPageVersionService();
 // store
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
+
+export type TPageRootHandlers = {
+  create: (payload: Partial<TPage>) => Promise<Partial<TPage> | undefined>;
+  fetchAllVersions: (pageId: string) => Promise<TPageVersion[] | undefined>;
+  fetchDescriptionBinary: () => Promise<any>;
+  fetchVersionDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
+  getRedirectionLink: (pageId: string) => string;
+  updateDescription: (document: TDocumentPayload) => Promise<void>;
+} & TEditorBodyHandlers;
+
+export type TPageRootConfig = TEditorBodyConfig;
 
 type TPageRootProps = {
-  page: IPage;
-  projectId: string;
+  config: TPageRootConfig;
+  handlers: TPageRootHandlers;
+  page: TPageInstance;
   workspaceSlug: string;
 };
 
 export const PageRoot = observer((props: TPageRootProps) => {
-  const { projectId, workspaceSlug, page } = props;
+  const { config, handlers, page, workspaceSlug } = props;
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
@@ -36,16 +53,13 @@ export const PageRoot = observer((props: TPageRootProps) => {
   // search params
   const searchParams = useSearchParams();
   // derived values
-  const { isContentEditable, updateDescription } = page;
+  const { isContentEditable } = page;
   // page fallback
   usePageFallback({
     editorRef,
-    fetchPageDescription: async () => {
-      if (!page.id) return;
-      return await projectPageService.fetchDescriptionBinary(workspaceSlug, projectId, page.id);
-    },
+    fetchPageDescription: handlers.fetchDescriptionBinary,
     hasConnectionFailed,
-    updatePageDescription: async (data) => await updateDescription(data),
+    updatePageDescription: handlers.updateDescription,
   });
   // update query params
   const { updateQueryParams } = useQueryParams();
@@ -78,23 +92,8 @@ export const PageRoot = observer((props: TPageRootProps) => {
         activeVersion={version}
         currentVersionDescription={currentVersionDescription ?? null}
         editorComponent={PagesVersionEditor}
-        fetchAllVersions={async (pageId) => {
-          if (!workspaceSlug || !projectId) return;
-          return await projectPageVersionService.fetchAllVersions(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            pageId
-          );
-        }}
-        fetchVersionDetails={async (pageId, versionId) => {
-          if (!workspaceSlug || !projectId) return;
-          return await projectPageVersionService.fetchVersionById(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            pageId,
-            versionId
-          );
-        }}
+        fetchAllVersions={handlers.fetchAllVersions}
+        fetchVersionDetails={handlers.fetchVersionDetails}
         handleRestore={handleRestoreVersion}
         isOpen={isVersionsOverlayOpen}
         onClose={handleCloseVersionsOverlay}
@@ -109,12 +108,15 @@ export const PageRoot = observer((props: TPageRootProps) => {
         sidePeekVisible={sidePeekVisible}
       />
       <PageEditorBody
+        config={config}
         editorReady={editorReady}
         editorRef={editorRef}
         handleConnectionStatus={setHasConnectionFailed}
         handleEditorReady={setEditorReady}
+        handlers={handlers}
         page={page}
         sidePeekVisible={sidePeekVisible}
+        workspaceSlug={workspaceSlug}
       />
     </>
   );

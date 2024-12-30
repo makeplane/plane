@@ -11,25 +11,31 @@ import { PageActions } from "@/components/pages";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useMember, usePage } from "@/hooks/store";
+import { useMember } from "@/hooks/store";
 import { usePageOperations } from "@/hooks/use-page-operations";
+import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
-  pageId: string;
+  page: TPageInstance;
   parentRef: React.RefObject<HTMLElement>;
 };
 
 export const BlockItemAction: FC<Props> = observer((props) => {
-  const { pageId, parentRef } = props;
+  const { page, parentRef } = props;
   // store hooks
-  const page = usePage(pageId);
   const { getUserDetails } = useMember();
   // page operations
   const { pageOperations } = usePageOperations({
     page,
   });
   // derived values
-  const { access, created_at, is_favorite, owned_by, canCurrentUserFavoritePage } = page;
+  const {
+    access,
+    created_at,
+    is_favorite,
+    owned_by,
+    canCurrentUserFavoritePage,
+  } = page;
   const ownerDetails = owned_by ? getUserDetails(owned_by) : undefined;
 
   return (

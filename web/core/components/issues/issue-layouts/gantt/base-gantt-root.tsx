@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
-import { ALL_ISSUES } from "@plane/constants";
+import { ALL_ISSUES, EIssueLayoutTypes, EIssuesStoreType } from "@plane/constants";
 import { TIssue } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
@@ -10,7 +10,6 @@ import { GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "@/component
 import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 import { QuickAddIssueRoot, IssueGanttBlock, GanttQuickAddIssueButton } from "@/components/issues";
 //constants
-import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 //hooks
@@ -112,6 +111,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           target_date: renderFormattedPayloadDate(targetDate),
         }}
         quickAddCallback={quickAddIssue}
+        isEpic={isEpic}
       />
     ) : undefined;
 
@@ -121,8 +121,8 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
         <div className="h-full w-full">
           <GanttChartRoot
             border={false}
-            title="Issues"
-            loaderTitle="Issues"
+            title={isEpic ? "Epics" : "Issues"}
+            loaderTitle={isEpic ? "Epics" : "Issues"}
             blockIds={issuesIds}
             blockUpdateHandler={updateIssueBlockStructure}
             blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} isEpic={isEpic} />}

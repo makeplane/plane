@@ -109,16 +109,6 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                 {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Create or get state
-        state, _ = State.objects.get_or_create(
-            name="Triage",
-            group="triage",
-            description="Default state for managing all Intake Issues",
-            project_id=project_id,
-            color="#ff7700",
-            is_triage=True,
-        )
-
         # create an issue
         issue = Issue.objects.create(
             name=request.data.get("issue", {}).get("name"),
@@ -128,7 +118,6 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             ),
             priority=request.data.get("issue", {}).get("priority", "none"),
             project_id=project_id,
-            state=state,
         )
 
         # create an intake issue

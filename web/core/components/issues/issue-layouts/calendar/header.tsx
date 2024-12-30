@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 
 // components
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { EIssueFilterType } from "@plane/constants";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -11,7 +12,6 @@ import {
 import { Row } from "@plane/ui";
 import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "@/components/issues";
 // icons
-import { EIssueFilterType } from "@/constants/issue";
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
 import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import { ICycleIssuesFilter } from "@/store/issue/cycle";

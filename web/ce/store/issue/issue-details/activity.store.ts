@@ -93,10 +93,11 @@ export class IssueActivityStore implements IIssueActivityStore {
 
     let activityComments: TIssueActivityComment[] = [];
 
-    const currentStore = this.serviceType === EIssueServiceType.EPICS ? this.store.epic : this.store.issue;
+    const currentStore =
+      this.serviceType === EIssueServiceType.EPICS ? this.store.issue.epicDetail : this.store.issue.issueDetail;
 
     const activities = this.getActivitiesByIssueId(issueId) || [];
-    const comments = currentStore.issueDetail.comment.getCommentsByIssueId(issueId) || [];
+    const comments = currentStore.comment.getCommentsByIssueId(issueId) || [];
 
     activities.forEach((activityId) => {
       const activity = this.getActivityById(activityId);
@@ -109,7 +110,7 @@ export class IssueActivityStore implements IIssueActivityStore {
     });
 
     comments.forEach((commentId) => {
-      const comment = currentStore.issueDetail.comment.getCommentById(commentId);
+      const comment = currentStore.comment.getCommentById(commentId);
       if (!comment) return;
       activityComments.push({
         id: comment.id,

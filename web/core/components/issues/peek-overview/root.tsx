@@ -4,6 +4,7 @@ import { FC, useEffect, useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // plane types
+import { EIssuesStoreType } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // plane ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
@@ -11,7 +12,6 @@ import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 import { IssueView, TIssueOperations } from "@/components/issues";
 // constants
 import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "@/constants/event-tracker";
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";

@@ -16,11 +16,11 @@ import { copyTextToClipboard } from "@/helpers/string.helper";
 import { usePageFilters } from "@/hooks/use-page-filters";
 import { useQueryParams } from "@/hooks/use-query-params";
 // store
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   editorRef: EditorRefApi | null;
-  page: IPage;
+  page: TPageInstance;
 };
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {

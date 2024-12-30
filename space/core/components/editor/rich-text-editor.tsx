@@ -1,6 +1,8 @@
 import React, { forwardRef } from "react";
 // editor
-import { EditorRefApi, IMentionHighlight, IRichTextEditor, RichTextEditorWithRef } from "@plane/editor";
+import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef } from "@plane/editor";
+// components
+import { EditorMentionsRoot } from "@/components/editor";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 
@@ -11,19 +13,11 @@ interface RichTextEditorWrapperProps
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
   const { containerClassName, uploadFile, ...rest } = props;
-  // store hooks
-
-  // use-mention
-
-  // file size
 
   return (
     <RichTextEditorWithRef
       mentionHandler={{
-        highlights: function (): Promise<IMentionHighlight[]> {
-          throw new Error("Function not implemented.");
-        },
-        suggestions: undefined,
+        renderComponent: (props) => <EditorMentionsRoot {...props} />,
       }}
       ref={ref}
       disabledExtensions={[]}

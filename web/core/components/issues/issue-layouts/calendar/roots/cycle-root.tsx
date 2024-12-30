@@ -2,8 +2,8 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 //hooks
+import { EIssuesStoreType } from "@plane/constants";
 import { CycleIssueQuickActions } from "@/components/issues";
-import { EIssuesStoreType } from "@/constants/issue";
 import { useCycle, useIssues } from "@/hooks/store";
 // components
 import { BaseCalendarRoot } from "../base-calendar-root";

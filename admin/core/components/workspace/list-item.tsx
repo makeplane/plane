@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 import { ExternalLink } from "lucide-react";
-// helpers
+// plane internal packages
+import { WEB_BASE_URL } from "@plane/constants";
 import { Tooltip } from "@plane/ui";
-import { WEB_BASE_URL } from "@/helpers/common.helper";
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 

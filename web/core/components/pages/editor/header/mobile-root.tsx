@@ -6,11 +6,11 @@ import { PageExtraOptions, PageSummaryPopover, PageToolbar } from "@/components/
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
 // store
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
-  editorRef: EditorRefApi | null;
-  page: IPage;
+  editorRef: EditorRefApi;
+  page: TPageInstance;
   setSidePeekVisible: (sidePeekState: boolean) => void;
   sidePeekVisible: boolean;
 };

@@ -18,7 +18,7 @@ import {
   CustomImageExtension,
   CustomKeymap,
   CustomLinkExtension,
-  CustomMention,
+  CustomMentionExtension,
   CustomQuoteExtension,
   CustomTextAlignExtension,
   CustomTypographyExtension,
@@ -33,7 +33,7 @@ import {
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 // types
-import { IMentionHighlight, IMentionSuggestion, TExtensions, TFileHandler } from "@/types";
+import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 
@@ -41,17 +41,14 @@ type TArguments = {
   disabledExtensions: TExtensions[];
   enableHistory: boolean;
   fileHandler: TFileHandler;
-  mentionConfig: {
-    mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
-    mentionHighlights?: () => Promise<IMentionHighlight[]>;
-  };
+  mentionHandler: TMentionHandler;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   editable: boolean;
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
-  const { disabledExtensions, enableHistory, fileHandler, mentionConfig, placeholder, tabIndex, editable } = args;
+  const { disabledExtensions, enableHistory, fileHandler, mentionHandler, placeholder, tabIndex } = args;
 
   return [
     StarterKit.configure({
@@ -85,7 +82,8 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
         },
       },
       dropcursor: {
-        class: "text-custom-text-300",
+        class:
+          "text-custom-text-300 transition-all motion-reduce:transition-none motion-reduce:hover:transform-none duration-200 ease-[cubic-bezier(0.165, 0.84, 0.44, 1)]",
       },
       ...(enableHistory ? {} : { history: false }),
     }),
@@ -146,11 +144,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     TableHeader,
     TableCell,
     TableRow,
-    CustomMention({
-      mentionSuggestions: editable ? mentionConfig.mentionSuggestions : undefined,
-      mentionHighlights: mentionConfig.mentionHighlights,
-      readonly: !editable,
-    }),
+    CustomMentionExtension(mentionHandler),
     Placeholder.configure({
       placeholder: ({ editor, node }) => {
         if (!editor.isEditable) return;

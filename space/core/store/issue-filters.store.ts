@@ -3,10 +3,9 @@ import isEqual from "lodash/isEqual";
 import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// plane types
+// plane internal
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@plane/constants";
 import { IssuePaginationOptions, TIssueParams } from "@plane/types";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // store
 import { CoreRootStore } from "@/store/root.store";
 // types
@@ -75,14 +74,12 @@ export class IssueFilterStore implements IIssueFilterStore {
 
     Object.keys(filters).map((key) => {
       const currentFilterKey = key as TIssueFilterKeys;
+      const filterValue = filters[currentFilterKey] as any;
 
-      if (filters[currentFilterKey] != undefined && filteredParams.includes(currentFilterKey)) {
-        if (Array.isArray(filters[currentFilterKey]))
-          computedFilters[currentFilterKey] = filters[currentFilterKey]?.join(",");
-        else if (filters[currentFilterKey] && typeof filters[currentFilterKey] === "string")
-          computedFilters[currentFilterKey] = filters[currentFilterKey]?.toString();
-        else if (typeof filters[currentFilterKey] === "boolean")
-          computedFilters[currentFilterKey] = filters[currentFilterKey]?.toString();
+      if (filterValue !== undefined && filteredParams.includes(currentFilterKey)) {
+        if (Array.isArray(filterValue)) computedFilters[currentFilterKey] = filterValue.join(",");
+        else if (typeof filterValue === "string" || typeof filterValue === "boolean")
+          computedFilters[currentFilterKey] = filterValue.toString();
       }
     });
 

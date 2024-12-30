@@ -1,7 +1,7 @@
 import { useImperativeHandle, useRef, MutableRefObject, useEffect } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { EditorProps } from "@tiptap/pm/view";
-import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
+import { useEditor as useCustomEditor, Editor, Extensions } from "@tiptap/react";
 import * as Y from "yjs";
 // extensions
 import { CoreReadOnlyEditorExtensions } from "@/extensions";
@@ -13,24 +13,22 @@ import { CoreReadOnlyEditorProps } from "@/props";
 // types
 import type {
   EditorReadOnlyRefApi,
-  IMentionHighlight,
   TExtensions,
   TDocumentEventsServer,
   TFileHandler,
+  TReadOnlyMentionHandler,
 } from "@/types";
 
 interface CustomReadOnlyEditorProps {
   disabledExtensions: TExtensions[];
   editorClassName: string;
   editorProps?: EditorProps;
-  extensions?: any;
+  extensions?: Extensions;
   forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
   initialValue?: string;
   fileHandler: Pick<TFileHandler, "getAssetSrc">;
   handleEditorReady?: (value: boolean) => void;
-  mentionHandler: {
-    highlights: () => Promise<IMentionHighlight[]>;
-  };
+  mentionHandler: TReadOnlyMentionHandler;
   provider?: HocuspocusProvider;
 }
 
@@ -63,9 +61,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
     extensions: [
       ...CoreReadOnlyEditorExtensions({
         disabledExtensions,
-        mentionConfig: {
-          mentionHighlights: mentionHandler.highlights,
-        },
+        mentionHandler,
         fileHandler,
       }),
       ...extensions,

@@ -4,6 +4,8 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
+// plane constants
+import { EIssueLayoutTypes } from "@plane/constants";
 // plane ui
 import {
   IGroupByColumn,
@@ -20,7 +22,7 @@ import { cn } from "@plane/utils";
 // components
 import { ListLoaderItemRow } from "@/components/ui";
 // constants
-import { DRAG_ALLOWED_GROUPS, EIssueLayoutTypes } from "@/constants/issue";
+import { DRAG_ALLOWED_GROUPS } from "@/constants/issue";
 // hooks
 import { useProjectState } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
@@ -282,6 +284,7 @@ export const ListGroup = observer((props: Props) => {
             dropErrorMessage={group.dropErrorMessage}
             orderBy={orderBy}
             isDraggingOverColumn={isDraggingOverColumn}
+            isEpic={isEpic}
           />
           {groupIssueIds && (
             <IssueBlocksList
@@ -310,6 +313,7 @@ export const ListGroup = observer((props: Props) => {
                 prePopulatedData={prePopulateQuickAddData(group_by, group.id)}
                 containerClassName="border-b border-t border-custom-border-200 bg-custom-background-100 "
                 quickAddCallback={quickAddCallback}
+                isEpic={isEpic}
               />
             </div>
           )}

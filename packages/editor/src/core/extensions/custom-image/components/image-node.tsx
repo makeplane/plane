@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
 import { Editor, NodeViewProps, NodeViewWrapper } from "@tiptap/react";
+import { useEffect, useRef, useState } from "react";
 // extensions
 import { CustomImageBlock, CustomImageUploader, ImageAttributes } from "@/extensions/custom-image";
 
