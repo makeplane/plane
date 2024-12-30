@@ -223,7 +223,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/quick-links/<uuid:pk>/", 
-        QuickLinkViewSet.as_view({"patch": "partial_update", "delete": "destroy"}), 
+        QuickLinkViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}), 
         name="workspace-quick-links"
     )
 ]

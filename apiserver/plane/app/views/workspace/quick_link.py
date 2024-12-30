@@ -13,7 +13,7 @@ class QuickLinkViewSet(BaseViewSet):
 
     def get_serializer_class(self):
         return WorkspaceUserLinkSerializer
-    
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
@@ -36,5 +36,28 @@ class QuickLinkViewSet(BaseViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
         return Response({"detail": "Quick link not found."}, status=status.HTTP_404_NOT_FOUND)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def retrieve(self, request, slug, pk):
+        print("Print retrieve method")
+        quick_link = WorkspaceUserLink.objects.get(pk=pk)
         
+        if not quick_link:
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = WorkspaceUserLinkSerializer(quick_link)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def destroy(self, request, slug, pk):
+        quick_link = WorkspaceUserLink.objects.filter(pk=pk)
+
+        if quick_link: 
+            quick_link.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"detail": "Quick link not found."}, status=status.HTTP_404_NOT_FOUND)
+    
+
     
