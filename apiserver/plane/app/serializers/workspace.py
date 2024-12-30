@@ -15,6 +15,10 @@ from plane.db.models import (
 )
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
+# Django imports
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+
 class WorkSpaceSerializer(DynamicBaseSerializer):
     owner = UserLiteSerializer(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
@@ -112,3 +116,19 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
         model = WorkspaceUserLink
         fields = "__all__"
         read_only_fields = ["workspace", "owner"]
+
+    def to_internal_value(self, data):
+        url = data.get("url", "")
+        if url and not url.startswith(("http://", "https://")):
+            data["url"] = "http://" + url
+        
+        return super().to_internal_value(data)
+
+    def validate_url(self, value):
+        url_validator = URLValidator()
+        try:
+            url_validator(value)
+        except ValidationError:
+            raise serializers.ValidationError({"error": "Invalid URL format."})
+
+        return value
