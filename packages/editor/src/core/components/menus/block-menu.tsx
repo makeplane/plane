@@ -1,7 +1,10 @@
+import { NodeType } from "@tiptap/pm/model";
+import { EditorState, Transaction } from "@tiptap/pm/state";
+import { Editor, findParentNode, getNodeType } from "@tiptap/react";
+import { Copy, LucideIcon, Repeat2, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef } from "react";
-import { Editor } from "@tiptap/react";
 import tippy, { Instance } from "tippy.js";
-import { Copy, LucideIcon, Trash2 } from "lucide-react";
+import { MultipleSelection } from "@/extensions/selection/multi-selection-tracker-new";
 
 interface BlockMenuProps {
   editor: Editor;
@@ -143,6 +146,26 @@ export const BlockMenu = (props: BlockMenuProps) => {
         popup.current?.hide();
       },
     },
+    {
+      key: "turn-into",
+      icon: Repeat2,
+      label: "Turn into Heading 1",
+      isDisabled: !(editor.view.state.selection instanceof MultipleSelection),
+      onClick: (e) => {
+        editor.commands.toggleHeading({ level: 1 });
+        // toggleBulletList(editor.view.state, editor.view.dispatch);
+        // const toggleListType = (listType: NodeType) => (state: EditorState, dispatch?: (tr: Transaction) => void) => {
+        //   const { schema, selection } = state;
+        //   console.log("selection", selection instanceof MultipleSelection);
+        //   // apply on all the ranges
+        //   selection.ranges.forEach(({ $from, $to }) => {
+        //     editor.commands.toggleOrderedList();
+        //   });
+        // };
+        //
+        // toggleListType(editor.schema.nodes.bullet_list)(editor.view.state, editor.view.dispatch);
+      },
+    },
   ];
 
   return (
@@ -152,7 +175,7 @@ export const BlockMenu = (props: BlockMenuProps) => {
     >
       {MENU_ITEMS.map((item) => {
         // Skip rendering the button if it should be disabled
-        if (item.isDisabled && item.key === "duplicate") {
+        if (item.isDisabled) {
           return null;
         }
 
@@ -172,3 +195,56 @@ export const BlockMenu = (props: BlockMenuProps) => {
     </div>
   );
 };
+
+const toggleListType = (listType: NodeType) => (state: EditorState, dispatch?: (tr: Transaction) => void) => {
+  console.log(listType);
+  const { schema, selection } = state;
+
+  if (!(selection instanceof MultipleSelection)) {
+    // Fall back to default behavior for non-MultipleSelection
+    return false;
+  }
+
+  if (dispatch) {
+    const tr = state.tr;
+    const ranges = [...selection.ranges].sort((a, b) => a.$from.pos - b.$from.pos);
+
+    ranges.forEach(({ $from, $to }) => {
+      state.tr.setNodeMarkup($from.pos + 1, getNodeType("orderedList", schema));
+
+      // state.doc.nodesBetween($from.pos, $to.pos, (node, pos) => {
+      //   if (node.type === schema.nodes.paragraph) {
+      //     const parentList = findParentNode(
+      //       (p) => p.type === schema.nodes["bulletList"] || p.type === schema.nodes["orderedList"]
+      //     )(state.selection);
+      //
+      //     if (parentList) {
+      //       if (parentList.node.type !== listType) {
+      //         // Change list type
+      //         tr.setNodeMarkup(parentList.pos, listType);
+      //       }
+      //     } else {
+      //       console.log("should not happen");
+      //       // Wrap in new list
+      //       const listItem = schema.nodes["listItem"].create(null, node);
+      //       const list = listType.create(null, [listItem]);
+      //       tr.replaceRangeWith(pos, pos + node.nodeSize, list);
+      //     }
+      //   }
+      //   return false;
+      // });
+    });
+
+    if (tr.docChanged) {
+      dispatch(tr);
+      return true;
+    }
+  }
+
+  return false;
+};
+
+const toggleBulletList = (state: EditorState, dispatch?: (tr: Transaction) => void) =>
+  toggleListType(state.schema.nodes["bulletList"])(state, dispatch);
+const toggleNumberedList = (state: EditorState, dispatch?: (tr: Transaction) => void) =>
+  toggleListType(state.schema.nodes["orderedList"])(state, dispatch);

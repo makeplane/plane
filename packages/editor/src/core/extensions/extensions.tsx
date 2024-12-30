@@ -36,7 +36,7 @@ import { isValidHttpUrl } from "@/helpers/common";
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
 // plane editor extensions
-import { multipleSelectionExtension } from "./selection/multi-selection-tracker";
+import { multipleSelectionExtension } from "./selection/multi-selection-tracker-new";
 
 type TArguments = {
   disabledExtensions: TExtensions[];

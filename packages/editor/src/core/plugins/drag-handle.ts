@@ -166,6 +166,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     }
 
     const scrollableParent = getScrollParent(dragHandleElement);
+    console.log("scrollableParent drag hanlde", scrollableParent);
     if (!scrollableParent) return;
 
     const scrollRegionUp = options.scrollThreshold.up;
@@ -392,32 +393,32 @@ const handleNodeSelection = (
   draggedNodePos = Math.max(0, Math.min(draggedNodePos, docSize));
 
   // Use NodeSelection to select the node at the calculated position
-  const nodeSelection = NodeSelection.create(view.state.doc, draggedNodePos);
+  // const nodeSelection = NodeSelection.create(view.state.doc, draggedNodePos);
+  //
+  // // Dispatch the transaction to update the selection
+  // view.dispatch(view.state.tr.setSelection(nodeSelection));
 
-  // Dispatch the transaction to update the selection
-  view.dispatch(view.state.tr.setSelection(nodeSelection));
-
-  if (isDragStart) {
-    // Additional logic for drag start
-    if (event instanceof DragEvent && !event.dataTransfer) return;
-
-    if (nodeSelection.node.type.name === "listItem" || nodeSelection.node.type.name === "taskItem") {
-      listType = node.closest("ol, ul")?.tagName || "";
-    }
-
-    const slice = view.state.selection.content();
-    const { dom, text } = __serializeForClipboard(view, slice);
-
-    if (event instanceof DragEvent) {
-      event.dataTransfer.clearData();
-      event.dataTransfer.setData("text/html", dom.innerHTML);
-      event.dataTransfer.setData("text/plain", text);
-      event.dataTransfer.effectAllowed = "copyMove";
-      event.dataTransfer.setDragImage(node, 0, 0);
-    }
-
-    view.dragging = { slice, move: event.ctrlKey };
-  }
+  // if (isDragStart) {
+  //   // Additional logic for drag start
+  //   if (event instanceof DragEvent && !event.dataTransfer) return;
+  //
+  //   if (nodeSelection.node.type.name === "listItem" || nodeSelection.node.type.name === "taskItem") {
+  //     listType = node.closest("ol, ul")?.tagName || "";
+  //   }
+  //
+  //   const slice = view.state.selection.content();
+  //   const { dom, text } = __serializeForClipboard(view, slice);
+  //
+  //   if (event instanceof DragEvent) {
+  //     event.dataTransfer.clearData();
+  //     event.dataTransfer.setData("text/html", dom.innerHTML);
+  //     event.dataTransfer.setData("text/plain", text);
+  //     event.dataTransfer.effectAllowed = "copyMove";
+  //     event.dataTransfer.setDragImage(node, 0, 0);
+  //   }
+  //
+  //   view.dragging = { slice, move: event.ctrlKey };
+  // }
 
   return { listType };
 };

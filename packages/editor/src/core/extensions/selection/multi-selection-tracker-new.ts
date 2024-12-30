@@ -1,5 +1,6 @@
-import { Extension } from "@tiptap/core";
-import { Plugin, PluginKey } from "@tiptap/pm/state";
+import { Dispatch, Extension } from "@tiptap/core";
+import { Node, ResolvedPos, Slice, Fragment } from "@tiptap/pm/model";
+import { EditorState, Plugin, PluginKey, Selection, TextSelection, Transaction } from "@tiptap/pm/state";
 import { EditorView, Decoration, DecorationSet } from "@tiptap/pm/view";
 
 const MultipleSelectionPluginKey = new PluginKey("multipleSelection");
@@ -102,7 +103,7 @@ function scroll() {
     return;
   }
 
-  const editorContainer = document.querySelector(".editor-container"); // Assuming the editor container has a class 'ProseMirror'
+  const editorContainer = document.querySelector(".editor-container");
   const scrollableParent = getScrollParent(editorContainer);
 
   if (!scrollableParent) {
@@ -110,7 +111,6 @@ function scroll() {
     return;
   }
 
-  console.log("scrollableParent", scrollableParent);
   const scrollRegionUp = 150;
   const scrollRegionDown = scrollableParent.clientHeight - 100;
 
@@ -185,6 +185,83 @@ const removeActiveUser = (view?: EditorView) => {
   isDragging = false;
 };
 
+export class MultipleSelection extends Selection {
+  ranges: Array<{ $from: ResolvedPos; $to: ResolvedPos }>;
+
+  constructor(ranges: Array<{ $from: ResolvedPos; $to: ResolvedPos }>) {
+    const $anchor = ranges[0].$from;
+    const $head = ranges[ranges.length - 1].$to;
+    super($anchor, $head);
+    this.ranges = ranges;
+  }
+
+  map(doc: Node, mapping: any) {
+    const newRanges = this.ranges.map(({ $from, $to }) => ({
+      $from: doc.resolve(mapping.map($from.pos)),
+      $to: doc.resolve(mapping.map($to.pos)),
+    }));
+    return new MultipleSelection(newRanges);
+  }
+
+  eq(other: Selection): boolean {
+    if (!(other instanceof MultipleSelection) || other.ranges.length !== this.ranges.length) {
+      return false;
+    }
+    return this.ranges.every(
+      (range, i) => range.$from.pos === other.ranges[i].$from.pos && range.$to.pos === other.ranges[i].$to.pos
+    );
+  }
+
+  content() {
+    const nodes: Node[] = [];
+    this.ranges.forEach(({ $from, $to }) => {
+      const slice = $from.doc.slice($from.pos, $to.pos);
+      nodes.push(...slice.content.content);
+    });
+    return new Slice(Fragment.from(nodes), 0, 0);
+  }
+
+  replace(tr: any, content: Slice = Slice.empty) {
+    const ranges = this.ranges;
+    for (let i = 0; i < ranges.length; i++) {
+      const { $from, $to } = ranges[i];
+      const mappedFrom = tr.mapping.map($from.pos);
+      const mappedTo = tr.mapping.map($to.pos);
+      tr.replace(mappedFrom, mappedTo, i ? Slice.empty : content);
+    }
+    const lastFrom = tr.mapping.map(ranges[ranges.length - 1].$from.pos);
+    tr.setSelection(TextSelection.create(tr.doc, lastFrom));
+  }
+
+  toJSON() {
+    return {
+      type: "multiple",
+      ranges: this.ranges.map(({ $from, $to }) => ({ from: $from.pos, to: $to.pos })),
+    };
+  }
+
+  static fromJSON(doc: Node, json: any) {
+    if (json.type !== "multiple") throw new Error("Invalid input for MultipleSelection.fromJSON");
+    const ranges = json.ranges.map(({ from, to }) => ({
+      $from: doc.resolve(from),
+      $to: doc.resolve(to),
+    }));
+    return new MultipleSelection(ranges);
+  }
+
+  static create(doc: Node, ranges: Array<[number, number]>) {
+    return new MultipleSelection(
+      ranges.map(([from, to]) => ({
+        $from: doc.resolve(from),
+        $to: doc.resolve(to),
+      }))
+    );
+  }
+}
+
+// Register the new selection type
+Selection.jsonID("multiple", MultipleSelection);
+
 const createMultipleSelectionPlugin = () =>
   new Plugin<BlockSelectionState>({
     key: MultipleSelectionPluginKey,
@@ -212,6 +289,16 @@ const createMultipleSelectionPlugin = () =>
                   lastSelectedRange: undefined,
                 })
               );
+              console.log("view.state.selection instanceof MultipleSelection", view.state.selection);
+              // if (view.state.selection instanceof MultipleSelection) {
+              //   let tr: Transaction;
+              //   view.state.selection.ranges.forEach(({ $from, $to }) => {
+              //     console.log("from", $from.pos, "to", $to.pos);
+              //     // Example: Delete content in each range
+              //     // tr = view.state.tr.delete($from.pos, $to.pos);
+              //   });
+              //   view.dispatch(tr);
+              // }
               return false;
             }
           }
@@ -250,10 +337,9 @@ const createMultipleSelectionPlugin = () =>
               const ranges = getNodesInRect(view, rect);
 
               view.dispatch(
-                view.state.tr.setMeta(MultipleSelectionPluginKey, {
-                  ranges,
-                  lastSelectedRange: undefined,
-                })
+                view.state.tr
+                  .setMeta(MultipleSelectionPluginKey, { ranges })
+                  .setSelection(MultipleSelection.create(view.state.doc, ranges))
               );
             }
           };
@@ -279,17 +365,18 @@ const createMultipleSelectionPlugin = () =>
           );
         }
 
-        if (pluginState?.lastSelectedRange) {
-          const { from, to } = pluginState.lastSelectedRange;
-          return DecorationSet.create(state.doc, [
-            Decoration.node(from, to, {
-              class: "ProseMirror-selectednode",
-            }),
-          ]);
-        }
-
         return null;
       },
+    },
+    appendTransaction(transactions, oldState, newState) {
+      const oldPluginState = this.getState(oldState);
+      const newPluginState = this.getState(newState);
+
+      if (newPluginState?.ranges?.length && !oldPluginState?.ranges?.length) {
+        return newState.tr.setSelection(MultipleSelection.create(newState.doc, newPluginState.ranges));
+      }
+
+      return null;
     },
     view() {
       return {
@@ -307,3 +394,23 @@ export const multipleSelectionExtension = Extension.create({
     return [createMultipleSelectionPlugin()];
   },
 });
+
+export const deleteSelectedNodes = (state: EditorState, dispatch: Dispatch) => {
+  const { selection } = state;
+  if (!(selection instanceof MultipleSelection)) return false;
+
+  if (dispatch) {
+    const tr = state.tr;
+
+    // Sort ranges in reverse order (from end to start)
+    const sortedRanges = [...selection.ranges].sort((a, b) => b.$from.pos - a.$from.pos);
+
+    // Delete ranges from end to start to avoid position shifts
+    sortedRanges.forEach(({ $from, $to }) => {
+      tr.delete($from.pos, $to.pos);
+    });
+
+    dispatch(tr);
+  }
+  return true;
+};
