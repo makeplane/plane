@@ -11,19 +11,17 @@ import { PageQuickActions } from "@/components/pages/dropdowns";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useMember, usePage } from "@/hooks/store";
+import { useMember } from "@/hooks/store";
+import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
-  workspaceSlug: string;
-  projectId: string;
-  pageId: string;
+  page: TPageInstance;
   parentRef: React.RefObject<HTMLElement>;
 };
 
 export const BlockItemAction: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, pageId, parentRef } = props;
+  const { page, parentRef } = props;
   // store hooks
-  const page = usePage(pageId);
   const { getUserDetails } = useMember();
   // derived values
   const {
@@ -34,6 +32,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
     canCurrentUserFavoritePage,
     addToFavorites,
     removePageFromFavorites,
+    getRedirectionLink,
   } = page;
   const ownerDetails = owned_by ? getUserDetails(owned_by) : undefined;
 
@@ -94,11 +93,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
       )}
 
       {/* quick actions dropdown */}
-      <PageQuickActions
-        parentRef={parentRef}
-        page={page}
-        pageLink={`${workspaceSlug}/projects/${projectId}/pages/${pageId}`}
-      />
+      <PageQuickActions parentRef={parentRef} page={page} pageLink={getRedirectionLink()} />
     </>
   );
 });

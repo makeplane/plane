@@ -1,6 +1,4 @@
-import { TIssueActivityComment } from "@plane/types";
-// constants
-import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
+import { ILayoutDisplayFiltersOptions, TIssueActivityComment } from "@plane/types";
 
 export enum EActivityFilterType {
   ACTIVITY = "ACTIVITY",

@@ -4,6 +4,7 @@ import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // types
+import { EIssuesStoreType } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
@@ -12,7 +13,6 @@ import { EmptyState } from "@/components/common";
 import { IssueDetailsSidebar, IssuePeekOverview } from "@/components/issues";
 // constants
 import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "@/constants/event-tracker";
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useAppTheme, useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

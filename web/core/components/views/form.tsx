@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Layers } from "lucide-react";
+// plane constants
+import { EIssueLayoutTypes } from "@plane/constants";
 // types
 import { IProjectView, IIssueFilterOptions, IIssueDisplayProperties, IIssueDisplayFilterOptions } from "@plane/types";
 // ui
@@ -12,7 +14,7 @@ import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, TextArea } from "
 import { Logo } from "@/components/common";
 import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
-import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { ETabIndices } from "@/constants/tab-indices";
 import { EViewAccess } from "@/constants/views";
 // helpers

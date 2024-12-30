@@ -1,18 +1,18 @@
 import { observer } from "mobx-react";
-import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/editor";
+import { EditorRefApi } from "@plane/editor";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
 import { PageExtraOptions, PageSummaryPopover, PageToolbar } from "@/components/pages";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
 // store
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   editorReady: boolean;
   editorRef: React.RefObject<EditorRefApi>;
   handleDuplicatePage: () => void;
-  page: IPage;
+  page: TPageInstance;
   setSidePeekVisible: (sidePeekState: boolean) => void;
   sidePeekVisible: boolean;
 };

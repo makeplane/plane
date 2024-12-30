@@ -15,7 +15,7 @@ import { PageEditInformationPopover } from "@/components/pages";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getPageName } from "@/helpers/page.helper";
 // hooks
-import { usePage, useProject, useUser, useUserPermissions } from "@/hooks/store";
+import { useProjectPage, useProject, useUser, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
@@ -32,7 +32,7 @@ export const PageDetailsHeader = observer(() => {
   const [isOpen, setIsOpen] = useState(false);
   // store hooks
   const { currentProjectDetails, loader } = useProject();
-  const page = usePage(pageId?.toString() ?? "");
+  const page = useProjectPage(pageId?.toString() ?? "");
   const { name, logo_props, updatePageLogo, owned_by } = page;
   const { allowPermissions } = useUserPermissions();
   const { data: currentUser } = useUser();
@@ -169,7 +169,7 @@ export const PageDetailsHeader = observer(() => {
       </Header.LeftItem>
       <Header.RightItem>
         <PageEditInformationPopover page={page} />
-        <PageDetailsHeaderExtraActions />
+        <PageDetailsHeaderExtraActions page={page} />
       </Header.RightItem>
     </Header>
   );

@@ -49,6 +49,7 @@ export class IssueStore implements IIssueStore {
   // services
   serviceType;
   issueService;
+  epicService;
   issueArchiveService;
   issueDraftService;
 
@@ -62,6 +63,7 @@ export class IssueStore implements IIssueStore {
     // services
     this.serviceType = serviceType;
     this.issueService = new IssueService(serviceType);
+    this.epicService = new IssueService(EIssueServiceType.EPICS);
     this.issueArchiveService = new IssueArchiveService(serviceType);
     this.issueDraftService = new IssueDraftService();
   }
@@ -93,7 +95,9 @@ export class IssueStore implements IIssueStore {
     let issue: TIssue | undefined;
 
     // fetch issue from local db
-    issue = await persistence.getIssue(issueId);
+    if (this.serviceType === EIssueServiceType.ISSUES) {
+      issue = await persistence.getIssue(issueId);
+    }
 
     this.fetchingIssueDetails = issueId;
 

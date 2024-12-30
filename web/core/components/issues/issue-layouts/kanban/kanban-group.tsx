@@ -5,6 +5,8 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
+// plane constants
+import { EIssueLayoutTypes } from "@plane/constants";
 //types
 import {
   TGroupedIssues,
@@ -20,7 +22,7 @@ import { KanbanQuickAddIssueButton, QuickAddIssueRoot } from "@/components/issue
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 import { KanbanIssueBlockLoader } from "@/components/ui";
 // helpers
-import { DRAG_ALLOWED_GROUPS, EIssueLayoutTypes } from "@/constants/issue";
+import { DRAG_ALLOWED_GROUPS } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
@@ -80,7 +82,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     quickAddCallback,
     scrollableContainerRef,
     handleOnDrop,
-    isEpic =false
+    isEpic = false,
   } = props;
   // hooks
   const projectState = useProjectState();
@@ -283,6 +285,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         dropErrorMessage={dropErrorMessage}
         orderBy={orderBy}
         isDraggingOverColumn={isDraggingOverColumn}
+        isEpic={isEpic}
       />
       <KanbanIssueBlocksList
         sub_group_id={sub_group_id}
@@ -310,6 +313,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
               ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
             }}
             quickAddCallback={quickAddCallback}
+            isEpic={isEpic}
           />
         </div>
       )}

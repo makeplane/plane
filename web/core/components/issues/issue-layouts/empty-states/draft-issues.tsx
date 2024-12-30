@@ -1,13 +1,13 @@
 import size from "lodash/size";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 import { IIssueFilterOptions } from "@plane/types";
 // hooks
 // components
 import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { useIssues } from "@/hooks/store";
 // types
 

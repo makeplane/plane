@@ -9,6 +9,7 @@ import { Popover, Transition } from "@headlessui/react";
 // hooks
 // ui
 // icons
+import { EIssueFilterType } from "@plane/constants";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -20,7 +21,6 @@ import { ToggleSwitch } from "@plane/ui";
 // types
 // constants
 import { CALENDAR_LAYOUTS } from "@/constants/calendar";
-import { EIssueFilterType } from "@/constants/issue";
 import { useCalendarView } from "@/hooks/store";
 import useSize from "@/hooks/use-window-size";
 import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";

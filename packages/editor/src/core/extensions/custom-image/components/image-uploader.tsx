@@ -2,6 +2,8 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
 import { ImageIcon } from "lucide-react";
 // plane utils
 import { cn } from "@plane/utils";
+// constants
+import { ACCEPTED_FILE_EXTENSIONS } from "@/constants/config";
 // hooks
 import { useUploader, useDropZone, uploadFirstImageAndInsertRemaining } from "@/hooks/use-file-upload";
 // extensions
@@ -166,7 +168,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         ref={fileInputRef}
         hidden
         type="file"
-        accept=".jpg,.jpeg,.png,.webp"
+        accept={ACCEPTED_FILE_EXTENSIONS.join(",")}
         onChange={onFileChange}
         multiple
       />

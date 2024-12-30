@@ -1,5 +1,7 @@
 import set from "lodash/set";
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
+// plane internal packages
+import { EInstanceStatus, TInstanceStatus } from "@plane/constants";
 import {
   IInstance,
   IInstanceAdmin,
@@ -8,8 +10,6 @@ import {
   IInstanceInfo,
   IInstanceConfig,
 } from "@plane/types";
-// helpers
-import { EInstanceStatus, TInstanceStatus } from "@/helpers/instance.helper";
 // services
 import { InstanceService } from "@/services/instance.service";
 // root store
