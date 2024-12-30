@@ -16,7 +16,7 @@
     }
 
     /* select the first list item of every list, except the first item of a nested list */
-    &:first-of-type:not(.prosemirror-flat-list .prosemirror-flat-list) {
+    &:not(.prosemirror-flat-list + .prosemirror-flat-list):not(.prosemirror-flat-list .prosemirror-flat-list) {
       padding-top: 4px;
 
       &::before,
