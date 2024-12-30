@@ -5,21 +5,12 @@ import { ChevronDown, CircleUserRound } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { useTranslation, SUPPORTED_LANGUAGES } from "@plane/i18n";
 import type { IUser, TUserProfile } from "@plane/types";
-import {
-  Button,
-  CustomSelect,
-  CustomSearchSelect,
-  Input,
-  TOAST_TYPE,
-  setPromiseToast,
-  setToast,
-  Tooltip,
-} from "@plane/ui";
+import { Button, CustomSelect, Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { DeactivateAccountModal } from "@/components/account";
 import { ImagePickerPopover, UserImageUploadModal } from "@/components/core";
+import { TimezoneSelect } from "@/components/global";
 // constants
-import { TIME_ZONES, TTimezone } from "@/constants/timezones";
 import { USER_ROLES } from "@/constants/workspace";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
@@ -86,22 +77,6 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
     if (!selectedLanguage) return value;
     return selectedLanguage.label;
   };
-
-  const getTimeZoneLabel = (timezone: TTimezone | undefined) => {
-    if (!timezone) return undefined;
-    return (
-      <div className="flex gap-1.5">
-        <span className="text-custom-text-400">{timezone.gmtOffset}</span>
-        <span className="text-custom-text-200">{timezone.name}</span>
-      </div>
-    );
-  };
-
-  const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
-    value: timeZone.value,
-    query: timeZone.name + " " + timeZone.gmtOffset + " " + timeZone.value,
-    content: getTimeZoneLabel(timeZone),
-  }));
 
   const handleProfilePictureDelete = async (url: string | null | undefined) => {
     if (!url) return;
@@ -403,19 +378,12 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                   control={control}
                   rules={{ required: "Please select a timezone" }}
                   render={({ field: { value, onChange } }) => (
-                    <CustomSearchSelect
+                    <TimezoneSelect
                       value={value}
-                      label={
-                        value
-                          ? (getTimeZoneLabel(TIME_ZONES.find((t) => t.value === value)) ?? value)
-                          : "Select a timezone"
-                      }
-                      options={timeZoneOptions}
-                      onChange={onChange}
-                      buttonClassName={errors.user_timezone ? "border-red-500" : ""}
-                      className="rounded-md border-[0.5px] !border-custom-border-200"
-                      optionsClassName="w-72"
-                      input
+                      onChange={(value: string) => {
+                        onChange(value);
+                      }}
+                      error={Boolean(errors.user_timezone)}
                     />
                   )}
                 />
