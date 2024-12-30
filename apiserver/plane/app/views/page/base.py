@@ -562,26 +562,30 @@ class PageDuplicateEndpoint(BaseAPIView):
     def post(self, request, slug, project_id, page_id):
         page = Page.objects.filter(
             pk=page_id, workspace__slug=slug, projects__id=project_id
-        ).values()
-        new_page_data = list(page)[0]
-        new_page_data.name = f"{new_page_data.name} (Copy)"
+        ).first()
 
-        serializer = PageSerializer(
-            data=new_page_data,
-            context={
-                "project_id": project_id,
-                "owned_by_id": request.user.id,
-                "description": new_page_data.description,
-                "description_binary": new_page_data.description_binary,
-                "description_html": new_page_data.description_html,
-            },
+        # get all the project ids where page is present
+        project_ids = ProjectPage.objects.filter(page_id=page_id).values_list(
+            "project_id", flat=True
         )
 
-        if serializer.is_valid():
-            serializer.save()
-            # capture the page transaction
-            page_transaction.delay(request.data, None, serializer.data["id"])
-            page = Page.objects.get(pk=serializer.data["id"])
-            serializer = PageDetailSerializer(page)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        page.pk = None
+        page.name = f"{page.name} (Copy)"
+        page.save()
+
+        for project_id in project_ids:
+            ProjectPage.objects.create(
+                workspace_id=page.workspace_id,
+                project_id=project_id,
+                page_id=page.id,
+                created_by_id=page.created_by_id,
+                updated_by_id=page.updated_by_id,
+            )
+
+
+        page_transaction.delay(
+            {"description_html": page.description_html}, None, page.id
+        )
+        page = Page.objects.get(pk=page.id)
+        serializer = PageDetailSerializer(page)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
