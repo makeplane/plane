@@ -10,7 +10,6 @@ const envSchema = z.object({
   DEDUP_INTERVAL: z.string().optional().default("2"),
   DB_URL: z.string().default("postgres://postgres:password@localhost:5432/silo"),
   AMQP_URL: z.string().default("amqp://guest:guest@localhost:5672"),
-  CELERY_AMQP_URL: z.string().default("amqp://guest:guest@localhost:5672"),
   REDIS_URL: z.string().default("redis://localhost:6379"),
   SENTRY_DSN: z.string().optional(),
   PG_SCHEMA: z.string().optional(),

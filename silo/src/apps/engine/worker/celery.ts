@@ -7,7 +7,7 @@ export class CeleryProducer {
   private mq: MQ | undefined;
 
   private initQueue = async (options: TMQEntityOptions) => {
-    this.mq = new MQ(options, env.CELERY_AMQP_URL);
+    this.mq = new MQ(options, env.AMQP_URL);
     await this.mq.connect();
     logger.info(`Message Queue ${options.queueName} connected successfully 🐇🐇🐰`);
   };
