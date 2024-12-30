@@ -1,10 +1,10 @@
 // store types
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
 
 export type TMovePageModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  page: IPage;
+  page: TPageInstance;
 };
 
 export const MovePageModal: React.FC<TMovePageModalProps> = () => null;

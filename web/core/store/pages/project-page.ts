@@ -65,6 +65,7 @@ export class ProjectPage extends BasePage implements TProjectPage {
       canCurrentUserArchivePage: computed,
       canCurrentUserDeletePage: computed,
       canCurrentUserFavoritePage: computed,
+      canCurrentUserMovePage: computed,
       isContentEditable: computed,
     });
   }
@@ -152,6 +153,14 @@ export class ProjectPage extends BasePage implements TProjectPage {
   get canCurrentUserFavoritePage() {
     const highestRole = this.getHighestRoleAcrossProjects();
     return !!highestRole && highestRole >= EUserPermissions.MEMBER;
+  }
+
+  /**
+   * @description returns true if the current logged in user can move the page
+   */
+  get canCurrentUserMovePage() {
+    const highestRole = this.getHighestRoleAcrossProjects();
+    return this.isCurrentUserOwner || highestRole === EUserPermissions.ADMIN;
   }
 
   /**

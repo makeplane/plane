@@ -42,6 +42,7 @@ export type TBasePagePermissions = {
   canCurrentUserArchivePage: boolean;
   canCurrentUserDeletePage: boolean;
   canCurrentUserFavoritePage: boolean;
+  canCurrentUserMovePage: boolean;
   isContentEditable: boolean;
 };
 

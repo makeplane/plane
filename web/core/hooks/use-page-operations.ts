@@ -11,7 +11,7 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useCollaborativePageActions } from "@/hooks/use-collaborative-page-actions";
 // store types
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
 
 export type TPageOperations = {
   toggleLock: () => void;
@@ -25,7 +25,7 @@ export type TPageOperations = {
 
 type Props = {
   editorRef?: EditorRefApi | null;
-  page: IPage;
+  page: TPageInstance;
 };
 
 export const usePageOperations = (

@@ -29,7 +29,7 @@ import { usePageOperations } from "@/hooks/use-page-operations";
 // plane web components
 import { MovePageModal } from "@/plane-web/components/pages";
 // store types
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
 
 export type TPageActions =
   | "full-screen"
@@ -49,7 +49,7 @@ type Props = {
   editorRef?: EditorRefApi | null;
   extraOptions?: (TContextMenuItem & { key: TPageActions })[];
   optionsOrder: TPageActions[];
-  page: IPage;
+  page: TPageInstance;
   parentRef?: React.RefObject<HTMLElement>;
 };
 
@@ -164,7 +164,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
   return (
     <>
       <MovePageModal isOpen={movePageModal} onClose={() => setMovePageModal(false)} page={page} />
-      <DeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} pageId={page.id ?? ""} />
+      <DeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} page={page} />
       {parentRef && <ContextMenu parentRef={parentRef} items={arrangedOptions} />}
       <CustomMenu placement="bottom-end" optionsClassName="max-h-[90vh]" ellipsis closeOnSelect>
         {arrangedOptions.map((item) => {
