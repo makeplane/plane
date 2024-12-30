@@ -38,6 +38,7 @@ from .workspace.base import (
     WorkspaceThemeViewSet,
     ExportWorkspaceUserActivityEndpoint,
 )
+from .workspace.recent_visit import UserRecentVisitViewSet
 
 from .workspace.draft import WorkspaceDraftIssueViewSet
 

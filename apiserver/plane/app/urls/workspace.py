@@ -27,6 +27,7 @@ from plane.app.views import (
     WorkspaceFavoriteEndpoint,
     WorkspaceFavoriteGroupEndpoint,
     WorkspaceDraftIssueViewSet,
+    UserRecentVisitViewSet
 )
 
 
@@ -213,4 +214,9 @@ urlpatterns = [
         WorkspaceDraftIssueViewSet.as_view({"post": "create_draft_to_issue"}),
         name="workspace-drafts-issues",
     ),
+    path(
+        "workspaces/<str:slug>/recents",
+        UserRecentVisitViewSet.as_view({"get": "list"}),
+        name="workspace-recent-visits"
+    )
 ]
