@@ -469,8 +469,9 @@ SIMPLE_JWT = {
 }
 
 # silo settings
-SILO_HOSTNAME = os.environ.get("SILO_HOSTNAME", "")
+SILO_HOSTNAME = os.environ.get("SILO_BASE_URL", "")
 SILO_BASE_PATH = os.environ.get("SILO_BASE_PATH", "/silo")
+SILO_URL = f"{SILO_HOSTNAME}{SILO_BASE_PATH}"
 
 
 # firebase settings

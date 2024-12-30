@@ -5,33 +5,27 @@ import traceback
 import requests
 from django.conf import settings
 
-from plane.api.serializers.issue import IssueSerializer, IssueLinkSerializer, IssueCommentSerializer
-from plane.bgtasks.issue_activities_task import issue_activity
+from plane.api.serializers.issue import IssueSerializer
 from plane.db.models.issue import Issue, IssueLink, IssueComment
 from plane.db.models.project import Project
 from plane.db.models.cycle import CycleIssue
 from plane.db.models.module import ModuleIssue
 from plane.db.models.workspace import Workspace
 from plane.db.models.asset import FileAsset
-from plane.ee.models import IssueProperty, IssuePropertyValue, PropertyTypeEnum
-from django.db.models import F, Value, Case, When, Q, CharField, Func
-from django.db.models.functions import Cast
-from django.contrib.postgres.aggregates import ArrayAgg
+from plane.ee.models import IssueProperty, IssuePropertyValue
 from django.conf import settings
-from django.utils import timezone
-import uuid
+
 
 def update_job_batch_completion(job_id):
     """Update the job batch completion status via API call to silo service"""
     try:
-        silo_url = settings.SILO_HOSTNAME.rstrip("/")
-        silo_base_path = settings.SILO_BASE_PATH.rstrip("/")
-        endpoint = f"{silo_url}/{silo_base_path}/api/jobs/{job_id}/batch-complete/"
+        silo_url = settings.SILO_URL.rstrip("/")
+        endpoint = f"{silo_url}/api/jobs/{job_id}/batch-complete/"
 
         response = requests.post(
             endpoint,
             json={"jobId": job_id},
-            headers={"Content-Type": "application/json"}
+            headers={"Content-Type": "application/json"},
         )
 
         if response.status_code != 200:
@@ -39,6 +33,7 @@ def update_job_batch_completion(job_id):
 
     except Exception as e:
         print(f"Failed to update job batch completion: {str(e)}")
+
 
 def process_single_issue(slug, project, user_id, issue_data):
     try:
@@ -78,7 +73,9 @@ def process_single_issue(slug, project, user_id, issue_data):
             process_issue_links(issue, issue_data.get("links", []))
 
             # Process comments
-            process_issue_comments(user_id=user_id, issue=issue, comments=issue_data.get("comments", []))
+            process_issue_comments(
+                user_id=user_id, issue=issue, comments=issue_data.get("comments", [])
+            )
 
             # Process cycles
             process_issue_cycles(issue, issue_data.get("cycles", []))
@@ -90,7 +87,9 @@ def process_single_issue(slug, project, user_id, issue_data):
             process_issue_file_assets(issue, issue_data.get("file_assets", []))
 
             # Process issue property values
-            process_issue_property_values(issue, issue_data.get("issue_property_values", []))
+            process_issue_property_values(
+                issue, issue_data.get("issue_property_values", [])
+            )
 
             return issue
     except Exception as e:
@@ -103,7 +102,11 @@ def process_issue_links(issue, links):
     bulk_create_links = []
 
     # Get existing links
-    existing_links = list(IssueLink.objects.filter(issue=issue, project_id=issue.project_id, workspace_id=issue.workspace_id).values_list("url", flat=True))
+    existing_links = list(
+        IssueLink.objects.filter(
+            issue=issue, project_id=issue.project_id, workspace_id=issue.workspace_id
+        ).values_list("url", flat=True)
+    )
 
     for link_data in links:
         if link_data["url"] not in existing_links:
@@ -117,7 +120,9 @@ def process_issue_links(issue, links):
                 )
             )
 
-    IssueLink.objects.bulk_create(bulk_create_links, batch_size=100, ignore_conflicts=True)
+    IssueLink.objects.bulk_create(
+        bulk_create_links, batch_size=100, ignore_conflicts=True
+    )
     return
 
 
@@ -135,12 +140,18 @@ def process_issue_comments(user_id, issue, comments):
             issue=issue,
             project_id=issue.project_id,
             workspace_id=issue.workspace_id,
-            external_id__in=[str(c.get("external_id")) for c in comments if c.get("external_id")]
+            external_id__in=[
+                str(c.get("external_id")) for c in comments if c.get("external_id")
+            ],
         )
     }
 
     for comment_data in comments:
-        external_id = str(comment_data.get("external_id")) if comment_data.get("external_id") else None
+        external_id = (
+            str(comment_data.get("external_id"))
+            if comment_data.get("external_id")
+            else None
+        )
 
         # Skip if no external_id
         if not external_id:
@@ -167,32 +178,36 @@ def process_issue_comments(user_id, issue, comments):
 
     # Bulk create new comments
     created_comments = IssueComment.objects.bulk_create(
-        bulk_create_comments,
-        batch_size=100,
-        ignore_conflicts=True
+        bulk_create_comments, batch_size=100, ignore_conflicts=True
     )
 
     # Bulk update existing comments
     if bulk_update_comments:
         IssueComment.objects.bulk_update(
-            bulk_update_comments,
-            ["comment_html"],
-            batch_size=100
+            bulk_update_comments, ["comment_html"], batch_size=100
         )
 
     # Process file assets for each comment
     for comment in created_comments:
         comment_data = next(
-            (c for c in comments if str(c.get("external_id")) == str(comment.external_id)),
-            None
+            (
+                c
+                for c in comments
+                if str(c.get("external_id")) == str(comment.external_id)
+            ),
+            None,
         )
         if comment_data and comment_data.get("file_assets"):
             process_comment_file_assets(comment, comment_data["file_assets"])
 
     for comment in bulk_update_comments:
         comment_data = next(
-            (c for c in comments if str(c.get("external_id")) == str(comment.external_id)),
-            None
+            (
+                c
+                for c in comments
+                if str(c.get("external_id")) == str(comment.external_id)
+            ),
+            None,
         )
         if comment_data and comment_data.get("file_assets"):
             process_comment_file_assets(comment, comment_data["file_assets"])
@@ -207,9 +222,10 @@ def process_issue_cycles(issue, cycle_ids):
             issue=issue,
             project_id=issue.project_id,
             workspace_id=issue.workspace_id,
-            cycle_id=cycle_id
+            cycle_id=cycle_id,
         )
     return
+
 
 def process_issue_modules(issue, module_ids):
     # Create new module associations without deleting existing ones
@@ -218,9 +234,10 @@ def process_issue_modules(issue, module_ids):
             issue=issue,
             project_id=issue.project_id,
             workspace_id=issue.workspace_id,
-            module_id=module_id
+            module_id=module_id,
         )
     return
+
 
 def process_comment_file_assets(comment, file_assets):
     if not file_assets:
@@ -236,9 +253,10 @@ def process_comment_file_assets(comment, file_assets):
         entity_type=FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
         comment_id=comment.id,
         project_id=comment.project_id,
-        workspace_id=comment.workspace_id
+        workspace_id=comment.workspace_id,
     )
     return
+
 
 def process_issue_file_assets(issue, file_assets):
     if not file_assets:
@@ -254,9 +272,10 @@ def process_issue_file_assets(issue, file_assets):
         entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
         issue_id=issue.id,
         project_id=issue.project_id,
-        workspace_id=issue.workspace_id
+        workspace_id=issue.workspace_id,
     )
     return
+
 
 def process_issue_property_values(issue, issue_property_values):
     workspace = Workspace.objects.get(pk=issue.workspace_id)
@@ -295,9 +314,7 @@ def process_issue_property_values(issue, issue_property_values):
 
                 # check if issue property with the same external id and external source already exists
                 property_external_id = value.get("external_id", None)
-                property_external_source = value.get(
-                    "external_source", None
-                )
+                property_external_source = value.get("external_source", None)
 
                 # Save the values
                 bulk_external_issue_property_values.append(
@@ -319,6 +336,7 @@ def process_issue_property_values(issue, issue_property_values):
         IssuePropertyValue.objects.bulk_create(
             bulk_external_issue_property_values, batch_size=10
         )
+
 
 @shared_task
 def import_data(slug, project_id, user_id, job_id, payload):
@@ -357,7 +375,7 @@ def import_data(slug, project_id, user_id, job_id, payload):
                             project_id=project_id,
                             workspace__slug=slug,
                             external_id=parent_external_id,
-                            external_source=issue_data.get("external_source")
+                            external_source=issue_data.get("external_source"),
                         ).first()
                         if parent_issue:
                             issue_data["parent"] = str(parent_issue.id)
