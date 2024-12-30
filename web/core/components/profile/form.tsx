@@ -390,7 +390,12 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                 {errors.user_timezone && <span className="text-xs text-red-500">{errors.user_timezone.message}</span>}
               </div>
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm font-medium text-custom-text-200">{t("language")}</h4>
+                <div className="flex gap-2 items-center">
+                  <h4 className="text-sm font-medium text-custom-text-200">{t("language")} </h4>
+                  <div className="w-fit cursor-pointer rounded-2xl text-custom-primary-200 bg-custom-primary-100/20 text-center font-medium outline-none text-xs px-2">
+                    Alpha
+                  </div>
+                </div>
                 <Controller
                   control={control}
                   name="language"
