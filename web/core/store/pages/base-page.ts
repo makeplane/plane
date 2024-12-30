@@ -484,9 +484,5 @@ export class BasePage implements TBasePage {
   /**
    * @description duplicate the page
    */
-  duplicate = async () => {
-    const { workspaceSlug, projectId } = this.store.router;
-    if (!workspaceSlug || !projectId || !this.id) return undefined;
-    return await this.services.duplicate();
-  };
+  duplicate = async () => await this.services.duplicate();
 }
