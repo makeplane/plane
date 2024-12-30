@@ -15,8 +15,14 @@
       }
     }
 
-    /* select the first list item of every list, except the first item of a nested list */
-    &:not(.prosemirror-flat-list + .prosemirror-flat-list):not(.prosemirror-flat-list .prosemirror-flat-list) {
+    /* select the first list item of every list,
+      except the-
+        1. first item of a nested list
+        2. first item of the editor
+    */
+    &:not(.prosemirror-flat-list + .prosemirror-flat-list):not(.prosemirror-flat-list .prosemirror-flat-list):not(
+        :first-of-type:first-child
+      ) {
       padding-top: 4px;
 
       &::before,
