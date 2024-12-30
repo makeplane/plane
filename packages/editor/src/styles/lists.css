@@ -1,24 +1,38 @@
 .ProseMirror {
   .prosemirror-flat-list {
-    padding-bottom: 4px !important;
-
     &::before,
     .list-marker {
+      position: absolute;
+      right: 100%;
+      top: -2px;
       height: 28px;
       width: 28px;
       display: grid;
       place-items: center;
-      margin-top: 1px;
 
       label {
         margin-top: 2px;
       }
     }
 
+    /* select the first list item of every list, except the first item of a nested list */
+    &:first-of-type:not(.prosemirror-flat-list .prosemirror-flat-list) {
+      padding-top: 4px;
+
+      &::before,
+      .list-marker {
+        top: 1px;
+      }
+    }
+
     .list-content {
+      & > *:first-child:not(.prosemirror-flat-list) {
+        padding-bottom: 4px;
+      }
+
       & > p {
         margin: 0 !important;
-        padding: 4px 0 !important;
+        /* padding: 4px 0 !important; */
       }
     }
 
@@ -136,31 +150,6 @@
             }
           }
         }
-      }
-    }
-  }
-
-  /* apply a top padding to every list item whose previous element is not a list item */
-  :not(.prosemirror-flat-list) + .prosemirror-flat-list {
-    padding-top: 4px;
-  }
-
-  /* apply a larger top padding to every list item whose previous element is a paragraph */
-  p + .prosemirror-flat-list {
-    padding-top: 8px !important;
-  }
-
-  /* remove top padding from a list item if it's the first node of the editor */
-  .prosemirror-flat-list:first-child,
-  :not(.prosemirror-flat-list) + .prosemirror-flat-list {
-    &::before,
-    .list-marker {
-      margin-top: -2px;
-    }
-
-    .list-content {
-      & > p {
-        padding-top: 0 !important;
       }
     }
   }

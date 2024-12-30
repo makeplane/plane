@@ -413,10 +413,6 @@ p.editor-paragraph-block {
   line-height: var(--line-height-regular);
 }
 
-p.editor-paragraph-block + p.editor-paragraph-block {
-  padding-top: 8px !important;
-}
-
 .prose :where(ol):not(:where([class~="not-prose"], [class~="not-prose"] *)) li p.editor-paragraph-block,
 .prose :where(ul):not(:where([class~="not-prose"], [class~="not-prose"] *)) li p.editor-paragraph-block {
   font-size: var(--font-size-list);
