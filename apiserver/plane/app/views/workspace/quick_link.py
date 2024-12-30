@@ -26,7 +26,7 @@ class QuickLinkViewSet(BaseViewSet):
     
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def partial_update(self, request, slug, pk):
-        quick_link = WorkspaceUserLink.objects.filter(pk=pk).first()
+        quick_link = WorkspaceUserLink.objects.filter(pk=pk, workspace__slug=slug).first()
 
         if quick_link: 
             serializer = WorkspaceUserLinkSerializer(quick_link, data=request.data, partial=True)
@@ -38,26 +38,31 @@ class QuickLinkViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def retrieve(self, request, slug, pk):
-        print("Print retrieve method")
-        quick_link = WorkspaceUserLink.objects.get(pk=pk)
-        
-        if not quick_link:
+        try:
+            quick_link = WorkspaceUserLink.objects.get(
+                pk=pk,
+                workspace__slug=slug
+            )
+            serializer = WorkspaceUserLinkSerializer(quick_link)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except WorkspaceUserLink.DoesNotExist:
             return Response(
-                {"error": "The required object does not exist."},
-                status=status.HTTP_404_NOT_FOUND,
+                {"error": "Quick link not found."},
+                status=status.HTTP_404_NOT_FOUND
             )
 
-        serializer = WorkspaceUserLinkSerializer(quick_link)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def destroy(self, request, slug, pk):
-        quick_link = WorkspaceUserLink.objects.filter(pk=pk)
+        quick_link = WorkspaceUserLink.objects.filter(pk=pk, workspace__slug=slug).first()
 
-        if quick_link: 
+        if quick_link:
             quick_link.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response({"detail": "Quick link not found."}, status=status.HTTP_404_NOT_FOUND)
-    
 
-    
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def list(self, request, slug):
+        quick_links = WorkspaceUserLink.objects.all()
+
+        serializer = WorkspaceUserLinkSerializer(quick_links, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
