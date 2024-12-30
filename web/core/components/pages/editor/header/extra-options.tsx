@@ -84,7 +84,7 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
           iconClassName="text-custom-text-100"
         />
       )}
-      <PageInfoPopover editorRef={editorRef?.current} />
+      <PageInfoPopover editorRef={editorRef?.current} page={page} />
       <PageOptionsDropdown editorRef={editorRef?.current} handleDuplicatePage={handleDuplicatePage} page={page} />
     </div>
   );
