@@ -25,8 +25,8 @@ export const getTransformedIssues = async (
 ): Promise<Partial<PlaneIssue>[]> => {
   const teamUrl = job.config?.meta.teamUrl || "";
   const stateMap = job.config?.meta.state || [];
-
-  const issuePromises = entities.issues.map(async (issue: Issue) => {
+  // TODO: fix types
+  const issuePromises = entities.issues.map(async (issue: any) => {
     const transformedIssue = await transformIssue(issue, teamUrl, entities.users, entities.labels, stateMap);
     // Add a label signifying the issue is imported from Linear
     if (transformedIssue.labels) {
@@ -45,8 +45,9 @@ export const getTransformedLabels = (
   _job: TJobWithConfig<LinearConfig>,
   entities: LinearEntity
 ): Partial<ExIssueLabel>[] =>
+  // TODO: fix types
   entities.labels.map(
-    (label: IssueLabel): Partial<ExIssueLabel> => ({
+    (label: any): Partial<ExIssueLabel> => ({
       name: label.name,
       color: label.color ?? getRandomColor(),
     })
@@ -96,7 +97,7 @@ export const getTransformedProjects = (
 ): Partial<ExModule>[] => {
   const modules = entities.projects.map((project): Partial<ExModule> => {
     const issues = project.issues;
-    const transformedIssues = issues.map((issue: Issue) => issue.id);
+    const transformedIssues = issues.map((issue: any) => issue.id); // TODO: fix types
 
     return {
       external_id: project.project.id,

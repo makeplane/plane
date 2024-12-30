@@ -106,7 +106,7 @@ const handleIssueSync = async (store: Store, payload: PlaneWebhookPayload) => {
 
 const createOrUpdateGitHubIssue = async (
   githubService: GithubService,
-  planeClient: Client,
+  planeClient: PlaneClient,
   issue: ExIssue,
   credentials: TServiceCredentials,
   workspaceConnection: GithubWorkspaceConnection,

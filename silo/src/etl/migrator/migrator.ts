@@ -18,7 +18,7 @@ import { protect } from "@/lib";
 import { v4 as uuidv4 } from "uuid";
 import { logger } from "@/logger";
 import { FeatureFlagService, TJobWithConfig, E_FEATURE_FLAGS, PlaneEntities } from "@plane/etl/core";
-import { createCycles } from "./cycles.migrator";
+import { createAllCycles } from "./cycles.migrator";
 import { getCredentialsForMigration, validateJobForMigration } from "./helpers";
 import { generateIssuePayload } from "./issues.migrator";
 import { createLabelsForIssues } from "./labels.migrator";
