@@ -20,8 +20,12 @@ export class TranslationStore {
   }
 
   setLanguage(lng: Language) {
-    localStorage.setItem("userLanguage", lng);
-    this.currentLocale = lng;
+    try {
+      localStorage.setItem("userLanguage", lng);
+      this.currentLocale = lng;
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   initializeLanguage() {

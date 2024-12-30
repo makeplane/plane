@@ -1,7 +1,7 @@
-import React, { createContext, useEffect } from "react";
 import { observer } from "mobx-react";
-import { TranslationStore } from "./store";
+import React, { createContext, useEffect } from "react";
 import { Language, languages } from "../config";
+import { TranslationStore } from "./store";
 
 // Create the store instance
 const translationStore = new TranslationStore();
@@ -9,7 +9,7 @@ const translationStore = new TranslationStore();
 // Create Context
 export const TranslationContext = createContext<TranslationStore>(translationStore);
 
-export const TranslationProvider = observer(({ children }: any) => {
+export const TranslationProvider = observer(({ children }: { children: React.ReactNode }) => {
   // Handle storage events for cross-tab synchronization
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
