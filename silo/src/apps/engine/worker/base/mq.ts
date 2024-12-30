@@ -28,14 +28,16 @@ export class MQActorBase {
 
     if (options.appType === "extension") {
       this.exchange = options.exchange ?? "migration_exchange";
-    }
-
-    if (options.appType === "integration-tasks") {
       this.queueName = options.queueName;
       this.routingKey = options.routingKey;
     } else {
-      this.queueName = "silo-api";
-      this.routingKey = "silo-api";
+      if (options.appType === "integration-tasks") {
+        this.queueName = options.queueName;
+        this.routingKey = options.routingKey;
+      } else {
+        this.queueName = "silo-api";
+        this.routingKey = "silo-api";
+      }
     }
   }
 
