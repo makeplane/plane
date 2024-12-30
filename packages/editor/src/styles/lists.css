@@ -21,20 +21,6 @@
       }
     }
 
-    /* select the first item of the editor */
-    &:first-of-type:first-child {
-      .list-content {
-        & > *:first-child:not(.prosemirror-flat-list) {
-          padding-top: 0 !important;
-        }
-      }
-
-      &::before,
-      .list-marker {
-        top: -2px;
-      }
-    }
-
     &[data-list-kind="ordered"] {
       list-style: none;
 
@@ -150,6 +136,20 @@
           }
         }
       }
+    }
+  }
+
+  /* select the first item of the editor */
+  > .prosemirror-flat-list:first-child {
+    .list-content {
+      & > *:first-child:not(.prosemirror-flat-list) {
+        padding-top: 0 !important;
+      }
+    }
+
+    &::before,
+    .list-marker {
+      top: -2px;
     }
   }
 }
