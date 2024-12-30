@@ -571,6 +571,7 @@ class PageDuplicateEndpoint(BaseAPIView):
 
         page.pk = None
         page.name = f"{page.name} (Copy)"
+        page.description_binary = None
         page.save()
 
         for project_id in project_ids:
@@ -581,7 +582,6 @@ class PageDuplicateEndpoint(BaseAPIView):
                 created_by_id=page.created_by_id,
                 updated_by_id=page.updated_by_id,
             )
-
 
         page_transaction.delay(
             {"description_html": page.description_html}, None, page.id

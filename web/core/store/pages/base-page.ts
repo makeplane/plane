@@ -30,7 +30,7 @@ export type TBasePage = TPage & {
   updatePageLogo: (logo_props: TLogoProps) => Promise<void>;
   addToFavorites: () => Promise<void>;
   removePageFromFavorites: () => Promise<void>;
-  duplicate: () => Promise<void>;
+  duplicate: () => Promise<TPage | undefined>;
 };
 
 export type TBasePagePermissions = {
@@ -55,7 +55,7 @@ export type TBasePageServices = {
     archived_at: string;
   }>;
   restore: () => Promise<void>;
-  duplicate: () => Promise<void>;
+  duplicate: () => Promise<TPage>;
 };
 
 export type TPageInstance = TBasePage &
@@ -487,6 +487,6 @@ export class BasePage implements TBasePage {
   duplicate = async () => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
-    await this.services.duplicate();
+    return await this.services.duplicate();
   };
 }
