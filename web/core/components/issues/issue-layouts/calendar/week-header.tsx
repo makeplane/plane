@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 
 // constants
-import { DAYS_LIST } from "@/constants/calendar";
+import { DAYS_LIST } from "@plane/constants";
 
 type Props = {
   isLoading: boolean;

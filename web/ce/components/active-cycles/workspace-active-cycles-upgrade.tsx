@@ -3,17 +3,33 @@
 import React from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
+import { Folder, CircleDashed, BarChart4, AlertOctagon, Search, Microscope } from "lucide-react";
 // ui
+import { WORKSPACE_ACTIVE_CYCLES_DETAILS, MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
 import { ContentWrapper, getButtonStyling } from "@plane/ui";
 // components
 import { ProIcon } from "@/components/common";
 // constants
-import { MARKETING_PRICING_PAGE_LINK } from "@/constants/common";
-import { WORKSPACE_ACTIVE_CYCLES_DETAILS } from "@/constants/cycle";
 // helper
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useUser } from "@/hooks/store";
+
+const CycleItemIcon = ({ iconKey }: { iconKey: string }) => {
+  if (iconKey == "folder") return <Folder className="h-4 w-4 text-blue-500" />;
+
+  if (iconKey == "circle-dashed") return <CircleDashed className="h-4 w-4 text-blue-500" />;
+
+  if (iconKey == "bar-chart-4") return <BarChart4 className="h-4 w-4 text-blue-500" />;
+
+  if (iconKey == "alert-octagon") return <AlertOctagon className="h-4 w-4 text-blue-500" />;
+
+  if (iconKey === "search") return <Search className="h-4 w-4 text-blue-500" />;
+
+  if (iconKey === "microscope") return <Microscope className="h-4 w-4 text-blue-500" />;
+
+  return <></>;
+};
 
 export const WorkspaceActiveCyclesUpgrade = observer(() => {
   // store hooks
@@ -83,7 +99,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
           <div key={item.title} className="flex min-h-32 w-full flex-col gap-2 rounded-md bg-custom-background-80 p-4">
             <div className="flex items-center gap-2 justify-between">
               <h3 className="font-medium">{item.title}</h3>
-              <item.icon className="h-4 w-4 text-blue-500" />
+              <CycleItemIcon iconKey={item.iconKey} />
             </div>
             <span className="text-sm text-custom-text-300">{item.description}</span>
           </div>

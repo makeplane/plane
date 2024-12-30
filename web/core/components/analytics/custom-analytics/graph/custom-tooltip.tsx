@@ -1,9 +1,10 @@
 // nivo
 import { BarTooltipProps } from "@nivo/bar";
+// Plane imports
+import { DATE_KEYS } from "@plane/constants";
 import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
-import { DATE_KEYS } from "@/constants/analytics";
+// helpers
 import { renderMonthAndYear } from "@/helpers/analytics.helper";
-// types
 
 type Props = {
   datum: BarTooltipProps<any>;

@@ -20,7 +20,7 @@ import {
 import { ToggleSwitch } from "@plane/ui";
 // types
 // constants
-import { CALENDAR_LAYOUTS } from "@/constants/calendar";
+import { CALENDAR_LAYOUTS } from "@plane/constants";
 import { useCalendarView } from "@/hooks/store";
 import useSize from "@/hooks/use-window-size";
 import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";

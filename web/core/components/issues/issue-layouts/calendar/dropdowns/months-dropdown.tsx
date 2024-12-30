@@ -6,7 +6,7 @@ import { Popover, Transition } from "@headlessui/react";
 //hooks
 // icons
 // constants
-import { MONTHS_LIST } from "@/constants/calendar";
+import { MONTHS_LIST } from "@plane/constants";
 import { getDate } from "@/helpers/date-time.helper";
 import { useCalendarView } from "@/hooks/store";
 import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";

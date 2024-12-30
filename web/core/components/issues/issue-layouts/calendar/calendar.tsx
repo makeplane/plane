@@ -22,7 +22,7 @@ import { Spinner } from "@plane/ui";
 // components
 import { CalendarHeader, CalendarIssueBlocks, CalendarWeekDays, CalendarWeekHeader } from "@/components/issues";
 // constants
-import { MONTHS_LIST } from "@/constants/calendar";
+import { MONTHS_LIST } from "@plane/constants";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";

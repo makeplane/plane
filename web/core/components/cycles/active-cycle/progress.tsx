@@ -2,14 +2,13 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-// types
+// Plane Imports
+import { CYCLE_PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
 import { ICycle, IIssueFilterOptions } from "@plane/types";
-// ui
 import { LinearProgressIndicator, Loader } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/empty-state";
 // constants
-import { PROGRESS_STATE_GROUPS_DETAILS } from "@/constants/common";
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useProjectState } from "@/hooks/store";
@@ -27,7 +26,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props
   const { groupedProjectStates } = useProjectState();
 
   // derived values
-  const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
+  const progressIndicatorData = CYCLE_PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
     name: group.title,
     value: cycle && cycle.total_issues > 0 ? (cycle[group.key as keyof ICycle] as number) : 0,
@@ -77,7 +76,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props
                       <span
                         className="block h-3 w-3 rounded-full"
                         style={{
-                          backgroundColor: PROGRESS_STATE_GROUPS_DETAILS[index].color,
+                          backgroundColor: CYCLE_PROGRESS_STATE_GROUPS_DETAILS[index].color,
                         }}
                       />
                       <span className="text-custom-text-300 capitalize font-medium w-16">{group}</span>

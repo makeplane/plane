@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { Info, SquareUser } from "lucide-react";
-// ui
+// plane internal imports
+import { CYCLE_PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
 import { IModule } from "@plane/types";
 import {
   Card,
@@ -23,7 +24,6 @@ import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // constants
-import { PROGRESS_STATE_GROUPS_DETAILS } from "@/constants/common";
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
 import { MODULE_STATUS } from "@/constants/module";
 // helpers
@@ -185,7 +185,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const moduleLeadDetails = moduleDetails.lead_id ? getUserDetails(moduleDetails.lead_id) : undefined;
 
-  const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
+  const progressIndicatorData = CYCLE_PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
     name: group.title,
     value: moduleTotalIssues > 0 ? (moduleDetails[group.key as keyof IModule] as number) : 0,

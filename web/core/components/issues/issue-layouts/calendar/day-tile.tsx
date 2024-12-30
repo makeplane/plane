@@ -13,7 +13,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 import { CalendarIssueBlocks, ICalendarDate } from "@/components/issues";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 // helpers
-import { MONTHS_LIST } from "@/constants/calendar";
+import { MONTHS_LIST } from "@plane/constants";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";

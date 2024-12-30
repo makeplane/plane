@@ -3,7 +3,7 @@
 // ui
 import { getButtonStyling } from "@plane/ui";
 // constants
-import { MARKETING_PLANE_ONE_PAGE_LINK } from "@/constants/common";
+import { MARKETING_PLANE_ONE_PAGE_LINK } from "@plane/constants";
 // helpers
 import { cn } from "@/helpers/common.helper";
 

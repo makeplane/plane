@@ -4,7 +4,7 @@ import { ALargeSmall, Ban } from "lucide-react";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
-import { COLORS_LIST } from "@/constants/common";
+import { COLORS_LIST } from "@plane/constants";
 // helpers
 import { BackgroundColorItem, TextColorItem } from "../menu-items";
 

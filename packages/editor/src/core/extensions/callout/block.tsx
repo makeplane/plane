@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NodeViewContent, NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 // constants
-import { COLORS_LIST } from "@/constants/common";
+import { COLORS_LIST } from "@plane/constants";
 // local components
 import { CalloutBlockColorSelector } from "./color-selector";
 import { CalloutBlockLogoSelector } from "./logo-selector";

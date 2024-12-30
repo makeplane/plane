@@ -18,7 +18,7 @@ import {
   TextQuote,
 } from "lucide-react";
 // constants
-import { COLORS_LIST } from "@/constants/common";
+import { COLORS_LIST } from "@plane/constants";
 // helpers
 import {
   insertTableCommand,

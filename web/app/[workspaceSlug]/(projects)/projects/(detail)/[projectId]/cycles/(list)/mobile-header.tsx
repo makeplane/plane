@@ -2,13 +2,29 @@
 
 import { observer } from "mobx-react";
 // ui
-import { List } from "lucide-react";
-import { CustomMenu } from "@plane/ui";
-// icon
+import { List, LayoutGrid, GanttChartSquare } from "lucide-react";
 // constants
-import { CYCLE_VIEW_LAYOUTS } from "@/constants/cycle";
+import { CYCLE_VIEW_LAYOUTS } from "@plane/constants";
+import { TCycleLayoutOptions } from "@plane/types";
+import { CustomMenu } from "@plane/ui";
 // hooks
 import { useCycleFilter, useProject } from "@/hooks/store";
+
+const CycleViewIcon = ({ iconKey }: { iconKey: TCycleLayoutOptions }) => {
+  if (iconKey == "list") {
+    return <List className="w-3 h-3" />;
+  }
+
+  if (iconKey == "board") {
+    return <LayoutGrid className="w-3 h-3" />;
+  }
+
+  if (iconKey == "gantt") {
+    return <GanttChartSquare className="w-3 h-3" />;
+  }
+
+  return <></>;
+};
 
 export const CyclesListMobileHeader = observer(() => {
   const { currentProjectDetails } = useProject();
@@ -41,7 +57,7 @@ export const CyclesListMobileHeader = observer(() => {
               }}
               className="flex items-center gap-2"
             >
-              <layout.icon className="w-3 h-3" />
+              <CycleViewIcon iconKey={layout.key} />
               <div className="text-custom-text-300">{layout.title}</div>
             </CustomMenu.MenuItem>
           );
