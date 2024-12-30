@@ -168,32 +168,59 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     const scrollableParent = getScrollParent(dragHandleElement);
     if (!scrollableParent) return;
 
+    const viewportHeight = window.innerHeight;
     const scrollRegionUp = options.scrollThreshold.up;
     const scrollRegionDown = window.innerHeight - options.scrollThreshold.down;
 
+    const baseSpeed = maxScrollSpeed;
+    const viewportSpeedMultiplier = Math.log10(viewportHeight / 500) + 1;
+    const adjustedMaxSpeed = (baseSpeed / viewportSpeedMultiplier) * 0.8;
+
     let targetScrollAmount = 0;
 
+    const customEasing = (t: number) => t * t * t;
     if (isDraggedOutsideWindow === "top") {
-      targetScrollAmount = -maxScrollSpeed * 5;
+      // reduce multiplier for outside window scrolling
+      targetScrollAmount = -adjustedMaxSpeed * 3;
     } else if (isDraggedOutsideWindow === "bottom") {
-      targetScrollAmount = maxScrollSpeed * 5;
+      targetScrollAmount = adjustedMaxSpeed * 3;
     } else if (lastClientY < scrollRegionUp) {
-      const ratio = easeOutQuadAnimation((scrollRegionUp - lastClientY) / options.scrollThreshold.up);
-      targetScrollAmount = -maxScrollSpeed * ratio;
+      const distance = scrollRegionUp - lastClientY;
+      const normalizedDistance = distance / scrollRegionUp;
+
+      // apply multiple easing functions for more control
+      const easedRatio = customEasing(normalizedDistance);
+      const smoothedRatio = easeOutQuadAnimation(easedRatio);
+
+      targetScrollAmount = -adjustedMaxSpeed * smoothedRatio;
     } else if (lastClientY > scrollRegionDown) {
-      const ratio = easeOutQuadAnimation((lastClientY - scrollRegionDown) / options.scrollThreshold.down);
-      targetScrollAmount = maxScrollSpeed * ratio;
+      const distance = lastClientY - scrollRegionDown;
+      const normalizedDistance = distance / (viewportHeight - scrollRegionDown);
+
+      // apply multiple easing functions for more control
+      const easedRatio = customEasing(normalizedDistance);
+      const smoothedRatio = easeOutQuadAnimation(easedRatio);
+
+      targetScrollAmount = adjustedMaxSpeed * smoothedRatio;
     }
 
-    currentScrollSpeed += (targetScrollAmount - currentScrollSpeed) * acceleration;
+    // dampening the speed based on screen size
+    const dampeningFactor = Math.max(0.3, Math.min(1, viewportHeight / 1000));
+    targetScrollAmount *= dampeningFactor;
 
-    if (Math.abs(currentScrollSpeed) > 0.1) {
-      scrollableParent.scrollBy({ top: currentScrollSpeed });
+    // reduce acceleration for smoother ramping
+    const reducedAcceleration = acceleration * 0.75;
+    currentScrollSpeed += (targetScrollAmount - currentScrollSpeed) * reducedAcceleration;
+
+    // Add minimum threshold for very slow speeds
+    if (Math.abs(currentScrollSpeed) > 0.05) {
+      // Apply additional smoothing to the final scroll amount
+      const smoothedSpeed = Math.sign(currentScrollSpeed) * Math.pow(Math.abs(currentScrollSpeed), 1.2);
+      scrollableParent.scrollBy({ top: smoothedSpeed });
     }
 
     scrollAnimationFrame = requestAnimationFrame(scroll);
   }
-
   let dragHandleElement: HTMLElement | null = null;
   // drag handle view actions
   const showDragHandle = () => dragHandleElement?.classList.remove("drag-handle-hidden");
