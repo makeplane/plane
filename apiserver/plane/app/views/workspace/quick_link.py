@@ -23,11 +23,18 @@ class QuickLinkViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def partial_update(self, request, slug, pk):
         quick_link = WorkspaceUserLink.objects.filter(pk=pk).first()
-        serializer = WorkspaceUserLinkSerializer(quick_link, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
+
+        if quick_link: 
+            serializer = WorkspaceUserLinkSerializer(quick_link, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
+        return Response({"detail": "Quick link not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        
+    
