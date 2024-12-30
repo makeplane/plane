@@ -62,7 +62,7 @@ class QuickLinkViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
-        quick_links = WorkspaceUserLink.objects.all()
+        quick_links = WorkspaceUserLink.objects.filter(workspace__slug=slug)
 
         serializer = WorkspaceUserLinkSerializer(quick_links, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
