@@ -45,9 +45,12 @@ export const DropdownContent = ({
     }
   };
 
-  const handleSelect = (e: any, item: any) => {
-    onSelect && onSelect(e, item);
-  };
+  const handleSelect = useCallback(
+    (e: any, item: any) => {
+      onSelect && onSelect(e, item);
+    },
+    [onSelect]
+  );
 
   return (
     <RadixDropdownMenu.Portal container={container}>

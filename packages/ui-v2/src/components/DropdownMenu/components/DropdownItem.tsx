@@ -1,7 +1,7 @@
 import * as RadixDropdownMenu from "@radix-ui/react-dropdown-menu";
 import React, { useCallback } from "react";
 
-export const DropdownItem = ({
+const DropdownItem_ = ({
   children,
   onSelect,
   disabled,
@@ -38,3 +38,5 @@ export const DropdownItem = ({
     </RadixDropdownMenu.Item>
   );
 };
+
+export const DropdownItem = React.memo(DropdownItem_);

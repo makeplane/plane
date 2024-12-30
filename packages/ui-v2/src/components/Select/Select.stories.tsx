@@ -28,6 +28,15 @@ type Story = StoryObj<typeof meta>;
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const SingleSelect = () => {
+  const [items, setItems] = useState(fruits);
+  const handleSearch = async (query: String) => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Filters items on the name
+    const filteredItems = fruits.filter((item) =>
+      item.name.toLowerCase().includes(query.toLowerCase())
+    );
+    setItems(filteredItems);
+  };
   return (
     <Select
       items={fruits}
@@ -39,6 +48,7 @@ export const SingleSelect = () => {
       renderGroup={function (group: string): React.ReactNode {
         throw new Error("Function not implemented.");
       }}
+      onSearch={handleSearch}
       multiple
       defaultOpen
     >
@@ -47,6 +57,6 @@ export const SingleSelect = () => {
   );
 };
 
-const Fruit = ({ fruit }) => {
+const Fruit = ({ item: fruit }) => {
   return <div>{`${fruit.emoji} ${fruit.name}`}</div>;
 };

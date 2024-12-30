@@ -1,11 +1,7 @@
 import React, { useCallback } from "react";
 import { DropdownMenu } from "../DropdownMenu/DropdownMenu";
-import { DropdownButton } from "../DropdownMenu/components/DropdownButton";
-import { CheckIcon } from "@radix-ui/react-icons";
+import { SelectItem } from "./SelectItem";
 
-const EmptyIcon = () => (
-  <div style={{ width: "15px", height: "15px" }}>&nbsp;</div>
-);
 type SelectProps = {
   items: any[];
   onChange: (value: any) => void;
@@ -17,7 +13,9 @@ type SelectProps = {
   showSelectedAtTop?: boolean;
   defaultOpen?: boolean;
   children: React.ReactNode;
+  onSearch?: (query: String) => void;
 };
+
 export const Select = (props: SelectProps) => {
   const {
     items,
@@ -30,40 +28,40 @@ export const Select = (props: SelectProps) => {
     showSelectedAtTop = true,
     defaultOpen = false,
     children,
+    onSearch,
   } = props;
 
   const [value, setValue] = React.useState(initialValue);
   const [open, setOpen] = React.useState(defaultOpen);
 
-  const handleSelect = (e: React.MouseEvent, item: any) => {
-    const key = keyExtractor(item);
-    if (multiple) {
-      e.preventDefault();
-      e.stopPropagation();
+  const handleSelect = useCallback(
+    (e: React.MouseEvent, item: any) => {
+      const key = keyExtractor(item);
+      if (multiple) {
+        e.preventDefault();
+        e.stopPropagation();
 
-      // If values includes item, remove it
-      if (value.includes(key)) {
-        setValue(value.filter((v) => v !== key));
+        // If values includes item, remove it
+        if (value.includes(key)) {
+          setValue(value.filter((v) => v !== key));
+        } else {
+          setValue([...value, key]);
+        }
+        onChange([...value, key]);
       } else {
-        setValue([...value, key]);
+        setValue([key]);
+        onChange([key]);
       }
-      onChange([...value, key]);
-    } else {
-      setValue([key]);
-      onChange([key]);
-    }
-  };
+    },
+    [value]
+  );
 
   const renderItem_ = useCallback(
     (item: any) => {
       const key = keyExtractor(item);
       const selected = value.includes(key);
       return (
-        <div className="flex items-center gap-2 justify-between">
-          {<Item fruit={item} />}
-          {/* Added empty icon to reserve space */}
-          {selected ? <CheckIcon /> : <EmptyIcon />}
-        </div>
+        <SelectItem item={item} selected={selected} render={Item}></SelectItem>
       );
     },
     [value, keyExtractor]
@@ -91,6 +89,7 @@ export const Select = (props: SelectProps) => {
       renderItem={renderItem_}
       onSelect={handleSelect}
       onOpenChange={handleOpenChange}
+      onSearch={onSearch}
     >
       {children}
     </DropdownMenu>
