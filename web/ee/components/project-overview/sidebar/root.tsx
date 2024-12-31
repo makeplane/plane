@@ -7,20 +7,19 @@ import { useParams } from "next/navigation";
 import { Activity } from "lucide-react";
 import { InfoFillIcon, Tabs, UpdatesIcon } from "@plane/ui";
 
+import { ActivitySortRoot } from "@/components/issues";
 import { cn } from "@/helpers/common.helper";
 // hooks
-
-// local components
-
 import { useProject, useWorkspace } from "@/hooks/store";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { TProject } from "@/plane-web/types";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+// local components
+import { SidebarTabContent } from "../../epics/sidebar/sidebar-tab-content";
 import { ProjectActivity } from "./project-activity";
 import { ProjectPropertiesSidebar } from "./properties";
 import { UpgradeProperties } from "./properties/upgrade";
-import { SidebarTabContent } from "./sidebar-tab-content";
 import { UpdatesLoader } from "./updates/loader";
 import { ProjectUpdates } from "./updates/root";
 import { UpgradeUpdates } from "./updates/upgrade";
@@ -31,13 +30,18 @@ type TEpicDetailsSidebarProps = {
 
 export const ProjectDetailsSidebar: FC<TEpicDetailsSidebarProps> = observer((props) => {
   const { project } = props;
+  // router
   const { workspaceSlug } = useParams();
+  // states
+  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("desc");
   // store hooks
   const { updateProject } = useProject();
   const { features } = useProjectAdvanced();
   const { currentWorkspace } = useWorkspace();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
 
+  // handler
+  const toggleSortOrder = () => setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   // derived
   const isProjectUpdatesEnabled =
     features &&
@@ -91,8 +95,18 @@ export const ProjectDetailsSidebar: FC<TEpicDetailsSidebarProps> = observer((pro
       key: "activity",
       icon: Activity,
       content: (
-        <SidebarTabContent title="Activity">
-          <ProjectActivity workspaceSlug={workspaceSlug.toString()} projectId={project.id} />
+        <SidebarTabContent
+          title="Activity"
+          actionElement={
+            <ActivitySortRoot
+              sortOrder={sortOrder}
+              toggleSort={toggleSortOrder}
+              className="flex-shrink-0"
+              iconClassName="size-3"
+            />
+          }
+        >
+          <ProjectActivity workspaceSlug={workspaceSlug.toString()} projectId={project.id} sortOrder={sortOrder} />
         </SidebarTabContent>
       ),
     },

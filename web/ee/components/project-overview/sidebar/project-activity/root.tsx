@@ -1,5 +1,5 @@
 "use client";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 // components
 import useSWR from "swr";
@@ -11,12 +11,13 @@ import { ProjectActivityService } from "@/plane-web/services";
 type TProjectActivity = {
   workspaceSlug: string;
   projectId: string;
+  sortOrder: "asc" | "desc";
 };
 
 const projectActivityService = new ProjectActivityService();
 
 export const ProjectActivity: FC<TProjectActivity> = observer((props) => {
-  const { workspaceSlug, projectId } = props;
+  const { workspaceSlug, projectId, sortOrder } = props;
   // api calls
   const { data: activity, isLoading } = useSWR(
     projectId && workspaceSlug ? `PROJECT_ACTIVITY_${projectId}` : null,
@@ -26,6 +27,11 @@ export const ProjectActivity: FC<TProjectActivity> = observer((props) => {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
     }
+  );
+
+  const sortedActivity = useMemo(
+    () => (activity ? (sortOrder === "asc" ? [...activity].reverse() : activity) : []),
+    [sortOrder, activity]
   );
 
   return (
@@ -43,7 +49,7 @@ export const ProjectActivity: FC<TProjectActivity> = observer((props) => {
             ) : (
               <div>
                 {activity &&
-                  activity.map((activityComment, index) => (
+                  sortedActivity.map((activityComment, index) => (
                     <ActivityItem
                       key={activityComment.id}
                       activity={activityComment}

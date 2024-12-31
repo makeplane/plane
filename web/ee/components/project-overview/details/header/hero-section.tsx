@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { IProject, IWorkspace } from "@plane/types";
 import { EUserPermissions } from "@plane/types/src/enums";
 import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo, setToast, TOAST_TYPE } from "@plane/ui";
 import { EUserPermissionsLevel } from "@/ce/constants";
+import { ImagePickerPopover } from "@/components/core";
 import { PROJECT_UPDATED } from "@/constants/event-tracker";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getFileURL } from "@/helpers/file.helper";
@@ -14,7 +16,7 @@ type THeroSection = {
   project: TProject;
   workspaceSlug: string;
 };
-export const HeroSection = (props: THeroSection) => {
+export const HeroSection = observer((props: THeroSection) => {
   const { project, workspaceSlug } = props;
   const [isOpen, setIsOpen] = useState(false);
   const { allowPermissions } = useUserPermissions();
@@ -83,17 +85,35 @@ export const HeroSection = (props: THeroSection) => {
     handleUpdateChange(payload);
   };
 
+  const handleCoverChange = async (payload: Partial<IProject>) => {
+    if (!workspaceSlug || !project) return;
+    return updateProject(workspaceSlug.toString(), project.id, payload);
+  };
+
   return (
     <div>
       <div className="relative h-[118px] w-full ">
         <img
           src={getFileURL(
-            project.cover_image_url ??
+            project.cover_image ??
               "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
           )}
           alt={project.name}
           className="absolute left-0 top-0 h-full w-full object-cover"
         />
+        <div className="absolute right-4 top-4">
+          <ImagePickerPopover
+            label="Change cover"
+            control={control}
+            onChange={(data) => {
+              if (data === project.cover_image) return;
+              handleCoverChange({ cover_image: data });
+            }}
+            value={project.cover_image ?? null}
+            disabled={!isAdmin}
+            projectId={project.id}
+          />
+        </div>
       </div>
       <div className="relative px-page-x pt-page-y mt-2">
         <form
@@ -141,4 +161,4 @@ export const HeroSection = (props: THeroSection) => {
       </div>
     </div>
   );
-};
+});

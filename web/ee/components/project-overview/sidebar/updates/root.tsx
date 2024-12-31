@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
+import { ActivitySortRoot } from "@/components/issues";
 import { useProjectUpdates } from "@/plane-web/hooks/store/projects/use-project-updates";
 import { TProjectUpdate } from "@/plane-web/types";
 import { UpdateBlock } from "./block";
@@ -14,9 +15,15 @@ export const ProjectUpdates = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // state
   const [showInput, setShowInput] = useState(false);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   // hooks
   const { getUpdatesByProjectId, loader } = useProjectUpdates();
   const { handleUpdateOperations } = useUpdates(workspaceSlug.toString(), projectId.toString());
+
+  // handler
+  const toggleSortOrder = () => {
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  };
 
   // derived
   const projectUpdates = getUpdatesByProjectId(projectId.toString()) ?? [];
@@ -30,6 +37,11 @@ export const ProjectUpdates = observer(() => {
     }
   };
 
+  const sortedProjectUpdates = useMemo(
+    () => (sortOrder === "desc" ? [...projectUpdates].reverse() : projectUpdates),
+    [sortOrder, projectUpdates]
+  );
+
   return loader ? (
     <UpdatesLoader />
   ) : (
@@ -42,19 +54,27 @@ export const ProjectUpdates = observer(() => {
 
       {/* Add update */}
       {!showInput && projectUpdates.length !== 0 && (
-        <button
-          className="flex text-custom-primary-100 text-sm font-medium rounded w-fit py-1 px-2"
-          onClick={() => setShowInput(true)}
-        >
-          <Plus size={15} className="my-auto mr-1" />
-          <div>Add update</div>
-        </button>
+        <div className="flex justify-between items-center pb-3">
+          <button
+            className="flex text-custom-primary-100 text-sm font-medium rounded w-fit py-1 px-2"
+            onClick={() => setShowInput(true)}
+          >
+            <Plus size={15} className="my-auto mr-1" />
+            <div>Add update</div>
+          </button>
+          <ActivitySortRoot
+            sortOrder={sortOrder}
+            toggleSort={toggleSortOrder}
+            className="flex-shrink-0"
+            iconClassName="size-3"
+          />
+        </div>
       )}
 
       {/* Updates */}
-      {projectUpdates.length > 0 && (
+      {sortedProjectUpdates.length > 0 && (
         <div className="flex flex-col gap-4 pb-20">
-          {projectUpdates.map((updateId) => (
+          {sortedProjectUpdates.map((updateId) => (
             <UpdateBlock
               updateId={updateId}
               key={updateId}
