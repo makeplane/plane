@@ -18,7 +18,8 @@ import { generateQueryParams } from "@/helpers/router.helper";
 import { useCycle } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { CycleQuickActions } from "../quick-actions";
+// plane web
+import { CycleQuickActions } from "@/plane-web/components/cycles";
 
 type TCyclesListItem = {
   cycleId: string;

@@ -127,3 +127,8 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
     icon: Microscope,
   },
 ];
+
+export enum ECycleAction {
+  START = "start",
+  STOP = "stop",
+}

@@ -13,6 +13,8 @@ import {
   TCycleDistribution,
   TCycleEstimateType,
 } from "@plane/types";
+// constants
+import { ECycleAction } from "@/constants/cycle";
 // helpers
 import { orderCycles, shouldFilterCycle } from "@/helpers/cycle.helper";
 import { getDate } from "@/helpers/date-time.helper";
@@ -91,6 +93,7 @@ export interface ICycleStore {
   // archive
   archiveCycle: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
   restoreCycle: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
+  updateCycleState: (workspaceSlug: string, projectId: string, cycleId: string, action: ECycleAction) => Promise<void>;
 }
 
 export class CycleStore implements ICycleStore {
@@ -718,4 +721,7 @@ export class CycleStore implements ICycleStore {
         console.error("Failed to restore cycle in cycle store", error);
       });
   };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  updateCycleState = async (workspaceSlug: string, projectId: string, cycleId: string, action: ECycleAction) => {};
 }

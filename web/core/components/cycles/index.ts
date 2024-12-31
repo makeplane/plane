@@ -8,7 +8,6 @@ export * from "./cycles-view";
 export * from "./delete-modal";
 export * from "./form";
 export * from "./modal";
-export * from "./quick-actions";
 export * from "./transfer-issues-modal";
 export * from "./transfer-issues";
 export * from "./cycles-view-header";
