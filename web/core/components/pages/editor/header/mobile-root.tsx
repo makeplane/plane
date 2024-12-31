@@ -9,38 +9,34 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
-  editorReady: boolean;
-  editorRef: React.RefObject<EditorRefApi>;
-  handleDuplicatePage: () => void;
+  editorRef: EditorRefApi;
   page: TPageInstance;
   setSidePeekVisible: (sidePeekState: boolean) => void;
   sidePeekVisible: boolean;
 };
 
 export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
-  const { editorReady, editorRef, handleDuplicatePage, page, setSidePeekVisible, sidePeekVisible } = props;
+  const { editorRef, page, setSidePeekVisible, sidePeekVisible } = props;
   // derived values
   const { isContentEditable } = page;
   // page filters
   const { isFullWidth } = usePageFilters();
-
-  if (!editorRef.current) return null;
 
   return (
     <>
       <Header variant={EHeaderVariant.SECONDARY}>
         <div className="flex-shrink-0 my-auto">
           <PageSummaryPopover
-            editorRef={editorRef.current}
+            editorRef={editorRef}
             isFullWidth={isFullWidth}
             sidePeekVisible={sidePeekVisible}
             setSidePeekVisible={setSidePeekVisible}
           />
         </div>
-        <PageExtraOptions editorRef={editorRef} handleDuplicatePage={handleDuplicatePage} page={page} />
+        <PageExtraOptions editorRef={editorRef} page={page} />
       </Header>
       <Header variant={EHeaderVariant.TERNARY}>
-        {editorReady && isContentEditable && editorRef.current && <PageToolbar editorRef={editorRef?.current} />}
+        {isContentEditable && editorRef && <PageToolbar editorRef={editorRef} />}
       </Header>
     </>
   );

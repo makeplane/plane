@@ -4,14 +4,15 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Earth, Info, Lock, Minus } from "lucide-react";
 // ui
-import { Avatar, FavoriteStar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { Avatar, FavoriteStar, Tooltip } from "@plane/ui";
 // components
-import { PageQuickActions } from "@/components/pages/dropdowns";
+import { PageActions } from "@/components/pages";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember } from "@/hooks/store";
+import { usePageOperations } from "@/hooks/use-page-operations";
 import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
@@ -23,6 +24,10 @@ export const BlockItemAction: FC<Props> = observer((props) => {
   const { page, parentRef } = props;
   // store hooks
   const { getUserDetails } = useMember();
+  // page operations
+  const { pageOperations } = usePageOperations({
+    page,
+  });
   // derived values
   const {
     access,
@@ -30,32 +35,8 @@ export const BlockItemAction: FC<Props> = observer((props) => {
     is_favorite,
     owned_by,
     canCurrentUserFavoritePage,
-    addToFavorites,
-    removePageFromFavorites,
-    getRedirectionLink,
   } = page;
   const ownerDetails = owned_by ? getUserDetails(owned_by) : undefined;
-
-  // handlers
-  const handleFavorites = () => {
-    if (is_favorite) {
-      removePageFromFavorites().then(() =>
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Page removed from favorites.",
-        })
-      );
-    } else {
-      addToFavorites().then(() =>
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Page added to favorites.",
-        })
-      );
-    }
-  };
 
   return (
     <>
@@ -86,14 +67,26 @@ export const BlockItemAction: FC<Props> = observer((props) => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            handleFavorites();
+            pageOperations.toggleFavorite();
           }}
           selected={is_favorite}
         />
       )}
 
       {/* quick actions dropdown */}
-      <PageQuickActions parentRef={parentRef} page={page} pageLink={getRedirectionLink()} />
+      <PageActions
+        optionsOrder={[
+          "toggle-lock",
+          "toggle-access",
+          "open-in-new-tab",
+          "copy-link",
+          "make-a-copy",
+          "archive-restore",
+          "delete",
+        ]}
+        page={page}
+        parentRef={parentRef}
+      />
     </>
   );
 });

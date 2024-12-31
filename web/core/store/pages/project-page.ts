@@ -50,9 +50,14 @@ export class ProjectPage extends BasePage implements TProjectPage {
         if (!workspaceSlug || !projectId || !page.id) throw new Error("Missing required fields.");
         await projectPageService.restore(workspaceSlug, projectId, page.id);
       },
+      duplicate: async () => {
+        if (!workspaceSlug || !projectId || !page.id) throw new Error("Missing required fields.");
+        return await projectPageService.duplicate(workspaceSlug, projectId, page.id);
+      },
     });
     makeObservable(this, {
       // computed
+      canCurrentUserAccessPage: computed,
       canCurrentUserEditPage: computed,
       canCurrentUserDuplicatePage: computed,
       canCurrentUserLockPage: computed,
@@ -60,6 +65,7 @@ export class ProjectPage extends BasePage implements TProjectPage {
       canCurrentUserArchivePage: computed,
       canCurrentUserDeletePage: computed,
       canCurrentUserFavoritePage: computed,
+      canCurrentUserMovePage: computed,
       isContentEditable: computed,
     });
   }
@@ -80,6 +86,14 @@ export class ProjectPage extends BasePage implements TProjectPage {
     });
     return highestRole;
   });
+
+  /**
+   * @description returns true if the current logged in user can access the page
+   */
+  get canCurrentUserAccessPage() {
+    const isPagePublic = this.access === EPageAccess.PUBLIC;
+    return isPagePublic || this.isCurrentUserOwner;
+  }
 
   /**
    * @description returns true if the current logged in user can edit the page
@@ -139,6 +153,14 @@ export class ProjectPage extends BasePage implements TProjectPage {
   get canCurrentUserFavoritePage() {
     const highestRole = this.getHighestRoleAcrossProjects();
     return !!highestRole && highestRole >= EUserPermissions.MEMBER;
+  }
+
+  /**
+   * @description returns true if the current logged in user can move the page
+   */
+  get canCurrentUserMovePage() {
+    const highestRole = this.getHighestRoleAcrossProjects();
+    return this.isCurrentUserOwner || highestRole === EUserPermissions.ADMIN;
   }
 
   /**
