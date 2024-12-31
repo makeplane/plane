@@ -220,11 +220,15 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/quick-links/",
         QuickLinkViewSet.as_view({"get": "list", "post": "create"}),
-        name="workspace-quick-links "
+        name="workspace-quick-links"
     ),
     path(
         "workspaces/<str:slug>/quick-links/<uuid:pk>/", 
-        QuickLinkViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}), 
+        QuickLinkViewSet.as_view({
+            "get": "retrieve", 
+            "patch": "partial_update", 
+            "delete": "destroy"
+        }), 
         name="workspace-quick-links"
     ),
     path(
