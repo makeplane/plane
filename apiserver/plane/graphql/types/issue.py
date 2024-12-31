@@ -77,8 +77,16 @@ class IssuesType:
         return self.state_id
 
     @strawberry.field
-    def parent(self) -> int:
-        return self.parent_id
+    def parent(self) -> Optional[strawberry.ID]:
+        return (
+            self.parent_id
+            if self.parent_id
+            and self.parent.project.id != self.project_id
+            and self.parent.project.project__member.filter(
+                member_id=self.created_by, is_active=True, deleted_at__isnull=True
+            ).exists()
+            else None
+        )
 
     @strawberry.field
     def project(self) -> int:
