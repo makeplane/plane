@@ -58,6 +58,7 @@ export interface ICycleStore {
   getPlotTypeByCycleId: (cycleId: string) => TCyclePlotType;
   getEstimateTypeByCycleId: (cycleId: string) => TCycleEstimateType;
   getIsPointsDataAvailable: (cycleId: string) => boolean;
+  getNextCycleId: (projectId: string) => string | null;
 
   // actions
   updateCycleDistribution: (distributionUpdates: DistributionUpdates, cycleId: string) => void;
@@ -86,6 +87,7 @@ export interface ICycleStore {
     cycleId: string,
     data: Partial<ICycle>
   ) => Promise<ICycle>;
+  updateCycleState: (workspaceSlug: string, projectId: string, cycleId: string, action: ECycleAction) => Promise<void>;
   deleteCycle: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
   // favorites
   addCycleToFavorites: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<any>;
@@ -93,7 +95,6 @@ export interface ICycleStore {
   // archive
   archiveCycle: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
   restoreCycle: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
-  updateCycleState: (workspaceSlug: string, projectId: string, cycleId: string, action: ECycleAction) => Promise<void>;
 }
 
 export class CycleStore implements ICycleStore {
@@ -724,4 +725,7 @@ export class CycleStore implements ICycleStore {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateCycleState = async (workspaceSlug: string, projectId: string, cycleId: string, action: ECycleAction) => {};
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getNextCycleId = computedFn((projectId: string) => "");
 }
