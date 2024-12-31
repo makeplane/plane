@@ -27,6 +27,7 @@ from plane.app.views import (
     WorkspaceFavoriteEndpoint,
     WorkspaceFavoriteGroupEndpoint,
     WorkspaceDraftIssueViewSet,
+    QuickLinkViewSet
 )
 
 
@@ -213,4 +214,16 @@ urlpatterns = [
         WorkspaceDraftIssueViewSet.as_view({"post": "create_draft_to_issue"}),
         name="workspace-drafts-issues",
     ),
+
+    # quick link
+    path(
+        "workspaces/<str:slug>/quick-links/",
+        QuickLinkViewSet.as_view({"get": "list", "post": "create"}),
+        name="workspace-quick-links "
+    ),
+    path(
+        "workspaces/<str:slug>/quick-links/<uuid:pk>/", 
+        QuickLinkViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}), 
+        name="workspace-quick-links"
+    )
 ]
