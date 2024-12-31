@@ -93,7 +93,7 @@ def issue_on_results(issues, group_by, sub_group_by):
         "link_count",
         "is_draft",
         "archived_at",
-        "state__group",
+        "state__group"
     ]
 
     if group_by in FIELD_MAPPER:

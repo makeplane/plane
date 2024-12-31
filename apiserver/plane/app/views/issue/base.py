@@ -617,8 +617,9 @@ class IssueViewSet(BaseViewSet):
             user_id=request.user.id,
             project_id=project_id,
         )
-
+        
         serializer = IssueDetailSerializer(issue, expand=self.expand)
+        print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission(
