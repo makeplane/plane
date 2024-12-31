@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Layers } from "lucide-react";
 // ui
 import { Breadcrumbs, Button, Header } from "@plane/ui";
@@ -12,8 +11,6 @@ import { ViewListHeader } from "@/components/views";
 import { useCommandPalette, useProject } from "@/hooks/store";
 
 export const ProjectViewsHeader = observer(() => {
-  // router
-  const { workspaceSlug } = useParams();
   // store hooks
   const { toggleCreateViewModal } = useCommandPalette();
   const { currentProjectDetails, loader } = useProject();
