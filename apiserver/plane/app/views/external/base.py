@@ -177,7 +177,6 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
         api_key, model, provider = get_llm_config()
         
         if not api_key or not model or not provider:
-
             return Response(
                 {"error": "LLM provider API key and model are required"},
                 status=status.HTTP_400_BAD_REQUEST,
