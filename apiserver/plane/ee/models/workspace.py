@@ -179,3 +179,37 @@ class WorkspaceEntityConnection(BaseModel):
         verbose_name = "Workspace Entity Connection"
         verbose_name_plural = "Workspace Entity Connections"
         db_table = "workspace_entity_connections"
+
+
+class WorkspaceMemberActivityModel(BaseModel):
+    class WorkspaceMemberActivityType(models.TextChoices):
+        JOINED = "JOINED", "JOINED"
+        REMOVED = "REMOVED", "Removed"
+        LEFT = "LEFT", "Left"
+        ROLE_CHANGED = "ROLE_CHANGED", "Role Changed"
+
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="member_activities"
+    )
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="workspace_member_activities",
+    )
+    type = models.CharField(max_length=255, default=WorkspaceMemberActivityType.JOINED)
+    workspace_member = models.ForeignKey(
+        "db.WorkspaceMember", on_delete=models.CASCADE, related_name="activities"
+    )
+    old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
+    new_value = models.TextField(verbose_name="New Value", blank=True, null=True)
+    epoch = models.FloatField(null=True)
+
+    class Meta:
+        verbose_name = "Workspace Member Activity"
+        verbose_name_plural = "Workspace Member Activities"
+        db_table = "workspace_member_activities"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.workspace.name} {self.type}"

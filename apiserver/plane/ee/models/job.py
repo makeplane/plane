@@ -41,7 +41,7 @@ class ImportJob(BaseModel):
         ERROR = "ERROR", "Error"
         CANCELLED = "CANCELLED", "Cancelled"
 
-    type = models.CharField(max_length=20)
+    source = models.CharField(max_length=20)
     config = models.JSONField(default=dict)
     credential = models.ForeignKey(
         "ee.WorkspaceCredential",

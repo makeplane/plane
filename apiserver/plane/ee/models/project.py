@@ -210,3 +210,48 @@ class ProjectCommentReaction(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.comment} {self.actor.email}"
+
+
+class ProjectMemberActivityModel(ProjectBaseModel):
+    class ProjectMemberActivityType(models.TextChoices):
+        # Project
+        PROJECT_JOINED = "PROJECT_JOINED", "Project Joined"
+        PROJECT_LEFT = "PROJECT_LEFT", "Project Left"
+        PROJECT_INVITED = "PROJECT_INVITED", "Project Invited"
+        PROJECT_REMOVED = "PROJECT_REMOVED", "Project Removed"
+
+        # Team
+        TEAM_JOINED = "TEAM_JOINED", "Team Joined"
+        TEAM_LEFT = "TEAM_LEFT", "Team Left"
+        TEAM_INVITED = "TEAM_INVITED", "Team Invited"
+        TEAM_REMOVED = "TEAM_REMOVED", "Team Removed"
+
+        # Role
+        ROLE_UPDATED = "ROLE_UPDATED", "Role Updated"
+
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="project_member_activities",
+    )
+    project_member = models.ForeignKey(
+        "db.ProjectMember",
+        on_delete=models.CASCADE,
+        related_name="activities",
+        null=True,
+    )
+    type = models.CharField(
+        max_length=255, default=ProjectMemberActivityType.PROJECT_JOINED
+    )
+    old_value = models.TextField(blank=True, null=True)
+    new_value = models.TextField(blank=True, null=True)
+    epoch = models.FloatField(null=True)
+
+    class Meta:
+        verbose_name = "Project Member Activity"
+        verbose_name_plural = "Project Member Activities"
+        db_table = "project_member_activities"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.project.name} {self.actor}"
