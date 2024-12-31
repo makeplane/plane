@@ -20,6 +20,8 @@ type TLoader = "init-loader" | "mutation-loader" | undefined;
 
 type TError = { title: string; description: string };
 
+export const ROLE_PERMISSIONS_TO_CREATE_PAGE = [EUserPermissions.ADMIN, EUserPermissions.MEMBER];
+
 export interface IProjectPageStore {
   // observables
   loader: TLoader;
@@ -44,6 +46,7 @@ export interface IProjectPageStore {
   getPageById: (workspaceSlug: string, projectId: string, pageId: string) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (pageId: string) => Promise<void>;
+  movePage: (workspaceSlug: string, projectId: string, pageId: string, newProjectId: string) => Promise<void>;
 }
 
 export class ProjectPageStore implements IProjectPageStore {
@@ -78,6 +81,7 @@ export class ProjectPageStore implements IProjectPageStore {
       getPageById: action,
       createPage: action,
       removePage: action,
+      movePage: action,
     });
     this.rootStore = store;
     // service
@@ -109,7 +113,7 @@ export class ProjectPageStore implements IProjectPageStore {
       workspaceSlug?.toString() || "",
       projectId?.toString() || ""
     );
-    return !!currentUserProjectRole && currentUserProjectRole >= EUserPermissions.MEMBER;
+    return !!currentUserProjectRole && ROLE_PERMISSIONS_TO_CREATE_PAGE.includes(currentUserProjectRole);
   }
 
   /**
@@ -294,4 +298,13 @@ export class ProjectPageStore implements IProjectPageStore {
       throw error;
     }
   };
+
+  /**
+   * @description move a page to a new project
+   * @param {string} workspaceSlug
+   * @param {string} projectId
+   * @param {string} pageId
+   * @param {string} newProjectId
+   */
+  movePage = async (workspaceSlug: string, projectId: string, pageId: string, newProjectId: string) => {};
 }

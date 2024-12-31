@@ -41,7 +41,7 @@ const PageDetailsPage = observer(() => {
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
-  const { id, name, updateDescription } = page;
+  const { canCurrentUserAccessPage, id, name, updateDescription } = page;
   // entity search handler
   const fetchEntityCallback = useCallback(
     async (payload: TSearchEntityRequestPayload) =>
@@ -129,7 +129,7 @@ const PageDetailsPage = observer(() => {
       </div>
     );
 
-  if (pageDetailsError)
+  if (pageDetailsError || !canCurrentUserAccessPage)
     return (
       <div className="h-full w-full flex flex-col items-center justify-center">
         <h3 className="text-lg font-semibold text-center">Page not found</h3>
