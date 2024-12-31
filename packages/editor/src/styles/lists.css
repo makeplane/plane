@@ -10,7 +10,8 @@
       display: grid;
       place-items: center;
 
-      label {
+      label,
+      &::before {
         margin-top: 2px;
       }
     }
@@ -137,11 +138,19 @@
         }
       }
     }
+
+    &[data-list-kind="toggle"] {
+      &:not([data-list-collapsable]) {
+        .list-marker::before {
+          content: "\23f5" !important;
+        }
+      }
+    }
   }
 
   /* select the first item of the editor */
-  > .prosemirror-flat-list:first-child {
-    .list-content {
+  & > .prosemirror-flat-list:first-child {
+    & > .list-content {
       & > *:first-child:not(.prosemirror-flat-list) {
         padding-top: 0 !important;
       }
