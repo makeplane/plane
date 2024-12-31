@@ -13,20 +13,21 @@ import { TPageInstance } from "@/store/pages/base-page";
 type Props = {
   editorReady: boolean;
   editorRef: React.RefObject<EditorRefApi>;
-  handleDuplicatePage: () => void;
   page: TPageInstance;
   setSidePeekVisible: (sidePeekState: boolean) => void;
   sidePeekVisible: boolean;
 };
 
 export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
-  const { editorReady, editorRef, setSidePeekVisible, sidePeekVisible, handleDuplicatePage, page } = props;
+  const { editorReady, editorRef, page, setSidePeekVisible, sidePeekVisible } = props;
   // derived values
   const { isContentEditable } = page;
   // page filters
   const { isFullWidth } = usePageFilters();
+  // derived values
+  const resolvedEditorRef = editorRef.current;
 
-  if (!editorRef.current) return null;
+  if (!resolvedEditorRef) return null;
 
   return (
     <>
@@ -49,13 +50,11 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
           )}
           {editorReady && isContentEditable && editorRef.current && <PageToolbar editorRef={editorRef?.current} />}
         </Header.LeftItem>
-        <PageExtraOptions editorRef={editorRef} handleDuplicatePage={handleDuplicatePage} page={page} />
+        <PageExtraOptions editorRef={resolvedEditorRef} page={page} />
       </Header>
       <div className="md:hidden">
         <PageEditorMobileHeaderRoot
-          editorRef={editorRef}
-          editorReady={editorReady}
-          handleDuplicatePage={handleDuplicatePage}
+          editorRef={resolvedEditorRef}
           page={page}
           sidePeekVisible={sidePeekVisible}
           setSidePeekVisible={setSidePeekVisible}

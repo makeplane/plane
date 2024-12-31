@@ -5,8 +5,6 @@ import { useSearchParams } from "next/navigation";
 import { EditorRefApi } from "@plane/editor";
 // types
 import { TDocumentPayload, TPage, TPageVersion } from "@plane/types";
-// ui
-import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import {
   PageEditorHeaderRoot,
@@ -55,7 +53,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
   // search params
   const searchParams = useSearchParams();
   // derived values
-  const { access, description_html, name, isContentEditable } = page;
+  const { isContentEditable } = page;
   // page fallback
   usePageFallback({
     editorRef,
@@ -65,25 +63,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
   });
   // update query params
   const { updateQueryParams } = useQueryParams();
-
-  const handleDuplicatePage = async () => {
-    const formData: Partial<TPage> = {
-      name: "Copy of " + name,
-      description_html: editorRef.current?.getDocument().html ?? description_html ?? "<p></p>",
-      access,
-    };
-
-    await handlers
-      .create(formData)
-      .then((res) => router.push(handlers.getRedirectionLink(res?.id ?? "")))
-      .catch(() =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Page could not be duplicated. Please try again later.",
-        })
-      );
-  };
 
   const version = searchParams.get("version");
   useEffect(() => {
@@ -124,7 +103,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
       <PageEditorHeaderRoot
         editorReady={editorReady}
         editorRef={editorRef}
-        handleDuplicatePage={handleDuplicatePage}
         page={page}
         setSidePeekVisible={(state) => setSidePeekVisible(state)}
         sidePeekVisible={sidePeekVisible}

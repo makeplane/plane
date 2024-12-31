@@ -21,8 +21,8 @@ export type TBasePage = TPage & {
   update: (pageData: Partial<TPage>) => Promise<Partial<TPage> | undefined>;
   updateTitle: (title: string) => void;
   updateDescription: (document: TDocumentPayload) => Promise<void>;
-  makePublic: () => Promise<void>;
-  makePrivate: () => Promise<void>;
+  makePublic: (shouldSync?: boolean) => Promise<void>;
+  makePrivate: (shouldSync?: boolean) => Promise<void>;
   lock: (shouldSync?: boolean) => Promise<void>;
   unlock: (shouldSync?: boolean) => Promise<void>;
   archive: (shouldSync?: boolean) => Promise<void>;
@@ -30,9 +30,11 @@ export type TBasePage = TPage & {
   updatePageLogo: (logo_props: TLogoProps) => Promise<void>;
   addToFavorites: () => Promise<void>;
   removePageFromFavorites: () => Promise<void>;
+  duplicate: () => Promise<TPage | undefined>;
 };
 
 export type TBasePagePermissions = {
+  canCurrentUserAccessPage: boolean;
   canCurrentUserEditPage: boolean;
   canCurrentUserDuplicatePage: boolean;
   canCurrentUserLockPage: boolean;
@@ -40,6 +42,7 @@ export type TBasePagePermissions = {
   canCurrentUserArchivePage: boolean;
   canCurrentUserDeletePage: boolean;
   canCurrentUserFavoritePage: boolean;
+  canCurrentUserMovePage: boolean;
   isContentEditable: boolean;
 };
 
@@ -53,6 +56,7 @@ export type TBasePageServices = {
     archived_at: string;
   }>;
   restore: () => Promise<void>;
+  duplicate: () => Promise<TPage>;
 };
 
 export type TPageInstance = TBasePage &
@@ -161,6 +165,7 @@ export class BasePage implements TBasePage {
       updatePageLogo: action,
       addToFavorites: action,
       removePageFromFavorites: action,
+      duplicate: action,
     });
 
     this.rootStore = store;
@@ -295,38 +300,46 @@ export class BasePage implements TBasePage {
   /**
    * @description make the page public
    */
-  makePublic = async () => {
+  makePublic = async (shouldSync: boolean = true) => {
     const pageAccess = this.access;
-    runInAction(() => (this.access = EPageAccess.PUBLIC));
+    runInAction(() => {
+      this.access = EPageAccess.PUBLIC;
+    });
 
-    try {
-      await this.services.updateAccess({
-        access: EPageAccess.PUBLIC,
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.access = pageAccess;
-      });
-      throw error;
+    if (shouldSync) {
+      try {
+        await this.services.updateAccess({
+          access: EPageAccess.PUBLIC,
+        });
+      } catch (error) {
+        runInAction(() => {
+          this.access = pageAccess;
+        });
+        throw error;
+      }
     }
   };
 
   /**
    * @description make the page private
    */
-  makePrivate = async () => {
+  makePrivate = async (shouldSync: boolean = true) => {
     const pageAccess = this.access;
-    runInAction(() => (this.access = EPageAccess.PRIVATE));
+    runInAction(() => {
+      this.access = EPageAccess.PRIVATE;
+    });
 
-    try {
-      await this.services.updateAccess({
-        access: EPageAccess.PRIVATE,
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.access = pageAccess;
-      });
-      throw error;
+    if (shouldSync) {
+      try {
+        await this.services.updateAccess({
+          access: EPageAccess.PRIVATE,
+        });
+      } catch (error) {
+        runInAction(() => {
+          this.access = pageAccess;
+        });
+        throw error;
+      }
     }
   };
 
@@ -468,4 +481,9 @@ export class BasePage implements TBasePage {
       throw error;
     });
   };
+
+  /**
+   * @description duplicate the page
+   */
+  duplicate = async () => await this.services.duplicate();
 }
