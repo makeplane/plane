@@ -24,9 +24,25 @@ class Sticky(BaseModel):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="stickies"
     )
+    sort_order = models.FloatField(default=65535)
 
     class Meta:
         verbose_name = "Sticky"
         verbose_name_plural = "Stickies"
         db_table = "stickies"
         ordering = ("-created_at",)
+
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            # Get the maximum sequence value from the database
+            last_id = Sticky.objects.filter(workspace=self.workspace).aggregate(
+                largest=models.Max("sort_order")
+            )["largest"]
+            # if last_id is not None
+            if last_id is not None:
+                self.sort_order = last_id + 10000
+
+        super(Sticky, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return str(self.name)

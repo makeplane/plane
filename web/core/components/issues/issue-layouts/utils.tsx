@@ -11,6 +11,7 @@ import uniq from "lodash/uniq";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { ContrastIcon } from "lucide-react";
 // plane types
+import { EIssuesStoreType } from "@plane/constants";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -30,7 +31,7 @@ import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "
 // components
 import { Logo } from "@/components/common";
 // constants
-import { ISSUE_PRIORITIES, EIssuesStoreType } from "@/constants/issue";
+import { ISSUE_PRIORITIES } from "@/constants/issue";
 import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
@@ -67,6 +68,7 @@ type TGetGroupByColumns = {
   groupBy: GroupByColumnTypes | null;
   includeNone: boolean;
   isWorkspaceLevel: boolean;
+  isEpic?: boolean;
 };
 
 // NOTE: Type of groupBy is different compared to what's being passed from the components.
@@ -76,13 +78,14 @@ export const getGroupByColumns = ({
   groupBy,
   includeNone,
   isWorkspaceLevel,
+  isEpic = false,
 }: TGetGroupByColumns): IGroupByColumn[] | undefined => {
   // If no groupBy is specified and includeNone is true, return "All Issues" group
   if (!groupBy && includeNone) {
     return [
       {
         id: "All Issues",
-        name: "All Issues",
+        name: isEpic ? "All Epics" : "All Issues",
         payload: {},
         icon: undefined,
       },

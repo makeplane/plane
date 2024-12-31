@@ -13,6 +13,8 @@ import {
   IWorkspaceView,
   TIssuesResponse,
   TLink,
+  TSearchResponse,
+  TSearchEntityRequestPayload,
 } from "@plane/types";
 import { APIService } from "@/services/api.service";
 // helpers
@@ -311,6 +313,18 @@ export class WorkspaceService extends APIService {
 
   async deleteWorkspaceLink(workspaceSlug: string, projectId: string, linkId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/links/${linkId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+  async searchEntity(workspaceSlug: string, params: TSearchEntityRequestPayload): Promise<TSearchResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/entity-search/`, {
+      params: {
+        ...params,
+        query_type: params.query_type.join(","),
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

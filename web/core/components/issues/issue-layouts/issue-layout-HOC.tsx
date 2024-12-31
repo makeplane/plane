@@ -1,4 +1,6 @@
 import { observer } from "mobx-react";
+// plane constants
+import { EIssueLayoutTypes } from "@plane/constants";
 import {
   CalendarLayoutLoader,
   GanttLayoutLoader,
@@ -6,7 +8,6 @@ import {
   ListLayoutLoader,
   SpreadsheetLayoutLoader,
 } from "@/components/ui";
-import { EIssueLayoutTypes } from "@/constants/issue";
 import { useIssues } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { IssueLayoutEmptyState } from "./empty-states";

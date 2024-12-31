@@ -1,7 +1,7 @@
 from django.urls import path
 
 
-from plane.app.views import GlobalSearchEndpoint, IssueSearchEndpoint
+from plane.app.views import GlobalSearchEndpoint, IssueSearchEndpoint, SearchEndpoint
 
 
 urlpatterns = [
@@ -14,5 +14,10 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/search-issues/",
         IssueSearchEndpoint.as_view(),
         name="project-issue-search",
+    ),
+    path(
+        "workspaces/<str:slug>/entity-search/",
+        SearchEndpoint.as_view(),
+        name="entity-search",
     ),
 ]

@@ -1,5 +1,3 @@
-import { EIssueLayoutTypes } from "constants/issue";
-
 export type TIssueLayouts =
   | "list"
   | "kanban"
@@ -110,7 +108,7 @@ export interface IIssueDisplayFilterOptions {
   };
   group_by?: TIssueGroupByOptions;
   sub_group_by?: TIssueGroupByOptions;
-  layout?: EIssueLayoutTypes;
+  layout?: any; // TODO: Need to fix this and set it to enum EIssueLayoutTypes
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
   sub_issue?: boolean;

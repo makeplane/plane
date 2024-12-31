@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { Pencil, Trash2, LinkIcon, ExternalLink } from "lucide-react";
+import { Pencil, Trash2, LinkIcon, Copy } from "lucide-react";
 import { EIssueServiceType } from "@plane/constants";
 import { TIssueServiceType } from "@plane/types";
 // ui
@@ -48,33 +48,33 @@ export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
         <div className="flex items-center gap-2.5 truncate flex-grow">
           <LinkIcon className="size-4 flex-shrink-0 text-custom-text-400 group-hover:text-custom-text-200" />
           <Tooltip tooltipContent={linkDetail.url} isMobile={isMobile}>
-            <span
+            <a
+              href={linkDetail.url}
+              target="_blank"
+              rel="noopener noreferrer"
               className="truncate text-sm cursor-pointer flex-grow"
-              onClick={() => {
-                copyTextToClipboard(linkDetail.url);
-                setToast({
-                  type: TOAST_TYPE.SUCCESS,
-                  title: "Link copied!",
-                  message: "Link copied to clipboard",
-                });
-              }}
             >
               {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
-            </span>
+            </a>
           </Tooltip>
         </div>
         <div className="flex items-center gap-1 flex-shrink-0">
           <p className="p-1 text-xs align-bottom leading-5 text-custom-text-400 group-hover-text-custom-text-200">
             {calculateTimeAgoShort(linkDetail.created_at)}
           </p>
-          <a
-            href={linkDetail.url}
-            target="_blank"
-            rel="noopener noreferrer"
+          <span
+            onClick={() => {
+              copyTextToClipboard(linkDetail.url);
+              setToast({
+                type: TOAST_TYPE.SUCCESS,
+                title: "Link copied!",
+                message: "Link copied to clipboard",
+              });
+            }}
             className="relative grid place-items-center rounded p-1 text-custom-text-400 outline-none group-hover:text-custom-text-200 cursor-pointer hover:bg-custom-background-80"
           >
-            <ExternalLink className="h-3.5 w-3.5 stroke-[1.5]" />
-          </a>
+            <Copy className="h-3.5 w-3.5 stroke-[1.5]" />
+          </span>
           <CustomMenu
             ellipsis
             buttonClassName="text-custom-text-400 group-hover:text-custom-text-200"

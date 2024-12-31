@@ -44,6 +44,30 @@ module.exports = {
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-useless-empty-export": "error",
     "@typescript-eslint/prefer-ts-expect-error": "warn",
+    "import/order": [
+      "warn",
+      {
+        groups: ["builtin", "external", "internal", "parent", "sibling"],
+        pathGroups: [
+          {
+            pattern: "@plane/**",
+            group: "external",
+            position: "after",
+          },
+          {
+            pattern: "@/**",
+            group: "internal",
+            position: "before",
+          },
+        ],
+        pathGroupsExcludedImportTypes: ["builtin", "internal", "react"],
+        alphabetize: {
+          order: "asc",
+          caseInsensitive: true,
+        },
+      },
+    ],
   },
+
   ignorePatterns: [".*.js", "node_modules/", "dist/"],
 };

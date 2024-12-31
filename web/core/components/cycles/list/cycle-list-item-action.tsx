@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, MouseEvent, useEffect } from "react";
+import React, { FC, MouseEvent, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -8,7 +8,16 @@ import { Eye, Users } from "lucide-react";
 // types
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
-import { Avatar, AvatarGroup, FavoriteStar, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
+import {
+  Avatar,
+  AvatarGroup,
+  FavoriteStar,
+  LayersIcon,
+  TOAST_TYPE,
+  Tooltip,
+  setPromiseToast,
+  setToast,
+} from "@plane/ui";
 // components
 import { CycleQuickActions } from "@/components/cycles";
 import { DateRangeDropdown } from "@/components/dropdowns";
@@ -66,6 +75,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
 
   // derived values
   const cycleStatus = cycleDetails.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
+  const showIssueCount = useMemo(() => cycleStatus === "draft" || cycleStatus === "upcoming", [cycleStatus]);
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT,
@@ -215,6 +225,13 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
         <Eye className="h-4 w-4 my-auto  text-custom-primary-200" />
         <span>More details</span>
       </button>
+
+      {showIssueCount && (
+        <div className="flex items-center gap-1">
+          <LayersIcon className="h-4 w-4 text-custom-text-300" />
+          <span className="text-xs text-custom-text-300">{cycleDetails.total_issues}</span>
+        </div>
+      )}
 
       {!isActive && (
         <Controller

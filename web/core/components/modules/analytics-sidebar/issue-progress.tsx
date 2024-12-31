@@ -6,13 +6,13 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { AlertCircle, ChevronUp, ChevronDown } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 import { IIssueFilterOptions, TModulePlotType } from "@plane/types";
 import { CustomSelect, Spinner } from "@plane/ui";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
 import { ModuleProgressStats } from "@/components/modules";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { getDate } from "@/helpers/date-time.helper";
 // hooks

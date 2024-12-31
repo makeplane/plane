@@ -12,8 +12,9 @@ import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane constants
+import { EIssueLayoutTypes, ALL_ISSUES, EIssueServiceType } from "@plane/constants";
 // types
-import { ALL_ISSUES } from "@plane/constants";
 import {
   TIssue,
   TIssueGroupByOptions,
@@ -32,7 +33,7 @@ import {
 // components
 import { IBlockUpdateDependencyData } from "@/components/gantt-chart";
 // constants
-import { EIssueLayoutTypes, ISSUE_PRIORITIES } from "@/constants/issue";
+import { ISSUE_PRIORITIES } from "@/constants/issue";
 // helpers
 import { convertToISODateString } from "@/helpers/date-time.helper";
 // local-db
@@ -202,7 +203,12 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   // API Abort controller
   controller: AbortController;
 
-  constructor(_rootStore: IIssueRootStore, issueFilterStore: IBaseIssueFilterStore, isArchived = false) {
+  constructor(
+    _rootStore: IIssueRootStore,
+    issueFilterStore: IBaseIssueFilterStore,
+    isArchived = false,
+    serviceType = EIssueServiceType.ISSUES
+  ) {
     makeObservable(this, {
       // observable
       loader: observable,
@@ -256,7 +262,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     this.isArchived = isArchived;
 
-    this.issueService = new IssueService();
+    this.issueService = new IssueService(serviceType);
     this.issueArchiveService = new IssueArchiveService();
     this.issueDraftService = new IssueDraftService();
     this.moduleService = new ModuleService();
@@ -291,6 +297,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // Temporary code to fix no load order by
     if (
       this.rootIssueStore.rootStore.user.localDBEnabled &&
+      this.rootIssueStore.rootStore.router.projectId &&
       layout !== EIssueLayoutTypes.SPREADSHEET &&
       orderBy &&
       Object.keys(SPECIAL_ORDER_BY).includes(orderBy)
@@ -665,6 +672,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const issueBeforeRemoval = clone(this.rootIssueStore.issues.getIssueById(issueId));
     // update parent stats optimistically
     this.updateParentStats(issueBeforeRemoval, undefined);
+
     // Male API call
     await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
     // Remove from Respective issue Id list

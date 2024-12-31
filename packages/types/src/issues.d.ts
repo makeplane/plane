@@ -10,6 +10,12 @@ import type {
   Properties,
   IIssueDisplayFilterOptions,
   TIssue,
+  IIssueFilterOptions,
+  IIssueDisplayProperties,
+  TIssueGroupByOptions,
+  TIssueOrderByOptions,
+  TIssueGroupingFilters,
+  TIssueExtraOptions
 } from "@plane/types";
 
 export interface IIssueCycle {
@@ -234,4 +240,19 @@ export interface IIssueListRow {
   name?: string;
   icon?: ReactElement | undefined;
   payload?: Partial<TIssue>;
+}
+
+export interface ILayoutDisplayFiltersOptions {
+  filters: (keyof IIssueFilterOptions)[];
+  display_properties: (keyof IIssueDisplayProperties)[];
+  display_filters: {
+    group_by?: TIssueGroupByOptions[];
+    sub_group_by?: TIssueGroupByOptions[];
+    order_by?: TIssueOrderByOptions[];
+    type?: TIssueGroupingFilters[];
+  };
+  extra_options: {
+    access: boolean;
+    values: TIssueExtraOptions[];
+  };
 }

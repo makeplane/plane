@@ -3,6 +3,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
+import { EIssueServiceType } from "@plane/constants";
 import { TIssue, TIssueServiceType } from "@plane/types";
 // ui
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
@@ -50,14 +51,14 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     disabled,
     handleIssueCrudState,
     subIssueOperations,
+    issueServiceType = EIssueServiceType.ISSUES,
   } = props;
 
   const {
     issue: { getIssueById },
     subIssues: { subIssueHelpersByIssueId, setSubIssueHelpers },
-    toggleCreateIssueModal,
-    toggleDeleteIssueModal,
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
+  const { toggleCreateIssueModal, toggleDeleteIssueModal } = useIssueDetail(issueServiceType);
   const project = useProject();
   const { getProjectStates } = useProjectState();
   const { handleRedirection } = useIssuePeekOverviewRedirection();
@@ -164,6 +165,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                 issueId={issueId}
                 disabled={disabled}
                 subIssueOperations={subIssueOperations}
+                issueServiceType={issueServiceType}
               />
             </div>
 
@@ -209,7 +211,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                   >
                     <div className="flex items-center gap-2">
                       <X className="h-3.5 w-3.5" strokeWidth={2} />
-                      <span>Remove parent issue</span>
+                      <span>{`Remove ${issueServiceType === EIssueServiceType.ISSUES ? "parent" : ""} issue`}</span>
                     </div>
                   </CustomMenu.MenuItem>
                 )}

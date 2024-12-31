@@ -3,13 +3,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // constants
-import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
+import { WEB_BASE_URL, ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 // types
 import { IWorkspace } from "@plane/types";
 // components
 import { Button, CustomSelect, getButtonStyling, Input, setToast, TOAST_TYPE } from "@plane/ui";
-// helpers
-import { WEB_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 // services

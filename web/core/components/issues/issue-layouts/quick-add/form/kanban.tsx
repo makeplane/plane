@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { TQuickAddIssueForm } from "../root";
 
 export const KanbanQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) => {
-  const { ref, projectDetail, register, onSubmit } = props;
+  const { ref, projectDetail, register, onSubmit, isEpic } = props;
 
   return (
     <div className="m-1 overflow-hidden rounded shadow-custom-shadow-sm">
@@ -12,7 +12,7 @@ export const KanbanQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) 
           <h4 className="text-xs font-medium leading-5 text-custom-text-300">{projectDetail?.identifier ?? "..."}</h4>
           <input
             autoComplete="off"
-            placeholder="Issue Title"
+            placeholder={isEpic ? "Epic Title" : "Issue Title"}
             {...register("name", {
               required: "Issue title is required.",
             })}
@@ -20,7 +20,7 @@ export const KanbanQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) 
           />
         </div>
       </form>
-      <div className="px-3 py-2 text-xs italic text-custom-text-200">{`Press 'Enter' to add another issue`}</div>
+      <div className="px-3 py-2 text-xs italic text-custom-text-200">{`Press 'Enter' to add another ${isEpic ? "epic" : "issue"}`}</div>
     </div>
   );
 });

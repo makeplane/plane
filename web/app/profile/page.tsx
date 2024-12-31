@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ChevronDown, CircleUserRound } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import type { IUser } from "@plane/types";
+import type { IUser, TUserProfile } from "@plane/types";
 import {
   Button,
   CustomSelect,
@@ -20,14 +20,14 @@ import {
 import { DeactivateAccountModal } from "@/components/account";
 import { LogoSpinner } from "@/components/common";
 import { ImagePickerPopover, UserImageUploadModal, PageHead } from "@/components/core";
+import { TimezoneSelect } from "@/components/global";
 import { ProfileSettingContentWrapper } from "@/components/profile";
 // constants
-import { TIME_ZONES, TTimezone } from "@/constants/timezones";
 import { USER_ROLES } from "@/constants/workspace";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser, useUserProfile } from "@/hooks/store";
 
 const defaultValues: Partial<IUser> = {
   avatar_url: "",
@@ -59,29 +59,34 @@ const ProfileSettingsPage = observer(() => {
   const userCover = watch("cover_image_url");
   // store hooks
   const { data: currentUser, updateCurrentUser } = useUser();
+  const { updateUserProfile, data: currentUserProfile } = useUserProfile();
 
   useEffect(() => {
-    reset({ ...defaultValues, ...currentUser });
-  }, [currentUser, reset]);
+    reset({ ...defaultValues, ...currentUser, ...currentUserProfile });
+  }, [currentUser, currentUserProfile, reset]);
 
   const onSubmit = async (formData: IUser) => {
     setIsLoading(true);
-    const payload: Partial<IUser> = {
+    const userPayload: Partial<IUser> = {
       first_name: formData.first_name,
       last_name: formData.last_name,
       avatar_url: formData.avatar_url,
-      role: formData.role,
       display_name: formData?.display_name,
       user_timezone: formData.user_timezone,
     };
+    const userProfilePayload: Partial<TUserProfile> = {
+      role: formData.role ?? undefined,
+    };
     // if unsplash or a pre-defined image is uploaded, delete the old uploaded asset
     if (formData.cover_image_url?.startsWith("http")) {
-      payload.cover_image = formData.cover_image_url;
-      payload.cover_image_asset = null;
+      userPayload.cover_image = formData.cover_image_url;
+      userPayload.cover_image_asset = null;
     }
 
-    const updateCurrentUserDetail = updateCurrentUser(payload).finally(() => setIsLoading(false));
-    setPromiseToast(updateCurrentUserDetail, {
+    const updateUser = Promise.all([updateCurrentUser(userPayload), updateUserProfile(userProfilePayload)]).finally(
+      () => setIsLoading(false)
+    );
+    setPromiseToast(updateUser, {
       loading: "Updating...",
       success: {
         title: "Success!",
@@ -119,22 +124,6 @@ const ProfileSettingsPage = observer(() => {
         setIsImageUploadModalOpen(false);
       });
   };
-
-  const getTimeZoneLabel = (timezone: TTimezone | undefined) => {
-    if (!timezone) return undefined;
-    return (
-      <div className="flex gap-1.5">
-        <span className="text-custom-text-400">{timezone.gmtOffset}</span>
-        <span className="text-custom-text-200">{timezone.name}</span>
-      </div>
-    );
-  };
-
-  const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
-    value: timeZone.value,
-    query: timeZone.name + " " + timeZone.gmtOffset + " " + timeZone.value,
-    content: getTimeZoneLabel(timeZone),
-  }));
 
   if (!currentUser)
     return (
@@ -379,19 +368,12 @@ const ProfileSettingsPage = observer(() => {
                     control={control}
                     rules={{ required: "Please select a timezone" }}
                     render={({ field: { value, onChange } }) => (
-                      <CustomSearchSelect
+                      <TimezoneSelect
                         value={value}
-                        label={
-                          value
-                            ? (getTimeZoneLabel(TIME_ZONES.find((t) => t.value === value)) ?? value)
-                            : "Select a timezone"
-                        }
-                        options={timeZoneOptions}
-                        onChange={onChange}
-                        buttonClassName={errors.user_timezone ? "border-red-500" : ""}
-                        className="rounded-md border-[0.5px] !border-custom-border-200"
-                        optionsClassName="w-72"
-                        input
+                        onChange={(value: string) => {
+                          onChange(value);
+                        }}
+                        error={Boolean(errors.user_timezone)}
                       />
                     )}
                   />
