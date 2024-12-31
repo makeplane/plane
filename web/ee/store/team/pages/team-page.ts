@@ -52,9 +52,13 @@ export class TeamPage extends BasePage implements TTeamPage {
         if (!workspaceSlug || !teamId || !page.id) throw new Error("Missing required fields.");
         await teamPageService.restore(workspaceSlug, teamId, page.id);
       },
+      duplicate: async () => {
+        throw new Error("Duplicate not implemented for team page");
+      },
     });
     makeObservable(this, {
       // computed
+      canCurrentUserAccessPage: computed,
       canCurrentUserEditPage: computed,
       canCurrentUserDuplicatePage: computed,
       canCurrentUserLockPage: computed,
@@ -62,6 +66,7 @@ export class TeamPage extends BasePage implements TTeamPage {
       canCurrentUserArchivePage: computed,
       canCurrentUserDeletePage: computed,
       canCurrentUserFavoritePage: computed,
+      canCurrentUserMovePage: computed,
       isContentEditable: computed,
     });
   }
@@ -73,6 +78,14 @@ export class TeamPage extends BasePage implements TTeamPage {
       this.rootStore.user.permission.workspaceInfoBySlug(workspaceSlug)?.role;
     return userRole;
   });
+
+  /**
+   * @description returns true if the current logged in user can access the page
+   */
+  get canCurrentUserAccessPage() {
+    const isPagePublic = this.access === EPageAccess.PUBLIC;
+    return isPagePublic || this.isCurrentUserOwner;
+  }
 
   /**
    * @description returns true if the current logged in user can edit the page
@@ -131,6 +144,13 @@ export class TeamPage extends BasePage implements TTeamPage {
   get canCurrentUserFavoritePage() {
     const userRole = this.getUserWorkspaceRole();
     return !!userRole && userRole >= EUserPermissions.MEMBER;
+  }
+
+  /**
+   * @description returns true if the current logged in user can move the page
+   */
+  get canCurrentUserMovePage() {
+    return false;
   }
 
   /**

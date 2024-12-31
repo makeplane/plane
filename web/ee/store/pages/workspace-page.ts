@@ -50,9 +50,13 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
         if (!workspaceSlug || !page.id) throw new Error("Missing required fields.");
         await workspacePageService.restore(workspaceSlug, page.id);
       },
+      duplicate: async () => {
+        throw new Error("Duplicate not implemented for workspace page");
+      },
     });
     makeObservable(this, {
       // computed
+      canCurrentUserAccessPage: computed,
       canCurrentUserEditPage: computed,
       canCurrentUserDuplicatePage: computed,
       canCurrentUserLockPage: computed,
@@ -60,8 +64,17 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
       canCurrentUserArchivePage: computed,
       canCurrentUserDeletePage: computed,
       canCurrentUserFavoritePage: computed,
+      canCurrentUserMovePage: computed,
       isContentEditable: computed,
     });
+  }
+
+  /**
+   * @description returns true if the current logged in user can access the page
+   */
+  get canCurrentUserAccessPage() {
+    const isPagePublic = this.access === EPageAccess.PUBLIC;
+    return isPagePublic || this.isCurrentUserOwner;
   }
 
   /**
@@ -138,6 +151,13 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
     )?.role;
 
     return !!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserPermissions.MEMBER;
+  }
+
+  /**
+   * @description returns true if the current logged in user can move the page
+   */
+  get canCurrentUserMovePage() {
+    return false;
   }
 
   /**
