@@ -67,6 +67,7 @@ import {
 import { IPiChatStore, PiChatStore } from "./pi-chat/pi-chat";
 // timeline
 import { IProjectStore, ProjectStore } from "./projects/projects";
+import { IStickyStore, StickyStore } from "./sticky/sticky.store";
 import { ITimelineStore } from "./timeline";
 
 export class RootStore extends CoreRootStore {
@@ -100,6 +101,7 @@ export class RootStore extends CoreRootStore {
   gitlabIntegration: IGitlabStore;
   initiativeFilterStore: IInitiativeFilterStore;
   initiativeStore: IInitiativeStore;
+  stickyStore: IStickyStore;
 
   constructor() {
     super();
@@ -121,6 +123,7 @@ export class RootStore extends CoreRootStore {
     this.projectDetails = new ProjectStore(this);
     this.teamRoot = new TeamRootStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
+    this.stickyStore = new StickyStore();
     // importers
     this.jiraImporter = new JiraStore(this);
     this.jiraServerImporter = new JiraServerStore(this);
@@ -154,6 +157,7 @@ export class RootStore extends CoreRootStore {
     this.timelineStore = new TimeLineStore(this);
     this.projectDetails = new ProjectStore(this);
     this.teamRoot = new TeamRootStore(this);
+    this.stickyStore = new StickyStore();
     // importers
     this.jiraImporter = new JiraStore(this);
     this.jiraServerImporter = new JiraServerStore(this);

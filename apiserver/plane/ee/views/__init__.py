@@ -46,6 +46,7 @@ from plane.ee.views.app.workspace import (
     WorkspaceProjectStatesEndpoint,
     WorkspaceProjectStatesDefaultEndpoint,
     WorkspaceInviteCheckEndpoint,
+    WorkspaceStickyViewSet,
 )
 from plane.ee.views.app.webhook import InternalWebhookEndpoint
 from plane.ee.views.app.project import ProjectFeatureEndpoint

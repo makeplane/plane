@@ -8,3 +8,5 @@ from .project_state import (
 )
 
 from .invite import WorkspaceInviteCheckEndpoint
+
+from .sticky import WorkspaceStickyViewSet

@@ -24,10 +24,10 @@ export const FloatingBot = () => {
 
   return (
     <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="PI_CHAT" fallback={<></>}>
-      <div ref={ref} id="floating-bot">
+      <div ref={ref} id="floating-bot" className="m-auto">
         {" "}
         <button
-          className={cn("absolute bottom-4 right-4 bg-gradient-to-br rounded-full w-[40px] h-[40px] shadow-md z-[20]", {
+          className={cn("bg-gradient-to-br rounded-full w-[40px] h-[40px] shadow-md z-[20]", {
             "from-pi-500 to-pi-700": !isOpen,
             "from-pi-200 to-pi-400": isOpen,
           })}
@@ -43,7 +43,7 @@ export const FloatingBot = () => {
         </button>
         <div
           className={cn(
-            "absolute bottom-16 right-4 z-[20]",
+            "absolute bottom-16 right-0 z-[20]",
             "transform transition-all duration-300 ease-in-out",
             isOpen ? "translate-y-[0%] h-[690px]" : "translate-y-[100%] h-0"
           )}

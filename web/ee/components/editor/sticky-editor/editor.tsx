@@ -4,21 +4,17 @@ import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
 import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
 // components
-import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
+import { TSticky } from "@plane/types";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
-import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
-import { useEditorMention } from "@/hooks/use-editor-mention";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
-// plane web services
-import { WorkspaceService } from "@/plane-web/services";
-const workspaceService = new WorkspaceService();
+import { Toolbar } from "./toolbar";
 
-interface LiteTextEditorWrapperProps
+interface StickyEditorWrapperProps
   extends Omit<ILiteTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
   workspaceId: string;
@@ -32,19 +28,18 @@ interface LiteTextEditorWrapperProps
   showToolbar?: boolean;
   uploadFile: (file: File) => Promise<string>;
   parentClassName?: string;
+  handleColorChange: (data: Partial<TSticky>) => Promise<void>;
+  handleDelete: () => Promise<void>;
 }
 
-export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
+export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperProps>((props, ref) => {
   const {
     containerClassName,
     workspaceSlug,
     workspaceId,
     projectId,
-    accessSpecifier,
-    handleAccessChange,
-    showAccessSpecifier = false,
-    showSubmitButton = true,
-    isSubmitting = false,
+    handleDelete,
+    handleColorChange,
     showToolbarInitially = true,
     showToolbar = true,
     parentClassName = "",
@@ -56,21 +51,12 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   const [isFocused, setIsFocused] = useState(showToolbarInitially);
   // editor flaggings
   const { liteTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
-  // use editor mention
-  const { fetchMentions } = useEditorMention({
-    searchEntity: async (payload) =>
-      await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
-        ...payload,
-        project_id: projectId?.toString() ?? "",
-      }),
-  });
   // file size
   const { maxFileSize } = useFileSize();
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
     return !!ref && typeof ref === "object" && "current" in ref;
   }
   // derived values
-  const isEmpty = isCommentEmpty(props.initialValue);
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
 
   return (
@@ -90,46 +76,34 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           workspaceSlug,
         })}
         mentionHandler={{
-          searchCallback: async (query) => {
-            const res = await fetchMentions(query);
-            if (!res) throw new Error("Failed in fetching mentions");
-            return res;
-          },
-          renderComponent: (props) => <EditorMentionsRoot {...props} />,
+          renderComponent: () => <></>,
         }}
         placeholder={placeholder}
         containerClassName={cn(containerClassName, "relative")}
         {...rest}
       />
-      {showToolbar && (
-        <div
-          className={cn(
-            "transition-all duration-300 ease-out origin-top overflow-hidden",
-            isFocused ? "max-h-[200px] opacity-100 scale-y-100 mt-3" : "max-h-0 opacity-0 scale-y-0 invisible"
-          )}
-        >
-          <IssueCommentToolbar
-            accessSpecifier={accessSpecifier}
-            executeCommand={(item) => {
-              // TODO: update this while toolbar homogenization
-              // @ts-expect-error type mismatch here
-              editorRef?.executeMenuItemCommand({
-                itemKey: item.itemKey,
-                ...item.extraProps,
-              });
-            }}
-            handleAccessChange={handleAccessChange}
-            handleSubmit={(e) => rest.onEnterKeyPress?.(e)}
-            isCommentEmpty={isEmpty}
-            isSubmitting={isSubmitting}
-            showAccessSpecifier={showAccessSpecifier}
-            editorRef={editorRef}
-            showSubmitButton={showSubmitButton}
-          />
-        </div>
-      )}
+      <div
+        className={cn(
+          "transition-all duration-300 ease-out origin-top",
+          isFocused ? "max-h-[200px] opacity-100 scale-y-100 mt-3" : "max-h-0 opacity-0 scale-y-0 invisible"
+        )}
+      >
+        <Toolbar
+          executeCommand={(item) => {
+            // TODO: update this while toolbar homogenization
+            // @ts-expect-error type mismatch here
+            editorRef?.executeMenuItemCommand({
+              itemKey: item.itemKey,
+              ...item.extraProps,
+            });
+          }}
+          handleDelete={handleDelete}
+          handleColorChange={handleColorChange}
+          editorRef={editorRef}
+        />
+      </div>
     </div>
   );
 });
 
-LiteTextEditor.displayName = "LiteTextEditor";
+StickyEditor.displayName = "StickyEditor";

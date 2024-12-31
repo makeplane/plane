@@ -24,6 +24,7 @@ from .app.exporter import ExporterHistorySerializer
 
 from .app.workspace.feature import WorkspaceFeatureSerializer
 from .app.workspace.project_state import ProjectStateSerializer
+from .app.workspace.sticky import StickySerializer
 from .app.project import (
     ProjectLinkSerializer,
     ProjectAttachmentSerializer,
@@ -43,6 +44,7 @@ from .app.initiative import (
     InitiativeReactionSerializer,
     InitiativeActivitySerializer,
 )
+
 
 from .app.team import (
     TeamSpaceSerializer,
