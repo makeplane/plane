@@ -45,7 +45,7 @@ export const SelectPlaneProjectRoot: FC = observer(() => {
     workspaceSlug &&
     ((projectIdsByWorkspaceSlug(workspaceSlug) || [])
       .map((id) => getProjectById(id))
-      .filter((project) => project != undefined) as IProject[]);
+      .filter((project) => project != undefined && project.is_member) as IProject[]);
   const isNextButtonDisabled = !formData.projectId;
   // handlers
   const handleFormData = (value: string | undefined) => {

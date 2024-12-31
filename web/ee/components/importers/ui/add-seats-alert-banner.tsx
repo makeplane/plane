@@ -15,8 +15,7 @@ type Props = {
 export const AddSeatsAlertBanner: React.FC<Props> = observer((props: Props) => {
   const { additionalUserCount = 15, extraSeatRequired } = props;
   const [updateWorkspaceSeatsModal, setUpdateWorkspaceSeatsModal] = useState(false);
-  const currentWorkspaceSubscriptionAvailableSeats = 12;
-  const { togglePaidPlanModal, currentWorkspaceSubscribedPlanDetail: subscribedPlan } = useWorkspaceSubscription();
+  const { togglePaidPlanModal, currentWorkspaceSubscribedPlanDetail: subscribedPlan, currentWorkspaceSubscriptionAvailableSeats } = useWorkspaceSubscription();
   const isFreePlan = subscribedPlan?.product == "FREE";
 
   const toggleUpdateWorkspaceSeatsModal = (flag: boolean) => {
