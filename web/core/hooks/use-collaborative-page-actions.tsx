@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-// plane editor
-import { EditorReadOnlyRefApi, EditorRefApi, TDocumentEventsServer } from "@plane/editor";
+import { EditorRefApi, TDocumentEventsServer } from "@plane/editor";
 import { DocumentCollaborativeEvents, TDocumentEventsClient, getServerEventName } from "@plane/editor/lib";
 // plane ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
@@ -17,10 +16,13 @@ type CollaborativeActionEvent =
   | { type: "sendMessageToServer"; message: TDocumentEventsServer }
   | { type: "receivedMessageFromServer"; message: TDocumentEventsClient };
 
-export const useCollaborativePageActions = (
-  editorRef: EditorRefApi | EditorReadOnlyRefApi | null,
-  page: TPageInstance
-) => {
+type Props = {
+  editorRef?: EditorRefApi | null;
+  page: TPageInstance;
+};
+
+export const useCollaborativePageActions = (props: Props) => {
+  const { editorRef, page } = props;
   // currentUserAction local state to track if the current action is being processed, a
   // local action is basically the action performed by the current user to avoid double operations
   const [currentActionBeingProcessed, setCurrentActionBeingProcessed] = useState<TDocumentEventsClient | null>(null);
@@ -42,6 +44,14 @@ export const useCollaborativePageActions = (
       [DocumentCollaborativeEvents.unarchive.client]: {
         execute: (shouldSync) => page.restore(shouldSync),
         errorMessage: "Page could not be restored. Please try again later.",
+      },
+      [DocumentCollaborativeEvents["make-public"].client]: {
+        execute: (shouldSync) => page.makePublic(shouldSync),
+        errorMessage: "Page could not be made public. Please try again later.",
+      },
+      [DocumentCollaborativeEvents["make-private"].client]: {
+        execute: (shouldSync) => page.makePrivate(shouldSync),
+        errorMessage: "Page could not be made private. Please try again later.",
       },
     }),
     [page]
@@ -75,7 +85,6 @@ export const useCollaborativePageActions = (
 
   useEffect(() => {
     const realTimeStatelessMessageListener = editorRef?.listenToRealTimeUpdate();
-
     const handleStatelessMessage = (message: { payload: TDocumentEventsClient }) => {
       if (currentActionBeingProcessed === message.payload) {
         setCurrentActionBeingProcessed(null);
