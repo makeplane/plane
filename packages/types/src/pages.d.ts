@@ -1,5 +1,6 @@
 import { TLogoProps } from "./common";
 import { EPageAccess } from "./enums";
+import { TIssuePriorities } from "./issues";
 
 export type TPage = {
   access: EPageAccess | undefined;

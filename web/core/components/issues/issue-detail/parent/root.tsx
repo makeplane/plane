@@ -2,6 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { useRouter } from "next/navigation";
 import { MinusCircle } from "lucide-react";
 import { TIssue } from "@plane/types";
 // component
@@ -13,6 +14,7 @@ import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-red
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
+import { useIssueTypes } from "@/plane-web/hooks/store";
 // types
 import { TIssueOperations } from "../root";
 import { IssueParentSiblings } from "./siblings";
@@ -27,13 +29,18 @@ export type TIssueParentDetail = {
 
 export const IssueParentDetail: FC<TIssueParentDetail> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issue, issueOperations } = props;
+  // router
+  const router = useRouter();
   // hooks
   const { issueMap } = useIssues();
   const { getProjectStates } = useProjectState();
   const { handleRedirection } = useIssuePeekOverviewRedirection();
+  const { getIssueTypeById } = useIssueTypes();
   const { isMobile } = usePlatformOS();
 
+  // derived values
   const parentIssue = issueMap?.[issue.parent_id || ""] || undefined;
+  const isParentEpic = getIssueTypeById(parentIssue?.type_id || "")?.is_epic;
 
   const issueParentState = getProjectStates(parentIssue?.project_id)?.find(
     (state) => state?.id === parentIssue?.state_id
@@ -46,8 +53,14 @@ export const IssueParentDetail: FC<TIssueParentDetail> = observer((props) => {
     <>
       <div className="mb-5 flex w-min items-center gap-3 whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-80 px-2.5 py-1 text-xs">
         <ControlLink
-          href={`/${workspaceSlug}/projects/${parentIssue?.project_id}/issues/${parentIssue.id}`}
-          onClick={() => handleRedirection(workspaceSlug, parentIssue, isMobile)}
+          href={`/${workspaceSlug}/projects/${parentIssue?.project_id}/${isParentEpic ? "epics" : "issues"}/${parentIssue.id}`}
+          onClick={() => {
+            if (isParentEpic) {
+              router.push(`/${workspaceSlug}/projects/${parentIssue?.project_id}/epics/${parentIssue.id}`);
+            } else {
+              handleRedirection(workspaceSlug, parentIssue, isMobile);
+            }
+          }}
         >
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2.5">

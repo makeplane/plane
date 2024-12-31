@@ -1,4 +1,4 @@
-from .base import BaseSerializer
+from .base import BaseSerializer, DynamicBaseSerializer
 from .user import (
     UserSerializer,
     UserLiteSerializer,
@@ -20,6 +20,7 @@ from .workspace import (
     WorkspaceMemberMeSerializer,
     WorkspaceUserPropertiesSerializer,
     WorkspaceUserLinkSerializer
+    WorkspaceUserMeSerializer,
 )
 from .project import (
     ProjectSerializer,
@@ -30,7 +31,6 @@ from .project import (
     ProjectIdentifierSerializer,
     ProjectLiteSerializer,
     ProjectMemberLiteSerializer,
-    DeployBoardSerializer,
     ProjectMemberAdminSerializer,
     ProjectPublicMemberSerializer,
     ProjectMemberRoleSerializer,
@@ -42,6 +42,7 @@ from .cycle import (
     CycleIssueSerializer,
     CycleWriteSerializer,
     CycleUserPropertiesSerializer,
+    EntityProgressSerializer,
 )
 from .asset import FileAssetSerializer
 from .issue import (
@@ -125,3 +126,14 @@ from .draft import (
     DraftIssueSerializer,
     DraftIssueDetailSerializer,
 )
+from .integration import (
+    IntegrationSerializer,
+    WorkspaceIntegrationSerializer,
+    GithubIssueSyncSerializer,
+    GithubRepositorySerializer,
+    GithubRepositorySyncSerializer,
+    GithubCommentSyncSerializer,
+    SlackProjectSyncSerializer,
+)
+
+from .deploy_board import DeployBoardSerializer
