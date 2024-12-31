@@ -100,7 +100,7 @@ export const InitiativeDetailsCommentsRoot: FC<TEpicDetailsCommentsRootProps> = 
             workspaceSlug,
             {
               entity_identifier: commentId ?? "",
-              entity_type: EFileAssetType.COMMENT_DESCRIPTION,
+              entity_type: EFileAssetType.INITIATIVE_COMMENT_DESCRIPTION,
             },
             file
           );
