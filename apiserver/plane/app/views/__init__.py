@@ -45,6 +45,7 @@ from .workspace.favorite import (
     WorkspaceFavoriteEndpoint,
     WorkspaceFavoriteGroupEndpoint,
 )
+from .workspace.recent_visit import UserRecentVisitViewSet
 
 from .workspace.member import (
     WorkSpaceMemberViewSet,
