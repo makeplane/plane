@@ -43,21 +43,31 @@ export class MQActorBase {
 
   async connect() {
     try {
-      this.connection = await amqp.connect(this.amqpUrl);
+      // create connection
+      const amqpUrl = this.amqpUrl;
+
+      this.connection = await amqp.connect(amqpUrl, {});
       this.channel = await this.connection.createConfirmChannel();
 
-      const queueInfo = await this.channel.checkQueue(this.queueName);
+      // Declare the Dead Letter Exchange and Queue
+      if (this.queueName !== "celery") {
+        const dlxExchange = "dlx_exchange";
+        const dlxQueue = "dlx_queue";
 
-      if (!queueInfo) {
-        // Declare the Dead Letter Exchange and Queue
-        if (this.queueName !== "celery") {
-          await this.channel.assertExchange("dlx_exchange", "direct", { durable: true });
-          await this.channel.assertQueue("dlx_queue", this.dlxQueueSettings);
-          await this.channel.bindQueue("dlx_queue", "dlx_exchange", "dlx_routing_key");
-          await this.channel.assertQueue(this.queueName, { durable: true });
-        }
+        await this.channel.assertExchange(dlxExchange, "direct", {
+          durable: true,
+        });
+        await this.channel.assertQueue(dlxQueue, { durable: true });
+        await this.channel.bindQueue(dlxQueue, dlxExchange, "dlx_routing_key");
+
+        await this.channel.assertQueue(this.queueName, {
+          durable: true,
+          arguments: {
+            "x-dead-letter-exchange": dlxExchange,
+            "x-dead-letter-routing-key": "dlx_routing_key",
+          },
+        });
       }
-
       await this.channel.assertExchange(this.exchange, "direct", {
         durable: true,
       });
