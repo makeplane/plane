@@ -15,6 +15,7 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useCycle, useEventTracker, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useEndCycle, EndCycleModal } from "@/plane-web/components/cycles";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
@@ -40,6 +41,8 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const cycleDetails = getCycleById(cycleId);
   const isArchived = !!cycleDetails?.archived_at;
   const isCompleted = cycleDetails?.status?.toLowerCase() === "completed";
+  const isCurrentCycle = cycleDetails?.status?.toLowerCase() === "current";
+  const transferableIssuesCount = cycleDetails ? cycleDetails.total_issues - cycleDetails.completed_issues : 0;
   // auth
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -47,6 +50,8 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
     workspaceSlug,
     projectId
   );
+
+  const { isEndCycleModalOpen, setEndCycleModalOpen, endCycleContextMenu } = useEndCycle(isCurrentCycle);
 
   const cycleLink = `${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`;
   const handleCopyText = () =>
@@ -138,6 +143,8 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
     },
   ];
 
+  if (endCycleContextMenu) MENU_ITEMS.splice(3, 0, endCycleContextMenu);
+
   return (
     <>
       {cycleDetails && (
@@ -162,6 +169,14 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
             handleClose={() => setDeleteModal(false)}
             workspaceSlug={workspaceSlug}
             projectId={projectId}
+          />
+          <EndCycleModal
+            isOpen={isEndCycleModalOpen}
+            handleClose={() => setEndCycleModalOpen(false)}
+            cycleId={cycleId}
+            projectId={projectId}
+            workspaceSlug={workspaceSlug}
+            transferrableIssuesCount={transferableIssuesCount}
           />
         </div>
       )}

@@ -150,7 +150,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     try {
       const res = await cycleService.cycleDateCheck(workspaceSlug as string, projectId as string, payload);
       return res.status;
-    } catch (err) {
+    } catch {
       return false;
     }
   };
