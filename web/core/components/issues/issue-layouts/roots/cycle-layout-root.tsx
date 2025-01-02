@@ -86,7 +86,11 @@ export const CycleLayoutRoot: React.FC = observer(() => {
 
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.CYCLE}>
-      <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
+      <TransferIssuesModal
+        handleClose={() => setTransferIssuesModal(false)}
+        cycleId={cycleId.toString()}
+        isOpen={transferIssuesModal}
+      />
       <div className="relative flex h-full w-full flex-col overflow-hidden">
         {cycleStatus === "completed" && (
           <TransferIssues
