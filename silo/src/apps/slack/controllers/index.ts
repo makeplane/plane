@@ -1,4 +1,3 @@
-import { Controller, Get, Post } from "@/lib";
 import { Request, Response } from "express";
 import {
   isUserMessage,
@@ -7,26 +6,27 @@ import {
   TSlackCommandPayload,
   TSlackPayload,
 } from "@plane/etl/slack";
-import { slackAuth } from "../auth/auth";
+import { PlaneWebhookData } from "@plane/sdk";
+import { integrationTaskManager } from "@/apps/engine/worker";
 import {
   createOrUpdateCredentials,
   deactivateCredentials,
   deleteCredentialsForWorkspace,
   getCredentialsByWorkspaceId,
 } from "@/db/query";
-import { logger } from "@/logger";
-import { integrationTaskManager } from "@/apps/engine/worker";
 import {
   createWorkspaceConnection,
   deleteEntityConnectionByWorkspaceConnectionId,
   deleteWorkspaceConnection,
   getWorkspaceConnections,
 } from "@/db/query/connection";
-import { PlaneWebhookData } from "@plane/sdk";
 import { env } from "@/env";
+import { Controller, Get, Post } from "@/lib";
+import { logger } from "@/logger";
+import { slackAuth } from "../auth/auth";
+import { getConnectionDetails } from "../helpers/connection-details";
 import { ACTIONS } from "../helpers/constants";
 import { parseIssueFormData } from "../helpers/parse-issue-form";
-import { getConnectionDetails } from "../helpers/connection-details";
 import { convertToSlackOptions } from "../helpers/slack-options";
 
 @Controller("/api/slack")
@@ -51,7 +51,6 @@ export class SlackController {
   @Post("/user/auth/url")
   async getUserAuthURL(req: Request, res: Response) {
     const body: SlackAuthState = req.body;
-    console.log(body);
     if (!body.userId) {
       return res.status(400).send({
         message: "Bad Request, expected userId to be present.",
@@ -71,6 +70,12 @@ export class SlackController {
         code: code as string,
         state: authState,
       });
+
+      if (!response.ok) {
+        return res.status(500).send({
+          error: response,
+        });
+      }
 
       // Create credentials for slack for the workspace
       const credentials = await createOrUpdateCredentials(state.workspaceId, state.userId, {
@@ -96,8 +101,9 @@ export class SlackController {
           targetHostname: env.API_BASE_URL,
         });
       }
+
+      return res.redirect(`${env.APP_BASE_URL}/${state.workspaceSlug}/settings/integrations/slack/`);
     } catch (error) {
-      logger.error(error);
       return res.status(500).send({
         error: error,
       });
@@ -192,7 +198,6 @@ export class SlackController {
         await deleteCredentialsForWorkspace(workspaceId, "SLACK");
         await deleteCredentialsForWorkspace(workspaceId, "SLACK-USER");
 
-        console.log("Deleted slack credentials and connections");
         return res.sendStatus(200);
       }
     } catch (error) {
@@ -293,26 +298,20 @@ export class SlackController {
     const payload = JSON.parse(req.body.payload) as TSlackPayload;
 
     // Check if the payload type is block_suggestion
-    if (payload.type === "block_suggestion") {
-      // Switch between the actions received
-      switch (payload.action_id) {
-        case ACTIONS.ISSUE_LABELS:
-          const text = payload.value;
-          // If the action is issue_labels, parse the view to be of type
-          // IssueModalViewFull and pass it to the slack worker
-          const { workspaceConnection, planeClient } = await getConnectionDetails(payload.team.id);
-          const values = parseIssueFormData(payload.view.state.values);
-          const labels = await planeClient.label.list(workspaceConnection.workspaceSlug, values.project);
-          const filteredLabels = labels.results
-            .filter((label) => label.name.toLowerCase().includes(text.toLowerCase()))
-            .sort((a, b) => a.name.localeCompare(b.name));
-          const labelOptions = convertToSlackOptions(filteredLabels);
-          return res.status(200).json({
-            options: labelOptions,
-          });
-        default:
-          logger.info("No action found for block_suggestion.");
-      }
+    if (payload.type === "block_suggestion" && payload.action_id && payload.action_id === ACTIONS.ISSUE_LABELS) {
+      const text = payload.value;
+      // If the action is issue_labels, parse the view to be of type
+      // IssueModalViewFull and pass it to the slack worker
+      const { workspaceConnection, planeClient } = await getConnectionDetails(payload.team.id);
+      const values = parseIssueFormData(payload.view.state.values);
+      const labels = await planeClient.label.list(workspaceConnection.workspaceSlug, values.project);
+      const filteredLabels = labels.results
+        .filter((label) => label.name.toLowerCase().includes(text.toLowerCase()))
+        .sort((a, b) => a.name.localeCompare(b.name));
+      const labelOptions = convertToSlackOptions(filteredLabels);
+      return res.status(200).json({
+        options: labelOptions,
+      });
     }
 
     return res.status(200).json({});
