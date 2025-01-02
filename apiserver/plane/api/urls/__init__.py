@@ -11,6 +11,8 @@ from .issue_type import urlpatterns as issue_type_patterns
 
 # ee imports
 from plane.ee.urls.api.issue_property import urlpatterns as ee_issue_property_patterns
+from plane.ee.urls.api.workspace import urlpatterns as ee_workspace_patterns
+from plane.ee.urls.api.job import urlpatterns as ee_job_patterns
 
 urlpatterns = [
     *project_patterns,
@@ -24,4 +26,6 @@ urlpatterns = [
     *issue_type_patterns,
     *asset_patterns,
     *ee_issue_property_patterns,
+    *ee_workspace_patterns,
+    *ee_job_patterns
 ]

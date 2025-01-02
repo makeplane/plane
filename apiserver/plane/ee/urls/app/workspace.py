@@ -9,6 +9,11 @@ from plane.ee.views import (
     WorkspaceProjectStatesEndpoint,
     WorkspaceProjectStatesDefaultEndpoint,
     WorkspaceInviteCheckEndpoint,
+    WorkspaceCredentialView,
+    VerifyWorkspaceCredentialView,
+    WorkspaceConnectionView,
+    WorkspaceUserConnectionView,
+    WorkspaceEntityConnectionView
 )
 
 
@@ -47,5 +52,54 @@ urlpatterns = [
         "workspaces/<str:slug>/invite-check/",
         WorkspaceInviteCheckEndpoint.as_view(),
         name="workspace-invite-check",
+    ),
+    # workspace credential url patterns
+    path(
+        "workspaces/<str:slug>/credentials/<uuid:pk>/",
+        WorkspaceCredentialView.as_view(),
+        name="workspace-credential",
+    ),
+    path(
+        "workspaces/<str:slug>/credentials/",
+        WorkspaceCredentialView.as_view(),
+        name="workspace-credential",
+    ),
+    path(
+        "workspaces/<str:slug>/credentials/<uuid:pk>/token-verify/",
+        VerifyWorkspaceCredentialView.as_view(),
+        name="workspace-credential-token-verify",
+    ),
+
+    # workspace connections url patterns
+    path(
+        "workspaces/<str:slug>/connections/<uuid:pk>/",
+        WorkspaceConnectionView.as_view(),
+        name="workspace-connection-detail",
+    ),
+
+    path(
+        "workspaces/<str:slug>/connections/",
+        WorkspaceConnectionView.as_view(),
+        name="workspace-connection-detail",
+    ),
+
+    # List all user-specific connections for a workspace
+    path(
+        "workspaces/<str:slug>/user-connections/<uuid:user_id>/",
+        WorkspaceUserConnectionView.as_view(),
+        name="workspace-user-connections",
+    ),
+
+    # workspace entity connection url patterns
+    path(
+        "workspaces/<str:slug>/entity-connections/",
+        WorkspaceEntityConnectionView.as_view(),
+        name="workspace-entity-connections-list-create",
+    ),
+
+    path(
+        "workspaces/<str:slug>/entity-connections/<uuid:pk>/",
+        WorkspaceEntityConnectionView.as_view(),
+        name="workspace-entity-connection-detail",
     ),
 ]

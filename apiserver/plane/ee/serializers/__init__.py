@@ -83,3 +83,20 @@ from .app.workflow import (
 from .space.page import PagePublicSerializer, PagePublicMetaSerializer
 from .space.views import ViewsPublicSerializer, ViewsPublicMetaSerializer
 from .space.issue import IssueCreateSerializer
+
+
+#job
+from .app.job import ImportReportSerializer, ImportJobSerializer
+
+#api
+from .api.job import ImportReportAPISerializer, ImportJobAPISerializer
+
+#workspace
+from .app.workspace.credential import WorkspaceCredentialSerializer 
+from .app.workspace.connection import WorkspaceConnectionSerializer
+from .app.workspace.entity_connection import WorkspaceEntityConnectionSerializer
+
+#workspace
+from .api.workspace.credential import WorkspaceCredentialAPISerializer 
+from .api.workspace.connection import WorkspaceConnectionAPISerializer
+from .api.workspace.entity_connection import WorkspaceEntityConnectionAPISerializer

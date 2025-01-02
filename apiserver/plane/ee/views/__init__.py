@@ -71,3 +71,20 @@ from plane.ee.views.space.intake import (
     IntakePublishedIssueEndpoint,
     IntakeMetaPublishedIssueEndpoint,
 )
+
+# workspace connection views
+from plane.ee.views.app.workspace.credential import WorkspaceCredentialView, VerifyWorkspaceCredentialView
+from plane.ee.views.app.workspace.connection import WorkspaceConnectionView, WorkspaceUserConnectionView
+from plane.ee.views.app.workspace.entity_connection import WorkspaceEntityConnectionView
+
+
+from plane.ee.views.api.workspace.credential import WorkspaceCredentialAPIView, VerifyWorkspaceCredentialAPIView
+from plane.ee.views.api.workspace.connection import WorkspaceConnectionAPIView, WorkspaceUserConnectionAPIView
+from plane.ee.views.api.workspace.entity_connection import WorkspaceEntityConnectionAPIView
+
+# jobs views
+from plane.ee.views.app.job.base import ImportJobView
+from plane.ee.views.app.job.report import ImportReportView
+
+from plane.ee.views.api.job.base import ImportJobAPIView
+from plane.ee.views.api.job.report import ImportReportAPIView

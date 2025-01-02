@@ -50,6 +50,12 @@ class FeatureFlag(Enum):
     PROJECT_OVERVIEW = "PROJECT_OVERVIEW"
     # Inbox Stacking
     INBOX_STACKING = "INBOX_STACKING"
+    # Silo
+    SILO = "SILO"
+    # Silo Imports
+    SILO_IMPORTERS = "SILO_IMPORTERS"
+    # Silo integrations
+    SILO_INTEGRATIONS = "SILO_INTEGRATIONS"
 
 
 class AdminFeatureFlag(Enum):
