@@ -1,7 +1,7 @@
-import { Plugin, EditorState, PluginKey, NodeSelection } from "@tiptap/pm/state";
-import { EditorView } from "@tiptap/pm/view";
-import { dropPoint } from "@tiptap/pm/transform";
 import { Editor, Extension } from "@tiptap/core";
+import { Plugin, EditorState, PluginKey, NodeSelection } from "@tiptap/pm/state";
+import { dropPoint } from "@tiptap/pm/transform";
+import { EditorView } from "@tiptap/pm/view";
 
 interface DropCursorOptions {
   /// The color of the cursor. Defaults to `black`. Use `false` to apply no color and rely only on class.
@@ -14,14 +14,6 @@ interface DropCursorOptions {
   class?: string;
 }
 
-/// Create a plugin that, when added to a ProseMirror instance,
-/// causes a decoration to show up at the drop position when something
-/// is dragged over the editor.
-///
-/// Nodes may add a `disableDropCursor` property to their spec to
-/// control the showing of a drop cursor inside them. This may be a
-/// boolean or a function, which will be called with a view and a
-/// position, and should return a boolean.
 export function dropCursor(options: DropCursorOptions = {}, tiptapEditorOptions: { editor: Editor }): Plugin {
   const pluginKey = new PluginKey("dropCursor");
 
@@ -46,9 +38,6 @@ export function dropCursor(options: DropCursorOptions = {}, tiptapEditorOptions:
     props: {
       handleDrop(view, event, slice, moved) {
         const { isBetweenFlatLists, isNestedList, hasNestedLists, pos, isHoveringOverListContent } =
-          // Instead of calling rawIsBetweenFlatListsFn directly, we rely on the
-          // Plugin's stored value or re-check if needed. But here, you can
-          // directly call rawIsBetweenFlatListsFn if you wish.
           rawIsBetweenFlatListsFn(event, tiptapEditorOptions.editor) || {};
 
         const state = pluginKey.getState(view.state);
@@ -73,13 +62,11 @@ export function dropCursor(options: DropCursorOptions = {}, tiptapEditorOptions:
             tr.deleteSelection();
           }
 
-          const finalDropPos = dropPosByDropCursorPos;
-          console.log("finalDropPos", finalDropPos);
           // Insert the content
-          tr.insert(finalDropPos, slice.content);
+          tr.insert(dropPosByDropCursorPos, slice.content);
 
           // Create a NodeSelection on the newly inserted content
-          const $pos = tr.doc.resolve(finalDropPos);
+          const $pos = tr.doc.resolve(dropPosByDropCursorPos);
           const node = $pos.nodeAfter;
 
           if (node) {
@@ -318,7 +305,6 @@ export const DropCursorExtension = Extension.create({
       dropCursor(
         {
           width: 2,
-          class: "transition-all duration-200 ease-[cubic-bezier(0.165, 0.84, 0.44, 1)]",
         },
         this
       ),
@@ -327,27 +313,20 @@ export const DropCursorExtension = Extension.create({
 });
 
 function rawIsBetweenFlatListsFn(event: DragEvent, editor: Editor) {
-  // Cache coordinates and use a single object for multiple coordinate lookups
   const coords = {
     left: event.clientX,
     top: event.clientY,
   };
 
-  // Use WeakMap to cache element positions and calculations
   const positionCache = new WeakMap();
 
-  // Get element under drag with a more efficient selector strategy
   const elementUnderDrag = document.elementFromPoint(coords.left, coords.top);
   if (!elementUnderDrag) return null;
 
-  // Find closest flat list using a cached selector
+  // Find the closest list item and flat list
   const currentFlatList = elementUnderDrag.closest(".prosemirror-flat-list");
   if (!currentFlatList) return null;
 
-  // Use a single getBoundingClientRect call and cache the result
-  const currentFlatListRect = currentFlatList.getBoundingClientRect();
-
-  // Initialize state object once
   const state = {
     isHoveringOverListContent: !elementUnderDrag.classList.contains("prosemirror-flat-list"),
     isBetweenFlatLists: true,
@@ -357,42 +336,52 @@ function rawIsBetweenFlatListsFn(event: DragEvent, editor: Editor) {
     isNestedList: false,
   };
 
-  // Efficient position calculation with caching
-  const getPositionFromElement = (element: Element): number | null => {
+  const getPositionFromElement = (element: Element, some?: boolean): number | null => {
     if (positionCache.has(element)) {
       return positionCache.get(element);
     }
 
-    const rect = element.getBoundingClientRect();
-    const pos = editor.view.posAtCoords({
-      left: rect.left,
-      top: rect.top,
-    });
+    const pos = editor.view.posAtDOM(element, 0);
+    function getNodeAtPos(state: EditorState, pos: number) {
+      const $pos = state.doc.resolve(pos);
+      return $pos.node();
+    }
+    const editorNode = getNodeAtPos(editor.view.state, pos);
 
-    const result = pos?.pos ?? null;
+    let result = pos ?? null;
+    if (some) {
+      result = pos + editorNode.nodeSize;
+    }
     positionCache.set(element, result);
     return result;
   };
 
-  // Batch DOM operations
-  const sibling = currentFlatList.nextElementSibling;
-  const firstNestedList = currentFlatList.querySelector(":scope > .prosemirror-flat-list");
-
-  // Calculate list level efficiently using a direct parent check
-  const level = getListLevelOptimized(currentFlatList);
-  state.listLevel = level;
-  state.isNestedList = level >= 1;
-
-  // Determine position with minimal DOM operations
-  if (sibling) {
-    state.pos = getPositionFromElement(sibling);
-  } else if (firstNestedList) {
-    state.pos = getPositionFromElement(firstNestedList);
+  // Check for child list within the current list item
+  const childList = currentFlatList?.querySelector(".prosemirror-flat-list");
+  if (childList) {
+    state.pos = getPositionFromElement(childList);
     state.hasNestedLists = true;
-  } else if (level >= 1 && !sibling) {
-    const parent = currentFlatList.parentElement;
-    if (parent) {
-      state.pos = getPositionFromElement(parent);
+    state.isNestedList = true;
+  } else {
+    // Existing logic for other cases
+    const sibling = currentFlatList.nextElementSibling;
+    const firstNestedList = currentFlatList.querySelector(":scope > .prosemirror-flat-list");
+
+    const level = getListLevelOptimized(currentFlatList);
+    state.listLevel = level;
+    state.isNestedList = level >= 1;
+
+    if (sibling) {
+      state.pos = getPositionFromElement(sibling);
+    } else if (firstNestedList) {
+      state.pos = getPositionFromElement(firstNestedList);
+      state.hasNestedLists = true;
+    } else if (level >= 1 && !sibling) {
+      const parent = currentFlatList.parentElement.parentElement;
+      const poss = getPositionFromElement(currentFlatList as Element, true);
+      if (parent) {
+        state.pos = poss;
+      }
     }
   }
 
@@ -420,124 +409,25 @@ function getListLevelOptimized(element: Element): number {
   return level;
 }
 
-function getListLevel(element: Element): number {
-  let level = 0;
-  let current = element.parentElement;
-
-  while (current && current !== document.body) {
-    if (current.matches(".prosemirror-flat-list")) {
-      level++;
-    }
-    current = current.parentElement;
-  }
-
-  return level;
-}
-
-/**
- * The original (unthrottled) version of the function that inspects the DOM
- * to figure out if we are between flat lists.
- */
-// function rawIsBetweenFlatListsFn(event: DragEvent, editor: Editor) {
-//   const elementUnderDrag = document.elementFromPoint(event.clientX, event.clientY);
-//   if (!elementUnderDrag) {
-//     return null;
-//   }
-//
-//   let editorPos = editor.view.posAtCoords({ left: event.clientX, top: event.clientY });
-//   let pos = null;
-//   const currentFlatList = elementUnderDrag.closest(".prosemirror-flat-list");
-//
-//   if (!currentFlatList) {
-//     return null;
-//   }
-//
-//   let hasNestedLists = false;
-//   let firstChild = null;
-//   let isHoveringOverListContent = false;
-//
-//   // If the element under drag is not the flat list itself but a child of it
-//   if (currentFlatList && !elementUnderDrag.classList.contains("prosemirror-flat-list")) {
-//     isHoveringOverListContent = true;
-//   }
-//
-//   if (currentFlatList) {
-//     const sibling = currentFlatList.nextElementSibling;
-//     if (sibling) {
-//       const rect = sibling.getBoundingClientRect();
-//       pos = editor.view.posAtCoords({
-//         left: rect.left,
-//         top: rect.top,
-//       });
-//     }
-//
-//     firstChild = currentFlatList.querySelector(".prosemirror-flat-list") as HTMLElement;
-//     if (firstChild) {
-//       const rect = firstChild.getBoundingClientRect();
-//       pos = editor.view.posAtCoords({
-//         left: rect.left,
-//         top: rect.top,
-//       });
-//       hasNestedLists = true;
-//     }
-//   }
-//
-//   const level = getListLevel(currentFlatList);
-//   if (level >= 1) {
-//     const sibling = currentFlatList.nextElementSibling;
-//     if (!sibling) {
-//       const currentFlatListParentSibling = currentFlatList.parentElement;
-//       if (currentFlatListParentSibling) {
-//         const rect = currentFlatListParentSibling.getBoundingClientRect();
-//         pos = editor.view.posAtCoords({
-//           left: rect.left,
-//           top: rect.top,
-//         });
-//       }
-//     }
-//   }
-//
-//   if (!pos) {
-//     return null;
-//   }
-//
-//   return {
-//     isHoveringOverListContent,
-//     isBetweenFlatLists: !!currentFlatList,
-//     pos: pos.pos - 1,
-//     listLevel: level,
-//     isNestedList: level >= 1,
-//     hasNestedLists,
-//   };
-// }
-
-/**
- * Throttler factory for rawIsBetweenFlatListsFn.
- * You can tweak timeThreshold and moveThreshold for your needs.
- */
 function createThrottledIsBetweenFlatListsFn(
   editor: Editor,
-  timeThreshold = 300, // ms between new computations
-  moveThreshold = 5 // px of mouse movement before re-checking
+  moveThreshold = 8 // px of mouse movement before re-checking
 ) {
-  let lastCallTime = 0;
   let lastX = 0;
   let lastY = 0;
   let lastResult: ReturnType<typeof rawIsBetweenFlatListsFn> | null = null;
 
   return function throttledIsBetweenFlatListsFn(event: DragEvent) {
-    const now = performance.now();
     const dx = Math.abs(event.clientX - lastX);
     const dy = Math.abs(event.clientY - lastY);
 
     // Only recalc if we moved enough OR enough time passed
-    if (dx < moveThreshold && dy < moveThreshold && now - lastCallTime < timeThreshold) {
+    if (dx < moveThreshold && dy < moveThreshold) {
       return lastResult;
     }
 
     lastX = event.clientX;
     lastY = event.clientY;
-    lastCallTime = now;
     lastResult = rawIsBetweenFlatListsFn(event, editor);
     return lastResult;
   };
