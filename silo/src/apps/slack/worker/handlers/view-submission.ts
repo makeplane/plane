@@ -47,7 +47,8 @@ export const handleViewSubmission = async (data: TViewSubmissionPayload) => {
         metadata.entityPayload.channel.id,
         metadata.entityPayload.message?.ts,
         linkBack,
-        issue
+        issue,
+        false
       );
 
       if (parsedData.enableThreadSync && res.ok) {

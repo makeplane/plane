@@ -179,7 +179,8 @@ export class SlackService {
     channelId: string,
     threadTs: string,
     message: string | { text?: string; blocks?: any[] },
-    metadata?: any
+    metadata?: any,
+    unfurlLinks = true
   ): Promise<SlackMessageResponse> {
     try {
       const payload =
@@ -189,6 +190,7 @@ export class SlackService {
               thread_ts: threadTs,
               metadata: metadata,
               text: message,
+              unfurl_links: unfurlLinks,
             }
           : {
               channel: channelId,
@@ -197,6 +199,7 @@ export class SlackService {
                 event_type: "issue",
                 event_payload: metadata,
               },
+              unfurl_links: unfurlLinks,
               ...message,
             };
 
