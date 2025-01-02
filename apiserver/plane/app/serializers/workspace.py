@@ -151,7 +151,6 @@ class IssueRecentVisitSerializer(serializers.ModelSerializer):
     def get_project_identifier(self, obj):
         project = obj.project
 
-        project = Project.objects.get(id=project.id)
         return project.identifier if project else None
 
 class ProjectMemberSerializer(BaseSerializer):
@@ -169,7 +168,7 @@ class ProjectRecentVisitSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "logo_props", "project_members", "identifier"]
 
     def get_project_members(self, obj):
-        members = ProjectMember.objects.filter(project_id=obj.id)
+        members = ProjectMember.objects.filter(project_id=obj.id).select_related('member')
 
         serializer = ProjectMemberSerializer(members, many=True)
         return serializer.data
@@ -183,15 +182,11 @@ class PageRecentVisitSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "logo_props", "project_id", "owned_by", "project_identifier"]
 
     def get_project_id(self, obj):
-        project = (
-            obj.projects.first()
-        )
-        return project.id if project else None
+        return obj.project_id if hasattr(obj, 'project_id') else obj.projects.values_list('id', flat=True).first()
     
     def get_project_identifier(self, obj):
         project = obj.projects.first()
 
-        project = Project.objects.get(id=project.id)
         return project.identifier if project else None
 
 def get_entity_model_and_serializer(entity_type):
