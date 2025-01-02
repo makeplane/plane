@@ -107,4 +107,9 @@ class Migration(migrations.Migration):
             name="name",
             field=models.TextField(blank=True),
         ),
+        migrations.AlterField(
+            model_name="sticky",
+            name="name",
+            field=models.TextField(blank=True, null=True),
+        ),
     ]
