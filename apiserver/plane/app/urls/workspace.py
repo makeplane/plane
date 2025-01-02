@@ -27,7 +27,8 @@ from plane.app.views import (
     WorkspaceFavoriteEndpoint,
     WorkspaceFavoriteGroupEndpoint,
     WorkspaceDraftIssueViewSet,
-    QuickLinkViewSet
+    QuickLinkViewSet,
+    WorkspacePreferenceViewSet
 )
 
 
@@ -225,5 +226,10 @@ urlpatterns = [
         "workspaces/<str:slug>/quick-links/<uuid:pk>/", 
         QuickLinkViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}), 
         name="workspace-quick-links"
+    ),
+    path(
+        "workspaces/<str:slug>/home-preferences/",
+        WorkspacePreferenceViewSet.as_view(),
+        name="workspace-home-preference"
     )
 ]

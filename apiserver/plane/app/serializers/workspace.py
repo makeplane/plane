@@ -11,7 +11,8 @@ from plane.db.models import (
     WorkspaceMemberInvite,
     WorkspaceTheme,
     WorkspaceUserProperties,
-    WorkspaceUserLink
+    WorkspaceUserLink,
+    WorkspaceHomePreference
 )
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
@@ -132,3 +133,10 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
             raise serializers.ValidationError({"error": "Invalid URL format."})
 
         return value
+
+
+class WorkspaceHomePreferenceSerializer(BaseSerializer):
+    class Meta: 
+        model = WorkspaceHomePreference
+        fields = "__all__"
+        read_only_fields = ["workspace", "owner"]
