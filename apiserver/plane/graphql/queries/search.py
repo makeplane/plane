@@ -17,13 +17,28 @@ from django.db.models import Exists, OuterRef, Q
 
 # Module Imports
 from plane.graphql.types.search import GlobalSearchType
-from plane.db.models import Issue, Project, Page, Module, Cycle, ProjectMember
+from plane.db.models import (
+    Issue,
+    Project,
+    Page,
+    Module,
+    Cycle,
+    ProjectMember,
+    WorkspaceMember,
+)
 from plane.graphql.types.project import ProjectLiteType
 from plane.graphql.types.issue import IssueLiteType
 from plane.graphql.types.page import PageLiteType
 from plane.graphql.types.module import ModuleLiteType
 from plane.graphql.types.cycle import CycleLiteType
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
+
+
+@sync_to_async
+def check_user_is_workspace_admin(user, slug):
+    return WorkspaceMember.objects.filter(
+        member=user, workspace__slug=slug, role=20
+    ).exists()
 
 
 async def filter_projects(
@@ -49,6 +64,10 @@ async def filter_projects(
         project_query = project_query.filter(
             project_projectmember__member=user, project_projectmember__is_active=True
         )
+    else:
+        is_workspace_admin = await check_user_is_workspace_admin(user, slug)
+        if is_workspace_admin is False:
+            project_query = project_query.filter(network=2)
 
     project_query = project_query.annotate(
         is_member=Exists(
