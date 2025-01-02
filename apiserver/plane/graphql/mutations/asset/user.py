@@ -44,7 +44,7 @@ def delete_asset(asset_id: int) -> dict:
 
 
 @sync_to_async
-def create_asset_entity(attributes, asset, size, entity_type, user) -> FileAssetType:
+def create_asset(attributes, asset, size, entity_type, user) -> FileAssetType:
     return FileAsset.objects.create(
         attributes=attributes,
         asset=asset,
@@ -141,7 +141,7 @@ class UserAssetMutation:
         asset_key = f"{uuid.uuid4().hex}-{name}"
 
         # Create a File Asset
-        asset = await create_asset_entity(
+        asset = await create_asset(
             attributes={"name": name, "type": type, "size": size_limit},
             asset=asset_key,
             size=size_limit,

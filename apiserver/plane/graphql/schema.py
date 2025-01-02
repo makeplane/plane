@@ -88,7 +88,11 @@ from .mutations.issues import (
     IssueCycleMutation,
 )
 from .mutations.device import DeviceInformationMutation
-from .mutations.asset import UserAssetMutation, ProjectAssetMutation
+from .mutations.asset import (
+    UserAssetMutation,
+    WorkspaceAssetMutation,
+    ProjectAssetMutation,
+)
 
 
 # combined query class for all
@@ -178,6 +182,7 @@ class Mutation(
     IssueCycleMutation,
     UserAssetMutation,
     UserMutation,
+    WorkspaceAssetMutation,
     ProjectAssetMutation,
 ):
     pass

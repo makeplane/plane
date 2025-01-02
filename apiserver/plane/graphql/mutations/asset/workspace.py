@@ -18,32 +18,16 @@ from strawberry.exceptions import GraphQLError
 from asgiref.sync import sync_to_async
 
 # Module imports
-from plane.graphql.permissions.project import ProjectBasePermission
+from plane.graphql.permissions.workspace import WorkspaceBasePermission
 from plane.db.models import Workspace, Project, FileAsset
 from plane.settings.storage import S3Storage
 from plane.graphql.types.asset import (
     FileAssetType,
     AssetPresignedUrlResponseType,
     UserAssetFileEnumType,
-    ProjectAssetEnumType,
+    WorkspaceAssetEnumType,
 )
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
-
-
-@sync_to_async
-def get_project(project_id):
-    return Project.objects.get(id=project_id)
-
-
-@sync_to_async
-def save_project_cover(project, asset_id):
-    project.cover_image_asset_id = asset_id
-    project.save()
-
-
-@sync_to_async
-def get_assets_by_ids(slug, asset_ids):
-    return list(FileAsset.objects.filter(workspace__slug=slug, id__in=asset_ids))
 
 
 @sync_to_async
@@ -60,37 +44,32 @@ def validate_feature_flag(slug: str, user_id: str, feature_key: str) -> bool:
 
 
 def get_entity_id_field(entity_type, entity_identifier):
-    if entity_type == ProjectAssetEnumType.PROJECT_COVER.value:
+    if entity_identifier is None:
+        return {}
+
+    if entity_type == WorkspaceAssetEnumType.WORKSPACE_LOGO.value:
+        return {"workspace_id": entity_identifier}
+
+    if entity_type == WorkspaceAssetEnumType.PROJECT_COVER.value:
         return {"project_id": entity_identifier}
 
-    if entity_type in [
-        ProjectAssetEnumType.ISSUE_ATTACHMENT.value,
-        ProjectAssetEnumType.ISSUE_DESCRIPTION.value,
-    ]:
-        return {"issue_id": entity_identifier}
-
-    if entity_type == ProjectAssetEnumType.PAGE_DESCRIPTION.value:
+    if entity_type == WorkspaceAssetEnumType.PAGE_DESCRIPTION.value:
         return {"page_id": entity_identifier}
-
-    if entity_type == ProjectAssetEnumType.COMMENT_DESCRIPTION.value:
-        return {"comment_id": entity_identifier}
-
-    if entity_type == ProjectAssetEnumType.DRAFT_ISSUE_DESCRIPTION.value:
-        return {"draft_issue_id": entity_identifier}
 
     return {}
 
 
 @sync_to_async
+def get_workspace(slug):
+    try:
+        return Workspace.objects.get(slug=slug)
+    except Workspace.DoesNotExist:
+        return None
+
+
+@sync_to_async
 def create_asset(
-    attributes,
-    asset,
-    size,
-    workspace_id,
-    user,
-    project_id,
-    entity_type,
-    entity_identifier,
+    attributes, asset, size, workspace_id, user, entity_type, entity_identifier
 ) -> FileAssetType:
     asset_fields = {
         "attributes": attributes,
@@ -101,41 +80,106 @@ def create_asset(
         "created_by": user,
     }
 
-    if entity_type != ProjectAssetEnumType.PROJECT_COVER.value:
-        asset_fields["project_id"] = project_id
+    if entity_type != WorkspaceAssetEnumType.PROJECT_COVER.value:
+        asset_fields["project_id"] = entity_identifier
 
     return FileAsset.objects.create(
         **asset_fields, **get_entity_id_field(entity_type, entity_identifier)
     )
 
 
+@sync_to_async
+def delete_asset(asset_id):
+    asset = FileAsset.objects.get(id=asset_id)
+    if asset is None:
+        return
+
+    asset.is_deleted = True
+    asset.deleted_at = timezone.now()
+    asset.save(update_fields=["is_deleted", "deleted_at"])
+    return
+
+
+@sync_to_async
+def create_asset_entity(entity_type, asset):
+    if not asset:
+        return
+
+    if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
+        workspace = Workspace.objects.filter(id=asset.workspace_id).first()
+        if workspace is None:
+            return
+
+        if workspace.logo_asset_id:
+            delete_asset(workspace.logo_asset_id)
+
+        workspace.logo = ""
+        workspace.logo_asset_id = asset.id
+        workspace.save()
+        return
+    elif entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
+        project = Project.objects.filter(id=asset.project_id).first()
+        if project is None:
+            return
+
+        if project.cover_image_asset_id:
+            delete_asset(project.cover_image_asset_id)
+
+        project.cover_image = ""
+        project.cover_image_asset_id = asset.id
+        project.save()
+        return
+    else:
+        return
+
+
+@sync_to_async
+def delete_asset_entity(entity_type, asset):
+    if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
+        workspace = Workspace.objects.get(id=asset.workspace_id)
+
+        if workspace is None:
+            return
+
+        workspace.logo_asset_id = None
+        workspace.save()
+        return
+    elif entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
+        project = Project.objects.filter(id=asset.project_id).first()
+
+        if project is None:
+            return
+
+        project.cover_image_asset_id = None
+        project.save()
+        return
+    else:
+        return
+
+
 @strawberry.type
-class ProjectAssetMutation:
+class WorkspaceAssetMutation:
     # asset entity create
     @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
-    async def create_project_asset(
+    async def create_workspace_asset(
         self,
         info: Info,
         slug: str,
-        project: strawberry.ID,
         name: str,
         type: str,
         size: int,
-        entity_type: ProjectAssetEnumType,
+        entity_type: WorkspaceAssetEnumType,
         entity_identifier: Optional[str] = None,
     ) -> AssetPresignedUrlResponseType:
         user = info.context.user
 
         # Checking if the entity type is valid
         if not entity_type or entity_type not in [
-            ProjectAssetEnumType.PROJECT_COVER,
-            ProjectAssetEnumType.ISSUE_ATTACHMENT,
-            ProjectAssetEnumType.ISSUE_DESCRIPTION,
-            ProjectAssetEnumType.COMMENT_DESCRIPTION,
-            ProjectAssetEnumType.PAGE_DESCRIPTION,
-            ProjectAssetEnumType.DRAFT_ISSUE_DESCRIPTION,
+            WorkspaceAssetEnumType.WORKSPACE_LOGO,
+            WorkspaceAssetEnumType.PROJECT_COVER,
+            WorkspaceAssetEnumType.PAGE_DESCRIPTION,
         ]:
             message = "Invalid entity type."
             error_extensions = {"code": "INVALID_ENTITY_TYPE", "statusCode": 400}
@@ -157,19 +201,23 @@ class ProjectAssetMutation:
         # Checking if the file size is within the limit
         size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
-        if entity_type in [ProjectAssetEnumType.PROJECT_COVER.value]:
+        if entity_type in [
+            WorkspaceAssetEnumType.WORKSPACE_LOGO.value,
+            WorkspaceAssetEnumType.PROJECT_COVER.value,
+        ]:
             size_limit = min(size, settings.FILE_SIZE_LIMIT)
         else:
-            if validate_feature_flag(
+            if settings.IS_MULTI_TENANT and validate_feature_flag(
                 slug=slug, user_id=str(user.id), feature_key="FILE_SIZE_LIMIT_PRO"
             ):
                 size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
 
         # Get the workspace
-        workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
-
-        # Get the project details
-        project_details = await sync_to_async(Project.objects.get)(id=project)
+        workspace = await get_workspace(slug=slug)
+        if workspace is None:
+            message = "Workspace not found."
+            error_extensions = {"code": "WORKSPACE_NOT_FOUND", "statusCode": 404}
+            raise GraphQLError(message, extensions=error_extensions)
 
         asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"
 
@@ -180,7 +228,6 @@ class ProjectAssetMutation:
             size=size_limit,
             workspace_id=workspace.id,
             user=user,
-            project_id=project_details.id,
             entity_type=entity_type,
             entity_identifier=entity_identifier,
         )
@@ -200,17 +247,18 @@ class ProjectAssetMutation:
 
     # asset entity update
     @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
-    async def update_project_asset(
+    async def update_workspace_asset(
         self,
         info: Info,
         slug: str,
-        project: strawberry.ID,
         asset_id: strawberry.ID,
         attributes: Optional[JSON] = None,
     ) -> bool:
-        asset = await sync_to_async(FileAsset.objects.get)(id=asset_id)
+        asset = await sync_to_async(FileAsset.objects.get)(
+            workspace__slug=slug, id=asset_id
+        )
         asset.is_uploaded = True
 
         # update the attributes
@@ -223,6 +271,9 @@ class ProjectAssetMutation:
         if not asset.storage_metadata:
             get_asset_object_metadata.delay(asset_id=str(asset_id))
 
+        # get the entity and save the asset id for the request field
+        create_asset_entity(entity_type=asset.entity_type, asset=asset)
+
         # save the asset
         await sync_to_async(asset.save)(update_fields=["is_uploaded", "attributes"])
 
@@ -230,77 +281,22 @@ class ProjectAssetMutation:
 
     # asset entity delete
     @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
-    async def delete_project_asset(
-        self, info: Info, slug: str, project: strawberry.ID, asset_id: strawberry.ID
+    async def delete_workspace_asset(
+        self, info: Info, slug: str, asset_id: strawberry.ID
     ) -> bool:
         asset = await sync_to_async(FileAsset.objects.get)(
-            workspace__slug=slug, project_id=project, id=asset_id
+            workspace__slug=slug, id=asset_id
         )
 
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
 
+        # get the entity and save the asset id for the request field
+        delete_asset_entity(entity_type=asset.entity_type, asset=asset)
+
         # save the asset
         await sync_to_async(asset.save)(update_fields=["is_deleted", "deleted_at"])
-
-        return True
-
-    # asset entity update
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def update_project_asset_entity(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        entity_id: strawberry.ID,
-        asset_ids: list[strawberry.ID],
-    ) -> bool:
-        if not asset_ids:
-            message = "Asset not found."
-            error_extensions = {"code": "ASSET_NOT_FOUND", "statusCode": 404}
-            raise GraphQLError(message, extensions=error_extensions)
-
-        assets = await get_assets_by_ids(slug, asset_ids)
-
-        if not assets:
-            message = "No assets found matching the given IDs."
-            error_extensions = {"code": "NO_ASSETS_FOUND", "statusCode": 404}
-            raise GraphQLError(message, extensions=error_extensions)
-
-        # Get the first asset
-        asset = assets[0]
-
-        if asset.entity_type == ProjectAssetEnumType.PROJECT_COVER.value:
-            for asset in assets:
-                # updating the asset with the project id
-                asset.project_id = project
-                await sync_to_async(asset.save)(update_fields=["project_id"])
-                # updating the project cover image
-                project_details = await get_project(project)
-                await save_project_cover(project_details, asset.id)
-
-        if asset.entity_type == ProjectAssetEnumType.ISSUE_DESCRIPTION.value:
-            for asset in assets:
-                asset.issue_id = entity_id
-                await sync_to_async(asset.save)(update_fields=["issue_id"])
-
-        if asset.entity_type == ProjectAssetEnumType.COMMENT_DESCRIPTION.value:
-            for asset in assets:
-                asset.comment_id = entity_id
-                await sync_to_async(asset.save)(update_fields=["comment_id"])
-
-        if asset.entity_type == ProjectAssetEnumType.PAGE_DESCRIPTION.value:
-            for asset in assets:
-                asset.page_id = entity_id
-                await sync_to_async(asset.save)(update_fields=["page_id"])
-
-        if asset.entity_type == ProjectAssetEnumType.DRAFT_ISSUE_DESCRIPTION.value:
-            for asset in assets:
-                asset.draft_issue_id = entity_id
-                await sync_to_async(asset.save)(update_fields=["draft_issue_id"])
 
         return True
