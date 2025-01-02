@@ -67,7 +67,7 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
     >
       <LiteTextEditorWithRef
         ref={ref}
-        disabledExtensions={disabledExtensions}
+        disabledExtensions={[...disabledExtensions, "enter-key"]}
         fileHandler={getEditorFileHandlers({
           maxFileSize,
           projectId,

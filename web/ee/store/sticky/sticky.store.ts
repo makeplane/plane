@@ -4,6 +4,7 @@ import { v4 } from "uuid";
 import { TSticky } from "@plane/types";
 import { StickyService } from "@/plane-web/services/sticky.service";
 export interface IStickyStore {
+  creatingSticky: boolean;
   fetchingWorkspaceStickies: boolean;
   workspaceStickies: Record<string, string[]>; // workspaceId -> stickyIds
   stickies: Record<string, TSticky>; // stickyId -> sticky
@@ -30,6 +31,7 @@ export interface IStickyStore {
 }
 
 export class StickyStore implements IStickyStore {
+  creatingSticky = false;
   fetchingWorkspaceStickies = true;
   workspaceStickies: Record<string, string[]> = {};
   stickies: Record<string, TSticky> = {};
@@ -45,6 +47,8 @@ export class StickyStore implements IStickyStore {
 
   constructor() {
     makeObservable(this, {
+      // observables
+      creatingSticky: observable,
       fetchingWorkspaceStickies: observable,
       activeStickyId: observable,
       showAddNewSticky: observable,
@@ -115,21 +119,15 @@ export class StickyStore implements IStickyStore {
   createSticky = async (workspaceSlug: string, sticky: Partial<TSticky>) => {
     if (!this.showAddNewSticky) return;
     this.showAddNewSticky = false;
-    const tempId = v4();
+    this.creatingSticky = true;
     const workspaceStickies = this.workspaceStickies[workspaceSlug] || [];
-    runInAction(() => {
-      this.workspaceStickies[workspaceSlug] = [tempId, ...workspaceStickies];
-      this.stickies[tempId] = { id: tempId, ...sticky };
-      this.activeStickyId = tempId;
-      this.recentStickyId = tempId;
-    });
     const response = await this.stickyService.createSticky(workspaceSlug, sticky);
     runInAction(() => {
-      delete this.stickies[tempId];
       this.stickies[response.id] = response;
       this.workspaceStickies[workspaceSlug] = [response.id, ...workspaceStickies];
       this.activeStickyId = response.id;
       this.recentStickyId = response.id;
+      this.creatingSticky = false;
     });
   };
 

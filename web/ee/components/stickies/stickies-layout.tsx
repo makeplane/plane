@@ -50,9 +50,11 @@ export const StickiesLayout = observer(() => {
 
   if (fetchingWorkspaceStickies && workspaceStickies.length === 0) {
     return (
-      <Loader>
-        <Loader.Item height="300px" width="255px" />
-      </Loader>
+      <div className="min-h-[500px] overflow-scroll pb-2">
+        <Loader>
+          <Loader.Item height="300px" width="255px" />
+        </Loader>
+      </div>
     );
   }
 

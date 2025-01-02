@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Plus, X } from "lucide-react";
 import { RecentStickyIcon } from "@plane/ui";
@@ -11,10 +12,10 @@ type TProps = {
   handleClose?: () => void;
 };
 
-export const Stickies = (props: TProps) => {
+export const Stickies = observer((props: TProps) => {
   const { handleClose } = props;
   const { workspaceSlug } = useParams();
-  const { toggleShowNewSticky } = useSticky();
+  const { creatingSticky, toggleShowNewSticky } = useSticky();
   const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
 
   return (
@@ -35,13 +36,23 @@ export const Stickies = (props: TProps) => {
               stickyOperations.create({ color: STICKY_COLORS[0] });
             }}
             className="flex gap-1 text-sm font-medium text-custom-primary-100 my-auto"
+            disabled={creatingSticky}
           >
             <Plus className="size-4 my-auto" /> <span>Add sticky</span>
+            {creatingSticky && (
+              <div className="flex items-center justify-center ml-2">
+                <div
+                  className={`w-4 h-4 border-2 border-t-transparent rounded-full animate-spin border-custom-primary-100`}
+                  role="status"
+                  aria-label="loading"
+                />
+              </div>
+            )}
           </button>
           {handleClose && (
             <button
               onClick={handleClose}
-              className="flex-shrink-0 grid place-items-center text-custom-text-300 hover:text-custom-text-100 transition-colors my-auto"
+              className="flex-shrink-0 grid place-items-center text-custom-text-300 hover:text-custom-text-100 hover:bg-custom-background-80 rounded p-1 transition-colors my-auto"
             >
               <X className="text-custom-text-400 size-4" />
             </button>
@@ -52,4 +63,4 @@ export const Stickies = (props: TProps) => {
       <StickiesLayout />
     </div>
   );
-};
+});

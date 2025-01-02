@@ -45,7 +45,7 @@ export const StickyInput = (props: TProps) => {
 
   const handleFormSubmit = useCallback(
     async (formdata: Partial<TSticky>) => {
-      if (formdata.name) {
+      if (formdata.name !== undefined) {
         await handleUpdate({
           description_html: formdata.description_html ?? "<p></p>",
           name: formdata.name,
@@ -94,7 +94,6 @@ export const StickyInput = (props: TProps) => {
               onChange(description_html);
               handleSubmit(handleFormSubmit)();
             }}
-            onEnterKeyPress={() => {}}
             placeholder={"Click to type here"}
             containerClassName={"px-0 text-base min-h-[200px] w-full text-[#455068]"}
             uploadFile={async () => ""}
