@@ -94,9 +94,7 @@ def track_lead(
     team_space_activities,
     epoch,
 ):
-
     if current_instance.get("lead_id") != requested_data.get("lead_id"):
-
         # Get the current user
         current_user = (
             User.objects.get(pk=current_instance.get("lead_id"))
@@ -405,7 +403,6 @@ def create_comment_activity(
             field="comment",
             new_value=requested_data.get("comment_html", ""),
             new_identifier=requested_data.get("id", None),
-            team_space_comment_id=requested_data.get("id", None),
             epoch=epoch,
         )
     )
@@ -438,7 +435,6 @@ def update_comment_activity(
                 old_identifier=current_instance.get("id"),
                 new_value=requested_data.get("comment_html", ""),
                 new_identifier=current_instance.get("id", None),
-                team_space_comment_id=current_instance.get("id", None),
                 epoch=epoch,
             )
         )
