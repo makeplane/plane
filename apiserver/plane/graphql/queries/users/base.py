@@ -13,13 +13,8 @@ from strawberry.types import Info
 from strawberry.permission import PermissionExtension
 
 # Module Imports
-from plane.db.models import Profile, UserFavorite, UserRecentVisit
-from plane.graphql.types.users import (
-    UserType,
-    ProfileType,
-    UserFavoriteType,
-    UserRecentVisitType,
-)
+from plane.db.models import UserFavorite, UserRecentVisit
+from plane.graphql.types.users import UserType, UserFavoriteType, UserRecentVisitType
 from plane.graphql.permissions.workspace import IsAuthenticated, WorkspaceBasePermission
 
 
@@ -28,14 +23,6 @@ class UserQuery:
     @strawberry.field(extensions=[PermissionExtension(permissions=[IsAuthenticated()])])
     async def user(self, info: Info) -> UserType:
         return info.context.user
-
-
-@strawberry.type
-class ProfileQuery:
-    @strawberry.field(extensions=[PermissionExtension(permissions=[IsAuthenticated()])])
-    async def profile(self, info: Info) -> ProfileType:
-        profile = await sync_to_async(Profile.objects.get)(user=info.context.user)
-        return profile
 
 
 # user favorite

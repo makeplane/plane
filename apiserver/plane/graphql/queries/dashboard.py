@@ -59,5 +59,8 @@ class userInformationQuery:
                 device_information = None
 
         return UserInformationType(
-            user=info.context.user, workspace=workspace, device_info=device_information
+            user=info.context.user,
+            profile=profile,
+            workspace=workspace,
+            device_info=device_information,
         )

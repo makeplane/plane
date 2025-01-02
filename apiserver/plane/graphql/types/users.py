@@ -61,6 +61,9 @@ class ProfileType:
     billing_address: Optional[str]
     has_billing_address: bool
     company_name: str
+    mobile_timezone_auto_set: bool
+    is_mobile_onboarded: bool
+    mobile_onboarding_step = Optional[JSON]
 
     @strawberry.field
     def user(self) -> int:

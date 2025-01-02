@@ -50,6 +50,7 @@ from .queries.dashboard import userInformationQuery
 from .queries.external import UnsplashImagesQuery, ProjectCoversQuery
 from .queries.feature_flag import FeatureFlagQuery
 from .queries.version_check import VersionCheckQuery
+from .queries.timezone import TimezoneListQuery
 
 # mutations
 from .mutations.workspace import WorkspaceMutation, WorkspaceInviteMutation
@@ -144,6 +145,7 @@ class Query(
     FeatureFlagQuery,
     VersionCheckQuery,
     WorkspacePageQuery,
+    TimezoneListQuery,
 ):
     pass
 
