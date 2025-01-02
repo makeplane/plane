@@ -8,6 +8,7 @@ from .queries.workspace import (
     WorkspaceIssuesInformationQuery,
     WorkspaceIssuesQuery,
     YourWorkQuery,
+    WorkspaceLicenseQuery,
 )
 from .queries.users import UserQuery, UserFavoritesQuery, UserRecentVisitQuery
 from .queries.users import ProfileQuery
@@ -145,6 +146,7 @@ class Query(
     FeatureFlagQuery,
     VersionCheckQuery,
     WorkspacePageQuery,
+    WorkspaceLicenseQuery,
     TimezoneListQuery,
 ):
     pass

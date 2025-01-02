@@ -53,7 +53,9 @@ class WorkspaceMembersQuery:
         self, info: Info, slug: str
     ) -> list[WorkspaceMemberType]:
         workspace_members = await sync_to_async(list)(
-            WorkspaceMember.objects.filter(workspace__slug=slug, is_active=True)
+            WorkspaceMember.objects.filter(
+                workspace__slug=slug, is_active=True, member__is_bot=False
+            )
         )
         return workspace_members
 
