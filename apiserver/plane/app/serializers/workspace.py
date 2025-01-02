@@ -142,9 +142,17 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
         return value
 
 class IssueRecentVisitSerializer(serializers.ModelSerializer):
+    project_identifier = serializers.SerializerMethodField()
+
     class Meta:
         model = Issue
-        fields = ["name", "state", "priority", "assignees"]
+        fields = ["name", "state", "priority", "assignees", "type", "sequence_id", "project_id", "project_identifier"]        
+
+    def get_project_identifier(self, obj):
+        project = obj.project
+
+        project = Project.objects.get(id=project.id)
+        return project.identifier if project else None
 
 class ProjectMemberSerializer(BaseSerializer):
     member = UserLiteSerializer(read_only=True)
@@ -158,7 +166,7 @@ class ProjectRecentVisitSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Project
-        fields = ["id", "name", "logo_props", "project_members"]
+        fields = ["id", "name", "logo_props", "project_members", "identifier"]
 
     def get_project_members(self, obj):
         members = ProjectMember.objects.filter(project_id=obj.id)
@@ -168,16 +176,23 @@ class ProjectRecentVisitSerializer(serializers.ModelSerializer):
   
 class PageRecentVisitSerializer(serializers.ModelSerializer):
     project_id = serializers.SerializerMethodField()
+    project_identifier = serializers.SerializerMethodField()
 
     class Meta:
         model = Page
-        fields = ["id", "name", "logo_props", "project_id", "owned_by"]
+        fields = ["id", "name", "logo_props", "project_id", "owned_by", "project_identifier"]
 
     def get_project_id(self, obj):
         project = (
             obj.projects.first()
-        )  
+        )
         return project.id if project else None
+    
+    def get_project_identifier(self, obj):
+        project = obj.projects.first()
+
+        project = Project.objects.get(id=project.id)
+        return project.identifier if project else None
 
 def get_entity_model_and_serializer(entity_type):
     entity_map = {
