@@ -49,8 +49,7 @@ class JiraController {
         message: "Bad Request, expected both apiToken and workspaceId to be present.",
       });
     }
-    const baseUrl = env.SILO_API_BASE_URL;
-    const response = jiraAuth.getAuthorizationURL(body, baseUrl);
+    const response = jiraAuth.getAuthorizationURL(body);
     res.send(response);
   }
 
@@ -71,7 +70,7 @@ class JiraController {
     let tokenResponse: JiraTokenResponse;
     try {
       const baseUrl = env.SILO_API_BASE_URL;
-      const tokenInfo = await jiraAuth.getAccessToken(query.code as string, state, baseUrl);
+      const tokenInfo = await jiraAuth.getAccessToken(query.code as string, state);
       tokenResponse = tokenInfo.tokenResponse;
     } catch (error: any) {
       console.log("Error occured while fetching token details", error.response.data);
@@ -150,7 +149,7 @@ class JiraController {
 
         // await jiraService.getResourceProjects();
       } catch (error: any) {
-        console.log("error in jira upsertCredentials", error)
+        console.log("error in jira upsertCredentials", error);
         return res.status(401).send({ message: "Invalid personal access token" });
       }
 
@@ -211,7 +210,7 @@ class JiraController {
       const resources = await fetchJiraResources(axiosInstance, credentials);
       return res.json(resources);
     } catch (error) {
-      console.error("error in get resources", error)
+      console.error("error in get resources", error);
       handleError(error, res);
     }
   }
@@ -315,16 +314,13 @@ class JiraController {
       return res.status(400).send({ message: "Emails must be strings" });
     }
 
-    const jiraEmails = userData?.map((x) => x.email)
+    const jiraEmails = userData?.map((x) => x.email);
 
     try {
-      const planeClient = await createPlaneClient(workspaceId, userId, "JIRA")
-      const workspaceMembers = (await planeClient.users.listAllUsers(workspaceSlug))
-      const billableMembers = workspaceMembers.filter(member => member.role > 10);
-      const additionalUsers = compareAndGetAdditionalUsers(
-        billableMembers,
-        jiraEmails
-      );
+      const planeClient = await createPlaneClient(workspaceId, userId, "JIRA");
+      const workspaceMembers = await planeClient.users.listAllUsers(workspaceSlug);
+      const billableMembers = workspaceMembers.filter((member) => member.role > 10);
+      const additionalUsers = compareAndGetAdditionalUsers(billableMembers, jiraEmails);
 
       return res.json({
         additionalUserCount: additionalUsers.length,
@@ -335,7 +331,6 @@ class JiraController {
     }
   }
 }
-
 
 const createJiraClient = async (workspaceId: string, userId: string, cloudId?: string): Promise<JiraService> => {
   const credentials = await getCredentialsByWorkspaceId(workspaceId, userId, "JIRA");

@@ -14,14 +14,13 @@ export class LinearAuth {
     this.props = props;
   }
 
-  getCallbackUrl(_state: LinearAuthState, hostname: string): string {
-    const host = hostname.endsWith("/") ? hostname.slice(0, -1) : hostname;
-    return host + this.props.callbackURL;
+  getCallbackUrl(): string {
+    return this.props.callbackURL;
   }
 
-  getAuthorizationURL(state: LinearAuthState, hostname: string): string {
+  getAuthorizationURL(state: LinearAuthState): string {
     const scope = "read,write"; // Linear's scope
-    const callbackURL = this.getCallbackUrl(state, hostname);
+    const callbackURL = this.getCallbackUrl();
     const stateString = JSON.stringify(state);
     // encode state string to base64
     const encodedState = Buffer.from(stateString).toString("base64");
@@ -31,14 +30,13 @@ export class LinearAuth {
 
   async getAccessToken(
     code: string,
-    state: LinearAuthState,
-    hostname: string
+    state: LinearAuthState
   ): Promise<{ tokenResponse: LinearTokenResponse; state: LinearAuthState }> {
     const params = new URLSearchParams();
     params.append("code", code);
     params.append("client_id", this.props.clientId);
     params.append("client_secret", this.props.clientSecret);
-    params.append("redirect_uri", this.getCallbackUrl(state, hostname));
+    params.append("redirect_uri", this.getCallbackUrl());
     params.append("grant_type", "authorization_code");
 
     const { data: tokenResponse } = await axios.post("https://api.linear.app/oauth/token", params.toString(), {

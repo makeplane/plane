@@ -15,16 +15,15 @@ export class JiraAuth {
     this.props = props;
   }
 
-  getCallbackUrl(hostname: string): string {
+  getCallbackUrl(): string {
     // return this.props.callbackURL;
     // remove the / at the end of the hostname
-    const host = hostname.endsWith("/") ? hostname.slice(0, -1) : hostname;
-    return host + this.props.callbackURL;
+    return this.props.callbackURL;
   }
 
-  getAuthorizationURL(state: JiraAuthState, hostname: string): string {
+  getAuthorizationURL(state: JiraAuthState): string {
     const scope = JIRA_SCOPES.join(" ");
-    const callbackURL = this.getCallbackUrl(hostname);
+    const callbackURL = this.getCallbackUrl();
     const stateString = JSON.stringify(state);
     const encodedState = Buffer.from(stateString).toString("base64");
     const consentURL = `${this.props.authorizeURL}?client_id=${this.props.clientId}&redirect_uri=${callbackURL}&access_type=offline&response_type=code&scope=${scope}&state=${encodedState || ""}`;
@@ -33,14 +32,13 @@ export class JiraAuth {
 
   async getAccessToken(
     code: string,
-    state: JiraAuthState,
-    hostname: string
+    state: JiraAuthState
   ): Promise<{ tokenResponse: JiraTokenResponse; state: JiraAuthState }> {
     const data = {
       code,
       client_id: this.props.clientId,
       client_secret: this.props.clientSecret,
-      redirect_uri: this.getCallbackUrl(hostname),
+      redirect_uri: this.getCallbackUrl(),
       grant_type: "authorization_code",
     };
 

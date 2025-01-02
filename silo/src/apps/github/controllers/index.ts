@@ -13,7 +13,6 @@ import {
   deleteEntityConnectionByWorkspaceConnectionId,
   deleteWorkspaceConnection,
   updateWorkspaceConnection,
-  getEntityConnectionByWorkspaceIdAndConnectionId,
 } from "@/db/query/connection";
 import { env } from "@/env";
 import { Controller, Get, Post } from "@/lib";
@@ -36,7 +35,7 @@ export const githubAuthService = createGithubAuth(
   env.GITHUB_APP_NAME,
   env.GITHUB_CLIENT_ID,
   env.GITHUB_CLIENT_SECRET,
-  `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/github/auth/user/callback`
+  encodeURI(env.SILO_API_BASE_URL + env.SILO_BASE_PATH + "/api/github/auth/user/callback")
 );
 
 @Controller("/api/github")

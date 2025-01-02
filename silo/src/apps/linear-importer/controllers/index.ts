@@ -4,7 +4,6 @@ import { Request, Response } from "express";
 import { LinearTokenResponse, createLinearService, LinearAuthPayload, LinearAuthState } from "@plane/etl/linear";
 import { createOrUpdateCredentials, getCredentialsByWorkspaceId } from "@/db/query";
 import { linearAuth } from "../auth/auth";
-import { TServiceCredentials } from "@plane/etl/core";
 import { createPlaneClient } from "@/helpers/utils";
 import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
 
@@ -29,8 +28,7 @@ class LinearController {
         message: "Bad Request, expected both apiToken and workspaceId to be present.",
       });
     }
-    const hostname = env.SILO_API_BASE_URL;
-    const response = linearAuth.getAuthorizationURL(body, hostname);
+    const response = linearAuth.getAuthorizationURL(body);
     res.send(response);
   }
 
@@ -50,8 +48,7 @@ class LinearController {
     const state: LinearAuthState = JSON.parse(Buffer.from(stringifiedJsonState, "base64").toString());
     let tokenResponse: LinearTokenResponse;
     try {
-      const hostname = env.SILO_API_BASE_URL;
-      const tokenInfo = await linearAuth.getAccessToken(query.code as string, state, hostname);
+      const tokenInfo = await linearAuth.getAccessToken(query.code as string, state);
       tokenResponse = tokenInfo.tokenResponse;
     } catch (error: any) {
       console.log("Error occured while fetching token details", error.response.data);
@@ -87,8 +84,6 @@ class LinearController {
       if (!workspaceId || !userId || !apiToken || !personalAccessToken) {
         res.status(400).json({ message: "Workspace ID, User ID, API Token and Personal Access Token are required" });
       }
-
-      const payload = req.body as TServiceCredentials;
 
       // Verify the credentials for validity
       try {
