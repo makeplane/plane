@@ -20,6 +20,7 @@ from plane.ee.views.app.team import (
     TeamSpaceActivityEndpoint,
     TeamSpaceCommentEndpoint,
     TeamSpaceCommentReactionEndpoint,
+    TeamSpacePageDuplicateEndpoint,
 )
 
 urlpatterns = [
@@ -73,6 +74,11 @@ urlpatterns = [
         "workspaces/<str:slug>/teams/<uuid:team_space_id>/pages/<uuid:pk>/",
         TeamSpacePageEndpoint.as_view(),
         name="team-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/teams/<uuid:team_space_id>/pages/<uuid:pk>/duplicate/",
+        TeamSpacePageDuplicateEndpoint.as_view(),
+        name="team-page-duplicate",
     ),
     path(
         "workspaces/<str:slug>/teams/<uuid:team_space_id>/pages/<uuid:pk>/archive/",

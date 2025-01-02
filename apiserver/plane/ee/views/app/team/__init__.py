@@ -11,6 +11,7 @@ from .page import (
     TeamSpacePageUnarchiveEndpoint,
     TeamSpacePageLockEndpoint,
     TeamSpacePageFavoriteEndpoint,
+    TeamSpacePageDuplicateEndpoint,
 )
 from .issue import TeamSpaceIssueEndpoint, TeamSpaceUserPropertiesEndpoint
 from .activity import TeamSpaceActivityEndpoint

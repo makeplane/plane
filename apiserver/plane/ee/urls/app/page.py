@@ -7,6 +7,7 @@ from plane.ee.views import (
     WorkspacePagesDescriptionViewSet,
     WorkspacePageVersionEndpoint,
     WorkspacePageFavoriteEndpoint,
+    WorkspacePageDuplicateEndpoint,
 )
 
 
@@ -30,6 +31,11 @@ urlpatterns = [
             {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
         ),
         name="workspace-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:pk>/duplicate/",
+        WorkspacePageDuplicateEndpoint.as_view(),
+        name="workspace-page-duplicate",
     ),
     path(
         "workspaces/<str:slug>/pages/<uuid:pk>/archive/",

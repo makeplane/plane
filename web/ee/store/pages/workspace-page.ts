@@ -51,7 +51,8 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
         await workspacePageService.restore(workspaceSlug, page.id);
       },
       duplicate: async () => {
-        throw new Error("Duplicate not implemented for workspace page");
+        if (!workspaceSlug || !page.id) throw new Error("Missing required fields.");
+        return await workspacePageService.duplicate(workspaceSlug, page.id);
       },
     });
     makeObservable(this, {

@@ -306,9 +306,7 @@ class TeamSpacePageEndpoint(TeamBaseEndpoint):
             )
 
         # remove parent from all the children
-        _ = Page.objects.filter(parent_id=pk, workspace__slug=slug).update(
-            parent=None
-        )
+        _ = Page.objects.filter(parent_id=pk, workspace__slug=slug).update(parent=None)
 
         page.delete()
         # Delete the user favorite page
@@ -341,6 +339,75 @@ class TeamSpacePageEndpoint(TeamBaseEndpoint):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class TeamSpacePageDuplicateEndpoint(TeamBaseEndpoint):
+    permission_classes = [
+        TeamSpacePermission,
+    ]
+
+    @check_feature_flag(FeatureFlag.TEAMS)
+    def post(self, request, slug, team_space_id, pk):
+        workspace = Workspace.objects.get(slug=slug)
+        page = Page.objects.filter(pk=pk, workspace__slug=slug).first()
+
+        page.pk = None
+        page.name = f"{page.name} (Copy)"
+        page.owned_by = request.user
+        page.description_binary = None
+        page.save()
+
+        # Attach the page to the team space
+        TeamSpacePage.objects.create(
+            workspace=workspace,
+            page=page,
+            team_space_id=team_space_id,
+            sort_order=random.randint(0, 65535),
+        )
+
+        # Capture the team space activity
+        team_space_activity.delay(
+            type="page.activity.created",
+            slug=slug,
+            requested_data=json.dumps(
+                {
+                    "name": str(page.name),
+                    "id": str(page.id),
+                },
+                cls=DjangoJSONEncoder,
+            ),
+            actor_id=str(request.user.id),
+            team_space_id=str(team_space_id),
+            current_instance={},
+            epoch=int(timezone.now().timestamp()),
+        )
+
+        # capture the page transaction
+        page_transaction.delay(
+            {"description_html": page.description_html}, None, page.id
+        )
+        page = (
+            Page.objects.filter(pk=page.id)
+            .annotate(
+                team=TeamSpacePage.objects.filter(
+                    page_id=OuterRef("pk"),
+                    team_space_id=self.kwargs.get("team_space_id"),
+                ).values("team_space_id")
+            )
+            .annotate(
+                project_ids=Coalesce(
+                    ArrayAgg(
+                        "projects__id",
+                        distinct=True,
+                        filter=~Q(projects__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+            .first()
+        )
+        serializer = TeamSpacePageSerializer(page)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
 class TeamSpacePageArchiveEndpoint(TeamBaseEndpoint):
 
     permission_classes = [
@@ -350,9 +417,7 @@ class TeamSpacePageArchiveEndpoint(TeamBaseEndpoint):
     @check_feature_flag(FeatureFlag.TEAMS)
     def post(self, request, slug, team_space_id, pk):
         # Check the page is part of the team space
-        if not TeamSpacePage.objects.filter(
-            page_id=pk, workspace__slug=slug
-        ).exists():
+        if not TeamSpacePage.objects.filter(page_id=pk, workspace__slug=slug).exists():
             return Response(
                 {"error": "The page is not part of the team space"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -387,9 +452,7 @@ class TeamSpacePageUnarchiveEndpoint(TeamBaseEndpoint):
     @check_feature_flag(FeatureFlag.TEAMS)
     def post(self, request, slug, team_space_id, pk):
         # Check the page is part of the team space
-        if not TeamSpacePage.objects.filter(
-            page_id=pk, workspace__slug=slug
-        ).exists():
+        if not TeamSpacePage.objects.filter(page_id=pk, workspace__slug=slug).exists():
             return Response(
                 {"error": "The page is not part of the team space"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -418,9 +481,7 @@ class TeamSpacePageLockEndpoint(TeamBaseEndpoint):
     @check_feature_flag(FeatureFlag.TEAMS)
     def post(self, request, slug, team_space_id, pk):
         # Check the page is part of the team space
-        if not TeamSpacePage.objects.filter(
-            page_id=pk, workspace__slug=slug
-        ).exists():
+        if not TeamSpacePage.objects.filter(page_id=pk, workspace__slug=slug).exists():
             return Response(
                 {"error": "The page is not part of the team space"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -443,9 +504,7 @@ class TeamSpacePageLockEndpoint(TeamBaseEndpoint):
     @check_feature_flag(FeatureFlag.TEAMS)
     def delete(self, request, slug, team_space_id, pk):
         # Check the page is part of the team space
-        if not TeamSpacePage.objects.filter(
-            page_id=pk, workspace__slug=slug
-        ).exists():
+        if not TeamSpacePage.objects.filter(page_id=pk, workspace__slug=slug).exists():
             return Response(
                 {"error": "The page is not part of the team space"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -499,9 +558,7 @@ class TeamSpacePagesDescriptionEndpoint(TeamBaseEndpoint):
         response = StreamingHttpResponse(
             stream_data(), content_type="application/octet-stream"
         )
-        response["Content-Disposition"] = (
-            'attachment; filename="page_description.bin"'
-        )
+        response["Content-Disposition"] = 'attachment; filename="page_description.bin"'
         return response
 
     @check_feature_flag(FeatureFlag.TEAMS)

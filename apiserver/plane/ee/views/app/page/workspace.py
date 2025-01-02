@@ -300,6 +300,28 @@ class WorkspacePageViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class WorkspacePageDuplicateEndpoint(BaseAPIView):
+    permission_classes = [WorkspaceEntityPermission]
+
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
+    def post(self, request, slug, pk):
+        page = Page.objects.filter(pk=pk, workspace__slug=slug).first()
+
+        page.pk = None
+        page.name = f"{page.name} (Copy)"
+        page.owned_by = request.user
+        page.description_binary = None
+        page.save()
+
+        # capture the page transaction
+        page_transaction.delay(
+            {"description_html": page.description_html}, None, page.id
+        )
+        page = Page.objects.get(pk=page.id)
+        serializer = WorkspacePageDetailSerializer(page)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
 class WorkspacePagesDescriptionViewSet(BaseViewSet):
     permission_classes = [WorkspaceEntityPermission]
 

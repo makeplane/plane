@@ -53,7 +53,8 @@ export class TeamPage extends BasePage implements TTeamPage {
         await teamPageService.restore(workspaceSlug, teamId, page.id);
       },
       duplicate: async () => {
-        throw new Error("Duplicate not implemented for team page");
+        if (!workspaceSlug || !teamId || !page.id) throw new Error("Missing required fields.");
+        return await teamPageService.duplicate(workspaceSlug, teamId, page.id);
       },
     });
     makeObservable(this, {

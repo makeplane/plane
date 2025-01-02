@@ -232,4 +232,19 @@ export class TeamPageService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  /**
+   * Duplicate a page for a team
+   * @param workspaceSlug
+   * @param teamId
+   * @param pageId
+   * @returns
+   */
+  async duplicate(workspaceSlug: string, teamId: string, pageId: string): Promise<TPage> {
+    return this.post(`/api/workspaces/${workspaceSlug}/teams/${teamId}/pages/${pageId}/duplicate/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }
