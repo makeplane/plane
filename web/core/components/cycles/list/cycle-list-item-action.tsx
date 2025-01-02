@@ -33,7 +33,8 @@ import { generateQueryParams } from "@/helpers/router.helper";
 import { useCycle, useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web
+// plane web components
+import { CycleAdditionalActions } from "@/plane-web/components/cycles";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // services
@@ -156,7 +157,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     try {
       const res = await cycleService.cycleDateCheck(workspaceSlug as string, projectId as string, payload);
       return res.status;
-    } catch (err) {
+    } catch {
       return false;
     }
   };
@@ -244,6 +245,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
         </div>
       )}
 
+      <CycleAdditionalActions cycleId={cycleId} projectId={projectId} />
       {showTransferIssues && (
         <div
           className="px-2 h-6  text-custom-primary-200 flex items-center gap-1 cursor-pointer"
