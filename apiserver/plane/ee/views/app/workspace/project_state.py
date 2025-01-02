@@ -2,6 +2,9 @@
 from rest_framework import status
 from rest_framework.response import Response
 
+# Django imports
+from django.db import IntegrityError
+
 # Module imports
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -41,12 +44,19 @@ class WorkspaceProjectStatesEndpoint(BaseAPIView):
         if check_workspace_feature(
             slug, WorkspaceFeatureContext.IS_PROJECT_GROUPING_ENABLED
         ):
-            workspace = Workspace.objects.get(slug=slug)
-            serializer = ProjectStateSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save(workspace=workspace)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                workspace = Workspace.objects.get(slug=slug)
+                serializer = ProjectStateSerializer(data=request.data)
+                if serializer.is_valid():
+                    serializer.save(workspace=workspace)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            except IntegrityError as e:
+                if "already exists" in str(e):
+                    return Response(
+                        {"name": "The state name is already taken"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
         return Response(
             {"error": "Project grouping is not enabled for this workspace"},
             status=status.HTTP_400_BAD_REQUEST,
