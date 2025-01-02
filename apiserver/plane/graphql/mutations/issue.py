@@ -119,14 +119,14 @@ class IssueMutation:
             await sync_to_async(IssueAssignee.objects.bulk_create)(
                 [
                     IssueAssignee(
-                        assignee_id=user,
+                        assignee_id=assignee,
                         issue=issue,
                         workspace=workspace,
                         project_id=project,
                         created_by_id=user.id,
                         updated_by_id=user.id,
                     )
-                    for user in assignees
+                    for assignee in assignees
                 ],
                 batch_size=10,
             )

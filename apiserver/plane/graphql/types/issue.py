@@ -11,7 +11,6 @@ import strawberry_django
 from strawberry.scalars import JSON
 from strawberry.types import Info
 
-
 # Module Imports
 from plane.db.models import (
     Issue,
@@ -23,6 +22,7 @@ from plane.db.models import (
     CycleIssue,
     ModuleIssue,
     IssueType,
+    ProjectMember,
 )
 
 
@@ -77,16 +77,14 @@ class IssuesType:
         return self.state_id
 
     @strawberry.field
-    def parent(self) -> Optional[strawberry.ID]:
-        return (
-            self.parent_id
-            if self.parent_id
-            and self.parent.project.id != self.project_id
-            and self.parent.project.project__member.filter(
-                member_id=self.created_by, is_active=True, deleted_at__isnull=True
-            ).exists()
-            else None
-        )
+    async def parent(self) -> Optional[strawberry.ID]:
+        if self.parent:
+            parent_issue_project_id = await sync_to_async(
+                lambda: self.parent.project_id if self.parent else None
+            )()
+            if parent_issue_project_id == self.project_id:
+                return str(self.parent_id)
+        return None
 
     @strawberry.field
     def project(self) -> int:
