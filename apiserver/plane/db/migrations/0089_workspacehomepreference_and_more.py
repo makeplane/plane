@@ -107,4 +107,9 @@ class Migration(migrations.Migration):
             name="name",
             field=models.TextField(blank=True),
         ),
+        migrations.AddField(
+            model_name='workspacehomepreference',
+            name='sort_order',
+            field=models.PositiveIntegerField(default=65535),
+        ),
     ]
