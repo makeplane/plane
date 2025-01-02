@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { PenSquare } from "lucide-react";
+import { EIssuesStoreType } from "@plane/constants";
 // ui
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, CountChip } from "@/components/common";
 import { CreateUpdateIssueModal } from "@/components/issues";
-// constants
-import { EIssuesStoreType } from "@/constants/issue";
+
 // hooks
 import { useProject, useUserPermissions, useWorkspaceDraftIssues } from "@/hooks/store";
 // plane-web

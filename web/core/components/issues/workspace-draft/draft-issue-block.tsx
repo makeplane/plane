@@ -4,11 +4,11 @@ import { omit } from "lodash";
 import { observer } from "mobx-react";
 import { Copy, Pencil, SquareStackIcon, Trash2 } from "lucide-react";
 // types
+import { EIssuesStoreType } from "@plane/constants";
 import { TWorkspaceDraftIssue } from "@plane/types";
 // ui
 import { Row, TContextMenuItem, Tooltip } from "@plane/ui";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
 // helper
 import { cn } from "@/helpers/common.helper";
 // hooks

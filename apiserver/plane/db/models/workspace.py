@@ -322,3 +322,23 @@ class WorkspaceUserProperties(BaseModel):
 
     def __str__(self):
         return f"{self.workspace.name} {self.user.email}"
+
+
+class WorkspaceUserLink(WorkspaceBaseModel):
+    title = models.CharField(max_length=255, null=True, blank=True)
+    url = models.TextField()
+    metadata = models.JSONField(default=dict)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="owner_workspace_user_link",
+    )
+
+    class Meta:
+        verbose_name = "Workspace User Link"
+        verbose_name_plural = "Workspace User Links"
+        db_table = "workspace_user_links"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.workspace.id} {self.url}"

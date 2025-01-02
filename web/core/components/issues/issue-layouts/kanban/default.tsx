@@ -58,6 +58,7 @@ export interface IKanBan {
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   showEmptyGroup?: boolean;
   subGroupIndex?: number;
+  isEpic?: boolean;
 }
 
 export const KanBan: React.FC<IKanBan> = observer((props) => {
@@ -86,6 +87,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     isDropDisabled,
     dropErrorMessage,
     subGroupIndex = 0,
+    isEpic = false,
   } = props;
   // store hooks
   const storeType = useIssueStoreType();
@@ -96,6 +98,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     groupBy: group_by as GroupByColumnTypes,
     includeNone: true,
     isWorkspaceLevel: isWorkspaceLevel(storeType),
+    isEpic: isEpic,
   });
 
   if (!list) return null;
@@ -164,6 +167,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                     addIssuesToView={addIssuesToView}
                     collapsedGroups={collapsedGroups}
                     handleCollapsedGroups={handleCollapsedGroups}
+                    isEpic={isEpic}
                   />
                 </div>
               )}
@@ -207,6 +211,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                     scrollableContainerRef={scrollableContainerRef}
                     loadMoreIssues={loadMoreIssues}
                     handleOnDrop={handleOnDrop}
+                    isEpic={isEpic}
                   />
                 </RenderIfVisible>
               )}

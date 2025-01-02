@@ -91,6 +91,7 @@ def issue_on_results(issues, group_by, sub_group_by):
             Case(
                 When(
                     votes__isnull=False,
+                    votes__deleted_at__isnull=True,
                     then=JSONObject(
                         vote=F("votes__vote"),
                         actor_details=JSONObject(
@@ -117,13 +118,14 @@ def issue_on_results(issues, group_by, sub_group_by):
                 default=None,
                 output_field=JSONField(),
             ),
-            filter=Q(votes__isnull=False),
+            filter=Q(votes__isnull=False,votes__deleted_at__isnull=True),
             distinct=True,
         ),
         reaction_items=ArrayAgg(
             Case(
                 When(
                     issue_reactions__isnull=False,
+                    issue_reactions__deleted_at__isnull=True,
                     then=JSONObject(
                         reaction=F("issue_reactions__reaction"),
                         actor_details=JSONObject(
@@ -150,7 +152,7 @@ def issue_on_results(issues, group_by, sub_group_by):
                 default=None,
                 output_field=JSONField(),
             ),
-            filter=Q(issue_reactions__isnull=False),
+            filter=Q(issue_reactions__isnull=False, issue_reactions__deleted_at__isnull=True),
             distinct=True,
         ),
     ).values(*required_fields, "vote_items", "reaction_items")

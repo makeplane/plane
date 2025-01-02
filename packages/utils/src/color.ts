@@ -8,9 +8,13 @@
 export type RGB = { r: number; g: number; b: number };
 
 /**
- * Validates and clamps color values to RGB range (0-255)
+ * @description Validates and clamps color values to RGB range (0-255)
  * @param {number} value - The color value to validate
  * @returns {number} Clamped and floored value between 0-255
+ * @example
+ * validateColor(-10) // returns 0
+ * validateColor(300) // returns 255
+ * validateColor(128) // returns 128
  */
 export const validateColor = (value: number) => {
   if (value < 0) return 0;

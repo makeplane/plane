@@ -3,7 +3,8 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// hooks
+// plane constants
+import { EIssueLayoutTypes, EIssuesStoreType } from "@plane/constants";
 // components
 import { LogoSpinner } from "@/components/common";
 import { TransferIssues, TransferIssuesModal } from "@/components/cycles";
@@ -17,7 +18,6 @@ import {
   IssuePeekOverview,
 } from "@/components/issues";
 // constants
-import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useCycle, useIssues } from "@/hooks/store";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
@@ -86,7 +86,11 @@ export const CycleLayoutRoot: React.FC = observer(() => {
 
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.CYCLE}>
-      <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
+      <TransferIssuesModal
+        handleClose={() => setTransferIssuesModal(false)}
+        cycleId={cycleId.toString()}
+        isOpen={transferIssuesModal}
+      />
       <div className="relative flex h-full w-full flex-col overflow-hidden">
         {cycleStatus === "completed" && (
           <TransferIssues

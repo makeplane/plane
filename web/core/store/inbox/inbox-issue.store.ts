@@ -98,7 +98,9 @@ export class InboxIssueStore implements IInboxIssueStore {
 
       // If issue accepted sync issue to local db
       if (status === EInboxIssueStatus.ACCEPTED) {
-        addIssueToPersistanceLayer({ ...this.issue, ...inboxIssue.issue });
+        const updatedIssue = { ...this.issue, ...inboxIssue.issue };
+        this.store.issue.issues.addIssue([updatedIssue]);
+        await addIssueToPersistanceLayer(updatedIssue);
       }
     } catch {
       runInAction(() => set(this, "status", previousData.status));

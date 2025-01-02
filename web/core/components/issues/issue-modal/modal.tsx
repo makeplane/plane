@@ -3,11 +3,11 @@
 import React from "react";
 import { observer } from "mobx-react";
 // types
+import { EIssuesStoreType } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 // components
 import { CreateUpdateIssueModalBase } from "@/components/issues";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
 // plane web providers
 import { IssueModalProvider } from "@/plane-web/components/issues";
 

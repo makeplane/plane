@@ -9,7 +9,7 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // types
 import { ISearchIssueResponse } from "@plane/types";
 // ui
-import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // components
 import { IssueSearchModalEmptyState } from "@/components/core";
 // helpers
@@ -29,6 +29,7 @@ type Props = {
   onChange: (issue: ISearchIssueResponse) => void;
   projectId: string | undefined;
   issueId?: string;
+  searchEpic?: boolean;
 };
 
 // services
@@ -41,12 +42,12 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   onChange,
   projectId,
   issueId,
+  searchEpic = false,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   const { isMobile } = usePlatformOS();
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
 
@@ -57,7 +58,6 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   const handleClose = () => {
     onClose();
     setSearchTerm("");
-    setIsWorkspaceLevel(false);
   };
 
   useEffect(() => {
@@ -69,16 +69,17 @@ export const ParentIssuesListModal: React.FC<Props> = ({
     projectService
       .projectIssuesSearch(workspaceSlug as string, projectId as string, {
         search: debouncedSearchTerm,
-        parent: true,
+        parent: searchEpic ? undefined : true,
         issue_id: issueId,
-        workspace_search: isWorkspaceLevel,
+        workspace_search: false,
+        epic: searchEpic ? true : undefined,
       })
       .then((res) => setIssues(res))
       .finally(() => {
         setIsSearching(false);
         setIsLoading(false);
       });
-  }, [debouncedSearchTerm, isOpen, issueId, isWorkspaceLevel, projectId, workspaceSlug]);
+  }, [debouncedSearchTerm, isOpen, issueId, projectId, workspaceSlug]);
 
   return (
     <>
@@ -127,28 +128,6 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       displayValue={() => ""}
                       tabIndex={baseTabIndex}
                     />
-                  </div>
-                  <div className="flex p-2 sm:justify-end">
-                    <Tooltip tooltipContent="Toggle workspace level search" isMobile={isMobile}>
-                      <div
-                        className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-xs ${
-                          isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"
-                        }`}
-                      >
-                        <ToggleSwitch
-                          value={isWorkspaceLevel}
-                          onChange={() => setIsWorkspaceLevel((prevData) => !prevData)}
-                          label="Workspace level"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
-                          className="flex-shrink-0"
-                        >
-                          Workspace Level
-                        </button>
-                      </div>
-                    </Tooltip>
                   </div>
                   <Combobox.Options
                     static

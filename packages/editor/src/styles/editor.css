@@ -111,8 +111,12 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   transform: scale(1.05);
 }
 
-ul[data-type="taskList"] li > label input[type="checkbox"]:hover {
-  background-color: rgba(var(--color-background-80)) !important;
+.ProseMirror[contenteditable="true"] input[type="checkbox"]:hover {
+  background-color: rgba(var(--color-background-80));
+}
+
+.ProseMirror[contenteditable="false"] input[type="checkbox"] {
+  pointer-events: none;
 }
 
 ul[data-type="taskList"] li > label input[type="checkbox"][checked] {
@@ -150,10 +154,6 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   border: 1.5px solid rgb(var(--color-text-100));
   margin-right: 0.2rem;
   margin-top: 0.15rem;
-
-  &:hover {
-    background-color: rgb(var(--color-background-80));
-  }
 
   &:active {
     background-color: rgb(var(--color-background-90));

@@ -1,12 +1,13 @@
 "use client";
 
 import React from "react";
-
+// plane constants
+import { EIssueLayoutTypes } from "@plane/constants";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
 // constants
-import { EIssueLayoutTypes, ISSUE_LAYOUTS } from "@/constants/issue";
+import { ISSUE_LAYOUTS } from "@/constants/issue";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // hooks
 

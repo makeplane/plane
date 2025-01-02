@@ -1,8 +1,9 @@
 "use client";
 
 import { CommandPalette } from "@/components/command-palette";
-import { WorkspaceAuthWrapper } from "@/layouts/auth-layout";
 import { AuthenticationWrapper } from "@/lib/wrappers";
+// plane web components
+import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 import { AppSidebar } from "./sidebar";
 
 export default function WorkspaceLayout({ children }: { children: React.ReactNode }) {

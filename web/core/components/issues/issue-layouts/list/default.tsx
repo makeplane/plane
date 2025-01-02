@@ -48,6 +48,7 @@ export interface IList {
   loadMoreIssues: (groupId?: string) => void;
   handleCollapsedGroups: (value: string) => void;
   collapsedGroups: TIssueKanbanFilters;
+  isEpic?: boolean;
 }
 
 export const List: React.FC<IList> = observer((props) => {
@@ -70,6 +71,7 @@ export const List: React.FC<IList> = observer((props) => {
     loadMoreIssues,
     handleCollapsedGroups,
     collapsedGroups,
+    isEpic = false,
   } = props;
 
   const storeType = useIssueStoreType();
@@ -82,6 +84,7 @@ export const List: React.FC<IList> = observer((props) => {
     groupBy: group_by as GroupByColumnTypes,
     includeNone: true,
     isWorkspaceLevel: isWorkspaceLevel(storeType),
+    isEpic: isEpic,
   });
 
   // Enable Auto Scroll for Main Kanban
@@ -121,7 +124,11 @@ export const List: React.FC<IList> = observer((props) => {
   return (
     <div className="relative size-full flex flex-col">
       {groups && (
-        <MultipleSelectGroup containerRef={containerRef} entities={entities} disabled={!isBulkOperationsEnabled}>
+        <MultipleSelectGroup
+          containerRef={containerRef}
+          entities={entities}
+          disabled={!isBulkOperationsEnabled || isEpic}
+        >
           {(helpers) => (
             <>
               <div
@@ -153,6 +160,7 @@ export const List: React.FC<IList> = observer((props) => {
                     selectionHelpers={helpers}
                     handleCollapsedGroups={handleCollapsedGroups}
                     collapsedGroups={collapsedGroups}
+                    isEpic={isEpic}
                   />
                 ))}
               </div>

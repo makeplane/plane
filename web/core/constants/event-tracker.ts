@@ -8,6 +8,8 @@ export type IssueEventProps = {
 export type EventProps = {
   eventName: string;
   payload: any;
+  updates?: any;
+  path?: string;
 };
 
 export const getWorkspaceEventPayload = (payload: any) => ({

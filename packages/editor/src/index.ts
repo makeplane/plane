@@ -11,7 +11,6 @@ import "./core/extensions/flat-list/core/style.css";
 // editors
 export {
   CollaborativeDocumentEditorWithRef,
-  CollaborativeDocumentReadOnlyEditorWithRef,
   DocumentReadOnlyEditorWithRef,
   LiteTextEditorWithRef,
   LiteTextReadOnlyEditorWithRef,

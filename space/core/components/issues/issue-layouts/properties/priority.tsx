@@ -4,7 +4,7 @@
 import { TIssuePriorities } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 // constants
-import { issuePriorityFilter } from "@/constants/issue";
+import { getIssuePriorityFilters } from "@plane/utils";
 
 export const IssueBlockPriority = ({
   priority,
@@ -13,7 +13,7 @@ export const IssueBlockPriority = ({
   priority: TIssuePriorities | null;
   shouldShowName?: boolean;
 }) => {
-  const priority_detail = priority != null ? issuePriorityFilter(priority) : null;
+  const priority_detail = priority != null ? getIssuePriorityFilters(priority) : null;
 
   if (priority_detail === null) return <></>;
 

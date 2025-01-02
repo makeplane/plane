@@ -29,6 +29,7 @@ type Props = {
   loadMoreIssues: () => void;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   selectionHelpers: TSelectionHelper;
+  isEpic?: boolean;
 };
 
 export const SpreadsheetTable = observer((props: Props) => {
@@ -47,6 +48,7 @@ export const SpreadsheetTable = observer((props: Props) => {
     loadMoreIssues,
     spreadsheetColumnsList,
     selectionHelpers,
+    isEpic = false,
   } = props;
 
   // states
@@ -110,6 +112,7 @@ export const SpreadsheetTable = observer((props: Props) => {
         isEstimateEnabled={isEstimateEnabled}
         spreadsheetColumnsList={spreadsheetColumnsList}
         selectionHelpers={selectionHelpers}
+        isEpic={isEpic}
       />
       <tbody>
         {issueIds.map((id) => (
@@ -127,6 +130,7 @@ export const SpreadsheetTable = observer((props: Props) => {
             isScrolled={isScrolled}
             spreadsheetColumnsList={spreadsheetColumnsList}
             selectionHelpers={selectionHelpers}
+            isEpic={isEpic}
           />
         ))}
       </tbody>

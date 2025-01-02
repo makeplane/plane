@@ -1,9 +1,11 @@
 import { useContext } from "react";
 import merge from "lodash/merge";
+import { EIssuesStoreType } from "@plane/constants";
 import { TIssueMap } from "@plane/types";
 // mobx store
-import { EIssuesStoreType } from "@/constants/issue";
 import { StoreContext } from "@/lib/store-context";
+// plane web types
+import { IProjectEpics, IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 // types
 import { ITeamIssues, ITeamIssuesFilter } from "@/plane-web/store/issue/team";
 import { ITeamViewIssues, ITeamViewIssuesFilter } from "@/plane-web/store/issue/team-views";
@@ -71,6 +73,10 @@ export type TStoreIssues = {
     issues: IProjectIssues;
     issuesFilter: IProjectIssuesFilter;
   };
+  [EIssuesStoreType.EPIC]: defaultIssueStore & {
+    issues: IProjectEpics;
+    issuesFilter: IProjectEpicsFilter;
+  };
 };
 
 export const useIssues = <T extends EIssuesStoreType>(storeType?: T): TStoreIssues[T] => {
@@ -136,6 +142,11 @@ export const useIssues = <T extends EIssuesStoreType>(storeType?: T): TStoreIssu
       return merge(defaultStore, {
         issues: context.issue.draftIssues,
         issuesFilter: context.issue.draftIssuesFilter,
+      }) as TStoreIssues[T];
+    case EIssuesStoreType.EPIC:
+      return merge(defaultStore, {
+        issues: context.issue.projectEpics,
+        issuesFilter: context.issue.projectEpicsFilter,
       }) as TStoreIssues[T];
     default:
       return merge(defaultStore, {

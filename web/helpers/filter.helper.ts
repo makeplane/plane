@@ -1,4 +1,4 @@
-import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
+import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 // helpers
 import { IIssueFilters } from "@plane/types";
 import { getDate } from "./date-time.helper";

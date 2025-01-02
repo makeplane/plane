@@ -259,7 +259,7 @@ class CycleViewSet(BaseViewSet):
             "created_by",
         )
         datetime_fields = ["start_date", "end_date"]
-        data = user_timezone_converter(data, datetime_fields, project_timezone)
+        data = user_timezone_converter(data, datetime_fields, request.user.user_timezone)
         return Response(data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -404,7 +404,6 @@ class CycleViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def retrieve(self, request, slug, project_id, pk):
-        project = Project.objects.get(id=project_id)
         queryset = self.get_queryset().filter(archived_at__isnull=True).filter(pk=pk)
         data = (
             self.get_queryset()
@@ -458,7 +457,7 @@ class CycleViewSet(BaseViewSet):
 
         queryset = queryset.first()
         datetime_fields = ["start_date", "end_date"]
-        data = user_timezone_converter(data, datetime_fields, project.timezone)
+        data = user_timezone_converter(data, datetime_fields, request.user.user_timezone)
 
         recent_visited_task.delay(
             slug=slug,
@@ -534,8 +533,8 @@ class CycleDateCheckEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        start_date = convert_to_utc(str(start_date), project_id)
-        end_date = convert_to_utc(str(end_date), project_id, is_end_date=True)
+        start_date = convert_to_utc(str(start_date), project_id, is_start_date=True)
+        end_date = convert_to_utc(str(end_date), project_id)
 
         # Check if any cycle intersects in the given interval
         cycles = Cycle.objects.filter(

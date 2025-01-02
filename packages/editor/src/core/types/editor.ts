@@ -1,11 +1,13 @@
-import { JSONContent } from "@tiptap/core";
+import { Extensions, JSONContent } from "@tiptap/core";
 import { Selection } from "@tiptap/pm/state";
+// plane types
+import { TWebhookConnectionQueryParams } from "@plane/types";
+// extension types
+import { TTextAlign } from "@/extensions";
 // helpers
 import { IMarking } from "@/helpers/scroll-to-node";
 // types
 import {
-  IMentionHighlight,
-  IMentionSuggestion,
   TAIHandler,
   TDisplayConfig,
   TDocumentEventEmitter,
@@ -13,9 +15,10 @@ import {
   TEmbedConfig,
   TExtensions,
   TFileHandler,
+  TMentionHandler,
+  TReadOnlyMentionHandler,
   TServerHandler,
 } from "@/types";
-import { TTextAlign } from "@/extensions";
 
 export type TEditorCommands =
   | "text"
@@ -115,10 +118,7 @@ export interface IEditorProps {
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   id: string;
   initialValue: string;
-  mentionHandler: {
-    highlights: () => Promise<IMentionHighlight[]>;
-    suggestions?: () => Promise<IMentionSuggestion[]>;
-  };
+  mentionHandler: TMentionHandler;
   onChange?: (json: object, html: string) => void;
   onTransaction?: () => void;
   handleEditorReady?: (value: boolean) => void;
@@ -129,16 +129,17 @@ export interface IEditorProps {
   value?: string | null;
 }
 export interface ILiteTextEditor extends IEditorProps {
-  extensions?: any[];
+  extensions?: Extensions;
 }
 export interface IRichTextEditor extends IEditorProps {
-  extensions?: any[];
+  extensions?: Extensions;
   bubbleMenuEnabled?: boolean;
   dragDropEnabled?: boolean;
 }
 
 export interface ICollaborativeDocumentEditor
   extends Omit<IEditorProps, "initialValue" | "onChange" | "onEnterKeyPress" | "value"> {
+  editable: boolean;
   aiHandler?: TAIHandler;
   embedHandler: TEmbedConfig;
   handleEditorReady?: (value: boolean) => void;
@@ -158,9 +159,7 @@ export interface IReadOnlyEditorProps {
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
   id: string;
   initialValue: string;
-  mentionHandler: {
-    highlights: () => Promise<IMentionHighlight[]>;
-  };
+  mentionHandler: TReadOnlyMentionHandler;
 }
 
 export type ILiteTextReadOnlyEditor = IReadOnlyEditorProps;
@@ -190,7 +189,5 @@ export type TUserDetails = {
 
 export type TRealtimeConfig = {
   url: string;
-  queryParams: {
-    [key: string]: string;
-  };
+  queryParams: TWebhookConnectionQueryParams;
 };

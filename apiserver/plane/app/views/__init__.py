@@ -72,6 +72,7 @@ from .workspace.user import (
 from .workspace.estimate import WorkspaceEstimatesEndpoint
 from .workspace.module import WorkspaceModulesEndpoint
 from .workspace.cycle import WorkspaceCyclesEndpoint
+from .workspace.quick_link import QuickLinkViewSet
 
 from .state.base import StateViewSet
 from .view.base import (
@@ -155,10 +156,11 @@ from .page.base import (
     PageLogEndpoint,
     SubPagesEndpoint,
     PagesDescriptionViewSet,
+    PageDuplicateEndpoint,
 )
 from .page.version import PageVersionEndpoint
 
-from .search.base import GlobalSearchEndpoint
+from .search.base import GlobalSearchEndpoint, SearchEndpoint
 from .search.issue import IssueSearchEndpoint
 
 
@@ -204,3 +206,5 @@ from .error_404 import custom_404_view
 
 from .notification.base import MarkAllReadNotificationViewSet
 from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
+
+from .timezone.base import TimezoneEndpoint

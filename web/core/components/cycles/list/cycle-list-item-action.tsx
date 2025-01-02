@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, MouseEvent, useEffect } from "react";
+import React, { FC, MouseEvent, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -8,9 +8,19 @@ import { Eye, Users } from "lucide-react";
 // types
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
-import { Avatar, AvatarGroup, FavoriteStar, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
+import {
+  Avatar,
+  AvatarGroup,
+  FavoriteStar,
+  LayersIcon,
+  TOAST_TYPE,
+  Tooltip,
+  TransferIcon,
+  setPromiseToast,
+  setToast,
+} from "@plane/ui";
 // components
-import { CycleQuickActions } from "@/components/cycles";
+import { CycleQuickActions, TransferIssuesModal } from "@/components/cycles";
 import { DateRangeDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // constants
@@ -23,6 +33,7 @@ import { generateQueryParams } from "@/helpers/router.helper";
 import { useCycle, useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // services
@@ -46,6 +57,8 @@ const defaultValues: Partial<ICycle> = {
 
 export const CycleListItemAction: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, cycleId, cycleDetails, parentRef, isActive = false } = props;
+  //states
+  const [transferIssuesModal, setTransferIssuesModal] = useState(false);
   // hooks
   const { isMobile } = usePlatformOS();
   // router
@@ -66,6 +79,9 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
 
   // derived values
   const cycleStatus = cycleDetails.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
+  const showIssueCount = useMemo(() => cycleStatus === "draft" || cycleStatus === "upcoming", [cycleStatus]);
+  const transferableIssuesCount = cycleDetails ? cycleDetails.total_issues - cycleDetails.completed_issues : 0;
+  const showTransferIssues = transferableIssuesCount > 0 && cycleStatus === "completed";
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT,
@@ -208,6 +224,11 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
 
   return (
     <>
+      <TransferIssuesModal
+        handleClose={() => setTransferIssuesModal(false)}
+        isOpen={transferIssuesModal}
+        cycleId={cycleId.toString()}
+      />
       <button
         onClick={openCycleOverview}
         className={`z-[1] flex text-custom-primary-200 text-xs gap-1 flex-shrink-0 ${isMobile || (isActive && !searchParams.has("peekCycle")) ? "flex" : "hidden group-hover:flex"}`}
@@ -215,6 +236,25 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
         <Eye className="h-4 w-4 my-auto  text-custom-primary-200" />
         <span>More details</span>
       </button>
+
+      {showIssueCount && (
+        <div className="flex items-center gap-1">
+          <LayersIcon className="h-4 w-4 text-custom-text-300" />
+          <span className="text-xs text-custom-text-300">{cycleDetails.total_issues}</span>
+        </div>
+      )}
+
+      {showTransferIssues && (
+        <div
+          className="px-2 h-6  text-custom-primary-200 flex items-center gap-1 cursor-pointer"
+          onClick={() => {
+            setTransferIssuesModal(true);
+          }}
+        >
+          <TransferIcon className="fill-custom-primary-200 w-4" />
+          <span>Transfer {transferableIssuesCount} issues</span>
+        </div>
+      )}
 
       {!isActive && (
         <Controller

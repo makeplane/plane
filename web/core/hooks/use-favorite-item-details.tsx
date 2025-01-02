@@ -8,7 +8,7 @@ import {
 // helpers
 import { getPageName } from "@/helpers/page.helper";
 // hooks
-import { useProject, usePage, useProjectView, useCycle, useModule } from "@/hooks/store";
+import { useProject, useProjectPage, useProjectView, useCycle, useModule } from "@/hooks/store";
 
 export const useFavoriteItemDetails = (workspaceSlug: string, favorite: IFavorite) => {
   const favoriteItemId = favorite?.entity_data?.id;
@@ -23,7 +23,7 @@ export const useFavoriteItemDetails = (workspaceSlug: string, favorite: IFavorit
   const { getModuleById } = useModule();
 
   // derived values
-  const pageDetail = usePage(favoriteItemId ?? "");
+  const pageDetail = useProjectPage(favoriteItemId ?? "");
   const viewDetails = getViewById(favoriteItemId ?? "");
   const cycleDetail = getCycleById(favoriteItemId ?? "");
   const moduleDetail = getModuleById(favoriteItemId ?? "");
