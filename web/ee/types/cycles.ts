@@ -1,6 +1,6 @@
 export type TCycleUpdateStatus =
-  | "ONTRACK"
-  | "OFFTRACK"
+  | "ON_TRACK"
+  | "OFF_TRACK"
   | "AT_RISK"
   | "STARTED"
   | "ENDED"

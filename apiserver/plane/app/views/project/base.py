@@ -656,8 +656,24 @@ class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        current_instance = json.dumps(
+            ProjectSerializer(project).data, cls=DjangoJSONEncoder
+        )
         project.archived_at = timezone.now()
         project.save()
+        project_activity.delay(
+            type="project.activity.updated",
+            requested_data=json.dumps(
+                {"archived_at": str(timezone.now().date())}
+            ),
+            actor_id=str(request.user.id),
+            project_id=str(project_id),
+            current_instance=current_instance,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+
         UserFavorite.objects.filter(
             project_id=project_id, workspace__slug=slug
         ).delete()
@@ -668,8 +684,24 @@ class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def delete(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        current_instance = json.dumps(
+            ProjectSerializer(project).data, cls=DjangoJSONEncoder
+        )
         project.archived_at = None
         project.save()
+        project_activity.delay(
+            type="project.activity.updated",
+            requested_data=json.dumps(
+                {"archived_at": None}
+            ),
+            actor_id=str(request.user.id),
+            project_id=str(project_id),
+            current_instance=current_instance,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -847,5 +879,42 @@ class DeployBoardViewSet(BaseViewSet):
 
         project_deploy_board.save()
 
+        project_activity.delay(
+            type="project.activity.updated",
+            requested_data=json.dumps(
+                {"deploy_board": True}
+            ),
+            actor_id=str(request.user.id),
+            project_id=str(project_id),
+            current_instance=json.dumps(
+                {"deploy_board": False}
+            ),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+
         serializer = DeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+    def destroy(self, request, slug, project_id, pk):
+        project_deploy_board = DeployBoard.objects.get(
+            entity_name="project", entity_identifier=project_id, project_id=project_id, pk=pk
+        )
+        project_deploy_board.delete()
+        project_activity.delay(
+            type="project.activity.updated",
+            requested_data=json.dumps(
+                {"deploy_board": False}
+            ),
+            actor_id=str(request.user.id),
+            project_id=str(project_id),
+            current_instance=json.dumps(
+                {"deploy_board": True}
+            ),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)

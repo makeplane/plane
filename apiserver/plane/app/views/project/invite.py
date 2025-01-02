@@ -1,5 +1,6 @@
 # Python imports
 import jwt
+import json
 from datetime import datetime
 
 # Django imports
@@ -7,6 +8,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.conf import settings
 from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
+
 
 # Third Party imports
 from rest_framework.response import Response
@@ -16,9 +19,8 @@ from rest_framework.permissions import AllowAny
 # Module imports
 from .base import BaseViewSet, BaseAPIView
 from plane.app.serializers import ProjectMemberInviteSerializer
-
+from plane.ee.bgtasks.project_activites_task import project_activity
 from plane.app.permissions import allow_permission, ROLE
-
 from plane.db.models import (
     ProjectMember,
     Workspace,
@@ -177,6 +179,24 @@ class UserProjectInvitationsViewset(BaseViewSet):
             ],
             ignore_conflicts=True,
         )
+
+        for project_id in project_ids:
+            project_activity.delay(
+                type="project.activity.updated",
+                requested_data=json.dumps(
+                    {
+                        "members": [{"member_id": str(request.user.id)}],
+                        "joined": True,
+                    },
+                    cls=DjangoJSONEncoder,
+                ),
+                actor_id=str(request.user.id),
+                project_id=str(project_id),
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
 
         return Response(
             {"message": "Projects joined successfully"}, status=status.HTTP_201_CREATED

@@ -10,11 +10,7 @@ from django.utils import timezone
 
 # Module imports
 from plane.ee.models import WorkspaceActivity, ProjectReaction, ProjectState
-from plane.db.models import (
-    CommentReaction,
-    IssueComment,
-    Project,
-)
+from plane.db.models import CommentReaction, IssueComment, Project, User, State, Label
 from plane.utils.exception_logger import log_exception
 
 
@@ -54,9 +50,7 @@ def track_description(
     project_activities,
     epoch,
 ):
-    if current_instance.get("description") != requested_data.get(
-        "description"
-    ):
+    if current_instance.get("description") != requested_data.get("description"):
         last_activity = (
             WorkspaceActivity.objects.filter(project_id=project_id)
             .order_by("-created_at")
@@ -154,9 +148,7 @@ def track_target_date(
     project_activities,
     epoch,
 ):
-    if current_instance.get("target_date") != requested_data.get(
-        "target_date"
-    ):
+    if current_instance.get("target_date") != requested_data.get("target_date"):
         project_activities.append(
             WorkspaceActivity(
                 actor_id=actor_id,
@@ -285,7 +277,7 @@ def track_archived_at(
         project_activities.append(
             WorkspaceActivity(
                 actor_id=actor_id,
-                verb="updated",
+                verb="archived" if requested_data.get("archived_at") else "restored",
                 old_value=current_instance.get("archived_at"),
                 new_value=requested_data.get("archived_at"),
                 field="archived_at",
@@ -321,6 +313,7 @@ def track_identifier(
             )
         )
 
+
 def track_timezone(
     requested_data,
     current_instance,
@@ -341,6 +334,202 @@ def track_timezone(
                 project_id=project_id,
                 workspace_id=workspace_id,
                 comment="updated the timezone to",
+                epoch=epoch,
+            )
+        )
+
+
+def track_lead(
+    requested_data,
+    current_instance,
+    project_id,
+    workspace_id,
+    actor_id,
+    project_activities,
+    epoch,
+):
+    if current_instance.get("project_lead") != requested_data.get("project_lead"):
+        project_activities.append(
+            WorkspaceActivity(
+                actor_id=actor_id,
+                workspace_id=workspace_id,
+                verb="updated",
+                old_value=None,
+                new_value="",
+                field="lead",
+                comment="updated lead ",
+                project_id=project_id,
+                old_identifier=current_instance.get("project_lead"),
+                new_identifier=requested_data.get("project_lead"),
+                epoch=epoch,
+            )
+        )
+
+
+def track_deploy_board(
+    requested_data,
+    current_instance,
+    project_id,
+    workspace_id,
+    actor_id,
+    project_activities,
+    epoch,
+):
+    if current_instance.get("deploy_board") != requested_data.get("deploy_board"):
+        project_activities.append(
+            WorkspaceActivity(
+                actor_id=actor_id,
+                workspace_id=workspace_id,
+                verb="published"
+                if requested_data.get("deploy_board")
+                else "unpublished",
+                old_value=current_instance.get("deploy_board"),
+                new_value=requested_data.get("deploy_board"),
+                field="deploy_board",
+                comment="updated deploy board ",
+                project_id=project_id,
+                old_identifier=current_instance.get("deploy_board"),
+            )
+        )
+
+
+def track_members(
+    requested_data,
+    current_instance,
+    project_id,
+    workspace_id,
+    actor_id,
+    project_activities,
+    epoch,
+):
+    if requested_data:
+        members = requested_data.get("members", [])
+        for member in members:
+            member = User.objects.get(id=member.get("member_id"))
+            project_activities.append(
+                WorkspaceActivity(
+                    actor_id=actor_id,
+                    verb="joined" if requested_data.get("joined", None) else "added",
+                    old_value=None,
+                    new_value=member.first_name + " " + member.last_name,
+                    field="members",
+                    project_id=project_id,
+                    workspace_id=workspace_id,
+                    old_identifier=None,
+                    new_identifier=member.id,
+                    comment="joined the project" if requested_data.get("joined", None) else "added the member",
+                    epoch=epoch,
+                )
+            )
+
+    if current_instance:
+        members = current_instance.get("members", [])
+        for member in members:
+            member = User.objects.get(id=member)
+            project_activities.append(
+                WorkspaceActivity(
+                    actor_id=actor_id,
+                    verb="removed" if current_instance.get("removed") else "left",
+                    old_value=member.first_name + " " + member.last_name,
+                    new_value=None,
+                    field="members",
+                    project_id=project_id,
+                    workspace_id=workspace_id,
+                    old_identifier=member.id,
+                    new_identifier=None,
+                    comment="removed the members"
+                    if current_instance.get("removed")
+                    else "left the project",
+                    epoch=epoch,
+                )
+            )
+
+
+def track_project_state(
+    requested_data,
+    current_instance,
+    project_id,
+    workspace_id,
+    actor_id,
+    project_activities,
+    epoch,
+):  
+
+    if requested_data.get("project_state"):
+        new_state = State.objects.get(id=requested_data.get("project_state"))
+        project_activities.append(
+            WorkspaceActivity(
+                actor_id=actor_id,
+                verb="created",
+                old_value="",
+                new_value=new_state.name,
+                field="project_state",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                old_identifier=None,
+                new_identifier=new_state.id,
+                comment="created a new state",
+                epoch=epoch,
+            )
+        )
+    
+    if current_instance.get("project_state"):
+        project_activities.append(
+            WorkspaceActivity(
+                actor_id=actor_id,
+                verb="deleted",
+                old_value=current_instance.get("state_name"),
+                new_value="",
+                field="project_state",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                old_identifier=current_instance.get("project_state"),
+                new_identifier=None,
+                comment="removed the project state",
+                epoch=epoch,
+            )
+        )
+
+def track_label(
+    requested_data,
+    current_instance,
+    project_id,
+    workspace_id,
+    actor_id,
+    project_activities,
+    epoch,
+):
+    if requested_data.get("label"):
+        new_label = Label.objects.get(id=requested_data.get("label"))
+        project_activities.append(
+            WorkspaceActivity(
+                actor_id=actor_id,
+                verb="created",
+                old_value="",
+                new_value=new_label.name,
+                field="label",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                old_identifier=None,
+                new_identifier=new_label.id,
+                comment="created a new label",
+                epoch=epoch,
+            )
+        )
+    
+    if current_instance.get("label"):
+        project_activities.append(
+            WorkspaceActivity(
+                actor_id=actor_id,
+                verb="deleted",
+                old_value=current_instance.get("label_name"),
+                new_value="",
+                field="label",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                old_identifier=current_instance.get("label"),
+                new_identifier=None,
+                comment="removed the project label",
                 epoch=epoch,
             )
         )
@@ -387,6 +576,11 @@ def update_project_activity(
         "identifier": track_identifier,
         "timezone": track_timezone,
         "archived_at": track_archived_at,
+        "project_lead": track_lead,
+        "deploy_board": track_deploy_board,
+        "members": track_members,
+        "project_state": track_project_state,
+        "label": track_label,
     }
 
     boolean_fields = [
@@ -400,12 +594,10 @@ def update_project_activity(
         "intake_view",
         "is_time_tracking_enabled",
         "is_issue_type_enabled",
+        "estimate"
     ]
 
-
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -467,9 +659,7 @@ def create_comment_activity(
     project_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -498,16 +688,12 @@ def update_comment_activity(
     project_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
 
-    if current_instance.get("comment_html") != requested_data.get(
-        "comment_html"
-    ):
+    if current_instance.get("comment_html") != requested_data.get("comment_html"):
         project_activities.append(
             WorkspaceActivity(
                 project_id=project_id,
@@ -557,9 +743,7 @@ def create_link_activity(
     project_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -588,9 +772,7 @@ def update_link_activity(
     project_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -650,9 +832,7 @@ def create_attachment_activity(
     project_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -703,9 +883,7 @@ def create_project_reaction_activity(
     project_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     if requested_data and requested_data.get("reaction") is not None:
         project_reaction = (
             ProjectReaction.objects.filter(
@@ -773,9 +951,7 @@ def create_comment_reaction_activity(
     project_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     if requested_data and requested_data.get("reaction") is not None:
         comment_reaction_id, comment_id = (
             CommentReaction.objects.filter(
@@ -786,9 +962,7 @@ def create_comment_reaction_activity(
             .values_list("id", "comment__id")
             .first()
         )
-        comment = IssueComment.objects.get(
-            pk=comment_id, project_id=project_id
-        )
+        comment = IssueComment.objects.get(pk=comment_id, project_id=project_id)
         if (
             comment is not None
             and comment_reaction_id is not None

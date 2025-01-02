@@ -115,21 +115,9 @@ class ProjectUpdatesViewSet(BaseViewSet):
             workspace__slug=slug, project_id=project_id
         ).select_related("estimate_point")
         total_issues = project_issues.count()
-        # total_estimate_points = (
-        #     project_issues.aggregate(
-        #         total_estimate_points=Sum("estimate_point__value")
-        #     )["total_estimate_points"]
-        #     or 0
-        # )
         completed_issues = project_issues.filter(
             state__group="completed"
         ).count()
-        # completed_estimate_points = (
-        #     project_issues.filter(state_group="completed").aggregate(
-        #         total_estimate_points=Sum("estimate_value")
-        #     )["total_estimate_points"]
-        #     or 0
-        # )
         update_status = None
         if request.data.get("parent"):
             parent_update = EntityUpdates.objects.get(
@@ -149,9 +137,7 @@ class ProjectUpdatesViewSet(BaseViewSet):
                 ),
                 entity_type="PROJECT",
                 total_issues=total_issues,
-                # total_estimate_points=total_estimate_points,
                 completed_issues=completed_issues,
-                # completed_estimate_points=completed_estimate_points,
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
