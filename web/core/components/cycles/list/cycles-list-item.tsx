@@ -11,6 +11,7 @@ import type { TCycleGroups } from "@plane/types";
 import { CircularProgressIndicator } from "@plane/ui";
 // components
 import { ListItem } from "@/components/core/list";
+import { CycleQuickActions } from "@/components/cycles/";
 import { CycleListItemAction } from "@/components/cycles/list";
 // helpers
 import { generateQueryParams } from "@/helpers/router.helper";
@@ -18,8 +19,6 @@ import { generateQueryParams } from "@/helpers/router.helper";
 import { useCycle } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { CycleQuickActions } from "@/plane-web/components/cycles/";
 
 type TCyclesListItem = {
   cycleId: string;
