@@ -39,6 +39,11 @@ export const CycleProgressHeader: FC<Props> = (props: Props) => {
     router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`, {}, { showProgressBar: false });
   };
 
+  const handleEventPropagation = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   return (
     <ControlLink
       onClick={handleControlLinkClick}
@@ -68,7 +73,7 @@ export const CycleProgressHeader: FC<Props> = (props: Props) => {
           </div>
         </div>
       </div>
-      <div className="flex gap-4 items-center">
+      <div className="flex gap-4 items-center" onClick={handleEventPropagation}>
         <CycleListItemAction
           workspaceSlug={workspaceSlug}
           projectId={projectId}

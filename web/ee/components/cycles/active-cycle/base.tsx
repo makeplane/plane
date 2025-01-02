@@ -31,8 +31,8 @@ export const ActiveCycleBase: React.FC<IActiveCycleDetails> = observer((props) =
 
   return (
     <>
-      <Disclosure as="div" className="flex flex-shrink-0 flex-col border-b border-custom-border-200" defaultOpen>
-        <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
+      <div className="flex flex-shrink-0 flex-col border-b border-custom-border-200">
+        <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
           <CycleProgressHeader
             cycleDetails={cycleDetails.cycle}
             progress={cycleDetails.cycleProgress}
@@ -41,11 +41,11 @@ export const ActiveCycleBase: React.FC<IActiveCycleDetails> = observer((props) =
             workspaceSlug={workspaceSlug}
             progressLoader={cycleDetails.progressLoader}
           />
-        </Disclosure.Button>
-        <Disclosure.Panel>
+        </div>
+        <div>
           <ActiveCycleDetail {...cycleDetails} />
-        </Disclosure.Panel>
-      </Disclosure>
+        </div>
+      </div>
     </>
   );
 });
