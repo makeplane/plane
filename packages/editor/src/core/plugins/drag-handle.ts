@@ -20,6 +20,7 @@ const generalSelectors = [
   ".image-component",
   ".image-upload-component",
   ".editor-callout-component",
+  ".prosemirror-flat-list",
 ].join(", ");
 
 const maxScrollSpeed = 20;
@@ -86,20 +87,6 @@ const getScrollParent = (node: HTMLElement | SVGElement) => {
 
 export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
   const elements = document.elementsFromPoint(coords.x, coords.y);
-  const generalSelectors = [
-    "li",
-    "p:not(:first-child)",
-    ".code-block",
-    "blockquote",
-    "h1, h2, h3, h4, h5, h6",
-    "[data-type=horizontalRule]",
-    ".table-wrapper",
-    ".issue-embed",
-    ".image-component",
-    ".image-upload-component",
-    ".editor-callout-component",
-    ".prosemirror-flat-list",
-  ].join(", ");
 
   for (const elem of elements) {
     if (elem.matches("p:first-child") && elem.parentElement?.matches(".ProseMirror")) {
@@ -142,88 +129,12 @@ const nodePosAtDOMForBlockQuotes = (node: Element, view: EditorView) => {
 
 export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOptions => {
   let listType = "";
-  const handleDragStart = (event: DragEvent, view: EditorView) => {
-    view.focus();
-
-    if (!event.dataTransfer) return;
-
-    const node = nodeDOMAtCoords({
-      x: event.clientX + 50 + options.dragHandleWidth,
-      y: event.clientY,
-    });
-
-    if (!(node instanceof Element)) return;
-
-    let draggedNodePos = nodePosAtDOM(node, view, options);
-    if (draggedNodePos == null || draggedNodePos < 0) return;
-    draggedNodePos = calcNodePos(draggedNodePos, view, node);
-
-    const { from, to } = view.state.selection;
-    const diff = from - to;
-
-    const fromSelectionPos = calcNodePos(from, view, node);
-    let differentNodeSelected = false;
-
-    const nodePos = view.state.doc.resolve(fromSelectionPos);
-
-    // Check if nodePos points to the top level node
-    if (nodePos.node().type.name === "doc") differentNodeSelected = true;
-    else {
-      // TODO FIX ERROR
-      const nodeSelection = NodeSelection.create(view.state.doc, nodePos.before());
-      // Check if the node where the drag event started is part of the current selection
-      differentNodeSelected = !(
-        draggedNodePos + 1 >= nodeSelection.$from.pos && draggedNodePos <= nodeSelection.$to.pos
-      );
-    }
-
-    console.log("draggedNodePos", draggedNodePos, node);
-    // if (node.className.includes("prosemirror-flat-list")) {
-    //   draggedNodePos = draggedNodePos - 1;
-    //   console.log("draggedNodePos", draggedNodePos);
-    // }
-
-    if (!differentNodeSelected && diff !== 0 && !(view.state.selection instanceof NodeSelection)) {
-      const endSelection = NodeSelection.create(view.state.doc, to - 1);
-      const multiNodeSelection = TextSelection.create(view.state.doc, draggedNodePos, endSelection.$to.pos);
-      view.dispatch(view.state.tr.setSelection(multiNodeSelection));
-    } else {
-      // TODO FIX ERROR
-      const nodeSelection = NodeSelection.create(view.state.doc, draggedNodePos);
-      view.dispatch(view.state.tr.setSelection(nodeSelection));
-    }
-
-    // If the selected node is a list item, we need to save the type of the wrapping list e.g. OL or UL
-    if (view.state.selection instanceof NodeSelection && view.state.selection.node.type.name === "listItem") {
-      listType = node.parentElement!.tagName;
-    }
-
-    if (node.matches("blockquote")) {
-      let nodePosForBlockQuotes = nodePosAtDOMForBlockQuotes(node, view);
-      if (nodePosForBlockQuotes === null || nodePosForBlockQuotes === undefined) return;
-
-      const docSize = view.state.doc.content.size;
-      nodePosForBlockQuotes = Math.max(0, Math.min(nodePosForBlockQuotes, docSize));
-
-      if (nodePosForBlockQuotes >= 0 && nodePosForBlockQuotes <= docSize) {
-        // TODO FIX ERROR
-        const nodeSelection = NodeSelection.create(view.state.doc, nodePosForBlockQuotes);
-        view.dispatch(view.state.tr.setSelection(nodeSelection));
-      }
-    }
-
-    const slice = view.state.selection.content();
-    const { dom, text } = __serializeForClipboard(view, slice);
-
-    event.dataTransfer.clearData();
-    event.dataTransfer.setData("text/html", dom.innerHTML);
-    event.dataTransfer.setData("text/plain", text);
-    event.dataTransfer.effectAllowed = "copyMove";
-
-    event.dataTransfer.setDragImage(node, 0, 0);
-
-    view.dragging = { slice, move: event.ctrlKey };
-  };
+  let isDragging = false;
+  let lastClientY = 0;
+  let scrollAnimationFrame = null;
+  let isDraggedOutsideWindow: "top" | "bottom" | boolean = false;
+  let isMouseInsideWhileDragging = false;
+  let currentScrollSpeed = 0;
 
   const handleClick = (event: MouseEvent, view: EditorView) => {
     handleNodeSelection(event, view, false, options);
@@ -263,14 +174,17 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
 
     let targetScrollAmount = 0;
 
-    // if (node.className.includes("prosemirror-flat-list")) {
-    //   console.log("nodePos", nodePos);
-    //   nodePos = nodePos - 1;
-    // }
-
-    // TODO FIX ERROR
-    // Use NodeSelection to select the node at the calculated position
-    const nodeSelection = NodeSelection.create(view.state.doc, nodePos);
+    if (isDraggedOutsideWindow === "top") {
+      targetScrollAmount = -maxScrollSpeed * 5;
+    } else if (isDraggedOutsideWindow === "bottom") {
+      targetScrollAmount = maxScrollSpeed * 5;
+    } else if (lastClientY < scrollRegionUp) {
+      const ratio = easeOutQuadAnimation((scrollRegionUp - lastClientY) / options.scrollThreshold.up);
+      targetScrollAmount = -maxScrollSpeed * ratio;
+    } else if (lastClientY > scrollRegionDown) {
+      const ratio = easeOutQuadAnimation((lastClientY - scrollRegionDown) / options.scrollThreshold.down);
+      targetScrollAmount = maxScrollSpeed * ratio;
+    }
 
     currentScrollSpeed += (targetScrollAmount - currentScrollSpeed) * acceleration;
 
