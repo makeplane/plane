@@ -122,7 +122,7 @@ export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
   const result = await getConnectionAndCredentials(data);
   if (!result) return;
 
-  const [{ workspaceConnection, entityConnection }, credentials] = result;
+  const [{ workspaceConnection, entityConnection, projectConnections }, credentials] = result;
 
   const { closingReferences, nonClosingReferences } = getReferredIssues(
     data.object_attributes.title,
@@ -132,9 +132,6 @@ export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
     logger.info(`[GITLAB] No issue references found for project ${data.project.id}, skipping...`);
     return;
   }
-
-  const targetState = getTargetState(data, entityConnection);
-  if (!targetState) return;
 
   const referredIssues = ["MR_CLOSED", "MR_MERGED"].includes(classifyMergeRequestEvent(data))
     ? closingReferences
@@ -162,10 +159,31 @@ export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
     workspaceConnection.sourceHostname!
   );
 
+  // we need to get the plane project attached to referred issues and then get target state for each and then do the updates
+  // get the exissues from identifiers it'll have the project attached
+  // loop through the referred issues, check if it has a plane project attached and then update the state using project connection target state
+
+  const allReferredIssues = await Promise.all(
+    referredIssues.map(async (reference) => {
+      const issue = await planeClient.issue.getIssueByIdentifier(
+        entityConnection.workspaceSlug,
+        reference.identifier,
+        reference.sequence
+      );
+      return { reference, issue };
+    })
+  );
+
   const updatedIssues = await Promise.all(
-    referredIssues.map((reference) =>
-      updateIssue(planeClient, entityConnection, reference, targetState, data.project.id)
-    )
+    allReferredIssues.map(async (referredIssue) => {
+      const targetProject = projectConnections.find((project) => project.projectId === referredIssue.issue.project);
+      if (targetProject) {
+        const targetState = getTargetState(data, targetProject);
+        if (!targetState) return null;
+        return updateIssue(planeClient, entityConnection, referredIssue.reference, targetState, data.project.id);
+      }
+      return null;
+    })
   );
 
   const validIssues = updatedIssues.filter((issue): issue is IssueWithReference => issue !== null);

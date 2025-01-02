@@ -79,13 +79,10 @@ export const ConnectOrganization: FC = observer(() => {
             <img
               src={workspaceConnection?.connectionData?.avatar_url}
               alt={workspaceConnection?.connectionData?.login}
-              className="object-contain w-full h-full overflow-hidden"
+              className="object-contain w-10 h-10 overflow-hidden rounded"
             />
           </div>
-          <div className="space-y-0.5 w-full">
-            <div className="text-base font-medium">{workspaceConnection?.connectionData?.login}</div>
-            <div className="text-sm text-custom-text-200">Gitlab org added by and time</div>
-          </div>
+          <div className="text-sm text-custom-text-200 font-medium">{workspaceConnection?.connectionData?.organization || workspaceConnection?.connectionData?.name}</div>
         </div>
       ) : (
         <div className="space-y-0.5 w-full">

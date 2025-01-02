@@ -83,13 +83,13 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
     try {
       issue = await planeClient.issue.getIssueWithExternalId(
         entityConnection.workspaceSlug,
-        entityConnection.projectId,
+        entityConnection.projectId ?? "",
         data.issueNumber.toString(),
         "GITHUB"
       );
     } catch (error) { }
 
-    const planeUsers = await planeClient.users.list(entityConnection.workspaceSlug, entityConnection.projectId);
+    const planeUsers = await planeClient.users.list(entityConnection.workspaceSlug, entityConnection.projectId ?? "");
 
     const userMap: Record<string, string> = Object.fromEntries(
       workspaceConnection.config.userMap.map((obj) => [obj.githubUser.login, obj.planeUser.id])
@@ -103,14 +103,14 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
       data.repositoryName,
       userMap,
       entityConnection.workspaceSlug,
-      entityConnection.projectId,
+      entityConnection.projectId ?? "",
       planeUsers,
       ghService,
       issue ? true : false
     );
 
-    const states = (await planeClient.state.list(entityConnection.workspaceSlug, entityConnection.projectId)).results;
-    const users = await planeClient.users.list(entityConnection.workspaceSlug, entityConnection.projectId);
+    const states = (await planeClient.state.list(entityConnection.workspaceSlug, entityConnection.projectId ?? "")).results;
+    const users = await planeClient.users.list(entityConnection.workspaceSlug, entityConnection.projectId ?? "");
 
     if (planeIssue.state) {
       const state = states.find((s) => s.name === planeIssue.state);
@@ -120,7 +120,7 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
     }
 
     if (planeIssue.labels) {
-      const labels = (await planeClient.label.list(entityConnection.workspaceSlug, entityConnection.projectId)).results;
+      const labels = (await planeClient.label.list(entityConnection.workspaceSlug, entityConnection.projectId ?? "")).results;
       const githubLabel = labels.find((l) => l.name.toLowerCase() === "github");
 
       if (githubLabel) {
@@ -137,7 +137,7 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
         const labelPromises = labelsToCreate.map(async (label: any) => {
           const createdLabel = await planeClient.label.create(
             entityConnection.workspaceSlug,
-            entityConnection.projectId,
+            entityConnection.projectId ?? "",
             {
               name: label.name,
               color: `#${label.color}`,
@@ -182,12 +182,12 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
     }
 
     if (issue) {
-      await planeClient.issue.update(entityConnection.workspaceSlug, entityConnection.projectId, issue.id, planeIssue);
+      await planeClient.issue.update(entityConnection.workspaceSlug, entityConnection.projectId ?? "", issue.id, planeIssue);
       await store.set(`silo:issue:${issue.id}`, "true");
     } else {
       const createdIssue = await planeClient.issue.create(
         entityConnection.workspaceSlug,
-        entityConnection.projectId,
+        entityConnection.projectId ?? "",
         planeIssue
       );
 
@@ -195,12 +195,12 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
       const createLink = async () => {
         const linkTitle = `[${entityConnection.entitySlug}] ${ghIssue?.data.title} #${ghIssue?.data.number}`;
         const linkUrl = ghIssue?.data.html_url;
-        await planeClient.issue.createLink(entityConnection.workspaceSlug, entityConnection.projectId, createdIssue.id, linkTitle, linkUrl);
+        await planeClient.issue.createLink(entityConnection.workspaceSlug, entityConnection.projectId ?? "", createdIssue.id, linkTitle, linkUrl);
       }
 
       const createLinkBack = async () => {
         // Get the project for the issue
-        const project = await planeClient.project.getProject(entityConnection.workspaceSlug, entityConnection.projectId);
+        const project = await planeClient.project.getProject(entityConnection.workspaceSlug, entityConnection.projectId ?? "");
         const comment = `Synced Issue with [Plane](${env.APP_BASE_URL}) Workspace 🔄\n\n[${project.identifier}-${createdIssue.sequence_id} ${createdIssue.name}](${env.APP_BASE_URL}/${entityConnection.workspaceSlug}/projects/${entityConnection.projectId}/issues/${createdIssue.id})`;
         await ghService.createIssueComment(data.owner, data.repositoryName, Number(data.issueNumber), comment);
       }

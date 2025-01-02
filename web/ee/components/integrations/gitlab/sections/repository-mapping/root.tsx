@@ -3,11 +3,11 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Briefcase } from "lucide-react";
-import { Button } from "@plane/ui";
+import { Briefcase, BriefcaseBusiness } from "lucide-react";
+import { Button, Loader } from "@plane/ui";
 // plane web components
 import { Logo } from "@/components/common";
-import { EntityConnectionItem, FormCreate } from "@/plane-web/components/integrations/gitlab";
+import { EntityConnectionItem, EntityFormCreate, ProjectEntityFormCreate } from "@/plane-web/components/integrations/gitlab";
 //  plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
@@ -17,6 +17,7 @@ import {
   TProjectMap,
   TStateMap,
 } from "@/plane-web/types/integrations/gitlab";
+import { EConnectionType, GitlabEntityType } from "@plane/etl/gitlab";
 
 export const projectMapInit: TProjectMap = {
   entityId: undefined,
@@ -37,38 +38,40 @@ export const RepositoryMappingRoot: FC = observer(() => {
   const {
     workspace,
     fetchProjects,
-    getProjectById,
     auth: { workspaceConnectionIds },
-    data: { fetchGitlabRepositories },
-    entity: { entityIds, entityById, fetchEntities },
+    data: { fetchGitlabEntities },
+    entityConnection: { entityConnectionIds, entityConnectionById, fetchEntityConnections },
   } = useGitlabIntegration();
 
   // states
   const [modalCreateOpen, setModalCreateOpen] = useState<boolean>(false);
+  const [modalProjectCreateOpen, setModalProjectCreateOpen] = useState<boolean>(false);
+
 
   // derived values
   const workspaceId = workspace?.id || undefined;
   const workspaceSlug = workspace?.slug || undefined;
   const workspaceConnectionId = workspaceConnectionIds[0] || undefined;
-  const entityConnectionMap = entityIds.map((id) => entityById(id));
-  const entityConnection = entityConnectionMap.reduce(
-    (result: { [key: string]: TGitlabEntityConnection[] }, entity) => {
-      if (!entity) return result;
+  const entityConnections = entityConnectionIds.map((id) => {
+    const entityConnection = entityConnectionById(id);
+    if (!entityConnection || (entityConnection.connectionType !== EConnectionType.ENTITY)) {
+      return;
+    }
+    return entityConnection;
+  });
 
-      const projectId = entity?.projectId || "default";
-
-      if (!result[projectId]) result[projectId] = [];
-      result[projectId].push(entity);
-
-      return result;
-    },
-    {}
-  );
+  const projectEntityConnections = entityConnectionIds.map((id) => {
+    const entityConnection = entityConnectionById(id);
+    if (!entityConnection || (entityConnection.connectionType !== EConnectionType.PLANE_PROJECT)) {
+      return;
+    }
+    return entityConnection;
+  });
 
   // fetching external api token
-  const { isLoading: isGitlabReposLoading } = useSWR(
-    workspaceConnectionId && workspaceId ? `INTEGRATION_GITLAB_REPOS_${workspaceId}_${workspaceConnectionId}` : null,
-    workspaceConnectionId && workspaceId ? async () => fetchGitlabRepositories() : null,
+  const { isLoading: isGitlabEntitiesLoading } = useSWR(
+    workspaceConnectionId && workspaceId ? `INTEGRATION_GITLAB_ENTITIES_${workspaceId}_${workspaceConnectionId}` : null,
+    workspaceConnectionId && workspaceId ? async () => fetchGitlabEntities() : null,
     { errorRetryCount: 0 }
   );
 
@@ -82,55 +85,84 @@ export const RepositoryMappingRoot: FC = observer(() => {
   // fetching entity connections
   const { isLoading: isEntitiesLoading } = useSWR(
     workspaceId ? `INTEGRATION_GITLAB_ENTITY_CONNECTIONS_${workspaceId}` : null,
-    workspaceId ? async () => fetchEntities() : null,
+    workspaceId ? async () => fetchEntityConnections() : null,
     { errorRetryCount: 0 }
   );
 
+
   return (
-    <div className="relative border border-custom-border-200 rounded p-4 space-y-4">
-      {/* heading */}
-      <div className="relative flex justify-between items-center gap-4">
-        <div className="space-y-1">
-          <div className="text-base font-medium">Repository Mapping</div>
-          <div className="text-sm text-custom-text-200">Sync issues from Gitlab repository to Plane projects</div>
+    <div className="space-y-4">
+      <div className="relative border border-custom-border-200 rounded p-4 space-y-4">
+        {/* heading */}
+        <div className="relative flex justify-between items-start gap-4">
+          <div className="space-y-1">
+            <div className="text-base font-medium">Gitlab Project & Group Connections</div>
+            <div className="text-sm text-custom-text-200">Sync issues from Gitlab projects or groups to Plane projects</div>
+          </div>
+          <Button variant="neutral-primary" size="sm" onClick={() => setModalCreateOpen(true)}>
+            Add
+          </Button>
         </div>
-        <Button variant="neutral-primary" size="sm" onClick={() => setModalCreateOpen(true)}>
-          Add
-        </Button>
+
+        {/* entity connection list */}
+        {
+          isEntitiesLoading && <Loader className="space-y-8">
+            <Loader.Item height="50px" width="40%" />
+            <div className="w-2/3 grid grid-cols-2 gap-x-8 gap-y-4">
+              <Loader.Item height="50px" />
+              <Loader.Item height="50px" />
+            </div>
+            <Loader.Item height="50px" width="20%" />
+          </Loader>
+        }
+
+        {entityConnectionIds && entityConnectionIds.length > 0 && (
+          <div className="relative space-y-2">
+            {entityConnections.map((entityConnection, index) => {
+              if (!entityConnection) return null;
+              return (
+                <div className="space-y-2" key={index}>
+                  <EntityConnectionItem key={index} entityConnection={entityConnection} />
+                </div>
+              );
+            })}
+          </div>
+        )}
+        <EntityFormCreate modal={modalCreateOpen} handleModal={setModalCreateOpen} />
       </div>
 
-      {/* mapped blocks */}
-      {entityIds && entityIds.length > 0 && (
-        <div className="relative space-y-2">
-          {Object.keys(entityConnection).map((projectId, index) => {
-            const project = projectId ? getProjectById(projectId) : undefined;
-            if (!project) return null;
 
-            return (
-              <div className="space-y-2" key={index}>
-                <div className="relative flex items-center gap-2 rounded bg-custom-background-90/50 text-base p-2">
-                  <div className="flex-shrink-0 relative flex justify-center items-center !w-5 !h-5 rounded-sm bg-custom-background-100">
-                    {project && project?.logo_props ? (
-                      <Logo logo={project?.logo_props} size={14} />
-                    ) : (
-                      <Briefcase className="w-4 h-4" />
-                    )}
-                  </div>
-                  <div className="text-sm">{project?.name || "Project"}</div>
-                </div>
-
-                <div className="space-y-1">
-                  {(entityConnection[projectId] || []).map((connection, index) => (
-                    <EntityConnectionItem key={index} project={project} entityConnection={connection} />
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+      {/* Add project state mapping blocks */}
+      <div className="relative border border-custom-border-200 rounded p-4 space-y-4">
+        {/* heading */}
+        <div className="relative flex justify-between items-center gap-4">
+          <div className="space-y-1">
+            <div className="text-base font-medium">Plane Project Connections</div>
+            <div className="text-sm text-custom-text-200">Configure pull requests state mapping from Gitlab to Plane projects</div>
+          </div>
+          <Button variant="neutral-primary" size="sm" onClick={() => setModalProjectCreateOpen(true)}>
+            Add
+          </Button>
         </div>
-      )}
 
-      <FormCreate modal={modalCreateOpen} handleModal={setModalCreateOpen} />
+        {/* Project mapping list */}
+        {entityConnectionIds && entityConnectionIds.length > 0 && (
+          <div className="relative space-y-2">
+            {projectEntityConnections.map((entityConnection, index) => {
+              if (!entityConnection) return null;
+              return (
+                <div className="space-y-2" key={index}>
+                  <EntityConnectionItem key={index} entityConnection={entityConnection} />
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* project entity form */}
+        <ProjectEntityFormCreate modal={modalProjectCreateOpen} handleModal={setModalProjectCreateOpen} />
+
+      </div>
     </div>
   );
 });

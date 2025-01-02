@@ -59,7 +59,7 @@ const handlePullRequestOpened = async (data: GithubWebhookPayload["webhook-pull-
       try {
         const issue = await planeClient.issue.getIssueWithExternalId(
           entityConnection.workspaceSlug,
-          entityConnection.projectId,
+          entityConnection.projectId ?? "",
           reference.node.databaseId.toString(),
           "GITHUB"
         );
@@ -68,7 +68,7 @@ const handlePullRequestOpened = async (data: GithubWebhookPayload["webhook-pull-
           // Create a link in the issue for the pull request
           await planeClient.issue.createLink(
             entityConnection.workspaceSlug,
-            entityConnection.projectId,
+            entityConnection.projectId ?? "",
             issue.id,
             `GitHub PR: ${data.pull_request.title}`,
             data.pull_request.html_url

@@ -36,7 +36,13 @@ export const UserConnectionsView = observer(({ workspaceId }: { workspaceId: str
 
   useEffect(() => {
     if (selectedWorkspace && !isLoading) {
-      const response = getConnectionsByWorkspaceSlug(selectedWorkspace.slug);
+      let response = getConnectionsByWorkspaceSlug(selectedWorkspace.slug);
+      response = (response || []).reduce((allConnections: any, connection: any) => {
+        if (connection.connectionType !== "GITLAB") {
+          allConnections.push(connection);
+        }
+        return allConnections;
+      }, []);
       setConnections(response);
     }
 

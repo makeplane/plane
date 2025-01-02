@@ -40,6 +40,18 @@ export function verifyEntityConnection<T extends z.ZodType>(schema: T, data: Ent
   const parsedConfig = schema.parse(data.config);
   return { ...data, config: parsedConfig };
 }
+
+export function verifyEntityConnections<T extends z.ZodType>(
+  schema: T,
+  dataArray: EntityConnection<T>[]
+): EntityConnection<T>[] {
+  return dataArray.map((data) => {
+    const parsedConfig = schema.parse(data.config);
+    return { ...data, config: parsedConfig };
+  });
+}
+
+
 export type Credentials = typeof credentials.$inferInsert;
 
 export type BulkIssuePayload = ExIssue & {
@@ -52,3 +64,10 @@ export type BulkIssuePayload = ExIssue & {
     values: ExIssuePropertyValue;
   }[];
 };
+
+
+export enum EIntegrationType {
+  GITLAB = "GITLAB",
+  GITHUB = "GITHUB",
+  SLACK = "SLACK",
+}

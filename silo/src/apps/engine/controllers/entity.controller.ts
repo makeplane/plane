@@ -2,9 +2,12 @@ import { Request, Response } from "express";
 import { Controller, Get, Post, Put, Delete } from "@/lib";
 import {
   createEntityConnectionByWorkspaceConnectionId,
+  deleteEntityConnection,
   deleteEntityConnectionByWorkspaceConnectionIdAndEntityId,
+  getEntityConnection,
   getEntityConnectionByWorkspaceIdAndConnectionId,
   getEntityConnectionByWorkspaceIdAndConnectionIdAndEntityId,
+  updateEntityConnection,
   updateEntityConnectionByWorkspaceConnectionIdAndEntityId,
 } from "@/db/query/connection";
 
@@ -120,6 +123,80 @@ export class EntityConnectionController {
         entityId,
         payload
       );
+
+      return res.status(200).send(entityConnections);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send("Internal Server Error");
+    }
+  }
+
+
+  @Get("/:id")
+  async getEntityConnectionByConnectionId(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        return res.status(400).send({
+          message: "Bad Request, expected id to be present.",
+        });
+      }
+
+      const entityConnections = await getEntityConnection(id);
+
+      return res.status(200).send(entityConnections);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send("Internal Server Error");
+    }
+  }
+
+  @Put("/:id")
+  async updateEntityConnectionById(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        return res.status(400).send({
+          message: "Bad Request, expected id to be present.",
+        });
+      }
+
+      const payload = {
+        workspaceSlug: req.body.workspaceSlug,
+        projectId: req.body.projectId,
+        entityId: req.body.entityId,
+        entitySlug: req.body.entitySlug,
+        entityData: req.body.entityData,
+        config: req.body.config,
+      };
+
+      const entityConnections = await updateEntityConnection(
+        id,
+        payload
+      );
+
+      return res.status(200).send(entityConnections);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send("Internal Server Error");
+    }
+  }
+
+
+  @Delete("/:id")
+  async deleteEntityConnectionById(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        return res.status(400).send({
+          message: "Bad Request, expected id to be present.",
+        });
+      }
+
+      const entityConnections = await deleteEntityConnection(id);
 
       return res.status(200).send(entityConnections);
     } catch (error) {

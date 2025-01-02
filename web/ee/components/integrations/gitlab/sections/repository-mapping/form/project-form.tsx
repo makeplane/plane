@@ -13,7 +13,6 @@ import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
 import { TProjectMap } from "@/plane-web/types/integrations";
 // public images
-import GitlabLogo from "@/public/services/gitlab.svg";
 
 type TProjectForm = {
   value: TProjectMap;
@@ -29,17 +28,9 @@ export const ProjectForm: FC<TProjectForm> = observer((props) => {
     workspace,
     projectIdsByWorkspaceSlug,
     getProjectById,
-    data: { gitlabRepositoryIds, gitlabRepositoryById },
   } = useGitlabIntegration();
 
   // derived values
-  const repositories = (gitlabRepositoryIds || [])
-    .map((id) => {
-      const repository = gitlabRepositoryById(id);
-      return repository || undefined;
-    })
-    .filter((repo) => repo !== undefined && repo !== null);
-
   const workspaceSlug = workspace?.slug || undefined;
   const planeProjectIds = (workspaceSlug && projectIdsByWorkspaceSlug(workspaceSlug)) || [];
   const planeProjects = planeProjectIds
@@ -48,27 +39,6 @@ export const ProjectForm: FC<TProjectForm> = observer((props) => {
 
   return (
     <div className="relative space-y-4 text-sm">
-      <div className="space-y-1">
-        <div className="text-custom-text-200">Gitlab Repository</div>
-        <Dropdown
-          dropdownOptions={(repositories || [])?.map((repo) => ({
-            key: repo?.id.toString() || "",
-            label: repo?.name || "",
-            value: repo?.id.toString() || "",
-            data: repo,
-          }))}
-          value={value?.entityId || undefined}
-          placeHolder="Choose Repository..."
-          onChange={(value: string | undefined) => handleChange("entityId", value || undefined)}
-          iconExtractor={() => (
-            <div className="w-4 h-4 flex-shrink-0 overflow-hidden relative flex justify-center items-center">
-              <Image src={GitlabLogo} layout="fill" objectFit="contain" alt="Gitlab Logo" />
-            </div>
-          )}
-          queryExtractor={(option) => option.name}
-        />
-      </div>
-
       <div className="space-y-1">
         <div className="text-custom-text-200">Plane Project</div>
         <Dropdown

@@ -32,13 +32,13 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
 
     const eConnection = entityConnection[0];
 
-    const members = await planeClient.users.list(workspaceConnection.workspaceSlug, eConnection.projectId);
+    const members = await planeClient.users.list(workspaceConnection.workspaceSlug, eConnection.projectId ?? "");
     const userInfo = await slackService.getUserInfo(data.event.user);
     const issueId = eConnection.entitySlug;
 
     const planeUser = members.find((member) => member.email === userInfo?.user.profile.email);
 
-    await planeClient.issueComment.create(workspaceConnection.workspaceSlug, eConnection.projectId, issueId, {
+    await planeClient.issueComment.create(workspaceConnection.workspaceSlug, eConnection.projectId ?? "", issueId ?? "", {
       comment_html: `<p>${data.event.text}</p>`,
       external_source: "SLACK_COMMENT",
       external_id: data.event.event_ts,

@@ -7,4 +7,5 @@ export type GitlabEntityConnection = EntityConnection<typeof gitlabEntityConnect
 export type GitlabConnectionDetails = {
   workspaceConnection: GitlabWorkspaceConnection;
   entityConnection: GitlabEntityConnection;
+  projectConnections: GitlabEntityConnection[];
 };

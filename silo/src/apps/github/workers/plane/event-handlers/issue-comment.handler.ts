@@ -50,7 +50,7 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
     // Get the issue associated with the comment
     const issue = await planeClient.issue.getIssue(
       entityConnection.workspaceSlug,
-      entityConnection.projectId,
+      entityConnection.projectId ?? "",
       payload.issue
     );
 
@@ -66,7 +66,7 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
 
     const comment = await planeClient.issueComment.getComment(
       entityConnection.workspaceSlug,
-      entityConnection.projectId,
+      entityConnection.projectId ?? "",
       payload.issue,
       payload.id
     );
@@ -88,7 +88,7 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
     ) {
       await planeClient.issueComment.update(
         entityConnection.workspaceSlug,
-        entityConnection.projectId,
+        entityConnection.projectId ?? "",
         payload.issue,
         payload.id,
         {
@@ -110,8 +110,8 @@ const createOrUpdateGitHubComment = async (
   entityConnection: GithubEntityConnection,
   credentials: TServiceCredentials
 ) => {
-  const owner = entityConnection.entitySlug.split("/")[0];
-  const repo = entityConnection.entitySlug.split("/")[1];
+  const owner = (entityConnection.entitySlug ?? "").split("/")[0];
+  const repo = (entityConnection.entitySlug ?? "").split("/")[1];
 
   const assetImagePrefix = imagePrefix + workspaceConnection.workspaceId + "/" + credentials.user_id;
 

@@ -1,4 +1,4 @@
-import { SQL, and, eq } from "drizzle-orm";
+import { SQL, and, eq, inArray } from "drizzle-orm";
 import { db } from "../config/db.config";
 import { entityConnections, workspaceConnections } from "../schema/connection.schema";
 
@@ -62,6 +62,13 @@ export async function createEntityConnection(data: typeof entityConnections.$inf
   return await db.insert(entityConnections).values(data).returning();
 }
 
+export async function getAllEntityConnectionsByEntityIds(entityIds: string[]) {
+  return await db
+    .select()
+    .from(entityConnections)
+    .where(inArray(entityConnections.entityId, entityIds));
+} 
+
 export async function getEntityConnectionByWorkspaceId(workspaceId: string) {
   return await db.select().from(entityConnections).where(eq(entityConnections.workspaceId, workspaceId));
 }
@@ -76,6 +83,19 @@ export async function getEntityConnectionByEntityId(entityId: string) {
 
 export async function getEntityConnectionByWorkspaceAndProjectId(workspaceId: string, projectId?: string) {
   const conditions: SQL[] = [eq(entityConnections.workspaceId, workspaceId)];
+
+  if (projectId) {
+    conditions.push(eq(entityConnections.projectId, projectId));
+  }
+
+  return await db
+    .select()
+    .from(entityConnections)
+    .where(and(...conditions));
+}
+
+export async function getEntityConnectionByWorkspaceConnectionAndProjectId(workspaceConnectionId: string, projectId?: string) {
+  const conditions: SQL[] = [eq(entityConnections.workspaceConnectionId, workspaceConnectionId)];
 
   if (projectId) {
     conditions.push(eq(entityConnections.projectId, projectId));
@@ -134,16 +154,21 @@ export async function deleteEntityConnectionByWorkspaceConnectionId(workspaceCon
 // Get entity connection by workspaceId, and workspaceConnectionId
 export async function getEntityConnectionByWorkspaceIdAndConnectionId(
   workspaceId: string,
-  workspaceConnectionId: string
+  workspaceConnectionId: string,
+  connectionType?: string
 ) {
+  const conditions: SQL[] = [eq(entityConnections.workspaceId, workspaceId),
+  eq(entityConnections.workspaceConnectionId, workspaceConnectionId)];
+
+  if (connectionType) {
+    conditions.push(eq(entityConnections.connectionType, connectionType));
+  }
+
   return await db
     .select()
     .from(entityConnections)
     .where(
-      and(
-        eq(entityConnections.workspaceId, workspaceId),
-        eq(entityConnections.workspaceConnectionId, workspaceConnectionId)
-      )
+      and(...conditions)
     );
 }
 

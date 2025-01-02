@@ -11,43 +11,46 @@ import { GitlabEntityService } from "@/plane-web/services/integrations/gitlab";
 import { IGitlabStore } from "@/plane-web/store/integrations";
 // plane web types
 import { TGitlabEntityConnection } from "@/plane-web/types/integrations/gitlab";
+import { EConnectionType, GitlabEntityType } from "@plane/etl/gitlab";
 
-export interface IGitlabEntityStore {
+export interface IGitlabEntityConnectionStore {
   // store instances
-  entityMap: Record<string, Record<string, Record<string, TGitlabEntityConnection>>>; // workspaceId -> workspaceConnectionId -> entityId -> entity
-  // computed
-  entityIds: string[];
+  entityConnectionMap: Record<string, Record<string, Record<string, TGitlabEntityConnection>>>; // workspaceId -> workspaceConnectionId -> connectionId -> entity
+ // computed
+  entityConnectionIds: string[];
   // computed functions
-  entityById: (entityId: string) => TGitlabEntityConnection | undefined;
+  entityConnectionById: (entityId: string) => TGitlabEntityConnection | undefined;
   // actions
-  fetchEntities: () => Promise<TGitlabEntityConnection[] | undefined>;
-  fetchEntity: (entityId: string) => Promise<TGitlabEntityConnection | undefined>;
-  createEntity: (entity: Partial<TGitlabEntityConnection>) => Promise<TGitlabEntityConnection | undefined>;
-  updateEntity: (
-    entityId: string,
+  fetchEntityConnections: () => Promise<TGitlabEntityConnection[] | undefined>;
+  fetchEntityConnection: (entityId: string) => Promise<TGitlabEntityConnection | undefined>;
+  createEntityConnection: (entity: Partial<TGitlabEntityConnection>) => Promise<TGitlabEntityConnection | undefined>;
+  createProjectConnection: (entity: Partial<TGitlabEntityConnection>) => Promise<TGitlabEntityConnection | undefined>;
+  updateEntityConnection: (
+    connectionId: string,
     entity: Partial<TGitlabEntityConnection>
   ) => Promise<TGitlabEntityConnection | undefined>;
-  deleteEntity: (entityId: string) => Promise<void | undefined>;
+  deleteEntityConnection: (connectionId: string) => Promise<void | undefined>;
 }
 
-export class GitlabEntityStore implements IGitlabEntityStore {
+export class GitlabEntityStore implements IGitlabEntityConnectionStore {
   // observables
-  entityMap: Record<string, Record<string, Record<string, TGitlabEntityConnection>>> = {}; // workspaceId -> workspaceConnectionId -> entityId -> entity
+  entityConnectionMap: Record<string, Record<string, Record<string, TGitlabEntityConnection>>> = {}; // workspaceId -> workspaceConnectionId -> connectionId -> entity
   // service
   private service: GitlabEntityService;
 
   constructor(protected store: IGitlabStore) {
     makeObservable(this, {
       // observables
-      entityMap: observable,
+      entityConnectionMap: observable,
       // computed
-      entityIds: computed,
+      entityConnectionIds: computed,
       // actions
-      fetchEntities: action,
-      fetchEntity: action,
-      createEntity: action,
-      updateEntity: action,
-      deleteEntity: action,
+      fetchEntityConnections: action,
+      fetchEntityConnection: action,
+      createEntityConnection: action,
+      createProjectConnection: action,
+      updateEntityConnection: action,
+      deleteEntityConnection: action,
     });
 
     this.service = new GitlabEntityService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
@@ -58,27 +61,27 @@ export class GitlabEntityStore implements IGitlabEntityStore {
    * @description get entity ids
    * @returns { string[] }
    */
-  get entityIds(): string[] {
+  get entityConnectionIds(): string[] {
     const workspaceId = this.store.workspace?.id || undefined;
     const workspaceConnectionId = this.store.auth.workspaceConnectionIds[0] || undefined;
-    if (!workspaceId || !workspaceConnectionId || !this.entityMap?.[workspaceId]?.[workspaceConnectionId]) return [];
+    if (!workspaceId || !workspaceConnectionId || !this.entityConnectionMap?.[workspaceId]?.[workspaceConnectionId]) return [];
 
-    return Object.keys(this.entityMap[workspaceId][workspaceConnectionId]);
+    return Object.keys(this.entityConnectionMap[workspaceId][workspaceConnectionId]);
   }
 
   // computed functions
   /**
    * @description get entity by id
-   * @param { string } entityId
+   * @param { string } connectionId
    * @returns { TGitlabEntityConnection | undefined }
    */
-  entityById = computedFn((entityId: string): TGitlabEntityConnection | undefined => {
+  entityConnectionById = computedFn((connectionId: string): TGitlabEntityConnection | undefined => {
     const workspaceId = this.store.workspace?.id || undefined;
     const workspaceConnectionId = this.store.auth.workspaceConnectionIds[0] || undefined;
-    if (!workspaceId || !workspaceConnectionId || !entityId || !this.entityMap?.[workspaceId]?.[workspaceConnectionId])
+    if (!workspaceId || !workspaceConnectionId || !connectionId || !this.entityConnectionMap?.[workspaceId]?.[workspaceConnectionId])
       return undefined;
 
-    return this.entityMap[workspaceId][workspaceConnectionId][entityId];
+    return this.entityConnectionMap[workspaceId][workspaceConnectionId][connectionId];
   });
 
   // actions
@@ -86,18 +89,18 @@ export class GitlabEntityStore implements IGitlabEntityStore {
    * @description fetch entities
    * @returns { Promise<TGitlabEntityConnection[] | undefined> }
    */
-  fetchEntities = async (): Promise<TGitlabEntityConnection[] | undefined> => {
+  fetchEntityConnections = async (): Promise<TGitlabEntityConnection[] | undefined> => {
     try {
       const workspaceId = this.store.workspace?.id || undefined;
       const workspaceConnectionId = this.store.auth.workspaceConnectionIds[0] || undefined;
       if (!workspaceId || !workspaceConnectionId) return;
 
-      const response = await this.service.fetchEntityConnections(workspaceId, workspaceConnectionId);
+      const response = await this.service.fetchEntityConnections(workspaceId);
 
       if (response) {
         runInAction(() => {
           response.forEach((data) => {
-            set(this.entityMap, [workspaceId, workspaceConnectionId, data.id], data);
+              set(this.entityConnectionMap, [workspaceId, workspaceConnectionId, data.id], data);
           });
         });
       }
@@ -110,20 +113,20 @@ export class GitlabEntityStore implements IGitlabEntityStore {
 
   /**
    * @description fetch entity
-   * @param { string } entityId
+   * @param { string } connectionId
    * @returns { Promise<TGitlabEntityConnection | undefined> }
    */
-  fetchEntity = async (entityId: string): Promise<TGitlabEntityConnection | undefined> => {
+  fetchEntityConnection = async (connectionId: string): Promise<TGitlabEntityConnection | undefined> => {
     try {
       const workspaceId = this.store.workspace?.id || undefined;
       const workspaceConnectionId = this.store.auth.workspaceConnectionIds[0] || undefined;
-      if (!workspaceId || !workspaceConnectionId || !entityId) return;
+      if (!workspaceId || !workspaceConnectionId || !connectionId) return;
 
-      const response = await this.service.fetchEntityConnection(workspaceId, workspaceConnectionId, entityId);
+      const response = await this.service.fetchEntityConnection(connectionId);
 
       if (response) {
         runInAction(() => {
-          set(this.entityMap, [workspaceId, workspaceConnectionId, response.id], response);
+          set(this.entityConnectionMap, [workspaceId, workspaceConnectionId, response.id], response);
         });
       }
 
@@ -138,18 +141,18 @@ export class GitlabEntityStore implements IGitlabEntityStore {
    * @param { Partial<TGitlabEntityConnection> } entity
    * @returns { Promise<TGitlabEntityConnection | undefined> }
    */
-  createEntity = async (entity: Partial<TGitlabEntityConnection>): Promise<TGitlabEntityConnection | undefined> => {
+  createEntityConnection = async (entity: Partial<TGitlabEntityConnection>): Promise<TGitlabEntityConnection | undefined> => {
     try {
       const workspaceId = this.store.workspace?.id || undefined;
       const workspaceSlug = this.store.workspace?.slug || undefined;
       const workspaceConnectionId = this.store.auth.workspaceConnectionIds[0] || undefined;
       if (!workspaceId || !workspaceSlug || !workspaceConnectionId) return;
 
-      const gitlabRepoId = entity?.entityId || undefined;
-      if (!gitlabRepoId) return;
+      const gitlabEntityId = entity?.entityId || undefined;
+      if (!gitlabEntityId) return;
 
-      const gitlabRepo = this.store.data.gitlabRepositoryById(gitlabRepoId) || undefined;
-      if (!gitlabRepo) return;
+      const gitlabEntity = this.store.data.gitlabEntityById(gitlabEntityId) || undefined;
+      if (!gitlabEntity) return;
 
       const payload: Partial<TGitlabEntityConnection> = {
         workspaceId: workspaceId,
@@ -157,8 +160,9 @@ export class GitlabEntityStore implements IGitlabEntityStore {
         projectId: entity.projectId,
         workspaceConnectionId: workspaceConnectionId,
         entityId: entity.entityId,
-        entitySlug: gitlabRepo.full_name,
-        entityData: gitlabRepo,
+        entityType: gitlabEntity.type,
+        entitySlug: gitlabEntity.name,
+        entityData: gitlabEntity,
         config: entity.config,
       };
 
@@ -166,11 +170,42 @@ export class GitlabEntityStore implements IGitlabEntityStore {
 
       if (response) {
         runInAction(() => {
-          set(this.entityMap, [workspaceId, workspaceConnectionId, response.id], response);
+          set(this.entityConnectionMap, [workspaceId, workspaceConnectionId, response.id], response);
         });
       }
 
-      await this.fetchEntities();
+      await this.fetchEntityConnections();
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  createProjectConnection = async (entity: Partial<TGitlabEntityConnection>): Promise<TGitlabEntityConnection | undefined> => {
+    try {
+      const workspaceId = this.store.workspace?.id || undefined;
+      const workspaceSlug = this.store.workspace?.slug || undefined;
+      const workspaceConnectionId = this.store.auth.workspaceConnectionIds[0] || undefined;
+      if (!workspaceId || !workspaceSlug || !workspaceConnectionId) return;
+
+      const payload: Partial<TGitlabEntityConnection> = {
+        workspaceId: workspaceId,
+        workspaceSlug: workspaceSlug,
+        projectId: entity.projectId,
+        workspaceConnectionId: workspaceConnectionId,
+        config: entity.config,
+      };
+
+      const response = await this.service.createProjectEntityConnection(workspaceId, workspaceConnectionId, payload);
+
+      if (response) {
+        runInAction(() => {
+          set(this.entityConnectionMap, [workspaceId, workspaceConnectionId, response.id], response);
+        });
+      }
+
+      await this.fetchEntityConnections();
 
       return response;
     } catch (error) {
@@ -180,42 +215,33 @@ export class GitlabEntityStore implements IGitlabEntityStore {
 
   /**
    * @description update entity
-   * @param { string } entityId
+   * @param { string } connectionId
    * @param { Partial<TGitlabEntityConnection> } entity
    * @returns { Promise<TGitlabEntityConnection | undefined> }
    */
-  updateEntity = async (
-    entityId: string,
+  updateEntityConnection = async (
+    connectionId: string,
     entity: Partial<TGitlabEntityConnection>
   ): Promise<TGitlabEntityConnection | undefined> => {
     try {
       const workspaceId = this.store.workspace?.id || undefined;
       const workspaceSlug = this.store.workspace?.slug || undefined;
       const workspaceConnectionId = this.store.auth.workspaceConnectionIds[0] || undefined;
-      if (!workspaceId || !workspaceSlug || !workspaceConnectionId || !entityId) return;
-
-      const gitlabRepoId = entity?.entityId || undefined;
-      if (!gitlabRepoId) return;
-
-      const gitlabRepo = this.store.data.gitlabRepositoryById(gitlabRepoId) || undefined;
-      if (!gitlabRepo) return;
+      if (!workspaceId || !workspaceSlug || !workspaceConnectionId || !connectionId) return;
 
       const payload: Partial<TGitlabEntityConnection> = {
         workspaceId: workspaceId,
         workspaceSlug: workspaceSlug,
         projectId: entity.projectId,
         workspaceConnectionId: workspaceConnectionId,
-        entityId: entity.entityId,
-        entitySlug: gitlabRepo.full_name,
-        entityData: gitlabRepo,
         config: entity.config,
       };
 
-      const response = await this.service.updateEntityConnection(workspaceId, workspaceConnectionId, entityId, payload);
+      const response = await this.service.updateEntityConnection(connectionId, payload);
 
       if (response) {
         runInAction(() => {
-          set(this.entityMap, [workspaceId, workspaceConnectionId, response.id], response);
+          set(this.entityConnectionMap, [workspaceId, workspaceConnectionId, response.id], response);
         });
       }
 
@@ -227,17 +253,17 @@ export class GitlabEntityStore implements IGitlabEntityStore {
 
   /**
    * @description delete entity
-   * @param { string } entityId
+   * @param { string } connectionId
    * @returns { Promise<void | undefined> }
    */
-  deleteEntity = async (entityId: string): Promise<void | undefined> => {
+  deleteEntityConnection = async (connectionId: string): Promise<void | undefined> => {
     try {
       const workspaceId = this.store.workspace?.id || undefined;
       const workspaceConnectionId = this.store.auth.workspaceConnectionIds[0] || undefined;
-      if (!workspaceId || !workspaceConnectionId || !entityId) return;
+      if (!workspaceId || !workspaceConnectionId || !connectionId) return;
 
-      await this.service.deleteEntityConnection(workspaceId, workspaceConnectionId, entityId);
-      unset(this.entityMap, [workspaceId, workspaceConnectionId, entityId]);
+      await this.service.deleteEntityConnection(connectionId);
+      unset(this.entityConnectionMap, [workspaceId, workspaceConnectionId, connectionId]);
 
       return;
     } catch (error) {

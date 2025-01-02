@@ -1,4 +1,5 @@
 import { TGitlabWorkspaceConnectionData, TWorkspaceConnection } from "@plane/etl/core";
+import { EConnectionType, GitlabEntityType, IGitlabEntity } from "@plane/etl/gitlab";
 import { IState } from "@plane/sdk";
 
 // auth types
@@ -48,13 +49,12 @@ export type TGitlabEntityConnection = {
 
   entityId: string;
   entitySlug: string;
-  entityData: object & {
-    id: number;
-    name: string;
-    full_name: string;
-  };
+  entityData: IGitlabEntity;
+  entityType: GitlabEntityType;
 
   config: TGitlabEntityConnectionConfig;
+
+  connectionType: keyof typeof EConnectionType;
 
   createdAt: string;
   updatedAt: string;

@@ -26,12 +26,12 @@ const handleCommentSync = async (payload: WebhookIssueCommentPayload) => {
     if (credentials && credentials.length > 0 && credentials[0].source_access_token) {
       await slackService.sendMessageAsUser(
         slackData.channel,
-        entityConnection[0].entityId,
+        entityConnection[0].entityId ?? "",
         data.data.comment_stripped,
         credentials[0].source_access_token
       );
     } else {
-      await slackService.sendThreadMessage(slackData.channel, entityConnection[0].entityId, data.data.comment_stripped);
+      await slackService.sendThreadMessage(slackData.channel, entityConnection[0].entityId ?? "", data.data.comment_stripped);
     }
   }
 };

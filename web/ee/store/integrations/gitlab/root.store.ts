@@ -8,7 +8,7 @@ import {
   GitlabAuthStore,
   IGitlabDataStore,
   GitlabDataStore,
-  IGitlabEntityStore,
+  IGitlabEntityConnectionStore,
   GitlabEntityStore,
 } from "@/plane-web/store/integrations";
 import { RootStore } from "@/plane-web/store/root.store";
@@ -17,14 +17,14 @@ export interface IGitlabStore extends IIntegrationBaseStore {
   // store instances
   auth: IGitlabAuthStore;
   data: IGitlabDataStore;
-  entity: IGitlabEntityStore;
+  entityConnection: IGitlabEntityConnectionStore;
 }
 
 export class GitlabStore extends IntegrationBaseStore implements IGitlabStore {
   // store instances
   auth: IGitlabAuthStore;
   data: IGitlabDataStore;
-  entity: IGitlabEntityStore;
+  entityConnection: IGitlabEntityConnectionStore;
 
   constructor(protected store: RootStore) {
     super(store);
@@ -33,6 +33,6 @@ export class GitlabStore extends IntegrationBaseStore implements IGitlabStore {
     // store instances
     this.auth = new GitlabAuthStore(this);
     this.data = new GitlabDataStore(this);
-    this.entity = new GitlabEntityStore(this);
+    this.entityConnection = new GitlabEntityStore(this);
   }
 }

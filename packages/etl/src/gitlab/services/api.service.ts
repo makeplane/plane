@@ -100,4 +100,80 @@ export class GitLabService {
     const response = await this.client.get(`/projects/${projectId}/members`);
     return response.data;
   }
+
+  async addWebhookToProject(projectId: string, url: string, token: string) {
+    try {
+      const response = await this.client.post(
+        `/projects/${projectId}/hooks`,
+        { url, token, push_events: true, merge_requests_events: true, pipeline_events: true, tag_push_events: true, issues_events: true },
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 
+   * @param projectId - entityId or gitlab project id
+   * @param hookId - webhookId or gitlab hook id
+   * @returns 
+   */
+  async removeWebhookFromProject(projectId: string, hookId: string) {
+    try {
+      const response = await this.client.delete(
+        `/projects/${projectId}/hooks/${hookId}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async addWebhookToGroup(groupId: string, url: string, token: string) {
+    try {
+      const response = await this.client.post(
+        `/groups/${groupId}/hooks`,
+        { url, token, push_events: true, merge_requests_events: true, pipeline_events: true, tag_push_events: true, issues_events: true },
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 
+   * @param groupId - entityId or gitlab group id
+   * @param hookId - webhookId or gitlab hook id
+   * @returns 
+   */
+  async removeWebhookFromGroup(groupId: string, hookId: string) {
+    try {
+      const response = await this.client.delete(
+        `/groups/${groupId}/hooks/${hookId}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getGroups() {
+    try {
+      const response = await this.client.get("/groups");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getProjects() {
+    try {
+      const response = await this.client.get("/projects?membership=true&pages=100");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

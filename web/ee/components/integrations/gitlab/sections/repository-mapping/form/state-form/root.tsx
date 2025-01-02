@@ -57,7 +57,7 @@ export const StateForm: FC<TStateForm> = observer((props) => {
 
   return (
     <div className="w-full min-h-44 max-h-full overflow-y-auto">
-      {planeProjectStates &&
+      {planeProjectStates && projectId &&
         GIT_PR_DATA.map((gitState) => (
           <StateFormSelection
             title={gitState.title}

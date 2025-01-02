@@ -58,7 +58,7 @@ const handleIssueSync = async (store: Store, payload: PlaneWebhookPayload) => {
 
     const issue = await planeClient.issue.getIssue(entityConnection.workspaceSlug, payload.project, payload.id);
 
-    const labels = await planeClient.label.list(entityConnection.workspaceSlug, entityConnection.projectId);
+    const labels = await planeClient.label.list(entityConnection.workspaceSlug, entityConnection.projectId ?? "");
     const githubIssue = await createOrUpdateGitHubIssue(
       githubService,
       planeClient,
@@ -73,7 +73,7 @@ const handleIssueSync = async (store: Store, payload: PlaneWebhookPayload) => {
     if (!issue.external_id || !issue.external_source || (issue.external_source && issue.external_source !== "GITHUB")) {
       // Add the external id and source
       const addExternalId = async () => {
-        await planeClient.issue.update(entityConnection.workspaceSlug, entityConnection.projectId, payload.id, {
+        await planeClient.issue.update(entityConnection.workspaceSlug, entityConnection.projectId ?? "", payload.id, {
           external_id: githubIssue?.data.number.toString(),
           external_source: "GITHUB",
         });
@@ -83,14 +83,8 @@ const handleIssueSync = async (store: Store, payload: PlaneWebhookPayload) => {
       const createLink = async () => {
         const linkTitle = `[${entityConnection.entitySlug}] ${githubIssue?.data.title} #${githubIssue?.data.number}`;
         const linkUrl = githubIssue?.data.html_url;
-        await planeClient.issue.createLink(
-          entityConnection.workspaceSlug,
-          entityConnection.projectId,
-          issue.id,
-          linkTitle,
-          linkUrl
-        );
-      };
+        await planeClient.issue.createLink(entityConnection.workspaceSlug, entityConnection.projectId ?? "", issue.id, linkTitle, linkUrl);
+      }
 
       // Execute all the promises
       await Promise.all([addExternalId(), createLink()]);
@@ -118,9 +112,9 @@ const createOrUpdateGitHubIssue = async (
     workspaceConnection.config.userMap.map((obj) => [obj.planeUser.id, obj.githubUser])
   );
 
-  const owner = entityConnection.entitySlug.split("/")[0];
-  const repo = entityConnection.entitySlug.split("/")[1];
-  const issueImagePrefix = imagePrefix + workspaceConnection.workspaceId + "/" + credentials.user_id;
+  const owner = (entityConnection.entitySlug ?? "").split("/")[0];
+  const repo = (entityConnection.entitySlug ?? "").split("/")[1];
+  const issueImagePrefix = imagePrefix + workspaceConnection.workspaceId + "/" + credentials.user_id
 
   const transformedGithubIssue = await transformPlaneIssue(issue, issueImagePrefix, labels, owner, repo, userMap);
 
@@ -146,7 +140,7 @@ const createOrUpdateGitHubIssue = async (
   } else {
     const createdIssue = await githubUserService.createIssue(transformedGithubIssue as GithubIssue);
 
-    const project = await planeClient.project.getProject(entityConnection.workspaceSlug, entityConnection.projectId);
+    const project = await planeClient.project.getProject(entityConnection.workspaceSlug, entityConnection.projectId ?? "");
 
     const comment = `Synced Issue with [Plane](${env.APP_BASE_URL}) Workspace 🔄\n\n[${project.identifier}-${issue.sequence_id} ${issue.name}](${env.APP_BASE_URL}/${entityConnection.workspaceSlug}/projects/${entityConnection.projectId}/issues/${issue.id})`;
     await githubService.createIssueComment(owner, repo, Number(createdIssue.data.number), comment);

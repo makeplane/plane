@@ -80,14 +80,14 @@ export const syncCommentWithPlane = async (
       workspaceConnection.config.userMap.map((obj) => [obj.githubUser.login, obj.planeUser.id])
     );
 
-    const planeUsers = await planeClient.users.list(entityConnection.workspaceSlug, entityConnection.projectId);
+    const planeUsers = await planeClient.users.list(entityConnection.workspaceSlug, entityConnection.projectId ?? "");
 
     let comment: ExIssueComment | null = null;
 
     try {
       comment = await planeClient.issueComment.getIssueCommentWithExternalId(
         entityConnection.workspaceSlug,
-        entityConnection.projectId,
+        entityConnection.projectId ?? "",
         issue.id,
         data.comment.id.toString(),
         "GITHUB"
@@ -101,7 +101,7 @@ export const syncCommentWithPlane = async (
       issue.id,
       data.repository.full_name,
       entityConnection.workspaceSlug,
-      entityConnection.projectId,
+      entityConnection.projectId ?? "",
       planeClient,
       ghService,
       userMap,
@@ -112,7 +112,7 @@ export const syncCommentWithPlane = async (
     if (comment) {
       await planeClient.issueComment.update(
         entityConnection.workspaceSlug,
-        entityConnection.projectId,
+        entityConnection.projectId ?? "",
         issue.id,
         comment.id,
         planeComment
@@ -121,7 +121,7 @@ export const syncCommentWithPlane = async (
     } else {
       const createdComment = await planeClient.issueComment.create(
         entityConnection.workspaceSlug,
-        entityConnection.projectId,
+        entityConnection.projectId ?? "",
         issue.id,
         planeComment
       );
@@ -137,7 +137,7 @@ const getPlaneIssue = async (planeClient: PlaneClient, entityConnection: GithubE
   try {
     return await planeClient.issue.getIssueWithExternalId(
       entityConnection.workspaceSlug,
-      entityConnection.projectId,
+      entityConnection.projectId ?? "",
       issueId.toString(),
       "GITHUB"
     );

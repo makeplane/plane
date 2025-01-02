@@ -34,6 +34,8 @@ export type TGitlabWorkspaceConnectionType = keyof typeof EGitlabWorkspaceConnec
 
 export type TGitlabWorkspaceConnectionData = {
   id: number | undefined;
+  name: string | undefined;
+  organization: string | undefined;
   url: string | undefined;
   type: string | undefined;
   login: string | undefined;

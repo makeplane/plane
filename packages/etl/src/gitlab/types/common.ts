@@ -70,6 +70,10 @@ export interface GitlabProject {
     kind: string;
     full_path: string;
   };
+  shared_with_groups: {
+    group_id: number;
+    group_name: string;
+  }[];
   default_branch: string;
   visibility: "private" | "internal" | "public";
 }
@@ -146,4 +150,32 @@ export interface GitlabNote {
   internal: boolean;
   imported?: boolean;
   imported_from?: string;
+}
+
+export interface GitlabWebhook {
+  url: string;
+  token: string;
+}
+
+export interface GitlabEntityData {
+  id: string;
+  type: string;
+  webhookId: string;
+}
+
+export enum GitlabEntityType {
+  PROJECT = "PROJECT",
+  GROUP = "GROUP",
+}
+
+export interface IGitlabEntity {
+  id: string;
+  name: string;
+  type: GitlabEntityType;
+}
+
+
+export enum EConnectionType {
+  ENTITY = "ENTITY",
+  PLANE_PROJECT = "PLANE_PROJECT",
 }
