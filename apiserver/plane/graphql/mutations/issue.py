@@ -307,12 +307,20 @@ class IssueMutation:
         if estimatePoint is not None:
             issue.estimate_point_id = estimatePoint
             activity_payload["estimate_point"] = estimatePoint
+
         if startDate is not None:
             issue.start_date = startDate
             activity_payload["start_date"] = startDate.strftime("%Y-%m-%d")
+        else:
+            issue.start_date = None
+            activity_payload["start_date"] = None
+
         if targetDate is not None:
             issue.target_date = targetDate
             activity_payload["target_date"] = targetDate.strftime("%Y-%m-%d")
+        else:
+            issue.target_date = None
+            activity_payload["target_date"] = None
 
         workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
 
