@@ -572,6 +572,7 @@ class PageDuplicateEndpoint(BaseAPIView):
         page.pk = None
         page.name = f"{page.name} (Copy)"
         page.description_binary = None
+        page.owned_by = request.user
         page.save()
 
         for project_id in project_ids:
@@ -586,6 +587,17 @@ class PageDuplicateEndpoint(BaseAPIView):
         page_transaction.delay(
             {"description_html": page.description_html}, None, page.id
         )
-        page = Page.objects.get(pk=page.id)
+        page = (
+            Page.objects.filter(pk=page.id)
+            .annotate(
+                project_ids=Coalesce(
+                    ArrayAgg(
+                        "projects__id", distinct=True, filter=~Q(projects__id=True)
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            )
+            .first()
+        )
         serializer = PageDetailSerializer(page)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
