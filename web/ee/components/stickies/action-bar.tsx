@@ -6,22 +6,23 @@ import { Plus, StickyNote as StickyIcon, X } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { RecentStickyIcon, StickyNoteIcon, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
+import { useCommandPalette } from "@/hooks/store";
 import { useSticky } from "@/plane-web/hooks/use-stickies";
+import { WithFeatureFlagHOC } from "../feature-flags";
 import { AllStickiesModal } from "./modal";
 import { StickyNote } from "./sticky";
-import { WithFeatureFlagHOC } from "../feature-flags";
 
 export const StickyActionBar = observer(() => {
   const { workspaceSlug } = useParams();
   const [isExpanded, setIsExpanded] = useState(false);
   const [newSticky, setNewSticky] = useState(false);
   const [showRecentSticky, setShowRecentSticky] = useState(false);
-  const [showAllStickies, setShowAllStickies] = useState(false);
   const ref = useRef(null);
 
   // hooks
   const { stickies, activeStickyId, recentStickyId, updateActiveStickyId, fetchRecentSticky, toggleShowNewSticky } =
     useSticky();
+  const { toggleAllStickiesModal, allStickiesModal } = useCommandPalette();
 
   useSWR(
     workspaceSlug ? `WORKSPACE_STICKIES_RECENT_${workspaceSlug}` : null,
@@ -47,7 +48,7 @@ export const StickyActionBar = observer(() => {
           <Tooltip tooltipContent="All stickies" isMobile={false} position="left">
             <button
               className="btn btn--icon rounded-full w-10 h-10 flex items-center justify-center shadow-sm bg-custom-background-100"
-              onClick={() => setShowAllStickies(true)}
+              onClick={() => toggleAllStickiesModal(true)}
             >
               <RecentStickyIcon className="size-5 rotate-90 text-custom-text-350" />
             </button>
@@ -125,7 +126,7 @@ export const StickyActionBar = observer(() => {
           )}
         </div>
 
-        <AllStickiesModal isOpen={showAllStickies} handleClose={() => setShowAllStickies(false)} />
+        <AllStickiesModal isOpen={allStickiesModal} handleClose={() => toggleAllStickiesModal(false)} />
       </div>
     </WithFeatureFlagHOC>
   );

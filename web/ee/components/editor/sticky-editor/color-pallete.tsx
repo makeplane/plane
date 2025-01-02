@@ -1,9 +1,9 @@
 import { TSticky } from "@plane/types";
 
 export const STICKY_COLORS = [
-  "#FFF2B4", // light yellow
   "#D4DEF7", // light periwinkle
   "#B4E4FF", // light blue
+  "#FFF2B4", // light yellow
   "#E3E3E3", // light gray
   "#FFE2DD", // light pink
   "#F5D1A5", // light orange

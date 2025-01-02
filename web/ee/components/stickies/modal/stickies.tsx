@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useParams } from "next/navigation";
 import { Plus, X } from "lucide-react";
 import { RecentStickyIcon } from "@plane/ui";
 import { useSticky } from "@/plane-web/hooks/use-stickies";
+import { STICKY_COLORS } from "../../editor/sticky-editor/color-pallete";
 import { StickiesLayout } from "../stickies-layout";
+import { useStickyOperations } from "../sticky/use-operations";
 import { StickySearch } from "./search";
 
 type TProps = {
@@ -11,7 +13,9 @@ type TProps = {
 
 export const Stickies = (props: TProps) => {
   const { handleClose } = props;
-  const { updateActiveStickyId, toggleShowNewSticky } = useSticky();
+  const { workspaceSlug } = useParams();
+  const { toggleShowNewSticky } = useSticky();
+  const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
 
   return (
     <div className="p-6 pb-0">
@@ -27,8 +31,8 @@ export const Stickies = (props: TProps) => {
           <StickySearch />
           <button
             onClick={() => {
-              updateActiveStickyId(undefined);
               toggleShowNewSticky(true);
+              stickyOperations.create({ color: STICKY_COLORS[0] });
             }}
             className="flex gap-1 text-sm font-medium text-custom-primary-100 my-auto"
           >

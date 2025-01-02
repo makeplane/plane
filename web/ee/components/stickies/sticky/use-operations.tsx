@@ -17,11 +17,24 @@ export const useStickyOperations = (props: TProps) => {
   const { workspaceSlug } = props;
   const { createSticky, updateSticky, deleteSticky } = useSticky();
 
+  const isValid = (data: Partial<TSticky>) => {
+    if (data.name && data.name.length > 100) {
+      setToast({
+        message: "The sticky name cannot be longer than 100 characters",
+        type: TOAST_TYPE.ERROR,
+        title: "Sticky not updated",
+      });
+      return false;
+    }
+    return true;
+  };
+
   const stickyOperations: TOperations = useMemo(
     () => ({
       create: async (data: Partial<TSticky>) => {
         try {
           if (!workspaceSlug) throw new Error("Missing required fields");
+          if (!isValid(data)) return;
           await createSticky(workspaceSlug, data);
           setToast({
             message: "The sticky has been successfully created",
@@ -40,12 +53,8 @@ export const useStickyOperations = (props: TProps) => {
       update: async (stickyId: string, data: Partial<TSticky>) => {
         try {
           if (!workspaceSlug) throw new Error("Missing required fields");
+          if (!isValid(data)) return;
           await updateSticky(workspaceSlug, stickyId, data);
-          setToast({
-            message: "The sticky has been successfully updated",
-            type: TOAST_TYPE.SUCCESS,
-            title: "Sticky updated",
-          });
         } catch (error) {
           setToast({
             message: "The sticky could not be updated",

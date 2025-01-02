@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { uniq } from "lodash";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import Masonry from "react-masonry-component";
@@ -21,8 +20,7 @@ export const StickiesLayout = observer(() => {
     toggleShowNewSticky,
     getWorkspaceStickies,
     fetchWorkspaceStickies,
-    activeStickyId,
-    showAddNewSticky,
+
     currentPage,
     totalPages,
     incrementPage,
@@ -60,9 +58,6 @@ export const StickiesLayout = observer(() => {
 
   const getStickiesToRender = () => {
     let stickies: (string | undefined)[] = workspaceStickies;
-    if (showAddNewSticky) {
-      stickies = uniq([activeStickyId, ...workspaceStickies]);
-    }
     if (currentPage + 1 < totalPages && stickies.length >= PER_PAGE) {
       stickies = [...stickies, undefined];
     }

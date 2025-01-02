@@ -93,7 +93,7 @@ export const Toolbar: React.FC<Props> = (props) => {
                       >
                         <item.icon
                           className={cn("h-3.5 w-3.5", {
-                            "text-custom-text-100": isItemActive,
+                            "font-extrabold": isItemActive,
                           })}
                           strokeWidth={2.5}
                         />
