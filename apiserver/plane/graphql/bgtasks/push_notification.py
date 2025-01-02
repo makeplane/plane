@@ -185,6 +185,7 @@ def construct_issue_push_notification(notification):
         workspace_slug = workspace.slug
 
     push_notification = {
+        "id": notification.get("id", ""),
         "receiver": {"id": receiver_id, "push_tokens": receiver_push_tokens},
         "actor": {"id": actor_id, "name": actor_name},
         "issue": {
@@ -215,6 +216,7 @@ def issue_push_notifications(notification):
         print("Notification is None")
         return
 
+    notification_id = notification.get("id", None)
     notification_receiver = notification.get("receiver", None)
     notification_actor = notification.get("actor", None)
     notification_issue = notification.get("issue", None)
@@ -249,6 +251,7 @@ def issue_push_notifications(notification):
         "projectId": project_id,
         "issueId": issue_id,
         "userId": receiver_id,
+        "notificationId": notification_id,
     }
 
     property_key = notification_issue_activity.get("field", "")
