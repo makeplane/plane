@@ -50,7 +50,7 @@ def track_description(
     project_activities,
     epoch,
 ):
-    if current_instance.get("description") != requested_data.get("description"):
+    if current_instance.get("description_html") != requested_data.get("description_html"):
         last_activity = (
             WorkspaceActivity.objects.filter(project_id=project_id)
             .order_by("-created_at")
@@ -58,7 +58,7 @@ def track_description(
         )
         if (
             last_activity is not None
-            and last_activity.field == "description"
+            and last_activity.field == "description_html"
             and actor_id == str(last_activity.actor_id)
         ):
             last_activity.created_at = timezone.now()
@@ -68,8 +68,8 @@ def track_description(
                 WorkspaceActivity(
                     actor_id=actor_id,
                     verb="updated",
-                    old_value=current_instance.get("description"),
-                    new_value=requested_data.get("description"),
+                    old_value=current_instance.get("description_html"),
+                    new_value=requested_data.get("description_html"),
                     field="description",
                     project_id=project_id,
                     workspace_id=workspace_id,
@@ -567,7 +567,7 @@ def update_project_activity(
 ):
     project_activity_MAPPER = {
         "name": track_name,
-        "description": track_description,
+        "description_html": track_description,
         "target_date": track_target_date,
         "start_date": track_start_date,
         "priority": track_priority,

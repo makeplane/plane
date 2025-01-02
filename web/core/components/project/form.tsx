@@ -261,7 +261,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           <span className="text-xs text-red-500">{errors?.name?.message}</span>
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">Description</h4>
+          <h4 className="text-sm">Summary</h4>
           <Controller
             name="description"
             control={control}
@@ -270,7 +270,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 id="description"
                 name="description"
                 value={value}
-                placeholder="Enter project description"
+                placeholder="Enter project summary"
                 onChange={onChange}
                 className="min-h-[102px] text-sm font-medium"
                 hasError={Boolean(errors?.description)}
