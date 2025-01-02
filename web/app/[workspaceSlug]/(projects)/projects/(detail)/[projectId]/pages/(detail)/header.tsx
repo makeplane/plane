@@ -15,11 +15,10 @@ import { PageEditInformationPopover } from "@/components/pages";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getPageName } from "@/helpers/page.helper";
 // hooks
-import { useProjectPage, useProject, useUser, useUserPermissions } from "@/hooks/store";
+import { useProjectPage, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
-import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
@@ -33,16 +32,9 @@ export const PageDetailsHeader = observer(() => {
   // store hooks
   const { currentProjectDetails, loader } = useProject();
   const page = useProjectPage(pageId?.toString() ?? "");
-  const { name, logo_props, updatePageLogo, owned_by } = page;
-  const { allowPermissions } = useUserPermissions();
-  const { data: currentUser } = useUser();
+  const { name, logo_props, updatePageLogo, isContentEditable } = page;
   // use platform
   const { isMobile } = usePlatformOS();
-
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
-  const isOwner = owned_by === currentUser?.id;
-
-  const isEditable = isAdmin || isOwner;
 
   const handlePageLogoUpdate = async (data: TLogoProps) => {
     if (data) {
@@ -151,7 +143,7 @@ export const PageDetailsHeader = observer(() => {
                               ? EmojiIconPickerTypes.EMOJI
                               : EmojiIconPickerTypes.ICON
                           }
-                          disabled={!isEditable}
+                          disabled={!isContentEditable}
                         />
                       </div>
                       <Tooltip tooltipContent={pageTitle} position="bottom" isMobile={isMobile}>
