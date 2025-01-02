@@ -6,6 +6,7 @@ import requests
 # Django imports
 from django.utils import timezone
 from django.conf import settings
+from django.core import serializers
 
 # Strawberry imports
 import strawberry
@@ -17,7 +18,6 @@ from strawberry.permission import PermissionExtension
 from typing import Optional
 from asgiref.sync import sync_to_async
 
-
 # Module imports
 from plane.graphql.types.issue import IssuesType, IssueUserPropertyType
 from plane.graphql.permissions.project import (
@@ -25,6 +25,7 @@ from plane.graphql.permissions.project import (
     ProjectMemberPermission,
 )
 from plane.db.models import (
+    Project,
     Issue,
     IssueUserProperty,
     IssueAssignee,
@@ -33,6 +34,8 @@ from plane.db.models import (
     FileAsset,
     IssueSubscriber,
     IssueType,
+    CycleIssue,
+    ModuleIssue,
 )
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.graphql.utils.issue_activity import convert_issue_properties_to_activity_dict
@@ -71,13 +74,17 @@ class IssueMutation:
         estimatePoint: Optional[str] = None,
         startDate: Optional[datetime] = None,
         targetDate: Optional[datetime] = None,
+        cycle_id: Optional[strawberry.ID] = None,
+        module_ids: Optional[list[strawberry.ID]] = None,
     ) -> IssuesType:
+        user = info.context.user
         workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
+        project_details = await sync_to_async(Project.objects.get)(id=project)
 
         issue_type_id = None
         # validating issue type and assigning thr default issue type
         is_feature_flagged = await get_feature_flag(
-            workspace.slug, str(info.context.user.id), "ISSUE_TYPE_DISPLAY"
+            workspace.slug, str(user.id), "ISSUE_TYPE_DISPLAY"
         )
 
         if is_feature_flagged:
@@ -116,8 +123,8 @@ class IssueMutation:
                         issue=issue,
                         workspace=workspace,
                         project_id=project,
-                        created_by_id=info.context.user.id,
-                        updated_by_id=info.context.user.id,
+                        created_by_id=user.id,
+                        updated_by_id=user.id,
                     )
                     for user in assignees
                 ],
@@ -132,8 +139,8 @@ class IssueMutation:
                         issue=issue,
                         project_id=project,
                         workspace=workspace,
-                        created_by_id=info.context.user.id,
-                        updated_by_id=info.context.user.id,
+                        created_by_id=user.id,
+                        updated_by_id=user.id,
                     )
                     for label in labels
                 ],
@@ -172,10 +179,87 @@ class IssueMutation:
             notification=True,
             project_id=str(project),
             issue_id=str(issue.id),
-            actor_id=str(info.context.user.id),
+            actor_id=str(user.id),
             current_instance=None,
             requested_data=json.dumps(activity_payload),
         )
+
+        issue_id = issue.id
+        project_id = project_details.id
+        # creating the cycle for the issue
+        if cycle_id is not None:
+            created_cycle = await sync_to_async(CycleIssue.objects.create)(
+                issue_id=issue_id,
+                cycle_id=cycle_id,
+                project_id=project_details.id,
+                workspace_id=workspace.id,
+                created_by_id=user.id,
+                updated_by_id=user.id,
+            )
+
+            update_cycle_issue_activity = [
+                {
+                    "old_cycle_id": None,
+                    "new_cycle_id": str(cycle_id),
+                    "issue_id": str(issue_id),
+                }
+            ]
+
+            await sync_to_async(issue_activity.delay)(
+                type="cycle.activity.created",
+                requested_data=json.dumps({"cycles_list": list(str(issue_id))}),
+                actor_id=str(user.id),
+                issue_id=None,
+                project_id=str(project_id),
+                current_instance=json.dumps(
+                    {
+                        "updated_cycle_issues": update_cycle_issue_activity,
+                        "created_cycle_issues": serializers.serialize(
+                            "json", [created_cycle]
+                        ),
+                    }
+                ),
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=info.context.request.META.get("HTTP_ORIGIN"),
+            )
+
+        # creating the modules for the issue
+        if module_ids and len(module_ids) > 0:
+            await sync_to_async(
+                lambda: ModuleIssue.objects.bulk_create(
+                    [
+                        ModuleIssue(
+                            issue_id=issue_id,
+                            module_id=module_id,
+                            project_id=project_id,
+                            workspace_id=workspace.id,
+                            created_by_id=user.id,
+                            updated_by_id=user.id,
+                        )
+                        for module_id in module_ids
+                    ],
+                    batch_size=10,
+                    ignore_conflicts=True,
+                )
+            )()
+
+            await sync_to_async(
+                lambda: [
+                    issue_activity.delay(
+                        type="module.activity.created",
+                        requested_data=json.dumps({"module_id": str(module_id)}),
+                        actor_id=str(user.id),
+                        issue_id=str(issue),
+                        project_id=str(project_id),
+                        current_instance=None,
+                        epoch=int(timezone.now().timestamp()),
+                        notification=True,
+                        origin=info.context.request.META.get("HTTP_ORIGIN"),
+                    )
+                    for module_id in module_ids
+                ]
+            )()
 
         return issue
 
