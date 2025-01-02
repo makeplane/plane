@@ -17,7 +17,8 @@ class UserRecentVisitViewSet(BaseViewSet):
     
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
-        user_recent_visits = UserRecentVisit.objects.filter(workspace__slug=slug)
+        user_recent_visits = UserRecentVisit.objects.filter(workspace__slug=slug).filter(entity_name__in=["issue","page","project"])
+        
         serializer = WorkspaceRecentVisitSerializer(user_recent_visits, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)

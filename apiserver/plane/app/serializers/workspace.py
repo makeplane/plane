@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from .base import BaseSerializer, DynamicBaseSerializer
 from .user import UserLiteSerializer, UserAdminLiteSerializer
 
+
 from plane.db.models import (
     Workspace,
     WorkspaceMember,
@@ -18,7 +19,7 @@ from plane.db.models import (
     Issue, 
     Page, 
     Project,
-    ProjectMember,
+    ProjectMember
 )
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
@@ -153,18 +154,18 @@ class ProjectMemberSerializer(BaseSerializer):
         fields = ["member"]
 
 class ProjectRecentVisitSerializer(serializers.ModelSerializer):
-    project_members = serializers.SerializerMethodField()
-
+    project_members = serializers.SerializerMethodField()    
+    
     class Meta:
         model = Project
         fields = ["id", "name", "logo_props", "project_members"]
 
     def get_project_members(self, obj):
-        members = ProjectMember.objects.filter(project_id=obj.id)   
+        members = ProjectMember.objects.filter(project_id=obj.id)
 
         serializer = ProjectMemberSerializer(members, many=True)
         return serializer.data
-
+  
 class PageRecentVisitSerializer(serializers.ModelSerializer):
     project_id = serializers.SerializerMethodField()
 
