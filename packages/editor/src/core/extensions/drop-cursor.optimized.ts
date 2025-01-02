@@ -73,8 +73,7 @@ export function dropCursor(options: DropCursorOptions = {}, tiptapEditorOptions:
             tr.deleteSelection();
           }
 
-          const finalDropPos = dropPosByDropCursorPos + 2;
-          console.log("finalDropPos", finalDropPos + 1);
+          const finalDropPos = dropPosByDropCursorPos - 2;
           // Insert the content
           tr.insert(finalDropPos, slice.content);
 

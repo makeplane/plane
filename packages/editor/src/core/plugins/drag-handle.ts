@@ -139,6 +139,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       );
     }
 
+    console.log("draggedNodePos", draggedNodePos, node);
     // if (node.className.includes("prosemirror-flat-list")) {
     //   draggedNodePos = draggedNodePos - 1;
     //   console.log("draggedNodePos", draggedNodePos);
