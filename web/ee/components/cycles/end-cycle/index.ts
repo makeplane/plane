@@ -1,1 +1,1 @@
-export * from "ce/components/views/publish";
+export * from "ce/components/cycles/end-cycle";
