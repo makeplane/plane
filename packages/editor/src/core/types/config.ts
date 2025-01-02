@@ -22,4 +22,5 @@ export type TEditorFontSize = "small-font" | "large-font";
 export type TDisplayConfig = {
   fontStyle?: TEditorFontStyle;
   fontSize?: TEditorFontSize;
+  wideLayout?: boolean;
 };

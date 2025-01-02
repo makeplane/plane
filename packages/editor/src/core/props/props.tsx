@@ -12,7 +12,7 @@ export const CoreEditorProps = (props: TCoreEditorProps): EditorProps => {
   return {
     attributes: {
       class: cn(
-        "prose prose-brand max-w-full prose-headings:font-display font-default focus:outline-none",
+        "prose prose-brand max-w-full prose-headings:font-display font-default focus:outline-none transition-all duration-300",
         editorClassName
       ),
     },

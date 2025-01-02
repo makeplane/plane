@@ -12,8 +12,7 @@
 }
 
 /* text background colors */
-[data-theme="light"],
-[data-theme="light-contrast"] {
+[data-theme*="light"] {
   --editor-colors-gray-background: #d6d6d8;
   --editor-colors-peach-background: #ffd5d7;
   --editor-colors-pink-background: #fdd4e3;
@@ -23,8 +22,7 @@
   --editor-colors-dark-blue-background: #c9dafb;
   --editor-colors-purple-background: #e3d8fd;
 }
-[data-theme="dark"],
-[data-theme="dark-contrast"] {
+[data-theme*="dark"] {
   --editor-colors-gray-background: #404144;
   --editor-colors-peach-background: #593032;
   --editor-colors-pink-background: #562e3d;
@@ -36,6 +34,7 @@
 }
 /* end text background colors */
 
+/* font size and style */
 .editor-container {
   /* font sizes and line heights */
   &.large-font {
@@ -83,6 +82,8 @@
   /* end font sizes and line heights */
 
   /* font styles */
+  --font-style: "Inter", sans-serif;
+
   &.sans-serif {
     --font-style: "Inter", sans-serif;
   }
@@ -94,3 +95,50 @@
   }
   /* end font styles */
 }
+/* end font size and style */
+
+/* layout config */
+#page-content-container {
+  container-name: page-content-container;
+  container-type: inline-size;
+}
+
+.editor-container {
+  --editor-content-width: 720px;
+  --editor-margin-width: 96px;
+
+  &.wide-layout {
+    --editor-content-width: 1152px;
+  }
+
+  .ProseMirror {
+    padding-left: calc((100% - var(--editor-content-width)) / 2);
+    padding-right: calc((100% - var(--editor-content-width)) / 2);
+    /* transition: 0.3s all linear; */
+  }
+}
+
+/* keep a static padding of 20px for normal layouts for container width <760px */
+@container page-content-container (max-width: 760px) {
+  .editor-container:not(.wide-layout),
+  .page-title-container {
+    padding: 0 20px;
+  }
+}
+
+/* keep a static padding of 96px for wide layouts for container width >912px and <1344px */
+@container page-content-container (min-width: 912px) and (max-width: 1344px) {
+  .editor-container.wide-layout,
+  .page-title-container {
+    padding: 0 96px;
+  }
+}
+
+/* keep a static padding of 20px for wide layouts for container width <912px */
+@container page-content-container (max-width: 912px) {
+  .editor-container.wide-layout,
+  .page-title-container {
+    padding: 0 20px;
+  }
+}
+/* end layout config */

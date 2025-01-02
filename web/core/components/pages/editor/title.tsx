@@ -24,15 +24,19 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
   // states
   const [isLengthVisible, setIsLengthVisible] = useState(false);
   // page filters
-  const { fontSize } = usePageFilters();
+  const { fontSize, isFullWidth } = usePageFilters();
   // ui
-  const titleClassName = cn("bg-transparent tracking-[-2%] font-bold", {
-    "text-[1.6rem] leading-[1.9rem]": fontSize === "small-font",
-    "text-[2rem] leading-[2.375rem]": fontSize === "large-font",
-  });
+  const titleClassName = cn(
+    "bg-transparent tracking-[-2%] font-bold block max-w-[720px] mx-auto transition-all duration-300",
+    {
+      "text-[1.6rem] leading-[1.9rem]": fontSize === "small-font",
+      "text-[2rem] leading-[2.375rem]": fontSize === "large-font",
+      "max-w-[1152px]": isFullWidth,
+    }
+  );
 
   return (
-    <div className="relative w-full flex-shrink-0 md:pl-5 px-4">
+    <div className="relative w-full flex-shrink-0 page-title-container">
       {readOnly ? (
         <h6
           className={cn(

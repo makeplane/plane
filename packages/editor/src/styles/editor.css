@@ -8,7 +8,7 @@
   -moz-user-select: text;
   -ms-user-select: text;
   user-select: text;
-  outline: none;
+  outline: none !important;
   cursor: text;
   font-family: var(--font-style);
   font-size: var(--font-size-regular);

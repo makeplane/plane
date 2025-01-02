@@ -13,7 +13,7 @@ import {
 // plane types
 import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
 // plane ui
-import { Row } from "@plane/ui";
+import { ERowVariant, Row } from "@plane/ui";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
@@ -86,8 +86,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     () => ({
       fontSize,
       fontStyle,
+      wideLayout: isFullWidth,
     }),
-    [fontSize, fontStyle]
+    [fontSize, fontStyle, isFullWidth]
   );
 
   const getAIMenu = useCallback(
@@ -149,23 +150,23 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   if (pageId === undefined || !realtimeConfig) return <PageContentLoader />;
 
   return (
-    <div className="flex items-center h-full w-full overflow-y-auto">
-      <Row
+    <>
+      {/* <div
         className={cn("sticky top-0 hidden h-full flex-shrink-0 -translate-x-full py-5 duration-200 md:block", {
           "translate-x-0": sidePeekVisible,
           "w-[10rem] lg:w-[14rem]": !isFullWidth,
           "w-[5%]": isFullWidth,
         })}
       >
-        {!isFullWidth && <PageContentBrowser editorRef={editorRef.current} />}
-      </Row>
-      <div
-        className={cn("size-full pt-5 duration-200", {
-          "md:w-[calc(100%-10rem)] xl:w-[calc(100%-28rem)]": !isFullWidth,
-          "md:w-[90%]": isFullWidth,
-        })}
+        {!isFullWidth && (
+          <PageContentBrowser editorRef={(isContentEditable ? editorRef : readOnlyEditorRef)?.current} />
+        )}
+      </div> */}
+      <Row
+        className="relative size-full flex flex-col gap-y-7 pt-[64px] overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
+        variant={ERowVariant.HUGGING}
       >
-        <div className="size-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
+        <div id="page-content-container" className="relative w-full flex-shrink-0 space-y-7">
           <PageEditorTitle
             editorRef={editorRef}
             title={pageTitle}
@@ -180,7 +181,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             ref={editorRef}
             containerClassName="h-full p-0 pb-64"
             displayConfig={displayConfig}
-            editorClassName="pl-10"
             mentionHandler={{
               searchCallback: async (query) => {
                 const res = await fetchMentions(query);
@@ -201,13 +201,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             }}
           />
         </div>
-      </div>
-      <div
-        className={cn("hidden xl:block flex-shrink-0 duration-200", {
-          "w-[10rem] lg:w-[14rem]": !isFullWidth,
-          "w-[5%]": isFullWidth,
-        })}
-      />
-    </div>
+      </Row>
+    </>
   );
 });
