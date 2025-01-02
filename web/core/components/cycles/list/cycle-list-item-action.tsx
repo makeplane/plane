@@ -32,7 +32,7 @@ import { useCycle, useEventTracker, useMember, useUserPermissions } from "@/hook
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { CycleQuickActions } from "@/plane-web/components/cycles";
+import { CycleAdditionalActions, CycleQuickActions } from "@/plane-web/components/cycles";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // services
@@ -233,6 +233,8 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
           <span className="text-xs text-custom-text-300">{cycleDetails.total_issues}</span>
         </div>
       )}
+
+      <CycleAdditionalActions cycleId={cycleId} projectId={projectId} />
 
       {!isActive && (
         <Controller
