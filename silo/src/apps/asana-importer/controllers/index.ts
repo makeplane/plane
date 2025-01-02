@@ -35,8 +35,7 @@ class AsanaController {
         message: "Bad Request, expected both apiToken and workspaceId to be present.",
       });
     }
-    const hostname = env.SILO_API_BASE_URL;
-    const response = asanaAuth.getAuthorizationURL(body, hostname);
+    const response = asanaAuth.getAuthorizationURL(body);
     res.send(response);
   }
 
@@ -51,8 +50,7 @@ class AsanaController {
     const state: AsanaAuthState = JSON.parse(Buffer.from(stringifiedJsonState, "base64").toString());
     let tokenResponse: AsanaTokenResponse;
     try {
-      const hostname = env.SILO_API_BASE_URL;
-      const tokenInfo = await asanaAuth.getAccessToken(query.code as string, state, hostname);
+      const tokenInfo = await asanaAuth.getAccessToken(query.code as string, state);
       tokenResponse = tokenInfo.tokenResponse;
     } catch (error: any) {
       console.log("Error occurred while fetching token details", error);

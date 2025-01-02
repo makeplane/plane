@@ -25,7 +25,7 @@ export const FormCreate: FC<TFormCreate> = observer((props) => {
   const {
     workspace,
     fetchStates,
-    entity: { createEntity },
+    entityConnection: { createEntityConnection },
   } = useGitlabIntegration();
 
   // states
@@ -64,7 +64,7 @@ export const FormCreate: FC<TFormCreate> = observer((props) => {
           states: { mergeRequestEventMapping: stateMap },
         },
       };
-      await createEntity(payload);
+      await createEntityConnection(payload);
 
       handleModal(false);
     } catch (error) {

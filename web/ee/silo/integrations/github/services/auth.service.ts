@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { GithubAuthorizeState } from "@plane/etl/github";
+import { SILO_BASE_PATH } from "@plane/constants";
 
 export class IntegrationAuthService {
   protected baseURL: string;
@@ -17,7 +18,7 @@ export class IntegrationAuthService {
    */
   async githubOrganizationAuthentication(payload: GithubAuthorizeState) {
     return this.axiosInstance
-      .post(`/silo/api/github/auth/url`, payload)
+      .post(`${SILO_BASE_PATH}/api/github/auth/url`, payload)
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -31,7 +32,7 @@ export class IntegrationAuthService {
    */
   async githubPersonalAccountAuthentication(payload: GithubAuthorizeState) {
     return this.axiosInstance
-      .post(`/silo/api/github/auth/user/url`, payload)
+      .post(`${SILO_BASE_PATH}/api/github/auth/user/url`, payload)
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;

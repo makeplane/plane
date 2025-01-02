@@ -97,7 +97,7 @@ export class GitlabController {
     const gitlabService = createGitLabAuth({
       clientId: env.GITLAB_CLIENT_ID,
       clientSecret: env.GITLAB_CLIENT_SECRET,
-      redirectUri: `${env.SILO_API_BASE_URL}/silo/api/gitlab/auth/callback`,
+      redirectUri: `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/gitlab/auth/callback`,
     });
 
     res.send(
@@ -119,7 +119,7 @@ export class GitlabController {
     const gitlabAuthService = createGitLabAuth({
       clientId: env.GITLAB_CLIENT_ID,
       clientSecret: env.GITLAB_CLIENT_SECRET,
-      redirectUri: `${env.SILO_API_BASE_URL}/silo/api/gitlab/auth/callback`,
+      redirectUri: `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/gitlab/auth/callback`,
     });
 
     const { response: token, state: authState } = await gitlabAuthService.getAccessToken({

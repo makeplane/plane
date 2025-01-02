@@ -16,7 +16,7 @@ const envSchema = z.object({
   APP_BASE_URL: z.string().default(""),
   API_BASE_URL: z.string().default(""),
   SILO_API_BASE_URL: z.string().default(""),
-  SILO_BASE_PATH: z.string().default("/"),
+  SILO_BASE_PATH: z.string().default(""),
   WEBHOOK_SECRET: z.string().default("plane-silo"),
   MQ_PREFETCH_COUNT: z.string().default("5"),
   // Feature Flags Env Variables

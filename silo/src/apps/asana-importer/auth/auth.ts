@@ -4,5 +4,5 @@ import { createAsanaAuthService } from "@plane/etl/asana";
 export const asanaAuth = createAsanaAuthService(
   env.ASANA_CLIENT_ID,
   env.ASANA_CLIENT_SECRET,
-  "/silo/api/asana/auth/callback"
+  encodeURI(env.SILO_API_BASE_URL + env.SILO_BASE_PATH + "/api/asana/auth/callback")
 );

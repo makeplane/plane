@@ -15,14 +15,13 @@ export class AsanaAuth {
     this.props = props;
   }
 
-  getCallbackUrl(_state: AsanaAuthState, hostname: string): string {
-    const host = hostname.endsWith("/") ? hostname.slice(0, -1) : hostname;
-    return host + this.props.callbackURL;
+  getCallbackUrl(): string {
+    return this.props.callbackURL;
   }
 
-  getAuthorizationURL(state: AsanaAuthState, hostname: string): string {
+  getAuthorizationURL(state: AsanaAuthState): string {
     const scope = "default"; // Asana's scope
-    const callbackURL = this.getCallbackUrl(state, hostname);
+    const callbackURL = this.getCallbackUrl();
     const stateString = JSON.stringify(state);
     // encode state string to base64
     const encodedState = Buffer.from(stateString).toString("base64");
@@ -32,14 +31,13 @@ export class AsanaAuth {
 
   async getAccessToken(
     code: string,
-    state: AsanaAuthState,
-    hostname: string
+    state: AsanaAuthState
   ): Promise<{ tokenResponse: AsanaTokenResponse; state: AsanaAuthState }> {
     const params = new URLSearchParams();
     params.append("grant_type", "authorization_code");
     params.append("client_id", this.props.clientId);
     params.append("client_secret", this.props.clientSecret);
-    params.append("redirect_uri", this.getCallbackUrl(state, hostname));
+    params.append("redirect_uri", this.getCallbackUrl());
     params.append("code", code);
 
     const { data: tokenResponse } = await axios.post<AsanaTokenResponse>(

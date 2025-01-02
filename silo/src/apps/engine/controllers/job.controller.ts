@@ -128,7 +128,8 @@ export class JobController {
             await updateJob(jobId, {
               status: "FINISHED",
               end_time: new Date(),
-              completed_batch_count: job.completed_batch_count + 1,
+              transformed_batch_count: job.total_batch_count,
+              completed_batch_count: job.total_batch_count,
             });
           } else {
             await updateJob(jobId, {
