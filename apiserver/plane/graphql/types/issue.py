@@ -22,7 +22,6 @@ from plane.db.models import (
     CycleIssue,
     ModuleIssue,
     IssueType,
-    ProjectMember,
 )
 
 
