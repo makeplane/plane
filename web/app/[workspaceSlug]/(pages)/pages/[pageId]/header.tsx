@@ -30,7 +30,7 @@ export const PageDetailsHeader = observer(() => {
   // params
   const { workspaceSlug, pageId } = useParams();
   // store hooks
-  const { anchor, isCurrentUserOwner, name, logo_props, updatePageLogo } = useWorkspacePageDetails(
+  const { anchor, isCurrentUserOwner, name, logo_props, updatePageLogo, isContentEditable } = useWorkspacePageDetails(
     pageId?.toString() ?? ""
   );
   const { fetchWorkspacePagePublishSettings, getPagePublishSettings, publishWorkspacePage, unpublishWorkspacePage } =
@@ -130,6 +130,7 @@ export const PageDetailsHeader = observer(() => {
                             ? EmojiIconPickerTypes.EMOJI
                             : EmojiIconPickerTypes.ICON
                         }
+                        disabled={!isContentEditable}
                       />
                     }
                   />
