@@ -9,7 +9,7 @@ import "@/core/config/sentry-config.js";
 // hocuspocus server
 import { getHocusPocusServer } from "@/core/hocuspocus-server.js";
 // helpers
-import { convertHTMLDocumentToAllFormats } from "@/core/helpers/convert.js";
+import { convertHTMLDocumentToAllFormats } from "@/core/helpers/convert-document.js";
 import { logger, manualLogger } from "@/core/helpers/logger.js";
 import { errorHandler } from "@/core/helpers/error-handler.js";
 // types
@@ -62,18 +62,24 @@ router.ws("/collaboration", (ws, req) => {
 });
 
 router.post("/convert-document", (req, res) => {
-  const { document_html, variant } = req.body as TConvertDocumentRequestBody;
+  const { description_html, variant } = req.body as TConvertDocumentRequestBody;
   try {
-    if (document_html === undefined || variant === undefined) {
+    if (description_html === undefined || variant === undefined) {
       res.status(400).send({
         message: "Missing required fields",
       });
       return;
     }
-    const convertedDocument = convertHTMLDocumentToAllFormats(req.body);
-    res.status(200).json(convertedDocument);
+    const { description, description_binary } = convertHTMLDocumentToAllFormats({
+      document_html: description_html,
+      variant,
+    });
+    res.status(200).json({
+      description,
+      description_binary,
+    });
   } catch (error) {
-    manualLogger.error("Error in /resolve-document-conflicts endpoint:", error);
+    manualLogger.error("Error in /convert-document endpoint:", error);
     res.status(500).send({
       message: `Internal server error. ${error}`,
     });

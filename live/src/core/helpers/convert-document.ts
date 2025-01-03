@@ -1,10 +1,11 @@
-// plane types
+// plane editor
 import {
   getAllDocumentFormatsFromDocumentEditorBinaryData,
   getAllDocumentFormatsFromRichTextEditorBinaryData,
   getBinaryDataFromDocumentEditorHTMLString,
   getBinaryDataFromRichTextEditorHTMLString,
 } from "@plane/editor";
+// plane types
 import { TDocumentPayload } from "@plane/types";
 
 type TArgs = {

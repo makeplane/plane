@@ -8,6 +8,6 @@ export type HocusPocusServerContext = {
 };
 
 export type TConvertDocumentRequestBody = {
-  document_html: string;
+  description_html: string;
   variant: "rich" | "document";
 };
