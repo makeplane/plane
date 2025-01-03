@@ -55,7 +55,7 @@ export const EntityFormCreate: FC<TEntityFormCreate> = observer((props) => {
   return (
     <ModalCore isOpen={modal} handleClose={() => handleModal(false)}>
       <div className="space-y-5 p-5">
-        <div className="text-xl font-medium text-custom-text-200">Link Gitlab Project or Group</div>
+        <div className="text-xl font-medium text-custom-text-200">Link Gitlab Project</div>
 
         <div className="space-y-4">
           <EntityForm value={projectMap} handleChange={handleProjectMapChange} />

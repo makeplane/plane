@@ -70,10 +70,7 @@ export interface GitlabProject {
     kind: string;
     full_path: string;
   };
-  shared_with_groups: {
-    group_id: number;
-    group_name: string;
-  }[];
+  path_with_namespace: string;
   default_branch: string;
   visibility: "private" | "internal" | "public";
 }
@@ -171,6 +168,8 @@ export enum GitlabEntityType {
 export interface IGitlabEntity {
   id: string;
   name: string;
+  path: string;
+  path_with_namespace: string;
   type: GitlabEntityType;
 }
 

@@ -161,7 +161,7 @@ export class GitlabEntityStore implements IGitlabEntityConnectionStore {
         workspaceConnectionId: workspaceConnectionId,
         entityId: entity.entityId,
         entityType: gitlabEntity.type,
-        entitySlug: gitlabEntity.name,
+        entitySlug: gitlabEntity.path,
         entityData: gitlabEntity,
         config: entity.config,
       };
@@ -262,7 +262,7 @@ export class GitlabEntityStore implements IGitlabEntityConnectionStore {
       const workspaceConnectionId = this.store.auth.workspaceConnectionIds[0] || undefined;
       if (!workspaceId || !workspaceConnectionId || !connectionId) return;
 
-      await this.service.deleteEntityConnection(connectionId);
+      await this.service.deleteEntityConnection(workspaceId, connectionId);
       unset(this.entityConnectionMap, [workspaceId, workspaceConnectionId, connectionId]);
 
       return;

@@ -17,12 +17,16 @@ export const getGitlabConnectionDetails = async (
   // project payload has array of groups attached to it so we need to check
   // if we have any group connections among them and use that or not then check for project connection
 
-  const projectRelatedGroups = data.project.shared_with_groups.map((group) => group.group_id?.toString());
-  const entityConnectionIds = projectRelatedGroups.concat(data.project.id.toString());
-  const entityConnectionSet = await getAllEntityConnectionsByEntityIds(entityConnectionIds);
+  // later we'll check for group connections already done for a project
+
+  if(!data.project.id) {
+    logger.error(`[GITLAB] Project id not found for project ${data.project.id}, skipping...`);
+    return;
+  }
+  const entityConnectionSet = await getEntityConnectionByEntityId(data.project.id?.toString());
 
   if (!entityConnectionSet || entityConnectionSet.length === 0) {
-    logger.error(`[GITLAB] Entity connection not found for project ${entityConnectionIds}, skipping...`);
+    logger.error(`[GITLAB] Entity connection not found for project ${data.project.id}, skipping...`);
     return;
   }
 

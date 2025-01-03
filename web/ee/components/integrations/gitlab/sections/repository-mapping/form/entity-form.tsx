@@ -37,7 +37,7 @@ export const EntityForm: FC<TEntityForm> = observer((props) => {
   return (
     <div className="relative space-y-4 text-sm">
       <div className="space-y-1">
-        <div className="text-custom-text-200">Gitlab Project or Group</div>
+        <div className="text-custom-text-200">Gitlab Project</div>
         <Dropdown
           dropdownOptions={(entities || [])?.map((entity) => ({
             key: entity?.id.toString() || "",

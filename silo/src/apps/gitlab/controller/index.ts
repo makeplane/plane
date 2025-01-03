@@ -75,6 +75,19 @@ export class GitlabController {
         return res.sendStatus(200);
       } else {
         const connection = connections[0];
+
+        // remove the webhooks from gitlab
+        const gitlabClientService = await getGitlabClientService(workspaceId)
+        const entityConnections = await getEntityConnectionByWorkspaceIdAndConnectionId(workspaceId, connection.id);
+        for (const entityConnection of entityConnections) {
+          const entityData = entityConnection.entityData as GitlabEntityData
+          if (entityData.type === GitlabEntityType.PROJECT) {
+            await gitlabClientService.removeWebhookFromProject(entityData.id, entityData.webhookId?.toString());
+          } else if (entityData.type === GitlabEntityType.GROUP) {
+            await gitlabClientService.removeWebhookFromGroup(entityData.id, entityData.webhookId?.toString());
+          }
+        }
+
         // Delete entity connections referencing the workspace connection
         await deleteEntityConnectionByWorkspaceConnectionId(connection.id);
 
@@ -367,9 +380,9 @@ export class GitlabController {
       const entityData = entityConnection.entityData as GitlabEntityData;
 
       if (entityData.type === GitlabEntityType.PROJECT) {
-        await gitlabClientService.removeWebhookFromProject(entityData.id, entityData.webhookId);
+        await gitlabClientService.removeWebhookFromProject(entityData.id, entityData.webhookId?.toString());
       } else if (entityData.type === GitlabEntityType.GROUP) {
-        await gitlabClientService.removeWebhookFromGroup(entityData.id, entityData.webhookId);
+        await gitlabClientService.removeWebhookFromGroup(entityData.id, entityData.webhookId?.toString());
       }
 
       const connection = await deleteEntityConnection(connectionId);
@@ -434,28 +447,20 @@ export class GitlabController {
   async getProjectAndGroups(req: Request, res: Response, next: any) {
     try {
       const workspaceId = req.params.workspaceId;
+
+      const workspaceConnections = await getWorkspaceConnections(workspaceId, EIntegrationType.GITLAB);
+      if (workspaceConnections.length === 0) {
+        return res.status(400).json({ error: "No gitlab connection found" });
+      }
+
       const entities = [];
-      const gitlabClientService = await getGitlabClientService(workspaceId);
-      const [projects, groups] = await Promise.all([
-        gitlabClientService.getProjects(),
-        gitlabClientService.getGroups(),
-      ]);
+      const gitlabClientService = await getGitlabClientService(workspaceId)
 
+      const projects = await gitlabClientService.getProjects();
       if (projects.length) {
-        entities.push(
-          ...projects.map((project: IGitlabEntity) => ({
-            id: project.id,
-            name: project.name,
-            type: GitlabEntityType.PROJECT,
-          }))
-        );
+        entities.push(...projects.map((project: IGitlabEntity) => ({ id: project.id, name: project.name, path: project.path_with_namespace, type: GitlabEntityType.PROJECT })));
       }
 
-      if (groups.length) {
-        entities.push(
-          ...groups.map((group: IGitlabEntity) => ({ id: group.id, name: group.name, type: GitlabEntityType.GROUP }))
-        );
-      }
       res.status(200).json(entities);
     } catch (error) {
       console.error(error);

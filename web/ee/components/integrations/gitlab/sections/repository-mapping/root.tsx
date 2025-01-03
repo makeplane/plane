@@ -96,8 +96,8 @@ export const RepositoryMappingRoot: FC = observer(() => {
         {/* heading */}
         <div className="relative flex justify-between items-start gap-4">
           <div className="space-y-1">
-            <div className="text-base font-medium">Gitlab Project & Group Connections</div>
-            <div className="text-sm text-custom-text-200">Sync issues from Gitlab projects or groups to Plane projects</div>
+            <div className="text-base font-medium">Gitlab Project Connections</div>
+            <div className="text-sm text-custom-text-200">Sync merge requests from Gitlab projects to Plane projects</div>
           </div>
           <Button variant="neutral-primary" size="sm" onClick={() => setModalCreateOpen(true)}>
             Add

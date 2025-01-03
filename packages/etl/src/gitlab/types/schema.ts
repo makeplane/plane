@@ -11,7 +11,7 @@ export type MergeRequestEvent =
 const exStateSchema = z.object({
   id: z.string(),
   name: z.string(),
-  status: z.literal("to_be_created"),
+  status: z.literal("to_be_created").optional(),
 });
 
 export const gitlabWorkspaceConnectionSchema = z.object({});
@@ -19,5 +19,5 @@ export const gitlabWorkspaceConnectionSchema = z.object({});
 export const gitlabEntityConnectionSchema = z.object({
   states: z.object({
     mergeRequestEventMapping: z.record(z.custom<MergeRequestEvent>(), exStateSchema),
-  }),
+  }).optional(),
 });

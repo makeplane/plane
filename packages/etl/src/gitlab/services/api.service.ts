@@ -161,7 +161,7 @@ export class GitLabService {
 
   async getGroups() {
     try {
-      const response = await this.client.get("/groups");
+      const response = await this.client.get("/groups?owned=true&membership=true&pages=100");
       return response.data;
     } catch (error) {
       throw error;
