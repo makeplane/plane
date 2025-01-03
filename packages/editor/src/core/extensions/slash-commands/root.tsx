@@ -103,9 +103,9 @@ const renderItems = () => {
   };
 };
 
-type TExtensionProps = {
+export type TExtensionProps = {
   additionalOptions?: TSlashCommandAdditionalOption[];
-  disabledExtensions: TExtensions[];
+  disabledExtensions?: TExtensions[];
 };
 
 export const SlashCommands = (props: TExtensionProps) =>

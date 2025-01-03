@@ -4,7 +4,7 @@ import { TSlashCommandAdditionalOption } from "@/extensions";
 import { TExtensions } from "@/types";
 
 type Props = {
-  disabledExtensions: TExtensions[];
+  disabledExtensions?: TExtensions[];
 };
 
 export const coreEditorAdditionalSlashCommandOptions = (props: Props): TSlashCommandAdditionalOption[] => {
