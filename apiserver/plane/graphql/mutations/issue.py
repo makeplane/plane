@@ -440,48 +440,6 @@ class IssueUserPropertyMutation:
 
 
 @strawberry.type
-class IssueAttachmentMutation:
-    # @strawberry.mutation(
-    #     extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    # )
-    # def upload_file(self, file: Upload, info: Info) -> bool:
-    #     content = file.read()
-    #     filename = file.filename
-    #     @strawberry.mutation(
-    #         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    #     )
-    #     async def upload_file(self, file: Upload, info: Info) -> bool:
-    #         content = await sync_to_async(file.read)()
-    #         filename = file.filename
-
-    #         # Save the file using Django's file storage
-    #         await sync_to_async(default_storage.save)(filename, content)
-
-    #         return True
-
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def deleteIssueAttachment(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        issue: strawberry.ID,
-        attachment: strawberry.ID,
-    ) -> bool:
-        issue_attachment = await sync_to_async(FileAsset.objects.get)(
-            id=attachment,
-            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-            entity_identifier=issue,
-            project_id=project,
-            workspace__slug=slug,
-        )
-        await sync_to_async(issue_attachment.delete)()
-        return True
-
-
-@strawberry.type
 class IssueSubscriptionMutation:
     @strawberry.mutation(
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]

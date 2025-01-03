@@ -24,7 +24,7 @@ from plane.settings.storage import S3Storage
 from plane.graphql.types.asset import (
     FileAssetType,
     AssetPresignedUrlResponseType,
-    UserAssetFileEnumType,
+    FileAssetAssetType,
     ProjectAssetEnumType,
 )
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
@@ -63,20 +63,17 @@ def get_entity_id_field(entity_type, entity_identifier):
     if entity_type == ProjectAssetEnumType.PROJECT_COVER.value:
         return {"project_id": entity_identifier}
 
-    if entity_type in [
-        ProjectAssetEnumType.ISSUE_ATTACHMENT.value,
-        ProjectAssetEnumType.ISSUE_DESCRIPTION.value,
-    ]:
-        return {"issue_id": entity_identifier}
-
     if entity_type == ProjectAssetEnumType.PAGE_DESCRIPTION.value:
         return {"page_id": entity_identifier}
 
-    if entity_type == ProjectAssetEnumType.COMMENT_DESCRIPTION.value:
-        return {"comment_id": entity_identifier}
+    if entity_type == ProjectAssetEnumType.ISSUE_DESCRIPTION.value:
+        return {"issue_id": entity_identifier}
 
     if entity_type == ProjectAssetEnumType.DRAFT_ISSUE_DESCRIPTION.value:
         return {"draft_issue_id": entity_identifier}
+
+    if entity_type == ProjectAssetEnumType.COMMENT_DESCRIPTION.value:
+        return {"comment_id": entity_identifier}
 
     return {}
 
@@ -131,11 +128,12 @@ class ProjectAssetMutation:
         # Checking if the entity type is valid
         if not entity_type or entity_type not in [
             ProjectAssetEnumType.PROJECT_COVER,
-            ProjectAssetEnumType.ISSUE_ATTACHMENT,
-            ProjectAssetEnumType.ISSUE_DESCRIPTION,
-            ProjectAssetEnumType.COMMENT_DESCRIPTION,
             ProjectAssetEnumType.PAGE_DESCRIPTION,
+            ProjectAssetEnumType.ISSUE_DESCRIPTION,
             ProjectAssetEnumType.DRAFT_ISSUE_DESCRIPTION,
+            ProjectAssetEnumType.ISSUE_ATTACHMENT,
+            ProjectAssetEnumType.DRAFT_ISSUE_ATTACHMENT,
+            ProjectAssetEnumType.COMMENT_DESCRIPTION,
         ]:
             message = "Invalid entity type."
             error_extensions = {"code": "INVALID_ENTITY_TYPE", "statusCode": 400}
@@ -143,11 +141,11 @@ class ProjectAssetMutation:
 
         # Checking if the file type is valid
         allowed_types = [
-            UserAssetFileEnumType.IMAGE_JPEG.value,
-            UserAssetFileEnumType.IMAGE_PNG.value,
-            UserAssetFileEnumType.IMAGE_WEBP.value,
-            UserAssetFileEnumType.IMAGE_JPG.value,
-            UserAssetFileEnumType.IMAGE_GIF.value,
+            FileAssetAssetType.IMAGE_JPEG.value,
+            FileAssetAssetType.IMAGE_PNG.value,
+            FileAssetAssetType.IMAGE_WEBP.value,
+            FileAssetAssetType.IMAGE_JPG.value,
+            FileAssetAssetType.IMAGE_GIF.value,
         ]
         if type not in allowed_types:
             message = "Invalid file type. Only JPEG and PNG files are allowed."
@@ -283,24 +281,24 @@ class ProjectAssetMutation:
                 project_details = await get_project(project)
                 await save_project_cover(project_details, asset.id)
 
-        if asset.entity_type == ProjectAssetEnumType.ISSUE_DESCRIPTION.value:
-            for asset in assets:
-                asset.issue_id = entity_id
-                await sync_to_async(asset.save)(update_fields=["issue_id"])
-
-        if asset.entity_type == ProjectAssetEnumType.COMMENT_DESCRIPTION.value:
-            for asset in assets:
-                asset.comment_id = entity_id
-                await sync_to_async(asset.save)(update_fields=["comment_id"])
-
         if asset.entity_type == ProjectAssetEnumType.PAGE_DESCRIPTION.value:
             for asset in assets:
                 asset.page_id = entity_id
                 await sync_to_async(asset.save)(update_fields=["page_id"])
 
+        if asset.entity_type == ProjectAssetEnumType.ISSUE_DESCRIPTION.value:
+            for asset in assets:
+                asset.issue_id = entity_id
+                await sync_to_async(asset.save)(update_fields=["issue_id"])
+
         if asset.entity_type == ProjectAssetEnumType.DRAFT_ISSUE_DESCRIPTION.value:
             for asset in assets:
                 asset.draft_issue_id = entity_id
                 await sync_to_async(asset.save)(update_fields=["draft_issue_id"])
+
+        if asset.entity_type == ProjectAssetEnumType.COMMENT_DESCRIPTION.value:
+            for asset in assets:
+                asset.comment_id = entity_id
+                await sync_to_async(asset.save)(update_fields=["comment_id"])
 
         return True

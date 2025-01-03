@@ -64,7 +64,6 @@ from .mutations.project import (
 from .mutations.issue import (
     IssueMutation,
     IssueUserPropertyMutation,
-    IssueAttachmentMutation,
     IssueSubscriptionMutation,
 )
 from .mutations.notification import NotificationMutation
@@ -88,6 +87,7 @@ from .mutations.issues import (
     IssueModuleMutation,
     IssueCycleMutation,
     IssueLinkMutation,
+    IssueAttachmentMutation,
 )
 from .mutations.device import DeviceInformationMutation
 from .mutations.asset import (

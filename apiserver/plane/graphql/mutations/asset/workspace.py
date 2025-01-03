@@ -24,7 +24,7 @@ from plane.settings.storage import S3Storage
 from plane.graphql.types.asset import (
     FileAssetType,
     AssetPresignedUrlResponseType,
-    UserAssetFileEnumType,
+    FileAssetAssetType,
     WorkspaceAssetEnumType,
 )
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
@@ -187,11 +187,11 @@ class WorkspaceAssetMutation:
 
         # Checking if the file type is valid
         allowed_types = [
-            UserAssetFileEnumType.IMAGE_JPEG.value,
-            UserAssetFileEnumType.IMAGE_PNG.value,
-            UserAssetFileEnumType.IMAGE_WEBP.value,
-            UserAssetFileEnumType.IMAGE_JPG.value,
-            UserAssetFileEnumType.IMAGE_GIF.value,
+            FileAssetAssetType.IMAGE_JPEG.value,
+            FileAssetAssetType.IMAGE_PNG.value,
+            FileAssetAssetType.IMAGE_WEBP.value,
+            FileAssetAssetType.IMAGE_JPG.value,
+            FileAssetAssetType.IMAGE_GIF.value,
         ]
         if type not in allowed_types:
             message = "Invalid file type. Only JPEG and PNG files are allowed."
