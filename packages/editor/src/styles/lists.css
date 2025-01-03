@@ -1,0 +1,164 @@
+.ProseMirror {
+  .prosemirror-flat-list {
+    &::before,
+    .list-marker {
+      position: absolute;
+      right: 100%;
+      top: 2px;
+      height: 28px;
+      width: 28px;
+      display: grid;
+      place-items: center;
+
+      label,
+      &::before {
+        margin-top: 2px;
+      }
+    }
+
+    .list-content {
+      & > *:first-child:not(.prosemirror-flat-list) {
+        padding: 4px 0;
+      }
+    }
+
+    &[data-list-kind="ordered"] {
+      list-style: none;
+
+      &::before {
+        font-variant-numeric: tabular-nums;
+        content: counter(prosemirror-flat-list-counter, decimal) ".";
+      }
+
+      /* Second level - lower-alpha */
+      & > .list-content > & {
+        &::before {
+          content: counter(prosemirror-flat-list-counter, lower-alpha) ".";
+        }
+
+        /* Third level - lower-roman */
+        & > .list-content > & {
+          &::before {
+            content: counter(prosemirror-flat-list-counter, lower-roman) ".";
+          }
+
+          /* Start repeat pattern */
+          & > .list-content > & {
+            &::before {
+              content: counter(prosemirror-flat-list-counter, decimal) ".";
+            }
+
+            /* Continue pattern */
+            & > .list-content > & {
+              &::before {
+                content: counter(prosemirror-flat-list-counter, lower-alpha) ".";
+              }
+
+              & > .list-content > & {
+                &::before {
+                  content: counter(prosemirror-flat-list-counter, lower-roman) ".";
+                }
+
+                /* Pattern repeats again */
+                & > .list-content > & {
+                  &::before {
+                    content: counter(prosemirror-flat-list-counter, decimal) ".";
+                  }
+
+                  & > .list-content > & {
+                    &::before {
+                      content: counter(prosemirror-flat-list-counter, lower-alpha) ".";
+                    }
+
+                    & > .list-content > & {
+                      &::before {
+                        content: counter(prosemirror-flat-list-counter, lower-roman) ".";
+                      }
+                    }
+
+                    & > .list-content > & {
+                      &::before {
+                        content: counter(prosemirror-flat-list-counter, decimal) ".";
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    &[data-list-kind="bullet"] {
+      list-style: none;
+
+      &::before {
+        content: "•";
+      }
+
+      /* Second level - circle */
+      & > .list-content > & {
+        &::before {
+          content: "⚬";
+        }
+
+        /* Third level - square */
+        & > .list-content > & {
+          &::before {
+            content: "▪";
+          }
+
+          /* Start repeat pattern */
+          & > .list-content > & {
+            &::before {
+              content: "•";
+            }
+
+            /* Continue pattern */
+            & > .list-content > & {
+              &::before {
+                content: "⚬";
+              }
+
+              & > .list-content > & {
+                &::before {
+                  content: "▪";
+                }
+
+                /* Pattern repeats again */
+                & > .list-content > & {
+                  &::before {
+                    content: "•";
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    &[data-list-kind="toggle"] {
+      &:not([data-list-collapsable]) {
+        .list-marker::before {
+          content: "\23f5" !important;
+        }
+      }
+    }
+  }
+
+  /* select the first item of the editor */
+  & > .prosemirror-flat-list:first-child {
+    & > .list-content {
+      & > *:first-child:not(.prosemirror-flat-list) {
+        padding-top: 0 !important;
+      }
+    }
+
+    &::before,
+    .list-marker {
+      top: -2px;
+    }
+  }
+}

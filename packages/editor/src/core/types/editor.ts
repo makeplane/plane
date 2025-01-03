@@ -35,6 +35,7 @@ export type TEditorCommands =
   | "bulleted-list"
   | "numbered-list"
   | "to-do-list"
+  | "toggle-list"
   | "quote"
   | "code"
   | "table"
