@@ -2,7 +2,6 @@
 from ..base import BaseAPIView
 from plane.db.models.workspace import WorkspaceHomePreference
 from plane.app.permissions import allow_permission, ROLE
-from plane.db.models.workspace import WorkspaceHomePreference
 from plane.db.models import Workspace
 
 # Third party imports
@@ -15,7 +14,7 @@ class WorkspacePreferenceViewSet(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug):
-        workspace = Workspace.objects.get(slug=slug, owner=request.user)
+        workspace = Workspace.objects.get(slug=slug)
 
         preference_keys = WorkspaceHomePreference.objects.filter(
             user=request.user, workspace_id=workspace.id
