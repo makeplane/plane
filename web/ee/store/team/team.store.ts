@@ -426,7 +426,10 @@ export class TeamStore implements ITeamStore {
       const team = await this.teamService.updateTeam(workspaceSlug, teamId, payload);
       // refetch team entities if projects have been updated
       if (areProjectsUpdated) {
-        await this.fetchTeamEntities(workspaceSlug, teamId);
+        Promise.all([
+          this.fetchTeamEntities(workspaceSlug, teamId),
+          this.rootStore.teamRoot.teamAnalytics.fetchTeamAnalytics(workspaceSlug, teamId),
+        ]);
       }
       // Fetch team activity
       this.rootStore.teamRoot.teamUpdates.fetchTeamActivities(workspaceSlug, teamId);

@@ -2,6 +2,7 @@
 import { RootStore } from "../root.store";
 // team stores
 import { ITeamPageStore, TeamPageStore } from "./pages/team-page.store";
+import { ITeamAnalyticsStore, TeamAnalyticsStore } from "./team-analytics.store";
 import { ITeamCycleStore, TeamCycleStore } from "./team-cycle.store";
 import { ITeamFilterStore, TeamFilterStore } from "./team-filter.store";
 import { ITeamUpdatesStore, TeamUpdatesStore } from "./team-updates.store";
@@ -12,6 +13,7 @@ export interface ITeamRootStore {
   team: ITeamStore;
   teamFilter: ITeamFilterStore;
   teamUpdates: ITeamUpdatesStore;
+  teamAnalytics: ITeamAnalyticsStore;
   teamCycle: ITeamCycleStore;
   teamView: ITeamViewStore;
   teamPage: ITeamPageStore;
@@ -21,6 +23,7 @@ export class TeamRootStore implements ITeamRootStore {
   team: ITeamStore;
   teamFilter: ITeamFilterStore;
   teamUpdates: ITeamUpdatesStore;
+  teamAnalytics: ITeamAnalyticsStore;
   teamCycle: ITeamCycleStore;
   teamView: ITeamViewStore;
   teamPage: ITeamPageStore;
@@ -29,6 +32,7 @@ export class TeamRootStore implements ITeamRootStore {
     this.team = new TeamStore(root);
     this.teamFilter = new TeamFilterStore(root);
     this.teamUpdates = new TeamUpdatesStore(root);
+    this.teamAnalytics = new TeamAnalyticsStore(root);
     this.teamCycle = new TeamCycleStore(root);
     this.teamView = new TeamViewStore(root);
     this.teamPage = new TeamPageStore(root);

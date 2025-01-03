@@ -1,10 +1,18 @@
 import { AlignLeft, Briefcase, FileText, Layers, Type, User2, Users } from "lucide-react";
 // plane imports
 import { ETeamScope } from "@plane/constants";
-import { TCreateUpdateTeamModal, TCreateUpdateTeamViewModal } from "@plane/types";
+import {
+  TCreateUpdateTeamModal,
+  TCreateUpdateTeamViewModal,
+  TWorkloadXAxisKeys,
+  TTeamAnalyticsValueKeys,
+  TTeamAnalyticsDataKeys,
+  TStatisticsLegend,
+} from "@plane/types";
 import { TeamsIcon } from "@plane/ui";
-// store
+// helpers
 import { getPageName } from "@/helpers/page.helper";
+// store
 import { store } from "@/lib/store-context";
 // plane web types
 import { TTeamActivity, TTeamActivityDetailsHelperMap } from "@/plane-web/types";
@@ -47,37 +55,37 @@ export const TEAM_UPDATES_HELPER_MAP: Partial<TTeamActivityDetailsHelperMap> = {
   }),
   description_updated: () => ({
     icon: <AlignLeft className={commonIconClassName} />,
-    message: <>updated the team description.</>,
+    message: <>updated the team&apos;s description.</>,
   }),
   lead_updated: (activity: TTeamActivity) => ({
     icon: <Users className={commonIconClassName} />,
     message: (
       <>
-        {activity.old_value && activity.new_value ? (
+        {activity.old_identifier && activity.new_identifier ? (
           <>
             changed the lead to{" "}
             <span className={commonTextClassName}>
-              {store.memberRoot.getUserDetails(activity.new_value)?.display_name}
+              {store.memberRoot.getUserDetails(activity.new_identifier)?.display_name}
             </span>{" "}
             from{" "}
             <span className={commonTextClassName}>
-              {store.memberRoot.getUserDetails(activity.old_value)?.display_name}
+              {store.memberRoot.getUserDetails(activity.old_identifier)?.display_name}
             </span>
             .
           </>
-        ) : activity.old_value ? (
+        ) : activity.old_identifier ? (
           <>
             removed{" "}
             <span className={commonTextClassName}>
-              {store.memberRoot.getUserDetails(activity.old_value)?.display_name}
+              {store.memberRoot.getUserDetails(activity.old_identifier)?.display_name}
             </span>{" "}
             as team lead.
           </>
-        ) : activity.new_value ? (
+        ) : activity.new_identifier ? (
           <>
             set the lead to{" "}
             <span className={commonTextClassName}>
-              {store.memberRoot.getUserDetails(activity.new_value)?.display_name}
+              {store.memberRoot.getUserDetails(activity.new_identifier)?.display_name}
             </span>
             .
           </>
@@ -93,11 +101,11 @@ export const TEAM_UPDATES_HELPER_MAP: Partial<TTeamActivityDetailsHelperMap> = {
       <>
         {activity.old_value ? (
           <>
-            removed project <span className={commonTextClassName}>{activity.old_value}</span> from the team.
+            removed the project <span className={commonTextClassName}>{activity.old_value}</span> from the team.
           </>
         ) : activity.new_value ? (
           <>
-            added project <span className={commonTextClassName}>{activity.new_value}</span> to the team.
+            added the project <span className={commonTextClassName}>{activity.new_value}</span> to the team.
           </>
         ) : (
           <></>
@@ -127,7 +135,7 @@ export const TEAM_UPDATES_HELPER_MAP: Partial<TTeamActivityDetailsHelperMap> = {
     icon: <Layers className={commonIconClassName} />,
     message: (
       <>
-        created a team view <span className={commonTextClassName}>{activity.new_value}</span>.
+        created the team view <span className={commonTextClassName}>{activity.new_value}</span>.
       </>
     ),
   }),
@@ -143,7 +151,7 @@ export const TEAM_UPDATES_HELPER_MAP: Partial<TTeamActivityDetailsHelperMap> = {
     icon: <FileText className={commonIconClassName} />,
     message: (
       <>
-        created a team page <span className={commonTextClassName}>{getPageName(activity.new_value)}</span>.
+        created the team page <span className={commonTextClassName}>{getPageName(activity.new_value)}</span>.
       </>
     ),
   }),
@@ -155,4 +163,31 @@ export const TEAM_UPDATES_HELPER_MAP: Partial<TTeamActivityDetailsHelperMap> = {
       </>
     ),
   }),
+};
+
+export const TEAM_WORKLOAD_X_AXIS_LABEL_MAP: Record<TWorkloadXAxisKeys, string> = {
+  target_date: "Due date",
+  start_date: "Start date",
+  state__group: "State group",
+  priority: "Priority",
+};
+
+export const TEAM_WORKLOAD_Y_AXIS_LABEL_MAP: Record<TTeamAnalyticsValueKeys, string> = {
+  issues: "Issues",
+  // points: "Points",
+};
+
+export const TEAM_STATISTICS_DATA_KEY_MAP: Record<TTeamAnalyticsDataKeys, string> = {
+  projects: "Projects",
+  members: "Members",
+};
+
+export const TEAM_STATISTICS_VALUE_KEY_MAP: Record<TTeamAnalyticsValueKeys, string> = {
+  issues: "No. of issues",
+  // points: "No. of points",
+};
+
+export const TEAM_STATISTICS_LEGEND_MAP: Record<TStatisticsLegend, string> = {
+  state: "State",
+  priority: "Priority",
 };

@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { BriefcaseIcon, PlusIcon } from "lucide-react";
 // components
-import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+import { Button, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 import { ProjectMultiSelectModal } from "@/components/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -17,6 +17,8 @@ type UpdateTeamProjectsButtonProps = {
   teamId: string;
   isEditingAllowed: boolean;
 };
+
+const TOOLTIP_CONTENT = "Contact team admin";
 
 const UpdateTeamProjectsButton = observer((props: UpdateTeamProjectsButtonProps) => {
   const { variant = "default", teamId, isEditingAllowed } = props;
@@ -62,52 +64,66 @@ const UpdateTeamProjectsButton = observer((props: UpdateTeamProjectsButtonProps)
         projectIds={workspaceProjectIds ?? []}
       />
       {variant === "default" && (
-        <button
-          className={cn(
-            "group/projects flex flex-shrink-0 items-center gap-1 text-xs text-custom-text-200 py-1 px-2 border-[0.5px] border-custom-border-400 rounded transition-[width] ease-linear",
-            !isEditingAllowed && "cursor-not-allowed"
-          )}
-          onClick={() => {
-            if (!isEditingAllowed) return;
-            setIsModalOpen(true);
-          }}
-        >
-          <BriefcaseIcon className="size-3.5 text-custom-text-300" />
-          {!areProjectsPresent && "Add a project"}
-          {areProjectsPresent && (
-            <>
-              <span className="group-hover/projects:hidden">{team.project_ids?.length}</span>
-              <span className="group-hover/projects:block hidden">Update projects</span>
-            </>
-          )}
-        </button>
+        <Tooltip tooltipContent={TOOLTIP_CONTENT} disabled={isEditingAllowed} position="left">
+          <button
+            className={cn(
+              "group/projects flex flex-shrink-0 items-center gap-1 text-xs text-custom-text-200 py-1 px-2 border-[0.5px] border-custom-border-400 rounded transition-[width] ease-linear duration-700",
+              !isEditingAllowed && "cursor-not-allowed"
+            )}
+            onClick={() => {
+              if (!isEditingAllowed) return;
+              setIsModalOpen(true);
+            }}
+          >
+            <BriefcaseIcon className="size-3.5 text-custom-text-300" />
+            {!areProjectsPresent && "Link a project"}
+            {areProjectsPresent && (
+              <>
+                <span className={cn(isEditingAllowed && "group-hover/projects:hidden")}>
+                  {team.project_ids?.length}
+                </span>
+                <span className={cn("hidden", isEditingAllowed && "group-hover/projects:block")}>Update projects</span>
+              </>
+            )}
+          </button>
+        </Tooltip>
       )}
       {variant === "header" && (
-        <Button
-          size="sm"
-          className="flex gap-1 items-center"
-          onClick={() => {
-            if (!isEditingAllowed) return;
-            setIsModalOpen(true);
-          }}
-        >
-          <PlusIcon className="size-3.5" />
-          Add a project
-        </Button>
+        <Tooltip tooltipContent={TOOLTIP_CONTENT} disabled={isEditingAllowed} position="left">
+          <div>
+            <Button
+              size="sm"
+              className="flex gap-1 items-center"
+              onClick={() => {
+                if (!isEditingAllowed) return;
+                setIsModalOpen(true);
+              }}
+              disabled={!isEditingAllowed}
+            >
+              <PlusIcon className="size-3.5" />
+              Add a project
+            </Button>
+          </div>
+        </Tooltip>
       )}
       {variant === "empty-state" && (
-        <Button
-          variant="accent-primary"
-          size="sm"
-          className="flex items-center gap-x-1 mt-2"
-          onClick={() => {
-            if (!isEditingAllowed) return;
-            setIsModalOpen(true);
-          }}
-        >
-          <PlusIcon className="size-3.5" />
-          Add Projects
-        </Button>
+        <Tooltip tooltipContent={TOOLTIP_CONTENT} disabled={isEditingAllowed} position="right">
+          <div>
+            <Button
+              variant="accent-primary"
+              size="sm"
+              className="relative flex flex-shrink-0 items-center gap-x-1 mt-2"
+              onClick={() => {
+                if (!isEditingAllowed) return;
+                setIsModalOpen(true);
+              }}
+              disabled={!isEditingAllowed}
+            >
+              <PlusIcon className="size-3.5" />
+              Link a project
+            </Button>
+          </div>
+        </Tooltip>
       )}
     </>
   );

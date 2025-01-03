@@ -106,7 +106,7 @@ export const TeamsOverviewProperties = observer((props: TTeamsOverviewProperties
             </Tooltip>
           )}
           <div className="flex-shrink-0">
-            <AvatarGroup size="base" showTooltip>
+            <AvatarGroup size="base" showTooltip max={4}>
               {team.member_ids?.map((userId: string) => {
                 const userDetails = getUserDetails(userId);
                 if (!userDetails) return;

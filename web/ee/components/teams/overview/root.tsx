@@ -28,7 +28,7 @@ export const TeamsOverviewRoot = observer((props: TTeamsOverviewRootProps) => {
   const { isUserMemberOfTeam } = useTeams();
   // derived values
   const isTeamMember = isUserMemberOfTeam(teamId);
-  const isEditingAllowed = allowPermissions(
+  const hasAdminLevelPermissions = allowPermissions(
     [EUserPermissions.ADMIN],
     EUserPermissionsLevel.WORKSPACE,
     workspaceSlug?.toString()
@@ -37,8 +37,8 @@ export const TeamsOverviewRoot = observer((props: TTeamsOverviewRootProps) => {
   return (
     <ContentWrapper variant={ERowVariant.HUGGING}>
       <div className="flex w-full h-full">
-        <TeamsOverviewContent teamId={teamId} isEditingAllowed={isEditingAllowed && isTeamMember} />
-        {isTeamMember && <TeamsOverviewSidebar teamId={teamId} isEditingAllowed={isEditingAllowed && isTeamMember} />}
+        <TeamsOverviewContent teamId={teamId} isEditingAllowed={hasAdminLevelPermissions && isTeamMember} />
+        {isTeamMember && <TeamsOverviewSidebar teamId={teamId} />}
       </div>
     </ContentWrapper>
   );

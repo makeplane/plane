@@ -42,8 +42,8 @@ export const TeamQuickActions: React.FC<Props> = observer((props) => {
     copyUrlToClipboard(teamLink).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "Team link copied to clipboard.",
+        title: "Link copied",
+        message: "Paste it anywhere you like.",
       });
     });
 
@@ -62,13 +62,13 @@ export const TeamQuickActions: React.FC<Props> = observer((props) => {
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
-      title: "Open in new tab",
+      title: "Open in a new tab",
       icon: ExternalLink,
     },
     {
       key: "copy-link",
       action: handleCopyText,
-      title: "Copy team link",
+      title: "Copy link to team",
       icon: Link2,
       iconClassName: "-rotate-45",
     },

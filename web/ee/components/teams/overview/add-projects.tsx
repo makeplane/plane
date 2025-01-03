@@ -19,9 +19,9 @@ export const AddProjectsToTeam = observer((props: TAddProjectsToTeamProps) => {
       <span className="flex flex-shrink-0 items-center justify-center size-8 rounded bg-custom-background-80/70 my-1">
         <BriefcaseIcon className="size-4 text-custom-text-300" />
       </span>
-      <span className="font-medium text-custom-text-200">Add Projects</span>
+      <span className="font-medium text-custom-text-200">No projects linked to this team yet</span>
       <span className="text-sm text-custom-text-300">
-        Add projects to get charge up your team with work and motivation
+        Link projects that members of this team are in and track that work in this space.
       </span>
       <UpdateTeamProjectsButton variant="empty-state" teamId={teamId?.toString()} isEditingAllowed={isEditingAllowed} />
     </div>

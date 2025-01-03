@@ -53,7 +53,7 @@ export const TeamsOverviewQuickLinks = observer(() => {
   ];
 
   return (
-    <div className="w-full flex flex-col gap-y-4 px-4">
+    <div className="w-full flex flex-col gap-y-3 pb-6">
       <div className="text-sm font-semibold text-custom-text-300">Jump into</div>
       <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 items-center gap-4">
         {TEAM_QUICK_LINKS.map((link) => (

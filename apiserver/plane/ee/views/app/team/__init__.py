@@ -1,6 +1,11 @@
 from .base import TeamSpaceEndpoint
 from .member import TeamSpaceMembersEndpoint
-from .analytic import TeamSpaceEntitiesEndpoint
+from .analytic import (
+    TeamSpaceEntitiesEndpoint,
+    TeamSpaceWorkLoadEndpoint,
+    TeamSpaceDependencyEndpoint,
+    TeamSpaceStatisticsEndpoint,
+)
 from .views import TeamSpaceViewEndpoint
 from .cycle import TeamSpaceCycleEndpoint
 from .page import (

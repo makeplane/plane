@@ -84,8 +84,8 @@ export class WorkspaceProjectStatesStore implements IWorkspaceProjectStatesStore
    */
   get isFeatureFlagged(): boolean {
     const workspaceSlug = this.workspaceStore.currentWorkspace?.slug.toString();
-    if (!workspaceSlug || !this.store.featureFlags.flags[E_FEATURE_FLAGS.PROJECT_GROUPING]) return false;
-    return this.store.featureFlags.flags[E_FEATURE_FLAGS.PROJECT_GROUPING][workspaceSlug] ?? false;
+    if (!workspaceSlug || !this.store.featureFlags.flags[workspaceSlug]) return false;
+    return this.store.featureFlags.flags[workspaceSlug][E_FEATURE_FLAGS.PROJECT_GROUPING] ?? false;
   }
 
   /**

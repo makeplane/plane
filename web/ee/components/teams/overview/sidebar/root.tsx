@@ -8,7 +8,10 @@ import { Activity, UsersRound } from "lucide-react";
 import { CommentFillIcon, InfoFillIcon, Tabs } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
+import { useUserPermissions } from "@/hooks/store";
 // plane web hooks
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants";
 import { useTeams } from "@/plane-web/hooks/store";
 import { useTeamUpdates } from "@/plane-web/hooks/store/teams/use-team-updates";
 // local components
@@ -19,18 +22,28 @@ import { TeamsOverviewSidebarProperties } from "./properties/root";
 
 type TTeamsOverviewSidebarProps = {
   teamId: string;
-  isEditingAllowed: boolean;
 };
 
 export const TeamsOverviewSidebar: FC<TTeamsOverviewSidebarProps> = observer((props) => {
-  const { teamId, isEditingAllowed } = props;
+  const { teamId } = props;
   // router
   const { workspaceSlug } = useParams();
   // hooks
+  const { allowPermissions } = useUserPermissions();
   const { isTeamSidebarCollapsed, getTeamById, fetchTeamEntities } = useTeams();
   const { fetchTeamActivities, fetchTeamComments } = useTeamUpdates();
   // derived values
   const team = getTeamById(teamId);
+  const hasAdminLevelPermissions = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.WORKSPACE,
+    workspaceSlug?.toString()
+  );
+  const hasMemberLevelPermissions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE,
+    workspaceSlug?.toString()
+  );
   // fetch team entities
   useSWR(
     workspaceSlug && teamId ? ["teamEntities", workspaceSlug, teamId] : null,
@@ -66,17 +79,17 @@ export const TeamsOverviewSidebar: FC<TTeamsOverviewSidebarProps> = observer((pr
     {
       key: "properties",
       icon: InfoFillIcon,
-      content: <TeamsOverviewSidebarProperties teamId={teamId} isEditingAllowed={isEditingAllowed} />,
+      content: <TeamsOverviewSidebarProperties teamId={teamId} isEditingAllowed={hasAdminLevelPermissions} />,
     },
     {
       key: "members",
       icon: UsersRound,
-      content: <TeamsOverviewSidebarMembers teamId={teamId} isEditingAllowed={isEditingAllowed} />,
+      content: <TeamsOverviewSidebarMembers teamId={teamId} isEditingAllowed={hasAdminLevelPermissions} />,
     },
     {
       key: "comments",
       icon: CommentFillIcon,
-      content: <TeamsOverviewSidebarComments teamId={teamId} isEditingAllowed={isEditingAllowed} />,
+      content: <TeamsOverviewSidebarComments teamId={teamId} isEditingAllowed={hasMemberLevelPermissions} />,
     },
     {
       key: "activity",

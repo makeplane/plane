@@ -22,7 +22,7 @@ export const TeamsListHeader = observer(() => {
   const { allowPermissions } = useUserPermissions();
   // derived values
   const workspaceId = currentWorkspace?.id || undefined;
-  const isAuthorizedUser = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const hasAdminLevelPermissions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   if (!workspaceSlug || !workspaceId) return <></>;
 
@@ -37,7 +37,8 @@ export const TeamsListHeader = observer(() => {
               link={<BreadcrumbLink label="Teams" icon={<TeamsIcon className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
-          <TeamScopeDropdown />
+          {/* Only workspace admins can see and join teams created by other admins. */}
+          {hasAdminLevelPermissions && <TeamScopeDropdown />}
         </div>
         <div className="flex items-center gap-4">
           {/* search */}
@@ -47,7 +48,7 @@ export const TeamsListHeader = observer(() => {
             <TeamListFiltersDropdown />
           </div> */}
           {/* create team button */}
-          {isAuthorizedUser && (
+          {hasAdminLevelPermissions && (
             <Button
               size="sm"
               onClick={() => {
