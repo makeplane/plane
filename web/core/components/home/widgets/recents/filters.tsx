@@ -5,12 +5,13 @@ import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
+import { TRecentActivityFilterKeys } from "@plane/types";
 
 export type TFiltersDropdown = {
   className?: string;
-  activeFilter: string;
-  setActiveFilter: (filter: string) => void;
-  filters: { name: string; icon?: React.ReactNode }[];
+  activeFilter: TRecentActivityFilterKeys;
+  setActiveFilter: (filter: TRecentActivityFilterKeys) => void;
+  filters: { name: TRecentActivityFilterKeys; icon?: React.ReactNode }[];
 };
 
 export const FiltersDropdown: FC<TFiltersDropdown> = observer((props) => {

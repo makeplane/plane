@@ -2,9 +2,8 @@
 
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { WidgetProps } from "@/components/dashboard/widgets";
 // types
-import { TActivityEntityData } from "@plane/types";
+import { TActivityEntityData, THomeWidgetProps, TRecentActivityFilterKeys } from "@plane/types";
 // components
 import { FiltersDropdown } from "./filters";
 import { RecentIssue } from "./issue";
@@ -19,17 +18,19 @@ import { EmptyWorkspace } from "../empty-states";
 
 const WIDGET_KEY = EWidgetKeys.RECENT_ACTIVITY;
 const workspaceService = new WorkspaceService();
-const filters = [
+const filters: { name: TRecentActivityFilterKeys; icon?: React.ReactNode }[] = [
   { name: "all item" },
   { name: "issue", icon: <LayersIcon className="w-4 h-4" /> },
   { name: "page", icon: <FileText size={16} /> },
   { name: "project", icon: <Briefcase size={16} /> },
 ];
 
-export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
+export const RecentActivityWidget: React.FC<THomeWidgetProps> = observer((props) => {
   const { workspaceSlug } = props;
+  // state
+  const [filter, setFilter] = useState<TRecentActivityFilterKeys>(filters[0].name);
+  // ref
   const ref = useRef<HTMLDivElement>(null);
-  const [filter, setFilter] = useState(filters[0].name);
 
   const { data: recents, isLoading } = useSWR(
     workspaceSlug ? `WORKSPACE_RECENT_ACTIVITY_${workspaceSlug}_${filter}` : null,

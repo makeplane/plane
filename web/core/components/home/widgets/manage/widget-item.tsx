@@ -122,7 +122,7 @@ export const WidgetItem: FC<Props> = observer((props) => {
           <WidgetItemDragHandle sort_order={widget.sort_order} isDragging={isDragging} />
           <div>{widget.title}</div>
         </div>
-        <ToggleSwitch />
+        {/* <ToggleSwitch /> */}
       </div>
       {isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}
     </div>

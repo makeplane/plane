@@ -4,11 +4,9 @@ import { useHome } from "@/hooks/store/use-home";
 import { LinkCreateUpdateModal } from "./create-update-link-modal";
 import { ProjectLinkList } from "./links";
 import { useLinks } from "./use-links";
+import { THomeWidgetProps } from "@plane/types";
 
-type TProps = {
-  workspaceSlug: string;
-};
-export const DashboardQuickLinks = observer((props: TProps) => {
+export const DashboardQuickLinks = observer((props: THomeWidgetProps) => {
   const { workspaceSlug } = props;
   const { linkOperations } = useLinks(workspaceSlug);
   const {
