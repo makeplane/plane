@@ -42,7 +42,7 @@ export const WORKSPACE_PROJECT_STATE_GROUPS: {
   [EProjectStateGroup.CANCELLED]: {
     title: "Cancelled",
     color: "#DC3E42",
-    background: "#3A3A3A",
+    background: "#FAD7D5",
   },
 };
 

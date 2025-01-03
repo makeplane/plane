@@ -31,7 +31,7 @@ export const TeamStatisticsMap: React.FC<TTeamStatisticsMapProps> = observer((pr
   const teamStatisticsLoader = getTeamStatisticsLoader(teamId);
   const teamStatisticsFilter = getTeamStatisticsFilter(teamId);
   const teamStatistics = getTeamStatistics(teamId);
-  const currentDataKey = teamStatisticsFilter.dataKey;
+  const currentDataKey = teamStatisticsFilter.data_key;
   const currentLegend = teamStatisticsFilter.legend;
   // helpers
   const getDataIcon: (id: string) => React.ReactElement | undefined = useCallback(
@@ -121,6 +121,7 @@ export const TeamStatisticsMap: React.FC<TTeamStatisticsMapProps> = observer((pr
     return teamStatistics.map((item) => ({
       name: getDataName(item.identifier),
       value: item.count,
+      label: "issues",
       icon: getDataIcon(item.identifier) ?? undefined,
       ...getFillDetail(item.identifier),
     }));
@@ -130,7 +131,7 @@ export const TeamStatisticsMap: React.FC<TTeamStatisticsMapProps> = observer((pr
     <>
       {teamStatisticsLoader === "init-loader" ? (
         <Loader className="w-full h-96 flex items-center justify-center">
-          <Loader.Item width="96%" height="100%" />
+          <Loader.Item width="100%" height="100%" />
         </Loader>
       ) : (
         <TreeMapChart data={data} isAnimationActive />

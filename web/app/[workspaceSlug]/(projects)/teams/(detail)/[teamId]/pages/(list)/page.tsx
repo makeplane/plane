@@ -59,15 +59,15 @@ const TeamPagesPage = observer(() => {
   const TEAM_VIEWS_TABS = useMemo(
     () => [
       {
-        key: "teams",
-        label: "Teams",
+        key: "team",
+        label: "Team",
         content: <TeamPagesList teamId={teamId} />,
         onClick: () => updateTeamScope(workspaceSlug, teamId, "teams"),
         disabled: teamPagesLoader === "init-loader",
       },
       {
-        key: "projects",
-        label: "Projects",
+        key: "project",
+        label: "Project",
         content: <TeamPagesList teamId={teamId} />,
         onClick: () => updateTeamScope(workspaceSlug, teamId, "projects"),
         disabled: teamPagesLoader === "init-loader",

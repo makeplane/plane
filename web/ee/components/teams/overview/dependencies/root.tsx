@@ -1,7 +1,8 @@
 "use client";
 
-import React, { FC, useMemo, useState } from "react";
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 // plane imports
 import useSWR from "swr";
@@ -11,6 +12,10 @@ import { cn } from "@plane/utils";
 import { useTeamAnalytics } from "@/plane-web/hooks/store/teams/use-team-analytics";
 // local imports
 import { TeamDependencyIssueList } from "./list";
+// dynamic imports
+const IssuePeekOverview = dynamic(() =>
+  import("@/components/issues/peek-overview/root").then((module) => ({ default: module.IssuePeekOverview }))
+);
 
 type Props = {
   teamId: string;
@@ -21,6 +26,8 @@ export const TeamDependenciesRoot: FC<Props> = observer((props) => {
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
+  // refs
+  const dependenciesContainerRef = useRef<HTMLDivElement>(null);
   // states
   const [isOpen, setIsOpen] = useState(false);
   // store hooks
@@ -37,6 +44,23 @@ export const TeamDependenciesRoot: FC<Props> = observer((props) => {
       revalidateOnFocus: false,
     }
   );
+  // effects
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const timeoutId = setTimeout(() => {
+      if (dependenciesContainerRef.current) {
+        requestAnimationFrame(() => {
+          dependenciesContainerRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+          });
+        });
+      }
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [isOpen]);
 
   const TEAM_DEPENDENCY_TYPE_LIST = useMemo(
     () => [
@@ -49,7 +73,7 @@ export const TeamDependenciesRoot: FC<Props> = observer((props) => {
       {
         key: "blocked",
         label: "Blocked",
-        content: <TeamDependencyIssueList teamId={teamId} type="blocked" />,
+        content: <TeamDependencyIssueList teamId={teamId} type="blocked_by" />,
         disabled: teamDependenciesLoader === "init-loader" || (teamDependencies?.blocked_by_issues.length ?? 0) === 0,
       },
     ],
@@ -86,18 +110,21 @@ export const TeamDependenciesRoot: FC<Props> = observer((props) => {
       buttonClassName="w-full"
       className="py-2"
     >
-      <div className="flex w-full h-full">
-        <Tabs
-          tabs={TEAM_DEPENDENCY_TYPE_LIST}
-          storageKey={`teams-dependencies-${teamId}`}
-          defaultTab="blocking"
-          size="sm"
-          containerClassName="pb-4"
-          tabListClassName="my-2 max-w-36"
-          tabPanelClassName="max-h-[180px] w-full overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-xs"
-          storeInLocalStorage={false}
-        />
-      </div>
+      <>
+        <div ref={dependenciesContainerRef} className="flex w-full h-full">
+          <Tabs
+            tabs={TEAM_DEPENDENCY_TYPE_LIST}
+            storageKey={`teams-dependencies-${teamId}`}
+            defaultTab="blocking"
+            size="sm"
+            containerClassName="pb-4"
+            tabListClassName="my-2 max-w-36"
+            tabPanelClassName="max-h-[180px] w-full overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-xs"
+            storeInLocalStorage={false}
+          />
+        </div>
+        <IssuePeekOverview />
+      </>
     </Collapsible>
   );
 });

@@ -20,10 +20,11 @@ from plane.ee.views.app.team import (
     TeamSpaceActivityEndpoint,
     TeamSpaceCommentEndpoint,
     TeamSpaceCommentReactionEndpoint,
-    TeamSpaceWorkLoadEndpoint,
+    TeamSpaceWorkLoadChartEndpoint,
     TeamSpaceDependencyEndpoint,
     TeamSpaceStatisticsEndpoint,
     TeamSpacePageDuplicateEndpoint,
+    TeamSpaceWorkloadSummaryEndpoint,
 )
 
 urlpatterns = [
@@ -154,14 +155,19 @@ urlpatterns = [
         name="team-space-comments-reactions",
     ),
     path(
-        "workspaces/<str:slug>/teams/<uuid:team_space_id>/workloads/",
-        TeamSpaceWorkLoadEndpoint.as_view(),
+        "workspaces/<str:slug>/teams/<uuid:team_space_id>/workload-chart/",
+        TeamSpaceWorkLoadChartEndpoint.as_view(),
         name="team-analytics",
     ),
     path(
         "workspaces/<str:slug>/teams/<uuid:team_space_id>/dependencies/",
         TeamSpaceDependencyEndpoint.as_view(),
         name="team-dependencies",
+    ),
+    path(
+        "workspaces/<str:slug>/teams/<uuid:team_space_id>/workload-summary/",
+        TeamSpaceWorkloadSummaryEndpoint.as_view(),
+        name="team-workload-summary",
     ),
     path(
         "workspaces/<str:slug>/teams/<uuid:team_space_id>/statistics/",

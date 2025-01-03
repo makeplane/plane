@@ -36,7 +36,7 @@ const defaultValues: Partial<TTeamView> = {
   access: EViewAccess.PUBLIC,
   display_properties: getComputedDisplayProperties(),
   display_filters: getComputedDisplayFilters({
-    group_by: "team_project",
+    group_by: "state_detail.group",
   }),
 };
 

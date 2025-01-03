@@ -19,7 +19,7 @@ export const TeamDependencyIssueList = observer((props: TTeamDependencyIssueList
   // derived values
   const teamDependencies = getTeamDependencies(teamId);
   const currentDependencyIssue =
-    type === "blocked" ? teamDependencies?.blocked_by_issues : teamDependencies?.blocking_issues;
+    type === "blocked_by" ? teamDependencies?.blocked_by_issues : teamDependencies?.blocking_issues;
 
   if (!currentDependencyIssue || currentDependencyIssue.length === 0) return null;
 

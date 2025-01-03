@@ -1,6 +1,6 @@
+import difference from "lodash/difference";
 import set from "lodash/set";
 import update from "lodash/update";
-import xor from "lodash/xor";
 import { makeObservable, action, computed, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // constants
@@ -412,7 +412,8 @@ export class TeamStore implements ITeamStore {
       ? member_ids.filter((memberId) => !teamDetailsBeforeUpdate.member_ids?.includes(memberId))
       : [];
     // Check if team projects have been updated
-    const areProjectsUpdated = xor(teamDetailsBeforeUpdate.project_ids, data.project_ids).length > 0;
+    const areProjectsUpdated =
+      !!data.project_ids && difference(teamDetailsBeforeUpdate.project_ids, data.project_ids).length > 0;
     try {
       // update team map
       runInAction(() => {

@@ -64,7 +64,7 @@ export type TTeamAnalyticsValueKeys = "issues";
 
 // --------------- Team Workload ---------------
 
-export type TWorkloadXAxisKeys = "target_date" | "start_date" | "state__group" | "priority";
+export type TWorkloadXAxisKeys = "target_date" | "start_date" | "priority";
 
 export type TWorkloadDataKeys = "completed" | "pending" | "overdue";
 
@@ -73,17 +73,26 @@ export type TWorkloadFilter = {
   xAxisKey: TWorkloadXAxisKeys;
 };
 
-export type TTeamWorkload = {
+export type TTeamWorkloadChart = {
   distribution: TStackChartData<TWorkloadXAxisKeys, TWorkloadDataKeys>[];
+};
+
+export type TTeamWorkloadSummary = {
+  backlog_issues: number;
+  cancelled_issues: number;
+  completed_issues: number;
+  pending_issues: number;
+  overdue_issues: number;
+  no_due_date_issues: number;
 };
 
 // --------------- Team Dependencies ---------------
 
-export type TDependencyType = "blocking" | "blocked";
+export type TDependencyType = "blocking" | "blocked_by";
 
 export type TTeamDependencyIssue = Pick<
   TIssue,
-  "id" | "name" | "type_id" | "sequence_id" | "project_id" | "priority" | "assignee_ids"
+  "id" | "name" | "type_id" | "sequence_id" | "project_id" | "priority" | "assignee_ids" | "archived_at"
 > & {
   state__group: TStateGroups;
 };
@@ -98,12 +107,12 @@ export type TTeamDependencies = {
 export type TStatisticsLegend = "state" | "priority";
 
 export type TStatisticsFilter = {
-  dataKey: TTeamAnalyticsDataKeys;
-  valueKey: TTeamAnalyticsValueKeys;
+  data_key: TTeamAnalyticsDataKeys;
+  value_key: TTeamAnalyticsValueKeys;
   issue_type: string[]; // issue type ids
-  state__group: string[]; // state group ids
-  dependency: TDependencyType | undefined;
-  due_date: string[];
+  state_group: TStateGroups[]; // state group names
+  dependency_type: TDependencyType | undefined;
+  target_date: string[];
   legend: TStatisticsLegend;
 };
 

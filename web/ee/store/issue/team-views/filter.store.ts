@@ -213,10 +213,10 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
             _filters.displayFilters.sub_group_by = null;
             updatedDisplayFilters.sub_group_by = null;
           }
-          // set group_by to team_project if layout is switched to kanban and group_by is null
+          // set group_by to state_detail.group if layout is switched to kanban and group_by is null
           if (_filters.displayFilters.layout === "kanban" && _filters.displayFilters.group_by === null) {
-            _filters.displayFilters.group_by = "team_project";
-            updatedDisplayFilters.group_by = "team_project";
+            _filters.displayFilters.group_by = "state_detail.group";
+            updatedDisplayFilters.group_by = "state_detail.group";
           }
 
           runInAction(() => {

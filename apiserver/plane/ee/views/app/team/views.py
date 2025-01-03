@@ -103,28 +103,13 @@ class TeamSpaceViewEndpoint(TeamBaseEndpoint):
             serializer = TeamSpaceViewSerializer(issue_views, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        # Get all the public views of the team members for the projects
-        project_ids = TeamSpaceProject.objects.filter(
-            team_space_id=team_space_id
-        ).values_list("project_id", flat=True)
-        member_ids = TeamSpaceMember.objects.filter(
-            team_space_id=team_space_id
-        ).values_list("member_id", flat=True)
 
         # Get all the views that are part of the team space
         team_space_views = TeamSpaceView.objects.filter(
             workspace__slug=slug, team_space_id=team_space_id
         ).values_list("view_id", flat=True)
         team_issue_views = (
-            IssueView.objects.filter(
-                Q(
-                    Q(pk__in=team_space_views)
-                    | Q(
-                        project_id__in=project_ids, access=1, owned_by_id__in=member_ids
-                    )
-                ),
-                workspace__slug=slug,
-            )
+            IssueView.objects.filter(pk__in=team_space_views, workspace__slug=slug)
             .annotate(
                 is_team_view=Exists(
                     TeamSpaceView.objects.filter(
@@ -148,7 +133,6 @@ class TeamSpaceViewEndpoint(TeamBaseEndpoint):
                 ).values("team_space_id")
             )
         )
-        # Combine the views
         serializer = TeamSpaceViewSerializer(team_issue_views, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

@@ -27,13 +27,6 @@ const stacks: TStackItem<TWorkloadDataKeys>[] = [
     showPercentage: true,
   },
   {
-    key: "overdue",
-    fillClassName: "fill-[#FFCCCC]",
-    textClassName: "text-[#FF0000]",
-    dotClassName: "bg-[#FFCCCC]",
-    showPercentage: true,
-  },
-  {
     key: "pending",
     fillClassName: "fill-custom-background-80/80",
     textClassName: "text-custom-text-200",
@@ -51,24 +44,19 @@ type TTeamWorkloadChartProps = {
   yAxisKey: TTeamAnalyticsValueKeys;
   data: TStackChartData<TWorkloadXAxisKeys, TWorkloadDataKeys>[];
   handleXAxisKeyChange: (key: TWorkloadXAxisKeys) => void;
-  handleYAxisKeyChange: (key: TTeamAnalyticsValueKeys) => void;
 };
 
 const workloadXAxisOptions = Object.entries(TEAM_WORKLOAD_X_AXIS_LABEL_MAP).map(([data, value]) => ({
   data,
   value,
 }));
-const workloadYAxisOptions = Object.entries(TEAM_WORKLOAD_Y_AXIS_LABEL_MAP).map(([data, value]) => ({
-  data,
-  value,
-}));
 
 export const TeamWorkloadChart: React.FC<TTeamWorkloadChartProps> = observer((props) => {
-  const { teamId, data, xAxisKey, yAxisKey, handleXAxisKeyChange, handleYAxisKeyChange } = props;
+  const { teamId, data, xAxisKey, yAxisKey, handleXAxisKeyChange } = props;
   // store hooks
-  const { getTeamWorkloadLoader } = useTeamAnalytics();
+  const { getTeamWorkloadChartLoader } = useTeamAnalytics();
   // derived values
-  const loader = getTeamWorkloadLoader(teamId);
+  const loader = getTeamWorkloadChartLoader(teamId);
   const isLoading = loader && ["init-loader", "mutation"].includes(loader);
   // Format data in case of date
   const modifiedData = useMemo(() => {
@@ -87,25 +75,7 @@ export const TeamWorkloadChart: React.FC<TTeamWorkloadChartProps> = observer((pr
   return (
     <div className="w-full h-full flex flex-col gap-6">
       <div className="flex items-center text-sm text-custom-text-300">
-        Progress on
-        <Dropdown
-          value={yAxisKey}
-          options={workloadYAxisOptions}
-          onChange={(value) => handleYAxisKeyChange(value as TTeamAnalyticsValueKeys)}
-          keyExtractor={(option) => option.data}
-          buttonContainerClassName={COMMON_DROPDOWN_CONTAINER_CLASSNAME}
-          buttonContent={(isOpen, value) => (
-            <span className="flex items-center gap-1">
-              {value && typeof value === "string"
-                ? TEAM_WORKLOAD_Y_AXIS_LABEL_MAP[value as TTeamAnalyticsValueKeys]
-                : TEAM_WORKLOAD_Y_AXIS_LABEL_MAP[yAxisKey]}
-              <ChevronDown className={cn(COMMON_CHEVRON_CLASSNAME, isOpen ? "rotate-180" : "rotate-0")} />
-            </span>
-          )}
-          disableSearch
-          disabled={isLoading}
-        />
-        view by
+        Progress on <b className="px-1">{TEAM_WORKLOAD_Y_AXIS_LABEL_MAP[yAxisKey]}</b> view by
         <Dropdown
           value={xAxisKey}
           options={workloadXAxisOptions}

@@ -1,3 +1,4 @@
+import isEqual from "lodash/isEqual";
 import set from "lodash/set";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
@@ -5,11 +6,12 @@ import { computedFn } from "mobx-utils";
 // plane web imports
 import {
   TLoader,
-  TTeamWorkload,
+  TTeamWorkloadChart,
   TWorkloadFilter,
   TTeamDependencies,
   TTeamStatistics,
   TStatisticsFilter,
+  TTeamWorkloadSummary,
 } from "@plane/types";
 import { TeamAnalyticsService } from "@/plane-web/services/teams/team-analytics.service";
 // store
@@ -17,19 +19,23 @@ import { RootStore } from "@/plane-web/store/root.store";
 
 export interface ITeamAnalyticsStore {
   // observables
-  teamWorkloadLoader: Record<string, TLoader>; // teamId => loader
+  teamWorkloadChartLoader: Record<string, TLoader>; // teamId => loader
+  teamWorkloadSummaryLoader: Record<string, TLoader>; // teamId => loader
   teamDependenciesLoader: Record<string, TLoader>; // teamId => loader
   teamStatisticsLoader: Record<string, TLoader>; // teamId => loader
-  teamWorkloadMap: Record<string, TTeamWorkload>; // teamId => workload
+  teamWorkloadChartMap: Record<string, TTeamWorkloadChart>; // teamId => workload chart details
+  teamWorkloadSummaryMap: Record<string, TTeamWorkloadSummary>; // teamId => workload summary
   teamDependenciesMap: Record<string, TTeamDependencies>; // teamId => dependencies
   teamStatisticsMap: Record<string, TTeamStatistics>; // teamId => statistics
   teamWorkloadFilter: Record<string, TWorkloadFilter>; // teamId => workload filter
   teamStatisticsFilter: Record<string, TStatisticsFilter>; // teamId => statistics filter
   // computed functions
-  getTeamWorkloadLoader: (teamId: string) => TLoader | undefined;
+  getTeamWorkloadChartLoader: (teamId: string) => TLoader | undefined;
+  getTeamWorkloadSummaryLoader: (teamId: string) => TLoader | undefined;
   getTeamDependenciesLoader: (teamId: string) => TLoader | undefined;
   getTeamStatisticsLoader: (teamId: string) => TLoader | undefined;
-  getTeamWorkload: (teamId: string) => TTeamWorkload | undefined;
+  getTeamWorkloadChart: (teamId: string) => TTeamWorkloadChart | undefined;
+  getTeamWorkloadSummary: (teamId: string) => TTeamWorkloadSummary | undefined;
   getTeamDependencies: (teamId: string) => TTeamDependencies | undefined;
   getTeamStatistics: (teamId: string) => TTeamStatistics | undefined;
   getTeamWorkloadFilter: (teamId: string) => TWorkloadFilter;
@@ -46,17 +52,20 @@ export interface ITeamAnalyticsStore {
   ) => Promise<void>;
   fetchTeamAnalytics: (workspaceSlug: string, teamId: string) => Promise<void>;
   // actions
-  fetchTeamWorkload: (workspaceSlug: string, teamId: string, filter?: TWorkloadFilter) => Promise<void>;
+  fetchTeamWorkloadChartDetails: (workspaceSlug: string, teamId: string, filter?: TWorkloadFilter) => Promise<void>;
+  fetchTeamWorkloadSummary: (workspaceSlug: string, teamId: string) => Promise<void>;
   fetchTeamDependencies: (workspaceSlug: string, teamId: string) => Promise<void>;
   fetchTeamStatistics: (workspaceSlug: string, teamId: string, filter?: TStatisticsFilter) => Promise<void>;
 }
 
 export class TeamAnalyticsStore implements ITeamAnalyticsStore {
   // observables
-  teamWorkloadLoader: Record<string, TLoader> = {}; // teamId => loader
+  teamWorkloadChartLoader: Record<string, TLoader> = {}; // teamId => loader
+  teamWorkloadSummaryLoader: Record<string, TLoader> = {}; // teamId => loader
   teamDependenciesLoader: Record<string, TLoader> = {}; // teamId => loader
   teamStatisticsLoader: Record<string, TLoader> = {}; // teamId => loader
-  teamWorkloadMap: Record<string, TTeamWorkload> = {}; // teamId => workload
+  teamWorkloadChartMap: Record<string, TTeamWorkloadChart> = {}; // teamId => workload chart details
+  teamWorkloadSummaryMap: Record<string, TTeamWorkloadSummary> = {}; // teamId => workload summary
   teamDependenciesMap: Record<string, TTeamDependencies> = {}; // teamId => dependencies
   teamStatisticsMap: Record<string, TTeamStatistics> = {}; // teamId => statistics
   teamWorkloadFilter: Record<string, TWorkloadFilter> = {}; // teamId => workload filter
@@ -69,10 +78,12 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
-      teamWorkloadLoader: observable,
+      teamWorkloadChartLoader: observable,
+      teamWorkloadSummaryLoader: observable,
       teamDependenciesLoader: observable,
       teamStatisticsLoader: observable,
-      teamWorkloadMap: observable,
+      teamWorkloadChartMap: observable,
+      teamWorkloadSummaryMap: observable,
       teamDependenciesMap: observable,
       teamStatisticsMap: observable,
       teamWorkloadFilter: observable,
@@ -84,7 +95,8 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
       updateTeamStatisticsFilter: action,
       fetchTeamAnalytics: action,
       // actions
-      fetchTeamWorkload: action,
+      fetchTeamWorkloadChartDetails: action,
+      fetchTeamWorkloadSummary: action,
       fetchTeamDependencies: action,
       fetchTeamStatistics: action,
     });
@@ -96,11 +108,17 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
 
   // computed functions
   /**
-   * Get team workload loader
+   * Get team workload chart loader
    * @param teamId
    * @returns TLoader | undefined
    */
-  getTeamWorkloadLoader = computedFn((teamId: string) => this.teamWorkloadLoader[teamId]);
+  getTeamWorkloadChartLoader = computedFn((teamId: string) => this.teamWorkloadChartLoader[teamId]);
+
+  /** Get team workload summary loader
+   * @param teamId
+   * @returns TLoader | undefined
+   */
+  getTeamWorkloadSummaryLoader = computedFn((teamId: string) => this.teamWorkloadSummaryLoader[teamId]);
 
   /**
    * Get team dependencies loader
@@ -121,7 +139,13 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
    * @param teamId
    * @returns TStackChartData<TWorkloadDataKeys>[]
    */
-  getTeamWorkload = computedFn((teamId: string) => this.teamWorkloadMap[teamId]);
+  getTeamWorkloadChart = computedFn((teamId: string) => this.teamWorkloadChartMap[teamId]);
+
+  /** Get team workload summary
+   * @param teamId
+   * @returns TTeamWorkloadSummary
+   */
+  getTeamWorkloadSummary = computedFn((teamId: string) => this.teamWorkloadSummaryMap[teamId]);
 
   /**
    * Get team dependencies
@@ -175,12 +199,12 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
    */
   initTeamStatisticsFilter = (teamId: string) => {
     set(this.teamStatisticsFilter, teamId, {
-      dataKey: "projects",
-      valueKey: "issues",
+      data_key: "projects",
+      value_key: "issues",
       issue_type: [],
-      state__group: [],
-      dependency: undefined,
-      due_date: [],
+      state_group: [],
+      dependency_type: undefined,
+      target_date: [],
       legend: "state",
     });
   };
@@ -193,7 +217,7 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
    */
   updateTeamWorkloadFilter = async (workspaceSlug: string, teamId: string, payload: Partial<TWorkloadFilter>) => {
     const filter = this.getTeamWorkloadFilter(teamId);
-    await this.fetchTeamWorkload(workspaceSlug, teamId, { ...filter, ...payload }).then(() => {
+    await this.fetchTeamWorkloadChartDetails(workspaceSlug, teamId, { ...filter, ...payload }).then(() => {
       update(this.teamWorkloadFilter, teamId, (filter) => ({ ...filter, ...payload }));
     });
   };
@@ -212,10 +236,12 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
     value: TStatisticsFilter[K]
   ) => {
     const filter = this.getTeamStatisticsFilter(teamId);
+    const updatedFilter = { ...filter, [key]: value };
+    if (isEqual(updatedFilter, filter)) return;
     if (key === "legend") {
       update(this.teamStatisticsFilter, teamId, (filter) => ({ ...filter, [key]: value })); // API call is not required when legend is changed
     } else {
-      await this.fetchTeamStatistics(workspaceSlug, teamId, { ...filter, [key]: value }).then(() => {
+      await this.fetchTeamStatistics(workspaceSlug, teamId, updatedFilter).then(() => {
         update(this.teamStatisticsFilter, teamId, (filter) => ({ ...filter, [key]: value }));
       });
     }
@@ -229,7 +255,8 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
    */
   fetchTeamAnalytics = async (workspaceSlug: string, teamId: string) => {
     Promise.all([
-      this.fetchTeamWorkload(workspaceSlug, teamId),
+      this.fetchTeamWorkloadChartDetails(workspaceSlug, teamId),
+      this.fetchTeamWorkloadSummary(workspaceSlug, teamId),
       this.fetchTeamDependencies(workspaceSlug, teamId),
       this.fetchTeamStatistics(workspaceSlug, teamId),
     ]);
@@ -243,27 +270,54 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
    * @param filter
    * @returns Promise<void>
    */
-  fetchTeamWorkload = async (workspaceSlug: string, teamId: string, filter?: TWorkloadFilter) => {
+  fetchTeamWorkloadChartDetails = async (workspaceSlug: string, teamId: string, filter?: TWorkloadFilter) => {
     try {
       // Set loader
-      if (this.getTeamWorkload(teamId)) {
-        set(this.teamWorkloadLoader, teamId, "mutation");
+      if (this.getTeamWorkloadChart(teamId)) {
+        set(this.teamWorkloadChartLoader, teamId, "mutation");
       } else {
-        set(this.teamWorkloadLoader, teamId, "init-loader");
+        set(this.teamWorkloadChartLoader, teamId, "init-loader");
       }
       // get the team workload filter
       const params = filter || this.getTeamWorkloadFilter(teamId);
       // Fetch team workload
-      const response = await this.teamAnalyticsService.getTeamWorkload(workspaceSlug, teamId, params);
+      const response = await this.teamAnalyticsService.getTeamWorkloadChart(workspaceSlug, teamId, params);
       // Update team workload store
       runInAction(() => {
-        set(this.teamWorkloadMap, teamId, response);
+        set(this.teamWorkloadChartMap, teamId, response);
       });
     } catch (e) {
       console.log("error while fetching team workload", e);
       throw e;
     } finally {
-      set(this.teamWorkloadLoader, teamId, "loaded");
+      set(this.teamWorkloadChartLoader, teamId, "loaded");
+    }
+  };
+
+  /** Fetch team workload summary
+   * @param workspaceSlug
+   * @param teamId
+   * @returns Promise<void>
+   */
+  fetchTeamWorkloadSummary = async (workspaceSlug: string, teamId: string) => {
+    try {
+      // Set loader
+      if (this.getTeamWorkloadSummary(teamId)) {
+        set(this.teamWorkloadSummaryLoader, teamId, "mutation");
+      } else {
+        set(this.teamWorkloadSummaryLoader, teamId, "init-loader");
+      }
+      // Fetch team workload summary
+      const response = await this.teamAnalyticsService.getTeamWorkloadSummary(workspaceSlug, teamId);
+      // Update team workload summary store
+      runInAction(() => {
+        set(this.teamWorkloadSummaryMap, teamId, response);
+      });
+    } catch (e) {
+      console.log("error while fetching team workload summary", e);
+      throw e;
+    } finally {
+      set(this.teamWorkloadSummaryLoader, teamId, "loaded");
     }
   };
 

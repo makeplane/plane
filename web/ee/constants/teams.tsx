@@ -8,6 +8,7 @@ import {
   TTeamAnalyticsValueKeys,
   TTeamAnalyticsDataKeys,
   TStatisticsLegend,
+  TDependencyType,
 } from "@plane/types";
 import { TeamsIcon } from "@plane/ui";
 // helpers
@@ -168,7 +169,6 @@ export const TEAM_UPDATES_HELPER_MAP: Partial<TTeamActivityDetailsHelperMap> = {
 export const TEAM_WORKLOAD_X_AXIS_LABEL_MAP: Record<TWorkloadXAxisKeys, string> = {
   target_date: "Due date",
   start_date: "Start date",
-  state__group: "State group",
   priority: "Priority",
 };
 
@@ -190,4 +190,9 @@ export const TEAM_STATISTICS_VALUE_KEY_MAP: Record<TTeamAnalyticsValueKeys, stri
 export const TEAM_STATISTICS_LEGEND_MAP: Record<TStatisticsLegend, string> = {
   state: "State",
   priority: "Priority",
+};
+
+export const TEAM_STATISTICS_DEPENDENCY_MAP: Record<TDependencyType, string> = {
+  blocking: "Blocking",
+  blocked_by: "Blocked by",
 };

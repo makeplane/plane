@@ -146,33 +146,15 @@ class TeamSpacePageEndpoint(TeamBaseEndpoint):
             serializer = TeamSpacePageSerializer(pages, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        # Get all the public pages of the team members for the projects
-        project_ids = TeamSpaceProject.objects.filter(
-            team_space_id=team_space_id
-        ).values_list("project_id", flat=True)
-        member_ids = TeamSpaceMember.objects.filter(
-            team_space_id=team_space_id
-        ).values_list("member_id", flat=True)
-
         # Get all the pages that are part of the team space
         team_space_pages = TeamSpacePage.objects.filter(
             workspace__slug=slug, team_space_id=team_space_id
         ).values_list("page_id", flat=True)
 
-        # Get all the pages that are part of the team space
-        team_issue_views = self.get_queryset().filter(
-            Q(
-                Q(pk__in=team_space_pages)
-                | Q(
-                    project_ids__overlap=project_ids,
-                    access=0,
-                    owned_by_id__in=member_ids,
-                )
-            ),
-            workspace__slug=slug,
+        pages = self.get_queryset().filter(
+            pk__in=team_space_pages, workspace__slug=slug
         )
-        # Combine the views
-        serializer = TeamSpacePageSerializer(team_issue_views, many=True)
+        serializer = TeamSpacePageSerializer(pages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.TEAMS)

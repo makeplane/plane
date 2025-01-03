@@ -18,7 +18,7 @@ from plane.ee.models import TeamSpacePage, TeamSpaceProject, TeamSpaceView
 from plane.ee.permissions import TeamSpacePermission, WorkspaceUserPermission
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
-
+from plane.utils.issue_filters import issue_filters
 from .base import TeamBaseEndpoint
 
 
@@ -80,7 +80,7 @@ class TeamSpaceEntitiesEndpoint(TeamBaseEndpoint):
         )
 
 
-class TeamSpaceWorkLoadEndpoint(TeamBaseEndpoint):
+class TeamSpaceWorkLoadChartEndpoint(TeamBaseEndpoint):
     def get_date_range(self):
         today = timezone.now().date()
         weekday = today.weekday()
@@ -195,6 +195,47 @@ class TeamSpaceWorkLoadEndpoint(TeamBaseEndpoint):
         return Response({"distribution": distribution}, status=status.HTTP_200_OK)
 
 
+class TeamSpaceWorkloadSummaryEndpoint(TeamBaseEndpoint):
+    def get(self, request, slug, team_space_id):
+        project_ids = TeamSpaceProject.objects.filter(
+            team_space_id=team_space_id
+        ).values_list("project_id", flat=True)
+
+        issues = Issue.issue_objects.filter(
+            project_id__in=project_ids, workspace__slug=slug
+        )
+
+        # Get the count of completed, pending, backlog, cancelled issues
+        completed_issues = issues.filter(state__group="completed").count()
+        pending_issues = issues.filter(
+            state__group__in=["backlog", "unstarted", "started"]
+        ).count()
+
+        # Get the count of overdue issues
+        overdue_issues = issues.filter(
+            state__group__in=["backlog", "unstarted", "started"],
+            target_date__lt=timezone.now(),
+        ).count()
+
+        # Get the count of issues in each state
+        backlog_issues = issues.filter(state__group="backlog").count()
+        cancelled_issues = issues.filter(state__group="cancelled").count()
+
+        no_due_date_issues = issues.filter(target_date__isnull=True).count()
+
+        return Response(
+            {
+                "backlog_issues": backlog_issues,
+                "cancelled_issues": cancelled_issues,
+                "completed_issues": completed_issues,
+                "pending_issues": pending_issues,
+                "overdue_issues": overdue_issues,
+                "no_due_date_issues": no_due_date_issues,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
 class TeamSpaceDependencyEndpoint(TeamBaseEndpoint):
     @check_feature_flag(FeatureFlag.TEAMS)
     def get(self, request, slug, team_space_id):
@@ -231,6 +272,7 @@ class TeamSpaceDependencyEndpoint(TeamBaseEndpoint):
                 "project_id",
                 "sequence_id",
                 "type_id",
+                "archived_at",
             )
             .annotate(
                 assignee_ids=Coalesce(
@@ -260,6 +302,7 @@ class TeamSpaceDependencyEndpoint(TeamBaseEndpoint):
                 "project_id",
                 "sequence_id",
                 "type_id",
+                "archived_at",
             )
             .annotate(
                 assignee_ids=Coalesce(
@@ -287,9 +330,10 @@ class TeamSpaceDependencyEndpoint(TeamBaseEndpoint):
 
 
 class TeamSpaceStatisticsEndpoint(TeamBaseEndpoint):
-    def project_tree(self, project_ids):
+    def project_tree(self, project_ids, filters):
         issue_map = (
             Issue.issue_objects.filter(project_id__in=project_ids)
+            .filter(**filters)
             .annotate(identifier=F("project_id"))
             .values("identifier")
             .annotate(count=Count("id"))
@@ -297,9 +341,15 @@ class TeamSpaceStatisticsEndpoint(TeamBaseEndpoint):
         )
         return Response(issue_map, status=status.HTTP_200_OK)
 
-    def member_tree(self, project_ids):
+    def member_tree(self, project_ids, filters):
+        issue_ids = (
+            Issue.issue_objects.filter(project_id__in=project_ids)
+            .filter(**filters)
+            .values_list("id", flat=True)
+        )
+        # Get the issue map:
         issue_map = (
-            IssueAssignee.objects.filter(project_id__in=project_ids)
+            IssueAssignee.objects.filter(issue__in=issue_ids)
             .annotate(identifier=F("assignee_id"))
             .values("identifier")
             .annotate(count=Count("id"))
@@ -316,9 +366,10 @@ class TeamSpaceStatisticsEndpoint(TeamBaseEndpoint):
 
         # Get the tab
         data_key = request.GET.get("data_key", "projects")
+        filters = issue_filters(request.query_params, "GET")
 
         # Get the tree map based on the data_key
         if data_key == "projects":
-            return self.project_tree(project_ids)
+            return self.project_tree(project_ids, filters)
         else:
-            return self.member_tree(project_ids)
+            return self.member_tree(project_ids, filters)
