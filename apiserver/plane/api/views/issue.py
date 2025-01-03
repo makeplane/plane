@@ -3,8 +3,8 @@ import json
 import uuid
 
 # Django imports
-from django.http import HttpResponseRedirect
 from django.core.serializers.json import DjangoJSONEncoder
+from django.http import HttpResponseRedirect
 from django.db import IntegrityError
 from django.db.models import (
     Case,
@@ -54,10 +54,10 @@ from plane.db.models import (
     Workspace,
 )
 from plane.settings.storage import S3Storage
+from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
-from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.ee.utils.workflow import WorkflowStateManager
 
 
@@ -1313,6 +1313,10 @@ class IssueAttachmentServerEndpoint(BaseAPIView):
             origin=request.META.get("HTTP_ORIGIN"),
         )
 
+        # Get the storage metadata
+        if not issue_attachment.storage_metadata:
+            get_asset_object_metadata.delay(str(issue_attachment.id))
+        issue_attachment.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def get(self, request, slug, project_id, issue_id, pk=None):

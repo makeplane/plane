@@ -32,6 +32,7 @@
     "@plane/editor": "*",
     "@plane/etl": "*",
     "@plane/hooks": "*",
+    "@plane/i18n": "*",
     "@plane/sdk": "*",
     "@plane/types": "*",
     "@plane/ui": "*",

@@ -1,28 +1,15 @@
 "use client";
 
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // types
+import { useTranslation } from "@plane/i18n";
 import { IUserTheme } from "@plane/types";
 // ui
 import { Button, InputColorPicker, setPromiseToast } from "@plane/ui";
 // hooks
 import { useUserProfile } from "@/hooks/store";
-
-const inputRules = {
-  minLength: {
-    value: 7,
-    message: "Enter a valid hex code of 6 characters",
-  },
-  maxLength: {
-    value: 7,
-    message: "Enter a valid hex code of 6 characters",
-  },
-  pattern: {
-    value: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
-    message: "Enter a valid hex code of 6 characters",
-  },
-};
 
 type TCustomThemeSelector = {
   applyThemeChange: (theme: Partial<IUserTheme>) => void;
@@ -32,7 +19,7 @@ export const CustomThemeSelector: React.FC<TCustomThemeSelector> = observer((pro
   const { applyThemeChange } = props;
   // hooks
   const { data: userProfile, updateUserTheme } = useUserProfile();
-
+  const { t } = useTranslation();
   const {
     control,
     formState: { errors, isSubmitting },
@@ -51,6 +38,24 @@ export const CustomThemeSelector: React.FC<TCustomThemeSelector> = observer((pro
     },
   });
 
+  const inputRules = useMemo(
+    () => ({
+      minLength: {
+        value: 7,
+        message: t("enter_a_valid_hex_code_of_6_characters"),
+      },
+      maxLength: {
+        value: 7,
+        message: t("enter_a_valid_hex_code_of_6_characters"),
+      },
+      pattern: {
+        value: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
+        message: t("enter_a_valid_hex_code_of_6_characters"),
+      },
+    }),
+    [t] // Empty dependency array since these rules never change
+  );
+
   const handleUpdateTheme = async (formData: Partial<IUserTheme>) => {
     const payload: IUserTheme = {
       background: formData.background,
@@ -66,14 +71,14 @@ export const CustomThemeSelector: React.FC<TCustomThemeSelector> = observer((pro
 
     const updateCurrentUserThemePromise = updateUserTheme(payload);
     setPromiseToast(updateCurrentUserThemePromise, {
-      loading: "Updating theme...",
+      loading: t("updating_theme"),
       success: {
-        title: "Success!",
-        message: () => "Theme updated successfully!",
+        title: t("success"),
+        message: () => t("theme_updated_successfully"),
       },
       error: {
-        title: "Error!",
-        message: () => "Failed to Update the theme",
+        title: t("error"),
+        message: () => t("failed_to_update_the_theme"),
       },
     });
 
@@ -91,16 +96,16 @@ export const CustomThemeSelector: React.FC<TCustomThemeSelector> = observer((pro
   return (
     <form onSubmit={handleSubmit(handleUpdateTheme)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-semibold text-custom-text-100">Customize your theme</h3>
+        <h3 className="text-lg font-semibold text-custom-text-100">{t("customize_your_theme")}</h3>
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-custom-text-200">Background color</h3>
+              <h3 className="text-left text-sm font-medium text-custom-text-200">{t("background_color")}</h3>
               <div className="w-full">
                 <Controller
                   control={control}
                   name="background"
-                  rules={{ ...inputRules, required: "Background color is required" }}
+                  rules={{ ...inputRules, required: t("background_color_is_required") }}
                   render={({ field: { value, onChange } }) => (
                     <InputColorPicker
                       name="background"
@@ -121,12 +126,12 @@ export const CustomThemeSelector: React.FC<TCustomThemeSelector> = observer((pro
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-custom-text-200">Text color</h3>
+              <h3 className="text-left text-sm font-medium text-custom-text-200">{t("text_color")}</h3>
               <div className="w-full">
                 <Controller
                   control={control}
                   name="text"
-                  rules={{ ...inputRules, required: "Text color is required" }}
+                  rules={{ ...inputRules, required: t("text_color_is_required") }}
                   render={({ field: { value, onChange } }) => (
                     <InputColorPicker
                       name="text"
@@ -147,12 +152,12 @@ export const CustomThemeSelector: React.FC<TCustomThemeSelector> = observer((pro
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-custom-text-200">Primary(Theme) color</h3>
+              <h3 className="text-left text-sm font-medium text-custom-text-200">{t("primary_color")}</h3>
               <div className="w-full">
                 <Controller
                   control={control}
                   name="primary"
-                  rules={{ ...inputRules, required: "Primary color is required" }}
+                  rules={{ ...inputRules, required: t("primary_color_is_required") }}
                   render={({ field: { value, onChange } }) => (
                     <InputColorPicker
                       name="primary"
@@ -173,12 +178,12 @@ export const CustomThemeSelector: React.FC<TCustomThemeSelector> = observer((pro
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-custom-text-200">Sidebar background color</h3>
+              <h3 className="text-left text-sm font-medium text-custom-text-200">{t("sidebar_background_color")}</h3>
               <div className="w-full">
                 <Controller
                   control={control}
                   name="sidebarBackground"
-                  rules={{ ...inputRules, required: "Sidebar background color is required" }}
+                  rules={{ ...inputRules, required: t("sidebar_background_color_is_required") }}
                   render={({ field: { value, onChange } }) => (
                     <InputColorPicker
                       name="sidebarBackground"
@@ -201,12 +206,12 @@ export const CustomThemeSelector: React.FC<TCustomThemeSelector> = observer((pro
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-custom-text-200">Sidebar text color</h3>
+              <h3 className="text-left text-sm font-medium text-custom-text-200">{t("sidebar_text_color")}</h3>
               <div className="w-full">
                 <Controller
                   control={control}
                   name="sidebarText"
-                  rules={{ ...inputRules, required: "Sidebar text color is required" }}
+                  rules={{ ...inputRules, required: t("sidebar_text_color_is_required") }}
                   render={({ field: { value, onChange } }) => (
                     <InputColorPicker
                       name="sidebarText"
@@ -230,7 +235,7 @@ export const CustomThemeSelector: React.FC<TCustomThemeSelector> = observer((pro
       </div>
       <div className="mt-5 flex justify-end gap-2">
         <Button variant="primary" type="submit" loading={isSubmitting}>
-          {isSubmitting ? "Creating Theme..." : "Set Theme"}
+          {isSubmitting ? t("creating_theme") : t("set_theme")}
         </Button>
       </div>
     </form>

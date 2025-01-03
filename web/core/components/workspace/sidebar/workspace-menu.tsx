@@ -6,8 +6,8 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { ArchiveIcon, ChevronRight, MoreHorizontal, Settings } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-// plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components
@@ -38,6 +38,7 @@ export const SidebarWorkspaceMenu = observer(() => {
   // pathname
   const pathname = usePathname();
   // store hooks
+  const { t } = useTranslation();
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const { captureEvent } = useEventTracker();
   const { isMobile } = usePlatformOS();
@@ -85,7 +86,7 @@ export const SidebarWorkspaceMenu = observer(() => {
             className="flex-1 sticky top-0  z-10  w-full  py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400  text-xs font-semibold"
             onClick={() => toggleWorkspaceMenu(!isWorkspaceMenuOpen)}
           >
-            <span>WORKSPACE</span>
+            <span>{t("workspace").toUpperCase()}</span>
           </Disclosure.Button>
           <CustomMenu
             customButton={
@@ -112,7 +113,7 @@ export const SidebarWorkspaceMenu = observer(() => {
               <Link href={`/${workspaceSlug}/projects/archives`}>
                 <div className="flex items-center justify-start gap-2">
                   <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                  <span>Archives</span>
+                  <span>{t("archives")}</span>
                 </div>
               </Link>
             </CustomMenu.MenuItem>
@@ -122,7 +123,7 @@ export const SidebarWorkspaceMenu = observer(() => {
                 <Link href={`/${workspaceSlug}/settings`}>
                   <div className="flex items-center justify-start gap-2">
                     <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
-                    <span>Settings</span>
+                    <span>{t("settings")}</span>
                   </div>
                 </Link>
               </CustomMenu.MenuItem>
@@ -162,32 +163,32 @@ export const SidebarWorkspaceMenu = observer(() => {
             static
           >
             {SIDEBAR_WORKSPACE_MENU_ITEMS.map((link) => {
-              if (!isWorkspaceFeatureEnabled(link.key, workspaceSlug.toString())) return null;
+              if (!isWorkspaceFeatureEnabled(link.value, workspaceSlug.toString())) return null;
               return (
                 allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString()) && (
                   <Tooltip
-                    key={link.key}
-                    tooltipContent={link.label}
+                    key={link.value}
+                    tooltipContent={t(link.key)}
                     position="right"
                     className="ml-2"
                     disabled={!sidebarCollapsed}
                     isMobile={isMobile}
                   >
-                    <Link href={`/${workspaceSlug}${link.href}`} onClick={() => handleLinkClick(link.key)}>
+                    <Link href={`/${workspaceSlug}${link.href}`} onClick={() => handleLinkClick(link.value)}>
                       <SidebarNavItem
-                        key={link.key}
+                        key={link.value}
                         className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
                         isActive={link.highlight(pathname, `/${workspaceSlug}`)}
                       >
                         <div className="flex items-center gap-1.5 py-[1px]">
                           <link.Icon
                             className={cn("size-4", {
-                              "rotate-180": link.key === "active-cycles",
+                              "rotate-180": link.value === "active-cycles",
                             })}
                           />
-                          {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}
+                          {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{t(link.key)}</p>}
                         </div>
-                        {!sidebarCollapsed && link.key === "active-cycles" && indicatorElement}
+                        {!sidebarCollapsed && link.value === "active-cycles" && indicatorElement}
                       </SidebarNavItem>
                     </Link>
                   </Tooltip>

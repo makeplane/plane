@@ -21,6 +21,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  transpilePackages: ["@plane/i18n"],
   async redirects() {
     return [
       {

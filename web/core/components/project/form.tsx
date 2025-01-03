@@ -3,6 +3,7 @@
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Info, Lock } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // plane types
 import { IProject, IWorkspace } from "@plane/types";
 // plane ui
@@ -43,6 +44,7 @@ export interface IProjectDetailsForm {
 const projectService = new ProjectService();
 export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { project, workspaceSlug, projectId, isAdmin } = props;
+  const { t } = useTranslation();
   // states
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -361,8 +363,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                         <div className="flex items-start gap-2">
                           <network.icon className="h-3.5 w-3.5" />
                           <div className="-mt-1">
-                            <p>{network.label}</p>
-                            <p className="text-xs text-custom-text-400">{network.description}</p>
+                            <p>{t(network.label)}</p>
+                            <p className="text-xs text-custom-text-400">{t(network.description)}</p>
                           </div>
                         </div>
                       </CustomSelect.Option>
