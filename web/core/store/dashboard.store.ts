@@ -9,6 +9,7 @@ import {
   TWidgetStatsResponse,
   TWidgetKeys,
   TWidgetStatsRequestParams,
+  TRecentActivityWidgetFilters,
 } from "@plane/types";
 // services
 import { DashboardService } from "@/services/dashboard.service";
@@ -19,6 +20,7 @@ export interface IDashboardStore {
   // error states
   widgetStatsError: { [workspaceSlug: string]: Record<string, Record<TWidgetKeys, any | null>> };
   // observables
+  activeFilter: TRecentActivityWidgetFilters;
   homeDashboardId: string | null;
   widgetDetails: { [workspaceSlug: string]: Record<string, TWidget[]> };
   // {
@@ -59,12 +61,14 @@ export interface IDashboardStore {
     widgetId: string,
     data: TWidgetFiltersFormData
   ) => Promise<any>;
+  setActiveFilter: (filter: TRecentActivityWidgetFilters) => void;
 }
 
 export class DashboardStore implements IDashboardStore {
   // error states
   widgetStatsError: { [workspaceSlug: string]: Record<string, Record<TWidgetKeys, any>> } = {};
   // observables
+  activeFilter = "all";
   homeDashboardId: string | null = null;
   widgetDetails: { [workspaceSlug: string]: Record<string, TWidget[]> } = {};
   widgetStats: { [workspaceSlug: string]: Record<string, Record<TWidgetKeys, TWidgetStatsResponse>> } = {};
@@ -79,6 +83,7 @@ export class DashboardStore implements IDashboardStore {
       // error states
       widgetStatsError: observable,
       // observables
+      activeFilter: observable,
       homeDashboardId: observable.ref,
       widgetDetails: observable,
       widgetStats: observable,
@@ -90,6 +95,7 @@ export class DashboardStore implements IDashboardStore {
       // update actions
       updateDashboardWidget: action,
       updateDashboardWidgetFilters: action,
+      setActiveFilter: action,
     });
 
     // router store
@@ -281,5 +287,9 @@ export class DashboardStore implements IDashboardStore {
       });
       throw error;
     }
+  };
+
+  setActiveFilter = (filter: TRecentActivityWidgetFilters) => {
+    this.activeFilter = filter;
   };
 }

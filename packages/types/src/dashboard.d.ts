@@ -10,20 +10,20 @@ export type WidgetProps = {
 };
 
 export type TWidgetKeys =
-  | "quick_links"
   | "overview_stats"
   | "assigned_issues"
   | "created_issues"
   | "issues_by_state_groups"
   | "issues_by_priority"
   | "recent_activity"
-  | "recent_pages"
   | "recent_projects"
   | "recent_collaborators";
 
 export type TIssuesListTypes = "pending" | "upcoming" | "overdue" | "completed";
 
 // widget filters
+export type TRecentActivityWidgetFilters = "all" | "projects" | "pages" | "issues";
+
 export type TAssignedIssuesWidgetFilters = {
   custom_dates?: string[];
   duration?: EDurationFilters;

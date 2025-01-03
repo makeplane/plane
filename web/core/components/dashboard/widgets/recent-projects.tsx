@@ -3,10 +3,11 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
+import { Plus } from "lucide-react";
 // plane types
 import { TRecentProjectsWidgetResponse } from "@plane/types";
 // plane ui
-import { Avatar, AvatarGroup } from "@plane/ui";
+import { Avatar, AvatarGroup, Card } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 import { WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
@@ -37,10 +38,7 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
   if (!projectDetails) return null;
 
   return (
-    <Link
-      href={`/${workspaceSlug}/projects/${projectId}/issues`}
-      className="group flex items-center gap-4 border-[0.5px] border-custom-border-200 bg-custom-background-100 hover:shadow-sm rounded-md p-2 w-[290px]"
-    >
+    <Link href={`/${workspaceSlug}/projects/${projectId}/issues`} className="group flex items-center gap-8">
       <div
         className={`grid h-[3.375rem] w-[3.375rem] flex-shrink-0 place-items-center rounded border border-transparent ${randomBgColor}`}
       >
@@ -92,43 +90,37 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div>
-      <div className="flex items-center justify-between">
-        <Link
-          href={`/${workspaceSlug}/projects`}
-          className="text-base font-semibold text-custom-text-350 hover:underline my-auto"
-        >
-          Recent projects
-        </Link>
-        <div className="flex gap-4">
-          {canCreateProject && (
-            <button
-              type="button"
-              className="group flex items-center gap-8"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setTrackElement("Sidebar");
-                toggleCreateProjectModal(true);
-              }}
-            >
-              <p className="text-sm font-medium text-custom-primary-100 group-hover:text-custom-text-100 group-hover:underline">
-                Add project{" "}
-              </p>
-            </button>
-          )}
-          <Link href={`/${workspaceSlug}/projects`}>
-            <p className="text-sm font-medium text-custom-primary-100 group-hover:text-custom-text-100 group-hover:underline">
-              View all{" "}
-            </p>
-          </Link>
-        </div>
-      </div>
+    <Card>
+      <Link
+        href={`/${workspaceSlug}/projects`}
+        className="text-lg font-semibold text-custom-text-300 hover:underline mb-4"
+      >
+        Recent projects
+      </Link>
       <div className="mt-4 space-y-8">
+        {canCreateProject && (
+          <button
+            type="button"
+            className="group flex items-center gap-8"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setTrackElement("Sidebar");
+              toggleCreateProjectModal(true);
+            }}
+          >
+            <div className="grid h-[3.375rem] w-[3.375rem] flex-shrink-0 place-items-center rounded border border-dashed border-custom-primary-60 bg-custom-primary-100/20 text-custom-primary-100">
+              <Plus className="h-6 w-6" />
+            </div>
+            <p className="text-sm font-medium text-custom-text-300 group-hover:text-custom-text-100 group-hover:underline">
+              Create new project
+            </p>
+          </button>
+        )}
         {widgetStats.map((projectId) => (
           <ProjectListItem key={projectId} projectId={projectId} workspaceSlug={workspaceSlug} />
         ))}
       </div>
-    </div>
+    </Card>
   );
 });

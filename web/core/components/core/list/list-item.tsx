@@ -18,6 +18,7 @@ interface IListItemProps {
   parentRef: React.RefObject<HTMLDivElement>;
   disableLink?: boolean;
   className?: string;
+  itemClassName?: string;
   actionItemContainerClassName?: string;
   isSidebarOpen?: boolean;
   quickActionElement?: JSX.Element;
@@ -38,6 +39,7 @@ export const ListItem: FC<IListItemProps> = (props) => {
     actionItemContainerClassName = "",
     isSidebarOpen = false,
     quickActionElement,
+    itemClassName = "",
   } = props;
 
   // router
@@ -61,7 +63,7 @@ export const ListItem: FC<IListItemProps> = (props) => {
           className
         )}
       >
-        <div className="relative flex w-full items-center justify-between gap-3 overflow-hidden">
+        <div className={cn("relative flex w-full items-center justify-between gap-3 overflow-hidden", itemClassName)}>
           <ControlLink
             className="relative flex w-full items-center gap-3 overflow-hidden"
             href={itemLink}

@@ -282,37 +282,32 @@ export class WorkspaceService extends APIService {
   }
 
   // quick links
-  async fetchWorkspaceLinks(workspaceSlug: string, projectId: string): Promise<TLink[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/links/`)
+  async fetchWorkspaceLinks(workspaceSlug: string): Promise<TLink[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/quick-links/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async createWorkspaceLink(workspaceSlug: string, projectId: string, data: Partial<TLink>): Promise<TLink> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/links/`, data)
+  async createWorkspaceLink(workspaceSlug: string, data: Partial<TLink>): Promise<TLink> {
+    return this.post(`/api/workspaces/${workspaceSlug}/quick-links/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async updateWorkspaceLink(
-    workspaceSlug: string,
-    projectId: string,
-    linkId: string,
-    data: Partial<TLink>
-  ): Promise<TLink> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/links/${linkId}/`, data)
+  async updateWorkspaceLink(workspaceSlug: string, linkId: string, data: Partial<TLink>): Promise<TLink> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/quick-links/${linkId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async deleteWorkspaceLink(workspaceSlug: string, projectId: string, linkId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/links/${linkId}/`)
+  async deleteWorkspaceLink(workspaceSlug: string, linkId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/quick-links/${linkId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -5,7 +5,7 @@ type TProps = {
 };
 export const AddLink = (props: TProps) => {
   const { onClick } = props;
-  console.log("AddLink");
+
   return (
     <button
       className="btn btn-primary flex bg-custom-background-100 px-4 w-[230px] h-[56px] border-[0.5px] border-custom-border-200 rounded-md gap-4"

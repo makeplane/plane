@@ -5,7 +5,6 @@ import { useParams } from "next/navigation";
 import { ContentWrapper } from "@plane/ui";
 import { DashboardWidgets } from "@/components/dashboard";
 import { EmptyState } from "@/components/empty-state";
-import { IssuePeekOverview } from "@/components/issues";
 import { TourRoot } from "@/components/onboarding";
 import { UserGreetingsView } from "@/components/user";
 // constants
@@ -16,6 +15,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useCommandPalette, useUserProfile, useEventTracker, useDashboard, useProject, useUser } from "@/hooks/store";
 import useSize from "@/hooks/use-window-size";
+import { useHome } from "@/hooks/store/use-home";
 
 export const WorkspaceDashboardView = observer(() => {
   // store hooks
@@ -29,6 +29,7 @@ export const WorkspaceDashboardView = observer(() => {
   const { data: currentUserProfile, updateTourCompleted } = useUserProfile();
   const { captureEvent } = useEventTracker();
   const { homeDashboardId, fetchHomeDashboardWidgets } = useDashboard();
+  const { toggleWidgetSettings } = useHome();
   const { joinedProjectIds, loader } = useProject();
 
   const [windowWidth] = useSize();
@@ -71,7 +72,9 @@ export const WorkspaceDashboardView = observer(() => {
                   "vertical-scrollbar scrollbar-lg": windowWidth >= 768,
                 })}
               >
-                {currentUser && <UserGreetingsView user={currentUser} />}
+                {currentUser && (
+                  <UserGreetingsView user={currentUser} handleWidgetModal={() => toggleWidgetSettings(true)} />
+                )}
 
                 <DashboardWidgets />
               </ContentWrapper>

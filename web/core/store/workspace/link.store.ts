@@ -7,7 +7,7 @@ import { WorkspaceService } from "@/plane-web/services";
 
 export interface IWorkspaceLinkStoreActions {
   addLinks: (projectId: string, links: TLink[]) => void;
-  fetchLinks: (workspaceSlug: string, projectId: string) => Promise<TLink[]>;
+  fetchLinks: (workspaceSlug: string) => Promise<TLink[]>;
   createLink: (workspaceSlug: string, data: Partial<TLink>) => Promise<TLink>;
   updateLink: (workspaceSlug: string, linkId: string, data: Partial<TLink>) => Promise<TLink>;
   removeLink: (workspaceSlug: string, linkId: string) => Promise<void>;
@@ -79,27 +79,28 @@ export class WorkspaceLinkStore implements IWorkspaceLinkStore {
     });
   };
 
-  addLinks = (projectId: string, links: TLink[]) => {
+  addLinks = (workspaceSlug: string, links: TLink[]) => {
     runInAction(() => {
-      this.links[projectId] = links.map((link) => link.id);
+      this.links[workspaceSlug] = links.map((link) => link.id);
       links.forEach((link) => set(this.linkMap, link.id, link));
     });
   };
 
-  fetchLinks = async (workspaceSlug: string, projectId: string) => {
-    const response = await this.workspaceService.fetchWorkspaceLinks(workspaceSlug, projectId);
-    this.addLinks(projectId, response);
+  fetchLinks = async (workspaceSlug: string) => {
+    const response = await this.workspaceService.fetchWorkspaceLinks(workspaceSlug);
+    this.addLinks(workspaceSlug, response);
     return response;
   };
 
   createLink = async (workspaceSlug: string, data: Partial<TLink>) => {
-    // const response = await this.workspaceService.createWorkspaceLink(workspaceSlug, projectId, data);
-    // const issueLinkCount = this.getLinksByWorkspaceId(projectId)?.length ?? 0;
-    // runInAction(() => {
-    //   this.links[workspaceSlug] = [response.id, ...this.links[workspaceSlug]];
-    //   set(this.linkMap, response.id, response);
-    // });
-    // return response;
+    console.log("hereee");
+    const response = await this.workspaceService.createWorkspaceLink(workspaceSlug, data);
+
+    runInAction(() => {
+      this.links[workspaceSlug] = [response.id, ...(this.links[workspaceSlug] ?? [])];
+      set(this.linkMap, response.id, response);
+    });
+    return response;
   };
 
   updateLink = async (workspaceSlug: string, linkId: string, data: Partial<TLink>) => {
@@ -109,14 +110,13 @@ export class WorkspaceLinkStore implements IWorkspaceLinkStore {
       });
     });
 
-    // const response = await this.workspaceService.updateWorkspaceLink(workspaceSlug, projectId, linkId, data);
-
-    // return response;
+    const response = await this.workspaceService.updateWorkspaceLink(workspaceSlug, linkId, data);
+    return response;
   };
 
   removeLink = async (workspaceSlug: string, linkId: string) => {
     // const issueLinkCount = this.getLinksByWorkspaceId(projectId)?.length ?? 0;
-    // await this.workspaceService.deleteWorkspaceLink(workspaceSlug, projectId, linkId);
+    await this.workspaceService.deleteWorkspaceLink(workspaceSlug, linkId);
 
     const linkIndex = this.links[workspaceSlug].findIndex((link) => link === linkId);
     if (linkIndex >= 0)

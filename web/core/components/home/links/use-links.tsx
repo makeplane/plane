@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { TProjectLink } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { useWorkspace } from "@/hooks/store";
+import { useHome } from "@/hooks/store/use-home";
 
 export type TLinkOperations = {
   create: (data: Partial<TProjectLink>) => Promise<void>;
@@ -15,14 +15,24 @@ export type TProjectLinkRoot = {
 export const useLinks = (workspaceSlug: string) => {
   // hooks
   const {
-    links: { createLink, updateLink, removeLink, isLinkModalOpen, toggleLinkModal, linkData, setLinkData, fetchLinks },
-  } = useWorkspace();
+    quickLinks: {
+      createLink,
+      updateLink,
+      removeLink,
+      isLinkModalOpen,
+      toggleLinkModal,
+      linkData,
+      setLinkData,
+      fetchLinks,
+    },
+  } = useHome();
 
   const linkOperations: TLinkOperations = useMemo(
     () => ({
       create: async (data: Partial<TProjectLink>) => {
         try {
           if (!workspaceSlug) throw new Error("Missing required fields");
+          console.log("data", data, workspaceSlug);
           await createLink(workspaceSlug, data);
           setToast({
             message: "The link has been successfully created",
@@ -31,6 +41,7 @@ export const useLinks = (workspaceSlug: string) => {
           });
           toggleLinkModal(false);
         } catch (error: any) {
+          console.error("error", error);
           setToast({
             message: error?.data?.error ?? "The link could not be created",
             type: TOAST_TYPE.ERROR,
@@ -67,7 +78,6 @@ export const useLinks = (workspaceSlug: string) => {
             type: TOAST_TYPE.SUCCESS,
             title: "Link removed",
           });
-          toggleLinkModal(false);
         } catch (error) {
           setToast({
             message: "The link could not be removed",

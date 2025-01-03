@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
-import { useWorkspace } from "@/hooks/store";
-import { AddLink } from "./action";
+import useSWR from "swr";
+import { useHome } from "@/hooks/store/use-home";
 import { LinkCreateUpdateModal } from "./create-update-link-modal";
 import { ProjectLinkList } from "./links";
 import { useLinks } from "./use-links";
@@ -12,9 +12,18 @@ export const DashboardQuickLinks = observer((props: TProps) => {
   const { workspaceSlug } = props;
   const { linkOperations } = useLinks(workspaceSlug);
   const {
-    links: { isLinkModalOpen, toggleLinkModal, linkData, setLinkData },
-  } = useWorkspace();
+    quickLinks: { isLinkModalOpen, toggleLinkModal, linkData, setLinkData, fetchLinks },
+  } = useHome();
 
+  useSWR(
+    workspaceSlug ? `HOME_LINKS_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchLinks(workspaceSlug.toString()) : null,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
   return (
     <>
       <LinkCreateUpdateModal
@@ -24,12 +33,9 @@ export const DashboardQuickLinks = observer((props: TProps) => {
         preloadedData={linkData}
         setLinkData={setLinkData}
       />
-      <div className="flex mx-auto justify-center">
+      <div className="flex mx-auto flex-wrap border-b border-custom-border-100 pb-4">
         {/* rendering links */}
         <ProjectLinkList workspaceSlug={workspaceSlug} linkOperations={linkOperations} />
-
-        {/* Add new link */}
-        <AddLink onClick={() => toggleLinkModal(true)} />
       </div>
     </>
   );
