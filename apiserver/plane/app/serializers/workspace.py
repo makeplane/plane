@@ -133,10 +133,3 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
             raise serializers.ValidationError({"error": "Invalid URL format."})
 
         return value
-
-
-class WorkspaceHomePreferenceSerializer(BaseSerializer):
-    class Meta: 
-        model = WorkspaceHomePreference
-        fields = "__all__"
-        read_only_fields = ["workspace", "owner"]
