@@ -36,6 +36,7 @@ import { isValidHttpUrl } from "@/helpers/common";
 import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
+import { DragAndDrop } from "./drag-and-drop/drag-handle-extension";
 
 type TArguments = {
   disabledExtensions: TExtensions[];
@@ -177,5 +178,6 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,
     }),
+    DragAndDrop,
   ];
 };
