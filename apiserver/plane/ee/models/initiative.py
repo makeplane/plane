@@ -309,3 +309,33 @@ class InitiativeUserProperty(BaseModel):
     def __str__(self):
         """Return properties status of the initiative"""
         return str(self.user)
+
+
+class InitiativeEpic(BaseModel):
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="initiative_epics"
+    )
+    initiative = models.ForeignKey(
+        "ee.Initiative", on_delete=models.CASCADE, related_name="initiative_epics"
+    )
+    epic = models.ForeignKey(
+        "db.Issue", on_delete=models.CASCADE, related_name="initiative_epics"
+    )
+    sort_order = models.FloatField(default=65535)
+
+    class Meta:
+        unique_together = ["initiative", "epic", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["initiative", "epic"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="initiative_epic_unique_initiative_epic_when_deleted_at_null",
+            )
+        ]
+        db_table = "initiative_epics"
+        verbose_name = "Initiative Epic"
+        verbose_name_plural = "Initiative Epics"
+
+    def __str__(self):
+        """Return epic of the initiative"""
+        return f"{self.initiative.name} {self.epic.name}"
