@@ -229,8 +229,14 @@ urlpatterns = [
         ),
         name="workspace-quick-links",
     ),
+    # Widgets
     path(
         "workspaces/<str:slug>/home-preferences/",
+        WorkspacePreferenceViewSet.as_view(),
+        name="workspace-home-preference",
+    ),
+    path(
+        "workspaces/<str:slug>/home-preferences/<uuid:pk>/",
         WorkspacePreferenceViewSet.as_view(),
         name="workspace-home-preference",
     ),

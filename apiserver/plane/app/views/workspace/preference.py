@@ -22,8 +22,6 @@ class WorkspacePreferenceViewSet(BaseAPIView):
 
         create_preference_keys = []
 
-        print(WorkspaceHomePreference.HomeWidgetKeys.choices, "Print Choices")
-
         keys = [key for key, _ in WorkspaceHomePreference.HomeWidgetKeys.choices]
 
         for preference in keys:
@@ -46,7 +44,21 @@ class WorkspacePreferenceViewSet(BaseAPIView):
 
         workspace_user_home_preferences = WorkspaceHomePreference.objects.filter(
             workspace=workspace, user=request.user
-        ).values("key", "is_enabled", "sort_order", "config")
+        ).values("key", "is_enabled", "sort_order", "config", "id")
 
-        # for preference in home_preferences:
         return Response(workspace_user_home_preferences, status=status.HTTP_200_OK)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def patch(self, request, slug, pk):
+        preference = WorkspaceHomePreference.objects.filter(pk=pk, workspace__slug=slug)
+
+        if preference:
+            WorkspaceHomePreference.objects.update(
+                is_enabled=request.data["is_enabled"]
+            )
+
+        preference = WorkspaceHomePreference.objects.filter(
+            pk=pk, user=request.user
+        ).values("key", "is_enabled", "sort_order", "config", "id")
+
+        return Response(preference, status=status.HTTP_200_OK)
