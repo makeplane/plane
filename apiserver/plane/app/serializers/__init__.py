@@ -20,6 +20,7 @@ from .workspace import (
     WorkspaceMemberMeSerializer,
     WorkspaceUserPropertiesSerializer,
     WorkspaceUserLinkSerializer,
+    WorkspaceRecentVisitSerializer
     WorkspaceUserMeSerializer,
 )
 from .project import (

@@ -53,7 +53,6 @@ const nextConfig = {
   },
   async rewrites() {
     const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://app.posthog.com";
-    const uploadsBaseURL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
     const rewrites = [
       {
         source: "/ingest/static/:path*",
