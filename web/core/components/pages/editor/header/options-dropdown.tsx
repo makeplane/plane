@@ -102,14 +102,14 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         extraOptions={EXTRA_MENU_OPTIONS}
         optionsOrder={[
           "full-screen",
-          "copy-markdown",
           "copy-link",
+          "make-a-copy",
           "toggle-lock",
           "toggle-access",
-          "make-a-copy",
           "archive-restore",
           "delete",
           "version-history",
+          "copy-markdown",
           "export",
         ]}
         page={page}
