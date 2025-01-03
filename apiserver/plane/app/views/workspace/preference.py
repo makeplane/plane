@@ -26,14 +26,17 @@ class WorkspacePreferenceViewSet(BaseAPIView):
         if quick_links and recents and my_stickies and new_at_plane and quick_tutorial:
             return Response(WorkspaceHomePreference.objects.filter(user=request.user, workspace_id=workspace.id).values(), status=status.HTTP_201_CREATED)  
 
-        home_preferences = [
-            WorkspaceHomePreference.HomeWidgetKeys.QUICK_LINKS, 
-            WorkspaceHomePreference.HomeWidgetKeys.RECENTS, 
-            WorkspaceHomePreference.HomeWidgetKeys.MY_STICKIES,
-            WorkspaceHomePreference.HomeWidgetKeys.NEW_AT_PLANE,
-            WorkspaceHomePreference.HomeWidgetKeys.QUICK_TUTORIAL
-        ]
-        
-        create = WorkspaceHomePreference.objects.create(user=request.user, workspace_id=workspace.id, key="asdfasdfasdf", is_enabled=True)
-        print(create, "Print Created")
+        # home_preferences = [
+        #     WorkspaceHomePreference.HomeWidgetKeys.QUICK_LINKS, 
+        #     WorkspaceHomePreference.HomeWidgetKeys.RECENTS, 
+        #     WorkspaceHomePreference.HomeWidgetKeys.MY_STICKIES,
+        #     WorkspaceHomePreference.HomeWidgetKeys.NEW_AT_PLANE,
+        #     WorkspaceHomePreference.HomeWidgetKeys.QUICK_TUTORIAL
+        # ]
+        print(request.user, "request.user") 
+        print(WorkspaceHomePreference.HomeWidgetKeys.QUICK_LINKS, "WorkspaceHomePreference.HomeWidgetKeys.QUICK_LINKS") 
+        print(workspace.id, "workspace.id") 
+
+        preference = WorkspaceHomePreference(user=request.user, workspace_id=workspace.id, key="QUICK_LINKS", is_enabled=True)
+        preference.save()
         return Response({"Created"}, status=status.HTTP_201_CREATED)
