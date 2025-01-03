@@ -85,6 +85,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       addInputRules() {
         return [];
       },
+      addKeyboardShortcuts() {
+        return {};
+      },
     }).configure({
       HTMLAttributes: {
         class: "list-disc pl-7 space-y-2",
@@ -94,15 +97,44 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       addInputRules() {
         return [];
       },
+      addKeyboardShortcuts() {
+        return {};
+      },
     }).configure({
       HTMLAttributes: {
         class: "list-decimal pl-7 space-y-2",
       },
     }),
-    ListItem.configure({
+    ListItem.extend({
+      addKeyboardShortcuts() {
+        return {};
+      },
+    }).configure({
       HTMLAttributes: {
         class: "not-prose space-y-2",
       },
+    }),
+    TaskList.extend({
+      addInputRules() {
+        return [];
+      },
+    }).configure({
+      HTMLAttributes: {
+        class: "not-prose pl-2 space-y-2",
+      },
+    }),
+    TaskItem.extend({
+      addInputRules() {
+        return [];
+      },
+      addKeyboardShortcuts() {
+        return {};
+      },
+    }).configure({
+      HTMLAttributes: {
+        class: "relative",
+      },
+      nested: true,
     }),
     CustomQuoteExtension,
     DropHandlerExtension,
@@ -133,31 +165,6 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomImageExtension(fileHandler),
     TiptapUnderline,
     TextStyle,
-    TaskList.extend({
-      addInputRules() {
-        return [];
-      },
-      addKeyboardShortcuts() {
-        return {};
-      },
-    }).configure({
-      HTMLAttributes: {
-        class: "not-prose pl-2 space-y-2",
-      },
-    }),
-    TaskItem.extend({
-      addInputRules() {
-        return [];
-      },
-      addKeyboardShortcuts() {
-        return {};
-      },
-    }).configure({
-      HTMLAttributes: {
-        class: "relative",
-      },
-      nested: true,
-    }),
     CustomCodeBlockExtension.configure({
       HTMLAttributes: {
         class: "",
@@ -165,12 +172,6 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     }),
     CustomCodeMarkPlugin,
     CustomCodeInlineExtension,
-    Markdown.configure({
-      html: true,
-      transformCopiedText: true,
-      transformPastedText: true,
-      breaks: true,
-    }),
     Table,
     TableHeader,
     TableCell,
@@ -207,6 +208,12 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomColorExtension,
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,
+    }),
+    Markdown.configure({
+      html: true,
+      transformCopiedText: true,
+      transformPastedText: true,
+      breaks: true,
     }),
     FlatListExtension,
   ];

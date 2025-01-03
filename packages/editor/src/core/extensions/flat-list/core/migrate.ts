@@ -45,7 +45,7 @@ function migrateNodes(nodes: ProsemirrorNodeJSON[]): [ProsemirrorNodeJSON[], boo
 
 function migrateNode(node: ProsemirrorNodeJSON, { kind }: { kind?: ListKind } = {}): [ProsemirrorNodeJSON, boolean] {
   // Check if the node is a list item
-  if (node.type === "list_item" || node.type === "listItem" || node.type === "taskListItem") {
+  if (node.type === "list_item" || node.type === "listItem" || node.type === "taskItem") {
     const [content, updated] = migrateNodes(node.content ?? []);
     return [
       {

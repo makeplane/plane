@@ -223,6 +223,7 @@ class DropCursorView {
     const finalTop = (rect.top! - parentTop) / scaleY;
     const finalWidth = (rect.right! - rect.left!) / scaleX;
     const finalHeight = (rect.bottom! - rect.top!) / scaleY;
+    console.log("isBetweenFlatList", isBetweenFlatList);
     this.element.style.transform = isBetweenFlatList ? `translateX(${-20}px` : `translateX(0px)`;
     this.element.style.left = finalLeft + "px";
     this.element.style.top = finalTop + "px";
@@ -333,6 +334,16 @@ function rawIsBetweenFlatListsFn(event: DragEvent, editor: Editor) {
   const currentFlatList = elementUnderDrag.closest(".prosemirror-flat-list");
   if (!currentFlatList) return null;
 
+  console.log(currentFlatList);
+  let isInsideToggleOrTask = false;
+  if (
+    currentFlatList.getAttribute("data-list-kind") === "toggle" ||
+    currentFlatList.getAttribute("data-list-kind") === "task"
+  ) {
+    isInsideToggleOrTask = true;
+  }
+
+  console.log("isInsideToggleOrTask", isInsideToggleOrTask);
   const state = {
     isHoveringOverListContent: !elementUnderDrag.classList.contains("prosemirror-flat-list"),
     isBetweenFlatLists: true,
@@ -341,7 +352,12 @@ function rawIsBetweenFlatListsFn(event: DragEvent, editor: Editor) {
     listLevel: 0,
     isNestedList: false,
   };
+  if (isInsideToggleOrTask) {
+    const firstChildListMarker = currentFlatList.firstChild as HTMLElement;
+    state.isHoveringOverListContent = firstChildListMarker?.classList.contains("list-marker");
+  }
 
+  console.log("isHoveringOverListContent", state.isHoveringOverListContent);
   const getPositionFromElement = (element: Element, some?: boolean): number | null => {
     if (positionCache.has(element)) {
       return positionCache.get(element);

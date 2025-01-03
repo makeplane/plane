@@ -50,10 +50,7 @@ export function createListSpec(options: ListSpecOptions = {}): NodeSpec {
         default: false,
       },
     },
-    toDOM: (node): DOMOutputSpec => {
-      return listToDOM({ node });
-    },
-
-    parseDOM: createParseDomRules(listTypeName),
+    toDOM: (node): DOMOutputSpec => listToDOM({ node }),
+    parseDOM: createParseDomRules(),
   };
 }
