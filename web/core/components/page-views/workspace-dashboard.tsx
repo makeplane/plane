@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { ContentWrapper } from "@plane/ui";
 import { DashboardWidgets } from "@/components/dashboard";
 import { EmptyState } from "@/components/empty-state";
+import { IssuePeekOverview } from "@/components/issues";
 import { TourRoot } from "@/components/onboarding";
 import { UserGreetingsView } from "@/components/user";
 // constants
@@ -15,7 +16,6 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useCommandPalette, useUserProfile, useEventTracker, useDashboard, useProject, useUser } from "@/hooks/store";
 import useSize from "@/hooks/use-window-size";
-import { IssuePeekOverview } from "../issues";
 
 export const WorkspaceDashboardView = observer(() => {
   // store hooks
