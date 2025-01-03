@@ -36,6 +36,7 @@ export const IssueCommentRoot: FC<TIssueCommentRoot> = observer((props) => {
         commentIds.map((commentId, index) => (
           <IssueCommentCard
             projectId={projectId}
+            issueId={issueId}
             key={commentId}
             workspaceSlug={workspaceSlug}
             commentId={commentId}

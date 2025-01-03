@@ -277,28 +277,14 @@ class SearchEndpoint(BaseAPIView):
                         for field in fields:
                             q |= Q(**{f"{field}__icontains": query})
 
-                    base_filters = Q(
-                        q,
-                        is_active=True,
-                        workspace__slug=slug,
-                        member__is_bot=False,
-                        project_id=project_id,
-                        role__gt=10,
-                    )
-                    if issue_id:
-                        issue_created_by = (
-                            Issue.objects.filter(id=issue_id)
-                            .values_list("created_by_id", flat=True)
-                            .first()
-                        )
-                        # Add condition to include `issue_created_by` in the query
-                        filters = Q(member_id=issue_created_by) | base_filters
-                    else:
-                        filters = base_filters
-
-                    # Query to fetch users
                     users = (
-                        ProjectMember.objects.filter(filters)
+                        ProjectMember.objects.filter(
+                            q,
+                            is_active=True,
+                            workspace__slug=slug,
+                            member__is_bot=False,
+                            project_id=project_id,
+                        )
                         .annotate(
                             member__avatar_url=Case(
                                 When(
@@ -318,14 +304,35 @@ class SearchEndpoint(BaseAPIView):
                             )
                         )
                         .order_by("-created_at")
-                        .values(
-                            "member__avatar_url",
-                            "member__display_name",
-                            "member__id",
-                        )[:count]
                     )
 
-                    response_data["user_mention"] = list(users)
+                    if issue_id:
+                        issue_created_by = (
+                            Issue.objects.filter(id=issue_id)
+                            .values_list("created_by_id", flat=True)
+                            .first()
+                        )
+                        users = (
+                            users.filter(Q(role__gt=10) | Q(member_id=issue_created_by))
+                            .distinct()
+                            .values(
+                                "member__avatar_url",
+                                "member__display_name",
+                                "member__id",
+                            )
+                        )
+                    else:
+                        users = (
+                            users.filter(Q(role__gt=10))
+                            .distinct()
+                            .values(
+                                "member__avatar_url",
+                                "member__display_name",
+                                "member__id",
+                            )
+                        )
+
+                    response_data["user_mention"] = list(users[:count])
 
                 elif query_type == "project":
                     fields = ["name", "identifier"]

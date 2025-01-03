@@ -74,4 +74,5 @@ export type TSearchEntityRequestPayload = {
   query_type: TSearchEntities[];
   query: string;
   team_id?: string;
+  issue_id?: string;
 };

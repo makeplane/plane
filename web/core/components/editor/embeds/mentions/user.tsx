@@ -19,6 +19,8 @@ type Props = {
 
 export const EditorUserMention: React.FC<Props> = observer((props) => {
   const { id } = props;
+  // router
+  const { projectId } = useParams();
   // states
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [referenceElement, setReferenceElement] = useState<HTMLAnchorElement | null>(null);
@@ -44,7 +46,7 @@ export const EditorUserMention: React.FC<Props> = observer((props) => {
   });
   // derived values
   const userDetails = getUserDetails(id);
-  const roleDetails = getProjectMemberDetails(id)?.role;
+  const roleDetails = projectId ? getProjectMemberDetails(id, projectId.toString())?.role : null;
   const profileLink = `/${workspaceSlug}/profile/${id}`;
 
   if (!userDetails) {
