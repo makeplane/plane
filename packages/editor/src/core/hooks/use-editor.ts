@@ -114,9 +114,8 @@ export const useEditor = (props: CustomEditorProps) => {
   const [hasMigrated, setHasMigrated] = useState(false);
 
   useEffect(() => {
-    if (editor && (!hasMigrated || editor.isActive("listItem"))) {
+    if (editor && (!hasMigrated || editor.isActive("listItem") || editor.isActive("taskItem"))) {
       const newJSON = migrateDocJSON(editor.getJSON() as any);
-      console.log("newJSON", newJSON);
 
       if (newJSON) {
         // Create a new transaction
@@ -145,6 +144,7 @@ export const useEditor = (props: CustomEditorProps) => {
       }
     }
   }, [editor?.getJSON(), editor?.isActive("listItem"), hasMigrated]);
+
   // Update the ref whenever savedSelection changes
   useEffect(() => {
     savedSelectionRef.current = savedSelection;

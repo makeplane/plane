@@ -197,7 +197,8 @@ class DropCursorView {
     if (!this.element) {
       this.element = parent.appendChild(document.createElement("div"));
       if (this.class) this.element.className = this.class;
-      this.element.style.cssText = "position: absolute; z-index: 50; pointer-events: none;";
+      this.element.style.cssText =
+        "position: absolute; z-index: 50; pointer-events: none; transition: transform 0.2s ease";
       if (this.color) {
         this.element.style.backgroundColor = this.color;
       }
@@ -218,11 +219,11 @@ class DropCursorView {
     }
 
     // Adjust left if we're between flat lists
-    const finalLeft = (rect.left! - parentLeft) / scaleX - (isBetweenFlatList ? 20 : 0);
+    const finalLeft = (rect.left! - parentLeft) / scaleX;
     const finalTop = (rect.top! - parentTop) / scaleY;
     const finalWidth = (rect.right! - rect.left!) / scaleX;
     const finalHeight = (rect.bottom! - rect.top!) / scaleY;
-
+    this.element.style.transform = isBetweenFlatList ? `translateX(${-20}px` : `translateX(0px)`;
     this.element.style.left = finalLeft + "px";
     this.element.style.top = finalTop + "px";
     this.element.style.width = finalWidth + "px";
@@ -237,22 +238,27 @@ class DropCursorView {
   dragover(event: DragEvent) {
     if (!this.editorView.editable) return;
 
-    // Throttled call to the function
-    const result = this.isBetweenFlatListsFn(event);
-    if (!result) return;
-
-    const { isBetweenFlatLists, pos: posList, isHoveringOverListContent } = result;
-
-    // If we’re between flat lists, override the usual pos with posList
     const pos = this.editorView.posAtCoords({
       left: event.clientX,
       top: event.clientY,
     });
+
     if (!pos) return;
 
-    if (isBetweenFlatLists && this.element) {
-      // Reassign to the pos we discovered in the function
-      pos.pos = posList;
+    // Throttled call to the function
+    const result = this.isBetweenFlatListsFn(event);
+
+    let isHoveringOverListContentVar = false;
+    let isBetweenFlatListsVar = false;
+    if (result) {
+      const { isBetweenFlatLists, pos: posList, isHoveringOverListContent } = result;
+      isBetweenFlatListsVar = isBetweenFlatLists;
+      isHoveringOverListContentVar = isHoveringOverListContent;
+      // If we’re between flat lists, override the usual pos with posList
+      if (isBetweenFlatLists && this.element) {
+        // Reassign to the pos we discovered in the function
+        pos.pos = posList;
+      }
     }
 
     const node = pos.inside >= 0 && this.editorView.state.doc.nodeAt(pos.inside);
@@ -260,14 +266,14 @@ class DropCursorView {
     const disabled =
       typeof disableDropCursor == "function" ? disableDropCursor(this.editorView, pos, event) : disableDropCursor;
 
-    if (!disabled && pos) {
+    if (pos && !disabled) {
       let target = pos.pos;
       if (this.editorView.dragging && this.editorView.dragging.slice) {
         const point = dropPoint(this.editorView.state.doc, target, this.editorView.dragging.slice);
         if (point != null) target = point;
       }
       this.dropPosByDropCursorPos = target;
-      this.setCursor(target, !!isBetweenFlatLists && !isHoveringOverListContent);
+      this.setCursor(target, !!isBetweenFlatListsVar && !isHoveringOverListContentVar);
       this.scheduleRemoval(5000);
     }
   }
