@@ -1,13 +1,11 @@
-import { SlackEventPayload, SlackLinkSharedEvent, UnfurlMap } from "@plane/etl/slack";
+import { SlackEventPayload, UnfurlMap } from "@plane/etl/slack";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { getEntityConnectionByEntityId } from "@/db/query/connection";
 import { extractPlaneResource } from "../../helpers/parse-plane-resources";
 import { createSlackLinkback } from "../../views/issue-linkback";
-import { convertUnicodeToSlackEmoji } from "../../helpers/emoji-converter";
 import { createProjectLinkback } from "../../views/project-linkback";
 import { createCycleLinkback } from "../../views/cycle-linkback";
 import { createModuleLinkback } from "../../views/module-linkback";
-import axios from "axios";
 
 export const handleSlackEvent = async (data: SlackEventPayload) => {
   switch (data.event.type) {
@@ -38,12 +36,17 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
 
     const planeUser = members.find((member) => member.email === userInfo?.user.profile.email);
 
-    await planeClient.issueComment.create(workspaceConnection.workspaceSlug, eConnection.projectId ?? "", issueId ?? "", {
-      comment_html: `<p>${data.event.text}</p>`,
-      external_source: "SLACK_COMMENT",
-      external_id: data.event.event_ts,
-      created_by: planeUser?.id,
-    });
+    await planeClient.issueComment.create(
+      workspaceConnection.workspaceSlug,
+      eConnection.projectId ?? "",
+      issueId ?? "",
+      {
+        comment_html: `<p>${data.event.text}</p>`,
+        external_source: "SLACK_COMMENT",
+        external_id: data.event.event_ts,
+        created_by: planeUser?.id,
+      }
+    );
   }
 };
 
@@ -70,15 +73,15 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
           );
 
           const states = await planeClient.state.list(workspaceConnection.workspaceSlug, issue.project);
-          const cycles = await planeClient.cycles.list(workspaceConnection.workspaceSlug, issue.project);
 
           const linkBack = createSlackLinkback(
             workspaceConnection.workspaceSlug,
             project,
             members,
             states.results,
-            cycles.results,
-            issue
+            issue,
+            false,
+            true
           );
 
           unfurlMap[link.url] = linkBack;

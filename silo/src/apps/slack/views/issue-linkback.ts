@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { ExCycle, ExIssue, ExProject, ExState, PlaneUser } from "@plane/sdk";
+import { ExIssue, ExProject, ExState, PlaneUser } from "@plane/sdk";
 import { formatTimestampToNaturalLanguage } from "../helpers/format-date";
 import { ACTIONS, PLANE_PRIORITIES } from "../helpers/constants";
 import { convertUnicodeToSlackEmoji } from "../helpers/emoji-converter";
@@ -9,10 +9,10 @@ export const createSlackLinkback = (
   project: ExProject,
   members: PlaneUser[],
   state: ExState[],
-  cycles: ExCycle[],
-  issue: ExIssue
+  issue: ExIssue,
+  isSynced: boolean,
+  showLogo = false
 ) => {
-  const today = new Date().toISOString().split("T")[0];
   const targetState = state.find((s) => s.id === issue.state);
 
   const stateList = state.map((s) => ({
@@ -22,15 +22,6 @@ export const createSlackLinkback = (
       emoji: true,
     },
     value: `${issue.project}.${issue.id}.${s.id}`,
-  }));
-
-  const cycleList = cycles.map((c) => ({
-    text: {
-      type: "plain_text",
-      text: c.name,
-      emoji: true,
-    },
-    value: `${issue.project}.${issue.id}.${c.id}`,
   }));
 
   const priorityList = PLANE_PRIORITIES.map((p) => ({
@@ -45,20 +36,22 @@ export const createSlackLinkback = (
   // Create base blocks array
   const blocks: any[] = [];
 
-  blocks.push({
-    type: "context",
-    elements: [
-      {
-        type: "image",
-        image_url: "https://res.cloudinary.com/ddglxo0l3/image/upload/v1732200793/xljpcpmftawmjkv4x61s.png",
-        alt_text: "Plane",
-      },
-      {
-        type: "mrkdwn",
-        text: `*Plane*`,
-      },
-    ],
-  });
+  if (showLogo) {
+    blocks.push({
+      type: "context",
+      elements: [
+        {
+          type: "image",
+          image_url: "https://res.cloudinary.com/ddglxo0l3/image/upload/v1732200793/xljpcpmftawmjkv4x61s.png",
+          alt_text: "Plane",
+        },
+        {
+          type: "mrkdwn",
+          text: `*Plane*`,
+        },
+      ],
+    });
+  }
 
   blocks.push({
     type: "section",
@@ -68,31 +61,13 @@ export const createSlackLinkback = (
     },
   });
 
-  // Only add description if it exists
-  // if (issue.description_stripped) {
-  //   blocks.push({
-  //     type: "rich_text",
-  //     elements: [
-  //       {
-  //         type: "rich_text_preformatted",
-  //         elements: [
-  //           {
-  //             type: "text",
-  //             text: issue.description_stripped,
-  //           },
-  //         ],
-  //       },
-  //     ],
-  //   });
-  // }
-
   // Create context elements array with only non-empty values
   const contextElements: any[] = [];
 
   if (project.name) {
     contextElements.push({
       type: "mrkdwn",
-      text: `${project.logo_props ? convertUnicodeToSlackEmoji(project.logo_props.emoji.value) : ""} <${env.APP_BASE_URL}/${workspaceSlug}/projects/${issue.project}/issues|${project.name}>`,
+      text: `${project.logo_props && project.logo_props.emoji ? convertUnicodeToSlackEmoji(project.logo_props.emoji.value) : ""} <${env.APP_BASE_URL}/${workspaceSlug}/projects/${issue.project}/issues|${project.name}>`,
     });
   }
 
@@ -128,6 +103,23 @@ export const createSlackLinkback = (
     blocks.push({
       type: "context",
       elements: contextElements,
+    });
+  }
+
+  if (isSynced) {
+    blocks.push({
+      type: "context",
+      elements: [
+        {
+          type: "image",
+          image_url: "https://res.cloudinary.com/ddglxo0l3/image/upload/v1732200793/xljpcpmftawmjkv4x61s.png",
+          alt_text: "Plane",
+        },
+        {
+          type: "mrkdwn",
+          text: `*Synced with Plane*`,
+        },
+      ],
     });
   }
 

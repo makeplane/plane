@@ -31,15 +31,14 @@ export const handleViewSubmission = async (data: TViewSubmissionPayload) => {
 
     const project = await planeClient.project.getProject(workspaceConnection.workspaceSlug, parsedData.project);
     const states = await planeClient.state.list(workspaceConnection.workspaceSlug, issue.project);
-    const cycles = await planeClient.cycles.list(workspaceConnection.workspaceSlug, issue.project);
 
     const linkBack = createSlackLinkback(
       workspaceConnection.workspaceSlug,
       project,
       members,
       states.results,
-      cycles.results,
-      issue
+      issue,
+      parsedData.enableThreadSync || false
     );
 
     if (metadata.entityType === ENTITIES.ISSUE_SUBMISSION && metadata.entityPayload.type === "message_action") {

@@ -131,6 +131,9 @@ async function handleCreateWebLinkAction(data: TBlockActionPayload) {
 async function handleSwitchPriorityAction(data: TBlockActionPayload) {
   if (data.actions[0].type !== "static_select") return;
 
+  const isThreadSync =
+    data.message && data.message.text && data.message.text.includes("Synced with Plane") ? true : false;
+
   const selection = data.actions[0].selected_option;
   if (!selection) return;
 
@@ -148,7 +151,6 @@ async function handleSwitchPriorityAction(data: TBlockActionPayload) {
     const issue = await planeClient.issue.getIssue(workspaceConnection.workspaceSlug, projectId, issueId);
     const project = await planeClient.project.getProject(workspaceConnection.workspaceSlug, projectId);
     const states = await planeClient.state.list(workspaceConnection.workspaceSlug, projectId);
-    const cycles = await planeClient.cycles.list(workspaceConnection.workspaceSlug, projectId);
     const members = await planeClient.users.list(workspaceConnection.workspaceSlug, projectId);
 
     // Create updated linkback
@@ -157,8 +159,8 @@ async function handleSwitchPriorityAction(data: TBlockActionPayload) {
       project,
       members,
       states.results,
-      cycles.results,
-      issue
+      issue,
+      isThreadSync
     );
 
     // Update the unfurl using response_url with proper Slack message format
@@ -233,6 +235,8 @@ async function handleProjectSelectAction(data: TBlockActionModalPayload) {
 
 async function handleLinkbackStateChange(data: TBlockActionPayload) {
   if (data.actions[0].type === "static_select") {
+    const isThreadSync =
+      data.message && data.message.text && data.message.text.includes("Synced with Plane") ? true : false;
     const selection = data.actions[0].selected_option;
     if (!selection) return;
 
@@ -253,7 +257,6 @@ async function handleLinkbackStateChange(data: TBlockActionPayload) {
       const issue = await planeClient.issue.getIssue(workspaceConnection.workspaceSlug, projectId, issueId);
       const project = await planeClient.project.getProject(workspaceConnection.workspaceSlug, projectId);
       const states = await planeClient.state.list(workspaceConnection.workspaceSlug, projectId);
-      const cycles = await planeClient.cycles.list(workspaceConnection.workspaceSlug, projectId);
       const members = await planeClient.users.list(workspaceConnection.workspaceSlug, projectId);
 
       // Create updated linkback
@@ -262,8 +265,8 @@ async function handleLinkbackStateChange(data: TBlockActionPayload) {
         project,
         members,
         states.results,
-        cycles.results,
-        issue
+        issue,
+        isThreadSync
       );
 
       // Update the unfurl using response_url with proper Slack message format

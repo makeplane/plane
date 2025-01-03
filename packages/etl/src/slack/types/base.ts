@@ -52,6 +52,7 @@ export type TBlockActionPayload = {
   trigger_id: string;
   message?: {
     thread_ts: string;
+    text?: string;
   };
   response_url?: string;
   actions: ISlackAction[];
