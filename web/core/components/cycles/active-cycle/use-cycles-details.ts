@@ -30,21 +30,23 @@ const useCyclesDetails = (props: IActiveCycleDetails) => {
 
   // fetch cycle details
   useSWR(
-    workspaceSlug && projectId && cycle ? `PROJECT_ACTIVE_CYCLE_${projectId}_PROGRESS` : null,
-    workspaceSlug && projectId && cycle ? () => fetchActiveCycleProgress(workspaceSlug, projectId, cycle.id) : null,
+    workspaceSlug && projectId && cycle?.id ? `PROJECT_ACTIVE_CYCLE_${projectId}_PROGRESS` : null,
+    workspaceSlug && projectId && cycle?.id ? () => fetchActiveCycleProgress(workspaceSlug, projectId, cycle.id) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   useSWR(
-    workspaceSlug && projectId && cycle && !cycle?.distribution ? `PROJECT_ACTIVE_CYCLE_${projectId}_DURATION` : null,
-    workspaceSlug && projectId && cycle && !cycle?.distribution
+    workspaceSlug && projectId && cycle?.id && !cycle?.distribution
+      ? `PROJECT_ACTIVE_CYCLE_${projectId}_DURATION`
+      : null,
+    workspaceSlug && projectId && cycle?.id && !cycle?.distribution
       ? () => fetchActiveCycleAnalytics(workspaceSlug, projectId, cycle.id, "issues")
       : null
   );
   useSWR(
-    workspaceSlug && projectId && cycle && !cycle?.estimate_distribution
+    workspaceSlug && projectId && cycle?.id && !cycle?.estimate_distribution
       ? `PROJECT_ACTIVE_CYCLE_${projectId}_ESTIMATE_DURATION`
       : null,
-    workspaceSlug && projectId && cycle && !cycle?.estimate_distribution
+    workspaceSlug && projectId && cycle?.id && !cycle?.estimate_distribution
       ? () => fetchActiveCycleAnalytics(workspaceSlug, projectId, cycle.id, "points")
       : null
   );

@@ -29,13 +29,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
     page,
   });
   // derived values
-  const {
-    access,
-    created_at,
-    is_favorite,
-    owned_by,
-    canCurrentUserFavoritePage,
-  } = page;
+  const { access, created_at, is_favorite, owned_by, canCurrentUserFavoritePage } = page;
   const ownerDetails = owned_by ? getUserDetails(owned_by) : undefined;
 
   return (
@@ -76,11 +70,11 @@ export const BlockItemAction: FC<Props> = observer((props) => {
       {/* quick actions dropdown */}
       <PageActions
         optionsOrder={[
-          "toggle-lock",
-          "toggle-access",
           "open-in-new-tab",
           "copy-link",
           "make-a-copy",
+          "toggle-lock",
+          "toggle-access",
           "archive-restore",
           "delete",
         ]}
