@@ -25,7 +25,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
 
   const { data: estimate_distribution } = useSWR(
     `PROJECTS_${cycle.project_detail.id}_CYCLES_ANALYTICS_POINTS_${cycle.id}`,
-    workspaceSlug && cycle
+    workspaceSlug && cycle?.project_detail.id && cycle?.id
       ? () =>
           cycleService.workspaceActiveCyclesAnalytics(
             workspaceSlug.toString(),
@@ -40,7 +40,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
   );
   const { data: distribution } = useSWR(
     `PROJECTS_${cycle.project_detail.id}_CYCLES_ANALYTICS_ISSUES_${cycle.id}`,
-    workspaceSlug && cycle
+    workspaceSlug && cycle?.project_detail?.id && cycle?.id
       ? () =>
           cycleService.workspaceActiveCyclesAnalytics(
             workspaceSlug.toString(),

@@ -27,7 +27,7 @@ export const ActiveCycleInfoCard: FC<ActiveCycleInfoCardProps> = (props) => {
 
   const { data: progress } = useSWR(
     `PROJECTS_${cycle.project_detail.id}_PROGRESS_${cycle.id}`,
-    workspaceSlug && cycle
+    workspaceSlug && cycle?.project_detail?.id && cycle?.id
       ? () => cycleService.workspaceActiveCyclesProgress(workspaceSlug.toString(), cycle.project_detail.id, cycle.id)
       : null,
     {

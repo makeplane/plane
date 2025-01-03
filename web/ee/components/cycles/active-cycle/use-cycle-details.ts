@@ -46,27 +46,29 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
 
   // fetches cycle details for non-pro users
   useSWR(
-    workspaceSlug && projectId && cycle && cycle?.version === 1 ? `PROJECT_ACTIVE_CYCLE_${projectId}_PROGRESS` : null,
-    workspaceSlug && projectId && cycle && cycle?.version === 1
+    workspaceSlug && projectId && cycle?.id && cycle?.version === 1
+      ? `PROJECT_ACTIVE_CYCLE_${projectId}_PROGRESS`
+      : null,
+    workspaceSlug && projectId && cycle?.id && cycle?.version === 1
       ? () => fetchActiveCycleProgress(workspaceSlug, projectId, cycle.id)
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetches cycle details for non-pro users
   useSWR(
-    workspaceSlug && projectId && cycle && !cycle?.distribution && cycle?.version === 1
+    workspaceSlug && projectId && cycle?.id && !cycle?.distribution && cycle?.version === 1
       ? `PROJECT_ACTIVE_CYCLE_${projectId}_DURATION`
       : null,
-    workspaceSlug && projectId && cycle && !cycle?.distribution && cycle?.version === 1
+    workspaceSlug && projectId && cycle?.id && !cycle?.distribution && cycle?.version === 1
       ? () => fetchActiveCycleAnalytics(workspaceSlug, projectId, cycle.id, "issues")
       : null
   );
   // fetches cycle details for non-pro users
   useSWR(
-    workspaceSlug && projectId && cycle && !cycle?.estimate_distribution && cycle?.version === 1
+    workspaceSlug && projectId && cycle?.id && !cycle?.estimate_distribution && cycle?.version === 1
       ? `PROJECT_ACTIVE_CYCLE_${projectId}_ESTIMATE_DURATION`
       : null,
-    workspaceSlug && projectId && cycle && !cycle?.estimate_distribution && cycle?.version === 1
+    workspaceSlug && projectId && cycle?.id && !cycle?.estimate_distribution && cycle?.version === 1
       ? () => fetchActiveCycleAnalytics(workspaceSlug, projectId, cycle.id, "points")
       : null
   );
