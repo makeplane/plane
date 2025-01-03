@@ -28,8 +28,8 @@ from plane.app.views import (
     WorkspaceFavoriteGroupEndpoint,
     WorkspaceDraftIssueViewSet,
     QuickLinkViewSet,
-    WorkspacePreferenceViewSet,
     UserRecentVisitViewSet,
+    WorkspacePreferenceViewSet,
 )
 
 
