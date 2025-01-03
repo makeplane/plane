@@ -1,4 +1,3 @@
-import { captureException } from "@sentry/nextjs";
 import pick from "lodash/pick";
 import { TIssue } from "@plane/types";
 import { rootStore } from "@/lib/store-context";
@@ -15,7 +14,6 @@ export const logError = (e: any) => {
     e = parseSQLite3Error(e);
   }
   console.error(e);
-  captureException(e);
 };
 export const logInfo = console.info;
 
