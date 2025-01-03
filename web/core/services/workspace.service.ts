@@ -12,6 +12,7 @@ import {
   IUserProjectsRole,
   IWorkspaceView,
   TIssuesResponse,
+  TLink,
   TSearchResponse,
   TSearchEntityRequestPayload,
 } from "@plane/types";
@@ -280,6 +281,39 @@ export class WorkspaceService extends APIService {
       });
   }
 
+  // quick links
+  async fetchWorkspaceLinks(workspaceSlug: string): Promise<TLink[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/quick-links/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async createWorkspaceLink(workspaceSlug: string, data: Partial<TLink>): Promise<TLink> {
+    return this.post(`/api/workspaces/${workspaceSlug}/quick-links/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async updateWorkspaceLink(workspaceSlug: string, linkId: string, data: Partial<TLink>): Promise<TLink> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/quick-links/${linkId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async deleteWorkspaceLink(workspaceSlug: string, linkId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/quick-links/${linkId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async searchEntity(workspaceSlug: string, params: TSearchEntityRequestPayload): Promise<TSearchResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/entity-search/`, {
       params: {
@@ -290,6 +324,19 @@ export class WorkspaceService extends APIService {
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
+      });
+  }
+
+  // recents
+  async fetchWorkspaceRecents(workspaceSlug: string, entity_name?: string) {
+    return this.get(`/api/workspaces/${workspaceSlug}/recent-visits/`, {
+      params: {
+        entity_name,
+      },
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
       });
   }
 }
