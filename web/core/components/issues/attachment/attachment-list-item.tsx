@@ -17,6 +17,8 @@ import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useIssueDetail, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// local-components
+import { MusicPlayer } from "./music-player";
 
 type TIssueAttachmentsListItem = {
   attachmentId: string;
@@ -36,7 +38,7 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
   // derived values
   const attachment = attachmentId ? getAttachmentById(attachmentId) : undefined;
   const fileName = getFileName(attachment?.attributes.name ?? "");
-  const fileExtension = getFileExtension(attachment?.asset_url ?? "");
+  const fileExtension = getFileExtension(attachment?.asset ?? "");
   const fileIcon = getFileIcon(fileExtension, 18);
   const fileURL = getFileURL(attachment?.asset_url ?? "");
   // hooks
@@ -52,48 +54,56 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
           e.stopPropagation();
           window.open(fileURL, "_blank");
         }}
+        className="group flex items-center justify-between gap-3 h-11 hover:bg-custom-background-90 pl-9 pr-2 w-full border-red-500"
       >
-        <div className="group flex items-center justify-between gap-3 h-11 hover:bg-custom-background-90 pl-9 pr-2">
-          <div className="flex items-center gap-3 text-sm truncate">
-            <div className="flex items-center gap-3">{fileIcon}</div>
+        <div className="flex items-center gap-4 truncate">
+          <div className="flex items-center gap-3 text-sm truncate border-red-500">
+            <div className="flex items-center gap-3 flex-shrink-0">{fileIcon}</div>
             <Tooltip tooltipContent={`${fileName}.${fileExtension}`} isMobile={isMobile}>
               <p className="text-custom-text-200 font-medium truncate">{`${fileName}.${fileExtension}`}</p>
             </Tooltip>
-            <span className="flex size-1.5 bg-custom-background-80 rounded-full" />
+            <span className="flex size-1.5 bg-custom-background-80 rounded-full flex-shrink-0" />
             <span className="flex-shrink-0 text-custom-text-400">{convertBytesToSize(attachment.attributes.size)}</span>
           </div>
-
-          <div className="flex items-center gap-3">
-            {attachment?.updated_by && (
-              <>
-                <Tooltip
-                  isMobile={isMobile}
-                  tooltipContent={`${
-                    getUserDetails(attachment.updated_by)?.display_name ?? ""
-                  } uploaded on ${renderFormattedDate(attachment.updated_at)}`}
-                >
-                  <div className="flex items-center justify-center">
-                    <ButtonAvatars showTooltip userIds={attachment?.updated_by} />
-                  </div>
-                </Tooltip>
-              </>
+          {(getFileExtension(attachment.attributes.name) === "wav" ||
+            getFileExtension(attachment.attributes.name) == "mp3") &&
+            fileURL && (
+              <div className="w-min max-w-52 flex-shrink-0">
+                <MusicPlayer src={fileURL} />
+              </div>
             )}
+        </div>
 
-            <CustomMenu ellipsis closeOnSelect placement="bottom-end" disabled={disabled}>
-              <CustomMenu.MenuItem
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  toggleDeleteAttachmentModal(attachmentId);
-                }}
+        <div className="flex items-center gap-3 flex-shrink-0 border-orange-500">
+          {attachment?.updated_by && (
+            <>
+              <Tooltip
+                isMobile={isMobile}
+                tooltipContent={`${
+                  getUserDetails(attachment.updated_by)?.display_name ?? ""
+                } uploaded on ${renderFormattedDate(attachment.updated_at)}`}
               >
-                <div className="flex items-center gap-2">
-                  <Trash className="h-3.5 w-3.5" strokeWidth={2} />
-                  <span>Delete</span>
+                <div className="flex items-center justify-center">
+                  <ButtonAvatars showTooltip userIds={attachment?.updated_by} />
                 </div>
-              </CustomMenu.MenuItem>
-            </CustomMenu>
-          </div>
+              </Tooltip>
+            </>
+          )}
+
+          <CustomMenu ellipsis closeOnSelect placement="bottom-end" disabled={disabled}>
+            <CustomMenu.MenuItem
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleDeleteAttachmentModal(attachmentId);
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <Trash className="h-3.5 w-3.5" strokeWidth={2} />
+                <span>Delete</span>
+              </div>
+            </CustomMenu.MenuItem>
+          </CustomMenu>
         </div>
       </button>
     </>

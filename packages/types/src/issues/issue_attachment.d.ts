@@ -5,7 +5,9 @@ export type TIssueAttachment = {
   attributes: {
     name: string;
     size: number;
+    type: string;
   };
+  asset: string;
   asset_url: string;
   issue_id: string;
   // required
@@ -14,7 +16,7 @@ export type TIssueAttachment = {
 };
 
 export type TIssueAttachmentUploadResponse = TFileSignedURLResponse & {
-  attachment: TIssueAttachment
+  attachment: TIssueAttachment;
 };
 
 export type TIssueAttachmentMap = {

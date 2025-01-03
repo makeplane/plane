@@ -6,4 +6,5 @@ export * from "./attachment-upload-details";
 export * from "./attachment-upload";
 export * from "./attachments-list";
 export * from "./delete-attachment-modal";
+export * from "./music-player";
 export * from "./root";
