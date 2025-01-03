@@ -1,7 +1,8 @@
 import { ChangeEvent } from "react";
 import { Controller, useFormContext, UseFormSetValue } from "react-hook-form";
 import { Info } from "lucide-react";
-// plane ui
+import { useTranslation } from "@plane/i18n";
+// ui
 import { Input, TextArea, Tooltip } from "@plane/ui";
 // plane utils
 import { cn } from "@plane/utils";
@@ -27,6 +28,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
   } = useFormContext<TProject>();
 
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
+  const { t } = useTranslation();
 
   const handleNameChange = (onChange: (...event: any[]) => void) => (e: ChangeEvent<HTMLInputElement>) => {
     if (!isChangeInIdentifierRequired) {
@@ -51,10 +53,10 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
           control={control}
           name="name"
           rules={{
-            required: "Name is required",
+            required: t("name_is_required"),
             maxLength: {
               value: 255,
-              message: "Title should be less than 255 characters",
+              message: t("title_should_be_less_than_255_characters"),
             },
           }}
           render={({ field: { value, onChange } }) => (
@@ -65,7 +67,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
               value={value}
               onChange={handleNameChange(onChange)}
               hasError={Boolean(errors.name)}
-              placeholder="Project name"
+              placeholder={t("project_name")}
               className="w-full focus:border-blue-400"
               tabIndex={getIndex("name")}
             />
@@ -78,17 +80,17 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
           control={control}
           name="identifier"
           rules={{
-            required: "Project ID is required",
+            required: t("project_id_is_required"),
             // allow only alphanumeric & non-latin characters
             validate: (value) =>
-              /^[ÇŞĞIİÖÜA-Z0-9]+$/.test(value.toUpperCase()) || "Only Alphanumeric & Non-latin characters are allowed.",
+              /^[ÇŞĞIİÖÜA-Z0-9]+$/.test(value.toUpperCase()) || t("only_alphanumeric_non_latin_characters_allowed"),
             minLength: {
               value: 1,
-              message: "Project ID must at least be of 1 character",
+              message: t("project_id_must_be_at_least_1_character"),
             },
             maxLength: {
               value: 5,
-              message: "Project ID must at most be of 5 characters",
+              message: t("project_id_must_be_at_most_5_characters"),
             },
           }}
           render={({ field: { value, onChange } }) => (
@@ -99,7 +101,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
               value={value}
               onChange={handleIdentifierChange(onChange)}
               hasError={Boolean(errors.identifier)}
-              placeholder="Project ID"
+              placeholder={t("project_id")}
               className={cn("w-full text-xs focus:border-blue-400 pr-7", {
                 uppercase: value,
               })}
@@ -109,7 +111,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
         />
         <Tooltip
           isMobile={isMobile}
-          tooltipContent="Helps you identify issues in the project uniquely. Max 5 characters."
+          tooltipContent={t("project_id_tooltip_content")}
           className="text-sm"
           position="right-top"
         >
@@ -126,7 +128,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
               id="description"
               name="description"
               value={value}
-              placeholder="Description..."
+              placeholder={t("description")}
               onChange={onChange}
               className="!h-24 text-sm focus:border-blue-400"
               hasError={Boolean(errors?.description)}
