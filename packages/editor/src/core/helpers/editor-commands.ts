@@ -174,8 +174,8 @@ export const insertTableCommand = (editor: Editor, range?: Range) => {
       }
     }
   }
-  if (range) editor.chain().focus().deleteRange(range).clearNodes().insertTable({ rows: 3, cols: 3 }).run();
-  else editor.chain().focus().clearNodes().insertTable({ rows: 3, cols: 3 }).run();
+  if (range) editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3 }).run();
+  else editor.chain().focus().insertTable({ rows: 3, cols: 3 }).run();
 };
 
 export const insertImage = ({
