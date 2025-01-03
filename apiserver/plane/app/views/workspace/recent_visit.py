@@ -17,15 +17,15 @@ class UserRecentVisitViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
-            user_recent_visits = UserRecentVisit.objects.filter(workspace__slug=slug)
+        user_recent_visits = UserRecentVisit.objects.filter(workspace__slug=slug)
 
-            entity_name = request.query_params.get("entity_name")
+        entity_name = request.query_params.get("entity_name")
 
-            if entity_name: 
-                user_recent_visits = user_recent_visits.filter(entity_name=entity_name)
+        if entity_name: 
+            user_recent_visits = user_recent_visits.filter(entity_name=entity_name)
                 
-            user_recent_visits = user_recent_visits.filter(entity_name__in=["issue","page","project"])
+        user_recent_visits = user_recent_visits.filter(entity_name__in=["issue","page","project"])
             
-            serializer = WorkspaceRecentVisitSerializer(user_recent_visits[:20], many=True)    
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = WorkspaceRecentVisitSerializer(user_recent_visits[:20], many=True)    
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
