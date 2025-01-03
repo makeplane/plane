@@ -65,7 +65,7 @@ export const SidebarWorkspaceMenu = observer(() => {
 
   const indicatorElement = (
     <div className="flex-shrink-0">
-      <UpgradeBadge />
+      <UpgradeBadge flag="WORKSPACE_ACTIVE_CYCLES" />
     </div>
   );
 

@@ -177,10 +177,11 @@ const emptyStateDetails = {
   [EmptyStateType.WORKSPACE_TEAMS]: {
     key: EmptyStateType.WORKSPACE_TEAMS,
     title: "Teams",
-    description: "Teams are groups of people who collaborate on projects. Create a team to get started.",
+    description:
+      "Teams are groups of people who collaborate closely on projects. Create a team to see work by team members, progress by this team in several projects, and this team’s knowledge right next to progress metrics.",
     path: "/empty-state/teams/teams",
     primaryButton: {
-      text: "Create new team",
+      text: "Create a new team",
     },
     accessType: "workspace",
     access: [EUserPermissions.ADMIN],

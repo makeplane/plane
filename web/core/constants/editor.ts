@@ -30,7 +30,7 @@ import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/ui";
 // helpers
 import { convertRemToPixel } from "@/helpers/common.helper";
 
-type TEditorTypes = "lite" | "document";
+type TEditorTypes = "lite" | "document" | "sticky";
 
 // Utility type to enforce the necessary extra props or make extraProps optional
 type ExtraPropsForCommand<T extends TEditorCommands> = T extends keyof TCommandExtraProps
@@ -183,6 +183,10 @@ export const TOOLBAR_ITEMS: {
     list: LIST_ITEMS.filter((item) => item.editors.includes("document")),
     userAction: USER_ACTION_ITEMS.filter((item) => item.editors.includes("document")),
     complex: COMPLEX_ITEMS.filter((item) => item.editors.includes("document")),
+  },
+  sticky: {
+    basic: BASIC_MARK_ITEMS.filter((item) => ["Bold", "Italic"].includes(item.name)),
+    list: LIST_ITEMS.filter((item) => ["To-do list"].includes(item.name)),
   },
 };
 
