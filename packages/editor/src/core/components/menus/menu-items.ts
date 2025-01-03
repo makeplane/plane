@@ -22,6 +22,7 @@ import {
   MinusSquare,
   Palette,
   AlignCenter,
+  ListCollapse,
 } from "lucide-react";
 // helpers
 import {
@@ -154,7 +155,7 @@ export const StrikeThroughItem = (editor: Editor): EditorMenuItem<"strikethrough
 export const BulletListItem = (editor: Editor): EditorMenuItem<"bulleted-list"> => ({
   key: "bulleted-list",
   name: "Bulleted list",
-  isActive: () => editor?.isActive("list", { type: "bullet" }),
+  isActive: () => editor?.isActive("list", { kind: "bullet" }),
   command: () => toggleFlatBulletList(editor),
   icon: ListIcon,
 });
@@ -162,7 +163,7 @@ export const BulletListItem = (editor: Editor): EditorMenuItem<"bulleted-list"> 
 export const NumberedListItem = (editor: Editor): EditorMenuItem<"numbered-list"> => ({
   key: "numbered-list",
   name: "Numbered list",
-  isActive: () => editor?.isActive("list", { type: "ordered" }),
+  isActive: () => editor?.isActive("list", { kind: "ordered" }),
   command: () => toggleFlatOrderedList(editor),
   icon: ListOrderedIcon,
 });
@@ -170,7 +171,7 @@ export const NumberedListItem = (editor: Editor): EditorMenuItem<"numbered-list"
 export const TodoListItem = (editor: Editor): EditorMenuItem<"to-do-list"> => ({
   key: "to-do-list",
   name: "To-do list",
-  isActive: () => editor?.isActive("list", { type: "task" }),
+  isActive: () => editor?.isActive("list", { kind: "task" }),
   command: () => toggleFlatTaskList(editor),
   icon: CheckSquare,
 });
@@ -178,9 +179,9 @@ export const TodoListItem = (editor: Editor): EditorMenuItem<"to-do-list"> => ({
 export const ToggleListItem = (editor: Editor): EditorMenuItem<"toggle-list"> => ({
   key: "toggle-list",
   name: "Toggle list",
-  isActive: () => editor?.isActive("list", { type: "toggle" }),
+  isActive: () => editor?.isActive("list", { kind: "toggle" }),
   command: () => toggleFlatToggleList(editor),
-  icon: ListIcon,
+  icon: ListCollapse,
 });
 
 export const QuoteItem = (editor: Editor): EditorMenuItem<"quote"> => ({
@@ -266,6 +267,7 @@ export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem<TEdito
     StrikeThroughItem(editor),
     BulletListItem(editor),
     TodoListItem(editor),
+    ToggleListItem(editor),
     CodeItem(editor),
     NumberedListItem(editor),
     QuoteItem(editor),

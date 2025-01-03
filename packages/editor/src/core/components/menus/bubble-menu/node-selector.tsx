@@ -18,6 +18,7 @@ import {
   HeadingFiveItem,
   HeadingSixItem,
   EditorMenuItem,
+  ToggleListItem,
 } from "@/components/menus";
 // types
 import { TEditorCommands } from "@/types";
@@ -42,6 +43,7 @@ export const BubbleMenuNodeSelector: FC<Props> = (props) => {
     BulletListItem(editor),
     NumberedListItem(editor),
     TodoListItem(editor),
+    ToggleListItem(editor),
     QuoteItem(editor),
     CodeItem(editor),
   ];
