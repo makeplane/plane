@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
+import { useTranslation } from "@plane/i18n";
 // types
 import { EIssuesStoreType } from "@plane/constants";
 import type { TBaseIssue, TIssue } from "@plane/types";
@@ -54,6 +55,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
   const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
   // store hooks
+  const { t } = useTranslation();
   const { captureIssueEvent } = useEventTracker();
   const { workspaceSlug, projectId: routerProjectId, cycleId, moduleId } = useParams();
   const { projectsWithCreatePermissions } = useUser();
@@ -218,8 +220,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: `${is_draft_issue ? "Draft created." : "Issue created successfully."} `,
+        title: t("success"),
+        message: `${is_draft_issue ? t("draft_created") : t("issue_created_successfully")} `,
         actionItems: !is_draft_issue && response?.project_id && (
           <CreateIssueToastActionItems
             workspaceSlug={workspaceSlug.toString()}
@@ -241,8 +243,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: `${is_draft_issue ? "Draft issue" : "Issue"} could not be created. Please try again.`,
+        title: t("error"),
+        message: t(is_draft_issue ? "draft_creation_failed" : "issue_creation_failed"),
       });
       captureIssueEvent({
         eventName: ISSUE_CREATED,
@@ -287,8 +289,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "Issue updated successfully.",
+        title: t("success"),
+        message: t("issue_updated_successfully"),
       });
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
@@ -300,8 +302,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       console.error(error);
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Issue could not be updated. Please try again.",
+        title: t("error"),
+        message: t("issue_could_not_be_updated"),
       });
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
