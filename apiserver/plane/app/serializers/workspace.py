@@ -146,7 +146,7 @@ class IssueRecentVisitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Issue
-        fields = ["name", "state", "priority", "assignees", "type", "sequence_id", "project_id", "project_identifier"]        
+        fields = ["id", "name", "state", "priority", "assignees", "type", "sequence_id", "project_id", "project_identifier", ]        
 
     def get_project_identifier(self, obj):
         project = obj.project
