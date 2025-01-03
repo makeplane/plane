@@ -24,7 +24,9 @@ class WorkspaceStickyViewSet(BaseViewSet):
             .distinct()
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
+    )
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         serializer = StickySerializer(data=request.data)
@@ -33,6 +35,9 @@ class WorkspaceStickyViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
+    )
     def list(self, request, slug):
         return self.paginate(
             request=request,
@@ -40,10 +45,10 @@ class WorkspaceStickyViewSet(BaseViewSet):
             on_results=lambda stickies: StickySerializer(stickies, many=True).data,
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @allow_permission(allowed_roles=[], creator=True, model=Sticky, level="WORKSPACE")
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], creator=True, level="WORKSPACE")
+    @allow_permission(allowed_roles=[], creator=True, model=Sticky, level="WORKSPACE")
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
