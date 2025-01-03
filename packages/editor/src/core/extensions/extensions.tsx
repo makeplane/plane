@@ -139,7 +139,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       },
     }),
     CustomKeymap,
-    // ListKeymap({ tabIndex }),
+    ListKeymap({ tabIndex }),
     CustomLinkExtension.configure({
       openOnClick: true,
       autolink: true,
