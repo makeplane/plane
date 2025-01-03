@@ -143,7 +143,7 @@ export const useEditor = (props: CustomEditorProps) => {
         }
       }
     }
-  }, [editor?.getJSON(), editor?.isActive("listItem"), hasMigrated]);
+  }, [editor?.getJSON(), editor?.isActive("listItem"), editor?.isActive("taskItem"), hasMigrated]);
 
   // Update the ref whenever savedSelection changes
   useEffect(() => {
