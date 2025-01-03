@@ -3,20 +3,20 @@ import { useParams } from "next/navigation";
 // types
 import { TWidgetKeys, WidgetProps } from "@plane/types";
 // components
-import { RecentActivityWidget, EmptyWorkspace } from "@/components/dashboard";
 // hooks
 import { useDashboard, useProject } from "@/hooks/store";
 import { useHome } from "@/hooks/store/use-home";
 import { HomePageHeader } from "@/plane-web/components/home/header";
-import { DashboardQuickLinks } from "./links";
+import { RecentActivityWidget } from "./widgets";
+import { DashboardQuickLinks } from "./widgets/links";
 import { ManageWidgetsModal } from "./widgets/manage";
+import { StickiesWidget } from "@/plane-web/components/stickies";
 
 const WIDGETS_LIST: {
-  [key in TWidgetKeys]: { component: React.FC<WidgetProps>; fullWidth: boolean };
+  [key: string]: { component: React.FC<WidgetProps>; fullWidth: boolean };
 } = {
   recent_activity: { component: RecentActivityWidget, fullWidth: false },
-  // recent_collaborators: { component: RecentCollaboratorsWidget, fullWidth: true },
-  // my_stickies: { component: StickiesWidget, fullWidth: false },
+  stickies: { component: StickiesWidget, fullWidth: false },
 };
 
 export const DashboardWidgets = observer(() => {
@@ -42,25 +42,20 @@ export const DashboardWidgets = observer(() => {
       />
       <DashboardQuickLinks workspaceSlug={workspaceSlug.toString()} />
 
-      {totalProjectIds?.length === 0 ? (
-        <EmptyWorkspace />
-      ) : (
-        Object.entries(WIDGETS_LIST).map(([key, widget]) => {
-          const WidgetComponent = widget.component;
-          // if the widget doesn't exist, return null
-          // if (!doesWidgetExist(key as TWidgetKeys)) return null;
-          // if the widget is full width, return it in a 2 column grid
-          console.log({ widget, key });
-          if (widget.fullWidth)
-            return (
-              <div key={key} className="lg:col-span-2">
-                <WidgetComponent dashboardId={homeDashboardId} workspaceSlug={workspaceSlug.toString()} />
-              </div>
-            );
-          else
-            return <WidgetComponent key={key} dashboardId={homeDashboardId} workspaceSlug={workspaceSlug.toString()} />;
-        })
-      )}
+      {Object.entries(WIDGETS_LIST).map(([key, widget]) => {
+        const WidgetComponent = widget.component;
+        // if the widget doesn't exist, return null
+        // if (!doesWidgetExist(key as TWidgetKeys)) return null;
+        // if the widget is full width, return it in a 2 column grid
+        if (widget.fullWidth)
+          return (
+            <div key={key} className="lg:col-span-2">
+              <WidgetComponent dashboardId={homeDashboardId} workspaceSlug={workspaceSlug.toString()} />
+            </div>
+          );
+        else
+          return <WidgetComponent key={key} dashboardId={homeDashboardId} workspaceSlug={workspaceSlug.toString()} />;
+      })}
     </div>
   );
 });

@@ -313,6 +313,7 @@ export class WorkspaceService extends APIService {
         throw error?.response?.data;
       });
   }
+
   async searchEntity(workspaceSlug: string, params: TSearchEntityRequestPayload): Promise<TSearchResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/entity-search/`, {
       params: {
@@ -323,6 +324,19 @@ export class WorkspaceService extends APIService {
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
+      });
+  }
+
+  // recents
+  async fetchWorkspaceRecents(workspaceSlug: string, entity_name?: string) {
+    return this.get(`/api/workspaces/${workspaceSlug}/recent-visits/`, {
+      params: {
+        entity_name,
+      },
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
       });
   }
 }

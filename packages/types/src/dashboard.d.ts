@@ -186,3 +186,41 @@ export type THomeDashboardResponse = {
   dashboard: TDashboard;
   widgets: TWidget[];
 };
+
+// home
+type TPageEntityData = {
+  id: string;
+  name: string;
+  logo_props: TLogoProps;
+  project_id: string;
+  owned_by: string;
+  project_identifier: string;
+};
+
+type TProjectEntityData = {
+  id: string;
+  name: string;
+  logo_props: TLogoProps;
+  project_members: ProjectMember[];
+  identifier: string;
+};
+
+type TIssueEntityData = {
+  id: string;
+  name: string;
+  state: string;
+  priority: TIssuePriorities;
+  assignees: string[];
+  type: string | null;
+  sequence_id: number;
+  project_id: string;
+  project_identifier: string;
+};
+
+type TActivityEntityData = {
+  id: string;
+  entity_name: "page" | "project" | "issue";
+  entity_identifier: string;
+  visited_at: string;
+  entity_data: TPageEntityData | TProjectEntityData | TIssueEntityData;
+};

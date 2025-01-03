@@ -1,59 +1,78 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
+import { WidgetProps } from "@/components/dashboard/widgets";
 // types
-import { TRecentActivityWidgetResponse } from "@plane/types";
+import { TActivityEntityData } from "@plane/types";
 // components
-import { WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
-// hooks
-import { useDashboard, useUser } from "@/hooks/store";
 import { FiltersDropdown } from "./filters";
 import { RecentIssue } from "./issue";
+import { WorkspaceService } from "@/plane-web/services";
+import useSWR from "swr";
+import { RecentProject } from "./project";
+import { RecentPage } from "./page";
+import { EWidgetKeys, WidgetLoader } from "../loaders";
+import { Briefcase, FileText } from "lucide-react";
+import { LayersIcon } from "@plane/ui";
+import { EmptyWorkspace } from "../empty-states";
 
-const WIDGET_KEY = "recent_activity";
+const WIDGET_KEY = EWidgetKeys.RECENT_ACTIVITY;
+const workspaceService = new WorkspaceService();
+const filters = [
+  { name: "all item" },
+  { name: "issue", icon: <LayersIcon className="w-4 h-4" /> },
+  { name: "page", icon: <FileText size={16} /> },
+  { name: "project", icon: <Briefcase size={16} /> },
+];
 
 export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
-  const { dashboardId, workspaceSlug } = props;
+  const { workspaceSlug } = props;
   const ref = useRef<HTMLDivElement>(null);
-  // store hooks
-  const { data: currentUser } = useUser();
-  const { activeFilter, setActiveFilter, fetchWidgetStats, getWidgetStats } = useDashboard();
-  // derived values
-  const widgetStats = getWidgetStats<TRecentActivityWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
-  const redirectionLink = `/${workspaceSlug}/profile/${currentUser?.id}/activity`;
+  const [filter, setFilter] = useState(filters[0].name);
 
-  useEffect(() => {
-    fetchWidgetStats(workspaceSlug, dashboardId, {
-      widget_key: WIDGET_KEY,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { data: recents, isLoading } = useSWR(
+    workspaceSlug ? `WORKSPACE_RECENT_ACTIVITY_${workspaceSlug}_${filter}` : null,
+    workspaceSlug
+      ? () =>
+          workspaceService.fetchWorkspaceRecents(
+            workspaceSlug.toString(),
+            filter === filters[0].name ? undefined : filter
+          )
+      : null,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
 
-  if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
-
-  const resolveRecent = (activity: TRecentActivityWidgetResponse) => {
-    console.log();
-    return <RecentIssue activity={activity} ref={ref} />;
+  const resolveRecent = (activity: TActivityEntityData) => {
+    switch (activity.entity_name) {
+      case "page":
+        return <RecentPage activity={activity} ref={ref} workspaceSlug={workspaceSlug} />;
+      case "project":
+        return <RecentProject activity={activity} ref={ref} workspaceSlug={workspaceSlug} />;
+      case "issue":
+        return <RecentIssue activity={activity} ref={ref} workspaceSlug={workspaceSlug} />;
+      default:
+        return <></>;
+    }
   };
 
-  return (
-    <div ref={ref}>
-      <div className="flex items-center justify-between">
-        <Link href={redirectionLink} className="text-base font-semibold text-custom-text-350 hover:underline">
-          Recent
-        </Link>
+  if (!isLoading && recents?.length === 0) return <EmptyWorkspace />;
 
-        <FiltersDropdown activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
+  return (
+    <div ref={ref} className=" max-h-[500px] overflow-y-scroll">
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-base font-semibold text-custom-text-350 hover:underline">Recents</div>
+
+        <FiltersDropdown filters={filters} activeFilter={filter} setActiveFilter={setFilter} />
       </div>
-      {widgetStats.length > 0 && (
-        <div className="mt-2">
-          {widgetStats.map((activity) => (
-            <div key={activity.id}>{resolveRecent(activity)}</div>
-          ))}
-        </div>
-      )}
+      {isLoading && <WidgetLoader widgetKey={WIDGET_KEY} />}
+      {!isLoading &&
+        recents?.length > 0 &&
+        recents.map((activity: TActivityEntityData) => <div key={activity.id}>{resolveRecent(activity)}</div>)}
     </div>
   );
 });

@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // plane types
 // plane ui
-import { Button, ModalCore } from "@plane/ui";
+import { Button, EModalWidth, ModalCore } from "@plane/ui";
 import { WidgetList } from "./widget-list";
 
 export type TProps = {
@@ -18,7 +18,7 @@ export const ManageWidgetsModal: FC<TProps> = observer((props) => {
   const { workspaceSlug, isModalOpen, handleOnClose } = props;
 
   return (
-    <ModalCore isOpen={isModalOpen} handleClose={handleOnClose}>
+    <ModalCore isOpen={isModalOpen} handleClose={handleOnClose} width={EModalWidth.MD}>
       <div className="p-4">
         <div className="font-medium text-xl">Manage widgets</div>
         <WidgetList workspaceSlug={workspaceSlug} />

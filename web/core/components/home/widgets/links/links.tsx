@@ -5,12 +5,12 @@ import { useHome } from "@/hooks/store/use-home";
 import { AddLink } from "./action";
 import { ProjectLinkDetail } from "./link-detail";
 import { TLinkOperations } from "./use-links";
+import { EWidgetKeys, WidgetLoader } from "../loaders";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "create">;
 
 export type TProjectLinkList = {
   linkOperations: TLinkOperationsModal;
-
   workspaceSlug: string;
 };
 
@@ -50,7 +50,7 @@ export const ProjectLinkList: FC<TProjectLinkList> = observer((props) => {
     return () => window.removeEventListener("resize", updateColumnCount);
   }, []);
 
-  if (!links) return <></>;
+  if (links === undefined) return <WidgetLoader widgetKey={EWidgetKeys.QUICK_LINKS} />;
 
   return (
     <div>

@@ -14,7 +14,7 @@ import { Button, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
 // hooks
-import { useMember, useProject, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useMember, useProject, useProjectState, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local
@@ -48,6 +48,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { isMobile } = usePlatformOS();
   const { loader, workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
     useUserPermissions();
+  const { fetchWorkspaceStates } = useProjectState();
   // derived values
   const canPerformWorkspaceMemberActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -91,6 +92,12 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug && currentWorkspace && canPerformWorkspaceMemberActions
       ? () => fetchFavorite(workspaceSlug.toString())
       : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+  // fetch workspace states
+  useSWR(
+    workspaceSlug ? `WORKSPACE_STATES_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchWorkspaceStates(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

@@ -112,14 +112,16 @@ export const WidgetItem: FC<Props> = observer((props) => {
       <div
         ref={elementRef}
         className={cn(
-          "px-2 relative flex items-center py-2 font-medium text-sm capitalize group/widget-item rounded hover:bg-custom-background-80",
+          "px-2 relative flex items-center py-2 font-medium text-sm capitalize group/widget-item rounded hover:bg-custom-background-80 justify-between",
           {
             "cursor-grabbing bg-custom-background-80": isDragging,
           }
         )}
       >
-        <WidgetItemDragHandle sort_order={widget.sort_order} isDragging={isDragging} />
-        <div className="w-6/12">{widget.title}</div>
+        <div className="flex items-center">
+          <WidgetItemDragHandle sort_order={widget.sort_order} isDragging={isDragging} />
+          <div>{widget.title}</div>
+        </div>
         <ToggleSwitch />
       </div>
       {isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}

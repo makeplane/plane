@@ -42,7 +42,7 @@ export const EmptyWorkspace = () => {
       icon: <Users className="w-[40px] h-[40px] text-custom-primary-100" />,
       cta: {
         text: "Invite now",
-        link: "settings/members",
+        link: `/${workspaceSlug}/settings/members`,
       },
     },
     {

@@ -80,7 +80,7 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
       </div>
       <div className="my-auto flex-1">
         <div className="text-sm font-medium truncate">{linkDetail.title || linkDetail.url}</div>
-        <div className="text-xs font-semibold text-custom-text-400">{calculateTimeAgo(linkDetail.created_at)}</div>
+        <div className="text-xs font-medium text-custom-text-400">{calculateTimeAgo(linkDetail.created_at)}</div>
       </div>
 
       <CustomMenu

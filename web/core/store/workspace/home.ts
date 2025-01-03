@@ -1,5 +1,6 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { IWorkspaceLinkStore, WorkspaceLinkStore } from "./link.store";
+import { WorkspaceService } from "@/plane-web/services";
 
 export interface IHomeStore {
   // observables
@@ -18,6 +19,8 @@ export class HomeStore implements IHomeStore {
   widgetsMap: Record<string, any> = {};
   // stores
   quickLinks: IWorkspaceLinkStore;
+  // services
+  workspaceService: WorkspaceService;
 
   constructor() {
     makeObservable(this, {
@@ -29,6 +32,7 @@ export class HomeStore implements IHomeStore {
       reorderWidgets: action,
     });
     // services
+    this.workspaceService = new WorkspaceService();
 
     // stores
     this.quickLinks = new WorkspaceLinkStore();
@@ -69,4 +73,13 @@ export class HomeStore implements IHomeStore {
     //   throw error;
     // }
   };
+
+  //   fetchRecentActivity = async (workspaceSlug: string) => {
+  //     try {
+  //       const response = await this.workspaceService.fetchWorkspaceRecents(workspaceSlug);
+  //     } catch (error) {
+  //       console.error("Failed to fetch recent activity");
+  //       throw error;
+  //     }
+  //   };
 }
