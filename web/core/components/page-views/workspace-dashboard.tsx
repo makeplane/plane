@@ -14,8 +14,9 @@ import { PRODUCT_TOUR_COMPLETED } from "@/constants/event-tracker";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useCommandPalette, useUserProfile, useEventTracker, useDashboard, useProject, useUser } from "@/hooks/store";
-import useSize from "@/hooks/use-window-size";
 import { useHome } from "@/hooks/store/use-home";
+import useSize from "@/hooks/use-window-size";
+import { IssuePeekOverview } from "../issues";
 
 export const WorkspaceDashboardView = observer(() => {
   // store hooks
@@ -66,7 +67,7 @@ export const WorkspaceDashboardView = observer(() => {
         <>
           {joinedProjectIds.length > 0 || loader ? (
             <>
-              {/* <IssuePeekOverview /> */}
+              <IssuePeekOverview />
               <ContentWrapper
                 className={cn("gap-7 bg-custom-background-90/20", {
                   "vertical-scrollbar scrollbar-lg": windowWidth >= 768,
