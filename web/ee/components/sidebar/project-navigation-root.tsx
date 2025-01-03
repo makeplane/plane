@@ -37,6 +37,7 @@ export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = observer((props
       access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
       shouldRender: !!isEpicsEnabled,
       sortOrder: -1,
+      key: "epics",
     },
   ];
 

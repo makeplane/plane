@@ -77,7 +77,7 @@ export const TeamWorkloadChart: React.FC<TTeamWorkloadChartProps> = observer((pr
         ...item,
         [xAxisKey]:
           item[xAxisKey] && typeof item[xAxisKey] === "string"
-            ? renderFormattedDateWithoutYear(item[xAxisKey])
+            ? renderFormattedDateWithoutYear(item[xAxisKey] as string)
             : item[xAxisKey],
       }));
     }

@@ -29,6 +29,7 @@ export const INTAKE_FEATURES_LIST: TIntakeFeatureList = {
     isPro: false,
     isEnabled: true,
     hasOptions: false,
+    key: "in_app",
   },
   // email: {
   //   property: "email",
@@ -51,6 +52,7 @@ export const INTAKE_FEATURES_LIST: TIntakeFeatureList = {
     hasOptions: true,
     hasHyperlink: true,
     canShuffle: true,
+    key: "form",
   },
 };
 

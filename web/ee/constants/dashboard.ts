@@ -18,6 +18,7 @@ SIDEBAR_USER_MENU_ITEMS.push({
   access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/pi-chat/`),
   Icon: PiChatLogo,
+  value: "pi-chat",
 });
 
 export const SIDEBAR_WORKSPACE_MENU: Partial<Record<TSidebarWorkspaceMenuItemKeys, TSidebarWorkspaceMenuItems>> = {
@@ -29,6 +30,7 @@ export const SIDEBAR_WORKSPACE_MENU: Partial<Record<TSidebarWorkspaceMenuItemKey
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/teams/`,
     Icon: TeamsIcon,
+    value: "teams",
   },
   initiatives: {
     key: "initiatives",
@@ -37,6 +39,7 @@ export const SIDEBAR_WORKSPACE_MENU: Partial<Record<TSidebarWorkspaceMenuItemKey
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/initiatives/`,
     Icon: InitiativeIcon,
+    value: "initiatives",
   },
 };
 
