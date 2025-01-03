@@ -7,7 +7,7 @@ from .base import BaseModel
 
 
 class Sticky(BaseModel):
-    name = models.TextField()
+    name = models.TextField(null=True, blank=True)
 
     description = models.JSONField(blank=True, default=dict)
     description_html = models.TextField(blank=True, default="<p></p>")
