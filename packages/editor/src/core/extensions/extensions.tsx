@@ -35,12 +35,12 @@ import {
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
-// types
-import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
-import { FlatListExtension } from "./flat-list/list-extension";
+// types
+import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
 import { DropCursorExtension } from "./drop-cursor";
+import { FlatListExtension } from "./flat-list/list-extension";
 
 type TArguments = {
   disabledExtensions: TExtensions[];
@@ -81,12 +81,10 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       ...(enableHistory ? {} : { history: false }),
     }),
     DropCursorExtension,
+    FlatListExtension,
     BulletList.extend({
       addInputRules() {
         return [];
-      },
-      addKeyboardShortcuts() {
-        return {};
       },
     }).configure({
       HTMLAttributes: {
@@ -97,17 +95,14 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       addInputRules() {
         return [];
       },
-      addKeyboardShortcuts() {
-        return {};
-      },
     }).configure({
       HTMLAttributes: {
         class: "list-decimal pl-7 space-y-2",
       },
     }),
     ListItem.extend({
-      addKeyboardShortcuts() {
-        return {};
+      adddInputRules() {
+        return [];
       },
     }).configure({
       HTMLAttributes: {
@@ -144,7 +139,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       },
     }),
     CustomKeymap,
-    ListKeymap({ tabIndex }),
+    // ListKeymap({ tabIndex }),
     CustomLinkExtension.configure({
       openOnClick: true,
       autolink: true,
@@ -215,6 +210,5 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       transformPastedText: true,
       breaks: true,
     }),
-    FlatListExtension,
   ];
 };

@@ -13,9 +13,6 @@ export function pasteHandler(options: PasteHandlerOptions): Plugin {
     key: new PluginKey("handlePasteLink"),
     props: {
       handlePaste: (view, event, slice) => {
-        const text = event.clipboardData.getData("text/html");
-        console.log("text", text);
-
         const { state } = view;
         const { selection } = state;
         const { empty } = selection;

@@ -43,7 +43,7 @@ export const ListKeymap = ({ tabIndex }: { tabIndex?: number }) =>
           if (tabIndex !== undefined && tabIndex !== null) {
             return false;
           }
-          return true;
+          return false;
         },
         "Shift-Tab": () => {
           if (this.editor.commands.liftListItem("listItem")) {
@@ -51,7 +51,7 @@ export const ListKeymap = ({ tabIndex }: { tabIndex?: number }) =>
           } else if (this.editor.commands.liftListItem("taskItem")) {
             return true;
           }
-          return true;
+          return false;
         },
         Delete: ({ editor }) => {
           try {
