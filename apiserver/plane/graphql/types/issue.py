@@ -77,13 +77,13 @@ class IssuesType:
         return self.state_id
 
     @strawberry.field
-    async def parent(self) -> Optional[strawberry.ID]:
-        if self.parent:
-            parent_issue_project_id = await sync_to_async(
-                lambda: self.parent.project_id if self.parent else None
-            )()
-            if parent_issue_project_id == self.project_id:
-                return str(self.parent_id)
+    async def parent(self) -> Optional[str]:
+        parent_issue_project_id = await sync_to_async(
+            lambda: self.parent.project_id if self.parent else None
+        )()
+        issue_project_id = await sync_to_async(lambda: self.project_id)()
+        if parent_issue_project_id == issue_project_id:
+            return str(self.parent_id)
         return None
 
     @strawberry.field
