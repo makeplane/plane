@@ -153,13 +153,6 @@ class IssueRecentVisitSerializer(serializers.ModelSerializer):
 
         return project.identifier if project else None
 
-class ProjectMemberSerializer(BaseSerializer):
-    member = UserLiteSerializer(read_only=True)
-
-    class Meta:
-        model = ProjectMember
-        fields = ["member"]
-
 class ProjectRecentVisitSerializer(serializers.ModelSerializer):
     project_members = serializers.SerializerMethodField()    
     
@@ -168,10 +161,9 @@ class ProjectRecentVisitSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "logo_props", "project_members", "identifier"]
 
     def get_project_members(self, obj):
-        members = ProjectMember.objects.filter(project_id=obj.id).select_related('member')
-
-        serializer = ProjectMemberSerializer(members, many=True)
-        return serializer.data
+        members = ProjectMember.objects.filter(project_id=obj.id).values_list("member", flat=True)
+        
+        return members
   
 class PageRecentVisitSerializer(serializers.ModelSerializer):
     project_id = serializers.SerializerMethodField()
