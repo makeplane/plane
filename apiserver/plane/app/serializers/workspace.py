@@ -45,6 +45,27 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
         ]
 
 
+class WorkspaceUserMeSerializer(DynamicBaseSerializer):
+    owner = UserLiteSerializer(read_only=True)
+    total_members = serializers.IntegerField(read_only=True)
+    total_issues = serializers.IntegerField(read_only=True)
+    logo_url = serializers.CharField(read_only=True)
+    current_plan = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = Workspace
+        fields = "__all__"
+        read_only_fields = [
+            "id",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+            "owner",
+            "logo_url",
+        ]
+
+
 class WorkspaceLiteSerializer(BaseSerializer):
     class Meta:
         model = Workspace
@@ -63,6 +84,7 @@ class WorkSpaceMemberSerializer(DynamicBaseSerializer):
 
 class WorkspaceMemberMeSerializer(BaseSerializer):
     draft_issue_count = serializers.IntegerField(read_only=True)
+    active_cycles_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = WorkspaceMember

@@ -7,12 +7,14 @@ export interface IThemeStore {
   workspaceAnalyticsSidebarCollapsed: boolean | undefined;
   issueDetailSidebarCollapsed: boolean | undefined;
   epicDetailSidebarCollapsed: boolean | undefined;
+  initiativesSidebarCollapsed: boolean | undefined;
   // actions
   toggleSidebar: (collapsed?: boolean) => void;
   toggleProfileSidebar: (collapsed?: boolean) => void;
   toggleWorkspaceAnalyticsSidebar: (collapsed?: boolean) => void;
   toggleIssueDetailSidebar: (collapsed?: boolean) => void;
   toggleEpicDetailSidebar: (collapsed?: boolean) => void;
+  toggleInitiativesSidebar: (collapsed?: boolean) => void;
 }
 
 export class ThemeStore implements IThemeStore {
@@ -22,6 +24,7 @@ export class ThemeStore implements IThemeStore {
   workspaceAnalyticsSidebarCollapsed: boolean | undefined = undefined;
   issueDetailSidebarCollapsed: boolean | undefined = undefined;
   epicDetailSidebarCollapsed: boolean | undefined = undefined;
+  initiativesSidebarCollapsed: boolean | undefined = undefined;
 
   constructor() {
     makeObservable(this, {
@@ -31,12 +34,14 @@ export class ThemeStore implements IThemeStore {
       workspaceAnalyticsSidebarCollapsed: observable.ref,
       issueDetailSidebarCollapsed: observable.ref,
       epicDetailSidebarCollapsed: observable.ref,
+      initiativesSidebarCollapsed: observable.ref,
       // action
       toggleSidebar: action,
       toggleProfileSidebar: action,
       toggleWorkspaceAnalyticsSidebar: action,
       toggleIssueDetailSidebar: action,
       toggleEpicDetailSidebar: action,
+      toggleInitiativesSidebar: action,
     });
   }
 
@@ -95,5 +100,14 @@ export class ThemeStore implements IThemeStore {
       this.epicDetailSidebarCollapsed = collapsed;
     }
     localStorage.setItem("epic_detail_sidebar_collapsed", this.epicDetailSidebarCollapsed.toString());
+  };
+
+  toggleInitiativesSidebar = (collapsed?: boolean) => {
+    if (collapsed === undefined) {
+      this.initiativesSidebarCollapsed = !this.initiativesSidebarCollapsed;
+    } else {
+      this.initiativesSidebarCollapsed = collapsed;
+    }
+    localStorage.setItem("initiatives_sidebar_collapsed", this.initiativesSidebarCollapsed.toString());
   };
 }
