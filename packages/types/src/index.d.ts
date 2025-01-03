@@ -34,8 +34,6 @@ export * from "./favorite";
 export * from "./file";
 export * from "./workspace-draft-issues/base";
 export * from "./command-palette";
-export * from "./workspace/link";
-export * from "./workspace/dashboard";
 export * from "./timezone";
 export * from "./activity";
 export * from "./epics";

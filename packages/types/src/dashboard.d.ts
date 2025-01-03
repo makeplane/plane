@@ -17,7 +17,6 @@ export type TWidgetKeys =
 export type TIssuesListTypes = "pending" | "upcoming" | "overdue" | "completed";
 
 // widget filters
-
 export type TAssignedIssuesWidgetFilters = {
   custom_dates?: string[];
   duration?: EDurationFilters;
