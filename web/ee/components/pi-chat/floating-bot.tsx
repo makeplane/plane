@@ -24,7 +24,7 @@ export const FloatingBot = () => {
 
   return (
     <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="PI_CHAT" fallback={<></>}>
-      <div ref={ref} id="floating-bot" className="m-auto">
+      <div ref={ref} className="m-auto">
         {" "}
         <button
           className={cn("bg-gradient-to-br rounded-full w-[40px] h-[40px] shadow-md z-[20]", {
