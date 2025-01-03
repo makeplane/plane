@@ -15,9 +15,9 @@ class UpdateReactionSerializer(BaseSerializer):
 class UpdatesSerializer(BaseSerializer):
     comments_count = serializers.IntegerField(read_only=True)
     update_reactions = UpdateReactionSerializer(many=True, read_only=True)
+    status = serializers.CharField(required=False)
 
     class Meta:
         model = EntityUpdates
         fields = "__all__"
         read_only_fields = ["workspace", "project", "cycle", "issue", "entity_type" ]
-    
