@@ -3,9 +3,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
+import { EIssuesStoreType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
-import { EIssuesStoreType } from "@plane/constants";
 import type { TBaseIssue, TIssue } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
