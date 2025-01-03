@@ -35,6 +35,7 @@ export type TStackedBarChartProps<K extends string, T extends string> = {
 export type TreeMapItem = {
   name: string;
   value: number;
+  label?: string;
   textClassName?: string;
   icon?: React.ReactElement;
 } & (
