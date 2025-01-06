@@ -20,7 +20,7 @@ from .workspace import (
     WorkspaceMemberMeSerializer,
     WorkspaceUserPropertiesSerializer,
     WorkspaceUserLinkSerializer,
-    WorkspaceRecentVisitSerializer
+    WorkspaceRecentVisitSerializer,
 )
 from .project import (
     ProjectSerializer,
@@ -70,6 +70,8 @@ from .issue import (
     IssueReactionLiteSerializer,
     IssueAttachmentLiteSerializer,
     IssueLinkLiteSerializer,
+    IssueVersionDetailSerializer,
+    IssueDescriptionVersionDetailSerializer,
 )
 
 from .module import (
