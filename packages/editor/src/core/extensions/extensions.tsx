@@ -101,7 +101,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       },
     }),
     ListItem.extend({
-      adddInputRules() {
+      addInputRules() {
         return [];
       },
     }).configure({
