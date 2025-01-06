@@ -11,7 +11,7 @@ import { TIssue } from "@plane/types";
 import { Breadcrumbs, Header, EpicIcon } from "@plane/ui";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@/ce/constants";
-import { BreadcrumbLink, Logo } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -19,6 +19,7 @@ import { useAppTheme, useIssueDetail, useProject, useUserPermissions } from "@/h
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // plane-web
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 import { ProjectEpicQuickActions } from "@/plane-web/components/epics";
 
 export const ProjectEpicDetailsHeader = observer(() => {
@@ -64,22 +65,7 @@ export const ProjectEpicDetailsHeader = observer(() => {
       <Header.LeftItem>
         <div>
           <Breadcrumbs onBack={router.back} isLoading={loader}>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  href={`/${workspaceSlug}/projects`}
-                  label={currentProjectDetails?.name ?? "Project"}
-                  icon={
-                    currentProjectDetails && (
-                      <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                      </span>
-                    )
-                  }
-                />
-              }
-            />
+            <ProjectBreadcrumb />
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
