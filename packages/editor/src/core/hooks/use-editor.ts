@@ -136,8 +136,6 @@ export const useEditor = (props: CustomEditorProps) => {
             const relativePosition = Math.min(currentSavedSelection.from, docLength - 1);
             editor.commands.setTextSelection(relativePosition);
           }
-
-          console.log("Migration of old lists completed without adding to history");
         } catch (error) {
           console.error("Error during migration:", error);
         }
