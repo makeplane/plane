@@ -14,9 +14,10 @@ import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree
 
 import { observer } from "mobx-react";
 // plane helpers
+import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
 // ui
-import { InstructionType } from "@plane/types";
+import { InstructionType, TWidgetEntityData } from "@plane/types";
 // components
 import { DropIndicator, ToggleSwitch } from "@plane/ui";
 // helpers
@@ -26,13 +27,15 @@ import { getCanDrop, getInstructionFromPayload } from "./widget.helpers";
 
 type Props = {
   isLastChild: boolean;
-  widget: any;
+  widget: TWidgetEntityData;
   handleDrop: (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => void;
+  handleToggle: (workspaceSlug: string, widgetKey: string, is_enabled: boolean) => void;
 };
 
 export const WidgetItem: FC<Props> = observer((props) => {
   // props
-  const { isLastChild, widget, handleDrop } = props;
+  const { isLastChild, widget, handleDrop, handleToggle } = props;
+  const { workspace_slug } = useParams();
   //state
   const [isDragging, setIsDragging] = useState(false);
   const [instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
@@ -45,7 +48,7 @@ export const WidgetItem: FC<Props> = observer((props) => {
     const element = elementRef.current;
 
     if (!element) return;
-    const initialData = { id: widget.id, isGroup: false };
+    const initialData = { id: widget.key, isGroup: false };
     return combine(
       draggable({
         element,
@@ -62,7 +65,7 @@ export const WidgetItem: FC<Props> = observer((props) => {
             getOffset: pointerOutsideOfPreview({ x: "0px", y: "0px" }),
             render: ({ container }) => {
               const root = createRoot(container);
-              root.render(<div className="rounded bg-custom-background-100 text-sm p-1 pr-2">{widget.title}</div>);
+              root.render(<div className="rounded bg-custom-background-100 text-sm p-1 pr-2">{widget.key}</div>);
               return () => root.unmount();
             },
             nativeSetDragImage,
@@ -104,7 +107,7 @@ export const WidgetItem: FC<Props> = observer((props) => {
       })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [elementRef?.current, isDragging, isLastChild, widget.id]);
+  }, [elementRef?.current, isDragging, isLastChild, widget.key]);
 
   return (
     <div className="">
@@ -120,9 +123,12 @@ export const WidgetItem: FC<Props> = observer((props) => {
       >
         <div className="flex items-center">
           <WidgetItemDragHandle sort_order={widget.sort_order} isDragging={isDragging} />
-          <div>{widget.title}</div>
+          <div>{widget.name}</div>
         </div>
-        {/* <ToggleSwitch /> */}
+        <ToggleSwitch
+          value={widget.is_enabled}
+          onChange={() => handleToggle(workspace_slug.toString(), widget.key, !widget.is_enabled)}
+        />
       </div>
       {isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}
     </div>

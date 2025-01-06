@@ -9,6 +9,7 @@ export interface IHomeStore {
   // observables
   showWidgetSettings: boolean;
   widgetsMap: Record<string, TWidgetEntityData>;
+  widgets: string[];
   //stores
   quickLinks: IWorkspaceLinkStore;
   // actions
