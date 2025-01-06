@@ -14,7 +14,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 import { Breadcrumbs, Button, ContrastIcon, CustomMenu, Tooltip, Header } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
-import { BreadcrumbLink, Logo } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
@@ -37,6 +37,8 @@ import {
 import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
@@ -167,16 +169,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 link={
                   <span>
                     <span className="hidden md:block">
-                      <BreadcrumbLink
-                        label={currentProjectDetails?.name ?? "Project"}
-                        icon={
-                          currentProjectDetails && (
-                            <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                              <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                            </span>
-                          )
-                        }
-                      />
+                      <ProjectBreadcrumb />
                     </span>
                     <Link
                       href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
