@@ -36,7 +36,7 @@ export interface IProjectMemberStore {
   // computed
   projectMemberIds: string[] | null;
   // computed actions
-  getProjectMemberDetails: (userId: string) => IProjectMemberDetails | null;
+  getProjectMemberDetails: (userId: string, projectId: string) => IProjectMemberDetails | null;
   getProjectMemberIds: (projectId: string) => string[] | null;
   // fetch actions
   fetchProjectMembers: (workspaceSlug: string, projectId: string) => Promise<IProjectMembership[]>;
@@ -110,12 +110,10 @@ export class ProjectMemberStore implements IProjectMemberStore {
    * @description get the details of a project member
    * @param userId
    */
-  getProjectMemberDetails = computedFn((userId: string) => {
-    const projectId = this.routerStore.projectId;
-    if (!projectId) return null;
+  getProjectMemberDetails = computedFn((userId: string, projectId: string) => {
     const projectMember = this.projectMemberMap?.[projectId]?.[userId];
     if (!projectMember) return null;
-
+    console.log({ projectMember });
     const memberDetails: IProjectMemberDetails = {
       id: projectMember.id,
       role: projectMember.role,
@@ -183,7 +181,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
    * @param data
    */
   updateMember = async (workspaceSlug: string, projectId: string, userId: string, data: { role: EUserPermissions }) => {
-    const memberDetails = this.getProjectMemberDetails(userId);
+    const memberDetails = this.getProjectMemberDetails(userId, projectId);
     if (!memberDetails) throw new Error("Member not found");
     // original data to revert back in case of error
     const originalProjectMemberData = this.projectMemberMap?.[projectId]?.[userId];
@@ -214,7 +212,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
    * @param userId
    */
   removeMemberFromProject = async (workspaceSlug: string, projectId: string, userId: string) => {
-    const memberDetails = this.getProjectMemberDetails(userId);
+    const memberDetails = this.getProjectMemberDetails(userId, projectId);
     if (!memberDetails) throw new Error("Member not found");
     await this.projectMemberService.deleteProjectMember(workspaceSlug, projectId, memberDetails?.id).then(() => {
       runInAction(() => {

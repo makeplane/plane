@@ -20,6 +20,7 @@ from plane.db.models import (
     Page,
     Project,
     ProjectMember,
+    WorkspaceHomePreference,
 )
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
@@ -249,3 +250,10 @@ class WorkspaceRecentVisitSerializer(BaseSerializer):
             except entity_model.DoesNotExist:
                 return None
         return None
+
+
+class WorkspaceHomePreferenceSerializer(BaseSerializer):
+    class Meta:
+        model = WorkspaceHomePreference
+        fields = ["user", "key", "is_enabled", "sort_order"]
+        read_only_fields = ["worspace", "created_by", "update_by"]

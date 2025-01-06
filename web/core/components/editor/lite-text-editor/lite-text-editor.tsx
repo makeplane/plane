@@ -30,6 +30,7 @@ interface LiteTextEditorWrapperProps
   isSubmitting?: boolean;
   showToolbarInitially?: boolean;
   uploadFile: (file: File) => Promise<string>;
+  issue_id?: string;
 }
 
 export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
@@ -38,6 +39,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     workspaceSlug,
     workspaceId,
     projectId,
+    issue_id,
     accessSpecifier,
     handleAccessChange,
     showAccessSpecifier = false,
@@ -58,6 +60,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
       await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
         ...payload,
         project_id: projectId?.toString() ?? "",
+        issue_id: issue_id,
       }),
   });
   // file size
