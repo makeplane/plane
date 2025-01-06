@@ -236,7 +236,7 @@ urlpatterns = [
         name="workspace-home-preference",
     ),
     path(
-        "workspaces/<str:slug>/home-preferences/<uuid:pk>/",
+        "workspaces/<str:slug>/home-preferences/<str:key>/",
         WorkspacePreferenceViewSet.as_view(),
         name="workspace-home-preference",
     ),

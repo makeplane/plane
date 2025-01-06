@@ -49,16 +49,24 @@ class WorkspacePreferenceViewSet(BaseAPIView):
         return Response(workspace_user_home_preferences, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
-    def patch(self, request, slug, pk):
-        preference = WorkspaceHomePreference.objects.filter(pk=pk, workspace__slug=slug)
+    def patch(self, request, slug, key):
+        preference = WorkspaceHomePreference.objects.filter(
+            key=key, workspace__slug=slug
+        )
 
         if preference:
-            WorkspaceHomePreference.objects.update(
-                is_enabled=request.data["is_enabled"]
-            )
+            if "is_enabled" in request.data:
+                WorkspaceHomePreference.objects.update(
+                    is_enabled=request.data["is_enabled"]
+                )
+
+            if "sort_order" in request.data:
+                WorkspaceHomePreference.objects.update(
+                    sort_order=request.data["sort_order"]
+                )
 
         preference = WorkspaceHomePreference.objects.filter(
-            pk=pk, user=request.user
+            key=key, user=request.user
         ).values("key", "is_enabled", "sort_order", "config", "id")
 
         return Response(preference, status=status.HTTP_200_OK)
