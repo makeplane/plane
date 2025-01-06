@@ -3,11 +3,12 @@
 import { FC, memo } from "react";
 import { ArrowUpWideNarrow, ArrowDownWideNarrow } from "lucide-react";
 import { getButtonStyling } from "@plane/ui";
+import { TSORT_ORDER } from "@/constants/common";
 // helpers
 import { cn } from "@/helpers/common.helper";
 
 export type TActivitySortRoot = {
-  sortOrder: "asc" | "desc";
+  sortOrder: TSORT_ORDER;
   toggleSort: () => void;
   className?: string;
   iconClassName?: string;

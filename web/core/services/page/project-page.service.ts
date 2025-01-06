@@ -171,4 +171,14 @@ export class ProjectPageService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async move(workspaceSlug: string, projectId: string, pageId: string, newProjectId: string): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/move/`, {
+      new_project_id: newProjectId,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

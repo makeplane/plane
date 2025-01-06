@@ -28,6 +28,8 @@ import { cn } from "@/helpers/common.helper";
 import { usePageOperations } from "@/hooks/use-page-operations";
 // plane web components
 import { MovePageModal } from "@/plane-web/components/pages";
+// plane web constants
+import { ENABLE_MOVE_PAGE } from "@/plane-web/constants";
 // store types
 import { TPageInstance } from "@/store/pages/base-page";
 
@@ -132,7 +134,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
         action: () => setMovePageModal(true),
         title: "Move",
         icon: FileOutput,
-        shouldRender: canCurrentUserMovePage,
+        shouldRender: canCurrentUserMovePage && ENABLE_MOVE_PAGE,
       },
     ];
     if (extraOptions) {
