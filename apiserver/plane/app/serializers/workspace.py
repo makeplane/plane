@@ -20,6 +20,7 @@ from plane.db.models import (
     Page,
     Project,
     ProjectMember,
+    WorkspaceHomePreference,
 )
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
@@ -248,4 +249,21 @@ class WorkspaceRecentVisitSerializer(BaseSerializer):
                 return entity_serializer(entity).data
             except entity_model.DoesNotExist:
                 return None
+        return None
+
+
+class WorkspaceHomePreferenceSerializer(BaseSerializer):
+    name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = WorkspaceHomePreference
+        fields = ["key", "is_enabled", "sort_order", "name"]
+        read_only_fields = ["worspace", "created_by", "update_by"]
+
+    def get_name(self, obj):
+        preference_key = obj.key
+
+        for key, name in WorkspaceHomePreference.HomeWidgetKeys.choices:
+            if preference_key == key:
+                return name
         return None
