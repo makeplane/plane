@@ -43,6 +43,7 @@
   "activity": "Activity",
   "appearance": "Appearance",
   "notifications": "Notifications",
+  "inbox": "Inbox",
   "workspaces": "Workspaces",
   "create_workspace": "Create workspace",
   "invitations": "Invitations",

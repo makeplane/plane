@@ -17,6 +17,7 @@ import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useUser, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions } from "@/plane-web/constants";
 
 interface Props {
   className?: string;
@@ -39,7 +40,7 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
   const { workspaceSlug } = useParams();
   const {
     getUserDetails,
-    project: { getProjectMemberIds, fetchProjectMembers },
+    project: { getProjectMemberIds, fetchProjectMembers, getProjectMemberDetails },
     workspace: { workspaceMemberIds },
   } = useMember();
   const { data: currentUser } = useUser();
@@ -78,23 +79,32 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
     }
   };
 
-  const options = memberIds?.map((userId) => {
-    const userDetails = getUserDetails(userId);
+  const options = memberIds
+    ?.map((userId) => {
+      const userDetails = getUserDetails(userId);
+      if (projectId) {
+        const role = getProjectMemberDetails(userId, projectId)?.role;
+        const isGuest = role === EUserPermissions.GUEST;
+        if (isGuest) return;
+      }
 
-    return {
-      value: userId,
-      query: `${userDetails?.display_name} ${userDetails?.first_name} ${userDetails?.last_name}`,
-      content: (
-        <div className="flex items-center gap-2">
-          <Avatar name={userDetails?.display_name} src={getFileURL(userDetails?.avatar_url ?? "")} />
-          <span className="flex-grow truncate">{currentUser?.id === userId ? t("you") : userDetails?.display_name}</span>
-        </div>
-      ),
-    };
-  });
+      return {
+        value: userId,
+        query: `${userDetails?.display_name} ${userDetails?.first_name} ${userDetails?.last_name}`,
+        content: (
+          <div className="flex items-center gap-2">
+            <Avatar name={userDetails?.display_name} src={getFileURL(userDetails?.avatar_url ?? "")} />
+            <span className="flex-grow truncate">
+              {currentUser?.id === userId ? t("you") : userDetails?.display_name}
+            </span>
+          </div>
+        ),
+      };
+    })
+    .filter((o) => !!o);
 
   const filteredOptions =
-    query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
+    query === "" ? options : options?.filter((o) => o?.query.toLowerCase().includes(query.toLowerCase()));
 
   return createPortal(
     <Combobox.Options data-prevent-outside-click static>
@@ -125,24 +135,27 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
         <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
           {filteredOptions ? (
             filteredOptions.length > 0 ? (
-              filteredOptions.map((option) => (
-                <Combobox.Option
-                  key={option.value}
-                  value={option.value}
-                  className={({ active, selected }) =>
-                    `flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
-                      active ? "bg-custom-background-80" : ""
-                    } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
-                  }
-                >
-                  {({ selected }) => (
-                    <>
-                      <span className="flex-grow truncate">{option.content}</span>
-                      {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
-                    </>
-                  )}
-                </Combobox.Option>
-              ))
+              filteredOptions.map(
+                (option) =>
+                  option && (
+                    <Combobox.Option
+                      key={option.value}
+                      value={option.value}
+                      className={({ active, selected }) =>
+                        `flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
+                          active ? "bg-custom-background-80" : ""
+                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                      }
+                    >
+                      {({ selected }) => (
+                        <>
+                          <span className="flex-grow truncate">{option.content}</span>
+                          {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                        </>
+                      )}
+                    </Combobox.Option>
+                  )
+              )
             ) : (
               <p className="px-1.5 py-1 italic text-custom-text-400">{t("no_matching_results")}</p>
             )

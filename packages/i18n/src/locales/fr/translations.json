@@ -314,5 +314,6 @@
   "change_parent_issue": "Modifier le problème parent",
   "remove_parent_issue": "Supprimer le problème parent",
   "add_parent": "Ajouter un parent",
-  "loading_members": "Chargement des membres..."
+  "loading_members": "Chargement des membres...",
+  "inbox": "boîte de réception"
 }
