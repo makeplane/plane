@@ -20,7 +20,7 @@ class Page(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="pages"
     )
-    name = models.CharField(max_length=255, blank=True)
+    name = models.TextField(blank=True)
     description = models.JSONField(default=dict, blank=True)
     description_binary = models.BinaryField(null=True)
     description_html = models.TextField(blank=True, default="<p></p>")

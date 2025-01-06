@@ -1,9 +1,12 @@
 # Third party imports
 from rest_framework import serializers
+from rest_framework import status
+from rest_framework.response import Response
 
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
 from .user import UserLiteSerializer, UserAdminLiteSerializer
+
 
 from plane.db.models import (
     Workspace,
@@ -11,7 +14,12 @@ from plane.db.models import (
     WorkspaceMemberInvite,
     WorkspaceTheme,
     WorkspaceUserProperties,
-    WorkspaceUserLink
+    WorkspaceUserLink,
+    UserRecentVisit,
+    Issue, 
+    Page, 
+    Project,
+    ProjectMember
 )
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
@@ -132,3 +140,88 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
             raise serializers.ValidationError({"error": "Invalid URL format."})
 
         return value
+
+class IssueRecentVisitSerializer(serializers.ModelSerializer):
+    project_identifier = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Issue
+        fields = ["name", "state", "priority", "assignees", "type", "sequence_id", "project_id", "project_identifier"]        
+
+    def get_project_identifier(self, obj):
+        project = obj.project
+
+        return project.identifier if project else None
+
+class ProjectMemberSerializer(BaseSerializer):
+    member = UserLiteSerializer(read_only=True)
+
+    class Meta:
+        model = ProjectMember
+        fields = ["member"]
+
+class ProjectRecentVisitSerializer(serializers.ModelSerializer):
+    project_members = serializers.SerializerMethodField()    
+    
+    class Meta:
+        model = Project
+        fields = ["id", "name", "logo_props", "project_members", "identifier"]
+
+    def get_project_members(self, obj):
+        members = ProjectMember.objects.filter(project_id=obj.id).select_related('member')
+
+        serializer = ProjectMemberSerializer(members, many=True)
+        return serializer.data
+  
+class PageRecentVisitSerializer(serializers.ModelSerializer):
+    project_id = serializers.SerializerMethodField()
+    project_identifier = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Page
+        fields = ["id", "name", "logo_props", "project_id", "owned_by", "project_identifier"]
+
+    def get_project_id(self, obj):
+        return obj.project_id if hasattr(obj, 'project_id') else obj.projects.values_list('id', flat=True).first()
+    
+    def get_project_identifier(self, obj):
+        project = obj.projects.first()
+
+        return project.identifier if project else None
+
+def get_entity_model_and_serializer(entity_type):
+    entity_map = {
+        "issue": (Issue, IssueRecentVisitSerializer),
+        "page": (Page, PageRecentVisitSerializer),
+        "project": (Project, ProjectRecentVisitSerializer)
+    }
+    return entity_map.get(entity_type, (None, None))
+
+class WorkspaceRecentVisitSerializer(BaseSerializer):
+    entity_data = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UserRecentVisit
+        fields = [
+            "id",
+            "entity_name",
+            "entity_identifier",
+            "entity_data",
+            "visited_at"
+        ]
+        read_only_fields = ["workspace", "owner", "created_by", "updated_by"]
+
+    def get_entity_data(self, obj):
+        entity_name = obj.entity_name
+        entity_identifier = obj.entity_identifier
+
+        entity_model, entity_serializer = get_entity_model_and_serializer(entity_name)
+
+        if entity_model and entity_serializer:
+            try:
+                entity = entity_model.objects.get(pk=entity_identifier)
+
+                return entity_serializer(entity).data
+            except entity_model.DoesNotExist:
+                return None
+        return None
