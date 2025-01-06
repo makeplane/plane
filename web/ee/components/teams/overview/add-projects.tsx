@@ -15,7 +15,7 @@ export const AddProjectsToTeam = observer((props: TAddProjectsToTeamProps) => {
 
   if (!teamId) return <></>;
   return (
-    <div className="flex flex-col items-center justify-center gap-1 px-4 py-12 mx-4 border border-custom-border-200 rounded-lg">
+    <div className="flex flex-col items-center justify-center text-center gap-1 px-4 py-12 mx-4 border border-custom-border-200 rounded-lg">
       <span className="flex flex-shrink-0 items-center justify-center size-8 rounded bg-custom-background-80/70 my-1">
         <BriefcaseIcon className="size-4 text-custom-text-300" />
       </span>

@@ -129,7 +129,7 @@ export class TeamPageStore implements ITeamPageStore {
     if (!this.fetchedMap[teamId]) return undefined;
     const teamPages = filterPagesByPageType("public", Object.values(this.pageMap[teamId] ?? {}));
     const teamFilters = this.getTeamPagesFilters(teamId);
-    if (!teamPages || teamPages.length === 0) return undefined;
+    if (!teamPages || teamPages.length === 0) return [];
     // helps to filter pages based on the teamId, searchQuery and filters
     let filteredPages = teamPages.filter(
       (page) =>

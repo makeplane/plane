@@ -23,9 +23,8 @@ export const TeamUpcomingCyclesRoot = observer((props: TTeamUpcomingCyclesRoot) 
   const filteredUpcomingCycleIds = getTeamFilteredUpcomingCycleIds(teamId);
   const groupedUpcomingCycleIds = getTeamGroupedUpcomingCycleIds(teamId);
 
-  // TODO: Update the empty state
   if (filteredUpcomingCycleIds.length === 0) {
-    return <EmptyState type={EmptyStateType.PROJECT_CYCLE_ALL} />;
+    return <EmptyState type={EmptyStateType.TEAM_UPCOMING_CYCLES} />;
   }
 
   return (

@@ -101,7 +101,7 @@ const UpdateTeamProjectsButton = observer((props: UpdateTeamProjectsButtonProps)
               disabled={!isEditingAllowed}
             >
               <PlusIcon className="size-3.5" />
-              Add a project
+              Link a project
             </Button>
           </div>
         </Tooltip>

@@ -27,7 +27,7 @@ export const TeamViewEmptyState: React.FC = observer(() => {
       Object.entries(userFilters ?? {}).filter(([, value]) => value && Array.isArray(value) && value.length > 0)
     )
   );
-  const emptyStateType = issueFilterCount > 0 ? EmptyStateType.TEAM_EMPTY_FILTER : EmptyStateType.TEAM_NO_ISSUES;
+  const emptyStateType = issueFilterCount > 0 ? EmptyStateType.TEAM_EMPTY_FILTER : EmptyStateType.TEAM_ISSUES;
   const additionalPath = issueFilterCount > 0 ? (activeLayout ?? "list") : undefined;
 
   const handleClearAllFilters = () => {

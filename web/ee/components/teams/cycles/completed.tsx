@@ -23,9 +23,8 @@ export const TeamCompletedCyclesRoot = observer((props: TeamCompletedCyclesRootP
   const filteredCompletedCycleIds = getTeamFilteredCompletedCycleIds(teamId);
   const groupedCompletedCycleIds = getTeamGroupedCompletedCycleIds(teamId);
 
-  // TODO: Update the empty state
   if (filteredCompletedCycleIds.length === 0) {
-    return <EmptyState type={EmptyStateType.PROJECT_CYCLE_ALL} />;
+    return <EmptyState type={EmptyStateType.TEAM_COMPLETED_CYCLES} />;
   }
 
   return (

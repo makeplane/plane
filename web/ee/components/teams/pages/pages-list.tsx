@@ -73,7 +73,7 @@ export const TeamPagesList = observer((props: Props) => {
           </ListLayout>
         </div>
       ) : (
-        <EmptyState type={EmptyStateType.TEAM_VIEW} primaryButtonOnClick={handleCreatePage} />
+        <EmptyState type={EmptyStateType.TEAM_PAGE} primaryButtonOnClick={handleCreatePage} />
       )}
     </>
   );

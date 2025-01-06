@@ -26,7 +26,7 @@ export const TeamCurrentCyclesRoot = observer((props: TTeamCurrentCyclesRoot) =>
   const groupedActiveCycleIds = getTeamGroupedActiveCycleIds(teamId);
 
   if (filteredActiveCycleIds.length === 0) {
-    return <EmptyState type={EmptyStateType.WORKSPACE_ACTIVE_CYCLES} />;
+    return <EmptyState type={EmptyStateType.TEAM_CURRENT_CYCLES} />;
   }
 
   return (

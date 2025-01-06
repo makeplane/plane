@@ -115,8 +115,12 @@ export enum EmptyStateType {
 
   PROJECT_NO_EPICS = "project-no-epics",
   // Teams
-  TEAM_NO_ISSUES = "team-no-issues",
+  TEAM_PROJECTS = "team-projects",
+  TEAM_ISSUES = "team-issues",
   TEAM_EMPTY_FILTER = "team-empty-filter",
+  TEAM_CURRENT_CYCLES = "team-current-cycles",
+  TEAM_COMPLETED_CYCLES = "team-completed-cycles",
+  TEAM_UPCOMING_CYCLES = "team-upcoming-cycles",
   TEAM_VIEW = "team-view",
   TEAM_PAGE = "team-page",
 }
@@ -848,19 +852,21 @@ const emptyStateDetails = {
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   // Teams
-  [EmptyStateType.TEAM_NO_ISSUES]: {
-    key: EmptyStateType.TEAM_NO_ISSUES,
-    title: "Create an issue in your team projects and assign it to someone, even yourself",
+  [EmptyStateType.TEAM_PROJECTS]: {
+    key: EmptyStateType.TEAM_PROJECTS,
+    title: "Start by linking projects to this team.",
     description:
-      "Think of issues as jobs, tasks, work, or JTBD. Which we like. An issue and its sub-issues are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes issues to move your project towards its goal.",
-    path: "/empty-state/onboarding/issues",
+      "Teams link projects that team members are in, so you can see only their work, their contribution to progress in those projects, and team-specific work metrics.",
+    path: "/empty-state/teams/projects",
+  },
+  [EmptyStateType.TEAM_ISSUES]: {
+    key: EmptyStateType.TEAM_ISSUES,
+    title: "Create team-specific issues.",
+    description:
+      "Issues that are assigned to members of this team in any linked project will automatically show up here. If you expect to see some issues here, make sure your linked projects have issues assigned to members of this team or create issues.",
+    path: "/empty-state/teams/issues",
     primaryButton: {
-      text: "Create your first issue",
-      comicBox: {
-        title: "Issues are building blocks in Plane.",
-        description:
-          "Redesign the Plane UI, Rebrand the company, or Launch the new fuel injection system are examples of issues that likely have sub-issues.",
-      },
+      text: "Add issues to a linked project",
     },
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -875,12 +881,33 @@ const emptyStateDetails = {
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
+  [EmptyStateType.TEAM_CURRENT_CYCLES]: {
+    key: EmptyStateType.TEAM_CURRENT_CYCLES,
+    title: "None of your linked projects have an active cycle.",
+    path: "/empty-state/teams/current-cycles",
+    description:
+      "Linked projects that have active cycles will automatically show up here. If you expect to see an active cycle here, make sure it is running in a linked project right now.",
+  },
+  [EmptyStateType.TEAM_COMPLETED_CYCLES]: {
+    key: EmptyStateType.TEAM_COMPLETED_CYCLES,
+    title: "None of your linked projects have a completed cycle.",
+    path: "/empty-state/teams/completed-cycles",
+    description:
+      "Linked projects that have completed cycles will automatically show up here. If you expect to see a completed cycle here, make sure it is also completed in a linked project.",
+  },
+  [EmptyStateType.TEAM_UPCOMING_CYCLES]: {
+    key: EmptyStateType.TEAM_UPCOMING_CYCLES,
+    title: "None of your linked projects have an upcoming cycle.",
+    path: "/empty-state/teams/upcoming-cycles",
+    description:
+      "Linked projects that have upcoming cycles will automatically show up here. If you expect to see an upcoming cycle here, make sure it is there in a linked project, too.",
+  },
   [EmptyStateType.TEAM_VIEW]: {
     key: EmptyStateType.TEAM_VIEW,
     title: "Your team’s views of your work without disrupting any other views in your workspace",
     description:
       "See your team’s work in views that are saved just for your team and separately from a project’s views.",
-    path: "/empty-state/onboarding/views",
+    path: "/empty-state/teams/views",
     primaryButton: {
       text: "Create a view",
     },
@@ -896,6 +923,8 @@ const emptyStateDetails = {
     primaryButton: {
       text: "Create your first team page",
     },
+    accessType: "workspace",
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
 } as const;
 
