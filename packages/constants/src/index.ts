@@ -1,6 +1,7 @@
 export * from "./ai";
 export * from "./auth";
 export * from "./endpoints";
+export * from "./event";
 export * from "./file";
 export * from "./instance";
 export * from "./issue";

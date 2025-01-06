@@ -2,10 +2,9 @@ import { E_FEATURE_FLAGS } from "@plane/constants";
 // store
 import { store } from "@/lib/store-context";
 // plane web types
-import { TSidebarUserMenuItemKeys, TSidebarWorkspaceMenuItemKeys } from "@/plane-web/types/dashboard";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 
-const UserFeatureKeyToFeatureFlagMap: Record<TSidebarUserMenuItemKeys, E_FEATURE_FLAGS | undefined> = {
+const UserFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefined> = {
   home: undefined,
   "your-work": undefined,
   notifications: undefined,
@@ -13,7 +12,7 @@ const UserFeatureKeyToFeatureFlagMap: Record<TSidebarUserMenuItemKeys, E_FEATURE
   "pi-chat": E_FEATURE_FLAGS.PI_CHAT,
 };
 
-export const isUserFeatureEnabled = (featureKey: TSidebarUserMenuItemKeys) => {
+export const isUserFeatureEnabled = (featureKey: string) => {
   // Check if we need to check for a feature flag, if not, return true
   const featureFlag = UserFeatureKeyToFeatureFlagMap[featureKey];
   if (!featureFlag) return true;
@@ -21,7 +20,7 @@ export const isUserFeatureEnabled = (featureKey: TSidebarUserMenuItemKeys) => {
   return store.featureFlags.getFeatureFlagForCurrentWorkspace(featureFlag, false);
 };
 
-const WorkspaceFeatureKeyToFeatureFlagMap: Record<TSidebarWorkspaceMenuItemKeys, E_FEATURE_FLAGS | undefined> = {
+const WorkspaceFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefined> = {
   projects: undefined,
   teams: E_FEATURE_FLAGS.TEAMS,
   "all-issues": undefined,
@@ -30,7 +29,7 @@ const WorkspaceFeatureKeyToFeatureFlagMap: Record<TSidebarWorkspaceMenuItemKeys,
   initiatives: E_FEATURE_FLAGS.INITIATIVES,
 };
 
-export const isWorkspaceFeatureEnabled = (featureKey: TSidebarWorkspaceMenuItemKeys, workspaceSlug: string) => {
+export const isWorkspaceFeatureEnabled = (featureKey: string, workspaceSlug: string) => {
   // Check if we need to check for a feature flag, if not, return true
   const featureFlag = WorkspaceFeatureKeyToFeatureFlagMap[featureKey];
   if (!featureFlag) return true;

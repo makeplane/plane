@@ -52,7 +52,7 @@ export const INTAKE_FEATURES_LIST: TIntakeFeatureList = {
     hasOptions: true,
     hasHyperlink: true,
     canShuffle: true,
-    key: "form",
+    key: "forms",
   },
 };
 
