@@ -31,6 +31,7 @@ export const CustomTreeMapContent = ({
   height,
   name,
   value,
+  label,
   fillColor,
   fillClassName,
   textClassName,
@@ -109,10 +110,11 @@ export const CustomTreeMapContent = ({
         x={pX + TEXT_PADDING_LEFT}
         y={pY + pHeight - TEXT_PADDING_LEFT}
         textAnchor="start"
-        className={cn("text-xs", textClassName || "text-custom-text-300")}
+        className={cn("text-xs font-light tracking-wider", textClassName || "text-custom-text-300")}
         fill="currentColor"
       >
         {value?.toLocaleString()}
+        {label && ` ${label}`}
       </text>
     </g>
   );

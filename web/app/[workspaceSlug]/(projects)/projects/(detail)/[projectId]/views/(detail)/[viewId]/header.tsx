@@ -33,6 +33,8 @@ import {
   useProjectView,
   useUserPermissions,
 } from "@/hooks/store";
+// plane web
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
@@ -137,21 +139,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader}>
-          <Breadcrumbs.BreadcrumbItem
-            type="text"
-            link={
-              <BreadcrumbLink
-                label={currentProjectDetails?.name ?? "Project"}
-                icon={
-                  currentProjectDetails && (
-                    <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                      <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                    </span>
-                  )
-                }
-              />
-            }
-          />
+          <ProjectBreadcrumb />
           <Breadcrumbs.BreadcrumbItem
             type="text"
             link={

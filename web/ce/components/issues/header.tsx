@@ -3,13 +3,13 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { Briefcase, Circle, ExternalLink } from "lucide-react";
+import { Circle, ExternalLink } from "lucide-react";
 // plane constants
 import { EIssuesStoreType } from "@plane/constants";
 // ui
 import { Breadcrumbs, Button, LayersIcon, Tooltip, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink, CountChip, Logo } from "@/components/common";
+import { BreadcrumbLink, CountChip } from "@/components/common";
 // constants
 import HeaderFilters from "@/components/issues/filters";
 // helpers
@@ -19,6 +19,8 @@ import { useEventTracker, useProject, useCommandPalette, useUserPermissions } fr
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const IssuesHeader = observer(() => {
@@ -51,27 +53,7 @@ export const IssuesHeader = observer(() => {
       <Header.LeftItem>
         <div className="flex items-center gap-2.5">
           <Breadcrumbs onBack={() => router.back()} isLoading={loader}>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  label={currentProjectDetails?.name ?? "Project"}
-                  icon={
-                    currentProjectDetails ? (
-                      currentProjectDetails && (
-                        <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                          <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                        </span>
-                      )
-                    ) : (
-                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                        <Briefcase className="h-4 w-4" />
-                      </span>
-                    )
-                  }
-                />
-              }
-            />
+            <ProjectBreadcrumb />
 
             <Breadcrumbs.BreadcrumbItem
               type="text"

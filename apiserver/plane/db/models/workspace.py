@@ -342,3 +342,44 @@ class WorkspaceUserLink(WorkspaceBaseModel):
 
     def __str__(self):
         return f"{self.workspace.id} {self.url}"
+
+
+class WorkspaceHomePreference(BaseModel):
+    class HomeWidgetKeys(models.TextChoices):
+        QUICK_LINKS = "quick_links", "Quick Links"
+        RECENTS = "recents", "Recents"
+        MY_STICKIES = "my_stickies", "My Stickies"
+        NEW_AT_PLANE = "new_at_plane", "New at Plane"
+        QUICK_TUTORIAL = "quick_tutorial", "Quick Tutorial"
+
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_user_home_preferences",
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="workspace_user_home_preferences",
+    )
+    key = models.CharField(max_length=255)
+    is_enabled = models.BooleanField(default=True)
+    config = models.JSONField(default=dict)
+    sort_order = models.PositiveIntegerField(default=65535)
+
+    class Meta:
+        unique_together = ["workspace", "user", "key", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "user", "key"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="workspace_user_home_preferences_unique_workspace_user_key_when_deleted_at_null",
+            )
+        ]
+        verbose_name = "Workspace Home Preference"
+        verbose_name_plural = "Workspace Home Preferences"
+        db_table = "workspace_home_preferences"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.workspace.name} {self.user.email} {self.key}"
