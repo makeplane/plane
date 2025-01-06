@@ -125,6 +125,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                   await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
                     ...payload,
                     project_id: projectId?.toString() ?? "",
+                    issue_id: issueId?.toString(),
                   })
                 }
                 containerClassName={containerClassName}

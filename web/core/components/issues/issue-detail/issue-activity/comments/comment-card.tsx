@@ -22,6 +22,7 @@ import { IssueCommentBlock } from "./comment-block";
 
 type TIssueCommentCard = {
   projectId: string;
+  issueId: string;
   workspaceSlug: string;
   commentId: string;
   activityOperations: TActivityOperations;
@@ -34,6 +35,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
   const {
     workspaceSlug,
     projectId,
+    issueId,
     commentId,
     activityOperations,
     ends,
@@ -144,6 +146,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
             <LiteTextEditor
               workspaceId={workspaceId}
               projectId={projectId}
+              issue_id={issueId}
               workspaceSlug={workspaceSlug}
               ref={editorRef}
               id={comment.id}
