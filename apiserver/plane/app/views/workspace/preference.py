@@ -37,14 +37,19 @@ class WorkspacePreferenceViewSet(BaseAPIView):
                         WorkspaceHomePreference(
                             key=key, user=request.user, workspace=workspace
                         )
-                        for index, key in enumerate(create_preference_keys)
+                        for key in create_preference_keys
                     ],
                     batch_size=10,
                     ignore_conflicts=True,
                 )
-        serializer = WorkspaceHomePreferenceSerializer(get_preference, many=True)
+        preference = WorkspaceHomePreference.objects.filter(
+            user=request.user, workspace_id=workspace.id
+        )
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            preference.values("key", "is_enabled", "config", "sort_order"),
+            status=status.HTTP_200_OK,
+        )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def patch(self, request, slug, key):
