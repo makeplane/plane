@@ -14,7 +14,7 @@ type LiteTextReadOnlyEditorWrapperProps = Omit<
   "disabledExtensions" | "fileHandler" | "mentionHandler"
 > & {
   workspaceSlug: string;
-  projectId: string;
+  projectId?: string;
 };
 
 export const LiteTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, LiteTextReadOnlyEditorWrapperProps>(
