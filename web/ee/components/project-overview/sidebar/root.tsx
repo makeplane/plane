@@ -6,8 +6,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Activity } from "lucide-react";
 import { InfoFillIcon, Tabs, UpdatesIcon } from "@plane/ui";
-
 import { ActivitySortRoot } from "@/components/issues";
+import { TSORT_ORDER } from "@/constants/common";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProject, useWorkspace } from "@/hooks/store";
@@ -33,7 +33,7 @@ export const ProjectDetailsSidebar: FC<TEpicDetailsSidebarProps> = observer((pro
   // router
   const { workspaceSlug } = useParams();
   // states
-  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("desc");
+  const [sortOrder, setSortOrder] = React.useState<TSORT_ORDER>(TSORT_ORDER.DESC);
   // store hooks
   const { updateProject } = useProject();
   const { features } = useProjectAdvanced();
@@ -41,7 +41,7 @@ export const ProjectDetailsSidebar: FC<TEpicDetailsSidebarProps> = observer((pro
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
 
   // handler
-  const toggleSortOrder = () => setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  const toggleSortOrder = () => setSortOrder(sortOrder === TSORT_ORDER.ASC ? TSORT_ORDER.DESC : TSORT_ORDER.ASC);
   // derived
   const isProjectUpdatesEnabled =
     features &&

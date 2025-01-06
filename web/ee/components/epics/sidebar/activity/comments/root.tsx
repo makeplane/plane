@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { EIssueServiceType } from "@plane/constants";
 // components
 import { TActivityOperations } from "@/components/issues";
+import { TSORT_ORDER } from "@/constants/common";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web constants
@@ -26,7 +27,7 @@ export const EpicCommentActivityRoot: FC<TEpicCommentActivityRoot> = observer((p
     comment: {},
   } = useIssueDetail(EIssueServiceType.EPICS);
 
-  const activityComments = getActivityCommentByIssueId(issueId);
+  const activityComments = getActivityCommentByIssueId(issueId, TSORT_ORDER.ASC);
 
   if (!activityComments || (activityComments && activityComments.length <= 0)) return <></>;
 

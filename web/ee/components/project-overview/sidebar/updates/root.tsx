@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
 import { ActivitySortRoot } from "@/components/issues";
+import { TSORT_ORDER } from "@/constants/common";
 import { useProjectUpdates } from "@/plane-web/hooks/store/projects/use-project-updates";
 import { TProjectUpdate } from "@/plane-web/types";
 import { UpdateBlock } from "./block";
@@ -15,14 +16,14 @@ export const ProjectUpdates = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // state
   const [showInput, setShowInput] = useState(false);
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [sortOrder, setSortOrder] = useState<TSORT_ORDER>(TSORT_ORDER.DESC);
   // hooks
   const { getUpdatesByProjectId, loader } = useProjectUpdates();
   const { handleUpdateOperations } = useUpdates(workspaceSlug.toString(), projectId.toString());
 
   // handler
   const toggleSortOrder = () => {
-    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    setSortOrder(sortOrder === TSORT_ORDER.ASC ? TSORT_ORDER.DESC : TSORT_ORDER.ASC);
   };
 
   // derived

@@ -1,6 +1,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { EIssueServiceType } from "@plane/constants";
+
+import { TSORT_ORDER } from "@/constants/common";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web components
@@ -33,7 +35,7 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
     comment: {},
   } = useIssueDetail(EIssueServiceType.EPICS);
 
-  const activityComments = getActivityCommentByIssueId(issueId);
+  const activityComments = getActivityCommentByIssueId(issueId, TSORT_ORDER.DESC);
 
   if (!activityComments || (activityComments && activityComments.length <= 0)) return <></>;
 

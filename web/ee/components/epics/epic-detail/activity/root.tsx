@@ -11,6 +11,8 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { IssueCommentCreate } from "@/components/issues";
 import { IssueActivityCommentRoot } from "@/components/issues/issue-detail";
+// constants
+import { TSORT_ORDER } from "@/constants/common";
 // hooks
 import { useIssueDetail, useProject, useUser, useUserPermissions } from "@/hooks/store";
 // plane web components
@@ -184,6 +186,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
               activityOperations={activityOperations}
               showAccessSpecifier={!!project.anchor}
               disabled={disabled}
+              sortOrder={TSORT_ORDER.ASC}
             />
             {!disabled && (
               <IssueCommentCreate

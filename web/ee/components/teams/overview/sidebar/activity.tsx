@@ -9,6 +9,8 @@ import { Loader } from "@plane/ui";
 // components
 import { ActivityBlockComponent } from "@/components/common/activity/activity-block";
 import { ActivitySortRoot } from "@/components/issues";
+// constants
+import { TSORT_ORDER } from "@/constants/common";
 // plane web constants
 import { TEAM_UPDATES_HELPER_MAP } from "@/plane-web/constants/teams";
 // plane web helpers
@@ -63,7 +65,7 @@ export const TeamsOverviewSidebarActivity: FC<TTeamActivityProps> = observer((pr
           <span className="flex items-center gap-2">
             {teamActivitiesLoader === "mutation" ? <Spinner size={12} className="animate-spin" /> : null}
             <ActivitySortRoot
-              sortOrder={teamActivitySortOrder}
+              sortOrder={teamActivitySortOrder as TSORT_ORDER} //TODO: fix this by changing store types.
               toggleSort={() => toggleTeamActivitySortOrder(teamId)}
               className="py-1"
               iconClassName="size-3"
