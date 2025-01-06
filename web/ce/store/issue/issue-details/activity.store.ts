@@ -16,6 +16,7 @@ import {
   TIssueServiceType,
 } from "@plane/types";
 // plane web constants
+import { TSORT_ORDER } from "@/constants/common";
 import { EActivityFilterType } from "@/plane-web/constants/issues";
 // services
 import { IssueActivityService } from "@/services/issue";
@@ -36,20 +37,17 @@ export interface IIssueActivityStoreActions {
 
 export interface IIssueActivityStore extends IIssueActivityStoreActions {
   // observables
-  sortOrder: "asc" | "desc";
   loader: TActivityLoader;
   activities: TIssueActivityIdMap;
   activityMap: TIssueActivityMap;
   // helper methods
   getActivitiesByIssueId: (issueId: string) => string[] | undefined;
   getActivityById: (activityId: string) => TIssueActivity | undefined;
-  getActivityCommentByIssueId: (issueId: string) => TIssueActivityComment[] | undefined;
-  toggleSortOrder: () => void;
+  getActivityCommentByIssueId: (issueId: string, sortOrder: TSORT_ORDER) => TIssueActivityComment[] | undefined;
 }
 
 export class IssueActivityStore implements IIssueActivityStore {
   // observables
-  sortOrder: "asc" | "desc" = "asc";
   loader: TActivityLoader = "fetch";
   activities: TIssueActivityIdMap = {};
   activityMap: TIssueActivityMap = {};
@@ -64,13 +62,11 @@ export class IssueActivityStore implements IIssueActivityStore {
   ) {
     makeObservable(this, {
       // observables
-      sortOrder: observable.ref,
       loader: observable.ref,
       activities: observable,
       activityMap: observable,
       // actions
       fetchActivities: action,
-      toggleSortOrder: action,
     });
     this.serviceType = serviceType;
     // services
@@ -88,7 +84,7 @@ export class IssueActivityStore implements IIssueActivityStore {
     return this.activityMap[activityId] ?? undefined;
   };
 
-  getActivityCommentByIssueId = computedFn((issueId: string) => {
+  getActivityCommentByIssueId = computedFn((issueId: string, sortOrder: TSORT_ORDER) => {
     if (!issueId) return undefined;
 
     let activityComments: TIssueActivityComment[] = [];
@@ -119,14 +115,10 @@ export class IssueActivityStore implements IIssueActivityStore {
       });
     });
 
-    activityComments = orderBy(activityComments, (e) => new Date(e.created_at || 0), this.sortOrder);
+    activityComments = orderBy(activityComments, (e) => new Date(e.created_at || 0), sortOrder);
 
     return activityComments;
   });
-
-  toggleSortOrder = () => {
-    this.sortOrder = this.sortOrder === "asc" ? "desc" : "asc";
-  };
 
   // actions
   public async fetchActivities(
