@@ -38,6 +38,8 @@ export const SidebarUserMenuItem: FC<SidebarUserMenuItemProps> = observer((props
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const { isMobile } = usePlatformOS();
 
+  const isActive = pathname === item.href;
+
   if (item.key === "drafts" && draftIssueCount === 0) return null;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -63,11 +65,11 @@ export const SidebarUserMenuItem: FC<SidebarUserMenuItemProps> = observer((props
       <Link href={item.href} onClick={() => handleLinkClick(item.key)}>
         <SidebarNavItem
           className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
-          isActive={pathname.startsWith(item.href)}
+          isActive={isActive}
         >
           <div className="flex items-center gap-1.5 py-[1px]">
             <item.Icon className="size-4 flex-shrink-0" />
-            {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{t(item.key)}</p>}
+            {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{t(item.labelTranslationKey)}</p>}
           </div>
           {item.key === "notifications" && (
             <NotificationAppSidebarOption
