@@ -1,15 +1,15 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { THomeWidgetKeys, THomeWidgetProps, TWidgetKeys } from "@plane/types";
+import { THomeWidgetKeys, THomeWidgetProps } from "@plane/types";
 // hooks
 import { useHome } from "@/hooks/store/use-home";
 // components
 import { HomePageHeader } from "@/plane-web/components/home/header";
+import { StickiesWidget } from "@/plane-web/components/stickies";
 import { RecentActivityWidget } from "./widgets";
 import { DashboardQuickLinks } from "./widgets/links";
 import { ManageWidgetsModal } from "./widgets/manage";
-import { StickiesWidget } from "@/plane-web/components/stickies";
 
 const WIDGETS_LIST: {
   [key in THomeWidgetKeys]: { component: React.FC<THomeWidgetProps>; fullWidth: boolean };

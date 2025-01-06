@@ -67,3 +67,10 @@ export type TLinkMap = {
 export type TLinkIdMap = {
   [workspace_slug: string]: string[];
 };
+
+export type TWidgetEntityData = {
+  key: string;
+  name: string;
+  is_enabled: boolean;
+  sort_order: number;
+};
