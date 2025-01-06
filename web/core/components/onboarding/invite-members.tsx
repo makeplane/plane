@@ -17,7 +17,7 @@ import {
 // icons
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
-import { Listbox, Transition } from "@headlessui/react";
+import { Listbox } from "@headlessui/react";
 // types
 import { IUser, IWorkspace } from "@plane/types";
 // ui
@@ -29,7 +29,6 @@ import { ROLE, ROLE_DETAILS } from "@/constants/workspace";
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
-import useDynamicDropdownPosition from "@/hooks/use-dynamic-dropdown";
 // plane web constants
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
@@ -102,13 +101,8 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
     watch,
   } = props;
 
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-
-  // useDynamicDropdownPosition(isDropdownOpen, () => setIsDropdownOpen(false), buttonRef, dropdownRef);
 
   const email = watch(`emails.${index}.email`);
 
