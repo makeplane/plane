@@ -29,7 +29,7 @@ from plane.db.models import (
     DeployBoard,
     PageVersion,
 )
-from plane.ee.models import TeamSpacePage, TeamSpaceProject, TeamSpaceMember
+from plane.ee.models import TeamSpacePage, TeamSpaceProject
 from plane.ee.serializers import (
     TeamSpacePageDetailSerializer,
     TeamSpacePageSerializer,

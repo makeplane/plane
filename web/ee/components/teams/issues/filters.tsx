@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane constants
-import { EIssueFilterType, EIssuesStoreType, EIssueLayoutTypes } from "@plane/constants";
+import { EIssueFilterType, EIssuesStoreType, EIssueLayoutTypes, ETeamEntityScope } from "@plane/constants";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // components
@@ -14,6 +14,8 @@ import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useLabel, useMember, useIssues } from "@/hooks/store";
+// plane web imports
+import { useTeams } from "@/plane-web/hooks/store";
 
 type Props = {
   teamId: string;
@@ -27,11 +29,15 @@ export const TeamHeaderFilters = observer((props: Props) => {
     workspace: { workspaceMemberIds },
   } = useMember();
   const {
-    issuesFilter: { issueFilters, updateFilters },
+    issuesFilter: { issueFilters, updateFilters, getTeamScope },
   } = useIssues(EIssuesStoreType.TEAM);
   const { workspaceLabels } = useLabel();
+  const { getTeamMemberIds } = useTeams();
   // derived values
   const activeLayout = issueFilters?.displayFilters?.layout;
+  const teamMemberIds = getTeamMemberIds(teamId);
+  const currentScope = getTeamScope(teamId);
+  const memberIds = currentScope === ETeamEntityScope.TEAM ? teamMemberIds : workspaceMemberIds;
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
@@ -99,7 +105,7 @@ export const TeamHeaderFilters = observer((props: Props) => {
             activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.team_issues[activeLayout] : undefined
           }
           labels={workspaceLabels}
-          memberIds={workspaceMemberIds ?? undefined}
+          memberIds={memberIds ?? undefined}
         />
       </FiltersDropdown>
       <FiltersDropdown title="Display" placement="bottom-end">

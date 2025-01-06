@@ -8,13 +8,13 @@ from rest_framework.response import Response
 
 # Django imports
 from django.db import transaction
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Exists, OuterRef
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Module imports
 from plane.db.models import IssueView, Workspace, UserFavorite
-from plane.ee.models import TeamSpaceView, TeamSpaceProject, TeamSpaceMember
+from plane.ee.models import TeamSpaceView, TeamSpaceProject
 from .base import TeamBaseEndpoint
 from plane.ee.permissions import TeamSpacePermission
 from plane.ee.serializers import TeamSpaceViewSerializer

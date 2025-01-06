@@ -4,7 +4,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // base class
 import { computedFn } from "mobx-utils";
 // plane constants
-import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import { EIssueFilterType, EIssuesStoreType, ETeamEntityScope } from "@plane/constants";
 // types
 import {
   IIssueFilterOptions,
@@ -24,7 +24,12 @@ import { IBaseIssueFilterStore, IssueFilterHelperStore } from "@/store/issue/hel
 import { IIssueRootStore } from "@/store/issue/root.store";
 
 export interface ITeamIssuesFilter extends IBaseIssueFilterStore {
+  // observables
+  scopeMap: Record<string, ETeamEntityScope>; // teamId -> scope
   //helper actions
+  initTeamScope: (teamId: string) => void;
+  getTeamScope: (teamId: string) => ETeamEntityScope | undefined;
+  updateTeamScope: (teamId: string, scope: ETeamEntityScope) => void;
   getFilterParams: (
     options: IssuePaginationOptions,
     teamId: string,
@@ -45,6 +50,7 @@ export interface ITeamIssuesFilter extends IBaseIssueFilterStore {
 
 export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIssuesFilter {
   // observables
+  scopeMap: Record<string, ETeamEntityScope> = {}; // teamId -> scope
   filters: { [teamId: string]: IIssueFilters } = {};
   // root store
   rootIssueStore: IIssueRootStore;
@@ -55,10 +61,14 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
     super();
     makeObservable(this, {
       // observables
+      scopeMap: observable,
       filters: observable,
       // computed
       issueFilters: computed,
       appliedFilters: computed,
+      // helper actions
+      initTeamScope: action,
+      updateTeamScope: action,
       // actions
       fetchFilters: action,
       updateFilters: action,
@@ -89,6 +99,38 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
     if (!teamId) return undefined;
     return this.getAppliedFilters(teamId);
   }
+
+  // helpers
+  /**
+   * Initializes team views scope
+   * @param teamId
+   */
+  initTeamScope = (teamId: string) => {
+    set(this.scopeMap, teamId, "teams");
+  };
+
+  /**
+   * Returns team scope
+   * @param teamId
+   * @returns ETeamEntityScope | undefined
+   */
+  getTeamScope = computedFn((teamId: string) => {
+    if (!this.scopeMap[teamId]) {
+      this.initTeamScope(teamId);
+    }
+    return this.scopeMap[teamId];
+  });
+
+  /**
+   * Updates team scope
+   * @param teamId
+   * @param scope
+   */
+  updateTeamScope = (teamId: string, scope: ETeamEntityScope) => {
+    runInAction(() => {
+      set(this.scopeMap, teamId, scope);
+    });
+  };
 
   /**
    * @description This method is used to get the issue filters for the team
@@ -133,9 +175,10 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
       groupId: string | undefined,
       subGroupId: string | undefined
     ) => {
+      const currentScope = this.getTeamScope(teamId);
       const filterParams = this.getAppliedFilters(teamId);
       const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
-      return paginationParams;
+      return { ...paginationParams, scope: currentScope };
     }
   );
 

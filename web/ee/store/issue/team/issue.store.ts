@@ -1,4 +1,6 @@
 import { action, makeObservable, runInAction } from "mobx";
+// plane imports
+import { ETeamEntityScope } from "@plane/constants";
 // types
 import {
   TIssue,
@@ -167,7 +169,7 @@ export class TeamIssues extends BaseIssuesStore implements ITeamIssues {
   };
 
   /**
-   * Override inherited create issue, to only add issue to the list if the project is part of the team
+   * Override inherited create issue, to only add issue to the list based on current team issue scope
    * @param workspaceSlug
    * @param projectId
    * @param data
@@ -175,8 +177,16 @@ export class TeamIssues extends BaseIssuesStore implements ITeamIssues {
    * @returns
    */
   override createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, teamId: string) => {
+    const currentScope = this.teamIssueFilterStore.getTeamScope(teamId);
     const teamProjectIds = this.rootIssueStore.rootStore.teamRoot.team.getTeamProjectIds(teamId);
-    return await super.createIssue(workspaceSlug, projectId, data, undefined, teamProjectIds?.includes(projectId));
+    const teamMemberIds = this.rootIssueStore.rootStore.teamRoot.team.getTeamMemberIds(teamId);
+    const shouldUpdateList =
+      teamProjectIds?.includes(projectId) &&
+      (currentScope === ETeamEntityScope.TEAM
+        ? data.assignee_ids?.some((assigneeId) => teamMemberIds?.includes(assigneeId))
+        : true);
+
+    return await super.createIssue(workspaceSlug, projectId, data, undefined, shouldUpdateList);
   };
 
   // Using aliased names as they cannot be overridden in other stores

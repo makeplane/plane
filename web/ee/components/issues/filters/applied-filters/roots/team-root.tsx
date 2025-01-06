@@ -58,7 +58,7 @@ export const TeamAppliedFiltersRoot: React.FC = observer(() => {
   if (Object.keys(appliedFilters).length === 0) return null;
 
   return (
-    <Header variant={EHeaderVariant.TERNARY}>
+    <Header variant={EHeaderVariant.TERNARY} className="border-none py-0">
       <AppliedFiltersList
         appliedFilters={appliedFilters}
         handleClearAllFilters={handleClearAllFilters}

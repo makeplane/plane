@@ -13,8 +13,9 @@ from plane.db.models import (
     FileAsset,
     Workspace,
     ProjectMember,
+    IssueAssignee,
 )
-from plane.ee.models import TeamSpaceProject, TeamSpaceUserProperty
+from plane.ee.models import TeamSpaceProject, TeamSpaceUserProperty, TeamSpaceMember
 from plane.ee.serializers import TeamSpaceUserPropertySerializer
 from .base import TeamBaseEndpoint
 from plane.ee.permissions import TeamSpacePermission
@@ -87,10 +88,20 @@ class TeamSpaceIssueEndpoint(TeamBaseEndpoint):
             )
             .filter(project_id__in=accessible_project_ids)
         )
-        filters = issue_filters(request.query_params, "GET")
 
-        order_by_param = request.GET.get("order_by", "-created_at")
-        issue_queryset = issue_queryset.filter(**filters)
+        # Get the issues scope
+        scope = request.GET.get("scope", "projects")
+        if scope == "teams":
+            team_member_ids = TeamSpaceMember.objects.filter(
+                team_space_id=team_space_id
+            ).values_list("member_id", flat=True)
+            issue_ids = IssueAssignee.objects.filter(
+                workspace__slug=slug, assignee_id__in=team_member_ids
+            ).values_list("issue_id", flat=True)
+            issue_queryset = issue_queryset.filter(
+                pk__in=issue_ids,
+            )
+
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
             issue_queryset=issue_queryset, order_by_param=order_by_param
