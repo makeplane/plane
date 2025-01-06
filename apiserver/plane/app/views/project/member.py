@@ -2,6 +2,12 @@
 from rest_framework.response import Response
 from rest_framework import status
 
+import json
+# Django imports
+from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
+
+
 # Module imports
 from .base import BaseViewSet, BaseAPIView
 from plane.app.serializers import (
@@ -20,7 +26,7 @@ from plane.db.models import Project, ProjectMember, IssueUserProperty, Workspace
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
 from plane.app.permissions.base import allow_permission, ROLE
-
+from plane.ee.bgtasks.project_activites_task import project_activity
 
 class ProjectMemberViewSet(BaseViewSet):
     serializer_class = ProjectMemberAdminSerializer
@@ -169,6 +175,17 @@ class ProjectMemberViewSet(BaseViewSet):
         ]
         # Serialize the project members
         serializer = ProjectMemberRoleSerializer(project_members, many=True)
+        project_activity.delay(
+            type="project.activity.updated",
+            requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+            actor_id=str(request.user.id),
+            project_id=str(project_id),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+
         # Return the serialized data
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -270,6 +287,21 @@ class ProjectMemberViewSet(BaseViewSet):
 
         project_member.is_active = False
         project_member.save()
+        project_activity.delay(
+            type="project.activity.updated",
+            requested_data=json.dumps({"members": []}),
+            actor_id=str(request.user.id),
+            project_id=str(project_id),
+            current_instance=json.dumps(
+                {
+                    "members": [str(project_member.member_id)],
+                    "removed": True
+                }
+            ), 
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -298,6 +330,21 @@ class ProjectMemberViewSet(BaseViewSet):
         # Deactivate the user
         project_member.is_active = False
         project_member.save()
+        project_activity.delay(
+            type="project.activity.updated",
+            requested_data=json.dumps({"members": []}),
+            actor_id=str(request.user.id),
+            project_id=str(project_id),
+            current_instance=json.dumps(
+                {
+                    "members": [str(request.user.id)],
+                    "removed": False
+                }
+            ), 
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
