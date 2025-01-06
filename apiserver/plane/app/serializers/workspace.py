@@ -150,29 +150,12 @@ class IssueRecentVisitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Issue
-        fields = [
-            "name",
-            "state",
-            "priority",
-            "assignees",
-            "type",
-            "sequence_id",
-            "project_id",
-            "project_identifier",
-        ]
+        fields = ["id", "name", "state", "priority", "assignees", "type", "sequence_id", "project_id", "project_identifier", ]        
 
     def get_project_identifier(self, obj):
         project = obj.project
 
         return project.identifier if project else None
-
-
-class ProjectMemberSerializer(BaseSerializer):
-    member = UserLiteSerializer(read_only=True)
-
-    class Meta:
-        model = ProjectMember
-        fields = ["member"]
 
 
 class ProjectRecentVisitSerializer(serializers.ModelSerializer):
@@ -183,14 +166,9 @@ class ProjectRecentVisitSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "logo_props", "project_members", "identifier"]
 
     def get_project_members(self, obj):
-        members = ProjectMember.objects.filter(project_id=obj.id).select_related(
-            "member"
-        )
-
-        serializer = ProjectMemberSerializer(members, many=True)
-        return serializer.data
-
-
+        members = ProjectMember.objects.filter(project_id=obj.id).values_list("member", flat=True)
+        return members
+  
 class PageRecentVisitSerializer(serializers.ModelSerializer):
     project_id = serializers.SerializerMethodField()
     project_identifier = serializers.SerializerMethodField()
