@@ -116,11 +116,10 @@ export const Table = Node.create({
             const { selection } = tr;
             const position = selection.$from.before(selection.$from.depth);
 
-            console.log("ran");
             // Delete any existing content at the current position if it's an empty paragraph
             const nodeAfter = tr.doc.nodeAt(position);
             if (nodeAfter && nodeAfter.type.name === "paragraph" && nodeAfter.content.size === 0) {
-              tr.delete(position, position + 2);
+              tr.delete(position, position + nodeAfter.nodeSize);
             }
 
             // Insert the table
