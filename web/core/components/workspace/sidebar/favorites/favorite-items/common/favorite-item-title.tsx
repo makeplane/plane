@@ -3,6 +3,7 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Tooltip } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { useAppTheme } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -28,7 +29,7 @@ export const FavoriteItemTitle: FC<Props> = observer((props) => {
   };
 
   return (
-    <Tooltip tooltipContent={title} isMobile={isMobile} disabled={!isSidebarCollapsed} position="right">
+    <Tooltip tooltipContent={title} isMobile={isMobile} position="right" className={cn(!isSidebarCollapsed && "ml-8")}>
       <Link href={href} className={isSidebarCollapsed ? collapsedClass : linkClass} draggable onClick={handleOnClick}>
         <span className="flex items-center justify-center size-5">{icon}</span>
         {!isSidebarCollapsed && <span className="text-sm leading-5 font-medium flex-1 truncate">{title}</span>}
