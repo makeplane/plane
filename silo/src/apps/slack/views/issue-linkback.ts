@@ -65,9 +65,11 @@ export const createSlackLinkback = (
   const contextElements: any[] = [];
 
   if (project.name) {
+    const emoji = project.logo_props && project.logo_props?.in_use === "emoji" && project.logo_props?.emoji && project.logo_props?.emoji?.value ? convertUnicodeToSlackEmoji(project.logo_props?.emoji?.value) : "📋";
+
     contextElements.push({
       type: "mrkdwn",
-      text: `${project.logo_props && project.logo_props.emoji ? convertUnicodeToSlackEmoji(project.logo_props.emoji.value) : ""} <${env.APP_BASE_URL}/${workspaceSlug}/projects/${issue.project}/issues|${project.name}>`,
+      text: `${emoji} <${env.APP_BASE_URL}/${workspaceSlug}/projects/${issue.project}/issues|${project.name}>`,
     });
   }
 

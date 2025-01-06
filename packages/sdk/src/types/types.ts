@@ -205,7 +205,18 @@ type IProject = {
   cover_image: string;
   archive_in: number;
   close_in: number;
-  logo_props: Record<string, any>;
+  logo_props: {
+    in_use: "emoji" | "icon";
+    emoji?: {
+      value?: string;
+      url?: string;
+    };
+    icon?: {
+      name?: string;
+      color?: string;
+      background_color?: string;
+    };
+  };
   archived_at: string | null;
   start_date: string | null;
   target_date: string | null;

@@ -1,17 +1,16 @@
 import { TViewSubmissionPayload } from "@plane/etl/slack";
-import { createSlackLinkback } from "../../views/issue-linkback";
-import { getConnectionDetails } from "../../helpers/connection-details";
-import { parseIssueFormData } from "../../helpers/parse-issue-form";
-import { SlackPrivateMetadata } from "../../types/types";
-import { ENTITIES } from "../../helpers/constants";
 import { createEntityConnection, getEntityConnectionByEntityId } from "@/db/query/connection";
 import { logger } from "@/logger";
+import { getConnectionDetails } from "../../helpers/connection-details";
+import { ENTITIES } from "../../helpers/constants";
+import { parseIssueFormData } from "../../helpers/parse-issue-form";
+import { SlackPrivateMetadata } from "../../types/types";
+import { createSlackLinkback } from "../../views/issue-linkback";
 
 export const handleViewSubmission = async (data: TViewSubmissionPayload) => {
   const { workspaceConnection, slackService, planeClient } = await getConnectionDetails(data.team.id);
   const projects = await planeClient.project.list(workspaceConnection.workspaceSlug);
   projects.results.filter((project) => project.is_member === true);
-  // @ts-ignore
   const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata;
 
   const parsedData = parseIssueFormData(data.view.state.values);
