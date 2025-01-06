@@ -18,7 +18,7 @@ import { PROFILE_ACTION_LINKS } from "@/constants/profile";
 import { cn } from "@/helpers/common.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useAppTheme, useUser, useUserSettings, useWorkspace } from "@/hooks/store";
+import { useAppTheme, useUser, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const WORKSPACE_ACTION_LINKS = [
@@ -44,7 +44,7 @@ export const ProfileLayoutSidebar = observer(() => {
   // store hooks
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: currentUser, signOut } = useUser();
-  const { data: currentUserSettings } = useUserSettings();
+  // const { currentUserSettings } = useUser();
   const { workspaces } = useWorkspace();
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
@@ -52,9 +52,10 @@ export const ProfileLayoutSidebar = observer(() => {
   const workspacesList = Object.values(workspaces ?? {});
 
   // redirect url for normal mode
+  // FIXME:
   const redirectWorkspaceSlug =
-    currentUserSettings?.workspace?.last_workspace_slug ||
-    currentUserSettings?.workspace?.fallback_workspace_slug ||
+    // currentUserSettings?.workspace?.last_workspace_slug ||
+    // currentUserSettings?.workspace?.fallback_workspace_slug ||
     "";
 
   const ref = useRef<HTMLDivElement>(null);

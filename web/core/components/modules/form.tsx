@@ -83,8 +83,10 @@ export const ModuleForm: React.FC<Props> = (props) => {
                   <ProjectDropdown
                     value={value}
                     onChange={(val) => {
-                      onChange(val);
-                      setActiveProject(val);
+                      if (!Array.isArray(val)) {
+                        onChange(val);
+                        setActiveProject(val);
+                      }
                     }}
                     multiple={false}
                     buttonVariant="border-with-text"

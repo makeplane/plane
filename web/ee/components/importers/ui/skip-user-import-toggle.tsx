@@ -1,0 +1,50 @@
+import React from "react";
+import cn from "classnames";
+
+interface SkipUserImportProps {
+  importSourceName?: string;
+  userSkipToggle: boolean;
+  handleUserSkipToggle: (value: boolean) => void;
+  className?: string;
+}
+
+export const SkipUserImport: React.FC<SkipUserImportProps> = ({
+  importSourceName = "Jira",
+  userSkipToggle,
+  handleUserSkipToggle,
+  className = "",
+}) => {
+  const handleClick = (value: boolean) => {
+    handleUserSkipToggle(value);
+  };
+
+  return (
+    <div className={cn("flex flex-col gap-2", className)}>
+      <div
+        className="inline-flex items-center gap-2 cursor-pointer"
+        onClick={() => handleClick(!userSkipToggle)}
+      >
+        <div
+          className={cn(
+            "flex-shrink-0 w-4 h-4 p-1 relative flex justify-center items-center border border-custom-border-300 overflow-hidden rounded-sm transition-all",
+            { "border-custom-primary-100": userSkipToggle }
+          )}
+        >
+          <div
+            className={cn("w-full h-full bg-custom-background-80 transition-all", {
+              "bg-custom-primary-100": userSkipToggle,
+            })}
+          />
+        </div>
+        <div className="text-sm text-custom-text-100">Skip importing User data</div>
+      </div>
+
+      {userSkipToggle && (
+        <div className="text-sm text-red-500">
+          Skipping user import will result in issues, comments, and other data from {importSourceName} being created by the user
+          performing the migration in Plane. You can still manually add users later.
+        </div>
+      )}
+    </div>
+  );
+};

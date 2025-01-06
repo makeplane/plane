@@ -1,9 +1,10 @@
 import React, { FC, Fragment, useEffect, useState } from "react";
 import { Tab } from "@headlessui/react";
-import { LucideProps } from "lucide-react";
 // helpers
 import { useLocalStorage } from "@plane/hooks";
 import { cn } from "../../helpers";
+// types
+import { LucideProps } from "lucide-react";
 
 type TabItem = {
   key: string;
