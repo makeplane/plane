@@ -143,10 +143,7 @@ class CycleViewSet(BaseViewSet):
                         & Q(end_date__gte=current_time_in_utc),
                         then=Value("CURRENT"),
                     ),
-                    When(
-                        start_date__gt=current_time_in_utc,
-                        then=Value("UPCOMING"),
-                    ),
+                    When(start_date__gt=current_time_in_utc, then=Value("UPCOMING")),
                     When(end_date__lt=current_time_in_utc, then=Value("COMPLETED")),
                     When(
                         Q(start_date__isnull=True) & Q(end_date__isnull=True),
@@ -259,7 +256,9 @@ class CycleViewSet(BaseViewSet):
             "created_by",
         )
         datetime_fields = ["start_date", "end_date"]
-        data = user_timezone_converter(data, datetime_fields, request.user.user_timezone)
+        data = user_timezone_converter(
+            data, datetime_fields, request.user.user_timezone
+        )
         return Response(data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -457,7 +456,9 @@ class CycleViewSet(BaseViewSet):
 
         queryset = queryset.first()
         datetime_fields = ["start_date", "end_date"]
-        data = user_timezone_converter(data, datetime_fields, request.user.user_timezone)
+        data = user_timezone_converter(
+            data, datetime_fields, request.user.user_timezone
+        )
 
         recent_visited_task.delay(
             slug=slug,
@@ -533,8 +534,17 @@ class CycleDateCheckEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        start_date = convert_to_utc(str(start_date), project_id, is_start_date=True)
-        end_date = convert_to_utc(str(end_date), project_id)
+        is_start_date_end_date_equal = (
+            True if str("start_date") == str("end_date") else False
+        )
+        start_date = convert_to_utc(
+            date=str(start_date), project_id=project_id, is_start_date=True
+        )
+        end_date = convert_to_utc(
+            date=str(end_date),
+            project_id=project_id,
+            is_start_date_end_date_equal=is_start_date_end_date_equal,
+        )
 
         # Check if any cycle intersects in the given interval
         cycles = Cycle.objects.filter(
