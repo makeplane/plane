@@ -2,7 +2,8 @@ import { useCallback, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { TDependencyType, TTeamDependencyIssue } from "@plane/types";
+import { EDependencyType } from "@plane/constants";
+import { TTeamDependencyIssue } from "@plane/types";
 import { Avatar, AvatarGroup, PriorityIcon, StateGroupIcon, Tooltip } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // components
@@ -13,7 +14,7 @@ import { useIssueDetail, useMember, useProject } from "@/hooks/store";
 import { IssueIdentifier } from "@/plane-web/components/issues";
 
 type TTeamDependencyIssueListItemProps = {
-  type: TDependencyType;
+  type: EDependencyType;
   issue: TTeamDependencyIssue;
 };
 

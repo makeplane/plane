@@ -4,6 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
+import { TTeamActivity } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { ActivityBlockComponent } from "@/components/common/activity/activity-block";
@@ -11,11 +12,9 @@ import { ActivitySortRoot } from "@/components/issues";
 // plane web constants
 import { TEAM_UPDATES_HELPER_MAP } from "@/plane-web/constants/teams";
 // plane web helpers
-import { getTeamActivityKey } from "@/plane-web/helpers/team-activity";
+import { getTeamActivityKey } from "@/plane-web/helpers/team-helper";
 // plane web services
 import { useTeamUpdates } from "@/plane-web/hooks/store/teams/use-team-updates";
-// plane web types
-import { TTeamActivity } from "@/plane-web/types";
 
 type TTeamActivityProps = {
   teamId: string;

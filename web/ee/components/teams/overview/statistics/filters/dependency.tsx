@@ -1,11 +1,12 @@
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 // plane imports
-import { TStatisticsFilterProps, TDependencyType } from "@plane/types";
+import { EDependencyType } from "@plane/constants";
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { TEAM_STATISTICS_DEPENDENCY_MAP } from "@/plane-web/constants/teams";
+import { TStatisticsFilterProps } from "@/plane-web/types/teams";
 
 export const StatisticsDependencyFilter: React.FC<TStatisticsFilterProps<"dependency_type">> = observer((props) => {
   const { value, isLoading, buttonContainerClassName, chevronClassName, handleFilterChange } = props;
@@ -19,12 +20,12 @@ export const StatisticsDependencyFilter: React.FC<TStatisticsFilterProps<"depend
     <Dropdown
       value={value ?? ""}
       options={options}
-      onChange={(val) => handleFilterChange(val === value ? undefined : (val as TDependencyType))}
+      onChange={(val) => handleFilterChange(val === value ? undefined : (val as EDependencyType))}
       keyExtractor={(option) => option.data}
       buttonContainerClassName={buttonContainerClassName}
       buttonContent={(isOpen, val) => (
         <span className="flex items-center gap-1">
-          {val && typeof val === "string" ? TEAM_STATISTICS_DEPENDENCY_MAP[val as TDependencyType] : "Dependency"}
+          {val && typeof val === "string" ? TEAM_STATISTICS_DEPENDENCY_MAP[val as EDependencyType] : "Dependency"}
           <ChevronDown className={cn(chevronClassName, isOpen ? "rotate-180" : "rotate-0")} />
         </span>
       )}

@@ -4,8 +4,9 @@ import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
-// plane imports
 import useSWR from "swr";
+// plane imports
+import { EDependencyType } from "@plane/constants/src/teams";
 import { Collapsible, CollapsibleButton, Tabs } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
@@ -65,15 +66,15 @@ export const TeamDependenciesRoot: FC<Props> = observer((props) => {
   const TEAM_DEPENDENCY_TYPE_LIST = useMemo(
     () => [
       {
-        key: "blocking",
+        key: EDependencyType.BLOCKING,
         label: "Blocking",
-        content: <TeamDependencyIssueList teamId={teamId} type="blocking" />,
+        content: <TeamDependencyIssueList teamId={teamId} type={EDependencyType.BLOCKING} />,
         disabled: teamDependenciesLoader === "init-loader" || (teamDependencies?.blocking_issues.length ?? 0) === 0,
       },
       {
-        key: "blocked",
+        key: EDependencyType.BLOCKED_BY,
         label: "Blocked",
-        content: <TeamDependencyIssueList teamId={teamId} type="blocked_by" />,
+        content: <TeamDependencyIssueList teamId={teamId} type={EDependencyType.BLOCKED_BY} />,
         disabled: teamDependenciesLoader === "init-loader" || (teamDependencies?.blocked_by_issues.length ?? 0) === 0,
       },
     ],

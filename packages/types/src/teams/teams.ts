@@ -1,4 +1,4 @@
-import { TIssue, TLogoProps, TStackChartData, TStateGroups } from "@plane/types";
+import { TIssue, TLogoProps, TStateGroups, TWorkspaceBaseActivity, TBaseActivityVerbs, IUserLite } from "@plane/types";
 
 export type TTeam = {
   id: string;
@@ -48,34 +48,39 @@ export type TTeamEntities = {
     views: number;
     total: number;
   };
-};
-
-export type TTeamScope = "teams" | "projects";
+}; 
 
 export type TCreateUpdateTeamModal = {
   isOpen: boolean;
   teamId: string | undefined;
 };
 
-export type TTeamAnalyticsDataKeys = "projects" | "members";
+// --------------- Team Activity & Comments ---------------
 
-// export type TTeamAnalyticsValueKeys = "issues" | "points";
-export type TTeamAnalyticsValueKeys = "issues";
+export type TTeamActivityFields =
+  | "team_space"
+  | "name"
+  | "description"
+  | "lead"
+  | "projects"
+  | "members"
+  | "view"
+  | "page";
+
+export type TTeamActivityVerbs = TBaseActivityVerbs;
+
+export type TTeamActivity = TWorkspaceBaseActivity<TTeamActivityFields, TTeamActivityVerbs>;
+
+export type TTeamActivityKeys = `${TTeamActivityFields}_${TTeamActivityVerbs}`;
+
+export type TTeamReaction = {
+  id: string;
+  reaction: string;
+  actor: string;
+  actor_detail: IUserLite;
+};
 
 // --------------- Team Workload ---------------
-
-export type TWorkloadXAxisKeys = "target_date" | "start_date" | "priority";
-
-export type TWorkloadDataKeys = "completed" | "pending" | "overdue";
-
-export type TWorkloadFilter = {
-  yAxisKey: TTeamAnalyticsValueKeys;
-  xAxisKey: TWorkloadXAxisKeys;
-};
-
-export type TTeamWorkloadChart = {
-  distribution: TStackChartData<TWorkloadXAxisKeys, TWorkloadDataKeys>[];
-};
 
 export type TTeamWorkloadSummary = {
   backlog_issues: number;
@@ -87,8 +92,6 @@ export type TTeamWorkloadSummary = {
 };
 
 // --------------- Team Dependencies ---------------
-
-export type TDependencyType = "blocking" | "blocked_by";
 
 export type TTeamDependencyIssue = Pick<
   TIssue,
@@ -104,27 +107,7 @@ export type TTeamDependencies = {
 
 // --------------- Team Statistics ---------------
 
-export type TStatisticsLegend = "state" | "priority";
-
-export type TStatisticsFilter = {
-  data_key: TTeamAnalyticsDataKeys;
-  value_key: TTeamAnalyticsValueKeys;
-  issue_type: string[]; // issue type ids
-  state_group: TStateGroups[]; // state group names
-  dependency_type: TDependencyType | undefined;
-  target_date: string[];
-  legend: TStatisticsLegend;
-};
-
 export type TTeamStatistics = {
   identifier: string;
   count: number;
 }[];
-
-export type TStatisticsFilterProps<K extends keyof TStatisticsFilter> = {
-  value: TStatisticsFilter[K];
-  isLoading: boolean;
-  buttonContainerClassName?: string;
-  chevronClassName?: string;
-  handleFilterChange: (value: TStatisticsFilter[K]) => Promise<void>;
-};

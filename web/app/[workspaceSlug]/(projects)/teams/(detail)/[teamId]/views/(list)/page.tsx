@@ -4,7 +4,8 @@ import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// plane types
+// plane imports
+import { ETeamEntityScope } from "@plane/constants";
 import { TViewFilterProps } from "@plane/types";
 // constants
 import { Tabs } from "@plane/ui";
@@ -12,9 +13,9 @@ import { ViewAppliedFiltersList } from "@/components/views/applied-filters";
 import { EViewAccess } from "@/constants/views";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
-// plane web components
+// plane web imports
 import { TeamViewsList } from "@/plane-web/components/teams/views";
-// plane web hooks
+import { getTeamEntityScopeLabel } from "@/plane-web/helpers/team-helper";
 import { useTeamViews } from "@/plane-web/hooks/store";
 
 const TeamViewsPage = observer(() => {
@@ -22,9 +23,17 @@ const TeamViewsPage = observer(() => {
   const workspaceSlug = routerWorkspaceSlug!.toString();
   const teamId = routerTeamId!.toString();
   // store hooks
-  const { getTeamViewsLoader, getTeamViewsFilters, fetchTeamViews, updateTeamScope, updateFilters, clearAllFilters } =
-    useTeamViews();
+  const {
+    getTeamViewsScope,
+    getTeamViewsLoader,
+    getTeamViewsFilters,
+    fetchTeamViews,
+    updateTeamScope,
+    updateFilters,
+    clearAllFilters,
+  } = useTeamViews();
   // derived values
+  const teamViewsScope = getTeamViewsScope(teamId);
   const teamViewsLoader = getTeamViewsLoader(teamId);
   const teamViewsFilters = getTeamViewsFilters(teamId);
   const isFiltersApplied = calculateTotalFilters(teamViewsFilters?.filters ?? {}) !== 0;
@@ -64,17 +73,17 @@ const TeamViewsPage = observer(() => {
   const TEAM_VIEWS_TABS = useMemo(
     () => [
       {
-        key: "team",
-        label: "Team",
+        key: ETeamEntityScope.TEAM,
+        label: getTeamEntityScopeLabel(ETeamEntityScope.TEAM),
         content: <TeamViewsList teamId={teamId} />,
-        onClick: () => updateTeamScope(workspaceSlug, teamId, "teams"),
+        onClick: () => updateTeamScope(workspaceSlug, teamId, ETeamEntityScope.TEAM),
         disabled: teamViewsLoader === "init-loader",
       },
       {
-        key: "project",
-        label: "Project",
+        key: ETeamEntityScope.PROJECT,
+        label: getTeamEntityScopeLabel(ETeamEntityScope.PROJECT),
         content: <TeamViewsList teamId={teamId} />,
-        onClick: () => updateTeamScope(workspaceSlug, teamId, "projects"),
+        onClick: () => updateTeamScope(workspaceSlug, teamId, ETeamEntityScope.PROJECT),
         disabled: teamViewsLoader === "init-loader",
       },
     ],
@@ -86,7 +95,7 @@ const TeamViewsPage = observer(() => {
       <Tabs
         tabs={TEAM_VIEWS_TABS}
         storageKey={`teams-views-${teamId}`}
-        defaultTab="teams"
+        defaultTab={teamViewsScope}
         size="sm"
         tabListContainerClassName="px-6 py-2 border-b border-custom-border-200 divide-x divide-custom-border-200"
         tabListClassName="my-2 max-w-36"

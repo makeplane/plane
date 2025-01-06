@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
+// plane imports
+import { EDependencyType } from "@plane/constants";
 // components
-import { TDependencyType } from "@plane/types";
 import { ListLayout } from "@/components/core/list/list-root";
 // plane web hooks
 import { useTeamAnalytics } from "@/plane-web/hooks/store/teams/use-team-analytics";
@@ -9,7 +10,7 @@ import { TeamDependencyIssueListItem } from "./list-item";
 
 type TTeamDependencyIssueListProps = {
   teamId: string;
-  type: TDependencyType;
+  type: EDependencyType;
 };
 
 export const TeamDependencyIssueList = observer((props: TTeamDependencyIssueListProps) => {

@@ -1,23 +1,22 @@
 import { ReactNode } from "react";
 // plane imports
-import { EIssueCommentAccessSpecifier } from "@plane/constants";
-import { TWorkspaceBaseActivity, TBaseActivityVerbs, IUserLite } from "@plane/types";
-
-export type TTeamActivityFields =
-  | "team_space"
-  | "name"
-  | "description"
-  | "lead"
-  | "projects"
-  | "members"
-  | "view"
-  | "page";
-
-export type TTeamActivityVerbs = TBaseActivityVerbs;
-
-export type TTeamActivity = TWorkspaceBaseActivity<TTeamActivityFields, TTeamActivityVerbs>;
-
-export type TTeamActivityKeys = `${TTeamActivityFields}_${TTeamActivityVerbs}`;
+import {
+  EIssueCommentAccessSpecifier,
+  ETeamAnalyticsDataKeys,
+  ETeamAnalyticsValueKeys,
+  EStatisticsLegend,
+  EWorkloadXAxisKeys,
+  EWorkloadDataKeys,
+  EDependencyType,
+} from "@plane/constants";
+import {
+  IUserLite,
+  TStackChartData,
+  TStateGroups,
+  TTeamActivity,
+  TTeamActivityKeys,
+  TTeamReaction,
+} from "@plane/types";
 
 export type TTeamActivityDetails = {
   icon: ReactNode;
@@ -27,13 +26,6 @@ export type TTeamActivityDetails = {
 
 export type TTeamActivityDetailsHelperMap = {
   [key in TTeamActivityKeys]: (activity: TTeamActivity) => TTeamActivityDetails;
-};
-
-export type TTeamReaction = {
-  id: string;
-  reaction: string;
-  actor: string;
-  actor_detail: IUserLite;
 };
 
 export type TTeamComment = {
@@ -55,4 +47,31 @@ export type TTeamComment = {
   updated_by: string | null;
   workspace: string;
   team: string;
+};
+
+export type TWorkloadFilter = {
+  yAxisKey: ETeamAnalyticsValueKeys;
+  xAxisKey: EWorkloadXAxisKeys;
+};
+
+export type TTeamWorkloadChart = {
+  distribution: TStackChartData<EWorkloadXAxisKeys, EWorkloadDataKeys>[];
+};
+
+export type TStatisticsFilter = {
+  data_key: ETeamAnalyticsDataKeys;
+  value_key: ETeamAnalyticsValueKeys;
+  issue_type: string[]; // issue type ids
+  state_group: TStateGroups[]; // state group names
+  dependency_type: EDependencyType | undefined;
+  target_date: string[];
+  legend: EStatisticsLegend;
+};
+
+export type TStatisticsFilterProps<K extends keyof TStatisticsFilter> = {
+  value: TStatisticsFilter[K];
+  isLoading: boolean;
+  buttonContainerClassName?: string;
+  chevronClassName?: string;
+  handleFilterChange: (value: TStatisticsFilter[K]) => Promise<void>;
 };

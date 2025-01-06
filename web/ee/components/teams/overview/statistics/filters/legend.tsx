@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 // plane imports
-import { TStatisticsFilterProps, TStatisticsLegend } from "@plane/types";
+import { EStatisticsLegend } from "@plane/constants";
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
@@ -10,6 +10,7 @@ import {
   WORKSPACE_PROJECT_STATE_GROUPS,
   WORKSPACE_PROJECT_STATE_PRIORITY,
 } from "@/plane-web/constants/workspace-project-states";
+import { TStatisticsFilterProps } from "@/plane-web/types/teams";
 
 export const StatisticsLegend: React.FC<TStatisticsFilterProps<"legend">> = observer((props) => {
   const { value, isLoading, buttonContainerClassName, chevronClassName, handleFilterChange } = props;
@@ -26,13 +27,13 @@ export const StatisticsLegend: React.FC<TStatisticsFilterProps<"legend">> = obse
         <Dropdown
           value={value}
           options={options}
-          onChange={(value) => handleFilterChange(value as TStatisticsLegend)}
+          onChange={(value) => handleFilterChange(value as EStatisticsLegend)}
           keyExtractor={(option) => option.data}
           buttonContainerClassName={buttonContainerClassName}
           buttonContent={(isOpen, val) => (
             <span className="flex items-center gap-1">
               {val && typeof val === "string"
-                ? TEAM_STATISTICS_LEGEND_MAP[val as TStatisticsLegend]
+                ? TEAM_STATISTICS_LEGEND_MAP[val as EStatisticsLegend]
                 : TEAM_STATISTICS_LEGEND_MAP[value]}
               <ChevronDown className={cn(chevronClassName, isOpen ? "rotate-180" : "rotate-0")} />
             </span>

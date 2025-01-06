@@ -1,14 +1,9 @@
 // plane constants
 import { API_BASE_URL } from "@plane/constants";
 // plane imports
-import {
-  TWorkloadFilter,
-  TTeamWorkloadChart,
-  TTeamDependencies,
-  TTeamStatistics,
-  TStatisticsFilter,
-  TTeamWorkloadSummary,
-} from "@plane/types";
+import { TTeamDependencies, TTeamStatistics, TTeamWorkloadSummary } from "@plane/types";
+// plane web imports
+import { TStatisticsFilter, TTeamWorkloadChart, TWorkloadFilter } from "@/plane-web/types/teams";
 // services
 import { APIService } from "@/services/api.service";
 

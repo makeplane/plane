@@ -1,7 +1,8 @@
-// plane constants
+// plane imports
 import { API_BASE_URL } from "@plane/constants";
-// plane web types
-import { TTeamActivity, TTeamComment, TTeamReaction } from "@/plane-web/types";
+import { TTeamActivity, TTeamReaction } from "@plane/types";
+// plane web imports
+import { TTeamComment } from "@/plane-web/types";
 // services
 import { APIService } from "@/services/api.service";
 

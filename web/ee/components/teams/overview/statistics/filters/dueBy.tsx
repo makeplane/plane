@@ -2,11 +2,11 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 // plane imports
-import { TStatisticsFilterProps } from "@plane/types";
 import { MultiSelectDropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { DATE_AFTER_FILTER_OPTIONS } from "@/constants/filters";
+import { TStatisticsFilterProps } from "@/plane-web/types/teams";
 
 export const StatisticsDueByFilter: React.FC<TStatisticsFilterProps<"target_date">> = observer((props) => {
   const { value, isLoading, buttonContainerClassName, chevronClassName, handleFilterChange } = props;

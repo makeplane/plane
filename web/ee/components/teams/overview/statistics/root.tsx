@@ -6,12 +6,12 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
-import { TStatisticsFilter } from "@plane/types";
 import { Collapsible, CollapsibleButton, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { useTeamAnalytics } from "@/plane-web/hooks/store/teams/use-team-analytics";
+import { TStatisticsFilter } from "@/plane-web/types/teams";
 // local imports
 import { TeamStatisticsMap } from "./chart";
 import {

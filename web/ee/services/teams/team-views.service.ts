@@ -1,7 +1,7 @@
 // plane constants
-import { API_BASE_URL } from "@plane/constants";
+import { API_BASE_URL, ETeamEntityScope } from "@plane/constants";
 // plane types
-import { TTeamView, TPublishViewSettings, TIssuesResponse, TTeamScope } from "@plane/types";
+import { TTeamView, TPublishViewSettings, TIssuesResponse } from "@plane/types";
 // constants
 import { EViewAccess } from "@/constants/views";
 // helpers
@@ -64,7 +64,7 @@ export class TeamViewService extends APIService {
    * @param teamId
    * @returns
    */
-  async getViews(workspaceSlug: string, teamId: string, scope: TTeamScope): Promise<TTeamView[]> {
+  async getViews(workspaceSlug: string, teamId: string, scope: ETeamEntityScope): Promise<TTeamView[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/teams/${teamId}/views/?scope=${scope}`)
       .then((response) => response?.data)
       .catch((error) => {

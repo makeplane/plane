@@ -1,8 +1,9 @@
 import set from "lodash/set";
 import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// types
-import { TLoader, TPublishViewDetails, TPublishViewSettings, TTeamScope, TTeamView, TViewFilters } from "@plane/types";
+// plane imports
+import { ETeamEntityScope } from "@plane/constants";
+import { TLoader, TPublishViewDetails, TPublishViewSettings, TTeamView, TViewFilters } from "@plane/types";
 // constants
 import { EViewAccess } from "@/constants/views";
 // plane web helpers
@@ -23,7 +24,7 @@ export interface ITeamViewStore {
   // observables
   loaderMap: Record<string, TLoader>; // teamId -> loader
   fetchedMap: Record<string, boolean>; // teamId -> fetched
-  scopeMap: Record<string, TTeamScope>; // teamId -> scope
+  scopeMap: Record<string, ETeamEntityScope>; // teamId -> scope
   viewMap: Record<string, Record<string, TTeamView>>; // teamId -> viewId -> view
   filtersMap: Record<string, TViewFilters>; // teamId -> filters
   // computed functions
@@ -35,10 +36,10 @@ export interface ITeamViewStore {
   getViewById: (teamId: string, viewId: string) => TTeamView | undefined;
   // helper actions
   initTeamViewsScope: (teamId: string) => void;
-  getTeamViewsScope: (teamId: string) => TTeamScope | undefined;
+  getTeamViewsScope: (teamId: string) => ETeamEntityScope | undefined;
   initTeamViewsFilters: (teamId: string) => void;
   getTeamViewsFilters: (teamId: string) => TViewFilters | undefined;
-  updateTeamScope: (workspaceSlug: string, teamId: string, scope: TTeamScope) => void;
+  updateTeamScope: (workspaceSlug: string, teamId: string, scope: ETeamEntityScope) => void;
   // fetch actions
   fetchTeamViews: (workspaceSlug: string, teamId: string, loader?: TLoader) => Promise<TTeamView[] | undefined>;
   fetchTeamViewDetails: (
@@ -81,7 +82,7 @@ export class TeamViewStore implements ITeamViewStore {
   // observables
   loaderMap: Record<string, TLoader> = {}; // teamId -> loader
   fetchedMap: Record<string, boolean> = {}; // teamId -> fetched
-  scopeMap: Record<string, TTeamScope> = {}; // teamId -> scope
+  scopeMap: Record<string, ETeamEntityScope> = {}; // teamId -> scope
   viewMap: Record<string, Record<string, TTeamView>> = {}; // teamId -> viewId -> view
   filtersMap: Record<string, TViewFilters> = {}; // teamId -> filters
   // root store
@@ -204,7 +205,7 @@ export class TeamViewStore implements ITeamViewStore {
   /**
    * Returns team scope
    * @param teamId
-   * @returns TTeamScope | undefined
+   * @returns ETeamEntityScope | undefined
    */
   getTeamViewsScope = (teamId: string) => {
     if (!this.scopeMap[teamId]) {
@@ -244,7 +245,7 @@ export class TeamViewStore implements ITeamViewStore {
    * @param teamId
    * @param scope
    */
-  updateTeamScope = (workspaceSlug: string, teamId: string, scope: TTeamScope) => {
+  updateTeamScope = (workspaceSlug: string, teamId: string, scope: ETeamEntityScope) => {
     runInAction(() => {
       set(this.scopeMap, teamId, scope);
       set(this.viewMap, [teamId], {});

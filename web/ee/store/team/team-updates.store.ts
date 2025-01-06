@@ -5,11 +5,12 @@ import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane imports
+import { TLoader, TTeamActivity, TTeamReaction } from "@plane/types";
 // plane web imports
-import { TLoader } from "@plane/types";
 import { TeamUpdatesService } from "@/plane-web/services/teams/team-updates.service";
 import { RootStore } from "@/plane-web/store/root.store";
-import { TTeamActivity, TTeamComment, TTeamReaction } from "@/plane-web/types";
+import { TTeamComment } from "@/plane-web/types";
 
 export interface ITeamUpdatesStore {
   // observables

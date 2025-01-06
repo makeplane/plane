@@ -2,13 +2,8 @@ import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Loader as Spinner, ChevronDown } from "lucide-react";
 // plane imports
-import {
-  TStackChartData,
-  TStackItem,
-  TWorkloadDataKeys,
-  TWorkloadXAxisKeys,
-  TTeamAnalyticsValueKeys,
-} from "@plane/types";
+import { ETeamAnalyticsValueKeys, EWorkloadDataKeys, EWorkloadXAxisKeys } from "@plane/constants";
+import { TStackChartData, TStackItem } from "@plane/types";
 import { Dropdown, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
@@ -18,16 +13,16 @@ import { renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
 import { TEAM_WORKLOAD_X_AXIS_LABEL_MAP, TEAM_WORKLOAD_Y_AXIS_LABEL_MAP } from "@/plane-web/constants/teams";
 import { useTeamAnalytics } from "@/plane-web/hooks/store/teams/use-team-analytics";
 
-const stacks: TStackItem<TWorkloadDataKeys>[] = [
+const stacks: TStackItem<EWorkloadDataKeys>[] = [
   {
-    key: "completed",
+    key: EWorkloadDataKeys.COMPLETED,
     fillClassName: "fill-[#004EFF]",
     textClassName: "text-white",
     dotClassName: "bg-[#004EFF]",
     showPercentage: true,
   },
   {
-    key: "pending",
+    key: EWorkloadDataKeys.PENDING,
     fillClassName: "fill-custom-background-80/80",
     textClassName: "text-custom-text-200",
     dotClassName: "bg-custom-background-80/80",
@@ -40,10 +35,10 @@ const COMMON_CHEVRON_CLASSNAME = "size-3 text-custom-text-400 transition-all";
 
 type TTeamWorkloadChartProps = {
   teamId: string;
-  xAxisKey: TWorkloadXAxisKeys;
-  yAxisKey: TTeamAnalyticsValueKeys;
-  data: TStackChartData<TWorkloadXAxisKeys, TWorkloadDataKeys>[];
-  handleXAxisKeyChange: (key: TWorkloadXAxisKeys) => void;
+  xAxisKey: EWorkloadXAxisKeys;
+  yAxisKey: ETeamAnalyticsValueKeys;
+  data: TStackChartData<EWorkloadXAxisKeys, EWorkloadDataKeys>[];
+  handleXAxisKeyChange: (key: EWorkloadXAxisKeys) => void;
 };
 
 const workloadXAxisOptions = Object.entries(TEAM_WORKLOAD_X_AXIS_LABEL_MAP).map(([data, value]) => ({
@@ -79,13 +74,13 @@ export const TeamWorkloadChart: React.FC<TTeamWorkloadChartProps> = observer((pr
         <Dropdown
           value={xAxisKey}
           options={workloadXAxisOptions}
-          onChange={(value) => handleXAxisKeyChange(value as TWorkloadXAxisKeys)}
+          onChange={(value) => handleXAxisKeyChange(value as EWorkloadXAxisKeys)}
           keyExtractor={(option) => option.data}
           buttonContainerClassName={COMMON_DROPDOWN_CONTAINER_CLASSNAME}
           buttonContent={(isOpen, value) => (
             <span className="flex items-center gap-1">
               {value && typeof value === "string"
-                ? TEAM_WORKLOAD_X_AXIS_LABEL_MAP[value as TWorkloadXAxisKeys]
+                ? TEAM_WORKLOAD_X_AXIS_LABEL_MAP[value as EWorkloadXAxisKeys]
                 : TEAM_WORKLOAD_X_AXIS_LABEL_MAP[xAxisKey]}
               <ChevronDown className={cn(COMMON_CHEVRON_CLASSNAME, isOpen ? "rotate-180" : "rotate-0")} />
             </span>

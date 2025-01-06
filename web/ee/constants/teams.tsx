@@ -1,22 +1,21 @@
 import { AlignLeft, Briefcase, FileText, Layers, Type, User2, Users } from "lucide-react";
 // plane imports
-import { ETeamScope } from "@plane/constants";
 import {
-  TCreateUpdateTeamModal,
-  TCreateUpdateTeamViewModal,
-  TWorkloadXAxisKeys,
-  TTeamAnalyticsValueKeys,
-  TTeamAnalyticsDataKeys,
-  TStatisticsLegend,
-  TDependencyType,
-} from "@plane/types";
+  EDependencyType,
+  EStatisticsLegend,
+  ETeamAnalyticsDataKeys,
+  ETeamAnalyticsValueKeys,
+  ETeamScope,
+  EWorkloadXAxisKeys,
+} from "@plane/constants";
+import { TCreateUpdateTeamModal, TCreateUpdateTeamViewModal, TTeamActivity } from "@plane/types";
 import { TeamsIcon } from "@plane/ui";
 // helpers
 import { getPageName } from "@/helpers/page.helper";
 // store
 import { store } from "@/lib/store-context";
 // plane web types
-import { TTeamActivity, TTeamActivityDetailsHelperMap } from "@/plane-web/types";
+import { TTeamActivityDetailsHelperMap } from "@/plane-web/types";
 
 export const DEFAULT_CREATE_UPDATE_TEAM_MODAL_DATA: TCreateUpdateTeamModal = {
   isOpen: false,
@@ -166,33 +165,33 @@ export const TEAM_UPDATES_HELPER_MAP: Partial<TTeamActivityDetailsHelperMap> = {
   }),
 };
 
-export const TEAM_WORKLOAD_X_AXIS_LABEL_MAP: Record<TWorkloadXAxisKeys, string> = {
+export const TEAM_WORKLOAD_X_AXIS_LABEL_MAP: Record<EWorkloadXAxisKeys, string> = {
   target_date: "Due date",
   start_date: "Start date",
   priority: "Priority",
 };
 
-export const TEAM_WORKLOAD_Y_AXIS_LABEL_MAP: Record<TTeamAnalyticsValueKeys, string> = {
+export const TEAM_WORKLOAD_Y_AXIS_LABEL_MAP: Record<ETeamAnalyticsValueKeys, string> = {
   issues: "Issues",
   // points: "Points",
 };
 
-export const TEAM_STATISTICS_DATA_KEY_MAP: Record<TTeamAnalyticsDataKeys, string> = {
+export const TEAM_STATISTICS_DATA_KEY_MAP: Record<ETeamAnalyticsDataKeys, string> = {
   projects: "Projects",
   members: "Members",
 };
 
-export const TEAM_STATISTICS_VALUE_KEY_MAP: Record<TTeamAnalyticsValueKeys, string> = {
+export const TEAM_STATISTICS_VALUE_KEY_MAP: Record<ETeamAnalyticsValueKeys, string> = {
   issues: "No. of issues",
   // points: "No. of points",
 };
 
-export const TEAM_STATISTICS_LEGEND_MAP: Record<TStatisticsLegend, string> = {
+export const TEAM_STATISTICS_LEGEND_MAP: Record<EStatisticsLegend, string> = {
   state: "State",
   priority: "Priority",
 };
 
-export const TEAM_STATISTICS_DEPENDENCY_MAP: Record<TDependencyType, string> = {
+export const TEAM_STATISTICS_DEPENDENCY_MAP: Record<EDependencyType, string> = {
   blocking: "Blocking",
   blocked_by: "Blocked by",
 };

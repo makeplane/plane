@@ -3,6 +3,7 @@
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 // Plane
+import { TTeamReaction } from "@plane/types";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { ReactionSelector } from "@/components/issues";
@@ -14,7 +15,7 @@ import { formatTextList } from "@/helpers/issue.helper";
 import { useMember, useUser } from "@/hooks/store";
 // PLane-web
 import { useTeamUpdates } from "@/plane-web/hooks/store/teams/use-team-updates";
-import { TTeamComment, TTeamReaction } from "@/plane-web/types";
+import { TTeamComment } from "@/plane-web/types";
 
 export type TTeamCommentReaction = {
   workspaceSlug: string;

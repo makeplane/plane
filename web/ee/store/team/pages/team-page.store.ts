@@ -1,8 +1,9 @@
 import set from "lodash/set";
 import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// types
-import { TLoader, TTeamScope, TPageFilters, TPage } from "@plane/types";
+// plane imports
+import { ETeamEntityScope } from "@plane/constants";
+import { TLoader, TPageFilters, TPage } from "@plane/types";
 // plane web services
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
 import { TeamPageService } from "@/plane-web/services/teams/team-pages.service";
@@ -19,7 +20,7 @@ export interface ITeamPageStore {
   // observables
   loaderMap: Record<string, TLoader>; // teamId -> loader
   fetchedMap: Record<string, boolean>; // teamId -> fetched
-  scopeMap: Record<string, TTeamScope>; // teamId -> scope
+  scopeMap: Record<string, ETeamEntityScope>; // teamId -> scope
   pageMap: Record<string, Record<string, TTeamPageDetails>>; // teamId -> pageId -> page
   filtersMap: Record<string, TPageFilters>; // teamId -> filters
   // computed functions
@@ -30,10 +31,10 @@ export interface ITeamPageStore {
   getPageById: (teamId: string, pageId: string) => TTeamPageDetails | undefined;
   // helper actions
   initTeamPagesScope: (teamId: string) => void;
-  getTeamPagesScope: (teamId: string) => TTeamScope | undefined;
+  getTeamPagesScope: (teamId: string) => ETeamEntityScope | undefined;
   initTeamPagesFilters: (teamId: string) => void;
   getTeamPagesFilters: (teamId: string) => TPageFilters | undefined;
-  updateTeamScope: (workspaceSlug: string, teamId: string, scope: TTeamScope) => void;
+  updateTeamScope: (workspaceSlug: string, teamId: string, scope: ETeamEntityScope) => void;
   updateFilters: <T extends keyof TPageFilters>(teamId: string, filterKey: T, filterValue: TPageFilters[T]) => void;
   clearAllFilters: (teamId: string) => void;
   // fetch actions
@@ -53,7 +54,7 @@ export class TeamPageStore implements ITeamPageStore {
   // observables
   loaderMap: Record<string, TLoader> = {}; // teamId -> loader
   fetchedMap: Record<string, boolean> = {}; // teamId -> fetched
-  scopeMap: Record<string, TTeamScope> = {}; // teamId -> scope
+  scopeMap: Record<string, ETeamEntityScope> = {}; // teamId -> scope
   pageMap: Record<string, Record<string, TTeamPageDetails>> = {}; // teamId -> pageId -> page
   filtersMap: Record<string, TPageFilters> = {}; // teamId -> filters
   // root store
@@ -159,7 +160,7 @@ export class TeamPageStore implements ITeamPageStore {
   /**
    * Returns team scope
    * @param teamId
-   * @returns TTeamScope | undefined
+   * @returns ETeamEntityScope | undefined
    */
   getTeamPagesScope = (teamId: string) => {
     if (!this.scopeMap[teamId]) {
@@ -199,7 +200,7 @@ export class TeamPageStore implements ITeamPageStore {
    * @param teamId
    * @param scope
    */
-  updateTeamScope = (workspaceSlug: string, teamId: string, scope: TTeamScope) => {
+  updateTeamScope = (workspaceSlug: string, teamId: string, scope: ETeamEntityScope) => {
     runInAction(() => {
       set(this.scopeMap, teamId, scope);
       set(this.pageMap, [teamId], {});

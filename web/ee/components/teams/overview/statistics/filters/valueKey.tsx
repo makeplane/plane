@@ -1,11 +1,12 @@
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 // plane imports
-import { TStatisticsFilterProps, TTeamAnalyticsValueKeys } from "@plane/types";
+import { ETeamAnalyticsValueKeys } from "@plane/constants";
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { TEAM_STATISTICS_VALUE_KEY_MAP } from "@/plane-web/constants/teams";
+import { TStatisticsFilterProps } from "@/plane-web/types";
 
 export const StatisticsValueKeyFilter: React.FC<TStatisticsFilterProps<"value_key">> = observer((props) => {
   const { value, isLoading, buttonContainerClassName, chevronClassName, handleFilterChange } = props;
@@ -19,13 +20,13 @@ export const StatisticsValueKeyFilter: React.FC<TStatisticsFilterProps<"value_ke
     <Dropdown
       value={value}
       options={options}
-      onChange={(value) => handleFilterChange(value as TTeamAnalyticsValueKeys)}
+      onChange={(value) => handleFilterChange(value as ETeamAnalyticsValueKeys)}
       keyExtractor={(option) => option.data}
       buttonContainerClassName={buttonContainerClassName}
       buttonContent={(isOpen, val) => (
         <span className="flex items-center gap-1">
           {val && typeof val === "string"
-            ? TEAM_STATISTICS_VALUE_KEY_MAP[val as TTeamAnalyticsValueKeys]
+            ? TEAM_STATISTICS_VALUE_KEY_MAP[val as ETeamAnalyticsValueKeys]
             : TEAM_STATISTICS_VALUE_KEY_MAP[value]}
           <ChevronDown className={cn(chevronClassName, isOpen ? "rotate-180" : "rotate-0")} />
         </span>

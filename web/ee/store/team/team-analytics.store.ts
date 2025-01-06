@@ -3,19 +3,12 @@ import set from "lodash/set";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane imports
+import { TLoader, TTeamDependencies, TTeamStatistics, TTeamWorkloadSummary } from "@plane/types";
 // plane web imports
-import {
-  TLoader,
-  TTeamWorkloadChart,
-  TWorkloadFilter,
-  TTeamDependencies,
-  TTeamStatistics,
-  TStatisticsFilter,
-  TTeamWorkloadSummary,
-} from "@plane/types";
 import { TeamAnalyticsService } from "@/plane-web/services/teams/team-analytics.service";
-// store
 import { RootStore } from "@/plane-web/store/root.store";
+import { TStatisticsFilter, TTeamWorkloadChart, TWorkloadFilter } from "@/plane-web/types/teams";
 
 export interface ITeamAnalyticsStore {
   // observables
@@ -137,7 +130,7 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
   /**
    * Get team workload
    * @param teamId
-   * @returns TStackChartData<TWorkloadDataKeys>[]
+   * @returns TTeamWorkloadChart
    */
   getTeamWorkloadChart = computedFn((teamId: string) => this.teamWorkloadChartMap[teamId]);
 

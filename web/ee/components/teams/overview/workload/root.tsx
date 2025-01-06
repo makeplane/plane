@@ -5,11 +5,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { TWorkloadFilter } from "@plane/types";
 import { Collapsible, CollapsibleButton, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { useTeamAnalytics } from "@/plane-web/hooks/store/teams/use-team-analytics";
+import { TWorkloadFilter } from "@/plane-web/types/teams";
 // local imports
 import { TeamWorkloadBanner } from "./banner";
 import { TeamWorkloadChart } from "./chart";
