@@ -1,10 +1,10 @@
 import { TActivityEntityData, TIssueEntityData } from "@plane/types";
-import { PriorityIcon, StateGroupIcon } from "@plane/ui";
+import { PriorityIcon, StateGroupIcon, Tooltip } from "@plane/ui";
 import { ListItem } from "@/components/core/list";
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
-import { IssueIdentifier } from "@/plane-web/components/issues";
 import { MemberDropdown } from "@/components/dropdowns";
+import { calculateTimeAgo } from "@/helpers/date-time.helper";
 import { useIssueDetail, useProjectState } from "@/hooks/store";
+import { IssueIdentifier } from "@/plane-web/components/issues";
 
 type BlockProps = {
   activity: TActivityEntityData;
@@ -40,8 +40,16 @@ export const RecentIssue = (props: BlockProps) => {
       }
       quickActionElement={
         <div className="flex gap-4">
-          <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} className="h-4 w-4 my-auto" />
-          <PriorityIcon priority={issueDetails?.priority} withContainer size={12} />
+          <Tooltip tooltipHeading="State" tooltipContent={state?.name ?? "State"}>
+            <div>
+              <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} className="h-4 w-4 my-auto" />
+            </div>
+          </Tooltip>
+          <Tooltip tooltipHeading="Priority" tooltipContent={issueDetails?.priority ?? "Priority"}>
+            <div>
+              <PriorityIcon priority={issueDetails?.priority} withContainer size={12} />
+            </div>
+          </Tooltip>
           {issueDetails?.assignees?.length > 0 && (
             <div className="h-5">
               <MemberDropdown
