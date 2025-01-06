@@ -1,3 +1,5 @@
+import { TStateAnalytics } from "@plane/types";
+
 export type TStateGroups =
   | "backlog"
   | "unstarted"
@@ -42,4 +44,41 @@ export const STATE_GROUPS: {
 export const ARCHIVABLE_STATE_GROUPS = [
   STATE_GROUPS.completed.key,
   STATE_GROUPS.cancelled.key,
+];
+
+export const STATE_ANALYTICS_DETAILS: {
+  key: keyof TStateAnalytics;
+  title: string;
+  color: string;
+}[] = [
+  {
+    key: "overdue_issues",
+    title: "Overdue",
+    color: "#FF333380",
+  },
+  {
+    key: "backlog_issues",
+    title: "Backlog",
+    color: "#EBEDF2",
+  },
+  {
+    key: "unstarted_issues",
+    title: "Unstarted",
+    color: "#6E6E6E80",
+  },
+  {
+    key: "started_issues",
+    title: "Started",
+    color: "#FF813380",
+  },
+  {
+    key: "completed_issues",
+    title: "Completed",
+    color: "#26D95080",
+  },
+  {
+    key: "cancelled_issues",
+    title: "Cancelled",
+    color: "#FF333350",
+  },
 ];
