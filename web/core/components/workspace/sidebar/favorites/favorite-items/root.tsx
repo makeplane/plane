@@ -151,6 +151,7 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
           />
         )}
       </FavoriteItemWrapper>
+
       {isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}
     </>
   );

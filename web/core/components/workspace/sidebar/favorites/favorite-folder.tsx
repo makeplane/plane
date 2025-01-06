@@ -175,11 +175,16 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                     "justify-center": isSidebarCollapsed,
                   })}
                 >
-                  <Disclosure.Button as="button" className="size-8 aspect-square flex-shrink-0 grid place-items-center">
-                    <div className="size-4 grid place-items-center flex-shrink-0">
-                      <FavoriteFolderIcon />
-                    </div>
-                  </Disclosure.Button>
+                  <Tooltip tooltipContent={favorite.name} position="right" isMobile={isMobile}>
+                    <Disclosure.Button
+                      as="button"
+                      className="size-8 aspect-square flex-shrink-0 grid place-items-center"
+                    >
+                      <div className="size-4 grid place-items-center flex-shrink-0">
+                        <FavoriteFolderIcon />
+                      </div>
+                    </Disclosure.Button>
+                  </Tooltip>
                 </div>
               ) : (
                 <>
