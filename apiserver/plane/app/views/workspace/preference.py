@@ -35,10 +35,7 @@ class WorkspacePreferenceViewSet(BaseAPIView):
                 preference = WorkspaceHomePreference.objects.bulk_create(
                     [
                         WorkspaceHomePreference(
-                            key=key,
-                            user=request.user,
-                            workspace=workspace,
-                            sort_order=(index + 1) * 1000,
+                            key=key, user=request.user, workspace=workspace
                         )
                         for index, key in enumerate(create_preference_keys)
                     ],
