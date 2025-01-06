@@ -42,7 +42,7 @@ class CycleSerializer(BaseSerializer):
             data["end_date"] = convert_to_utc(
                 date=str(data.get("end_date", None).date()),
                 project_id=project_id,
-                is_end_date=is_start_date_end_date_equal,
+                is_end_date=is_start_date_end_date_equal=is_start_date_end_date_equal,
             )
         return data
 
