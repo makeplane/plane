@@ -45,11 +45,9 @@ class WorkspacePreferenceViewSet(BaseAPIView):
                     batch_size=10,
                     ignore_conflicts=True,
                 )
+        serializer = WorkspaceHomePreferenceSerializer(get_preference, many=True)
 
-        return Response(
-            get_preference.values("key", "is_enabled", "sort_order", "config"),
-            status=status.HTTP_200_OK,
-        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def patch(self, request, slug, key):

@@ -253,7 +253,17 @@ class WorkspaceRecentVisitSerializer(BaseSerializer):
 
 
 class WorkspaceHomePreferenceSerializer(BaseSerializer):
+    name = serializers.SerializerMethodField()
+
     class Meta:
         model = WorkspaceHomePreference
-        fields = ["user", "key", "is_enabled", "sort_order"]
+        fields = ["key", "is_enabled", "sort_order", "name"]
         read_only_fields = ["worspace", "created_by", "update_by"]
+
+    def get_name(self, obj):
+        preference_key = obj.key
+
+        for key, name in WorkspaceHomePreference.HomeWidgetKeys.choices:
+            if preference_key == key:
+                return name
+        return None
