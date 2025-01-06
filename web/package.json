@@ -37,7 +37,6 @@
     "@plane/utils": "*",
     "@popperjs/core": "^2.11.8",
     "@react-pdf/renderer": "^3.4.5",
-    "@sentry/nextjs": "^8.32.0",
     "axios": "^1.7.4",
     "clsx": "^2.0.0",
     "cmdk": "^1.0.0",

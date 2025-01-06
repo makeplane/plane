@@ -3,9 +3,9 @@ import {
   DropTargetRecord,
   ElementDragPayload,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import { useHome } from "@/hooks/store/use-home";
 import { WidgetItem } from "./widget-item";
 import { getInstructionFromPayload, TargetData } from "./widget.helpers";
-import { useHome } from "@/hooks/store/use-home";
 
 const WIDGETS_LIST = [
   { id: 1, title: "quick links" },
@@ -13,7 +13,7 @@ const WIDGETS_LIST = [
   { id: 3, title: "stickies" },
 ];
 export const WidgetList = ({ workspaceSlug }: { workspaceSlug: string }) => {
-  const { reorderWidgets } = useHome();
+  const { reorderWidget } = useHome();
 
   const handleDrop = (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => {
     const dropTargets = location?.current?.dropTargets ?? [];
@@ -30,7 +30,7 @@ export const WidgetList = ({ workspaceSlug }: { workspaceSlug: string }) => {
 
     if (!sourceData.id) return;
     if (droppedId) {
-      reorderWidgets(workspaceSlug, sourceData.id, droppedId, instruction); /** sequence */
+      reorderWidget(workspaceSlug, sourceData.id, droppedId, instruction); /** sequence */
     }
   };
 
