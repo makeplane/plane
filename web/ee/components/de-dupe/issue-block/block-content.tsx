@@ -20,7 +20,7 @@ export const DeDupeIssueBlockContent: FC<TDeDupeIssueBlockContentProps> = observ
   } = useMember();
   // derived values
   const stateDetails = issue ? getStateById(issue?.state_id) : undefined;
-  const creator = getProjectMemberDetails(issue.created_by);
+  const creator = getProjectMemberDetails(issue.created_by, issue.project_id);
 
   return (
     <>
