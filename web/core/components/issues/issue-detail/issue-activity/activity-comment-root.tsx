@@ -1,5 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
+// constants
+import { TSORT_ORDER } from "@/constants/common";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web components
@@ -21,18 +23,27 @@ type TIssueActivityCommentRoot = {
   activityOperations: TActivityOperations;
   showAccessSpecifier?: boolean;
   disabled?: boolean;
+  sortOrder: TSORT_ORDER;
 };
 
 export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer((props) => {
-  const { workspaceSlug, issueId, selectedFilters, activityOperations, showAccessSpecifier, projectId, disabled } =
-    props;
+  const {
+    workspaceSlug,
+    issueId,
+    selectedFilters,
+    activityOperations,
+    showAccessSpecifier,
+    projectId,
+    disabled,
+    sortOrder,
+  } = props;
   // hooks
   const {
     activity: { getActivityCommentByIssueId },
     comment: {},
   } = useIssueDetail();
 
-  const activityComments = getActivityCommentByIssueId(issueId);
+  const activityComments = getActivityCommentByIssueId(issueId, sortOrder);
 
   if (!activityComments || (activityComments && activityComments.length <= 0)) return <></>;
 
