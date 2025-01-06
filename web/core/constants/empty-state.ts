@@ -177,10 +177,11 @@ const emptyStateDetails = {
   [EmptyStateType.WORKSPACE_TEAMS]: {
     key: EmptyStateType.WORKSPACE_TEAMS,
     title: "Teams",
-    description: "Teams are groups of people who collaborate on projects. Create a team to get started.",
+    description:
+      "Teams are groups of people who collaborate closely on projects. Create a team to see work by team members, progress by this team in several projects, and this team’s knowledge right next to progress metrics.",
     path: "/empty-state/teams/teams",
     primaryButton: {
-      text: "Create new team",
+      text: "Create a new team",
     },
     accessType: "workspace",
     access: [EUserPermissions.ADMIN],
@@ -876,26 +877,25 @@ const emptyStateDetails = {
   },
   [EmptyStateType.TEAM_VIEW]: {
     key: EmptyStateType.TEAM_VIEW,
-    title: "Save filtered views for your team. Create as many as you need",
+    title: "Your team’s views of your work without disrupting any other views in your workspace",
     description:
-      "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a team can see everyone’s views and choose whichever suits their needs best.",
+      "See your team’s work in views that are saved just for your team and separately from a project’s views.",
     path: "/empty-state/onboarding/views",
     primaryButton: {
-      text: "Create your first view",
-      comicBox: {
-        title: "Views work atop Issue properties.",
-        description: "You can create a view from here with as many properties as filters as you see fit.",
-      },
+      text: "Create a view",
     },
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.TEAM_PAGE]: {
     key: EmptyStateType.TEAM_PAGE,
-    title: "Team pages are coming soon!",
+    title: "House your team’s knowledge in Team Pages.",
     description:
-      "Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started. Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button.",
+      "Unlike pages in a project, you can save knowledge specific to a team in a separate set of pages here. Get all the features of Pages, create best practices docs, and team wikis easily.",
     path: "/empty-state/onboarding/pages",
+    primaryButton: {
+      text: "Create your first team page",
+    },
   },
 } as const;
 
