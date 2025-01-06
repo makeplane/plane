@@ -117,6 +117,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                   value={"<p></p>"}
                   projectId={projectId}
                   workspaceSlug={workspaceSlug}
+                  issue_id={issueId}
                   onEnterKeyPress={(e) => {
                     if (!isEmpty && !isSubmitting) {
                       handleSubmit(onSubmit)(e);
