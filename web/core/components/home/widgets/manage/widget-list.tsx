@@ -3,18 +3,14 @@ import {
   DropTargetRecord,
   ElementDragPayload,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import { observer } from "mobx-react";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 import { useHome } from "@/hooks/store/use-home";
 import { WidgetItem } from "./widget-item";
 import { getInstructionFromPayload, TargetData } from "./widget.helpers";
 
-// TODO: Replace with api data
-const widgets = [
-  { key: "1", name: "quick links", is_enabled: true, sort_order: 1 },
-  { key: "2", name: "recents", is_enabled: true, sort_order: 2 },
-  { key: "3", name: "stickies", is_enabled: true, sort_order: 3 },
-];
-export const WidgetList = ({ workspaceSlug }: { workspaceSlug: string }) => {
-  const { reorderWidget, toggleWidget } = useHome();
+export const WidgetList = observer(({ workspaceSlug }: { workspaceSlug: string }) => {
+  const { orderedWidgets, reorderWidget, toggleWidget } = useHome();
 
   const handleDrop = (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => {
     const dropTargets = location?.current?.dropTargets ?? [];
@@ -31,21 +27,34 @@ export const WidgetList = ({ workspaceSlug }: { workspaceSlug: string }) => {
 
     if (!sourceData.id) return;
     if (droppedId) {
-      reorderWidget(workspaceSlug, sourceData.id, droppedId, instruction); /** sequence */
+      try {
+        reorderWidget(workspaceSlug, sourceData.id, droppedId, instruction); /** sequence */
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Widget reordered successfully.",
+        });
+      } catch {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Error occurred while reordering widget.",
+        });
+      }
     }
   };
 
   return (
     <div className="my-4">
-      {widgets.map((widget, index) => (
+      {orderedWidgets.map((widget, index) => (
         <WidgetItem
-          key={widget.key}
-          widget={widget}
-          isLastChild={index === widgets.length - 1}
+          key={widget}
+          widgetId={widget}
+          isLastChild={index === orderedWidgets.length - 1}
           handleDrop={handleDrop}
           handleToggle={toggleWidget}
         />
       ))}
     </div>
   );
-};
+});

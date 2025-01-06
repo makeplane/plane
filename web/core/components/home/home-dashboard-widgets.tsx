@@ -12,18 +12,20 @@ import { DashboardQuickLinks } from "./widgets/links";
 import { ManageWidgetsModal } from "./widgets/manage";
 
 const WIDGETS_LIST: {
-  [key in THomeWidgetKeys]: { component: React.FC<THomeWidgetProps>; fullWidth: boolean };
+  [key in THomeWidgetKeys]: { component: React.FC<THomeWidgetProps> | null; fullWidth: boolean };
 } = {
   quick_links: { component: DashboardQuickLinks, fullWidth: false },
-  recent_activity: { component: RecentActivityWidget, fullWidth: false },
-  stickies: { component: StickiesWidget, fullWidth: false },
+  recents: { component: RecentActivityWidget, fullWidth: false },
+  my_stickies: { component: StickiesWidget, fullWidth: false },
+  new_at_plane: { component: null, fullWidth: false },
+  quick_tutorial: { component: null, fullWidth: false },
 };
 
 export const DashboardWidgets = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { toggleWidgetSettings, showWidgetSettings } = useHome();
+  const { toggleWidgetSettings, widgetsMap, showWidgetSettings, orderedWidgets } = useHome();
 
   if (!workspaceSlug) return null;
 
@@ -36,9 +38,11 @@ export const DashboardWidgets = observer(() => {
         handleOnClose={() => toggleWidgetSettings(false)}
       />
 
-      {Object.entries(WIDGETS_LIST).map(([key, widget]) => {
-        const WidgetComponent = widget.component;
-        if (widget.fullWidth)
+      {orderedWidgets.map((key) => {
+        const WidgetComponent = WIDGETS_LIST[key]?.component;
+        const isEnabled = widgetsMap[key]?.is_enabled;
+        if (!WidgetComponent || !isEnabled) return null;
+        if (WIDGETS_LIST[key]?.fullWidth)
           return (
             <div key={key} className="lg:col-span-2">
               <WidgetComponent workspaceSlug={workspaceSlug.toString()} />

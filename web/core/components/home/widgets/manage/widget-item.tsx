@@ -22,26 +22,30 @@ import { InstructionType, TWidgetEntityData } from "@plane/types";
 import { DropIndicator, ToggleSwitch } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
+import { useHome } from "@/hooks/store/use-home";
 import { WidgetItemDragHandle } from "./widget-item-drag-handle";
 import { getCanDrop, getInstructionFromPayload } from "./widget.helpers";
 
 type Props = {
+  widgetId: string;
   isLastChild: boolean;
-  widget: TWidgetEntityData;
   handleDrop: (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => void;
   handleToggle: (workspaceSlug: string, widgetKey: string, is_enabled: boolean) => void;
 };
 
 export const WidgetItem: FC<Props> = observer((props) => {
   // props
-  const { isLastChild, widget, handleDrop, handleToggle } = props;
-  const { workspace_slug } = useParams();
+  const { widgetId, isLastChild, handleDrop, handleToggle } = props;
+  const { workspaceSlug } = useParams();
   //state
   const [isDragging, setIsDragging] = useState(false);
   const [instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
-
   //ref
   const elementRef = useRef<HTMLDivElement>(null);
+  // hooks
+  const { widgetsMap } = useHome();
+  // derived values
+  const widget = widgetsMap[widgetId] as TWidgetEntityData;
 
   // drag and drop
   useEffect(() => {
@@ -123,11 +127,11 @@ export const WidgetItem: FC<Props> = observer((props) => {
       >
         <div className="flex items-center">
           <WidgetItemDragHandle sort_order={widget.sort_order} isDragging={isDragging} />
-          <div>{widget.name}</div>
+          <div>{widget.key.replaceAll("_", " ")}</div>
         </div>
         <ToggleSwitch
           value={widget.is_enabled}
-          onChange={() => handleToggle(workspace_slug.toString(), widget.key, !widget.is_enabled)}
+          onChange={() => handleToggle(workspaceSlug.toString(), widget.key, !widget.is_enabled)}
         />
       </div>
       {isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}
