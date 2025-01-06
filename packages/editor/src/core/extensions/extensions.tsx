@@ -1,14 +1,14 @@
 import { Extensions } from "@tiptap/core";
+import BulletList from "@tiptap/extension-bullet-list";
 import CharacterCount from "@tiptap/extension-character-count";
+import ListItem from "@tiptap/extension-list-item";
+import OrderedList from "@tiptap/extension-ordered-list";
 import Placeholder from "@tiptap/extension-placeholder";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
-import ListItem from "@tiptap/extension-list-item";
 import TextStyle from "@tiptap/extension-text-style";
 import TiptapUnderline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
-import BulletList from "@tiptap/extension-bullet-list";
-import OrderedList from "@tiptap/extension-ordered-list";
 import { Markdown } from "tiptap-markdown";
 // extensions
 import {
@@ -32,6 +32,7 @@ import {
   TableCell,
   TableHeader,
   TableRow,
+  FlatListExtension,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
@@ -40,7 +41,6 @@ import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
 import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
 import { DropCursorExtension } from "./drop-cursor";
-import { FlatListExtension } from "./flat-list/list-extension";
 
 type TArguments = {
   disabledExtensions: TExtensions[];
@@ -83,6 +83,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     DropCursorExtension,
     FlatListExtension,
     BulletList.extend({
+      parseHTML() {
+        return [];
+      },
       addInputRules() {
         return [];
       },
@@ -92,6 +95,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       },
     }),
     OrderedList.extend({
+      parseHTML() {
+        return [];
+      },
       addInputRules() {
         return [];
       },
@@ -101,6 +107,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       },
     }),
     ListItem.extend({
+      parseHTML() {
+        return [];
+      },
       addInputRules() {
         return [];
       },
@@ -110,6 +119,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       },
     }),
     TaskList.extend({
+      parseHTML() {
+        return [];
+      },
       addInputRules() {
         return [];
       },
@@ -119,6 +131,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       },
     }),
     TaskItem.extend({
+      parseHTML() {
+        return [];
+      },
       addInputRules() {
         return [];
       },

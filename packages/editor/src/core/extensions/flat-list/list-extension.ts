@@ -1,6 +1,6 @@
 import { Node } from "@tiptap/core";
-import { keymap } from "@tiptap/pm/keymap";
 import { inputRules } from "@tiptap/pm/inputrules";
+import { keymap } from "@tiptap/pm/keymap";
 import {
   ListAttributes,
   IndentListOptions,
