@@ -19,3 +19,20 @@ export type TUserStatus = {
   status: EUserStatus | undefined;
   message?: string;
 };
+
+export enum EUserPermissionsLevel {
+  WORKSPACE = "WORKSPACE",
+  PROJECT = "PROJECT",
+}
+
+export enum EUserWorkspaceRoles {
+  ADMIN = 20,
+  MEMBER = 15,
+  GUEST = 5,
+}
+
+export enum EUserProjectRoles {
+  ADMIN = 20,
+  MEMBER = 15,
+  GUEST = 5,
+}
