@@ -2,10 +2,10 @@ import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // computed
 import { useHome } from "@/hooks/store/use-home";
+import { EWidgetKeys, WidgetLoader } from "../loaders";
 import { AddLink } from "./action";
 import { ProjectLinkDetail } from "./link-detail";
 import { TLinkOperations } from "./use-links";
-import { EWidgetKeys, WidgetLoader } from "../loaders";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "create">;
 

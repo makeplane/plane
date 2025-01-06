@@ -1,7 +1,7 @@
-import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
+import useSWR from "swr";
 import { ContentWrapper } from "@plane/ui";
 import { EmptyState } from "@/components/empty-state";
 import { TourRoot } from "@/components/onboarding";
@@ -11,7 +11,7 @@ import { PRODUCT_TOUR_COMPLETED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useCommandPalette, useUserProfile, useEventTracker, useDashboard, useProject, useUser } from "@/hooks/store";
+import { useCommandPalette, useUserProfile, useEventTracker, useProject, useUser } from "@/hooks/store";
 import { useHome } from "@/hooks/store/use-home";
 import useSize from "@/hooks/use-window-size";
 import { IssuePeekOverview } from "../issues";
@@ -29,11 +29,19 @@ export const WorkspaceHomeView = observer(() => {
   const { data: currentUser } = useUser();
   const { data: currentUserProfile, updateTourCompleted } = useUserProfile();
   const { captureEvent } = useEventTracker();
-  const { homeDashboardId, fetchHomeDashboardWidgets } = useDashboard();
-  const { toggleWidgetSettings } = useHome();
+  const { toggleWidgetSettings, fetchWidgets } = useHome();
   const { joinedProjectIds, loader } = useProject();
-
   const [windowWidth] = useSize();
+
+  useSWR(
+    workspaceSlug ? `HOME_DASHBOARD_WIDGETS_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchWidgets(workspaceSlug?.toString()) : null,
+    {
+      revalidateIfStale: true,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: true,
+    }
+  );
 
   const handleTourCompleted = () => {
     updateTourCompleted()
@@ -48,13 +56,6 @@ export const WorkspaceHomeView = observer(() => {
       });
   };
 
-  // fetch home dashboard widgets on workspace change
-  useEffect(() => {
-    if (!workspaceSlug) return;
-
-    fetchHomeDashboardWidgets(workspaceSlug?.toString());
-  }, [fetchHomeDashboardWidgets, workspaceSlug]);
-
   // TODO: refactor loader implementation
   return (
     <>
@@ -63,7 +64,7 @@ export const WorkspaceHomeView = observer(() => {
           <TourRoot onComplete={handleTourCompleted} />
         </div>
       )}
-      {homeDashboardId && joinedProjectIds && (
+      {joinedProjectIds && (
         <>
           {joinedProjectIds.length > 0 || loader ? (
             <>

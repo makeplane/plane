@@ -2,7 +2,7 @@ import { TLogoProps } from "./common";
 import { TIssuePriorities } from "./issues";
 
 export type TRecentActivityFilterKeys = "all item" | "issue" | "page" | "project";
-export type THomeWidgetKeys = "quick_links" | "recent_activity" | "stickies";
+export type THomeWidgetKeys = "quick_links" | "recents" | "my_stickies" | "quick_tutorial" | "new_at_plane";
 
 export type THomeWidgetProps = {
   workspaceSlug: string;
@@ -69,7 +69,7 @@ export type TLinkIdMap = {
 };
 
 export type TWidgetEntityData = {
-  key: string;
+  key: THomeWidgetKeys;
   name: string;
   is_enabled: boolean;
   sort_order: number;
