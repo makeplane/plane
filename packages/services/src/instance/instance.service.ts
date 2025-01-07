@@ -34,7 +34,7 @@ export class InstanceService extends APIService {
     return this.get("/api/instances/")
       .then((response) => response.data)
       .catch((error) => {
-        throw error;
+        throw error?.response?.data;
       });
   }
 
@@ -47,7 +47,7 @@ export class InstanceService extends APIService {
     return this.get("/api/instances/changelog/")
       .then((response) => response.data)
       .catch((error) => {
-        throw error;
+        throw error?.response?.data;
       });
   }
 
@@ -60,7 +60,7 @@ export class InstanceService extends APIService {
     return this.get("/api/instances/admins/")
       .then((response) => response.data)
       .catch((error) => {
-        throw error;
+        throw error?.response?.data;
       });
   }
 
@@ -87,7 +87,7 @@ export class InstanceService extends APIService {
     return this.get("/api/instances/configurations/")
       .then((response) => response.data)
       .catch((error) => {
-        throw error;
+        throw error?.response?.data;
       });
   }
 
