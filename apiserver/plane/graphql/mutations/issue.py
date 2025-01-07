@@ -197,15 +197,7 @@ class IssueMutation:
                 updated_by_id=user.id,
             )
 
-            update_cycle_issue_activity = [
-                {
-                    "old_cycle_id": None,
-                    "new_cycle_id": str(cycle_id),
-                    "issue_id": str(issue_id),
-                }
-            ]
-
-            await sync_to_async(issue_activity.delay)(
+            issue_activity.delay(
                 type="cycle.activity.created",
                 requested_data=json.dumps({"cycles_list": list(str(issue_id))}),
                 actor_id=str(user.id),
@@ -213,7 +205,7 @@ class IssueMutation:
                 project_id=str(project_id),
                 current_instance=json.dumps(
                     {
-                        "updated_cycle_issues": update_cycle_issue_activity,
+                        "updated_cycle_issues": [],
                         "created_cycle_issues": serializers.serialize(
                             "json", [created_cycle]
                         ),
