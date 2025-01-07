@@ -100,18 +100,23 @@ export class StickyStore implements IStickyStore {
     });
   };
   fetchWorkspaceStickies = async (workspaceSlug: string, cursor?: string, per_page?: number) => {
-    const response = await this.stickyService.getStickies(workspaceSlug, cursor, per_page);
+    try {
+      const response = await this.stickyService.getStickies(workspaceSlug, cursor, per_page);
 
-    runInAction(() => {
-      response.results.forEach((sticky) => {
-        if (!this.workspaceStickies[workspaceSlug]?.includes(sticky.id)) {
-          this.workspaceStickies[workspaceSlug] = [...(this.workspaceStickies[workspaceSlug] || []), sticky.id];
-        }
-        this.stickies[sticky.id] = sticky;
+      runInAction(() => {
+        response.results.forEach((sticky) => {
+          if (!this.workspaceStickies[workspaceSlug]?.includes(sticky.id)) {
+            this.workspaceStickies[workspaceSlug] = [...(this.workspaceStickies[workspaceSlug] || []), sticky.id];
+          }
+          this.stickies[sticky.id] = sticky;
+        });
+        this.totalPages = response.total_pages;
+        this.fetchingWorkspaceStickies = false;
       });
-      this.totalPages = response.total_pages;
+    } catch (e) {
+      console.error(e);
       this.fetchingWorkspaceStickies = false;
-    });
+    }
   };
 
   createSticky = async (workspaceSlug: string, sticky: Partial<TSticky>) => {
