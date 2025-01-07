@@ -1,14 +1,13 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { InfoIcon } from "lucide-react";
 // types
 import { TTeam } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // ui
-import { Button, CustomEmojiIconPicker, Input, Logo, Tooltip } from "@plane/ui";
+import { Button, CustomEmojiIconPicker, Input, Logo } from "@plane/ui";
 // components
 import { MemberDropdown, ProjectDropdown } from "@/components/dropdowns";
 import { RichTextEditor } from "@/components/editor";
@@ -17,8 +16,9 @@ import { cn } from "@/helpers/common.helper";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 // store hooks
-import { useWorkspace } from "@/hooks/store";
+import { useMember, useWorkspace } from "@/hooks/store";
 // plane web components
+import { EUserPermissions } from "@/plane-web/constants";
 import { useTeams } from "@/plane-web/hooks/store";
 import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
 // services
@@ -44,9 +44,20 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
   const [errors, setErrors] = useState<{ name?: string }>({});
   // store hooks
   const { currentWorkspace } = useWorkspace();
+  const {
+    workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
+  } = useMember();
   const { getTeamMemberIds } = useTeams();
   // derived values
   const teamMemberIds = teamDetail?.id ? (getTeamMemberIds(teamDetail.id) ?? []) : (formData?.member_ids ?? []);
+  const userIdsWithAdminOrMemberRole = useMemo(
+    () =>
+      workspaceMemberIds?.filter((userId) => {
+        const memberDetails = getWorkspaceMemberDetails(userId);
+        return memberDetails?.role === EUserPermissions.GUEST ? false : true;
+      }),
+    [workspaceMemberIds, getWorkspaceMemberDetails]
+  );
   // use editor mention search
   const { searchEntity } = useEditorMentionSearch({
     memberIds: teamMemberIds,
@@ -161,6 +172,7 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
           <p className="text-sm text-custom-text-300">Team lead</p>
           <MemberDropdown
             value={formData.lead_id ?? ""}
+            memberIds={userIdsWithAdminOrMemberRole}
             onChange={(val) => {
               if (val && val !== formData.lead_id) {
                 handleFormDataChange("lead_id", val);
@@ -180,21 +192,12 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
           />
         </div>
         <div className="space-y-0.5">
-          <p className="flex gap-1.5 items-center text-sm text-custom-text-300">
-            <span>{teamDetail?.id ? "Add team members" : "Team members"}</span>
-            {teamDetail?.id && (
-              <Tooltip
-                position="right"
-                tooltipContent="Team members cannot be removed directly from here. Please visit the team details page sidebar to manage removals."
-              >
-                <InfoIcon className="size-3.5 text-custom-text-400 hover:text-custom-text-300 cursor-help outline-none" />
-              </Tooltip>
-            )}
-          </p>
+          <p className="flex gap-1.5 items-center text-sm text-custom-text-300">Team members</p>
           <MemberDropdown
             value={formData.member_ids ?? []}
+            memberIds={userIdsWithAdminOrMemberRole}
             onChange={(val) => {
-              handleFormDataChange("member_ids", Array.from(new Set([...(teamDetail?.member_ids ?? []), ...val])));
+              handleFormDataChange("member_ids", val);
             }}
             multiple
             buttonVariant="border-with-text"

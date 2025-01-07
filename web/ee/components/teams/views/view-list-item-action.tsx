@@ -58,13 +58,13 @@ export const TeamViewListItemAction: FC<Props> = observer((props) => {
 
   // handlers
   const handleAddToFavorites = () => {
-    if (!workspaceSlug || !teamId) return;
+    if (!workspaceSlug || !teamId || view.is_team_view) return;
 
     addViewToFavorites(workspaceSlug.toString(), teamId.toString(), view.id);
   };
 
   const handleRemoveFromFavorites = () => {
-    if (!workspaceSlug || !teamId) return;
+    if (!workspaceSlug || !teamId || view.is_team_view) return;
 
     removeViewFromFavorites(workspaceSlug.toString(), teamId.toString(), view.id);
   };
@@ -96,7 +96,7 @@ export const TeamViewListItemAction: FC<Props> = observer((props) => {
       {/* created by */}
       {<ButtonAvatars showTooltip={false} userIds={ownedByDetails?.id ?? []} />}
 
-      {isEditingAllowed && (
+      {isEditingAllowed && !view.is_team_view && (
         <FavoriteStar
           onClick={(e) => {
             e.preventDefault();

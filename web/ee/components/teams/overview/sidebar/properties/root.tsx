@@ -11,6 +11,8 @@ import { Props } from "@/components/icons/types";
 // hooks
 import { cn } from "@/helpers/common.helper";
 // plane web hooks
+import { useMember } from "@/hooks/store";
+import { EUserPermissions } from "@/plane-web/constants";
 import { useTeams } from "@/plane-web/hooks/store";
 // local components
 import { TeamsPropertiesList } from "./list";
@@ -34,6 +36,9 @@ export const TeamsOverviewSidebarProperties = observer((props: TTeamsOverviewSid
   // router
   const { workspaceSlug } = useParams();
   // hooks
+  const {
+    workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
+  } = useMember();
   const { getTeamById, getTeamEntitiesById, getTeamEntitiesLoaderById, updateTeam } = useTeams();
   // derived values
   const team = getTeamById(teamId);
@@ -41,6 +46,14 @@ export const TeamsOverviewSidebarProperties = observer((props: TTeamsOverviewSid
   const teamEntitiesLoader = getTeamEntitiesLoaderById(teamId);
   const linkedEntitiesCount = teamEntities?.linked_entities.total;
   const teamEntitiesCount = teamEntities?.team_entities.total;
+  const userIdsWithAdminOrMemberRole = useMemo(
+    () =>
+      workspaceMemberIds?.filter((userId) => {
+        const memberDetails = getWorkspaceMemberDetails(userId);
+        return memberDetails?.role === EUserPermissions.GUEST ? false : true;
+      }),
+    [workspaceMemberIds, getWorkspaceMemberDetails]
+  );
 
   if (!team) return null;
 
@@ -64,6 +77,7 @@ export const TeamsOverviewSidebarProperties = observer((props: TTeamsOverviewSid
         value: (
           <MemberDropdown
             value={team.lead_id ?? null}
+            memberIds={userIdsWithAdminOrMemberRole}
             onChange={handleTeamLeadChange}
             multiple={false}
             buttonVariant="transparent-with-text"
@@ -78,7 +92,7 @@ export const TeamsOverviewSidebarProperties = observer((props: TTeamsOverviewSid
         ),
       },
     ],
-    [handleTeamLeadChange, team.lead_id, isEditingAllowed]
+    [handleTeamLeadChange, team.lead_id, userIdsWithAdminOrMemberRole, isEditingAllowed]
   );
 
   const LINKED_ENTITIES: TPropertyListItem[] = useMemo(

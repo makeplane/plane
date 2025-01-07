@@ -14,7 +14,12 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.db.models import Cycle, Issue, IssueView, Page, IssueRelation, IssueAssignee
-from plane.ee.models import TeamSpacePage, TeamSpaceProject, TeamSpaceView
+from plane.ee.models import (
+    TeamSpacePage,
+    TeamSpaceProject,
+    TeamSpaceView,
+    TeamSpaceMember,
+)
 from plane.ee.permissions import TeamSpacePermission, WorkspaceUserPermission
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -341,7 +346,12 @@ class TeamSpaceStatisticsEndpoint(TeamBaseEndpoint):
         )
         return Response(issue_map, status=status.HTTP_200_OK)
 
-    def member_tree(self, project_ids, filters):
+    def member_tree(self, team_space_id, project_ids, filters):
+        # Get all team member ids
+        team_member_ids = TeamSpaceMember.objects.filter(
+            team_space_id=team_space_id
+        ).values_list("member_id", flat=True)
+
         issue_ids = (
             Issue.issue_objects.filter(project_id__in=project_ids)
             .filter(**filters)
@@ -349,7 +359,9 @@ class TeamSpaceStatisticsEndpoint(TeamBaseEndpoint):
         )
         # Get the issue map:
         issue_map = (
-            IssueAssignee.objects.filter(issue__in=issue_ids)
+            IssueAssignee.objects.filter(
+                issue__in=issue_ids, assignee_id__in=team_member_ids
+            )
             .annotate(identifier=F("assignee_id"))
             .values("identifier")
             .annotate(count=Count("id"))
@@ -372,4 +384,4 @@ class TeamSpaceStatisticsEndpoint(TeamBaseEndpoint):
         if data_key == "projects":
             return self.project_tree(project_ids, filters)
         else:
-            return self.member_tree(project_ids, filters)
+            return self.member_tree(team_space_id, project_ids, filters)

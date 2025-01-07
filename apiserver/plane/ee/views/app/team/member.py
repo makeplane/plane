@@ -105,13 +105,14 @@ class TeamSpaceMembersEndpoint(TeamBaseEndpoint):
         team_space = TeamSpace.objects.get(workspace__slug=slug, pk=team_space_id)
 
         # Get the current team space members
-        current_team_space_members = list(
-            TeamSpaceMember.objects.filter(
+        current_members = list(
+           str(member_id) for member_id in TeamSpaceMember.objects.filter(
                 workspace__slug=slug, team_space_id=team_space_id
             ).values_list("member_id", flat=True)
         )
+
         current_instance = json.dumps(
-            {"member_ids": current_team_space_members}, cls=DjangoJSONEncoder
+            {"member_ids": current_members}, cls=DjangoJSONEncoder
         )
 
         # Get the list of team space members
@@ -123,9 +124,20 @@ class TeamSpaceMembersEndpoint(TeamBaseEndpoint):
             .order_by("sort_order")
         )
 
+        # Set of newly added members
+        added_members = set(member_ids) - set(current_members)
+
+        # Set of dropped members
+        dropped_members = set(current_members) - set(member_ids)
+
+        # Remove dropped members from team
+        TeamSpaceMember.objects.filter(
+            workspace__slug=slug, team_space_id=team_space_id, member_id__in=dropped_members
+        ).delete()
+
         # Create team space members
         bulk_team_space_members = []
-        for member in member_ids:
+        for member in added_members:
             sort_order = next(
                 (
                     member.get("sort_order")
@@ -156,11 +168,6 @@ class TeamSpaceMembersEndpoint(TeamBaseEndpoint):
         team_space_members = TeamSpaceMember.objects.filter(
             workspace__slug=slug, team_space_id=team_space_id
         )
-
-        # add current members also to requested data to make it consistent
-        request.data["member_ids"] = [
-            str(mem) for mem in current_team_space_members
-        ] + request.data.get("member_ids", [])
 
         # Create activity
         team_space_activity.delay(

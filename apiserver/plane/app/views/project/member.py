@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 import json
+
 # Django imports
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
@@ -21,12 +22,13 @@ from plane.app.permissions import (
     ProjectLitePermission,
     WorkspaceUserPermission,
 )
-
 from plane.db.models import Project, ProjectMember, IssueUserProperty, WorkspaceMember
+from plane.ee.models import TeamSpaceMember, TeamSpaceProject
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
 from plane.app.permissions.base import allow_permission, ROLE
 from plane.ee.bgtasks.project_activites_task import project_activity
+
 
 class ProjectMemberViewSet(BaseViewSet):
     serializer_class = ProjectMemberAdminSerializer
@@ -53,6 +55,35 @@ class ProjectMemberViewSet(BaseViewSet):
             .select_related("project")
             .select_related("member")
             .select_related("workspace", "workspace__owner")
+        )
+
+    def get_team_error_message(
+        self,
+        is_singular,
+        team_count,
+        type,
+        project_member_id=None,
+        requested_project_member_id=None,
+    ):
+        if type == "update_role":
+            return (
+                "This project is linked to a team they are in. Remove them from that team first."
+                if is_singular
+                else f"This project is linked to {team_count} teams they are in. Remove them from those teams first."
+            )
+
+        return (
+            (
+                "This project is linked to a team you are in. Remove yourself from that team first."
+                if is_singular
+                else f"This project is linked to {team_count} teams you are in. Remove yourself from those teams first."
+            )
+            if str(project_member_id) == str(requested_project_member_id)
+            else (
+                "This project is linked to a team they are in. Remove them from that team first."
+                if is_singular
+                else f"This project is linked to {team_count} teams they are in. Remove them from those teams first."
+            )
         )
 
     @allow_permission([ROLE.ADMIN])
@@ -245,6 +276,28 @@ class ProjectMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        team_ids = TeamSpaceMember.objects.filter(
+            workspace__slug=slug, member_id=project_member.member_id
+        ).values_list("team_space_id", flat=True)
+        team_project_ids = TeamSpaceProject.objects.filter(
+            project_id=project_id, team_space_id__in=team_ids
+        ).values_list("team_space_id", flat=True)
+        if (
+            "role" in request.data
+            and team_project_ids.exists()
+            and int(request.data.get("role")) < 10
+        ):
+            team_count = team_project_ids.count()
+            is_singular = team_count == 1
+            return Response(
+                {
+                    "error": self.get_team_error_message(
+                        is_singular, team_count, "update_role"
+                    )
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         serializer = ProjectMemberSerializer(
             project_member, data=request.data, partial=True
         )
@@ -285,6 +338,32 @@ class ProjectMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Check if this user is part of any team which is part of this project
+        team_ids = TeamSpaceMember.objects.filter(
+            workspace__slug=slug, member_id=project_member.member_id
+        ).values_list("team_space_id", flat=True)
+
+        team_project_ids = TeamSpaceProject.objects.filter(
+            project_id=project_id, team_space_id__in=team_ids
+        ).values_list("team_space_id", flat=True)
+
+        # Check if this project is part of any team
+        if team_project_ids.exists():
+            team_count = team_project_ids.count()
+            is_singular = team_count == 1
+            return Response(
+                {
+                    "error": self.get_team_error_message(
+                        is_singular,
+                        team_count,
+                        "leave",
+                        project_member.id,
+                        requesting_project_member.id,
+                    )
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         project_member.is_active = False
         project_member.save()
         project_activity.delay(
@@ -293,11 +372,8 @@ class ProjectMemberViewSet(BaseViewSet):
             actor_id=str(request.user.id),
             project_id=str(project_id),
             current_instance=json.dumps(
-                {
-                    "members": [str(project_member.member_id)],
-                    "removed": True
-                }
-            ), 
+                {"members": [str(project_member.member_id)], "removed": True}
+            ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
@@ -323,10 +399,40 @@ class ProjectMemberViewSet(BaseViewSet):
         ):
             return Response(
                 {
-                    "error": "You cannot leave the project as your the only admin of the project you will have to either delete the project or create an another admin"
+                    "error": """
+                    You cannot leave the project as your the only admin of the project
+                    you will have to either delete the project or create an another admin
+                    """
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Check if this user is part of any team which is part of this project
+        team_ids = TeamSpaceMember.objects.filter(
+            workspace__slug=slug, member_id=request.user.id
+        ).values_list("team_space_id", flat=True)
+
+        team_project_ids = TeamSpaceProject.objects.filter(
+            project_id=project_id, team_space_id__in=team_ids
+        ).values_list("team_space_id", flat=True)
+
+        # Check if this project is part of any team
+        if team_project_ids.exists():
+            team_count = team_project_ids.count()
+            is_singular = team_count == 1
+            return Response(
+                {
+                    "error": self.get_team_error_message(
+                        is_singular,
+                        team_count,
+                        "leave",
+                        project_member.id,
+                        project_member.id,
+                    )
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Deactivate the user
         project_member.is_active = False
         project_member.save()
@@ -336,11 +442,8 @@ class ProjectMemberViewSet(BaseViewSet):
             actor_id=str(request.user.id),
             project_id=str(project_id),
             current_instance=json.dumps(
-                {
-                    "members": [str(request.user.id)],
-                    "removed": False
-                }
-            ), 
+                {"members": [str(request.user.id)], "removed": False}
+            ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),

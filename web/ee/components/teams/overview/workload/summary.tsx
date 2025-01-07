@@ -61,7 +61,7 @@ export const TeamWorkloadSummary: React.FC<TTeamWorkloadSummaryProps> = observer
         {isUpdating && <Spinner size={12} className="animate-spin flex-shrink-0" />}
       </div>
       <div className="flex flex-col gap-2.5">
-        {teamWorkloadSummary && teamWorkloadSummary.no_due_date_issues > 0 ? (
+        {teamWorkloadSummary ? (
           <div className="flex items-center gap-1.5 py-2.5 border-b border-custom-border-100 text-sm font-medium text-[#FF9500]">
             <TriangleAlert size={16} strokeWidth={2} />
             <span>{teamWorkloadSummary.no_due_date_issues} issues are not assigned due date</span>

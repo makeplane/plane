@@ -143,8 +143,9 @@ export class TeamPage extends BasePage implements TTeamPage {
    * @description returns true if the current logged in user can favorite the page
    */
   get canCurrentUserFavoritePage() {
-    const userRole = this.getUserWorkspaceRole();
-    return !!userRole && userRole >= EUserPermissions.MEMBER;
+    return false;
+    // const userRole = this.getUserWorkspaceRole();
+    // return !!userRole && userRole >= EUserPermissions.MEMBER;
   }
 
   /**

@@ -1,4 +1,5 @@
 import set from "lodash/set";
+import uniq from "lodash/uniq";
 import update from "lodash/update";
 import xor from "lodash/xor";
 import { makeObservable, action, computed, observable, runInAction } from "mobx";
@@ -50,7 +51,7 @@ export interface ITeamStore {
   // CURD actions
   createTeam: (workspaceSlug: string, data: Partial<TTeam>) => Promise<TTeam>;
   updateTeam: (workspaceSlug: string, teamId: string, data: Partial<TTeam>) => Promise<TTeam>;
-  addTeamMembers: (
+  updateTeamMembers: (
     workspaceSlug: string,
     teamId: string,
     memberIds: string[],
@@ -100,7 +101,7 @@ export class TeamStore implements ITeamStore {
       // CURD actions
       createTeam: action,
       updateTeam: action,
-      addTeamMembers: action,
+      updateTeamMembers: action,
       removeTeamMember: action,
       joinTeam: action,
       deleteTeam: action,
@@ -378,8 +379,8 @@ export class TeamStore implements ITeamStore {
       // create team
       const team = await this.teamService.createTeam(workspaceSlug, data);
       // add team members
-      if (data.member_ids) {
-        await this.addTeamMembers(workspaceSlug, team.id, data.member_ids, false);
+      if (data.member_ids && data.member_ids.length > 0) {
+        await this.updateTeamMembers(workspaceSlug, team.id, data.member_ids, false);
       }
       // set team map along with member_ids
       runInAction(() => {
@@ -407,21 +408,20 @@ export class TeamStore implements ITeamStore {
     const teamDetailsBeforeUpdate = this.getTeamById(teamId);
     // remove member_ids from data
     const { member_ids, ...payload } = data;
-    // get member ids to be added
-    const memberIdsToBeAdded = member_ids
-      ? member_ids.filter((memberId) => !teamDetailsBeforeUpdate.member_ids?.includes(memberId))
-      : [];
     // Check if team projects have been updated
     const areProjectsUpdated =
       !!data.project_ids && xor(teamDetailsBeforeUpdate.project_ids, data.project_ids).length > 0;
+
+    // Check if team members have been updated
+    const areMembersUpdated = !!member_ids && xor(teamDetailsBeforeUpdate.member_ids, member_ids).length > 0;
     try {
       // update team map
       runInAction(() => {
         update(this.teamMap, [teamId], (team) => ({ ...team, ...data }));
       });
       // add team members if any
-      if (memberIdsToBeAdded.length > 0) {
-        await this.addTeamMembers(workspaceSlug, teamId, memberIdsToBeAdded, false);
+      if (areMembersUpdated) {
+        await this.updateTeamMembers(workspaceSlug, teamId, member_ids, false);
       }
       // update team
       const team = await this.teamService.updateTeam(workspaceSlug, teamId, payload);
@@ -445,14 +445,14 @@ export class TeamStore implements ITeamStore {
   };
 
   /**
-   * Adds team members to a team and updates the store
+   * Updates team members of a team and updates the store
    * @param workspaceSlug
    * @param teamId
    * @param memberIds
    * @param updateTeamDetails
    * @returns Promise<TTeamMember[]>
    */
-  addTeamMembers = async (
+  updateTeamMembers = async (
     workspaceSlug: string,
     teamId: string,
     memberIds: string[],
@@ -461,8 +461,10 @@ export class TeamStore implements ITeamStore {
     try {
       // add team members
       const teamMembers = await this.teamService.addTeamMembers(workspaceSlug, teamId, memberIds);
-      // set team members map
       runInAction(() => {
+        // clear team members map
+        set(this.teamMembersMap, [teamId], {});
+        // set team members map
         teamMembers.forEach((member) => {
           set(this.teamMembersMap, [teamId, member.member], member);
         });
@@ -529,8 +531,10 @@ export class TeamStore implements ITeamStore {
         return;
       }
       this.loader = "mutation";
+      // get team member ids
+      const teamMemberIds = this.getTeamMemberIds(teamId);
       // join team
-      await this.addTeamMembers(workspaceSlug, teamId, [currentUserId]);
+      await this.updateTeamMembers(workspaceSlug, teamId, uniq([...(teamMemberIds ?? []), currentUserId]), false);
       this.loader = "loaded";
     } catch (error) {
       console.error("Failed to join team", error);

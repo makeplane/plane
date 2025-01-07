@@ -1,4 +1,5 @@
 import { FC, useEffect, useMemo, useState } from "react";
+import uniq from "lodash/uniq";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronDown, Plus, X } from "lucide-react";
@@ -17,7 +18,8 @@ import {
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember } from "@/hooks/store";
-// plane web hooks
+// plane web imports
+import { EUserPermissions } from "@/plane-web/constants";
 import { useTeams } from "@/plane-web/hooks/store";
 
 type Props = {
@@ -32,51 +34,53 @@ export const AddTeamMembersModal: FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [teamMemberIds, setTeamMemberIds] = useState<string[]>([]);
+  const [memberIdsToInvite, setMemberIdsToInvite] = useState<string[]>([]);
   // store hooks
   const {
     workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
   } = useMember();
-  const { getTeamById, getTeamMemberIds, addTeamMembers } = useTeams();
+  const { getTeamById, getTeamMemberIds, updateTeamMembers } = useTeams();
   // derived values
   const teamDetail = teamId ? getTeamById(teamId) : undefined;
-  const memberIds = teamId ? getTeamMemberIds(teamId) : [];
+  const teamMemberIds = teamId ? getTeamMemberIds(teamId) : [];
   const uninvitedPeople = useMemo(
     () =>
       workspaceMemberIds?.filter((userId) => {
-        const isInvited = memberIds?.find((u) => u === userId) || teamMemberIds?.find((u) => u === userId);
+        const memberDetails = getWorkspaceMemberDetails(userId);
+        if (memberDetails?.role === EUserPermissions.GUEST) return false;
+        const isInvited = teamMemberIds?.find((u) => u === userId) || memberIdsToInvite?.find((u) => u === userId);
         return !isInvited;
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [teamMemberIds]
+    [memberIdsToInvite]
   );
   const isButtonDisabled = useMemo(
-    () => teamMemberIds.length === 0 || teamMemberIds.some((id) => !id),
-    [teamMemberIds]
+    () => memberIdsToInvite.length === 0 || memberIdsToInvite.some((id) => !id),
+    [memberIdsToInvite]
   );
 
   useEffect(() => {
     if (isModalOpen) {
       if (teamDetail) {
-        setTeamMemberIds([""]);
+        setMemberIdsToInvite([""]);
       } else {
-        setTeamMemberIds([""]);
+        setMemberIdsToInvite([""]);
       }
     }
   }, [teamDetail, isModalOpen]);
 
   const handleModalClearAndClose = () => {
-    setTeamMemberIds([]);
+    setMemberIdsToInvite([]);
     handleModalClose();
   };
 
   const handleAddTeamMembers = async () => {
-    if (!teamId || !teamMemberIds) return;
+    if (!teamId || !memberIdsToInvite) return;
     // clean up team member ids
-    setTeamMemberIds(teamMemberIds.filter((id) => id !== ""));
+    setMemberIdsToInvite(memberIdsToInvite.filter((id) => id !== ""));
 
     setIsSubmitting(true);
-    await addTeamMembers(workspaceSlug?.toString(), teamId, teamMemberIds)
+    await updateTeamMembers(workspaceSlug?.toString(), teamId, uniq([...(teamMemberIds ?? []), ...memberIdsToInvite]))
       .then(() => {
         handleModalClearAndClose();
         setToast({
@@ -140,7 +144,7 @@ export const AddTeamMembersModal: FC<Props> = observer((props) => {
       <div className="space-y-5">
         <h3 className="text-lg font-medium leading-6 text-custom-text-100">Add coworkers, clients, and consultants</h3>
         <div className="mb-3 space-y-4">
-          {teamMemberIds.map((memberId, index) => {
+          {memberIdsToInvite.map((memberId, index) => {
             const selectedMember = getWorkspaceMemberDetails(memberId);
             return (
               <div key={memberId} className="group mb-1 flex items-center justify-between gap-x-4 text-sm w-full">
@@ -164,11 +168,11 @@ export const AddTeamMembersModal: FC<Props> = observer((props) => {
                       </button>
                     }
                     onChange={(val: string) => {
-                      setTeamMemberIds(
-                        teamMemberIds.map((_, i) => {
+                      setMemberIdsToInvite(
+                        memberIdsToInvite.map((_, i) => {
                           if (i === index) {
                             // Don't add if value already exists in array
-                            if (teamMemberIds.includes(val)) return "";
+                            if (memberIdsToInvite.includes(val)) return "";
                             return val;
                           }
                           return _;
@@ -180,12 +184,12 @@ export const AddTeamMembersModal: FC<Props> = observer((props) => {
                   />
                 </div>
                 <div className="flex items-center justify-between gap-2 flex-shrink-0 ">
-                  {teamMemberIds.length > 1 && (
+                  {memberIdsToInvite.length > 1 && (
                     <div className="flex-item flex w-6">
                       <button
                         type="button"
                         className="place-items-center self-center rounded"
-                        onClick={() => setTeamMemberIds(teamMemberIds.filter((_, i) => i !== index))}
+                        onClick={() => setMemberIdsToInvite(memberIdsToInvite.filter((_, i) => i !== index))}
                       >
                         <X className="h-4 w-4 text-custom-text-200" />
                       </button>
@@ -201,7 +205,7 @@ export const AddTeamMembersModal: FC<Props> = observer((props) => {
         <button
           type="button"
           className="flex items-center gap-1.5 bg-transparent py-2 pr-3 text-sm font-medium text-custom-primary outline-custom-primary"
-          onClick={() => setTeamMemberIds([...teamMemberIds, ""])}
+          onClick={() => setMemberIdsToInvite([...memberIdsToInvite, ""])}
         >
           <Plus className="h-4 w-4" />
           Add another
@@ -219,8 +223,8 @@ export const AddTeamMembersModal: FC<Props> = observer((props) => {
             onClick={handleAddTeamMembers}
           >
             {isSubmitting
-              ? `${teamMemberIds && teamMemberIds.length > 1 ? "Adding members" : "Adding member"}`
-              : `${teamMemberIds && teamMemberIds.length > 1 ? "Add members" : "Add member"}`}
+              ? `${memberIdsToInvite && memberIdsToInvite.length > 1 ? "Adding members" : "Adding member"}`
+              : `${memberIdsToInvite && memberIdsToInvite.length > 1 ? "Add members" : "Add member"}`}
           </Button>
         </div>
       </div>
