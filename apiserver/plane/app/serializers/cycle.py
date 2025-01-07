@@ -22,7 +22,9 @@ class CycleWriteSerializer(BaseSerializer):
         ):
             project_id = self.initial_data.get("project_id") or self.instance.project_id
             is_start_date_end_date_equal = (
-                True if data.get("start_date") == data.get("end_date") else False
+                True
+                if str(data.get("start_date")) == str(data.get("end_date"))
+                else False
             )
             data["start_date"] = convert_to_utc(
                 date=str(data.get("start_date").date()),
