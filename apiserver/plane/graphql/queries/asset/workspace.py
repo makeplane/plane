@@ -40,7 +40,11 @@ class WorkspaceAssetQuery:
         storage = S3Storage(request=info.context["request"])
 
         # Generate a presigned URL to share an S3 object
-        signed_url = storage.generate_presigned_url(object_name=asset.asset.name)
+        signed_url = storage.generate_presigned_url(
+            object_name=asset.asset.name,
+            disposition="attachment",
+            filename=asset.attributes.get("name"),
+        )
 
         # Redirect to the signed URL
         return signed_url
