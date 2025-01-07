@@ -28,6 +28,7 @@ export const RecentIssue = (props: BlockProps) => {
       prependTitleElement={
         <div className="flex flex-shrink-0 items-center justify-center rounded-md gap-4 ">
           <IssueIdentifier
+            size="lg"
             issueTypeId={issueDetails?.type}
             projectId={issueDetails?.project_id || ""}
             projectIdentifier={issueDetails?.project_identifier || ""}
