@@ -6,3 +6,4 @@ from .workspace import (
     WorkspacePageFavoriteEndpoint,
     WorkspacePageDuplicateEndpoint,
 )
+from .base import MovePageEndpoint

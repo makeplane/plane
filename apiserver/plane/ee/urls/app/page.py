@@ -8,6 +8,7 @@ from plane.ee.views import (
     WorkspacePageVersionEndpoint,
     WorkspacePageFavoriteEndpoint,
     WorkspacePageDuplicateEndpoint,
+    MovePageEndpoint,
 )
 
 
@@ -75,5 +76,10 @@ urlpatterns = [
         "workspaces/<str:slug>/favorite-pages/<uuid:pk>/",
         WorkspacePageFavoriteEndpoint.as_view(),
         name="page-favorites",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/move/",
+        MovePageEndpoint.as_view(),
+        name="move-page",
     ),
 ]

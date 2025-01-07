@@ -34,6 +34,7 @@ from plane.ee.views.app.page import (
     WorkspacePageVersionEndpoint,
     WorkspacePageFavoriteEndpoint,
     WorkspacePageDuplicateEndpoint,
+    MovePageEndpoint,
 )
 from plane.ee.views.app.views import (
     IssueViewEEViewSet,
@@ -74,14 +75,28 @@ from plane.ee.views.space.intake import (
 )
 
 # workspace connection views
-from plane.ee.views.app.workspace.credential import WorkspaceCredentialView, VerifyWorkspaceCredentialView
-from plane.ee.views.app.workspace.connection import WorkspaceConnectionView, WorkspaceUserConnectionView
+from plane.ee.views.app.workspace.credential import (
+    WorkspaceCredentialView,
+    VerifyWorkspaceCredentialView,
+)
+from plane.ee.views.app.workspace.connection import (
+    WorkspaceConnectionView,
+    WorkspaceUserConnectionView,
+)
 from plane.ee.views.app.workspace.entity_connection import WorkspaceEntityConnectionView
 
 
-from plane.ee.views.api.workspace.credential import WorkspaceCredentialAPIView, VerifyWorkspaceCredentialAPIView
-from plane.ee.views.api.workspace.connection import WorkspaceConnectionAPIView, WorkspaceUserConnectionAPIView
-from plane.ee.views.api.workspace.entity_connection import WorkspaceEntityConnectionAPIView
+from plane.ee.views.api.workspace.credential import (
+    WorkspaceCredentialAPIView,
+    VerifyWorkspaceCredentialAPIView,
+)
+from plane.ee.views.api.workspace.connection import (
+    WorkspaceConnectionAPIView,
+    WorkspaceUserConnectionAPIView,
+)
+from plane.ee.views.api.workspace.entity_connection import (
+    WorkspaceEntityConnectionAPIView,
+)
 
 # jobs views
 from plane.ee.views.app.job.base import ImportJobView
