@@ -6,7 +6,7 @@ import { format, parseISO, startOfToday } from "date-fns";
 import { ArrowRight, CalendarDays } from "lucide-react";
 // icons
 import { ICycle, TCycleProgress } from "@plane/types";
-import { ControlLink, Loader } from "@plane/ui";
+import { ControlLink, Loader, Tooltip } from "@plane/ui";
 import { CycleListItemAction } from "@/components/cycles";
 // helpers
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
@@ -48,40 +48,43 @@ export const CycleProgressHeader: FC<Props> = (props: Props) => {
     <ControlLink
       onClick={handleControlLinkClick}
       href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}
-      className={cn("px-page-x flex items-center justify-between py-4 bg-custom-sidebar-background-100")}
     >
-      <div className="flex gap-6 h-full rounded-full">
-        {progress === null && <Loader.Item width="82px" height="82px" className="rounded-full" />}
-        {progress && (
-          <ProgressDonut progress={progressToday} days_left={findHowManyDaysLeft(cycleDetails.end_date) ?? 0} />
-        )}
-        <div className="flex flex-col h-full my-auto">
-          <div className="text-xs text-custom-primary-200 font-medium self-start">Currently active cycle</div>
-          <div className="inline-block line-clamp-1 truncate font-bold text-custom-text-100 my-1 text-[20px] text-left">
-            {cycleDetails.name}
-          </div>
-          <div className="flex gap-2">
-            {/* Duration */}
-            <div className="flex gap-1 text-xs text-custom-text-300 font-medium items-center">
-              <CalendarDays className="h-3 w-3 flex-shrink-0 my-auto" />
-              {cycleDetails.start_date && <span>{format(parseISO(cycleDetails.start_date), "MMM dd, yyyy")}</span>}
-              <ArrowRight className="h-3 w-3 flex-shrink-0 my-auto" />
-              {cycleDetails.end_date && <span>{format(parseISO(cycleDetails.end_date), "MMM dd, yyyy")}</span>}
+      <div className="px-page-x flex items-center justify-between py-4 bg-custom-sidebar-background-100 w-full">
+        <div className="flex gap-6 h-full rounded-full truncate">
+          {progress === null && <Loader.Item width="82px" height="82px" className="rounded-full" />}
+          {progress && (
+            <ProgressDonut progress={progressToday} days_left={findHowManyDaysLeft(cycleDetails.end_date) ?? 0} />
+          )}
+          <div className="flex flex-col h-full my-auto w-full overflow-hidden max-w-[85%]">
+            <div className="text-xs text-custom-primary-200 font-medium self-start">Currently active cycle</div>
+            <Tooltip tooltipContent={cycleDetails.name} position="bottom-right">
+              <div className="inline-block line-clamp-1 truncate font-bold text-custom-text-100 my-1 text-[20px] text-left">
+                {cycleDetails.name}
+              </div>
+            </Tooltip>
+            <div className="flex gap-2">
+              {/* Duration */}
+              <div className="flex gap-1 text-xs text-custom-text-300 font-medium items-center">
+                <CalendarDays className="h-3 w-3 flex-shrink-0 my-auto" />
+                {cycleDetails.start_date && <span>{format(parseISO(cycleDetails.start_date), "MMM dd, yyyy")}</span>}
+                <ArrowRight className="h-3 w-3 flex-shrink-0 my-auto" />
+                {cycleDetails.end_date && <span>{format(parseISO(cycleDetails.end_date), "MMM dd, yyyy")}</span>}
+              </div>
+              {/* created by */}
+              {createdByDetails && <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />}
             </div>
-            {/* created by */}
-            {createdByDetails && <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />}
           </div>
         </div>
-      </div>
-      <div className="flex gap-4 items-center" onClick={handleEventPropagation}>
-        <CycleListItemAction
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          cycleId={cycleId}
-          cycleDetails={cycleDetails}
-          parentRef={parentRef}
-          isActive
-        />
+        <div className="flex gap-4 items-center" onClick={handleEventPropagation}>
+          <CycleListItemAction
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            cycleId={cycleId}
+            cycleDetails={cycleDetails}
+            parentRef={parentRef}
+            isActive
+          />
+        </div>
       </div>
     </ControlLink>
   );
