@@ -24,11 +24,13 @@ export const RecentProject = (props: BlockProps) => {
       title={""}
       prependTitleElement={
         <div className="flex flex-shrink-0 items-center justify-center rounded-md gap-4 ">
-          <div className="flex flex-shrink-0 items-center justify-center rounded gap-4 bg-custom-background-80 w-8 h-8">
-            <Logo logo={projectDetails?.logo_props} size={16} />
-          </div>
-          <div className="font-medium text-custom-sidebar-text-400 text-sm whitespace-nowrap">
-            {projectDetails?.identifier}
+          <div className="flex gap-2 items-center justify-center">
+            <div className="flex flex-shrink-0 items-center justify-center rounded gap-4 bg-custom-background-80 w-[25.5px] h-[25.5px]">
+              <Logo logo={projectDetails?.logo_props} size={16} />
+            </div>
+            <div className="font-medium text-custom-sidebar-text-400 text-sm whitespace-nowrap">
+              {projectDetails?.identifier}
+            </div>
           </div>
           <div className="text-custom-text-200 font-medium text-sm whitespace-nowrap">{projectDetails?.name}</div>
           <div className="font-medium text-xs text-custom-text-400">{calculateTimeAgo(activity.visited_at)}</div>

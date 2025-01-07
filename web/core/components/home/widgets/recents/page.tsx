@@ -28,17 +28,19 @@ export const RecentPage = (props: BlockProps) => {
       title={""}
       prependTitleElement={
         <div className="flex flex-shrink-0 items-center justify-center rounded-md gap-4 ">
-          <div className="flex flex-shrink-0 items-center justify-center rounded gap-4 bg-custom-background-80 w-8 h-8">
-            <>
-              {pageDetails?.logo_props?.in_use ? (
-                <Logo logo={pageDetails?.logo_props} size={16} type="lucide" />
-              ) : (
-                <FileText className="h-4 w-4 text-custom-text-300" />
-              )}
-            </>
-          </div>
-          <div className="font-medium text-custom-sidebar-text-400 text-sm whitespace-nowrap">
-            {pageDetails?.project_identifier}
+          <div className="flex gap-2 items-center justify-center">
+            <div className="flex flex-shrink-0 items-center justify-center rounded gap-2 bg-custom-background-80 w-[25.5px] h-[25.5px]">
+              <>
+                {pageDetails?.logo_props?.in_use ? (
+                  <Logo logo={pageDetails?.logo_props} size={16} type="lucide" />
+                ) : (
+                  <FileText className="h-4 w-4 text-custom-text-350" />
+                )}
+              </>
+            </div>
+            <div className="font-medium text-custom-sidebar-text-400 text-sm whitespace-nowrap">
+              {pageDetails?.project_identifier}
+            </div>
           </div>
           <div className="text-custom-text-200 font-medium text-sm whitespace-nowrap">{pageDetails?.name}</div>
           <div className="font-medium text-xs text-custom-text-400">{calculateTimeAgo(activity.visited_at)}</div>

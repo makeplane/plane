@@ -5,6 +5,11 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.db.models import Workspace
 from plane.app.serializers.workspace import WorkspaceHomePreferenceSerializer
 
+# Django imports
+
+from django.db.models import Count
+
+
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
@@ -28,20 +33,29 @@ class WorkspacePreferenceViewSet(BaseAPIView):
 
         keys = [key for key, _ in WorkspaceHomePreference.HomeWidgetKeys.choices]
 
+        sort_order_counter = 1
+
         for preference in keys:
             if preference not in get_preference.values_list("key", flat=True):
                 create_preference_keys.append(preference)
 
+                sort_order = 1000 - sort_order_counter
+
                 preference = WorkspaceHomePreference.objects.bulk_create(
                     [
                         WorkspaceHomePreference(
-                            key=key, user=request.user, workspace=workspace
+                            key=key,
+                            user=request.user,
+                            workspace=workspace,
+                            sort_order=sort_order,
                         )
                         for key in create_preference_keys
                     ],
                     batch_size=10,
                     ignore_conflicts=True,
                 )
+                sort_order_counter += 1
+
         preference = WorkspaceHomePreference.objects.filter(
             user=request.user, workspace_id=workspace.id
         )

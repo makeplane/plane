@@ -31,7 +31,7 @@ export const DashboardQuickLinks = observer((props: THomeWidgetProps) => {
         preloadedData={linkData}
         setLinkData={setLinkData}
       />
-      <div className="flex mx-auto flex-wrap border-b border-custom-border-100 pb-4 w-full justify-center">
+      <div className="flex mx-auto flex-wrap pb-4 w-full justify-center">
         {/* rendering links */}
         <ProjectLinkList workspaceSlug={workspaceSlug} linkOperations={linkOperations} />
       </div>
