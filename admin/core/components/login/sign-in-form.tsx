@@ -5,13 +5,12 @@ import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 // plane internal packages
 import { API_BASE_URL, EAdminAuthErrorCodes, TAuthErrorInfo } from "@plane/constants";
+import { AuthService } from "@plane/services";
 import { Button, Input, Spinner } from "@plane/ui";
 // components
 import { Banner } from "@/components/common";
 // helpers
 import { authErrorHandler } from "@/lib/auth-helpers";
-// services
-import { AuthService } from "@/services/auth.service";
 // local components
 import { AuthBanner } from "../authentication";
 

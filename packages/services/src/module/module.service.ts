@@ -1,7 +1,7 @@
 // types
 import type { IModule, ILinkDetails, ModuleLink, TIssuesResponse } from "@plane/types";
 // services
-import { APIService } from "@/api.service";
+import { APIService } from "../api.service";
 
 export class ModuleService extends APIService {
   constructor(baseURL: string) {
