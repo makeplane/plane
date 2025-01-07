@@ -154,7 +154,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
 
                   setToast({
                     type: TOAST_TYPE.ERROR,
-                    title: "Error!",
+                    title: "You can’t change this role yet.",
                     message: errorString ?? "An error occurred while updating member role. Please try again.",
                   });
                 });

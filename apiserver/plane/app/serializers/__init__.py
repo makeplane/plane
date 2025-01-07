@@ -22,6 +22,7 @@ from .workspace import (
     WorkspaceUserLinkSerializer,
     WorkspaceRecentVisitSerializer,
     WorkspaceHomePreferenceSerializer,
+    StickySerializer,
     WorkspaceUserMeSerializer,
 )
 from .project import (

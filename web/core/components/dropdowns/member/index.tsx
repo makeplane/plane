@@ -24,6 +24,7 @@ type Props = {
   onClose?: () => void;
   renderByDefault?: boolean;
   optionsClassName?: string;
+  memberIds?: string[];
 } & MemberDropdownProps;
 
 export const MemberDropdown: React.FC<Props> = observer((props) => {
@@ -52,6 +53,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     value,
     icon,
     renderByDefault = true,
+    memberIds,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -169,6 +171,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     >
       {isOpen && (
         <MemberOptions
+          memberIds={memberIds}
           optionsClassName={optionsClassName}
           isOpen={isOpen}
           projectId={projectId}
