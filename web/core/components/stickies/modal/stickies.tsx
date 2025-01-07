@@ -2,11 +2,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Plus, X } from "lucide-react";
 import { RecentStickyIcon } from "@plane/ui";
+import { useSticky } from "@/hooks/use-stickies";
 import { STICKY_COLORS } from "../../editor/sticky-editor/color-pallete";
 import { StickiesLayout } from "../stickies-layout";
 import { useStickyOperations } from "../sticky/use-operations";
 import { StickySearch } from "./search";
-import { useSticky } from "@/hooks/use-stickies";
 
 type TProps = {
   handleClose?: () => void;
