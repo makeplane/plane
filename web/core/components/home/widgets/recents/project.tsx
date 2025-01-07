@@ -1,9 +1,9 @@
+import { useRouter } from "next/navigation";
 import { TActivityEntityData, TProjectEntityData } from "@plane/types";
 import { Logo } from "@plane/ui";
 import { ListItem } from "@/components/core/list";
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
 import { MemberDropdown } from "@/components/dropdowns";
-import { useRouter } from "next/navigation";
+import { calculateTimeAgo } from "@/helpers/date-time.helper";
 
 type BlockProps = {
   activity: TActivityEntityData;

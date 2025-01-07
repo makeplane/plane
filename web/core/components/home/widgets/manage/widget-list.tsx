@@ -3,17 +3,14 @@ import {
   DropTargetRecord,
   ElementDragPayload,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import { observer } from "mobx-react";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 import { useHome } from "@/hooks/store/use-home";
 import { WidgetItem } from "./widget-item";
 import { getInstructionFromPayload, TargetData } from "./widget.helpers";
 
-const WIDGETS_LIST = [
-  { id: 1, title: "quick links" },
-  { id: 2, title: "recents" },
-  { id: 3, title: "stickies" },
-];
-export const WidgetList = ({ workspaceSlug }: { workspaceSlug: string }) => {
-  const { reorderWidget } = useHome();
+export const WidgetList = observer(({ workspaceSlug }: { workspaceSlug: string }) => {
+  const { orderedWidgets, reorderWidget, toggleWidget } = useHome();
 
   const handleDrop = (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => {
     const dropTargets = location?.current?.dropTargets ?? [];
@@ -30,20 +27,34 @@ export const WidgetList = ({ workspaceSlug }: { workspaceSlug: string }) => {
 
     if (!sourceData.id) return;
     if (droppedId) {
-      reorderWidget(workspaceSlug, sourceData.id, droppedId, instruction); /** sequence */
+      try {
+        reorderWidget(workspaceSlug, sourceData.id, droppedId, instruction); /** sequence */
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Widget reordered successfully.",
+        });
+      } catch {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Error occurred while reordering widget.",
+        });
+      }
     }
   };
 
   return (
     <div className="my-4">
-      {WIDGETS_LIST.map((widget, index) => (
+      {orderedWidgets.map((widget, index) => (
         <WidgetItem
-          key={widget.id}
-          widget={widget}
-          isLastChild={index === WIDGETS_LIST.length - 1}
+          key={widget}
+          widgetId={widget}
+          isLastChild={index === orderedWidgets.length - 1}
           handleDrop={handleDrop}
+          handleToggle={toggleWidget}
         />
       ))}
     </div>
   );
-};
+});
