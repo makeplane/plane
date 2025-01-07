@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "@plane/constants";
 import type { IFavorite } from "@plane/types";
-import { APIService } from "@/api.service";
+import { APIService } from "../api.service";
 
 /**
  * Service class for managing user favorites

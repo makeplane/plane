@@ -6,12 +6,11 @@ import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 // plane internal packages
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
+import { AuthService } from "@plane/services";
 import { Button, Checkbox, Input, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // components
 import { Banner, PasswordStrengthMeter } from "@/components/common";
-// services
-import { AuthService } from "@/services/auth.service";
 
 // service initialization
 const authService = new AuthService();
