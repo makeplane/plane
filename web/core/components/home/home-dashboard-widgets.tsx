@@ -37,19 +37,18 @@ export const DashboardWidgets = observer(() => {
         isModalOpen={showWidgetSettings}
         handleOnClose={() => toggleWidgetSettings(false)}
       />
-
-      {orderedWidgets.map((key) => {
-        const WidgetComponent = WIDGETS_LIST[key]?.component;
-        const isEnabled = widgetsMap[key]?.is_enabled;
-        if (!WidgetComponent || !isEnabled) return null;
-        if (WIDGETS_LIST[key]?.fullWidth)
+      <div className="flex flex-col divide-y-[1px] divide-custom-border-100">
+        {orderedWidgets.map((key) => {
+          const WidgetComponent = WIDGETS_LIST[key]?.component;
+          const isEnabled = widgetsMap[key]?.is_enabled;
+          if (!WidgetComponent || !isEnabled) return null;
           return (
-            <div key={key} className="lg:col-span-2">
+            <div key={key} className="py-4">
               <WidgetComponent workspaceSlug={workspaceSlug.toString()} />
             </div>
           );
-        else return <WidgetComponent key={key} workspaceSlug={workspaceSlug.toString()} />;
-      })}
+        })}
+      </div>
     </div>
   );
 });
