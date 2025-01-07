@@ -90,14 +90,11 @@ export class HomeStore implements IHomeStore {
   };
 
   reorderWidget = async (workspaceSlug: string, widgetKey: string, destinationId: string, edge: string | undefined) => {
-    console.log("edge", edge);
     try {
       let resultSequence = 10000;
-      console.log("edge", edge);
       if (edge) {
         const sortedIds = orderBy(Object.values(this.widgetsMap), "sort_order", "desc").map((widget) => widget.key);
         const destinationSequence = this.widgetsMap[destinationId]?.sort_order || undefined;
-        console.log("destinationSequence", destinationSequence);
         if (destinationSequence) {
           const destinationIndex = sortedIds.findIndex((id) => id === destinationId);
           if (edge === "reorder-above") {
