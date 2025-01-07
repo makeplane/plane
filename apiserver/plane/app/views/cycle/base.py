@@ -535,7 +535,7 @@ class CycleDateCheckEndpoint(BaseAPIView):
             )
 
         is_start_date_end_date_equal = (
-            True if str("start_date") == str("end_date") else False
+            True if str(start_date) == str(end_date) else False
         )
         start_date = convert_to_utc(
             date=str(start_date), project_id=project_id, is_start_date=True

@@ -20,6 +20,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { EUserPermissions } from "@/plane-web/constants";
 
 interface Props {
+  memberIds?: string[];
   className?: string;
   optionsClassName?: string;
   projectId?: string;
@@ -29,7 +30,7 @@ interface Props {
 }
 
 export const MemberOptions: React.FC<Props> = observer((props: Props) => {
-  const { projectId, referenceElement, placement, isOpen, optionsClassName = "" } = props;
+  const { memberIds: propsMemberIds, projectId, referenceElement, placement, isOpen, optionsClassName = "" } = props;
   // states
   const [query, setQuery] = useState("");
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -67,7 +68,7 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
     }
   }, [isOpen, isMobile]);
 
-  const memberIds = projectId ? getProjectMemberIds(projectId) : workspaceMemberIds;
+  const memberIds = propsMemberIds ? propsMemberIds : projectId ? getProjectMemberIds(projectId) : workspaceMemberIds;
   const onOpen = () => {
     if (!memberIds && workspaceSlug && projectId) fetchProjectMembers(workspaceSlug.toString(), projectId);
   };
