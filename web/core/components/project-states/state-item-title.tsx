@@ -23,7 +23,7 @@ export type StateItemTitleProps = {
 export const StateItemTitle = observer((props: StateItemTitleProps) => {
   const { workspaceSlug, projectId, stateCount, setUpdateStateModal, disabled, state, currentTransitionMap } = props;
   return (
-    <div className="py-4 px-2 flex items-center gap-2 w-full justify-between">
+    <div className="flex items-center gap-2 w-full justify-between">
       <div className="flex items-center gap-2">
         {/* draggable indicator */}
         {!disabled && stateCount != 1 && (
