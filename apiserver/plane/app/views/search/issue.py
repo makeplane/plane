@@ -53,6 +53,7 @@ class IssueSearchEndpoint(BaseAPIView):
                 .exclude(project__archived_at__isnull=False)
                 .exclude(is_draft=True)
             )
+            issues = search_issues(query, issues)
             issue = Issue.issue_objects.filter(pk=issue_id).first()
             if issue:
                 issues = issues.filter(
