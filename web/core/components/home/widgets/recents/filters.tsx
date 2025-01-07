@@ -3,9 +3,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
+import { TRecentActivityFilterKeys } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { TRecentActivityFilterKeys } from "@plane/types";
 
 export type TFiltersDropdown = {
   className?: string;

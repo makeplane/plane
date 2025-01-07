@@ -3,18 +3,18 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 // types
+import useSWR from "swr";
+import { Briefcase, FileText } from "lucide-react";
 import { TActivityEntityData, THomeWidgetProps, TRecentActivityFilterKeys } from "@plane/types";
 // components
+import { LayersIcon } from "@plane/ui";
+import { WorkspaceService } from "@/plane-web/services";
+import { EmptyWorkspace } from "../empty-states";
+import { EWidgetKeys, WidgetLoader } from "../loaders";
 import { FiltersDropdown } from "./filters";
 import { RecentIssue } from "./issue";
-import { WorkspaceService } from "@/plane-web/services";
-import useSWR from "swr";
-import { RecentProject } from "./project";
 import { RecentPage } from "./page";
-import { EWidgetKeys, WidgetLoader } from "../loaders";
-import { Briefcase, FileText } from "lucide-react";
-import { LayersIcon } from "@plane/ui";
-import { EmptyWorkspace } from "../empty-states";
+import { RecentProject } from "./project";
 
 const WIDGET_KEY = EWidgetKeys.RECENT_ACTIVITY;
 const workspaceService = new WorkspaceService();

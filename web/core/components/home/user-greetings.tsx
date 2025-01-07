@@ -51,13 +51,13 @@ export const UserGreetingsView: FC<IUserGreetingsView> = (props) => {
           </div>
         </h6>
       </div>
-      {/* <button
+      <button
         onClick={handleWidgetModal}
         className="flex items-center gap-2 font-medium text-custom-text-300 justify-center border border-custom-border-200 rounded p-2 my-auto mb-0"
       >
         <Shapes size={16} />
         <div className="text-xs font-medium">Manage widgets</div>
-      </button> */}
+      </button>
     </div>
   );
 };

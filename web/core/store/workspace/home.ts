@@ -1,7 +1,7 @@
 import orderBy from "lodash/orderBy";
 import set from "lodash/set";
-import { action, makeObservable, observable, runInAction } from "mobx";
-import { TWidgetEntityData } from "@plane/types";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { THomeWidgetKeys, TWidgetEntityData } from "@plane/types";
 import { WorkspaceService } from "@/plane-web/services";
 import { IWorkspaceLinkStore, WorkspaceLinkStore } from "./link.store";
 
@@ -9,6 +9,9 @@ export interface IHomeStore {
   // observables
   showWidgetSettings: boolean;
   widgetsMap: Record<string, TWidgetEntityData>;
+  widgets: THomeWidgetKeys[];
+  // computed
+  orderedWidgets: THomeWidgetKeys[];
   //stores
   quickLinks: IWorkspaceLinkStore;
   // actions
@@ -22,7 +25,7 @@ export class HomeStore implements IHomeStore {
   // observables
   showWidgetSettings = false;
   widgetsMap: Record<string, TWidgetEntityData> = {};
-  widgets: string[] = [];
+  widgets: THomeWidgetKeys[] = [];
   // stores
   quickLinks: IWorkspaceLinkStore;
   // services
@@ -34,6 +37,8 @@ export class HomeStore implements IHomeStore {
       showWidgetSettings: observable,
       widgetsMap: observable,
       widgets: observable,
+      // computed
+      orderedWidgets: computed,
       // actions
       toggleWidgetSettings: action,
       fetchWidgets: action,
@@ -47,6 +52,10 @@ export class HomeStore implements IHomeStore {
     this.quickLinks = new WorkspaceLinkStore();
   }
 
+  get orderedWidgets() {
+    return orderBy(Object.values(this.widgetsMap), "sort_order", "desc").map((widget) => widget.key);
+  }
+
   toggleWidgetSettings = (value?: boolean) => {
     this.showWidgetSettings = value !== undefined ? value : !this.showWidgetSettings;
   };
@@ -55,7 +64,7 @@ export class HomeStore implements IHomeStore {
     try {
       const widgets = await this.workspaceService.fetchWorkspaceWidgets(workspaceSlug);
       runInAction(() => {
-        this.widgets = widgets.map((widget) => widget.key);
+        this.widgets = orderBy(Object.values(widgets), "sort_order", "desc").map((widget) => widget.key);
         widgets.forEach((widget) => {
           this.widgetsMap[widget.key] = widget;
         });

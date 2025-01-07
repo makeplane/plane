@@ -1,6 +1,6 @@
 // components
-import { RecentActivityWidgetLoader } from "./recent-activity";
 import { QuickLinksWidgetLoader } from "./quick-links";
+import { RecentActivityWidgetLoader } from "./recent-activity";
 
 // types
 

@@ -1,5 +1,5 @@
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
-import { IFavorite, InstructionType, IPragmaticPayloadLocation, TDropTarget } from "@plane/types";
+import { InstructionType, IPragmaticPayloadLocation, TDropTarget, TWidgetEntityData } from "@plane/types";
 
 export type TargetData = {
   id: string;
@@ -11,7 +11,7 @@ export type TargetData = {
 /**
  * extracts the Payload and translates the instruction for the current dropTarget based on drag and drop payload
  * @param dropTarget dropTarget for which the instruction is required
- * @param source the dragging favorite data that is being dragged on the dropTarget
+ * @param source the dragging widget data that is being dragged on the dropTarget
  * @param location location includes the data of all the dropTargets the source is being dragged on
  * @returns Instruction for dropTarget
  */
@@ -37,7 +37,7 @@ export const getInstructionFromPayload = (
     instruction = dropTargetData.isChild ? "reorder-above" : "make-child";
   }
 
-  // if source that is being dragged is a group. A group cannon be a child of any other favorite,
+  // if source that is being dragged is a group. A group cannon be a child of any other widget,
   // hence if current instruction is to be a child of dropTarget then reorder-above instead
   if (instruction === "make-child" && sourceData.isGroup) instruction = "reorder-above";
 
@@ -45,18 +45,18 @@ export const getInstructionFromPayload = (
 };
 
 /**
- * This provides a boolean to indicate if the favorite can be dropped onto the droptarget
+ * This provides a boolean to indicate if the widget can be dropped onto the droptarget
  * @param source
- * @param favorite
+ * @param widget
  * @returns
  */
-export const getCanDrop = (source: TDropTarget, favorite: IFavorite | undefined) => {
+export const getCanDrop = (source: TDropTarget, widget: TWidgetEntityData | undefined) => {
   const sourceData = source?.data;
 
   if (!sourceData) return false;
 
-  // a favorite cannot be dropped on to itself
-  if (sourceData.id === favorite?.id) return false;
+  // a widget cannot be dropped on to itself
+  if (sourceData.id === widget?.key) return false;
 
   return true;
 };
