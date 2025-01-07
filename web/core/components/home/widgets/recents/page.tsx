@@ -34,7 +34,7 @@ export const RecentPage = (props: BlockProps) => {
                 {pageDetails?.logo_props?.in_use ? (
                   <Logo logo={pageDetails?.logo_props} size={16} type="lucide" />
                 ) : (
-                  <FileText className="h-4 w-4 text-custom-text-300" />
+                  <FileText className="h-4 w-4 text-custom-text-350" />
                 )}
               </>
             </div>
