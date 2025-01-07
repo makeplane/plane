@@ -361,6 +361,7 @@ ATTACHMENT_MIME_TYPES = [
     "application/vnd.openxmlformats-officedocument.presentationml.presentation",
     "text/plain",
     "application/rtf",
+    "application/vnd.oasis.opendocument.spreadsheet",
     # Audio
     "audio/mpeg",
     "audio/wav",
