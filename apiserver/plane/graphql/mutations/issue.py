@@ -242,7 +242,7 @@ class IssueMutation:
                         type="module.activity.created",
                         requested_data=json.dumps({"module_id": str(module_id)}),
                         actor_id=str(user.id),
-                        issue_id=str(issue),
+                        issue_id=str(issue_id),
                         project_id=str(project_id),
                         current_instance=None,
                         epoch=int(timezone.now().timestamp()),
