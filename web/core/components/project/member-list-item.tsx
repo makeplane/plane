@@ -38,9 +38,9 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !projectId || !memberId) return;
 
     if (memberId === currentUser?.id) {
-      router.push(`/${workspaceSlug}/projects`);
       await leaveProject(workspaceSlug.toString(), projectId.toString())
         .then(async () => {
+          router.push(`/${workspaceSlug}/projects`);
           captureEvent(PROJECT_MEMBER_LEAVE, {
             state: "SUCCESS",
             element: "Project settings members page",
@@ -50,7 +50,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
         .catch((err) =>
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
+            title: "You can’t leave this project yet.",
             message: err?.error || "Something went wrong. Please try again.",
           })
         );
@@ -58,14 +58,13 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
       await removeMemberFromProject(workspaceSlug.toString(), projectId.toString(), memberId).catch((err) =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
+          title: "You can’t remove the member from this project yet.",
           message: err?.error || "Something went wrong. Please try again.",
         })
       );
   };
 
   if (!memberDetails) return null;
-  removeMemberModal && console.log("removeMemberModal", JSON.parse(JSON.stringify(removeMemberModal?.member)));
   return (
     <>
       {removeMemberModal && (
