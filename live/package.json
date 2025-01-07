@@ -27,7 +27,7 @@
     "@sentry/profiling-node": "^8.28.0",
     "@tiptap/core": "^2.4.0",
     "@tiptap/html": "^2.3.0",
-    "axios": "^1.7.2",
+    "axios": "^1.7.9",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
