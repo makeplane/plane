@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { Home, Inbox, PenSquare } from "lucide-react";
 // plane imports
 import { EUserWorkspaceRoles } from "@plane/constants";
-import { UserActivityIcon } from "@plane/ui";
+import { PiChatLogo, UserActivityIcon } from "@plane/ui";
 // components
 import { SidebarUserMenuItem } from "@/components/workspace/sidebar";
 // helpers
@@ -48,6 +48,13 @@ export const SidebarUserMenu = observer(() => {
       href: `/${workspaceSlug.toString()}/drafts/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
       Icon: PenSquare,
+    },
+    {
+      key: "pi-chat",
+      labelTranslationKey: "pi_chat",
+      href: `/${workspaceSlug.toString()}/pi-chat/`,
+      access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
+      Icon: PiChatLogo,
     },
   ];
 

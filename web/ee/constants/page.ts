@@ -1,1 +1,1 @@
-export * from "ce/constants/page";
+export const ENABLE_MOVE_PAGE = true;
