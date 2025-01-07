@@ -69,7 +69,7 @@ export const RecentActivityWidget: React.FC<THomeWidgetProps> = observer((props)
     return (
       <div ref={ref} className=" max-h-[500px]  overflow-y-scroll">
         <div className="flex items-center justify-between mb-2">
-          <div className="text-base font-semibold text-custom-text-350 hover:underline">Recents</div>
+          <div className="text-base font-semibold text-custom-text-350">Recents</div>
           <FiltersDropdown filters={filters} activeFilter={filter} setActiveFilter={setFilter} />
         </div>
         <div className="min-h-[400px] flex flex-col items-center justify-center">
@@ -81,7 +81,7 @@ export const RecentActivityWidget: React.FC<THomeWidgetProps> = observer((props)
   return (
     <div ref={ref} className=" max-h-[500px] min-h-[400px]  overflow-y-scroll">
       <div className="flex items-center justify-between mb-2">
-        <div className="text-base font-semibold text-custom-text-350 hover:underline">Recents</div>
+        <div className="text-base font-semibold text-custom-text-350">Recents</div>
 
         <FiltersDropdown filters={filters} activeFilter={filter} setActiveFilter={setFilter} />
       </div>

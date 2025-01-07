@@ -13,7 +13,7 @@ export const StickiesWidget = () => {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <div className="text-base font-semibold text-custom-text-350 hover:underline">My Stickies </div>
+        <div className="text-base font-semibold text-custom-text-350">My Stickies </div>
         {/* actions */}
         <div className="flex gap-2">
           <StickySearch />
