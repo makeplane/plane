@@ -28,10 +28,10 @@ def get_workspace(slug):
 
 @sync_to_async
 def issue_link_exists(
-    slug, project, url, exclude_link_id: Optional[strawberry.ID] = None
+    slug, project, issue, url, exclude_link_id: Optional[strawberry.ID] = None
 ):
     issue_query = IssueLink.objects.filter(
-        workspace__slug=slug, project_id=project, url=url
+        workspace__slug=slug, project_id=project, issue_id=issue, url=url
     )
     if exclude_link_id:
         issue_query = issue_query.exclude(pk=exclude_link_id)
@@ -77,7 +77,7 @@ class IssueLinkMutation:
         if not url.startswith(("http://", "https://")):
             raise ValueError("Invalid URL")
 
-        if await issue_link_exists(slug, project, url):
+        if await issue_link_exists(slug, project, issue, url):
             raise ValueError("Issue link already exists")
 
         try:
@@ -149,7 +149,7 @@ class IssueLinkMutation:
             if not url.startswith(("http://", "https://")):
                 raise ValueError("Invalid URL")
 
-            link_exists = await issue_link_exists(slug, project, url, link)
+            link_exists = await issue_link_exists(slug, project, issue, url, link)
             if link_exists:
                 raise ValueError("Issue link already exists")
 
