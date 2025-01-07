@@ -30,6 +30,7 @@ from plane.app.views import (
     QuickLinkViewSet,
     UserRecentVisitViewSet,
     WorkspacePreferenceViewSet,
+    WorkspaceStickyViewSet,
 )
 
 
@@ -244,5 +245,17 @@ urlpatterns = [
         "workspaces/<str:slug>/recent-visits/",
         UserRecentVisitViewSet.as_view({"get": "list"}),
         name="workspace-recent-visits",
+    ),
+    path(
+        "workspaces/<str:slug>/stickies/",
+        WorkspaceStickyViewSet.as_view({"get": "list", "post": "create"}),
+        name="workspace-sticky",
+    ),
+    path(
+        "workspaces/<str:slug>/stickies/<uuid:pk>/",
+        WorkspaceStickyViewSet.as_view(
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
+        ),
+        name="workspace-sticky",
     ),
 ]

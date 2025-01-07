@@ -21,6 +21,7 @@ from plane.db.models import (
     Project,
     ProjectMember,
     WorkspaceHomePreference,
+    Sticky,
 )
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
@@ -150,7 +151,17 @@ class IssueRecentVisitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Issue
-        fields = ["id", "name", "state", "priority", "assignees", "type", "sequence_id", "project_id", "project_identifier", ]        
+        fields = [
+            "id",
+            "name",
+            "state",
+            "priority",
+            "assignees",
+            "type",
+            "sequence_id",
+            "project_id",
+            "project_identifier",
+        ]
 
     def get_project_identifier(self, obj):
         project = obj.project
@@ -166,9 +177,12 @@ class ProjectRecentVisitSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "logo_props", "project_members", "identifier"]
 
     def get_project_members(self, obj):
-        members = ProjectMember.objects.filter(project_id=obj.id).values_list("member", flat=True)
+        members = ProjectMember.objects.filter(project_id=obj.id).values_list(
+            "member", flat=True
+        )
         return members
-  
+
+
 class PageRecentVisitSerializer(serializers.ModelSerializer):
     project_id = serializers.SerializerMethodField()
     project_identifier = serializers.SerializerMethodField()
@@ -235,3 +249,11 @@ class WorkspaceHomePreferenceSerializer(BaseSerializer):
         model = WorkspaceHomePreference
         fields = ["key", "is_enabled", "sort_order"]
         read_only_fields = ["worspace", "created_by", "update_by"]
+
+
+class StickySerializer(BaseSerializer):
+    class Meta:
+        model = Sticky
+        fields = "__all__"
+        read_only_fields = ["workspace", "owner"]
+        extra_kwargs = {"name": {"required": False}}
