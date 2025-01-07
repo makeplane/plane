@@ -6,7 +6,7 @@ import { THomeWidgetKeys, THomeWidgetProps } from "@plane/types";
 import { useHome } from "@/hooks/store/use-home";
 // components
 import { HomePageHeader } from "@/plane-web/components/home/header";
-import { StickiesWidget } from "@/plane-web/components/stickies";
+import { StickiesWidget } from "../stickies";
 import { RecentActivityWidget } from "./widgets";
 import { DashboardQuickLinks } from "./widgets/links";
 import { ManageWidgetsModal } from "./widgets/manage";
