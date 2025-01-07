@@ -108,10 +108,10 @@ export class InstanceService extends APIService {
   /**
    * Sends a test email to the specified receiver to test SMTP configuration
    * @param {string} receiverEmail Email address to send the test email to
-   * @returns {Promise<undefined>} Promise resolving to undefined
+   * @returns {Promise<void>} Promise resolving to void
    * @throws {Error} If the API request fails
    */
-  async sendTestEmail(receiverEmail: string): Promise<undefined> {
+  async sendTestEmail(receiverEmail: string): Promise<void> {
     return this.post("/api/instances/email-credentials-check/", {
       receiver_email: receiverEmail,
     })
