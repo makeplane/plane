@@ -62,9 +62,17 @@ export const Toolbar: React.FC<Props> = (props) => {
       <div className="flex my-auto gap-4" ref={colorPaletteRef}>
         {/* color palette */}
         {showColorPalette && <ColorPalette handleUpdate={handleColorChange} />}
-        <button onClick={() => setShowColorPalette(!showColorPalette)} className="flex text-custom-text-300">
-          <Palette className="size-4 my-auto" />
-        </button>
+        <Tooltip
+          tooltipContent={
+            <p className="flex flex-col gap-1 text-center text-xs">
+              <span className="font-medium">Background color</span>
+            </p>
+          }
+        >
+          <button onClick={() => setShowColorPalette(!showColorPalette)} className="flex text-custom-text-300">
+            <Palette className="size-4 my-auto" />
+          </button>
+        </Tooltip>
 
         <div className="flex w-fit items-stretch justify-between gap-4 rounded p-1 my-auto">
           <div className="flex items-stretch my-auto gap-4">
@@ -107,9 +115,17 @@ export const Toolbar: React.FC<Props> = (props) => {
         </div>
       </div>
       {/* delete action */}
-      <button onClick={handleDelete} className="my-auto text-custom-text-300">
-        <Trash2 className="size-4" />
-      </button>
+      <Tooltip
+        tooltipContent={
+          <p className="flex flex-col gap-1 text-center text-xs">
+            <span className="font-medium">Delete</span>
+          </p>
+        }
+      >
+        <button onClick={handleDelete} className="my-auto text-custom-text-300">
+          <Trash2 className="size-4" />
+        </button>
+      </Tooltip>
     </div>
   );
 };
