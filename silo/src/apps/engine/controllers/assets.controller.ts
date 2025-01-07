@@ -5,6 +5,8 @@ import { Controller, Delete, Get, Post } from "@/lib";
 import { Client } from "@plane/sdk";
 import { env } from "@/env";
 import { getWorkspaceConnectionByCredentialsId } from "@/db/query/connection";
+import { responseHandler } from "@/helpers/response-handler";
+
 
 @Controller("/api/assets")
 export class AssetsController {
@@ -46,9 +48,8 @@ export class AssetsController {
       const asset = await planeClient.assets.getAssetInfo(workspaceConnection.workspaceSlug, id)
       return res.status(302).redirect(asset.asset_url);
 
-    } catch (error: any) {
-      console.log(error);
-      return res.status(500).send(error.message);
+    } catch (error) {
+      responseHandler(res, 500, error)
     }
   }
 }

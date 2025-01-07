@@ -27,9 +27,10 @@ import {
   GithubUserAuthState,
   GithubWebhookPayload,
 } from "@plane/etl/github";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { logger } from "@/logger";
 import { GithubWorkspaceConnection } from "../types";
+import { responseHandler } from "@/helpers/response-handler";
 
 export const githubAuthService = createGithubAuth(
   env.GITHUB_APP_NAME,
@@ -62,7 +63,7 @@ class GithubController {
 
       return res.json(workspaceConnection);
     } catch (error) {
-      return res.status(500).send("Internal Server Error");
+      responseHandler(res, 500, error);
     }
   }
 
@@ -113,54 +114,56 @@ class GithubController {
         return res.sendStatus(200);
       }
     } catch (error) {
-      logger.error(error);
-      return res.status(500).send({
-        error: error,
-      });
+      responseHandler(res, 500, error);
     }
   }
 
   @Post("/auth/url")
   async getAuthURL(req: Request, res: Response) {
-    const { workspace_id, workspace_slug, plane_api_token, user_id } = req.body;
+    try {
+      const { workspace_id, workspace_slug, plane_api_token, user_id } = req.body;
 
-    if (!workspace_id || !workspace_slug || !plane_api_token || !user_id) {
-      return res.status(400).send({
-        message: "Bad Request, expected workspace_id, workspace_slug and plane_api_token be present.",
-      });
+      if (!workspace_id || !workspace_slug || !plane_api_token || !user_id) {
+        return res.status(400).send({
+          message: "Bad Request, expected workspace_id, workspace_slug and plane_api_token be present.",
+        });
+      }
+
+      const connections = await getWorkspaceConnections(workspace_id, "GITHUB");
+
+      if (connections.length > 0) {
+        // If the connection already exists, then we don't need to create it again
+        return res.status(400).send("Connection already exists");
+      }
+
+      res.send(
+        githubAuthService.getAuthUrl({
+          workspace_id: workspace_id,
+          workspace_slug: workspace_slug,
+          plane_api_token: plane_api_token,
+          user_id: user_id,
+          target_host: env.API_BASE_URL,
+        })
+      );
+    } catch (error) {
+      responseHandler(res, 500, error);
     }
-
-    const connections = await getWorkspaceConnections(workspace_id, "GITHUB");
-
-    if (connections.length > 0) {
-      // If the connection already exists, then we don't need to create it again
-      return res.status(400).send("Connection already exists");
-    }
-
-    res.send(
-      githubAuthService.getAuthUrl({
-        workspace_id: workspace_id,
-        workspace_slug: workspace_slug,
-        plane_api_token: plane_api_token,
-        user_id: user_id,
-        target_host: env.API_BASE_URL,
-      })
-    );
   }
 
   @Get("/auth/callback")
   async authCallback(req: Request, res: Response) {
-    const { installation_id, state } = req.query;
-
-    // Check if the request is valid, with the data received
-    if (!installation_id || !state) {
-      return res.status(400).send("Invalid request callback");
-    }
-    // Decode the base64 encoded state string and parse it to JSON
-    const authState: GithubAuthorizeState = JSON.parse(Buffer.from(state as string, "base64").toString());
-
-    // Create a credentials entry for the installation
     try {
+      const { installation_id, state } = req.query;
+
+      // Check if the request is valid, with the data received
+      if (!installation_id || !state) {
+        return res.status(400).send("Invalid request callback");
+      }
+      // Decode the base64 encoded state string and parse it to JSON
+      const authState: GithubAuthorizeState = JSON.parse(Buffer.from(state as string, "base64").toString());
+
+      // Create a credentials entry for the installation
+
       // Get the credentials for the workspaceId
       const credentials = await getCredentialsByOnlyWorkspaceId(authState.workspace_id, "GITHUB");
 
@@ -211,7 +214,7 @@ class GithubController {
 
       res.redirect(`${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github/`);
     } catch (error) {
-      res.status(500).send(error);
+      responseHandler(res, 500, error);
     }
   }
 
@@ -232,22 +235,20 @@ class GithubController {
         isConnected: credentials.length > 0,
       });
     } catch (error) {
-      console.error(error);
-      return res.status(500).send("Internal Server Error");
+      responseHandler(res, 500, error);
     }
   }
 
   @Post("/auth/user-disconnect/:workspaceId/:userId")
   async disconnectUser(req: Request, res: Response) {
-    const { workspaceId, userId } = req.params;
-
-    if (!workspaceId || !userId) {
-      return res.status(400).send({
-        message: "Bad Request, expected workspaceId and userId to be present.",
-      });
-    }
-
     try {
+      const { workspaceId, userId } = req.params;
+
+      if (!workspaceId || !userId) {
+        return res.status(400).send({
+          message: "Bad Request, expected workspaceId and userId to be present.",
+        });
+      }
       // Delete the user credentials for the workspace
       await deactivateCredentials(workspaceId, userId, "GITHUB-USER");
 
@@ -267,48 +268,49 @@ class GithubController {
 
       return res.sendStatus(200);
     } catch (error) {
-      logger.error(error);
-      return res.status(500).send({
-        error: error,
-      });
+      responseHandler(res, 500, error);
     }
   }
 
   @Post("/auth/user/url")
   async getUserAuthUrl(req: Request, res: Response) {
-    const { workspace_id, workspace_slug, user_id, plane_api_token, profile_redirect } = req.body;
+    try {
+      const { workspace_id, workspace_slug, user_id, plane_api_token, profile_redirect } = req.body;
 
-    if (!workspace_id || !workspace_slug || !user_id) {
-      return res.status(400).send({
-        message: "Bad Request, expected workspace_id, workspace_slug, user_id and plane_api_token to be present.",
+      if (!workspace_id || !workspace_slug || !user_id) {
+        return res.status(400).send({
+          message: "Bad Request, expected workspace_id, workspace_slug, user_id and plane_api_token to be present.",
+        });
+      }
+
+      const authUrl = githubAuthService.getUserAuthUrl({
+        workspace_id: workspace_id,
+        workspace_slug: workspace_slug,
+        user_id: user_id,
+        plane_api_token: plane_api_token,
+        profile_redirect: profile_redirect,
+        target_host: env.API_BASE_URL,
       });
+
+      res.send(authUrl);
+    } catch (error) {
+      responseHandler(res, 500, error);
     }
-
-    const authUrl = githubAuthService.getUserAuthUrl({
-      workspace_id: workspace_id,
-      workspace_slug: workspace_slug,
-      user_id: user_id,
-      plane_api_token: plane_api_token,
-      profile_redirect: profile_redirect,
-      target_host: env.API_BASE_URL,
-    });
-
-    res.send(authUrl);
   }
 
   @Get("/auth/user/callback")
   async authUserCallback(req: Request, res: Response) {
-    // Generate the access token for the user and save the credentials to the db
-    const { code, state } = req.query;
-
-    // Check if the request is valid, with the data received
-    if (!code || !state) {
-      return res.status(400).send("Invalid request callback");
-    }
-
-    const authState: GithubUserAuthState = JSON.parse(Buffer.from(state as string, "base64").toString());
-
     try {
+      // Generate the access token for the user and save the credentials to the db
+      const { code, state: queryState } = req.query;
+
+      // Check if the request is valid, with the data received
+      if (!code || !queryState) {
+        return res.status(400).send("Invalid request callback");
+      }
+
+      const authState: GithubUserAuthState = JSON.parse(Buffer.from(queryState as string, "base64").toString());
+
       const { response, state } = await githubAuthService.getUserAccessToken({
         code: code as string,
         state: authState,
@@ -373,24 +375,23 @@ class GithubController {
           },
         });
       }
+
+      if (authState.profile_redirect) {
+        return res.redirect(`${env.APP_BASE_URL}/profile/connections/?workspaceId=${authState.workspace_id}`);
+      }
+
+      return res.redirect(`${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github/`);
     } catch (error) {
-      return res.status(500);
+      responseHandler(res, 500, error);
     }
-
-    if (authState.profile_redirect) {
-      return res.redirect(`${env.APP_BASE_URL}/profile/connections/?workspaceId=${authState.workspace_id}`);
-    }
-
-    return res.redirect(`${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github/`);
   }
   /* -------------------- Auth Endpoints -------------------- */
 
   /* -------------------- Data Endpoints -------------------- */
   @Get("/:workspaceId/installations")
   async getInstallations(req: Request, res: Response) {
-    const { workspaceId } = req.params;
-
     try {
+      const { workspaceId } = req.params;
       // Get the credentials for the workspace id, where the source is GITHUB
       const credentials = await getCredentialsByOnlyWorkspaceId(workspaceId, "GITHUB");
 
@@ -429,18 +430,14 @@ class GithubController {
       // Return the response of the installation
       res.status(200).json(installations);
     } catch (error) {
-      res.status(500).json({
-        error: "Something went wrong fetching installations",
-        message: error,
-      });
+      responseHandler(res, 500, error);
     }
   }
 
   @Get("/:workspaceId/repos")
   async getWorkspaceAccessibleRepositories(req: Request, res: Response) {
-    const { workspaceId } = req.params;
-
     try {
+      const { workspaceId } = req.params;
       // Get the credentials for the workspace id, where the source is GITHUB
       const credentials = await getCredentialsByOnlyWorkspaceId(workspaceId, "GITHUB");
 
@@ -480,10 +477,7 @@ class GithubController {
       await Promise.all(repoPromises);
       res.status(200).json(repositories);
     } catch (error) {
-      res.status(500).send({
-        error: "Something went wrong fetching repositories",
-        message: error,
-      });
+      responseHandler(res, 500, error);
     }
   }
   /* -------------------- Data Endpoints -------------------- */
@@ -491,120 +485,132 @@ class GithubController {
   /* ------------------- Webhook Endpoints ------------------- */
   @Post("/github-webhook")
   async githubWebhook(req: Request, res: Response) {
-    res.status(202).send({
-      message: "Webhook received",
-    });
+    try {
+      res.status(202).send({
+        message: "Webhook received",
+      });
 
-    // Get the event types and the delivery id
-    const eventType = req.headers["x-github-event"];
-    const deliveryId = req.headers["x-github-delivery"];
+      // Get the event types and the delivery id
+      const eventType = req.headers["x-github-event"];
+      const deliveryId = req.headers["x-github-delivery"];
 
-    if (eventType === "issues") {
-      const payload = req.body as GithubWebhookPayload["webhook-issues-opened"];
-      // Discard the issue, if the labels doens't include github label
-      if (!payload.issue?.labels?.find((label) => label.name.toLowerCase() === "plane")) {
-        return;
+      if (eventType === "issues") {
+        const payload = req.body as GithubWebhookPayload["webhook-issues-opened"];
+        // Discard the issue, if the labels doens't include github label
+        if (!payload.issue?.labels?.find((label) => label.name.toLowerCase() === "plane")) {
+          return;
+        }
+        await integrationTaskManager.registerStoreTask(
+          {
+            route: "github-webhook",
+            jobId: eventType as string,
+            type: eventType as string,
+          },
+          {
+            installationId: payload.installation?.id,
+            owner: payload.repository.owner.login,
+            accountId: payload.organization ? payload.organization.id : payload.repository.owner.id,
+            repositoryId: payload.repository.id,
+            repositoryName: payload.repository.name,
+            issueNumber: payload.issue.number,
+          },
+          Number(env.DEDUP_INTERVAL)
+        );
+
+        // Forward the event to the task manager to process
+      } else {
+        await integrationTaskManager.registerTask(
+          {
+            route: "github-webhook",
+            jobId: deliveryId as string,
+            type: eventType as string,
+          },
+          req.body
+        );
       }
-      await integrationTaskManager.registerStoreTask(
-        {
-          route: "github-webhook",
-          jobId: eventType as string,
-          type: eventType as string,
-        },
-        {
-          installationId: payload.installation?.id,
-          owner: payload.repository.owner.login,
-          accountId: payload.organization ? payload.organization.id : payload.repository.owner.id,
-          repositoryId: payload.repository.id,
-          repositoryName: payload.repository.name,
-          issueNumber: payload.issue.number,
-        },
-        Number(env.DEDUP_INTERVAL)
-      );
-
-      // Forward the event to the task manager to process
-    } else {
-      await integrationTaskManager.registerTask(
-        {
-          route: "github-webhook",
-          jobId: deliveryId as string,
-          type: eventType as string,
-        },
-        req.body
-      );
+    } catch (error) {
+      responseHandler(res, 500, error);
     }
   }
 
   @Post("/plane-webhook")
   async planeWebhook(req: Request, res: Response) {
-    res.status(202).send({
-      message: "Webhook received",
-    });
-    // Get the event types and delivery id
-    const eventType = req.headers["x-plane-event"];
-    const event = req.body.event;
-    if (event == "issue" || event == "issue_comment") {
-      const payload = req.body as PlaneWebhookPayloadBase<ExIssue | ExIssueComment>;
+    try {
+      res.status(202).send({
+        message: "Webhook received",
+      });
+      // Get the event types and delivery id
+      const eventType = req.headers["x-plane-event"];
+      const event = req.body.event;
+      if (event == "issue" || event == "issue_comment") {
+        const payload = req.body as PlaneWebhookPayloadBase<ExIssue | ExIssueComment>;
 
-      const id = payload.data.id;
-      const workspace = payload.data.workspace;
-      const project = payload.data.project;
-      const issue = payload.data.issue;
+        const id = payload.data.id;
+        const workspace = payload.data.workspace;
+        const project = payload.data.project;
+        const issue = payload.data.issue;
 
-      if (event == "issue") {
-        const labels = req.body.data.labels as ExIssueLabel[];
-        // If labels doesn't include github label, then we don't need to process this event
-        if (!labels.find((label) => label.name.toLowerCase() === "github")) {
-          return;
+        if (event == "issue") {
+          const labels = req.body.data.labels as ExIssueLabel[];
+          // If labels doesn't include github label, then we don't need to process this event
+          if (!labels.find((label) => label.name.toLowerCase() === "github")) {
+            return;
+          }
+
+          // Reject the activity, that is not useful
+          const skipFields = ["priority", "state", "start_date", "target_date", "cycles", "parent", "modules", "link"];
+          if (payload.activity.field && skipFields.includes(payload.activity.field)) {
+            return;
+          }
         }
 
-        // Reject the activity, that is not useful
-        const skipFields = ["priority", "state", "start_date", "target_date", "cycles", "parent", "modules", "link"];
-        if (payload.activity.field && skipFields.includes(payload.activity.field)) {
-          return;
-        }
+        // Forward the event to the task manager to process
+        await integrationTaskManager.registerStoreTask(
+          {
+            route: "plane-github-webhook",
+            jobId: eventType as string,
+            type: eventType as string,
+          },
+          {
+            id,
+            event,
+            workspace,
+            project,
+            issue,
+          },
+          Number(env.DEDUP_INTERVAL)
+        );
       }
-
-      // Forward the event to the task manager to process
-      await integrationTaskManager.registerStoreTask(
-        {
-          route: "plane-github-webhook",
-          jobId: eventType as string,
-          type: eventType as string,
-        },
-        {
-          id,
-          event,
-          workspace,
-          project,
-          issue,
-        },
-        Number(env.DEDUP_INTERVAL)
-      );
+    } catch (error) {
+      responseHandler(res, 500, error);
     }
   }
   /* ------------------- Webhook Endpoints ------------------- */
 }
 
 function parseAccessToken(response: string): string {
-  // Split the response into key-value pairs
-  const pairs = response.split("&");
+  try {
+    // Split the response into key-value pairs
+    const pairs = response.split("&");
 
-  // Find the pair that starts with "access_token"
-  const accessTokenPair = pairs.find((pair) => pair.startsWith("access_token="));
+    // Find the pair that starts with "access_token"
+    const accessTokenPair = pairs.find((pair) => pair.startsWith("access_token="));
 
-  if (!accessTokenPair) {
-    throw new Error("Access token not found in the response");
+    if (!accessTokenPair) {
+      throw new Error("Access token not found in the response");
+    }
+
+    // Split the pair and return the value (index 1)
+    const [, accessToken] = accessTokenPair.split("=");
+
+    if (!accessToken) {
+      throw new Error("Access token is empty");
+    }
+
+    return accessToken;
+  } catch (error) {
+    throw error;
   }
-
-  // Split the pair and return the value (index 1)
-  const [, accessToken] = accessTokenPair.split("=");
-
-  if (!accessToken) {
-    throw new Error("Access token is empty");
-  }
-
-  return accessToken;
 }
 
 export default GithubController;

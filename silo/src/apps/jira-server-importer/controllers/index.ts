@@ -1,5 +1,5 @@
 import { Controller, Get, Post } from "@/lib";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 // etl
 import { createJiraService, JiraProject, JiraV2Service } from "@plane/etl/jira-server";
 import { JiraResource } from "@plane/etl/jira";
@@ -9,6 +9,7 @@ import { createOrUpdateCredentials, getCredentialsByWorkspaceId } from "@/db/que
 import { createPlaneClient } from "@/helpers/utils";
 import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
 import { getValidCredentials } from "@/helpers/credential";
+import { responseHandler } from "@/helpers/response-handler";
 
 @Controller("/api/jira-server")
 class JiraDataCenterController {
@@ -49,7 +50,7 @@ class JiraDataCenterController {
 
       res.status(200).json(credential);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -68,7 +69,7 @@ class JiraDataCenterController {
       };
       return res.json([resource]);
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -81,7 +82,7 @@ class JiraDataCenterController {
       const projects: JiraProject[] = await jiraClient.getResourceProjects();
       return res.json(projects);
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -94,7 +95,7 @@ class JiraDataCenterController {
       const statuses = await jiraClient.getProjectStatuses(projectId);
       return res.json(statuses);
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -107,7 +108,7 @@ class JiraDataCenterController {
       const priorities = await jiraClient.getIssuePriorities();
       return res.json(priorities);
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -120,7 +121,7 @@ class JiraDataCenterController {
       const labels = await jiraClient.getAllProjectLabels(projectId);
       return res.json(labels);
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -135,7 +136,7 @@ class JiraDataCenterController {
         count: issueCount,
       });
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -148,7 +149,7 @@ class JiraDataCenterController {
       const statuses = await jiraClient.getProjectIssueTypes(projectId);
       return res.json(statuses);
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -173,7 +174,7 @@ class JiraDataCenterController {
         occupiedUserCount: billableMembers.length,
       });
     } catch (error) {
-      return res.status(500).send({ message: error });
+      responseHandler(res, 500, error);
     }
   }
 }

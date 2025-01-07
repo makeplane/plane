@@ -1,11 +1,12 @@
 import { env } from "@/env";
 import { Controller, Get, Post } from "@/lib";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { LinearTokenResponse, createLinearService, LinearAuthPayload, LinearAuthState } from "@plane/etl/linear";
 import { createOrUpdateCredentials, getCredentialsByWorkspaceId } from "@/db/query";
 import { linearAuth } from "../auth/auth";
 import { createPlaneClient } from "@/helpers/utils";
 import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
+import { responseHandler } from "@/helpers/response-handler";
 
 @Controller("/api/linear")
 class LinearController {
@@ -16,52 +17,58 @@ class LinearController {
 
   @Post("/auth/url")
   async getAuthURL(req: Request, res: Response) {
-    if (env.LINEAR_OAUTH_ENABLED === "0") {
-      return res.status(400).send({
-        message: "Bad Request, OAuth is not enabled for Linear.",
-      });
-    }
+    try {
+      if (env.LINEAR_OAUTH_ENABLED === "0") {
+        return res.status(400).send({
+          message: "Bad Request, OAuth is not enabled for Linear.",
+        });
+      }
 
-    const body: LinearAuthState = req.body;
-    if (!body.workspaceId || !body.apiToken) {
-      return res.status(400).send({
-        message: "Bad Request, expected both apiToken and workspaceId to be present.",
-      });
+      const body: LinearAuthState = req.body;
+      if (!body.workspaceId || !body.apiToken) {
+        return res.status(400).send({
+          message: "Bad Request, expected both apiToken and workspaceId to be present.",
+        });
+      }
+      const response = linearAuth.getAuthorizationURL(body);
+      res.send(response);
+
+    } catch (error) {
+      responseHandler(res, 500, error);
     }
-    const response = linearAuth.getAuthorizationURL(body);
-    res.send(response);
   }
 
   @Get("/auth/callback")
   async authCallback(req: Request, res: Response) {
-    if (env.LINEAR_OAUTH_ENABLED === "0") {
-      return res.status(400).send({
-        message: "Invalid Callback, OAuth is not enabled for Linear.",
-      });
-    }
-    const query: LinearAuthPayload | any = req.query;
-    if (!query.code || !query.state) {
-      return res.status(400).send("code not found in the query params");
-    }
-    const stringifiedJsonState = query.state as string;
-    // Decode the base64 encoded state string and parse it to JSON
-    const state: LinearAuthState = JSON.parse(Buffer.from(stringifiedJsonState, "base64").toString());
-    let tokenResponse: LinearTokenResponse;
     try {
-      const tokenInfo = await linearAuth.getAccessToken(query.code as string, state);
-      tokenResponse = tokenInfo.tokenResponse;
-    } catch (error: any) {
-      console.log("Error occured while fetching token details", error.response.data);
-      res.status(400).send(error.response.data);
-      return;
-    }
+      if (env.LINEAR_OAUTH_ENABLED === "0") {
+        return res.status(400).send({
+          message: "Invalid Callback, OAuth is not enabled for Linear.",
+        });
+      }
+      const query: LinearAuthPayload | any = req.query;
+      if (!query.code || !query.state) {
+        return res.status(400).send("code not found in the query params");
+      }
+      const stringifiedJsonState = query.state as string;
+      // Decode the base64 encoded state string and parse it to JSON
+      const state: LinearAuthState = JSON.parse(Buffer.from(stringifiedJsonState, "base64").toString());
+      let tokenResponse: LinearTokenResponse;
+      try {
+        const tokenInfo = await linearAuth.getAccessToken(query.code as string, state);
+        tokenResponse = tokenInfo.tokenResponse;
+      } catch (error: any) {
+        console.log("Error occured while fetching token details", error.response.data);
+        res.status(400).send(error.response.data);
+        return;
+      }
 
-    if (!tokenResponse) {
-      res.status(400).send("failed to fetch token details");
-      return;
-    }
+      if (!tokenResponse) {
+        res.status(400).send("failed to fetch token details");
+        return;
+      }
 
-    try {
+
       // Create a new credentials record in the database for the recieved token
       await createOrUpdateCredentials(state.workspaceId, state.userId, {
         source_access_token: tokenResponse.access_token,
@@ -73,7 +80,7 @@ class LinearController {
       // As we are using base path as /linear, we can redirect to /linear
       res.redirect(`${env.APP_BASE_URL}/${state.workspaceSlug}/settings/imports/linear/`);
     } catch (error: any) {
-      res.status(500).send(error.response.data);
+      responseHandler(res, 500, error);
     }
   }
 
@@ -103,7 +110,7 @@ class LinearController {
       });
       return res.status(200).json(credential);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -120,7 +127,7 @@ class LinearController {
       const org = await linearServiceInstance.organization();
       res.send(org);
     } catch (error: any) {
-      res.status(500).send(error?.response?.data);
+      responseHandler(res, 500, error);
     }
   }
 
@@ -140,7 +147,7 @@ class LinearController {
       const teams = await linearServiceInstance.getTeamsWithoutPagination();
       res.send(teams);
     } catch (error: any) {
-      res.status(500).send(error?.response?.data);
+      responseHandler(res, 500, error);
     }
   }
 
@@ -160,7 +167,7 @@ class LinearController {
       const teams = await linearServiceInstance.getTeamStatusesWithoutPagination(teamId);
       res.send(teams);
     } catch (error: any) {
-      res.status(500).send(error.response.data);
+      responseHandler(res, 500, error);
     }
   }
 
@@ -181,7 +188,7 @@ class LinearController {
       res.json(teams);
     } catch (error: any) {
       console.log(error);
-      res.sendStatus(500).send(error);
+      responseHandler(res, 500, error);
     }
   }
 
@@ -214,7 +221,7 @@ class LinearController {
       if (error instanceof Error) {
         return res.status(401).json({ error: error.message });
       }
-      return res.status(500).json({ error: "An unexpected error occurred" });
+      responseHandler(res, 500, error);
     }
   }
 }

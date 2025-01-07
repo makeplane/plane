@@ -15,12 +15,14 @@
     "check-types": "tsc --noEmit",
     "check-format": "prettier --check \"**/*.{ts,tsx,md}\"",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject ./dist && sentry-cli sourcemaps upload --release=$SENTRY_RELEASE_VERSION ./dist"
   },
   "dependencies": {
     "@linear/sdk": "^30.0.0",
     "@octokit/openapi-webhooks-types": "^8.3.0",
     "@plane/sdk": "*",
+    "@sentry/cli": "^2.40.0",
     "@sentry/node": "^8.27.0",
     "@sentry/profiling-node": "^8.27.0",
     "amqplib": "^0.10.4",

@@ -11,6 +11,7 @@ import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "./base";
 import { TMQEntityOptions } from "./base/types";
 import { JiraDataCenterMigrator } from "@/apps/jira-server-importer/migrator";
+import { SentryInstance } from "@/sentry-config";
 
 class WorkerFactory {
   static createWorker(type: string, mq: MQ, store: Store): TaskHandler {
@@ -176,6 +177,7 @@ export class TaskManager {
       msg.properties.headers.retry_count = retryCount;
     } else {
       logger.error(`Max retry attempts reached for message: ${msg.content.toString()}`);
+      SentryInstance.captureException(error);
       await this.mq.ackMessage(msg);
     }
   }
@@ -190,6 +192,7 @@ export class TaskManager {
         this.workers.set(jobType, WorkerFactory.createWorker(workerType, this.mq!, this.store!));
       }
     } catch (error) {
+      SentryInstance.captureException(error);
       logger.error(`Something went wrong while initiating job worker 🧨, ${error}`);
     }
   };

@@ -7,6 +7,7 @@ import { TaskHandler, TaskHeaders } from "@/types";
 import { TJobWithConfig, TJobStatus, PlaneEntities } from "@plane/etl/core";
 import { getJobForMigration, migrateToPlane } from "./migrator";
 import { Lock } from "@/apps/engine/worker/base/lock";
+import { SentryInstance } from "@/sentry-config";
 
 export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements TaskHandler {
   private mq: MQ;
@@ -126,6 +127,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
         await batchLock.releaseLock();
         // Inditate that the task has been errored, don't need to requeue, the task
         // will be requeued manually
+        SentryInstance.captureException(error);
         return true;
       }
       return true;
@@ -137,6 +139,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
 
       // Inditate that the task has been errored, don't need to requeue, the task
       // will be requeued manually
+      SentryInstance.captureException(error);
       return true;
     }
   }

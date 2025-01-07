@@ -5,8 +5,11 @@ export const logger = createLogger({
   format: format.combine(
     format.colorize(),
     format.timestamp(),
-    format.printf(({ timestamp, level, message }) => `${timestamp} ${level}: ${message}`)
-  ),
+    format.printf(({ timestamp, level, message, ...metadata }) => {
+      const msg = `[${timestamp}] "${level}" ${message}`;
+      const metaString = Object.keys(metadata).length ? ` ${JSON.stringify(metadata)}` : "";
+      return msg + metaString;
+    })),
   transports: [new transports.Console()],
 });
 

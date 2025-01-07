@@ -5,6 +5,7 @@ dotenv.config();
 
 const envSchema = z.object({
   // App Env Variables
+  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   BATCH_SIZE: z.string().default("50"),
   PORT: z.string().default("3000"),
   DEDUP_INTERVAL: z.string().optional().default("2"),
@@ -12,6 +13,9 @@ const envSchema = z.object({
   AMQP_URL: z.string().default("amqp://guest:guest@localhost:5672"),
   REDIS_URL: z.string().default("redis://localhost:6379"),
   SENTRY_DSN: z.string().optional(),
+  SENTRY_ORG: z.string().default("plane-hq"),
+  SENTRY_PROJECT: z.string().default("plane-silo"),
+  SENTRY_RELEASE_VERSION: z.string().default("1.0.0"),
   PG_SCHEMA: z.string().optional(),
   APP_BASE_URL: z.string().default(""),
   API_BASE_URL: z.string().default(""),

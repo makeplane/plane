@@ -12,7 +12,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "inlineSources": true,
+    "inlineSourceMap": false,
+    "sourceRoot": "./src"
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "build", "node_modules"]

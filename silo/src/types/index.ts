@@ -71,3 +71,8 @@ export enum EIntegrationType {
   GITHUB = "GITHUB",
   SLACK = "SLACK",
 }
+
+export interface APIErrorResponse {
+  error: string;
+  status: number;
+}

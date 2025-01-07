@@ -18,10 +18,11 @@ import {
   getJobByWorkspaceIdAndSource,
   updateJob,
 } from "@/db/query";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 import { TImporterKeys, TIntegrationKeys } from "@plane/etl/core";
 import { importTaskManger } from "@/apps/engine/worker";
+import { responseHandler } from "@/helpers/response-handler";
 
 @Controller("/api/jobs")
 export class JobController {
@@ -37,7 +38,7 @@ export class JobController {
       });
       res.status(201).json(job);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -88,7 +89,7 @@ export class JobController {
         res.status(200).json(jobs);
       }
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -111,7 +112,7 @@ export class JobController {
         res.status(404).json({ message: "Job not found" });
       }
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -142,7 +143,7 @@ export class JobController {
         res.status(404).json({ message: "Job not found" });
       }
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -156,7 +157,7 @@ export class JobController {
         res.status(404).json({ message: "Job not found" });
       }
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -190,7 +191,7 @@ export class JobController {
       await cancelJob(body.jobId);
       res.status(200).json({ message: "Job cancelled successfully" });
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -261,7 +262,7 @@ export class JobController {
       );
       res.status(200).json({ message: "Job initiated successfully" });
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error);
     }
   }
 }
@@ -274,7 +275,7 @@ export class JobConfigController {
       const jobConfig = await createJobConfig(req.body);
       res.status(201).json(jobConfig);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error);
     }
   }
 }

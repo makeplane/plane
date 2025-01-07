@@ -8,6 +8,7 @@ import { Client, Client as PlaneClient } from "@plane/sdk";
 import { TServiceCredentials } from "@plane/etl/core";
 import { createGithubService, GithubService, GithubWebhookPayload } from "@plane/etl/github";
 import { MergeRequestEvent } from "@plane/etl/gitlab";
+import { SentryInstance } from "@/sentry-config";
 
 export const handlePullRequestEvents = async (action: PullRequestWebhookActions, data: unknown) => {
   await handlePullRequestOpened(data as unknown as GithubWebhookPayload["webhook-pull-request-opened"]);
@@ -77,6 +78,7 @@ const handlePullRequestOpened = async (data: GithubWebhookPayload["webhook-pull-
       } catch (error) {
         logger.error("Error while creating link in issue", error);
         console.log(error);
+        SentryInstance?.captureException(error);
         continue;
       }
     }
@@ -211,6 +213,7 @@ const updateIssue = async (
     return { reference, issue };
   } catch (error) {
     logger.error(`[GITHUB] Error updating issue ${reference.identifier}-${reference.sequence}: ${error}`);
+    SentryInstance?.captureException(error);
     return null;
   }
 };

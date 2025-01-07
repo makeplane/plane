@@ -198,5 +198,6 @@ export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
     await handleComment(gitlabService, data.project.id, data.object_attributes.iid, body);
   } catch (error: unknown) {
     logger.error(`[GITLAB] Error handling merge request: ${(error as Error)?.stack}`);
+    throw error;
   }
 };

@@ -3,6 +3,7 @@ import { logger } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { GitlabMergeRequestEvent, GitlabWebhookEvent } from "@plane/etl/gitlab";
 import { handleMergeRequest } from "./handlers/merge-request.handler";
+import { SentryInstance } from "@/sentry-config";
 
 export class GitlabWebhookWorker extends TaskHandler {
   mq: MQ;
@@ -18,10 +19,15 @@ export class GitlabWebhookWorker extends TaskHandler {
       `[GITLAB][${headers.type.toUpperCase()}] Received webhook event from gitlab 🐱 --------- [${data.event_type}]`
     );
 
-    if (data.event_type === "merge_request") {
-      await handleMergeRequest(data as GitlabMergeRequestEvent);
+    try {
+      if (data.event_type === "merge_request") {
+        await handleMergeRequest(data as GitlabMergeRequestEvent);
+      }
+    } catch (error) {
+      SentryInstance.captureException(error); 
+    } finally {
+      logger.info("[GITLAB] Event Processed Successfully");
+      return true;
     }
-
-    return true;
   }
 }

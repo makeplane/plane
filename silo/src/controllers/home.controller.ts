@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Controller, Get } from "@/lib";
+import { responseHandler } from "@/helpers/response-handler";
 
 @Controller("/health")
 export class HomeController {
@@ -8,7 +9,7 @@ export class HomeController {
     try {
       res.status(201).json({ message: "Welcome to Silo health check" });
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error);
     }
   }
 }

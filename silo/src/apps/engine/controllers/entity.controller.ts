@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { Controller, Get, Post, Put, Delete } from "@/lib";
 import {
   createEntityConnectionByWorkspaceConnectionId,
@@ -10,6 +10,7 @@ import {
   updateEntityConnection,
   updateEntityConnectionByWorkspaceConnectionIdAndEntityId,
 } from "@/db/query/connection";
+import { responseHandler } from "@/helpers/response-handler";
 
 @Controller("/api/entity-connections")
 export class EntityConnectionController {
@@ -32,7 +33,7 @@ export class EntityConnectionController {
       return res.status(200).send(entityConnections);
     } catch (error) {
       console.error(error);
-      return res.status(500).send("Internal Server Error");
+      responseHandler(res, 500, error)
     }
   }
 
@@ -56,7 +57,7 @@ export class EntityConnectionController {
       return res.status(200).send(entityConnections);
     } catch (error) {
       console.error(error);
-      return res.status(500).send("Internal Server Error");
+      responseHandler(res, 500, error)
     }
   }
 
@@ -91,7 +92,7 @@ export class EntityConnectionController {
       return res.status(200).send(entityConnections);
     } catch (error) {
       console.error(error);
-      return res.status(500).send("Internal Server Error");
+      responseHandler(res, 500, error)
     }
   }
 
@@ -127,7 +128,7 @@ export class EntityConnectionController {
       return res.status(200).send(entityConnections);
     } catch (error) {
       console.error(error);
-      return res.status(500).send("Internal Server Error");
+      responseHandler(res, 500, error)
     }
   }
 
@@ -148,7 +149,7 @@ export class EntityConnectionController {
       return res.status(200).send(entityConnections);
     } catch (error) {
       console.error(error);
-      return res.status(500).send("Internal Server Error");
+      responseHandler(res, 500, error)
     }
   }
 
@@ -180,7 +181,7 @@ export class EntityConnectionController {
       return res.status(200).send(entityConnections);
     } catch (error) {
       console.error(error);
-      return res.status(500).send("Internal Server Error");
+      responseHandler(res, 500, error)
     }
   }
 
@@ -201,7 +202,7 @@ export class EntityConnectionController {
       return res.status(200).send(entityConnections);
     } catch (error) {
       console.error(error);
-      return res.status(500).send("Internal Server Error");
+      responseHandler(res, 500, error)
     }
   }
 
@@ -225,7 +226,7 @@ export class EntityConnectionController {
       return res.status(200).send(entityConnections);
     } catch (error) {
       console.error(error);
-      return res.status(500).send("Internal Server Error");
+      responseHandler(res, 500, error)
     }
   }
 }

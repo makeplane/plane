@@ -7,6 +7,7 @@ import { MQ, Store } from "@/apps/engine/worker/base";
 import { handleViewSubmission } from "./handlers/view-submission";
 import { handleSlackEvent } from "./handlers/handle-message";
 import { handleCommand } from "./handlers/handle-command";
+import { SentryInstance } from "@/sentry-config";
 
 export class SlackInteractionHandler extends TaskHandler {
   mq: MQ;
@@ -46,10 +47,12 @@ export class SlackInteractionHandler extends TaskHandler {
           break;
       }
     } catch (error) {
+      SentryInstance.captureException(error);
       logger.error(error);
-      console.log(error);
+    } finally {
+      logger.info("[SLACK] Event Processed Successfully");
+      return true;
     }
 
-    return true;
   }
 }

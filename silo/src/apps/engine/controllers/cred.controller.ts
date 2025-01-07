@@ -5,8 +5,9 @@ import {
   getCredentialsByWorkspaceId,
   verifyAndUpdateTargetToken,
 } from "@/db/query";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { env } from "@/env";
+import { responseHandler } from "@/helpers/response-handler";
 
 @Controller("/api/credentials")
 export class CredentialController {
@@ -21,7 +22,7 @@ export class CredentialController {
       });
       res.status(200).json(credential);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error)
     }
   }
 
@@ -53,7 +54,7 @@ export class CredentialController {
 
       return res.status(200).json({ isAuthenticated: true, isOAuthEnabled: isOAuthEnabled });
     } catch (error: any) {
-      return res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error)
     }
   }
 
@@ -73,7 +74,7 @@ export class CredentialController {
 
       res.status(200).json({ message: "Successfully verified." });
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error)
     }
   }
 
@@ -93,7 +94,7 @@ export class CredentialController {
 
       res.status(200).json({ message: "Credentials deactivated successfully" });
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error)
     }
   }
 }

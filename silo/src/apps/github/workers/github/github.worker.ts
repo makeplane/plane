@@ -6,6 +6,7 @@ import { handleInstallationEvents } from "./event-handlers/installation.handler"
 import { handleIssueComment } from "./event-handlers/issue-comment.handler";
 import { handleIssueEvents } from "./event-handlers/issue.handler";
 import { handlePullRequestEvents } from "./event-handlers/pull-request.handler";
+import { SentryInstance } from "@/sentry-config";
 
 export class GithubWebhookWorker extends TaskHandler {
   mq: MQ;
@@ -19,24 +20,29 @@ export class GithubWebhookWorker extends TaskHandler {
   async handleTask(headers: TaskHeaders, data: any): Promise<boolean> {
     data = data as GithubWebhookPayload;
     const eventType = headers.type;
-
-    switch (eventType) {
-      case "installation": {
-        return handleInstallationEvents(data.action, data);
+    try {
+      switch (eventType) {
+        case "installation": {
+          return handleInstallationEvents(data.action, data);
+        }
+        case "issues": {
+          return handleIssueEvents(this.store, data.action, data);
+        }
+        case "pull_request": {
+          return handlePullRequestEvents(data.action, data);
+        }
+        case "issue_comment": {
+          return handleIssueComment(this.store, data.action, data);
+        }
+        default: {
+        }
       }
-      case "issues": {
-        return handleIssueEvents(this.store, data.action, data);
-      }
-      case "pull_request": {
-        return handlePullRequestEvents(data.action, data);
-      }
-      case "issue_comment": {
-        return handleIssueComment(this.store, data.action, data);
-      }
-      default: {
-      }
+    } catch (error) {
+      SentryInstance.captureException(error);
+    } finally {
+      logger.info("[GITHUB] Event Processed Successfully");
+      return true;
     }
 
-    return true;
   }
 }

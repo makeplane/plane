@@ -209,5 +209,6 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
     }
   } catch (error) {
     logger.error("Error syncing issue with Plane", error);
+    throw error;
   }
 };
