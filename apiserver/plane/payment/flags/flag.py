@@ -56,6 +56,8 @@ class FeatureFlag(Enum):
     SILO_IMPORTERS = "SILO_IMPORTERS"
     # Silo integrations
     SILO_INTEGRATIONS = "SILO_INTEGRATIONS"
+    # MOVE_PAGES
+    MOVE_PAGES = "MOVE_PAGES"
 
 
 class AdminFeatureFlag(Enum):

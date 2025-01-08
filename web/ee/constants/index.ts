@@ -5,4 +5,3 @@ export * from "./issues";
 export * from "./project";
 export * from "./user-permissions";
 export * from "./workspace";
-export * from "./page";
