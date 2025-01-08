@@ -22,5 +22,5 @@ export type TIssueReactionIdMap = {
 
 export interface IPublicVote {
   vote: -1 | 1;
-  actor_details: ActorDetail;
+  actor_details: IUserLite;
 }
