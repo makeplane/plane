@@ -34,7 +34,7 @@ export const PageDetailsHeaderExtraActions: React.FC<TPageHeaderExtraActionsProp
   const isDeployed = !!anchor;
   const pagePublishSettings = getPagePublishSettings(pageId.toString());
   const isPublishAllowed =
-    isCurrentUserOwner && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+    isCurrentUserOwner || allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   const SPACE_APP_URL = SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL;
   const publishLink = `${SPACE_APP_URL}${SPACE_BASE_PATH}/pages/${anchor}`;
