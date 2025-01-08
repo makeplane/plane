@@ -13,10 +13,10 @@ import { EmptyState } from "@/components/common";
 import { PageHead } from "@/components/core";
 // hooks
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
-// assets
 import { useAppRouter } from "@/hooks/use-app-router";
-import { EpicDetailRoot } from "@/plane-web/components/epics";
-import { useIssueTypes } from "@/plane-web/hooks/store";
+// plane web
+import { EpicDetailRoot } from "@/plane-web/components/epics/details/root";
+// assets
 import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
 import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
 

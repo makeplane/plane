@@ -20,6 +20,8 @@ import { IInitiativeFilterStore } from "./initiatives-filter.store";
 
 export const ALL_INITIATIVES = "All Initiatives";
 
+type InitiativeCollapsible = "links" | "attachments" | "projects";
+
 export interface IInitiativeStore {
   initiativesMap: Record<string, TInitiative> | undefined;
   initiativeLinks: IInitiativeLinkStore;
@@ -27,6 +29,13 @@ export interface IInitiativeStore {
   initiativeAttachments: IInitiativeAttachmentStore;
   initiativeAnalyticsLoader: Record<string, TLoader>;
   initiativeAnalyticsMap: Record<string, TInitiativeAnalytics>;
+
+  openCollapsibleSection: InitiativeCollapsible[];
+  lastCollapsibleAction: InitiativeCollapsible | null;
+
+  setOpenCollapsibleSection: (section: InitiativeCollapsible[]) => void;
+  setLastCollapsibleAction: (section: InitiativeCollapsible) => void;
+  toggleOpenCollapsibleSection: (section: InitiativeCollapsible) => void;
 
   currentGroupedInitiativeIds: { [key: string]: string[] } | undefined;
 
@@ -58,6 +67,9 @@ export class InitiativeStore implements IInitiativeStore {
   initiativeAnalyticsLoader: Record<string, TLoader> = {};
   initiativeAnalyticsMap: Record<string, TInitiativeAnalytics> = {};
 
+  openCollapsibleSection: InitiativeCollapsible[] = ["projects"];
+  lastCollapsibleAction: InitiativeCollapsible | null = null;
+
   initiativeLinks: IInitiativeLinkStore;
   initiativeCommentActivities: IInitiativeCommentActivityStore;
   initiativeAttachments: IInitiativeAttachmentStore;
@@ -72,6 +84,8 @@ export class InitiativeStore implements IInitiativeStore {
       initiativesMap: observable,
       initiativeAnalyticsLoader: observable,
       initiativeAnalyticsMap: observable,
+      openCollapsibleSection: observable.ref,
+      lastCollapsibleAction: observable.ref,
       // actions
       fetchInitiatives: action,
       fetchInitiativeAnalytics: action,
@@ -81,6 +95,9 @@ export class InitiativeStore implements IInitiativeStore {
       deleteInitiative: action,
       addInitiativeReaction: action,
       deleteInitiativeReaction: action,
+      setOpenCollapsibleSection: action,
+      setLastCollapsibleAction: action,
+      toggleOpenCollapsibleSection: action,
     });
 
     this.rootStore = _rootStore;
@@ -122,6 +139,23 @@ export class InitiativeStore implements IInitiativeStore {
   getInitiativeById = computedFn((initiativeId: string) => this.initiativesMap?.[initiativeId]);
 
   getInitiativeAnalyticsById = computedFn((initiativeId: string) => this.initiativeAnalyticsMap[initiativeId]);
+
+  setOpenCollapsibleSection = (section: InitiativeCollapsible[]) => {
+    this.openCollapsibleSection = section;
+    if (this.lastCollapsibleAction) this.lastCollapsibleAction = null;
+  };
+
+  setLastCollapsibleAction = (section: InitiativeCollapsible) => {
+    this.openCollapsibleSection = [section];
+  };
+
+  toggleOpenCollapsibleSection = (section: InitiativeCollapsible) => {
+    if (this.openCollapsibleSection && this.openCollapsibleSection.includes(section)) {
+      this.openCollapsibleSection = this.openCollapsibleSection.filter((s) => s !== section);
+    } else {
+      this.openCollapsibleSection = [...this.openCollapsibleSection, section];
+    }
+  };
 
   fetchInitiatives = async (workspaceSlug: string): Promise<TInitiative[] | undefined> => {
     try {

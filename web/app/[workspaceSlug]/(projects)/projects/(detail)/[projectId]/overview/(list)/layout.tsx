@@ -8,7 +8,7 @@ export default function ProjectOverviewLayout({ children }: { children: React.Re
   return (
     <>
       <AppHeader header={<ProjectOverviewHeader />} />
-      <ContentWrapper>{children}</ContentWrapper>
+      <ContentWrapper className="overflow-hidden">{children}</ContentWrapper>
     </>
   );
 }

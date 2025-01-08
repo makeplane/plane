@@ -13,7 +13,7 @@ import { PageHead } from "@/components/core";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // Plane-web
-import { InitiativeDetailRoot } from "@/plane-web/components/initiatives/detail/root";
+import { InitiativeDetailRoot } from "@/plane-web/components/initiatives/details/root";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // public
 import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";

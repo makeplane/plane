@@ -1,16 +1,15 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { EIssueServiceType } from "@plane/constants";
-// components
-import { ArchiveIssueModal, DeleteIssueModal } from "@/components/issues";
+import { TIssueOperations } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
 import usePeekOverviewOutsideClickDetector from "@/hooks/use-peek-overview-outside-click";
-// store hooks
-import { EpicDetailRoot, TIssueOperations } from "../epic-detail";
+// local components
+import { EpicDetailRoot } from "../details/root";
 import { EpicPeekOverviewError } from "./error";
 import { EpicPeekOverviewHeader, TPeekModes } from "./header";
 import { EpicPeekOverviewLoader } from "./loader";
