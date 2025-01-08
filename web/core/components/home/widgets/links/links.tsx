@@ -34,7 +34,7 @@ export const ProjectLinkList: FC<TProjectLinkList> = observer((props) => {
       buttonClassName="bg-custom-background-90/20"
     >
       <div>
-        <div className="flex gap-2 mb-2 flex-wrap justify-center ">
+        <div className="flex gap-2 mb-2 flex-wrap">
           {links &&
             links.length > 0 &&
             links.map((linkId) => <ProjectLinkDetail key={linkId} linkId={linkId} linkOperations={linkOperations} />)}
