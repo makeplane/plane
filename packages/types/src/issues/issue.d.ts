@@ -2,7 +2,7 @@ import { EIssueServiceType } from "@plane/constants";
 import { TIssuePriorities } from "../issues";
 import { TIssueAttachment } from "./issue_attachment";
 import { TIssueLink } from "./issue_link";
-import { TIssueReaction } from "./issue_reaction";
+import { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
 import { TIssueRelationTypes, TIssuePublicComment } from "@/plane-web/types";
 
 // new issue structure types
@@ -118,16 +118,9 @@ export type TBulkOperationsPayload = {
   properties: Partial<TBulkIssueProperties>;
 };
 
-export type TIssueDetailWidget =
-  | "sub-issues"
-  | "relations"
-  | "links"
-  | "attachments";
+export type TIssueDetailWidget = "sub-issues" | "relations" | "links" | "attachments";
 
-export type TIssueServiceType =
-  | EIssueServiceType.ISSUES
-  | EIssueServiceType.EPICS;
-
+export type TIssueServiceType = EIssueServiceType.ISSUES | EIssueServiceType.EPICS;
 
 export interface IPublicIssue
   extends Pick<
@@ -155,8 +148,8 @@ export interface IPublicIssue
     | "estimate_point"
   > {
   comments: TIssuePublicComment[];
-  reaction_items: IIssueReaction[];
-  vote_items: IVote[];
+  reaction_items: IIssuePublicReaction[];
+  vote_items: IPublicVote[];
 }
 
 type TPublicIssueResponseResults =

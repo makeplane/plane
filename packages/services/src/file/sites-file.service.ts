@@ -9,8 +9,8 @@ import { generateFileUploadPayload, getAssetIdFromUrl, getFileMetaDataForUpload 
 
 /**
  * Service class for managing file operations within plane sites application.
- * Extends APIService to handle HTTP requests to the file-related endpoints.
- * @extends {APIService}
+ * Extends FileService to manage file-related operations.
+ * @extends {FileService}
  * @remarks This service is only available for plane sites
  */
 export class SitesFileService extends FileService {
