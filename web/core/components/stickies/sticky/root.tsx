@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { Minimize2 } from "lucide-react";
 import { TSticky } from "@plane/types";
 import { cn } from "@plane/utils";
-import { useSticky } from "@/plane-web/hooks/use-stickies";
+import { useSticky } from "@/hooks/use-stickies";
 import { STICKY_COLORS } from "../../editor/sticky-editor/color-pallete";
 import { StickyInput } from "./inputs";
 import { useStickyOperations } from "./use-operations";

@@ -7,8 +7,7 @@ import { Search, X } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { useSticky } from "@/plane-web/hooks/use-stickies";
-// hooks
+import { useSticky } from "@/hooks/use-stickies";
 
 export const StickySearch: FC = observer(() => {
   // hooks

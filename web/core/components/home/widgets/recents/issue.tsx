@@ -1,5 +1,5 @@
 import { TActivityEntityData, TIssueEntityData } from "@plane/types";
-import { PriorityIcon, StateGroupIcon, Tooltip } from "@plane/ui";
+import { LayersIcon, PriorityIcon, StateGroupIcon, Tooltip } from "@plane/ui";
 import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns";
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
@@ -27,13 +27,25 @@ export const RecentIssue = (props: BlockProps) => {
       title={""}
       prependTitleElement={
         <div className="flex flex-shrink-0 items-center justify-center rounded-md gap-4 ">
-          <IssueIdentifier
-            issueTypeId={issueDetails?.type}
-            projectId={issueDetails?.project_id || ""}
-            projectIdentifier={issueDetails?.project_identifier || ""}
-            issueSequenceId={issueDetails?.sequence_id || ""}
-            textContainerClassName="text-custom-sidebar-text-400 text-sm whitespace-nowrap"
-          />
+          {issueDetails.type ? (
+            <IssueIdentifier
+              size="lg"
+              issueTypeId={issueDetails?.type}
+              projectId={issueDetails?.project_id || ""}
+              projectIdentifier={issueDetails?.project_identifier || ""}
+              issueSequenceId={issueDetails?.sequence_id || ""}
+              textContainerClassName="text-custom-sidebar-text-400 text-sm whitespace-nowrap"
+            />
+          ) : (
+            <div className="flex gap-2 items-center justify-center">
+              <div className="flex flex-shrink-0 items-center justify-center rounded gap-4 bg-custom-background-80 w-[25.5px] h-[25.5px]">
+                <LayersIcon className="w-4 h-4 text-custom-text-350" />
+              </div>
+              <div className="font-medium text-custom-sidebar-text-400 text-sm whitespace-nowrap">
+                {issueDetails?.project_identifier}-{issueDetails?.sequence_id}
+              </div>
+            </div>
+          )}
           <div className="text-custom-text-200 font-medium text-sm whitespace-nowrap">{issueDetails?.name}</div>
           <div className="font-medium text-xs text-custom-text-400">{calculateTimeAgo(activity.visited_at)}</div>
         </div>

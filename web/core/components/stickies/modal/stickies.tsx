@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Plus, X } from "lucide-react";
 import { RecentStickyIcon } from "@plane/ui";
-import { useSticky } from "@/plane-web/hooks/use-stickies";
+import { useSticky } from "@/hooks/use-stickies";
 import { STICKY_COLORS } from "../../editor/sticky-editor/color-pallete";
 import { StickiesLayout } from "../stickies-layout";
 import { useStickyOperations } from "../sticky/use-operations";
@@ -60,7 +60,9 @@ export const Stickies = observer((props: TProps) => {
         </div>
       </div>
       {/* content */}
-      <StickiesLayout />
+      <div className="mb-4 max-h-[625px] overflow-scroll">
+        <StickiesLayout />
+      </div>
     </div>
   );
 });

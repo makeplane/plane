@@ -1,10 +1,10 @@
 "use client";
 
 import { CommandPalette } from "@/components/command-palette";
+import { StickyActionBar } from "@/components/stickies";
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // plane web components
 import { FloatingBot } from "@/plane-web/components/pi-chat";
-import { StickyActionBar } from "@/plane-web/components/stickies";
 import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 import { FloatingActionsRoot } from "./floating-action-bar";
 import { AppSidebar } from "./sidebar";

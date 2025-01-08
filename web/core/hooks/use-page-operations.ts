@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { useParams } from "next/navigation";
 // plane editor
 import { EditorRefApi } from "@plane/editor";
 // plane types
@@ -34,15 +33,22 @@ export const usePageOperations = (
   pageOperations: TPageOperations;
 } => {
   const { page } = props;
-  // params
-  const { workspaceSlug, projectId } = useParams();
   // derived values
-  const { access, addToFavorites, archived_at, duplicate, id, is_favorite, is_locked, removePageFromFavorites } = page;
+  const {
+    access,
+    addToFavorites,
+    archived_at,
+    duplicate,
+    is_favorite,
+    is_locked,
+    getRedirectionLink,
+    removePageFromFavorites,
+  } = page;
   // collaborative actions
   const { executeCollaborativeAction } = useCollaborativePageActions(props);
   // page operations
   const pageOperations: TPageOperations = useMemo(() => {
-    const pageLink = projectId ? `${workspaceSlug}/projects/${projectId}/pages/${id}` : `${workspaceSlug}/pages/${id}`;
+    const pageLink = getRedirectionLink();
 
     return {
       copyLink: () => {
@@ -184,12 +190,10 @@ export const usePageOperations = (
     archived_at,
     duplicate,
     executeCollaborativeAction,
-    id,
+    getRedirectionLink,
     is_favorite,
     is_locked,
-    projectId,
     removePageFromFavorites,
-    workspaceSlug,
   ]);
   return {
     pageOperations,

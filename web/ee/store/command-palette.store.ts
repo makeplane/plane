@@ -14,14 +14,12 @@ export interface ICommandPaletteStore extends IBaseCommandPaletteStore {
   createUpdateTeamModal: TCreateUpdateTeamModal;
   createUpdateTeamViewModal: TCreateUpdateTeamViewModal;
   createUpdateInitiativeModal: TCreateUpdateInitiativeModal;
-  allStickiesModal: boolean;
   // computed
   isAnyModalOpen: boolean;
   // actions
   toggleCreateTeamModal: (value?: TCreateUpdateTeamModal) => void;
   toggleCreateTeamViewModal: (value?: TCreateUpdateTeamViewModal) => void;
   toggleCreateInitiativeModal: (value?: TCreateUpdateInitiativeModal) => void;
-  toggleAllStickiesModal: (value?: boolean) => void;
 }
 
 export class CommandPaletteStore extends BaseCommandPaletteStore implements ICommandPaletteStore {
@@ -29,7 +27,7 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
   createUpdateTeamModal: TCreateUpdateTeamModal = DEFAULT_CREATE_UPDATE_TEAM_MODAL_DATA;
   createUpdateTeamViewModal: TCreateUpdateTeamViewModal = DEFAULT_CREATE_UPDATE_TEAM_VIEW_MODAL_DATA;
   createUpdateInitiativeModal: TCreateUpdateInitiativeModal = DEFAULT_CREATE_UPDATE_INITIATIVE_MODAL_DATA;
-  allStickiesModal: boolean = false;
+
   constructor() {
     super();
     makeObservable(this, {
@@ -37,14 +35,13 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
       createUpdateTeamModal: observable,
       createUpdateTeamViewModal: observable,
       createUpdateInitiativeModal: observable,
-      allStickiesModal: observable,
+
       // computed
       isAnyModalOpen: computed,
       // actions
       toggleCreateTeamModal: action,
       toggleCreateTeamViewModal: action,
       toggleCreateInitiativeModal: action,
-      toggleAllStickiesModal: action,
     });
   }
 
@@ -57,8 +54,7 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
       super.getCoreModalsState() ||
         this.createUpdateTeamModal.isOpen ||
         this.createUpdateTeamViewModal.isOpen ||
-        this.createUpdateInitiativeModal.isOpen ||
-        this.allStickiesModal
+        this.createUpdateInitiativeModal.isOpen
     );
   }
 
@@ -116,19 +112,6 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
         isOpen: !this.createUpdateInitiativeModal.isOpen,
         initiativeId: undefined,
       };
-    }
-  };
-
-  /**
-   * Toggles the all stickies modal
-   * @param value
-   * @returns
-   */
-  toggleAllStickiesModal = (value?: boolean) => {
-    if (value) {
-      this.allStickiesModal = value;
-    } else {
-      this.allStickiesModal = !this.allStickiesModal;
     }
   };
 }

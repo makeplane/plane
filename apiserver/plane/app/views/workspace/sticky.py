@@ -43,6 +43,7 @@ class WorkspaceStickyViewSet(BaseViewSet):
             request=request,
             queryset=(self.get_queryset()),
             on_results=lambda stickies: StickySerializer(stickies, many=True).data,
+            default_per_page=20,
         )
 
     @allow_permission(allowed_roles=[], creator=True, model=Sticky, level="WORKSPACE")

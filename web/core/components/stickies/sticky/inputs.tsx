@@ -5,7 +5,6 @@ import { EditorRefApi } from "@plane/editor";
 import { TSticky } from "@plane/types";
 import { TextArea } from "@plane/ui";
 import { useWorkspace } from "@/hooks/store";
-import { TProject } from "@/plane-web/types";
 import { StickyEditor } from "../../editor";
 
 type TProps = {
@@ -23,7 +22,7 @@ export const StickyInput = (props: TProps) => {
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   // form info
-  const { handleSubmit, reset, control } = useForm<TProject>({
+  const { handleSubmit, reset, control } = useForm<TSticky>({
     defaultValues: {
       description_html: stickyData?.description_html,
       name: stickyData?.name,

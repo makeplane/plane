@@ -8,8 +8,10 @@ import { Briefcase, FileText } from "lucide-react";
 import { TActivityEntityData, THomeWidgetProps, TRecentActivityFilterKeys } from "@plane/types";
 // components
 import { LayersIcon } from "@plane/ui";
+import { useProject } from "@/hooks/store";
 import { WorkspaceService } from "@/plane-web/services";
 import { EmptyWorkspace } from "../empty-states";
+import { IssuesEmptyState } from "../empty-states/issues";
 import { EWidgetKeys, WidgetLoader } from "../loaders";
 import { FiltersDropdown } from "./filters";
 import { RecentIssue } from "./issue";
@@ -31,6 +33,7 @@ export const RecentActivityWidget: React.FC<THomeWidgetProps> = observer((props)
   const [filter, setFilter] = useState<TRecentActivityFilterKeys>(filters[0].name);
   // ref
   const ref = useRef<HTMLDivElement>(null);
+  const { joinedProjectIds, loader } = useProject();
 
   const { data: recents, isLoading } = useSWR(
     workspaceSlug ? `WORKSPACE_RECENT_ACTIVITY_${workspaceSlug}_${filter}` : null,
@@ -61,19 +64,33 @@ export const RecentActivityWidget: React.FC<THomeWidgetProps> = observer((props)
     }
   };
 
-  if (!isLoading && recents?.length === 0) return <EmptyWorkspace />;
+  if (!loader && joinedProjectIds?.length === 0) return <EmptyWorkspace />;
+  if (!isLoading && recents?.length === 0)
+    return (
+      <div ref={ref} className=" max-h-[500px]  overflow-y-scroll">
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-base font-semibold text-custom-text-350">Recents</div>
+          <FiltersDropdown filters={filters} activeFilter={filter} setActiveFilter={setFilter} />
+        </div>
+        <div className="min-h-[400px] flex flex-col items-center justify-center">
+          <IssuesEmptyState />
+        </div>
+      </div>
+    );
 
   return (
-    <div ref={ref} className=" max-h-[500px] overflow-y-scroll">
+    <div ref={ref} className=" max-h-[500px] min-h-[400px]  overflow-y-scroll">
       <div className="flex items-center justify-between mb-2">
-        <div className="text-base font-semibold text-custom-text-350 hover:underline">Recents</div>
+        <div className="text-base font-semibold text-custom-text-350">Recents</div>
 
         <FiltersDropdown filters={filters} activeFilter={filter} setActiveFilter={setFilter} />
       </div>
-      {isLoading && <WidgetLoader widgetKey={WIDGET_KEY} />}
-      {!isLoading &&
-        recents?.length > 0 &&
-        recents.map((activity: TActivityEntityData) => <div key={activity.id}>{resolveRecent(activity)}</div>)}
+      <div className="min-h-[400px] flex flex-col">
+        {isLoading && <WidgetLoader widgetKey={WIDGET_KEY} />}
+        {!isLoading &&
+          recents?.length > 0 &&
+          recents.map((activity: TActivityEntityData) => <div key={activity.id}>{resolveRecent(activity)}</div>)}
+      </div>
     </div>
   );
 });

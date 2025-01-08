@@ -39,6 +39,7 @@ export * from "./activity";
 export * from "./epics";
 export * from "./charts";
 export * from "./home";
+export * from "./stickies";
 // enterprise
 export * from "./active-cycle";
 export * from "./payment";

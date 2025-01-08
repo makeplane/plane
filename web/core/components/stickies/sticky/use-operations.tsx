@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { TSticky } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { useSticky } from "@/plane-web/hooks/use-stickies";
+import { useSticky } from "@/hooks/use-stickies";
 
 export type TOperations = {
   create: (data: Partial<TSticky>) => Promise<void>;
