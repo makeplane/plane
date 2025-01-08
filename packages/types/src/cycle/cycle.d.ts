@@ -132,3 +132,9 @@ export type CycleDateCheckData = {
 
 export type TCycleEstimateType = "issues" | "points";
 export type TCyclePlotType = "burndown" | "burnup";
+
+export type TPublicCycle = {
+  id: string;
+  name: string;
+  status: string;
+};

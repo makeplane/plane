@@ -1,12 +1,11 @@
 // plane internal
 import { MAX_FILE_SIZE } from "@plane/constants";
 import { TFileHandler } from "@plane/editor";
-
+import { SitesFileService } from "@plane/services";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // services
-import { FileService } from "@/services/file.service";
-const fileService = new FileService();
+const sitesFileService = new SitesFileService();
 
 /**
  * @description generate the file source using assetId
@@ -42,19 +41,19 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
     upload: uploadFile,
     delete: async (src: string) => {
       if (src?.startsWith("http")) {
-        await fileService.deleteOldEditorAsset(workspaceId, src);
+        await sitesFileService.deleteOldEditorAsset(workspaceId, src);
       } else {
-        await fileService.deleteNewAsset(getEditorAssetSrc(anchor, src) ?? "");
+        await sitesFileService.deleteNewAsset(getEditorAssetSrc(anchor, src) ?? "");
       }
     },
     restore: async (src: string) => {
       if (src?.startsWith("http")) {
-        await fileService.restoreOldEditorAsset(workspaceId, src);
+        await sitesFileService.restoreOldEditorAsset(workspaceId, src);
       } else {
-        await fileService.restoreNewAsset(anchor, src);
+        await sitesFileService.restoreNewAsset(anchor, src);
       }
     },
-    cancel: fileService.cancelUpload,
+    cancel: sitesFileService.cancelUpload,
     validation: {
       maxFileSize: MAX_FILE_SIZE,
     },
