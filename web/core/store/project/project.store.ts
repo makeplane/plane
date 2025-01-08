@@ -11,6 +11,8 @@ import { ProjectService, ProjectStateService, ProjectArchiveService } from "@/se
 // store
 import { CoreRootStore } from "../root.store";
 
+type ProjectOverviewCollapsible = "links" | "attachments";
+
 export interface IProjectStore {
   // observables
   isUpdatingProject: boolean;
@@ -29,6 +31,14 @@ export interface IProjectStore {
   // actions
   getProjectById: (projectId: string | undefined | null) => TProject | undefined;
   getProjectIdentifierById: (projectId: string | undefined | null) => string;
+  // collapsible
+  openCollapsibleSection: ProjectOverviewCollapsible[];
+  lastCollapsibleAction: ProjectOverviewCollapsible | null;
+
+  setOpenCollapsibleSection: (section: ProjectOverviewCollapsible[]) => void;
+  setLastCollapsibleAction: (section: ProjectOverviewCollapsible) => void;
+  toggleOpenCollapsibleSection: (section: ProjectOverviewCollapsible) => void;
+
   // fetch actions
   fetchProjects: (workspaceSlug: string) => Promise<TProject[]>;
   fetchProjectDetails: (workspaceSlug: string, projectId: string) => Promise<TProject>;
@@ -53,6 +63,9 @@ export class ProjectStore implements IProjectStore {
   projectMap: {
     [projectId: string]: TProject; // projectId: project Info
   } = {};
+  openCollapsibleSection: ProjectOverviewCollapsible[] = [];
+  lastCollapsibleAction: ProjectOverviewCollapsible | null = null;
+
   // root store
   rootStore: CoreRootStore;
   // service
@@ -68,6 +81,8 @@ export class ProjectStore implements IProjectStore {
       isUpdatingProject: observable,
       loader: observable.ref,
       projectMap: observable,
+      openCollapsibleSection: observable.ref,
+      lastCollapsibleAction: observable.ref,
       // computed
       filteredProjectIds: computed,
       workspaceProjectIds: computed,
@@ -87,6 +102,10 @@ export class ProjectStore implements IProjectStore {
       // CRUD actions
       createProject: action,
       updateProject: action,
+      // collapsible actions
+      setOpenCollapsibleSection: action,
+      setLastCollapsibleAction: action,
+      toggleOpenCollapsibleSection: action,
     });
     // root store
     this.rootStore = _rootStore;
@@ -204,6 +223,23 @@ export class ProjectStore implements IProjectStore {
       .map((project) => project.id);
     return projectIds;
   }
+
+  setOpenCollapsibleSection = (section: ProjectOverviewCollapsible[]) => {
+    this.openCollapsibleSection = section;
+    if (this.lastCollapsibleAction) this.lastCollapsibleAction = null;
+  };
+
+  setLastCollapsibleAction = (section: ProjectOverviewCollapsible) => {
+    this.openCollapsibleSection = [section];
+  };
+
+  toggleOpenCollapsibleSection = (section: ProjectOverviewCollapsible) => {
+    if (this.openCollapsibleSection && this.openCollapsibleSection.includes(section)) {
+      this.openCollapsibleSection = this.openCollapsibleSection.filter((s) => s !== section);
+    } else {
+      this.openCollapsibleSection = [...this.openCollapsibleSection, section];
+    }
+  };
 
   /**
    * get Workspace projects using workspace slug
