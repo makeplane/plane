@@ -67,11 +67,11 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
     defaultValues: { comment_html: comment?.comment_html },
   });
 
-  const onEnter = (formData: Partial<TIssueComment>) => {
+  const onEnter = async (formData: Partial<TIssueComment>) => {
     if (isSubmitting || !comment) return;
     setIsEditing(false);
 
-    activityOperations.updateComment(comment.id, formData);
+    await activityOperations.updateComment(comment.id, formData);
 
     editorRef.current?.setEditorValue(formData?.comment_html ?? "<p></p>");
     showEditorRef.current?.setEditorValue(formData?.comment_html ?? "<p></p>");
