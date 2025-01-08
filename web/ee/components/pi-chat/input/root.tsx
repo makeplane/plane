@@ -17,10 +17,13 @@ type TEditCommands = {
 };
 type TProps = {
   isFullScreen: boolean;
+  className?: string;
+  onSubmit?: () => void;
+  activeChatId?: string;
 };
 
 export const InputBox = (props: TProps) => {
-  const { isFullScreen } = props;
+  const { isFullScreen, className, onSubmit, activeChatId } = props;
   // store hooks
   const { getAnswer, searchCallback, isPiTyping } = usePiChat();
   const { data: currentUser } = useUser();
@@ -38,8 +41,9 @@ export const InputBox = (props: TProps) => {
       if (!query) return;
       getAnswer(query, currentUser?.id);
       editorCommands.current?.clear();
+      onSubmit?.();
     },
-    [currentUser, editorCommands, getAnswer]
+    [currentUser, editorCommands, getAnswer, onSubmit, activeChatId]
   );
 
   const getMentionSuggestions = async (query: string) => {
@@ -91,7 +95,8 @@ export const InputBox = (props: TProps) => {
   return (
     <form
       className={cn(
-        "flex flex-col absolute bottom-3 inset-x-10 bg-pi-50 left-1/2 transform -translate-x-1/2 w-full px-2 md:px-0"
+        "flex flex-col absolute bottom-3 inset-x-10 bg-pi-50 left-1/2 transform -translate-x-1/2 w-full px-2 md:px-0",
+        className
       )}
     >
       <div className="bg-custom-background-100 w-full rounded-[28px] p-2 flex gap-3 shadow-sm border-[4px] border-pi-100">

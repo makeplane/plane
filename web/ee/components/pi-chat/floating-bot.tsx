@@ -7,7 +7,7 @@ import { cn } from "@plane/utils";
 import { WithFeatureFlagHOC } from "../feature-flags";
 import { PiChatBase } from "./base";
 
-export const FloatingBot = () => {
+export const PiChatFloatingBot = () => {
   // states
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef(null);

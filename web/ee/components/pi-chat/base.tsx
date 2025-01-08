@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { cn } from "@plane/utils";
 import { generateQueryParams } from "@/helpers/router.helper";
@@ -14,7 +14,12 @@ import { Header } from "./header";
 import { History } from "./history";
 import { InputBox } from "./input";
 
-export const PiChatBase = observer(() => {
+type TProps = {
+  isFullScreen?: boolean;
+  onlyShowInput?: boolean;
+};
+export const PiChatBase = observer((props: TProps) => {
+  const { isFullScreen: isFullScreenProp = false, onlyShowInput = false } = props;
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
 
   // store hooks
@@ -38,15 +43,17 @@ export const PiChatBase = observer(() => {
   const { isMobile } = usePlatformOS();
   const { data: currentUser } = useUser();
   // router
+  const { workspaceSlug } = useParams();
   const router = useAppRouter();
   // query params
   const pathName = usePathname();
   const searchParams = useSearchParams();
   const chat_id = searchParams.get("chat_id");
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // derived states
   const userThreads = currentUser && geUserThreads(currentUser?.id);
-  const isFullScreen = pathName.includes("pi-chat");
+  const isFullScreen = pathName.includes("pi-chat") || isFullScreenProp;
 
   useSWR(currentUser ? `PI_AI_MODELS` : null, currentUser ? () => fetchModels() : null, {
     revalidateOnFocus: false,
@@ -77,20 +84,47 @@ export const PiChatBase = observer(() => {
     errorRetryCount: 0,
   });
 
-  useEffect(() => {
-    initPiChat(chat_id || undefined);
-  }, []);
+  const handleRedirect = (path = pathName) => {
+    if (!activeChatId) return; // Don't redirect if we don't have an activeChatId
 
+    const query = generateQueryParams(searchParams, ["chat_id"]);
+    router.push(`${path}?${query && `${query}&`}chat_id=${activeChatId}`);
+  };
+
+  // Handle initialization
   useEffect(() => {
-    if (!chat_id) {
-      const query = generateQueryParams(searchParams, ["chat_id"]);
-      router.push(`${pathName}?${query && `${query}&`}chat_id=${activeChatId}`);
+    const initializeChat = async () => {
+      await initPiChat(chat_id || undefined);
+      setIsInitialized(true);
+    };
+
+    if (!isInitialized) {
+      initializeChat();
     }
-  }, [activeChatId]);
+  }, [chat_id, isInitialized]);
+
+  // Handle redirect after initialization
+  useEffect(() => {
+    if (isInitialized && activeChatId && !chat_id) {
+      handleRedirect();
+    }
+  }, [isInitialized, activeChatId, chat_id]);
+
+  // Early return while initializing
+  if (!isInitialized) {
+    return <></>;
+  }
 
   const toggleSidePanel = (value: boolean) => setIsSidePanelOpen(value);
 
-  return (
+  return onlyShowInput ? (
+    <InputBox
+      isFullScreen={isFullScreen}
+      className="relative bg-transparent mt-2 max-w-[950px]"
+      onSubmit={() => handleRedirect(`/${workspaceSlug}/pi-chat`)}
+      activeChatId={activeChatId}
+    />
+  ) : (
     <div
       className={cn("md:flex h-full bg-pi-50", {
         "md:w-[450px] max-w-[450px] max-h-[722px] shadow-2xl rounded-md z-[20]": !isFullScreen,
@@ -132,7 +166,7 @@ export const PiChatBase = observer(() => {
             )}
 
             {/* Chat Input */}
-            <InputBox isFullScreen={isFullScreen} />
+            <InputBox isFullScreen={isFullScreen} activeChatId={activeChatId} />
           </div>
         </div>
       </div>
