@@ -53,6 +53,7 @@
     "@tiptap/extension-text-align": "^2.8.0",
     "@tiptap/extension-text-style": "^2.7.1",
     "@tiptap/extension-underline": "^2.1.13",
+    "@tiptap/html": "^2.1.13",
     "@tiptap/pm": "^2.1.13",
     "@tiptap/react": "^2.1.13",
     "@tiptap/starter-kit": "^2.1.13",
