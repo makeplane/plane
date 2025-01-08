@@ -80,9 +80,6 @@ def create_asset(
         "created_by": user,
     }
 
-    if entity_type != WorkspaceAssetEnumType.PROJECT_COVER.value:
-        asset_fields["project_id"] = entity_identifier
-
     return FileAsset.objects.create(
         **asset_fields, **get_entity_id_field(entity_type, entity_identifier)
     )
