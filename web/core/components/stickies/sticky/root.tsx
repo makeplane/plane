@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { debounce } from "lodash";
 import { observer } from "mobx-react";
 import { Minimize2 } from "lucide-react";
@@ -6,6 +6,7 @@ import { TSticky } from "@plane/types";
 import { cn } from "@plane/utils";
 import { useSticky } from "@/hooks/use-stickies";
 import { STICKY_COLORS } from "../../editor/sticky-editor/color-pallete";
+import { StickyDeleteModal } from "../delete-modal";
 import { StickyInput } from "./inputs";
 import { useStickyOperations } from "./use-operations";
 
@@ -17,6 +18,8 @@ type TProps = {
 };
 export const StickyNote = observer((props: TProps) => {
   const { onClose, workspaceSlug, className = "", stickyId } = props;
+  //state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // hooks
   const { stickyOperations } = useStickyOperations({ workspaceSlug });
   const { stickies } = useSticky();
@@ -49,24 +52,34 @@ export const StickyNote = observer((props: TProps) => {
   };
 
   return (
-    <div
-      className={cn("w-full flex flex-col h-fit rounded p-4 group/sticky", className)}
-      style={{ backgroundColor: stickyData?.color || STICKY_COLORS[0] }}
-    >
-      {onClose && (
-        <button className="flex w-full" onClick={onClose}>
-          <Minimize2 className="size-4 m-auto mr-0" />
-        </button>
-      )}
-      {/* inputs */}
-      <StickyInput
-        stickyData={stickyData}
-        workspaceSlug={workspaceSlug}
-        handleUpdate={debouncedFormSave}
-        stickyId={stickyId}
-        handleDelete={handleDelete}
-        handleChange={handleChange}
+    <>
+      <StickyDeleteModal
+        isOpen={isDeleteModalOpen}
+        handleSubmit={handleDelete}
+        handleClose={() => setIsDeleteModalOpen(false)}
       />
-    </div>
+      <div
+        className={cn("w-full flex flex-col h-fit rounded p-4 group/sticky", className)}
+        style={{ backgroundColor: stickyData?.color || STICKY_COLORS[0] }}
+      >
+        {onClose && (
+          <button className="flex w-full" onClick={onClose}>
+            <Minimize2 className="size-4 m-auto mr-0" />
+          </button>
+        )}
+        {/* inputs */}
+        <StickyInput
+          stickyData={stickyData}
+          workspaceSlug={workspaceSlug}
+          handleUpdate={debouncedFormSave}
+          stickyId={stickyId}
+          handleDelete={() => {
+            if (!stickyId) return;
+            setIsDeleteModalOpen(true);
+          }}
+          handleChange={handleChange}
+        />
+      </div>
+    </>
   );
 });

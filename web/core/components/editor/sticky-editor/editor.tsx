@@ -29,7 +29,7 @@ interface StickyEditorWrapperProps
   uploadFile: (file: File) => Promise<string>;
   parentClassName?: string;
   handleColorChange: (data: Partial<TSticky>) => Promise<void>;
-  handleDelete: () => Promise<void>;
+  handleDelete: () => void;
 }
 
 export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperProps>((props, ref) => {
