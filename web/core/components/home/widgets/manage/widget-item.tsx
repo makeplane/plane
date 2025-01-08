@@ -17,6 +17,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
 // ui
+import { Lock } from "lucide-react";
 import { InstructionType, TWidgetEntityData } from "@plane/types";
 // components
 import { DropIndicator, ToggleSwitch } from "@plane/ui";
@@ -53,6 +54,46 @@ export const WidgetItem: FC<Props> = observer((props) => {
 
     if (!element) return;
     const initialData = { id: widget.key, isGroup: false };
+    const dropTargets = dropTargetForElements({
+      element,
+      canDrop: ({ source }) => {
+        if (widget.key === "quick_links") return false;
+        return getCanDrop(source, widget);
+      },
+      onDragStart: () => {
+        setIsDragging(true);
+      },
+      getData: ({ input, element }) => {
+        const blockedStates: InstructionType[] = ["make-child"];
+        if (!isLastChild) {
+          blockedStates.push("reorder-below");
+        }
+
+        return attachInstruction(initialData, {
+          input,
+          element,
+          currentLevel: 1,
+          indentPerLevel: 0,
+          mode: isLastChild ? "last-in-group" : "standard",
+          block: blockedStates,
+        });
+      },
+      onDrag: ({ self, source, location }) => {
+        const instruction = getInstructionFromPayload(self, source, location);
+        setInstruction(instruction);
+      },
+      onDragLeave: () => {
+        setInstruction(undefined);
+      },
+      onDrop: ({ self, source, location }) => {
+        setInstruction(undefined);
+        handleDrop(self, source, location);
+      },
+    });
+
+    if (widget.key === "quick_links") {
+      return dropTargets;
+    }
     return combine(
       draggable({
         element,
@@ -76,46 +117,14 @@ export const WidgetItem: FC<Props> = observer((props) => {
           });
         },
       }),
-      dropTargetForElements({
-        element,
-        canDrop: ({ source }) => getCanDrop(source, widget),
-        onDragStart: () => {
-          setIsDragging(true);
-        },
-        getData: ({ input, element }) => {
-          const blockedStates: InstructionType[] = ["make-child"];
-          if (!isLastChild) {
-            blockedStates.push("reorder-below");
-          }
-
-          return attachInstruction(initialData, {
-            input,
-            element,
-            currentLevel: 1,
-            indentPerLevel: 0,
-            mode: isLastChild ? "last-in-group" : "standard",
-            block: blockedStates,
-          });
-        },
-        onDrag: ({ self, source, location }) => {
-          const instruction = getInstructionFromPayload(self, source, location);
-          setInstruction(instruction);
-        },
-        onDragLeave: () => {
-          setInstruction(undefined);
-        },
-        onDrop: ({ self, source, location }) => {
-          setInstruction(undefined);
-          handleDrop(self, source, location);
-        },
-      })
+      dropTargets
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [elementRef?.current, isDragging, isLastChild, widget.key]);
 
   return (
     <div className="">
-      <DropIndicator isVisible={instruction === "reorder-above"} />
+      {widget.key !== "quick_links" && <DropIndicator isVisible={instruction === "reorder-above"} />}{" "}
       <div
         ref={elementRef}
         className={cn(
@@ -126,7 +135,11 @@ export const WidgetItem: FC<Props> = observer((props) => {
         )}
       >
         <div className="flex items-center">
-          <WidgetItemDragHandle sort_order={widget.sort_order} isDragging={isDragging} />
+          {widget.key === "quick_links" ? (
+            <Lock className="mr-2 text-custom-text-400" size={16} />
+          ) : (
+            <WidgetItemDragHandle sort_order={widget.sort_order} isDragging={isDragging} />
+          )}
           <div>{widget.key.replaceAll("_", " ")}</div>
         </div>
         <ToggleSwitch
