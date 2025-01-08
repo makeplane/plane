@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 // computed
 import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";
 import { useHome } from "@/hooks/store/use-home";
+import { LinksEmptyState } from "../empty-states/links";
 import { EWidgetKeys, WidgetLoader } from "../loaders";
 import { ProjectLinkDetail } from "./link-detail";
 import { TLinkOperations } from "./use-links";
@@ -19,13 +20,14 @@ export const ProjectLinkList: FC<TProjectLinkList> = observer((props) => {
   const { linkOperations, workspaceSlug } = props;
   // hooks
   const {
-    quickLinks: { getLinksByWorkspaceId },
+    quickLinks: { getLinksByWorkspaceId, toggleLinkModal },
   } = useHome();
 
   const links = getLinksByWorkspaceId(workspaceSlug);
 
   if (links === undefined) return <WidgetLoader widgetKey={EWidgetKeys.QUICK_LINKS} />;
 
+  if (links.length === 0) return <LinksEmptyState handleCreate={() => toggleLinkModal(true)} />;
   return (
     <ContentOverflowWrapper
       maxHeight={150}
