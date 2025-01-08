@@ -26,7 +26,7 @@ const projectActivityService = new ProjectActivityService();
 export const ProjectOverviewSidebarActivityRoot: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = props;
   // states
-  const [sortOrder, setSortOrder] = React.useState<TSORT_ORDER>(TSORT_ORDER.DESC);
+  const [sortOrder, setSortOrder] = React.useState<TSORT_ORDER>(TSORT_ORDER.ASC);
   // store hooks
   const { getProjectById } = useProject();
 
@@ -50,7 +50,7 @@ export const ProjectOverviewSidebarActivityRoot: FC<Props> = observer((props) =>
   );
 
   const sortedActivity = useMemo(
-    () => (activity ? (sortOrder === "asc" ? [...activity].reverse() : activity) : []),
+    () => (activity ? (sortOrder === TSORT_ORDER.DESC ? [...activity].reverse() : activity) : []),
     [sortOrder, activity]
   );
 

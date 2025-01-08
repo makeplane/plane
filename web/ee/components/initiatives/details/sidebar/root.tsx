@@ -9,7 +9,6 @@ import { CommentFillIcon, InfoFillIcon } from "@plane/ui";
 import { useAppTheme } from "@/hooks/store";
 // plane web
 import { SidebarRoot } from "@/plane-web/components/common";
-import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 // local components
 import { InitiativeSidebarActivityRoot } from "./activity-tab-root";
 import { InitiativeSidebarCommentsRoot } from "./comment-tab-root";
@@ -31,36 +30,24 @@ export const InitiativeSidebarRoot: FC<Props> = observer((props) => {
       key: "properties",
       icon: InfoFillIcon,
       content: (
-        <SidebarContentWrapper title="Properties">
-          <InitiativeSidebarPropertiesRoot
-            workspaceSlug={workspaceSlug}
-            initiativeId={initiativeId}
-            disabled={disabled}
-          />
-        </SidebarContentWrapper>
+        <InitiativeSidebarPropertiesRoot
+          workspaceSlug={workspaceSlug}
+          initiativeId={initiativeId}
+          disabled={disabled}
+        />
       ),
     },
     {
       key: "comments",
       icon: CommentFillIcon,
       content: (
-        <SidebarContentWrapper title="Comments">
-          <InitiativeSidebarCommentsRoot
-            workspaceSlug={workspaceSlug}
-            initiativeId={initiativeId}
-            disabled={disabled}
-          />
-        </SidebarContentWrapper>
+        <InitiativeSidebarCommentsRoot workspaceSlug={workspaceSlug} initiativeId={initiativeId} disabled={disabled} />
       ),
     },
     {
       key: "activity",
       icon: Activity,
-      content: (
-        <SidebarContentWrapper title="Activity">
-          <InitiativeSidebarActivityRoot initiativeId={initiativeId} />
-        </SidebarContentWrapper>
-      ),
+      content: <InitiativeSidebarActivityRoot initiativeId={initiativeId} />,
     },
   ];
 

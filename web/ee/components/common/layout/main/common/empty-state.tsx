@@ -6,7 +6,7 @@ type TSectionEmptyStateProps = {
   heading: string;
   subHeading: string;
   icon: React.ReactNode;
-  actionElement: React.ReactNode;
+  actionElement?: React.ReactNode;
 };
 
 export const SectionEmptyState: FC<TSectionEmptyStateProps> = (props) => {

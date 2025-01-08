@@ -41,12 +41,8 @@ export const EpicCollapsibleSection: FC<Props> = observer((props) => {
   const shouldRenderAttachments =
     (!!epic?.attachment_count && epic?.attachment_count > 0) || (!!attachmentUploads && attachmentUploads.length > 0);
 
-  const shouldRenderDetailsSection = shouldRenderLinks || shouldRenderAttachments;
-
   const linksCount = epic?.link_count ?? 0;
   const attachmentCount = epic?.attachment_count ?? 0;
-
-  if (!shouldRenderDetailsSection) return <></>;
 
   return (
     <>

@@ -5,8 +5,12 @@ import { observer } from "mobx-react";
 import { TFileSignedURLResponse } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-// hooks
+// components
+import { ActivitySortRoot } from "@/components/issues";
 // constants
+import { TSORT_ORDER } from "@/constants/common";
+// constants
+import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { EActivityFilterType, filterActivityOnSelectedFilters } from "@/plane-web/constants";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TInitiativeActivityComment, TInitiativeComment } from "@/plane-web/types/initiative";
@@ -33,6 +37,8 @@ export type TInitiativeActivityOperations = {
 
 export const InitiativeSidebarCommentsRoot: FC<Props> = observer((props) => {
   const { workspaceSlug, initiativeId, disabled = false } = props;
+  // states
+  const [sortOrder, setSortOrder] = React.useState<TSORT_ORDER>(TSORT_ORDER.ASC);
   // store hooks
   const {
     initiative: {
@@ -124,34 +130,60 @@ export const InitiativeSidebarCommentsRoot: FC<Props> = observer((props) => {
   // derived values
   const activityComments = getActivityCommentByIssueId(initiativeId);
 
-  if (!activityComments || (activityComments && activityComments.length <= 0)) return <></>;
+  const filteredActivityComments = filterActivityOnSelectedFilters(activityComments ?? [], [
+    EActivityFilterType.COMMENT,
+  ]);
 
-  const filteredActivityComments = filterActivityOnSelectedFilters(activityComments, [EActivityFilterType.COMMENT]);
+  // handlers
+  const toggleSortOrder = () => setSortOrder(sortOrder === TSORT_ORDER.ASC ? TSORT_ORDER.DESC : TSORT_ORDER.ASC);
+
+  const sortedActivity = useMemo(
+    () =>
+      filteredActivityComments
+        ? sortOrder === TSORT_ORDER.DESC
+          ? [...filteredActivityComments].reverse()
+          : filteredActivityComments
+        : [],
+    [sortOrder, filteredActivityComments]
+  );
 
   return (
-    <div className="space-y-5 min-h-[200px] w-full">
-      {!disabled && (
-        <InitiativeCommentCreate
-          workspaceSlug={workspaceSlug}
-          initiativeId={initiativeId}
-          activityOperations={activityOperations}
+    <SidebarContentWrapper
+      title="Comments"
+      actionElement={
+        <ActivitySortRoot
+          sortOrder={sortOrder}
+          toggleSort={toggleSortOrder}
+          className="flex-shrink-0"
+          iconClassName="size-3"
         />
-      )}
-      {filteredActivityComments.map((activityComment) => {
-        const currActivityComment = activityComment as TInitiativeActivityComment;
-        return currActivityComment.activity_type === "COMMENT" ? (
-          <InitiativeCommentCard
-            key={currActivityComment.id}
-            initiativeId={initiativeId}
+      }
+    >
+      <div className="space-y-5 min-h-[200px] w-full">
+        {!disabled && (
+          <InitiativeCommentCreate
             workspaceSlug={workspaceSlug}
-            comment={currActivityComment.detail as TInitiativeComment}
+            initiativeId={initiativeId}
             activityOperations={activityOperations}
-            disabled={disabled}
           />
-        ) : (
-          <></>
-        );
-      })}
-    </div>
+        )}
+        {sortedActivity.length > 0 &&
+          sortedActivity.map((activityComment) => {
+            const currActivityComment = activityComment as TInitiativeActivityComment;
+            return currActivityComment.activity_type === "COMMENT" ? (
+              <InitiativeCommentCard
+                key={currActivityComment.id}
+                initiativeId={initiativeId}
+                workspaceSlug={workspaceSlug}
+                comment={currActivityComment.detail as TInitiativeComment}
+                activityOperations={activityOperations}
+                disabled={disabled}
+              />
+            ) : (
+              <></>
+            );
+          })}
+      </div>
+    </SidebarContentWrapper>
   );
 });

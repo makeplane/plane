@@ -1,4 +1,3 @@
-import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // Plane-web
@@ -130,10 +129,11 @@ export class InitiativeLinkStore implements IInitiativeLinkStore {
     try {
       await this.initiativeStore.initiativeService.deleteInitiativeLink(workspaceSlug, initiativeId, linkId);
 
-      runInAction(() => {
-        if (!this.initiativeLinksMap[initiativeId] || !Array.isArray(this.initiativeLinksMap[initiativeId])) return;
+      const linkIndex = this.initiativeLinksMap[initiativeId].findIndex((_comment) => _comment.id === linkId);
 
-        update(this.initiativeLinksMap, [initiativeId], (links: TInitiativeLink[]) => links.filter((link) => link.id !== linkId));
+      runInAction(() => {
+        this.initiativeLinksMap[initiativeId].splice(linkIndex, 1);
+        delete this.initiativeLinksMap[linkId];
       });
     } catch (e) {
       console.log("error while updating initiative Link", e);

@@ -58,12 +58,8 @@ export const InitiativeCollapsibleSection: FC<Props> = observer((props) => {
     (!!initiativesAttachments && initiativesAttachments?.length > 0) ||
     (!!attachmentUploads && attachmentUploads.length > 0);
 
-  const shouldRenderDetailsSection = shouldRenderLinks || shouldRenderAttachments;
-
   const linksCount = initiativesLinks?.length ?? 0;
   const attachmentCount = initiativesAttachments?.length ?? 0;
-
-  if (!shouldRenderDetailsSection) return <></>;
 
   const handleProjectsUpdate = async (initiativeProjectIds: string[]) => {
     if (!initiativeId) return;

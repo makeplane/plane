@@ -46,7 +46,7 @@ export const ProjectOverviewSidebarUpdatesRoot: FC<Props> = observer((props) => 
       ) : !isProjectUpdatesEnabled ? (
         <UpgradeUpdates workspaceSlug={workspaceSlug.toString()} projectId={project.id} />
       ) : (
-        <div className="flex flex-col gap-3 h-full w-full px-6 overflow-y-auto">
+        <div className="flex flex-col gap-3 h-full w-full px-6 pb-6 overflow-y-auto">
           <ProjectUpdates />
         </div>
       )}

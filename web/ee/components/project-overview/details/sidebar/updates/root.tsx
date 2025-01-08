@@ -16,7 +16,7 @@ export const ProjectUpdates = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // state
   const [showInput, setShowInput] = useState(false);
-  const [sortOrder, setSortOrder] = useState<TSORT_ORDER>(TSORT_ORDER.DESC);
+  const [sortOrder, setSortOrder] = useState<TSORT_ORDER>(TSORT_ORDER.ASC);
   // hooks
   const { getUpdatesByProjectId, loader } = useProjectUpdates();
   const { handleUpdateOperations } = useUpdates(workspaceSlug.toString(), projectId.toString());
@@ -39,7 +39,7 @@ export const ProjectUpdates = observer(() => {
   };
 
   const sortedProjectUpdates = useMemo(
-    () => (sortOrder === "desc" ? [...projectUpdates].reverse() : projectUpdates),
+    () => (sortOrder === TSORT_ORDER.ASC ? [...projectUpdates].reverse() : projectUpdates),
     [sortOrder, projectUpdates]
   );
 
