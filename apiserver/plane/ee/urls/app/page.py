@@ -14,11 +14,11 @@ from plane.ee.views import (
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/publish/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/publish/",
         ProjectPagePublishEndpoint.as_view(),
     ),
     path(
-        "workspaces/<str:slug>/pages/<uuid:page_id>/publish/",
+        "workspaces/<str:slug>/pages/<uuid:pk>/publish/",
         WorkspacePagePublishEndpoint.as_view(),
     ),
     path(

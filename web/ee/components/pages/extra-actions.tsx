@@ -33,11 +33,8 @@ export const PageDetailsHeaderExtraActions: React.FC<TPageHeaderExtraActionsProp
   const { anchor, isCurrentUserOwner } = page;
   const isDeployed = !!anchor;
   const pagePublishSettings = getPagePublishSettings(pageId.toString());
-
-  const isPublishAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
+  const isPublishAllowed =
+    isCurrentUserOwner && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   const SPACE_APP_URL = SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL;
   const publishLink = `${SPACE_APP_URL}${SPACE_BASE_PATH}/pages/${anchor}`;
@@ -73,7 +70,7 @@ export const PageDetailsHeaderExtraActions: React.FC<TPageHeaderExtraActionsProp
           Live
         </a>
       )}
-      {isCurrentUserOwner && isPublishAllowed && (
+      {isPublishAllowed && (
         <Button variant="outline-primary" size="sm" onClick={() => setIsPublishModalOpen(true)}>
           {isDeployed ? "Unpublish" : "Publish"}
         </Button>

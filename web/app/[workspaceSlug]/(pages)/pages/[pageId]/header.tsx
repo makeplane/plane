@@ -14,8 +14,12 @@ import { BreadcrumbLink, Logo } from "@/components/common";
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getPageName } from "@/helpers/page.helper";
+// hooks
+import { useUserPermissions } from "@/hooks/store";
 // plane web components
 import { PublishPageModal } from "@/plane-web/components/pages";
+// plane web constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants";
 // plane web hooks
 import { usePublishPage, useWorkspacePageDetails } from "@/plane-web/hooks/store";
 
@@ -30,6 +34,7 @@ export const PageDetailsHeader = observer(() => {
   // params
   const { workspaceSlug, pageId } = useParams();
   // store hooks
+  const { allowPermissions } = useUserPermissions();
   const { anchor, isCurrentUserOwner, name, logo_props, updatePageLogo, isContentEditable } = useWorkspacePageDetails(
     pageId?.toString() ?? ""
   );
@@ -38,6 +43,8 @@ export const PageDetailsHeader = observer(() => {
   // derived values
   const isDeployed = !!anchor;
   const pagePublishSettings = getPagePublishSettings(pageId.toString());
+  const isPublishAllowed =
+    isCurrentUserOwner || allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   const handlePageLogoUpdate = async (data: TLogoProps) => {
     if (data) {
@@ -150,7 +157,7 @@ export const PageDetailsHeader = observer(() => {
             Live
           </a>
         )}
-        {isCurrentUserOwner && (
+        {isPublishAllowed && (
           <Button variant="outline-primary" size="sm" onClick={() => setIsPublishModalOpen(true)}>
             {isDeployed ? "Unpublish" : "Publish"}
           </Button>
