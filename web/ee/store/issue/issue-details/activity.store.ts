@@ -9,7 +9,8 @@ import {
   IIssueActivityStore as IIssueActivityStoreCe,
   IssueActivityStore as IssueActivityStoreCe,
 } from "@/ce/store/issue/issue-details/activity.store";
-// plane web constants
+// constants
+import { TSORT_ORDER } from "@/constants/common";
 import { EActivityFilterType, EActivityFilterTypeEE } from "@/plane-web/constants/issues";
 // plane web store types
 import { RootStore } from "@/plane-web/store/root.store";
@@ -39,7 +40,7 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
     this.issueActivityService = new IssueActivityService(this.serviceType);
   }
 
-  getActivityCommentByIssueId = computedFn((issueId: string) => {
+  getActivityCommentByIssueId = computedFn((issueId: string, sortOrder: TSORT_ORDER) => {
     const workspace = this.store.workspaceRoot.currentWorkspace;
     if (!workspace?.id || !issueId) return undefined;
 
@@ -94,7 +95,7 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
       });
     });
 
-    activityComments = orderBy(activityComments, (e) => new Date(e.created_at || 0), this.sortOrder);
+    activityComments = orderBy(activityComments, (e) => new Date(e.created_at || 0), sortOrder);
 
     return activityComments;
   });
