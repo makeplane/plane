@@ -29,9 +29,10 @@ export class InstanceService extends APIService {
    * Retrieves information about the current instance
    * @returns {Promise<IInstanceInfo>} Promise resolving to instance information
    * @throws {Error} If the API request fails
+   * @remarks This method uses the validateStatus: null option to bypass interceptors for unauthorized errors.
    */
   async info(): Promise<IInstanceInfo> {
-    return this.get("/api/instances/")
+    return this.get("/api/instances/", { validateStatus: null })
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -55,9 +56,10 @@ export class InstanceService extends APIService {
    * Fetches the list of instance admins
    * @returns {Promise<IInstanceAdmin[]>} Promise resolving to an array of instance admins
    * @throws {Error} If the API request fails
+   * @remarks This method uses the validateStatus: null option to bypass interceptors for unauthorized errors.
    */
   async admins(): Promise<IInstanceAdmin[]> {
-    return this.get("/api/instances/admins/")
+    return this.get("/api/instances/admins/", { validateStatus: null })
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;
