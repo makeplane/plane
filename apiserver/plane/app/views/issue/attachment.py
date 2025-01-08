@@ -118,17 +118,14 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
             entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
         )
 
-        print(asset, "Print Assert")
-
         # Get the presigned URL
         storage = S3Storage(request=request)
-        print(storage, "Print Storage")
 
         # Generate a presigned URL to share an S3 object
         presigned_url = storage.generate_presigned_post(
             object_name=asset_key, file_type=type, file_size=size_limit
         )
-        print(presigned_url, "Print Presigned_URL")
+
         # Return the presigned URL
         return Response(
             {

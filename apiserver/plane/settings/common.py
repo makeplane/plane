@@ -362,6 +362,17 @@ ATTACHMENT_MIME_TYPES = [
     "text/plain",
     "application/rtf",
     "application/vnd.oasis.opendocument.spreadsheet",
+    "application/vnd.oasis.opendocument.text",
+    "application/vnd.oasis.opendocument.presentation",
+    "application/vnd.oasis.opendocument.graphics",
+    # Microsoft Visio
+    "application/vnd.visio",
+    # Netpbm format
+    "image/x-portable-graymap",
+    "image/x-portable-bitmap",
+    "image/x-portable-pixmap",
+    # Open Office Bae
+    "application/vnd.oasis.opendocument.database",
     # Audio
     "audio/mpeg",
     "audio/wav",
@@ -379,6 +390,8 @@ ATTACHMENT_MIME_TYPES = [
     "video/quicktime",
     "video/x-msvideo",
     "video/x-ms-wmv",
+    # Flash video
+    "video/x-flv",
     # Archives
     "application/zip",
     "application/x-rar-compressed",
