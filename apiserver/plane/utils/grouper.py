@@ -5,6 +5,7 @@ from django.db.models import Q, UUIDField, Value
 from django.db.models.functions import Coalesce
 
 # Module imports
+from plane.ee.models import TeamSpaceProject
 from plane.db.models import (
     Cycle,
     Issue,
@@ -87,6 +88,7 @@ def issue_on_results(issues, group_by, sub_group_by):
         "is_draft",
         "archived_at",
         "state__group",
+        "type_id",
     ]
 
     if group_by in FIELD_MAPPER:
@@ -101,7 +103,9 @@ def issue_on_results(issues, group_by, sub_group_by):
     return issues.values(*required_fields)
 
 
-def issue_group_values(field, slug, project_id=None, filters=dict):
+def issue_group_values(
+    field, slug, project_id=None, filters=dict, team_id=None, epic=False
+):
     if field == "state_id":
         queryset = State.objects.filter(
             is_triage=False, workspace__slug=slug
@@ -146,47 +150,100 @@ def issue_group_values(field, slug, project_id=None, filters=dict):
         else:
             return list(queryset) + ["None"]
     if field == "project_id":
-        queryset = Project.objects.filter(workspace__slug=slug).values_list(
-            "id", flat=True
-        )
-        return list(queryset)
+        if team_id:
+            queryset = TeamSpaceProject.objects.filter(
+                workspace__slug=slug, team_space_id=team_id
+            ).values_list("project_id", flat=True)
+            return list(queryset)
+        else:
+            queryset = Project.objects.filter(workspace__slug=slug).values_list(
+                "id", flat=True
+            )
+            return list(queryset)
     if field == "priority":
         return ["low", "medium", "high", "urgent", "none"]
     if field == "state__group":
         return ["backlog", "unstarted", "started", "completed", "cancelled"]
-    if field == "target_date":
-        queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug)
-            .filter(**filters)
-            .values_list("target_date", flat=True)
-            .distinct()
-        )
-        if project_id:
-            return list(queryset.filter(project_id=project_id))
-        else:
-            return list(queryset)
-    if field == "start_date":
-        queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug)
-            .filter(**filters)
-            .values_list("start_date", flat=True)
-            .distinct()
-        )
-        if project_id:
-            return list(queryset.filter(project_id=project_id))
-        else:
-            return list(queryset)
 
-    if field == "created_by":
-        queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug)
-            .filter(**filters)
-            .values_list("created_by", flat=True)
-            .distinct()
-        )
-        if project_id:
-            return list(queryset.filter(project_id=project_id))
-        else:
-            return list(queryset)
+    if epic:
+        if field == "target_date":
+            queryset = (
+                Issue.objects.filter(workspace__slug=slug)
+                .exclude(archived_at__isnull=False)
+                .exclude(project__archived_at__isnull=False)
+                .exclude(is_draft=True)
+                .filter(**filters)
+                .values_list("target_date", flat=True)
+                .distinct()
+            )
+            if project_id:
+                return list(queryset.filter(project_id=project_id))
+            else:
+                return list(queryset)
+        if field == "start_date":
+            queryset = (
+                Issue.objects.filter(workspace__slug=slug)
+                .exclude(archived_at__isnull=False)
+                .exclude(project__archived_at__isnull=False)
+                .exclude(is_draft=True)
+                .filter(**filters)
+                .values_list("start_date", flat=True)
+                .distinct()
+            )
+            if project_id:
+                return list(queryset.filter(project_id=project_id))
+            else:
+                return list(queryset)
+
+        if field == "created_by":
+            queryset = (
+                Issue.objects.filter(workspace__slug=slug)
+                .exclude(archived_at__isnull=False)
+                .exclude(project__archived_at__isnull=False)
+                .exclude(is_draft=True)
+                .filter(**filters)
+                .values_list("created_by", flat=True)
+                .distinct()
+            )
+            if project_id:
+                return list(queryset.filter(project_id=project_id))
+            else:
+                return list(queryset)
+
+    else:
+        if field == "target_date":
+            queryset = (
+                Issue.issue_objects.filter(workspace__slug=slug)
+                .filter(**filters)
+                .values_list("target_date", flat=True)
+                .distinct()
+            )
+            if project_id:
+                return list(queryset.filter(project_id=project_id))
+            else:
+                return list(queryset)
+        if field == "start_date":
+            queryset = (
+                Issue.issue_objects.filter(workspace__slug=slug)
+                .filter(**filters)
+                .values_list("start_date", flat=True)
+                .distinct()
+            )
+            if project_id:
+                return list(queryset.filter(project_id=project_id))
+            else:
+                return list(queryset)
+
+        if field == "created_by":
+            queryset = (
+                Issue.issue_objects.filter(workspace__slug=slug)
+                .filter(**filters)
+                .values_list("created_by", flat=True)
+                .distinct()
+            )
+            if project_id:
+                return list(queryset.filter(project_id=project_id))
+            else:
+                return list(queryset)
 
     return []

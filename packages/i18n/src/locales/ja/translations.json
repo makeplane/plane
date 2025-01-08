@@ -315,5 +315,11 @@
   "remove_parent_issue": "親問題を削除",
   "add_parent": "親問題を追加",
   "loading_members": "メンバーを読み込んでいます...",
-  "inbox": "受信箱"
+  "inbox": "受信箱",
+  "pi_chat": "Piチャット",
+  "teams": "チーム",
+  "initiatives": "イニシアチブ",
+  "in_app": "アプリ内",
+  "forms": "フォーム",
+  "epics": "叙事詩"
 }
