@@ -7,11 +7,11 @@ import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useSticky } from "@/hooks/use-stickies";
+import { ContentOverflowWrapper } from "../core/content-overflow-HOC";
 import { STICKY_COLORS } from "../editor/sticky-editor/color-pallete";
 import { EmptyState } from "./empty";
 import { StickyNote } from "./sticky";
 import { useStickyOperations } from "./sticky/use-operations";
-import { ContentOverflowWrapper } from "../core/content-overflow-HOC";
 
 const PER_PAGE = 10;
 

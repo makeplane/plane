@@ -17,18 +17,18 @@ export const StickyDeleteModal: React.FC<IStickyDelete> = observer((props) => {
   const [loader, setLoader] = useState(false);
 
   const formSubmit = async () => {
-    await handleSubmit();
-    setLoader(true);
     try {
+      setLoader(true);
+      await handleSubmit();
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Warning!",
         message: "Something went wrong please try again later.",
       });
+    } finally {
+      setLoader(false);
     }
-
-    setLoader(false);
   };
 
   return (
