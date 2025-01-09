@@ -52,7 +52,7 @@
     "@tiptap/extension-mention": "2.11.0",
     "@tiptap/extension-paragraph": "2.10.4",
     "@tiptap/extension-placeholder": "2.11.0",
-    "@tiptap/extension-task-item": "2.10.4",
+    "@tiptap/extension-task-item": "2.11.0",
     "@tiptap/extension-task-list": "2.11.0",
     "@tiptap/extension-text": "2.11.0",
     "@tiptap/extension-text-align": "2.11.0",

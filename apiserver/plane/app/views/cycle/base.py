@@ -62,10 +62,7 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 # Module imports
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.webhook_task import model_activity
-from plane.utils.timezone_converter import (
-    convert_to_utc,
-    user_timezone_converter,
-)
+from plane.utils.timezone_converter import convert_to_utc, user_timezone_converter
 
 
 class CycleViewSet(BaseViewSet):
@@ -277,7 +274,9 @@ class CycleViewSet(BaseViewSet):
             request.data.get("start_date", None) is not None
             and request.data.get("end_date", None) is not None
         ):
-            serializer = CycleWriteSerializer(data=request.data)
+            serializer = CycleWriteSerializer(
+                data=request.data, context={"project_id": project_id}
+            )
             if serializer.is_valid():
                 serializer.save(project_id=project_id, owned_by=request.user)
                 cycle = (
@@ -364,7 +363,9 @@ class CycleViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        serializer = CycleWriteSerializer(cycle, data=request.data, partial=True)
+        serializer = CycleWriteSerializer(
+            cycle, data=request.data, partial=True, context={"project_id": project_id}
+        )
         if serializer.is_valid():
             serializer.save()
             cycle = queryset.values(
