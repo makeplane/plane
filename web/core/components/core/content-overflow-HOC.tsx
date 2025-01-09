@@ -23,9 +23,11 @@ export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) 
   // states
   const [containerHeight, setContainerHeight] = useState(0);
   const [showAll, setShowAll] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // refs
   const contentRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!contentRef?.current) return;
@@ -70,37 +72,72 @@ export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) 
     };
   }, [contentRef?.current]);
 
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const handleTransitionEnd = () => {
+      setIsTransitioning(false);
+    };
+
+    containerRef.current.addEventListener("transitionend", handleTransitionEnd);
+
+    return () => {
+      containerRef.current?.removeEventListener("transitionend", handleTransitionEnd);
+    };
+  }, []);
+
+  const handleToggle = () => {
+    setIsTransitioning(true);
+    setShowAll((prev) => !prev);
+  };
+
   if (!children) return fallback;
 
   return (
     <div
+      ref={containerRef}
       className={cn(
         "relative",
         {
-          [`overflow-hidden`]: !showAll,
-          "overflow-visible": showAll,
+          [`overflow-hidden transition-[height] duration-300 ease-in-out`]: containerHeight > maxHeight,
         },
         containerClassName
       )}
-      style={{ maxHeight: showAll ? "100%" : `${maxHeight}px` }}
+      style={{
+        height: showAll ? `${containerHeight}px` : `${Math.min(maxHeight, containerHeight)}px`,
+      }}
     >
-      <div ref={contentRef}>{children}</div>
+      <div
+        ref={contentRef}
+        className={cn("h-auto", {
+          "pb-6": showAll,
+        })}
+      >
+        {children}
+      </div>
 
       {containerHeight > maxHeight && (
         <div
           className={cn(
-            "bottom-0 left-0 w-full",
+            "bottom-0 left-0 w-full transition-all duration-300 ease-in-out",
             `bg-gradient-to-t from-custom-background-100 to-transparent flex flex-col items-center justify-end`,
             "text-center",
             {
-              "absolute h-[100px]": !showAll,
-              "h-[30px]": showAll,
+              "absolute h-[100px] opacity-100": !showAll,
+              "absolute h-[30px] opacity-70": showAll,
             }
           )}
+          style={{
+            pointerEvents: isTransitioning ? "none" : "auto",
+          }}
         >
           <button
-            className={cn("gap-1 w-full text-custom-primary-100 text-sm font-medium", buttonClassName)}
-            onClick={() => setShowAll((prev) => !prev)}
+            className={cn(
+              "gap-1 w-full text-custom-primary-100 text-sm font-medium transition-opacity duration-300",
+              buttonClassName
+            )}
+            onClick={handleToggle}
+            disabled={isTransitioning}
           >
             {showAll ? "Show less" : "Show all"}
           </button>
