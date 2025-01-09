@@ -3576,11 +3576,7 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-underline/-/extension-underline-2.11.0.tgz#473025d3ed01953fb2c23f8060ea90be4c231faa"
   integrity sha512-DE1piq441y1+9Aj1pvvuq1dcc5B2HZ2d1SPtO4DTMjCxrhok12biTkMxxq0q1dzA5/BouLlUW6WTPpinhmrUWA==
 
-<<<<<<< Updated upstream
 "@tiptap/html@2.11.0":
-=======
-"@tiptap/html@^2.1.13", "@tiptap/html@^2.3.0":
->>>>>>> Stashed changes
   version "2.11.0"
   resolved "https://registry.yarnpkg.com/@tiptap/html/-/html-2.11.0.tgz#dd0b4195a07bbdca27aa13325b8ebac41480a6a0"
   integrity sha512-9+8eSeey3gm6vMtbt+uKZfkvtwsWr577lhtTeGUsoThim9zyBnbhzHc1dQw2m1RefOoPcODrnnQPvi5nvA84Cw==
