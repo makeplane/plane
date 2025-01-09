@@ -17,6 +17,7 @@ import { FiltersDropdown } from "./filters";
 import { RecentIssue } from "./issue";
 import { RecentPage } from "./page";
 import { RecentProject } from "./project";
+import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";
 
 const WIDGET_KEY = EWidgetKeys.RECENT_ACTIVITY;
 const workspaceService = new WorkspaceService();
@@ -79,7 +80,12 @@ export const RecentActivityWidget: React.FC<THomeWidgetProps> = observer((props)
     );
 
   return (
-    <div ref={ref} className=" max-h-[500px] min-h-[250px]  overflow-y-scroll">
+    <ContentOverflowWrapper
+      maxHeight={415}
+      containerClassName="box-border min-h-[250px]"
+      fallback={<></>}
+      buttonClassName="bg-custom-background-90/20"
+    >
       <div className="flex items-center justify-between mb-2">
         <div className="text-base font-semibold text-custom-text-350">Recents</div>
 
@@ -89,8 +95,10 @@ export const RecentActivityWidget: React.FC<THomeWidgetProps> = observer((props)
         {isLoading && <WidgetLoader widgetKey={WIDGET_KEY} />}
         {!isLoading &&
           recents?.length > 0 &&
-          recents.map((activity: TActivityEntityData) => <div key={activity.id}>{resolveRecent(activity)}</div>)}
+          recents
+            .filter((recent: TActivityEntityData) => recent.entity_data)
+            .map((activity: TActivityEntityData) => <div key={activity.id}>{resolveRecent(activity)}</div>)}
       </div>
-    </div>
+    </ContentOverflowWrapper>
   );
 });
