@@ -11,7 +11,7 @@ import { LayersIcon } from "@plane/ui";
 import { useProject } from "@/hooks/store";
 import { WorkspaceService } from "@/plane-web/services";
 import { EmptyWorkspace } from "../empty-states";
-import { IssuesEmptyState } from "../empty-states/issues";
+import { RecentsEmptyState } from "../empty-states/recents";
 import { EWidgetKeys, WidgetLoader } from "../loaders";
 import { FiltersDropdown } from "./filters";
 import { RecentIssue } from "./issue";
@@ -68,24 +68,24 @@ export const RecentActivityWidget: React.FC<THomeWidgetProps> = observer((props)
   if (!isLoading && recents?.length === 0)
     return (
       <div ref={ref} className=" max-h-[500px]  overflow-y-scroll">
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between mb-4">
           <div className="text-base font-semibold text-custom-text-350">Recents</div>
           <FiltersDropdown filters={filters} activeFilter={filter} setActiveFilter={setFilter} />
         </div>
-        <div className="min-h-[400px] flex flex-col items-center justify-center">
-          <IssuesEmptyState />
+        <div className="flex flex-col items-center justify-center">
+          <RecentsEmptyState />
         </div>
       </div>
     );
 
   return (
-    <div ref={ref} className=" max-h-[500px] min-h-[400px]  overflow-y-scroll">
+    <div ref={ref} className=" max-h-[500px] min-h-[250px]  overflow-y-scroll">
       <div className="flex items-center justify-between mb-2">
         <div className="text-base font-semibold text-custom-text-350">Recents</div>
 
         <FiltersDropdown filters={filters} activeFilter={filter} setActiveFilter={setFilter} />
       </div>
-      <div className="min-h-[400px] flex flex-col">
+      <div className="min-h-[250px] flex flex-col">
         {isLoading && <WidgetLoader widgetKey={WIDGET_KEY} />}
         {!isLoading &&
           recents?.length > 0 &&

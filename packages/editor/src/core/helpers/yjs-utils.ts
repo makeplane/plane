@@ -12,7 +12,9 @@ import {
 const RICH_TEXT_EDITOR_EXTENSIONS = CoreEditorExtensionsWithoutProps;
 const DOCUMENT_EDITOR_EXTENSIONS = [...CoreEditorExtensionsWithoutProps, ...DocumentEditorExtensionsWithoutProps];
 // editor schemas
+// @ts-expect-error tiptap types are incorrect
 const richTextEditorSchema = getSchema(RICH_TEXT_EDITOR_EXTENSIONS);
+// @ts-expect-error tiptap types are incorrect
 const documentEditorSchema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
 
 /**
@@ -54,6 +56,7 @@ export const convertBase64StringToBinaryData = (document: string): ArrayBuffer =
  */
 export const getBinaryDataFromRichTextEditorHTMLString = (descriptionHTML: string): Uint8Array => {
   // convert HTML to JSON
+  // @ts-expect-error tiptap types are incorrect
   const contentJSON = generateJSON(descriptionHTML ?? "<p></p>", RICH_TEXT_EDITOR_EXTENSIONS);
   // convert JSON to Y.Doc format
   const transformedData = prosemirrorJSONToYDoc(richTextEditorSchema, contentJSON, "default");
@@ -69,6 +72,7 @@ export const getBinaryDataFromRichTextEditorHTMLString = (descriptionHTML: strin
  */
 export const getBinaryDataFromDocumentEditorHTMLString = (descriptionHTML: string): Uint8Array => {
   // convert HTML to JSON
+  // @ts-expect-error tiptap types are incorrect
   const contentJSON = generateJSON(descriptionHTML ?? "<p></p>", DOCUMENT_EDITOR_EXTENSIONS);
   // convert JSON to Y.Doc format
   const transformedData = prosemirrorJSONToYDoc(documentEditorSchema, contentJSON, "default");
@@ -97,6 +101,7 @@ export const getAllDocumentFormatsFromRichTextEditorBinaryData = (
   const type = yDoc.getXmlFragment("default");
   const contentJSON = yXmlFragmentToProseMirrorRootNode(type, richTextEditorSchema).toJSON();
   // convert to HTML
+  // @ts-expect-error tiptap types are incorrect
   const contentHTML = generateHTML(contentJSON, RICH_TEXT_EDITOR_EXTENSIONS);
 
   return {
@@ -126,6 +131,7 @@ export const getAllDocumentFormatsFromDocumentEditorBinaryData = (
   const type = yDoc.getXmlFragment("default");
   const contentJSON = yXmlFragmentToProseMirrorRootNode(type, documentEditorSchema).toJSON();
   // convert to HTML
+  // @ts-expect-error tiptap types are incorrect
   const contentHTML = generateHTML(contentJSON, DOCUMENT_EDITOR_EXTENSIONS);
 
   return {
