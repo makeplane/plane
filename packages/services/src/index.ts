@@ -10,3 +10,4 @@ export * from "./module";
 export * from "./user";
 export * from "./project";
 export * from "./workspace";
+export * from "./feature-flag";
