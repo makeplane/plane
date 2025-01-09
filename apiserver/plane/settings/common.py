@@ -390,8 +390,6 @@ ATTACHMENT_MIME_TYPES = [
     "video/quicktime",
     "video/x-msvideo",
     "video/x-ms-wmv",
-    # Flash video
-    "video/x-flv",
     # Archives
     "application/zip",
     "application/x-rar-compressed",
