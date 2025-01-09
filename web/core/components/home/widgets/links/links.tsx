@@ -28,20 +28,21 @@ export const ProjectLinkList: FC<TProjectLinkList> = observer((props) => {
   if (links === undefined) return <WidgetLoader widgetKey={EWidgetKeys.QUICK_LINKS} />;
 
   if (links.length === 0) return <LinksEmptyState handleCreate={() => toggleLinkModal(true)} />;
+
   return (
-    <ContentOverflowWrapper
-      maxHeight={150}
-      containerClassName="pb-2 box-border"
-      fallback={<></>}
-      buttonClassName="bg-custom-background-90/20"
-    >
-      <div>
-        <div className="flex gap-2 mb-2 flex-wrap">
+    <div className="relative">
+      <ContentOverflowWrapper
+        maxHeight={150}
+        containerClassName="box-border min-h-[30px] flex flex-col"
+        fallback={<></>}
+        buttonClassName="bg-custom-background-90/20"
+      >
+        <div className="flex gap-2 mb-2 flex-wrap flex-1">
           {links &&
             links.length > 0 &&
             links.map((linkId) => <ProjectLinkDetail key={linkId} linkId={linkId} linkOperations={linkOperations} />)}
         </div>
-      </div>
-    </ContentOverflowWrapper>
+      </ContentOverflowWrapper>
+    </div>
   );
 });
