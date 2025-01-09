@@ -15,7 +15,7 @@ RUN turbo prune --scope=web --docker
 # STAGE 2: Install dependencies & build the project
 # *****************************************************************************
 # Add lockfile and package.json's of isolated subworkspace
-FROM node:18-alpine AS installer
+FROM node:20-alpine AS installer
 
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
