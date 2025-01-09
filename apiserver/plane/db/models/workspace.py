@@ -365,7 +365,7 @@ class WorkspaceHomePreference(BaseModel):
     key = models.CharField(max_length=255)
     is_enabled = models.BooleanField(default=True)
     config = models.JSONField(default=dict)
-    sort_order = models.PositiveIntegerField(default=65535)
+    sort_order = models.FloatField(default=65535)
 
     class Meta:
         unique_together = ["workspace", "user", "key", "deleted_at"]
