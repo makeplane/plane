@@ -66,7 +66,7 @@ export const ModulesLinksListItem: React.FC<Props> = observer((props) => {
             </button>
           )}
           <span
-            onClick={() => copyToClipboard(link.title && link.title !== "" ? link.title : link.url)}
+            onClick={() => copyToClipboard(link.url)}
             className="grid place-items-center p-1 hover:bg-custom-background-80 cursor-pointer"
           >
             <Copy className="h-3.5 w-3.5 stroke-[1.5]" />
