@@ -7,6 +7,7 @@ import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useSticky } from "@/hooks/use-stickies";
+import { ContentOverflowWrapper } from "../core/content-overflow-HOC";
 import { STICKY_COLORS } from "../editor/sticky-editor/color-pallete";
 import { EmptyState } from "./empty";
 import { StickyNote } from "./sticky";
@@ -24,8 +25,6 @@ export const StickyAll = observer((props: TProps) => {
   const masonryRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   // states
-  const [containerHeight, setContainerHeight] = useState(0);
-  const [showAllStickies, setShowAllStickies] = useState(false);
   const [intersectionElement, setIntersectionElement] = useState<HTMLDivElement | null>(null);
   // router
   const { workspaceSlug } = useParams();
@@ -58,44 +57,6 @@ export const StickyAll = observer((props: TProps) => {
       toggleShowNewSticky(true);
     }
   }, [fetchingWorkspaceStickies, workspaceStickies, toggleShowNewSticky]);
-
-  // Update this useEffect to correctly track height
-  useEffect(() => {
-    if (!masonryRef?.current) return;
-
-    const updateHeight = () => {
-      if (masonryRef.current) {
-        const height = masonryRef.current.getBoundingClientRect().height;
-        setContainerHeight(parseInt(height.toString()));
-      }
-    };
-
-    // Initial height measurement
-    updateHeight();
-
-    // Create ResizeObserver
-    const resizeObserver = new ResizeObserver(() => {
-      updateHeight();
-    });
-
-    resizeObserver.observe(masonryRef.current);
-
-    // Also update height when Masonry content changes
-    const mutationObserver = new MutationObserver(() => {
-      updateHeight();
-    });
-
-    mutationObserver.observe(masonryRef.current, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-    });
-
-    return () => {
-      resizeObserver.disconnect();
-      mutationObserver.disconnect();
-    };
-  }, [masonryRef?.current]);
 
   useIntersectionObserver(containerRef, fetchingWorkspaceStickies ? null : intersectionElement, incrementPage, "20%");
 
@@ -145,26 +106,16 @@ export const StickyAll = observer((props: TProps) => {
     );
 
   return (
-    <div
-      ref={containerRef}
-      className={cn("relative max-h-[625px] overflow-hidden pb-2 box-border", {
-        "max-h-full overflow-scroll": showAllStickies,
-      })}
-    >
-      <div className="h-full w-full" ref={masonryRef}>
+    <div ref={containerRef}>
+      <ContentOverflowWrapper
+        maxHeight={650}
+        containerClassName="pb-2 box-border"
+        fallback={<></>}
+        buttonClassName="bg-custom-background-90/20"
+      >
         {/* @ts-expect-error type mismatch here */}
         <Masonry elementType="div">{childElements}</Masonry>
-      </div>
-      {containerHeight > 632.9 && (
-        <div className="absolute bottom-0 left-0 bg-gradient-to-t from-custom-background-100 to-transparent w-full h-[100px] text-center text-sm font-medium text-custom-primary-100">
-          <button
-            className="flex flex-col items-center justify-end gap-1 h-full m-auto w-full"
-            onClick={() => setShowAllStickies((state) => !state)}
-          >
-            {showAllStickies ? "Show less" : "Show all"}
-          </button>
-        </div>
-      )}
+      </ContentOverflowWrapper>
     </div>
   );
 });

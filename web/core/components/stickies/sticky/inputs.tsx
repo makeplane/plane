@@ -13,7 +13,7 @@ type TProps = {
   handleUpdate: DebouncedFunc<(payload: Partial<TSticky>) => Promise<void>>;
   stickyId: string | undefined;
   handleChange: (data: Partial<TSticky>) => Promise<void>;
-  handleDelete: () => Promise<void>;
+  handleDelete: () => void;
 };
 export const StickyInput = (props: TProps) => {
   const { stickyData, workspaceSlug, handleUpdate, stickyId, handleDelete, handleChange } = props;

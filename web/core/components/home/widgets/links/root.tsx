@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { Plus } from "lucide-react";
 import { THomeWidgetProps } from "@plane/types";
 import { useHome } from "@/hooks/store/use-home";
 import { LinkCreateUpdateModal } from "./create-update-link-modal";
@@ -31,9 +32,22 @@ export const DashboardQuickLinks = observer((props: THomeWidgetProps) => {
         preloadedData={linkData}
         setLinkData={setLinkData}
       />
-      <div className="flex mx-auto flex-wrap pb-4 w-full justify-center">
-        {/* rendering links */}
-        <ProjectLinkList workspaceSlug={workspaceSlug} linkOperations={linkOperations} />
+      <div className="mb-2">
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-base font-semibold text-custom-text-350">Quick links</div>
+          <button
+            onClick={() => {
+              toggleLinkModal(true);
+            }}
+            className="flex gap-1 text-sm font-medium text-custom-primary-100 my-auto"
+          >
+            <Plus className="size-4 my-auto" /> <span>Add quick link</span>
+          </button>
+        </div>
+        <div className="flex flex-wrap w-full">
+          {/* rendering links */}
+          <ProjectLinkList workspaceSlug={workspaceSlug} linkOperations={linkOperations} />
+        </div>
       </div>
     </>
   );
