@@ -39,10 +39,10 @@ export type TreeMapItem = {
   textClassName?: string;
   icon?: React.ReactElement;
 } & (
-    | {
+  | {
       fillColor: string;
     }
-    | {
+  | {
       fillClassName: string;
     }
   );
@@ -51,4 +51,23 @@ export type TreeMapChartProps = {
   data: TreeMapItem[];
   className?: string;
   isAnimationActive?: boolean;
+  showTooltip?: boolean;
+};
+
+export type TTopSectionConfig = {
+  showIcon: boolean;
+  showName: boolean;
+  nameTruncated: boolean;
+};
+
+export type TBottomSectionConfig = {
+  show: boolean;
+  showValue: boolean;
+  showLabel: boolean;
+  labelTruncated: boolean;
+};
+
+export type TContentVisibility = {
+  top: TTopSectionConfig;
+  bottom: TBottomSectionConfig;
 };
