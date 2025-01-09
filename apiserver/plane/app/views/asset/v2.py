@@ -10,6 +10,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Module imports
 from ..base import BaseAPIView
@@ -18,6 +19,9 @@ from plane.settings.storage import S3Storage
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.cache import invalidate_cache_directly
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
+from plane.authentication.session import BaseSessionAuthentication
 
 
 class UserAssetsV2Endpoint(BaseAPIView):
@@ -205,7 +209,10 @@ class UserAssetsV2Endpoint(BaseAPIView):
 
 
 class WorkspaceFileAssetEndpoint(BaseAPIView):
-    """This endpoint is used to upload cover images/logos etc for workspace, projects and users."""
+    """
+    This endpoint is used to upload cover images/logos
+    etc for workspace, projects and users.
+    """
 
     def get_entity_id_field(self, entity_type, entity_id):
         # Workspace Logo
@@ -237,6 +244,10 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         # Comment Description
         if entity_type == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION:
             return {"comment_id": entity_id}
+
+        if entity_type == FileAsset.EntityTypeContext.TEAM_SPACE_DESCRIPTION:
+            return {"entity_identifier": entity_id}
+
         return {}
 
     def asset_delete(self, asset_id):
@@ -356,8 +367,20 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get the size limit
-        size_limit = min(settings.FILE_SIZE_LIMIT, size)
+        if entity_type in [
+            FileAsset.EntityTypeContext.WORKSPACE_LOGO,
+            FileAsset.EntityTypeContext.PROJECT_COVER,
+        ]:
+            size_limit = min(size, settings.FILE_SIZE_LIMIT)
+        else:
+            if settings.IS_MULTI_TENANT and check_workspace_feature_flag(
+                feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
+                slug=slug,
+                user_id=str(request.user.id),
+            ):
+                size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
+            else:
+                size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
@@ -484,6 +507,8 @@ class StaticFileAssetEndpoint(BaseAPIView):
 class AssetRestoreEndpoint(BaseAPIView):
     """Endpoint to restore a deleted assets."""
 
+    authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def post(self, request, slug, asset_id):
         asset = FileAsset.all_objects.get(id=asset_id, workspace__slug=slug)
@@ -495,6 +520,8 @@ class AssetRestoreEndpoint(BaseAPIView):
 
 class ProjectAssetEndpoint(BaseAPIView):
     """This endpoint is used to upload cover images/logos etc for workspace, projects and users."""
+
+    authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
 
     def get_entity_id_field(self, entity_type, entity_id):
         if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
@@ -557,8 +584,20 @@ class ProjectAssetEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get the size limit
-        size_limit = min(settings.FILE_SIZE_LIMIT, size)
+        if entity_type in [
+            FileAsset.EntityTypeContext.WORKSPACE_LOGO,
+            FileAsset.EntityTypeContext.PROJECT_COVER,
+        ]:
+            size_limit = min(size, settings.FILE_SIZE_LIMIT)
+        else:
+            if check_workspace_feature_flag(
+                feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
+                slug=slug,
+                user_id=str(request.user.id),
+            ):
+                size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
+            else:
+                size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
