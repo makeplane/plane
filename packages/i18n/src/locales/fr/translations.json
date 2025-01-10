@@ -316,5 +316,11 @@
   "remove_parent_issue": "Supprimer le problème parent",
   "add_parent": "Ajouter un parent",
   "loading_members": "Chargement des membres...",
-  "inbox": "boîte de réception"
+  "inbox": "boîte de réception",
+  "pi_chat": "Chat Pi",
+  "teams": "Équipes",
+  "initiatives": "Initiatives",
+  "in_app": "Dans l'application",
+  "forms": "Formulaires",
+  "epics": "Épopées"
 }
