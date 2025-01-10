@@ -25,7 +25,10 @@ export const InitiativeDetailRoot = observer((props: Props) => {
   // derived values
   const initiative = getInitiativeById(initiativeId);
 
-  const isEditable = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const isEditable = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   return (
     <LayoutRoot

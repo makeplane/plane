@@ -6,6 +6,7 @@ export type TProjectAttachment = {
     name: string;
     size: number;
   };
+  asset: string;
   asset_url: string;
   project_id: string;
   // required

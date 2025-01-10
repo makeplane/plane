@@ -8,7 +8,7 @@ import { InitiativesDetailsHeader } from "./header";
 const ProjectDetailLayout = ({ children }: { children: ReactNode }) => (
   <>
     <AppHeader header={<InitiativesDetailsHeader />} />
-    <ContentWrapper>{children}</ContentWrapper>
+    <ContentWrapper className="overflow-hidden">{children}</ContentWrapper>
   </>
 );
 

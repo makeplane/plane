@@ -91,7 +91,9 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
   // store hooks
   const {
     issue: { getIssueById },
+    setPeekIssue,
   } = useIssueDetail(EIssueServiceType.EPICS);
+
   const { updateIssue, removeIssue } = useIssuesActions(EIssuesStoreType.EPIC);
   const { allowPermissions } = useUserPermissions();
   const { epicDetailSidebarCollapsed, toggleEpicDetailSidebar } = useAppTheme();
@@ -119,7 +121,7 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
     if (issue) {
       await removeIssue(issue.project_id, issue.id).then(() => {
         // TODO: add toast
-        router.push(`/${workspaceSlug}/projects/${projectId}/epics`);
+        setPeekIssue(undefined);
       });
     }
   };

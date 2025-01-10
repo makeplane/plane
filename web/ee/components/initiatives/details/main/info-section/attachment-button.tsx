@@ -7,6 +7,7 @@ import { Plus } from "lucide-react";
 // plane ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // plane web
+import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 // helpers
 import { useAttachmentOperations } from "../collapsible-section/attachment/use-attachments";
@@ -22,6 +23,10 @@ export const InitiativeAttachmentActionButton: FC<Props> = observer((props) => {
   const { workspaceSlug, initiativeId, customButton, disabled = false } = props;
   // state
   const [isLoading, setIsLoading] = useState(false);
+  // store hooks
+  const {
+    initiative: { setLastCollapsibleAction },
+  } = useInitiatives();
   // file size
   const { maxFileSize } = useFileSize();
   // operations
@@ -38,6 +43,9 @@ export const InitiativeAttachmentActionButton: FC<Props> = observer((props) => {
         setIsLoading(true);
         attachmentOperations
           .create(currentFile)
+          .then(() => {
+            setLastCollapsibleAction("attachments");
+          })
           .catch(() => {
             setToast({
               type: TOAST_TYPE.ERROR,
@@ -72,9 +80,16 @@ export const InitiativeAttachmentActionButton: FC<Props> = observer((props) => {
   });
 
   return (
-    <button {...getRootProps()} type="button" disabled={disabled}>
-      <input {...getInputProps()} />
-      {customButton ? customButton : <Plus className="h-4 w-4" />}
-    </button>
+    <div
+      onClick={(e) => {
+        // TODO: Remove extra div and move event propagation to button
+        e.stopPropagation();
+      }}
+    >
+      <button {...getRootProps()} type="button" disabled={disabled}>
+        <input {...getInputProps()} />
+        {customButton ? customButton : <Plus className="h-4 w-4" />}
+      </button>
+    </div>
   );
 });

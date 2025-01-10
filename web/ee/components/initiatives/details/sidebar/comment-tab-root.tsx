@@ -108,7 +108,7 @@ export const InitiativeSidebarCommentsRoot: FC<Props> = observer((props) => {
       },
       uploadCommentAsset: async (file, commentId) => {
         try {
-          if (!workspaceSlug || !commentId) throw new Error("Missing fields");
+          if (!workspaceSlug) throw new Error("Missing fields");
           const res = await fileService.uploadWorkspaceAsset(
             workspaceSlug,
             {

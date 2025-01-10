@@ -11,6 +11,7 @@ export type TInitiativeAttachment = {
     name: string;
     size: number;
   };
+  asset: string;
   asset_url: string;
   Initiative_id: string;
   // required

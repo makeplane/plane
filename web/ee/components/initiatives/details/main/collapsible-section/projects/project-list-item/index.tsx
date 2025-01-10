@@ -75,6 +75,7 @@ export const ProjectItem = observer((props: Props) => {
           </div>
         </div>
       }
+      itemClassName="overflow-visible"
       isMobile={isMobile}
       parentRef={parentRef}
     />

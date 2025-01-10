@@ -8,7 +8,7 @@ export default function ProjectEpicDetailsLayout({ children }: { children: React
   return (
     <>
       <AppHeader header={<ProjectEpicDetailsHeader />} />
-      <ContentWrapper>{children}</ContentWrapper>
+      <ContentWrapper className="overflow-hidden">{children}</ContentWrapper>
     </>
   );
 }

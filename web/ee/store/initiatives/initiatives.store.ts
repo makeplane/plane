@@ -146,7 +146,7 @@ export class InitiativeStore implements IInitiativeStore {
   };
 
   setLastCollapsibleAction = (section: InitiativeCollapsible) => {
-    this.openCollapsibleSection = [section];
+    this.openCollapsibleSection = [...this.openCollapsibleSection, section];
   };
 
   toggleOpenCollapsibleSection = (section: InitiativeCollapsible) => {
