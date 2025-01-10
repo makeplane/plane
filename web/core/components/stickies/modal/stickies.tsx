@@ -4,7 +4,7 @@ import { Plus, X } from "lucide-react";
 import { RecentStickyIcon } from "@plane/ui";
 import { useSticky } from "@/hooks/use-stickies";
 import { STICKY_COLORS } from "../../editor/sticky-editor/color-pallete";
-import { StickiesLayout } from "../stickies-layout";
+import { StickiesTruncated } from "../layout/stickies-truncated";
 import { useStickyOperations } from "../sticky/use-operations";
 import { StickySearch } from "./search";
 
@@ -19,7 +19,7 @@ export const Stickies = observer((props: TProps) => {
   const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
 
   return (
-    <div className="p-6 pb-0">
+    <div className="p-6 pb-0 min-h-[620px]">
       {/* header */}
       <div className="flex items-center justify-between mb-6">
         {/* Title */}
@@ -61,7 +61,7 @@ export const Stickies = observer((props: TProps) => {
       </div>
       {/* content */}
       <div className="mb-4 max-h-[625px] overflow-scroll">
-        <StickiesLayout />
+        <StickiesTruncated />
       </div>
     </div>
   );

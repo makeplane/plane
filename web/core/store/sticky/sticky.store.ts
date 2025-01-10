@@ -1,18 +1,20 @@
+import { set } from "lodash";
 import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { TSticky } from "@plane/types";
+import { STICKIES_PER_PAGE } from "@plane/constants";
+import { TLoader, TPaginationInfo, TSticky } from "@plane/types";
 import { StickyService } from "@/services/sticky.service";
+
 export interface IStickyStore {
   creatingSticky: boolean;
-  fetchingWorkspaceStickies: boolean;
+  loader: TLoader;
   workspaceStickies: Record<string, string[]>; // workspaceId -> stickyIds
   stickies: Record<string, TSticky>; // stickyId -> sticky
   searchQuery: string;
   activeStickyId: string | undefined;
   recentStickyId: string | undefined;
   showAddNewSticky: boolean;
-  currentPage: number;
-  totalPages: number;
+  paginationInfo: TPaginationInfo | undefined;
 
   // computed
   getWorkspaceStickies: (workspaceSlug: string) => string[];
@@ -20,26 +22,25 @@ export interface IStickyStore {
   // actions
   toggleShowNewSticky: (value: boolean) => void;
   updateSearchQuery: (query: string) => void;
-  fetchWorkspaceStickies: (workspaceSlug: string, cursor?: string, per_page?: number) => void;
+  fetchWorkspaceStickies: (workspaceSlug: string) => void;
   createSticky: (workspaceSlug: string, sticky: Partial<TSticky>) => void;
   updateSticky: (workspaceSlug: string, id: string, updates: Partial<TSticky>) => void;
   deleteSticky: (workspaceSlug: string, id: string) => void;
   updateActiveStickyId: (id: string | undefined) => void;
   fetchRecentSticky: (workspaceSlug: string) => void;
-  incrementPage: () => void;
+  fetchNextWorkspaceStickies: (workspaceSlug: string) => void;
 }
 
 export class StickyStore implements IStickyStore {
+  loader: TLoader = "init-loader";
   creatingSticky = false;
-  fetchingWorkspaceStickies = true;
   workspaceStickies: Record<string, string[]> = {};
   stickies: Record<string, TSticky> = {};
   recentStickyId: string | undefined = undefined;
   searchQuery = "";
   activeStickyId: string | undefined = undefined;
   showAddNewSticky = false;
-  currentPage = 0;
-  totalPages = 0;
+  paginationInfo: TPaginationInfo | undefined = undefined;
 
   // services
   stickyService;
@@ -48,33 +49,28 @@ export class StickyStore implements IStickyStore {
     makeObservable(this, {
       // observables
       creatingSticky: observable,
-      fetchingWorkspaceStickies: observable,
+      loader: observable,
       activeStickyId: observable,
       showAddNewSticky: observable,
       recentStickyId: observable,
       workspaceStickies: observable,
       stickies: observable,
       searchQuery: observable,
-      currentPage: observable,
-      totalPages: observable,
       // actions
       updateSearchQuery: action,
       updateSticky: action,
       deleteSticky: action,
-      incrementPage: action,
+      fetchNextWorkspaceStickies: action,
+      fetchWorkspaceStickies: action,
+      createSticky: action,
+      updateActiveStickyId: action,
+      toggleShowNewSticky: action,
+      fetchRecentSticky: action,
     });
     this.stickyService = new StickyService();
   }
 
-  getWorkspaceStickies = computedFn((workspaceSlug: string) => {
-    let filteredStickies = (this.workspaceStickies[workspaceSlug] || []).map((stickyId) => this.stickies[stickyId]);
-    if (this.searchQuery) {
-      filteredStickies = filteredStickies.filter(
-        (sticky) => sticky.name && sticky.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
-    }
-    return filteredStickies.map((sticky) => sticky.id);
-  });
+  getWorkspaceStickies = computedFn((workspaceSlug: string) => this.workspaceStickies[workspaceSlug]);
 
   toggleShowNewSticky = (value: boolean) => {
     this.showAddNewSticky = value;
@@ -88,34 +84,77 @@ export class StickyStore implements IStickyStore {
     this.activeStickyId = id;
   };
 
-  incrementPage = () => {
-    this.currentPage += 1;
-  };
-
   fetchRecentSticky = async (workspaceSlug: string) => {
-    const response = await this.stickyService.getStickies(workspaceSlug, "1:0:0", 1);
+    const response = await this.stickyService.getStickies(workspaceSlug, "1:0:0");
     runInAction(() => {
       this.recentStickyId = response.results[0]?.id;
       this.stickies[response.results[0]?.id] = response.results[0];
     });
   };
-  fetchWorkspaceStickies = async (workspaceSlug: string, cursor?: string, per_page?: number) => {
+  fetchNextWorkspaceStickies = async (workspaceSlug: string) => {
     try {
-      const response = await this.stickyService.getStickies(workspaceSlug, cursor, per_page);
+      if (!this.paginationInfo?.next_cursor || !this.paginationInfo.next_page_results || this.loader === "pagination") {
+        return;
+      }
+      this.loader = "pagination";
+      const response = await this.stickyService.getStickies(
+        workspaceSlug,
+        this.paginationInfo.next_cursor,
+        this.searchQuery
+      );
 
       runInAction(() => {
-        response.results.forEach((sticky) => {
+        const { results, ...paginationInfo } = response;
+
+        // Add new stickies to store
+        results.forEach((sticky) => {
           if (!this.workspaceStickies[workspaceSlug]?.includes(sticky.id)) {
             this.workspaceStickies[workspaceSlug] = [...(this.workspaceStickies[workspaceSlug] || []), sticky.id];
           }
           this.stickies[sticky.id] = sticky;
         });
-        this.totalPages = response.total_pages;
-        this.fetchingWorkspaceStickies = false;
+
+        // Update pagination info directly from backend
+        set(this, "paginationInfo", paginationInfo);
+        set(this, "loader", "loaded");
       });
     } catch (e) {
       console.error(e);
-      this.fetchingWorkspaceStickies = false;
+      runInAction(() => {
+        this.loader = "loaded";
+      });
+    }
+  };
+
+  fetchWorkspaceStickies = async (workspaceSlug: string) => {
+    try {
+      if (this.workspaceStickies[workspaceSlug]) {
+        this.loader = "mutation";
+      } else {
+        this.loader = "init-loader";
+      }
+
+      const response = await this.stickyService.getStickies(
+        workspaceSlug,
+        `${STICKIES_PER_PAGE}:0:0`,
+        this.searchQuery
+      );
+
+      runInAction(() => {
+        const { results, ...paginationInfo } = response;
+
+        results.forEach((sticky) => {
+          this.stickies[sticky.id] = sticky;
+        });
+        this.workspaceStickies[workspaceSlug] = results.map((sticky) => sticky.id);
+        set(this, "paginationInfo", paginationInfo);
+        this.loader = "loaded";
+      });
+    } catch (e) {
+      console.error(e);
+      runInAction(() => {
+        this.loader = "loaded";
+      });
     }
   };
 

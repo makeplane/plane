@@ -2,8 +2,8 @@ import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
 import { useSticky } from "@/hooks/use-stickies";
 import { STICKY_COLORS } from "../editor/sticky-editor/color-pallete";
+import { StickiesTruncated } from "./layout";
 import { StickySearch } from "./modal/search";
-import { StickiesLayout } from "./stickies-layout";
 import { useStickyOperations } from "./sticky/use-operations";
 
 export const StickiesWidget = () => {
@@ -39,7 +39,7 @@ export const StickiesWidget = () => {
         </div>
       </div>
       <div className="-mx-2">
-        <StickiesLayout />
+        <StickiesTruncated />
       </div>
     </div>
   );

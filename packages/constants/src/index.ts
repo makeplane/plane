@@ -10,3 +10,4 @@ export * from "./state";
 export * from "./swr";
 export * from "./user";
 export * from "./workspace";
+export * from "./stickies";
