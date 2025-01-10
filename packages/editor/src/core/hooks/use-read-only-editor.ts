@@ -1,6 +1,6 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { EditorProps } from "@tiptap/pm/view";
-import { useEditor as useCustomEditor, Extensions } from "@tiptap/react";
+import { useEditor as useTiptapEditor, Extensions } from "@tiptap/react";
 import { useImperativeHandle, MutableRefObject, useEffect } from "react";
 import * as Y from "yjs";
 // extensions
@@ -40,7 +40,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
     provider,
   } = props;
 
-  const editor = useCustomEditor({
+  const editor = useTiptapEditor({
     editable: false,
     immediatelyRender: true,
     shouldRerenderOnTransaction: false,

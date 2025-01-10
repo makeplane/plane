@@ -73,7 +73,8 @@ export const useEditor = (props: CustomEditorProps) => {
 
   const editor = useTiptapEditor(
     {
-      immediatelyRender: true,
+      editable,
+      immediatelyRender: false,
       shouldRerenderOnTransaction: false,
       autofocus,
       editorProps: {
