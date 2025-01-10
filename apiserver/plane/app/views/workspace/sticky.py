@@ -4,7 +4,7 @@ from rest_framework import status
 
 # Module imports
 from plane.app.views.base import BaseViewSet
-from plane.app.permissions import WorkSpaceBasePermission, ROLE, allow_permission
+from plane.app.permissions import ROLE, allow_permission
 from plane.db.models import Sticky, Workspace
 from plane.app.serializers import StickySerializer
 
@@ -12,7 +12,6 @@ from plane.app.serializers import StickySerializer
 class WorkspaceStickyViewSet(BaseViewSet):
     serializer_class = StickySerializer
     model = Sticky
-    permission_classes = [WorkSpaceBasePermission]
 
     def get_queryset(self):
         return self.filter_queryset(
