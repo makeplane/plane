@@ -26,6 +26,7 @@ type Props = TDropdownProps & {
   value: string | null;
   canRemoveCycle?: boolean;
   renderByDefault?: boolean;
+  currentCycleId?: string;
 };
 
 export const CycleDropdown: React.FC<Props> = observer((props) => {
@@ -49,6 +50,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     value,
     canRemoveCycle = true,
     renderByDefault = true,
+    currentCycleId,
   } = props;
   // states
 
@@ -145,6 +147,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
           placement={placement}
           referenceElement={referenceElement}
           canRemoveCycle={canRemoveCycle}
+          currentCycleId={currentCycleId}
         />
       )}
     </ComboDropDown>

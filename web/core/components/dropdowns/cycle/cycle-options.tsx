@@ -31,10 +31,11 @@ type CycleOptionsProps = {
   placement: Placement | undefined;
   isOpen: boolean;
   canRemoveCycle: boolean;
+  currentCycleId?: string;
 };
 
 export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
-  const { projectId, isOpen, referenceElement, placement, canRemoveCycle } = props;
+  const { projectId, isOpen, referenceElement, placement, canRemoveCycle, currentCycleId } = props;
   //state hooks
   const [query, setQuery] = useState("");
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -68,6 +69,7 @@ export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
 
   const cycleIds = (getProjectCycleIds(projectId) ?? [])?.filter((cycleId) => {
     const cycleDetails = getCycleById(cycleId);
+    if (currentCycleId && currentCycleId === cycleId) return false;
     return cycleDetails?.status ? (cycleDetails?.status.toLowerCase() != "completed" ? true : false) : true;
   });
 
