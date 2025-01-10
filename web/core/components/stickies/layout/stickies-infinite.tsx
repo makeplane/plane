@@ -28,7 +28,6 @@ export const StickiesInfinite = observer(() => {
 
   const handleLoadMore = () => {
     if (loader === "pagination") return;
-    console.log("handleLoadMore");
     fetchNextWorkspaceStickies(workspaceSlug?.toString());
   };
 

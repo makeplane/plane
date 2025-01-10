@@ -40,9 +40,9 @@ class WorkspaceStickyViewSet(BaseViewSet):
     )
     def list(self, request, slug):
         query = request.query_params.get("query", False)
-        stickies = self.get_queryset()
+        stickies = self.get_queryset().order_by("-sort_order")
         if query:
-            stickies = stickies.filter(name__icontains=query)
+            stickies = stickies.filter(description_html__icontains=query)
 
         return self.paginate(
             request=request,

@@ -9,15 +9,20 @@ import { STICKY_COLORS } from "../../editor/sticky-editor/color-pallete";
 import { StickyDeleteModal } from "../delete-modal";
 import { StickyInput } from "./inputs";
 import { useStickyOperations } from "./use-operations";
+import { StickyItemDragHandle } from "./sticky-item-drag-handle";
+import { usePathname } from "next/navigation";
 
 type TProps = {
   onClose?: () => void;
   workspaceSlug: string;
   className?: string;
   stickyId: string | undefined;
+  showToolbar?: boolean;
 };
 export const StickyNote = observer((props: TProps) => {
-  const { onClose, workspaceSlug, className = "", stickyId } = props;
+  const { onClose, workspaceSlug, className = "", stickyId, showToolbar } = props;
+  //router
+  const pathName = usePathname();
   //state
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // hooks
@@ -61,6 +66,7 @@ export const StickyNote = observer((props: TProps) => {
         className={cn("w-full flex flex-col h-fit rounded p-4 group/sticky", className)}
         style={{ backgroundColor: stickyData?.color || STICKY_COLORS[0] }}
       >
+        {pathName?.includes("stickies") && <StickyItemDragHandle isDragging={false} />}{" "}
         {onClose && (
           <button className="flex w-full" onClick={onClose}>
             <Minimize2 className="size-4 m-auto mr-0" />
@@ -77,6 +83,7 @@ export const StickyNote = observer((props: TProps) => {
             setIsDeleteModalOpen(true);
           }}
           handleChange={handleChange}
+          showToolbar={showToolbar}
         />
       </div>
     </>

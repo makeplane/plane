@@ -5,4 +5,5 @@ export type TSticky = {
   color?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  sort_order: number;
 };

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { TSticky } from "@plane/types";
+import { InstructionType, TSticky } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { STICKY_COLORS } from "@/components/editor/sticky-editor/color-pallete";
 import { useSticky } from "@/hooks/use-stickies";
@@ -8,6 +8,12 @@ export type TOperations = {
   create: (data?: Partial<TSticky>) => Promise<void>;
   update: (stickyId: string, data: Partial<TSticky>) => Promise<void>;
   remove: (stickyId: string) => Promise<void>;
+  updatePosition: (
+    workspaceSlug: string,
+    sourceId: string,
+    droppedId: string,
+    instruction: InstructionType
+  ) => Promise<void>;
 };
 
 type TProps = {
@@ -21,7 +27,7 @@ export const getRandomStickyColor = (): string => {
 
 export const useStickyOperations = (props: TProps) => {
   const { workspaceSlug } = props;
-  const { createSticky, updateSticky, deleteSticky } = useSticky();
+  const { createSticky, updateSticky, deleteSticky, updateStickyPosition } = useSticky();
 
   const isValid = (data: Partial<TSticky>) => {
     if (data.name && data.name.length > 100) {
@@ -88,6 +94,24 @@ export const useStickyOperations = (props: TProps) => {
             message: "The sticky could not be removed",
             type: TOAST_TYPE.ERROR,
             title: "Sticky not removed",
+          });
+          throw error;
+        }
+      },
+      updatePosition: async (
+        workspaceSlug: string,
+        sourceId: string,
+        droppedId: string,
+        instruction: InstructionType
+      ) => {
+        try {
+          if (!workspaceSlug) throw new Error("Missing required fields");
+          await updateStickyPosition(workspaceSlug, sourceId, droppedId, instruction);
+        } catch (error) {
+          setToast({
+            message: "The sticky could not be updated",
+            type: TOAST_TYPE.ERROR,
+            title: "Sticky not updated",
           });
           throw error;
         }

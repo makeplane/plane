@@ -1,8 +1,8 @@
-import { set } from "lodash";
+import { orderBy, set } from "lodash";
 import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { STICKIES_PER_PAGE } from "@plane/constants";
-import { TLoader, TPaginationInfo, TSticky } from "@plane/types";
+import { InstructionType, TLoader, TPaginationInfo, TSticky } from "@plane/types";
 import { StickyService } from "@/services/sticky.service";
 
 export interface IStickyStore {
@@ -29,6 +29,7 @@ export interface IStickyStore {
   updateActiveStickyId: (id: string | undefined) => void;
   fetchRecentSticky: (workspaceSlug: string) => void;
   fetchNextWorkspaceStickies: (workspaceSlug: string) => void;
+  updateStickyPosition: (workspaceSlug: string, stickyId: string, destinationId: string, edge: InstructionType) => void;
 }
 
 export class StickyStore implements IStickyStore {
@@ -66,11 +67,18 @@ export class StickyStore implements IStickyStore {
       updateActiveStickyId: action,
       toggleShowNewSticky: action,
       fetchRecentSticky: action,
+      updateStickyPosition: action,
     });
     this.stickyService = new StickyService();
   }
 
-  getWorkspaceStickies = computedFn((workspaceSlug: string) => this.workspaceStickies[workspaceSlug]);
+  getWorkspaceStickies = computedFn((workspaceSlug: string) => {
+    return orderBy(
+      (this.workspaceStickies[workspaceSlug] || []).map((stickyId) => this.stickies[stickyId]),
+      ["sort_order"],
+      ["desc"]
+    ).map((sticky) => sticky.id);
+  });
 
   toggleShowNewSticky = (value: boolean) => {
     this.showAddNewSticky = value;
@@ -204,6 +212,52 @@ export class StickyStore implements IStickyStore {
     } catch (e) {
       console.log(e);
       this.stickies[id] = sticky;
+    }
+  };
+
+  updateStickyPosition = async (
+    workspaceSlug: string,
+    stickyId: string,
+    destinationId: string,
+    edge: InstructionType
+  ) => {
+    try {
+      let resultSequence = 10000;
+      const workspaceStickies = this.workspaceStickies[workspaceSlug] || [];
+      const stickies = workspaceStickies.map((id) => this.stickies[id]);
+      const sortedStickies = orderBy(stickies, "sort_order", "desc").map((sticky) => sticky.id);
+      const destinationSequence = this.stickies[destinationId]?.sort_order || undefined;
+
+      if (destinationSequence) {
+        const destinationIndex = sortedStickies.findIndex((id) => id === destinationId);
+
+        if (edge === "reorder-above") {
+          const prevSequence = this.stickies[sortedStickies[destinationIndex - 1]]?.sort_order || undefined;
+          if (prevSequence) {
+            resultSequence = (destinationSequence + prevSequence) / 2;
+          } else {
+            resultSequence = destinationSequence + resultSequence;
+          }
+        } else {
+          // reorder-below
+          resultSequence = destinationSequence - resultSequence;
+        }
+      }
+
+      runInAction(() => {
+        this.stickies[stickyId] = {
+          ...this.stickies[stickyId],
+          sort_order: resultSequence,
+        };
+      });
+
+      // Assuming you have a service method to update sticky position
+      await this.stickyService.updateSticky(workspaceSlug, stickyId, {
+        sort_order: resultSequence,
+      });
+    } catch (error) {
+      console.error("Failed to move sticky");
+      throw error;
     }
   };
 }
