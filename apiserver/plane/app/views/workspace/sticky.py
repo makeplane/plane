@@ -4,7 +4,7 @@ from rest_framework import status
 
 # Module imports
 from plane.app.views.base import BaseViewSet
-from plane.app.permissions import WorkSpaceBasePermission, ROLE, allow_permission
+from plane.app.permissions import ROLE, allow_permission
 from plane.db.models import Sticky, Workspace
 from plane.app.serializers import StickySerializer
 
@@ -12,7 +12,6 @@ from plane.app.serializers import StickySerializer
 class WorkspaceStickyViewSet(BaseViewSet):
     serializer_class = StickySerializer
     model = Sticky
-    permission_classes = [WorkSpaceBasePermission]
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -42,7 +41,7 @@ class WorkspaceStickyViewSet(BaseViewSet):
         query = request.query_params.get("query", False)
         stickies = self.get_queryset().order_by("-sort_order")
         if query:
-            stickies = stickies.filter(description_html__icontains=query)
+            stickies = stickies.filter(description_stripped__icontains=query)
 
         return self.paginate(
             request=request,
@@ -50,7 +49,7 @@ class WorkspaceStickyViewSet(BaseViewSet):
             on_results=lambda stickies: StickySerializer(stickies, many=True).data,
             default_per_page=20,
         )
-        
+
     @allow_permission(allowed_roles=[], creator=True, model=Sticky, level="WORKSPACE")
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
