@@ -65,7 +65,7 @@ export const SidebarTeamsList = observer(() => {
             <Disclosure.Button
               as="button"
               className={cn(
-                "flex-1 sticky top-0 z-10 w-full py-1.5 flex items-center gap-1 text-custom-sidebar-text-400 text-xs font-semibold outline-none",
+                "flex-1 sticky top-0 w-full py-1.5 flex items-center gap-1 text-custom-sidebar-text-400 text-xs font-semibold outline-none",
                 sidebarCollapsed ? "justify-center" : "justify-between"
               )}
               onClick={() => toggleTeamMenu(!isTeamsListOpen)}

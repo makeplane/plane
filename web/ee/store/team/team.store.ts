@@ -40,6 +40,7 @@ export interface ITeamStore {
   getTeamEntitiesById: (teamId: string) => TTeamEntities | undefined;
   getTeamProjectIds: (teamId: string) => string[] | undefined;
   getTeamMemberIds: (teamId: string) => string[] | undefined;
+  getTeamMemberIdsFromMembersMap: (teamId: string) => string[];
   isUserMemberOfTeam: (teamId: string) => boolean;
   // helper actions
   updateTeamNameDescriptionLoader: (teamId: string, loaderType: TNameDescriptionLoader) => void;
@@ -230,6 +231,14 @@ export class TeamStore implements ITeamStore {
    */
   getTeamMemberIds = computedFn((teamId: string) => this.teamMap[teamId]?.member_ids);
 
+  /** Returns team member IDs from members map by team ID
+   * @param teamId
+   * @returns string[]
+   */
+  getTeamMemberIdsFromMembersMap = computedFn((teamId: string) =>
+    this.teamMembersMap[teamId] ? Object.keys(this.teamMembersMap[teamId]) : []
+  );
+
   /**
    * Returns whether the user is a member of the team
    * @param teamId
@@ -284,7 +293,7 @@ export class TeamStore implements ITeamStore {
         });
         // set team map along with member_ids
         teams.forEach((team) => {
-          const teamMemberIds = Object.keys(this.teamMembersMap[team.id]);
+          const teamMemberIds = this.getTeamMemberIdsFromMembersMap(team.id);
           set(this.teamMap, [team.id], {
             ...team,
             member_ids: teamMemberIds,
@@ -324,7 +333,7 @@ export class TeamStore implements ITeamStore {
           set(this.teamMembersMap, [teamId, member.member], member);
         });
         // set team map along with member_ids
-        const teamMemberIds = Object.keys(this.teamMembersMap[teamId]);
+        const teamMemberIds = this.getTeamMemberIdsFromMembersMap(team.id);
         set(this.teamMap, [teamId], { ...team, member_ids: teamMemberIds });
         this.loader = "loaded";
       });
@@ -378,13 +387,17 @@ export class TeamStore implements ITeamStore {
       this.loader = "mutation";
       // create team
       const team = await this.teamService.createTeam(workspaceSlug, data);
-      // add team members
-      if (data.member_ids && data.member_ids.length > 0) {
-        await this.updateTeamMembers(workspaceSlug, team.id, data.member_ids, false);
-      }
+      // add current user to the list of members and update the team members
+      const currentUserId = this.rootStore.user.data?.id;
+      await this.updateTeamMembers(
+        workspaceSlug,
+        team.id,
+        currentUserId ? uniq([...data.member_ids ?? [], currentUserId]) : data.member_ids ?? [],
+        false
+      );
       // set team map along with member_ids
       runInAction(() => {
-        const teamMemberIds = Object.keys(this.teamMembersMap[team.id]);
+        const teamMemberIds = this.getTeamMemberIdsFromMembersMap(team.id);
         set(this.teamMap, [team.id], { ...team, member_ids: teamMemberIds });
         this.loader = "loaded";
       });
@@ -431,6 +444,9 @@ export class TeamStore implements ITeamStore {
           this.fetchTeamEntities(workspaceSlug, teamId),
           this.rootStore.teamRoot.teamAnalytics.fetchTeamAnalytics(workspaceSlug, teamId),
         ]);
+      } else if (areMembersUpdated) {
+        // refetch team analytics if members have been updated
+        this.rootStore.teamRoot.teamAnalytics.fetchTeamAnalytics(workspaceSlug, teamId);
       }
       // Fetch team activity
       this.rootStore.teamRoot.teamUpdates.fetchTeamActivities(workspaceSlug, teamId);
@@ -469,11 +485,13 @@ export class TeamStore implements ITeamStore {
           set(this.teamMembersMap, [teamId, member.member], member);
         });
         if (updateTeamDetails) {
-          const teamMemberIds = Object.keys(this.teamMembersMap[teamId]);
+          const teamMemberIds = this.getTeamMemberIdsFromMembersMap(teamId);
           update(this.teamMap, [teamId], (team) => ({
             ...team,
             member_ids: teamMemberIds,
           }));
+          // Fetch team analytics
+          this.rootStore.teamRoot.teamAnalytics.fetchTeamAnalytics(workspaceSlug, teamId);
         }
       });
       // Fetch team activity
@@ -534,7 +552,7 @@ export class TeamStore implements ITeamStore {
       // get team member ids
       const teamMemberIds = this.getTeamMemberIds(teamId);
       // join team
-      await this.updateTeamMembers(workspaceSlug, teamId, uniq([...(teamMemberIds ?? []), currentUserId]), false);
+      await this.updateTeamMembers(workspaceSlug, teamId, uniq([...(teamMemberIds ?? []), currentUserId]));
       this.loader = "loaded";
     } catch (error) {
       console.error("Failed to join team", error);

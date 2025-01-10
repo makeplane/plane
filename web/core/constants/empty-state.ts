@@ -122,7 +122,9 @@ export enum EmptyStateType {
   TEAM_COMPLETED_CYCLES = "team-completed-cycles",
   TEAM_UPCOMING_CYCLES = "team-upcoming-cycles",
   TEAM_VIEW = "team-view",
+  TEAM_PROJECT_VIEW = "team-project-view",
   TEAM_PAGE = "team-page",
+  TEAM_PROJECT_PAGE = "team-project-page",
 }
 
 const emptyStateDetails = {
@@ -886,21 +888,21 @@ const emptyStateDetails = {
     title: "None of your linked projects have an active cycle.",
     path: "/empty-state/teams/current-cycles",
     description:
-      "Linked projects that have active cycles will automatically show up here. If you expect to see an active cycle here, make sure it is running in a linked project right now.",
+      "Active cycles in linked projects will automatically show up here. If you expect to see an active cycle, make sure it is running in a linked project right now.",
   },
   [EmptyStateType.TEAM_COMPLETED_CYCLES]: {
     key: EmptyStateType.TEAM_COMPLETED_CYCLES,
     title: "None of your linked projects have a completed cycle.",
     path: "/empty-state/teams/completed-cycles",
     description:
-      "Linked projects that have completed cycles will automatically show up here. If you expect to see a completed cycle here, make sure it is also completed in a linked project.",
+      "Completed cycles in linked projects will automatically show up here. If you expect to see a completed cycle, make sure it is also completed in a linked project.",
   },
   [EmptyStateType.TEAM_UPCOMING_CYCLES]: {
     key: EmptyStateType.TEAM_UPCOMING_CYCLES,
     title: "None of your linked projects have an upcoming cycle.",
     path: "/empty-state/teams/upcoming-cycles",
     description:
-      "Linked projects that have upcoming cycles will automatically show up here. If you expect to see an upcoming cycle here, make sure it is there in a linked project, too.",
+      "Upcoming cycles in linked projects will automatically show up here. If you expect to see an upcoming cycle, make sure it is there in a linked project, too.",
   },
   [EmptyStateType.TEAM_VIEW]: {
     key: EmptyStateType.TEAM_VIEW,
@@ -914,6 +916,13 @@ const emptyStateDetails = {
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
+  [EmptyStateType.TEAM_PROJECT_VIEW]: {
+    key: EmptyStateType.TEAM_PROJECT_VIEW,
+    title: "None of your linked projects have any public views.",
+    description:
+      "Public views in linked projects will automatically show up here. To see public views from linked projects here, make sure those projects have public views accessible to all project members.",
+    path: "/empty-state/teams/views",
+  },
   [EmptyStateType.TEAM_PAGE]: {
     key: EmptyStateType.TEAM_PAGE,
     title: "House your team’s knowledge in Team Pages.",
@@ -925,6 +934,13 @@ const emptyStateDetails = {
     },
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+  },
+  [EmptyStateType.TEAM_PROJECT_PAGE]: {
+    key: EmptyStateType.TEAM_PROJECT_PAGE,
+    title: "None of your linked projects have public pages.",
+    description:
+      "Public pages from linked projects will automatically show up here. If you expect to see public pages here, first see if your linked projects have public pages available to all project members.",
+    path: "/empty-state/onboarding/pages",
   },
 } as const;
 

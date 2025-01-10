@@ -28,6 +28,7 @@ from plane.db.models import (
     UserFavorite,
     DeployBoard,
     PageVersion,
+    ProjectMember,
 )
 from plane.ee.models import TeamSpacePage, TeamSpaceProject
 from plane.ee.serializers import (
@@ -281,7 +282,12 @@ class TeamSpacePageEndpoint(TeamBaseEndpoint):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if page.owned_by_id != request.user.id:
+        if (
+            ProjectMember.objects.filter(
+                member=request.user, is_active=True, role__lte=15
+            ).exists()
+            and request.user.id != page.owned_by_id
+        ):
             return Response(
                 {"error": "Only admin or owner can delete the page"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -407,7 +413,12 @@ class TeamSpacePageArchiveEndpoint(TeamBaseEndpoint):
 
         # Check if the user has access to the workspace
         page = Page.objects.get(pk=pk, workspace__slug=slug)
-        if page.owned_by_id != request.user.id:
+        if (
+            ProjectMember.objects.filter(
+                member=request.user, is_active=True, role__lte=15
+            ).exists()
+            and request.user.id != page.owned_by_id
+        ):
             return Response(
                 {"error": "Only admin or owner can archive the page"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -442,7 +453,12 @@ class TeamSpacePageUnarchiveEndpoint(TeamBaseEndpoint):
 
         # Check if the user has access to the workspace
         page = Page.objects.get(pk=pk, workspace__slug=slug)
-        if page.owned_by_id != request.user.id:
+        if (
+            ProjectMember.objects.filter(
+                member=request.user, is_active=True, role__lte=15
+            ).exists()
+            and request.user.id != page.owned_by_id
+        ):
             return Response(
                 {"error": "Only admin or owner can unarchive the page"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -471,7 +487,12 @@ class TeamSpacePageLockEndpoint(TeamBaseEndpoint):
 
         # Check if the user has access to the workspace
         page = Page.objects.get(pk=pk, workspace__slug=slug)
-        if page.owned_by_id != request.user.id:
+        if (
+            ProjectMember.objects.filter(
+                member=request.user, is_active=True, role__lte=15
+            ).exists()
+            and request.user.id != page.owned_by_id
+        ):
             return Response(
                 {"error": "Only admin or owner can lock the page"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -494,7 +515,12 @@ class TeamSpacePageLockEndpoint(TeamBaseEndpoint):
 
         # Check if the user has access to the workspace
         page = Page.objects.get(pk=pk, workspace__slug=slug)
-        if page.owned_by_id != request.user.id:
+        if (
+            ProjectMember.objects.filter(
+                member=request.user, is_active=True, role__lte=15
+            ).exists()
+            and request.user.id != page.owned_by_id
+        ):
             return Response(
                 {"error": "Only admin or owner can unlock the page"},
                 status=status.HTTP_403_FORBIDDEN,

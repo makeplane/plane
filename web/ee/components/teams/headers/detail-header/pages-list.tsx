@@ -2,7 +2,8 @@ import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ListFilter } from "lucide-react";
-// ui
+// plane imports
+import { ETeamEntityScope } from "@plane/constants";
 import { TPageFilters } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // components
@@ -14,7 +15,7 @@ import { EPageAccess } from "@/constants/page";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web hooks
+// plane web imports
 import { useTeamPages, useTeams } from "@/plane-web/hooks/store";
 
 type TeamPagesListHeaderActionsProps = {
@@ -32,8 +33,9 @@ export const TeamPagesListHeaderActions = observer((props: TeamPagesListHeaderAc
   const [isCreatingPage, setIsCreatingPage] = useState(false);
   // plane web hooks
   const { getTeamMemberIds } = useTeams();
-  const { getTeamPagesFilters, updateFilters: updateTeamFilters, createPage } = useTeamPages();
+  const { getTeamPagesScope, getTeamPagesFilters, updateFilters: updateTeamFilters, createPage } = useTeamPages();
   // derived values
+  const teamPagesScope = getTeamPagesScope(teamId);
   const filters = getTeamPagesFilters(teamId);
   const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
   const teamMemberIds = getTeamMemberIds(teamId);
@@ -93,7 +95,7 @@ export const TeamPagesListHeaderActions = observer((props: TeamPagesListHeaderAc
           memberIds={teamMemberIds ?? undefined}
         />
       </FiltersDropdown>
-      {isEditingAllowed && (
+      {isEditingAllowed && teamPagesScope === ETeamEntityScope.TEAM && (
         <Button variant="primary" size="sm" onClick={handleCreatePage} loading={isCreatingPage}>
           {isCreatingPage ? "Adding" : "Add page"}
         </Button>

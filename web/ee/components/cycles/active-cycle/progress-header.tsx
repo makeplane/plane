@@ -49,9 +49,9 @@ export const CycleProgressHeader: FC<Props> = (props: Props) => {
       onClick={handleControlLinkClick}
       href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}
     >
-      <div className="px-page-x flex items-center justify-between py-4 bg-custom-sidebar-background-100 w-full gap-2">
+      <div className="px-page-x flex items-center justify-between py-4 bg-custom-sidebar-background-100 w-full">
         <div className="flex gap-6 h-full truncate">
-          {progress === null && <Loader.Item width="82px" height="82px" className="rounded-full" />}
+          {progress === null && <Loader.Item width="82px" height="82px" className="flex-shrink-0 rounded-full" />}
           {progress && (
             <ProgressDonut progress={progressToday} days_left={findHowManyDaysLeft(cycleDetails.end_date) ?? 0} />
           )}

@@ -73,9 +73,7 @@ export class TeamPageStore implements ITeamPageStore {
       filtersMap: observable,
       // helper actions
       initTeamPagesScope: action,
-      getTeamPagesScope: action,
       initTeamPagesFilters: action,
-      getTeamPagesFilters: action,
       updateTeamScope: action,
       updateFilters: action,
       clearAllFilters: action,
@@ -162,12 +160,12 @@ export class TeamPageStore implements ITeamPageStore {
    * @param teamId
    * @returns ETeamEntityScope | undefined
    */
-  getTeamPagesScope = (teamId: string) => {
+  getTeamPagesScope = computedFn((teamId: string) => {
     if (!this.scopeMap[teamId]) {
       this.initTeamPagesScope(teamId);
     }
     return this.scopeMap[teamId];
-  };
+  });
 
   /**
    * Initializes team pages filters
@@ -187,12 +185,12 @@ export class TeamPageStore implements ITeamPageStore {
    * @param teamId
    * @returns TPageFilters
    */
-  getTeamPagesFilters = (teamId: string) => {
+  getTeamPagesFilters = computedFn((teamId: string) => {
     if (!this.filtersMap[teamId]) {
       this.initTeamPagesFilters(teamId);
     }
     return this.filtersMap[teamId];
-  };
+  });
 
   /**
    * Updates team scope

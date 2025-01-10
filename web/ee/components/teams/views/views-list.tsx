@@ -1,4 +1,6 @@
 import { observer } from "mobx-react";
+// plane imports
+import { ETeamEntityScope } from "@plane/constants";
 // components
 import { ListLayout } from "@/components/core/list";
 import { EmptyState } from "@/components/empty-state";
@@ -20,9 +22,10 @@ export const TeamViewsList = observer((props: Props) => {
   const { teamId } = props;
   // store hooks
   const { toggleCreateTeamViewModal } = useCommandPalette();
-  const { getTeamViewsLoader, getTeamViews, getFilteredTeamViews } = useTeamViews();
+  const { getTeamViewsLoader, getTeamViewsScope, getTeamViews, getFilteredTeamViews } = useTeamViews();
   // derived values
   const teamViewsLoader = getTeamViewsLoader(teamId);
+  const teamViewsScope = getTeamViewsScope(teamId);
   const teamViews = getTeamViews(teamId);
   const filteredTeamViews = getFilteredTeamViews(teamId);
 
@@ -50,7 +53,7 @@ export const TeamViewsList = observer((props: Props) => {
         </div>
       ) : (
         <EmptyState
-          type={EmptyStateType.TEAM_VIEW}
+          type={teamViewsScope === ETeamEntityScope.TEAM ? EmptyStateType.TEAM_VIEW : EmptyStateType.TEAM_PROJECT_VIEW}
           primaryButtonOnClick={() => toggleCreateTeamViewModal({ isOpen: true, teamId })}
         />
       )}

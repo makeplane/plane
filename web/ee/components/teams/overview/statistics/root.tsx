@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -37,7 +37,7 @@ export const TeamStatisticsRoot: FC<Props> = observer((props) => {
   // refs
   const statisticsContainerRef = useRef<HTMLDivElement>(null);
   // states
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   // stor hooks
   const { isSettingsEnabled } = useWorkspaceProjectStates();
   const { getTeamStatisticsLoader, getTeamStatisticsFilter, fetchTeamStatistics, updateTeamStatisticsFilter } =
@@ -55,24 +55,26 @@ export const TeamStatisticsRoot: FC<Props> = observer((props) => {
       revalidateOnFocus: false,
     }
   );
-  // effects
-  useEffect(() => {
-    if (!isOpen || isLoading) return;
 
-    const timeoutId = setTimeout(() => {
-      if (statisticsContainerRef.current) {
-        requestAnimationFrame(() => {
-          statisticsContainerRef.current?.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
-        });
-      }
-    }, 100);
-
-    return () => clearTimeout(timeoutId);
-  }, [isOpen, isLoading]);
   // handlers
+  const handleToggle = () => {
+    const newState = !isOpen;
+    setIsOpen(newState);
+
+    if (newState) {
+      setTimeout(() => {
+        if (statisticsContainerRef.current) {
+          requestAnimationFrame(() => {
+            statisticsContainerRef.current?.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          });
+        }
+      }, 100);
+    }
+  };
+
   const handleTeamStatisticsFilterChange = async <K extends keyof TStatisticsFilter>(
     key: K,
     value: TStatisticsFilter[K]
@@ -89,7 +91,7 @@ export const TeamStatisticsRoot: FC<Props> = observer((props) => {
   return (
     <Collapsible
       isOpen={isOpen}
-      onToggle={() => setIsOpen((prevState) => !prevState)}
+      onToggle={handleToggle}
       title={
         <CollapsibleButton
           isOpen={isOpen}
@@ -98,7 +100,6 @@ export const TeamStatisticsRoot: FC<Props> = observer((props) => {
           titleClassName={cn(isOpen ? "text-custom-text-100" : "text-custom-text-300 hover:text-custom-text-200")}
         />
       }
-      buttonClassName="w-full"
       className="py-2"
     >
       <div ref={statisticsContainerRef} className="flex items-center gap-2.5 text-sm pb-3 px-1.5">

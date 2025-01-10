@@ -265,6 +265,8 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
    */
   fetchTeamWorkloadChartDetails = async (workspaceSlug: string, teamId: string, filter?: TWorkloadFilter) => {
     try {
+      // return if no projects are available
+      if (this.rootStore.teamRoot.team.getTeamProjectIds(teamId)?.length === 0) return;
       // Set loader
       if (this.getTeamWorkloadChart(teamId)) {
         set(this.teamWorkloadChartLoader, teamId, "mutation");
@@ -294,6 +296,8 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
    */
   fetchTeamWorkloadSummary = async (workspaceSlug: string, teamId: string) => {
     try {
+      // return if no projects are available
+      if (this.rootStore.teamRoot.team.getTeamProjectIds(teamId)?.length === 0) return;
       // Set loader
       if (this.getTeamWorkloadSummary(teamId)) {
         set(this.teamWorkloadSummaryLoader, teamId, "mutation");
@@ -322,6 +326,8 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
    */
   fetchTeamDependencies = async (workspaceSlug: string, teamId: string) => {
     try {
+      // return if no projects are available
+      if (this.rootStore.teamRoot.team.getTeamProjectIds(teamId)?.length === 0) return;
       // Set loader
       if (this.getTeamDependencies(teamId)) {
         set(this.teamDependenciesLoader, teamId, "mutation");
@@ -350,6 +356,8 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
    */
   fetchTeamStatistics = async (workspaceSlug: string, teamId: string, filter?: TStatisticsFilter) => {
     try {
+      // return if no projects are available
+      if (this.rootStore.teamRoot.team.getTeamProjectIds(teamId)?.length === 0) return;
       // Set loader
       if (this.getTeamStatistics(teamId)) {
         set(this.teamStatisticsLoader, teamId, "mutation");

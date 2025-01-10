@@ -101,9 +101,7 @@ export class TeamViewStore implements ITeamViewStore {
       filtersMap: observable,
       // helper actions
       initTeamViewsScope: action,
-      getTeamViewsScope: action,
       initTeamViewsFilters: action,
-      getTeamViewsFilters: action,
       updateTeamScope: action,
       // fetch actions
       fetchTeamViews: action,
@@ -207,12 +205,12 @@ export class TeamViewStore implements ITeamViewStore {
    * @param teamId
    * @returns ETeamEntityScope | undefined
    */
-  getTeamViewsScope = (teamId: string) => {
+  getTeamViewsScope = computedFn((teamId: string) => {
     if (!this.scopeMap[teamId]) {
       this.initTeamViewsScope(teamId);
     }
     return this.scopeMap[teamId];
-  };
+  });
 
   /**
    * Initializes team views filters
@@ -232,12 +230,12 @@ export class TeamViewStore implements ITeamViewStore {
    * @param teamId
    * @returns TViewFilters
    */
-  getTeamViewsFilters = (teamId: string) => {
+  getTeamViewsFilters = computedFn((teamId: string) => {
     if (!this.filtersMap[teamId]) {
       this.initTeamViewsFilters(teamId);
     }
     return this.filtersMap[teamId];
-  };
+  });
 
   /**
    * Updates team scope

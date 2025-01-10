@@ -35,6 +35,7 @@ export const TeamsOverviewProperties = observer((props: TTeamsOverviewProperties
   const team = getTeamById(teamId?.toString());
   const isTeamMember = isUserMemberOfTeam(teamId);
   const teamLead = team?.lead_id ? getUserDetails(team.lead_id) : undefined;
+  const teamMemberIdsExceptLead = team?.member_ids?.filter((memberId) => memberId !== teamLead?.id);
   const teamDescription =
     team?.description_html !== undefined || team?.description_html !== null
       ? team?.description_html != ""
@@ -107,7 +108,7 @@ export const TeamsOverviewProperties = observer((props: TTeamsOverviewProperties
           )}
           <div className="flex-shrink-0">
             <AvatarGroup size="base" showTooltip max={4}>
-              {team.member_ids?.map((userId: string) => {
+              {teamMemberIdsExceptLead?.map((userId: string) => {
                 const userDetails = getUserDetails(userId);
                 if (!userDetails) return;
                 return <Avatar key={userId} src={getFileURL(userDetails.avatar_url)} name={userDetails.display_name} />;

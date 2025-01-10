@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect, useMemo, useRef, useState } from "react";
+import React, { FC, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
@@ -30,7 +30,7 @@ export const TeamDependenciesRoot: FC<Props> = observer((props) => {
   // refs
   const dependenciesContainerRef = useRef<HTMLDivElement>(null);
   // states
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   // store hooks
   const { getTeamDependenciesLoader, getTeamDependencies, fetchTeamDependencies } = useTeamAnalytics();
   // derived values
@@ -45,23 +45,27 @@ export const TeamDependenciesRoot: FC<Props> = observer((props) => {
       revalidateOnFocus: false,
     }
   );
-  // effects
-  useEffect(() => {
-    if (!isOpen) return;
 
-    const timeoutId = setTimeout(() => {
-      if (dependenciesContainerRef.current) {
-        requestAnimationFrame(() => {
-          dependenciesContainerRef.current?.scrollIntoView({
-            behavior: "smooth",
-            block: "nearest",
+  // handlers
+  const handleToggle = () => {
+    if (teamDependenciesLoader === "init-loader") return;
+
+    const newState = !isOpen;
+    setIsOpen(newState);
+
+    if (newState) {
+      setTimeout(() => {
+        if (dependenciesContainerRef.current) {
+          requestAnimationFrame(() => {
+            dependenciesContainerRef.current?.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
           });
-        });
-      }
-    }, 100);
-
-    return () => clearTimeout(timeoutId);
-  }, [isOpen]);
+        }
+      }, 100);
+    }
+  };
 
   const TEAM_DEPENDENCY_TYPE_LIST = useMemo(
     () => [
@@ -96,7 +100,7 @@ export const TeamDependenciesRoot: FC<Props> = observer((props) => {
   return (
     <Collapsible
       isOpen={isOpen}
-      onToggle={() => teamDependenciesLoader !== "init-loader" && setIsOpen((prevState) => !prevState)}
+      onToggle={handleToggle}
       title={
         <CollapsibleButton
           isOpen={isOpen}
@@ -108,7 +112,6 @@ export const TeamDependenciesRoot: FC<Props> = observer((props) => {
           )}
         />
       }
-      buttonClassName="w-full"
       className="py-2"
     >
       <>

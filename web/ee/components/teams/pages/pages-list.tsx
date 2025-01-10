@@ -1,5 +1,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
+import { ETeamEntityScope } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ListLayout } from "@/components/core/list";
@@ -24,9 +26,10 @@ export const TeamPagesList = observer((props: Props) => {
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
   // plane web hooks
-  const { getTeamPagesLoader, getTeamPageIds, getFilteredTeamPageIds, createPage } = useTeamPages();
+  const { getTeamPagesLoader, getTeamPagesScope, getTeamPageIds, getFilteredTeamPageIds, createPage } = useTeamPages();
   // derived values
   const teamPagesLoader = getTeamPagesLoader(teamId);
+  const teamPagesScope = getTeamPagesScope(teamId);
   const teamPageIds = getTeamPageIds(teamId);
   const filteredTeamPageIds = getFilteredTeamPageIds(teamId);
   // handlers
@@ -73,7 +76,10 @@ export const TeamPagesList = observer((props: Props) => {
           </ListLayout>
         </div>
       ) : (
-        <EmptyState type={EmptyStateType.TEAM_PAGE} primaryButtonOnClick={handleCreatePage} />
+        <EmptyState
+          type={teamPagesScope === ETeamEntityScope.TEAM ? EmptyStateType.TEAM_PAGE : EmptyStateType.TEAM_PROJECT_PAGE}
+          primaryButtonOnClick={handleCreatePage}
+        />
       )}
     </>
   );
