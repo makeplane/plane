@@ -37,7 +37,7 @@ export const TimezoneSelect: FC<TTimezoneSelect> = observer((props) => {
     <div>
       <CustomSearchSelect
         value={value}
-        label={selectedValue ? selectedValue(value) : label}
+        label={value && selectedValue ? selectedValue(value) : label}
         options={isDisabled || disabled ? [] : timezones}
         onChange={onChange}
         buttonClassName={cn(buttonClassName, {
