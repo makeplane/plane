@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.ee.views.base import BaseAPIView
-from plane.ee.models import Workflow, WorkflowTransition, WorkflowTransitionActor
+from plane.ee.models import Workflow, WorkflowTransition
 from plane.ee.serializers import WorkflowSerializer, WorkflowTransitionSerializer
 from plane.ee.permissions import allow_permission, ROLE
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -122,10 +122,6 @@ class ProjectWorkflowEndpoint(BaseAPIView):
             project_id=project_id, workspace__slug=slug
         ).values("id", "transition_state_id", "workflow_id")
 
-        # Get the workflow transition actors
-        workflow_transition_actors = WorkflowTransitionActor.objects.filter(
-            project_id=project_id, workspace__slug=slug
-        ).values("workflow_transition_id", "actor_id")
 
         # Create the project workflow structure
         project_workflows = {}
@@ -135,14 +131,6 @@ class ProjectWorkflowEndpoint(BaseAPIView):
                     "transition_state_id": str(
                         workflow_transition["transition_state_id"]
                     ),
-                    "actors": [
-                        str(workflow_transition_actor["actor_id"])
-                        for workflow_transition_actor in workflow_transition_actors
-                        if (
-                            str(workflow_transition_actor["workflow_transition_id"])
-                            == str(workflow_transition["id"])
-                        )
-                    ],
                 }
                 for workflow_transition in workflow_transitions
                 if str(workflow_transition["workflow_id"]) == str(workflow_state["id"])

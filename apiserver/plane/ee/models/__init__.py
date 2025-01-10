@@ -61,6 +61,6 @@ from .team import (
     TeamSpaceUserProperty,
 )
 
-from .workflow import Workflow, WorkflowTransition, WorkflowTransitionActor
+from .workflow import Workflow, WorkflowTransition
 
 from .job import ImportReport, ImportJob

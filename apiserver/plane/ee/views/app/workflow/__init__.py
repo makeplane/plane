@@ -1,2 +1,1 @@
 from .base import WorkflowTransitionEndpoint, ProjectWorkflowEndpoint
-from .actor import WorkflowTransitionActorEndpoint

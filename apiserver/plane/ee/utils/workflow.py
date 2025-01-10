@@ -2,7 +2,7 @@
 import uuid
 
 # Module imports
-from plane.ee.models import WorkflowTransition, WorkflowTransitionActor, ProjectFeature
+from plane.ee.models import WorkflowTransition, ProjectFeature
 from plane.db.models import Issue
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -26,13 +26,6 @@ class WorkflowStateManager:
     ) -> bool:
         """Check if a user has permission to transition to the target state."""
 
-        # Check if there are any actors defined for this transition
-        workflow_actors = list(
-            WorkflowTransitionActor.objects.filter(
-                workflow_transition__workflow__state_id=current_state_id,
-                workflow_transition__transition_state_id=transition_state_id,
-            ).values_list("actor_id", flat=True)
-        )
 
         # Get actors
         if not workflow_actors:

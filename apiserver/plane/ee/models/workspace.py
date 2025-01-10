@@ -136,6 +136,9 @@ class WorkspaceConnection(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="connections"
     )
+    credential = models.ForeignKey(
+        "ee.WorkspaceCredential", on_delete=models.CASCADE, related_name="connections", null=True, blank=True
+    )
     target_hostname = models.TextField(null=True, blank=True)
     source_hostname = models.TextField(null=True, blank=True)
     # IntegrationType enum
@@ -143,6 +146,7 @@ class WorkspaceConnection(BaseModel):
     # Id of the org from integrator
     connection_id = models.CharField(max_length=255)
     connection_data = models.JSONField(default=dict)
+    connection_slug = models.TextField(null=True, blank=True)
     scopes = models.JSONField(default=list)
     config = models.JSONField(default=dict)
 
@@ -152,6 +156,13 @@ class WorkspaceConnection(BaseModel):
         db_table = "workspace_connections"
         ordering = ("-created_at",)
 
+    def delete(self, *args, **kwargs):
+        credential = self.credential
+        super().delete(*args, **kwargs)
+        # Deactivate the credential if no other connections reference it
+        if not WorkspaceConnection.objects.filter(credential=credential).exists():
+            credential.is_active = False
+            credential.save()
 
 class WorkspaceEntityConnection(BaseModel):
     type = models.CharField(max_length=30, blank=True, null=True)

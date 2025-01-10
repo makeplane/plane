@@ -75,7 +75,6 @@ from .app.epic import (
 from .app.workflow import (
     WorkflowSerializer,
     WorkflowTransitionSerializer,
-    WorkflowTransitionActorSerializer,
 )
 
 # Space imports
@@ -91,11 +90,11 @@ from .app.job import ImportReportSerializer, ImportJobSerializer
 from .api.job import ImportReportAPISerializer, ImportJobAPISerializer
 
 #workspace
-from .app.workspace.credential import WorkspaceCredentialSerializer 
+from .app.workspace.credential import WorkspaceCredentialSerializer
 from .app.workspace.connection import WorkspaceConnectionSerializer
 from .app.workspace.entity_connection import WorkspaceEntityConnectionSerializer
 
 #workspace
-from .api.workspace.credential import WorkspaceCredentialAPISerializer 
+from .api.workspace.credential import WorkspaceCredentialAPISerializer
 from .api.workspace.connection import WorkspaceConnectionAPISerializer
 from .api.workspace.entity_connection import WorkspaceEntityConnectionAPISerializer
