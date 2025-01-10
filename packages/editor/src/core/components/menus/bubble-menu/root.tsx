@@ -87,12 +87,9 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
   }, []);
 
   return (
-    <BubbleMenu
-      {...bubbleMenuProps}
-      className="flex py-2 divide-x divide-custom-border-200 rounded-lg border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-rg"
-    >
+    <BubbleMenu {...bubbleMenuProps}>
       {!isSelecting && (
-        <>
+        <div className="flex py-2 divide-x divide-custom-border-200 rounded-lg border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-rg">
           <div className="px-2">
             {!props.editor.isActive("table") && (
               <BubbleMenuNodeSelector
@@ -161,7 +158,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
               editor.commands.setTextSelection(pos ?? 0);
             }}
           />
-        </>
+        </div>
       )}
     </BubbleMenu>
   );

@@ -303,6 +303,11 @@ class CycleViewSet(BaseViewSet):
                     .first()
                 )
 
+                datetime_fields = ["start_date", "end_date"]
+                cycle = user_timezone_converter(
+                    cycle, datetime_fields, request.user.user_timezone
+                )
+
                 # Send the model activity
                 model_activity.delay(
                     model_name="cycle",
@@ -386,6 +391,11 @@ class CycleViewSet(BaseViewSet):
                 "status",
                 "created_by",
             ).first()
+
+            datetime_fields = ["start_date", "end_date"]
+            cycle = user_timezone_converter(
+                cycle, datetime_fields, request.user.user_timezone
+            )
 
             # Send the model activity
             model_activity.delay(
