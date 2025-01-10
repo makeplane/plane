@@ -230,7 +230,7 @@ export class ProjectStore implements IProjectStore {
   };
 
   setLastCollapsibleAction = (section: ProjectOverviewCollapsible) => {
-    this.openCollapsibleSection = [section];
+    this.openCollapsibleSection = [...this.openCollapsibleSection, section];
   };
 
   toggleOpenCollapsibleSection = (section: ProjectOverviewCollapsible) => {
