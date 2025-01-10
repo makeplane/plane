@@ -58,6 +58,7 @@ export type TCycleProgress = {
 
 export type TProgressSnapshot = {
   total_issues: number;
+  pending_issues: number;
   completed_issues: number;
   backlog_issues: number;
   started_issues: number;
@@ -120,9 +121,7 @@ export interface CycleIssueResponse {
   sub_issues_count: number;
 }
 
-export type SelectCycleType =
-  | (ICycle & { actionType: "edit" | "delete" | "create-issue" })
-  | undefined;
+export type SelectCycleType = (ICycle & { actionType: "edit" | "delete" | "create-issue" }) | undefined;
 
 export type CycleDateCheckData = {
   start_date: string;

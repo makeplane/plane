@@ -176,7 +176,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
             cycleId={cycleId}
             projectId={projectId}
             workspaceSlug={workspaceSlug}
-            transferrableIssuesCount={transferableIssuesCount}
+            pendingIssues={cycleDetails.pending_issues}
           />
         </div>
       )}
