@@ -22,7 +22,6 @@ type TProps = TStickiesLayout & {
   columnCount: number;
 };
 
-// Updated StickiesList Component
 export const StickiesList = observer((props: TProps) => {
   const { workspaceSlug, intersectionElement, columnCount } = props;
   const { getWorkspaceStickies, toggleShowNewSticky, creatingSticky, searchQuery, loader } = useSticky();
@@ -35,7 +34,7 @@ export const StickiesList = observer((props: TProps) => {
     const dropTargets = location?.current?.dropTargets ?? [];
     if (!dropTargets || dropTargets.length <= 0) return;
 
-    const dropTarget = dropTargets[0]; // Since we don't have nested stickies, we can use the first target
+    const dropTarget = dropTargets[0];
     if (!dropTarget?.data?.id || !source.data?.id) return;
 
     const instruction = getInstructionFromPayload(dropTarget, source, location);
@@ -50,7 +49,7 @@ export const StickiesList = observer((props: TProps) => {
     }
   };
 
-  if (loader === "init-loader" || loader === "mutation") {
+  if (loader === "init-loader") {
     return (
       <div className="min-h-[500px] overflow-scroll pb-2">
         <Loader>
@@ -60,7 +59,7 @@ export const StickiesList = observer((props: TProps) => {
     );
   }
 
-  if (loader === "loaded" && workspaceStickies.length === 0)
+  if (loader === "loaded" && workspaceStickies.length === 0) {
     return (
       <EmptyState
         query={searchQuery}
@@ -71,9 +70,10 @@ export const StickiesList = observer((props: TProps) => {
         }}
       />
     );
+  }
 
   return (
-    <>
+    <div className="transition-opacity duration-300 ease-in-out">
       {/* @ts-expect-error type mismatch here */}
       <Masonry elementType="div">
         {workspaceStickies.map((stickyId, index) => (
@@ -88,11 +88,10 @@ export const StickiesList = observer((props: TProps) => {
         ))}
         {intersectionElement && <div style={{ width: itemWidth }}>{intersectionElement}</div>}
       </Masonry>
-    </>
+    </div>
   );
 });
 
-// StickiesLayout remains the same
 export const StickiesLayout = (props: TStickiesLayout) => {
   const [containerWidth, setContainerWidth] = useState<number | null>(null);
   const ref = useRef<HTMLDivElement>(null);
@@ -124,7 +123,7 @@ export const StickiesLayout = (props: TStickiesLayout) => {
 
   const columnCount = getColumnCount(containerWidth);
   return (
-    <div ref={ref}>
+    <div ref={ref} className="min-h-[500px]">
       <StickiesList {...props} columnCount={columnCount} />
     </div>
   );

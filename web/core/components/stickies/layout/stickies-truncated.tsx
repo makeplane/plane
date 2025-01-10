@@ -4,6 +4,8 @@ import useSWR from "swr";
 import { useSticky } from "@/hooks/use-stickies";
 import { ContentOverflowWrapper } from "../../core/content-overflow-HOC";
 import { StickiesLayout } from "./stickies-list";
+import { cn } from "@plane/utils";
+import Link from "next/link";
 
 export const StickiesTruncated = observer(() => {
   // router
@@ -23,8 +25,16 @@ export const StickiesTruncated = observer(() => {
       maxHeight={620}
       containerClassName="pb-2 box-border"
       fallback={<></>}
-      buttonClassName="bg-custom-background-90/20"
-      customButtonAction={() => router.push(`/${workspaceSlug}/stickies`)}
+      customButton={
+        <Link
+          href={`/${workspaceSlug}/stickies`}
+          className={cn(
+            "gap-1 w-full text-custom-primary-100 text-sm font-medium transition-opacity duration-300 bg-custom-background-90/20"
+          )}
+        >
+          Show all
+        </Link>
+      }
     >
       <StickiesLayout workspaceSlug={workspaceSlug.toString()} />
     </ContentOverflowWrapper>

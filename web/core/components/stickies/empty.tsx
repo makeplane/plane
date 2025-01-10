@@ -9,7 +9,7 @@ type TProps = {
 export const EmptyState = (props: TProps) => {
   const { handleCreate, creatingSticky, query } = props;
   return (
-    <div className="flex justify-center h-[500px] rounded border-[1.5px] border-custom-border-100 mx-2">
+    <div className="flex justify-center min-h-[500px] rounded border-[1.5px] border-custom-border-100 mx-2 h-full">
       <div className="m-auto">
         <div
           className={`mb-2 rounded-full mx-auto last:rounded-full w-[50px] h-[50px] flex items-center justify-center bg-custom-background-80/40 transition-transform duration-300`}

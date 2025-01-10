@@ -41,7 +41,7 @@ export const StickySearch: FC = observer(() => {
   const debouncedSearch = useCallback(
     debounce(async () => {
       await fetchStickies();
-    }, 1000),
+    }, 500),
     [fetchWorkspaceStickies]
   );
 
