@@ -72,13 +72,11 @@ export class StickyStore implements IStickyStore {
     this.stickyService = new StickyService();
   }
 
-  getWorkspaceStickies = computedFn((workspaceSlug: string) => {
-    return orderBy(
+  getWorkspaceStickies = computedFn((workspaceSlug: string) => orderBy(
       (this.workspaceStickies[workspaceSlug] || []).map((stickyId) => this.stickies[stickyId]),
       ["sort_order"],
       ["desc"]
-    ).map((sticky) => sticky.id);
-  });
+    ).map((sticky) => sticky.id));
 
   toggleShowNewSticky = (value: boolean) => {
     this.showAddNewSticky = value;

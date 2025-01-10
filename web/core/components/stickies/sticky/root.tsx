@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { debounce } from "lodash";
 import { observer } from "mobx-react";
+import { usePathname } from "next/navigation";
 import { Minimize2 } from "lucide-react";
 import { TSticky } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -8,9 +9,8 @@ import { useSticky } from "@/hooks/use-stickies";
 import { STICKY_COLORS } from "../../editor/sticky-editor/color-pallete";
 import { StickyDeleteModal } from "../delete-modal";
 import { StickyInput } from "./inputs";
-import { useStickyOperations } from "./use-operations";
 import { StickyItemDragHandle } from "./sticky-item-drag-handle";
-import { usePathname } from "next/navigation";
+import { useStickyOperations } from "./use-operations";
 
 type TProps = {
   onClose?: () => void;

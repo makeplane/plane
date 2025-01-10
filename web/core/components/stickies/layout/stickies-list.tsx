@@ -10,8 +10,8 @@ import { Loader } from "@plane/ui";
 import { useSticky } from "@/hooks/use-stickies";
 import { EmptyState } from "../empty";
 import { useStickyOperations } from "../sticky/use-operations";
-import { getInstructionFromPayload } from "./sticky.helpers";
 import { StickyDNDWrapper } from "./sticky-dnd-wrapper";
+import { getInstructionFromPayload } from "./sticky.helpers";
 
 type TStickiesLayout = {
   workspaceSlug: string;

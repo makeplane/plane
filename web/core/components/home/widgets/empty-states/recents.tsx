@@ -1,5 +1,5 @@
-import { LayersIcon } from "@plane/ui";
 import { Briefcase, FileText, History } from "lucide-react";
+import { LayersIcon } from "@plane/ui";
 
 export const RecentsEmptyState = ({ type }: { type: string }) => {
   const getDisplayContent = () => {

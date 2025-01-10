@@ -1,15 +1,15 @@
 "use client";
 
 import { FC, useCallback, useRef, useState } from "react";
+import { debounce } from "lodash";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { Search, X } from "lucide-react";
 // plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { useSticky } from "@/hooks/use-stickies";
-import { debounce } from "lodash";
-import { useParams } from "next/navigation";
 
 export const StickySearch: FC = observer(() => {
   // router

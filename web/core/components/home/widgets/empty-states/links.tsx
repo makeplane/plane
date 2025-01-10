@@ -1,7 +1,6 @@
 import { Link2 } from "lucide-react";
 
-export const LinksEmptyState = () => {
-  return (
+export const LinksEmptyState = () => (
     <div className="min-h-[110px] flex w-full justify-center py-6 bg-custom-border-100 rounded">
       <div className="m-auto flex gap-2">
         <Link2 size={30} className="text-custom-text-400/40 -rotate-45" />
@@ -11,4 +10,3 @@ export const LinksEmptyState = () => {
       </div>
     </div>
   );
-};

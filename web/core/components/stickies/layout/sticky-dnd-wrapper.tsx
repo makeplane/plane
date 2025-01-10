@@ -4,19 +4,22 @@ import type {
   DropTargetRecord,
   DragLocationHistory,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
-import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import type { ElementDragPayload } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import {
+  draggable,
+  dropTargetForElements,
+  ElementDragPayload,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
+import { usePathname } from "next/navigation";
 import { createRoot } from "react-dom/client";
 import { InstructionType } from "@plane/types";
 import { DropIndicator } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { StickyNote } from "../sticky";
 import { getInstructionFromPayload } from "./sticky.helpers";
-import { usePathname } from "next/navigation";
 
 // Draggable Sticky Wrapper Component
 export const StickyDNDWrapper = observer(
