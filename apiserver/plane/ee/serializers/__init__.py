@@ -24,7 +24,6 @@ from .app.exporter import ExporterHistorySerializer
 
 from .app.workspace.feature import WorkspaceFeatureSerializer
 from .app.workspace.project_state import ProjectStateSerializer
-from .app.workspace.sticky import StickySerializer
 from .app.project import (
     ProjectLinkSerializer,
     ProjectAttachmentSerializer,

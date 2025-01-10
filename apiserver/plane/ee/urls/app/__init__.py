@@ -10,7 +10,6 @@ from .intake import urlpatterns as intake_patterns
 from .inbox import urlpatterns as inbox_patterns
 from .issue_property import urlpatterns as issue_property_patterns
 from .workspace import urlpatterns as workspace_patterns
-from .sticky import urlpatterns as sticky_patterns
 from .initiative import urlpatterns as initiative_patterns
 from .team import urlpatterns as team_patterns
 from .epic_property import urlpatterns as epic_property_patterns
@@ -32,7 +31,6 @@ urlpatterns = [
     *project_patterns,
     *issue_property_patterns,
     *workspace_patterns,
-    *sticky_patterns,
     *initiative_patterns,
     *team_patterns,
     *epic_property_patterns,
