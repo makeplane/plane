@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
+import { SendHorizonal } from "lucide-react";
 import useSWR from "swr";
 import { Input, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -122,16 +123,29 @@ export const CommentList = observer((props: TProps) => {
               );
             })}
         </div>
-        <form onSubmit={updateCommentOperations.create}>
+        <form
+          onSubmit={updateCommentOperations.create}
+          className="flex items-center gap-1 px-2 mb-2 w-full rounded-md shadow border border-custom-border-100"
+        >
           <Input
             placeholder="Write your comment"
             value={newComment}
             onChange={(e) => {
-              console.log(e.target.value);
               setNewComment(e.target.value);
             }}
-            className="w-full shadow border-custom-border-100 mb-4"
+            className="px-1.5 border-none flex-grow"
           />
+          <button
+            type="submit"
+            disabled={newComment.trim() === ""}
+            className={`flex items-center justify-center size-6 text-sm rounded-full flex-shrink-0 ${
+              newComment.trim() === ""
+                ? "bg-custom-background-80 text-custom-text-300 cursor-not-allowed"
+                : "bg-custom-primary text-white hover:bg-custom-primary/90"
+            }`}
+          >
+            <SendHorizonal className="size-3.5" />
+          </button>
         </form>
       </div>
     </div>

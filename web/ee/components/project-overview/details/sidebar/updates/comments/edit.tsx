@@ -19,7 +19,7 @@ export const EditComment = (props: TProps) => {
     setIsEditing(false);
   };
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="w-full">
       <Input
         placeholder="Write your comment"
         value={newComment}

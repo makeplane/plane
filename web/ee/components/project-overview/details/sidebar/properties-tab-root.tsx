@@ -168,7 +168,7 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
                 value={getDate(project.start_date) ?? null}
                 onChange={(val) =>
                   handleUpdateProject({
-                    start_date: val ? renderFormattedPayloadDate(val) : undefined,
+                    start_date: val ? renderFormattedPayloadDate(val) : null,
                   })
                 }
                 disabled={!isEditingAllowed || isArchived}
@@ -191,7 +191,7 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
                 value={project.target_date ?? null}
                 onChange={(val) =>
                   handleUpdateProject({
-                    target_date: val ? renderFormattedPayloadDate(val) : undefined,
+                    target_date: val ? renderFormattedPayloadDate(val) : null,
                   })
                 }
                 disabled={!isEditingAllowed || isArchived}
