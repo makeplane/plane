@@ -258,6 +258,7 @@ class CycleViewSet(BaseViewSet):
             # meta fields
             "is_favorite",
             "total_issues",
+            "pending_issues",
             "completed_issues",
             "assignee_ids",
             "status",
