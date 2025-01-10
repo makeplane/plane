@@ -393,8 +393,6 @@ class WorkspaceUserPreference(BaseModel):
     """Preference for the workspace for a user"""
 
     class UserPreferenceKeys(models.TextChoices):
-        INITIATIVES = "initiatives", "Initiatives"
-        TEAMS = "teams", "Teams"
         CYCLES = "cycles", "Cycles"
         VIEWS = "views", "Views"
         ANALYTICS = "analytics", "Analytics"
