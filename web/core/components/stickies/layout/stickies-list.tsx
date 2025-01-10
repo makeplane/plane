@@ -29,6 +29,17 @@ export const StickiesList = observer((props: TProps) => {
 
   const workspaceStickies = getWorkspaceStickies(workspaceSlug?.toString());
   const itemWidth = `${100 / columnCount}%`;
+  // Calculate total number of rows
+  const totalRows = Math.ceil(workspaceStickies.length / columnCount);
+
+  // Function to determine if an item is in first or last row
+  const getRowPositions = (index: number) => {
+    const currentRow = Math.floor(index / columnCount);
+    return {
+      isInFirstRow: currentRow === 0,
+      isInLastRow: currentRow === totalRows - 1 || index >= workspaceStickies.length - columnCount,
+    };
+  };
 
   const handleDrop = (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => {
     const dropTargets = location?.current?.dropTargets ?? [];
@@ -76,16 +87,21 @@ export const StickiesList = observer((props: TProps) => {
     <div className="transition-opacity duration-300 ease-in-out">
       {/* @ts-expect-error type mismatch here */}
       <Masonry elementType="div">
-        {workspaceStickies.map((stickyId, index) => (
-          <StickyDNDWrapper
-            key={stickyId}
-            stickyId={stickyId}
-            workspaceSlug={workspaceSlug.toString()}
-            itemWidth={itemWidth}
-            handleDrop={handleDrop}
-            isLastChild={index === workspaceStickies.length - 1}
-          />
-        ))}
+        {workspaceStickies.map((stickyId, index) => {
+          const { isInFirstRow, isInLastRow } = getRowPositions(index);
+          return (
+            <StickyDNDWrapper
+              key={stickyId}
+              stickyId={stickyId}
+              workspaceSlug={workspaceSlug.toString()}
+              itemWidth={itemWidth}
+              handleDrop={handleDrop}
+              isLastChild={index === workspaceStickies.length - 1}
+              isInFirstRow={isInFirstRow}
+              isInLastRow={isInLastRow}
+            />
+          );
+        })}
         {intersectionElement && <div style={{ width: itemWidth }}>{intersectionElement}</div>}
       </Masonry>
     </div>

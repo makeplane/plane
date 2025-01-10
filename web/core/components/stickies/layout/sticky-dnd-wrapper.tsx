@@ -25,12 +25,16 @@ export const StickyDNDWrapper = observer(
     workspaceSlug,
     itemWidth,
     isLastChild,
+    isInFirstRow,
+    isInLastRow,
     handleDrop,
   }: {
     stickyId: string;
     workspaceSlug: string;
     itemWidth: string;
     isLastChild: boolean;
+    isInFirstRow: boolean;
+    isInLastRow: boolean;
     handleDrop: (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => void;
   }) => {
     const pathName = usePathname();
@@ -58,11 +62,11 @@ export const StickyDNDWrapper = observer(
             },
             onGenerateDragPreview: ({ nativeSetDragImage }) => {
               setCustomNativeDragPreview({
-                getOffset: pointerOutsideOfPreview({ x: "0px", y: "0px" }),
+                getOffset: pointerOutsideOfPreview({ x: "-200px", y: "0px" }),
                 render: ({ container }) => {
                   const root = createRoot(container);
                   root.render(
-                    <div className="scale-50 -mr-30 translate-x-200">
+                    <div className="scale-50">
                       <div className="-m-2 max-h-[150px]">
                         <StickyNote
                           className={"w-[290px]"}
@@ -114,7 +118,7 @@ export const StickyDNDWrapper = observer(
 
     return (
       <div className="relative" style={{ width: itemWidth }}>
-        <DropIndicator isVisible={instruction === "reorder-above"} />
+        {!isInFirstRow && <DropIndicator isVisible={instruction === "reorder-above"} />}
         <div
           ref={elementRef}
           className={cn("flex min-h-[300px] box-border p-2", {
@@ -123,7 +127,7 @@ export const StickyDNDWrapper = observer(
         >
           <StickyNote key={stickyId || "new"} workspaceSlug={workspaceSlug} stickyId={stickyId} />
         </div>
-        <DropIndicator isVisible={instruction === "reorder-below"} />
+        {!isInLastRow && <DropIndicator isVisible={instruction === "reorder-below"} />}
       </div>
     );
   }
