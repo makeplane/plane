@@ -5,6 +5,8 @@ import { observer } from "mobx-react";
 import { Activity } from "lucide-react";
 // ui
 import { InfoFillIcon, UpdatesIcon } from "@plane/ui";
+// hooks
+import { useAppTheme } from "@/hooks/store";
 // plane web
 import { SidebarRoot } from "@/plane-web/components/common";
 // local components
@@ -20,6 +22,8 @@ type Props = {
 
 export const ProjectOverviewSidebarRoot: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = props;
+  // store hooks
+  const { projectOverviewSidebarCollapsed } = useAppTheme();
 
   const PROJECT_OVERVIEW_DETAILS_SIDEBAR_TABS = [
     {
@@ -44,7 +48,7 @@ export const ProjectOverviewSidebarRoot: FC<Props> = observer((props) => {
       tabs={PROJECT_OVERVIEW_DETAILS_SIDEBAR_TABS}
       storageKey={`project-detail-sidebar-${projectId}`}
       defaultTab="properties"
-      isSidebarOpen
+      isSidebarOpen={!projectOverviewSidebarCollapsed}
     />
   );
 });

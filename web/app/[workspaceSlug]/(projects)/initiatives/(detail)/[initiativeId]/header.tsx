@@ -59,7 +59,7 @@ export const InitiativesDetailsHeader = observer(() => {
             />
             <Sidebar
               className={cn("size-4 cursor-pointer", {
-                "text-custom-primary-100": initiativesSidebarCollapsed,
+                "text-custom-primary-100": !initiativesSidebarCollapsed,
               })}
               onClick={() => toggleInitiativesSidebar()}
             />

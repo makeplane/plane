@@ -203,7 +203,7 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
               />
               <Sidebar
                 className={cn("size-4 cursor-pointer", {
-                  "text-custom-primary-100": epicDetailSidebarCollapsed,
+                  "text-custom-primary-100": !epicDetailSidebarCollapsed,
                 })}
                 onClick={() => toggleEpicDetailSidebar(!epicDetailSidebarCollapsed)}
               />

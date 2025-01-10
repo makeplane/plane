@@ -2,13 +2,15 @@
 
 import { observer } from "mobx-react";
 // icons
-import { Briefcase } from "lucide-react";
+import { Briefcase, Sidebar } from "lucide-react";
 // ui
 import { Breadcrumbs, Header, OverviewIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useAppTheme, useProject } from "@/hooks/store";
 
 import { useAppRouter } from "@/hooks/use-app-router";
 
@@ -17,6 +19,7 @@ export const ProjectOverviewHeader = observer(() => {
   const router = useAppRouter();
   // store hooks
   const { currentProjectDetails, loader } = useProject();
+  const { projectOverviewSidebarCollapsed, toggleProjectOverviewSidebar } = useAppTheme();
 
   return (
     <Header>
@@ -52,6 +55,16 @@ export const ProjectOverviewHeader = observer(() => {
           </Breadcrumbs>
         </div>
       </Header.LeftItem>
+      <Header.RightItem>
+        <div className="flex items-center gap-2">
+          <Sidebar
+            className={cn("size-4 cursor-pointer", {
+              "text-custom-primary-100": !projectOverviewSidebarCollapsed,
+            })}
+            onClick={() => toggleProjectOverviewSidebar()}
+          />
+        </div>
+      </Header.RightItem>
     </Header>
   );
 });

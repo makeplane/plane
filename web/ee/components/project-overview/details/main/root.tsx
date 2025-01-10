@@ -2,7 +2,10 @@
 
 import { FC } from "react";
 import useSWR from "swr";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
+import { useAppTheme } from "@/hooks/store";
 import { useProjectAttachments } from "@/plane-web/hooks/store/projects/use-project-attachments";
 // local components
 import { ProjectOverviewCollapsibleSectionRoot } from "./collapsible-section-root";
@@ -21,6 +24,7 @@ export const ProjectOverviewMainContentRoot: FC<Props> = (props) => {
   const { workspaceSlug, projectId, disabled } = props;
   // store hooks
   const { fetchAttachments } = useProjectAttachments();
+  const { projectOverviewSidebarCollapsed } = useAppTheme();
   // helper hooks
   const { fetchLinks } = useLinks(workspaceSlug.toString(), projectId.toString());
 
@@ -46,7 +50,11 @@ export const ProjectOverviewMainContentRoot: FC<Props> = (props) => {
   return (
     <div className="h-full w-full flex flex-col overflow-y-auto">
       <ProjectOverviewInfoSectionRoot workspaceSlug={workspaceSlug} projectId={projectId} />
-      <div className="flex flex-col h-full w-full px-10 py-8">
+      <div
+        className={cn("flex flex-col h-full w-full px-10 py-8", {
+          "max-w-2/3": !projectOverviewSidebarCollapsed,
+        })}
+      >
         <ProjectOverviewProgressSectionRoot workspaceSlug={workspaceSlug} projectId={projectId} />
         <ProjectOverviewCollapsibleSectionRoot
           workspaceSlug={workspaceSlug}

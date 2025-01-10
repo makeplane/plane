@@ -19,7 +19,7 @@ export const DescriptionBox = (props: TProps) => {
   const { data: currentUser } = useUser();
 
   return (
-    <div className="flex flex-col gap-4 w-full text-2xl px-10">
+    <div className="flex flex-col gap-4 w-full text-2xl pt-4 px-10">
       <ProjectDescriptionInput
         workspaceSlug={workspaceSlug}
         project={project}
