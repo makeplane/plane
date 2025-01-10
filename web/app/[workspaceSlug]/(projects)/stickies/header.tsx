@@ -6,7 +6,6 @@ import { useParams } from "next/navigation";
 import { Breadcrumbs, Button, Header, RecentStickyIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
-import { STICKY_COLORS } from "@/components/editor/sticky-editor/color-pallete";
 
 // hooks
 import { StickySearch } from "@/components/stickies/modal/search";
@@ -47,7 +46,7 @@ export const WorkspaceStickyHeader = observer(() => {
             className="items-center gap-1"
             onClick={() => {
               toggleShowNewSticky(true);
-              stickyOperations.create({ color: STICKY_COLORS[0] });
+              stickyOperations.create();
             }}
           >
             Add sticky

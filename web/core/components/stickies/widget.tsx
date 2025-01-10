@@ -1,7 +1,6 @@
 import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
 import { useSticky } from "@/hooks/use-stickies";
-import { STICKY_COLORS } from "../editor/sticky-editor/color-pallete";
 import { StickiesTruncated } from "./layout";
 import { StickySearch } from "./modal/search";
 import { useStickyOperations } from "./sticky/use-operations";
@@ -20,7 +19,7 @@ export const StickiesWidget = () => {
           <button
             onClick={() => {
               toggleShowNewSticky(true);
-              stickyOperations.create({ color: STICKY_COLORS[0] });
+              stickyOperations.create();
             }}
             className="flex gap-1 text-sm font-medium text-custom-primary-100 my-auto"
             disabled={creatingSticky}

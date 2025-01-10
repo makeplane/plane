@@ -31,7 +31,6 @@ export const StickyNote = observer((props: TProps) => {
       stickyId
         ? await stickyOperations.update(stickyId, payload)
         : await stickyOperations.create({
-            color: payload.color || STICKY_COLORS[0],
             ...payload,
           });
     },

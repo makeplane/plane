@@ -4,7 +4,6 @@ import Masonry from "react-masonry-component";
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useSticky } from "@/hooks/use-stickies";
-import { STICKY_COLORS } from "../../editor/sticky-editor/color-pallete";
 import { EmptyState } from "../empty";
 import { StickyNote } from "../sticky";
 import { useStickyOperations } from "../sticky/use-operations";
@@ -45,7 +44,7 @@ export const StickiesList = observer((props: TProps) => {
         creatingSticky={creatingSticky}
         handleCreate={() => {
           toggleShowNewSticky(true);
-          stickyOperations.create({ color: STICKY_COLORS[0] });
+          stickyOperations.create();
         }}
       />
     );

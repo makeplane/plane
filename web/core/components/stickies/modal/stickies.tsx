@@ -3,7 +3,6 @@ import { useParams } from "next/navigation";
 import { Plus, X } from "lucide-react";
 import { RecentStickyIcon } from "@plane/ui";
 import { useSticky } from "@/hooks/use-stickies";
-import { STICKY_COLORS } from "../../editor/sticky-editor/color-pallete";
 import { StickiesTruncated } from "../layout/stickies-truncated";
 import { useStickyOperations } from "../sticky/use-operations";
 import { StickySearch } from "./search";
@@ -33,7 +32,7 @@ export const Stickies = observer((props: TProps) => {
           <button
             onClick={() => {
               toggleShowNewSticky(true);
-              stickyOperations.create({ color: STICKY_COLORS[0] });
+              stickyOperations.create();
             }}
             className="flex gap-1 text-sm font-medium text-custom-primary-100 my-auto"
             disabled={creatingSticky}

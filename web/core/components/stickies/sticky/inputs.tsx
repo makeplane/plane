@@ -3,7 +3,6 @@ import { DebouncedFunc } from "lodash";
 import { Controller, useForm } from "react-hook-form";
 import { EditorRefApi } from "@plane/editor";
 import { TSticky } from "@plane/types";
-import { TextArea } from "@plane/ui";
 import { useWorkspace } from "@/hooks/store";
 import { StickyEditor } from "../../editor";
 
@@ -25,7 +24,6 @@ export const StickyInput = (props: TProps) => {
   const { handleSubmit, reset, control } = useForm<TSticky>({
     defaultValues: {
       description_html: stickyData?.description_html,
-      name: stickyData?.name,
     },
   });
 
@@ -38,7 +36,6 @@ export const StickyInput = (props: TProps) => {
     reset({
       id: stickyId,
       description_html: stickyData?.description_html === "" ? "<p></p>" : stickyData?.description_html,
-      name: stickyData?.name,
     });
   }, [stickyData, reset]);
 
@@ -47,7 +44,6 @@ export const StickyInput = (props: TProps) => {
       if (formdata.name !== undefined) {
         await handleUpdate({
           description_html: formdata.description_html ?? "<p></p>",
-          name: formdata.name,
         });
       } else {
         await handleUpdate({
@@ -60,24 +56,6 @@ export const StickyInput = (props: TProps) => {
 
   return (
     <div className="flex-1">
-      {/* name */}
-      <Controller
-        name="name"
-        control={control}
-        render={({ field: { value, onChange } }) => (
-          <TextArea
-            value={value}
-            id="name"
-            name="name"
-            onChange={(e) => {
-              onChange(e.target.value);
-              handleSubmit(handleFormSubmit)();
-            }}
-            placeholder="Title"
-            className="text-lg font-medium text-[#455068] mb-2 w-full p-0 border-none min-h-[22px]"
-          />
-        )}
-      />
       {/* description */}
       <Controller
         name="description_html"
@@ -94,7 +72,7 @@ export const StickyInput = (props: TProps) => {
               handleSubmit(handleFormSubmit)();
             }}
             placeholder={"Click to type here"}
-            containerClassName={"px-0 text-base min-h-[200px] w-full text-[#455068]"}
+            containerClassName={"px-0 text-base min-h-[250px] w-full text-[#455068]"}
             uploadFile={async () => ""}
             showToolbar={false}
             parentClassName={"border-none p-0"}
