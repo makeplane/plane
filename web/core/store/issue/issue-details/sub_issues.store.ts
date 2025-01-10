@@ -4,6 +4,7 @@ import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
+import { EIssueServiceType } from "@plane/constants";
 // types
 import {
   TIssue,
@@ -64,6 +65,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
   // root store
   rootIssueDetailStore: IIssueDetail;
   // services
+  serviceType;
   issueService;
 
   constructor(rootStore: IIssueDetail, serviceType: TIssueServiceType) {
@@ -84,6 +86,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
     // root store
     this.rootIssueDetailStore = rootStore;
     // services
+    this.serviceType = serviceType;
     this.issueService = new IssueService(serviceType);
   }
 
@@ -182,7 +185,10 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       [parentIssueId, "sub_issues_count"],
       this.subIssues[parentIssueId].length
     );
-    updatePersistentLayer([parentIssueId, ...issueIds]);
+
+    if (this.serviceType === EIssueServiceType.ISSUES) {
+      updatePersistentLayer([parentIssueId, ...issueIds]);
+    }
 
     return;
   };
@@ -280,7 +286,9 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       );
     });
 
-    updatePersistentLayer([parentIssueId]);
+    if (this.serviceType === EIssueServiceType.ISSUES) {
+      updatePersistentLayer([parentIssueId]);
+    }
 
     return;
   };
@@ -315,7 +323,9 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       );
     });
 
-    updatePersistentLayer([parentIssueId]);
+    if (this.serviceType === EIssueServiceType.ISSUES) {
+      updatePersistentLayer([parentIssueId]);
+    }
 
     return;
   };

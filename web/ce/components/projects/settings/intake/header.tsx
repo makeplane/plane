@@ -7,10 +7,12 @@ import { RefreshCcw } from "lucide-react";
 // ui
 import { Breadcrumbs, Button, Intake, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink, Logo } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common";
 import { InboxIssueCreateModalRoot } from "@/components/inbox";
 // hooks
 import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
+// plane web
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectInboxHeader: FC = observer(() => {
@@ -35,21 +37,7 @@ export const ProjectInboxHeader: FC = observer(() => {
       <Header.LeftItem>
         <div className="flex items-center gap-4">
           <Breadcrumbs isLoading={currentProjectDetailsLoader}>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  label={currentProjectDetails?.name ?? "Project"}
-                  icon={
-                    currentProjectDetails && (
-                      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                      </span>
-                    )
-                  }
-                />
-              }
-            />
+            <ProjectBreadcrumb />
 
             <Breadcrumbs.BreadcrumbItem
               type="text"

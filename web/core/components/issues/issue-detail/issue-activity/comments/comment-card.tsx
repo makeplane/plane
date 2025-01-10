@@ -22,6 +22,7 @@ import { IssueCommentBlock } from "./comment-block";
 
 type TIssueCommentCard = {
   projectId: string;
+  issueId: string;
   workspaceSlug: string;
   commentId: string;
   activityOperations: TActivityOperations;
@@ -34,6 +35,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
   const {
     workspaceSlug,
     projectId,
+    issueId,
     commentId,
     activityOperations,
     ends,
@@ -65,11 +67,11 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
     defaultValues: { comment_html: comment?.comment_html },
   });
 
-  const onEnter = (formData: Partial<TIssueComment>) => {
+  const onEnter = async (formData: Partial<TIssueComment>) => {
     if (isSubmitting || !comment) return;
     setIsEditing(false);
 
-    activityOperations.updateComment(comment.id, formData);
+    await activityOperations.updateComment(comment.id, formData);
 
     editorRef.current?.setEditorValue(formData?.comment_html ?? "<p></p>");
     showEditorRef.current?.setEditorValue(formData?.comment_html ?? "<p></p>");
@@ -144,6 +146,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
             <LiteTextEditor
               workspaceId={workspaceId}
               projectId={projectId}
+              issue_id={issueId}
               workspaceSlug={workspaceSlug}
               ref={editorRef}
               id={comment.id}

@@ -130,15 +130,6 @@ class IntakeIssuePublicViewSet(BaseViewSet):
                 {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Create or get state
-        state, _ = State.objects.get_or_create(
-            name="Triage",
-            group="backlog",
-            description="Default state for managing all Intake Issues",
-            project_id=project_deploy_board.project_id,
-            color="#ff7700",
-        )
-
         # create an issue
         issue = Issue.objects.create(
             name=request.data.get("issue", {}).get("name"),
@@ -148,7 +139,6 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             ),
             priority=request.data.get("issue", {}).get("priority", "low"),
             project_id=project_deploy_board.project_id,
-            state=state,
         )
 
         # Create an Issue Activity

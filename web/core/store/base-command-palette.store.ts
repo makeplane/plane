@@ -23,6 +23,7 @@ export interface IBaseCommandPaletteStore {
   isDeleteIssueModalOpen: boolean;
   isBulkDeleteIssueModalOpen: boolean;
   createIssueStoreType: TCreateModalStoreTypes;
+  allStickiesModal: boolean;
   // toggle actions
   toggleCommandPaletteModal: (value?: boolean) => void;
   toggleShortcutModal: (value?: boolean) => void;
@@ -34,6 +35,7 @@ export interface IBaseCommandPaletteStore {
   toggleCreateModuleModal: (value?: boolean) => void;
   toggleDeleteIssueModal: (value?: boolean) => void;
   toggleBulkDeleteIssueModal: (value?: boolean) => void;
+  toggleAllStickiesModal: (value?: boolean) => void;
 }
 
 export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStore {
@@ -49,6 +51,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   isBulkDeleteIssueModalOpen: boolean = false;
   createPageModal: TCreatePageModal = DEFAULT_CREATE_PAGE_MODAL_DATA;
   createIssueStoreType: TCreateModalStoreTypes = EIssuesStoreType.PROJECT;
+  allStickiesModal: boolean = false;
 
   constructor() {
     makeObservable(this, {
@@ -64,6 +67,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       isBulkDeleteIssueModalOpen: observable.ref,
       createPageModal: observable,
       createIssueStoreType: observable,
+      allStickiesModal: observable,
       // projectPages: computed,
       // toggle actions
       toggleCommandPaletteModal: action,
@@ -76,6 +80,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       toggleCreateModuleModal: action,
       toggleDeleteIssueModal: action,
       toggleBulkDeleteIssueModal: action,
+      toggleAllStickiesModal: action,
     });
   }
 
@@ -86,14 +91,15 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   protected getCoreModalsState(): boolean {
     return Boolean(
       this.isCreateIssueModalOpen ||
-      this.isCreateCycleModalOpen ||
-      this.isCreateProjectModalOpen ||
-      this.isCreateModuleModalOpen ||
-      this.isCreateViewModalOpen ||
-      this.isShortcutModalOpen ||
-      this.isBulkDeleteIssueModalOpen ||
-      this.isDeleteIssueModalOpen ||
-      this.createPageModal.isOpen
+        this.isCreateCycleModalOpen ||
+        this.isCreateProjectModalOpen ||
+        this.isCreateModuleModalOpen ||
+        this.isCreateViewModalOpen ||
+        this.isShortcutModalOpen ||
+        this.isBulkDeleteIssueModalOpen ||
+        this.isDeleteIssueModalOpen ||
+        this.createPageModal.isOpen ||
+        this.allStickiesModal
     );
   }
 
@@ -233,6 +239,19 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       this.isBulkDeleteIssueModalOpen = value;
     } else {
       this.isBulkDeleteIssueModalOpen = !this.isBulkDeleteIssueModalOpen;
+    }
+  };
+
+  /**
+   * Toggles the all stickies modal
+   * @param value
+   * @returns
+   */
+  toggleAllStickiesModal = (value?: boolean) => {
+    if (value) {
+      this.allStickiesModal = value;
+    } else {
+      this.allStickiesModal = !this.allStickiesModal;
     }
   };
 }

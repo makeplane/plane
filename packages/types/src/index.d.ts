@@ -36,3 +36,7 @@ export * from "./workspace-draft-issues/base";
 export * from "./command-palette";
 export * from "./timezone";
 export * from "./activity";
+export * from "./epics";
+export * from "./charts";
+export * from "./home";
+export * from "./stickies";

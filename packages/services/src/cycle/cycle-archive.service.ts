@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "@plane/constants";
 import { ICycle } from "@plane/types";
-import { APIService } from "@/api.service";
+import { APIService } from "../api.service";
 
 /**
  * Service class for managing archived cycles in a project

@@ -19,6 +19,10 @@ from .workspace import (
     WorkspaceMemberAdminSerializer,
     WorkspaceMemberMeSerializer,
     WorkspaceUserPropertiesSerializer,
+    WorkspaceUserLinkSerializer,
+    WorkspaceRecentVisitSerializer,
+    WorkspaceHomePreferenceSerializer,
+    StickySerializer,
 )
 from .project import (
     ProjectSerializer,

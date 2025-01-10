@@ -15,6 +15,7 @@ export interface IProject {
   archived_at: string | null;
   archived_issues: number;
   archived_sub_issues: number;
+  completed_issues: number;
   close_in: number;
   created_at: Date;
   created_by: string;

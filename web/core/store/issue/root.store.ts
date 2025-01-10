@@ -67,6 +67,7 @@ export interface IIssueRootStore {
   issues: IIssueStore;
 
   issueDetail: IIssueDetail;
+  epicDetail: IIssueDetail;
 
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
   workspaceIssues: IWorkspaceIssues;
@@ -134,6 +135,7 @@ export class IssueRootStore implements IIssueRootStore {
   issues: IIssueStore;
 
   issueDetail: IIssueDetail;
+  epicDetail: IIssueDetail;
 
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
   workspaceIssues: IWorkspaceIssues;
@@ -221,9 +223,10 @@ export class IssueRootStore implements IIssueRootStore {
       if (!isEmpty(rootStore?.cycle?.cycleMap)) this.cycleMap = rootStore?.cycle?.cycleMap;
     });
 
-    this.issues = new IssueStore(this.serviceType);
+    this.issues = new IssueStore();
 
-    this.issueDetail = new IssueDetail(this, this.serviceType);
+    this.issueDetail = new IssueDetail(this, EIssueServiceType.ISSUES);
+    this.epicDetail = new IssueDetail(this, EIssueServiceType.EPICS);
 
     this.workspaceIssuesFilter = new WorkspaceIssuesFilter(this);
     this.workspaceIssues = new WorkspaceIssues(this, this.workspaceIssuesFilter);

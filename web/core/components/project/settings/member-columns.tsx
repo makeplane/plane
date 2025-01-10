@@ -112,7 +112,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
     Number(getWorkspaceMemberDetails(rowData.member.id)?.role) ?? EUserPermissions.GUEST
   );
   const isCurrentUserProjectMember = currentUser
-    ? getProjectMemberDetails(currentUser.id)?.role === EUserPermissions.MEMBER
+    ? getProjectMemberDetails(currentUser.id, projectId)?.role === EUserPermissions.MEMBER
     : false;
   const isRoleNonEditable =
     isCurrentUser || (isProjectAdminOrGuest && !isWorkspaceMember) || isCurrentUserProjectMember;
@@ -154,7 +154,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
 
                   setToast({
                     type: TOAST_TYPE.ERROR,
-                    title: "Error!",
+                    title: "You can’t change this role yet.",
                     message: errorString ?? "An error occurred while updating member role. Please try again.",
                   });
                 });

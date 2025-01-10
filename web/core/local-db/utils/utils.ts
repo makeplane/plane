@@ -1,4 +1,3 @@
-import { captureException } from "@sentry/nextjs";
 import pick from "lodash/pick";
 import { TIssue } from "@plane/types";
 import { rootStore } from "@/lib/store-context";
@@ -15,7 +14,6 @@ export const logError = (e: any) => {
     e = parseSQLite3Error(e);
   }
   console.error(e);
-  captureException(e);
 };
 export const logInfo = console.info;
 
@@ -64,9 +62,10 @@ export const updatePersistentLayer = async (issueIds: string | string[]) => {
   issueIds.forEach(async (issueId) => {
     const dbIssue = await persistence.getIssue(issueId);
     const issue = rootStore.issue.issues.getIssueById(issueId);
+    const updatedIssue = dbIssue ? { ...dbIssue, ...issue } : issue;
 
-    if (issue) {
-      addIssueToPersistanceLayer(issue);
+    if (updatedIssue) {
+      addIssueToPersistanceLayer(updatedIssue);
     }
   });
 };

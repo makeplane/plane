@@ -1,7 +1,8 @@
 "use client";
 
-import { FC, useMemo, useState } from "react";
+import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
+import { useLocalStorage } from "@plane/hooks";
 // types
 import { TFileSignedURLResponse, TIssueComment } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
@@ -10,6 +11,8 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { IssueCommentCreate } from "@/components/issues";
 import { ActivitySortRoot, IssueActivityCommentRoot } from "@/components/issues/issue-detail";
+// constants
+import { TSORT_ORDER } from "@/constants/common";
 // hooks
 import { useIssueDetail, useProject, useUser, useUserPermissions } from "@/hooks/store";
 // plane web components
@@ -38,12 +41,14 @@ export type TActivityOperations = {
 
 export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const { workspaceSlug, projectId, issueId, disabled = false, isIntakeIssue = false } = props;
-  // state
-  const [selectedFilters, setSelectedFilters] = useState<TActivityFilters[]>(defaultActivityFilters);
   // hooks
+  const { setValue: setFilterValue, storedValue: selectedFilters } = useLocalStorage(
+    "issue_activity_filters",
+    defaultActivityFilters
+  );
+  const { setValue: setSortOrder, storedValue: sortOrder } = useLocalStorage("activity_sort_order", TSORT_ORDER.ASC);
   const {
     issue: { getIssueById },
-    activity: { sortOrder, toggleSortOrder },
     createComment,
     updateComment,
     removeComment,
@@ -60,14 +65,20 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const isWorklogButtonEnabled = !isIntakeIssue && !isGuest && (isAdmin || isAssigned);
   // toggle filter
   const toggleFilter = (filter: TActivityFilters) => {
-    setSelectedFilters((prevFilters) => {
-      if (prevFilters.includes(filter)) {
-        if (prevFilters.length === 1) return prevFilters; // Ensure at least one filter is applied
-        return prevFilters.filter((f) => f !== filter);
-      } else {
-        return [...prevFilters, filter];
-      }
-    });
+    if (!selectedFilters) return;
+    let _filters = [];
+    if (selectedFilters.includes(filter)) {
+      if (selectedFilters.length === 1) return selectedFilters; // Ensure at least one filter is applied
+      _filters = selectedFilters.filter((f) => f !== filter);
+    } else {
+      _filters = [...selectedFilters, filter];
+    }
+
+    setFilterValue(_filters);
+  };
+
+  const toggleSortOrder = () => {
+    setSortOrder(sortOrder === TSORT_ORDER.ASC ? TSORT_ORDER.DESC : TSORT_ORDER.ASC);
   };
 
   const activityOperations: TActivityOperations = useMemo(
@@ -163,9 +174,9 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
               disabled={disabled}
             />
           )}
-          <ActivitySortRoot sortOrder={sortOrder} toggleSort={toggleSortOrder} />
+          <ActivitySortRoot sortOrder={sortOrder || TSORT_ORDER.ASC} toggleSort={toggleSortOrder} />
           <ActivityFilterRoot
-            selectedFilters={selectedFilters}
+            selectedFilters={selectedFilters || defaultActivityFilters}
             toggleFilter={toggleFilter}
             isIntakeIssue={isIntakeIssue}
             projectId={projectId}
@@ -181,10 +192,11 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
               projectId={projectId}
               workspaceSlug={workspaceSlug}
               issueId={issueId}
-              selectedFilters={selectedFilters}
+              selectedFilters={selectedFilters || defaultActivityFilters}
               activityOperations={activityOperations}
               showAccessSpecifier={!!project.anchor}
               disabled={disabled}
+              sortOrder={sortOrder || TSORT_ORDER.ASC}
             />
             {!disabled && (
               <IssueCommentCreate

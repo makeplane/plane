@@ -68,6 +68,8 @@ from .workspace import (
     WorkspaceMemberInvite,
     WorkspaceTheme,
     WorkspaceUserProperties,
+    WorkspaceUserLink,
+    WorkspaceHomePreference
 )
 
 from .favorite import UserFavorite

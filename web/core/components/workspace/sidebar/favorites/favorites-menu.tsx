@@ -13,6 +13,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, FolderPlus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { IFavorite } from "@plane/types";
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
@@ -38,6 +39,7 @@ export const SidebarFavoritesMenu = observer(() => {
   const [isDragging, setIsDragging] = useState(false);
 
   // store hooks
+  const { t } = useTranslation();
   const { sidebarCollapsed } = useAppTheme();
   const {
     favoriteIds,
@@ -65,8 +67,8 @@ export const SidebarFavoritesMenu = observer(() => {
     }).catch(() => {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Failed to move favorite.",
+        title: t("error"),
+        message: t("failed_to_move_favorite"),
       });
     });
   };
@@ -116,15 +118,15 @@ export const SidebarFavoritesMenu = observer(() => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Favorite removed successfully.",
+          title: t("success"),
+          message: t("favorite_removed_successfully"),
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Something went wrong!",
+          title: t("error"),
+          message: t("something_went_wrong"),
         });
       });
   };
@@ -132,8 +134,8 @@ export const SidebarFavoritesMenu = observer(() => {
     removeFromFavoriteFolder(workspaceSlug.toString(), favoriteId).catch(() => {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Failed to move favorite.",
+        title: t("error"),
+        message: t("failed_to_move_favorite"),
       });
     });
   };
@@ -143,8 +145,8 @@ export const SidebarFavoritesMenu = observer(() => {
       reOrderFavorite(workspaceSlug.toString(), favoriteId, droppedFavId, edge).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Failed reorder favorite",
+          title: t("error"),
+          message: t("failed_to_reorder_favorite"),
         });
       });
     },
@@ -198,10 +200,10 @@ export const SidebarFavoritesMenu = observer(() => {
             )}
           >
             <span onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)} className="flex-1 text-start">
-              YOUR FAVORITES
+              {t("your_favorites").toUpperCase()}
             </span>
             <span className="flex flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded p-0.5 ">
-              <Tooltip tooltipHeading="Create folder" tooltipContent="">
+              <Tooltip tooltipHeading={t("create_folder")} tooltipContent="">
                 <FolderPlus
                   onClick={() => {
                     setCreateNewFolder(true);
@@ -240,7 +242,9 @@ export const SidebarFavoritesMenu = observer(() => {
               {Object.keys(groupedFavorites).length === 0 ? (
                 <>
                   {!sidebarCollapsed && (
-                    <span className="text-custom-text-400 text-xs font-medium px-8 py-1.5">No favorites yet</span>
+                    <span className="text-custom-text-400 text-xs font-medium px-8 py-1.5">
+                      {t("no_favorites_yet")}
+                    </span>
                   )}
                 </>
               ) : (

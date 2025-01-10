@@ -6,6 +6,7 @@
 </a>
 </p>
 <h1 align="center"><b>Plane</b></h1>
+<p align="center"><b>Open-source project management that unlocks customer value</b></p>
 
 <p align="center">
 <a href="https://discord.com/invite/A92xrEGCge">
@@ -57,7 +58,7 @@ Prefer full control over your data and infrastructure? Install and run Plane on 
 | Docker               | [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://developers.plane.so/self-hosting/methods/docker-compose)         |
 | Kubernetes           | [![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)](https://developers.plane.so/self-hosting/methods/kubernetes) |
 
-`Instance admins` can manage and customize settings using [God mode](https://developers.plane.so/self-hosting/govern/instance-admin).
+`Instance admins` can configure instance settings with [God mode](https://developers.plane.so/self-hosting/govern/instance-admin).
 
 ## 🌟 Features
 
@@ -117,9 +118,9 @@ Setting up your local environment is simple and straightforward. Follow these st
 
 That’s it! You’re all set to begin coding. Remember to refresh your browser if changes don’t auto-reload. Happy contributing! 🎉
 
-## Built with
-[![Next JS](https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)<br/>
-[![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=green)](https://www.djangoproject.com/)<br/>
+## ⚙️ Built with
+[![Next JS](https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=green)](https://www.djangoproject.com/)
 [![Node JS](https://img.shields.io/badge/node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white)](https://nodejs.org/en)
 
 ## 📸 Screenshots

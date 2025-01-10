@@ -26,6 +26,9 @@ export const ActivityFilter: FC<TActivityFilter> = observer((props) => {
           className="relative"
         >
           <span className="text-custom-text-200">Filters</span>
+          {selectedFilters.length < filterOptions.length && (
+            <span className="absolute h-2 w-2 -right-0.5 -top-0.5 bg-custom-primary-100 rounded-full" />
+          )}
         </Button>
       }
       panelClassName="p-2 rounded-md border border-custom-border-200 bg-custom-background-100"

@@ -28,3 +28,8 @@ export const PROGRESS_STATE_GROUPS_DETAILS = [
     color: "#A3A3A3",
   },
 ];
+
+export enum TSORT_ORDER {
+  ASC = "asc",
+  DESC = "desc",
+}

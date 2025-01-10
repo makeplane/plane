@@ -1,7 +1,7 @@
 // plane web constants
 import { AI_EDITOR_TASKS, API_BASE_URL } from "@plane/constants";
 // services
-import { APIService } from "@/api.service";
+import { APIService } from "../api.service";
 
 /**
  * Payload type for AI editor tasks
