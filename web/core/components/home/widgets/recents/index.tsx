@@ -8,6 +8,7 @@ import { Briefcase, FileText } from "lucide-react";
 import { TActivityEntityData, THomeWidgetProps, TRecentActivityFilterKeys } from "@plane/types";
 // components
 import { LayersIcon } from "@plane/ui";
+import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";
 import { useProject } from "@/hooks/store";
 import { WorkspaceService } from "@/plane-web/services";
 import { EmptyWorkspace } from "../empty-states";
@@ -17,7 +18,6 @@ import { FiltersDropdown } from "./filters";
 import { RecentIssue } from "./issue";
 import { RecentPage } from "./page";
 import { RecentProject } from "./project";
-import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";
 
 const WIDGET_KEY = EWidgetKeys.RECENT_ACTIVITY;
 const workspaceService = new WorkspaceService();

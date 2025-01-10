@@ -8,6 +8,7 @@ export interface IThemeStore {
   issueDetailSidebarCollapsed: boolean | undefined;
   epicDetailSidebarCollapsed: boolean | undefined;
   initiativesSidebarCollapsed: boolean | undefined;
+  projectOverviewSidebarCollapsed: boolean | undefined;
   // actions
   toggleSidebar: (collapsed?: boolean) => void;
   toggleProfileSidebar: (collapsed?: boolean) => void;
@@ -15,6 +16,7 @@ export interface IThemeStore {
   toggleIssueDetailSidebar: (collapsed?: boolean) => void;
   toggleEpicDetailSidebar: (collapsed?: boolean) => void;
   toggleInitiativesSidebar: (collapsed?: boolean) => void;
+  toggleProjectOverviewSidebar: (collapsed?: boolean) => void;
 }
 
 export class ThemeStore implements IThemeStore {
@@ -25,6 +27,7 @@ export class ThemeStore implements IThemeStore {
   issueDetailSidebarCollapsed: boolean | undefined = undefined;
   epicDetailSidebarCollapsed: boolean | undefined = undefined;
   initiativesSidebarCollapsed: boolean | undefined = undefined;
+  projectOverviewSidebarCollapsed: boolean | undefined = undefined;
 
   constructor() {
     makeObservable(this, {
@@ -35,6 +38,7 @@ export class ThemeStore implements IThemeStore {
       issueDetailSidebarCollapsed: observable.ref,
       epicDetailSidebarCollapsed: observable.ref,
       initiativesSidebarCollapsed: observable.ref,
+      projectOverviewSidebarCollapsed: observable.ref,
       // action
       toggleSidebar: action,
       toggleProfileSidebar: action,
@@ -42,6 +46,7 @@ export class ThemeStore implements IThemeStore {
       toggleIssueDetailSidebar: action,
       toggleEpicDetailSidebar: action,
       toggleInitiativesSidebar: action,
+      toggleProjectOverviewSidebar: action,
     });
   }
 
@@ -109,5 +114,14 @@ export class ThemeStore implements IThemeStore {
       this.initiativesSidebarCollapsed = collapsed;
     }
     localStorage.setItem("initiatives_sidebar_collapsed", this.initiativesSidebarCollapsed.toString());
+  };
+
+  toggleProjectOverviewSidebar = (collapsed?: boolean) => {
+    if (collapsed === undefined) {
+      this.projectOverviewSidebarCollapsed = !this.projectOverviewSidebarCollapsed;
+    } else {
+      this.projectOverviewSidebarCollapsed = collapsed;
+    }
+    localStorage.setItem("project_overview_sidebar_collapsed", this.projectOverviewSidebarCollapsed.toString());
   };
 }
