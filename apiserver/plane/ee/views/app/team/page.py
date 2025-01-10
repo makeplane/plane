@@ -341,6 +341,8 @@ class TeamSpacePageDuplicateEndpoint(TeamBaseEndpoint):
         page.name = f"{page.name} (Copy)"
         page.owned_by = request.user
         page.description_binary = None
+        page.created_by = request.user
+        page.updated_by = request.user
         page.save()
 
         # Attach the page to the team space
