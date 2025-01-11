@@ -22,6 +22,7 @@
     "@plane/editor": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
+    "@plane/services": "*",
     "@sentry/nextjs": "^8.32.0",
     "axios": "^1.7.9",
     "clsx": "^2.0.0",
