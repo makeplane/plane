@@ -31,7 +31,11 @@ class WorkspacePreferenceViewSet(BaseAPIView):
 
         create_preference_keys = []
 
-        keys = [key for key, _ in WorkspaceHomePreference.HomeWidgetKeys.choices]
+        keys = [
+            key
+            for key, _ in WorkspaceHomePreference.HomeWidgetKeys.choices
+            if key not in ["quick_tutorial", "new_at_plane"]
+        ]
 
         sort_order_counter = 1
 

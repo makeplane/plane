@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import {
   ArchiveRestoreIcon,
   Copy,
@@ -28,8 +29,8 @@ import { cn } from "@/helpers/common.helper";
 import { usePageOperations } from "@/hooks/use-page-operations";
 // plane web components
 import { MovePageModal } from "@/plane-web/components/pages";
-// plane web constants
-import { ENABLE_MOVE_PAGE } from "@/plane-web/constants";
+// plane web hooks
+import { usePageFlag } from "@/plane-web/hooks/use-page-flag";
 // store types
 import { TPageInstance } from "@/store/pages/base-page";
 
@@ -60,6 +61,12 @@ export const PageActions: React.FC<Props> = observer((props) => {
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
   const [movePageModal, setMovePageModal] = useState(false);
+  // params
+  const { workspaceSlug } = useParams();
+  // page flag
+  const { isMovePageEnabled } = usePageFlag({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
   // page operations
   const { pageOperations } = usePageOperations({
     editorRef,
@@ -134,7 +141,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
         action: () => setMovePageModal(true),
         title: "Move",
         icon: FileOutput,
-        shouldRender: canCurrentUserMovePage && ENABLE_MOVE_PAGE,
+        shouldRender: canCurrentUserMovePage && isMovePageEnabled,
       },
     ];
     if (extraOptions) {
@@ -146,6 +153,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
     archived_at,
     extraOptions,
     is_locked,
+    isMovePageEnabled,
     canCurrentUserArchivePage,
     canCurrentUserChangeAccess,
     canCurrentUserDeletePage,

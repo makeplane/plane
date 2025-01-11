@@ -34,6 +34,7 @@ const defaultValues: Partial<IWorkspaceView> = {
   display_properties: getComputedDisplayProperties(),
   display_filters: getComputedDisplayFilters({
     layout: EIssueLayoutTypes.SPREADSHEET,
+    order_by: "-created_at",
   }),
 };
 

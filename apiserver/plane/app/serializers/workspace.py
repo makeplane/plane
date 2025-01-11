@@ -177,9 +177,10 @@ class ProjectRecentVisitSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "logo_props", "project_members", "identifier"]
 
     def get_project_members(self, obj):
-        members = ProjectMember.objects.filter(project_id=obj.id).values_list(
-            "member", flat=True
-        )
+        members = ProjectMember.objects.filter(
+            project_id=obj.id, member__is_bot=False, is_active=True
+        ).values_list("member", flat=True)
+
         return members
 
 

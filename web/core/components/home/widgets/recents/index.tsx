@@ -8,10 +8,11 @@ import { Briefcase, FileText } from "lucide-react";
 import { TActivityEntityData, THomeWidgetProps, TRecentActivityFilterKeys } from "@plane/types";
 // components
 import { LayersIcon } from "@plane/ui";
+import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";
 import { useProject } from "@/hooks/store";
 import { WorkspaceService } from "@/plane-web/services";
 import { EmptyWorkspace } from "../empty-states";
-import { IssuesEmptyState } from "../empty-states/issues";
+import { RecentsEmptyState } from "../empty-states/recents";
 import { EWidgetKeys, WidgetLoader } from "../loaders";
 import { FiltersDropdown } from "./filters";
 import { RecentIssue } from "./issue";
@@ -68,29 +69,36 @@ export const RecentActivityWidget: React.FC<THomeWidgetProps> = observer((props)
   if (!isLoading && recents?.length === 0)
     return (
       <div ref={ref} className=" max-h-[500px]  overflow-y-scroll">
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between mb-4">
           <div className="text-base font-semibold text-custom-text-350">Recents</div>
           <FiltersDropdown filters={filters} activeFilter={filter} setActiveFilter={setFilter} />
         </div>
-        <div className="min-h-[400px] flex flex-col items-center justify-center">
-          <IssuesEmptyState />
+        <div className="flex flex-col items-center justify-center">
+          <RecentsEmptyState />
         </div>
       </div>
     );
 
   return (
-    <div ref={ref} className=" max-h-[500px] min-h-[400px]  overflow-y-scroll">
+    <ContentOverflowWrapper
+      maxHeight={415}
+      containerClassName="box-border min-h-[250px]"
+      fallback={<></>}
+      buttonClassName="bg-custom-background-90/20"
+    >
       <div className="flex items-center justify-between mb-2">
         <div className="text-base font-semibold text-custom-text-350">Recents</div>
 
         <FiltersDropdown filters={filters} activeFilter={filter} setActiveFilter={setFilter} />
       </div>
-      <div className="min-h-[400px] flex flex-col">
+      <div className="min-h-[250px] flex flex-col">
         {isLoading && <WidgetLoader widgetKey={WIDGET_KEY} />}
         {!isLoading &&
           recents?.length > 0 &&
-          recents.map((activity: TActivityEntityData) => <div key={activity.id}>{resolveRecent(activity)}</div>)}
+          recents
+            .filter((recent: TActivityEntityData) => recent.entity_data)
+            .map((activity: TActivityEntityData) => <div key={activity.id}>{resolveRecent(activity)}</div>)}
       </div>
-    </div>
+    </ContentOverflowWrapper>
   );
 });

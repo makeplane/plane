@@ -195,7 +195,7 @@ const emptyStateDetails = {
       text: "Create an initiative",
     },
     accessType: "workspace",
-    access: [EUserPermissions.ADMIN],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.WORKSPACE_INITIATIVES_EMPTY_SEARCH]: {
     key: EmptyStateType.WORKSPACE_INITIATIVES_EMPTY_SEARCH,
