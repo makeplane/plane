@@ -34,7 +34,7 @@ export abstract class APIService {
       (error) => {
         if (error.response && error.response.status === 401) {
           const currentPath = window.location.pathname;
-          let prefix = "";
+          let prefix = "/";
           let updatedPath = currentPath;
 
           // Check for special path prefixes
