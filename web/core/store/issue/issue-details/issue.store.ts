@@ -119,10 +119,26 @@ export class IssueStore implements IIssueStore {
 
     // store handlers from issue detail
     // parent
-    if (issue && issue?.parent && issue?.parent?.id && issue?.parent?.project_id) {
-      this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
-        this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
-      });
+    if (
+      issue &&
+      issue?.parent &&
+      issue?.parent?.id &&
+      issue?.parent?.project_id &&
+      this.serviceType === EIssueServiceType.ISSUES
+    ) {
+      // if typeId exists in epic projectEpics
+      if (
+        this.rootIssueDetailStore.rootIssueStore.rootStore.issueTypes.getProjectEpicId(projectId) ===
+        issue?.parent.type_id
+      ) {
+        this.epicService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
+          this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
+        });
+      } else {
+        this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
+          this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
+        });
+      }
     }
     // assignees
     // labels

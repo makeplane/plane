@@ -14,14 +14,12 @@ import { WORKSPACE_ACTIVE_CYCLES_DETAILS } from "@/constants/cycle";
 // helper
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store";
 
 export const WorkspaceActiveCyclesUpgrade = observer(() => {
   const { t } = useTranslation();
   // store hooks
-  const {
-    userProfile: { data: userProfile },
-  } = useUser();
+  const { data: userProfile } = useUserProfile();
 
   const isDarkMode = userProfile?.theme.theme === "dark";
 
