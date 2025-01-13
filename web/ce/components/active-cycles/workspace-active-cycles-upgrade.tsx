@@ -3,13 +3,13 @@
 import React from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
+// plane imports
+import { MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// ui
 import { ContentWrapper, getButtonStyling } from "@plane/ui";
 // components
 import { ProIcon } from "@/components/common";
 // constants
-import { MARKETING_PRICING_PAGE_LINK } from "@/constants/common";
 import { WORKSPACE_ACTIVE_CYCLES_DETAILS } from "@/constants/cycle";
 // helper
 import { cn } from "@/helpers/common.helper";

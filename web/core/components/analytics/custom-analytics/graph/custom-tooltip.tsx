@@ -1,9 +1,10 @@
 // nivo
 import { BarTooltipProps } from "@nivo/bar";
+// plane imports
+import { ANALYTICS_DATE_KEYS } from "@plane/constants";
 import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
-import { DATE_KEYS } from "@/constants/analytics";
+// helpers
 import { renderMonthAndYear } from "@/helpers/analytics.helper";
-// types
 
 type Props = {
   datum: BarTooltipProps<any>;
@@ -23,7 +24,7 @@ export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => 
   };
 
   if (params.segment) {
-    if (DATE_KEYS.includes(params.segment)) tooltipValue = renderMonthAndYear(datum.id);
+    if (ANALYTICS_DATE_KEYS.includes(params.segment)) tooltipValue = renderMonthAndYear(datum.id);
     else if (params.segment === "labels__id") {
       const label = analytics.extras.label_details.find((l) => l.labels__id === datum.id);
       tooltipValue = label && label.labels__name ? label.labels__name : "None";
@@ -41,7 +42,7 @@ export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => 
           : "None";
     } else tooltipValue = datum.id;
   } else {
-    if (DATE_KEYS.includes(params.x_axis)) tooltipValue = datum.indexValue;
+    if (ANALYTICS_DATE_KEYS.includes(params.x_axis)) tooltipValue = datum.indexValue;
     else tooltipValue = datum.id === "count" ? "Issue count" : "Estimate";
   }
 

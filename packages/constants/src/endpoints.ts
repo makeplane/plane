@@ -23,3 +23,7 @@ export const WEBSITE_URL =
 // support email
 export const SUPPORT_EMAIL =
   process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@plane.so";
+// marketing links
+export const MARKETING_PRICING_PAGE_LINK = "https://plane.so/pricing";
+export const MARKETING_CONTACT_US_PAGE_LINK = "https://plane.so/contact";
+export const MARKETING_PLANE_ONE_PAGE_LINK = "https://plane.so/one";
