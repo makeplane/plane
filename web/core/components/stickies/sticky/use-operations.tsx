@@ -71,13 +71,14 @@ export const useStickyOperations = (props: TProps) => {
           // check if latest sticky is empty
           if (getWorkspaceStickies(workspaceSlug).length >= 0) {
             const latestSticky = stickies[workspaceStickies[0]];
-            if (latestSticky && (!latestSticky.description_html || isHtmlContentEmpty(latestSticky.description_html)))
+            if (latestSticky && (!latestSticky.description_html || isHtmlContentEmpty(latestSticky.description_html))) {
               setToast({
                 message: "There already exists a sticky with no description",
                 type: TOAST_TYPE.WARNING,
                 title: "Sticky already created",
               });
-            return;
+              return;
+            }
           }
           if (!workspaceSlug) throw new Error("Missing required fields");
           if (!isValid(payload)) return;
