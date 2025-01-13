@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
 import { useSticky } from "@/hooks/use-stickies";
@@ -5,7 +6,7 @@ import { StickiesTruncated } from "./layout";
 import { StickySearch } from "./modal/search";
 import { useStickyOperations } from "./sticky/use-operations";
 
-export const StickiesWidget = () => {
+export const StickiesWidget = observer(() => {
   const { workspaceSlug } = useParams();
   const { creatingSticky, toggleShowNewSticky } = useSticky();
   const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
@@ -42,4 +43,4 @@ export const StickiesWidget = () => {
       </div>
     </div>
   );
-};
+});

@@ -16,7 +16,7 @@ import { useSticky } from "@/hooks/use-stickies";
 export const WorkspaceStickyHeader = observer(() => {
   const { workspaceSlug } = useParams();
   // hooks
-  const { toggleShowNewSticky } = useSticky();
+  const { creatingSticky, toggleShowNewSticky } = useSticky();
   const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
 
   return (
@@ -50,6 +50,15 @@ export const WorkspaceStickyHeader = observer(() => {
             }}
           >
             Add sticky
+            {creatingSticky && (
+              <div className="flex items-center justify-center ml-2">
+                <div
+                  className={`w-4 h-4 border-[1px] border-t-transparent rounded-full animate-spin border-white`}
+                  role="status"
+                  aria-label="loading"
+                />
+              </div>
+            )}
           </Button>
         </Header.RightItem>
       </Header>

@@ -72,11 +72,13 @@ export class StickyStore implements IStickyStore {
     this.stickyService = new StickyService();
   }
 
-  getWorkspaceStickies = computedFn((workspaceSlug: string) => orderBy(
+  getWorkspaceStickies = computedFn((workspaceSlug: string) =>
+    orderBy(
       (this.workspaceStickies[workspaceSlug] || []).map((stickyId) => this.stickies[stickyId]),
       ["sort_order"],
       ["desc"]
-    ).map((sticky) => sticky.id));
+    ).map((sticky) => sticky.id)
+  );
 
   toggleShowNewSticky = (value: boolean) => {
     this.showAddNewSticky = value;
@@ -219,6 +221,7 @@ export class StickyStore implements IStickyStore {
     destinationId: string,
     edge: InstructionType
   ) => {
+    const previousSortOrder = this.stickies[stickyId].sort_order;
     try {
       let resultSequence = 10000;
       const workspaceStickies = this.workspaceStickies[workspaceSlug] || [];
@@ -249,12 +252,14 @@ export class StickyStore implements IStickyStore {
         };
       });
 
-      // Assuming you have a service method to update sticky position
       await this.stickyService.updateSticky(workspaceSlug, stickyId, {
         sort_order: resultSequence,
       });
     } catch (error) {
       console.error("Failed to move sticky");
+      runInAction(() => {
+        this.stickies[stickyId].sort_order = previousSortOrder;
+      });
       throw error;
     }
   };

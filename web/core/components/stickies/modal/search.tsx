@@ -46,7 +46,7 @@ export const StickySearch: FC = observer(() => {
   );
 
   return (
-    <div className="flex items-center mr-2">
+    <div className="flex items-center mr-2 my-auto">
       {!isSearchOpen && (
         <button
           type="button"

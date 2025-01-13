@@ -22,7 +22,7 @@ export const StickiesTruncated = observer(() => {
     <ContentOverflowWrapper
       maxHeight={620}
       containerClassName="pb-2 box-border"
-      fallback={<></>}
+      fallback={null}
       customButton={
         <Link
           href={`/${workspaceSlug}/stickies`}
@@ -34,7 +34,7 @@ export const StickiesTruncated = observer(() => {
         </Link>
       }
     >
-      <StickiesLayout workspaceSlug={workspaceSlug.toString()} />
+      <StickiesLayout workspaceSlug={workspaceSlug?.toString()} />
     </ContentOverflowWrapper>
   );
 });

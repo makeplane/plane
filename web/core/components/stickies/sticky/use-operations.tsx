@@ -20,6 +20,23 @@ type TProps = {
   workspaceSlug: string;
 };
 
+/**
+ * Checks if HTML content is empty after extracting text
+ * @param html HTML string to check
+ * @returns boolean indicating if content is empty
+ */
+const isHtmlContentEmpty = (html: string): boolean => {
+  // Create a temporary DOM element
+  const tempElement = document.createElement("div");
+  tempElement.innerHTML = html;
+
+  // Get text content and trim whitespace
+  const textContent = tempElement.textContent || "";
+  const trimmedContent = textContent.trim();
+
+  return trimmedContent.length === 0;
+};
+
 export const getRandomStickyColor = (): string => {
   const randomIndex = Math.floor(Math.random() * STICKY_COLORS.length);
   return STICKY_COLORS[randomIndex];
@@ -27,7 +44,8 @@ export const getRandomStickyColor = (): string => {
 
 export const useStickyOperations = (props: TProps) => {
   const { workspaceSlug } = props;
-  const { createSticky, updateSticky, deleteSticky, updateStickyPosition } = useSticky();
+  const { stickies, getWorkspaceStickies, createSticky, updateSticky, deleteSticky, updateStickyPosition } =
+    useSticky();
 
   const isValid = (data: Partial<TSticky>) => {
     if (data.name && data.name.length > 100) {
@@ -49,6 +67,18 @@ export const useStickyOperations = (props: TProps) => {
             color: getRandomStickyColor(),
             ...data,
           };
+          const workspaceStickies = getWorkspaceStickies(workspaceSlug);
+          // check if latest sticky is empty
+          if (getWorkspaceStickies(workspaceSlug).length >= 0) {
+            const latestSticky = stickies[workspaceStickies[0]];
+            if (latestSticky && (!latestSticky.description_html || isHtmlContentEmpty(latestSticky.description_html)))
+              setToast({
+                message: "There already exists a sticky with no description",
+                type: TOAST_TYPE.WARNING,
+                title: "Sticky already created",
+              });
+            return;
+          }
           if (!workspaceSlug) throw new Error("Missing required fields");
           if (!isValid(payload)) return;
           await createSticky(workspaceSlug, payload);
