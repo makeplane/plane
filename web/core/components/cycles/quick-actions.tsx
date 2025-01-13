@@ -36,17 +36,13 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   // store hooks
   const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
-  const { getCycleById, restoreCycle } = useCycle();
+  const { getCycleById, restoreCycle, getPendingIssueCount } = useCycle();
   // derived values
   const cycleDetails = getCycleById(cycleId);
   const isArchived = !!cycleDetails?.archived_at;
   const isCompleted = cycleDetails?.status?.toLowerCase() === "completed";
   const isCurrentCycle = cycleDetails?.status?.toLowerCase() === "current";
-  const transferableIssuesCount = cycleDetails
-    ? cycleDetails.total_issues -
-      cycleDetails.completed_issues -
-      (cycleDetails.progress_snapshot?.cancelled_issues || 0)
-    : 0;
+  const transferableIssuesCount = getPendingIssueCount(cycleId);
   // auth
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
