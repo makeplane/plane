@@ -308,6 +308,14 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       cycleId as string,
       payload
     );
+    // update pending count
+    runInAction(() => {
+      if (this.rootIssueStore.cycleMap)
+        set(this.rootIssueStore.cycleMap[cycleId], "pending_issues", {
+          ...this.rootIssueStore.cycleMap[cycleId],
+          pending_issues: 0,
+        });
+    });
     // call fetch issues
     if (this.paginationOptions) {
       await persistence.syncIssues(projectId.toString());
