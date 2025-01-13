@@ -377,5 +377,6 @@
   "add_sticky": "付箋を追加",
   "all_items": "すべてのアイテム",
   "recents": "最近",
-  "url": "URL"
+  "url": "URL",
+  "star_on_github": "GitHubでスターをつける"
 }

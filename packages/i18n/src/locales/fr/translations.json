@@ -378,5 +378,7 @@
   "add_sticky": "Ajouter une note adhésive",
   "all_items": "Tous les éléments",
   "recents": "Récents",
-  "url": "URL"
+  "url": "URL",
+  "star_on_github": "Ajoutez-nous une étoile sur GitHub"
+
 }
