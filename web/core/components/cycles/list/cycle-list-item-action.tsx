@@ -81,7 +81,11 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   // derived values
   const cycleStatus = cycleDetails.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
   const showIssueCount = useMemo(() => cycleStatus === "draft" || cycleStatus === "upcoming", [cycleStatus]);
-  const transferableIssuesCount = cycleDetails ? cycleDetails.total_issues - cycleDetails.completed_issues : 0;
+  const transferableIssuesCount = cycleDetails
+    ? cycleDetails.total_issues -
+      cycleDetails.completed_issues -
+      (cycleDetails.progress_snapshot?.cancelled_issues || 0)
+    : 0;
   const showTransferIssues = transferableIssuesCount > 0 && cycleStatus === "completed";
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
