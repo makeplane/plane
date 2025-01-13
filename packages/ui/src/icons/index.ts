@@ -49,3 +49,5 @@ export * from "./off-track-icon";
 export * from "./at-risk-icon";
 export * from "./multiple-sticky";
 export * from "./sticky-note-icon";
+export * from "./bar-icon";
+export * from "./tree-map-icon";
