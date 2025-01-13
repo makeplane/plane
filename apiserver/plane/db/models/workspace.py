@@ -1,4 +1,5 @@
 # Python imports
+from django.db.models.functions import Ln
 import pytz
 
 # Django imports
@@ -345,6 +346,8 @@ class WorkspaceUserLink(WorkspaceBaseModel):
 
 
 class WorkspaceHomePreference(BaseModel):
+    """Preference for the home page of a workspace for a user"""
+
     class HomeWidgetKeys(models.TextChoices):
         QUICK_LINKS = "quick_links", "Quick Links"
         RECENTS = "recents", "Recents"
@@ -365,7 +368,7 @@ class WorkspaceHomePreference(BaseModel):
     key = models.CharField(max_length=255)
     is_enabled = models.BooleanField(default=True)
     config = models.JSONField(default=dict)
-    sort_order = models.PositiveIntegerField(default=65535)
+    sort_order = models.FloatField(default=65535)
 
     class Meta:
         unique_together = ["workspace", "user", "key", "deleted_at"]
@@ -383,3 +386,42 @@ class WorkspaceHomePreference(BaseModel):
 
     def __str__(self):
         return f"{self.workspace.name} {self.user.email} {self.key}"
+
+
+
+class WorkspaceUserPreference(BaseModel):
+    """Preference for the workspace for a user"""
+
+    class UserPreferenceKeys(models.TextChoices):
+        CYCLES = "cycles", "Cycles"
+        VIEWS = "views", "Views"
+        ANALYTICS = "analytics", "Analytics"
+        PROJECTS = "projects", "Projects"
+
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_user_preferences",
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="workspace_user_preferences",
+    )
+    key = models.CharField(max_length=255)
+    is_pinned = models.BooleanField(default=False)
+    sort_order = models.FloatField(default=65535)
+
+    class Meta:
+        unique_together = ["workspace", "user", "key", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "user", "key"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="workspace_user_preferences_unique_workspace_user_key_when_deleted_at_null",
+            )
+        ]
+        verbose_name = "Workspace User Preference"
+        verbose_name_plural = "Workspace User Preferences"
+        db_table = "workspace_user_preferences"
+        ordering = ("-created_at",)

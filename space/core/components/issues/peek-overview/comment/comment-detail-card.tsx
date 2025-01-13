@@ -3,8 +3,10 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Check, MessageSquare, MoreVertical, X } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
-// components
+// plane imports
 import { EditorRefApi } from "@plane/editor";
+import { TIssuePublicComment } from "@plane/types";
+// components
 import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
 import { CommentReactions } from "@/components/issues/peek-overview";
 // helpers
@@ -13,12 +15,10 @@ import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useIssueDetails, usePublish, useUser } from "@/hooks/store";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
-// types
-import { Comment } from "@/types/issue";
 
 type Props = {
   anchor: string;
-  comment: Comment;
+  comment: TIssuePublicComment;
 };
 
 export const CommentCard: React.FC<Props> = observer((props) => {
@@ -48,7 +48,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
     deleteIssueComment(anchor, peekId, comment.id);
   };
 
-  const handleCommentUpdate = async (formData: Comment) => {
+  const handleCommentUpdate = async (formData: TIssuePublicComment) => {
     if (!anchor || !peekId) return;
     updateIssueComment(anchor, peekId, comment.id, formData);
     setIsEditing(false);
