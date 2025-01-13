@@ -309,13 +309,13 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       payload
     );
     // update pending count
-    runInAction(() => {
-      if (this.rootIssueStore.cycleMap)
-        set(this.rootIssueStore.cycleMap[cycleId], "pending_issues", {
-          ...this.rootIssueStore.cycleMap[cycleId],
-          pending_issues: 0,
-        });
-    });
+    try {
+      const cycleMap = this.rootIssueStore.cycleMap;
+      if (!cycleMap?.[cycleId]) return;
+      set(cycleMap, [cycleId, "pending_issues"], 0);
+    } catch (error) {
+      console.error("Failed to update pending issues count:", error);
+    }
     // call fetch issues
     if (this.paginationOptions) {
       await persistence.syncIssues(projectId.toString());
