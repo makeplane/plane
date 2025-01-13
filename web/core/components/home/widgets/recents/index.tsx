@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 // types
 import useSWR from "swr";
 import { Briefcase, FileText } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { TActivityEntityData, THomeWidgetProps, TRecentActivityFilterKeys } from "@plane/types";
 // components
 import { LayersIcon } from "@plane/ui";
@@ -22,7 +23,7 @@ import { RecentProject } from "./project";
 const WIDGET_KEY = EWidgetKeys.RECENT_ACTIVITY;
 const workspaceService = new WorkspaceService();
 const filters: { name: TRecentActivityFilterKeys; icon?: React.ReactNode }[] = [
-  { name: "all item" },
+  { name: "all_item" },
   { name: "issue", icon: <LayersIcon className="w-4 h-4" /> },
   { name: "page", icon: <FileText size={16} /> },
   { name: "project", icon: <Briefcase size={16} /> },
@@ -35,6 +36,7 @@ export const RecentActivityWidget: React.FC<THomeWidgetProps> = observer((props)
   // ref
   const ref = useRef<HTMLDivElement>(null);
   const { joinedProjectIds, loader } = useProject();
+  const { t } = useTranslation();
 
   const { data: recents, isLoading } = useSWR(
     workspaceSlug ? `WORKSPACE_RECENT_ACTIVITY_${workspaceSlug}_${filter}` : null,
@@ -70,7 +72,7 @@ export const RecentActivityWidget: React.FC<THomeWidgetProps> = observer((props)
     return (
       <div ref={ref} className=" max-h-[500px]  overflow-y-scroll">
         <div className="flex items-center justify-between mb-4">
-          <div className="text-base font-semibold text-custom-text-350">Recents</div>
+          <div className="text-base font-semibold text-custom-text-350 capitalize">{t("recents")}</div>
           <FiltersDropdown filters={filters} activeFilter={filter} setActiveFilter={setFilter} />
         </div>
         <div className="flex flex-col items-center justify-center">
@@ -87,7 +89,7 @@ export const RecentActivityWidget: React.FC<THomeWidgetProps> = observer((props)
       buttonClassName="bg-custom-background-90/20"
     >
       <div className="flex items-center justify-between mb-2">
-        <div className="text-base font-semibold text-custom-text-350">Recents</div>
+        <div className="text-base font-semibold text-custom-text-350 capitalize">{t("recents")}</div>
 
         <FiltersDropdown filters={filters} activeFilter={filter} setActiveFilter={setFilter} />
       </div>

@@ -1,5 +1,6 @@
 import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { useSticky } from "@/hooks/use-stickies";
 import { STICKY_COLORS } from "../editor/sticky-editor/color-pallete";
 import { StickySearch } from "./modal/search";
@@ -10,10 +11,11 @@ export const StickiesWidget = () => {
   const { workspaceSlug } = useParams();
   const { creatingSticky, toggleShowNewSticky } = useSticky();
   const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
+  const { t } = useTranslation();
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <div className="text-base font-semibold text-custom-text-350">My Stickies </div>
+        <div className="text-base font-semibold text-custom-text-350"> {t("stickies_heading")}</div>
         {/* actions */}
         <div className="flex gap-2">
           <StickySearch />
@@ -25,7 +27,7 @@ export const StickiesWidget = () => {
             className="flex gap-1 text-sm font-medium text-custom-primary-100 my-auto"
             disabled={creatingSticky}
           >
-            <Plus className="size-4 my-auto" /> <span>Add sticky</span>
+            <Plus className="size-4 my-auto" /> <span>{t("add_sticky")}</span>
             {creatingSticky && (
               <div className="flex items-center justify-center ml-2">
                 <div

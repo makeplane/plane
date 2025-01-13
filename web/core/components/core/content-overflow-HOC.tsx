@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 
 interface IContentOverflowWrapper {
@@ -29,6 +30,7 @@ export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) 
   const contentRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const { t } = useTranslation();
   useEffect(() => {
     if (!contentRef?.current) return;
 
@@ -139,7 +141,7 @@ export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) 
             onClick={handleToggle}
             disabled={isTransitioning}
           >
-            {showAll ? "Show less" : "Show all"}
+            {showAll ? t("show_less") : t("show_all")}
           </button>
         </div>
       )}

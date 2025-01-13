@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { DebouncedFunc } from "lodash";
 import { Controller, useForm } from "react-hook-form";
 import { EditorRefApi } from "@plane/editor";
+import { useTranslation } from "@plane/i18n";
 import { TSticky } from "@plane/types";
 import { TextArea } from "@plane/ui";
 import { useWorkspace } from "@/hooks/store";
@@ -21,6 +22,7 @@ export const StickyInput = (props: TProps) => {
   const editorRef = useRef<EditorRefApi>(null);
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
+  const { t } = useTranslation();
   // form info
   const { handleSubmit, reset, control } = useForm<TSticky>({
     defaultValues: {
@@ -93,7 +95,7 @@ export const StickyInput = (props: TProps) => {
               onChange(description_html);
               handleSubmit(handleFormSubmit)();
             }}
-            placeholder={"Click to type here"}
+            placeholder={t("sticky_placeholder")}
             containerClassName={"px-0 text-base min-h-[200px] w-full text-[#455068]"}
             uploadFile={async () => ""}
             showToolbar={false}
