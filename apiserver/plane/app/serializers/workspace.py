@@ -271,7 +271,7 @@ class WorkspaceHomePreferenceSerializer(BaseSerializer):
     class Meta:
         model = WorkspaceHomePreference
         fields = ["key", "is_enabled", "sort_order"]
-        read_only_fields = ["worspace", "created_by", "update_by"]
+        read_only_fields = ["workspace", "created_by", "updated_by"]
 
 
 class StickySerializer(BaseSerializer):

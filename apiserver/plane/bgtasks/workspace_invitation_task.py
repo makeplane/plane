@@ -31,9 +31,9 @@ def push_updated_to_slack(workspace, workspace_member_invite):
 
 
 @shared_task
-def workspace_invitation(email, workspace_id, token, current_site, invitor):
+def workspace_invitation(email, workspace_id, token, current_site, inviter):
     try:
-        user = User.objects.get(email=invitor)
+        user = User.objects.get(email=inviter)
 
         workspace = Workspace.objects.get(pk=workspace_id)
         workspace_member_invite = WorkspaceMemberInvite.objects.get(
@@ -41,7 +41,7 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         )
 
         # Relative link
-        relative_link = f"/workspace-invitations/?invitation_id={workspace_member_invite.id}&email={email}&slug={workspace.slug}"
+        relative_link = f"/workspace-invitations/?invitation_id={workspace_member_invite.id}&email={email}&slug={workspace.slug}"  # noqa: E501
 
         # The complete url including the domain
         abs_url = str(current_site) + relative_link
@@ -57,7 +57,7 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         ) = get_email_configuration()
 
         # Subject of the email
-        subject = f"{user.first_name or user.display_name or user.email} has invited you to join them in {workspace.name} on Plane"
+        subject = f"{user.first_name or user.display_name or user.email} has invited you to join them in {workspace.name} on Plane"  # noqa: E501
 
         context = {
             "email": email,
@@ -93,15 +93,14 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         )
         msg.attach_alternative(html_content, "text/html")
         msg.send()
-        logging.getLogger("plane").info("Email sent succesfully")
+        logging.getLogger("plane").info("Email sent successfully")
 
         # Send message on slack as well
         if settings.SLACK_BOT_TOKEN:
             push_updated_to_slack(workspace, workspace_member_invite)
-
         return
-    except (Workspace.DoesNotExist, WorkspaceMemberInvite.DoesNotExist) as e:
-        log_exception(e)
+
+    except (Workspace.DoesNotExist, WorkspaceMemberInvite.DoesNotExist):
         return
     except Exception as e:
         log_exception(e)

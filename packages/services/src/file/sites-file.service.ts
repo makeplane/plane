@@ -1,22 +1,40 @@
+// plane imports
 import { API_BASE_URL } from "@plane/constants";
+// local services
 import { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
+import { FileUploadService } from "./file-upload.service";
 // helpers
-import { generateFileUploadPayload, getAssetIdFromUrl, getFileMetaDataForUpload } from "@/helpers/file.helper";
-// services
-import { APIService } from "@/services/api.service";
-import { FileUploadService } from "@/services/file-upload.service";
+import { FileService } from "./file.service";
+import { generateFileUploadPayload, getAssetIdFromUrl, getFileMetaDataForUpload } from "./helper";
 
-export class FileService extends APIService {
+/**
+ * Service class for managing file operations within plane sites application.
+ * Extends FileService to manage file-related operations.
+ * @extends {FileService}
+ * @remarks This service is only available for plane sites
+ */
+export class SitesFileService extends FileService {
   private cancelSource: any;
   fileUploadService: FileUploadService;
 
-  constructor() {
-    super(API_BASE_URL);
+  /**
+   * Creates an instance of SitesFileService
+   * @param {string} BASE_URL - The base URL for API requests
+   */
+  constructor(BASE_URL?: string) {
+    super(BASE_URL || API_BASE_URL);
     this.cancelUpload = this.cancelUpload.bind(this);
     // services
     this.fileUploadService = new FileUploadService();
   }
 
+  /**
+   * Updates the upload status of an asset
+   * @param {string} anchor - The anchor identifier
+   * @param {string} assetId - The asset identifier
+   * @returns {Promise<void>} Promise resolving to void
+   * @throws {Error} If the request fails
+   */
   private async updateAssetUploadStatus(anchor: string, assetId: string): Promise<void> {
     return this.patch(`/api/public/assets/v2/anchor/${anchor}/${assetId}/`)
       .then((response) => response?.data)
@@ -25,6 +43,14 @@ export class FileService extends APIService {
       });
   }
 
+  /**
+   * Updates the upload status of multiple assets
+   * @param {string} anchor - The anchor identifier
+   * @param {string} entityId - The entity identifier
+   * @param {Object} data - The data payload
+   * @returns {Promise<void>} Promise resolving to void
+   * @throws {Error} If the request fails
+   */
   async updateBulkAssetsUploadStatus(
     anchor: string,
     entityId: string,
@@ -39,6 +65,14 @@ export class FileService extends APIService {
       });
   }
 
+  /**
+   * Uploads a file to the specified anchor
+   * @param {string} anchor - The anchor identifier
+   * @param {TFileEntityInfo} data - The data payload
+   * @param {File} file - The file to upload
+   * @returns {Promise<TFileSignedURLResponse>} Promise resolving to the signed URL response
+   * @throws {Error} If the request fails
+   */
   async uploadAsset(anchor: string, data: TFileEntityInfo, file: File): Promise<TFileSignedURLResponse> {
     const fileMetaData = getFileMetaDataForUpload(file);
     return this.post(`/api/public/assets/v2/anchor/${anchor}/`, {
@@ -57,23 +91,13 @@ export class FileService extends APIService {
       });
   }
 
-  async deleteNewAsset(assetPath: string): Promise<void> {
-    return this.delete(assetPath)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteOldEditorAsset(workspaceId: string, src: string): Promise<any> {
-    const assetKey = getAssetIdFromUrl(src);
-    return this.delete(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/`)
-      .then((response) => response?.status)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
+  /**
+   * Restores a new asset
+   * @param {string} workspaceSlug - The workspace slug
+   * @param {string} src - The asset source
+   * @returns {Promise<void>} Promise resolving to void
+   * @throws {Error} If the request fails
+   */
   async restoreNewAsset(workspaceSlug: string, src: string): Promise<void> {
     // remove the last slash and get the asset id
     const assetId = getAssetIdFromUrl(src);
@@ -84,16 +108,10 @@ export class FileService extends APIService {
       });
   }
 
-  async restoreOldEditorAsset(workspaceId: string, src: string): Promise<void> {
-    const assetKey = getAssetIdFromUrl(src);
-    return this.post(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/restore/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
+  /**
+   * Cancels the upload
+   */
   cancelUpload() {
-    this.cancelSource.cancel("Upload cancelled");
+    this.cancelSource.cancelUpload();
   }
 }
