@@ -1,22 +1,19 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// types
-import { TLogoProps } from "@plane/types";
-// services
-import { PageService } from "@/plane-web/services/page.service";
-// plane web types
-import { TPageResponse } from "@/plane-web/types";
+// plane imports
+import { SitesPagePublishService } from "@plane/services";
+import { TLogoProps, TPublicPageResponse } from "@plane/types";
 // store
 import { CoreRootStore } from "@/store/root.store";
 // types
 import { IIssue } from "@/types/issue";
 
-export interface IPage extends TPageResponse {
+export interface IPage extends TPublicPageResponse {
   // observables
   issueEmbedError: boolean;
   issueEmbedData: IIssue[] | undefined;
   // computed
-  asJSON: TPageResponse | undefined;
+  asJSON: TPublicPageResponse | undefined;
   areIssueEmbedsLoaded: boolean;
   // helpers
   getIssueEmbedDetails: (issueID: string) => IIssue | undefined;
@@ -36,11 +33,11 @@ export class Page implements IPage {
   name: string | undefined;
   updated_at: Date | undefined;
   // services
-  pageService: PageService;
+  pageService: SitesPagePublishService;
 
   constructor(
     private rootStore: CoreRootStore,
-    page: TPageResponse
+    page: TPublicPageResponse
   ) {
     this.created_at = page.created_at || undefined;
     this.description_html = page.description_html || undefined;
@@ -67,7 +64,7 @@ export class Page implements IPage {
       fetchPageIssueEmbeds: action,
     });
 
-    this.pageService = new PageService();
+    this.pageService = new SitesPagePublishService();
   }
 
   get asJSON() {
@@ -101,7 +98,7 @@ export class Page implements IPage {
     });
 
     try {
-      const response = await this.pageService.fetchPageIssueEmbeds(anchor);
+      const response = await this.pageService.listIssueEmbeds(anchor);
       runInAction(() => {
         this.issueEmbedData = response;
       });

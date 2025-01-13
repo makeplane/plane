@@ -1,8 +1,7 @@
 import { action, makeObservable, runInAction } from "mobx";
 // types
+import { SitesViewPublishService } from "@plane/services";
 import { IssuePaginationOptions, TLoader } from "@plane/types";
-// services
-import { ViewService } from "@/plane-web/services/view.service";
 // store
 import { BaseIssuesStore, IBaseIssuesStore } from "@/store/helpers/base-issues.store";
 import { RootStore } from "../root.store";
@@ -23,7 +22,7 @@ export class ViewIssueStore extends BaseIssuesStore implements IViewIssueStore {
   // root store
   rootStore: RootStore;
   // services
-  viewService: ViewService;
+  viewPublishService: SitesViewPublishService;
 
   constructor(_rootStore: RootStore) {
     super(_rootStore);
@@ -35,7 +34,7 @@ export class ViewIssueStore extends BaseIssuesStore implements IViewIssueStore {
     });
 
     this.rootStore = _rootStore;
-    this.viewService = new ViewService();
+    this.viewPublishService = new SitesViewPublishService();
   }
 
   /**
@@ -58,7 +57,7 @@ export class ViewIssueStore extends BaseIssuesStore implements IViewIssueStore {
 
       const params = this.rootStore.viewIssuesFilter.getFilterParams(options, undefined, undefined, undefined);
 
-      const response = await this.viewService.getViewIssues(anchor, params);
+      const response = await this.viewPublishService.listIssues(anchor, params);
 
       // after fetching issues, call the base method to process the response further
       this.onfetchIssues(response, options);
@@ -84,7 +83,7 @@ export class ViewIssueStore extends BaseIssuesStore implements IViewIssueStore {
         subGroupId
       );
       // call the fetch issues API with the params for next page in issues
-      const response = await this.viewService.getViewIssues(anchor, params);
+      const response = await this.viewPublishService.listIssues(anchor, params);
 
       // after the next page of issues are fetched, call the base method to process the response
       this.onfetchNexIssues(response, groupId, subGroupId);

@@ -75,3 +75,8 @@ export type TWebhookConnectionQueryParams = {
   teamId?: string;
   workspaceSlug: string;
 };
+
+export type TPublicPageResponse = Pick<
+  TPage,
+  "created_at" | "description_html" | "id" | "logo_props" | "name" | "updated_at"
+>;

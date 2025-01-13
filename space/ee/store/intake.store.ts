@@ -1,7 +1,9 @@
 import { makeObservable, observable } from "mobx";
+// plane imports
+import { SitesIntakeService } from "@plane/services";
+import { TIntakeIssueForm } from "@plane/types";
+// types
 import { TPublicCycle } from "@/types/cycle";
-import { TIntakeIssueForm } from "@/types/intake";
-import { IntakeService } from "../services/intake.service";
 
 export interface IIntakeStore {
   // observables
@@ -12,7 +14,7 @@ export interface IIntakeStore {
 
 export class IntakeStore implements IIntakeStore {
   cycles: TPublicCycle[] | undefined = undefined;
-  intakeService: IntakeService;
+  intakeService: SitesIntakeService;
 
   constructor() {
     makeObservable(this, {
@@ -20,13 +22,14 @@ export class IntakeStore implements IIntakeStore {
       cycles: observable,
       // fetch action
     });
-    this.intakeService = new IntakeService();
+    this.intakeService = new SitesIntakeService();
   }
 
   publishIntakeForm = async (anchor: string, data: TIntakeIssueForm) => {
     try {
       await this.intakeService.publishForm(anchor, data);
     } catch (error) {
+      console.error("Error publishing intake form", error);
       throw error;
     }
   };

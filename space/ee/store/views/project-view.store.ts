@@ -1,9 +1,8 @@
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
-// types
+// plane imports
+import { SitesViewPublishService } from "@plane/services";
 import { IIssueFilterOptions, IProjectView } from "@plane/types";
-// services
-import { ViewService } from "@/plane-web/services/view.service";
 // store
 import { RootStore } from "@/plane-web/store/root.store";
 import {
@@ -30,7 +29,7 @@ export class ProjectViewStore implements IProjectViewStore {
   // root store
   rootStore;
   // services
-  viewService;
+  viewPublishService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -45,7 +44,7 @@ export class ProjectViewStore implements IProjectViewStore {
     // root store
     this.rootStore = _rootStore;
     // services
-    this.viewService = new ViewService();
+    this.viewPublishService = new SitesViewPublishService();
   }
 
   /**
@@ -136,7 +135,7 @@ export class ProjectViewStore implements IProjectViewStore {
    * @returns Promise<IProjectView>
    */
   fetchViewDetails = async (anchor: string): Promise<IProjectView> =>
-    await this.viewService.getViewDetails(anchor).then((response) => {
+    await this.viewPublishService.retrieve(anchor).then((response) => {
       runInAction(() => {
         this.viewData = response;
       });

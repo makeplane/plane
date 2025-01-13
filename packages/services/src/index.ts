@@ -14,4 +14,5 @@ export * from "./file";
 export * from "./label";
 export * from "./state";
 export * from "./issue";
+export * from "./page";
 export * from "./feature-flag";
