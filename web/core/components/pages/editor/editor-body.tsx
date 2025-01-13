@@ -23,7 +23,7 @@ import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
 import { getEditorFileHandlers, getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
-import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
+import { useMember, useMention, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
@@ -64,6 +64,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
+  const {
+    data: { has_enabled_smooth_cursor },
+  } = useUserProfile();
   const { getWorkspaceBySlug } = useWorkspace();
   const {
     getUserDetails,
@@ -190,6 +193,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           </div>
           {isContentEditable ? (
             <CollaborativeDocumentEditorWithRef
+              has_enabled_smooth_cursor={has_enabled_smooth_cursor}
               id={pageId}
               fileHandler={getEditorFileHandlers({
                 maxFileSize,

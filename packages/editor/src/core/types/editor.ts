@@ -117,11 +117,12 @@ export interface IEditorProps {
   onChange?: (json: object, html: string) => void;
   onTransaction?: () => void;
   handleEditorReady?: (value: boolean) => void;
+  has_enabled_smooth_cursor?: boolean;
   autofocus?: boolean;
   onEnterKeyPress?: (e?: any) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
-  value?: string | null; 
+  value?: string | null;
 }
 export interface ILiteTextEditor extends IEditorProps {
   extensions?: any[];
@@ -141,6 +142,7 @@ export interface ICollaborativeDocumentEditor
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
+  has_enabled_smooth_cursor?: boolean;
 }
 
 // read only editor props

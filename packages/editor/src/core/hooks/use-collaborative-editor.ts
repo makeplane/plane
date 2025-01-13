@@ -14,6 +14,7 @@ import { TCollaborativeEditorProps } from "@/types";
 export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const {
     onTransaction,
+    has_enabled_smooth_cursor,
     disabledExtensions,
     editorClassName,
     editorProps = {},
@@ -99,6 +100,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     ],
     fileHandler,
     handleEditorReady,
+    has_enabled_smooth_cursor,
     forwardedRef,
     mentionHandler,
     placeholder,

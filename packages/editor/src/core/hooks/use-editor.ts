@@ -26,6 +26,7 @@ export interface CustomEditorProps {
   fileHandler: TFileHandler;
   forwardedRef?: MutableRefObject<EditorRefApi | null>;
   handleEditorReady?: (value: boolean) => void;
+  has_enabled_smooth_cursor?: boolean;
   id?: string;
   initialValue?: string;
   mentionHandler: {
@@ -62,6 +63,7 @@ export const useEditor = (props: CustomEditorProps) => {
     tabIndex,
     value,
     autofocus = false,
+    has_enabled_smooth_cursor = true,
   } = props;
   // states
 
@@ -79,6 +81,7 @@ export const useEditor = (props: CustomEditorProps) => {
     },
     extensions: [
       ...CoreEditorExtensions({
+        has_enabled_smooth_cursor,
         enableHistory,
         fileHandler,
         mentionConfig: {

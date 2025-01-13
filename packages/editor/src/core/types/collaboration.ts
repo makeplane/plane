@@ -36,6 +36,7 @@ type TCollaborativeEditorHookProps = {
 };
 
 export type TCollaborativeEditorProps = TCollaborativeEditorHookProps & {
+  has_enabled_smooth_cursor: boolean;
   onTransaction?: () => void;
   embedHandler?: TEmbedConfig;
   fileHandler: TFileHandler;

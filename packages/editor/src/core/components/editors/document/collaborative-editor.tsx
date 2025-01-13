@@ -31,6 +31,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     serverHandler,
     tabIndex,
     user,
+    has_enabled_smooth_cursor = true,
   } = props;
 
   const extensions = [];
@@ -45,6 +46,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   // use document editor
   const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeEditor({
     onTransaction,
+    has_enabled_smooth_cursor,
     disabledExtensions,
     editorClassName,
     embedHandler,

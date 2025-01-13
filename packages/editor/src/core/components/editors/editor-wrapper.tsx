@@ -13,6 +13,7 @@ import { EditorContentWrapper } from "./editor-content";
 type Props = IEditorProps & {
   children?: (editor: Editor) => React.ReactNode;
   extensions: Extension<any, any>[];
+  has_enabled_smooth_cursor: boolean;
 };
 
 export const EditorWrapper: React.FC<Props> = (props) => {
@@ -26,10 +27,11 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     initialValue,
     fileHandler,
     forwardedRef,
+    handleEditorReady,
+    has_enabled_smooth_cursor,
     mentionHandler,
     onChange,
     onTransaction,
-    handleEditorReady,
     autofocus,
     placeholder,
     tabIndex,
@@ -42,12 +44,13 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     extensions,
     fileHandler,
     forwardedRef,
+    handleEditorReady,
+    has_enabled_smooth_cursor,
     id,
     initialValue,
     mentionHandler,
     onChange,
     onTransaction,
-    handleEditorReady,
     autofocus,
     placeholder,
     tabIndex,

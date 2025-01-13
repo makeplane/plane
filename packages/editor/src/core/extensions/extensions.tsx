@@ -37,6 +37,7 @@ import { IMentionHighlight, IMentionSuggestion, TFileHandler } from "@/types";
 
 type TArguments = {
   enableHistory: boolean;
+  has_enabled_smooth_cursor: boolean;
   fileHandler: TFileHandler;
   mentionConfig: {
     mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
@@ -47,7 +48,7 @@ type TArguments = {
 };
 
 export const CoreEditorExtensions = (args: TArguments) => {
-  const { enableHistory, fileHandler, mentionConfig, placeholder, tabIndex } = args;
+  const { enableHistory, fileHandler, mentionConfig, placeholder, tabIndex, has_enabled_smooth_cursor } = args;
 
   return [
     StarterKit.configure({
@@ -163,6 +164,6 @@ export const CoreEditorExtensions = (args: TArguments) => {
     CustomTextAlignExtension,
     CustomCalloutExtension,
     CustomColorExtension,
-    SmoothCursorExtension,
+    has_enabled_smooth_cursor ? SmoothCursorExtension : null,
   ];
 };

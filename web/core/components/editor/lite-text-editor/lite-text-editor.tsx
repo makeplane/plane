@@ -12,7 +12,7 @@ import { cn } from "@/helpers/common.helper";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
-import { useMember, useMention, useUser } from "@/hooks/store";
+import { useMember, useMention, useUser, useUserProfile } from "@/hooks/store";
 // plane web hooks
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 
@@ -45,6 +45,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   } = props;
   // store hooks
   const { data: currentUser } = useUser();
+  const {
+    data: { has_enabled_smooth_cursor },
+  } = useUserProfile();
   const {
     getUserDetails,
     project: { getProjectMemberIds },
@@ -79,6 +82,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           workspaceId,
           workspaceSlug,
         })}
+        has_enabled_smooth_cursor={has_enabled_smooth_cursor}
         mentionHandler={{
           highlights: mentionHighlights,
           suggestions: mentionSuggestions,
