@@ -1,7 +1,7 @@
 "use client";
 import { Fragment } from "react";
 
-import { DayPicker } from "react-day-picker";
+import { DayPicker, getDefaultClassNames } from "react-day-picker";
 import { Controller, useForm } from "react-hook-form";
 
 import { X } from "lucide-react";
@@ -48,6 +48,8 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
 
   const date1 = getDate(watch("date1"));
   const date2 = getDate(watch("date1"));
+
+  const defaultClassNames = getDefaultClassNames();
 
   const isInvalid = watch("filterType") === "range" && date1 && date2 ? date1 > date2 : false;
 
@@ -97,6 +99,8 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                         const date2Value = getDate(watch("date2"));
                         return (
                           <DayPicker
+                            classNames={{root: `${defaultClassNames.root} border border-custom-border-200 p-3 rounded-md`}}
+                            captionLayout="dropdown"
                             selected={dateValue}
                             defaultMonth={dateValue}
                             onSelect={(date) => {
@@ -105,7 +109,6 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                             }}
                             mode="single"
                             disabled={date2Value ? [{ after: date2Value }] : undefined}
-                            className="border border-custom-border-200 p-3 rounded-md"
                           />
                         );
                       }}
@@ -119,6 +122,8 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                           const date1Value = getDate(watch("date1"));
                           return (
                             <DayPicker
+                              classNames={{root: `${defaultClassNames.root} border border-custom-border-200 p-3 rounded-md`}}
+                              captionLayout="dropdown"
                               selected={dateValue}
                               defaultMonth={dateValue}
                               onSelect={(date) => {
@@ -127,7 +132,6 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                               }}
                               mode="single"
                               disabled={date1Value ? [{ before: date1Value }] : undefined}
-                              className="border border-custom-border-200 p-3 rounded-md"
                             />
                           );
                         }}
