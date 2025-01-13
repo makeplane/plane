@@ -1,5 +1,6 @@
 import { type Selection, Plugin, PluginKey, TextSelection } from "@tiptap/pm/state";
 import { type EditorView, Decoration, DecorationSet } from "@tiptap/pm/view";
+import { codeMarkPluginKey } from "@/extensions/code-mark/utils";
 
 export const PROSEMIRROR_SMOOTH_CURSOR_CLASS = "prosemirror-smooth-cursor";
 const BLINK_DELAY = 750;
@@ -11,14 +12,19 @@ export function smoothCursorPlugin(): Plugin {
   let isEditorFocused = false;
   let lastCursorPosition = { x: 0, y: 0 };
 
+  function isCodemarkCursorActive(view: EditorView) {
+    const codemarkState = codeMarkPluginKey.getState(view.state);
+    return codemarkState?.active === true;
+  }
+
   function updateCursor(view?: EditorView, cursor?: HTMLElement) {
     if (!view || !view.dom || view.isDestroyed || !cursor) return;
 
-    // Hide cursor if editor is not focused
-    if (!isEditorFocused) {
+    if (!isEditorFocused || isCodemarkCursorActive(view)) {
       cursor.style.display = "none";
       return;
     }
+
     cursor.style.display = "block";
 
     const { state, dom } = view;
