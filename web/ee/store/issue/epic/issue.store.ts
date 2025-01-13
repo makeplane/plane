@@ -239,7 +239,7 @@ export class ProjectEpics extends BaseIssuesStore implements IProjectEpics {
     const shouldUpdateList = projectId === this.router.projectId;
 
     // add Issue to Store
-    this.addIssue(response, shouldUpdateList);
+    this.addIssue({ ...response, is_epic: true }, shouldUpdateList);
 
     return response;
   };
