@@ -316,5 +316,288 @@
   "change_parent_issue": "Change parent issue",
   "remove_parent_issue": "Remove parent issue",
   "add_parent": "Add parent",
-  "loading_members": "Loading members..."
+  "loading_members": "Loading members...",
+  
+    "empty_state_workspace_dashboard_title": "Overview of your projects, activity, and metrics",
+    "empty_state_workspace_dashboard_description": "Welcome to Plane, we are excited to have you here. Create your first project and track your issues, and this page will transform into a space that helps you progress. Admins will also see items which help their team progress.",
+    "empty_state_workspace_dashboard_primary_button": "Build your first project",
+    "empty_state_workspace_dashboard_comic_title": "Everything starts with a project in Plane",
+    "empty_state_workspace_dashboard_comic_description": "A project could be a product's roadmap, a marketing campaign, or launching a new car.",
+  
+    "empty_state_workspace_analytics_title": "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",
+    "empty_state_workspace_analytics_description": "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time.",
+    "empty_state_workspace_analytics_primary_button": "Start your first project",
+    "empty_state_workspace_analytics_comic_title": "Analytics works best with Cycles + Modules",
+    "empty_state_workspace_analytics_comic_description": "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav.",
+  
+    "empty_state_workspace_projects_title": "No active projects",
+    "empty_state_workspace_projects_description": "Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal. Create a new project or filter for archived projects.",
+    "empty_state_workspace_projects_primary_button": "Start your first project",
+    "empty_state_workspace_projects_comic_title": "Everything starts with a project in Plane",
+    "empty_state_workspace_projects_comic_description": "A project could be a product's roadmap, a marketing campaign, or launching a new car.",
+  
+    "empty_state_workspace_project_not_found_title": "No such project exists",
+    "empty_state_workspace_project_not_found_description": "To create issues or manage your work, you need to create a project or be a part of one.",
+    "empty_state_workspace_project_not_found_primary_button": "Create Project",
+    "empty_state_workspace_project_not_found_comic_title": "Everything starts with a project in Plane",
+    "empty_state_workspace_project_not_found_comic_description": "A project could be a product's roadmap, a marketing campaign, or launching a new car.",
+  
+    "empty_state_workspace_no_projects_title": "No project",
+    "empty_state_workspace_no_projects_description": "To create issues or manage your work, you need to create a project or be a part of one.",
+    "empty_state_workspace_no_projects_primary_button": "Start your first project",
+    "empty_state_workspace_no_projects_comic_title": "Everything starts with a project in Plane",
+    "empty_state_workspace_no_projects_comic_description": "A project could be a product's roadmap, a marketing campaign, or launching a new car.",
+  
+    "empty_state_workspace_teams_title": "Teams",
+    "empty_state_workspace_teams_description": "Teams are groups of people who collaborate on projects. Create a team to get started.",
+    "empty_state_workspace_teams_primary_button": "Create new team",
+  
+    "empty_state_workspace_initiatives_title": "Organize work at the highest level with Initiatives",
+    "empty_state_workspace_initiatives_description": "When you need to organize work spanning several projects and teams, Initiatives come in handy. Connect projects and epics to initiatives, see automatically rolled up updates, and see the forests before you get to the trees.",
+    "empty_state_workspace_initiatives_primary_button": "Create an initiative",
+  
+    "empty_state_workspace_initiatives_empty_search_title": "No matching initiatives",
+    "empty_state_workspace_initiatives_empty_search_description": "No initiatives detected with the matching criteria. \n Create a new initiative instead.",
+  
+    "empty_state_workspace_all_issues_title": "No issues in the project",
+    "empty_state_workspace_all_issues_description": "First project done! Now, slice your work into trackable pieces with issues. Let's go!",
+    "empty_state_workspace_all_issues_primary_button": "Create new issue",
+  
+    "empty_state_workspace_assigned_title": "No issues yet",
+    "empty_state_workspace_assigned_description": "Issues assigned to you can be tracked from here.",
+    "empty_state_workspace_assigned_primary_button": "Create new issue",
+  
+    "empty_state_workspace_created_title": "No issues yet",
+    "empty_state_workspace_created_description": "All issues created by you come here, track them here directly.",
+    "empty_state_workspace_created_primary_button": "Create new issue",
+  
+    "empty_state_workspace_subscribed_title": "No issues yet",
+    "empty_state_workspace_subscribed_description": "Subscribe to issues you are interested in, track all of them here.",
+  
+    "empty_state_workspace_custom_view_title": "No issues yet",
+    "empty_state_workspace_custom_view_description": "Issues that applies to the filters, track all of them here.",
+  
+    "empty_state_project_no_epics_title": "Create an epic and assign it to someone, even yourself",
+    "empty_state_project_no_epics_description": "For larger bodies of work that span several cycles and can live across modules, create an epic. Link issues and sub-issues in a project to an epic and jump into an issue from the overview.",
+    "empty_state_project_no_epics_primary_button": "Create an Epic",
+  
+    "empty_state_team_no_issues_title": "Create an issue in your team projects and assign it to someone, even yourself",
+    "empty_state_team_no_issues_description": "Think of issues as jobs, tasks, work, or JTBD. Which we like. An issue and its sub-issues are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes issues to move your project towards its goal.",
+    "empty_state_team_no_issues_primary_button": "Create your first issue",
+    "empty_state_team_no_issues_comic_title": "Issues are building blocks in Plane.",
+    "empty_state_team_no_issues_comic_description": "Redesign the Plane UI, Rebrand the company, or Launch the new fuel injection system are examples of issues that likely have sub-issues.",
+  
+    "empty_state_team_empty_filter_title": "No issues found matching the filters applied",
+    "empty_state_team_empty_filter_secondary_button": "Clear all filters",
+  
+    "empty_state_team_view_title": "Save filtered views for your team. Create as many as you need",
+    "empty_state_team_view_description": "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a team can see everyone's views and choose whichever suits their needs best.",
+    "empty_state_team_view_primary_button": "Create your first view",
+    "empty_state_team_view_comic_title": "Views work atop Issue properties.",
+    "empty_state_team_view_comic_description": "You can create a view from here with as many properties as filters as you see fit.",
+    
+    "empty_state_workspace_settings_api_tokens_title": "No API tokens created",
+    "empty_state_workspace_settings_api_tokens_description": "Plane APIs can be used to integrate your data in Plane with any external system. Create a token to get started.",
+  
+    "empty_state_workspace_settings_webhooks_title": "No webhooks added",
+    "empty_state_workspace_settings_webhooks_description": "Create webhooks to receive real-time updates and automate actions.",
+  
+    "empty_state_workspace_settings_export_title": "No previous exports yet",
+    "empty_state_workspace_settings_export_description": "Anytime you export, you will also have a copy here for reference.",
+  
+    "empty_state_workspace_settings_import_title": "No previous imports yet",
+    "empty_state_workspace_settings_import_description": "Find all your previous imports here and download them.",
+  
+    "empty_state_profile_activity_title": "No activities yet",
+    "empty_state_profile_activity_description": "Get started by creating a new issue! Add details and properties to it. Explore more in Plane to see your activity.",
+  
+    "empty_state_project_settings_labels_title": "No labels yet",
+    "empty_state_project_settings_labels_description": "Create labels to help organize and filter issues in you project.",
+  
+    "empty_state_project_settings_integrations_title": "No integrations configured",
+    "empty_state_project_settings_integrations_description": "Configure GitHub and other integrations to sync your project issues.",
+  
+    "empty_state_project_settings_estimate_title": "No estimates added",
+    "empty_state_project_settings_estimate_description": "Create a set of estimates to communicate the amount of work per issue.",
+  
+    "empty_state_project_cycles_title": "Group and timebox your work in Cycles.",
+    "empty_state_project_cycles_description": "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team.",
+    "empty_state_project_cycles_primary_button": "Set your first cycle",
+    "empty_state_project_cycles_comic_title": "Cycles are repetitive time-boxes.",
+    "empty_state_project_cycles_comic_description": "A sprint, an iteration, and or any other term you use for weekly or fortnightly tracking of work is a cycle.",
+  
+    "empty_state_project_cycle_no_issues_title": "No issues added to the cycle",
+    "empty_state_project_cycle_no_issues_description": "Add or create issues you wish to timebox and deliver within this cycle",
+    "empty_state_project_cycle_no_issues_primary_button": "Create new issue",
+    "empty_state_project_cycle_no_issues_secondary_button": "Add an existing issue",
+  
+    "empty_state_project_cycle_active_title": "No active cycle",
+    "empty_state_project_cycle_active_description": "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
+  
+    "empty_state_project_cycle_completed_no_issues_title": "No issues in the cycle",
+    "empty_state_project_cycle_completed_no_issues_description": "No issues in the cycle. Issues are either transferred or hidden. To see hidden issues if any, update your display properties accordingly.",
+  
+    "empty_state_command_k_search_empty_state_title": "No results found",
+    
+    "empty_state_issue_relation_search_empty_state_title": "No matching issues found",
+    
+    "empty_state_issue_relation_empty_state_title": "No issues found",
+    
+    "empty_state_issue_comment_empty_state_title": "No comments yet",
+    "empty_state_issue_comment_empty_state_description": "Comments can be used as a discussion and follow-up space for the issues",
+  
+    "empty_state_notification_detail_empty_state_title": "Select to view details.",
+  
+    "empty_state_notification_all_empty_state_title": "No issues assigned",
+    "empty_state_notification_all_empty_state_description": "Updates for issues assigned to you can be seen here",
+  
+    "empty_state_notification_mentions_empty_state_title": "No issues assigned",
+    "empty_state_notification_mentions_empty_state_description": "Updates for issues assigned to you can be seen here",
+  
+    "empty_state_notification_my_issue_empty_state_title": "No issues assigned",
+    "empty_state_notification_my_issue_empty_state_description": "Updates for issues assigned to you can be seen here",
+  
+    "empty_state_notification_created_empty_state_title": "No updates to issues",
+    "empty_state_notification_created_empty_state_description": "Updates to issues created by you can be seen here",
+  
+    "empty_state_notification_subscribed_empty_state_title": "No updates to issues",
+    "empty_state_notification_subscribed_empty_state_description": "Updates to any issue you are subscribed to can be seen here",
+  
+    "empty_state_notification_unread_empty_state_title": "No unread notifications",
+    "empty_state_notification_unread_empty_state_description": "Congratulations, you are up-to-date with everything happening in the issues you care about",
+  
+    "empty_state_notification_snoozed_empty_state_title": "No snoozed notifications yet",
+    "empty_state_notification_snoozed_empty_state_description": "Any notification you snooze for later will be available here to act upon",
+  
+    "empty_state_notification_archived_empty_state_title": "No archived notifications yet",
+    "empty_state_notification_archived_empty_state_description": "Any notification you archive will be available here to help you focus",
+  
+    "empty_state_active_cycle_progress_empty_state_title": "Add issues to the cycle to view it's progress",
+  
+    "empty_state_active_cycle_chart_empty_state_title": "Add issues to the cycle to view the burndown chart.",
+  
+    "empty_state_active_cycle_priority_issue_empty_state_title": "Observe high priority issues tackled in the cycle at a glance.",
+  
+    "empty_state_active_cycle_assignee_empty_state_title": "Add assignees to issues to see a breakdown of work by assignees.",
+  
+    "empty_state_active_cycle_label_empty_state_title": "Add labels to issues to see the breakdown of work by labels.",
+  
+    "empty_state_workspace_active_cycles_title": "No active cycles",
+    "empty_state_workspace_active_cycles_description": "Cycles of your projects that includes any period that encompasses today's date within its range. Find the progress and details of all your active cycle here.",
+  
+    "empty_state_disabled_project_inbox_title": "Intake is not enabled for the project.",
+    "empty_state_disabled_project_inbox_description": "Intake helps you manage incoming requests to your project and add them as issues in your workflow. Enable intake from project settings to manage requests.",
+    "empty_state_disabled_project_inbox_primary_button": "Manage features",
+  
+    "empty_state_disabled_project_cycle_title": "Cycles is not enabled for this project.",
+    "empty_state_disabled_project_cycle_description": "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team. Enable the cycles feature for your project to start using them.",
+    "empty_state_disabled_project_cycle_primary_button": "Manage features",
+  
+    "empty_state_disabled_project_module_title": "Modules are not enabled for the project.",
+    "empty_state_disabled_project_module_description": "A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. Enable modules from project settings.",
+    "empty_state_disabled_project_module_primary_button": "Manage features",
+    "empty_state_disabled_project_page_title": "Pages are not enabled for the project.",
+  "empty_state_disabled_project_page_description": "Pages are thought spotting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project's context. Enable the pages feature to start creating them in your project.",
+  "empty_state_disabled_project_page_primary_button": "Manage features",
+
+  "empty_state_disabled_project_view_title": "Views is not enabled for this project.",
+  "empty_state_disabled_project_view_description": "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone's views and choose whichever suits their needs best. Enable views in the project settings to start using them.",
+  "empty_state_disabled_project_view_primary_button": "Manage features",
+
+  "empty_state_inbox_sidebar_open_tab_title": "No open issues",
+  "empty_state_inbox_sidebar_open_tab_description": "Find open issues here. Create new issue.",
+
+  "empty_state_inbox_sidebar_closed_tab_title": "No closed issues",
+  "empty_state_inbox_sidebar_closed_tab_description": "All the issues whether accepted or declined can be found here.",
+
+  "empty_state_inbox_sidebar_filter_empty_state_title": "No matching issues",
+  "empty_state_inbox_sidebar_filter_empty_state_description": "No issue matches filter applied in intake. Create a new issue.",
+
+  "empty_state_inbox_detail_empty_state_title": "Select an issue to view its details.",
+
+  "empty_state_views_empty_search_title": "No matching views",
+  "empty_state_views_empty_search_description": "No views match the search criteria. Create a new view instead.",
+
+  "empty_state_projects_empty_search_title": "No matching projects",
+  "empty_state_projects_empty_search_description": "No projects detected with the matching criteria. Create a new project instead.",
+
+  "empty_state_members_empty_search_title": "No matching members",
+  "empty_state_members_empty_search_description": "Add them to the project if they are already a part of the workspace",
+
+  "empty_state_project_module_issues_title": "No issues in the module",
+  "empty_state_project_module_issues_description": "Create or add issues which you want to accomplish as part of this module",
+  "empty_state_project_module_issues_primary_button": "Create new issue",
+  "empty_state_project_module_issues_secondary_button": "Add an existing issue",
+
+  "empty_state_project_module_title": "Map your project milestones to Modules and track aggregated work easily.",
+  "empty_state_project_module_description": "A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone.",
+  "empty_state_project_module_primary_button": "Build your first module",
+  "empty_state_project_module_comic_title": "Modules help group work by hierarchy.",
+  "empty_state_project_module_comic_description": "A cart module, a chassis module, and a warehouse module are all good example of this grouping.",
+
+  "empty_state_project_archived_no_modules_title": "No archived Modules yet",
+  "empty_state_project_archived_no_modules_description": "To tidy up your project, archive completed or cancelled modules. Find them here once archived.",
+
+  "empty_state_project_empty_filter_title": "No issues found matching the filters applied",
+  "empty_state_project_empty_filter_secondary_button": "Clear all filters",
+
+  "empty_state_project_archived_empty_filter_title": "No issues found matching the filters applied",
+  "empty_state_project_archived_empty_filter_secondary_button": "Clear all filters",
+
+  "empty_state_project_draft_empty_filter_title": "No issues found matching the filters applied",
+  "empty_state_project_draft_empty_filter_secondary_button": "Clear all filters",
+
+  "empty_state_project_no_issues_title": "Create an issue and assign it to someone, even yourself",
+  "empty_state_project_no_issues_description": "Think of issues as jobs, tasks, work, or JTBD. Which we like. An issue and its sub-issues are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes issues to move your project towards its goal.",
+  "empty_state_project_no_issues_primary_button": "Create your first issue",
+  "empty_state_project_no_issues_comic_title": "Issues are building blocks in Plane.",
+  "empty_state_project_no_issues_comic_description": "Redesign the Plane UI, Rebrand the company, or Launch the new fuel injection system are examples of issues that likely have sub-issues.",
+
+  "empty_state_project_archived_no_issues_title": "No archived issues yet",
+  "empty_state_project_archived_no_issues_description": "Manually or through automation, you can archive issues that are completed or cancelled. Find them here once archived.",
+  "empty_state_project_archived_no_issues_primary_button": "Set automation",
+
+  "empty_state_project_draft_no_issues_title": "No draft issues yet",
+  "empty_state_project_draft_no_issues_description": "Quickly stepping away but want to keep your place? No worries – save a draft now. Your issues will be right here waiting for you.",
+
+  "empty_state_project_view_title": "Save filtered views for your project. Create as many as you need",
+  "empty_state_project_view_description": "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone's views and choose whichever suits their needs best.",
+  "empty_state_project_view_primary_button": "Create your first view",
+  "empty_state_project_view_comic_title": "Views work atop Issue properties.",
+  "empty_state_project_view_comic_description": "You can create a view from here with as many properties as filters as you see fit.",
+
+  "empty_state_project_page_title": "Write a note, a doc, or a full knowledge base. Get Galileo, Plane's AI assistant, to help you get started",
+  "empty_state_project_page_description": "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project's context. To make short work of any doc, invoke Galileo, Plane's AI, with a shortcut or the click of a button.",
+  "empty_state_project_page_primary_button": "Create your first page",
+
+  "empty_state_project_page_private_title": "No private pages yet",
+  "empty_state_project_page_private_description": "Keep your private thoughts here. When you're ready to share, the team's just a click away.",
+  "empty_state_project_page_private_primary_button": "Create your first page",
+
+  "empty_state_project_page_public_title": "No public pages yet",
+  "empty_state_project_page_public_description": "See pages shared with everyone in your project right here.",
+  "empty_state_project_page_public_primary_button": "Create your first page",
+
+  "empty_state_project_page_archived_title": "No archived pages yet",
+  "empty_state_project_page_archived_description": "Archive pages not on your radar. Access them here when needed.",
+
+  "empty_state_workspace_page_title": "Write a note, a doc, or a full knowledge base. Get Galileo, Plane's AI assistant, to help you get started",
+  "empty_state_workspace_page_description": "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project's context. To make short work of any doc, invoke Galileo, Plane's AI, with a shortcut or the click of a button.",
+  "empty_state_workspace_page_primary_button": "Create your first page",
+
+  "empty_state_workspace_page_private_title": "No private pages yet",
+  "empty_state_workspace_page_private_description": "Keep your private thoughts here. When you're ready to share, the team's just a click away.",
+  "empty_state_workspace_page_private_primary_button": "Create your first page",
+
+  "empty_state_workspace_page_public_title": "No public pages yet",
+  "empty_state_workspace_page_public_description": "See pages shared with everyone in your workspace right here.",
+  "empty_state_workspace_page_public_primary_button": "Create your first page",
+  
+  "empty_state_workspace_page_archived_title": "No archived pages yet",
+  "empty_state_workspace_page_archived_description": "Archive pages not on your radar. Access them here when needed.",
+
+  "empty_state_workspace_draft_issues_title": "Half-written issues, and soon, comments will show up here.",
+  "empty_state_workspace_draft_issues_description": "To try this out, start adding an issue and leave it mid-way or create your first draft below. 😉",
+  "empty_state_workspace_draft_issues_primary_button": "Create your first draft"
+  
 }

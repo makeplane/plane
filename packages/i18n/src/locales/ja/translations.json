@@ -316,5 +316,249 @@
   "remove_parent_issue": "親問題を削除",
   "add_parent": "親問題を追加",
   "loading_members": "メンバーを読み込んでいます...",
-  "inbox": "受信箱"
+  "inbox": "受信箱",
+  "empty_state_workspace_dashboard_title": "プロジェクト、アクティビティ、メトリクスの概要",
+  "empty_state_workspace_dashboard_description": "Planeへようこそ。最初のプロジェクトを作成し、課題を追跡してください。このページは進捗を支援するスペースに変わります。管理者はチームの進捗を支援する項目も確認できます。",
+  "empty_state_workspace_dashboard_primary_button": "最初のプロジェクトを作成",
+  "empty_state_workspace_dashboard_comic_title": "すべてはPlaneのプロジェクトから始まります",
+  "empty_state_workspace_dashboard_comic_description": "プロジェクトは、製品のロードマップ、マーケティングキャンペーン、新車の発売などです。",
+
+  "empty_state_workspace_analytics_title": "進捗状況、ワークロード、割り当てを追跡。トレンドを把握し、ブロッカーを取り除き、作業を迅速に進めます",
+  "empty_state_workspace_analytics_description": "スコープと需要、見積もり、スコープクリープを確認します。チームメンバーとチームのパフォーマンスを把握し、プロジェクトが時間通りに進むようにします。",
+  "empty_state_workspace_analytics_primary_button": "最初のプロジェクトを開始",
+  "empty_state_workspace_analytics_comic_title": "アナリティクスはサイクル+モジュールで最適に機能します",
+  "empty_state_workspace_analytics_comic_description": "まず、課題をサイクルにタイムボックス化し、可能であれば、サイクルを超えて広がる課題をモジュールにグループ化します。左のナビゲーションで両方を確認してください。",
+
+  "empty_state_workspace_projects_title": "アクティブなプロジェクトがありません",
+  "empty_state_workspace_projects_description": "各プロジェクトは目標指向の作業の親として考えてください。プロジェクトには、ジョブ、サイクル、モジュールが含まれ、同僚と協力して目標達成を支援します。新しいプロジェクトを作成するか、アーカイブされたプロジェクトをフィルタリングしてください。",
+  "empty_state_workspace_projects_primary_button": "最初のプロジェクトを開始",
+  "empty_state_workspace_projects_comic_title": "すべてはPlaneのプロジェクトから始まります",
+  "empty_state_workspace_projects_comic_description": "プロジェクトは、製品のロードマップ、マーケティングキャンペーン、新車の発売などです。",
+
+  "empty_state_workspace_teams_title": "チーム",
+  "empty_state_workspace_teams_description": "チームはプロジェクトで協力する人々のグループです。チームを作成して始めましょう。",
+  "empty_state_workspace_teams_primary_button": "新しいチームを作成",
+
+  "empty_state_workspace_initiatives_title": "イニシアチブで最高レベルの作業を整理",
+  "empty_state_workspace_initiatives_description": "複数のプロジェクトやチームにまたがる作業を整理する必要がある場合、イニシアチブが役立ちます。プロジェクトとエピックをイニシアチブに接続し、自動的に更新をロールアップし、木々を見る前に森を見ます。",
+  "empty_state_workspace_initiatives_primary_button": "イニシアチブを作成",
+
+  "empty_state_workspace_initiatives_empty_search_title": "一致するイニシアチブがありません",
+  "empty_state_workspace_initiatives_empty_search_description": "一致する条件のイニシアチブは検出されません。\n代わりに新しいイニシアチブを作成してください。",
+
+  "empty_state_workspace_all_issues_title": "プロジェクトに課題がありません",
+  "empty_state_workspace_all_issues_description": "最初のプロジェクトが完了しました！次は、作業を追跡可能な部分に分割しましょう。頑張りましょう！",
+  "empty_state_workspace_all_issues_primary_button": "新しい課題を作成",
+
+  "empty_state_workspace_assigned_title": "まだ課題がありません",
+  "empty_state_workspace_assigned_description": "あなたに割り当てられた課題はここで追跡できます。",
+  "empty_state_workspace_assigned_primary_button": "新しい課題を作成",
+
+  "empty_state_workspace_created_title": "まだ課題がありません",
+  "empty_state_workspace_created_description": "あなたが作成したすべての課題がここに表示され、直接追跡できます。",
+  "empty_state_workspace_created_primary_button": "新しい課題を作成",
+
+  "empty_state_workspace_subscribed_title": "まだ課題がありません",
+  "empty_state_workspace_subscribed_description": "興味のある課題をサブスクライブし、それらをすべてここで追跡します。",
+
+  "empty_state_workspace_custom_view_title": "まだ課題がありません",
+  "empty_state_workspace_custom_view_description": "フィルターに適用される課題を、ここですべて追跡します。",
+
+  "empty_state_project_no_epics_title": "エピックを作成し、誰かに（自分自身でも）割り当てます",
+  "empty_state_project_no_epics_description": "複数のサイクルにまたがり、モジュール間で存在できる大規模な作業の場合、エピックを作成します。プロジェクト内の課題とサブ課題をエピックにリンクし、概要から課題にジャンプします。",
+  "empty_state_project_no_epics_primary_button": "エピックを作成",
+
+  "empty_state_team_no_issues_title": "チームプロジェクトで課題を作成し、誰かに（自分自身でも）割り当てます",
+  "empty_state_team_no_issues_description": "課題は仕事、タスク、作業、またはJTBDとして考えてください。課題とそのサブ課題は通常、チームのメンバーに割り当てられた時間ベースのアクション項目です。チームが課題を作成、割り当て、完了させることで、プロジェクトの目標達成に向けて進みます。",
+  "empty_state_team_no_issues_primary_button": "最初の課題を作成",
+  "empty_state_team_no_issues_comic_title": "課題はPlaneの構成要素です。",
+  "empty_state_team_no_issues_comic_description": "Plane UIの再設計、会社のリブランド、新しい燃料噴射システムの発売など、サブ課題を持つ可能性が高い課題の例です。",
+
+  "empty_state_inbox_sidebar_filter_empty_state_title": "一致する課題がありません",
+  "empty_state_inbox_sidebar_filter_empty_state_description": "受信箱で適用されたフィルターに一致する課題はありません。新しい課題を作成してください。",
+
+  "empty_state_inbox_detail_empty_state_title": "詳細を表示する課題を選択してください。",
+
+  "empty_state_views_empty_search_title": "一致するビューがありません",
+  "empty_state_views_empty_search_description": "検索条件に一致するビューがありません。代わりに新しいビューを作成してください。",
+
+  "empty_state_projects_empty_search_title": "一致するプロジェクトがありません",
+  "empty_state_projects_empty_search_description": "一致する条件のプロジェクトは検出されません。代わりに新しいプロジェクトを作成してください。",
+
+  "empty_state_members_empty_search_title": "一致するメンバーがありません",
+  "empty_state_members_empty_search_description": "ワークスペースのメンバーの場合は、プロジェクトに追加してください。",
+
+  "empty_state_project_module_issues_title": "モジュールに課題がありません",
+  "empty_state_project_module_issues_description": "このモジュールの一部として達成したい課題を作成または追加してください",
+  "empty_state_project_module_issues_primary_button": "新しい課題を作成",
+  "empty_state_project_module_issues_secondary_button": "既存の課題を追加",
+
+  "empty_state_project_archived_no_modules_title": "アーカイブされたモジュールはまだありません",
+  "empty_state_project_archived_no_modules_description": "プロジェクトを整理するために、完了またはキャンセルされたモジュールをアーカイブします。アーカイブ後はここで確認できます。",
+
+  "empty_state_project_empty_filter_title": "フィルターに一致する課題が見つかりません",
+  "empty_state_project_empty_filter_secondary_button": "すべてのフィルターをクリア",
+
+  "empty_state_project_archived_empty_filter_title": "フィルターに一致する課題が見つかりません",
+  "empty_state_project_archived_empty_filter_secondary_button": "すべてのフィルターをクリア",
+
+  "empty_state_project_draft_empty_filter_title": "フィルターに一致する課題が見つかりません",
+  "empty_state_project_draft_empty_filter_secondary_button": "すべてのフィルターをクリア",
+
+  "empty_state_project_no_issues_title": "誰かに（自分自身でも）課題を作成して割り当てましょう",
+  "empty_state_project_no_issues_description": "課題は仕事、タスク、作業、またはJTBDとして考えてください。課題とそのサブ課題は通常、チームのメンバーに割り当てられた時間ベースのアクション項目です。チームが課題を作成、割り当て、完了させることで、プロジェクトの目標達成に向けて進みます。",
+  "empty_state_project_no_issues_primary_button": "最初の課題を作成",
+  "empty_state_project_no_issues_comic_title": "課題はPlaneの構成要素です。",
+  "empty_state_project_no_issues_comic_description": "Plane UIの再設計、会社のリブランド、新しい燃料噴射システムの発売など、サブ課題を持つ可能性が高い課題の例です。",
+
+  "empty_state_project_archived_no_issues_title": "アーカイブされた課題はまだありません",
+  "empty_state_project_archived_no_issues_description": "手動または自動化を通じて、完了またはキャンセルされた課題をアーカイブできます。アーカイブ後はここで確認できます。",
+  "empty_state_project_archived_no_issues_primary_button": "自動化を設定",
+
+  "empty_state_project_draft_no_issues_title": "下書き課題はまだありません",
+  "empty_state_project_draft_no_issues_description": "急いで離れる必要がありますが、場所を保持したいですか？心配いりません – 下書きを保存してください。課題はここで待っています。",
+
+  "empty_state_project_page_title": "メモ、ドキュメント、または完全なナレッジベースを作成します。Planeのプロジェクトで最初のメモを書きましょう。",
+  "empty_state_project_page_description": "メモを取り、簡単にフォーマットし、課題を埋め込み、コンポーネントのライブラリを使用してレイアウトし、すべてをプロジェクトのコンテキストに保持します。ドキュメントを簡単に作成するには、Planeのページエディターを使用してください。",
+  "empty_state_project_page_primary_button": "最初のページを作成",
+
+  "empty_state_project_page_private_title": "プライベートページはまだありません",
+  "empty_state_project_page_private_description": "ここにプライベートな考えを保持します。共有する準備ができたら、チームはクリック一つで利用できます。",
+  "empty_state_project_page_private_primary_button": "最初のページを作成",
+
+  "empty_state_project_page_public_title": "公開ページはまだありません",
+  "empty_state_project_page_public_description": "プロジェクト内の全員と共有されているページをここで確認します。",
+  "empty_state_project_page_public_primary_button": "最初のページを作成",
+
+  "empty_state_project_page_archived_title": "アーカイブされたページはまだありません",
+  "empty_state_project_page_archived_description": "レーダーにないページをアーカイブします。必要な時にここでアクセスできます。",
+
+  "empty_state_workspace_page_title": "メモ、ドキュメント、または完全なナレッジベースを作成します。Plane AIアシスタントのGalileoが開始をサポートします",
+  "empty_state_workspace_page_description": "ページはPlaneでの思考のスペースです。会議のメモを取り、簡単にフォーマットし、課題を埋め込み、コンポーネントのライブラリを使用してレイアウトし、すべてをプロジェクトのコンテキストに保持します。ドキュメントを素早く作成するには、ショートカットまたはボタンのクリックでGalileo、Plane AIを呼び出します。",
+  "empty_state_workspace_page_primary_button": "最初のページを作成",
+
+  "empty_state_workspace_page_private_title": "プライベートページはまだありません",
+  "empty_state_workspace_page_private_description": "ここにプライベートな考えを保持します。共有する準備ができたら、チームはクリック一つで利用できます。",
+  "empty_state_workspace_page_private_primary_button": "最初のページを作成",
+
+  "empty_state_workspace_page_public_title": "公開ページはまだありません",
+  "empty_state_workspace_page_public_description": "ワークスペース内の全員と共有されているページをここで確認します。",
+  "empty_state_workspace_page_public_primary_button": "最初のページを作成",
+
+  "empty_state_workspace_page_archived_title": "アーカイブされたページはまだありません",
+  "empty_state_workspace_page_archived_description": "レーダーにないページをアーカイブします。必要な時にここでアクセスできます。",
+
+  "empty_state_command_k_search_empty_state_title": "結果が見つかりません",
+
+  "empty_state_issue_relation_search_empty_state_title": "一致する課題が見つかりません",
+
+  "empty_state_issue_relation_empty_state_title": "課題が見つかりません",
+
+  "empty_state_issue_comment_empty_state_title": "コメントはまだありません",
+  "empty_state_issue_comment_empty_state_description": "コメントは課題のディスカッションとフォローアップのスペースとして使用できます",
+
+  "empty_state_notification_detail_empty_state_title": "詳細を表示するには選択してください。",
+
+  "empty_state_notification_mentions_empty_state_title": "課題が割り当てられていません",
+  "empty_state_notification_mentions_empty_state_description": "あなたに割り当てられた課題の更新はここで確認できます",
+
+  "empty_state_notification_my_issue_empty_state_title": "課題が割り当てられていません",
+  "empty_state_notification_my_issue_empty_state_description": "あなたに割り当てられた課題の更新はここで確認できます",
+
+  "empty_state_notification_created_empty_state_title": "課題への更新はありません",
+  "empty_state_notification_created_empty_state_description": "あなたが作成した課題への更新はここで確認できます",
+
+  "empty_state_notification_subscribed_empty_state_title": "課題への更新はありません",
+  "empty_state_notification_subscribed_empty_state_description": "サブスクライブしている課題への更新はここで確認できます",
+
+  "empty_state_notification_snoozed_empty_state_title": "スヌーズされた通知はまだありません",
+  "empty_state_notification_snoozed_empty_state_description": "後で対応するためにスヌーズした通知はここで利用できます",
+
+  "empty_state_notification_archived_empty_state_title": "アーカイブされた通知はまだありません",
+  "empty_state_notification_archived_empty_state_description": "アーカイブした通知は、フォーカスを助けるためにここで利用できます",
+
+  "empty_state_active_cycle_chart_empty_state_title": "バーンダウンチャートを表示するには課題をサイクルに追加してください。",
+
+  "empty_state_active_cycle_priority_issue_empty_state_title": "サイクル内で取り組まれている高優先度の課題を一目で確認します。",
+
+  "empty_state_active_cycle_assignee_empty_state_title": "担当者別の作業の内訳を確認するには、課題に担当者を追加してください。",
+
+  "empty_state_active_cycle_label_empty_state_title": "ラベル別の作業の内訳を確認するには、課題にラベルを追加してください。",
+
+  "empty_state_disabled_project_cycle_title": "このプロジェクトではサイクルが有効になっていません。",
+  "empty_state_disabled_project_cycle_description": "作業をタイムボックス化された塊に分割し、プロジェクトの期限から逆算して日付を設定し、チームとして実質的な進捗を作ります。プロジェクトでサイクル機能を有効にして使用を開始してください。",
+  "empty_state_disabled_project_cycle_primary_button": "機能を管理",
+
+  "empty_state_disabled_project_module_title": "このプロジェクトではモジュールが有効になっていません。",
+  "empty_state_disabled_project_module_description": "論理的な階層的な親に属する課題のグループがモジュールを形成します。プロジェクトのマイルストーンによって作業を追跡する方法として考えてください。プロジェクト設定でモジュールを有効にしてください。",
+  "empty_state_disabled_project_module_primary_button": "機能を管理",
+
+  "empty_state_disabled_project_view_title": "このプロジェクトではビューが有効になっていません。",
+  "empty_state_disabled_project_view_description": "ビューは、頻繁に使用するか簡単にアクセスしたいフィルターのセットです。プロジェクト内のすべての同僚が全員のビューを見ることができ、ニーズに最適なものを選択できます。プロジェクト設定でビューを有効にして使用を開始してください。",
+  "empty_state_disabled_project_view_primary_button": "機能を管理",
+
+  "empty_state_workspace_draft_issues_title": "半分書かれた課題、そしてまもなく、コメントがここに表示されます。",
+  "empty_state_workspace_draft_issues_description": "これを試すには、課題の追加を開始して途中で離れるか、以下で最初の下書きを作成してください。😉",
+  "empty_state_workspace_draft_issues_primary_button": "最初の下書きを作成",
+  
+  "empty_state_workspace_project_not_found_title": "そのようなプロジェクトは存在しません",
+  "empty_state_workspace_project_not_found_description": "課題を作成したり作業を管理したりするには、プロジェクトを作成するか、既存のプロジェクトに参加する必要があります。",
+  "empty_state_workspace_project_not_found_primary_button": "プロジェクトを作成",
+  "empty_state_workspace_project_not_found_comic_title": "Planeではすべてがプロジェクトから始まります",
+  "empty_state_workspace_project_not_found_comic_description": "プロジェクトは製品のロードマップ、マーケティングキャンペーン、新車の発売などです。",
+
+  "empty_state_workspace_no_projects_title": "プロジェクトがありません",
+  "empty_state_workspace_no_projects_description": "課題を作成したり作業を管理したりするには、プロジェクトを作成するか、既存のプロジェクトに参加する必要があります。",
+  "empty_state_workspace_no_projects_primary_button": "最初のプロジェクトを開始",
+  "empty_state_workspace_no_projects_comic_title": "Planeではすべてがプロジェクトから始まります",
+  "empty_state_workspace_no_projects_comic_description": "プロジェクトは製品のロードマップ、マーケティングキャンペーン、新車の発売などです。",
+
+  "empty_state_project_cycle_no_issues_title": "サイクルに課題が追加されていません",
+  "empty_state_project_cycle_no_issues_description": "このサイクル内でタイムボックス化して配信したい課題を追加または作成してください",
+  "empty_state_project_cycle_no_issues_primary_button": "新しい課題を作成",
+  "empty_state_project_cycle_no_issues_secondary_button": "既存の課題を追加",
+
+  "empty_state_project_cycle_active_title": "アクティブなサイクルがありません",
+  "empty_state_project_cycle_active_description": "アクティブなサイクルには、その範囲内に今日の日付を含む期間が含まれます。アクティブなサイクルの進捗状況と詳細はここで確認できます。",
+
+  "empty_state_project_cycle_completed_no_issues_title": "サイクルに課題がありません",
+  "empty_state_project_cycle_completed_no_issues_description": "サイクルに課題がありません。課題は転送されるか非表示になっています。非表示の課題がある場合は、表示プロパティを更新して確認してください。",
+
+  "empty_state_team_empty_filter_title": "適用されたフィルターに一致する課題が見つかりません",
+  "empty_state_team_empty_filter_secondary_button": "すべてのフィルターをクリア",
+
+  "empty_state_team_view_title": "チーム用のフィルタリングされたビューを保存します。必要な数だけ作成できます",
+  "empty_state_team_view_description": "ビューは、頻繁に使用するか簡単にアクセスしたいフィルターのセットです。チーム内のすべての同僚が全員のビューを見ることができ、ニーズに最適なものを選択できます。",
+  "empty_state_team_view_primary_button": "最初のビューを作成",
+  "empty_state_team_view_comic_title": "ビューは課題のプロパティ上で機能します。",
+  "empty_state_team_view_comic_description": "ここから、適切と思われる数のプロパティをフィルターとしてビューを作成できます。",
+
+  "empty_state_project_settings_labels_title": "ラベルがまだありません",
+  "empty_state_project_settings_labels_description": "プロジェクト内の課題を整理しフィルタリングするのに役立つラベルを作成してください。",
+
+  "empty_state_project_settings_integrations_title": "設定された統合がありません",
+  "empty_state_project_settings_integrations_description": "プロジェクトの課題を同期するためにGitHubやその他の統合を設定してください。",
+
+  "empty_state_project_settings_estimate_title": "見積もりが追加されていません",
+  "empty_state_project_settings_estimate_description": "課題ごとの作業量を伝えるための見積もりのセットを作成してください。",
+
+  "empty_state_inbox_sidebar_open_tab_title": "オープンな課題はありません",
+  "empty_state_inbox_sidebar_open_tab_description": "オープンな課題はここで見つかります。新しい課題を作成してください。",
+
+  "empty_state_inbox_sidebar_closed_tab_title": "クローズされた課題はありません",
+  "empty_state_inbox_sidebar_closed_tab_description": "受け入れられたか却下されたかにかかわらず、すべての課題はここで見つかります。",
+
+  "empty_state_disabled_project_page_title": "ページはこのプロジェクトで有効になっていません。",
+  "empty_state_disabled_project_page_description": "ページはPlaneでの思考のスペースです。会議のメモを取り、簡単にフォーマットし、課題を埋め込み、コンポーネントのライブラリを使用してレイアウトし、すべてをプロジェクトのコンテキストに保持します。プロジェクトでページ機能を有効にして作成を開始してください。",
+  "empty_state_disabled_project_page_primary_button": "機能を管理",
+
+  "empty_state_active_cycle_progress_empty_state_title": "進捗を表示するには、サイクルに課題を追加してください",
+
+  "empty_state_workspace_active_cycles_title": "アクティブなサイクルがありません",
+  "empty_state_workspace_active_cycles_description": "プロジェクトのサイクルで、その範囲内に今日の日付を含む期間があるもの。すべてのアクティブなサイクルの進捗と詳細はここで確認できます。",
+
+  "empty_state_disabled_project_inbox_title": "受信箱はこのプロジェクトで有効になっていません",
+  "empty_state_disabled_project_inbox_description": "受信箱は、プロジェクトへの着信リクエストを管理し、ワークフローに課題として追加するのに役立ちます。リクエストを管理するには、プロジェクト設定から受信箱を有効にしてください。",
+  "empty_state_disabled_project_inbox_primary_button": "機能を管理"
+  
 }

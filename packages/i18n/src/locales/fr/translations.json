@@ -316,5 +316,263 @@
   "remove_parent_issue": "Supprimer le problème parent",
   "add_parent": "Ajouter un parent",
   "loading_members": "Chargement des membres...",
-  "inbox": "boîte de réception"
+  "inbox": "boîte de réception",
+  "empty_state_workspace_dashboard_title": "Aperçu de vos projets, activités et métriques",
+  "empty_state_workspace_dashboard_description": "Bienvenue sur Plane ! Nous sommes ravis de vous accueillir. Créez votre premier projet et suivez vos tâches, et cette page se transformera en un espace qui vous aide à progresser. Les administrateurs verront également des éléments qui aident leur équipe à progresser.",
+  "empty_state_workspace_dashboard_primary_button": "Créer votre premier projet",
+  "empty_state_workspace_dashboard_comic_title": "Tout commence avec un projet dans Plane",
+  "empty_state_workspace_dashboard_comic_description": "Un projet pourrait être la feuille de route d'un produit, une campagne marketing ou le lancement d'une nouvelle voiture.",
+
+  "empty_state_workspace_analytics_title": "Suivez les progrès, charges de travail et allocations. Identifiez les tendances, supprimez les blocages et avancez plus vite",
+  "empty_state_workspace_analytics_description": "Visualisez la portée par rapport à la demande, les estimations et l'augmentation de la portée. Obtenez les performances par membre d'équipe et équipes, et assurez-vous que votre projet se déroule dans les temps.",
+  "empty_state_workspace_analytics_primary_button": "Démarrer votre premier projet",
+  "empty_state_workspace_analytics_comic_title": "Analytics fonctionne mieux avec Cycles + Modules",
+  "empty_state_workspace_analytics_comic_description": "D'abord, organisez vos tâches en Cycles et, si possible, regroupez les tâches qui s'étendent sur plus d'un cycle en Modules. Consultez les deux dans la navigation de gauche.",
+
+  "empty_state_workspace_projects_title": "Aucun projet actif",
+  "empty_state_workspace_projects_description": "Considérez chaque projet comme le parent du travail orienté objectif. Les projets sont là où vivent les Tâches, Cycles et Modules, et avec vos collègues, ils vous aident à atteindre cet objectif. Créez un nouveau projet ou filtrez les projets archivés.",
+  "empty_state_workspace_projects_primary_button": "Démarrer votre premier projet",
+  "empty_state_workspace_projects_comic_title": "Tout commence avec un projet dans Plane",
+  "empty_state_workspace_projects_comic_description": "Un projet pourrait être la feuille de route d'un produit, une campagne marketing ou le lancement d'une nouvelle voiture.",
+
+  "empty_state_workspace_teams_title": "Équipes",
+  "empty_state_workspace_teams_description": "Les équipes sont des groupes de personnes qui collaborent sur des projets. Créez une équipe pour commencer.",
+  "empty_state_workspace_teams_primary_button": "Créer une nouvelle équipe",
+
+  "empty_state_workspace_initiatives_title": "Organisez le travail au plus haut niveau avec les Initiatives",
+  "empty_state_workspace_initiatives_description": "Lorsque vous devez organiser un travail qui s'étend sur plusieurs projets et équipes, les Initiatives sont utiles. Connectez les projets et les épopées aux initiatives, voyez les mises à jour automatiquement agrégées et voyez la forêt avant les arbres.",
+  "empty_state_workspace_initiatives_primary_button": "Créer une initiative",
+
+  "empty_state_workspace_initiatives_empty_search_title": "Aucune initiative correspondante",
+  "empty_state_workspace_initiatives_empty_search_description": "Aucune initiative détectée avec les critères correspondants. \n Créez une nouvelle initiative à la place.",
+
+  "empty_state_workspace_all_issues_title": "Aucune tâche dans le projet",
+  "empty_state_workspace_all_issues_description": "Premier projet terminé ! Maintenant, découpez votre travail en morceaux traçables avec des tâches. Allons-y !",
+  "empty_state_workspace_all_issues_primary_button": "Créer une nouvelle tâche",
+
+  "empty_state_workspace_assigned_title": "Aucune tâche pour le moment",
+  "empty_state_workspace_assigned_description": "Les tâches qui vous sont assignées peuvent être suivies ici.",
+  "empty_state_workspace_assigned_primary_button": "Créer une nouvelle tâche",
+
+  "empty_state_workspace_created_title": "Aucune tâche pour le moment",
+  "empty_state_workspace_created_description": "Toutes les tâches que vous créez arrivent ici, suivez-les directement ici.",
+  "empty_state_workspace_created_primary_button": "Créer une nouvelle tâche",
+
+  "empty_state_workspace_subscribed_title": "Aucune tâche pour le moment",
+  "empty_state_workspace_subscribed_description": "Abonnez-vous aux tâches qui vous intéressent, suivez-les toutes ici.",
+
+  "empty_state_workspace_custom_view_title": "Aucune tâche pour le moment",
+  "empty_state_workspace_custom_view_description": "Les tâches qui correspondent aux filtres, suivez-les toutes ici.",
+
+  "empty_state_project_no_epics_title": "Créez une épopée et assignez-la à quelqu'un, même à vous-même",
+  "empty_state_project_no_epics_description": "Pour les grands ensembles de travail qui s'étendent sur plusieurs cycles et peuvent vivre à travers les modules, créez une épopée. Liez les tâches et sous-tâches d'un projet à une épopée et accédez à une tâche depuis la vue d'ensemble.",
+  "empty_state_project_no_epics_primary_button": "Créer une Épopée",
+
+  "empty_state_team_no_issues_title": "Créez une tâche dans vos projets d'équipe et assignez-la à quelqu'un, même à vous-même",
+  "empty_state_team_no_issues_description": "Pensez aux tâches comme des emplois, des tâches, du travail ou JTBD. Une tâche et ses sous-tâches sont généralement des actions temporelles assignées aux membres de votre équipe. Votre équipe crée, assigne et complète des tâches pour faire avancer votre projet vers son objectif.",
+  "empty_state_team_no_issues_primary_button": "Créer votre première tâche",
+  "empty_state_team_no_issues_comic_title": "Les tâches sont les blocs de construction dans Plane.",
+  "empty_state_team_no_issues_comic_description": "Refaire le design de l'UI de Plane, Rebaptiser l'entreprise, ou Lancer le nouveau système d'injection de carburant sont des exemples de tâches qui ont probablement des sous-tâches.",
+
+  "empty_state_project_settings_labels_title": "Aucune étiquette pour le moment",
+  "empty_state_project_settings_labels_description": "Créez des étiquettes pour aider à organiser et filtrer les tâches dans votre projet.",
+
+  "empty_state_project_settings_integrations_title": "Aucune intégration configurée",
+  "empty_state_project_settings_integrations_description": "Configurez GitHub et d'autres intégrations pour synchroniser les tâches de votre projet.",
+
+  "empty_state_project_settings_estimate_title": "Aucune estimation ajoutée",
+  "empty_state_project_settings_estimate_description": "Créez un ensemble d'estimations pour communiquer la quantité de travail par tâche.",
+
+  "empty_state_project_cycles_title": "Regroupez et délimitez votre travail en Cycles.",
+  "empty_state_project_cycles_description": "Découpez le travail en morceaux temporels, travaillez à rebours depuis la date limite de votre projet pour définir les dates, et réalisez des progrès tangibles en équipe.",
+  "empty_state_project_cycles_primary_button": "Définir votre premier cycle",
+  "empty_state_project_cycles_comic_title": "Les cycles sont des boîtes temporelles répétitives.",
+  "empty_state_project_cycles_comic_description": "Un sprint, une itération, ou tout autre terme que vous utilisez pour le suivi hebdomadaire ou bimensuel du travail est un cycle.",
+
+  "empty_state_project_module_title": "Cartographiez les jalons de votre projet en Modules et suivez facilement le travail agrégé",
+  "empty_state_project_module_description": "Un groupe de tâches appartenant à un parent logique et hiérarchique forme un module. Pensez-y comme une façon de suivre le travail par jalons de projet. Ils ont leurs propres périodes et échéances, ainsi que des analyses pour vous aider à voir à quel point vous êtes proche ou loin d'un jalon.",
+  "empty_state_project_module_primary_button": "Construire votre premier module",
+  "empty_state_project_module_comic_title": "Les modules aident à regrouper le travail par hiérarchie.",
+  "empty_state_project_module_comic_description": "Un module de panier, un module de châssis et un module d'entrepôt sont de bons exemples de ce regroupement.",
+
+  "empty_state_project_view_title": "Enregistrez des vues filtrées pour votre projet. Créez-en autant que nécessaire",
+  "empty_state_project_view_description": "Les vues sont un ensemble de filtres que vous utilisez fréquemment ou auxquels vous souhaitez accéder facilement. Tous vos collègues dans un projet peuvent voir les vues de tout le monde et choisir celle qui convient le mieux à leurs besoins.",
+  "empty_state_project_view_primary_button": "Créer votre première vue",
+  "empty_state_project_view_comic_title": "Les vues fonctionnent sur les propriétés des Tâches.",
+  "empty_state_project_view_comic_description": "Vous pouvez créer une vue à partir d'ici avec autant de propriétés et de filtres que vous le jugez approprié.",
+
+  "empty_state_project_page_title": "Écrivez une note, un document ou une base de connaissances complète. Obtenez l'aide de Galileo, l'assistant IA de Plane",
+  "empty_state_project_page_description": "Les pages sont l'espace de réflexion dans Plane. Prenez des notes de réunion, formatez-les facilement, intégrez des tâches, disposez-les à l'aide d'une bibliothèque de composants et gardez-les toutes dans le contexte de votre projet. Pour faire un travail rapide de tout document, invoquez Galileo, l'IA de Plane, avec un raccourci ou un clic sur un bouton.",
+  "empty_state_project_page_primary_button": "Créer votre première page",
+
+  "empty_state_project_page_private_title": "Aucune page privée pour le moment",
+  "empty_state_project_page_private_description": "Gardez vos pensées privées ici. Quand vous serez prêt à partager, l'équipe n'est qu'à un clic.",
+  "empty_state_project_page_private_primary_button": "Créer votre première page",
+
+  "empty_state_project_page_public_title": "Aucune page publique pour le moment",
+  "empty_state_project_page_public_description": "Consultez les pages partagées avec tout le monde dans votre projet ici.",
+  "empty_state_project_page_public_primary_button": "Créer votre première page",
+
+  "empty_state_workspace_page_title": "Écrivez une note, un document ou une base de connaissances complète. Obtenez l'aide de Galileo, l'assistant IA de Plane",
+  "empty_state_workspace_page_description": "Les pages sont l'espace de réflexion dans Plane. Prenez des notes de réunion, formatez-les facilement, intégrez des tâches, disposez-les à l'aide d'une bibliothèque de composants et gardez-les toutes dans le contexte de votre espace de travail.",
+  "empty_state_workspace_page_primary_button": "Créer votre première page",
+
+  "empty_state_notification_all_empty_state_title": "Aucune tâche assignée",
+  "empty_state_notification_all_empty_state_description": "Les mises à jour des tâches qui vous sont assignées peuvent être vues ici",
+
+  "empty_state_notification_unread_empty_state_title": "Aucune notification non lue",
+  "empty_state_notification_unread_empty_state_description": "Félicitations, vous êtes à jour avec tout ce qui se passe dans les tâches qui vous intéressent",
+
+  "empty_state_active_cycle_progress_empty_state_title": "Ajoutez des tâches au cycle pour voir sa progression",
+
+  "empty_state_workspace_active_cycles_title": "Aucun cycle actif",
+  "empty_state_workspace_active_cycles_description": "Les cycles de vos projets qui incluent toute période englobant la date d'aujourd'hui dans leur plage. Trouvez ici la progression et les détails de tous vos cycles actifs.",
+
+  "empty_state_disabled_project_inbox_title": "La boîte de réception n'est pas activée pour le projet",
+  "empty_state_disabled_project_inbox_description": "La boîte de réception vous aide à gérer les demandes entrantes dans votre projet et à les ajouter comme tâches dans votre flux de travail. Activez la boîte de réception depuis les paramètres du projet pour gérer les demandes.",
+  "empty_state_disabled_project_inbox_primary_button": "Gérer les fonctionnalités",
+  
+  "empty_state_workspace_project_not_found_title": "Ce projet n'existe pas",
+  "empty_state_workspace_project_not_found_description": "Pour créer des tâches ou gérer votre travail, vous devez créer un projet ou faire partie d'un projet existant.",
+  "empty_state_workspace_project_not_found_primary_button": "Créer un projet",
+  "empty_state_workspace_project_not_found_comic_title": "Tout commence par un projet dans Plane",
+  "empty_state_workspace_project_not_found_comic_description": "Un projet pourrait être la feuille de route d'un produit, une campagne marketing ou le lancement d'une nouvelle voiture.",
+
+  "empty_state_workspace_no_projects_title": "Aucun projet",
+  "empty_state_workspace_no_projects_description": "Pour créer des tâches ou gérer votre travail, vous devez créer un projet ou faire partie d'un projet existant.",
+  "empty_state_workspace_no_projects_primary_button": "Commencer votre premier projet",
+  "empty_state_workspace_no_projects_comic_title": "Tout commence par un projet dans Plane",
+  "empty_state_workspace_no_projects_comic_description": "Un projet pourrait être la feuille de route d'un produit, une campagne marketing ou le lancement d'une nouvelle voiture.",
+
+  "empty_state_project_cycle_no_issues_title": "Aucune tâche ajoutée au cycle",
+  "empty_state_project_cycle_no_issues_description": "Ajoutez ou créez des tâches que vous souhaitez programmer et livrer dans ce cycle",
+  "empty_state_project_cycle_no_issues_primary_button": "Créer une nouvelle tâche",
+  "empty_state_project_cycle_no_issues_secondary_button": "Ajouter une tâche existante",
+
+  "empty_state_project_cycle_active_title": "Aucun cycle actif",
+  "empty_state_project_cycle_active_description": "Un cycle actif inclut toute période qui englobe la date d'aujourd'hui dans sa plage. Trouvez ici l'avancement et les détails du cycle actif.",
+
+  "empty_state_project_cycle_completed_no_issues_title": "Aucune tâche dans le cycle",
+  "empty_state_project_cycle_completed_no_issues_description": "Aucune tâche dans le cycle. Les tâches sont soit transférées, soit masquées. Pour voir les tâches masquées, s'il y en a, mettez à jour vos propriétés d'affichage en conséquence.",
+
+  "empty_state_command_k_search_empty_state_title": "Aucun résultat trouvé",
+
+  "empty_state_issue_relation_search_empty_state_title": "Aucune tâche correspondante trouvée",
+
+  "empty_state_issue_relation_empty_state_title": "Aucune tâche trouvée",
+
+  "empty_state_issue_comment_empty_state_title": "Aucun commentaire pour le moment",
+  "empty_state_issue_comment_empty_state_description": "Les commentaires peuvent être utilisés comme espace de discussion et de suivi pour les tâches",
+
+  "empty_state_notification_detail_empty_state_title": "Sélectionnez pour voir les détails.",
+
+  "empty_state_notification_mentions_empty_state_title": "Aucune tâche assignée",
+  "empty_state_notification_mentions_empty_state_description": "Les mises à jour des tâches qui vous sont assignées peuvent être vues ici",
+
+  "empty_state_notification_my_issue_empty_state_title": "Aucune tâche assignée",
+  "empty_state_notification_my_issue_empty_state_description": "Les mises à jour des tâches qui vous sont assignées peuvent être vues ici",
+
+  "empty_state_notification_created_empty_state_title": "Aucune mise à jour des tâches",
+  "empty_state_notification_created_empty_state_description": "Les mises à jour des tâches que vous avez créées peuvent être vues ici",
+
+  "empty_state_notification_subscribed_empty_state_title": "Aucune mise à jour des tâches",
+  "empty_state_notification_subscribed_empty_state_description": "Les mises à jour de toute tâche à laquelle vous êtes abonné peuvent être vues ici",
+
+  "empty_state_notification_snoozed_empty_state_title": "Aucune notification mise en sommeil pour le moment",
+  "empty_state_notification_snoozed_empty_state_description": "Toute notification que vous mettez en sommeil pour plus tard sera disponible ici pour y donner suite",
+
+  "empty_state_notification_archived_empty_state_title": "Aucune notification archivée pour le moment",
+  "empty_state_notification_archived_empty_state_description": "Toute notification que vous archivez sera disponible ici pour vous aider à vous concentrer",
+
+  "empty_state_active_cycle_chart_empty_state_title": "Ajoutez des tâches au cycle pour voir le graphique d'avancement.",
+
+  "empty_state_active_cycle_priority_issue_empty_state_title": "Observez en un coup d'œil les tâches de haute priorité traitées dans le cycle.",
+
+  "empty_state_active_cycle_assignee_empty_state_title": "Ajoutez des assignés aux tâches pour voir une répartition du travail par assignés.",
+
+  "empty_state_active_cycle_label_empty_state_title": "Ajoutez des étiquettes aux tâches pour voir la répartition du travail par étiquettes.",
+
+  "empty_state_disabled_project_cycle_title": "Les cycles ne sont pas activés pour ce projet.",
+  "empty_state_disabled_project_cycle_description": "Découpez le travail en morceaux temporels, travaillez à rebours à partir de la date limite de votre projet pour définir les dates, et réalisez des progrès tangibles en équipe. Activez la fonctionnalité des cycles pour votre projet pour commencer à les utiliser.",
+  "empty_state_disabled_project_cycle_primary_button": "Gérer les fonctionnalités",
+
+  "empty_state_disabled_project_module_title": "Les modules ne sont pas activés pour ce projet.",
+  "empty_state_disabled_project_module_description": "Un groupe de tâches qui appartiennent à un parent logique et hiérarchique forme un module. Considérez-les comme un moyen de suivre le travail par jalons de projet. Activez les modules dans les paramètres du projet.",
+  "empty_state_disabled_project_module_primary_button": "Gérer les fonctionnalités",
+
+  "empty_state_disabled_project_page_title": "Les pages ne sont pas activées pour ce projet.",
+  "empty_state_disabled_project_page_description": "Les pages sont un espace de réflexion dans Plane. Prenez des notes de réunion, formatez-les facilement, intégrez des tâches, disposez-les à l'aide d'une bibliothèque de composants et gardez-les toutes dans le contexte de votre projet. Activez la fonctionnalité des pages pour commencer à les créer dans votre projet.",
+  "empty_state_disabled_project_page_primary_button": "Gérer les fonctionnalités",
+
+  "empty_state_disabled_project_view_title": "Les vues ne sont pas activées pour ce projet.",
+  "empty_state_disabled_project_view_description": "Les vues sont un ensemble de filtres enregistrés que vous utilisez fréquemment ou auxquels vous souhaitez un accès facile. Tous vos collègues dans un projet peuvent voir les vues de chacun et choisir celle qui convient le mieux à leurs besoins. Activez les vues dans les paramètres du projet pour commencer à les utiliser.",
+  "empty_state_disabled_project_view_primary_button": "Gérer les fonctionnalités",
+
+  "empty_state_inbox_sidebar_open_tab_title": "Aucune tâche ouverte",
+  "empty_state_inbox_sidebar_open_tab_description": "Trouvez ici les tâches ouvertes. Créez une nouvelle tâche.",
+
+  "empty_state_inbox_sidebar_closed_tab_title": "Aucune tâche fermée",
+  "empty_state_inbox_sidebar_closed_tab_description": "Toutes les tâches, qu'elles soient acceptées ou refusées, peuvent être trouvées ici.",
+
+  "empty_state_inbox_sidebar_filter_empty_state_title": "Aucune tâche correspondante",
+  "empty_state_inbox_sidebar_filter_empty_state_description": "Aucune tâche ne correspond au filtre appliqué dans la boîte de réception. Créez une nouvelle tâche.",
+
+  "empty_state_inbox_detail_empty_state_title": "Sélectionnez une tâche pour voir ses détails.",
+
+  "empty_state_views_empty_search_title": "Aucune vue correspondante",
+  "empty_state_views_empty_search_description": "Aucune vue ne correspond aux critères de recherche. Créez plutôt une nouvelle vue.",
+
+  "empty_state_projects_empty_search_title": "Aucun projet correspondant",
+  "empty_state_projects_empty_search_description": "Aucun projet détecté avec les critères correspondants. Créez plutôt un nouveau projet.",
+
+  "empty_state_members_empty_search_title": "Aucun membre correspondant",
+  "empty_state_members_empty_search_description": "Ajoutez-les au projet s'ils font déjà partie de l'espace de travail",
+
+  "empty_state_project_module_issues_title": "Aucune tâche dans le module",
+  "empty_state_project_module_issues_description": "Créez ou ajoutez des tâches que vous souhaitez accomplir dans le cadre de ce module",
+  "empty_state_project_module_issues_primary_button": "Créer une nouvelle tâche",
+  "empty_state_project_module_issues_secondary_button": "Ajouter une tâche existante",
+
+  "empty_state_project_archived_no_modules_title": "Aucun module archivé pour le moment",
+  "empty_state_project_archived_no_modules_description": "Pour ranger votre projet, archivez les modules terminés ou annulés. Retrouvez-les ici une fois archivés.",
+
+  "empty_state_project_empty_filter_title": "Aucune tâche trouvée correspondant aux filtres appliqués",
+  "empty_state_project_empty_filter_secondary_button": "Effacer tous les filtres",
+
+  "empty_state_project_archived_empty_filter_title": "Aucune tâche trouvée correspondant aux filtres appliqués",
+  "empty_state_project_archived_empty_filter_secondary_button": "Effacer tous les filtres",
+
+  "empty_state_project_draft_empty_filter_title": "Aucune tâche trouvée correspondant aux filtres appliqués",
+  "empty_state_project_draft_empty_filter_secondary_button": "Effacer tous les filtres",
+
+  "empty_state_project_no_issues_title": "Créez une tâche et assignez-la à quelqu'un, même à vous-même",
+  "empty_state_project_no_issues_description": "Pensez aux tâches comme des emplois, des tâches, du travail ou JTBD. Ce que nous aimons. Une tâche et ses sous-tâches sont généralement des actions temporelles assignées aux membres de votre équipe. Votre équipe crée, assigne et complète des tâches pour faire avancer votre projet vers son objectif.",
+  "empty_state_project_no_issues_primary_button": "Créez votre première tâche",
+  "empty_state_project_no_issues_comic_title": "Les tâches sont les blocs de construction dans Plane.",
+  "empty_state_project_no_issues_comic_description": "Refaire le design de l'interface utilisateur de Plane, rebaptiser l'entreprise ou lancer le nouveau système d'injection de carburant sont des exemples de tâches qui ont probablement des sous-tâches.",
+
+  "empty_state_project_archived_no_issues_title": "Aucune tâche archivée pour le moment",
+  "empty_state_project_archived_no_issues_description": "Manuellement ou par automatisation, vous pouvez archiver les tâches terminées ou annulées. Retrouvez-les ici une fois archivées.",
+  "empty_state_project_archived_no_issues_primary_button": "Configurer l'automatisation",
+
+  "empty_state_project_draft_no_issues_title": "Aucun brouillon de tâche pour le moment",
+  "empty_state_project_draft_no_issues_description": "Vous vous absentez rapidement mais vous voulez garder votre place ? Pas de souci - enregistrez un brouillon maintenant. Vos tâches seront là à vous attendre.",
+
+  "empty_state_project_page_archived_title": "Aucune page archivée pour le moment",
+  "empty_state_project_page_archived_description": "Archivez les pages qui ne sont pas sur votre radar. Accédez-y ici quand vous en aurez besoin.",
+
+  "empty_state_workspace_page_private_title": "Aucune page privée pour le moment",
+  "empty_state_workspace_page_private_description": "Gardez vos pensées privées ici. Quand vous serez prêt à partager, l'équipe n'est qu'à un clic.",
+  "empty_state_workspace_page_private_primary_button": "Créer votre première page",
+
+  "empty_state_workspace_page_public_title": "Aucune page publique pour le moment",
+  "empty_state_workspace_page_public_description": "Consultez ici les pages partagées avec tout le monde dans votre espace de travail.",
+  "empty_state_workspace_page_public_primary_button": "Créer votre première page",
+
+  "empty_state_workspace_page_archived_title": "Aucune page archivée pour le moment",
+  "empty_state_workspace_page_archived_description": "Archivez les pages qui ne sont pas sur votre radar. Accédez-y ici quand vous en aurez besoin.",
+
+  "empty_state_workspace_draft_issues_title": "Les tâches à moitié rédigées, et bientôt les commentaires, apparaîtront ici.",
+  "empty_state_workspace_draft_issues_description": "Pour essayer cela, commencez à ajouter une tâche et laissez-la en cours de route ou créez votre premier brouillon ci-dessous. 😉",
+  "empty_state_workspace_draft_issues_primary_button": "Créer votre premier brouillon"
 }

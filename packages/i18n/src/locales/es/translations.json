@@ -316,5 +316,265 @@
   "remove_parent_issue": "Eliminar problema padre",
   "add_parent": "Agregar padre",
   "loading_members": "Cargando miembros...",
-  "inbox": "bandeja de entrada"
+  "inbox": "bandeja de entrada",
+  "empty_state_workspace_dashboard_title": "Resumen de sus proyectos, actividad y métricas",
+  "empty_state_workspace_dashboard_description": "¡Bienvenido a Plane! Nos alegra tenerte aquí. Crea tu primer proyecto y realiza un seguimiento de tus tareas, y esta página se transformará en un espacio que te ayuda a progresar. Los administradores también verán elementos que ayudan a su equipo a progresar.",
+  "empty_state_workspace_dashboard_primary_button": "Crea tu primer proyecto",
+  "empty_state_workspace_dashboard_comic_title": "Todo comienza con un proyecto en Plane",
+  "empty_state_workspace_dashboard_comic_description": "Un proyecto podría ser el plan de un producto, una campaña de marketing o el lanzamiento de un nuevo coche.",
+
+  "empty_state_workspace_analytics_title": "Sigue el progreso, las cargas de trabajo y las asignaciones. Identifica tendencias, elimina bloqueos y avanza más rápido",
+  "empty_state_workspace_analytics_description": "Observa el alcance frente a la demanda, las estimaciones y el aumento del alcance. Obtén el rendimiento por miembros del equipo y equipos, y asegúrate de que tu proyecto se ejecute a tiempo.",
+  "empty_state_workspace_analytics_primary_button": "Comienza tu primer proyecto",
+  "empty_state_workspace_analytics_comic_title": "Analytics funciona mejor con Ciclos + Módulos",
+  "empty_state_workspace_analytics_comic_description": "Primero, organiza tus tareas en Ciclos y, si puedes, agrupa las tareas que abarcan más de un ciclo en Módulos. Consulta ambos en la navegación izquierda.",
+
+  "empty_state_workspace_projects_title": "No hay proyectos activos",
+  "empty_state_workspace_projects_description": "Piensa en cada proyecto como el padre del trabajo orientado a objetivos. Los proyectos son donde viven los Trabajos, Ciclos y Módulos, y junto con tus colegas, te ayudan a alcanzar ese objetivo. Crea un nuevo proyecto o filtra los proyectos archivados.",
+  "empty_state_workspace_projects_primary_button": "Comienza tu primer proyecto",
+  "empty_state_workspace_projects_comic_title": "Todo comienza con un proyecto en Plane",
+  "empty_state_workspace_projects_comic_description": "Un proyecto podría ser el plan de un producto, una campaña de marketing o el lanzamiento de un nuevo coche.",
+
+  "empty_state_workspace_teams_title": "Equipos",
+  "empty_state_workspace_teams_description": "Los equipos son grupos de personas que colaboran en proyectos. Crea un equipo para empezar.",
+  "empty_state_workspace_teams_primary_button": "Crear nuevo equipo",
+
+  "empty_state_workspace_initiatives_title": "Organiza el trabajo al más alto nivel con Iniciativas",
+  "empty_state_workspace_initiatives_description": "Cuando necesites organizar trabajo que abarca varios proyectos y equipos, las Iniciativas son útiles. Conecta proyectos y épicas a iniciativas, observa actualizaciones automáticamente acumuladas y ve el bosque antes que los árboles.",
+  "empty_state_workspace_initiatives_primary_button": "Crear una iniciativa",
+
+  "empty_state_workspace_initiatives_empty_search_title": "No hay iniciativas coincidentes",
+  "empty_state_workspace_initiatives_empty_search_description": "No se detectaron iniciativas con los criterios coincidentes. \n Crea una nueva iniciativa en su lugar.",
+
+  "empty_state_workspace_all_issues_title": "No hay tareas en el proyecto",
+  "empty_state_workspace_all_issues_description": "¡Primer proyecto completado! Ahora, divide tu trabajo en piezas rastreables con tareas. ¡Vamos!",
+  "empty_state_workspace_all_issues_primary_button": "Crear nueva tarea",
+
+  "empty_state_workspace_assigned_title": "No hay tareas aún",
+  "empty_state_workspace_assigned_description": "Las tareas asignadas a ti se pueden rastrear desde aquí.",
+  "empty_state_workspace_assigned_primary_button": "Crear nueva tarea",
+
+  "empty_state_workspace_created_title": "No hay tareas aún",
+  "empty_state_workspace_created_description": "Todas las tareas creadas por ti vienen aquí, rastréalas directamente aquí.",
+  "empty_state_workspace_created_primary_button": "Crear nueva tarea",
+
+  "empty_state_workspace_subscribed_title": "No hay tareas aún",
+  "empty_state_workspace_subscribed_description": "Suscríbete a las tareas que te interesan, rastréalas todas aquí.",
+
+  "empty_state_workspace_custom_view_title": "No hay tareas aún",
+  "empty_state_workspace_custom_view_description": "Las tareas que aplican a los filtros, rastréalas todas aquí.",
+
+  "empty_state_project_no_epics_title": "Crea una épica y asígnala a alguien, incluso a ti mismo",
+  "empty_state_project_no_epics_description": "Para cuerpos de trabajo más grandes que abarcan varios ciclos y pueden vivir a través de módulos, crea una épica. Vincula tareas y subtareas en un proyecto a una épica y salta a una tarea desde la vista general.",
+  "empty_state_project_no_epics_primary_button": "Crear una Épica",
+
+  "empty_state_team_no_issues_title": "Crea una tarea en tus proyectos de equipo y asígnala a alguien, incluso a ti mismo",
+  "empty_state_team_no_issues_description": "Piensa en las tareas como trabajos, tareas, trabajo o JTBD. Una tarea y sus subtareas son generalmente acciones basadas en tiempo asignadas a miembros de tu equipo. Tu equipo crea, asigna y completa tareas para mover tu proyecto hacia su objetivo.",
+  "empty_state_team_no_issues_primary_button": "Crear tu primera tarea",
+  "empty_state_team_no_issues_comic_title": "Las tareas son los bloques de construcción en Plane.",
+  "empty_state_team_no_issues_comic_description": "Rediseñar la UI de Plane, Hacer un rebranding de la empresa, o Lanzar el nuevo sistema de inyección de combustible son ejemplos de tareas que probablemente tienen subtareas.",
+
+  "empty_state_team_empty_filter_title": "No se encontraron tareas que coincidan con los filtros aplicados",
+  "empty_state_team_empty_filter_secondary_button": "Limpiar todos los filtros",
+  "empty_state_team_view_title": "Guarda vistas filtradas para tu equipo. Crea tantas como necesites",
+  "empty_state_team_view_description": "Las vistas son un conjunto de filtros que usas frecuentemente o a los que quieres acceder fácilmente. Todos tus colegas en un equipo pueden ver las vistas de todos y elegir la que mejor se adapte a sus necesidades.",
+  "empty_state_team_view_primary_button": "Crear tu primera vista",
+  "empty_state_team_view_comic_title": "Las vistas funcionan sobre las propiedades de las Tareas.",
+  "empty_state_team_view_comic_description": "Puedes crear una vista desde aquí con tantas propiedades como filtros consideres adecuados.",
+
+  "empty_state_workspace_settings_api_tokens_title": "No se han creado tokens API",
+  "empty_state_workspace_settings_api_tokens_description": "Las APIs de Plane se pueden usar para integrar tus datos en Plane con cualquier sistema externo. Crea un token para comenzar.",
+
+  "empty_state_workspace_settings_webhooks_title": "No se han añadido webhooks",
+  "empty_state_workspace_settings_webhooks_description": "Crea webhooks para recibir actualizaciones en tiempo real y automatizar acciones.",
+
+  "empty_state_workspace_settings_export_title": "No hay exportaciones previas aún",
+  "empty_state_workspace_settings_export_description": "Cada vez que exportes, también tendrás una copia aquí para referencia.",
+
+  "empty_state_workspace_settings_import_title": "No hay importaciones previas aún",
+  "empty_state_workspace_settings_import_description": "Encuentra todas tus importaciones previas aquí y descárgalas.",
+
+  "empty_state_profile_activity_title": "No hay actividades aún",
+  "empty_state_profile_activity_description": "¡Comienza creando una nueva tarea! Añade detalles y propiedades. Explora más en Plane para ver tu actividad.",
+
+  "empty_state_project_settings_labels_title": "No hay etiquetas aún",
+  "empty_state_project_settings_labels_description": "Crea etiquetas para ayudar a organizar y filtrar tareas en tu proyecto.",
+
+  "empty_state_project_settings_integrations_title": "No hay integraciones configuradas",
+  "empty_state_project_settings_integrations_description": "Configura GitHub y otras integraciones para sincronizar las tareas de tu proyecto.",
+
+  "empty_state_project_settings_estimate_title": "No se han añadido estimaciones",
+  "empty_state_project_settings_estimate_description": "Crea un conjunto de estimaciones para comunicar la cantidad de trabajo por tarea.",
+
+  "empty_state_project_cycles_title": "Agrupa y delimita tu trabajo en Ciclos.",
+  "empty_state_project_cycles_description": "Divide el trabajo en fragmentos delimitados por tiempo, trabaja hacia atrás desde la fecha límite de tu proyecto para establecer fechas y logra un progreso tangible como equipo.",
+  "empty_state_project_cycles_primary_button": "Establece tu primer ciclo",
+  "empty_state_project_cycles_comic_title": "Los ciclos son cajas de tiempo repetitivas.",
+  "empty_state_project_cycles_comic_description": "Un sprint, una iteración, o cualquier otro término que uses para el seguimiento semanal o quincenal del trabajo es un ciclo.",
+
+  "empty_state_project_module_title": "Mapea los hitos de tu proyecto a Módulos y rastrea el trabajo agregado fácilmente.",
+  "empty_state_project_module_description": "Un grupo de tareas que pertenecen a un padre lógico y jerárquico forman un módulo. Piensa en ellos como una forma de rastrear el trabajo por hitos del proyecto. Tienen sus propios períodos y fechas límite, así como analíticas para ayudarte a ver qué tan cerca o lejos estás de un hito.",
+  "empty_state_project_module_primary_button": "Construye tu primer módulo",
+  "empty_state_project_module_comic_title": "Los módulos ayudan a agrupar el trabajo por jerarquía.",
+  "empty_state_project_module_comic_description": "Un módulo de carrito, un módulo de chasis y un módulo de almacén son buenos ejemplos de esta agrupación.",
+
+  "empty_state_notification_all_empty_state_title": "No hay tareas asignadas",
+  "empty_state_notification_all_empty_state_description": "Las actualizaciones para tareas asignadas a ti se pueden ver aquí",
+
+  "empty_state_notification_unread_empty_state_title": "No hay notificaciones sin leer",
+  "empty_state_notification_unread_empty_state_description": "¡Felicitaciones! Estás al día con todo lo que sucede en las tareas que te importan",
+
+  "empty_state_active_cycle_progress_empty_state_title": "Agrega tareas al ciclo para ver su progreso",
+
+  "empty_state_workspace_active_cycles_title": "No hay ciclos activos",
+  "empty_state_workspace_active_cycles_description": "Ciclos de tus proyectos que incluyen cualquier período que abarque la fecha de hoy dentro de su rango. Encuentra el progreso y detalles de todos tus ciclos activos aquí.",
+
+  "empty_state_disabled_project_inbox_title": "La bandeja de entrada no está habilitada para el proyecto",
+  "empty_state_disabled_project_inbox_description": "La bandeja de entrada te ayuda a gestionar las solicitudes entrantes a tu proyecto y agregarlas como tareas en tu flujo de trabajo. Habilita la bandeja de entrada desde la configuración del proyecto para gestionar solicitudes.",
+  "empty_state_disabled_project_inbox_primary_button": "Gestionar funciones",
+  "empty_state_inbox_sidebar_open_tab_title": "No hay tareas abiertas",
+  "empty_state_inbox_sidebar_open_tab_description": "Encuentra tareas abiertas aquí. Crea una nueva tarea.",
+
+  "empty_state_inbox_sidebar_closed_tab_title": "No hay tareas cerradas",
+  "empty_state_inbox_sidebar_closed_tab_description": "Todas las tareas, ya sean aceptadas o rechazadas, se pueden encontrar aquí.",
+
+  "empty_state_inbox_sidebar_filter_empty_state_title": "No hay tareas coincidentes",
+  "empty_state_inbox_sidebar_filter_empty_state_description": "Ninguna tarea coincide con el filtro aplicado en la bandeja de entrada. Crea una nueva tarea.",
+
+  "empty_state_inbox_detail_empty_state_title": "Selecciona una tarea para ver sus detalles.",
+
+  "empty_state_project_page_title": "Escribe una nota, un documento o una base de conocimientos completa. Obtén ayuda de Galileo, el asistente de IA de Plane.",
+  "empty_state_project_page_description": "Las páginas son el espacio de pensamiento en Plane. Toma notas de reuniones, dales formato fácilmente, incrusta tareas, organízalas usando una biblioteca de componentes y mantenlas todas en el contexto de tu proyecto. Para hacer un trabajo rápido de cualquier documento, invoca a Galileo, la IA de Plane, con un atajo o el clic de un botón.",
+  "empty_state_disabled_project_view_title": "Las vistas no están habilitadas para este proyecto.",
+  "empty_state_disabled_project_view_description": "Las vistas son un conjunto de filtros que usas frecuentemente o a los que quieres acceder fácilmente. Todos tus colegas en un proyecto pueden ver las vistas de todos y elegir la que mejor se adapte a sus necesidades. Habilita las vistas en la configuración del proyecto para comenzar a usarlas.",
+  "empty_state_disabled_project_view_primary_button": "Gestionar funciones",
+
+  "empty_state_views_empty_search_title": "No se encontraron vistas coincidentes",
+  "empty_state_views_empty_search_description": "No hay vistas que coincidan con los criterios de búsqueda. Crea una nueva vista en su lugar.",
+
+  "empty_state_projects_empty_search_title": "No se encontraron proyectos coincidentes",
+  "empty_state_projects_empty_search_description": "No se detectaron proyectos con los criterios coincidentes. Crea un nuevo proyecto en su lugar.",
+
+  "empty_state_members_empty_search_title": "No se encontraron miembros coincidentes",
+  "empty_state_members_empty_search_description": "Agrégalos al proyecto si ya son parte del espacio de trabajo",
+
+  "empty_state_project_module_issues_title": "No hay tareas en el módulo",
+  "empty_state_project_module_issues_description": "Crea o agrega tareas que desees lograr como parte de este módulo",
+  "empty_state_project_module_issues_primary_button": "Crear nueva tarea",
+  "empty_state_project_module_issues_secondary_button": "Agregar una tarea existente",
+
+  "empty_state_project_archived_no_modules_title": "No hay módulos archivados aún",
+  "empty_state_project_archived_no_modules_description": "Para ordenar tu proyecto, archiva los módulos completados o cancelados. Encuéntralos aquí una vez archivados.",
+
+  "empty_state_project_empty_filter_title": "No se encontraron tareas que coincidan con los filtros aplicados",
+  "empty_state_project_empty_filter_secondary_button": "Limpiar todos los filtros",
+
+  "empty_state_workspace_draft_issues_title": "Las tareas a medio escribir y, pronto, los comentarios aparecerán aquí.",
+  "empty_state_workspace_draft_issues_description": "Para probar esto, comienza a agregar una tarea y déjala a medias o crea tu primer borrador a continuación. 😉",
+  "empty_state_workspace_draft_issues_primary_button": "Crear tu primer borrador",
+
+  "empty_state_workspace_project_not_found_title": "No existe tal proyecto",
+  "empty_state_workspace_project_not_found_description": "Para crear tareas o gestionar tu trabajo, necesitas crear un proyecto o ser parte de uno.",
+  "empty_state_workspace_project_not_found_primary_button": "Crear Proyecto",
+  "empty_state_workspace_project_not_found_comic_title": "Todo comienza con un proyecto en Plane",
+  "empty_state_workspace_project_not_found_comic_description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo coche.",
+  
+  "empty_state_workspace_no_projects_title": "Sin proyecto",
+  "empty_state_workspace_no_projects_description": "Para crear tareas o gestionar tu trabajo, necesitas crear un proyecto o ser parte de uno.",
+  "empty_state_workspace_no_projects_primary_button": "Inicia tu primer proyecto",
+  "empty_state_workspace_no_projects_comic_title": "Todo comienza con un proyecto en Plane",
+  "empty_state_workspace_no_projects_comic_description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo coche.",
+
+  "empty_state_project_cycle_no_issues_title": "No se han añadido tareas al ciclo",
+  "empty_state_project_cycle_no_issues_description": "Añade o crea tareas que desees programar y entregar dentro de este ciclo",
+  "empty_state_project_cycle_no_issues_primary_button": "Crear nueva tarea",
+  "empty_state_project_cycle_no_issues_secondary_button": "Añadir una tarea existente",
+
+  "empty_state_project_cycle_active_title": "No hay ciclo activo",
+  "empty_state_project_cycle_active_description": "Un ciclo activo incluye cualquier período que abarque la fecha de hoy dentro de su rango. Encuentra el progreso y los detalles del ciclo activo aquí.",
+
+  "empty_state_project_cycle_completed_no_issues_title": "No hay tareas en el ciclo",
+  "empty_state_project_cycle_completed_no_issues_description": "No hay tareas en el ciclo. Las tareas están transferidas u ocultas. Para ver las tareas ocultas si las hay, actualiza tus propiedades de visualización en consecuencia.",
+
+  "empty_state_command_k_search_empty_state_title": "No se encontraron resultados",
+
+  "empty_state_issue_relation_search_empty_state_title": "No se encontraron tareas coincidentes",
+
+  "empty_state_issue_relation_empty_state_title": "No se encontraron tareas",
+
+  "empty_state_issue_comment_empty_state_title": "Aún no hay comentarios",
+  "empty_state_issue_comment_empty_state_description": "Los comentarios se pueden usar como un espacio de discusión y seguimiento para las tareas",
+
+  "empty_state_notification_detail_empty_state_title": "Selecciona para ver detalles.",
+
+  "empty_state_notification_mentions_empty_state_title": "No hay tareas asignadas",
+  "empty_state_notification_mentions_empty_state_description": "Aquí se pueden ver las actualizaciones de las tareas que te han sido asignadas",
+
+  "empty_state_notification_my_issue_empty_state_title": "No hay tareas asignadas",
+  "empty_state_notification_my_issue_empty_state_description": "Aquí se pueden ver las actualizaciones de las tareas que te han sido asignadas",
+
+  "empty_state_notification_created_empty_state_title": "No hay actualizaciones de tareas",
+  "empty_state_notification_created_empty_state_description": "Aquí se pueden ver las actualizaciones de las tareas creadas por ti",
+
+  "empty_state_notification_subscribed_empty_state_title": "No hay actualizaciones de tareas",
+  "empty_state_notification_subscribed_empty_state_description": "Aquí se pueden ver las actualizaciones de cualquier tarea a la que estés suscrito",
+
+  "empty_state_notification_snoozed_empty_state_title": "Aún no hay notificaciones pospuestas",
+  "empty_state_notification_snoozed_empty_state_description": "Cualquier notificación que pospongas para más tarde estará disponible aquí para que actúes",
+
+  "empty_state_notification_archived_empty_state_title": "Aún no hay notificaciones archivadas",
+  "empty_state_notification_archived_empty_state_description": "Cualquier notificación que archives estará disponible aquí para ayudarte a concentrarte",
+
+  "empty_state_active_cycle_chart_empty_state_title": "Añade tareas al ciclo para ver el gráfico de avance.",
+
+  "empty_state_active_cycle_priority_issue_empty_state_title": "Observa las tareas de alta prioridad abordadas en el ciclo de un vistazo.",
+
+  "empty_state_active_cycle_assignee_empty_state_title": "Añade asignados a las tareas para ver un desglose del trabajo por asignados.",
+
+  "empty_state_active_cycle_label_empty_state_title": "Añade etiquetas a las tareas para ver el desglose del trabajo por etiquetas.",
+
+  "empty_state_disabled_project_cycle_title": "Los ciclos no están habilitados para este proyecto.",
+  "empty_state_disabled_project_cycle_description": "Divide el trabajo en fragmentos temporales, trabaja hacia atrás desde la fecha límite de tu proyecto para establecer fechas y logra un progreso tangible como equipo. Habilita la función de ciclos para tu proyecto para comenzar a usarlos.",
+  "empty_state_disabled_project_cycle_primary_button": "Gestionar funciones",
+
+  "empty_state_disabled_project_module_title": "Los módulos no están habilitados para el proyecto.",
+  "empty_state_disabled_project_module_description": "Un grupo de tareas que pertenecen a un padre lógico y jerárquico forman un módulo. Piensa en ellos como una forma de rastrear el trabajo por hitos del proyecto. Habilita los módulos desde la configuración del proyecto.",
+  "empty_state_disabled_project_module_primary_button": "Gestionar funciones",
+
+  "empty_state_disabled_project_page_title": "Las páginas no están habilitadas para el proyecto.",
+  "empty_state_disabled_project_page_description": "Las páginas son un espacio de pensamiento en Plane. Toma notas de reuniones, dales formato fácilmente, incrusta tareas, organízalas usando una biblioteca de componentes y mantenlas todas en el contexto de tu proyecto. Habilita la función de páginas para comenzar a crearlas en tu proyecto.",
+  "empty_state_disabled_project_page_primary_button": "Gestionar funciones",
+
+  "empty_state_project_archived_empty_filter_title": "No se encontraron tareas que coincidan con los filtros aplicados",
+  "empty_state_project_archived_empty_filter_secondary_button": "Limpiar todos los filtros",
+
+  "empty_state_project_draft_empty_filter_title": "No se encontraron tareas que coincidan con los filtros aplicados",
+  "empty_state_project_draft_empty_filter_secondary_button": "Limpiar todos los filtros",
+
+  "empty_state_project_no_issues_title": "Crea una tarea y asígnala a alguien, incluso a ti mismo",
+  "empty_state_project_no_issues_description": "Piensa en las tareas como trabajos, tareas, trabajo o JTBD. Lo cual nos gusta. Una tarea y sus subtareas son generalmente acciones basadas en tiempo asignadas a miembros de tu equipo. Tu equipo crea, asigna y completa tareas para mover tu proyecto hacia su objetivo.",
+  "empty_state_project_no_issues_primary_button": "Crea tu primera tarea",
+  "empty_state_project_no_issues_comic_title": "Las tareas son los bloques de construcción en Plane.",
+  "empty_state_project_no_issues_comic_description": "Rediseñar la interfaz de usuario de Plane, Cambiar la marca de la empresa o Lanzar el nuevo sistema de inyección de combustible son ejemplos de tareas que probablemente tienen subtareas.",
+
+  "empty_state_project_archived_no_issues_title": "Aún no hay tareas archivadas",
+  "empty_state_project_archived_no_issues_description": "Manualmente o mediante automatización, puedes archivar tareas que estén completadas o canceladas. Encuéntralas aquí una vez archivadas.",
+  "empty_state_project_archived_no_issues_primary_button": "Configurar automatización",
+
+  "empty_state_project_draft_no_issues_title": "Aún no hay borradores de tareas",
+  "empty_state_project_draft_no_issues_description": "¿Te vas rápidamente pero quieres mantener tu lugar? No te preocupes – guarda un borrador ahora. Tus tareas estarán aquí esperándote.",
+
+  "empty_state_project_page_archived_title": "Aún no hay páginas archivadas",
+  "empty_state_project_page_archived_description": "Archiva las páginas que no estén en tu radar. Accede a ellas aquí cuando las necesites.",
+
+  "empty_state_workspace_page_private_title": "Aún no hay páginas privadas",
+  "empty_state_workspace_page_private_description": "Mantén tus pensamientos privados aquí. Cuando estés listo para compartir, el equipo está a solo un clic de distancia.",
+  "empty_state_workspace_page_private_primary_button": "Crea tu primera página",
+
+  "empty_state_workspace_page_public_title": "Aún no hay páginas públicas",
+  "empty_state_workspace_page_public_description": "Ve las páginas compartidas con todos en tu espacio de trabajo aquí mismo.",
+  "empty_state_workspace_page_public_primary_button": "Crea tu primera página",
+
+  "empty_state_workspace_page_archived_title": "Aún no hay páginas archivadas",
+  "empty_state_workspace_page_archived_description": "Archiva las páginas que no estén en tu radar. Accede a ellas aquí cuando las necesites."
 }

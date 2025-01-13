@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 // hooks
 // components
+import { useTranslation } from "@plane/i18n";
 import { Button, TButtonVariant } from "@plane/ui";
 // constant
 import { EMPTY_STATE_DETAILS, EmptyStateType } from "@/constants/empty-state";
@@ -41,6 +42,7 @@ export const EmptyState: React.FC<EmptyStateProps> = observer((props) => {
   const { allowPermissions } = useUserPermissions();
   // theme
   const { resolvedTheme } = useTheme();
+  const { t } = useTranslation();
 
   // if empty state type is not found
   if (!EMPTY_STATE_DETAILS[type]) return null;
@@ -77,10 +79,10 @@ export const EmptyState: React.FC<EmptyStateProps> = observer((props) => {
     if (primaryButton.comicBox) {
       return (
         <ComicBoxButton
-          label={primaryButton.text}
+          label={t(primaryButton.text)}
           icon={primaryButton.icon}
-          title={primaryButton.comicBox?.title}
-          description={primaryButton.comicBox?.description}
+          title={primaryButton.comicBox?.title && t(primaryButton.comicBox?.title)}
+          description={primaryButton.comicBox?.description && t(primaryButton.comicBox?.description)}
           onClick={primaryButtonOnClick}
           disabled={!isEditingAllowed}
         />
@@ -88,11 +90,11 @@ export const EmptyState: React.FC<EmptyStateProps> = observer((props) => {
     } else if (primaryButtonLink) {
       return (
         <Link href={primaryButtonLink}>
-          <Button {...commonProps}>{primaryButton.text}</Button>
+          <Button {...commonProps}>{t(primaryButton.text)}</Button>
         </Link>
       );
     } else {
-      return <Button {...commonProps}>{primaryButton.text}</Button>;
+      return <Button {...commonProps}>{t(primaryButton.text)}</Button>;
     }
   };
   // secondary button
@@ -107,7 +109,7 @@ export const EmptyState: React.FC<EmptyStateProps> = observer((props) => {
         onClick={secondaryButtonOnClick}
         disabled={!isEditingAllowed}
       >
-        {secondaryButton.text}
+        {t(secondaryButton.text)}
       </Button>
     );
   };
@@ -125,11 +127,11 @@ export const EmptyState: React.FC<EmptyStateProps> = observer((props) => {
             <div className="flex flex-col gap-1.5 flex-shrink">
               {description ? (
                 <>
-                  <h3 className="text-xl font-semibold">{title}</h3>
-                  <p className="text-sm">{description}</p>
+                  <h3 className="text-xl font-semibold">{title && t(title)}</h3>
+                  <p className="text-sm">{description && t(description)}</p>
                 </>
               ) : (
-                <h3 className="text-xl font-medium">{title}</h3>
+                <h3 className="text-xl font-medium">{title && t(title)}</h3>
               )}
             </div>
 
@@ -169,11 +171,13 @@ export const EmptyState: React.FC<EmptyStateProps> = observer((props) => {
           </div>
           {description ? (
             <>
-              <h3 className="text-lg font-medium text-custom-text-300 whitespace-pre-line">{title}</h3>
-              <p className="text-base font-medium text-custom-text-400 whitespace-pre-line">{description}</p>
+              <h3 className="text-lg font-medium text-custom-text-300 whitespace-pre-line">{title && t(title)}</h3>
+              <p className="text-base font-medium text-custom-text-400 whitespace-pre-line">
+                {description && t(description)}
+              </p>
             </>
           ) : (
-            <h3 className="text-sm font-medium text-custom-text-400 whitespace-pre-line">{title}</h3>
+            <h3 className="text-sm font-medium text-custom-text-400 whitespace-pre-line">{title && t(title)}</h3>
           )}
         </div>
       )}
