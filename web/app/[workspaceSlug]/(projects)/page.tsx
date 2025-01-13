@@ -3,10 +3,10 @@
 import { observer } from "mobx-react";
 // components
 import { PageHead, AppHeader, ContentWrapper } from "@/components/core";
-import { WorkspaceHomeView } from "@/components/home";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 // local components
+import { HomeBase } from "@/plane-web/components/home/base";
 import { WorkspaceDashboardHeader } from "./header";
 
 const WorkspaceDashboardPage = observer(() => {
@@ -19,7 +19,7 @@ const WorkspaceDashboardPage = observer(() => {
       <AppHeader header={<WorkspaceDashboardHeader />} />
       <ContentWrapper>
         <PageHead title={pageTitle} />
-        <WorkspaceHomeView />
+        <HomeBase />
       </ContentWrapper>
     </>
   );

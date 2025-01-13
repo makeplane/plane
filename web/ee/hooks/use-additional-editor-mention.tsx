@@ -1,1 +1,1 @@
-export * from "@/plane-web/hooks/use-additional-editor-mention";
+export * from "@/ce/hooks/use-additional-editor-mention";
