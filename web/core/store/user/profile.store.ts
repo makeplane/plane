@@ -50,6 +50,7 @@ export class ProfileStore implements IUserProfileStore {
       workspace_create: false,
       workspace_invite: false,
     },
+    has_enabled_smooth_cursor: true,
     is_onboarded: false,
     is_tour_completed: false,
     use_case: undefined,
@@ -101,7 +102,8 @@ export class ProfileStore implements IUserProfileStore {
       const userProfile = await this.userService.getCurrentUserProfile();
       runInAction(() => {
         this.isLoading = false;
-        this.data = userProfile;
+        this.mutateUserProfile(userProfile);
+        // this.data = userProfile;
       });
       return userProfile;
     } catch (error) {
@@ -127,7 +129,7 @@ export class ProfileStore implements IUserProfileStore {
       if (currentUserProfileData) {
         this.mutateUserProfile(data);
       }
-      const userProfile = await this.userService.updateCurrentUserProfile(data);
+      // const userProfile = await this.userService.updateCurrentUserProfile(data);
       return userProfile;
     } catch {
       if (currentUserProfileData) {
@@ -169,7 +171,6 @@ export class ProfileStore implements IUserProfileStore {
       runInAction(() => {
         this.mutateUserProfile({ ...dataToUpdate, is_onboarded: true });
       });
-
     } catch (error) {
       runInAction(() => {
         this.error = {
@@ -179,7 +180,7 @@ export class ProfileStore implements IUserProfileStore {
       });
       throw error;
     }
-  }
+  };
 
   /**
    * @description updates the user tour completed status
