@@ -188,7 +188,7 @@ const emptyStateDetails = {
       text: "empty_state_workspace_initiatives_primary_button",
     },
     accessType: "workspace",
-    access: [EUserPermissions.ADMIN],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.WORKSPACE_INITIATIVES_EMPTY_SEARCH]: {
     key: EmptyStateType.WORKSPACE_INITIATIVES_EMPTY_SEARCH,

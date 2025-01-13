@@ -177,9 +177,10 @@ class ProjectRecentVisitSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "logo_props", "project_members", "identifier"]
 
     def get_project_members(self, obj):
-        members = ProjectMember.objects.filter(project_id=obj.id).values_list(
-            "member", flat=True
-        )
+        members = ProjectMember.objects.filter(
+            project_id=obj.id, member__is_bot=False, is_active=True
+        ).values_list("member", flat=True)
+
         return members
 
 
@@ -248,7 +249,7 @@ class WorkspaceHomePreferenceSerializer(BaseSerializer):
     class Meta:
         model = WorkspaceHomePreference
         fields = ["key", "is_enabled", "sort_order"]
-        read_only_fields = ["worspace", "created_by", "update_by"]
+        read_only_fields = ["workspace", "created_by", "updated_by"]
 
 
 class StickySerializer(BaseSerializer):
