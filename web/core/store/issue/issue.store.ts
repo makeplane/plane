@@ -1,3 +1,4 @@
+import clone from "lodash/clone";
 import set from "lodash/set";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
@@ -78,6 +79,7 @@ export class IssueStore implements IIssueStore {
    */
   updateIssue = (issueId: string, issue: Partial<TIssue>) => {
     if (!issue || !issueId || !this.issuesMap[issueId]) return;
+    const issueBeforeUpdate = clone(this.issuesMap[issueId]);
     runInAction(() => {
       set(this.issuesMap, [issueId, "updated_at"], getCurrentDateTimeInISO());
       Object.keys(issue).forEach((key) => {
@@ -85,7 +87,7 @@ export class IssueStore implements IIssueStore {
       });
     });
 
-    if (!this.issuesMap[issueId]?.is_epic) {
+    if (!issueBeforeUpdate.is_epic) {
       updatePersistentLayer(issueId);
     }
   };
