@@ -1,11 +1,10 @@
 {
   "name": "@plane/propel",
-  "version": "1.0.0",
+  "version": "0.24.1",
   "private": true,
   "exports": {
     "./globals.css": "./src/globals.css",
-    "./components/*": "./src/components/*.tsx",
-    "./lib/*": "./src/lib/*.ts"
+    "./components/*": "./src/*.tsx"
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
