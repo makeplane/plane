@@ -1,1 +1,1 @@
-export * from "../../ce/types/common.js"
+export type TAdditionalDocumentTypes = "team_page" | "workspace_page"
