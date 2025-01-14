@@ -79,7 +79,7 @@
   z-index: 1;
 }
 
-.rdp-selected .rdp-day_button:hover:not([data-disabled="true"]) {
+.rdp-selected .rdp-day_button:hover:not(.rdp-disabled) {
   background-color: var(--rdp-dark-background-color);
 }
 
@@ -288,9 +288,9 @@
   color: inherit;
 }
 
-.rdp-range_middle .rdp-day_button:hover,
-.rdp-range_middle .rdp-day_button:focus-visible {
-  background-color: var(--rdp-background-color) !important;
-  color: inherit !important;
+.rdp-day.rdp-range_middle .rdp-day_button:hover,
+.rdp-day.rdp-range_middle .rdp-day_button:focus-visible {
+  background-color: var(--rdp-background-color);
+  color: inherit;
 }
 
