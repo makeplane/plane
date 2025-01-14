@@ -1,12 +1,11 @@
 import { FC } from "react";
-// types
+// plane package imports
+import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
 import { ICycle } from "@plane/types";
-// ui
 import { LinearProgressIndicator } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/empty-state";
 // constants
-import { PROGRESS_STATE_GROUPS_DETAILS } from "@/constants/common";
 import { EmptyStateType } from "@/constants/empty-state";
 
 export type ActiveCycleProgressProps = {

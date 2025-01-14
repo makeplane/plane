@@ -2,8 +2,10 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
+// plane package imports
+import { E_SORT_ORDER } from "@plane/constants";
+// components
 import { ActivitySortRoot } from "@/components/issues";
-import { TSORT_ORDER } from "@/constants/common";
 import { useProjectUpdates } from "@/plane-web/hooks/store/projects/use-project-updates";
 import { TProjectUpdate } from "@/plane-web/types";
 import { UpdateBlock } from "./block";
@@ -16,14 +18,14 @@ export const ProjectUpdates = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // state
   const [showInput, setShowInput] = useState(false);
-  const [sortOrder, setSortOrder] = useState<TSORT_ORDER>(TSORT_ORDER.ASC);
+  const [sortOrder, setSortOrder] = useState<E_SORT_ORDER>(E_SORT_ORDER.ASC);
   // hooks
   const { getUpdatesByProjectId, loader } = useProjectUpdates();
   const { handleUpdateOperations } = useUpdates(workspaceSlug.toString(), projectId.toString());
 
   // handler
   const toggleSortOrder = () => {
-    setSortOrder(sortOrder === TSORT_ORDER.ASC ? TSORT_ORDER.DESC : TSORT_ORDER.ASC);
+    setSortOrder(sortOrder === E_SORT_ORDER.ASC ? E_SORT_ORDER.DESC : E_SORT_ORDER.ASC);
   };
 
   // derived
@@ -39,7 +41,7 @@ export const ProjectUpdates = observer(() => {
   };
 
   const sortedProjectUpdates = useMemo(
-    () => (sortOrder === TSORT_ORDER.ASC ? [...projectUpdates].reverse() : projectUpdates),
+    () => (sortOrder === E_SORT_ORDER.ASC ? [...projectUpdates].reverse() : projectUpdates),
     [sortOrder, projectUpdates]
   );
 

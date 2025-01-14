@@ -2,12 +2,11 @@
 
 import React, { FC, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { EIssueServiceType } from "@plane/constants";
+// plane package imports
+import { EIssueServiceType, E_SORT_ORDER } from "@plane/constants";
 import { TIssueActivityComment } from "@plane/types";
 // components
 import { ActivitySortRoot } from "@/components/issues";
-// constants
-import { TSORT_ORDER } from "@/constants/common";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 // constants
@@ -28,7 +27,7 @@ type TEpicSidebarCommentsRootProps = {
 export const EpicSidebarCommentsRoot: FC<TEpicSidebarCommentsRootProps> = observer((props) => {
   const { workspaceSlug, projectId, epicId, disabled = false } = props;
   // states
-  const [sortOrder, setSortOrder] = useState<TSORT_ORDER>(TSORT_ORDER.ASC);
+  const [sortOrder, setSortOrder] = useState<E_SORT_ORDER>(E_SORT_ORDER.ASC);
   // store hooks
   const {
     activity: { getActivityCommentByIssueId },
@@ -41,11 +40,11 @@ export const EpicSidebarCommentsRoot: FC<TEpicSidebarCommentsRootProps> = observ
   const activityOperations = useEpicActivityOperations(workspaceSlug, projectId, epicId);
 
   // handlers
-  const toggleSortOrder = () => setSortOrder(sortOrder === TSORT_ORDER.ASC ? TSORT_ORDER.DESC : TSORT_ORDER.ASC);
+  const toggleSortOrder = () => setSortOrder(sortOrder === E_SORT_ORDER.ASC ? E_SORT_ORDER.DESC : E_SORT_ORDER.ASC);
 
   // derived values
   const project = getProjectById(projectId);
-  const activityComments = getActivityCommentByIssueId(epicId, TSORT_ORDER.ASC);
+  const activityComments = getActivityCommentByIssueId(epicId, E_SORT_ORDER.ASC);
 
   if (!project) return <></>;
 
@@ -56,7 +55,7 @@ export const EpicSidebarCommentsRoot: FC<TEpicSidebarCommentsRootProps> = observ
   const sortedActivity = useMemo(
     () =>
       filteredActivityComments
-        ? sortOrder === TSORT_ORDER.DESC
+        ? sortOrder === E_SORT_ORDER.DESC
           ? [...filteredActivityComments].reverse()
           : filteredActivityComments
         : [],

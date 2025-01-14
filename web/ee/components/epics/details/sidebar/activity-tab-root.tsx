@@ -2,12 +2,11 @@
 
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { EIssueServiceType } from "@plane/constants";
+// plane package imports
+import { EIssueServiceType, E_SORT_ORDER } from "@plane/constants";
 import { TIssueActivityComment } from "@plane/types";
 // components
 import { ActivitySortRoot } from "@/components/issues";
-// constants
-import { TSORT_ORDER } from "@/constants/common";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web
@@ -23,7 +22,7 @@ type TEpicDetailActivityRootProps = {
 export const EpicSidebarActivityRoot: FC<TEpicDetailActivityRootProps> = observer((props) => {
   const { epicId } = props;
   // states
-  const [sortOrder, setSortOrder] = React.useState<TSORT_ORDER>(TSORT_ORDER.ASC);
+  const [sortOrder, setSortOrder] = React.useState<E_SORT_ORDER>(E_SORT_ORDER.ASC);
   // store hooks
   const {
     activity: { getActivityCommentByIssueId },
@@ -31,7 +30,7 @@ export const EpicSidebarActivityRoot: FC<TEpicDetailActivityRootProps> = observe
   } = useIssueDetail(EIssueServiceType.EPICS);
 
   // handlers
-  const toggleSortOrder = () => setSortOrder(sortOrder === TSORT_ORDER.ASC ? TSORT_ORDER.DESC : TSORT_ORDER.ASC);
+  const toggleSortOrder = () => setSortOrder(sortOrder === E_SORT_ORDER.ASC ? E_SORT_ORDER.DESC : E_SORT_ORDER.ASC);
 
   // derived values
   const activityComments = getActivityCommentByIssueId(epicId, sortOrder);

@@ -1,10 +1,10 @@
 "use client";
 import React, { FC, useMemo, useState } from "react";
 import { observer } from "mobx-react";
+// plane package imports
+import { E_SORT_ORDER } from "@plane/constants";
 // components
 import { ActivitySortRoot } from "@/components/issues";
-// constants
-import { TSORT_ORDER } from "@/constants/common";
 // plane web
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { EActivityFilterType, filterActivityOnSelectedFilters } from "@/plane-web/constants";
@@ -20,7 +20,7 @@ type Props = {
 export const InitiativeSidebarActivityRoot: FC<Props> = observer((props) => {
   const { initiativeId } = props;
   // states
-  const [sortOrder, setSortOrder] = useState<TSORT_ORDER>(TSORT_ORDER.ASC);
+  const [sortOrder, setSortOrder] = useState<E_SORT_ORDER>(E_SORT_ORDER.ASC);
   // store hooks
   const {
     initiative: {
@@ -36,12 +36,12 @@ export const InitiativeSidebarActivityRoot: FC<Props> = observer((props) => {
   ]);
 
   // handlers
-  const toggleSortOrder = () => setSortOrder(sortOrder === TSORT_ORDER.ASC ? TSORT_ORDER.DESC : TSORT_ORDER.ASC);
+  const toggleSortOrder = () => setSortOrder(sortOrder === E_SORT_ORDER.ASC ? E_SORT_ORDER.DESC : E_SORT_ORDER.ASC);
 
   const sortedActivity = useMemo(
     () =>
       filteredActivityComments
-        ? sortOrder === TSORT_ORDER.DESC
+        ? sortOrder === E_SORT_ORDER.DESC
           ? [...filteredActivityComments].reverse()
           : filteredActivityComments
         : [],

@@ -7,7 +7,8 @@ import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { EIssueServiceType } from "@plane/constants";
+// plane package imports
+import { EIssueServiceType, E_SORT_ORDER } from "@plane/constants";
 import {
   TIssueActivityComment,
   TIssueActivity,
@@ -16,7 +17,6 @@ import {
   TIssueServiceType,
 } from "@plane/types";
 // plane web constants
-import { TSORT_ORDER } from "@/constants/common";
 import { EActivityFilterType } from "@/plane-web/constants/issues";
 // services
 import { IssueActivityService } from "@/services/issue";
@@ -40,11 +40,11 @@ export interface IIssueActivityStore extends IIssueActivityStoreActions {
   loader: TActivityLoader;
   activities: TIssueActivityIdMap;
   activityMap: TIssueActivityMap;
-  sortOrder: TSORT_ORDER;
+  sortOrder: E_SORT_ORDER;
   // helper methods
   getActivitiesByIssueId: (issueId: string) => string[] | undefined;
   getActivityById: (activityId: string) => TIssueActivity | undefined;
-  getActivityCommentByIssueId: (issueId: string, sortOrder: TSORT_ORDER) => TIssueActivityComment[] | undefined;
+  getActivityCommentByIssueId: (issueId: string, sortOrder: E_SORT_ORDER) => TIssueActivityComment[] | undefined;
   toggleSortOrder: () => void;
 }
 
@@ -53,7 +53,7 @@ export class IssueActivityStore implements IIssueActivityStore {
   loader: TActivityLoader = "fetch";
   activities: TIssueActivityIdMap = {};
   activityMap: TIssueActivityMap = {};
-  sortOrder: TSORT_ORDER = TSORT_ORDER.ASC;
+  sortOrder: E_SORT_ORDER = E_SORT_ORDER.ASC;
   // services
   serviceType;
   issueActivityService;
@@ -76,10 +76,10 @@ export class IssueActivityStore implements IIssueActivityStore {
   }
 
   toggleSortOrder = () => {
-    if (this.sortOrder === TSORT_ORDER.ASC) {
-      this.sortOrder = TSORT_ORDER.DESC;
+    if (this.sortOrder === E_SORT_ORDER.ASC) {
+      this.sortOrder = E_SORT_ORDER.DESC;
     } else {
-      this.sortOrder = TSORT_ORDER.ASC;
+      this.sortOrder = E_SORT_ORDER.ASC;
     }
   };
 
@@ -94,7 +94,7 @@ export class IssueActivityStore implements IIssueActivityStore {
     return this.activityMap[activityId] ?? undefined;
   };
 
-  getActivityCommentByIssueId = computedFn((issueId: string, sortOrder: TSORT_ORDER) => {
+  getActivityCommentByIssueId = computedFn((issueId: string, sortOrder: E_SORT_ORDER) => {
     if (!issueId) return undefined;
 
     let activityComments: TIssueActivityComment[] = [];

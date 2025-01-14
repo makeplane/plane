@@ -3,12 +3,12 @@
 import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+// plane package imports
+import { E_SORT_ORDER } from "@plane/constants";
 import { Loader } from "@plane/ui";
 // components
 import { ActivityItem } from "@/components/common";
 import { ActivitySortRoot } from "@/components/issues";
-// constants
-import { TSORT_ORDER } from "@/constants/common";
 // hooks
 import { useProject } from "@/hooks/store";
 // plane web
@@ -26,7 +26,7 @@ const projectActivityService = new ProjectActivityService();
 export const ProjectOverviewSidebarActivityRoot: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = props;
   // states
-  const [sortOrder, setSortOrder] = React.useState<TSORT_ORDER>(TSORT_ORDER.ASC);
+  const [sortOrder, setSortOrder] = React.useState<E_SORT_ORDER>(E_SORT_ORDER.ASC);
   // store hooks
   const { getProjectById } = useProject();
 
@@ -36,7 +36,7 @@ export const ProjectOverviewSidebarActivityRoot: FC<Props> = observer((props) =>
   if (!project) return null;
 
   // handlers
-  const toggleSortOrder = () => setSortOrder(sortOrder === TSORT_ORDER.ASC ? TSORT_ORDER.DESC : TSORT_ORDER.ASC);
+  const toggleSortOrder = () => setSortOrder(sortOrder === E_SORT_ORDER.ASC ? E_SORT_ORDER.DESC : E_SORT_ORDER.ASC);
 
   // api calls
   const { data: activity, isLoading } = useSWR(
@@ -50,7 +50,7 @@ export const ProjectOverviewSidebarActivityRoot: FC<Props> = observer((props) =>
   );
 
   const sortedActivity = useMemo(
-    () => (activity ? (sortOrder === TSORT_ORDER.DESC ? [...activity].reverse() : activity) : []),
+    () => (activity ? (sortOrder === E_SORT_ORDER.DESC ? [...activity].reverse() : activity) : []),
     [sortOrder, activity]
   );
 

@@ -47,6 +47,7 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^1.4.0",
     "@plane/eslint-config": "*",
+    "@plane/tailwind-config": "*",
     "@plane/typescript-config": "*",
     "@storybook/addon-essentials": "^8.1.1",
     "@storybook/addon-interactions": "^8.1.1",
@@ -68,7 +69,6 @@
     "postcss-cli": "^11.0.0",
     "postcss-nested": "^6.0.1",
     "storybook": "^8.1.1",
-    "tailwind-config-custom": "*",
     "tailwindcss": "^3.4.3",
     "tsup": "^7.2.0",
     "typescript": "5.3.3"

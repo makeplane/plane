@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import { IndexedDBService } from "./indexedDB.service";
 
 /**
  * Abstract base class for making HTTP requests using axios

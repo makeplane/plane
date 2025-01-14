@@ -1,7 +1,8 @@
 import orderBy from "lodash/orderBy";
 import { makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
-import { EIssueServiceType } from "@plane/constants";
+// plane package imports
+import { EIssueServiceType, E_SORT_ORDER } from "@plane/constants";
 import { TIssueActivityComment, TIssueServiceType } from "@plane/types";
 // ce store
 import {
@@ -9,8 +10,6 @@ import {
   IIssueActivityStore as IIssueActivityStoreCe,
   IssueActivityStore as IssueActivityStoreCe,
 } from "@/ce/store/issue/issue-details/activity.store";
-// constants
-import { TSORT_ORDER } from "@/constants/common";
 import { EActivityFilterType, EActivityFilterTypeEE } from "@/plane-web/constants/issues";
 // plane web store types
 import { RootStore } from "@/plane-web/store/root.store";
@@ -40,7 +39,7 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
     this.issueActivityService = new IssueActivityService(this.serviceType);
   }
 
-  getActivityCommentByIssueId = computedFn((issueId: string, sortOrder: TSORT_ORDER) => {
+  getActivityCommentByIssueId = computedFn((issueId: string, sortOrder: E_SORT_ORDER) => {
     const workspace = this.store.workspaceRoot.currentWorkspace;
     if (!workspace?.id || !issueId) return undefined;
 
