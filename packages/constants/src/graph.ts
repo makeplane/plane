@@ -1,7 +1,4 @@
-// nivo
-import { Theme } from "@nivo/core";
-
-export const CHARTS_THEME: Theme = {
+export const CHARTS_THEME = {
   background: "transparent",
   text: {
     color: "rgb(var(--color-text-200))",
@@ -29,7 +26,7 @@ export const CHARTS_THEME: Theme = {
   },
 };
 
-export const DEFAULT_MARGIN = {
+export const CHART_DEFAULT_MARGIN = {
   top: 50,
   right: 50,
   bottom: 50,
