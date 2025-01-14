@@ -1,8 +1,8 @@
 {
-  "name": "tailwind-config-custom",
+  "name": "@plane/tailwind-config",
   "version": "0.24.1",
   "description": "common tailwind configuration across monorepo",
-  "main": "index.js",
+  "main": "tailwind.config.js",
   "private": true,
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.9",

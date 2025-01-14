@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
-// import sharedConfig from "@plane/tailwind-config-custom/tailwind.config";
+import sharedConfig from "@plane/tailwind-config/tailwind.config";
 
 export default {
-  //   ...sharedConfig,
+  ...sharedConfig,
   content: ["./src/**/*.{ts,tsx}"],
 } satisfies Config;
