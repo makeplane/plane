@@ -293,7 +293,6 @@ function deployStack() {
     echo ""
 }
 
-# Update other functions to use $stack_name
 function removeStack() {
     if [ -z "$stack_name" ]; then
         echo "Stack name not found"
@@ -306,6 +305,65 @@ function removeStack() {
         sleep 1
     done
     echo "Services stopped successfully ✅"
+}
+
+function viewStatus() {
+    echo "Checking status of ${stack_name} stack..."
+    if [ -z "$stack_name" ]; then
+        echo "Stack name not found"
+        exit 1
+    fi
+    docker stack ps "$stack_name"
+}
+
+function redeployStack() {   
+    removeStack
+    deployStack
+}
+
+function upgrade() {
+
+    echo "Checking status of ${stack_name} stack..."
+    if [ -z "$stack_name" ]; then
+        echo "Stack name not found"
+        exit 1
+    fi
+    
+    local latest_release=$(checkLatestRelease)
+
+    echo ""
+    echo "Current release: $APP_RELEASE"
+
+    if [ "$latest_release" == "$APP_RELEASE" ]; then
+        echo ""
+        echo "You are already using the latest release"
+        exit 0
+    fi
+
+    echo "Latest release: $latest_release"
+    echo ""
+
+    # Check for confirmation to upgrade
+    echo "Do you want to upgrade to the latest release ($latest_release)?"
+    read -p "Continue? [y/N]: " confirm
+
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+        echo "Exiting..."
+        exit 0
+    fi
+
+    export APP_RELEASE=$latest_release
+
+    # check if stack exists
+    echo "Upgrading ${stack_name} stack..."
+
+    # check env file and take backup
+    if [ -f "$DOCKER_ENV_PATH" ]; then
+        cp "$DOCKER_ENV_PATH" "${DOCKER_ENV_PATH}.bak"
+    fi
+
+    download
+    redeployStack
 }
 
 function viewSpecificLogs() {
@@ -402,104 +460,76 @@ function viewSpecificLogs() {
     done
 }
 
-function viewLogs() {
-    if [ -z "$stack_name" ]; then
-        echo "Stack name not found"
-        exit 1
-    fi
-    echo "Select a service to view logs:"
-    echo "   1) API"
-    echo "   2) Worker"
-    echo "   3) Beat"
-    echo "   4) Web"
-    echo "   5) Proxy"
-    echo "   6) Space"
-    echo "   7) Back to Menu"
-    echo 
-    read -p "Service [1]: " SERVICE
-
-    until [[ -z "$SERVICE" || "$SERVICE" =~ ^[1-7]$ ]]; do
-        echo "$SERVICE: invalid selection."
-        read -p "Service [1]: " SERVICE
-    done
+function viewLogs(){
     
-    if [ -z "$SERVICE" ]; then
-        SERVICE=1
-    fi
+    ARG_SERVICE_NAME=$2
+    if [ -z "$ARG_SERVICE_NAME" ];
+    then
+        echo
+        echo "Select a Service you want to view the logs for:"
+        echo "   1) Web"
+        echo "   2) Space"
+        echo "   3) API"
+        echo "   4) Worker"
+        echo "   5) Beat-Worker"
+        echo "   6) Migrator"
+        echo "   7) Proxy"
+        echo "   8) Redis"
+        echo "   9) Postgres"
+        echo "   10) Minio"
+        echo "   11) RabbitMQ"
+        echo "   0) Back to Main Menu"
+        echo 
+        read -p "Service: " DOCKER_SERVICE_NAME 
 
-    if [ "$SERVICE" == "1" ]; then
-        viewSpecificLogs "api"
-    elif [ "$SERVICE" == "2" ]; then
-        viewSpecificLogs "worker"
-    elif [ "$SERVICE" == "3" ]; then
-        viewSpecificLogs "beat"
-    elif [ "$SERVICE" == "4" ]; then
-        viewSpecificLogs "web"
-    elif [ "$SERVICE" == "5" ]; then
-        viewSpecificLogs "proxy"
-    elif [ "$SERVICE" == "6" ]; then
-        viewSpecificLogs "space"
-    elif [ "$SERVICE" == "7" ]; then
-        askForAction
+        until (( DOCKER_SERVICE_NAME >= 0 && DOCKER_SERVICE_NAME <= 11 )); do
+            echo "Invalid selection. Please enter a number between 1 and 11."
+            read -p "Service: " DOCKER_SERVICE_NAME
+        done
+
+        if [ -z "$DOCKER_SERVICE_NAME" ];
+        then
+            echo "INVALID SERVICE NAME SUPPLIED"
+        else
+            case $DOCKER_SERVICE_NAME in
+                1) viewSpecificLogs "web";;
+                2) viewSpecificLogs "space";;
+                3) viewSpecificLogs "api";;
+                4) viewSpecificLogs "worker";;
+                5) viewSpecificLogs "beat-worker";;
+                6) viewSpecificLogs "migrator";;
+                7) viewSpecificLogs "proxy";;
+                8) viewSpecificLogs "plane-redis";;
+                9) viewSpecificLogs "plane-db";;
+                10) viewSpecificLogs "plane-minio";;
+                11) viewSpecificLogs "plane-mq";;
+                0) askForAction;;
+                *) echo "INVALID SERVICE NAME SUPPLIED";;
+            esac
+        fi
+    elif [ -n "$ARG_SERVICE_NAME" ];
+    then
+        ARG_SERVICE_NAME=$(echo "$ARG_SERVICE_NAME" | tr '[:upper:]' '[:lower:]')
+        case $ARG_SERVICE_NAME in
+            web) viewSpecificLogs "web";;
+            space) viewSpecificLogs "space";;
+            api) viewSpecificLogs "api";;
+            worker) viewSpecificLogs "worker";;
+            beat-worker) viewSpecificLogs "beat-worker";;
+            migrator) viewSpecificLogs "migrator";;
+            proxy) viewSpecificLogs "proxy";;
+            redis) viewSpecificLogs "plane-redis";;
+            postgres) viewSpecificLogs "plane-db";;
+            minio) viewSpecificLogs "plane-minio";;
+            rabbitmq) viewSpecificLogs "plane-mq";;
+            *) echo "INVALID SERVICE NAME SUPPLIED";;
+        esac
+    else
+        echo "INVALID SERVICE NAME SUPPLIED"
     fi
 }
 
-function viewStatus() {
-    echo "Checking status of ${stack_name} stack..."
-    if [ -z "$stack_name" ]; then
-        echo "Stack name not found"
-        exit 1
-    fi
-    docker stack ps "$stack_name"
-}
 
-function upgrade() {
-
-    echo "Checking status of ${stack_name} stack..."
-    if [ -z "$stack_name" ]; then
-        echo "Stack name not found"
-        exit 1
-    fi
-    
-    local latest_release=$(checkLatestRelease)
-
-    echo ""
-    echo "Current release: $APP_RELEASE"
-
-    if [ "$latest_release" == "$APP_RELEASE" ]; then
-        echo ""
-        echo "You are already using the latest release"
-        exit 0
-    fi
-
-    echo "Latest release: $latest_release"
-    echo ""
-
-    # Check for confirmation to upgrade
-    echo "Do you want to upgrade to the latest release ($latest_release)?"
-    read -p "Continue? [y/N]: " confirm
-
-    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
-        echo "Exiting..."
-        exit 0
-    fi
-
-    export APP_RELEASE=$latest_release
-
-    # check if stack exists
-    echo "Upgrading ${stack_name} stack..."
-
-    # check env file and take backup
-    if [ -f "$DOCKER_ENV_PATH" ]; then
-        cp "$DOCKER_ENV_PATH" "${DOCKER_ENV_PATH}.bak"
-    fi
-
-    download
-    
-
-    removeStack 
-    deployStack
-}
 
 function askForAction() {
     # Rest of askForAction remains the same but use $stack_name instead of $STACK_NAME
@@ -534,7 +564,7 @@ function askForAction() {
     elif [ "$ACTION" == "3" ] || [ "$DEFAULT_ACTION" == "status" ]; then
         viewStatus
     elif [ "$ACTION" == "4" ] || [ "$DEFAULT_ACTION" == "logs" ]; then
-        viewLogs
+        viewLogs "$@"
     elif [ "$ACTION" == "5" ] || [ "$DEFAULT_ACTION" == "upgrade" ]; then
         upgrade
     elif [ "$ACTION" == "6" ] || [ "$DEFAULT_ACTION" == "exit" ]; then

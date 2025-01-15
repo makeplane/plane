@@ -388,6 +388,7 @@ Select a Service you want to view the logs for:
    8) Redis
    9) Postgres
    10) Minio
+   11) RabbitMQ
    0) Back to Main Menu
 
 Service: 3
