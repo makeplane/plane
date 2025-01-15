@@ -56,7 +56,6 @@ export interface ICycleStore {
   getPlotTypeByCycleId: (cycleId: string) => TCyclePlotType;
   getEstimateTypeByCycleId: (cycleId: string) => TCycleEstimateType;
   getIsPointsDataAvailable: (cycleId: string) => boolean;
-  getPendingIssueCount: (cycleId: string) => number;
 
   // actions
   updateCycleDistribution: (distributionUpdates: DistributionUpdates, cycleId: string) => void;
@@ -367,18 +366,6 @@ export class CycleStore implements ICycleStore {
       ? this.estimatedType[cycleId] || "issues"
       : "issues";
   });
-
-  getPendingIssueCount = (cycleId: string) => {
-    let pending_issues = 0;
-    const cycleDetails = this.cycleMap[cycleId];
-    if (!cycleDetails) return pending_issues;
-    pending_issues =
-      cycleDetails.total_issues -
-      cycleDetails.completed_issues -
-      (cycleDetails.progress_snapshot?.cancelled_issues || 0);
-
-    return pending_issues;
-  };
 
   /**
    * @description updates the plot type for the cycle store

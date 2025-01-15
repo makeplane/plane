@@ -67,7 +67,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   // store hooks
-  const { addCycleToFavorites, removeCycleFromFavorites, updateCycleDetails, getPendingIssueCount } = useCycle();
+  const { addCycleToFavorites, removeCycleFromFavorites, updateCycleDetails } = useCycle();
   const { captureEvent } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
@@ -81,8 +81,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   // derived values
   const cycleStatus = cycleDetails.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
   const showIssueCount = useMemo(() => cycleStatus === "draft" || cycleStatus === "upcoming", [cycleStatus]);
-  const transferableIssuesCount = getPendingIssueCount(cycleId);
-  const showTransferIssues = transferableIssuesCount > 0 && cycleStatus === "completed";
+  const showTransferIssues = cycleDetails.pending_issues > 0 && cycleStatus === "completed";
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT,
@@ -254,7 +253,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
           }}
         >
           <TransferIcon className="fill-custom-primary-200 w-4" />
-          <span>Transfer {transferableIssuesCount} issues</span>
+          <span>Transfer {cycleDetails.pending_issues} issues</span>
         </div>
       )}
 
