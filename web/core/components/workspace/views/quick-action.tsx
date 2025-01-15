@@ -114,43 +114,7 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
 
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
 
-      <CustomMenu customButton={customButton} placement="bottom-end" menuItemsClassName="z-20" closeOnSelect>
-        {MENU_ITEMS.map((item) => {
-          if (item.shouldRender === false) return null;
-          return (
-            <CustomMenu.MenuItem
-              key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                item.action();
-              }}
-              className={cn(
-                "flex items-center gap-2",
-                {
-                  "text-custom-text-400": item.disabled,
-                },
-                item.className
-              )}
-              disabled={item.disabled}
-            >
-              {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
-              <div>
-                <h5>{item.title}</h5>
-                {item.description && (
-                  <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
-                    })}
-                  >
-                    {item.description}
-                  </p>
-                )}
-              </div>
-            </CustomMenu.MenuItem>
-          );
-        })}
-      </CustomMenu>
+      {customButton}
     </>
   );
 });
