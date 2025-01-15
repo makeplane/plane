@@ -6,9 +6,14 @@ import type {
 import type { ElementDragPayload } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import Masonry from "react-masonry-component";
+// plane ui
 import { Loader } from "@plane/ui";
+// components
+import { EmptyState } from "@/components/empty-state";
+// constants
+import { EmptyStateType } from "@/constants/empty-state";
+// hooks
 import { useSticky } from "@/hooks/use-stickies";
-import { EmptyState } from "../empty";
 import { useStickyOperations } from "../sticky/use-operations";
 import { StickyDNDWrapper } from "./sticky-dnd-wrapper";
 import { getInstructionFromPayload } from "./sticky.helpers";
@@ -24,10 +29,10 @@ type TProps = TStickiesLayout & {
 
 export const StickiesList = observer((props: TProps) => {
   const { workspaceSlug, intersectionElement, columnCount } = props;
-  const { getWorkspaceStickies, toggleShowNewSticky, creatingSticky, searchQuery, loader } = useSticky();
+  const { getWorkspaceStickyIds, toggleShowNewSticky, searchQuery, loader } = useSticky();
   const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
 
-  const workspaceStickies = getWorkspaceStickies(workspaceSlug?.toString());
+  const workspaceStickies = getWorkspaceStickyIds(workspaceSlug?.toString());
   const itemWidth = `${100 / columnCount}%`;
   // Calculate total number of rows
   const totalRows = Math.ceil(workspaceStickies.length / columnCount);
@@ -72,14 +77,17 @@ export const StickiesList = observer((props: TProps) => {
 
   if (loader === "loaded" && workspaceStickies.length === 0) {
     return (
-      <EmptyState
-        query={searchQuery}
-        creatingSticky={creatingSticky}
-        handleCreate={() => {
-          toggleShowNewSticky(true);
-          stickyOperations.create();
-        }}
-      />
+      <div className="size-full grid place-items-center">
+        <EmptyState
+          type={searchQuery ? EmptyStateType.STICKIES_SEARCH : EmptyStateType.STICKIES}
+          layout={searchQuery ? "screen-simple" : "screen-detailed"}
+          primaryButtonOnClick={() => {
+            toggleShowNewSticky(true);
+            stickyOperations.create();
+          }}
+          size="sm"
+        />
+      </div>
     );
   }
 
@@ -139,7 +147,7 @@ export const StickiesLayout = (props: TStickiesLayout) => {
 
   const columnCount = getColumnCount(containerWidth);
   return (
-    <div ref={ref} className="min-h-[500px]">
+    <div ref={ref} className="size-full min-h-[500px]">
       <StickiesList {...props} columnCount={columnCount} />
     </div>
   );

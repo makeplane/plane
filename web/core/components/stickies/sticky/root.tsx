@@ -3,10 +3,14 @@ import { debounce } from "lodash";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { Minimize2 } from "lucide-react";
+// plane types
 import { TSticky } from "@plane/types";
+// plane utils
 import { cn } from "@plane/utils";
+// hooks
 import { useSticky } from "@/hooks/use-stickies";
-import { STICKY_COLORS } from "../../editor/sticky-editor/color-pallete";
+// components
+import { STICKY_COLORS_LIST } from "../../editor/sticky-editor/color-palette";
 import { StickyDeleteModal } from "../delete-modal";
 import { StickyInput } from "./inputs";
 import { StickyItemDragHandle } from "./sticky-item-drag-handle";
@@ -21,23 +25,30 @@ type TProps = {
 };
 export const StickyNote = observer((props: TProps) => {
   const { onClose, workspaceSlug, className = "", stickyId, showToolbar } = props;
-  //router
+  // navigation
   const pathName = usePathname();
-  //state
+  // states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  // hooks
-  const { stickyOperations } = useStickyOperations({ workspaceSlug });
+  // store hooks
   const { stickies } = useSticky();
+  // sticky operations
+  const { stickyOperations } = useStickyOperations({ workspaceSlug });
   // derived values
-  const stickyData: TSticky | undefined = stickyId ? stickies[stickyId] : undefined;
+  const stickyData = stickyId ? stickies[stickyId] : undefined;
+  const isStickiesPage = pathName?.includes("stickies");
+  const backgroundColor =
+    STICKY_COLORS_LIST.find((c) => c.key === stickyData?.background_color)?.backgroundColor ||
+    STICKY_COLORS_LIST[0].backgroundColor;
 
   const handleChange = useCallback(
     async (payload: Partial<TSticky>) => {
-      stickyId
-        ? await stickyOperations.update(stickyId, payload)
-        : await stickyOperations.create({
-            ...payload,
-          });
+      if (stickyId) {
+        await stickyOperations.update(stickyId, payload);
+      } else {
+        await stickyOperations.create({
+          ...payload,
+        });
+      }
     },
     [stickyId, stickyOperations]
   );
@@ -64,11 +75,13 @@ export const StickyNote = observer((props: TProps) => {
       />
       <div
         className={cn("w-full flex flex-col h-fit rounded p-4 group/sticky", className)}
-        style={{ backgroundColor: stickyData?.color || STICKY_COLORS[0] }}
+        style={{
+          backgroundColor,
+        }}
       >
-        {pathName?.includes("stickies") && <StickyItemDragHandle isDragging={false} />}{" "}
+        {isStickiesPage && <StickyItemDragHandle isDragging={false} />}{" "}
         {onClose && (
-          <button className="flex w-full" onClick={onClose}>
+          <button type="button" className="flex w-full" onClick={onClose}>
             <Minimize2 className="size-4 m-auto mr-0" />
           </button>
         )}
@@ -78,10 +91,7 @@ export const StickyNote = observer((props: TProps) => {
           workspaceSlug={workspaceSlug}
           handleUpdate={debouncedFormSave}
           stickyId={stickyId}
-          handleDelete={() => {
-            if (!stickyId) return;
-            setIsDeleteModalOpen(true);
-          }}
+          handleDelete={() => setIsDeleteModalOpen(true)}
           handleChange={handleChange}
           showToolbar={showToolbar}
         />

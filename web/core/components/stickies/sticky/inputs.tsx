@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useRef } from "react";
 import { DebouncedFunc } from "lodash";
 import { Controller, useForm } from "react-hook-form";
+// plane editor
 import { EditorRefApi } from "@plane/editor";
+// plane types
 import { TSticky } from "@plane/types";
+// hooks
 import { useWorkspace } from "@/hooks/store";
+// components
 import { StickyEditor } from "../../editor";
 
 type TProps = {
@@ -15,49 +19,41 @@ type TProps = {
   handleChange: (data: Partial<TSticky>) => Promise<void>;
   handleDelete: () => void;
 };
+
 export const StickyInput = (props: TProps) => {
   const { stickyData, workspaceSlug, handleUpdate, stickyId, handleDelete, handleChange, showToolbar } = props;
-  //refs
+  // refs
   const editorRef = useRef<EditorRefApi>(null);
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
+  // derived values
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id?.toString() ?? "";
   // form info
   const { handleSubmit, reset, control } = useForm<TSticky>({
     defaultValues: {
       description_html: stickyData?.description_html,
     },
   });
-
-  // computed values
-  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id as string;
-
+  // handle description update
+  const handleFormSubmit = useCallback(
+    async (formdata: Partial<TSticky>) => {
+      await handleUpdate({
+        description_html: formdata.description_html ?? "<p></p>",
+      });
+    },
+    [handleUpdate]
+  );
   // reset form values
   useEffect(() => {
     if (!stickyId) return;
     reset({
       id: stickyId,
-      description_html: stickyData?.description_html === "" ? "<p></p>" : stickyData?.description_html,
+      description_html: stickyData?.description_html?.trim() === "" ? "<p></p>" : stickyData?.description_html,
     });
-  }, [stickyData, reset]);
-
-  const handleFormSubmit = useCallback(
-    async (formdata: Partial<TSticky>) => {
-      if (formdata.name !== undefined) {
-        await handleUpdate({
-          description_html: formdata.description_html ?? "<p></p>",
-        });
-      } else {
-        await handleUpdate({
-          description_html: formdata.description_html ?? "<p></p>",
-        });
-      }
-    },
-    [handleUpdate, workspaceSlug]
-  );
+  }, [stickyData, stickyId, reset]);
 
   return (
     <div className="flex-1">
-      {/* description */}
       <Controller
         name="description_html"
         control={control}
@@ -68,12 +64,12 @@ export const StickyInput = (props: TProps) => {
             value={null}
             workspaceSlug={workspaceSlug}
             workspaceId={workspaceId}
-            onChange={(_description: object, description_html: string) => {
+            onChange={(_description, description_html) => {
               onChange(description_html);
               handleSubmit(handleFormSubmit)();
             }}
-            placeholder={"Click to type here"}
-            containerClassName={"px-0 text-base min-h-[250px] w-full text-[#455068]"}
+            placeholder="Click to type here"
+            containerClassName="px-0 text-base min-h-[250px] w-full"
             uploadFile={async () => ""}
             showToolbar={showToolbar}
             parentClassName={"border-none p-0"}

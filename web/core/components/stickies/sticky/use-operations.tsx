@@ -1,7 +1,13 @@
 import { useMemo } from "react";
+// plane types
 import { InstructionType, TSticky } from "@plane/types";
+// plane ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { STICKY_COLORS } from "@/components/editor/sticky-editor/color-pallete";
+// plane utils
+import { isCommentEmpty } from "@plane/utils";
+// components
+import { STICKY_COLORS_LIST } from "@/components/editor/sticky-editor/color-palette";
+// hooks
 import { useSticky } from "@/hooks/use-stickies";
 
 export type TOperations = {
@@ -20,39 +26,23 @@ type TProps = {
   workspaceSlug: string;
 };
 
-/**
- * Checks if HTML content is empty after extracting text
- * @param html HTML string to check
- * @returns boolean indicating if content is empty
- */
-const isHtmlContentEmpty = (html: string): boolean => {
-  // Create a temporary DOM element
-  const tempElement = document.createElement("div");
-  tempElement.innerHTML = html;
-
-  // Get text content and trim whitespace
-  const textContent = tempElement.textContent || "";
-  const trimmedContent = textContent.trim();
-
-  return trimmedContent.length === 0;
-};
-
 export const getRandomStickyColor = (): string => {
-  const randomIndex = Math.floor(Math.random() * STICKY_COLORS.length);
-  return STICKY_COLORS[randomIndex];
+  const randomIndex = Math.floor(Math.random() * STICKY_COLORS_LIST.length);
+  return STICKY_COLORS_LIST[randomIndex].backgroundColor;
 };
 
 export const useStickyOperations = (props: TProps) => {
   const { workspaceSlug } = props;
-  const { stickies, getWorkspaceStickies, createSticky, updateSticky, deleteSticky, updateStickyPosition } =
+  // store hooks
+  const { stickies, getWorkspaceStickyIds, createSticky, updateSticky, deleteSticky, updateStickyPosition } =
     useSticky();
 
   const isValid = (data: Partial<TSticky>) => {
     if (data.name && data.name.length > 100) {
       setToast({
-        message: "The sticky name cannot be longer than 100 characters",
         type: TOAST_TYPE.ERROR,
         title: "Sticky not updated",
+        message: "The sticky name cannot be longer than 100 characters.",
       });
       return false;
     }
@@ -64,34 +54,35 @@ export const useStickyOperations = (props: TProps) => {
       create: async (data?: Partial<TSticky>) => {
         try {
           const payload: Partial<TSticky> = {
-            color: getRandomStickyColor(),
+            background_color: getRandomStickyColor(),
             ...data,
           };
-          const workspaceStickies = getWorkspaceStickies(workspaceSlug);
+          const workspaceStickIds = getWorkspaceStickyIds(workspaceSlug);
           // check if latest sticky is empty
-          if (getWorkspaceStickies(workspaceSlug).length >= 0) {
-            const latestSticky = stickies[workspaceStickies[0]];
-            if (latestSticky && (!latestSticky.description_html || isHtmlContentEmpty(latestSticky.description_html)))
+          if (workspaceStickIds && workspaceStickIds.length >= 0) {
+            const latestSticky = stickies[workspaceStickIds[0]];
+            if (latestSticky && (!latestSticky.description_html || isCommentEmpty(latestSticky.description_html))) {
               setToast({
                 message: "There already exists a sticky with no description",
                 type: TOAST_TYPE.WARNING,
                 title: "Sticky already created",
               });
-            return;
+              return;
+            }
           }
           if (!workspaceSlug) throw new Error("Missing required fields");
           if (!isValid(payload)) return;
           await createSticky(workspaceSlug, payload);
           setToast({
-            message: "The sticky has been successfully created",
             type: TOAST_TYPE.SUCCESS,
             title: "Sticky created",
+            message: "The sticky has been successfully created.",
           });
         } catch (error: any) {
           setToast({
-            message: error?.data?.error ?? "The sticky could not be created",
             type: TOAST_TYPE.ERROR,
             title: "Sticky not created",
+            message: error?.data?.error ?? "The sticky could not be created.",
           });
           throw error;
         }
@@ -103,9 +94,9 @@ export const useStickyOperations = (props: TProps) => {
           await updateSticky(workspaceSlug, stickyId, data);
         } catch (error) {
           setToast({
-            message: "The sticky could not be updated",
             type: TOAST_TYPE.ERROR,
             title: "Sticky not updated",
+            message: "The sticky could not be updated.",
           });
           throw error;
         }
@@ -115,15 +106,15 @@ export const useStickyOperations = (props: TProps) => {
           if (!workspaceSlug) throw new Error("Missing required fields");
           await deleteSticky(workspaceSlug, stickyId);
           setToast({
-            message: "The sticky has been successfully removed",
             type: TOAST_TYPE.SUCCESS,
             title: "Sticky removed",
+            message: "The sticky has been removed successfully.",
           });
         } catch (error) {
           setToast({
-            message: "The sticky could not be removed",
             type: TOAST_TYPE.ERROR,
             title: "Sticky not removed",
+            message: "The sticky could not be removed.",
           });
           throw error;
         }
@@ -139,15 +130,15 @@ export const useStickyOperations = (props: TProps) => {
           await updateStickyPosition(workspaceSlug, sourceId, droppedId, instruction);
         } catch (error) {
           setToast({
-            message: "The sticky could not be updated",
             type: TOAST_TYPE.ERROR,
             title: "Sticky not updated",
+            message: "The sticky could not be updated.",
           });
           throw error;
         }
       },
     }),
-    [workspaceSlug]
+    [createSticky, deleteSticky, getWorkspaceStickyIds, stickies, updateSticky, updateStickyPosition, workspaceSlug]
   );
 
   return {

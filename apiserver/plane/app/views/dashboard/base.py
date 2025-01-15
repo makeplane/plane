@@ -707,17 +707,17 @@ class DashboardEndpoint(BaseAPIView):
 
                     updated_dashboard_widgets = []
                     for widget_key in widgets_to_fetch:
-                        widget = DeprecatedWidget.objects.filter(key=widget_key).values_list(
-                            "id", flat=True
-                        )
+                        widget = DeprecatedWidget.objects.filter(
+                            key=widget_key
+                        ).values_list("id", flat=True)
                         if widget:
                             updated_dashboard_widgets.append(
-                                DashboardWidget(
+                                DeprecatedDashboardWidget(
                                     widget_id=widget, dashboard_id=dashboard.id
                                 )
                             )
 
-                    DashboardWidget.objects.bulk_create(
+                    DeprecatedDashboardWidget.objects.bulk_create(
                         updated_dashboard_widgets, batch_size=100
                     )
 
@@ -733,7 +733,7 @@ class DashboardEndpoint(BaseAPIView):
                     )
                     .annotate(
                         dashboard_filters=Subquery(
-                            DashboardWidget.objects.filter(
+                            DeprecatedDashboardWidget.objects.filter(
                                 widget_id=OuterRef("pk"),
                                 dashboard_id=dashboard.id,
                                 filters__isnull=False,
@@ -792,7 +792,7 @@ class DashboardEndpoint(BaseAPIView):
 
 class WidgetsEndpoint(BaseAPIView):
     def patch(self, request, dashboard_id, widget_id):
-        dashboard_widget = DashboardWidget.objects.filter(
+        dashboard_widget = DeprecatedDashboardWidget.objects.filter(
             widget_id=widget_id, dashboard_id=dashboard_id
         ).first()
         dashboard_widget.is_visible = request.data.get(

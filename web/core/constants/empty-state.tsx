@@ -1,4 +1,5 @@
 import { EUserPermissions } from "ee/constants/user-permissions";
+import { Plus } from "lucide-react";
 
 export interface EmptyStateDetails {
   key: EmptyStateType;
@@ -119,9 +120,12 @@ export enum EmptyStateType {
   TEAM_EMPTY_FILTER = "team-empty-filter",
   TEAM_VIEW = "team-view",
   TEAM_PAGE = "team-page",
+
+  STICKIES = "stickies",
+  STICKIES_SEARCH = "stickies-search",
 }
 
-const emptyStateDetails = {
+const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
   // workspace
   [EmptyStateType.WORKSPACE_DASHBOARD]: {
     key: EmptyStateType.WORKSPACE_DASHBOARD,
@@ -896,6 +900,31 @@ const emptyStateDetails = {
     description:
       "Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started. Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button.",
     path: "/empty-state/onboarding/pages",
+  },
+  [EmptyStateType.STICKIES]: {
+    key: EmptyStateType.STICKIES,
+    title: "Begin with your first sticky note",
+    description:
+      "Capture your thoughts and ideas effortlessly by creating stickies that you can access anytime and from anywhere.",
+    path: "/empty-state/stickies/stickies",
+    primaryButton: {
+      icon: <Plus className="size-4" />,
+      text: "Add sticky",
+    },
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    accessType: "workspace",
+  },
+  [EmptyStateType.STICKIES_SEARCH]: {
+    key: EmptyStateType.STICKIES_SEARCH,
+    title: "No matching sticky",
+    description: "No stickies match the search criteria.\nCreate a new sticky instead.",
+    path: "/empty-state/stickies/stickies-search",
+    primaryButton: {
+      icon: <Plus className="size-4" />,
+      text: "Add sticky",
+    },
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    accessType: "workspace",
   },
 } as const;
 

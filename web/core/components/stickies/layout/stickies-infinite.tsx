@@ -12,7 +12,7 @@ import { StickiesLayout } from "./stickies-list";
 export const StickiesInfinite = observer(() => {
   const { workspaceSlug } = useParams();
   // hooks
-  const { fetchWorkspaceStickies, fetchNextWorkspaceStickies, getWorkspaceStickies, loader, paginationInfo } =
+  const { fetchWorkspaceStickies, fetchNextWorkspaceStickies, getWorkspaceStickyIds, loader, paginationInfo } =
     useSticky();
   //state
   const [elementRef, setElementRef] = useState<HTMLDivElement | null>(null);
@@ -33,7 +33,7 @@ export const StickiesInfinite = observer(() => {
 
   const hasNextPage = paginationInfo?.next_page_results && paginationInfo?.next_cursor !== undefined;
   const shouldObserve = hasNextPage && loader !== "pagination";
-  const workspaceStickies = getWorkspaceStickies(workspaceSlug?.toString());
+  const workspaceStickies = getWorkspaceStickyIds(workspaceSlug?.toString());
   useIntersectionObserver(containerRef, shouldObserve ? elementRef : null, handleLoadMore);
 
   return (

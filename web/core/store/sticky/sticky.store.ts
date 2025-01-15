@@ -15,21 +15,24 @@ export interface IStickyStore {
   recentStickyId: string | undefined;
   showAddNewSticky: boolean;
   paginationInfo: TPaginationInfo | undefined;
-
   // computed
-  getWorkspaceStickies: (workspaceSlug: string) => string[];
-
+  getWorkspaceStickyIds: (workspaceSlug: string) => string[];
   // actions
   toggleShowNewSticky: (value: boolean) => void;
   updateSearchQuery: (query: string) => void;
   fetchWorkspaceStickies: (workspaceSlug: string) => void;
-  createSticky: (workspaceSlug: string, sticky: Partial<TSticky>) => void;
-  updateSticky: (workspaceSlug: string, id: string, updates: Partial<TSticky>) => void;
-  deleteSticky: (workspaceSlug: string, id: string) => void;
+  createSticky: (workspaceSlug: string, sticky: Partial<TSticky>) => Promise<void>;
+  updateSticky: (workspaceSlug: string, id: string, updates: Partial<TSticky>) => Promise<void>;
+  deleteSticky: (workspaceSlug: string, id: string) => Promise<void>;
   updateActiveStickyId: (id: string | undefined) => void;
-  fetchRecentSticky: (workspaceSlug: string) => void;
-  fetchNextWorkspaceStickies: (workspaceSlug: string) => void;
-  updateStickyPosition: (workspaceSlug: string, stickyId: string, destinationId: string, edge: InstructionType) => void;
+  fetchRecentSticky: (workspaceSlug: string) => Promise<void>;
+  fetchNextWorkspaceStickies: (workspaceSlug: string) => Promise<void>;
+  updateStickyPosition: (
+    workspaceSlug: string,
+    stickyId: string,
+    destinationId: string,
+    edge: InstructionType
+  ) => Promise<void>;
 }
 
 export class StickyStore implements IStickyStore {
@@ -72,7 +75,7 @@ export class StickyStore implements IStickyStore {
     this.stickyService = new StickyService();
   }
 
-  getWorkspaceStickies = computedFn((workspaceSlug: string) =>
+  getWorkspaceStickyIds = computedFn((workspaceSlug: string) =>
     orderBy(
       (this.workspaceStickies[workspaceSlug] || []).map((stickyId) => this.stickies[stickyId]),
       ["sort_order"],
@@ -185,16 +188,18 @@ export class StickyStore implements IStickyStore {
     const sticky = this.stickies[id];
     if (!sticky) return;
     try {
-      this.stickies[id] = {
-        ...sticky,
-        ...updates,
-        updatedAt: new Date(),
-      };
+      runInAction(() => {
+        Object.keys(updates).forEach((key) => {
+          const currentStickyKey = key as keyof TSticky;
+          set(this.stickies[id], key, updates[currentStickyKey] || undefined);
+        });
+      });
       this.recentStickyId = id;
       await this.stickyService.updateSticky(workspaceSlug, id, updates);
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.error("Error in updating sticky:", error);
       this.stickies[id] = sticky;
+      throw new Error();
     }
   };
 
