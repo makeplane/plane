@@ -2,14 +2,16 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane
+import { EUserPermissionsLevel } from "@plane/constants";
 import { InitiativeIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
 // hooks
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local components
 import { BlockProperties } from "./block-properties";
@@ -31,10 +33,16 @@ export const InitiativeBlock = observer((props: Props) => {
   } = useInitiatives();
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { isMobile } = usePlatformOS();
+  const { allowPermissions } = useUserPermissions();
 
   const initiative = getInitiativeById(initiativeId);
 
   if (!initiative) return <></>;
+
+  const isEditable = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   return (
     <ListItem
@@ -47,7 +55,7 @@ export const InitiativeBlock = observer((props: Props) => {
       }
       quickActionElement={
         <>
-          <BlockProperties initiative={initiative} isSidebarCollapsed={isSidebarCollapsed} />
+          <BlockProperties initiative={initiative} isSidebarCollapsed={isSidebarCollapsed} disabled={!isEditable} />
           <div
             className={cn("hidden", {
               "md:flex": isSidebarCollapsed,
@@ -58,6 +66,7 @@ export const InitiativeBlock = observer((props: Props) => {
               parentRef={parentRef}
               initiative={initiative}
               workspaceSlug={workspaceSlug.toString()}
+              disabled={!isEditable}
             />
           </div>
         </>

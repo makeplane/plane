@@ -15,13 +15,15 @@ from rest_framework.response import Response
 # Module imports
 from plane.ee.views.base import BaseAPIView
 from plane.ee.permissions import WorkspaceUserPermission
-from plane.db.models import Workspace, Issue, FileAsset
+from plane.db.models import Workspace, Issue, FileAsset, Project
 from plane.ee.models import (
     Initiative,
     InitiativeProject,
     InitiativeLabel,
     InitiativeReaction,
     InitiativeLink,
+    InitiativeEpic,
+    ProjectAttribute,
 )
 from plane.ee.serializers import InitiativeSerializer, InitiativeProjectSerializer
 from plane.payment.flags.flag import FeatureFlag
@@ -77,7 +79,9 @@ class InitiativeEndpoint(BaseAPIView):
                     )
                 )
                 .annotate(
-                    link_count=InitiativeLink.objects.filter(initiative_id=OuterRef("id"))
+                    link_count=InitiativeLink.objects.filter(
+                        initiative_id=OuterRef("id")
+                    )
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
@@ -217,9 +221,47 @@ class InitiativeProjectEndpoint(BaseAPIView):
         # Get all projects in initiative
         initiative_projects = InitiativeProject.objects.filter(
             initiative_id=initiative_id, workspace__slug=slug
+        ).values_list("project_id", flat=True)
+
+        # Get all projects in initiative
+        projects = (
+            Project.objects.filter(id__in=initiative_projects)
+            .annotate(
+                total_issues=Issue.issue_objects.filter(project_id=OuterRef("pk"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                completed_issues=Issue.issue_objects.filter(
+                    project_id=OuterRef("pk"), state__group="completed"
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                state_id=Subquery(
+                    ProjectAttribute.objects.filter(project_id=OuterRef("pk")).values(
+                        "state_id"
+                    )[:1]
+                )
+            )
+            .values(
+                "id",
+                "name",
+                "completed_issues",
+                "total_issues",
+                "archived_at",
+                "state_id",
+                "lead_id",
+                "start_date",
+                "target_date",
+                "logo_props",
+            )
         )
-        serializer = InitiativeProjectSerializer(initiative_projects, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(projects, status=status.HTTP_200_OK)
 
     def post(self, request, slug, initiative_id, project_id=None):
         workspace = Workspace.objects.get(slug=slug)
@@ -309,9 +351,25 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
             workspace__slug=slug, initiative_id=initiative_id
         ).values_list("project_id", flat=True)
 
+        # also get the epics which are part of the initiative
+        initiative_epics = InitiativeEpic.objects.filter(
+            workspace__slug=slug, initiative_id=initiative_id
+        ).values_list("epic_id", flat=True)
+
         # Annotate the counts for different states in one query
-        issues = Issue.issue_objects.filter(
-            project_id__in=project_ids, workspace__slug=slug
+        issues = Issue.objects.filter(
+            Q(
+                Q(type__is_epic=False) | Q(type__isnull=True),
+                Q(issue_intake__status__in=[-1, 1, 2])
+                | Q(issue_intake__status__isnull=True),
+                project_id__in=project_ids,
+                deleted_at__isnull=True,
+                archived_at__isnull=True,
+                project__archived_at__isnull=True,
+                is_draft=False,
+            )
+            | Q(id__in=initiative_epics),
+            workspace__slug=slug,
         ).aggregate(
             backlog_issues=Count("id", filter=Q(state__group="backlog")),
             unstarted_issues=Count("id", filter=Q(state__group="unstarted")),

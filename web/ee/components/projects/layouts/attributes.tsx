@@ -181,8 +181,9 @@ const Attributes: React.FC<Props> = observer((props) => {
               to: "End date",
             }}
             hideIcon={{
-              to: true,
+              to: !!project.target_date,
             }}
+            renderPlaceholder={false}
             tabIndex={3}
             buttonClassName={cn("z-1 px-2 py-0 h-5")}
             className={cn("h-5 my-auto", dateClassname)}

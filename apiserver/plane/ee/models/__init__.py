@@ -9,6 +9,7 @@ from .issue_properties import (
 
 from .draft import DraftIssuePropertyValue
 
+
 from .issue import (
     IssueWorkLog,
     EntityUpdates,
@@ -47,6 +48,7 @@ from .initiative import (
     InitiativeCommentReaction,
     InitiativeReaction,
     InitiativeUserProperty,
+    InitiativeEpic,
 )
 from .team import (
     TeamSpace,

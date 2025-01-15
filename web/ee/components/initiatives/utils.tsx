@@ -31,6 +31,15 @@ export const getGroupList = (
 
   if (groupBy === "created_by" || groupBy === "lead") {
     for (const groupId of groupIds) {
+      if (groupId === "None") {
+        groupList.push({
+          id: groupId,
+          name: "None",
+          icon: <Avatar size="md" />,
+        });
+        continue;
+      }
+
       const member = getUserDetails(groupId);
 
       if (!member) continue;
@@ -40,14 +49,6 @@ export const getGroupList = (
         name: member.display_name,
         icon: <Avatar name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} size="md" />,
       });
-
-      if (groupIds.includes("None")) {
-        groupList.push({
-          id: "None",
-          name: "None",
-          icon: <Avatar size="md" />,
-        });
-      }
     }
   }
 

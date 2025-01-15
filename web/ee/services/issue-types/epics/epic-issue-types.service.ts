@@ -17,7 +17,7 @@ class EpicIssueTypesService extends APIService implements IIssueTypesService {
   }
 
   async fetchAll({ workspaceSlug }: TFetchIssueTypesPayload): Promise<TIssueType[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/epics/`)
+    return this.get(`/api/workspaces/${workspaceSlug}/epic-types/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

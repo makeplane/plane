@@ -20,7 +20,7 @@ import { IInitiativeFilterStore } from "./initiatives-filter.store";
 
 export const ALL_INITIATIVES = "All Initiatives";
 
-type InitiativeCollapsible = "links" | "attachments" | "projects";
+type InitiativeCollapsible = "links" | "attachments" | "projects" | "epics";
 
 export interface IInitiativeStore {
   initiativesMap: Record<string, TInitiative> | undefined;
@@ -29,6 +29,8 @@ export interface IInitiativeStore {
   initiativeAttachments: IInitiativeAttachmentStore;
   initiativeAnalyticsLoader: Record<string, TLoader>;
   initiativeAnalyticsMap: Record<string, TInitiativeAnalytics>;
+  initiativeEpicLoader: Record<string, TLoader>;
+  initiativeEpicsMap: Record<string, string[]>;
 
   openCollapsibleSection: InitiativeCollapsible[];
   lastCollapsibleAction: InitiativeCollapsible | null;
@@ -41,6 +43,11 @@ export interface IInitiativeStore {
 
   getInitiativeById: (initiativeId: string) => TInitiative | undefined;
   getInitiativeAnalyticsById: (initiativeId: string) => TInitiativeAnalytics | undefined;
+
+  fetchInitiativeEpics: (workspaceSlug: string, initiativeId: string) => string[] | undefined;
+  getInitiativeEpicsById: (initiativeId: string) => string[] | undefined;
+  removeEpicFromInitiative: (workspaceSlug: string, initiativeId: string, epicId: string) => Promise<void>;
+  addEpicsToInitiative: (workspaceSlug: string, initiativeId: string, epicIds: string[]) => Promise<void>;
 
   fetchInitiatives: (workspaceSlug: string) => Promise<TInitiative[] | undefined>;
   fetchInitiativeAnalytics: (workspaceSlug: string, initiativeId: string) => Promise<TInitiativeAnalytics | undefined>;
@@ -67,7 +74,10 @@ export class InitiativeStore implements IInitiativeStore {
   initiativeAnalyticsLoader: Record<string, TLoader> = {};
   initiativeAnalyticsMap: Record<string, TInitiativeAnalytics> = {};
 
-  openCollapsibleSection: InitiativeCollapsible[] = ["projects"];
+  initiativeEpicLoader: Record<string, TLoader> = {};
+  initiativeEpicsMap: Record<string, string[]> = {};
+
+  openCollapsibleSection: InitiativeCollapsible[] = ["projects", "epics"];
   lastCollapsibleAction: InitiativeCollapsible | null = null;
 
   initiativeLinks: IInitiativeLinkStore;
@@ -84,11 +94,18 @@ export class InitiativeStore implements IInitiativeStore {
       initiativesMap: observable,
       initiativeAnalyticsLoader: observable,
       initiativeAnalyticsMap: observable,
+
+      initiativeEpicLoader: observable,
+      initiativeEpicsMap: observable,
+
       openCollapsibleSection: observable.ref,
       lastCollapsibleAction: observable.ref,
       // actions
       fetchInitiatives: action,
       fetchInitiativeAnalytics: action,
+      fetchInitiativeEpics: action,
+      removeEpicFromInitiative: action,
+      addEpicsToInitiative: action,
       createInitiative: action,
       fetchInitiativeDetails: action,
       updateInitiative: action,
@@ -137,6 +154,8 @@ export class InitiativeStore implements IInitiativeStore {
   });
 
   getInitiativeById = computedFn((initiativeId: string) => this.initiativesMap?.[initiativeId]);
+
+  getInitiativeEpicsById = computedFn((initiativeId: string) => this.initiativeEpicsMap?.[initiativeId]);
 
   getInitiativeAnalyticsById = computedFn((initiativeId: string) => this.initiativeAnalyticsMap[initiativeId]);
 
@@ -214,6 +233,7 @@ export class InitiativeStore implements IInitiativeStore {
       this.fetchInitiativeAnalytics(workspaceSlug, initiativeId);
       this.initiativeCommentActivities.fetchInitiativeComments(workspaceSlug, initiativeId);
       this.initiativeCommentActivities.fetchActivities(workspaceSlug, initiativeId);
+      this.fetchInitiativeEpics(workspaceSlug, initiativeId);
       return response;
     } catch (error) {
       console.error("error while fetching initiative details", error);
@@ -254,6 +274,93 @@ export class InitiativeStore implements IInitiativeStore {
         };
       });
       return undefined;
+    }
+  };
+
+  fetchInitiativeEpics = (workspaceSlug: string, initiativeId: string): string[] | undefined => {
+    // Start the async operation
+    this.fetchInitiativeEpicsAsync(workspaceSlug, initiativeId);
+    // Return the current value synchronously
+    return this.initiativeEpicsMap[initiativeId];
+  };
+
+  private fetchInitiativeEpicsAsync = async (workspaceSlug: string, initiativeId: string) => {
+    try {
+      runInAction(() => {
+        this.initiativeEpicLoader = {
+          ...this.initiativeEpicLoader,
+          [initiativeId]: "init-loader",
+        };
+      });
+
+      const response = await this.initiativeService.fetchInitiativeEpics(workspaceSlug, initiativeId);
+
+      const transformedResponse = response.map((epic) => ({
+        ...epic,
+        is_epic: true,
+      }));
+
+      const responseIds = transformedResponse.map((epic) => epic.id);
+
+      this.rootStore.issue.issues.addIssue(transformedResponse);
+
+      runInAction(() => {
+        if (transformedResponse) {
+          this.initiativeEpicsMap[initiativeId] = responseIds;
+        }
+        this.initiativeEpicLoader = {
+          ...this.initiativeEpicLoader,
+          [initiativeId]: "loaded",
+        };
+      });
+
+      return responseIds;
+    } catch (error) {
+      console.error("Error while fetching initiative epics", error);
+      runInAction(() => {
+        this.initiativeEpicLoader = {
+          ...this.initiativeEpicLoader,
+          [initiativeId]: undefined,
+        };
+      });
+      return undefined;
+    }
+  };
+
+  removeEpicFromInitiative = async (workspaceSlug: string, initiativeId: string, epicId: string): Promise<void> => {
+    try {
+      await this.initiativeService.removeEpicsFromInitiative(workspaceSlug, initiativeId, epicId);
+
+      runInAction(() => {
+        if (this.initiativeEpicsMap?.[initiativeId]) {
+          this.initiativeEpicsMap[initiativeId] = this.initiativeEpicsMap[initiativeId].filter((id) => id !== epicId);
+        }
+      });
+    } catch (error) {
+      console.error("error while removing epic from initiative", error);
+    }
+  };
+
+  addEpicsToInitiative = async (workspaceSlug: string, initiativeId: string, epicIds: string[]): Promise<void> => {
+    try {
+      const response = await this.initiativeService.addEpicsToInitiative(workspaceSlug, initiativeId, epicIds);
+
+      const transformedResponse = response.map((epic) => ({
+        ...epic,
+        is_epic: true,
+      }));
+
+      const responseIds = transformedResponse.map((epic) => epic.id);
+
+      this.rootStore.issue.issues.addIssue(transformedResponse);
+
+      runInAction(() => {
+        // Update the epicMap by adding the new epicIds
+        update(this.initiativeEpicsMap, [initiativeId], (Ids: string[]) => [...Ids, ...responseIds]);
+      });
+    } catch (error) {
+      console.error("Error adding epics to initiative", error);
+      throw error;
     }
   };
 

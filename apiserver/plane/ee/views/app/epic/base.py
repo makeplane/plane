@@ -28,7 +28,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.permissions import allow_permission, ROLE
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.ee.models import EpicUserProperties, ProjectFeature
+from plane.ee.models import EpicUserProperties, ProjectFeature, InitiativeEpic
 from plane.db.models import (
     Issue,
     FileAsset,
@@ -584,3 +584,38 @@ class EpicDetailEndpoint(BaseAPIView):
                 epics, many=True, fields=self.fields, expand=self.expand
             ).data,
         )
+
+
+class WorkspaceEpicEndpoint(BaseAPIView):
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    def get(self, request, slug):
+        initiative_id = request.query_params.get("initiative_id", None)
+
+        epics_query = Issue.objects.filter(workspace__slug=slug).filter(
+            Q(type__isnull=False) & Q(type__is_epic=True)
+        )
+
+        if initiative_id:
+            # Exclude epics that are already in the initiative
+            initiative_epics = InitiativeEpic.objects.filter(
+                initiative_id=initiative_id
+            ).values_list("epic_id", flat=True)
+            epics_query = epics_query.exclude(id__in=initiative_epics)
+
+        epics = (
+            epics_query.select_related("workspace", "project", "state", "type")
+            .annotate(state_group=F("state__group"))
+            .values(
+                "id",
+                "name",
+                "state_id",
+                "sequence_id",
+                "project_id",
+                "state__group",
+                "type_id",
+                "project__identifier",
+            )
+        )
+
+        return Response(epics, status=status.HTTP_200_OK)

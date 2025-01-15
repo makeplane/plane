@@ -9,12 +9,9 @@ import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from 
 import { cn } from "@plane/utils";
 // helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";
-// hooks
-import { useUserPermissions } from "@/hooks/store";
 // Plane-web
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { TInitiative } from "@/plane-web/types/initiative";
-//
+// local components
 import { CreateUpdateInitiativeModal } from "./create-update-initiatives-modal";
 import { InitiativeDeleteModal } from "./initiative-delete-modal";
 
@@ -22,21 +19,14 @@ type Props = {
   parentRef: React.RefObject<HTMLElement>;
   initiative: TInitiative;
   workspaceSlug: string;
+  disabled?: boolean;
 };
 
 export const InitiativeQuickActions: React.FC<Props> = observer((props) => {
-  const { parentRef, initiative, workspaceSlug } = props;
+  const { parentRef, initiative, workspaceSlug, disabled = false } = props;
   // states
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-  // store hooks
-  const { allowPermissions } = useUserPermissions();
-  // auth
-  const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug
-  );
 
   const initiativeLink = `${workspaceSlug}/initiatives/${initiative?.id}`;
   const handleCopyText = () =>
@@ -63,7 +53,7 @@ export const InitiativeQuickActions: React.FC<Props> = observer((props) => {
       title: "Edit",
       icon: Pencil,
       action: handleEditCycle,
-      shouldRender: isEditingAllowed,
+      shouldRender: !disabled,
     },
     {
       key: "open-new-tab",
@@ -82,7 +72,7 @@ export const InitiativeQuickActions: React.FC<Props> = observer((props) => {
       action: handleDeleteCycle,
       title: "Delete",
       icon: Trash2,
-      shouldRender: isEditingAllowed,
+      shouldRender: !disabled,
     },
   ];
 

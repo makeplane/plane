@@ -12,11 +12,16 @@ from plane.ee.views.app.epic import (
     EpicAnalyticsEndpoint,
     EpicIssuesEndpoint,
     EpicDetailEndpoint,
+    WorkspaceEpicEndpoint,
 )
-from plane.ee.views.app.epic_property import WorkspaceEpicEndpoint
+from plane.ee.views.app.epic_property import WorkspaceEpicTypeEndpoint
 
 urlpatterns = [
-    path("workspaces/<str:slug>/epics/", WorkspaceEpicEndpoint.as_view(), name="epics"),
+    path(
+        "workspaces/<str:slug>/epic-types/",
+        WorkspaceEpicTypeEndpoint.as_view(),
+        name="epics",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/epics/",
         EpicViewSet.as_view({"get": "list", "post": "create"}),
@@ -126,5 +131,10 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:epic_id>/issues/",
         EpicIssuesEndpoint.as_view(),
         name="project-epic-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/epics/",
+        WorkspaceEpicEndpoint.as_view(),
+        name="workspace-epics",
     ),
 ]

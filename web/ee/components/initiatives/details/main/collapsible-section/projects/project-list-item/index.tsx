@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // Plane
-import { Logo, Spinner } from "@plane/ui";
+import { CircularProgressIndicator, Logo, Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { ListItem } from "@/components/core/list";
@@ -38,6 +38,10 @@ export const ProjectItem = observer((props: Props) => {
 
   if (!projectDetails || !currentWorkspace) return <Spinner />;
 
+  const progress = projectDetails.total_issues
+    ? Math.round((projectDetails.completed_issues / projectDetails.total_issues) * 100)
+    : 0;
+
   return (
     <ListItem
       title={projectDetails.name}
@@ -50,8 +54,12 @@ export const ProjectItem = observer((props: Props) => {
       quickActionElement={
         <div className="flex shrink-0 items-center gap-2">
           {projectDetails.total_issues > 0 && (
-            <span className="text-sm font-medium text-custom-text-400 px-1">{`${projectDetails.completed_issues}/${projectDetails.total_issues}`}</span>
+            <div className="flex items-center gap-1">
+              <CircularProgressIndicator size={20} percentage={progress} strokeWidth={3} />
+              <span className="text-sm font-medium text-custom-text-300 px-1">{`${progress}%`}</span>
+            </div>
           )}
+
           <Attributes
             project={projectDetails}
             isArchived={projectDetails.archived_at !== null}
@@ -78,6 +86,7 @@ export const ProjectItem = observer((props: Props) => {
       itemClassName="overflow-visible"
       isMobile={isMobile}
       parentRef={parentRef}
+      className="last:pb-0 last:border-b-0"
     />
   );
 });

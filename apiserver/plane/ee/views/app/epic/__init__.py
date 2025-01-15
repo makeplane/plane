@@ -1,4 +1,4 @@
-from .base import EpicViewSet, EpicUserDisplayPropertyEndpoint, EpicAnalyticsEndpoint, EpicDetailEndpoint
+from .base import EpicViewSet, EpicUserDisplayPropertyEndpoint, EpicAnalyticsEndpoint, EpicDetailEndpoint, WorkspaceEpicEndpoint
 from .link import EpicLinkViewSet
 from .comment import EpicCommentViewSet
 from .activity import EpicActivityEndpoint

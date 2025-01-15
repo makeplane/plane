@@ -16,7 +16,7 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
 
-class WorkspaceEpicEndpoint(BaseAPIView):
+class WorkspaceEpicTypeEndpoint(BaseAPIView):
     permission_classes = [WorkspaceEntityPermission]
 
     @check_feature_flag(FeatureFlag.EPICS_DISPLAY)

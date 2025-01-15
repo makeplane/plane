@@ -1,8 +1,4 @@
-from plane.app.serializers import (
-    BaseSerializer,
-    ProjectLiteSerializer,
-    IssueSerializer,
-)
+from plane.app.serializers import BaseSerializer, ProjectLiteSerializer, IssueSerializer
 
 from .app.issue import IssueLiteSerializer
 from .app.active_cycle import WorkspaceActiveCycleSerializer
@@ -29,7 +25,7 @@ from .app.project import (
     ProjectAttachmentSerializer,
     ProjectReactionSerializer,
     ProjectFeatureSerializer,
-    ProjectActivitySerializer
+    ProjectActivitySerializer,
 )
 
 from .app.initiative import (
@@ -42,6 +38,7 @@ from .app.initiative import (
     InitiativeCommentReactionSerializer,
     InitiativeReactionSerializer,
     InitiativeActivitySerializer,
+    InitiativeEpicSerializer,
 )
 
 
@@ -83,18 +80,16 @@ from .space.views import ViewsPublicSerializer, ViewsPublicMetaSerializer
 from .space.issue import IssueCreateSerializer
 
 
-#job
+# job
 from .app.job import ImportReportSerializer, ImportJobSerializer
 
-#api
-from .api.job import ImportReportAPISerializer, ImportJobAPISerializer
-
-#workspace
+# app
 from .app.workspace.credential import WorkspaceCredentialSerializer
 from .app.workspace.connection import WorkspaceConnectionSerializer
 from .app.workspace.entity_connection import WorkspaceEntityConnectionSerializer
 
-#workspace
+# api
+from .api.job import ImportReportAPISerializer, ImportJobAPISerializer
 from .api.workspace.credential import WorkspaceCredentialAPISerializer
 from .api.workspace.connection import WorkspaceConnectionAPISerializer
 from .api.workspace.entity_connection import WorkspaceEntityConnectionAPISerializer

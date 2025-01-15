@@ -13,6 +13,7 @@ from plane.ee.views.app.initiative import (
     InitiativeCommentReactionViewSet,
     InitiativeReactionViewSet,
     InitiativeActivityEndpoint,
+    InitiativeEpicViewSet,
 )
 
 urlpatterns = [
@@ -53,22 +54,12 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/links/",
-        InitiativeLinkViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
+        InitiativeLinkViewSet.as_view({"get": "list", "post": "create"}),
         name="initiative-links",
     ),
     path(
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/links/<uuid:pk>/",
-        InitiativeLinkViewSet.as_view(
-            {
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
+        InitiativeLinkViewSet.as_view({"patch": "partial_update", "delete": "destroy"}),
         name="initiative-links",
     ),
     # Initiative Attachment
@@ -86,21 +77,13 @@ urlpatterns = [
     # Initiative Comment
     path(
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/comments/",
-        InitiativeCommentViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
+        InitiativeCommentViewSet.as_view({"get": "list", "post": "create"}),
         name="initiative-comments",
     ),
     path(
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/comments/<uuid:pk>/",
         InitiativeCommentViewSet.as_view(
-            {
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
+            {"patch": "partial_update", "delete": "destroy"}
         ),
         name="initiative-comments",
     ),
@@ -108,47 +91,40 @@ urlpatterns = [
     # Initiative Comment Reactions
     path(
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/comments/<uuid:comment_id>/reactions/",
-        InitiativeCommentReactionViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
+        InitiativeCommentReactionViewSet.as_view({"get": "list", "post": "create"}),
         name="initiative-comment-reactions",
     ),
     path(
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/comments/<uuid:comment_id>/reactions/<str:reaction_code>/",
-        InitiativeCommentReactionViewSet.as_view(
-            {
-                "delete": "destroy",
-            }
-        ),
+        InitiativeCommentReactionViewSet.as_view({"delete": "destroy"}),
         name="initiative-comment-reactions",
     ),
     ## End Comment Reactions
     # Initiative Reactions
     path(
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/reactions/",
-        InitiativeReactionViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
+        InitiativeReactionViewSet.as_view({"get": "list", "post": "create"}),
         name="initiative-reactions",
     ),
     path(
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/reactions/<str:reaction_code>/",
-        InitiativeReactionViewSet.as_view(
-            {
-                "delete": "destroy",
-            }
-        ),
+        InitiativeReactionViewSet.as_view({"delete": "destroy"}),
         name="initiative-reactions",
     ),
     path(
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/activities/",
         InitiativeActivityEndpoint.as_view(),
         name="initiative-activities",
+    ),
+    # Initiative Epics
+    path(
+        "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/epics/",
+        InitiativeEpicViewSet.as_view({"get": "list", "post": "create"}),
+        name="initiative-epics",
+    ),
+    path(
+        "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/epics/<uuid:epic_id>/",
+        InitiativeEpicViewSet.as_view({"delete": "destroy"}),
+        name="initiative-epics",
     ),
 ]

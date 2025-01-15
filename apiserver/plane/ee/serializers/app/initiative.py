@@ -14,6 +14,7 @@ from plane.ee.models import (
     InitiativeComment,
     InitiativeReaction,
     InitiativeCommentReaction,
+    InitiativeEpic,
 )
 
 # Third party imports
@@ -23,46 +24,20 @@ from rest_framework import serializers
 class InitiativeReactionSerializer(BaseSerializer):
     class Meta:
         model = InitiativeReaction
-        fields = [
-            "id",
-            "reaction",
-            "actor",
-        ]
-        read_only_fields = [
-            "workspace",
-            "initiative",
-            "actor",
-            "deleted_at",
-        ]
+        fields = ["id", "reaction", "actor"]
+        read_only_fields = ["workspace", "initiative", "actor", "deleted_at"]
 
 
 class InitiativeCommentReactionSerializer(BaseSerializer):
     class Meta:
         model = InitiativeCommentReaction
-        fields = [
-            "id",
-            "reaction",
-            "actor",
-        ]
-        read_only_fields = [
-            "workspace",
-            "initiative",
-            "comment",
-            "actor",
-            "deleted_at",
-        ]
+        fields = ["id", "reaction", "actor"]
+        read_only_fields = ["workspace", "initiative", "comment", "actor", "deleted_at"]
 
 
 class InitiativeSerializer(BaseSerializer):
-
-    project_ids = serializers.ListField(
-        child=serializers.UUIDField(),
-        required=False,
-    )
-    label_ids = serializers.ListField(
-        child=serializers.UUIDField(),
-        required=False,
-    )
+    project_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     reactions = InitiativeCommentReactionSerializer(
         read_only=True, many=True, source="initiative_reactions"
     )
@@ -80,9 +55,7 @@ class InitiativeSerializer(BaseSerializer):
 
         # Create initiative
         initiative = Initiative.objects.create(
-            **validated_data,
-            workspace_id=workspace_id,
-            lead_id=lead,
+            **validated_data, workspace_id=workspace_id, lead_id=lead
         )
 
         created_by_id = initiative.created_by_id
@@ -177,14 +150,10 @@ class InitiativeLabelSerializer(BaseSerializer):
     class Meta:
         model = InitiativeLabel
         fields = "__all__"
-        read_only_fields = [
-            "initiative",
-            "label",
-        ]
+        read_only_fields = ["initiative", "label"]
 
 
 class InitiativeLinkSerializer(BaseSerializer):
-
     class Meta:
         model = InitiativeLink
         fields = "__all__"
@@ -226,8 +195,7 @@ class InitiativeLinkSerializer(BaseSerializer):
     def update(self, instance, validated_data):
         if (
             InitiativeLink.objects.filter(
-                url=validated_data.get("url"),
-                initiative_id=instance.initiative_id,
+                url=validated_data.get("url"), initiative_id=instance.initiative_id
             )
             .exclude(pk=instance.id)
             .exists()
@@ -240,7 +208,6 @@ class InitiativeLinkSerializer(BaseSerializer):
 
 
 class InitiativeCommentSerializer(BaseSerializer):
-
     comment_reactions = InitiativeCommentReactionSerializer(
         read_only=True, many=True, source="initiative_reactions"
     )
@@ -260,7 +227,6 @@ class InitiativeCommentSerializer(BaseSerializer):
 
 
 class InitiativeAttachmentSerializer(BaseSerializer):
-
     asset_url = serializers.CharField(read_only=True)
 
     class Meta:
@@ -283,19 +249,26 @@ class IssueReactionSerializer(BaseSerializer):
     class Meta:
         model = InitiativeReaction
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "initiative",
-            "actor",
-            "deleted_at",
-        ]
+        read_only_fields = ["workspace", "initiative", "actor", "deleted_at"]
 
 
 class InitiativeActivitySerializer(BaseSerializer):
     class Meta:
         model = InitiativeActivity
-        exclude = [
+        exclude = ["created_by", "updated_by"]
+        read_only_fields = ["initiative", "label"]
+
+
+class InitiativeEpicSerializer(BaseSerializer):
+    class Meta:
+        model = InitiativeEpic
+        fields = ["id", "initiative", "epic", "workspace", "sort_order"]
+        read_only_fields = [
+            "workspace",
+            "created_at",
+            "update_at",
             "created_by",
             "updated_by",
+            "deleted_at",
+            "initiative",
         ]
-        read_only_fields = ["initiative", "label"]

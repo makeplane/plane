@@ -1,3 +1,4 @@
+import { ISearchIssueResponse, TWorkspaceEpicsSearchParams } from "@plane/types";
 // constants
 import { EViewAccess } from "@/constants/views";
 // helpers
@@ -44,5 +45,12 @@ export class WorkspaceService extends CoreWorkspaceService {
     return this.get(`/api/workspaces/${workspaceSlug}/search/`, {
       params,
     }).then((response) => response?.data);
+  }
+
+  async fetchWorkspaceEpics(
+    workspaceSlug: string,
+    params: TWorkspaceEpicsSearchParams
+  ): Promise<ISearchIssueResponse[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/epics/`, { params }).then((response) => response?.data);
   }
 }

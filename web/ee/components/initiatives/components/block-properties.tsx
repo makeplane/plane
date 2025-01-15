@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Users } from "lucide-react";
 // plane
-import { Avatar, Tooltip } from "@plane/ui";
+import { Avatar, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { DateRangeDropdown, MemberDropdown, ProjectDropdown } from "@/components/dropdowns";
@@ -18,16 +18,15 @@ import { TInitiative } from "@/plane-web/types/initiative";
 type Props = {
   initiative: TInitiative;
   isSidebarCollapsed: boolean | undefined;
+  disabled?: boolean;
 };
 
 export const BlockProperties = observer((props: Props) => {
-  const { initiative, isSidebarCollapsed } = props;
+  const { initiative, isSidebarCollapsed, disabled = false } = props;
   const {
     initiative: { updateInitiative },
   } = useInitiatives();
-
   const { workspaceSlug } = useParams();
-
   const { getUserDetails } = useMember();
 
   const lead = getUserDetails(initiative.lead ?? "");
@@ -48,10 +47,20 @@ export const BlockProperties = observer((props: Props) => {
   };
 
   const handleProjects = (ids: string | string[]) => {
-    updateInitiative &&
+    if (ids.length === 0) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Please select at least one project.",
+      });
+      return;
+    }
+
+    if (updateInitiative) {
       updateInitiative(workspaceSlug.toString(), initiative.id, {
         project_ids: ids ? (Array.isArray(ids) ? ids : [ids]) : null,
       });
+    }
   };
 
   return (
@@ -76,8 +85,10 @@ export const BlockProperties = observer((props: Props) => {
           to: "End date",
         }}
         hideIcon={{
-          to: true,
+          to: !!initiative.end_date,
         }}
+        renderPlaceholder={false}
+        disabled={disabled}
       />
 
       <div className="h-5">
@@ -93,7 +104,7 @@ export const BlockProperties = observer((props: Props) => {
               <div
                 className={cn(
                   "h-full text-xs px-2 flex items-center gap-2 text-custom-text-200 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded",
-                  { "cursor-not-allowed": true } //!isEditingAllowed }
+                  { "cursor-not-allowed": disabled }
                 )}
               >
                 {lead ? (
@@ -116,6 +127,7 @@ export const BlockProperties = observer((props: Props) => {
               </div>
             </Tooltip>
           }
+          disabled={disabled}
         />
       </div>
 
@@ -126,6 +138,7 @@ export const BlockProperties = observer((props: Props) => {
           value={initiative.project_ids || []}
           multiple
           showTooltip
+          disabled={disabled}
         />
       </div>
     </div>

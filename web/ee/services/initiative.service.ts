@@ -1,3 +1,4 @@
+import { TIssue } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 import {
@@ -280,6 +281,36 @@ export class InitiativeService extends APIService {
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
+      });
+  }
+
+  // initiative epics
+  // list
+  async fetchInitiativeEpics(workspaceSlug: string, initiativeId: string): Promise<TIssue[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/epics/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  // add
+  async addEpicsToInitiative(workspaceSlug: string, initiativeId: string, epics: string[]): Promise<TIssue[]> {
+    return this.post(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/epics/`, {
+      epic_ids: epics,
+    })
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  // remove
+  async removeEpicsFromInitiative(workspaceSlug: string, initiativeId: string, epicId: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/epics/${epicId}/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
       });
   }
 }
