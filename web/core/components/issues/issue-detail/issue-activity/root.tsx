@@ -2,17 +2,16 @@
 
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
+// plane package imports
+import { E_SORT_ORDER } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
-// types
 import { TFileSignedURLResponse, TIssueComment } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
-// ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { IssueCommentCreate } from "@/components/issues";
 import { ActivitySortRoot, IssueActivityCommentRoot } from "@/components/issues/issue-detail";
 // constants
-import { TSORT_ORDER } from "@/constants/common";
 // hooks
 import { useIssueDetail, useProject, useUser, useUserPermissions } from "@/hooks/store";
 // plane web components
@@ -46,7 +45,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
     "issue_activity_filters",
     defaultActivityFilters
   );
-  const { setValue: setSortOrder, storedValue: sortOrder } = useLocalStorage("activity_sort_order", TSORT_ORDER.ASC);
+  const { setValue: setSortOrder, storedValue: sortOrder } = useLocalStorage("activity_sort_order", E_SORT_ORDER.ASC);
   const {
     issue: { getIssueById },
     createComment,
@@ -78,7 +77,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   };
 
   const toggleSortOrder = () => {
-    setSortOrder(sortOrder === TSORT_ORDER.ASC ? TSORT_ORDER.DESC : TSORT_ORDER.ASC);
+    setSortOrder(sortOrder === E_SORT_ORDER.ASC ? E_SORT_ORDER.DESC : E_SORT_ORDER.ASC);
   };
 
   const activityOperations: TActivityOperations = useMemo(
@@ -174,7 +173,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
               disabled={disabled}
             />
           )}
-          <ActivitySortRoot sortOrder={sortOrder || TSORT_ORDER.ASC} toggleSort={toggleSortOrder} />
+          <ActivitySortRoot sortOrder={sortOrder || E_SORT_ORDER.ASC} toggleSort={toggleSortOrder} />
           <ActivityFilterRoot
             selectedFilters={selectedFilters || defaultActivityFilters}
             toggleFilter={toggleFilter}
@@ -196,7 +195,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
               activityOperations={activityOperations}
               showAccessSpecifier={!!project.anchor}
               disabled={disabled}
-              sortOrder={sortOrder || TSORT_ORDER.ASC}
+              sortOrder={sortOrder || E_SORT_ORDER.ASC}
             />
             {!disabled && (
               <IssueCommentCreate

@@ -4,13 +4,14 @@ import React, { Fragment } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { Tab } from "@headlessui/react";
-// components
+// plane package imports
+import { ANALYTICS_TABS } from "@plane/constants";
 import { Header, EHeaderVariant } from "@plane/ui";
+// components
 import { CustomAnalytics, ScopeAndDemand } from "@/components/analytics";
 import { PageHead } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
 // constants
-import { ANALYTICS_TABS } from "@/constants/analytics";
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useWorkspace } from "@/hooks/store";

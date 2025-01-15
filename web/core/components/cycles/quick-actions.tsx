@@ -42,7 +42,6 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const isArchived = !!cycleDetails?.archived_at;
   const isCompleted = cycleDetails?.status?.toLowerCase() === "completed";
   const isCurrentCycle = cycleDetails?.status?.toLowerCase() === "current";
-  const transferableIssuesCount = cycleDetails ? cycleDetails.total_issues - cycleDetails.completed_issues : 0;
   // auth
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -170,14 +169,16 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
             workspaceSlug={workspaceSlug}
             projectId={projectId}
           />
-          <EndCycleModal
-            isOpen={isEndCycleModalOpen}
-            handleClose={() => setEndCycleModalOpen(false)}
-            cycleId={cycleId}
-            projectId={projectId}
-            workspaceSlug={workspaceSlug}
-            transferrableIssuesCount={transferableIssuesCount}
-          />
+          {isCurrentCycle && (
+            <EndCycleModal
+              isOpen={isEndCycleModalOpen}
+              handleClose={() => setEndCycleModalOpen(false)}
+              cycleId={cycleId}
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+              transferrableIssuesCount={cycleDetails.pending_issues}
+            />
+          )}
         </div>
       )}
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />

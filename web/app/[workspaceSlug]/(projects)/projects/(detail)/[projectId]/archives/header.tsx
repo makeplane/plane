@@ -5,11 +5,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EIssuesStoreType } from "@plane/constants";
 // ui
-import { ArchiveIcon, Breadcrumbs, Tooltip, Header } from "@plane/ui";
+import { ArchiveIcon, Breadcrumbs, Tooltip, Header, ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
-// constants
-import { PROJECT_ARCHIVES_BREADCRUMB_LIST } from "@/constants/archives";
 // hooks
 import { useIssues, useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -19,6 +17,30 @@ import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 
 type TProps = {
   activeTab: "issues" | "cycles" | "modules";
+};
+
+const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
+  [key: string]: {
+    label: string;
+    href: string;
+    icon: React.FC<React.SVGAttributes<SVGElement> & { className?: string }>;
+  };
+} = {
+  issues: {
+    label: "Issues",
+    href: "/issues",
+    icon: LayersIcon,
+  },
+  cycles: {
+    label: "Cycles",
+    href: "/cycles",
+    icon: ContrastIcon,
+  },
+  modules: {
+    label: "Modules",
+    href: "/modules",
+    icon: DiceIcon,
+  },
 };
 
 export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {

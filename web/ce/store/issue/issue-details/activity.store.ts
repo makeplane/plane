@@ -7,7 +7,8 @@ import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { EIssueServiceType } from "@plane/constants";
+// plane package imports
+import { EIssueServiceType, E_SORT_ORDER } from "@plane/constants";
 import {
   TIssueActivityComment,
   TIssueActivity,
@@ -16,7 +17,6 @@ import {
   TIssueServiceType,
 } from "@plane/types";
 // plane web constants
-import { TSORT_ORDER } from "@/constants/common";
 import { EActivityFilterType } from "@/plane-web/constants/issues";
 // services
 import { IssueActivityService } from "@/services/issue";
@@ -43,7 +43,7 @@ export interface IIssueActivityStore extends IIssueActivityStoreActions {
   // helper methods
   getActivitiesByIssueId: (issueId: string) => string[] | undefined;
   getActivityById: (activityId: string) => TIssueActivity | undefined;
-  getActivityCommentByIssueId: (issueId: string, sortOrder: TSORT_ORDER) => TIssueActivityComment[] | undefined;
+  getActivityCommentByIssueId: (issueId: string, sortOrder: E_SORT_ORDER) => TIssueActivityComment[] | undefined;
 }
 
 export class IssueActivityStore implements IIssueActivityStore {
@@ -84,7 +84,7 @@ export class IssueActivityStore implements IIssueActivityStore {
     return this.activityMap[activityId] ?? undefined;
   };
 
-  getActivityCommentByIssueId = computedFn((issueId: string, sortOrder: TSORT_ORDER) => {
+  getActivityCommentByIssueId = computedFn((issueId: string, sortOrder: E_SORT_ORDER) => {
     if (!issueId) return undefined;
 
     let activityComments: TIssueActivityComment[] = [];

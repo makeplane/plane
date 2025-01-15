@@ -1,12 +1,11 @@
 import React, { Fragment } from "react";
 import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
+// plane package imports
+import { ANALYTICS_TABS } from "@plane/constants";
 import { ICycle, IModule, IProject } from "@plane/types";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "@/components/analytics";
-// types
-import { ANALYTICS_TABS } from "@/constants/analytics";
-// constants
 
 type Props = {
   fullScreen: boolean;
