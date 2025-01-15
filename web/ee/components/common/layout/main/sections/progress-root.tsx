@@ -26,46 +26,6 @@ interface IProgressIndicatorData {
   percentage: number;
 }
 
-type TProgressItemProps = {
-  data: IProgressIndicatorData;
-  showSeparator?: boolean;
-};
-
-export const ProgressItem: FC<TProgressItemProps> = ({ data, showSeparator }) => {
-  const itemContent = (
-    <div
-      className={cn("flex flex-col gap-1 px-3 py-2 min-w-24", {
-        "flex-1": !showSeparator,
-      })}
-    >
-      <div className="flex items-center gap-2">
-        <span
-          className="size-2.5 rounded-sm flex-shrink-0"
-          style={{
-            backgroundColor: data.color,
-          }}
-        />
-        <span className="text-sm font-medium leading-4">{data.name}</span>
-      </div>
-      <div className="flex gap-3">
-        <span className="text-md font-bold">{data.value}</span>
-        <span className="text-sm font-medium text-custom-text-350 my-auto">{Math.round(data.percentage)}%</span>
-      </div>
-    </div>
-  );
-
-  if (!showSeparator) return itemContent;
-
-  return (
-    <div className="relative border-l-2 pl-10 flex-1">
-      <div className="absolute -left-2 top-5 font-medium text-custom-text-350 rotate-[270deg] text-[10px] tracking-widest">
-        STATUS
-      </div>
-      {itemContent}
-    </div>
-  );
-};
-
 export const ProgressSection: FC<TProgressSectionProps> = (props) => {
   const { title = "Progress", data } = props;
 
@@ -94,8 +54,22 @@ export const ProgressSection: FC<TProgressSectionProps> = (props) => {
         />
 
         <div className="flex gap-4 justify-stretch flex-wrap w-full">
-          {progressIndicatorData.map((item, index) => (
-            <ProgressItem key={item.id} data={item} showSeparator={index === 1} />
+          {progressIndicatorData.map((item) => (
+            <div key={item.id} className={cn("flex-1 flex flex-col gap-1 px-3 py-2 min-w-24")}>
+              <div className="flex items-center gap-2">
+                <span
+                  className="size-2.5 rounded-sm flex-shrink-0"
+                  style={{
+                    backgroundColor: item.color,
+                  }}
+                />
+                <span className="text-sm font-medium leading-4">{item.name}</span>
+              </div>
+              <div className="flex gap-3">
+                <span className="text-md font-bold">{item.value}</span>
+                <span className="text-sm font-medium text-custom-text-350 my-auto">{Math.round(item.percentage)}%</span>
+              </div>
+            </div>
           ))}
         </div>
       </div>

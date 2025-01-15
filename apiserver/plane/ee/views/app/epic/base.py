@@ -478,7 +478,6 @@ class EpicAnalyticsEndpoint(BaseAPIView):
                     "started_issues": 0,
                     "completed_issues": 0,
                     "cancelled_issues": 0,
-                    "overdue_issues": 0,
                 },
                 status=status.HTTP_200_OK,
             )
@@ -491,7 +490,6 @@ class EpicAnalyticsEndpoint(BaseAPIView):
             started_issues=Count("id", filter=Q(state__group="started")),
             completed_issues=Count("id", filter=Q(state__group="completed")),
             cancelled_issues=Count("id", filter=Q(state__group="cancelled")),
-            overdue_issues=Count("id", filter=Q(target_date__lt=timezone.now())),
         )
 
         return Response(issues, status=status.HTTP_200_OK)

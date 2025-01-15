@@ -318,7 +318,6 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
             started_issues=Count("id", filter=Q(state__group="started")),
             completed_issues=Count("id", filter=Q(state__group="completed")),
             cancelled_issues=Count("id", filter=Q(state__group="cancelled")),
-            overdue_issues=Count("id", filter=Q(target_date__lt=timezone.now())),
         )
 
         return Response(issues, status=status.HTTP_200_OK)

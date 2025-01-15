@@ -75,11 +75,6 @@ export const STATE_ANALYTICS_DETAILS: {
   color: string;
 }[] = [
   {
-    key: "overdue_issues",
-    title: "Overdue",
-    color: "#FF333380",
-  },
-  {
     key: "backlog_issues",
     title: "Backlog",
     color: "#EBEDF2",

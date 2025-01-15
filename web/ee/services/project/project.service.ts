@@ -1,8 +1,8 @@
 /* eslint-disable no-useless-catch */
 
 // ce services
-import { TProjectLink } from "@plane/types";
-import { TProject, TProjectAnalytics, TProjectFeatures } from "@/plane-web/types";
+import { TProjectLink, TStateAnalytics } from "@plane/types";
+import { TProject, TProjectFeatures } from "@/plane-web/types";
 import { ProjectService as CeProjectService } from "@/services/project";
 
 export class ProjectService extends CeProjectService {
@@ -11,7 +11,7 @@ export class ProjectService extends CeProjectService {
   }
 
   // analytics
-  async fetchProjectAnalytics(workspaceSlug: string, projectId: string): Promise<TProjectAnalytics> {
+  async fetchProjectAnalytics(workspaceSlug: string, projectId: string): Promise<TStateAnalytics> {
     try {
       const { data } = await this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/analytics/`);
       return data || undefined;
