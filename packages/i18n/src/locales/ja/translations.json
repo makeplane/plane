@@ -322,5 +322,15 @@
   "initiatives": "イニシアチブ",
   "in_app": "アプリ内",
   "forms": "フォーム",
-  "epics": "叙事詩"
+  "epics": "叙事詩",
+  "team-progress-empty-state-title": "リンクされたプロジェクトには公開された課題がありません。",
+  "team-progress-empty-state-description": "これらのプロジェクトの1つ以上に課題を作成して、日付、状態、優先順位ごとの進捗を確認してください。",
+  "team-blocking-relation-empty-state-title": "チームメイトをブロックしている課題はありません。",
+  "team-blocking-relation-empty-state-description": "素晴らしい！チームのために道を切り開きました。あなたは優れたチームプレイヤーです。",
+  "team-blocked-relation-empty-state-title": "チームメイトの課題であなたをブロックしているものはありません。",
+  "team-blocked-relation-empty-state-description": "良いニュースです！すべての割り当てられた課題を進めることができます。",
+  "team-stats-empty-state-title": "リンクされたプロジェクトには公開された課題がありません。",
+  "team-stats-empty-state-description": "これらのプロジェクトの1つ以上に課題を作成して、プロジェクトとチームメンバーごとの作業の分布を確認してください。",
+  "team-stats-filter-empty-state-title": "適用されたフィルターに対するチーム統計はありません。",
+  "team-stats-filter-empty-state-description": "これらのプロジェクトの1つ以上に課題を作成して、プロジェクトとチームメンバーごとの作業の分布を確認してください。"
 }

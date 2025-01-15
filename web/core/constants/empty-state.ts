@@ -890,7 +890,8 @@ const emptyStateDetails = {
   },
   [EmptyStateType.TEAM_EMPTY_FILTER]: {
     key: EmptyStateType.TEAM_EMPTY_FILTER,
-    title: "No issues found matching the filters applied",
+    title: "There are no team issues for the filters applied.",
+    description: "Change some of those filters or clear them all to see this team’s issues.",
     path: "/empty-state/empty-filters/",
     secondaryButton: {
       text: "Clear all filters",

@@ -1,67 +1,81 @@
+import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
 import set from "lodash/set";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { TLoader, TTeamDependencies, TTeamStatistics, TTeamWorkloadSummary } from "@plane/types";
+import { EStatisticsLegend, ETeamAnalyticsDataKeys, ETeamAnalyticsValueKeys, ETeamEntityScope } from "@plane/constants";
+import { TLoader, TTeamRelations, TTeamStatistics, TTeamProgressSummary } from "@plane/types";
 // plane web imports
 import { TeamAnalyticsService } from "@/plane-web/services/teams/team-analytics.service";
 import { RootStore } from "@/plane-web/store/root.store";
-import { TStatisticsFilter, TTeamWorkloadChart, TWorkloadFilter } from "@/plane-web/types/teams";
+import { TStatisticsFilter, TTeamProgressChart, TWorkloadFilter } from "@/plane-web/types/teams";
+
+const DEFAULT_TEAM_STATISTICS_FILTER: TStatisticsFilter = {
+  scope: ETeamEntityScope.PROJECT,
+  data_key: ETeamAnalyticsDataKeys.PROJECTS,
+  value_key: ETeamAnalyticsValueKeys.ISSUES,
+  issue_type: [],
+  state_group: [],
+  dependency_type: undefined,
+  target_date: [],
+  legend: EStatisticsLegend.STATE,
+};
 
 export interface ITeamAnalyticsStore {
   // observables
-  teamWorkloadChartLoader: Record<string, TLoader>; // teamId => loader
-  teamWorkloadSummaryLoader: Record<string, TLoader>; // teamId => loader
-  teamDependenciesLoader: Record<string, TLoader>; // teamId => loader
+  teamProgressChartLoader: Record<string, TLoader>; // teamId => loader
+  teamProgressSummaryLoader: Record<string, TLoader>; // teamId => loader
+  teamRelationsLoader: Record<string, TLoader>; // teamId => loader
   teamStatisticsLoader: Record<string, TLoader>; // teamId => loader
-  teamWorkloadChartMap: Record<string, TTeamWorkloadChart>; // teamId => workload chart details
-  teamWorkloadSummaryMap: Record<string, TTeamWorkloadSummary>; // teamId => workload summary
-  teamDependenciesMap: Record<string, TTeamDependencies>; // teamId => dependencies
+  teamProgressChartMap: Record<string, TTeamProgressChart>; // teamId => progress chart details
+  teamProgressSummaryMap: Record<string, TTeamProgressSummary>; // teamId => progress summary
+  teamRelationsMap: Record<string, TTeamRelations>; // teamId => relations
   teamStatisticsMap: Record<string, TTeamStatistics>; // teamId => statistics
-  teamWorkloadFilter: Record<string, TWorkloadFilter>; // teamId => workload filter
+  teamProgressFilter: Record<string, TWorkloadFilter>; // teamId => progress filter
   teamStatisticsFilter: Record<string, TStatisticsFilter>; // teamId => statistics filter
   // computed functions
-  getTeamWorkloadChartLoader: (teamId: string) => TLoader | undefined;
-  getTeamWorkloadSummaryLoader: (teamId: string) => TLoader | undefined;
-  getTeamDependenciesLoader: (teamId: string) => TLoader | undefined;
+  getTeamProgressChartLoader: (teamId: string) => TLoader | undefined;
+  getTeamProgressSummaryLoader: (teamId: string) => TLoader | undefined;
+  getTeamRelationsLoader: (teamId: string) => TLoader | undefined;
   getTeamStatisticsLoader: (teamId: string) => TLoader | undefined;
-  getTeamWorkloadChart: (teamId: string) => TTeamWorkloadChart | undefined;
-  getTeamWorkloadSummary: (teamId: string) => TTeamWorkloadSummary | undefined;
-  getTeamDependencies: (teamId: string) => TTeamDependencies | undefined;
+  getTeamProgressChart: (teamId: string) => TTeamProgressChart | undefined;
+  getTeamProgressSummary: (teamId: string) => TTeamProgressSummary | undefined;
+  getTeamRelations: (teamId: string) => TTeamRelations | undefined;
   getTeamStatistics: (teamId: string) => TTeamStatistics | undefined;
-  getTeamWorkloadFilter: (teamId: string) => TWorkloadFilter;
+  getTeamProgressFilter: (teamId: string) => TWorkloadFilter;
   getTeamStatisticsFilter: (teamId: string) => TStatisticsFilter;
   // helper action
-  initTeamWorkloadFilter: (teamId: string) => void;
+  initTeamProgressFilter: (teamId: string) => void;
   initTeamStatisticsFilter: (teamId: string) => void;
-  updateTeamWorkloadFilter: (workspaceSlug: string, teamId: string, payload: Partial<TWorkloadFilter>) => Promise<void>;
+  updateTeamProgressFilter: (workspaceSlug: string, teamId: string, payload: Partial<TWorkloadFilter>) => Promise<void>;
   updateTeamStatisticsFilter: <T extends keyof TStatisticsFilter>(
     workspaceSlug: string,
     teamId: string,
     key: T,
     value: TStatisticsFilter[T]
   ) => Promise<void>;
+  clearTeamStatisticsFilter: (workspaceSlug: string, teamId: string) => Promise<void>;
   fetchTeamAnalytics: (workspaceSlug: string, teamId: string) => Promise<void>;
   // actions
-  fetchTeamWorkloadChartDetails: (workspaceSlug: string, teamId: string, filter?: TWorkloadFilter) => Promise<void>;
-  fetchTeamWorkloadSummary: (workspaceSlug: string, teamId: string) => Promise<void>;
-  fetchTeamDependencies: (workspaceSlug: string, teamId: string) => Promise<void>;
+  fetchTeamProgressChartDetails: (workspaceSlug: string, teamId: string, filter?: TWorkloadFilter) => Promise<void>;
+  fetchTeamProgressSummary: (workspaceSlug: string, teamId: string) => Promise<void>;
+  fetchTeamRelations: (workspaceSlug: string, teamId: string) => Promise<void>;
   fetchTeamStatistics: (workspaceSlug: string, teamId: string, filter?: TStatisticsFilter) => Promise<void>;
 }
 
 export class TeamAnalyticsStore implements ITeamAnalyticsStore {
   // observables
-  teamWorkloadChartLoader: Record<string, TLoader> = {}; // teamId => loader
-  teamWorkloadSummaryLoader: Record<string, TLoader> = {}; // teamId => loader
-  teamDependenciesLoader: Record<string, TLoader> = {}; // teamId => loader
+  teamProgressChartLoader: Record<string, TLoader> = {}; // teamId => loader
+  teamProgressSummaryLoader: Record<string, TLoader> = {}; // teamId => loader
+  teamRelationsLoader: Record<string, TLoader> = {}; // teamId => loader
   teamStatisticsLoader: Record<string, TLoader> = {}; // teamId => loader
-  teamWorkloadChartMap: Record<string, TTeamWorkloadChart> = {}; // teamId => workload chart details
-  teamWorkloadSummaryMap: Record<string, TTeamWorkloadSummary> = {}; // teamId => workload summary
-  teamDependenciesMap: Record<string, TTeamDependencies> = {}; // teamId => dependencies
+  teamProgressChartMap: Record<string, TTeamProgressChart> = {}; // teamId => progress chart details
+  teamProgressSummaryMap: Record<string, TTeamProgressSummary> = {}; // teamId => progress summary
+  teamRelationsMap: Record<string, TTeamRelations> = {}; // teamId => relations
   teamStatisticsMap: Record<string, TTeamStatistics> = {}; // teamId => statistics
-  teamWorkloadFilter: Record<string, TWorkloadFilter> = {}; // teamId => workload filter
+  teamProgressFilter: Record<string, TWorkloadFilter> = {}; // teamId => progress filter
   teamStatisticsFilter: Record<string, TStatisticsFilter> = {}; // teamId => statistics filter
   // store
   rootStore: RootStore;
@@ -71,26 +85,26 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
-      teamWorkloadChartLoader: observable,
-      teamWorkloadSummaryLoader: observable,
-      teamDependenciesLoader: observable,
+      teamProgressChartLoader: observable,
+      teamProgressSummaryLoader: observable,
+      teamRelationsLoader: observable,
       teamStatisticsLoader: observable,
-      teamWorkloadChartMap: observable,
-      teamWorkloadSummaryMap: observable,
-      teamDependenciesMap: observable,
+      teamProgressChartMap: observable,
+      teamProgressSummaryMap: observable,
+      teamRelationsMap: observable,
       teamStatisticsMap: observable,
-      teamWorkloadFilter: observable,
+      teamProgressFilter: observable,
       teamStatisticsFilter: observable,
       // helper action
-      initTeamWorkloadFilter: action,
+      initTeamProgressFilter: action,
       initTeamStatisticsFilter: action,
-      updateTeamWorkloadFilter: action,
+      updateTeamProgressFilter: action,
       updateTeamStatisticsFilter: action,
       fetchTeamAnalytics: action,
       // actions
-      fetchTeamWorkloadChartDetails: action,
-      fetchTeamWorkloadSummary: action,
-      fetchTeamDependencies: action,
+      fetchTeamProgressChartDetails: action,
+      fetchTeamProgressSummary: action,
+      fetchTeamRelations: action,
       fetchTeamStatistics: action,
     });
     // store
@@ -101,24 +115,24 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
 
   // computed functions
   /**
-   * Get team workload chart loader
+   * Get team progress chart loader
    * @param teamId
    * @returns TLoader | undefined
    */
-  getTeamWorkloadChartLoader = computedFn((teamId: string) => this.teamWorkloadChartLoader[teamId]);
+  getTeamProgressChartLoader = computedFn((teamId: string) => this.teamProgressChartLoader[teamId]);
 
-  /** Get team workload summary loader
+  /** Get team progress summary loader
    * @param teamId
    * @returns TLoader | undefined
    */
-  getTeamWorkloadSummaryLoader = computedFn((teamId: string) => this.teamWorkloadSummaryLoader[teamId]);
+  getTeamProgressSummaryLoader = computedFn((teamId: string) => this.teamProgressSummaryLoader[teamId]);
 
   /**
-   * Get team dependencies loader
+   * Get team relations loader
    * @param teamId
    * @returns TLoader | undefined
    */
-  getTeamDependenciesLoader = computedFn((teamId: string) => this.teamDependenciesLoader[teamId]);
+  getTeamRelationsLoader = computedFn((teamId: string) => this.teamRelationsLoader[teamId]);
 
   /**
    * Get team statistics loader
@@ -128,24 +142,24 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
   getTeamStatisticsLoader = computedFn((teamId: string) => this.teamStatisticsLoader[teamId]);
 
   /**
-   * Get team workload
+   * Get team progress
    * @param teamId
-   * @returns TTeamWorkloadChart
+   * @returns TTeamProgressChart
    */
-  getTeamWorkloadChart = computedFn((teamId: string) => this.teamWorkloadChartMap[teamId]);
+  getTeamProgressChart = computedFn((teamId: string) => this.teamProgressChartMap[teamId]);
 
-  /** Get team workload summary
+  /** Get team progress summary
    * @param teamId
-   * @returns TTeamWorkloadSummary
+   * @returns TTeamProgressSummary
    */
-  getTeamWorkloadSummary = computedFn((teamId: string) => this.teamWorkloadSummaryMap[teamId]);
+  getTeamProgressSummary = computedFn((teamId: string) => this.teamProgressSummaryMap[teamId]);
 
   /**
-   * Get team dependencies
+   * Get team relations
    * @param teamId
    * @returns TTeamStatistics
    */
-  getTeamDependencies = computedFn((teamId: string) => this.teamDependenciesMap[teamId]);
+  getTeamRelations = computedFn((teamId: string) => this.teamRelationsMap[teamId]);
 
   /**
    * Get team statistics
@@ -155,13 +169,13 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
   getTeamStatistics = computedFn((teamId: string) => this.teamStatisticsMap[teamId]);
 
   /**
-   * Get team workload filter
+   * Get team progress filter
    * @param teamId
    * @returns TWorkloadFilter
    */
-  getTeamWorkloadFilter = computedFn((teamId: string) => {
-    if (!this.teamWorkloadFilter[teamId]) this.initTeamWorkloadFilter(teamId);
-    return this.teamWorkloadFilter[teamId];
+  getTeamProgressFilter = computedFn((teamId: string) => {
+    if (!this.teamProgressFilter[teamId]) this.initTeamProgressFilter(teamId);
+    return this.teamProgressFilter[teamId];
   });
 
   /**
@@ -176,11 +190,11 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
 
   // helper actions
   /**
-   * Initialize team workload filter
+   * Initialize team progress filter
    * @param teamId
    */
-  initTeamWorkloadFilter = (teamId: string) => {
-    set(this.teamWorkloadFilter, teamId, {
+  initTeamProgressFilter = (teamId: string) => {
+    set(this.teamProgressFilter, teamId, {
       yAxisKey: "issues",
       xAxisKey: "target_date",
     });
@@ -191,28 +205,26 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
    * @param teamId
    */
   initTeamStatisticsFilter = (teamId: string) => {
-    set(this.teamStatisticsFilter, teamId, {
-      data_key: "projects",
-      value_key: "issues",
-      issue_type: [],
-      state_group: [],
-      dependency_type: undefined,
-      target_date: [],
-      legend: "state",
-    });
+    set(this.teamStatisticsFilter, teamId, DEFAULT_TEAM_STATISTICS_FILTER);
   };
 
   /**
-   * Update team workload filter and fetch team workload
+   * Update team progress filter and fetch team progress
    * @param workspaceSlug
    * @param teamId
    * @param payload
    */
-  updateTeamWorkloadFilter = async (workspaceSlug: string, teamId: string, payload: Partial<TWorkloadFilter>) => {
-    const filter = this.getTeamWorkloadFilter(teamId);
-    await this.fetchTeamWorkloadChartDetails(workspaceSlug, teamId, { ...filter, ...payload }).then(() => {
-      update(this.teamWorkloadFilter, teamId, (filter) => ({ ...filter, ...payload }));
-    });
+  updateTeamProgressFilter = async (workspaceSlug: string, teamId: string, payload: Partial<TWorkloadFilter>) => {
+    const filterBeforeUpdate = cloneDeep(this.getTeamProgressFilter(teamId));
+    try {
+    // optimistic update
+      update(this.teamProgressFilter, teamId, (filter) => ({ ...filter, ...payload }));
+      await this.fetchTeamProgressChartDetails(workspaceSlug, teamId, { ...filterBeforeUpdate, ...payload });
+    } catch (error) {
+      // revert changes if API call fails
+      set(this.teamProgressFilter, teamId, filterBeforeUpdate);
+      console.error(error);
+    }
   };
 
   /**
@@ -228,16 +240,31 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
     key: K,
     value: TStatisticsFilter[K]
   ) => {
-    const filter = this.getTeamStatisticsFilter(teamId);
-    const updatedFilter = { ...filter, [key]: value };
-    if (isEqual(updatedFilter, filter)) return;
-    if (key === "legend") {
-      update(this.teamStatisticsFilter, teamId, (filter) => ({ ...filter, [key]: value })); // API call is not required when legend is changed
-    } else {
-      await this.fetchTeamStatistics(workspaceSlug, teamId, updatedFilter).then(() => {
-        update(this.teamStatisticsFilter, teamId, (filter) => ({ ...filter, [key]: value }));
-      });
+    const filterBeforeUpdate = cloneDeep(this.getTeamStatisticsFilter(teamId));
+    const updatedFilter = { ...filterBeforeUpdate, [key]: value };
+    if (isEqual(updatedFilter, filterBeforeUpdate)) return;
+    try {
+      // optimistic update
+      update(this.teamStatisticsFilter, teamId, (filter) => ({ ...filter, [key]: value }));
+      if (key !== "legend") {
+        await this.fetchTeamStatistics(workspaceSlug, teamId, updatedFilter); // API call is not required when legend is changed
+      }
+    } catch (error) {
+      // revert changes if API call fails
+      set(this.teamStatisticsFilter, teamId, filterBeforeUpdate);
+      console.error(error);
     }
+  };
+
+  /**
+   * Remove applied filters and reset to default
+   * @param workspaceSlug
+   * @param teamId
+   */
+  clearTeamStatisticsFilter = async (workspaceSlug: string, teamId: string) => {
+    await this.fetchTeamStatistics(workspaceSlug, teamId, DEFAULT_TEAM_STATISTICS_FILTER).then(() => {
+      this.initTeamStatisticsFilter(teamId);
+    });
   };
 
   /**
@@ -248,103 +275,103 @@ export class TeamAnalyticsStore implements ITeamAnalyticsStore {
    */
   fetchTeamAnalytics = async (workspaceSlug: string, teamId: string) => {
     Promise.all([
-      this.fetchTeamWorkloadChartDetails(workspaceSlug, teamId),
-      this.fetchTeamWorkloadSummary(workspaceSlug, teamId),
-      this.fetchTeamDependencies(workspaceSlug, teamId),
+      this.fetchTeamProgressChartDetails(workspaceSlug, teamId),
+      this.fetchTeamProgressSummary(workspaceSlug, teamId),
+      this.fetchTeamRelations(workspaceSlug, teamId),
       this.fetchTeamStatistics(workspaceSlug, teamId),
     ]);
   };
 
   // actions
   /**
-   * Fetch team workload
+   * Fetch team progress
    * @param workspaceSlug
    * @param teamId
    * @param filter
    * @returns Promise<void>
    */
-  fetchTeamWorkloadChartDetails = async (workspaceSlug: string, teamId: string, filter?: TWorkloadFilter) => {
+  fetchTeamProgressChartDetails = async (workspaceSlug: string, teamId: string, filter?: TWorkloadFilter) => {
     try {
       // return if no projects are available
       if (this.rootStore.teamRoot.team.getTeamProjectIds(teamId)?.length === 0) return;
       // Set loader
-      if (this.getTeamWorkloadChart(teamId)) {
-        set(this.teamWorkloadChartLoader, teamId, "mutation");
+      if (this.getTeamProgressChart(teamId)) {
+        set(this.teamProgressChartLoader, teamId, "mutation");
       } else {
-        set(this.teamWorkloadChartLoader, teamId, "init-loader");
+        set(this.teamProgressChartLoader, teamId, "init-loader");
       }
-      // get the team workload filter
-      const params = filter || this.getTeamWorkloadFilter(teamId);
-      // Fetch team workload
-      const response = await this.teamAnalyticsService.getTeamWorkloadChart(workspaceSlug, teamId, params);
-      // Update team workload store
+      // get the team progress filter
+      const params = filter || this.getTeamProgressFilter(teamId);
+      // Fetch team progress
+      const response = await this.teamAnalyticsService.getTeamProgressChart(workspaceSlug, teamId, params);
+      // Update team progress store
       runInAction(() => {
-        set(this.teamWorkloadChartMap, teamId, response);
+        set(this.teamProgressChartMap, teamId, response);
       });
     } catch (e) {
-      console.log("error while fetching team workload", e);
+      console.log("error while fetching team progress", e);
       throw e;
     } finally {
-      set(this.teamWorkloadChartLoader, teamId, "loaded");
+      set(this.teamProgressChartLoader, teamId, "loaded");
     }
   };
 
-  /** Fetch team workload summary
+  /** Fetch team progress summary
    * @param workspaceSlug
    * @param teamId
    * @returns Promise<void>
    */
-  fetchTeamWorkloadSummary = async (workspaceSlug: string, teamId: string) => {
+  fetchTeamProgressSummary = async (workspaceSlug: string, teamId: string) => {
     try {
       // return if no projects are available
       if (this.rootStore.teamRoot.team.getTeamProjectIds(teamId)?.length === 0) return;
       // Set loader
-      if (this.getTeamWorkloadSummary(teamId)) {
-        set(this.teamWorkloadSummaryLoader, teamId, "mutation");
+      if (this.getTeamProgressSummary(teamId)) {
+        set(this.teamProgressSummaryLoader, teamId, "mutation");
       } else {
-        set(this.teamWorkloadSummaryLoader, teamId, "init-loader");
+        set(this.teamProgressSummaryLoader, teamId, "init-loader");
       }
-      // Fetch team workload summary
-      const response = await this.teamAnalyticsService.getTeamWorkloadSummary(workspaceSlug, teamId);
-      // Update team workload summary store
+      // Fetch team progress summary
+      const response = await this.teamAnalyticsService.getTeamProgressSummary(workspaceSlug, teamId);
+      // Update team progress summary store
       runInAction(() => {
-        set(this.teamWorkloadSummaryMap, teamId, response);
+        set(this.teamProgressSummaryMap, teamId, response);
       });
     } catch (e) {
-      console.log("error while fetching team workload summary", e);
+      console.log("error while fetching team progress summary", e);
       throw e;
     } finally {
-      set(this.teamWorkloadSummaryLoader, teamId, "loaded");
+      set(this.teamProgressSummaryLoader, teamId, "loaded");
     }
   };
 
   /**
-   * Fetch team dependencies
+   * Fetch team relations
    * @param workspaceSlug
    * @param teamId
    * @returns Promise<void>
    */
-  fetchTeamDependencies = async (workspaceSlug: string, teamId: string) => {
+  fetchTeamRelations = async (workspaceSlug: string, teamId: string) => {
     try {
       // return if no projects are available
       if (this.rootStore.teamRoot.team.getTeamProjectIds(teamId)?.length === 0) return;
       // Set loader
-      if (this.getTeamDependencies(teamId)) {
-        set(this.teamDependenciesLoader, teamId, "mutation");
+      if (this.getTeamRelations(teamId)) {
+        set(this.teamRelationsLoader, teamId, "mutation");
       } else {
-        set(this.teamDependenciesLoader, teamId, "init-loader");
+        set(this.teamRelationsLoader, teamId, "init-loader");
       }
-      // Fetch team dependencies
-      const response = await this.teamAnalyticsService.getTeamDependencies(workspaceSlug, teamId);
-      // Update team dependencies store
+      // Fetch team relations
+      const response = await this.teamAnalyticsService.getTeamRelations(workspaceSlug, teamId);
+      // Update team relations store
       runInAction(() => {
-        set(this.teamDependenciesMap, teamId, response);
+        set(this.teamRelationsMap, teamId, response);
       });
     } catch (e) {
-      console.log("error while fetching team dependencies", e);
+      console.log("error while fetching team relations", e);
       throw e;
     } finally {
-      set(this.teamDependenciesLoader, teamId, "loaded");
+      set(this.teamRelationsLoader, teamId, "loaded");
     }
   };
 

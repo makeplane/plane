@@ -4,23 +4,27 @@ import { CalendarClock, Loader as Spinner } from "lucide-react";
 import { Loader, Logo } from "@plane/ui";
 // plane web imports
 import { cn } from "@plane/utils";
+import { useTeams } from "@/plane-web/hooks/store";
 import { useTeamAnalytics } from "@/plane-web/hooks/store/teams/use-team-analytics";
 
-type TTeamWorkloadBannerProps = {
+type TTeamProgressBannerProps = {
   teamId: string;
 };
 
-export const TeamWorkloadBanner: React.FC<TTeamWorkloadBannerProps> = observer((props) => {
+export const TeamProgressBanner: React.FC<TTeamProgressBannerProps> = observer((props) => {
   const { teamId } = props;
   // store hooks
-  const { getTeamWorkloadSummaryLoader, getTeamWorkloadSummary } = useTeamAnalytics();
+  const { getTeamEntitiesLoaderById } = useTeams();
+  const { getTeamProgressSummaryLoader, getTeamProgressSummary } = useTeamAnalytics();
   // derived values
-  const teamWorkloadSummaryLoader = getTeamWorkloadSummaryLoader(teamId);
-  const teamWorkloadSummary = getTeamWorkloadSummary(teamId);
-  const isLoading = teamWorkloadSummaryLoader === "init-loader";
-  const isUpdating = teamWorkloadSummaryLoader === "mutation";
-  const areIssuesOverdue = teamWorkloadSummary && teamWorkloadSummary.overdue_issues > 0;
+  const teamEntitiesLoader = getTeamEntitiesLoaderById(teamId);
+  const teamProgressSummaryLoader = getTeamProgressSummaryLoader(teamId);
+  const teamProgressSummary = getTeamProgressSummary(teamId);
+  const isLoading = teamEntitiesLoader === "init-loader" || teamProgressSummaryLoader === "init-loader";
+  const isUpdating = teamProgressSummaryLoader === "mutation";
+  const areIssuesOverdue = teamProgressSummary && teamProgressSummary.overdue_issues > 0;
 
+  if (!isLoading && !areIssuesOverdue) return null;
   return (
     <div className="w-full h-full pt-1 pb-2.5">
       {isLoading ? (
@@ -52,7 +56,7 @@ export const TeamWorkloadBanner: React.FC<TTeamWorkloadBannerProps> = observer((
                 size={16}
               />
             )}
-            {areIssuesOverdue ? `${teamWorkloadSummary.overdue_issues} issues are overdue` : "You are doing great!!"}
+            {areIssuesOverdue ? `${teamProgressSummary.overdue_issues} issues are overdue` : "You are doing great!!"}
             {areIssuesOverdue && (
               <Logo
                 logo={{

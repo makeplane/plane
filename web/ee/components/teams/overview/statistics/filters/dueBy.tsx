@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 // plane imports
@@ -10,8 +9,6 @@ import { TStatisticsFilterProps } from "@/plane-web/types/teams";
 
 export const StatisticsDueByFilter: React.FC<TStatisticsFilterProps<"target_date">> = observer((props) => {
   const { value, isLoading, buttonContainerClassName, chevronClassName, handleFilterChange } = props;
-  // state
-  const [localValue, setLocalValue] = useState<string[]>(value || []);
   // derived values
   const options = DATE_AFTER_FILTER_OPTIONS.map((filterOption) => ({
     data: filterOption.value,
@@ -20,10 +17,9 @@ export const StatisticsDueByFilter: React.FC<TStatisticsFilterProps<"target_date
 
   return (
     <MultiSelectDropdown
-      value={localValue}
+      value={value}
       options={options}
-      onChange={(value) => setLocalValue(value)}
-      onClose={() => handleFilterChange(localValue)}
+      onChange={(value) => handleFilterChange(value)}
       keyExtractor={(option) => option.data}
       buttonContainerClassName={buttonContainerClassName}
       buttonContent={(isOpen, val) => (

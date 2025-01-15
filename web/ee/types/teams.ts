@@ -5,9 +5,10 @@ import {
   ETeamAnalyticsDataKeys,
   ETeamAnalyticsValueKeys,
   EStatisticsLegend,
-  EWorkloadXAxisKeys,
-  EWorkloadDataKeys,
-  EDependencyType,
+  EProgressXAxisKeys,
+  EProgressDataKeys,
+  ERelationType,
+  ETeamEntityScope,
 } from "@plane/constants";
 import {
   IUserLite,
@@ -51,19 +52,20 @@ export type TTeamComment = {
 
 export type TWorkloadFilter = {
   yAxisKey: ETeamAnalyticsValueKeys;
-  xAxisKey: EWorkloadXAxisKeys;
+  xAxisKey: EProgressXAxisKeys;
 };
 
-export type TTeamWorkloadChart = {
-  distribution: TStackChartData<EWorkloadXAxisKeys, EWorkloadDataKeys>[];
+export type TTeamProgressChart = {
+  distribution: TStackChartData<EProgressXAxisKeys, EProgressDataKeys>[];
 };
 
 export type TStatisticsFilter = {
+  scope: ETeamEntityScope;
   data_key: ETeamAnalyticsDataKeys;
   value_key: ETeamAnalyticsValueKeys;
   issue_type: string[]; // issue type ids
   state_group: TStateGroups[]; // state group names
-  dependency_type: EDependencyType | undefined;
+  dependency_type: ERelationType | undefined;
   target_date: string[];
   legend: EStatisticsLegend;
 };

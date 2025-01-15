@@ -322,5 +322,15 @@
   "initiatives": "Initiatives",
   "in_app": "Dans l'application",
   "forms": "Formulaires",
-  "epics": "Épopées"
+  "epics": "Épopées",
+    "team-progress-empty-state-title": "Aucun de vos projets liés n'a de problèmes publiés.",
+    "team-progress-empty-state-description": "Créez des problèmes dans un ou plusieurs de ces projets pour voir les progrès par dates, états et priorités.",
+    "team-blocking-relation-empty-state-title": "Vous n'avez aucun problème bloquant pour un membre de votre équipe.",
+    "team-blocking-relation-empty-state-description": "Bon travail ! Vous avez dégagé le chemin pour votre équipe. Vous êtes un bon coéquipier.",
+    "team-blocked-relation-empty-state-title": "Vous n'avez aucun problème bloquant venant d'un membre de votre équipe.",
+    "team-blocked-relation-empty-state-description": "Bonne nouvelle ! Vous pouvez avancer sur tous vos problèmes assignés.",
+    "team-stats-empty-state-title": "Aucun de vos projets liés n'a de problèmes publiés.",
+    "team-stats-empty-state-description": "Créez des problèmes dans un ou plusieurs de ces projets pour voir la répartition du travail par projet et par membres de l'équipe.",
+    "team-stats-filter-empty-state-title": "Il n'y a pas de statistiques d'équipe pour les filtres appliqués.",
+    "team-stats-filter-empty-state-description": "Créez des problèmes dans un ou plusieurs de ces projets pour voir la répartition du travail par projet et par membres de l'équipe."
 }

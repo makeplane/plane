@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Loader as Spinner, ChevronDown } from "lucide-react";
 // plane imports
-import { ETeamAnalyticsValueKeys, EWorkloadDataKeys, EWorkloadXAxisKeys } from "@plane/constants";
+import { ETeamAnalyticsValueKeys, EProgressDataKeys, EProgressXAxisKeys } from "@plane/constants";
 import { TStackChartData, TStackItem } from "@plane/types";
 import { Dropdown, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -11,18 +11,19 @@ import { StackedBarChart } from "@/components/core/charts/stacked-bar-chart";
 // plane web imports
 import { renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
 import { TEAM_WORKLOAD_X_AXIS_LABEL_MAP, TEAM_WORKLOAD_Y_AXIS_LABEL_MAP } from "@/plane-web/constants/teams";
+import { useTeams } from "@/plane-web/hooks/store";
 import { useTeamAnalytics } from "@/plane-web/hooks/store/teams/use-team-analytics";
 
-const stacks: TStackItem<EWorkloadDataKeys>[] = [
+const stacks: TStackItem<EProgressDataKeys>[] = [
   {
-    key: EWorkloadDataKeys.COMPLETED,
+    key: EProgressDataKeys.COMPLETED,
     fillClassName: "fill-[#004EFF]",
     textClassName: "text-white",
     dotClassName: "bg-[#004EFF]",
     showPercentage: true,
   },
   {
-    key: EWorkloadDataKeys.PENDING,
+    key: EProgressDataKeys.PENDING,
     fillClassName: "fill-custom-background-80/80",
     textClassName: "text-custom-text-200",
     dotClassName: "bg-custom-background-80/80",
@@ -33,26 +34,29 @@ const COMMON_DROPDOWN_CONTAINER_CLASSNAME =
   "mx-1.5 px-1.5 bg-custom-background-80/60 rounded text-custom-text-100 font-medium";
 const COMMON_CHEVRON_CLASSNAME = "size-3 text-custom-text-400 transition-all";
 
-type TTeamWorkloadChartProps = {
+type TTeamProgressChartProps = {
   teamId: string;
-  xAxisKey: EWorkloadXAxisKeys;
+  xAxisKey: EProgressXAxisKeys;
   yAxisKey: ETeamAnalyticsValueKeys;
-  data: TStackChartData<EWorkloadXAxisKeys, EWorkloadDataKeys>[];
-  handleXAxisKeyChange: (key: EWorkloadXAxisKeys) => void;
+  data: TStackChartData<EProgressXAxisKeys, EProgressDataKeys>[];
+  handleXAxisKeyChange: (key: EProgressXAxisKeys) => void;
 };
 
-const workloadXAxisOptions = Object.entries(TEAM_WORKLOAD_X_AXIS_LABEL_MAP).map(([data, value]) => ({
+const progressXAxisOptions = Object.entries(TEAM_WORKLOAD_X_AXIS_LABEL_MAP).map(([data, value]) => ({
   data,
   value,
 }));
 
-export const TeamWorkloadChart: React.FC<TTeamWorkloadChartProps> = observer((props) => {
+export const TeamProgressChart: React.FC<TTeamProgressChartProps> = observer((props) => {
   const { teamId, data, xAxisKey, yAxisKey, handleXAxisKeyChange } = props;
   // store hooks
-  const { getTeamWorkloadChartLoader } = useTeamAnalytics();
+  const { getTeamEntitiesLoaderById } = useTeams();
+  const { getTeamProgressChartLoader } = useTeamAnalytics();
   // derived values
-  const loader = getTeamWorkloadChartLoader(teamId);
-  const isLoading = loader && ["init-loader", "mutation"].includes(loader);
+  const teamEntitiesLoader = getTeamEntitiesLoaderById(teamId);
+  const loader = getTeamProgressChartLoader(teamId);
+  const isLoading = loader === "init-loader" || teamEntitiesLoader === "init-loader";
+  const isUpdating = loader && ["init-loader", "mutation"].includes(loader);
   // Format data in case of date
   const modifiedData = useMemo(() => {
     if (["start_date", "target_date"].includes(xAxisKey)) {
@@ -73,24 +77,24 @@ export const TeamWorkloadChart: React.FC<TTeamWorkloadChartProps> = observer((pr
         Progress on <b className="px-1">{TEAM_WORKLOAD_Y_AXIS_LABEL_MAP[yAxisKey]}</b> view by
         <Dropdown
           value={xAxisKey}
-          options={workloadXAxisOptions}
-          onChange={(value) => handleXAxisKeyChange(value as EWorkloadXAxisKeys)}
+          options={progressXAxisOptions}
+          onChange={(value) => handleXAxisKeyChange(value as EProgressXAxisKeys)}
           keyExtractor={(option) => option.data}
           buttonContainerClassName={COMMON_DROPDOWN_CONTAINER_CLASSNAME}
           buttonContent={(isOpen, value) => (
             <span className="flex items-center gap-1">
               {value && typeof value === "string"
-                ? TEAM_WORKLOAD_X_AXIS_LABEL_MAP[value as EWorkloadXAxisKeys]
+                ? TEAM_WORKLOAD_X_AXIS_LABEL_MAP[value as EProgressXAxisKeys]
                 : TEAM_WORKLOAD_X_AXIS_LABEL_MAP[xAxisKey]}
               <ChevronDown className={cn(COMMON_CHEVRON_CLASSNAME, isOpen ? "rotate-180" : "rotate-0")} />
             </span>
           )}
           disableSearch
-          disabled={isLoading}
+          disabled={isUpdating}
         />
-        {isLoading && <Spinner size={14} className="animate-spin flex-shrink-0 mx-1" />}
+        {isUpdating && <Spinner size={14} className="animate-spin flex-shrink-0 mx-1" />}
       </div>
-      {loader === "init-loader" ? (
+      {isLoading ? (
         <Loader className="w-full h-96 flex items-center justify-center">
           <Loader.Item width="96%" height="100%" />
         </Loader>

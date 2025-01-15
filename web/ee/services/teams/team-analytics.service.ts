@@ -1,9 +1,9 @@
 // plane constants
 import { API_BASE_URL } from "@plane/constants";
 // plane imports
-import { TTeamDependencies, TTeamStatistics, TTeamWorkloadSummary } from "@plane/types";
+import { TTeamRelations, TTeamStatistics, TTeamProgressSummary } from "@plane/types";
 // plane web imports
-import { TStatisticsFilter, TTeamWorkloadChart, TWorkloadFilter } from "@/plane-web/types/teams";
+import { TStatisticsFilter, TTeamProgressChart, TWorkloadFilter } from "@/plane-web/types/teams";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -13,18 +13,18 @@ export class TeamAnalyticsService extends APIService {
   }
 
   /**
-   * Get team workload chart details
+   * Get team progress chart details
    * @param workspaceSlug
    * @param teamId
    * @param params
    * @returns TWorkloadResponse
    */
-  async getTeamWorkloadChart(
+  async getTeamProgressChart(
     workspaceSlug: string,
     teamId: string,
     params: TWorkloadFilter
-  ): Promise<TTeamWorkloadChart> {
-    return this.get(`/api/workspaces/${workspaceSlug}/teams/${teamId}/workload-chart/`, {
+  ): Promise<TTeamProgressChart> {
+    return this.get(`/api/workspaces/${workspaceSlug}/teams/${teamId}/progress-chart/`, {
       params: {
         x_axis: params.xAxisKey,
         y_axis: params.yAxisKey,
@@ -37,13 +37,13 @@ export class TeamAnalyticsService extends APIService {
   }
 
   /**
-   * Get team workload summary
+   * Get team progress summary
    * @param workspaceSlug
    * @param teamId
-   * @returns TTeamWorkloadSummary
+   * @returns TTeamProgressSummary
    */
-  async getTeamWorkloadSummary(workspaceSlug: string, teamId: string): Promise<TTeamWorkloadSummary> {
-    return this.get(`/api/workspaces/${workspaceSlug}/teams/${teamId}/workload-summary/`)
+  async getTeamProgressSummary(workspaceSlug: string, teamId: string): Promise<TTeamProgressSummary> {
+    return this.get(`/api/workspaces/${workspaceSlug}/teams/${teamId}/progress-summary/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -51,13 +51,13 @@ export class TeamAnalyticsService extends APIService {
   }
 
   /**
-   * Get team dependencies
+   * Get team relations
    * @param workspaceSlug
    * @param teamId
    * @returns
    */
-  async getTeamDependencies(workspaceSlug: string, teamId: string): Promise<TTeamDependencies> {
-    return this.get(`/api/workspaces/${workspaceSlug}/teams/${teamId}/dependencies/`)
+  async getTeamRelations(workspaceSlug: string, teamId: string): Promise<TTeamRelations> {
+    return this.get(`/api/workspaces/${workspaceSlug}/teams/${teamId}/relations/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -74,6 +74,7 @@ export class TeamAnalyticsService extends APIService {
   async getTeamStatistics(workspaceSlug: string, teamId: string, params: TStatisticsFilter): Promise<TTeamStatistics> {
     return this.get(`/api/workspaces/${workspaceSlug}/teams/${teamId}/statistics/`, {
       params: {
+        scope: params.scope,
         data_key: params.data_key,
         dependency_type: params.dependency_type,
         state_group: params.state_group.map((val) => val?.toString()).join(","),

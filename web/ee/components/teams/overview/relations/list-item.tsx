@@ -1,10 +1,11 @@
 import { useCallback, useMemo, useRef } from "react";
+import uniq from "lodash/uniq";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EDependencyType } from "@plane/constants";
+import { ERelationType } from "@plane/constants";
 import { TTeamDependencyIssue } from "@plane/types";
-import { Avatar, AvatarGroup, PriorityIcon, StateGroupIcon, Tooltip } from "@plane/ui";
+import { Avatar, AvatarGroup, PriorityIcon, StateGroupIcon } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list/list-item";
@@ -13,12 +14,12 @@ import { useIssueDetail, useMember, useProject } from "@/hooks/store";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 
-type TTeamDependencyIssueListItemProps = {
-  type: EDependencyType;
+type TTeamRelationIssueListItemProps = {
+  type: ERelationType;
   issue: TTeamDependencyIssue;
 };
 
-export const TeamDependencyIssueListItem = observer((props: TTeamDependencyIssueListItemProps) => {
+export const TeamRelationIssueListItem = observer((props: TTeamRelationIssueListItemProps) => {
   const { type, issue } = props;
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
@@ -32,18 +33,6 @@ export const TeamDependencyIssueListItem = observer((props: TTeamDependencyIssue
   // derived values
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
   // helpers
-  const getAssigneeDetails = useCallback(
-    (userIds: string[]) =>
-      userIds
-        .map((userId) => {
-          const userDetails = getUserDetails(userId);
-          if (!userDetails) return;
-          return userDetails.first_name ?? userDetails.display_name;
-        })
-        .join(", ")
-        .trim(),
-    [getUserDetails]
-  );
   const handleIssuePeekOverview = useCallback(
     () =>
       workspaceSlug &&
@@ -60,41 +49,16 @@ export const TeamDependencyIssueListItem = observer((props: TTeamDependencyIssue
     [getIsIssuePeeked, issue, setPeekIssue, workspaceSlug]
   );
 
-  const dependencyDetails = useMemo(() => {
-    if (issue.assignee_ids?.length === 0) return;
+  const relationText = useMemo(() => {
     switch (type) {
-      case "blocking": {
-        if (issue.assignee_ids?.length === 1) return `${getAssigneeDetails([issue.assignee_ids?.[0]])} is blocking you`;
-        else {
-          return (
-            <span>
-              {getAssigneeDetails([issue.assignee_ids?.[0]])} and{" "}
-              <Tooltip tooltipContent={getAssigneeDetails(issue.assignee_ids?.slice(1))}>
-                <span className="hover:underline cursor-help">{issue.assignee_ids?.length - 1} other(s)</span>
-              </Tooltip>{" "}
-              are blocking you
-            </span>
-          );
-        }
-      }
-      case "blocked_by": {
-        if (issue.assignee_ids?.length === 1)
-          return `You are blocking ${getAssigneeDetails([issue.assignee_ids?.[0]])}`;
-        else {
-          return (
-            <span>
-              You are blocking {getAssigneeDetails([issue.assignee_ids?.[0]])} and{" "}
-              <Tooltip tooltipContent={getAssigneeDetails(issue.assignee_ids?.slice(1))}>
-                <span className="hover:underline cursor-help">{issue.assignee_ids?.length - 1} other(s)</span>
-              </Tooltip>
-            </span>
-          );
-        }
-      }
+      case "blocking":
+        return "is blocking";
+      case "blocked_by":
+        return "is blocked by";
       default:
         return;
     }
-  }, [issue.assignee_ids, type, getAssigneeDetails]);
+  }, [type]);
 
   return (
     <div
@@ -126,15 +90,37 @@ export const TeamDependencyIssueListItem = observer((props: TTeamDependencyIssue
           </div>
         }
         quickActionElement={
-          <div className="flex flex-shrink-0 items-center justify-center gap-2">
+          <div className="flex flex-shrink-0 items-center justify-center gap-2 text-custom-text-400 font-medium text-sm">
+            {relationText}{" "}
+            {issue.related_issues.length > 1 ? (
+              <span className="text-custom-text-100">{issue.related_issues.length} issues</span>
+            ) : (
+              issue.related_issues[0] && (
+                <div className="flex flex-shrink-0 items-center justify-center gap-2">
+                  {issue.related_issues[0].project_id && projectIdentifier && (
+                    <IssueIdentifier
+                      size="xs"
+                      issueSequenceId={issue.related_issues[0].sequence_id}
+                      issueTypeId={issue.related_issues[0].type_id}
+                      projectId={issue.related_issues[0].project_id}
+                      projectIdentifier={projectIdentifier}
+                      textContainerClassName="text-xs text-custom-text-100"
+                    />
+                  )}
+                </div>
+              )
+            )}
+            assigned to{" "}
             <AvatarGroup size="md" showTooltip>
-              {issue.assignee_ids?.map((userId: string) => {
-                const userDetails = getUserDetails(userId);
-                if (!userDetails) return;
-                return <Avatar key={userId} src={getFileURL(userDetails.avatar_url)} name={userDetails.display_name} />;
-              })}
+              {issue.related_assignee_ids.length > 0 &&
+                uniq(issue.related_assignee_ids)?.map((userId: string) => {
+                  const userDetails = getUserDetails(userId);
+                  if (!userDetails) return;
+                  return (
+                    <Avatar key={userId} src={getFileURL(userDetails.avatar_url)} name={userDetails.display_name} />
+                  );
+                })}
             </AvatarGroup>
-            <div className="text-red-500 font-medium text-sm">{dependencyDetails}</div>
           </div>
         }
         parentRef={parentRef}

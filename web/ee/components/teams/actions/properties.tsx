@@ -26,6 +26,7 @@ export const TeamProperties = observer((props: TTeamPropertiesProps) => {
   if (!team) return null;
   // derived values
   const teamLead = team.lead_id ? getUserDetails(team.lead_id) : null;
+  const teamMemberIdsExceptLead = team?.member_ids?.filter((memberId) => memberId !== teamLead?.id);
 
   return (
     <div className="flex flex-shrink-0 items-center justify-end gap-2.5">
@@ -46,7 +47,7 @@ export const TeamProperties = observer((props: TTeamPropertiesProps) => {
       )}
       <div className="flex-shrink-0">
         <AvatarGroup size="base" showTooltip max={4}>
-          {team.member_ids?.map((userId: string) => {
+          {teamMemberIdsExceptLead?.map((userId: string) => {
             const userDetails = getUserDetails(userId);
             if (!userDetails) return;
             return <Avatar key={userId} src={getFileURL(userDetails.avatar_url)} name={userDetails.display_name} />;

@@ -7,9 +7,9 @@ import {
   TeamsOverviewQuickLinks,
   AddProjectsToTeam,
 } from "@/plane-web/components/teams/overview";
-import { TeamDependenciesRoot } from "@/plane-web/components/teams/overview/dependencies/root";
+import { TeamProgressRoot } from "@/plane-web/components/teams/overview/progress/root";
+import { TeamRelationsRoot } from "@/plane-web/components/teams/overview/relations/root";
 import { TeamStatisticsRoot } from "@/plane-web/components/teams/overview/statistics/root";
-import { TeamWorkloadRoot } from "@/plane-web/components/teams/overview/workload/root";
 // plane web hooks
 import { useTeams } from "@/plane-web/hooks/store";
 
@@ -44,8 +44,8 @@ export const TeamsOverviewContent = observer((props: TTeamsOverviewContentProps)
         {areProjectsLinked ? (
           <div className="flex flex-col divide-y divide-custom-border-100 px-3">
             <TeamsOverviewQuickLinks />
-            <TeamWorkloadRoot teamId={teamId} />
-            <TeamDependenciesRoot teamId={teamId} />
+            <TeamProgressRoot teamId={teamId} />
+            <TeamRelationsRoot teamId={teamId} />
             <TeamStatisticsRoot teamId={teamId} />
           </div>
         ) : (

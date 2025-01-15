@@ -322,5 +322,15 @@
   "initiatives": "Initiatives",
   "in_app": "In-app",
   "forms": "Forms",
-  "epics": "Epics"
+  "epics": "Epics",
+  "team-progress-empty-state-title": "None of your linked projects have published issues.",
+  "team-progress-empty-state-description": "Create some issues in one or more of those projects to see progress by dates, states, and priority.",
+  "team-blocking-relation-empty-state-title": "You don’t have any issues blocking a teammate.",
+  "team-blocking-relation-empty-state-description": "Good job! You have cleared the path for your team. You are a good team player.",
+  "team-blocked-relation-empty-state-title": "You don’t have any teammate’s issues blocking you.",
+  "team-blocked-relation-empty-state-description": "Good news! You can make progress on all your assigned issues.",
+  "team-stats-empty-state-title": "None of your linked projects have published issues.",
+  "team-stats-empty-state-description": "Create some issues in one or more of those projects to see distribution of work by project and team members.",
+  "team-stats-filter-empty-state-title": "There are no team stats for the filters applied.",
+  "team-stats-filter-empty-state-description": "Create some issues in one or more of those projects to see distribution of work by project and team members."
 }

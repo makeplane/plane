@@ -1,19 +1,22 @@
 import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { TreeMapItem } from "@plane/types";
-import { Avatar, Loader, Logo } from "@plane/ui";
+import { Avatar, Button, Loader, Logo, TreeMapIcon } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // components
 import { TreeMapChart } from "@/components/core/charts/tree-map";
 // hooks
 import { useMember, useProject } from "@/hooks/store";
 // plane web imports
+import { SectionEmptyState } from "@/plane-web/components/common";
 import {
   WORKSPACE_PROJECT_STATE_GROUPS,
   WORKSPACE_PROJECT_STATE_PRIORITY,
 } from "@/plane-web/constants/workspace-project-states";
-import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
+import { useTeams, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { useTeamAnalytics } from "@/plane-web/hooks/store/teams/use-team-analytics";
 
 type TTeamStatisticsMapProps = {
@@ -22,17 +25,28 @@ type TTeamStatisticsMapProps = {
 
 export const TeamStatisticsMap: React.FC<TTeamStatisticsMapProps> = observer((props) => {
   const { teamId } = props;
+  // router
+  const { workspaceSlug } = useParams();
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { getProjectById } = useProject();
   const { getUserDetails } = useMember();
   const { isSettingsEnabled, getProjectStateById } = useWorkspaceProjectStates();
-  const { getTeamStatisticsLoader, getTeamStatisticsFilter, getTeamStatistics } = useTeamAnalytics();
+  const { getTeamEntitiesLoaderById } = useTeams();
+  const { getTeamStatisticsLoader, getTeamStatisticsFilter, getTeamStatistics, clearTeamStatisticsFilter } =
+    useTeamAnalytics();
   // derived values
+  const teamEntitiesLoader = getTeamEntitiesLoaderById(teamId);
   const teamStatisticsLoader = getTeamStatisticsLoader(teamId);
   const teamStatisticsFilter = getTeamStatisticsFilter(teamId);
   const teamStatistics = getTeamStatistics(teamId);
   const currentDataKey = teamStatisticsFilter.data_key;
   const currentLegend = teamStatisticsFilter.legend;
+  const isLoading = teamEntitiesLoader === "init-loader" || teamStatisticsLoader === "init-loader";
+  const isUpdating = isLoading || teamStatisticsLoader === "mutation";
+  const showFilterEmptyState =
+    !isLoading && teamStatistics && (teamStatistics.length === 0 || teamStatistics.every((item) => item.count === 0));
   // helpers
   const getDataIcon: (id: string) => React.ReactElement | undefined = useCallback(
     (id) => {
@@ -129,10 +143,32 @@ export const TeamStatisticsMap: React.FC<TTeamStatisticsMapProps> = observer((pr
 
   return (
     <>
-      {teamStatisticsLoader === "init-loader" ? (
+      {isLoading ? (
         <Loader className="w-full h-96 flex items-center justify-center">
           <Loader.Item width="100%" height="100%" />
         </Loader>
+      ) : showFilterEmptyState ? (
+        <SectionEmptyState
+          heading={t("team-stats-filter-empty-state-title")}
+          subHeading={t("team-stats-filter-empty-state-description")}
+          icon={<TreeMapIcon className="size-6 text-custom-text-400" />}
+          actionElement={
+            <Button
+              variant="link-primary"
+              size="md"
+              className="bg-transparent"
+              disabled={isUpdating}
+              onClick={() => clearTeamStatisticsFilter(workspaceSlug?.toString(), teamId)}
+            >
+              Clear filters
+            </Button>
+          }
+          variant="solid"
+          iconVariant="round"
+          size="md"
+          containerClassName="h-96 gap-2"
+          contentClassName="gap-1"
+        />
       ) : (
         <TreeMapChart data={data} isAnimationActive />
       )}

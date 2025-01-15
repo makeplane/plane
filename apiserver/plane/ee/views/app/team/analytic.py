@@ -2,10 +2,7 @@
 from datetime import timedelta
 
 # Django imports
-from django.db.models import Case, Count, IntegerField, Q, When, Value, UUIDField, F
-from django.db.models.functions import Coalesce
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.fields import ArrayField
+from django.db.models import Case, Count, IntegerField, Q, When, F
 from django.utils import timezone
 
 # Third party imports
@@ -85,7 +82,7 @@ class TeamSpaceEntitiesEndpoint(TeamBaseEndpoint):
         )
 
 
-class TeamSpaceWorkLoadChartEndpoint(TeamBaseEndpoint):
+class TeamSpaceProgressChartEndpoint(TeamBaseEndpoint):
     def get_date_range(self):
         today = timezone.now().date()
         weekday = today.weekday()
@@ -200,7 +197,7 @@ class TeamSpaceWorkLoadChartEndpoint(TeamBaseEndpoint):
         return Response({"distribution": distribution}, status=status.HTTP_200_OK)
 
 
-class TeamSpaceWorkloadSummaryEndpoint(TeamBaseEndpoint):
+class TeamSpaceProgressSummaryEndpoint(TeamBaseEndpoint):
     def get(self, request, slug, team_space_id):
         project_ids = TeamSpaceProject.objects.filter(
             team_space_id=team_space_id
@@ -241,13 +238,152 @@ class TeamSpaceWorkloadSummaryEndpoint(TeamBaseEndpoint):
         )
 
 
-class TeamSpaceDependencyEndpoint(TeamBaseEndpoint):
+class TeamSpaceRelationEndpoint(TeamBaseEndpoint):
+
+    def get_blocking_issues(self, team_member_issue_ids, assigned_issue_ids):
+        # Filter the issues based on the dependency type
+        blocking_issue_ids = IssueRelation.objects.filter(
+            relation_type="blocked_by",
+            related_issue_id__in=assigned_issue_ids,
+            issue_id__in=team_member_issue_ids,
+        ).values_list("related_issue_id", flat=True)
+
+        # Get the blocking issues
+        blocking_issues = (
+            Issue.issue_objects.filter(
+                id__in=blocking_issue_ids,
+                assignees__id__isnull=False,
+                state__group__in=["backlog", "unstarted", "started"],
+            )
+            .values(
+                "id",
+                "name",
+                "state__group",
+                "priority",
+                "project_id",
+                "sequence_id",
+                "type_id",
+                "archived_at",
+            )
+            .distinct()
+        )[:5]
+
+        # Get the related issues
+        related_issues_map = IssueRelation.objects.filter(
+            relation_type="blocked_by", related_issue_id__in=blocking_issue_ids
+        ).values("related_issue_id", "issue_id")
+
+        related_blocking_issue_ids = [item["issue_id"] for item in related_issues_map]
+
+        related_issues = Issue.issue_objects.filter(
+            id__in=related_blocking_issue_ids
+        ).values(
+            "id",
+            "name",
+            "state__group",
+            "priority",
+            "project_id",
+            "sequence_id",
+            "type_id",
+            "archived_at",
+        )
+
+        for issue in blocking_issues:
+            # Get all the related issues
+            related_issue_ids = [
+                item["issue_id"]
+                for item in related_issues_map
+                if item["related_issue_id"] == issue["id"]
+            ]
+            # Attach the related issues to the blocking issue
+            issue["related_issues"] = [
+                item for item in related_issues if item["id"] in related_issue_ids
+            ]
+            # Attach the related issue assignee ids to the blocking issue
+            issue["related_assignee_ids"] = IssueAssignee.objects.filter(
+                issue_id__in=related_issue_ids
+            ).values_list("assignee_id", flat=True)
+
+        return blocking_issues
+
+
+    def get_blocked_by_issues(self,team_member_issue_ids, assigned_issue_ids):
+        blocked_by_issue_ids = IssueRelation.objects.filter(
+            relation_type="blocked_by",
+            issue_id__in=assigned_issue_ids,
+            related_issue_id__in=team_member_issue_ids,
+        ).values_list("issue_id", flat=True)
+
+        blocked_by_issues = (
+            Issue.issue_objects.filter(
+                id__in=blocked_by_issue_ids,
+                assignees__id__isnull=False,
+                state__group__in=["backlog", "unstarted", "started"],
+            )
+            .values(
+                "id",
+                "name",
+                "state__group",
+                "priority",
+                "project_id",
+                "sequence_id",
+                "type_id",
+                "archived_at",
+            )
+            .distinct()
+        )[:5]
+
+        # Get the related issues
+        related_issues_map = IssueRelation.objects.filter(
+            relation_type="blocked_by", issue_id__in=blocked_by_issue_ids
+        ).values("related_issue_id", "issue_id")
+
+        related_blocked_by_issue_ids = [
+            item["related_issue_id"] for item in related_issues_map
+        ]
+
+        related_issues = Issue.issue_objects.filter(
+            id__in=related_blocked_by_issue_ids
+        ).values(
+            "id",
+            "name",
+            "state__group",
+            "priority",
+            "project_id",
+            "sequence_id",
+            "type_id",
+            "archived_at",
+        )
+
+        for issue in blocked_by_issues:
+            # Get all the related issues
+            related_issue_ids = [
+                item["related_issue_id"]
+                for item in related_issues_map
+                if item["issue_id"] == issue["id"]
+            ]
+            # Attach the related issues to the blocked by issues
+            issue["related_issues"] = [
+                item for item in related_issues if item["id"] in related_issue_ids
+            ]
+            # Attach the related issue assignee ids to the blocked by issue
+            issue["related_assignee_ids"] = IssueAssignee.objects.filter(
+                issue_id__in=related_issue_ids
+            ).values_list("assignee_id", flat=True)
+
+        return blocked_by_issues
+
+
     @check_feature_flag(FeatureFlag.TEAMS)
     def get(self, request, slug, team_space_id):
         # Get all the project ids
         project_ids = TeamSpaceProject.objects.filter(
             team_space_id=team_space_id
         ).values_list("project_id", flat=True)
+        # Get all team member ids
+        team_member_ids = TeamSpaceMember.objects.filter(
+            team_space_id=team_space_id
+        ).values_list("member_id", flat=True)
 
         # Get the issues assigned to the user
         assigned_issue_ids = IssueAssignee.objects.filter(
@@ -256,74 +392,16 @@ class TeamSpaceDependencyEndpoint(TeamBaseEndpoint):
             assignee_id=request.user.id,
         ).values_list("issue_id", flat=True)
 
-        # Filter the issues based on the dependency type
-        blocking_issue_ids = IssueRelation.objects.filter(
-            relation_type="blocked_by", related_issue_id__in=assigned_issue_ids
+        # Get the issues assigned to the team members
+        team_member_issue_ids = IssueAssignee.objects.filter(
+            project_id__in=project_ids,
+            workspace__slug=slug,
+            assignee_id__in=team_member_ids,
         ).values_list("issue_id", flat=True)
 
-        blocked_by_issue_ids = IssueRelation.objects.filter(
-            relation_type="blocked_by", issue_id__in=assigned_issue_ids
-        ).values_list("related_issue_id", flat=True)
 
-        blocking_issues = (
-            Issue.issue_objects.filter(
-                id__in=blocking_issue_ids, assignees__id__isnull=False
-            )
-            .values(
-                "id",
-                "name",
-                "state__group",
-                "priority",
-                "project_id",
-                "sequence_id",
-                "type_id",
-                "archived_at",
-            )
-            .annotate(
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=Q(
-                            ~Q(assignees__id__isnull=True)
-                            & Q(assignees__member_project__is_active=True)
-                            & Q(issue_assignee__deleted_at__isnull=True)
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                )
-            )
-        )[:5]
-
-        blocked_by_issues = (
-            Issue.issue_objects.filter(
-                id__in=blocked_by_issue_ids, assignees__id__isnull=False
-            )
-            .values(
-                "id",
-                "name",
-                "state__group",
-                "priority",
-                "project_id",
-                "sequence_id",
-                "type_id",
-                "archived_at",
-            )
-            .annotate(
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=Q(
-                            ~Q(assignees__id__isnull=True)
-                            & Q(assignees__member_project__is_active=True)
-                            & Q(issue_assignee__deleted_at__isnull=True)
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                )
-            )
-        )[:5]
+        blocking_issues = self.get_blocking_issues(team_member_issue_ids, assigned_issue_ids)
+        blocked_by_issues = self.get_blocked_by_issues(team_member_issue_ids, assigned_issue_ids)
 
         return Response(
             {
@@ -335,9 +413,26 @@ class TeamSpaceDependencyEndpoint(TeamBaseEndpoint):
 
 
 class TeamSpaceStatisticsEndpoint(TeamBaseEndpoint):
-    def project_tree(self, project_ids, filters):
+    def project_tree(self, team_space_id, project_ids, scope, filters):
+        # Get team space issues queryset
+        issues_queryset = Issue.issue_objects.filter(project_id__in=project_ids)
+        # Get all team member ids
+        team_member_ids = TeamSpaceMember.objects.filter(
+            team_space_id=team_space_id
+        ).values_list("member_id", flat=True)
+
+        # Get issue filter based on scope
+        if scope == "teams":
+            issue_filter = {
+                "id__in": IssueAssignee.objects.filter(
+                    assignee_id__in=team_member_ids
+                ).values_list("issue_id", flat=True)
+            }
+        else:
+            issue_filter = {}
+
         issue_map = (
-            Issue.issue_objects.filter(project_id__in=project_ids)
+            issues_queryset.filter(**issue_filter)
             .filter(**filters)
             .annotate(identifier=F("project_id"))
             .values("identifier")
@@ -346,7 +441,7 @@ class TeamSpaceStatisticsEndpoint(TeamBaseEndpoint):
         )
         return Response(issue_map, status=status.HTTP_200_OK)
 
-    def member_tree(self, team_space_id, project_ids, filters):
+    def member_tree(self, team_space_id, project_ids, scope, filters):
         # Get all team member ids
         team_member_ids = TeamSpaceMember.objects.filter(
             team_space_id=team_space_id
@@ -357,11 +452,19 @@ class TeamSpaceStatisticsEndpoint(TeamBaseEndpoint):
             .filter(**filters)
             .values_list("id", flat=True)
         )
+
+        # Get assignee filter based on scope
+        if scope == "teams":
+            assignee_filter = {
+                "assignee_id__in": team_member_ids,
+                "issue__in": issue_ids,
+            }
+        else:
+            assignee_filter = {"issue__in": issue_ids}
+
         # Get the issue map:
         issue_map = (
-            IssueAssignee.objects.filter(
-                issue__in=issue_ids, assignee_id__in=team_member_ids
-            )
+            IssueAssignee.objects.filter(**assignee_filter)
             .annotate(identifier=F("assignee_id"))
             .values("identifier")
             .annotate(count=Count("id"))
@@ -377,11 +480,12 @@ class TeamSpaceStatisticsEndpoint(TeamBaseEndpoint):
         ).values_list("project_id", flat=True)
 
         # Get the tab
+        scope = request.GET.get("scope", "projects")
         data_key = request.GET.get("data_key", "projects")
         filters = issue_filters(request.query_params, "GET")
 
         # Get the tree map based on the data_key
         if data_key == "projects":
-            return self.project_tree(project_ids, filters)
+            return self.project_tree(team_space_id, project_ids, scope, filters)
         else:
-            return self.member_tree(team_space_id, project_ids, filters)
+            return self.member_tree(team_space_id, project_ids, scope, filters)

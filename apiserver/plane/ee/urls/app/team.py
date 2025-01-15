@@ -20,11 +20,11 @@ from plane.ee.views.app.team import (
     TeamSpaceActivityEndpoint,
     TeamSpaceCommentEndpoint,
     TeamSpaceCommentReactionEndpoint,
-    TeamSpaceWorkLoadChartEndpoint,
-    TeamSpaceDependencyEndpoint,
+    TeamSpaceProgressChartEndpoint,
+    TeamSpaceRelationEndpoint,
     TeamSpaceStatisticsEndpoint,
     TeamSpacePageDuplicateEndpoint,
-    TeamSpaceWorkloadSummaryEndpoint,
+    TeamSpaceProgressSummaryEndpoint,
 )
 
 urlpatterns = [
@@ -155,19 +155,19 @@ urlpatterns = [
         name="team-space-comments-reactions",
     ),
     path(
-        "workspaces/<str:slug>/teams/<uuid:team_space_id>/workload-chart/",
-        TeamSpaceWorkLoadChartEndpoint.as_view(),
-        name="team-analytics",
+        "workspaces/<str:slug>/teams/<uuid:team_space_id>/progress-chart/",
+        TeamSpaceProgressChartEndpoint.as_view(),
+        name="team-progress-chart",
     ),
     path(
-        "workspaces/<str:slug>/teams/<uuid:team_space_id>/dependencies/",
-        TeamSpaceDependencyEndpoint.as_view(),
+        "workspaces/<str:slug>/teams/<uuid:team_space_id>/relations/",
+        TeamSpaceRelationEndpoint.as_view(),
         name="team-dependencies",
     ),
     path(
-        "workspaces/<str:slug>/teams/<uuid:team_space_id>/workload-summary/",
-        TeamSpaceWorkloadSummaryEndpoint.as_view(),
-        name="team-workload-summary",
+        "workspaces/<str:slug>/teams/<uuid:team_space_id>/progress-summary/",
+        TeamSpaceProgressSummaryEndpoint.as_view(),
+        name="team-progress-summary",
     ),
     path(
         "workspaces/<str:slug>/teams/<uuid:team_space_id>/statistics/",

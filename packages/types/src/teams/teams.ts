@@ -48,7 +48,7 @@ export type TTeamEntities = {
     views: number;
     total: number;
   };
-}; 
+};
 
 export type TCreateUpdateTeamModal = {
   isOpen: boolean;
@@ -82,7 +82,7 @@ export type TTeamReaction = {
 
 // --------------- Team Workload ---------------
 
-export type TTeamWorkloadSummary = {
+export type TTeamProgressSummary = {
   backlog_issues: number;
   cancelled_issues: number;
   completed_issues: number;
@@ -93,14 +93,17 @@ export type TTeamWorkloadSummary = {
 
 // --------------- Team Dependencies ---------------
 
-export type TTeamDependencyIssue = Pick<
+type TIssueLite = Pick<
   TIssue,
-  "id" | "name" | "type_id" | "sequence_id" | "project_id" | "priority" | "assignee_ids" | "archived_at"
-> & {
-  state__group: TStateGroups;
+  "id" | "name" | "type_id" | "sequence_id" | "project_id" | "priority" | "archived_at"
+> & { state__group: TStateGroups };
+
+export type TTeamDependencyIssue = TIssueLite & {
+  related_issues: TIssueLite[];
+  related_assignee_ids: string[];
 };
 
-export type TTeamDependencies = {
+export type TTeamRelations = {
   blocking_issues: TTeamDependencyIssue[];
   blocked_by_issues: TTeamDependencyIssue[];
 };

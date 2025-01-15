@@ -2,10 +2,10 @@ from .base import TeamSpaceEndpoint
 from .member import TeamSpaceMembersEndpoint
 from .analytic import (
     TeamSpaceEntitiesEndpoint,
-    TeamSpaceDependencyEndpoint,
+    TeamSpaceRelationEndpoint,
     TeamSpaceStatisticsEndpoint,
-    TeamSpaceWorkloadSummaryEndpoint,
-    TeamSpaceWorkLoadChartEndpoint,
+    TeamSpaceProgressSummaryEndpoint,
+    TeamSpaceProgressChartEndpoint,
 )
 from .views import TeamSpaceViewEndpoint
 from .cycle import TeamSpaceCycleEndpoint

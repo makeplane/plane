@@ -1,12 +1,12 @@
 import { AlignLeft, Briefcase, FileText, Layers, Type, User2, Users } from "lucide-react";
 // plane imports
 import {
-  EDependencyType,
+  ERelationType,
   EStatisticsLegend,
   ETeamAnalyticsDataKeys,
   ETeamAnalyticsValueKeys,
   ETeamScope,
-  EWorkloadXAxisKeys,
+  EProgressXAxisKeys,
 } from "@plane/constants";
 import { TCreateUpdateTeamModal, TCreateUpdateTeamViewModal, TTeamActivity } from "@plane/types";
 import { TeamsIcon } from "@plane/ui";
@@ -165,7 +165,7 @@ export const TEAM_UPDATES_HELPER_MAP: Partial<TTeamActivityDetailsHelperMap> = {
   }),
 };
 
-export const TEAM_WORKLOAD_X_AXIS_LABEL_MAP: Record<EWorkloadXAxisKeys, string> = {
+export const TEAM_WORKLOAD_X_AXIS_LABEL_MAP: Record<EProgressXAxisKeys, string> = {
   target_date: "Due date",
   start_date: "Start date",
   priority: "Priority",
@@ -191,7 +191,7 @@ export const TEAM_STATISTICS_LEGEND_MAP: Record<EStatisticsLegend, string> = {
   priority: "Priority",
 };
 
-export const TEAM_STATISTICS_DEPENDENCY_MAP: Record<EDependencyType, string> = {
+export const TEAM_STATISTICS_DEPENDENCY_MAP: Record<ERelationType, string> = {
   blocking: "Blocking",
   blocked_by: "Blocked by",
 };

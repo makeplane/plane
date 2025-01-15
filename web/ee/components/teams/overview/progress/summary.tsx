@@ -3,6 +3,7 @@ import { Loader as Spinner, TriangleAlert } from "lucide-react";
 // plane imports
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
+import { useTeams } from "@/plane-web/hooks/store";
 import { useTeamAnalytics } from "@/plane-web/hooks/store/teams/use-team-analytics";
 // common classNames
 const ICON_CLASSNAME = "size-2.5 rounded-full";
@@ -40,19 +41,21 @@ const WorkloadDetailItem = (props: TWorkloadDetailItemProps) => {
   );
 };
 
-type TTeamWorkloadSummaryProps = {
+type TTeamProgressSummaryProps = {
   teamId: string;
 };
 
-export const TeamWorkloadSummary: React.FC<TTeamWorkloadSummaryProps> = observer((props) => {
+export const TeamProgressSummary: React.FC<TTeamProgressSummaryProps> = observer((props) => {
   const { teamId } = props;
   // store hooks
-  const { getTeamWorkloadSummaryLoader, getTeamWorkloadSummary } = useTeamAnalytics();
+  const { getTeamEntitiesLoaderById } = useTeams();
+  const { getTeamProgressSummaryLoader, getTeamProgressSummary } = useTeamAnalytics();
   // derived values
-  const teamWorkloadSummaryLoader = getTeamWorkloadSummaryLoader(teamId);
-  const teamWorkloadSummary = getTeamWorkloadSummary(teamId);
-  const isLoading = teamWorkloadSummaryLoader === "init-loader";
-  const isUpdating = teamWorkloadSummaryLoader === "mutation";
+  const teamEntitiesLoader = getTeamEntitiesLoaderById(teamId);
+  const teamProgressSummaryLoader = getTeamProgressSummaryLoader(teamId);
+  const teamProgressSummary = getTeamProgressSummary(teamId);
+  const isLoading = teamEntitiesLoader === "init-loader" || teamProgressSummaryLoader === "init-loader";
+  const isUpdating = teamProgressSummaryLoader === "mutation";
 
   return (
     <div className="w-full h-full">
@@ -61,10 +64,10 @@ export const TeamWorkloadSummary: React.FC<TTeamWorkloadSummaryProps> = observer
         {isUpdating && <Spinner size={12} className="animate-spin flex-shrink-0" />}
       </div>
       <div className="flex flex-col gap-2.5">
-        {teamWorkloadSummary ? (
+        {teamProgressSummary ? (
           <div className="flex items-center gap-1.5 py-2.5 border-b border-custom-border-100 text-sm font-medium text-[#FF9500]">
             <TriangleAlert size={16} strokeWidth={2} />
-            <span>{teamWorkloadSummary.no_due_date_issues} issues are not assigned due date</span>
+            <span>{teamProgressSummary.no_due_date_issues} issues are not assigned due date</span>
           </div>
         ) : null}
         <div className="flex flex-col gap-2 border-b border-custom-border-100 px-2 pb-2">
@@ -75,7 +78,7 @@ export const TeamWorkloadSummary: React.FC<TTeamWorkloadSummaryProps> = observer
             value={
               <>
                 <div className={"flex-shrink-0 absolute -top-0.5 -right-0.5 size-1.5 bg-red-500 rounded-full"} />
-                {teamWorkloadSummary?.pending_issues}
+                {teamProgressSummary?.pending_issues}
               </>
             }
             titleClassName={TITLE_CLASSNAME}
@@ -86,7 +89,7 @@ export const TeamWorkloadSummary: React.FC<TTeamWorkloadSummaryProps> = observer
           <WorkloadDetailItem
             title="Completed"
             icon={<span className={cn(ICON_CLASSNAME, "bg-[#004EFF]")} />}
-            value={teamWorkloadSummary?.completed_issues}
+            value={teamProgressSummary?.completed_issues}
             titleClassName={TITLE_CLASSNAME}
             containerClassName={ITEM_CONTAINER_CLASSNAME}
             valueClassName={cn(VALUE_CLASSNAME)}
@@ -97,7 +100,7 @@ export const TeamWorkloadSummary: React.FC<TTeamWorkloadSummaryProps> = observer
           <WorkloadDetailItem title="Other states" containerClassName="text-custom-text-300" />
           <WorkloadDetailItem
             title="Backlog"
-            value={teamWorkloadSummary?.backlog_issues}
+            value={teamProgressSummary?.backlog_issues}
             titleClassName={TITLE_CLASSNAME}
             containerClassName={ITEM_CONTAINER_CLASSNAME}
             valueClassName={cn(VALUE_CLASSNAME)}
@@ -105,7 +108,7 @@ export const TeamWorkloadSummary: React.FC<TTeamWorkloadSummaryProps> = observer
           />
           <WorkloadDetailItem
             title="Cancelled"
-            value={teamWorkloadSummary?.cancelled_issues}
+            value={teamProgressSummary?.cancelled_issues}
             titleClassName={TITLE_CLASSNAME}
             containerClassName={ITEM_CONTAINER_CLASSNAME}
             valueClassName={cn(VALUE_CLASSNAME)}

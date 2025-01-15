@@ -27,19 +27,19 @@ export enum ETeamAnalyticsValueKeys {
   // POINTS = "points",
 }
 
-export enum EWorkloadXAxisKeys {
+export enum EProgressXAxisKeys {
   TARGET_DATE = "target_date",
   START_DATE = "start_date",
   PRIORITY = "priority",
 }
 
-export enum EWorkloadDataKeys {
+export enum EProgressDataKeys {
   COMPLETED = "completed",
   PENDING = "pending",
   OVERDUE = "overdue",
 }
 
-export enum EDependencyType {
+export enum ERelationType {
   BLOCKING = "blocking",
   BLOCKED_BY = "blocked_by",
 }
