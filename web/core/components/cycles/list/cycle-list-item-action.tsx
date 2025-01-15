@@ -82,10 +82,10 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
 
   // derived values
   const cycleStatus = cycleDetails.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
-  
+
   const showIssueCount = useMemo(() => cycleStatus === "draft" || cycleStatus === "upcoming", [cycleStatus]);
 
-  const showTransferIssues = cycleDetails.pending_issues > 0 && cycleStatus === "completed";
+  const showTransferIssues = routerProjectId && cycleDetails.pending_issues > 0 && cycleStatus === "completed";
 
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
