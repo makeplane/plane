@@ -110,7 +110,7 @@ export const useEditor = (props: CustomEditorProps) => {
   useEffect(() => {
     // value is null when intentionally passed where syncing is not yet
     // supported and value is undefined when the data from swr is not populated
-    if (value === null || value === undefined) return;
+    if (value == null) return;
     if (editor && !editor.isDestroyed && !editor.storage.imageComponent.uploadInProgress) {
       try {
         editor.commands.setContent(value, false, { preserveWhitespace: "full" });
