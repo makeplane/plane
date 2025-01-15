@@ -46,7 +46,6 @@ function checkLatestRelease(){
     echo $latest_release    
 }
 
-
 # Function to read stack name from env file
 function readStackName() {
     if [ -f "$DOCKER_ENV_PATH" ]; then
@@ -149,17 +148,12 @@ function updateEnvFile() {
 
 function download() {
 
-    if [ ! -f "$DOCKER_FILE_PATH" ]; then
-        echo "Downloading configuration files..."
-        curl -L https://raw.githubusercontent.com/${GH_REPO}/refs/heads/${BRANCH}/deploy/selfhost/docker-compose.yml -o $DOCKER_FILE_PATH
-        curl -L https://raw.githubusercontent.com/${GH_REPO}/refs/heads/${BRANCH}/deploy/selfhost/variables.env -o $DOCKER_ENV_PATH
-        echo "Configuration files downloaded successfully"
-        echo ""
-        # Get stack name before updating variables
-        getStackName
-    else
-        readStackName
-    fi
+    echo "Downloading configuration files..."
+    curl -L https://raw.githubusercontent.com/${GH_REPO}/refs/heads/${BRANCH}/deploy/selfhost/swarm-compose.yml -o $DOCKER_FILE_PATH
+    curl -L https://raw.githubusercontent.com/${GH_REPO}/refs/heads/${BRANCH}/deploy/selfhost/variables.env -o $DOCKER_ENV_PATH
+    echo "Configuration files downloaded successfully"
+    echo ""
+
 }
 
 
@@ -400,6 +394,12 @@ function viewStatus() {
 }
 
 function upgrade() {
+
+    echo "Checking status of ${stack_name} stack..."
+    if [ -z "$stack_name" ]; then
+        echo "Stack name not found"
+        exit 1
+    fi
     
     local latest_release="stable"
 
@@ -431,19 +431,12 @@ function upgrade() {
         cp "$DOCKER_ENV_PATH" "${DOCKER_ENV_PATH}.bak"
     fi
 
-    # fetch new env file
-    curl -L https://raw.githubusercontent.com/${GH_REPO}/refs/heads/${BRANCH}/deploy/selfhost/docker-compose.yml -o $DOCKER_FILE_PATH
-    curl -L https://raw.githubusercontent.com/${GH_REPO}/refs/heads/${BRANCH}/deploy/selfhost/variables.env -o $DOCKER_ENV_PATH
-    echo "Configuration files downloaded successfully"
-    echo ""
-
+    download
     NEW_VERSION_NAME=$(getEnvValue "APP_RELEASE" "$DOCKER_ENV_PATH")
     syncEnvFile
     updateEnvFile "APP_RELEASE" "$NEW_VERSION_NAME" "$DOCKER_ENV_PATH"
-    if [ -z "$stack_name" ]; then
-        readStackName
-    fi
-    removeStack
+
+    removeStack 
     deployStack
 }
 
