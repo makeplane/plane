@@ -216,11 +216,6 @@ services:
   plane-minio:
     image: minio/minio:latest
     restart: unless-stopped
-    ports:
-      - target: 9090
-        published: 9090
-        protocol: tcp
-        mode: host
     command: server /export --console-address ":9090"
     deploy:
       replicas: 1
@@ -237,7 +232,7 @@ services:
     restart: unless-stopped
     ports:
       - target: 80
-        published: 80
+        published: ${NGINX_PORT:-80}
         protocol: tcp
         mode: host
     environment:
@@ -253,25 +248,16 @@ services:
 
 volumes:
   pgdata:
-    driver: local
   redisdata:
-    driver: local
   uploads:
-    driver: local
   logs_api:
-    driver: local
   logs_worker:
-    driver: local
   logs_beat-worker:
-    driver: local
   logs_migrator:
-    driver: local
   rabbitmq_data:
-    driver: local
 
 networks:
   plane-network:
     name: plane-network
     driver: overlay
     attachable: true
-    
