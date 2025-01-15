@@ -120,6 +120,7 @@ const HeaderFilters = observer((props: Props) => {
           layoutDisplayFiltersOptions={layoutDisplayFiltersOptions}
           labels={projectLabels}
           memberIds={projectMemberIds ?? undefined}
+          projectId={projectId}
           states={projectStates}
           cycleViewDisabled={!currentProjectDetails?.cycle_view}
           moduleViewDisabled={!currentProjectDetails?.module_view}
