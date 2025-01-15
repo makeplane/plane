@@ -93,12 +93,7 @@ export const InputBox = (props: TProps) => {
   };
 
   return (
-    <form
-      className={cn(
-        "flex flex-col absolute bottom-3 inset-x-10 bg-pi-50 left-1/2 transform -translate-x-1/2 w-full px-2 md:px-0",
-        className
-      )}
-    >
+    <form className={className}>
       <div className="bg-custom-background-100 w-full rounded-[28px] p-2 flex gap-3 shadow-sm border-[4px] border-pi-100">
         {/* Focus */}
         <FocusFilter />

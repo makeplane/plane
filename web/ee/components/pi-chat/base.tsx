@@ -120,7 +120,7 @@ export const PiChatBase = observer((props: TProps) => {
   return onlyShowInput ? (
     <InputBox
       isFullScreen={isFullScreen}
-      className="relative bg-transparent mt-2 max-w-[950px]"
+      className="relative bg-transparent mt-2 max-w-[950px] mx-auto w-full"
       onSubmit={() => handleRedirect(`/${workspaceSlug}/pi-chat`)}
       activeChatId={activeChatId}
     />
@@ -166,7 +166,11 @@ export const PiChatBase = observer((props: TProps) => {
             )}
 
             {/* Chat Input */}
-            <InputBox isFullScreen={isFullScreen} activeChatId={activeChatId} />
+            <InputBox
+              isFullScreen={isFullScreen}
+              activeChatId={activeChatId}
+              className="flex flex-col absolute bottom-3 bg-pi-50 left-1/2 transform -translate-x-1/2 w-full px-2 md:px-0"
+            />
           </div>
         </div>
       </div>
