@@ -15,7 +15,35 @@ from .base import BaseAPIView
 from plane.api.serializers import UserLiteSerializer
 from plane.db.models import User, Workspace, Project, WorkspaceMember, ProjectMember
 
-from plane.app.permissions import ProjectMemberPermission
+from plane.app.permissions import ProjectMemberPermission, WorkSpaceAdminPermission
+
+from plane.payment.bgtasks.member_sync_task import member_sync_task
+
+
+class WorkspaceMemberAPIEndpoint(BaseAPIView):
+    permission_classes = [WorkSpaceAdminPermission]
+
+    # Get all the users that are present inside the workspace
+    def get(self, request, slug):
+        # Check if the workspace exists
+        if not Workspace.objects.filter(slug=slug).exists():
+            return Response(
+                {"error": "Provided workspace does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        workspace_members = WorkspaceMember.objects.filter(
+            workspace__slug=slug
+        ).select_related("member")
+
+        # Get all the users with their roles
+        users_with_roles = []
+        for workspace_member in workspace_members:
+            user_data = UserLiteSerializer(workspace_member.member).data
+            user_data["role"] = workspace_member.role
+            users_with_roles.append(user_data)
+
+        return Response(users_with_roles, status=status.HTTP_200_OK)
 
 
 # API endpoint to get and insert users inside the workspace
@@ -30,7 +58,6 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
                 {"error": "Provided workspace does not exist"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
         # Get the workspace members that are present inside the workspace
         project_members = ProjectMember.objects.filter(
             project_id=project_id, workspace__slug=slug
@@ -43,10 +70,7 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
 
         return Response(users, status=status.HTTP_200_OK)
 
-    # Insert a new user inside the workspace, and assign the user to the project
     def post(self, request, slug, project_id):
-        # Check if user with email already exists, and send bad request if it's
-        # not present, check for workspace and valid project mandat
         # ------------------- Validation -------------------
         if (
             request.data.get("email") is None
@@ -77,8 +101,8 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check if user exists
         user = User.objects.filter(email=email).first()
+
         workspace_member = None
         project_member = None
 
@@ -109,6 +133,7 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
                 password=make_password(uuid.uuid4().hex),
                 is_password_autoset=True,
                 is_active=False,
+                avatar_asset_id=request.data.get("avatar_asset_id", None),
             )
             user.save()
 
@@ -125,6 +150,9 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
                 project=project, member=user, role=request.data.get("role", 5)
             )
             project_member.save()
+
+        # Run the member sync task for the workspace
+        member_sync_task.delay(workspace.slug)
 
         # Serialize the user and return the response
         user_data = UserLiteSerializer(user).data
