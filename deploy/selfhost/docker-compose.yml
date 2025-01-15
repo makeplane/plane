@@ -259,5 +259,5 @@ volumes:
 networks:
   plane-network:
     name: plane-network
-    driver: bridge
+    driver: overlay
     attachable: true

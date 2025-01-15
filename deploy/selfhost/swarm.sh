@@ -2,6 +2,7 @@
 
 BRANCH=${BRANCH:-master}
 SERVICE_FOLDER=plane-app
+SCRIPT_DIR=$PWD
 PLANE_INSTALL_DIR=$PWD/$SERVICE_FOLDER
 export APP_RELEASE="stable"
 export DOCKERHUB_USER=makeplane
@@ -146,22 +147,83 @@ function updateEnvFile() {
     fi
 }
 
-function download() {
 
-    echo "Downloading configuration files..."
-    curl -L https://raw.githubusercontent.com/${GH_REPO}/refs/heads/${BRANCH}/deploy/selfhost/swarm-compose.yml -o $DOCKER_FILE_PATH
-    curl -L https://raw.githubusercontent.com/${GH_REPO}/refs/heads/${BRANCH}/deploy/selfhost/variables.env -o $DOCKER_ENV_PATH
-    echo "Configuration files downloaded successfully"
-    echo ""
+
+function download() {
+    cd $SCRIPT_DIR
+    TS=$(date +%s)
+    if [ -f "$PLANE_INSTALL_DIR/docker-compose.yaml" ]
+    then
+        mv $PLANE_INSTALL_DIR/docker-compose.yaml $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml
+    fi
+
+    echo $RELEASE_DOWNLOAD_URL
+    echo $FALLBACK_DOWNLOAD_URL
+    echo $APP_RELEASE
+
+    RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$RELEASE_DOWNLOAD_URL/$APP_RELEASE/docker-compose.yml?$(date +%s)")
+    BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
+    STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+
+    if [ "$STATUS" -eq 200 ]; then
+        echo "$BODY" > $PLANE_INSTALL_DIR/docker-compose.yaml
+    else
+        # Fallback to download from the raw github url
+        RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$FALLBACK_DOWNLOAD_URL/docker-compose.yml?$(date +%s)")
+        BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
+        STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+
+        if [ "$STATUS" -eq 200 ]; then
+            echo "$BODY" > $PLANE_INSTALL_DIR/docker-compose.yaml
+        else
+            echo "Failed to download docker-compose.yml. HTTP Status: $STATUS"
+            echo "URL: $RELEASE_DOWNLOAD_URL/$APP_RELEASE/docker-compose.yml"
+            mv $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml $PLANE_INSTALL_DIR/docker-compose.yaml
+            exit 1
+        fi
+    fi
+
+    RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$RELEASE_DOWNLOAD_URL/$APP_RELEASE/variables.env?$(date +%s)")
+    BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
+    STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+
+    if [ "$STATUS" -eq 200 ]; then
+        echo "$BODY" > $PLANE_INSTALL_DIR/variables-upgrade.env
+    else
+        # Fallback to download from the raw github url
+        RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$FALLBACK_DOWNLOAD_URL/variables.env?$(date +%s)")
+        BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
+        STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+
+        if [ "$STATUS" -eq 200 ]; then
+            echo "$BODY" > $PLANE_INSTALL_DIR/variables-upgrade.env
+        else
+            echo "Failed to download variables.env. HTTP Status: $STATUS"
+            echo "URL: $RELEASE_DOWNLOAD_URL/$APP_RELEASE/variables.env"
+            mv $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml $PLANE_INSTALL_DIR/docker-compose.yaml
+            exit 1
+        fi
+    fi
+
+    if [ -f "$DOCKER_ENV_PATH" ];
+    then
+        cp "$DOCKER_ENV_PATH" "$PLANE_INSTALL_DIR/archive/$TS.env"
+        cp "$DOCKER_ENV_PATH" "$PLANE_INSTALL_DIR/plane.env.bak"
+    fi
+
+    mv $PLANE_INSTALL_DIR/variables-upgrade.env $DOCKER_ENV_PATH
+
+    syncEnvFile
+
+    updateEnvFile "APP_RELEASE" "$APP_RELEASE" "$DOCKER_ENV_PATH"
 
 }
-
-
 function deployStack() {   
     # Check if docker compose file and env file exist
     if [ ! -f "$DOCKER_FILE_PATH" ] || [ ! -f "$DOCKER_ENV_PATH" ]; then
         echo "Configuration files not found"
         echo "Downloading it now......"
+        APP_RELEASE=$(checkLatestRelease)
         download
     fi
     if [ -z "$stack_name" ]; then
@@ -401,7 +463,7 @@ function upgrade() {
         exit 1
     fi
     
-    local latest_release="stable"
+    local latest_release=$(checkLatestRelease)
 
     echo ""
     echo "Current release: $APP_RELEASE"
@@ -424,6 +486,9 @@ function upgrade() {
         exit 0
     fi
 
+    export APP_RELEASE=$latest_release
+
+    # check if stack exists
     echo "Upgrading ${stack_name} stack..."
 
     # check env file and take backup
@@ -432,9 +497,7 @@ function upgrade() {
     fi
 
     download
-    NEW_VERSION_NAME=$(getEnvValue "APP_RELEASE" "$DOCKER_ENV_PATH")
-    syncEnvFile
-    updateEnvFile "APP_RELEASE" "$NEW_VERSION_NAME" "$DOCKER_ENV_PATH"
+    
 
     removeStack 
     deployStack
@@ -487,6 +550,22 @@ function askForAction() {
 
 if [ -z "$stack_name" ]; then
     readStackName
+fi
+
+# Sync environment variables
+if [ -f "$DOCKER_ENV_PATH" ]; then
+    DOCKERHUB_USER=$(getEnvValue "DOCKERHUB_USER" "$DOCKER_ENV_PATH")
+    APP_RELEASE=$(getEnvValue "APP_RELEASE" "$DOCKER_ENV_PATH")
+
+    if [ -z "$DOCKERHUB_USER" ]; then
+        DOCKERHUB_USER=makeplane
+        updateEnvFile "DOCKERHUB_USER" "$DOCKERHUB_USER" "$DOCKER_ENV_PATH"
+    fi
+
+    if [ -z "$APP_RELEASE" ]; then
+        APP_RELEASE=stable
+        updateEnvFile "APP_RELEASE" "$APP_RELEASE" "$DOCKER_ENV_PATH"
+    fi
 fi
 
 
