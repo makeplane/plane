@@ -41,7 +41,8 @@ from .workspace.base import (
 
 from .workspace.draft import WorkspaceDraftIssueViewSet
 
-from .workspace.preference import WorkspacePreferenceViewSet
+from .workspace.home import WorkspaceHomePreferenceViewSet
+
 from .workspace.favorite import (
     WorkspaceFavoriteEndpoint,
     WorkspaceFavoriteGroupEndpoint,

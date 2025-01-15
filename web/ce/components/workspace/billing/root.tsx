@@ -1,7 +1,5 @@
-// ui
+import { MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
 import { Button } from "@plane/ui";
-// constants
-import { MARKETING_PRICING_PAGE_LINK } from "@/constants/common";
 
 export const BillingRoot = () => (
   <section className="w-full overflow-y-auto">
