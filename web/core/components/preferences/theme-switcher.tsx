@@ -84,7 +84,11 @@ export const ThemeSwitcher = observer((props: { option: PreferenceOption }) => {
       <PreferencesSection
         title={props.option.title}
         description={props.option.description}
-        control={<ThemeSwitch value={currentTheme} onChange={handleThemeChange} />}
+        control={
+          <div className="w-[352px]">
+            <ThemeSwitch value={currentTheme} onChange={handleThemeChange} />
+          </div>
+        }
       />
       {userProfile.theme?.theme === "custom" && <CustomThemeSelector applyThemeChange={applyThemeChange} />}
     </>
