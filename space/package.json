@@ -22,8 +22,9 @@
     "@plane/editor": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
+    "@plane/services": "*",
     "@sentry/nextjs": "^8.32.0",
-    "axios": "^1.7.4",
+    "axios": "^1.7.9",
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
     "dompurify": "^3.0.11",
@@ -49,6 +50,7 @@
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
+    "@plane/tailwind-config": "*",
     "@plane/typescript-config": "*",
     "@types/dompurify": "^3.0.5",
     "@types/lodash": "^4.17.1",
@@ -59,7 +61,6 @@
     "@types/uuid": "^9.0.1",
     "@types/zxcvbn": "^4.4.4",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
-    "tailwind-config-custom": "*",
     "typescript": "5.3.3"
   }
 }

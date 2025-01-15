@@ -1,7 +1,7 @@
 // types
 import type { ILinkDetails, ModuleLink } from "@plane/types";
 // services
-import { APIService } from "@/api.service";
+import { APIService } from "../api.service";
 
 /**
  * Service class for handling module link related operations.

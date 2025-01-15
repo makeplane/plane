@@ -1,10 +1,8 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-// types
+// plane imports
+import { UserService } from "@plane/services";
 import { IUser } from "@plane/types";
-// services
-import { AuthService } from "@/services/auth.service";
-import { UserService } from "@/services/user.service";
 // store types
 import { ProfileStore, IProfileStore } from "@/store/profile.store";
 // store
@@ -45,14 +43,12 @@ export class UserStore implements IUserStore {
   profile: IProfileStore;
   // service
   userService: UserService;
-  authService: AuthService;
 
   constructor(private store: CoreRootStore) {
     // stores
     this.profile = new ProfileStore(store);
     // service
     this.userService = new UserService();
-    this.authService = new AuthService();
     // observables
     makeObservable(this, {
       // observables
@@ -95,7 +91,7 @@ export class UserStore implements IUserStore {
         if (this.data === undefined) this.isLoading = true;
         this.error = undefined;
       });
-      const user = await this.userService.currentUser();
+      const user = await this.userService.me();
       if (user && user?.id) {
         await this.profile.fetchUserProfile();
         runInAction(() => {
@@ -137,7 +133,7 @@ export class UserStore implements IUserStore {
           if (this.data) set(this.data, userKey, data[userKey]);
         });
       }
-      const user = await this.userService.updateUser(data);
+      const user = await this.userService.update(data);
       return user;
     } catch (error) {
       if (currentUserData) {

@@ -13,16 +13,15 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import useOnlineStatus from "@/hooks/use-online-status";
 // store
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
-  editorRef: React.RefObject<EditorRefApi>;
-  handleDuplicatePage: () => void;
-  page: IPage;
+  editorRef: EditorRefApi;
+  page: TPageInstance;
 };
 
 export const PageExtraOptions: React.FC<Props> = observer((props) => {
-  const { editorRef, handleDuplicatePage, page } = props;
+  const { editorRef, page } = props;
   // derived values
   const {
     archived_at,
@@ -84,8 +83,8 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
           iconClassName="text-custom-text-100"
         />
       )}
-      <PageInfoPopover editorRef={editorRef?.current} />
-      <PageOptionsDropdown editorRef={editorRef?.current} handleDuplicatePage={handleDuplicatePage} page={page} />
+      <PageInfoPopover editorRef={editorRef} page={page} />
+      <PageOptionsDropdown editorRef={editorRef} page={page} />
     </div>
   );
 });

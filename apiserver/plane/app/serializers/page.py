@@ -54,6 +54,8 @@ class PageSerializer(BaseSerializer):
         labels = validated_data.pop("labels", None)
         project_id = self.context["project_id"]
         owned_by_id = self.context["owned_by_id"]
+        description = self.context["description"]
+        description_binary = self.context["description_binary"]
         description_html = self.context["description_html"]
 
         # Get the workspace id from the project
@@ -62,6 +64,8 @@ class PageSerializer(BaseSerializer):
         # Create the page
         page = Page.objects.create(
             **validated_data,
+            description=description,
+            description_binary=description_binary,
             description_html=description_html,
             owned_by_id=owned_by_id,
             workspace_id=project.workspace_id,

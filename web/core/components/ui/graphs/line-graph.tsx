@@ -1,7 +1,7 @@
 // nivo
 import { ResponsiveLine, LineSvgProps } from "@nivo/line";
 // helpers
-import { CHARTS_THEME, DEFAULT_MARGIN } from "@/constants/graph";
+import { CHARTS_THEME, CHART_DEFAULT_MARGIN } from "@plane/constants";
 import { generateYAxisTickValues } from "@/helpers/graph.helper";
 // types
 import { TGraph } from "./types";
@@ -21,7 +21,7 @@ export const LineGraph: React.FC<Props & TGraph & LineSvgProps> = ({
 }) => (
   <div style={{ height, width }}>
     <ResponsiveLine
-      margin={{ ...DEFAULT_MARGIN, ...(margin ?? {}) }}
+      margin={{ ...CHART_DEFAULT_MARGIN, ...(margin ?? {}) }}
       axisLeft={{
         tickSize: 0,
         tickPadding: 10,

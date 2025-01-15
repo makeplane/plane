@@ -111,6 +111,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           target_date: renderFormattedPayloadDate(targetDate),
         }}
         quickAddCallback={quickAddIssue}
+        isEpic={isEpic}
       />
     ) : undefined;
 
@@ -120,8 +121,8 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
         <div className="h-full w-full">
           <GanttChartRoot
             border={false}
-            title="Issues"
-            loaderTitle="Issues"
+            title={isEpic ? "Epics" : "Issues"}
+            loaderTitle={isEpic ? "Epics" : "Issues"}
             blockIds={issuesIds}
             blockUpdateHandler={updateIssueBlockStructure}
             blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} isEpic={isEpic} />}

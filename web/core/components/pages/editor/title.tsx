@@ -8,13 +8,14 @@ import { EditorRefApi } from "@plane/editor";
 import { TextArea } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   readOnly: boolean;
-  title: string;
+  title: string | undefined;
   updateTitle: (title: string) => void;
 };
 
@@ -33,7 +34,17 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
   return (
     <div className="relative w-full flex-shrink-0 md:pl-5 px-4">
       {readOnly ? (
-        <h6 className={cn(titleClassName, "break-words pb-1.5")}>{title}</h6>
+        <h6
+          className={cn(
+            titleClassName,
+            {
+              "text-custom-text-400": !title,
+            },
+            "break-words pb-1.5"
+          )}
+        >
+          {getPageName(title)}
+        </h6>
       ) : (
         <>
           <TextArea
@@ -62,10 +73,10 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
           >
             <span
               className={cn({
-                "text-red-500": title.length > 255,
+                "text-red-500": title && title.length > 255,
               })}
             >
-              {title.length}
+              {title?.length}
             </span>
             /255
           </div>

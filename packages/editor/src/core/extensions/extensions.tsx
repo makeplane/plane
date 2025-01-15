@@ -51,6 +51,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
   const { disabledExtensions, enableHistory, fileHandler, mentionHandler, placeholder, tabIndex } = args;
 
   return [
+    // @ts-expect-error tiptap types are incorrect
     StarterKit.configure({
       bulletList: {
         HTMLAttributes: {

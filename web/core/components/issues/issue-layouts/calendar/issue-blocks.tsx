@@ -87,6 +87,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
             }}
             quickAddCallback={quickAddCallback}
             addIssuesToView={addIssuesToView}
+            isEpic={isEpic}
           />
         </div>
       )}

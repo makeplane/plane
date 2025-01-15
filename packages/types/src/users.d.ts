@@ -25,7 +25,6 @@ export interface IUser extends IUserLite {
   is_password_autoset: boolean;
   is_tour_completed: boolean;
   mobile_number: string | null;
-  role: string | null;
   last_workspace_id: string;
   user_timezone: string;
   username: string;
@@ -62,6 +61,7 @@ export type TUserProfile = {
   billing_address_country: string | undefined;
   billing_address: string | undefined;
   has_billing_address: boolean;
+  language: string;
   created_at: Date | string;
   updated_at: Date | string;
 };
@@ -181,6 +181,17 @@ export interface IUserEmailNotificationSettings {
 }
 
 export type TProfileViews = "assigned" | "created" | "subscribed";
+
+export type TPublicMember = {
+  id: string;
+  member: string;
+  member__avatar: string;
+  member__first_name: string;
+  member__last_name: string;
+  member__display_name: string;
+  project: string;
+  workspace: string;
+};
 
 // export interface ICurrentUser {
 //   id: readonly string;
