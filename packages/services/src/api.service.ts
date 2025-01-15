@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import { IndexedDBService } from "./indexedDB.service";
 
 /**
  * Abstract base class for making HTTP requests using axios
@@ -34,7 +35,7 @@ export abstract class APIService {
       (error) => {
         if (error.response && error.response.status === 401) {
           const currentPath = window.location.pathname;
-          let prefix = "";
+          let prefix = "/";
           let updatedPath = currentPath;
 
           // Check for special path prefixes

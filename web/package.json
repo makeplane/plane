@@ -75,6 +75,7 @@
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
+    "@plane/tailwind-config": "*",
     "@plane/typescript-config": "*",
     "@types/dompurify": "^3.0.5",
     "@types/lodash": "^4.14.202",
@@ -86,7 +87,6 @@
     "@types/uuid": "^8.3.4",
     "@types/zxcvbn": "^4.4.4",
     "prettier": "^3.2.5",
-    "tailwind-config-custom": "*",
     "typescript": "5.3.3"
   }
 }

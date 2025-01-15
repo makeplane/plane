@@ -2,13 +2,34 @@
 
 import { observer } from "mobx-react";
 // ui
-import { List } from "lucide-react";
+import { GanttChartSquare, LayoutGrid, List } from "lucide-react";
+// plane package imports
+import { TCycleLayoutOptions } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
-// icon
-// constants
-import { CYCLE_VIEW_LAYOUTS } from "@/constants/cycle";
 // hooks
 import { useCycleFilter, useProject } from "@/hooks/store";
+
+const CYCLE_VIEW_LAYOUTS: {
+  key: TCycleLayoutOptions;
+  icon: any;
+  title: string;
+}[] = [
+  {
+    key: "list",
+    icon: List,
+    title: "List layout",
+  },
+  {
+    key: "board",
+    icon: LayoutGrid,
+    title: "Gallery layout",
+  },
+  {
+    key: "gantt",
+    icon: GanttChartSquare,
+    title: "Timeline layout",
+  },
+];
 
 export const CyclesListMobileHeader = observer(() => {
   const { currentProjectDetails } = useProject();

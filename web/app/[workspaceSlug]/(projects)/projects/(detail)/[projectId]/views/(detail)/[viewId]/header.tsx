@@ -246,6 +246,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 layoutDisplayFiltersOptions={
                   activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
                 }
+                projectId={projectId.toString()}
                 labels={projectLabels}
                 memberIds={projectMemberIds ?? undefined}
                 states={projectStates}

@@ -5,17 +5,12 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.db.models import Workspace
 from plane.app.serializers.workspace import WorkspaceHomePreferenceSerializer
 
-# Django imports
-
-from django.db.models import Count
-
-
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
 
 
-class WorkspacePreferenceViewSet(BaseAPIView):
+class WorkspaceHomePreferenceViewSet(BaseAPIView):
     model = WorkspaceHomePreference
 
     def get_serializer_class(self):
@@ -72,7 +67,7 @@ class WorkspacePreferenceViewSet(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def patch(self, request, slug, key):
         preference = WorkspaceHomePreference.objects.filter(
-            key=key, workspace__slug=slug
+            key=key, workspace__slug=slug, user=request.user
         ).first()
 
         if preference:

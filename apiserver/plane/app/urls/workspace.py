@@ -29,7 +29,7 @@ from plane.app.views import (
     WorkspaceDraftIssueViewSet,
     QuickLinkViewSet,
     UserRecentVisitViewSet,
-    WorkspacePreferenceViewSet,
+    WorkspaceHomePreferenceViewSet,
     WorkspaceStickyViewSet,
 )
 
@@ -233,12 +233,12 @@ urlpatterns = [
     # Widgets
     path(
         "workspaces/<str:slug>/home-preferences/",
-        WorkspacePreferenceViewSet.as_view(),
+        WorkspaceHomePreferenceViewSet.as_view(),
         name="workspace-home-preference",
     ),
     path(
         "workspaces/<str:slug>/home-preferences/<str:key>/",
-        WorkspacePreferenceViewSet.as_view(),
+        WorkspaceHomePreferenceViewSet.as_view(),
         name="workspace-home-preference",
     ),
     path(
