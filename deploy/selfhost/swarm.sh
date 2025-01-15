@@ -16,7 +16,7 @@ OS_NAME=$(uname)
 # Create necessary directories
 mkdir -p $PLANE_INSTALL_DIR/archive
 
-DOCKER_FILE_PATH=$PLANE_INSTALL_DIR/swarm-compose.yml
+DOCKER_FILE_PATH=$PLANE_INSTALL_DIR/docker-compose.yml
 DOCKER_ENV_PATH=$PLANE_INSTALL_DIR/plane.env
 
 function print_header() {
@@ -147,14 +147,12 @@ function updateEnvFile() {
     fi
 }
 
-
-
 function download() {
     cd $SCRIPT_DIR
     TS=$(date +%s)
-    if [ -f "$PLANE_INSTALL_DIR/docker-compose.yaml" ]
+    if [ -f "$PLANE_INSTALL_DIR/docker-compose.yml" ]
     then
-        mv $PLANE_INSTALL_DIR/docker-compose.yaml $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml
+        mv $PLANE_INSTALL_DIR/docker-compose.yml $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yml
     fi
 
     echo $RELEASE_DOWNLOAD_URL
@@ -166,7 +164,7 @@ function download() {
     STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
 
     if [ "$STATUS" -eq 200 ]; then
-        echo "$BODY" > $PLANE_INSTALL_DIR/docker-compose.yaml
+        echo "$BODY" > $PLANE_INSTALL_DIR/docker-compose.yml
     else
         # Fallback to download from the raw github url
         RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$FALLBACK_DOWNLOAD_URL/docker-compose.yml?$(date +%s)")
@@ -174,11 +172,11 @@ function download() {
         STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
 
         if [ "$STATUS" -eq 200 ]; then
-            echo "$BODY" > $PLANE_INSTALL_DIR/docker-compose.yaml
+            echo "$BODY" > $PLANE_INSTALL_DIR/docker-compose.yml
         else
             echo "Failed to download docker-compose.yml. HTTP Status: $STATUS"
             echo "URL: $RELEASE_DOWNLOAD_URL/$APP_RELEASE/docker-compose.yml"
-            mv $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml $PLANE_INSTALL_DIR/docker-compose.yaml
+            mv $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yml $PLANE_INSTALL_DIR/docker-compose.yml
             exit 1
         fi
     fi
@@ -200,7 +198,7 @@ function download() {
         else
             echo "Failed to download variables.env. HTTP Status: $STATUS"
             echo "URL: $RELEASE_DOWNLOAD_URL/$APP_RELEASE/variables.env"
-            mv $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml $PLANE_INSTALL_DIR/docker-compose.yaml
+            mv $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yml $PLANE_INSTALL_DIR/docker-compose.yml
             exit 1
         fi
     fi

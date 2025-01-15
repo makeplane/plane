@@ -66,8 +66,6 @@ services:
     depends_on:
       - api
       - worker
-    networks:
-      - plane-network
 
   space:
     image: ${DOCKERHUB_USER:-makeplane}/plane-space:${APP_RELEASE:-stable}
@@ -79,8 +77,6 @@ services:
       - api
       - worker
       - web
-    networks:
-      - plane-network
 
   admin:
     image: ${DOCKERHUB_USER:-makeplane}/plane-admin:${APP_RELEASE:-stable}
@@ -91,8 +87,6 @@ services:
     depends_on:
       - api
       - web
-    networks:
-      - plane-network
 
   live:
     image: ${DOCKERHUB_USER:-makeplane}/plane-live:${APP_RELEASE:-stable}
@@ -105,8 +99,6 @@ services:
     depends_on:
       - api
       - web
-    networks:
-      - plane-network
 
   api:
     image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
@@ -122,8 +114,6 @@ services:
       - plane-db
       - plane-redis
       - plane-mq
-    networks:
-      - plane-network
 
   worker:
     image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
@@ -140,8 +130,6 @@ services:
       - plane-db
       - plane-redis
       - plane-mq
-    networks:
-      - plane-network
 
   beat-worker:
     image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
@@ -158,8 +146,6 @@ services:
       - plane-db
       - plane-redis
       - plane-mq
-    networks:
-      - plane-network
 
   migrator:
     image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
@@ -175,8 +161,6 @@ services:
     depends_on:
       - plane-db
       - plane-redis
-    networks:
-      - plane-network
 
   plane-db:
     image: postgres:15.7-alpine
@@ -188,8 +172,6 @@ services:
       <<: *db-env
     volumes:
       - pgdata:/var/lib/postgresql/data
-    networks:
-      - plane-network
 
   plane-redis:
     image: valkey/valkey:7.2.5-alpine
@@ -198,8 +180,6 @@ services:
       replicas: 1
     volumes:
       - redisdata:/data
-    networks:
-      - plane-network
 
   plane-mq:
     image: rabbitmq:3.13.6-management-alpine
@@ -210,8 +190,6 @@ services:
       <<: *mq-env
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-    networks:
-      - plane-network
 
   plane-minio:
     image: minio/minio:latest
@@ -223,8 +201,6 @@ services:
       <<: *minio-env
     volumes:
       - uploads:/export
-    networks:
-      - plane-network
 
   # Comment this if you already have a reverse proxy running
   proxy:
@@ -243,8 +219,6 @@ services:
       - web
       - api
       - space
-    networks:
-      - plane-network
 
 volumes:
   pgdata:
@@ -255,9 +229,3 @@ volumes:
   logs_beat-worker:
   logs_migrator:
   rabbitmq_data:
-
-networks:
-  plane-network:
-    name: plane-network
-    driver: overlay
-    attachable: true
