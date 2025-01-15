@@ -196,7 +196,7 @@ export const CustomTreeMapContent: React.FC<any> = ({
             L${pX},${pY + LAYOUT.RADIUS}
             Q${pX},${pY} ${pX + LAYOUT.RADIUS},${pY}
           `}
-          className={cn("transition-colors duration-200 hover:opacity-90 cursor-pointer", fillClassName)}
+          className={cn("transition-colors duration-200 hover:opacity-90", fillClassName)}
           fill={fillColor ?? "currentColor"}
         />
 
@@ -269,7 +269,7 @@ export const CustomTreeMapContent: React.FC<any> = ({
 
   return (
     <g>
-      <rect x={x} y={y} width={width} height={height} fill="transparent" className="cursor-pointer" />
+      <rect x={x} y={y} width={width} height={height} fill="transparent" />
       {renderContent()}
     </g>
   );
