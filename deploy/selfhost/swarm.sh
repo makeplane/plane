@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BRANCH=preview
+BRANCH=${BRANCH:-master}
 SERVICE_FOLDER=plane-app
 PLANE_INSTALL_DIR=$PWD/$SERVICE_FOLDER
 export APP_RELEASE="stable"
