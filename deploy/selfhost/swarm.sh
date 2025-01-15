@@ -304,6 +304,7 @@ function removeStack() {
     while docker stack ls | grep -q "$stack_name"; do
         sleep 1
     done
+    sleep 20
     echo "Services stopped successfully ✅"
 }
 
@@ -318,6 +319,7 @@ function viewStatus() {
 
 function redeployStack() {   
     removeStack
+    echo "ReDeploying ${stack_name} stack..."
     deployStack
 }
 
@@ -541,9 +543,10 @@ function askForAction() {
         echo "   1) Deploy Stack"
         echo "   2) Remove Stack"
         echo "   3) View Stack Status"
-        echo "   4) View Logs"
+        echo "   4) Redeploy Stack"
         echo "   5) Upgrade"
-        echo "   6) Exit"
+        echo "   6) View Logs"
+        echo "   7) Exit"
         echo 
         read -p "Action [3]: " ACTION
         until [[ -z "$ACTION" || "$ACTION" =~ ^[1-6]$ ]]; do
@@ -563,11 +566,13 @@ function askForAction() {
         removeStack
     elif [ "$ACTION" == "3" ] || [ "$DEFAULT_ACTION" == "status" ]; then
         viewStatus
-    elif [ "$ACTION" == "4" ] || [ "$DEFAULT_ACTION" == "logs" ]; then
-        viewLogs "$@"
+    elif [ "$ACTION" == "4" ] || [ "$DEFAULT_ACTION" == "redeploy" ]; then
+        redeployStack
     elif [ "$ACTION" == "5" ] || [ "$DEFAULT_ACTION" == "upgrade" ]; then
         upgrade
-    elif [ "$ACTION" == "6" ] || [ "$DEFAULT_ACTION" == "exit" ]; then
+    elif [ "$ACTION" == "6" ] || [ "$DEFAULT_ACTION" == "logs" ]; then
+        viewLogs "$@"
+    elif [ "$ACTION" == "7" ] || [ "$DEFAULT_ACTION" == "exit" ]; then
         exit 0
     else
         echo "INVALID ACTION SUPPLIED"

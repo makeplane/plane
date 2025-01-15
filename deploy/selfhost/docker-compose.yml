@@ -192,7 +192,6 @@ services:
 
   plane-mq:
     image: rabbitmq:3.13.6-management-alpine
-    restart: always
     deploy:
       replicas: 1
       restart_policy:
