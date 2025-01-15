@@ -101,6 +101,7 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
   setProviderDocument: (value: Uint8Array) => void;
+  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
 }
 
 // editor props
