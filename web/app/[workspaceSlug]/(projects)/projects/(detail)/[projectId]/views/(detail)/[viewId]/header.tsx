@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -15,11 +15,11 @@ import { Breadcrumbs, Button, CustomMenu, Tooltip, Header } from "@plane/ui";
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
+import { ViewQuickActions } from "@/components/views";
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { EViewAccess } from "@/constants/views";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
-import { getPublishViewLink } from "@/helpers/project-views.helpers";
 import { truncateText } from "@/helpers/string.helper";
 // hooks
 import {
@@ -38,6 +38,8 @@ import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
+  // refs
+  const parentRef = useRef(null);
   // router
   const { workspaceSlug, projectId, viewId } = useParams();
   // store hooks
@@ -133,7 +135,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
-  const publishLink = getPublishViewLink(viewDetails?.anchor);
+
+  if (!viewDetails) return;
 
   return (
     <Header>
@@ -203,19 +206,14 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           <></>
         )}
 
-        {viewDetails?.anchor && publishLink ? (
-          <a
-            href={publishLink}
-            className="px-3 py-1.5 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />
-            Live
-          </a>
-        ) : (
-          <></>
-        )}
+        <div className="hidden md:block">
+          <ViewQuickActions
+            parentRef={parentRef}
+            projectId={projectId.toString()}
+            view={viewDetails}
+            workspaceSlug={workspaceSlug.toString()}
+          />
+        </div>
       </Header.LeftItem>
       <Header.RightItem>
         {!viewDetails?.is_locked ? (
