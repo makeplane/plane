@@ -2,7 +2,7 @@
 
 import React, { FC, MouseEvent, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, Users } from "lucide-react";
 // types
@@ -58,6 +58,8 @@ const defaultValues: Partial<ICycle> = {
 
 export const CycleListItemAction: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, cycleId, cycleDetails, parentRef, isActive = false } = props;
+  // router
+  const { projectId: routerProjectId } = useParams();
   //states
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
   // hooks
@@ -82,7 +84,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   const cycleStatus = cycleDetails.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
   const showIssueCount = useMemo(() => cycleStatus === "draft" || cycleStatus === "upcoming", [cycleStatus]);
   const transferableIssuesCount = cycleDetails ? cycleDetails.total_issues - cycleDetails.completed_issues : 0;
-  const showTransferIssues = transferableIssuesCount > 0 && cycleStatus === "completed";
+  const showTransferIssues = routerProjectId && transferableIssuesCount > 0 && cycleStatus === "completed"; // Only available inside project view.
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT,
