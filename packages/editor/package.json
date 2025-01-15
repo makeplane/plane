@@ -12,14 +12,12 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs",
-      "module": "./dist/index.mjs"
+      "import": "./dist/index.mjs"
     },
     "./lib": {
       "require": "./dist/lib.js",
       "types": "./dist/lib.d.mts",
-      "import": "./dist/lib.mjs",
-      "module": "./dist/lib.mjs"
+      "import": "./dist/lib.mjs"
     }
   },
   "scripts": {
@@ -36,7 +34,7 @@
   },
   "dependencies": {
     "@floating-ui/react": "^0.26.4",
-    "@hocuspocus/provider": "^2.13.5",
+    "@hocuspocus/provider": "^2.15.0",
     "@plane/types": "*",
     "@plane/ui": "*",
     "@plane/utils": "*",
@@ -67,12 +65,12 @@
     "prosemirror-codemark": "^0.4.2",
     "prosemirror-utils": "^1.2.2",
     "tippy.js": "^6.3.7",
-    "tiptap-markdown": "^0.8.9",
+    "tiptap-markdown": "^0.8.10",
     "uuid": "^10.0.0",
     "y-indexeddb": "^9.0.12",
-    "y-prosemirror": "^1.2.5",
+    "y-prosemirror": "^1.2.15",
     "y-protocols": "^1.0.6",
-    "yjs": "^13.6.15"
+    "yjs": "^13.6.20"
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
