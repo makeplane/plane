@@ -26,7 +26,7 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
   const [query, setQuery] = useState("");
 
   // store hooks
-  const { currentProjectIncompleteCycleIds, getCycleById, fetchCycleDetails } = useCycle();
+  const { currentProjectIncompleteCycleIds, getCycleById, fetchActiveCycleProgress } = useCycle();
   const {
     issues: { transferIssuesFromCycle },
   } = useIssues(EIssuesStoreType.CYCLE);
@@ -57,8 +57,8 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
   /**To update issue counts in target cycle and current cycle */
   const getCycleDetails = async (newCycleId: string) => {
     const cyclesFetch = [
-      fetchCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId),
-      fetchCycleDetails(workspaceSlug.toString(), projectId.toString(), newCycleId),
+      fetchActiveCycleProgress(workspaceSlug.toString(), projectId.toString(), cycleId),
+      fetchActiveCycleProgress(workspaceSlug.toString(), projectId.toString(), newCycleId),
     ];
     await Promise.all(cyclesFetch).catch((error) => {
       setToast({
