@@ -79,12 +79,12 @@ export const useStickyOperations = (props: TProps) => {
             message: "The sticky has been successfully created.",
           });
         } catch (error: any) {
+          console.error("Error in creating sticky:", error);
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Sticky not created",
             message: error?.data?.error ?? "The sticky could not be created.",
           });
-          throw error;
         }
       },
       update: async (stickyId: string, data: Partial<TSticky>) => {
@@ -93,12 +93,12 @@ export const useStickyOperations = (props: TProps) => {
           if (!isValid(data)) return;
           await updateSticky(workspaceSlug, stickyId, data);
         } catch (error) {
+          console.error("Error in updating sticky:", error);
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Sticky not updated",
             message: "The sticky could not be updated.",
           });
-          throw error;
         }
       },
       remove: async (stickyId: string) => {
@@ -111,12 +111,12 @@ export const useStickyOperations = (props: TProps) => {
             message: "The sticky has been removed successfully.",
           });
         } catch (error) {
+          console.error("Error in removing sticky:", error);
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Sticky not removed",
             message: "The sticky could not be removed.",
           });
-          throw error;
         }
       },
       updatePosition: async (
@@ -129,12 +129,12 @@ export const useStickyOperations = (props: TProps) => {
           if (!workspaceSlug) throw new Error("Missing required fields");
           await updateStickyPosition(workspaceSlug, sourceId, droppedId, instruction);
         } catch (error) {
+          console.error("Error in updating sticky position:", error);
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Sticky not updated",
             message: "The sticky could not be updated.",
           });
-          throw error;
         }
       },
     }),

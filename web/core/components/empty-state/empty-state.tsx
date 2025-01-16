@@ -153,12 +153,10 @@ export const EmptyState: React.FC<EmptyStateProps> = observer((props) => {
             )}
 
             {anyButton && (
-              <>
-                <div className="relative flex items-center justify-center gap-2 flex-shrink-0 w-full">
-                  {renderPrimaryButton()}
-                  {renderSecondaryButton()}
-                </div>
-              </>
+              <div className="relative flex items-center justify-center gap-2 flex-shrink-0 w-full">
+                {renderPrimaryButton()}
+                {renderSecondaryButton()}
+              </div>
             )}
           </div>
         </div>
@@ -184,12 +182,10 @@ export const EmptyState: React.FC<EmptyStateProps> = observer((props) => {
             <h3 className="text-sm font-medium text-custom-text-400 whitespace-pre-line">{title}</h3>
           )}
           {anyButton && (
-            <>
-              <div className="relative flex items-center justify-center gap-2 flex-shrink-0 w-full">
-                {renderPrimaryButton()}
-                {renderSecondaryButton()}
-              </div>
-            </>
+            <div className="relative flex items-center justify-center gap-2 flex-shrink-0 w-full">
+              {renderPrimaryButton()}
+              {renderSecondaryButton()}
+            </div>
           )}
         </div>
       )}
