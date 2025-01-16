@@ -136,7 +136,7 @@ export const ProjectDescriptionInput: FC<ProjectDescriptionInputProps> = observe
           ) : (
             <RichTextReadOnlyEditor
               id={project.id}
-              initialValue={""}
+              initialValue={initialValue ?? ""}
               containerClassName={containerClassName}
               workspaceSlug={workspaceSlug}
               projectId={project.id}

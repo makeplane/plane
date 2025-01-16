@@ -10,9 +10,10 @@ type TProps = {
   project: TProject;
   handleProjectUpdate: (data: Partial<TProject>) => Promise<void>;
   toggleLinkModalOpen: (value: boolean) => void;
+  disabled?: boolean;
 };
 export const DescriptionBox = (props: TProps) => {
-  const { workspaceSlug, project, handleProjectUpdate, toggleLinkModalOpen } = props;
+  const { workspaceSlug, project, handleProjectUpdate, toggleLinkModalOpen, disabled = false } = props;
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
 
   // hooks
@@ -27,6 +28,7 @@ export const DescriptionBox = (props: TProps) => {
         handleUpdate={handleProjectUpdate}
         setIsSubmitting={setIsSubmitting}
         containerClassName="px-0 text-base min-h-[200px] w-full"
+        disabled={disabled}
       />
       <div className="flex items-center justify-between w-full gap-2 pb-6 border-b border-custom-border-200">
         <ProjectReaction workspaceSlug={workspaceSlug} projectId={project.id} currentUser={currentUser} />

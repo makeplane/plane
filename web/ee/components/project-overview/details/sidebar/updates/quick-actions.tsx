@@ -5,7 +5,6 @@ import { cn } from "@plane/utils";
 import { ProjectUpdateDeleteModal } from "./delete-update-modal";
 
 type TProps = {
-  isCreator: boolean;
   updateId: string;
   operations: {
     update: () => void;
@@ -13,7 +12,7 @@ type TProps = {
   };
 };
 export const UpdateQuickActions = (props: TProps) => {
-  const { isCreator, operations, updateId } = props;
+  const { operations, updateId } = props;
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isMenuActive, setIsMenuActive] = useState(false);
   const actionSectionRef = useRef(null);
@@ -41,23 +40,19 @@ export const UpdateQuickActions = (props: TProps) => {
         customButtonClassName="grid place-items-center"
         placement="bottom-start"
       >
-        {isCreator && (
-          <CustomMenu.MenuItem onClick={() => operations.update()}>
-            <button className="flex items-center justify-start gap-2">
-              <Pencil className="h-3.5 w-3.5 stroke-[1.5]" />
-              <span>Edit</span>
-            </button>
-          </CustomMenu.MenuItem>
-        )}
+        <CustomMenu.MenuItem onClick={() => operations.update()}>
+          <button className="flex items-center justify-start gap-2">
+            <Pencil className="h-3.5 w-3.5 stroke-[1.5]" />
+            <span>Edit</span>
+          </button>
+        </CustomMenu.MenuItem>
 
-        {isCreator && (
-          <CustomMenu.MenuItem onClick={() => setIsDeleteModalOpen(true)}>
-            <button className="flex items-center justify-start gap-2">
-              <Trash2 className="h-3.5 w-3.5 stroke-[1.5]" />
-              <span>Delete</span>
-            </button>
-          </CustomMenu.MenuItem>
-        )}
+        <CustomMenu.MenuItem onClick={() => setIsDeleteModalOpen(true)}>
+          <button className="flex items-center justify-start gap-2">
+            <Trash2 className="h-3.5 w-3.5 stroke-[1.5]" />
+            <span>Delete</span>
+          </button>
+        </CustomMenu.MenuItem>
       </CustomMenu>
     </>
   );
