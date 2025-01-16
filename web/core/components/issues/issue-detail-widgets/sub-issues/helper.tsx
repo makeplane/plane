@@ -37,7 +37,8 @@ export const useSubIssueOperations = (
   const { peekIssue: epicPeekIssue } = useIssueDetail(EIssueServiceType.EPICS);
   // const { updateEpicAnalytics } = useIssueTypes();
   const { updateAnalytics } = updateEpicAnalytics();
-  const { fetchSubIssues, removeSubIssue } = useIssueDetail(issueServiceType);
+  const { fetchSubIssues } = useIssueDetail();
+  const { removeSubIssue } = useIssueDetail(issueServiceType);
   const { captureIssueEvent } = useEventTracker();
 
   // derived values

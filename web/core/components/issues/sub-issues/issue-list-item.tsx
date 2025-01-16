@@ -56,8 +56,10 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
 
   const {
     issue: { getIssueById },
-    subIssues: { subIssueHelpersByIssueId, setSubIssueHelpers },
   } = useIssueDetail(issueServiceType);
+  const {
+    subIssues: { subIssueHelpersByIssueId, setSubIssueHelpers },
+  } = useIssueDetail();
   const { toggleCreateIssueModal, toggleDeleteIssueModal } = useIssueDetail(issueServiceType);
   const project = useProject();
   const { getProjectStates } = useProjectState();
