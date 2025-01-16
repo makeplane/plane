@@ -77,7 +77,7 @@ export const usePageOperations = (
         }
       },
       move: async () => {},
-      openInNewTab: () => window.open(`/${pageLink}`, "_blank"),
+      openInNewTab: () => window.open(pageLink, "_blank"),
       toggleAccess: async () => {
         const changedPageType = access === EPageAccess.PUBLIC ? "private" : "public";
         try {
