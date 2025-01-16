@@ -31,10 +31,10 @@ export const PROFILE_ACTION_LINKS: {
     Icon: Activity,
   },
   {
-    key: "appearance",
-    label: "Appearance",
-    href: `/profile/appearance`,
-    highlight: (pathname: string) => pathname.includes("/profile/appearance"),
+    key: "preferences",
+    label: "Preferences",
+    href: `/profile/preferences`,
+    highlight: (pathname: string) => pathname.includes("/profile/preferences/"),
     Icon: Settings2,
   },
   {
