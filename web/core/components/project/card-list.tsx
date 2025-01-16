@@ -1,14 +1,16 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
+import { EUserPermissionsLevel } from "@plane/constants";
 // components
 import { ContentWrapper } from "@plane/ui";
-import { EmptyState } from "@/components/empty-state";
+import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { ProjectCard } from "@/components/project";
 import { ProjectsLoader } from "@/components/ui";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useProjectFilter } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject, useProjectFilter, useUserPermissions } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// plane-web
+import { EUserPermissions } from "@/plane-web/constants";
 // assets
 import AllFiltersImage from "@/public/empty-state/project/all-filters.svg";
 import NameFilterImage from "@/public/empty-state/project/name-filter.svg";
@@ -30,20 +32,41 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
     loader,
   } = useProject();
   const { searchQuery, currentWorkspaceDisplayFilters } = useProjectFilter();
+  const { allowPermissions } = useUserPermissions();
+
+  // helper hooks
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/projects" });
+
   // derived values
   const workspaceProjectIds = totalProjectIdsProps ?? storeWorkspaceProjectIds;
   const filteredProjectIds = filteredProjectIdsProps ?? storeFilteredProjectIds;
+
+  // permissions
+  const canPerformEmptyStateActions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   if (!filteredProjectIds || !workspaceProjectIds || loader) return <ProjectsLoader />;
 
   if (workspaceProjectIds?.length === 0 && !currentWorkspaceDisplayFilters?.archived_projects)
     return (
-      <EmptyState
-        type={EmptyStateType.WORKSPACE_PROJECTS}
-        primaryButtonOnClick={() => {
-          setTrackElement("Project empty state");
-          toggleCreateProjectModal(true);
-        }}
+      <DetailedEmptyState
+        title="No active projects"
+        description="Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal. Create a new project or filter for archived projects."
+        assetPath={resolvedPath}
+        customPrimaryButton={
+          <ComicBoxButton
+            label="Start your first project"
+            title="Everything starts with a project in Plane"
+            description="A project could be a product’s roadmap, a marketing campaign, or launching a new car."
+            onClick={() => {
+              setTrackElement("Project empty state");
+              toggleCreateProjectModal(true);
+            }}
+            disabled={!canPerformEmptyStateActions}
+          />
+        }
       />
     );
 
