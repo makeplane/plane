@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
 // plane package imports
 import { E_SORT_ORDER } from "@plane/constants";
+import { useLocalStorage } from "@plane/hooks";
 // components
 import { ActivitySortRoot } from "@/components/issues";
 import { useProjectUpdates } from "@/plane-web/hooks/store/projects/use-project-updates";
@@ -18,7 +19,10 @@ export const ProjectUpdates = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // state
   const [showInput, setShowInput] = useState(false);
-  const [sortOrder, setSortOrder] = useState<E_SORT_ORDER>(E_SORT_ORDER.ASC);
+  const { storedValue: sortOrder, setValue: setSortOrder } = useLocalStorage<E_SORT_ORDER>(
+    "project_overview_updates_sort_order",
+    E_SORT_ORDER.ASC
+  );
   // hooks
   const { getUpdatesByProjectId, loader } = useProjectUpdates();
   const { handleUpdateOperations } = useUpdates(workspaceSlug.toString(), projectId.toString());
@@ -66,7 +70,7 @@ export const ProjectUpdates = observer(() => {
             <div>Add update</div>
           </button>
           <ActivitySortRoot
-            sortOrder={sortOrder}
+            sortOrder={sortOrder ?? E_SORT_ORDER.ASC}
             toggleSort={toggleSortOrder}
             className="flex-shrink-0"
             iconClassName="size-3"
