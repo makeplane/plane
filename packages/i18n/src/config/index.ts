@@ -1,8 +1,8 @@
-import cn from "../locales/cn/translations.json";
 import en from "../locales/en/translations.json";
 import es from "../locales/es/translations.json";
 import fr from "../locales/fr/translations.json";
 import ja from "../locales/ja/translations.json";
+import zh_CN from "../locales/zh-CN/translations.json";
 
 export type Language = (typeof languages)[number];
 export type Translations = {
@@ -12,13 +12,13 @@ export type Translations = {
 };
 
 export const fallbackLng = "en";
-export const languages = ["en", "fr", "es", "ja", "cn"] as const;
+export const languages = ["en", "fr", "es", "ja", "zh-CN"] as const;
 export const translations: Translations = {
   en,
   fr,
   es,
   ja,
-  cn,
+  zh_CN,
 };
 
 export const SUPPORTED_LANGUAGES = [
@@ -40,6 +40,6 @@ export const SUPPORTED_LANGUAGES = [
   },
   {
     label: "Chinese",
-    value: "cn",
+    value: "zh-CN",
   },
 ];
