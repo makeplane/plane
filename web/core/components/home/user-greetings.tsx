@@ -1,9 +1,11 @@
 import { FC } from "react";
-// hooks
 import { Shapes } from "lucide-react";
+// plane types
 import { IUser } from "@plane/types";
+// plane ui
+import { Button } from "@plane/ui";
+// hooks
 import { useCurrentTime } from "@/hooks/use-current-time";
-// types
 
 export interface IUserGreetingsView {
   user: IUser;
@@ -51,13 +53,10 @@ export const UserGreetingsView: FC<IUserGreetingsView> = (props) => {
           </div>
         </h6>
       </div>
-      <button
-        onClick={handleWidgetModal}
-        className="flex items-center gap-2 font-medium text-custom-text-300 justify-center border border-custom-border-200 rounded p-2 my-auto mb-0"
-      >
+      <Button variant="neutral-primary" size="sm" onClick={handleWidgetModal} className="my-auto mb-0">
         <Shapes size={16} />
         <div className="text-xs font-medium">Manage widgets</div>
-      </button>
+      </Button>
     </div>
   );
 };

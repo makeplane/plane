@@ -59,12 +59,11 @@ export const WorkspaceHomeView = observer(() => {
       <>
         <IssuePeekOverview />
         <ContentWrapper
-          className={cn("gap-7 bg-custom-background-90/20", {
+          className={cn("gap-6 bg-custom-background-90/20", {
             "vertical-scrollbar scrollbar-lg": windowWidth >= 768,
           })}
         >
           {currentUser && <UserGreetingsView user={currentUser} handleWidgetModal={() => toggleWidgetSettings(true)} />}
-
           <DashboardWidgets />
         </ContentWrapper>
       </>

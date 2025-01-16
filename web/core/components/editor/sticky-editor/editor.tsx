@@ -82,26 +82,28 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         containerClassName={cn(containerClassName, "relative")}
         {...rest}
       />
-      <div
-        className={cn(
-          "transition-all duration-300 ease-out origin-top",
-          isFocused ? "max-h-[200px] opacity-100 scale-y-100 mt-3" : "max-h-0 opacity-0 scale-y-0 invisible"
-        )}
-      >
-        <Toolbar
-          executeCommand={(item) => {
-            // TODO: update this while toolbar homogenization
-            // @ts-expect-error type mismatch here
-            editorRef?.executeMenuItemCommand({
-              itemKey: item.itemKey,
-              ...item.extraProps,
-            });
-          }}
-          handleDelete={handleDelete}
-          handleColorChange={handleColorChange}
-          editorRef={editorRef}
-        />
-      </div>
+      {showToolbar && (
+        <div
+          className={cn(
+            "transition-all duration-300 ease-out origin-top",
+            isFocused ? "max-h-[200px] opacity-100 scale-y-100 mt-3" : "max-h-0 opacity-0 scale-y-0 invisible"
+          )}
+        >
+          <Toolbar
+            executeCommand={(item) => {
+              // TODO: update this while toolbar homogenization
+              // @ts-expect-error type mismatch here
+              editorRef?.executeMenuItemCommand({
+                itemKey: item.itemKey,
+                ...item.extraProps,
+              });
+            }}
+            handleDelete={handleDelete}
+            handleColorChange={handleColorChange}
+            editorRef={editorRef}
+          />
+        </div>
+      )}
     </div>
   );
 });

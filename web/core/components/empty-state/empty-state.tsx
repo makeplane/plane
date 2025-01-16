@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 // hooks
 // components
-import { Button, TButtonVariant } from "@plane/ui";
+import { Button, TButtonSizes, TButtonVariant } from "@plane/ui";
 // constant
 import { EMPTY_STATE_DETAILS, EmptyStateType } from "@/constants/empty-state";
 // helpers
@@ -18,10 +18,14 @@ import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { ComicBoxButton } from "./comic-box-button";
 
 export type EmptyStateProps = {
+  size?: TButtonSizes;
   type: EmptyStateType;
-  size?: "sm" | "md" | "lg";
   layout?: "screen-detailed" | "screen-simple";
   additionalPath?: string;
+  primaryButtonConfig?: {
+    size?: TButtonSizes;
+    variant?: TButtonVariant;
+  };
   primaryButtonOnClick?: () => void;
   primaryButtonLink?: string;
   secondaryButtonOnClick?: () => void;
@@ -29,10 +33,14 @@ export type EmptyStateProps = {
 
 export const EmptyState: React.FC<EmptyStateProps> = observer((props) => {
   const {
-    type,
     size = "lg",
+    type,
     layout = "screen-detailed",
     additionalPath = "",
+    primaryButtonConfig = {
+      size: "lg",
+      variant: "primary",
+    },
     primaryButtonOnClick,
     primaryButtonLink,
     secondaryButtonOnClick,
@@ -67,8 +75,8 @@ export const EmptyState: React.FC<EmptyStateProps> = observer((props) => {
     if (!primaryButton) return null;
 
     const commonProps = {
-      size: size,
-      variant: "primary" as TButtonVariant,
+      size: primaryButtonConfig.size,
+      variant: primaryButtonConfig.variant,
       prependIcon: primaryButton.icon,
       onClick: primaryButtonOnClick ? primaryButtonOnClick : undefined,
       disabled: !isEditingAllowed,
@@ -145,12 +153,10 @@ export const EmptyState: React.FC<EmptyStateProps> = observer((props) => {
             )}
 
             {anyButton && (
-              <>
-                <div className="relative flex items-center justify-center gap-2 flex-shrink-0 w-full">
-                  {renderPrimaryButton()}
-                  {renderSecondaryButton()}
-                </div>
-              </>
+              <div className="relative flex items-center justify-center gap-2 flex-shrink-0 w-full">
+                {renderPrimaryButton()}
+                {renderSecondaryButton()}
+              </div>
             )}
           </div>
         </div>
@@ -174,6 +180,12 @@ export const EmptyState: React.FC<EmptyStateProps> = observer((props) => {
             </>
           ) : (
             <h3 className="text-sm font-medium text-custom-text-400 whitespace-pre-line">{title}</h3>
+          )}
+          {anyButton && (
+            <div className="relative flex items-center justify-center gap-2 flex-shrink-0 w-full">
+              {renderPrimaryButton()}
+              {renderSecondaryButton()}
+            </div>
           )}
         </div>
       )}

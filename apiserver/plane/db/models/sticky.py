@@ -5,6 +5,9 @@ from django.db import models
 # Module imports
 from .base import BaseModel
 
+# Third party imports
+from plane.utils.html_processor import strip_tags
+
 
 class Sticky(BaseModel):
     name = models.TextField(null=True, blank=True)
@@ -33,6 +36,12 @@ class Sticky(BaseModel):
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
+        # Strip the html tags using html parser
+        self.description_stripped = (
+            None
+            if (self.description_html == "" or self.description_html is None)
+            else strip_tags(self.description_html)
+        )
         if self._state.adding:
             # Get the maximum sequence value from the database
             last_id = Sticky.objects.filter(workspace=self.workspace).aggregate(
