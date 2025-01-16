@@ -313,7 +313,6 @@
   "remove_parent_issue": "Eliminar problema padre",
   "add_parent": "Agregar padre",
   "loading_members": "Cargando miembros...",
-  "inbox": "bandeja de entrada",
 
   "workspace_dashboard": {
     "empty_state": {
@@ -638,16 +637,26 @@
   "disabled_project_view_empty_state_description": "Las vistas son un conjunto de filtros guardados que usas con frecuencia o que deseas tener acceso fácilmente. Todos tus compañeros de proyecto pueden ver las vistas de todos y elegir la que mejor se adapte a sus necesidades. Habilita las vistas en la configuración del proyecto para comenzar a usarlas.",
   "disabled_project_view_empty_state_primary_button_text": "Gestionar características",
 
-  "inbox_sidebar_open_tab_empty_state_title": "No hay problemas abiertos",
-  "inbox_sidebar_open_tab_empty_state_description": "Encuentra los problemas abiertos aquí. Crea un nuevo problema.",
-
-  "inbox_sidebar_closed_tab_empty_state_title": "No hay problemas cerrados",
-  "inbox_sidebar_closed_tab_empty_state_description": "Aquí puedes encontrar todos los problemas, ya sean aceptados o rechazados.",
-
-  "inbox_sidebar_filter_empty_state_title": "No hay problemas que coincidan",
-  "inbox_sidebar_filter_empty_state_description": "Ningún problema coincide con el filtro aplicado en la recepción. Crea un nuevo problema.",
-
-  "inbox_detail_empty_state_title": "Selecciona un problema para ver sus detalles.",
+  "inbox": {
+    "name": "Bandeja de entrada",
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "No hay problemas abiertos",
+        "description": "Encuentra los problemas abiertos aquí. Crea un nuevo problema."
+      },
+      "sidebar_closed_tab": {
+        "title": "No hay problemas cerrados",
+        "description": "Todos los problemas, ya sean aceptados o rechazados, se pueden encontrar aquí."
+      },
+      "sidebar_filter": {
+        "title": "No hay problemas coincidentes",
+        "description": "Ningún problema coincide con el filtro aplicado en la entrada. Crea un nuevo problema."
+      },
+      "detail": {
+        "title": "Selecciona un problema para ver sus detalles."
+      }
+    }
+  },
 
   "workspace_draft_issues": {
     "empty_state": {

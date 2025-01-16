@@ -42,7 +42,6 @@
   "activity": "Activity",
   "appearance": "Appearance",
   "notifications": "Notifications",
-  "inbox": "Inbox",
   "workspaces": "Workspaces",
   "create_workspace": "Create workspace",
   "invitations": "Invitations",
@@ -636,16 +635,26 @@
   "disabled_project_view_empty_state_description": "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone's views and choose whichever suits their needs best. Enable views in the project settings to start using them.",
   "disabled_project_view_empty_state_primary_button_text": "Manage features",
 
-  "inbox_sidebar_open_tab_empty_state_title": "No open issues",
-  "inbox_sidebar_open_tab_empty_state_description": "Find open issues here. Create new issue.",
-
-  "inbox_sidebar_closed_tab_empty_state_title": "No closed issues",
-  "inbox_sidebar_closed_tab_empty_state_description": "All the issues whether accepted or declined can be found here.",
-
-  "inbox_sidebar_filter_empty_state_title": "No matching issues",
-  "inbox_sidebar_filter_empty_state_description": "No issue matches filter applied in intake. Create a new issue.",
-
-  "inbox_detail_empty_state_title": "Select an issue to view its details.",
+  "inbox": {
+    "name": "Inbox",
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "No open issues",
+        "description": "Find open issues here. Create new issue."
+      },
+      "sidebar_closed_tab": {
+        "title": "No closed issues",
+        "description": "All the issues whether accepted or declined can be found here."
+      },
+      "sidebar_filter": {
+        "title": "No matching issues",
+        "description": "No issue matches filter applied in intake. Create a new issue."
+      },
+      "detail": {
+        "title": "Select an issue to view its details."
+      }
+    }
+  },
 
   "workspace_draft_issues": {
     "empty_state": {

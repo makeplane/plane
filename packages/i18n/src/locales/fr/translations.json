@@ -314,7 +314,6 @@
   "remove_parent_issue": "Supprimer le problème parent",
   "add_parent": "Ajouter un parent",
   "loading_members": "Chargement des membres...",
-  "inbox": "Boîte de réception",
 
   "workspace_dashboard": {
     "empty_state": {
@@ -639,16 +638,26 @@
   "disabled_project_view_empty_state_description": "Les vues sont un ensemble de filtres enregistrés que vous utilisez fréquemment ou auxquels vous voulez un accès facile. Tous vos collègues du projet peuvent voir les vues de chacun et choisir celle qui correspond le mieux à leurs besoins. Activez les vues dans les paramètres du projet pour commencer à les utiliser.",
   "disabled_project_view_empty_state_primary_button_text": "Gérer les fonctionnalités",
 
-  "inbox_sidebar_open_tab_empty_state_title": "Pas de problèmes ouverts",
-  "inbox_sidebar_open_tab_empty_state_description": "Trouvez ici les problèmes ouverts. Créez un nouveau problème.",
-
-  "inbox_sidebar_closed_tab_empty_state_title": "Pas de problèmes fermés",
-  "inbox_sidebar_closed_tab_empty_state_description": "Tous les problèmes, qu'ils soient acceptés ou rejetés, peuvent être trouvés ici.",
-
-  "inbox_sidebar_filter_empty_state_title": "Aucun problème ne correspond",
-  "inbox_sidebar_filter_empty_state_description": "Aucun problème ne correspond au filtre appliqué dans la réception. Créez un nouveau problème.",
-
-  "inbox_detail_empty_state_title": "Sélectionnez un problème pour voir ses détails.",
+  "inbox": {
+    "name": "Boîte de réception",
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "Aucun problème ouvert",
+        "description": "Trouvez ici les problèmes ouverts. Créez un nouveau problème."
+      },
+      "sidebar_closed_tab": {
+        "title": "Aucun problème fermé",
+        "description": "Tous les problèmes, qu'ils soient acceptés ou refusés, se trouvent ici."
+      },
+      "sidebar_filter": {
+        "title": "Aucun problème correspondant",
+        "description": "Aucun problème ne correspond au filtre appliqué dans l'entrée. Créez un nouveau problème."
+      },
+      "detail": {
+        "title": "Sélectionnez un problème pour voir ses détails."
+      }
+    }
+  },
 
   "workspace_draft_issues": {
     "empty_state": {

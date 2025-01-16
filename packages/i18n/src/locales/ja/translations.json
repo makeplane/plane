@@ -314,7 +314,6 @@
   "remove_parent_issue": "親問題を削除",
   "add_parent": "親問題を追加",
   "loading_members": "メンバーを読み込んでいます...",
-  "inbox": "受信箱",
 
   "workspace_dashboard": {
     "empty_state": {
@@ -639,16 +638,26 @@
   "disabled_project_view_empty_state_description": "ビューは頻繁に使用するフィルターのセットで、簡単にアクセスできるようにしたいものです。プロジェクト内のすべての同僚は、他の人のビューを見て、ニーズに合ったものを選択できます。プロジェクト設定からビューを有効にして、使用を開始してください。",
   "disabled_project_view_empty_state_primary_button_text": "機能を管理",
 
-  "inbox_sidebar_open_tab_empty_state_title": "開いている課題はありません",
-  "inbox_sidebar_open_tab_empty_state_description": "ここで開いている課題を見つけてください。新しい課題を作成します。",
-
-  "inbox_sidebar_closed_tab_empty_state_title": "閉じた課題はありません",
-  "inbox_sidebar_closed_tab_empty_state_description": "すべての課題は、承認されたものも拒否されたものもここで見つけることができます。",
-
-  "inbox_sidebar_filter_empty_state_title": "一致する課題はありません",
-  "inbox_sidebar_filter_empty_state_description": "インテークで適用したフィルターに一致する課題はありません。新しい課題を作成してください。",
-
-  "inbox_detail_empty_state_title": "課題を選択してその詳細を表示してください。",
+  "inbox": {
+    "name": "受信トレイ",
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "未解決の課題はありません",
+        "description": "ここに未解決の課題が表示されます。新しい課題を作成してください。"
+      },
+      "sidebar_closed_tab": {
+        "title": "完了した課題はありません",
+        "description": "受け入れ済みまたは却下済みのすべての課題がここに表示されます。"
+      },
+      "sidebar_filter": {
+        "title": "一致する課題はありません",
+        "description": "入力で適用されたフィルターに一致する課題はありません。新しい課題を作成してください。"
+      },
+      "detail": {
+        "title": "詳細を表示するには課題を選択してください。"
+      }
+    }
+  },
 
   "workspace_draft_issues": {
     "empty_state": {

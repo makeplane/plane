@@ -108,11 +108,6 @@ export enum EmptyStateType {
   DISABLED_PROJECT_MODULE = "disabled-project-module",
   DISABLED_PROJECT_VIEW = "disabled-project-view",
   DISABLED_PROJECT_PAGE = "disabled-project-page",
-
-  INBOX_SIDEBAR_OPEN_TAB = "inbox-sidebar-open-tab",
-  INBOX_SIDEBAR_CLOSED_TAB = "inbox-sidebar-closed-tab",
-  INBOX_SIDEBAR_FILTER_EMPTY_STATE = "inbox-sidebar-filter-empty-state",
-  INBOX_DETAIL_EMPTY_STATE = "inbox-detail-empty-state",
 }
 
 const emptyStateDetails = {
@@ -661,7 +656,7 @@ const emptyStateDetails = {
   },
 
   [EmptyStateType.NOTIFICATION_DETAIL_EMPTY_STATE]: {
-    key: EmptyStateType.INBOX_DETAIL_EMPTY_STATE,
+    key: EmptyStateType.NOTIFICATION_DETAIL_EMPTY_STATE,
     title: "Select to view details.",
     path: "/empty-state/intake/issue-detail",
   },
@@ -805,29 +800,6 @@ const emptyStateDetails = {
     primaryButton: {
       text: "Manage features",
     },
-  },
-  [EmptyStateType.INBOX_SIDEBAR_OPEN_TAB]: {
-    key: EmptyStateType.INBOX_SIDEBAR_OPEN_TAB,
-    title: "No open issues",
-    description: "Find open issues here. Create new issue.",
-    path: "/empty-state/intake/intake-issue",
-  },
-  [EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB]: {
-    key: EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB,
-    title: "No closed issues",
-    description: "All the issues whether accepted or \n declined can be found here.",
-    path: "/empty-state/intake/intake-issue",
-  },
-  [EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE]: {
-    key: EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE,
-    title: "No  matching issues",
-    description: "No issue matches filter applied in intake. \n Create a new issue.",
-    path: "/empty-state/intake/filter-issue",
-  },
-  [EmptyStateType.INBOX_DETAIL_EMPTY_STATE]: {
-    key: EmptyStateType.INBOX_DETAIL_EMPTY_STATE,
-    title: "Select an issue to view its details.",
-    path: "/empty-state/intake/issue-detail",
   },
 } as const;
 
