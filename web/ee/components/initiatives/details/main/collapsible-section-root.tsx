@@ -124,44 +124,6 @@ export const InitiativeCollapsibleSection: FC<Props> = observer((props) => {
 
   return (
     <>
-      {shouldRenderLinks && (
-        <CollapsibleDetailSection
-          title="Links"
-          actionItemElement={!disabled && <InitiativeLinksActionButton disabled={disabled} />}
-          count={linksCount}
-          collapsibleContent={
-            <InitiativeLinksCollapsibleContent
-              workspaceSlug={workspaceSlug}
-              initiativeId={initiativeId}
-              disabled={disabled}
-            />
-          }
-          isOpen={openCollapsibleSection.includes("links")}
-          onToggle={() => toggleOpenCollapsibleSection("links")}
-        />
-      )}
-      {shouldRenderAttachments && (
-        <CollapsibleDetailSection
-          title="Attachments"
-          actionItemElement={
-            !disabled && (
-              <div className="pb-3">
-                <InitiativeAttachmentActionButton
-                  workspaceSlug={workspaceSlug}
-                  initiativeId={initiativeId}
-                  disabled={disabled}
-                />
-              </div>
-            )
-          }
-          count={attachmentCount}
-          collapsibleContent={
-            <InitiativeAttachmentRoot workspaceSlug={workspaceSlug} initiativeId={initiativeId} disabled={disabled} />
-          }
-          isOpen={openCollapsibleSection.includes("attachments")}
-          onToggle={() => toggleOpenCollapsibleSection("attachments")}
-        />
-      )}
       {shouldRenderProjects && (
         <CollapsibleDetailSection
           title="Projects"
@@ -226,6 +188,45 @@ export const InitiativeCollapsibleSection: FC<Props> = observer((props) => {
           onToggle={() => toggleOpenCollapsibleSection("epics")}
         />
       )}
+      {shouldRenderLinks && (
+        <CollapsibleDetailSection
+          title="Links"
+          actionItemElement={!disabled && <InitiativeLinksActionButton disabled={disabled} />}
+          count={linksCount}
+          collapsibleContent={
+            <InitiativeLinksCollapsibleContent
+              workspaceSlug={workspaceSlug}
+              initiativeId={initiativeId}
+              disabled={disabled}
+            />
+          }
+          isOpen={openCollapsibleSection.includes("links")}
+          onToggle={() => toggleOpenCollapsibleSection("links")}
+        />
+      )}
+      {shouldRenderAttachments && (
+        <CollapsibleDetailSection
+          title="Attachments"
+          actionItemElement={
+            !disabled && (
+              <div className="pb-3">
+                <InitiativeAttachmentActionButton
+                  workspaceSlug={workspaceSlug}
+                  initiativeId={initiativeId}
+                  disabled={disabled}
+                />
+              </div>
+            )
+          }
+          count={attachmentCount}
+          collapsibleContent={
+            <InitiativeAttachmentRoot workspaceSlug={workspaceSlug} initiativeId={initiativeId} disabled={disabled} />
+          }
+          isOpen={openCollapsibleSection.includes("attachments")}
+          onToggle={() => toggleOpenCollapsibleSection("attachments")}
+        />
+      )}
+
       <ProjectMultiSelectModal
         isOpen={isProjectsOpen}
         onClose={() => setIsProjectsOpen(false)}

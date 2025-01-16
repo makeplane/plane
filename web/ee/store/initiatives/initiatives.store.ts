@@ -336,6 +336,7 @@ export class InitiativeStore implements IInitiativeStore {
           this.initiativeEpicsMap[initiativeId] = this.initiativeEpicsMap[initiativeId].filter((id) => id !== epicId);
         }
       });
+      this.fetchInitiativeAnalytics(workspaceSlug, initiativeId);
     } catch (error) {
       console.error("error while removing epic from initiative", error);
     }
@@ -358,6 +359,8 @@ export class InitiativeStore implements IInitiativeStore {
         // Update the epicMap by adding the new epicIds
         update(this.initiativeEpicsMap, [initiativeId], (Ids: string[]) => [...Ids, ...responseIds]);
       });
+
+      this.fetchInitiativeAnalytics(workspaceSlug, initiativeId);
     } catch (error) {
       console.error("Error adding epics to initiative", error);
       throw error;
@@ -379,6 +382,7 @@ export class InitiativeStore implements IInitiativeStore {
 
       await this.initiativeService.updateInitiative(workspaceSlug, initiativeId, payload);
       this.initiativeCommentActivities.fetchActivities(workspaceSlug, initiativeId);
+      this.fetchInitiativeAnalytics(workspaceSlug, initiativeId);
       return;
     } catch (error) {
       runInAction(() => {
