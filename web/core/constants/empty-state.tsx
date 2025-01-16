@@ -96,14 +96,6 @@ export enum EmptyStateType {
   NOTIFICATION_ARCHIVED_EMPTY_STATE = "notification-archived-empty-state",
   NOTIFICATION_SNOOZED_EMPTY_STATE = "notification-snoozed-empty-state",
   NOTIFICATION_UNREAD_EMPTY_STATE = "notification-unread-empty-state",
-
-  ACTIVE_CYCLE_PROGRESS_EMPTY_STATE = "active-cycle-progress-empty-state",
-  ACTIVE_CYCLE_CHART_EMPTY_STATE = "active-cycle-chart-empty-state",
-  ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE = "active-cycle-priority-issue-empty-state",
-  ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE = "active-cycle-assignee-empty-state",
-  ACTIVE_CYCLE_LABEL_EMPTY_STATE = "active-cycle-label-empty-state",
-
-  WORKSPACE_ACTIVE_CYCLES = "workspace-active-cycles",
   // stickies
   STICKIES = "stickies",
   STICKIES_SEARCH = "stickies-search",
@@ -708,39 +700,6 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
     title: "No archived notifications yet",
     description: "Any notification you archive will be \n available here to help you focus",
     path: "/empty-state/search/archive",
-  },
-
-  [EmptyStateType.ACTIVE_CYCLE_PROGRESS_EMPTY_STATE]: {
-    key: EmptyStateType.ACTIVE_CYCLE_PROGRESS_EMPTY_STATE,
-    title: "Add issues to the cycle to view it's \n progress",
-    path: "/empty-state/active-cycle/progress",
-  },
-  [EmptyStateType.ACTIVE_CYCLE_CHART_EMPTY_STATE]: {
-    key: EmptyStateType.ACTIVE_CYCLE_CHART_EMPTY_STATE,
-    title: "Add issues to the cycle to view the \n burndown chart.",
-    path: "/empty-state/active-cycle/chart",
-  },
-  [EmptyStateType.ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE]: {
-    key: EmptyStateType.ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE,
-    title: "Observe high priority issues tackled in \n the cycle at a glance.",
-    path: "/empty-state/active-cycle/priority",
-  },
-  [EmptyStateType.ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE]: {
-    key: EmptyStateType.ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE,
-    title: "Add assignees to issues to see a \n breakdown of work by assignees.",
-    path: "/empty-state/active-cycle/assignee",
-  },
-  [EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE]: {
-    key: EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE,
-    title: "Add labels to issues to see the \n breakdown of work by labels.",
-    path: "/empty-state/active-cycle/label",
-  },
-  [EmptyStateType.WORKSPACE_ACTIVE_CYCLES]: {
-    key: EmptyStateType.WORKSPACE_ACTIVE_CYCLES,
-    title: "No active cycles",
-    description:
-      "Cycles of your projects that includes any period that encompasses today's date within its range. Find the progress and details of all your active cycle here.",
-    path: "/empty-state/onboarding/workspace-active-cycles",
   },
   [EmptyStateType.STICKIES]: {
     key: EmptyStateType.STICKIES,

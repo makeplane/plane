@@ -609,14 +609,25 @@
   "notification_mentions_empty_state_title": "割り当てられた課題はありません",
   "notification_mentions_empty_state_description": "あなたに割り当てられた課題の更新はここで確認できます",
 
-  "active_cycle_progress_empty_state_title": "課題をサイクルに追加して進捗を確認してください",
-  "active_cycle_chart_empty_state_title": "課題をサイクルに追加してバーンダウンチャートを表示してください。",
-  "active_cycle_priority_issue_empty_state_title": "サイクル内で対応された高優先度の課題を一目で確認できます。",
-  "active_cycle_assignee_empty_state_title": "課題に担当者を追加して、担当者別の作業の内訳を確認してください。",
-  "active_cycle_label_empty_state_title": "課題にラベルを追加して、ラベル別の作業の内訳を確認してください。",
-
-  "workspace_active_cycles_empty_state_title": "アクティブなサイクルはありません",
-  "workspace_active_cycles_empty_state_description": "現在の日付を範囲に含むプロジェクトのサイクルです。すべてのアクティブなサイクルの進捗と詳細をここで確認してください。",
+  "active_cycle": {
+    "empty_state": {
+      "progress": {
+        "title": "サイクルに課題を追加して進捗を確認してください。"
+      },
+      "chart": {
+        "title": "サイクルに課題を追加してバーンダウンチャートを確認してください。"
+      },
+      "priority_issue": {
+        "title": "サイクル内で処理された高優先度の課題を一目で把握できます。"
+      },
+      "assignee": {
+        "title": "課題に担当者を追加して、担当者ごとの作業の内訳を確認してください。"
+      },
+      "label": {
+        "title": "課題にラベルを追加して、ラベルごとの作業の内訳を確認してください。"
+      }
+    }
+  },
 
   "disabled_project": {
     "empty_state": {

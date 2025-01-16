@@ -609,14 +609,25 @@
   "notification_mentions_empty_state_title": "Aucun problème assigné",
   "notification_mentions_empty_state_description": "Les mises à jour des problèmes qui vous sont assignés sont visibles ici.",
 
-  "active_cycle_progress_empty_state_title": "Ajoutez des problèmes au cycle pour voir sa progression.",
-  "active_cycle_chart_empty_state_title": "Ajoutez des problèmes au cycle pour voir le graphique d'avancement.",
-  "active_cycle_priority_issue_empty_state_title": "Observez d'un coup d'œil les problèmes prioritaires traités dans le cycle.",
-  "active_cycle_assignee_empty_state_title": "Ajoutez des assignés aux problèmes pour voir une répartition du travail par assignés.",
-  "active_cycle_label_empty_state_title": "Ajoutez des étiquettes aux problèmes pour voir une répartition du travail par étiquettes.",
-
-  "workspace_active_cycles_empty_state_title": "Aucun cycle actif",
-  "workspace_active_cycles_empty_state_description": "Les cycles de vos projets incluent toute période couvrant la date d'aujourd'hui dans sa plage. Trouvez ici la progression et les détails de tous vos cycles actifs.",
+  "active_cycle": {
+    "empty_state": {
+      "progress": {
+        "title": "Ajoutez des problèmes au cycle pour voir sa progression."
+      },
+      "chart": {
+        "title": "Ajoutez des problèmes au cycle pour voir le graphique d'avancement."
+      },
+      "priority_issue": {
+        "title": "Observez d'un coup d'œil les problèmes prioritaires traités dans le cycle."
+      },
+      "assignee": {
+        "title": "Ajoutez des responsables aux problèmes pour voir la répartition du travail par responsable."
+      },
+      "label": {
+        "title": "Ajoutez des étiquettes aux problèmes pour voir la répartition du travail par étiquette."
+      }
+    }
+  },
 
   "disabled_project": {
     "empty_state": {

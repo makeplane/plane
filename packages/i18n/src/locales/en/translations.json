@@ -606,14 +606,25 @@
   "notification_mentions_empty_state_title": "No issues assigned",
   "notification_mentions_empty_state_description": "Updates for issues assigned to you can be seen here",
 
-  "active_cycle_progress_empty_state_title": "Add issues to the cycle to view it's progress",
-  "active_cycle_chart_empty_state_title": "Add issues to the cycle to view the burndown chart.",
-  "active_cycle_priority_issue_empty_state_title": "Observe high priority issues tackled in the cycle at a glance.",
-  "active_cycle_assignee_empty_state_title": "Add assignees to issues to see a breakdown of work by assignees.",
-  "active_cycle_label_empty_state_title": "Add labels to issues to see the breakdown of work by labels.",
-
-  "workspace_active_cycles_empty_state_title": "No active cycles",
-  "workspace_active_cycles_empty_state_description": "Cycles of your projects that includes any period that encompasses today's date within its range. Find the progress and details of all your active cycle here.",
+  "active_cycle": {
+    "empty_state": {
+      "progress": {
+        "title": "Add issues to the cycle to view it's progress"
+      },
+      "chart": {
+        "title": "Add issues to the cycle to view the burndown chart."
+      },
+      "priority_issue": {
+        "title": "Observe high priority issues tackled in the cycle at a glance."
+      },
+      "assignee": {
+        "title": "Add assignees to issues to see a breakdown of work by assignees."
+      },
+      "label": {
+        "title": "Add labels to issues to see the breakdown of work by labels."
+      }
+    }
+  },
 
   "disabled_project": {
     "empty_state": {

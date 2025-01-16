@@ -608,14 +608,25 @@
   "notification_mentions_empty_state_title": "No hay problemas asignados",
   "notification_mentions_empty_state_description": "Las actualizaciones de los problemas asignados a ti se pueden ver aquí",
 
-  "active_cycle_progress_empty_state_title": "Añade problemas al ciclo para ver su progreso",
-  "active_cycle_chart_empty_state_title": "Añade problemas al ciclo para ver el gráfico de avance.",
-  "active_cycle_priority_issue_empty_state_title": "Observa los problemas de alta prioridad abordados en el ciclo de un vistazo.",
-  "active_cycle_assignee_empty_state_title": "Añade asignados a los problemas para ver un desglose del trabajo por asignados.",
-  "active_cycle_label_empty_state_title": "Añade etiquetas a los problemas para ver el desglose del trabajo por etiquetas.",
-
-  "workspace_active_cycles_empty_state_title": "No hay ciclos activos",
-  "workspace_active_cycles_empty_state_description": "Ciclos de tus proyectos que incluyen cualquier período que abarque la fecha de hoy dentro de su rango. Encuentra el progreso y los detalles de todos tus ciclos activos aquí.",
+  "active_cycle": {
+    "empty_state": {
+      "progress": {
+        "title": "Agrega problemas al ciclo para ver su progreso."
+      },
+      "chart": {
+        "title": "Agrega problemas al ciclo para ver el gráfico de burndown."
+      },
+      "priority_issue": {
+        "title": "Observa de un vistazo los problemas de alta prioridad abordados en el ciclo."
+      },
+      "assignee": {
+        "title": "Asigna responsables a los problemas para ver un desglose del trabajo por responsables."
+      },
+      "label": {
+        "title": "Agrega etiquetas a los problemas para ver el desglose del trabajo por etiquetas."
+      }
+    }
+  },
 
   "disabled_project": {
     "empty_state": {
