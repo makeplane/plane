@@ -6,7 +6,7 @@ import { ICycle, TLoader } from "@plane/types";
 // plane web services
 import { TeamCycleService } from "@/plane-web/services/teams/team-cycles.service";
 // plane web store
-import { ICycleStore } from "@/plane-web/store/cycle.store";
+import { ICycleStore } from "@/plane-web/store/cycle";
 import { RootStore } from "@/plane-web/store/root.store";
 
 export interface ITeamCycleStore {

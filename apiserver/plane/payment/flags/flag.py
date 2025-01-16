@@ -58,6 +58,8 @@ class FeatureFlag(Enum):
     SILO_INTEGRATIONS = "SILO_INTEGRATIONS"
     # MOVE_PAGES
     MOVE_PAGES = "MOVE_PAGES"
+    # cycle manual start and stop
+    CYCLE_MANUAL_START_STOP = "CYCLE_MANUAL_START_STOP"
 
 
 class AdminFeatureFlag(Enum):

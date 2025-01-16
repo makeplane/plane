@@ -1,10 +1,14 @@
-import { set } from "lodash";
+import { format } from "date-fns";
+import set from "lodash/set";
+import sortBy from "lodash/sortBy";
 import { action, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import { ICycle } from "@plane/types";
+import { CYCLE_ACTION } from "@/plane-web/constants/cycle";
+import { CycleUpdateService, CycleService } from "@/plane-web/services/cycle.service";
 import { RootStore } from "@/plane-web/store/root.store";
+import { TCycleUpdateReaction, TCycleUpdates } from "@/plane-web/types";
 import { ICycleStore as ICeCycleStore, CycleStore as CeCycleStore } from "@/store/cycle.store";
-import { CycleUpdateService } from "../services/cycle.service";
-import { TCycleUpdateReaction, TCycleUpdates } from "../types";
 
 export interface ICycleStore extends ICeCycleStore {
   cycleUpdateIds: string[];
@@ -38,6 +42,9 @@ export interface ICycleStore extends ICeCycleStore {
     cycleUpdateId: string,
     reaction: string
   ) => Promise<void>;
+
+  updateCycleStatus: (workspaceSlug: string, projectId: string, cycleId: string, action: CYCLE_ACTION) => Promise<void>;
+  isNextCycle: (projectId: string, cycleId: string) => boolean;
 }
 
 export class CycleStore extends CeCycleStore implements ICycleStore {
@@ -47,6 +54,7 @@ export class CycleStore extends CeCycleStore implements ICycleStore {
   } = {};
   //services
   cycleUpdateService;
+  cycleService;
 
   constructor(public store: RootStore) {
     super(store);
@@ -65,6 +73,7 @@ export class CycleStore extends CeCycleStore implements ICycleStore {
 
     //services
     this.cycleUpdateService = new CycleUpdateService();
+    this.cycleService = new CycleService();
   }
 
   fetchUpdates = async (workspaceSlug: string, projectId: string, cycleId: string) => {
@@ -201,5 +210,25 @@ export class CycleStore extends CeCycleStore implements ICycleStore {
       });
       return response;
     });
+  });
+
+  updateCycleStatus = async (workspaceSlug: string, projectId: string, cycleId: string, action: CYCLE_ACTION) => {
+    const date = format(new Date(), "yyyy-MM-dd");
+    await this.cycleService.updateCycleStatus(workspaceSlug, projectId, cycleId, date, action);
+    await this.fetchCycleDetails(workspaceSlug, projectId, cycleId);
+  };
+
+  isNextCycle = computedFn((projectId: string, cycleId: string) => {
+    //check for an active cycle
+    const activeCycle = Object.values(this.cycleMap ?? {}).find(
+      (c) => c.project_id === projectId && c.status?.toLowerCase() === "current"
+    );
+    if (activeCycle) return false;
+    // filter cycles with  status "upcoming" return one with the latest start date
+    const upcomingCycles = Object.values(this.cycleMap ?? {}).filter(
+      (c) => c.project_id === projectId && c.status?.toLowerCase() === "upcoming"
+    );
+    const nextCycle = sortBy(upcomingCycles, [(c) => c.start_date])[0];
+    return nextCycle?.id === cycleId;
   });
 }

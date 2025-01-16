@@ -1,7 +1,9 @@
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
+import { CYCLE_ACTION } from "@/plane-web/constants/cycle";
 import { APIService } from "@/services/api.service";
+import { CycleService as CycleServiceCore } from "@/services/cycle.service";
 import { TCycleUpdateReaction, TCycleUpdates, TCycleUpdateStatus } from "../types";
 
 export class CycleUpdateService extends APIService {
@@ -85,6 +87,25 @@ export class CycleUpdateService extends APIService {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/updates/${updateId}/reactions/${reactionId}`
     )
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+}
+
+export class CycleService extends CycleServiceCore {
+  async updateCycleStatus(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    date: string,
+    action: CYCLE_ACTION
+  ): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/start-stop/`, {
+      date,
+      action,
+    })
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;

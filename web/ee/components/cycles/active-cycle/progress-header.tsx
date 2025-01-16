@@ -10,7 +10,6 @@ import { ControlLink, Loader, Tooltip } from "@plane/ui";
 import { CycleListItemAction } from "@/components/cycles";
 // helpers
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { cn } from "@/helpers/common.helper";
 import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
 import { useMember } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

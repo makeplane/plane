@@ -1,5 +1,5 @@
 // plane web store
-import { ICycleStore, CycleStore } from "@/plane-web/store/cycle.store";
+import { ICycleStore, CycleStore } from "@/plane-web/store/cycle";
 import { FeatureFlagsStore, IFeatureFlagsStore } from "@/plane-web/store/feature-flags/feature-flags.store";
 import {
   IIssuePropertiesActivityStore,
