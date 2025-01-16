@@ -522,5 +522,36 @@
 
   "disabled_project_inbox_empty_state_title": "La réception n'est pas activée pour le projet.",
   "disabled_project_inbox_empty_state_description": "La réception vous aide à gérer les demandes entrantes pour votre projet et à les ajouter comme problèmes dans votre flux de travail. Activez la réception dans les paramètres du projet pour gérer les demandes.",
-  "disabled_project_inbox_empty_state_primary_button_text": "Gérer les fonctionnalités"
+  "disabled_project_inbox_empty_state_primary_button_text": "Gérer les fonctionnalités",
+
+  "disabled_project_cycle_empty_state_title": "Les cycles ne sont pas activés pour ce projet.",
+  "disabled_project_cycle_empty_state_description": "Divisez le travail en morceaux temporels, travaillez à partir de la date limite du projet pour définir des dates et faites des progrès tangibles en équipe. Activez la fonction des cycles pour votre projet afin de commencer à les utiliser.",
+  "disabled_project_cycle_empty_state_primary_button_text": "Gérer les fonctionnalités",
+
+  "disabled_project_module_empty_state_title": "Les modules ne sont pas activés pour le projet.",
+  "disabled_project_module_empty_state_description": "Un groupe de problèmes appartenant à un parent logique et hiérarchique forme un module. Considérez-les comme un moyen de suivre le travail par jalons du projet. Activez les modules depuis les paramètres du projet.",
+  "disabled_project_module_empty_state_primary_button_text": "Gérer les fonctionnalités",
+
+  "disabled_project_page_empty_state_title": "Les pages ne sont pas activées pour le projet.",
+  "disabled_project_page_empty_state_description": "Les pages sont des espaces de prise de notes dans Plane. Prenez des notes lors des réunions, formatez-les facilement, intégrez des problèmes, organisez-les à l’aide d’une bibliothèque de composants et gardez-les dans le contexte de votre projet. Activez la fonction des pages pour commencer à les créer dans votre projet.",
+  "disabled_project_page_empty_state_primary_button_text": "Gérer les fonctionnalités",
+
+  "disabled_project_view_empty_state_title": "Les vues ne sont pas activées pour ce projet.",
+  "disabled_project_view_empty_state_description": "Les vues sont un ensemble de filtres enregistrés que vous utilisez fréquemment ou auxquels vous voulez un accès facile. Tous vos collègues du projet peuvent voir les vues de chacun et choisir celle qui correspond le mieux à leurs besoins. Activez les vues dans les paramètres du projet pour commencer à les utiliser.",
+  "disabled_project_view_empty_state_primary_button_text": "Gérer les fonctionnalités",
+
+  "inbox_sidebar_open_tab_empty_state_title": "Pas de problèmes ouverts",
+  "inbox_sidebar_open_tab_empty_state_description": "Trouvez ici les problèmes ouverts. Créez un nouveau problème.",
+
+  "inbox_sidebar_closed_tab_empty_state_title": "Pas de problèmes fermés",
+  "inbox_sidebar_closed_tab_empty_state_description": "Tous les problèmes, qu'ils soient acceptés ou rejetés, peuvent être trouvés ici.",
+
+  "inbox_sidebar_filter_empty_state_title": "Aucun problème ne correspond",
+  "inbox_sidebar_filter_empty_state_description": "Aucun problème ne correspond au filtre appliqué dans la réception. Créez un nouveau problème.",
+
+  "inbox_detail_empty_state_title": "Sélectionnez un problème pour voir ses détails.",
+
+  "workspace_draft_issues_empty_state_title": "Problèmes inachevés, et bientôt, des commentaires apparaîtront ici.",
+  "workspace_draft_issues_empty_state_description": "Pour essayer cela, commencez à ajouter un problème et laissez-le inachevé ou créez votre premier brouillon ci-dessous. 😉",
+  "workspace_draft_issues_empty_state_primary_button_text": "Créez votre premier brouillon"
 }

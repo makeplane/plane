@@ -521,5 +521,36 @@
 
   "disabled_project_inbox_empty_state_title": "La entrada no está habilitada para el proyecto.",
   "disabled_project_inbox_empty_state_description": "La entrada te ayuda a gestionar las solicitudes entrantes a tu proyecto y agregarlas como problemas en tu flujo de trabajo. Habilita la entrada desde la configuración del proyecto para gestionar las solicitudes.",
-  "disabled_project_inbox_empty_state_primary_button_text": "Gestionar funciones"
+  "disabled_project_inbox_empty_state_primary_button_text": "Gestionar funciones",
+
+  "disabled_project_cycle_empty_state_title": "Los ciclos no están habilitados para este proyecto.",
+  "disabled_project_cycle_empty_state_description": "Divide el trabajo en partes temporales, trabaja hacia atrás desde la fecha límite del proyecto para establecer fechas y realiza avances tangibles como equipo. Habilita la función de ciclos para tu proyecto para comenzar a usarlos.",
+  "disabled_project_cycle_empty_state_primary_button_text": "Gestionar características",
+
+  "disabled_project_module_empty_state_title": "Los módulos no están habilitados para el proyecto.",
+  "disabled_project_module_empty_state_description": "Un grupo de problemas que pertenecen a un padre lógico y jerárquico forma un módulo. Piénsalo como una forma de realizar un seguimiento del trabajo por los hitos del proyecto. Habilita los módulos desde la configuración del proyecto.",
+  "disabled_project_module_empty_state_primary_button_text": "Gestionar características",
+
+  "disabled_project_page_empty_state_title": "Las páginas no están habilitadas para el proyecto.",
+  "disabled_project_page_empty_state_description": "Las páginas son espacios de anotación en Plane. Toma notas de reuniones, formatearlas fácilmente, incrustar problemas, organizarlas utilizando una biblioteca de componentes y mantenerlas dentro del contexto de tu proyecto. Habilita la función de páginas para empezar a crearlas en tu proyecto.",
+  "disabled_project_page_empty_state_primary_button_text": "Gestionar características",
+
+  "disabled_project_view_empty_state_title": "Las vistas no están habilitadas para este proyecto.",
+  "disabled_project_view_empty_state_description": "Las vistas son un conjunto de filtros guardados que usas con frecuencia o que deseas tener acceso fácilmente. Todos tus compañeros de proyecto pueden ver las vistas de todos y elegir la que mejor se adapte a sus necesidades. Habilita las vistas en la configuración del proyecto para comenzar a usarlas.",
+  "disabled_project_view_empty_state_primary_button_text": "Gestionar características",
+
+  "inbox_sidebar_open_tab_empty_state_title": "No hay problemas abiertos",
+  "inbox_sidebar_open_tab_empty_state_description": "Encuentra los problemas abiertos aquí. Crea un nuevo problema.",
+
+  "inbox_sidebar_closed_tab_empty_state_title": "No hay problemas cerrados",
+  "inbox_sidebar_closed_tab_empty_state_description": "Aquí puedes encontrar todos los problemas, ya sean aceptados o rechazados.",
+
+  "inbox_sidebar_filter_empty_state_title": "No hay problemas que coincidan",
+  "inbox_sidebar_filter_empty_state_description": "Ningún problema coincide con el filtro aplicado en la recepción. Crea un nuevo problema.",
+
+  "inbox_detail_empty_state_title": "Selecciona un problema para ver sus detalles.",
+
+  "workspace_draft_issues_empty_state_title": "Problemas a medio escribir, y pronto, comentarios aparecerán aquí.",
+  "workspace_draft_issues_empty_state_description": "Para probarlo, comienza a agregar un problema y déjalo a medias o crea tu primer borrador a continuación. 😉",
+  "workspace_draft_issues_empty_state_primary_button_text": "Crea tu primer borrador"
 }

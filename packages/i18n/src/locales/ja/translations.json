@@ -522,5 +522,36 @@
 
   "disabled_project_inbox_empty_state_title": "このプロジェクトではインテークが有効になっていません。",
   "disabled_project_inbox_empty_state_description": "インテークは、プロジェクトへのリクエストを管理し、それらをワークフロー内の課題として追加するのに役立ちます。プロジェクト設定からインテークを有効にしてリクエストを管理してください。",
-  "disabled_project_inbox_empty_state_primary_button_text": "機能を管理"
+  "disabled_project_inbox_empty_state_primary_button_text": "機能を管理",
+
+  "disabled_project_cycle_empty_state_title": "このプロジェクトではサイクルが有効になっていません。",
+  "disabled_project_cycle_empty_state_description": "作業を時間枠で区切り、プロジェクトの期限から逆算して日付を設定し、チームとして具体的な進捗を遂げます。サイクル機能をプロジェクトで有効にして使用を開始してください。",
+  "disabled_project_cycle_empty_state_primary_button_text": "機能を管理",
+
+  "disabled_project_module_empty_state_title": "このプロジェクトではモジュールが有効になっていません。",
+  "disabled_project_module_empty_state_description": "論理的かつ階層的な親に属する課題のグループがモジュールを形成します。それらは、プロジェクトのマイルストーンごとに作業を追跡する方法として考えられます。プロジェクト設定からモジュールを有効にしてください。",
+  "disabled_project_module_empty_state_primary_button_text": "機能を管理",
+
+  "disabled_project_page_empty_state_title": "このプロジェクトではページが有効になっていません。",
+  "disabled_project_page_empty_state_description": "ページはPlaneのノート取り用スペースです。会議のメモを取り、簡単にフォーマットし、課題を埋め込み、コンポーネントのライブラリを使ってレイアウトし、プロジェクトの文脈内でそれらを保管します。ページ機能を有効にしてプロジェクト内で作成を開始してください。",
+  "disabled_project_page_empty_state_primary_button_text": "機能を管理",
+
+  "disabled_project_view_empty_state_title": "このプロジェクトではビューが有効になっていません。",
+  "disabled_project_view_empty_state_description": "ビューは頻繁に使用するフィルターのセットで、簡単にアクセスできるようにしたいものです。プロジェクト内のすべての同僚は、他の人のビューを見て、ニーズに合ったものを選択できます。プロジェクト設定からビューを有効にして、使用を開始してください。",
+  "disabled_project_view_empty_state_primary_button_text": "機能を管理",
+
+  "inbox_sidebar_open_tab_empty_state_title": "開いている課題はありません",
+  "inbox_sidebar_open_tab_empty_state_description": "ここで開いている課題を見つけてください。新しい課題を作成します。",
+
+  "inbox_sidebar_closed_tab_empty_state_title": "閉じた課題はありません",
+  "inbox_sidebar_closed_tab_empty_state_description": "すべての課題は、承認されたものも拒否されたものもここで見つけることができます。",
+
+  "inbox_sidebar_filter_empty_state_title": "一致する課題はありません",
+  "inbox_sidebar_filter_empty_state_description": "インテークで適用したフィルターに一致する課題はありません。新しい課題を作成してください。",
+
+  "inbox_detail_empty_state_title": "課題を選択してその詳細を表示してください。",
+
+  "workspace_draft_issues_empty_state_title": "未完成の課題、そしてすぐにコメントがここに表示されます。",
+  "workspace_draft_issues_empty_state_description": "これを試すために、課題を追加して途中で中断するか、下に最初のドラフトを作成してください。😉",
+  "workspace_draft_issues_empty_state_primary_button_text": "最初のドラフトを作成"
 }

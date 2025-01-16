@@ -522,5 +522,36 @@
 
   "disabled_project_inbox_empty_state_title": "Intake is not enabled for the project.",
   "disabled_project_inbox_empty_state_description": "Intake helps you manage incoming requests to your project and add them as issues in your workflow. Enable intake from project settings to manage requests.",
-  "disabled_project_inbox_empty_state_primary_button_text": "Manage features"
+  "disabled_project_inbox_empty_state_primary_button_text": "Manage features",
+
+  "disabled_project_cycle_empty_state_title": "Cycles is not enabled for this project.",
+  "disabled_project_cycle_empty_state_description": "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team. Enable the cycles feature for your project to start using them.",
+  "disabled_project_cycle_empty_state_primary_button_text": "Manage features",
+
+  "disabled_project_module_empty_state_title": "Modules are not enabled for the project.",
+  "disabled_project_module_empty_state_description": "A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. Enable modules from project settings.",
+  "disabled_project_module_empty_state_primary_button_text": "Manage features",
+
+  "disabled_project_page_empty_state_title": "Pages are not enabled for the project.",
+  "disabled_project_page_empty_state_description": "Pages are thought spotting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project's context. Enable the pages feature to start creating them in your project.",
+  "disabled_project_page_empty_state_primary_button_text": "Manage features",
+
+  "disabled_project_view_empty_state_title": "Views is not enabled for this project.",
+  "disabled_project_view_empty_state_description": "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone's views and choose whichever suits their needs best. Enable views in the project settings to start using them.",
+  "disabled_project_view_empty_state_primary_button_text": "Manage features",
+
+  "inbox_sidebar_open_tab_empty_state_title": "No open issues",
+  "inbox_sidebar_open_tab_empty_state_description": "Find open issues here. Create new issue.",
+
+  "inbox_sidebar_closed_tab_empty_state_title": "No closed issues",
+  "inbox_sidebar_closed_tab_empty_state_description": "All the issues whether accepted or declined can be found here.",
+
+  "inbox_sidebar_filter_empty_state_title": "No matching issues",
+  "inbox_sidebar_filter_empty_state_description": "No issue matches filter applied in intake. Create a new issue.",
+
+  "inbox_detail_empty_state_title": "Select an issue to view its details.",
+
+  "workspace_draft_issues_empty_state_title": "Half-written issues, and soon, comments will show up here.",
+  "workspace_draft_issues_empty_state_description": "To try this out, start adding an issue and leave it mid-way or create your first draft below. 😉",
+  "workspace_draft_issues_empty_state_primary_button_text": "Create your first draft"
 }
