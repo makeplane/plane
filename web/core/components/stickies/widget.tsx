@@ -7,13 +7,15 @@ import { StickiesTruncated } from "./layout";
 import { StickySearch } from "./modal/search";
 import { useStickyOperations } from "./sticky/use-operations";
 
-export const StickiesWidget = observer(() => {
+export const StickiesWidget: React.FC = observer(() => {
   // params
   const { workspaceSlug } = useParams();
   // store hooks
   const { creatingSticky, toggleShowNewSticky } = useSticky();
   // sticky operations
-  const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
+  const { stickyOperations } = useStickyOperations({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
 
   return (
     <div>

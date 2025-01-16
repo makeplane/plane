@@ -24,7 +24,7 @@ export const Stickies = observer((props: TProps) => {
         {/* Title */}
         <div className="text-custom-text-100 flex gap-2">
           <RecentStickyIcon className="size-5 rotate-90" />
-          <p className="text-lg font-medium">My Stickies</p>
+          <p className="text-lg font-medium">Your stickies</p>
         </div>
         {/* actions */}
         <div className="flex gap-2">

@@ -2,14 +2,18 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+// plane utils
 import { cn } from "@plane/utils";
+// hooks
 import { useSticky } from "@/hooks/use-stickies";
+// components
 import { ContentOverflowWrapper } from "../../core/content-overflow-HOC";
 import { StickiesLayout } from "./stickies-list";
 
 export const StickiesTruncated = observer(() => {
+  // navigation
   const { workspaceSlug } = useParams();
-  // hooks
+  // store hooks
   const { fetchWorkspaceStickies } = useSticky();
 
   useSWR(

@@ -5,6 +5,7 @@ import type {
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import type { ElementDragPayload } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
+import { usePathname } from "next/navigation";
 import Masonry from "react-masonry-component";
 // plane ui
 import { Loader } from "@plane/ui";
@@ -17,6 +18,7 @@ import { useSticky } from "@/hooks/use-stickies";
 import { useStickyOperations } from "../sticky/use-operations";
 import { StickyDNDWrapper } from "./sticky-dnd-wrapper";
 import { getInstructionFromPayload } from "./sticky.helpers";
+import { StickiesEmptyState } from "@/components/home/widgets/empty-states/stickies";
 
 type TStickiesLayout = {
   workspaceSlug: string;
@@ -29,20 +31,24 @@ type TProps = TStickiesLayout & {
 
 export const StickiesList = observer((props: TProps) => {
   const { workspaceSlug, intersectionElement, columnCount } = props;
+  // navigation
+  const pathname = usePathname();
+  // store hooks
   const { getWorkspaceStickyIds, toggleShowNewSticky, searchQuery, loader } = useSticky();
+  // sticky operations
   const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
-
-  const workspaceStickies = getWorkspaceStickyIds(workspaceSlug?.toString());
+  // derived values
+  const workspaceStickyIds = getWorkspaceStickyIds(workspaceSlug?.toString());
   const itemWidth = `${100 / columnCount}%`;
-  // Calculate total number of rows
-  const totalRows = Math.ceil(workspaceStickies.length / columnCount);
+  const totalRows = Math.ceil(workspaceStickyIds.length / columnCount);
+  const isStickiesPage = pathname?.includes("stickies");
 
   // Function to determine if an item is in first or last row
   const getRowPositions = (index: number) => {
     const currentRow = Math.floor(index / columnCount);
     return {
       isInFirstRow: currentRow === 0,
-      isInLastRow: currentRow === totalRows - 1 || index >= workspaceStickies.length - columnCount,
+      isInLastRow: currentRow === totalRows - 1 || index >= workspaceStickyIds.length - columnCount,
     };
   };
 
@@ -75,18 +81,24 @@ export const StickiesList = observer((props: TProps) => {
     );
   }
 
-  if (loader === "loaded" && workspaceStickies.length === 0) {
+  if (loader === "loaded" && workspaceStickyIds.length === 0) {
     return (
       <div className="size-full grid place-items-center">
-        <EmptyState
-          type={searchQuery ? EmptyStateType.STICKIES_SEARCH : EmptyStateType.STICKIES}
-          layout={searchQuery ? "screen-simple" : "screen-detailed"}
-          primaryButtonOnClick={() => {
-            toggleShowNewSticky(true);
-            stickyOperations.create();
-          }}
-          size="sm"
-        />
+        {isStickiesPage ? (
+          <EmptyState
+            type={searchQuery ? EmptyStateType.STICKIES_SEARCH : EmptyStateType.STICKIES}
+            layout={searchQuery ? "screen-simple" : "screen-detailed"}
+            primaryButtonOnClick={() => {
+              toggleShowNewSticky(true);
+              stickyOperations.create();
+            }}
+            primaryButtonConfig={{
+              size: "sm",
+            }}
+          />
+        ) : (
+          <StickiesEmptyState />
+        )}
       </div>
     );
   }
@@ -95,7 +107,7 @@ export const StickiesList = observer((props: TProps) => {
     <div className="transition-opacity duration-300 ease-in-out">
       {/* @ts-expect-error type mismatch here */}
       <Masonry elementType="div">
-        {workspaceStickies.map((stickyId, index) => {
+        {workspaceStickyIds.map((stickyId, index) => {
           const { isInFirstRow, isInLastRow } = getRowPositions(index);
           return (
             <StickyDNDWrapper
@@ -104,7 +116,7 @@ export const StickiesList = observer((props: TProps) => {
               workspaceSlug={workspaceSlug.toString()}
               itemWidth={itemWidth}
               handleDrop={handleDrop}
-              isLastChild={index === workspaceStickies.length - 1}
+              isLastChild={index === workspaceStickyIds.length - 1}
               isInFirstRow={isInFirstRow}
               isInLastRow={isInLastRow}
             />
@@ -117,7 +129,9 @@ export const StickiesList = observer((props: TProps) => {
 });
 
 export const StickiesLayout = (props: TStickiesLayout) => {
+  // states
   const [containerWidth, setContainerWidth] = useState<number | null>(null);
+  // refs
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -144,8 +158,8 @@ export const StickiesLayout = (props: TStickiesLayout) => {
     if (width < 1280) return 5; // xl
     return 6; // 2xl and above
   };
-
   const columnCount = getColumnCount(containerWidth);
+
   return (
     <div ref={ref} className="size-full min-h-[500px]">
       <StickiesList {...props} columnCount={columnCount} />

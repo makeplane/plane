@@ -8,7 +8,7 @@ import { StickiesInfinite } from "@/components/stickies";
 const WorkspaceStickiesPage = () => {
   // router
   const { workspaceSlug: routeWorkspaceSlug } = useParams();
-  const pageTitle = "My stickies";
+  const pageTitle = "Your stickies";
 
   // derived values
   const workspaceSlug = (routeWorkspaceSlug as string) || undefined;
