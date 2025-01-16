@@ -11,19 +11,23 @@ import { BlockItemAction } from "@/components/pages/list";
 import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { TUsePage } from "@/store/pages/base-page";
+// plane web hooks
+import { EPageStoreType, usePage } from "@/plane-web/hooks/store";
 
 type TPageListBlock = {
   pageId: string;
-  usePage: TUsePage;
+  storeType: EPageStoreType;
 };
 
 export const PageListBlock: FC<TPageListBlock> = observer((props) => {
-  const { pageId, usePage } = props;
+  const { pageId, storeType } = props;
   // refs
   const parentRef = useRef(null);
   // hooks
-  const page = usePage(pageId);
+  const page = usePage({
+    pageId,
+    storeType,
+  });
   const { isMobile } = usePlatformOS();
   // derived values
   const { name, logo_props, getRedirectionLink } = page;
@@ -41,7 +45,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
       }
       title={getPageName(name)}
       itemLink={getRedirectionLink()}
-      actionableItems={<BlockItemAction page={page} parentRef={parentRef} />}
+      actionableItems={<BlockItemAction page={page} parentRef={parentRef} storeType={storeType} />}
       isMobile={isMobile}
       parentRef={parentRef}
     />

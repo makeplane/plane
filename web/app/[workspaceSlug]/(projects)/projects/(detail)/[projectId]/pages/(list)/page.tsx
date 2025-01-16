@@ -12,6 +12,8 @@ import { PagesListRoot, PagesListView } from "@/components/pages";
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useProject } from "@/hooks/store";
+// plane web hooks
+import { EPageStoreType } from "@/plane-web/hooks/store";
 
 const ProjectPagesPage = observer(() => {
   // router
@@ -51,7 +53,7 @@ const ProjectPagesPage = observer(() => {
         projectId={projectId.toString()}
         pageType={currentPageType()}
       >
-        <PagesListRoot pageType={currentPageType()} />
+        <PagesListRoot pageType={currentPageType()} storeType={EPageStoreType.PROJECT} />
       </PagesListView>
     </>
   );
