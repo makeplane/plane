@@ -1,46 +1,52 @@
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
+// hooks
 import { useSticky } from "@/hooks/use-stickies";
-import { STICKY_COLORS } from "../editor/sticky-editor/color-pallete";
+import { StickiesTruncated } from "./layout";
 import { StickySearch } from "./modal/search";
-import { StickiesLayout } from "./stickies-layout";
 import { useStickyOperations } from "./sticky/use-operations";
 
-export const StickiesWidget = () => {
+export const StickiesWidget: React.FC = observer(() => {
+  // params
   const { workspaceSlug } = useParams();
+  // store hooks
   const { creatingSticky, toggleShowNewSticky } = useSticky();
-  const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
+  // sticky operations
+  const { stickyOperations } = useStickyOperations({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
+
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <div className="text-base font-semibold text-custom-text-350">My Stickies </div>
+        <div className="text-base font-semibold text-custom-text-350">Your stickies</div>
         {/* actions */}
         <div className="flex gap-2">
           <StickySearch />
           <button
             onClick={() => {
               toggleShowNewSticky(true);
-              stickyOperations.create({ color: STICKY_COLORS[0] });
+              stickyOperations.create();
             }}
             className="flex gap-1 text-sm font-medium text-custom-primary-100 my-auto"
             disabled={creatingSticky}
           >
-            <Plus className="size-4 my-auto" /> <span>Add sticky</span>
+            <Plus className="size-4 my-auto" />
+            <span>Add sticky</span>
             {creatingSticky && (
-              <div className="flex items-center justify-center ml-2">
-                <div
-                  className={`w-4 h-4 border-2 border-t-transparent rounded-full animate-spin border-custom-primary-100`}
-                  role="status"
-                  aria-label="loading"
-                />
-              </div>
+              <div
+                className="size-4 border-2 border-t-transparent border-custom-primary-100 rounded-full animate-spin"
+                role="status"
+                aria-label="loading"
+              />
             )}
           </button>
         </div>
       </div>
       <div className="-mx-2">
-        <StickiesLayout />
+        <StickiesTruncated />
       </div>
     </div>
   );
-};
+});

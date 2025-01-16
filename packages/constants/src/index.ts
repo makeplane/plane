@@ -14,6 +14,7 @@ export * from "./swr";
 export * from "./user";
 export * from "./payment";
 export * from "./workspace";
+export * from "./stickies";
 export * from "./feature-flag";
 export * from "./plans";
 export * from "./teams";

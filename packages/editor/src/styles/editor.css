@@ -145,7 +145,7 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   position: relative;
   -webkit-appearance: none;
   appearance: none;
-  background-color: rgb(var(--color-background-100));
+  background-color: transparent;
   margin: 0;
   cursor: pointer;
   width: 0.8rem;

@@ -39,9 +39,9 @@ class WorkspaceStickyViewSet(BaseViewSet):
     )
     def list(self, request, slug):
         query = request.query_params.get("query", False)
-        stickies = self.get_queryset()
+        stickies = self.get_queryset().order_by("-sort_order")
         if query:
-            stickies = stickies.filter(name__icontains=query)
+            stickies = stickies.filter(description_stripped__icontains=query)
 
         return self.paginate(
             request=request,
@@ -49,7 +49,7 @@ class WorkspaceStickyViewSet(BaseViewSet):
             on_results=lambda stickies: StickySerializer(stickies, many=True).data,
             default_per_page=20,
         )
-        
+
     @allow_permission(allowed_roles=[], creator=True, model=Sticky, level="WORKSPACE")
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
