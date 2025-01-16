@@ -73,7 +73,12 @@ export class TranslationStore {
     return this.isValidLanguage(browserLang) ? browserLang : FALLBACK_LANGUAGE;
   }
 
-  /** Gets the IntlMessageFormat instance for the given key and locale */
+  /**
+   * Gets the cache key for the given key and locale
+   * @param key - the key to get the cache key for
+   * @param locale - the locale to get the cache key for
+   * @returns the cache key for the given key and locale
+   */
   private getCacheKey(key: string, locale: TLanguage): string {
     return `${locale}:${key}`;
   }
