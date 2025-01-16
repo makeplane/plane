@@ -7,6 +7,7 @@ interface Props {
   projectId: string;
   workspaceSlug: string;
   transferrableIssuesCount: number;
+  cycleName: string;
 }
 
 export const EndCycleModal: React.FC<Props> = () => <></>;
