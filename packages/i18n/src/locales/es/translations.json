@@ -617,25 +617,45 @@
   "workspace_active_cycles_empty_state_title": "No hay ciclos activos",
   "workspace_active_cycles_empty_state_description": "Ciclos de tus proyectos que incluyen cualquier período que abarque la fecha de hoy dentro de su rango. Encuentra el progreso y los detalles de todos tus ciclos activos aquí.",
 
-  "disabled_project_inbox_empty_state_title": "La entrada no está habilitada para el proyecto.",
-  "disabled_project_inbox_empty_state_description": "La entrada te ayuda a gestionar las solicitudes entrantes a tu proyecto y agregarlas como problemas en tu flujo de trabajo. Habilita la entrada desde la configuración del proyecto para gestionar las solicitudes.",
-  "disabled_project_inbox_empty_state_primary_button_text": "Gestionar funciones",
-
-  "disabled_project_cycle_empty_state_title": "Los ciclos no están habilitados para este proyecto.",
-  "disabled_project_cycle_empty_state_description": "Divide el trabajo en partes temporales, trabaja hacia atrás desde la fecha límite del proyecto para establecer fechas y realiza avances tangibles como equipo. Habilita la función de ciclos para tu proyecto para comenzar a usarlos.",
-  "disabled_project_cycle_empty_state_primary_button_text": "Gestionar características",
-
-  "disabled_project_module_empty_state_title": "Los módulos no están habilitados para el proyecto.",
-  "disabled_project_module_empty_state_description": "Un grupo de problemas que pertenecen a un padre lógico y jerárquico forma un módulo. Piénsalo como una forma de realizar un seguimiento del trabajo por los hitos del proyecto. Habilita los módulos desde la configuración del proyecto.",
-  "disabled_project_module_empty_state_primary_button_text": "Gestionar características",
-
-  "disabled_project_page_empty_state_title": "Las páginas no están habilitadas para el proyecto.",
-  "disabled_project_page_empty_state_description": "Las páginas son espacios de anotación en Plane. Toma notas de reuniones, formatearlas fácilmente, incrustar problemas, organizarlas utilizando una biblioteca de componentes y mantenerlas dentro del contexto de tu proyecto. Habilita la función de páginas para empezar a crearlas en tu proyecto.",
-  "disabled_project_page_empty_state_primary_button_text": "Gestionar características",
-
-  "disabled_project_view_empty_state_title": "Las vistas no están habilitadas para este proyecto.",
-  "disabled_project_view_empty_state_description": "Las vistas son un conjunto de filtros guardados que usas con frecuencia o que deseas tener acceso fácilmente. Todos tus compañeros de proyecto pueden ver las vistas de todos y elegir la que mejor se adapte a sus necesidades. Habilita las vistas en la configuración del proyecto para comenzar a usarlas.",
-  "disabled_project_view_empty_state_primary_button_text": "Gestionar características",
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "La entrada no está habilitada para el proyecto.",
+        "description": "La entrada te ayuda a gestionar las solicitudes entrantes para tu proyecto y agregarlas como problemas en tu flujo de trabajo. Habilita la entrada desde la configuración del proyecto para gestionar solicitudes.",
+        "primary_button": {
+          "text": "Gestionar funciones"
+        }
+      },
+      "cycle": {
+        "title": "Los ciclos no están habilitados para este proyecto.",
+        "description": "Divide el trabajo en bloques de tiempo, trabaja hacia atrás desde la fecha límite de tu proyecto para establecer fechas y logra avances tangibles como equipo. Habilita la función de ciclos para tu proyecto para comenzar a usarlos.",
+        "primary_button": {
+          "text": "Gestionar funciones"
+        }
+      },
+      "module": {
+        "title": "Los módulos no están habilitados para el proyecto.",
+        "description": "Los módulos son los bloques de construcción de tu proyecto. Habilita módulos desde la configuración del proyecto para comenzar a usarlos.",
+        "primary_button": {
+          "text": "Gestionar funciones"
+        }
+      },
+      "page": {
+        "title": "Las páginas no están habilitadas para el proyecto.",
+        "description": "Las páginas son los bloques de construcción de tu proyecto. Habilita páginas desde la configuración del proyecto para comenzar a usarlas.",
+        "primary_button": {
+          "text": "Gestionar funciones"
+        }
+      },
+      "view": {
+        "title": "Las vistas no están habilitadas para el proyecto.",
+        "description": "Las vistas son los bloques de construcción de tu proyecto. Habilita vistas desde la configuración del proyecto para comenzar a usarlas.",
+        "primary_button": {
+          "text": "Gestionar funciones"
+        }
+      }
+    }
+  },
 
   "inbox": {
     "name": "Bandeja de entrada",

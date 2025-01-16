@@ -615,25 +615,45 @@
   "workspace_active_cycles_empty_state_title": "No active cycles",
   "workspace_active_cycles_empty_state_description": "Cycles of your projects that includes any period that encompasses today's date within its range. Find the progress and details of all your active cycle here.",
 
-  "disabled_project_inbox_empty_state_title": "Intake is not enabled for the project.",
-  "disabled_project_inbox_empty_state_description": "Intake helps you manage incoming requests to your project and add them as issues in your workflow. Enable intake from project settings to manage requests.",
-  "disabled_project_inbox_empty_state_primary_button_text": "Manage features",
-
-  "disabled_project_cycle_empty_state_title": "Cycles is not enabled for this project.",
-  "disabled_project_cycle_empty_state_description": "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team. Enable the cycles feature for your project to start using them.",
-  "disabled_project_cycle_empty_state_primary_button_text": "Manage features",
-
-  "disabled_project_module_empty_state_title": "Modules are not enabled for the project.",
-  "disabled_project_module_empty_state_description": "A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. Enable modules from project settings.",
-  "disabled_project_module_empty_state_primary_button_text": "Manage features",
-
-  "disabled_project_page_empty_state_title": "Pages are not enabled for the project.",
-  "disabled_project_page_empty_state_description": "Pages are thought spotting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project's context. Enable the pages feature to start creating them in your project.",
-  "disabled_project_page_empty_state_primary_button_text": "Manage features",
-
-  "disabled_project_view_empty_state_title": "Views is not enabled for this project.",
-  "disabled_project_view_empty_state_description": "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone's views and choose whichever suits their needs best. Enable views in the project settings to start using them.",
-  "disabled_project_view_empty_state_primary_button_text": "Manage features",
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "Intake is not enabled for the project.",
+        "description": "Intake helps you manage incoming requests to your project and add them as issues in your workflow. Enable intake from project settings to manage requests.",
+        "primary_button": {
+          "text": "Manage features"
+        }
+      },
+      "cycle": {
+        "title": "Cycles is not enabled for this project.",
+        "description": "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team. Enable the cycles feature for your project to start using them.",
+        "primary_button": {
+          "text": "Manage features"
+        }
+      },
+      "module": {
+        "title": "Modules are not enabled for the project.",
+        "description": "Modules are the building blocks of your project. Enable modules from project settings to start using them.",
+        "primary_button": {
+          "text": "Manage features"
+        }
+      },
+      "page": {
+        "title": "Pages are not enabled for the project.",
+        "description": "Pages are the building blocks of your project. Enable pages from project settings to start using them.",
+        "primary_button": {
+          "text": "Manage features"
+        }
+      },
+      "view": {
+        "title": "Views are not enabled for the project.",
+        "description": "Views are the building blocks of your project. Enable views from project settings to start using them.",
+        "primary_button": {
+          "text": "Manage features"
+        }
+      }
+    }
+  },
 
   "inbox": {
     "name": "Inbox",

@@ -618,25 +618,45 @@
   "workspace_active_cycles_empty_state_title": "アクティブなサイクルはありません",
   "workspace_active_cycles_empty_state_description": "現在の日付を範囲に含むプロジェクトのサイクルです。すべてのアクティブなサイクルの進捗と詳細をここで確認してください。",
 
-  "disabled_project_inbox_empty_state_title": "このプロジェクトではインテークが有効になっていません。",
-  "disabled_project_inbox_empty_state_description": "インテークは、プロジェクトへのリクエストを管理し、それらをワークフロー内の課題として追加するのに役立ちます。プロジェクト設定からインテークを有効にしてリクエストを管理してください。",
-  "disabled_project_inbox_empty_state_primary_button_text": "機能を管理",
-
-  "disabled_project_cycle_empty_state_title": "このプロジェクトではサイクルが有効になっていません。",
-  "disabled_project_cycle_empty_state_description": "作業を時間枠で区切り、プロジェクトの期限から逆算して日付を設定し、チームとして具体的な進捗を遂げます。サイクル機能をプロジェクトで有効にして使用を開始してください。",
-  "disabled_project_cycle_empty_state_primary_button_text": "機能を管理",
-
-  "disabled_project_module_empty_state_title": "このプロジェクトではモジュールが有効になっていません。",
-  "disabled_project_module_empty_state_description": "論理的かつ階層的な親に属する課題のグループがモジュールを形成します。それらは、プロジェクトのマイルストーンごとに作業を追跡する方法として考えられます。プロジェクト設定からモジュールを有効にしてください。",
-  "disabled_project_module_empty_state_primary_button_text": "機能を管理",
-
-  "disabled_project_page_empty_state_title": "このプロジェクトではページが有効になっていません。",
-  "disabled_project_page_empty_state_description": "ページはPlaneのノート取り用スペースです。会議のメモを取り、簡単にフォーマットし、課題を埋め込み、コンポーネントのライブラリを使ってレイアウトし、プロジェクトの文脈内でそれらを保管します。ページ機能を有効にしてプロジェクト内で作成を開始してください。",
-  "disabled_project_page_empty_state_primary_button_text": "機能を管理",
-
-  "disabled_project_view_empty_state_title": "このプロジェクトではビューが有効になっていません。",
-  "disabled_project_view_empty_state_description": "ビューは頻繁に使用するフィルターのセットで、簡単にアクセスできるようにしたいものです。プロジェクト内のすべての同僚は、他の人のビューを見て、ニーズに合ったものを選択できます。プロジェクト設定からビューを有効にして、使用を開始してください。",
-  "disabled_project_view_empty_state_primary_button_text": "機能を管理",
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "プロジェクトにインテークが有効化されていません。",
+        "description": "インテークは、プロジェクトへのリクエストを管理し、それらをワークフローの課題として追加するのに役立ちます。プロジェクト設定からインテークを有効化してリクエストを管理してください。",
+        "primary_button": {
+          "text": "機能を管理"
+        }
+      },
+      "cycle": {
+        "title": "このプロジェクトでサイクルが有効化されていません。",
+        "description": "作業をタイムボックス化されたチャンクに分割し、プロジェクトの期限から逆算して日程を設定し、チームとして具体的な進捗を実現します。プロジェクトでサイクル機能を有効化して利用を開始してください。",
+        "primary_button": {
+          "text": "機能を管理"
+        }
+      },
+      "module": {
+        "title": "プロジェクトにモジュールが有効化されていません。",
+        "description": "モジュールはプロジェクトの構成要素です。プロジェクト設定からモジュールを有効化して利用を開始してください。",
+        "primary_button": {
+          "text": "機能を管理"
+        }
+      },
+      "page": {
+        "title": "プロジェクトにページが有効化されていません。",
+        "description": "ページはプロジェクトの構成要素です。プロジェクト設定からページを有効化して利用を開始してください。",
+        "primary_button": {
+          "text": "機能を管理"
+        }
+      },
+      "view": {
+        "title": "プロジェクトにビューが有効化されていません。",
+        "description": "ビューはプロジェクトの構成要素です。プロジェクト設定からビューを有効化して利用を開始してください。",
+        "primary_button": {
+          "text": "機能を管理"
+        }
+      }
+    }
+  },
 
   "inbox": {
     "name": "受信トレイ",
