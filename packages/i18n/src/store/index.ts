@@ -64,13 +64,41 @@ export class TranslationStore {
 
   /** Checks if the language is valid based on the supported languages */
   private isValidLanguage(lang: string | null): lang is TLanguage {
-    return lang !== null && SUPPORTED_LANGUAGES.some((l) => l.value === lang);
+    return lang !== null && this.availableLanguages.some((l) => l.value === lang);
+  }
+
+  /** Checks if a language code is similar to any supported language */
+  private findSimilarLanguage(lang: string): TLanguage | null {
+    // Convert to lowercase for case-insensitive comparison
+    const normalizedLang = lang.toLowerCase();
+
+    // Find a supported language that includes or is included in the browser language
+    const similarLang = this.availableLanguages.find(
+      (l) => normalizedLang.includes(l.value.toLowerCase()) || l.value.toLowerCase().includes(normalizedLang)
+    );
+
+    return similarLang ? similarLang.value : null;
   }
 
   /** Gets the browser language based on the navigator.language */
   private getBrowserLanguage(): TLanguage {
-    const browserLang = navigator.language.split("-")[0];
-    return this.isValidLanguage(browserLang) ? browserLang : FALLBACK_LANGUAGE;
+    const browserLang = navigator.language;
+
+    // Check exact match first
+    if (this.isValidLanguage(browserLang)) {
+      return browserLang;
+    }
+
+    // Check base language without region code
+    const baseLang = browserLang.split("-")[0];
+    if (this.isValidLanguage(baseLang)) {
+      return baseLang as TLanguage;
+    }
+
+    // Try to find a similar language
+    const similarLang = this.findSimilarLanguage(browserLang) || this.findSimilarLanguage(baseLang);
+
+    return similarLang || FALLBACK_LANGUAGE;
   }
 
   /**
@@ -151,10 +179,14 @@ export class TranslationStore {
         throw new Error(`Invalid language: ${lng}`);
       }
 
-      localStorage.setItem(STORAGE_KEY, lng);
+      if (typeof window !== "undefined") {
+        localStorage.setItem(STORAGE_KEY, lng);
+      }
       this.currentLocale = lng;
       this.messageCache.clear(); // Clear cache when language changes
-      document.documentElement.lang = lng;
+      if (typeof window !== "undefined") {
+        document.documentElement.lang = lng;
+      }
     } catch (error) {
       console.error("Failed to set language:", error);
     }
