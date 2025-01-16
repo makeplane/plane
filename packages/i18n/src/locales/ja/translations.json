@@ -38,7 +38,6 @@
   "deactivate_account_description": "アカウントを無効化すると、そのアカウント内のすべてのデータとリソースが完全に削除され、復元することはできません。",
   "profile_settings": "プロフィール設定",
   "your_account": "アカウント",
-  "profile": "プロフィール",
   "security": "セキュリティ",
   "activity": "アクティビティ",
   "appearance": "アピアンス",
@@ -154,7 +153,6 @@
   "stay_ahead_of_blockers_description": "プロジェクト間の課題を見つけ、他のビューからは明らかでないサイクル間の依存関係を確認します。",
   "analytics": "分析",
   "workspace_invites": "ワークスペースの招待",
-  "workspace_settings": "ワークスペース設定",
   "enter_god_mode": "ゴッドモードに入る",
   "workspace_logo": "ワークスペースロゴ",
   "new_issue": "新しい問題",
@@ -318,103 +316,204 @@
   "loading_members": "メンバーを読み込んでいます...",
   "inbox": "受信箱",
 
-  "workspace_dashboard_empty_state_title": "プロジェクト、アクティビティ、メトリクスの概要",
-  "workspace_dashboard_empty_state_description": "Planeへようこそ。最初のプロジェクトを作成し、課題を追跡すると、このページが進捗を助けるスペースに変わります。管理者はチームの進捗を助ける項目も表示されます。",
-  "workspace_dashboard_empty_state_primary_button_text": "最初のプロジェクトを作成する",
-  "workspace_dashboard_empty_state_primary_button_comic_title": "Planeではすべてがプロジェクトから始まります",
-  "workspace_dashboard_empty_state_primary_button_comic_description": "プロジェクトは、製品のロードマップ、マーケティングキャンペーン、または新車の発売などです。",
+  "workspace_dashboard": {
+    "empty_state": {
+      "title": "プロジェクト、アクティビティ、指標の概要",
+      "description": "Planeへようこそ！私たちはあなたを迎えることができて嬉しいです。最初のプロジェクトを作成してタスクを追跡し、このページが進捗を助けるスペースに変わります。管理者は、チームを前進させるための要素も見ることができます。",
+      "primary_button": {
+        "text": "最初のプロジェクトを作成",
+        "comic": {
+          "title": "すべてはPlaneでのプロジェクトから始まります",
+          "description": "プロジェクトは製品ロードマップ、マーケティングキャンペーン、新車の発売など、さまざまなものになります。"
+        }
+      }
+    }
+  },
 
-  "workspace_analytics_empty_state_title": "進捗、作業負荷、割り当てを追跡する。傾向を見つけ、障害を取り除き、作業を迅速化する",
-  "workspace_analytics_empty_state_description": "スコープと需要、見積もり、スコープの増加を確認します。チームメンバーやチームごとのパフォーマンスを把握し、プロジェクトを予定通り進行させます。",
-  "workspace_analytics_empty_state_primary_button_text": "最初のプロジェクトを開始する",
-  "workspace_analytics_empty_state_primary_button_comic_title": "サイクル＋モジュールで分析が最適化されます",
-  "workspace_analytics_empty_state_primary_button_comic_description": "最初に課題をサイクルにタイムボックス化し、可能であればサイクルを超える課題をモジュールにグループ化します。左のナビで両方をチェックしてください。",
+  "workspace_analytics": {
+    "empty_state": {
+      "title": "進捗、作業負荷、割り当てを追跡します。傾向を見つけ、障害を取り除き、作業を加速させます",
+      "description": "需要に対するスコープ、見積もり、目標の進展を視覚化します。メンバーやチームごとのパフォーマンスを確認し、プロジェクトが期限内に進むことを確認します。",
+      "primary_button": {
+        "text": "最初のプロジェクトを開始",
+        "comic": {
+          "title": "分析はサイクル＋モジュールでより効果的に機能します",
+          "description": "まず、タスクをサイクルにフレーム化し、可能であれば複数のサイクルにまたがるタスクをモジュールにグループ化します。左側のナビゲーションで確認してください。"
+        }
+      }
+    }
+  },
 
-  "workspace_projects_empty_state_title": "アクティブなプロジェクトがありません",
-  "workspace_projects_empty_state_description": "各プロジェクトを目標指向の作業の親として考えてください。プロジェクトは、ジョブ、サイクル、モジュールが存在し、同僚と一緒にその目標を達成するのに役立ちます。新しいプロジェクトを作成するか、アーカイブされたプロジェクトをフィルタリングしてください。",
-  "workspace_projects_empty_state_primary_button_text": "最初のプロジェクトを開始する",
-  "workspace_projects_empty_state_primary_button_comic_title": "Planeではすべてがプロジェクトから始まります",
-  "workspace_projects_empty_state_primary_button_comic_description": "プロジェクトは、製品のロードマップ、マーケティングキャンペーン、または新車の発売などです。",
+  "workspace_projects": {
+    "empty_state": {
+      "general": {
+        "title": "アクティブなプロジェクトがありません",
+        "description": "各プロジェクトは目標志向の作業の親と見なされます。プロジェクトはタスク、サイクル、モジュールが存在する場所であり、同僚とともに目標を達成するのに役立ちます。新しいプロジェクトを作成するか、アーカイブされたプロジェクトをフィルタリングしてください。",
+        "primary_button": {
+          "text": "最初のプロジェクトを開始",
+          "comic": {
+            "title": "すべてはPlaneでのプロジェクトから始まります",
+            "description": "プロジェクトは製品ロードマップ、マーケティングキャンペーン、新車の発売など、さまざまなものになります。"
+          }
+        }
+      },
+      "not_found": {
+        "title": "一致するプロジェクトがありません",
+        "description": "タスクを作成したり作業を管理するには、プロジェクトを作成するか、その一部である必要があります。",
+        "primary_button": {
+          "text": "プロジェクトを作成",
+          "comic": {
+            "title": "すべてはPlaneでのプロジェクトから始まります",
+            "description": "プロジェクトは製品ロードマップ、マーケティングキャンペーン、新車の発売など、さまざまなものになります。"
+          }
+        }
+      },
+      "no_projects": {
+        "title": "プロジェクトがありません",
+        "description": "タスクを作成したり作業を管理するには、プロジェクトを作成するか、その一部である必要があります。",
+        "primary_button": {
+          "text": "最初のプロジェクトを開始",
+          "comic": {
+            "title": "すべてはPlaneでのプロジェクトから始まります",
+            "description": "プロジェクトは製品ロードマップ、マーケティングキャンペーン、新車の発売など、さまざまなものになります。"
+          }
+        }
+      }
+    }
+  },
 
-  "workspace_all_issues_empty_state_title": "プロジェクトに課題がありません",
-  "workspace_all_issues_empty_state_description": "最初のプロジェクト完了！今度は作業を追跡可能な部分に分割して課題を作成しましょう。",
-  "workspace_all_issues_empty_state_primary_button_text": "新しい課題を作成する",
+  "workspace_issues": {
+    "empty_state": {
+      "all_issues": {
+        "title": "プロジェクトにタスクがありません",
+        "description": "最初のプロジェクトが完了しました！次に、追跡可能なチャンクに分割してタスクを作成します。始めましょう！",
+        "primary_button": {
+          "text": "新しいタスクを作成"
+        }
+      },
+      "assigned": {
+        "title": "割り当てられたタスクがありません",
+        "description": "割り当てられたタスクをここで追跡できます。",
+        "primary_button": {
+          "text": "新しいタスクを作成"
+        }
+      },
+      "created": {
+        "title": "作成されたタスクがありません",
+        "description": "作成したすべてのタスクはここにあります。直接ここで追跡してください。",
+        "primary_button": {
+          "text": "新しいタスクを作成"
+        }
+      },
+      "subscribed": {
+        "title": "フォローしているタスクがありません",
+        "description": "興味のあるタスクをフォローして、すべてここで追跡してください。"
+      },
+      "custom_view": {
+        "title": "タスクが見つかりません",
+        "description": "フィルタに一致するタスクがここに表示されます。すべてここで追跡してください。"
+      }
+    }
+  },
 
-  "workspace_assigned_empty_state_title": "まだ課題がありません",
-  "workspace_assigned_empty_state_description": "あなたに割り当てられた課題をここから追跡できます。",
-  "workspace_assigned_empty_state_primary_button_text": "新しい課題を作成する",
+  "workspace_settings": {
+    "name": "ワークスペース設定",
+    "empty_state": {
+      "api_tokens": {
+        "title": "APIトークンが作成されていません",
+        "description": "Plane APIは、外部システムでPlaneデータを統合するために使用できます。トークンを作成して始めましょう。"
+      },
+      "webhooks": {
+        "title": "Webhookが追加されていません",
+        "description": "リアルタイム更新を受け取り、アクションを自動化するためにWebhookを作成します。"
+      },
+      "exports": {
+        "title": "エクスポートはまだありません",
+        "description": "エクスポートするたびに、コピーがここにも参照用として利用可能になります。"
+      },
+      "imports": {
+        "title": "インポートはまだありません",
+        "description": "過去のインポート履歴をすべてここで確認し、ダウンロードできます。"
+      }
+    }
+  },
 
-  "workspace_created_empty_state_title": "まだ課題がありません",
-  "workspace_created_empty_state_description": "あなたが作成したすべての課題がここに集まります。ここで直接追跡してください。",
-  "workspace_created_empty_state_primary_button_text": "新しい課題を作成する",
+  "profile": {
+    "name": "プロフィール",
+    "empty_state": {
+      "activity": {
+        "title": "まだアクティビティがありません",
+        "description": "新しいタスクを作成することから始めましょう！詳細やプロパティを追加してください。Planeをさらに探索して、アクティビティを確認してください。"
+      },
+      "assigned": {
+        "title": "割り当てられたタスクがありません",
+        "description": "割り当てられたタスクをここで追跡できます。"
+      },
+      "created": {
+        "title": "作成されたタスクがありません",
+        "description": "作成したすべてのタスクはここにあります。直接ここで追跡してください。"
+      },
+      "subscribed": {
+        "title": "フォローしているタスクがありません",
+        "description": "興味のあるタスクをフォローして、すべてここで追跡してください。"
+      }
+    }
+  },
 
-  "workspace_subscribed_empty_state_title": "まだ課題がありません",
-  "workspace_subscribed_empty_state_description": "興味のある課題を購読し、すべてをここで追跡してください。",
+  "project_settings": {
+    "empty_state": {
+      "labels": {
+        "title": "ラベルがありません",
+        "description": "ラベルを作成して、プロジェクトのタスクを整理し、フィルタリングします。"
+      },
+      "integerations": {
+        "title": "設定済みの統合がありません",
+        "description": "GitHubやその他の統合を設定して、プロジェクトのタスクを同期します。"
+      },
+      "estimates": {
+        "title": "見積もりが追加されていません",
+        "description": "タスクごとの作業量を伝えるために、見積もりセットを作成します。"
+      }
+    }
+  },
 
-  "workspace_custom_view_empty_state_title": "まだ課題がありません",
-  "workspace_custom_view_empty_state_description": "フィルターに適用された課題を追跡し、すべてをここで確認してください。",
-
-  "workspace_project_not_found_empty_state_title": "そのようなプロジェクトは存在しません",
-  "workspace_project_not_found_empty_state_description": "課題を作成したり作業を管理したりするには、プロジェクトを作成するか、その一部になる必要があります。",
-  "workspace_project_not_found_empty_state_primary_button_text": "プロジェクトを作成する",
-  "workspace_project_not_found_empty_state_primary_button_comic_title": "Planeではすべてがプロジェクトから始まります",
-  "workspace_project_not_found_empty_state_primary_button_comic_description": "プロジェクトは、製品のロードマップ、マーケティングキャンペーン、または新車の発売などです。",
-
-  "workspace_no_projects_empty_state_title": "プロジェクトがありません",
-  "workspace_no_projects_empty_state_description": "課題を作成したり作業を管理したりするには、プロジェクトを作成するか、その一部になる必要があります。",
-  "workspace_no_projects_empty_state_primary_button_text": "最初のプロジェクトを開始する",
-  "workspace_no_projects_empty_state_primary_button_comic_title": "Planeではすべてがプロジェクトから始まります",
-  "workspace_no_projects_empty_state_primary_button_comic_description": "プロジェクトは、製品のロードマップ、マーケティングキャンペーン、または新車の発売などです。",
-
-  "workspace_settings_api_tokens_empty_state_title": "APIトークンが作成されていません",
-  "workspace_settings_api_tokens_empty_state_description": "Plane APIを使用して、Plane内のデータを外部システムと統合できます。トークンを作成して開始してください。",
-
-  "workspace_settings_webhooks_empty_state_title": "Webhookが追加されていません",
-  "workspace_settings_webhooks_empty_state_description": "リアルタイム更新を受け取ったりアクションを自動化したりするためにWebhookを作成してください。",
-
-  "workspace_settings_export_empty_state_title": "過去のエクスポートがありません",
-  "workspace_settings_export_empty_state_description": "エクスポートするたびに、ここにコピーが保存されます。",
-
-  "workspace_settings_import_empty_state_title": "過去のインポートがありません",
-  "workspace_settings_import_empty_state_description": "過去のインポートをすべてここで確認し、ダウンロードできます。",
-
-  "profile_activity_empty_state_title": "まだアクティビティがありません",
-  "profile_activity_empty_state_description": "新しい課題を作成して始めてください！詳細とプロパティを追加します。Planeの他の機能を探索して、アクティビティを確認してください。",
-
-  "profile_assigned_empty_state_title": "あなたに割り当てられた課題がありません",
-  "profile_assigned_empty_state_description": "あなたに割り当てられた課題をここから追跡できます。",
-
-  "profile_created_empty_state_title": "まだ課題がありません",
-  "profile_created_empty_state_description": "あなたが作成したすべての課題がここに集まります。ここで直接追跡してください。",
-
-  "profile_subscribed_empty_state_title": "まだ課題がありません",
-  "profile_subscribed_empty_state_description": "興味のある課題を購読し、すべてをここで追跡してください。",
-
-  "project_settings_labels_empty_state_title": "ラベルがまだありません",
-  "project_settings_labels_empty_state_description": "課題を整理してプロジェクト内でフィルタリングするためのラベルを作成してください。",
-
-  "project_settings_integrations_empty_state_title": "統合が設定されていません",
-  "project_settings_integrations_empty_state_description": "GitHubや他の統合を設定して、プロジェクトの課題を同期してください。",
-
-  "project_settings_estimate_empty_state_title": "見積もりがまだ追加されていません",
-  "project_settings_estimate_empty_state_description": "課題ごとの作業量を伝えるための見積もりを作成してください。",
-
-  "project_cycles_empty_state_title": "サイクルで作業をグループ化してタイムボックス化する。",
-  "project_cycles_empty_state_description": "作業をタイムボックス化されたチャンクに分解し、プロジェクトの締め切りから逆算して日付を設定し、チームとして具体的な進捗を達成します。",
-  "project_cycles_empty_state_primary_button_text": "最初のサイクルを設定する",
-  "project_cycles_empty_state_primary_button_comic_title": "サイクルは反復的なタイムボックスです。",
-  "project_cycles_empty_state_primary_button_comic_description": "スプリント、イテレーション、または週次や隔週での作業追跡に使用する他の用語がサイクルです。",
-
-  "project_cycle_no_issues_empty_state_title": "サイクルに課題が追加されていません",
-  "project_cycle_no_issues_empty_state_description": "タイムボックス化してこのサイクル内で達成したい課題を追加または作成してください",
-  "project_cycle_no_issues_empty_state_primary_button_text": "新しい課題を作成する",
-  "project_cycle_no_issues_empty_state_secondary_button_text": "既存の課題を追加する",
-
-  "project_cycle_active_empty_state_title": "アクティブなサイクルはありません",
-  "project_cycle_active_empty_state_description": "アクティブなサイクルには、現在の日付が含まれる期間が含まれます。ここでアクティブなサイクルの進捗や詳細を確認できます。",
-
-  "project_cycle_completed_no_issues_empty_state_title": "サイクルに課題がありません",
-  "project_cycle_completed_no_issues_empty_state_description": "サイクルに課題はありません。課題は移動されたか、非表示になっています。非表示の課題を確認するには、表示プロパティを更新してください。",
+  "project_cycles": {
+    "empty_state": {
+      "general": {
+        "title": "作業をサイクルにまとめ、フレーム化します。",
+        "description": "作業を定義された期間に分割し、期限から逆算して締め切りを設定し、チームで具体的な進捗を達成します。",
+        "primary_button": {
+          "text": "最初のサイクルを設定",
+          "comic": {
+            "title": "サイクルは繰り返し期間です。",
+            "description": "スプリント、イテレーション、または週次・隔週の作業追跡に使用するその他の用語がサイクルです。"
+          }
+        }
+      },
+      "all": {
+        "title": "サイクルがありません",
+        "description": "アクティブなサイクルは、今日の日付を範囲内に含む期間を指します。アクティブなサイクルの進捗と詳細をここで確認してください。"
+      },
+      "no_issues": {
+        "title": "サイクルに追加されたタスクがありません",
+        "description": "このサイクル内でタイムフレーム化し、配信したいタスクを追加または作成してください。",
+        "primary_button": {
+          "text": "新しいタスクを作成"
+        },
+        "secondary_button": {
+          "text": "既存のタスクを追加"
+        }
+      },
+      "active": {
+        "title": "アクティブなサイクルがありません",
+        "description": "アクティブなサイクルは、今日の日付を範囲内に含む期間を指します。アクティブなサイクルの進捗と詳細をここで確認してください。"
+      },
+      "completed": {
+        "title": "サイクルにタスクがありません",
+        "description": "サイクルにタスクがありません。タスクは移行されるか、非表示になっています。存在する場合は、表示プロパティを更新して非表示のタスクを確認してください。"
+      }
+    }
+  },
 
   "project_archived_no_cycles_empty_state_title": "まだアーカイブされたサイクルはありません",
   "project_archived_no_cycles_empty_state_description": "プロジェクトを整理するために、完了したサイクルをアーカイブします。一度アーカイブされると、ここに表示されます。",
@@ -551,7 +650,13 @@
 
   "inbox_detail_empty_state_title": "課題を選択してその詳細を表示してください。",
 
-  "workspace_draft_issues_empty_state_title": "未完成の課題、そしてすぐにコメントがここに表示されます。",
-  "workspace_draft_issues_empty_state_description": "これを試すために、課題を追加して途中で中断するか、下に最初のドラフトを作成してください。😉",
-  "workspace_draft_issues_empty_state_primary_button_text": "最初のドラフトを作成"
+  "workspace_draft_issues": {
+    "empty_state": {
+      "title": "書きかけの課題や、もうすぐコメントもここに表示されます。",
+      "description": "これを試すには、課題の作成を始めて途中で中断するか、下に最初の下書きを作成してください。😉",
+      "primary_button": {
+        "text": "最初の下書きを作成"
+      }
+    }
+  }
 }

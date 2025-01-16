@@ -38,7 +38,6 @@
   "deactivate_account_description": "Al desactivar una cuenta, todos los datos y recursos dentro de esa cuenta se eliminarán permanentemente y no se podrán recuperar.",
   "profile_settings": "Configuración de perfil",
   "your_account": "Tu cuenta",
-  "profile": "Perfil",
   "security": "Seguridad",
   "activity": "Actividad",
   "appearance": "Apariencia",
@@ -153,7 +152,6 @@
   "stay_ahead_of_blockers_description": "Detecta desafíos de un proyecto a otro y ve dependencias entre ciclos que no son obvias desde ninguna otra vista.",
   "analytics": "Analítica",
   "workspace_invites": "Invitaciones al espacio de trabajo",
-  "workspace_settings": "Configuración del espacio de trabajo",
   "enter_god_mode": "Entrar en modo dios",
   "workspace_logo": "Logo del espacio de trabajo",
   "new_issue": "Nuevo problema",
@@ -317,103 +315,204 @@
   "loading_members": "Cargando miembros...",
   "inbox": "bandeja de entrada",
 
-  "workspace_dashboard_empty_state_title": "Resumen de tus proyectos, actividad y métricas",
-  "workspace_dashboard_empty_state_description": "Bienvenido a Plane, estamos emocionados de tenerte aquí. Crea tu primer proyecto y realiza un seguimiento de tus problemas, y esta página se transformará en un espacio que te ayuda a progresar. Los administradores también verán elementos que ayudan a su equipo a progresar.",
-  "workspace_dashboard_empty_state_primary_button_text": "Construye tu primer proyecto",
-  "workspace_dashboard_empty_state_primary_button_comic_title": "Todo comienza con un proyecto en Plane",
-  "workspace_dashboard_empty_state_primary_button_comic_description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo automóvil.",
+  "workspace_dashboard": {
+    "empty_state": {
+      "title": "Resumen de tus proyectos, actividad y métricas",
+      "description": "Bienvenido a Plane, estamos emocionados de tenerte aquí. Crea tu primer proyecto y rastrea tus problemas, y esta página se transformará en un espacio que te ayudará a avanzar. Los administradores también verán elementos que ayudan a su equipo a progresar.",
+      "primary_button": {
+        "text": "Construye tu primer proyecto",
+        "comic": {
+          "title": "Todo comienza con un proyecto en Plane",
+          "description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo coche."
+        }
+      }
+    }
+  },
 
-  "workspace_analytics_empty_state_title": "Rastrea el progreso, las cargas de trabajo y las asignaciones. Identifica tendencias, elimina obstáculos y mueve el trabajo más rápido",
-  "workspace_analytics_empty_state_description": "Observa el alcance versus la demanda, las estimaciones y el aumento del alcance. Obtén el rendimiento por miembros del equipo y equipos, y asegúrate de que tu proyecto se ejecute a tiempo.",
-  "workspace_analytics_empty_state_primary_button_text": "Comienza tu primer proyecto",
-  "workspace_analytics_empty_state_primary_button_comic_title": "El análisis funciona mejor con Ciclos + Módulos",
-  "workspace_analytics_empty_state_primary_button_comic_description": "Primero, limita en el tiempo tus problemas en Ciclos y, si puedes, agrupa los problemas que abarcan más de un ciclo en Módulos. Revisa ambos en la navegación izquierda.",
+  "workspace_analytics": {
+    "empty_state": {
+      "title": "Rastrea el progreso, cargas de trabajo y asignaciones. Detecta tendencias, elimina bloqueos y acelera el trabajo",
+      "description": "Consulta el alcance frente a la demanda, estimaciones y desbordamiento del alcance. Obtén el rendimiento por miembros del equipo y equipos, y asegúrate de que tu proyecto termine a tiempo.",
+      "primary_button": {
+        "text": "Comienza tu primer proyecto",
+        "comic": {
+          "title": "La analítica funciona mejor con Ciclos + Módulos",
+          "description": "Primero, organiza tus problemas en ciclos y, si puedes, agrupa problemas que abarquen más de un ciclo en módulos. Consulta ambos en el menú de navegación a la izquierda."
+        }
+      }
+    }
+  },
 
-  "workspace_projects_empty_state_title": "No hay proyectos activos",
-  "workspace_projects_empty_state_description": "Piensa en cada proyecto como el padre del trabajo orientado a objetivos. Los proyectos son donde viven los Trabajos, Ciclos y Módulos y, junto con tus colegas, te ayudan a alcanzar ese objetivo. Crea un nuevo proyecto o filtra proyectos archivados.",
-  "workspace_projects_empty_state_primary_button_text": "Comienza tu primer proyecto",
-  "workspace_projects_empty_state_primary_button_comic_title": "Todo comienza con un proyecto en Plane",
-  "workspace_projects_empty_state_primary_button_comic_description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo automóvil.",
+  "workspace_projects": {
+    "empty_state": {
+      "general": {
+        "title": "No hay proyectos activos",
+        "description": "Piensa en cada proyecto como el contenedor para trabajo orientado a objetivos. Los proyectos son donde viven Trabajos, Ciclos y Módulos y, junto con tus colegas, te ayudan a lograr ese objetivo. Crea un nuevo proyecto o filtra por proyectos archivados.",
+        "primary_button": {
+          "text": "Comienza tu primer proyecto",
+          "comic": {
+            "title": "Todo comienza con un proyecto en Plane",
+            "description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo coche."
+          }
+        }
+      },
+      "not_found": {
+        "title": "No existe tal proyecto",
+        "description": "Para crear problemas o gestionar tu trabajo, necesitas crear un proyecto o ser parte de uno.",
+        "primary_button": {
+          "text": "Crear proyecto",
+          "comic": {
+            "title": "Todo comienza con un proyecto en Plane",
+            "description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo coche."
+          }
+        }
+      },
+      "no_projects": {
+        "title": "Sin proyectos",
+        "description": "Para crear problemas o gestionar tu trabajo, necesitas crear un proyecto o ser parte de uno.",
+        "primary_button": {
+          "text": "Comienza tu primer proyecto",
+          "comic": {
+            "title": "Todo comienza con un proyecto en Plane",
+            "description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo coche."
+          }
+        }
+      }
+    }
+  },
 
-  "workspace_all_issues_empty_state_title": "No hay problemas en el proyecto",
-  "workspace_all_issues_empty_state_description": "¡Primer proyecto completado! Ahora, divide tu trabajo en piezas rastreables con problemas. ¡Vamos!",
-  "workspace_all_issues_empty_state_primary_button_text": "Crear nuevo problema",
+  "workspace_issues": {
+    "empty_state": {
+      "all_issues": {
+        "title": "No hay problemas en el proyecto",
+        "description": "¡Primer proyecto terminado! Ahora, divide tu trabajo en piezas rastreables con problemas. ¡Vamos!",
+        "primary_button": {
+          "text": "Crear nuevo problema"
+        }
+      },
+      "assigned": {
+        "title": "Aún no hay problemas",
+        "description": "Los problemas asignados a ti se pueden rastrear desde aquí.",
+        "primary_button": {
+          "text": "Crear nuevo problema"
+        }
+      },
+      "created": {
+        "title": "Aún no hay problemas",
+        "description": "Todos los problemas creados por ti aparecen aquí. Rastréalos directamente.",
+        "primary_button": {
+          "text": "Crear nuevo problema"
+        }
+      },
+      "subscribed": {
+        "title": "Aún no hay problemas",
+        "description": "Suscríbete a los problemas que te interesan y rastrea todos ellos aquí."
+      },
+      "custom_view": {
+        "title": "Aún no hay problemas",
+        "description": "Los problemas que se aplican a los filtros se rastrean aquí."
+      }
+    }
+  },
 
-  "workspace_assigned_empty_state_title": "No hay problemas aún",
-  "workspace_assigned_empty_state_description": "Los problemas asignados a ti pueden ser rastreados desde aquí.",
-  "workspace_assigned_empty_state_primary_button_text": "Crear nuevo problema",
+  "workspace_settings": {
+    "name": "Configuración del espacio de trabajo",
+    "empty_state": {
+      "api_tokens": {
+        "title": "No se han creado tokens API",
+        "description": "Las APIs de Plane pueden ser usadas para integrar tus datos en Plane con cualquier sistema externo. Crea un token para comenzar."
+      },
+      "webhooks": {
+        "title": "No se han agregado webhooks",
+        "description": "Crea webhooks para recibir actualizaciones en tiempo real y automatizar acciones."
+      },
+      "exports": {
+        "title": "Aún no hay exportaciones",
+        "description": "Cada vez que exportes, también tendrás una copia aquí para referencia."
+      },
+      "imports": {
+        "title": "Aún no hay importaciones",
+        "description": "Encuentra todas tus importaciones previas aquí y descárgalas."
+      }
+    }
+  },
 
-  "workspace_created_empty_state_title": "No hay problemas aún",
-  "workspace_created_empty_state_description": "Todos los problemas creados por ti vienen aquí, rastréalos aquí directamente.",
-  "workspace_created_empty_state_primary_button_text": "Crear nuevo problema",
+  "profile": {
+    "name": "Perfil",
+    "empty_state": {
+      "activity": {
+        "title": "Aún no hay actividades",
+        "description": "¡Comienza creando un nuevo problema! Añade detalles y propiedades a él. Explora más en Plane para ver tu actividad."
+      },
+      "assigned": {
+        "title": "No tienes problemas asignados",
+        "description": "Los problemas asignados a ti se pueden rastrear desde aquí."
+      },
+      "created": {
+        "title": "Aún no hay problemas",
+        "description": "Todos los problemas creados por ti aparecen aquí. Rastréalos directamente."
+      },
+      "subscribed": {
+        "title": "Aún no hay problemas",
+        "description": "Suscríbete a los problemas que te interesan y rastrea todos ellos aquí."
+      }
+    }
+  },
 
-  "workspace_subscribed_empty_state_title": "No hay problemas aún",
-  "workspace_subscribed_empty_state_description": "Suscríbete a problemas que te interesen, rastréalos todos aquí.",
+  "project_settings": {
+    "empty_state": {
+      "labels": {
+        "title": "Aún no hay etiquetas",
+        "description": "Crea etiquetas para ayudar a organizar y filtrar problemas en tu proyecto."
+      },
+      "integerations": {
+        "title": "No se han configurado integraciones",
+        "description": "Configura GitHub y otras integraciones para sincronizar los problemas de tu proyecto."
+      },
+      "estimates": {
+        "title": "Aún no hay estimaciones",
+        "description": "Crea un conjunto de estimaciones para comunicar la cantidad de trabajo por problema."
+      }
+    }
+  },
 
-  "workspace_custom_view_empty_state_title": "No hay problemas aún",
-  "workspace_custom_view_empty_state_description": "Problemas que aplican a los filtros, rastréalos todos aquí.",
-
-  "workspace_project_not_found_empty_state_title": "No existe tal proyecto",
-  "workspace_project_not_found_empty_state_description": "Para crear problemas o gestionar tu trabajo, necesitas crear un proyecto o ser parte de uno.",
-  "workspace_project_not_found_empty_state_primary_button_text": "Crear Proyecto",
-  "workspace_project_not_found_empty_state_primary_button_comic_title": "Todo comienza con un proyecto en Plane",
-  "workspace_project_not_found_empty_state_primary_button_comic_description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo automóvil.",
-
-  "workspace_no_projects_empty_state_title": "No hay proyecto",
-  "workspace_no_projects_empty_state_description": "Para crear problemas o gestionar tu trabajo, necesitas crear un proyecto o ser parte de uno.",
-  "workspace_no_projects_empty_state_primary_button_text": "Comienza tu primer proyecto",
-  "workspace_no_projects_empty_state_primary_button_comic_title": "Todo comienza con un proyecto en Plane",
-  "workspace_no_projects_empty_state_primary_button_comic_description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo automóvil.",
-
-  "workspace_settings_api_tokens_empty_state_title": "No se han creado tokens API",
-  "workspace_settings_api_tokens_empty_state_description": "Las APIs de Plane pueden usarse para integrar tus datos en Plane con cualquier sistema externo. Crea un token para comenzar.",
-
-  "workspace_settings_webhooks_empty_state_title": "No se han añadido webhooks",
-  "workspace_settings_webhooks_empty_state_description": "Crea webhooks para recibir actualizaciones en tiempo real y automatizar acciones.",
-
-  "workspace_settings_export_empty_state_title": "No hay exportaciones previas aún",
-  "workspace_settings_export_empty_state_description": "Cada vez que exportes, también tendrás una copia aquí para referencia.",
-
-  "workspace_settings_import_empty_state_title": "No hay importaciones previas aún",
-  "workspace_settings_import_empty_state_description": "Encuentra todas tus importaciones previas aquí y descárgalas.",
-
-  "profile_activity_empty_state_title": "No hay actividades aún",
-  "profile_activity_empty_state_description": "¡Comienza creando un nuevo problema! Añade detalles y propiedades. Explora más en Plane para ver tu actividad.",
-
-  "profile_assigned_empty_state_title": "No hay problemas asignados a ti",
-  "profile_assigned_empty_state_description": "Los problemas asignados a ti pueden ser rastreados desde aquí.",
-
-  "profile_created_empty_state_title": "No hay problemas aún",
-  "profile_created_empty_state_description": "Todos los problemas creados por ti vienen aquí, rastréalos aquí directamente.",
-
-  "profile_subscribed_empty_state_title": "No hay problemas aún",
-  "profile_subscribed_empty_state_description": "Suscríbete a problemas que te interesen, rastréalos todos aquí.",
-
-  "project_settings_labels_empty_state_title": "No hay etiquetas aún",
-  "project_settings_labels_empty_state_description": "Crea etiquetas para ayudar a organizar y filtrar problemas en tu proyecto.",
-
-  "project_settings_integrations_empty_state_title": "No hay integraciones configuradas",
-  "project_settings_integrations_empty_state_description": "Configura GitHub y otras integraciones para sincronizar los problemas de tu proyecto.",
-
-  "project_settings_estimate_empty_state_title": "No se han añadido estimaciones",
-  "project_settings_estimate_empty_state_description": "Crea un conjunto de estimaciones para comunicar la cantidad de trabajo por problema.",
-
-  "project_cycles_empty_state_title": "Agrupa y limita en el tiempo tu trabajo en Ciclos.",
-  "project_cycles_empty_state_description": "Divide el trabajo en fragmentos limitados en el tiempo, trabaja hacia atrás desde la fecha límite de tu proyecto para establecer fechas y haz progreso tangible como equipo.",
-  "project_cycles_empty_state_primary_button_text": "Establece tu primer ciclo",
-  "project_cycles_empty_state_primary_button_comic_title": "Los Ciclos son cajas de tiempo repetitivas.",
-  "project_cycles_empty_state_primary_button_comic_description": "Un sprint, una iteración, o cualquier otro término que uses para el seguimiento semanal o quincenal del trabajo es un ciclo.",
-
-  "project_cycle_no_issues_empty_state_title": "No se han añadido problemas al ciclo",
-  "project_cycle_no_issues_empty_state_description": "Añade o crea problemas que desees limitar en el tiempo y entregar dentro de este ciclo",
-  "project_cycle_no_issues_empty_state_primary_button_text": "Crear nuevo problema",
-  "project_cycle_no_issues_empty_state_secondary_button_text": "Añadir un problema existente",
-
-  "project_cycle_active_empty_state_title": "No hay ciclo activo",
-  "project_cycle_active_empty_state_description": "Un ciclo activo incluye cualquier período que abarque la fecha de hoy dentro de su rango. Encuentra el progreso y los detalles del ciclo activo aquí.",
-
-  "project_cycle_completed_no_issues_empty_state_title": "No hay problemas en el ciclo",
-  "project_cycle_completed_no_issues_empty_state_description": "No hay problemas en el ciclo. Los problemas están transferidos u ocultos. Para ver problemas ocultos si los hay, actualiza tus propiedades de visualización en consecuencia.",
+  "project_cycles": {
+    "empty_state": {
+      "general": {
+        "title": "Agrupa y organiza tu trabajo en Ciclos.",
+        "description": "Divide el trabajo en partes organizadas por plazos, retrocede desde la fecha límite de tu proyecto para establecer fechas y haz un progreso tangible como equipo.",
+        "primary_button": {
+          "text": "Configura tu primer ciclo",
+          "comic": {
+            "title": "Los ciclos son bloques de tiempo repetitivos.",
+            "description": "Un sprint, una iteración o cualquier otro término que uses para el seguimiento semanal o quincenal del trabajo es un ciclo."
+          }
+        }
+      },
+      "all": {
+        "title": "Sin ciclos",
+        "description": "Un ciclo activo incluye cualquier período que abarque la fecha de hoy dentro de su rango. Encuentra el progreso y los detalles del ciclo activo aquí."
+      },
+      "no_issues": {
+        "title": "No hay problemas añadidos al ciclo",
+        "description": "Añade o crea problemas que desees organizar y entregar dentro de este ciclo",
+        "primary_button": {
+          "text": "Crear nuevo problema"
+        },
+        "secondary_button": {
+          "text": "Añadir problema existente"
+        }
+      },
+      "active": {
+        "title": "Sin ciclo activo",
+        "description": "Un ciclo activo incluye cualquier período que abarque la fecha de hoy dentro de su rango. Encuentra el progreso y los detalles del ciclo activo aquí."
+      },
+      "completed": {
+        "title": "No hay problemas en el ciclo",
+        "description": "No hay problemas en el ciclo. Los problemas se transfirieron o están ocultos. Para ver los problemas ocultos, si los hay, actualiza tus propiedades de visualización según sea necesario."
+      }
+    }
+  },
 
   "project_archived_no_cycles_empty_state_title": "No hay ciclos archivados aún",
   "project_archived_no_cycles_empty_state_description": "Para ordenar tu proyecto, archiva los ciclos completados. Encuéntralos aquí una vez archivados.",
@@ -550,7 +649,13 @@
 
   "inbox_detail_empty_state_title": "Selecciona un problema para ver sus detalles.",
 
-  "workspace_draft_issues_empty_state_title": "Problemas a medio escribir, y pronto, comentarios aparecerán aquí.",
-  "workspace_draft_issues_empty_state_description": "Para probarlo, comienza a agregar un problema y déjalo a medias o crea tu primer borrador a continuación. 😉",
-  "workspace_draft_issues_empty_state_primary_button_text": "Crea tu primer borrador"
+  "workspace_draft_issues": {
+    "empty_state": {
+      "title": "Los problemas a medio escribir, y pronto, los comentarios aparecerán aquí.",
+      "description": "Para probar esto, comienza a agregar un problema y déjalo a medias o crea tu primer borrador abajo. 😉",
+      "primary_button": {
+        "text": "Crea tu primer borrador"
+      }
+    }
+  }
 }

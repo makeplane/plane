@@ -34,11 +34,11 @@ export const WorkspaceDraftEmptyState: FC = observer(() => {
       />
       <div className="relative h-full w-full overflow-y-auto">
         <DetailedEmptyState
-          title={t("workspace_draft_issues_empty_state_title")}
-          description={t("workspace_draft_issues_empty_state_description")}
+          title={t("workspace_draft_issues.empty_state.title")}
+          description={t("workspace_draft_issues.empty_state.description")}
           assetPath={resolvedPath}
           primaryButton={{
-            text: t("workspace_draft_issues_empty_state_primary_button_text"),
+            text: t("workspace_draft_issues.empty_state.primary_button.text"),
             onClick: () => {
               setIsDraftIssueModalOpen(true);
             },

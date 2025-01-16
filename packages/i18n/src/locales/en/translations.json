@@ -38,7 +38,6 @@
   "deactivate_account_description": "When deactivating an account, all of the data and resources within that account will be permanently removed and cannot be recovered.",
   "profile_settings": "Profile settings",
   "your_account": "Your account",
-  "profile": "Profile",
   "security": "Security",
   "activity": "Activity",
   "appearance": "Appearance",
@@ -155,7 +154,6 @@
   "stay_ahead_of_blockers_description": "Spot challenges from one project to another and see inter-cycle dependencies that aren't obvious from any other view.",
   "analytics": "Analytics",
   "workspace_invites": "Workspace invites",
-  "workspace_settings": "Workspace settings",
   "enter_god_mode": "Enter god mode",
   "workspace_logo": "Workspace logo",
   "new_issue": "New issue",
@@ -318,109 +316,207 @@
   "add_parent": "Add parent",
   "loading_members": "Loading members...",
 
-  "workspace_dashboard_empty_state_title": "Overview of your projects, activity, and metrics",
-  "workspace_dashboard_empty_state_description": "Welcome to Plane, we are excited to have you here. Create your first project and track your issues, and this page will transform into a space that helps you progress. Admins will also see items which help their team progress.",
-  "workspace_dashboard_empty_state_primary_button_text": "Build your first project",
-  "workspace_dashboard_empty_state_primary_button_comic_title": "Everything starts with a project in Plane",
-  "workspace_dashboard_empty_state_primary_button_comic_description": "A project could be a product's roadmap, a marketing campaign, or launching a new car.",
+  "workspace_dashboard": {
+    "empty_state": {
+      "title": "Overview of your projects, activity, and metrics",
+      "description": "Welcome to Plane, we are excited to have you here. Create your first project and track your issues, and this page will transform into a space that helps you progress. Admins will also see items which help their team progress.",
+      "primary_button": {
+        "text": "Build your first project",
+        "comic": {
+          "title": "Everything starts with a project in Plane",
+          "description": "A project could be a product's roadmap, a marketing campaign, or launching a new car."
+        }
+      }
+    }
+  },
 
-  "workspace_analytics_empty_state_title": "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",
-  "workspace_analytics_empty_state_description": "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time.",
-  "workspace_analytics_empty_state_primary_button_text": "Start your first project",
-  "workspace_analytics_empty_state_primary_button_comic_title": "Analytics works best with Cycles + Modules",
-  "workspace_analytics_empty_state_primary_button_comic_description": "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav.",
+  "workspace_analytics": {
+    "empty_state": {
+      "title": "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",
+      "description": "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time.",
+      "primary_button": {
+        "text": "Start your first project",
+        "comic": {
+          "title": "Analytics works best with Cycles + Modules",
+          "description": "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav."
+        }
+      }
+    }
+  },
 
-  "workspace_projects_empty_state_title": "No active projects",
-  "workspace_projects_empty_state_description": "Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal. Create a new project or filter for archived projects.",
-  "workspace_projects_empty_state_primary_button_text": "Start your first project",
-  "workspace_projects_empty_state_primary_button_comic_title": "Everything starts with a project in Plane",
-  "workspace_projects_empty_state_primary_button_comic_description": "A project could be a product's roadmap, a marketing campaign, or launching a new car.",
+  "workspace_projects": {
+    "empty_state": {
+      "general": {
+        "title": "No active projects",
+        "description": "Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal. Create a new project or filter for archived projects.",
+        "primary_button": {
+          "text": "Start your first project",
+          "comic": {
+            "title": "Everything starts with a project in Plane",
+            "description": "A project could be a product's roadmap, a marketing campaign, or launching a new car."
+          }
+        }
+      },
+      "not_found": {
+        "title": "No such project exists",
+        "description": "To create issues or manage your work, you need to create a project or be a part of one.",
+        "primary_button": {
+          "text": "Create Project",
+          "comic": {
+            "title": "Everything starts with a project in Plane",
+            "description": "A project could be a product's roadmap, a marketing campaign, or launching a new car."
+          }
+        }
+      },
+      "no_projects": {
+        "title": "No project",
+        "description": "To create issues or manage your work, you need to create a project or be a part of one.",
+        "primary_button": {
+          "text": "Start your first project",
+          "comic": {
+            "title": "Everything starts with a project in Plane",
+            "description": "A project could be a product's roadmap, a marketing campaign, or launching a new car."
+          }
+        }
+      }
+    }
+  },
 
-  "workspace_all_issues_empty_state_title": "No issues in the project",
-  "workspace_all_issues_empty_state_description": "First project done! Now, slice your work into trackable pieces with issues. Let's go!",
-  "workspace_all_issues_empty_state_primary_button_text": "Create new issue",
+  "workspace_issues": {
+    "empty_state": {
+      "all_issues": {
+        "title": "No issues in the project",
+        "description": "First project done! Now, slice your work into trackable pieces with issues. Let's go!",
+        "primary_button": {
+          "text": "Create new issue"
+        }
+      },
+      "assigned": {
+        "title": "No issues yet",
+        "description": "Issues assigned to you can be tracked from here.",
+        "primary_button": {
+          "text": "Create new issue"
+        }
+      },
+      "created": {
+        "title": "No issues yet",
+        "description": "All issues created by you come here, track them here directly.",
+        "primary_button": {
+          "text": "Create new issue"
+        }
+      },
+      "subscribed": {
+        "title": "No issues yet",
+        "description": "Subscribe to issues you are interested in, track all of them here."
+      },
+      "custom_view": {
+        "title": "No issues yet",
+        "description": "Issues that applies to the filters, track all of them here."
+      }
+    }
+  },
 
-  "workspace_assigned_empty_state_title": "No issues yet",
-  "workspace_assigned_empty_state_description": "Issues assigned to you can be tracked from here.",
-  "workspace_assigned_empty_state_primary_button_text": "Create new issue",
+  "workspace_settings": {
+    "name": "Workspace settings",
+    "empty_state": {
+      "api_tokens": {
+        "title": "No API tokens created",
+        "description": "Plane APIs can be used to integrate your data in Plane with any external system. Create a token to get started."
+      },
+      "webhooks": {
+        "title": "No webhooks added",
+        "description": "Create webhooks to receive real-time updates and automate actions."
+      },
+      "exports": {
+        "title": "No exports yet",
+        "description": "Anytime you export, you will also have a copy here for reference."
+      },
+      "imports": {
+        "title": "No imports yet",
+        "description": "Find all your previous imports here and download them."
+      }
+    }
+  },
 
-  "workspace_created_empty_state_title": "No issues yet",
-  "workspace_created_empty_state_description": "All issues created by you come here, track them here directly.",
-  "workspace_created_empty_state_primary_button_text": "Create new issue",
+  "profile": {
+    "name": "Profile",
+    "empty_state": {
+      "activity": {
+        "title": "No activities yet",
+        "description": "Get started by creating a new issue! Add details and properties to it. Explore more in Plane to see your activity."
+      },
+      "assigned": {
+        "title": "No issues are assigned to you",
+        "description": "Issues assigned to you can be tracked from here."
+      },
+      "created": {
+        "title": "No issues yet",
+        "description": "All issues created by you come here, track them here directly."
+      },
+      "subscribed": {
+        "title": "No issues yet",
+        "description": "Subscribe to issues you are interested in, track all of them here."
+      }
+    }
+  },
 
-  "workspace_subscribed_empty_state_title": "No issues yet",
-  "workspace_subscribed_empty_state_description": "Subscribe to issues you are interested in, track all of them here.",
+  "project_settings": {
+    "empty_state": {
+      "labels": {
+        "title": "No labels yet",
+        "description": "Create labels to help organize and filter issues in you project."
+      },
+      "integerations": {
+        "title": "No integrations configured",
+        "description": "Configure GitHub and other integrations to sync your project issues."
+      },
+      "estimates": {
+        "title": "No estimates added",
+        "description": "Create a set of estimates to communicate the amount of work per issue."
+      }
+    }
+  },
 
-  "workspace_custom_view_empty_state_title": "No issues yet",
-  "workspace_custom_view_empty_state_description": "Issues that applies to the filters, track all of them here.",
-
-  "workspace_project_not_found_empty_state_title": "No such project exists",
-  "workspace_project_not_found_empty_state_description": "To create issues or manage your work, you need to create a project or be a part of one.",
-  "workspace_project_not_found_empty_state_primary_button_text": "Create Project",
-  "workspace_project_not_found_empty_state_primary_button_comic_title": "Everything starts with a project in Plane",
-  "workspace_project_not_found_empty_state_primary_button_comic_description": "A project could be a product's roadmap, a marketing campaign, or launching a new car.",
-
-  "workspace_no_projects_empty_state_title": "No project",
-  "workspace_no_projects_empty_state_description": "To create issues or manage your work, you need to create a project or be a part of one.",
-  "workspace_no_projects_empty_state_primary_button_text": "Start your first project",
-  "workspace_no_projects_empty_state_primary_button_comic_title": "Everything starts with a project in Plane",
-  "workspace_no_projects_empty_state_primary_button_comic_description": "A project could be a product's roadmap, a marketing campaign, or launching a new car.",
-
-  "workspace_settings_api_tokens_empty_state_title": "No API tokens created",
-  "workspace_settings_api_tokens_empty_state_description": "Plane APIs can be used to integrate your data in Plane with any external system. Create a token to get started.",
-
-  "workspace_settings_webhooks_empty_state_title": "No webhooks added",
-  "workspace_settings_webhooks_empty_state_description": "Create webhooks to receive real-time updates and automate actions.",
-
-  "workspace_settings_export_empty_state_title": "No previous exports yet",
-  "workspace_settings_export_empty_state_description": "Anytime you export, you will also have a copy here for reference.",
-
-  "workspace_settings_import_empty_state_title": "No previous imports yet",
-  "workspace_settings_import_empty_state_description": "Find all your previous imports here and download them.",
-
-  "profile_activity_empty_state_title": "No activities yet",
-  "profile_activity_empty_state_description": "Get started by creating a new issue! Add details and properties to it. Explore more in Plane to see your activity.",
-
-  "profile_assigned_empty_state_title": "No issues are assigned to you",
-  "profile_assigned_empty_state_description": "Issues assigned to you can be tracked from here.",
-
-  "profile_created_empty_state_title": "No issues yet",
-  "profile_created_empty_state_description": "All issues created by you come here, track them here directly.",
-
-  "profile_subscribed_empty_state_title": "No issues yet",
-  "profile_subscribed_empty_state_description": "Subscribe to issues you are interested in, track all of them here.",
-
-  "project_settings_labels_empty_state_title": "No labels yet",
-  "project_settings_labels_empty_state_description": "Create labels to help organize and filter issues in you project.",
-
-  "project_settings_integrations_empty_state_title": "No integrations configured",
-  "project_settings_integrations_empty_state_description": "Configure GitHub and other integrations to sync your project issues.",
-
-  "project_settings_estimate_empty_state_title": "No estimates added",
-  "project_settings_estimate_empty_state_description": "Create a set of estimates to communicate the amount of work per issue.",
-
-  "project_cycles_empty_state_title": "Group and timebox your work in Cycles.",
-  "project_cycles_empty_state_description": "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team.",
-  "project_cycles_empty_state_primary_button_text": "Set your first cycle",
-  "project_cycles_empty_state_primary_button_comic_title": "Cycles are repetitive time-boxes.",
-  "project_cycles_empty_state_primary_button_comic_description": "A sprint, an iteration, and or any other term you use for weekly or fortnightly tracking of work is a cycle.",
-
-  "project_cycle_no_issues_empty_state_title": "No issues added to the cycle",
-  "project_cycle_no_issues_empty_state_description": "Add or create issues you wish to timebox and deliver within this cycle",
-  "project_cycle_no_issues_empty_state_primary_button_text": "Create new issue",
-  "project_cycle_no_issues_empty_state_secondary_button_text": "Add an existing issue",
-
-  "project_cycle_active_empty_state_title": "No active cycle",
-  "project_cycle_active_empty_state_description": "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
-
-  "project_cycle_completed_no_issues_empty_state_title": "No issues in the cycle",
-  "project_cycle_completed_no_issues_empty_state_description": "No issues in the cycle. Issues are either transferred or hidden. To see hidden issues if any, update your display properties accordingly.",
+  "project_cycles": {
+    "empty_state": {
+      "general": {
+        "title": "Group and timebox your work in Cycles.",
+        "description": "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team.",
+        "primary_button": {
+          "text": "Set your first cycle",
+          "comic": {
+            "title": "Cycles are repetitive time-boxes.",
+            "description": "A sprint, an iteration, and or any other term you use for weekly or fortnightly tracking of work is a cycle."
+          }
+        }
+      },
+      "all": {
+        "title": "No cycles",
+        "description": "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here."
+      },
+      "no_issues": {
+        "title": "No issues added to the cycle",
+        "description": "Add or create issues you wish to timebox and deliver within this cycle",
+        "primary_button": {
+          "text": "Create new issue"
+        },
+        "secondary_button": {
+          "text": "Add existing issue"
+        }
+      },
+      "active": {
+        "title": "No active cycle",
+        "description": "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here."
+      },
+      "completed": {
+        "title": "No issues in the cycle",
+        "description": "No issues in the cycle. Issues are either transferred or hidden. To see hidden issues if any, update your display properties accordingly."
+      }
+    }
+  },
 
   "project_archived_no_cycles_empty_state_title": "No archived cycles yet",
   "project_archived_no_cycles_empty_state_description": "To tidy up your project, archive completed cycles. Find them here once archived.",
-
-  "project_cycle_all_empty_state_title": "No cycles",
-  "project_cycle_all_empty_state_description": "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
 
   "project_empty_filter_empty_state_title": "No issues found matching the filters applied",
   "project_empty_filter_empty_state_secondary_button_text": "Clear all filters",
@@ -551,7 +647,13 @@
 
   "inbox_detail_empty_state_title": "Select an issue to view its details.",
 
-  "workspace_draft_issues_empty_state_title": "Half-written issues, and soon, comments will show up here.",
-  "workspace_draft_issues_empty_state_description": "To try this out, start adding an issue and leave it mid-way or create your first draft below. 😉",
-  "workspace_draft_issues_empty_state_primary_button_text": "Create your first draft"
+  "workspace_draft_issues": {
+    "empty_state": {
+      "title": "Half-written issues, and soon, comments will show up here.",
+      "description": "To try this out, start adding an issue and leave it mid-way or create your first draft below. 😉",
+      "primary_button": {
+        "text": "Create your first draft"
+      }
+    }
+  }
 }

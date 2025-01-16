@@ -41,7 +41,7 @@ export const SidebarDropdown = observer(() => {
       },
       {
         key: "settings",
-        name: t("workspace_settings"),
+        name: t("workspace_settings.name"),
         href: `/${workspaceSlug}/settings`,
         icon: Settings,
         access: [EUserPermissions.ADMIN],

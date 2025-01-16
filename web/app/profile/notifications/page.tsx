@@ -25,7 +25,7 @@ export default function ProfileNotificationPage() {
 
   return (
     <>
-      <PageHead title={`${t("profile")} - ${t("notifications")}`} />
+      <PageHead title={`${t("profile.name")} - ${t("notifications")}`} />
       <ProfileSettingContentWrapper>
         <ProfileSettingContentHeader
           title={t("email_notifications")}
