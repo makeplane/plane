@@ -485,7 +485,7 @@ function viewLogs(){
         read -p "Service: " DOCKER_SERVICE_NAME 
 
         until (( DOCKER_SERVICE_NAME >= 0 && DOCKER_SERVICE_NAME <= 11 )); do
-            echo "Invalid selection. Please enter a number between 1 and 11."
+            echo "Invalid selection. Please enter a number between 0 and 11."
             read -p "Service: " DOCKER_SERVICE_NAME
         done
 
