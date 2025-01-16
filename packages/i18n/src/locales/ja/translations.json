@@ -609,6 +609,22 @@
   "notification_mentions_empty_state_title": "割り当てられた課題はありません",
   "notification_mentions_empty_state_description": "あなたに割り当てられた課題の更新はここで確認できます",
 
+  "notification": {
+    "empty_state": {
+      "detail": {
+        "title": "詳細を表示するには選択してください。"
+      },
+      "all": {
+        "title": "割り当てられた問題はありません",
+        "description": "あなたに割り当てられた問題の更新情報はここで確認できます。"
+      },
+      "mentions": {
+        "title": "割り当てられた問題はありません",
+        "description": "あなたに割り当てられた問題の更新情報はここで確認できます。"
+      }
+    }
+  },
+
   "active_cycle": {
     "empty_state": {
       "progress": {

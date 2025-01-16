@@ -609,6 +609,22 @@
   "notification_mentions_empty_state_title": "Aucun problème assigné",
   "notification_mentions_empty_state_description": "Les mises à jour des problèmes qui vous sont assignés sont visibles ici.",
 
+  "notification": {
+    "empty_state": {
+      "detail": {
+        "title": "Sélectionnez pour voir les détails."
+      },
+      "all": {
+        "title": "Aucune tâche assignée",
+        "description": "Les mises à jour des problèmes qui vous sont assignés peuvent être \n vues ici."
+      },
+      "mentions": {
+        "title": "Aucune tâche assignée",
+        "description": "Les mises à jour des problèmes qui vous sont assignés peuvent être \n vues ici."
+      }
+    }
+  },
+
   "active_cycle": {
     "empty_state": {
       "progress": {

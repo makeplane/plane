@@ -608,6 +608,22 @@
   "notification_mentions_empty_state_title": "No hay problemas asignados",
   "notification_mentions_empty_state_description": "Las actualizaciones de los problemas asignados a ti se pueden ver aquí",
 
+  "notification": {
+    "empty_state": {
+      "detail": {
+        "title": "Selecciona para ver los detalles."
+      },
+      "all": {
+        "title": "No hay problemas asignados",
+        "description": "Las actualizaciones de los problemas asignados a ti se \n pueden ver aquí"
+      },
+      "mentions": {
+        "title": "No hay problemas asignados",
+        "description": "Las actualizaciones de los problemas asignados a ti se \n pueden ver aquí"
+      }
+    }
+  },
+
   "active_cycle": {
     "empty_state": {
       "progress": {

@@ -30,9 +30,6 @@ export enum EmptyStateType {
   WORKSPACE_DASHBOARD = "workspace-dashboard",
   WORKSPACE_ANALYTICS = "workspace-analytics",
   WORKSPACE_PROJECTS = "workspace-projects",
-  WORKSPACE_TEAMS = "workspace-teams",
-  WORKSPACE_INITIATIVES = "workspace-initiatives",
-  WORKSPACE_INITIATIVES_EMPTY_SEARCH = "workspace-initiatives-empty-search",
   WORKSPACE_ALL_ISSUES = "workspace-all-issues",
   WORKSPACE_ASSIGNED = "workspace-assigned",
   WORKSPACE_CREATED = "workspace-created",
@@ -84,18 +81,6 @@ export enum EmptyStateType {
   ISSUE_RELATION_EMPTY_STATE = "issue-relation-empty-state",
   ISSUE_COMMENT_EMPTY_STATE = "issue-comment-empty-state",
 
-  EPIC_RELATION_SEARCH_EMPTY_STATE = "epic-relation-search-empty-state",
-  EPIC_RELATION_EMPTY_STATE = "epic-relation-empty-state",
-
-  NOTIFICATION_DETAIL_EMPTY_STATE = "notification-detail-empty-state",
-  NOTIFICATION_ALL_EMPTY_STATE = "notification-all-empty-state",
-  NOTIFICATION_MENTIONS_EMPTY_STATE = "notification-mentions-empty-state",
-  NOTIFICATION_MY_ISSUE_EMPTY_STATE = "notification-my-issues-empty-state",
-  NOTIFICATION_CREATED_EMPTY_STATE = "notification-created-empty-state",
-  NOTIFICATION_SUBSCRIBED_EMPTY_STATE = "notification-subscribed-empty-state",
-  NOTIFICATION_ARCHIVED_EMPTY_STATE = "notification-archived-empty-state",
-  NOTIFICATION_SNOOZED_EMPTY_STATE = "notification-snoozed-empty-state",
-  NOTIFICATION_UNREAD_EMPTY_STATE = "notification-unread-empty-state",
   // stickies
   STICKIES = "stickies",
   STICKIES_SEARCH = "stickies-search",
@@ -155,35 +140,6 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
     },
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  [EmptyStateType.WORKSPACE_TEAMS]: {
-    key: EmptyStateType.WORKSPACE_TEAMS,
-    title: "Teams",
-    description: "Teams are groups of people who collaborate on projects. Create a team to get started.",
-    path: "/empty-state/teams/teams",
-    primaryButton: {
-      text: "Create new team",
-    },
-    accessType: "workspace",
-    access: [EUserPermissions.ADMIN],
-  },
-  [EmptyStateType.WORKSPACE_INITIATIVES]: {
-    key: EmptyStateType.WORKSPACE_INITIATIVES,
-    title: "Organize work at the highest level with Initiatives",
-    description:
-      "When you need to organize work spanning several projects and teams, Initiatives come in handy. Connect projects and epics to initiatives, see automatically rolled up updates, and see the forests before you get to the trees.",
-    path: "/empty-state/initiatives/initiatives",
-    primaryButton: {
-      text: "Create an initiative",
-    },
-    accessType: "workspace",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  [EmptyStateType.WORKSPACE_INITIATIVES_EMPTY_SEARCH]: {
-    key: EmptyStateType.WORKSPACE_INITIATIVES_EMPTY_SEARCH,
-    title: "No matching initiatives",
-    description: "No initiatives detected with the matching criteria. \n Create a new initiative instead.",
-    path: "/empty-state/search/project",
   },
   // all-issues
   [EmptyStateType.WORKSPACE_ALL_ISSUES]: {
@@ -629,77 +585,11 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
     title: "No issues found",
     path: "/empty-state/search/issues",
   },
-
-  [EmptyStateType.EPIC_RELATION_SEARCH_EMPTY_STATE]: {
-    key: EmptyStateType.EPIC_RELATION_SEARCH_EMPTY_STATE,
-    title: "No matching epics found",
-    path: "/empty-state/search/search",
-  },
-  [EmptyStateType.EPIC_RELATION_EMPTY_STATE]: {
-    key: EmptyStateType.EPIC_RELATION_EMPTY_STATE,
-    title: "No epics found",
-    path: "/empty-state/search/issues",
-  },
-
   [EmptyStateType.ISSUE_COMMENT_EMPTY_STATE]: {
     key: EmptyStateType.ISSUE_COMMENT_EMPTY_STATE,
     title: "No comments yet",
     description: "Comments can be used as a discussion and \n follow-up space for the issues",
     path: "/empty-state/search/comments",
-  },
-
-  [EmptyStateType.NOTIFICATION_DETAIL_EMPTY_STATE]: {
-    key: EmptyStateType.NOTIFICATION_DETAIL_EMPTY_STATE,
-    title: "Select to view details.",
-    path: "/empty-state/intake/issue-detail",
-  },
-  [EmptyStateType.NOTIFICATION_ALL_EMPTY_STATE]: {
-    key: EmptyStateType.NOTIFICATION_ALL_EMPTY_STATE,
-    title: "No issues assigned",
-    description: "Updates for issues assigned to you can be \n seen here",
-    path: "/empty-state/search/notification",
-  },
-  [EmptyStateType.NOTIFICATION_MENTIONS_EMPTY_STATE]: {
-    key: EmptyStateType.NOTIFICATION_MENTIONS_EMPTY_STATE,
-    title: "No issues assigned",
-    description: "Updates for issues assigned to you can be \n seen here",
-    path: "/empty-state/search/notification",
-  },
-  [EmptyStateType.NOTIFICATION_MY_ISSUE_EMPTY_STATE]: {
-    key: EmptyStateType.NOTIFICATION_MY_ISSUE_EMPTY_STATE,
-    title: "No issues assigned",
-    description: "Updates for issues assigned to you can be \n seen here",
-    path: "/empty-state/search/notification",
-  },
-  [EmptyStateType.NOTIFICATION_CREATED_EMPTY_STATE]: {
-    key: EmptyStateType.NOTIFICATION_CREATED_EMPTY_STATE,
-    title: "No updates to issues",
-    description: "Updates to issues created by you can be \n seen here",
-    path: "/empty-state/search/notification",
-  },
-  [EmptyStateType.NOTIFICATION_SUBSCRIBED_EMPTY_STATE]: {
-    key: EmptyStateType.NOTIFICATION_SUBSCRIBED_EMPTY_STATE,
-    title: "No updates to issues",
-    description: "Updates to any issue you are \n subscribed to can be seen here",
-    path: "/empty-state/search/notification",
-  },
-  [EmptyStateType.NOTIFICATION_UNREAD_EMPTY_STATE]: {
-    key: EmptyStateType.NOTIFICATION_UNREAD_EMPTY_STATE,
-    title: "No unread notifications",
-    description: "Congratulations, you are up-to-date \n with everything happening in the issues \n you care about",
-    path: "/empty-state/search/notification",
-  },
-  [EmptyStateType.NOTIFICATION_SNOOZED_EMPTY_STATE]: {
-    key: EmptyStateType.NOTIFICATION_SNOOZED_EMPTY_STATE,
-    title: "No snoozed notifications yet",
-    description: "Any notification you snooze for later will \n be available here to act upon",
-    path: "/empty-state/search/snooze",
-  },
-  [EmptyStateType.NOTIFICATION_ARCHIVED_EMPTY_STATE]: {
-    key: EmptyStateType.NOTIFICATION_ARCHIVED_EMPTY_STATE,
-    title: "No archived notifications yet",
-    description: "Any notification you archive will be \n available here to help you focus",
-    path: "/empty-state/search/archive",
   },
   [EmptyStateType.STICKIES]: {
     key: EmptyStateType.STICKIES,

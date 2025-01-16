@@ -598,13 +598,21 @@
   "issue_comment_empty_state_title": "No comments yet",
   "issue_comment_empty_state_description": "Comments can be used as a discussion and follow-up space for the issues",
 
-  "notification_detail_empty_state_title": "Select to view details.",
-
-  "notification_all_empty_state_title": "No issues assigned",
-  "notification_all_empty_state_description": "Updates for issues assigned to you can be seen here",
-
-  "notification_mentions_empty_state_title": "No issues assigned",
-  "notification_mentions_empty_state_description": "Updates for issues assigned to you can be seen here",
+  "notification": {
+    "empty_state": {
+      "detail": {
+        "title": "Select to view details."
+      },
+      "all": {
+        "title": "No issues assigned",
+        "description": "Updates for issues assigned to you can be \n seen here"
+      },
+      "mentions": {
+        "title": "No issues assigned",
+        "description": "Updates for issues assigned to you can be \n seen here"
+      }
+    }
+  },
 
   "active_cycle": {
     "empty_state": {
