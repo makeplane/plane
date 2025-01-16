@@ -11,6 +11,7 @@ export interface IHomeStore {
   widgetsMap: Record<string, TWidgetEntityData>;
   widgets: THomeWidgetKeys[];
   // computed
+  isAnyWidgetEnabled: boolean;
   orderedWidgets: THomeWidgetKeys[];
   //stores
   quickLinks: IWorkspaceLinkStore;
@@ -38,6 +39,7 @@ export class HomeStore implements IHomeStore {
       widgetsMap: observable,
       widgets: observable,
       // computed
+      isAnyWidgetEnabled: computed,
       orderedWidgets: computed,
       // actions
       toggleWidgetSettings: action,
@@ -50,6 +52,10 @@ export class HomeStore implements IHomeStore {
 
     // stores
     this.quickLinks = new WorkspaceLinkStore();
+  }
+
+  get isAnyWidgetEnabled() {
+    return Object.values(this.widgetsMap).some((widget) => widget.is_enabled);
   }
 
   get orderedWidgets() {

@@ -9,6 +9,7 @@ interface IContentOverflowWrapper {
   buttonClassName?: string;
   containerClassName?: string;
   fallback?: ReactNode;
+  customButton?: ReactNode;
 }
 
 export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) => {
@@ -18,6 +19,7 @@ export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) 
     buttonClassName = "text-sm font-medium text-custom-primary-100",
     containerClassName,
     fallback = null,
+    customButton,
   } = props;
 
   // states
@@ -131,16 +133,18 @@ export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) 
             pointerEvents: isTransitioning ? "none" : "auto",
           }}
         >
-          <button
-            className={cn(
-              "gap-1 w-full text-custom-primary-100 text-sm font-medium transition-opacity duration-300",
-              buttonClassName
-            )}
-            onClick={handleToggle}
-            disabled={isTransitioning}
-          >
-            {showAll ? "Show less" : "Show all"}
-          </button>
+          {customButton || (
+            <button
+              className={cn(
+                "gap-1 w-full text-custom-primary-100 text-sm font-medium transition-opacity duration-300",
+                buttonClassName
+              )}
+              onClick={handleToggle}
+              disabled={isTransitioning}
+            >
+              {showAll ? "Show less" : "Show all"}
+            </button>
+          )}
         </div>
       )}
     </div>

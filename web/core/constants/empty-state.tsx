@@ -1,4 +1,5 @@
 import { EUserPermissions } from "ee/constants/user-permissions";
+import { Plus, Shapes } from "lucide-react";
 
 export interface EmptyStateDetails {
   key: EmptyStateType;
@@ -108,9 +109,14 @@ export enum EmptyStateType {
   DISABLED_PROJECT_MODULE = "disabled-project-module",
   DISABLED_PROJECT_VIEW = "disabled-project-view",
   DISABLED_PROJECT_PAGE = "disabled-project-page",
+  // stickies
+  STICKIES = "stickies",
+  STICKIES_SEARCH = "stickies-search",
+  // home widgets
+  HOME_WIDGETS = "home-widgets",
 }
 
-const emptyStateDetails = {
+const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
   // workspace
   [EmptyStateType.WORKSPACE_DASHBOARD]: {
     key: EmptyStateType.WORKSPACE_DASHBOARD,
@@ -800,6 +806,43 @@ const emptyStateDetails = {
     primaryButton: {
       text: "Manage features",
     },
+  },
+  [EmptyStateType.STICKIES]: {
+    key: EmptyStateType.STICKIES,
+    title: "Stickies are quick notes and to-dos you take down on the fly.",
+    description:
+      "Capture your thoughts and ideas effortlessly by creating stickies that you can access anytime and from anywhere.",
+    path: "/empty-state/stickies/stickies",
+    primaryButton: {
+      icon: <Plus className="size-4" />,
+      text: "Add sticky",
+    },
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    accessType: "workspace",
+  },
+  [EmptyStateType.STICKIES_SEARCH]: {
+    key: EmptyStateType.STICKIES_SEARCH,
+    title: "That doesn't match any of your stickies.",
+    description: "Try a different term or let us know\nif you are sure your search is right. ",
+    path: "/empty-state/stickies/stickies-search",
+    primaryButton: {
+      icon: <Plus className="size-4" />,
+      text: "Add sticky",
+    },
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    accessType: "workspace",
+  },
+  [EmptyStateType.HOME_WIDGETS]: {
+    key: EmptyStateType.HOME_WIDGETS,
+    title: "It's Quiet Without Widgets, Turn Them On",
+    description: "It looks like all your widgets are turned off. Enable them\nnow to enhance your experience!",
+    path: "/empty-state/dashboard/widgets",
+    primaryButton: {
+      icon: <Shapes className="size-4" />,
+      text: "Manage widgets",
+    },
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    accessType: "workspace",
   },
 } as const;
 
