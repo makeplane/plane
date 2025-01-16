@@ -18,6 +18,8 @@ import {
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";
 import { useQueryParams } from "@/hooks/use-query-params";
+// plane web hooks
+import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 
@@ -36,11 +38,12 @@ type TPageRootProps = {
   config: TPageRootConfig;
   handlers: TPageRootHandlers;
   page: TPageInstance;
+  storeType: EPageStoreType;
   workspaceSlug: string;
 };
 
 export const PageRoot = observer((props: TPageRootProps) => {
-  const { config, handlers, page, workspaceSlug } = props;
+  const { config, handlers, page, storeType, workspaceSlug } = props;
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
@@ -106,6 +109,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
         page={page}
         setSidePeekVisible={(state) => setSidePeekVisible(state)}
         sidePeekVisible={sidePeekVisible}
+        storeType={storeType}
       />
       <PageEditorBody
         config={config}

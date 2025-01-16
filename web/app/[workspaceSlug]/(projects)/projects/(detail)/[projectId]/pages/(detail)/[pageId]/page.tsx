@@ -20,8 +20,9 @@ import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
-import { useProjectPage, useProjectPages, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store";
 // plane web hooks
+import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
@@ -36,8 +37,11 @@ const projectPageVersionService = new ProjectPageVersionService();
 const PageDetailsPage = observer(() => {
   const { workspaceSlug, projectId, pageId } = useParams();
   // store hooks
-  const { createPage, getPageById } = useProjectPages();
-  const page = useProjectPage(pageId?.toString() ?? "");
+  const { createPage, getPageById } = usePageStore(EPageStoreType.PROJECT);
+  const page = usePage({
+    pageId: pageId?.toString() ?? "",
+    storeType: EPageStoreType.PROJECT,
+  });
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
@@ -154,6 +158,7 @@ const PageDetailsPage = observer(() => {
             config={pageRootConfig}
             handlers={pageRootHandlers}
             page={page}
+            storeType={EPageStoreType.PROJECT}
             workspaceSlug={workspaceSlug?.toString() ?? ""}
           />
           <IssuePeekOverview />
