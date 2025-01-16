@@ -55,6 +55,15 @@ x-app-env: &app-env
   APP_BASE_URL: ${APP_BASE_URL}
   AMQP_URL: ${AMQP_URL:-amqp://plane:plane@plane-mq:5672/plane}
 
+  #Replicas Environment Variables
+  WEB_REPLICAS: ${WEB_REPLICAS:-1}
+  SPACE_REPLICAS: ${SPACE_REPLICAS:-1}
+  ADMIN_REPLICAS: ${ADMIN_REPLICAS:-1}
+  API_REPLICAS: ${API_REPLICAS:-1}
+  WORKER_REPLICAS: ${WORKER_REPLICAS:-1}
+  BEAT_WORKER_REPLICAS: ${BEAT_WORKER_REPLICAS:-1}
+  LIVE_REPLICAS: ${LIVE_REPLICAS:-1}
+
 
 services:
   web:
