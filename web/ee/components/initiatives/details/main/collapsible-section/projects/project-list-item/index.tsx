@@ -71,7 +71,7 @@ export const ProjectItem = observer((props: Props) => {
               state: isProjectGroupingEnabled,
               priority: isProjectGroupingEnabled,
               lead: true,
-              date: true,
+              date: isProjectGroupingEnabled,
             }}
           />
           <div className={cn("hidden md:flex")}>
