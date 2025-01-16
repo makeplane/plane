@@ -15,18 +15,21 @@ import {
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useMember, useProjectPages } from "@/hooks/store";
+import { useMember } from "@/hooks/store";
+// plane web hooks
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 type Props = {
   pageType: TPageNavigationTabs;
   projectId: string;
+  storeType: EPageStoreType;
   workspaceSlug: string;
 };
 
 export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
-  const { pageType, projectId, workspaceSlug } = props;
+  const { pageType, projectId, storeType, workspaceSlug } = props;
   // store hooks
-  const { filters, updateFilters, clearAllFilters } = useProjectPages();
+  const { filters, updateFilters, clearAllFilters } = usePageStore(storeType);
   const {
     workspace: { workspaceMemberIds },
   } = useMember();

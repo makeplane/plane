@@ -14,7 +14,7 @@ export type TReturnType = {
 
 export const usePageStore = <T extends EPageStoreType>(storeType: T): TReturnType[T] => {
   const context = useContext(StoreContext);
-  if (context === undefined) throw new Error("useProjectPage must be used within StoreProvider");
+  if (context === undefined) throw new Error("usePageStore must be used within StoreProvider");
 
   if (storeType === EPageStoreType.PROJECT) {
     return context.projectPages;

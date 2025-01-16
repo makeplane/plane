@@ -9,7 +9,9 @@ import { PageLoader } from "@/components/pages";
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { EPageAccess } from "@/constants/page";
-import { useCommandPalette, useProjectPages } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store";
+// plane web hooks
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // assets
 import AllFiltersImage from "@/public/empty-state/pages/all-filters.svg";
 import NameFilterImage from "@/public/empty-state/pages/name-filter.svg";
@@ -17,13 +19,14 @@ import NameFilterImage from "@/public/empty-state/pages/name-filter.svg";
 type Props = {
   children: React.ReactNode;
   pageType: TPageNavigationTabs;
+  storeType: EPageStoreType;
 };
 
 export const PagesListMainContent: React.FC<Props> = observer((props) => {
-  const { children, pageType } = props;
+  const { children, pageType, storeType } = props;
   // store hooks
   const { loader, isAnyPageAvailable, getCurrentProjectFilteredPageIds, getCurrentProjectPageIds, filters } =
-    useProjectPages();
+    usePageStore(storeType);
   const { toggleCreatePageModal } = useCommandPalette();
   // derived values
   const pageIds = getCurrentProjectPageIds(pageType);

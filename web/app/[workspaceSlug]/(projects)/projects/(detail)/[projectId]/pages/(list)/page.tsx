@@ -49,9 +49,10 @@ const ProjectPagesPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <PagesListView
-        workspaceSlug={workspaceSlug.toString()}
-        projectId={projectId.toString()}
         pageType={currentPageType()}
+        projectId={projectId.toString()}
+        storeType={EPageStoreType.PROJECT}
+        workspaceSlug={workspaceSlug.toString()}
       >
         <PagesListRoot pageType={currentPageType()} storeType={EPageStoreType.PROJECT} />
       </PagesListView>
