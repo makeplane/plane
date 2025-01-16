@@ -106,12 +106,12 @@ Action [2]: 1
 
 For the 1st time setup, type "1" as action input.
 
-This will create a create a folder `plane-app` and will download 2 files inside that
+This will create a folder `plane-app` and will download 2 files inside that
 
 - `docker-compose.yaml`
 - `plane.env`
 
-Again the `options [1-8]` will be popped up and this time hit `8` to exit.
+Again the `options [1-8]` will be popped up, and this time hit `8` to exit.
 
 #### Docker Swarm
 
@@ -135,7 +135,7 @@ This will create a create a folder `plane-app` and will download 2 files inside 
 - `docker-compose.yaml`
 - `plane.env`
 
-Again the `options [1-7]` will be popped up and this time hit `7` to exit.
+Again the `options [1-7]` will be popped up, and this time hit `7` to exit.
 
 ---
 

@@ -148,7 +148,7 @@ function updateEnvFile() {
 }
 
 function download() {
-    cd $SCRIPT_DIR
+    cd $SCRIPT_DIR || exit 1  
     TS=$(date +%s)
     if [ -f "$PLANE_INSTALL_DIR/docker-compose.yml" ]
     then
@@ -230,7 +230,12 @@ function deployStack() {
     echo "Starting ${stack_name} stack..."
 
     # Pull envs 
-    set -o allexport; source $DOCKER_ENV_PATH; set +o allexport;
+    if [ -f "$DOCKER_ENV_PATH" ]; then
+        set -o allexport; source $DOCKER_ENV_PATH; set +o allexport;
+    else
+        echo "Environment file not found: $DOCKER_ENV_PATH"
+        exit 1
+    fi
 
     # Deploy the stack
     docker stack deploy -c $DOCKER_FILE_PATH $stack_name
