@@ -28,7 +28,7 @@ type TProps = {
 
 export const getRandomStickyColor = (): string => {
   const randomIndex = Math.floor(Math.random() * STICKY_COLORS_LIST.length);
-  return STICKY_COLORS_LIST[randomIndex].backgroundColor;
+  return STICKY_COLORS_LIST[randomIndex].key;
 };
 
 export const useStickyOperations = (props: TProps) => {
