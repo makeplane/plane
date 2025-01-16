@@ -48,17 +48,9 @@ export const WorkspaceStickyHeader = observer(() => {
               toggleShowNewSticky(true);
               stickyOperations.create();
             }}
+            loading={creatingSticky}
           >
             Add sticky
-            {creatingSticky && (
-              <div className="flex items-center justify-center ml-2">
-                <div
-                  className={`w-4 h-4 border-[1px] border-t-transparent rounded-full animate-spin border-white`}
-                  role="status"
-                  aria-label="loading"
-                />
-              </div>
-            )}
           </Button>
         </Header.RightItem>
       </Header>
