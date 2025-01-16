@@ -83,6 +83,9 @@ export enum EmptyStateType {
   ISSUE_RELATION_EMPTY_STATE = "issue-relation-empty-state",
   ISSUE_COMMENT_EMPTY_STATE = "issue-comment-empty-state",
 
+  EPIC_RELATION_SEARCH_EMPTY_STATE = "epic-relation-search-empty-state",
+  EPIC_RELATION_EMPTY_STATE = "epic-relation-empty-state",
+
   NOTIFICATION_DETAIL_EMPTY_STATE = "notification-detail-empty-state",
   NOTIFICATION_ALL_EMPTY_STATE = "notification-all-empty-state",
   NOTIFICATION_MENTIONS_EMPTY_STATE = "notification-mentions-empty-state",
@@ -639,7 +642,7 @@ const emptyStateDetails = {
   },
   [EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE]: {
     key: EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE,
-    title: "No maching issues found",
+    title: "No matching issues found",
     path: "/empty-state/search/search",
   },
   [EmptyStateType.ISSUE_RELATION_EMPTY_STATE]: {
@@ -647,6 +650,18 @@ const emptyStateDetails = {
     title: "No issues found",
     path: "/empty-state/search/issues",
   },
+
+  [EmptyStateType.EPIC_RELATION_SEARCH_EMPTY_STATE]: {
+    key: EmptyStateType.EPIC_RELATION_SEARCH_EMPTY_STATE,
+    title: "No matching epics found",
+    path: "/empty-state/search/search",
+  },
+  [EmptyStateType.EPIC_RELATION_EMPTY_STATE]: {
+    key: EmptyStateType.EPIC_RELATION_EMPTY_STATE,
+    title: "No epics found",
+    path: "/empty-state/search/issues",
+  },
+
   [EmptyStateType.ISSUE_COMMENT_EMPTY_STATE]: {
     key: EmptyStateType.ISSUE_COMMENT_EMPTY_STATE,
     title: "No comments yet",
