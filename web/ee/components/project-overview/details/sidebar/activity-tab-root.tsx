@@ -82,12 +82,12 @@ export const ProjectOverviewSidebarActivityRoot: FC<Props> = observer((props) =>
                 </Loader>
               ) : (
                 <div>
-                  {activity &&
+                  {sortedActivity &&
                     sortedActivity.map((activityComment, index) => (
                       <ActivityItem
                         key={activityComment.id}
                         activity={activityComment}
-                        ends={index === 0 ? "top" : index === activity.length - 1 ? "bottom" : undefined}
+                        ends={index === 0 ? "top" : index === sortedActivity.length - 1 ? "bottom" : undefined}
                       />
                     ))}
                 </div>
