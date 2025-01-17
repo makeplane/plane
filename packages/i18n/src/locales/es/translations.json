@@ -593,21 +593,33 @@
   "workspace_page_private_empty_state_description": "Mantén tus pensamientos privados aquí. Cuando estés listo para compartir, el equipo está a solo un clic de distancia.",
   "workspace_page_private_empty_state_primary_button_text": "Crea tu primera página",
 
-  "command_k_search_empty_state_title": "No se encontraron resultados",
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "No se encontraron resultados"
+      }
+    }
+  },
 
-  "issue_relation_search_empty_state_title": "No se encontraron problemas coincidentes",
-  "issue_relation_empty_state_title": "No se encontraron problemas",
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "No se encontraron problemas coincidentes"
+      },
+      "general": {
+        "title": "No se encontraron problemas"
+      }
+    }
+  },
 
-  "issue_comment_empty_state_title": "Aún no hay comentarios",
-  "issue_comment_empty_state_description": "Los comentarios pueden usarse como un espacio de discusión y seguimiento para los problemas",
-
-  "notification_detail_empty_state_title": "Selecciona para ver detalles.",
-
-  "notification_all_empty_state_title": "No hay problemas asignados",
-  "notification_all_empty_state_description": "Las actualizaciones de los problemas asignados a ti se pueden ver aquí",
-
-  "notification_mentions_empty_state_title": "No hay problemas asignados",
-  "notification_mentions_empty_state_description": "Las actualizaciones de los problemas asignados a ti se pueden ver aquí",
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "Aún no hay comentarios",
+        "description": "Los comentarios pueden usarse como un espacio de discusión y seguimiento para los problemas"
+      }
+    }
+  },
 
   "notification": {
     "empty_state": {

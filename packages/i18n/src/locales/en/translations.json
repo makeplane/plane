@@ -591,13 +591,33 @@
   "workspace_page_private_empty_state_description": "Keep your private thoughts here. When you're ready to share, the team's just a click away.",
   "workspace_page_private_empty_state_primary_button_text": "Create your first page",
 
-  "command_k_search_empty_state_title": "No results found",
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "No results found"
+      }
+    }
+  },
 
-  "issue_relation_search_empty_state_title": "No matching issues found",
-  "issue_relation_empty_state_title": "No issues found",
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "No matching issues found"
+      },
+      "no_issues": {
+        "title": "No issues found"
+      }
+    }
+  },
 
-  "issue_comment_empty_state_title": "No comments yet",
-  "issue_comment_empty_state_description": "Comments can be used as a discussion and follow-up space for the issues",
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "No comments yet",
+        "description": "Comments can be used as a discussion and follow-up space for the issues"
+      }
+    }
+  },
 
   "notification": {
     "empty_state": {

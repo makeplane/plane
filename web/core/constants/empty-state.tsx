@@ -76,11 +76,6 @@ export enum EmptyStateType {
   WORKSPACE_PAGE_PUBLIC = "workspace-page-public",
   WORKSPACE_PAGE_ARCHIVED = "workspace-page-archived",
 
-  COMMAND_K_SEARCH_EMPTY_STATE = "command-k-search-empty-state",
-  ISSUE_RELATION_SEARCH_EMPTY_STATE = "issue-relation-search-empty-state",
-  ISSUE_RELATION_EMPTY_STATE = "issue-relation-empty-state",
-  ISSUE_COMMENT_EMPTY_STATE = "issue-comment-empty-state",
-
   // stickies
   STICKIES = "stickies",
   STICKIES_SEARCH = "stickies-search",
@@ -568,28 +563,6 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
     title: "No archived pages yet",
     description: "Archive pages not on your radar. Access them here when needed.",
     path: "/empty-state/pages/archived",
-  },
-
-  [EmptyStateType.COMMAND_K_SEARCH_EMPTY_STATE]: {
-    key: EmptyStateType.COMMAND_K_SEARCH_EMPTY_STATE,
-    title: "No results found",
-    path: "/empty-state/search/search",
-  },
-  [EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE]: {
-    key: EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE,
-    title: "No matching issues found",
-    path: "/empty-state/search/search",
-  },
-  [EmptyStateType.ISSUE_RELATION_EMPTY_STATE]: {
-    key: EmptyStateType.ISSUE_RELATION_EMPTY_STATE,
-    title: "No issues found",
-    path: "/empty-state/search/issues",
-  },
-  [EmptyStateType.ISSUE_COMMENT_EMPTY_STATE]: {
-    key: EmptyStateType.ISSUE_COMMENT_EMPTY_STATE,
-    title: "No comments yet",
-    description: "Comments can be used as a discussion and \n follow-up space for the issues",
-    path: "/empty-state/search/comments",
   },
   [EmptyStateType.STICKIES]: {
     key: EmptyStateType.STICKIES,

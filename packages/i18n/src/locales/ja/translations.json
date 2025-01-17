@@ -594,21 +594,33 @@
   "workspace_page_private_empty_state_description": "ここで個人的な考えを記録してください。共有する準備ができたら、チームとワンクリックで共有できます。",
   "workspace_page_private_empty_state_primary_button_text": "最初のページを作成する",
 
-  "command_k_search_empty_state_title": "結果が見つかりません",
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "結果が見つかりません"
+      }
+    }
+  },
 
-  "issue_relation_search_empty_state_title": "一致する課題が見つかりません",
-  "issue_relation_empty_state_title": "課題が見つかりません",
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "一致する課題が見つかりませんでした"
+      },
+      "general": {
+        "title": "課題が見つかりません"
+      }
+    }
+  },
 
-  "issue_comment_empty_state_title": "まだコメントがありません",
-  "issue_comment_empty_state_description": "コメントは課題に関する議論やフォローアップの場として活用できます",
-
-  "notification_detail_empty_state_title": "詳細を表示するには選択してください。",
-
-  "notification_all_empty_state_title": "割り当てられた課題はありません",
-  "notification_all_empty_state_description": "あなたに割り当てられた課題の更新はここで確認できます",
-
-  "notification_mentions_empty_state_title": "割り当てられた課題はありません",
-  "notification_mentions_empty_state_description": "あなたに割り当てられた課題の更新はここで確認できます",
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "まだコメントはありません",
+        "description": "コメントは課題の議論やフォローアップスペースとして使用できます"
+      }
+    }
+  },
 
   "notification": {
     "empty_state": {
