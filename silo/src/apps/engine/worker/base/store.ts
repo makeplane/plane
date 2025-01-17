@@ -1,6 +1,6 @@
-import { env } from "@/env";
-import { createClient, RedisClientType, RedisDefaultModules, RedisFunctions, RedisModules, RedisScripts } from "redis";
 import { EventEmitter } from "events";
+import { createClient, RedisClientType, RedisDefaultModules, RedisFunctions, RedisModules, RedisScripts } from "redis";
+import { env } from "@/env";
 
 export class Store extends EventEmitter {
   private client!: RedisClientType<RedisDefaultModules & RedisModules, RedisFunctions, RedisScripts>;
@@ -41,23 +41,15 @@ export class Store extends EventEmitter {
     return await this.client.get(key);
   }
 
-  public async set(key: string, value: string, ttl?: number): Promise<boolean> {
+  public async set(key: string, value: string, ttl?: number, NX = true): Promise<boolean> {
     this.jobs.push(key);
 
     if (ttl !== undefined) {
-      const acquired = await this.client.set(key, value, {
-        NX: true,
-        EX: ttl,
-      });
-      if (!acquired) return false;
-      return true;
+      const acquired = await this.client.set(key, value, NX ? { NX: true, EX: ttl } : { EX: ttl });
+      return acquired === "OK";
     } else {
-      const acquired = await this.client.set(key, value, {
-        NX: true,
-      });
-
-      if (!acquired) return false;
-      return true;
+      const acquired = await this.client.set(key, value, NX ? { NX: true } : {});
+      return acquired === "OK";
     }
   }
 

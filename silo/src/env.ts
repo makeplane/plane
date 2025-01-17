@@ -8,7 +8,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   BATCH_SIZE: z.string().default("50"),
   PORT: z.string().default("3000"),
-  DEDUP_INTERVAL: z.string().optional().default("2"),
+  DEDUP_INTERVAL: z.string().optional().default("3"),
   DB_URL: z.string().default("postgres://postgres:password@localhost:5432/silo"),
   AMQP_URL: z.string().default("amqp://guest:guest@localhost:5672"),
   REDIS_URL: z.string().default("redis://localhost:6379"),

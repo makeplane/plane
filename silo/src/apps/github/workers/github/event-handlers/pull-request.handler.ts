@@ -1,13 +1,13 @@
+import { TServiceCredentials } from "@plane/etl/core";
+import { createGithubService, GithubService, GithubWebhookPayload } from "@plane/etl/github";
+import { MergeRequestEvent } from "@plane/etl/gitlab";
+import { Client, Client as PlaneClient } from "@plane/sdk";
 import { classifyPullRequestEvent, getConnectionDetails } from "@/apps/github/helpers/helpers";
 import { GithubEntityConnection, GithubWorkspaceConnection, PullRequestWebhookActions } from "@/apps/github/types";
 import { getCredentialsBySourceToken } from "@/db/query";
 import { env } from "@/env";
 import { getReferredIssues, IssueReference, IssueWithReference } from "@/helpers/parser";
 import { logger } from "@/logger";
-import { Client, Client as PlaneClient } from "@plane/sdk";
-import { TServiceCredentials } from "@plane/etl/core";
-import { createGithubService, GithubService, GithubWebhookPayload } from "@plane/etl/github";
-import { MergeRequestEvent } from "@plane/etl/gitlab";
 import { SentryInstance } from "@/sentry-config";
 
 export const handlePullRequestEvents = async (action: PullRequestWebhookActions, data: unknown) => {
@@ -111,9 +111,10 @@ const handlePullRequestOpened = async (data: GithubWebhookPayload["webhook-pull-
 
       const validIssues = updatedIssues.filter((issue): issue is IssueWithReference => issue !== null);
 
-      const body = createCommentBody(validIssues, nonClosingReferences, workspaceConnection);
-
-      await handleComment(ghService, data.repository.owner.login, data.repository.name, data.pull_request.number, body);
+      if (validIssues.length > 0) {
+        const body = createCommentBody(validIssues, nonClosingReferences, workspaceConnection);
+        await handleComment(ghService, data.repository.owner.login, data.repository.name, data.pull_request.number, body);
+      }
     }
   }
 };
