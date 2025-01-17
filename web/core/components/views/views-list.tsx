@@ -5,11 +5,9 @@ import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { ListLayout } from "@/components/core/list";
-import { ComicBoxButton, DetailedEmptyState, EmptyState } from "@/components/empty-state";
+import { ComicBoxButton, DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
 import { ViewListLoader } from "@/components/ui";
 import { ProjectViewListItem } from "@/components/views";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useCommandPalette, useProjectView, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
@@ -32,13 +30,20 @@ export const ProjectViewsList = observer(() => {
   const generalViewResolvedPath = useResolvedAssetPath({
     basePath: "/empty-state/onboarding/views",
   });
+  const filteredViewResolvedPath = useResolvedAssetPath({
+    basePath: "/empty-state/search/views",
+  });
 
   if (loader || !projectViews || !filteredProjectViews) return <ViewListLoader />;
 
   if (filteredProjectViews.length === 0 && projectViews.length > 0) {
     return (
       <div className="flex items-center justify-center h-full w-full">
-        <EmptyState type={EmptyStateType.VIEWS_EMPTY_SEARCH} layout="screen-simple" />
+        <SimpleEmptyState
+          title={t("project_views.empty_state.filter.title")}
+          description={t("project_views.empty_state.filter.description")}
+          assetPath={filteredViewResolvedPath}
+        />
       </div>
     );
   }
@@ -57,14 +62,14 @@ export const ProjectViewsList = observer(() => {
         </div>
       ) : (
         <DetailedEmptyState
-          title={t("project_view.empty_state.general.title")}
-          description={t("project_view.empty_state.general.description")}
+          title={t("project_views.empty_state.general.title")}
+          description={t("project_views.empty_state.general.description")}
           assetPath={generalViewResolvedPath}
           customPrimaryButton={
             <ComicBoxButton
-              label={t("project_view.empty_state.general.primary_button.text")}
-              title={t("project_view.empty_state.general.primary_button.comic.title")}
-              description={t("project_view.empty_state.general.primary_button.comic.description")}
+              label={t("project_views.empty_state.general.primary_button.text")}
+              title={t("project_views.empty_state.general.primary_button.comic.title")}
+              description={t("project_views.empty_state.general.primary_button.comic.description")}
               onClick={() => toggleCreateViewModal(true)}
               disabled={!canPerformEmptyStateActions}
             />

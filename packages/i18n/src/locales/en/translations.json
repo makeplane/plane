@@ -220,6 +220,7 @@
   "join_the_project_to_rearrange": "Join the project to rearrange",
   "drag_to_rearrange": "Drag to rearrange",
   "congrats": "Congrats!",
+  "project": "Project",
   "open_project": "Open project",
   "issues": "Issues",
   "cycles": "Cycles",
@@ -377,6 +378,10 @@
             "description": "A project could be a product's roadmap, a marketing campaign, or launching a new car."
           }
         }
+      },
+      "filter": {
+        "title": "No matching projects",
+        "description": "No projects detected with the matching criteria. \n Create a new project instead."
       }
     }
   },
@@ -503,44 +508,22 @@
           "text": "Add existing issue"
         }
       },
+      "completed_no_issues": {
+        "title": "No issues in the cycle",
+        "description": "No issues in the cycle. Issues are either transferred or hidden. To see hidden issues if any, update your display properties accordingly."
+      },
       "active": {
         "title": "No active cycle",
         "description": "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here."
       },
-      "completed": {
-        "title": "No issues in the cycle",
-        "description": "No issues in the cycle. Issues are either transferred or hidden. To see hidden issues if any, update your display properties accordingly."
+      "archived": {
+        "title": "No archived cycles yet",
+        "description": "To tidy up your project, archive completed cycles. Find them here once archived."
       }
     }
   },
 
-  "project_archived_no_cycles_empty_state_title": "No archived cycles yet",
-  "project_archived_no_cycles_empty_state_description": "To tidy up your project, archive completed cycles. Find them here once archived.",
-
-  "project_archived_empty_filter_empty_state_title": "No issues found matching the filters applied",
-  "project_archived_empty_filter_empty_state_secondary_button_text": "Clear all filters",
-
-  "project_draft_empty_filter_empty_state_title": "No issues found matching the filters applied",
-  "project_draft_empty_filter_empty_state_secondary_button_text": "Clear all filters",
-
-  "project_archived_no_issues_empty_state_title": "No archived issues yet",
-  "project_archived_no_issues_empty_state_description": "Manually or through automation, you can archive issues that are completed or cancelled. Find them here once archived.",
-  "project_archived_no_issues_empty_state_primary_button_text": "Set automation",
-
-  "project_draft_no_issues_empty_state_title": "No draft issues yet",
-  "project_draft_no_issues_empty_state_description": "Quickly stepping away but want to keep your place? No worries – save a draft now. Your issues will be right here waiting for you.",
-
-  "views_empty_search_empty_state_title": "No matching views",
-  "views_empty_search_empty_state_description": "No views match the search criteria. Create a new view instead.",
-
-  "projects_empty_search_empty_state_title": "No matching projects",
-  "projects_empty_search_empty_state_description": "No projects detected with the matching criteria. Create a new project instead.",
-
-  "members_empty_search_empty_state_title": "No matching members",
-  "members_empty_search_empty_state_description": "Add them to the project if they are already a part of the workspace",
-
-  "project": {
-    "label": "Project",
+  "project_issues": {
     "empty_state": {
       "no_issues": {
         "title": "Create an issue and assign it to someone, even yourself",
@@ -551,6 +534,13 @@
             "title": "Issues are building blocks in Plane.",
             "description": "Redesign the Plane UI, Rebrand the company, or Launch the new fuel injection system are examples of issues that likely have sub-issues."
           }
+        }
+      },
+      "no_archived_issues": {
+        "title": "No archived issues yet",
+        "description": "Manually or through automation, you can archive issues that are completed or cancelled. Find them here once archived.",
+        "primary_button": {
+          "text": "Set automation"
         }
       },
       "issues_empty_filter": {
@@ -592,7 +582,7 @@
     }
   },
 
-  "project_view": {
+  "project_views": {
     "empty_state": {
       "general": {
         "title": "Save filtered views for your project. Create as many as you need",
@@ -604,6 +594,10 @@
             "description": "You can create a view from here with as many properties as filters as you see fit."
           }
         }
+      },
+      "filter": {
+        "title": "No matching views",
+        "description": "No views match the search criteria. \n Create a new view instead."
       }
     }
   },

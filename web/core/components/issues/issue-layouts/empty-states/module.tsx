@@ -103,10 +103,10 @@ export const ModuleEmptyState: React.FC = observer(() => {
       <div className="grid h-full w-full place-items-center">
         {isEmptyFilters ? (
           <DetailedEmptyState
-            title={t("project.empty_state.issues_empty_filter.title")}
+            title={t("project_issues.empty_state.issues_empty_filter.title")}
             assetPath={emptyFilterResolvedPath}
             secondaryButton={{
-              text: t("project.empty_state.issues_empty_filter.secondary_button.text"),
+              text: t("project_issues.empty_state.issues_empty_filter.secondary_button.text"),
               onClick: handleClearAllFilters,
               disabled: !canPerformEmptyStateActions,
             }}

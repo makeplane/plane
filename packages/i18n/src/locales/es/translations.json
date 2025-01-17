@@ -219,6 +219,7 @@
   "join_the_project_to_rearrange": "Únete al proyecto para reordenar",
   "drag_to_rearrange": "Arrastra para reordenar",
   "congrats": "¡Felicitaciones!",
+  "project": "Proyecto",
   "open_project": "Abrir proyecto",
   "issues": "Problemas",
   "cycles": "Ciclos",
@@ -376,6 +377,10 @@
             "description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo coche."
           }
         }
+      },
+      "filter": {
+        "title": "No hay proyectos coincidentes",
+        "description": "No se detectaron proyectos con los criterios coincidentes. \n Crea un nuevo proyecto en su lugar."
       }
     }
   },
@@ -502,47 +507,22 @@
           "text": "Añadir problema existente"
         }
       },
+      "completed_no_issues": {
+        "title": "No hay problemas en el ciclo",
+        "description": "No hay problemas en el ciclo. Los problemas se han transferido o están ocultos. Para ver problemas ocultos, si los hay, actualiza las propiedades de visualización en consecuencia."
+      },
       "active": {
-        "title": "Sin ciclo activo",
+        "title": "No hay ciclo activo",
         "description": "Un ciclo activo incluye cualquier período que abarque la fecha de hoy dentro de su rango. Encuentra el progreso y los detalles del ciclo activo aquí."
       },
-      "completed": {
-        "title": "No hay problemas en el ciclo",
-        "description": "No hay problemas en el ciclo. Los problemas se transfirieron o están ocultos. Para ver los problemas ocultos, si los hay, actualiza tus propiedades de visualización según sea necesario."
+      "archived": {
+        "title": "No hay ciclos archivados todavía",
+        "description": "Para organizar tu proyecto, archiva ciclos completados. Encuéntralos aquí una vez archivados."
       }
     }
   },
 
-  "project_archived_no_cycles_empty_state_title": "No hay ciclos archivados aún",
-  "project_archived_no_cycles_empty_state_description": "Para ordenar tu proyecto, archiva los ciclos completados. Encuéntralos aquí una vez archivados.",
-
-  "project_cycle_all_empty_state_title": "No hay ciclos",
-  "project_cycle_all_empty_state_description": "Un ciclo activo incluye cualquier período que abarque la fecha de hoy dentro de su rango. Encuentra el progreso y los detalles del ciclo activo aquí.",
-
-  "project_archived_empty_filter_empty_state_title": "No se encontraron problemas que coincidan con los filtros aplicados",
-  "project_archived_empty_filter_empty_state_secondary_button_text": "Limpiar todos los filtros",
-
-  "project_draft_empty_filter_empty_state_title": "No se encontraron problemas que coincidan con los filtros aplicados",
-  "project_draft_empty_filter_empty_state_secondary_button_text": "Limpiar todos los filtros",
-
-  "project_archived_no_issues_empty_state_title": "No hay problemas archivados aún",
-  "project_archived_no_issues_empty_state_description": "Manual o mediante automatización, puedes archivar problemas que están completados o cancelados. Encuéntralos aquí una vez archivados.",
-  "project_archived_no_issues_empty_state_primary_button_text": "Establecer automatización",
-
-  "project_draft_no_issues_empty_state_title": "No hay problemas en borrador aún",
-  "project_draft_no_issues_empty_state_description": "¿Te alejas rápidamente pero quieres mantener tu lugar? No te preocupes – guarda un borrador ahora. Tus problemas estarán aquí esperándote.",
-
-  "views_empty_search_empty_state_title": "No hay vistas coincidentes",
-  "views_empty_search_empty_state_description": "No hay vistas que coincidan con los criterios de búsqueda. Crea una nueva vista en su lugar.",
-
-  "projects_empty_search_empty_state_title": "No hay proyectos coincidentes",
-  "projects_empty_search_empty_state_description": "No se detectaron proyectos con los criterios coincidentes. Crea un nuevo proyecto en su lugar.",
-
-  "members_empty_search_empty_state_title": "No hay miembros coincidentes",
-  "members_empty_search_empty_state_description": "Añádelos al proyecto si ya son parte del espacio de trabajo",
-
-  "project": {
-    "label": "Proyecto",
+  "project_issues": {
     "empty_state": {
       "no_issues": {
         "title": "Crea un problema y asígnalo a alguien, incluso a ti mismo",
@@ -553,6 +533,13 @@
             "title": "Los problemas son bloques de construcción en Plane.",
             "description": "Rediseñar la interfaz de Plane, Rebrandear la empresa o Lanzar el nuevo sistema de inyección de combustible son ejemplos de problemas que probablemente tengan subproblemas."
           }
+        }
+      },
+      "no_archived_issues": {
+        "title": "Aún no hay problemas archivados",
+        "description": "De forma manual o mediante automatización, puedes archivar problemas que estén completados o cancelados. Encuéntralos aquí una vez archivados.",
+        "primary_button": {
+          "text": "Configurar automatización"
         }
       },
       "issues_empty_filter": {
@@ -594,7 +581,7 @@
     }
   },
 
-  "project_view": {
+  "project_views": {
     "empty_state": {
       "general": {
         "title": "Guarda vistas filtradas para tu proyecto. Crea tantas como necesites",
@@ -606,6 +593,10 @@
             "description": "Puedes crear una vista desde aquí con tantas propiedades como filtros que consideres necesarios."
           }
         }
+      },
+      "filter": {
+        "title": "No hay vistas coincidentes",
+        "description": "Ninguna vista coincide con los criterios de búsqueda. \n Crea una nueva vista en su lugar."
       }
     }
   },

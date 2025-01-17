@@ -49,18 +49,8 @@ export enum EmptyStateType {
   PROJECT_SETTINGS_INTEGRATIONS = "project-settings-integrations",
   PROJECT_SETTINGS_ESTIMATE = "project-settings-estimate",
   PROJECT_CYCLES = "project-cycles",
-  PROJECT_CYCLE_NO_ISSUES = "project-cycle-no-issues",
   PROJECT_CYCLE_ACTIVE = "project-cycle-active",
   PROJECT_CYCLE_ALL = "project-cycle-all",
-  PROJECT_CYCLE_COMPLETED_NO_ISSUES = "project-cycle-completed-no-issues",
-  PROJECT_ARCHIVED_NO_CYCLES = "project-archived-no-cycles",
-  PROJECT_EMPTY_FILTER = "project-empty-filter",
-  PROJECT_ARCHIVED_EMPTY_FILTER = "project-archived-empty-filter",
-  PROJECT_NO_ISSUES = "project-no-issues",
-  PROJECT_ARCHIVED_NO_ISSUES = "project-archived-no-issues",
-  VIEWS_EMPTY_SEARCH = "views-empty-search",
-  PROJECTS_EMPTY_SEARCH = "projects-empty-search",
-  MEMBERS_EMPTY_SEARCH = "members-empty-search",
   // stickies
   STICKIES = "stickies",
   STICKIES_SEARCH = "stickies-search",
@@ -287,39 +277,12 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
     accessType: "project",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
-  [EmptyStateType.PROJECT_CYCLE_NO_ISSUES]: {
-    key: EmptyStateType.PROJECT_CYCLE_NO_ISSUES,
-    title: "No issues added to the cycle",
-    description: "Add or create issues you wish to timebox and deliver within this cycle",
-    path: "/empty-state/cycle-issues/",
-    primaryButton: {
-      text: "Create new issue ",
-    },
-    secondaryButton: {
-      text: "Add an existing issue",
-    },
-    accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
   [EmptyStateType.PROJECT_CYCLE_ACTIVE]: {
     key: EmptyStateType.PROJECT_CYCLE_ACTIVE,
     title: "No active cycle",
     description:
       "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
     path: "/empty-state/cycle/active",
-  },
-  [EmptyStateType.PROJECT_CYCLE_COMPLETED_NO_ISSUES]: {
-    key: EmptyStateType.PROJECT_CYCLE_COMPLETED_NO_ISSUES,
-    title: "No issues in the cycle",
-    description:
-      "No issues in the cycle. Issues are either transferred or hidden. To see hidden issues if any, update your display properties accordingly.",
-    path: "/empty-state/cycle/completed-no-issues",
-  },
-  [EmptyStateType.PROJECT_ARCHIVED_NO_CYCLES]: {
-    key: EmptyStateType.PROJECT_ARCHIVED_NO_CYCLES,
-    title: "No archived cycles yet",
-    description: "To tidy up your project, archive completed cycles. Find them here once archived.",
-    path: "/empty-state/archived/empty-cycles",
   },
   [EmptyStateType.PROJECT_CYCLE_ALL]: {
     key: EmptyStateType.PROJECT_CYCLE_ALL,
@@ -329,74 +292,6 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
     path: "/empty-state/cycle/active",
   },
   // empty filters
-  [EmptyStateType.PROJECT_EMPTY_FILTER]: {
-    key: EmptyStateType.PROJECT_EMPTY_FILTER,
-    title: "No issues found matching the filters applied",
-    path: "/empty-state/empty-filters/",
-    secondaryButton: {
-      text: "Clear all filters",
-    },
-    accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  [EmptyStateType.PROJECT_ARCHIVED_EMPTY_FILTER]: {
-    key: EmptyStateType.PROJECT_ARCHIVED_EMPTY_FILTER,
-    title: "No issues found matching the filters applied",
-    path: "/empty-state/empty-filters/",
-    secondaryButton: {
-      text: "Clear all filters",
-    },
-    accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  //  project issues
-  [EmptyStateType.PROJECT_NO_ISSUES]: {
-    key: EmptyStateType.PROJECT_NO_ISSUES,
-    title: "Create an issue and assign it to someone, even yourself",
-    description:
-      "Think of issues as jobs, tasks, work, or JTBD. Which we like. An issue and its sub-issues are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes issues to move your project towards its goal.",
-    path: "/empty-state/onboarding/issues",
-    primaryButton: {
-      text: "Create your first issue",
-      comicBox: {
-        title: "Issues are building blocks in Plane.",
-        description:
-          "Redesign the Plane UI, Rebrand the company, or Launch the new fuel injection system are examples of issues that likely have sub-issues.",
-      },
-    },
-    accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  [EmptyStateType.PROJECT_ARCHIVED_NO_ISSUES]: {
-    key: EmptyStateType.PROJECT_ARCHIVED_NO_ISSUES,
-    title: "No archived issues yet",
-    description:
-      "Manually or through automation, you can archive issues that are completed or cancelled. Find them here once archived.",
-    path: "/empty-state/archived/empty-issues",
-    primaryButton: {
-      text: "Set automation",
-    },
-    accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  [EmptyStateType.VIEWS_EMPTY_SEARCH]: {
-    key: EmptyStateType.VIEWS_EMPTY_SEARCH,
-    title: "No matching views",
-    description: "No views match the search criteria. \n Create a new view instead.",
-    path: "/empty-state/search/views",
-  },
-  [EmptyStateType.PROJECTS_EMPTY_SEARCH]: {
-    key: EmptyStateType.PROJECTS_EMPTY_SEARCH,
-    title: "No matching projects",
-    description: "No projects detected with the matching criteria. Create a new project instead.",
-    path: "/empty-state/search/project",
-  },
-  [EmptyStateType.MEMBERS_EMPTY_SEARCH]: {
-    key: EmptyStateType.MEMBERS_EMPTY_SEARCH,
-    title: "No matching members",
-    description: "Add them to the project if they are already a part of the workspace",
-    path: "/empty-state/search/member",
-  },
   [EmptyStateType.STICKIES]: {
     key: EmptyStateType.STICKIES,
     title: "Stickies are quick notes and to-dos you take down on the fly.",

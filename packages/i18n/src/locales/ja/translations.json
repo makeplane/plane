@@ -220,6 +220,7 @@
   "join_the_project_to_rearrange": "プロジェクトに参加して並べ替え",
   "drag_to_rearrange": "ドラッグして並べ替え",
   "congrats": "おめでとうございます！",
+  "project": "プロジェクト",
   "open_project": "プロジェクトを開く",
   "issues": "問題",
   "cycles": "サイクル",
@@ -377,6 +378,10 @@
             "description": "プロジェクトは製品ロードマップ、マーケティングキャンペーン、新車の発売など、さまざまなものになります。"
           }
         }
+      },
+      "filter": {
+        "title": "一致するプロジェクトがありません",
+        "description": "一致する条件のプロジェクトが見つかりませんでした。\n 代わりに新しいプロジェクトを作成してください。"
       }
     }
   },
@@ -503,47 +508,22 @@
           "text": "既存のタスクを追加"
         }
       },
+      "completed_no_issues": {
+        "title": "サイクルに課題がありません",
+        "description": "サイクルに課題がありません。課題は転送されるか非表示になっています。非表示の課題がある場合は、表示プロパティを更新して確認してください。"
+      },
       "active": {
         "title": "アクティブなサイクルがありません",
-        "description": "アクティブなサイクルは、今日の日付を範囲内に含む期間を指します。アクティブなサイクルの進捗と詳細をここで確認してください。"
+        "description": "アクティブなサイクルは、今日の日付を含む範囲がある期間を指します。ここでアクティブなサイクルの進捗と詳細を確認してください。"
       },
-      "completed": {
-        "title": "サイクルにタスクがありません",
-        "description": "サイクルにタスクがありません。タスクは移行されるか、非表示になっています。存在する場合は、表示プロパティを更新して非表示のタスクを確認してください。"
+      "archived": {
+        "title": "まだアーカイブされたサイクルはありません",
+        "description": "プロジェクトを整理するには、完了したサイクルをアーカイブしてください。アーカイブされたサイクルはここで見つけることができます。"
       }
     }
   },
 
-  "project_archived_no_cycles_empty_state_title": "まだアーカイブされたサイクルはありません",
-  "project_archived_no_cycles_empty_state_description": "プロジェクトを整理するために、完了したサイクルをアーカイブします。一度アーカイブされると、ここに表示されます。",
-
-  "project_cycle_all_empty_state_title": "サイクルがありません",
-  "project_cycle_all_empty_state_description": "アクティブなサイクルには、現在の日付が含まれる期間が含まれます。ここでアクティブなサイクルの進捗や詳細を確認できます。",
-
-  "project_archived_empty_filter_empty_state_title": "適用されたフィルターに一致する課題は見つかりません",
-  "project_archived_empty_filter_empty_state_secondary_button_text": "すべてのフィルターをクリア",
-
-  "project_draft_empty_filter_empty_state_title": "適用されたフィルターに一致する課題は見つかりません",
-  "project_draft_empty_filter_empty_state_secondary_button_text": "すべてのフィルターをクリア",
-
-  "project_archived_no_issues_empty_state_title": "まだアーカイブされた課題はありません",
-  "project_archived_no_issues_empty_state_description": "手動または自動化により、完了またはキャンセルされた課題をアーカイブできます。一度アーカイブされると、ここに表示されます。",
-  "project_archived_no_issues_empty_state_primary_button_text": "自動化を設定する",
-
-  "project_draft_no_issues_empty_state_title": "まだドラフトの課題はありません",
-  "project_draft_no_issues_empty_state_description": "すぐに離れる必要がある場合でも心配いりません – 今すぐドラフトを保存してください。課題はここで待っています。",
-
-  "views_empty_search_empty_state_title": "一致するビューはありません",
-  "views_empty_search_empty_state_description": "検索条件に一致するビューはありません。代わりに新しいビューを作成してください。",
-
-  "projects_empty_search_empty_state_title": "一致するプロジェクトはありません",
-  "projects_empty_search_empty_state_description": "一致する条件のプロジェクトは見つかりませんでした。代わりに新しいプロジェクトを作成してください。",
-
-  "members_empty_search_empty_state_title": "一致するメンバーはありません",
-  "members_empty_search_empty_state_description": "すでにワークスペースの一員である場合、プロジェクトに追加してください。",
-
-  "project": {
-    "label": "プロジェクト",
+  "project_issues": {
     "empty_state": {
       "no_issues": {
         "title": "課題を作成し、誰かに、または自分に割り当てましょう",
@@ -554,6 +534,13 @@
             "title": "課題はPlaneの構成要素です。",
             "description": "Plane UIの再設計、会社のリブランド、新しい燃料噴射システムの開始は、サブ課題がある可能性のある課題の例です。"
           }
+        }
+      },
+      "no_archived_issues": {
+        "title": "まだアーカイブされた課題はありません",
+        "description": "手動または自動化を使用して、完了またはキャンセルされた課題をアーカイブできます。アーカイブされた課題はここで見つけることができます。",
+        "primary_button": {
+          "text": "自動化を設定"
         }
       },
       "issues_empty_filter": {
@@ -595,7 +582,7 @@
     }
   },
 
-  "project_view": {
+  "project_views": {
     "empty_state": {
       "general": {
         "title": "プロジェクト用にフィルタされたビューを保存します。必要なだけ作成してください",
@@ -607,6 +594,10 @@
             "description": "ここから必要に応じてプロパティをフィルターとして使用してビューを作成できます。"
           }
         }
+      },
+      "filter": {
+        "title": "一致するビューがありません",
+        "description": "検索条件に一致するビューはありません。 \n 代わりに新しいビューを作成してください。"
       }
     }
   },
