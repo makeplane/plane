@@ -53,10 +53,10 @@ from .. import BaseAPIView
 def dashboard_overview_stats(self, request, slug):
     assigned_issues = (
         Issue.issue_objects.filter(
+            (Q(assignees__in=[request.user]) & Q(issue_assignee__deleted_at__isnull=True)),
             project__project_projectmember__is_active=True,
             project__project_projectmember__member=request.user,
             workspace__slug=slug,
-            assignees__in=[request.user],
         )
         .filter(
             Q(
@@ -176,10 +176,13 @@ def dashboard_assigned_issues(self, request, slug):
     # get all the assigned issues
     assigned_issues = (
         Issue.issue_objects.filter(
+            (
+                Q(assignees__in=[request.user])
+                & Q(issue_assignee__deleted_at__isnull=True)
+            ),
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
             project__project_projectmember__is_active=True,
-            assignees__in=[request.user],
         )
         .filter(**filters)
         .select_related("workspace", "project", "state", "parent")
