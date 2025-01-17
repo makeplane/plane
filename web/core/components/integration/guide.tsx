@@ -28,6 +28,7 @@ import { IntegrationService } from "@/services/integrations";
 // services
 const integrationService = new IntegrationService();
 
+// FIXME: [Deprecated] Remove this component
 const IntegrationGuide = observer(() => {
   // states
   const [refreshing, setRefreshing] = useState(false);
@@ -137,7 +138,7 @@ const IntegrationGuide = observer(() => {
                     </div>
                   ) : (
                     <div className="flex h-full w-full items-center justify-center">
-                      <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_IMPORT} size="sm" />
+                      {/* <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_IMPORT} size="sm" /> */}
                     </div>
                   )
                 ) : (

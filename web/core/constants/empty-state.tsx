@@ -37,10 +37,6 @@ export enum EmptyStateType {
   WORKSPACE_CUSTOM_VIEW = "workspace-custom-view",
   WORKSPACE_NO_PROJECTS = "workspace-no-projects",
   WORKSPACE_PROJECT_NOT_FOUND = "workspace-project-not-found",
-  WORKSPACE_SETTINGS_API_TOKENS = "workspace-settings-api-tokens",
-  WORKSPACE_SETTINGS_WEBHOOKS = "workspace-settings-webhooks",
-  WORKSPACE_SETTINGS_EXPORT = "workspace-settings-export",
-  WORKSPACE_SETTINGS_IMPORT = "workspace-settings-import",
   // stickies
   STICKIES = "stickies",
   STICKIES_SEARCH = "stickies-search",
@@ -177,32 +173,6 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
     },
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  // workspace settings
-  [EmptyStateType.WORKSPACE_SETTINGS_API_TOKENS]: {
-    key: EmptyStateType.WORKSPACE_SETTINGS_API_TOKENS,
-    title: "No API tokens created",
-    description:
-      "Plane APIs can be used to integrate your data in Plane with any external system. Create a token to get started.",
-    path: "/empty-state/workspace-settings/api-tokens",
-  },
-  [EmptyStateType.WORKSPACE_SETTINGS_WEBHOOKS]: {
-    key: EmptyStateType.WORKSPACE_SETTINGS_WEBHOOKS,
-    title: "No webhooks added",
-    description: "Create webhooks to receive real-time updates and automate actions.",
-    path: "/empty-state/workspace-settings/webhooks",
-  },
-  [EmptyStateType.WORKSPACE_SETTINGS_EXPORT]: {
-    key: EmptyStateType.WORKSPACE_SETTINGS_EXPORT,
-    title: "No previous exports yet",
-    description: "Anytime you export, you will also have a copy here for reference.",
-    path: "/empty-state/workspace-settings/exports",
-  },
-  [EmptyStateType.WORKSPACE_SETTINGS_IMPORT]: {
-    key: EmptyStateType.WORKSPACE_SETTINGS_IMPORT,
-    title: "No previous imports yet",
-    description: "Find all your previous imports here and download them.",
-    path: "/empty-state/workspace-settings/imports",
   },
   // empty filters
   [EmptyStateType.STICKIES]: {
