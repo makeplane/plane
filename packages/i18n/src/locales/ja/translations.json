@@ -374,7 +374,6 @@
   "show_empty_groups": "空のグループを表示",
   "clear_all": "すべてクリア",
   "save_view": "ビューを保存",
-  "press_enter_to_add_another": "'Enter'を押して別の",
   "epic_title": "エピックタイトル",
   "issue_title": "問題タイトル",
   "new": "新しい",
@@ -393,5 +392,18 @@
   "comment_update_failed_please_try_again_later": "コメントの更新に失敗しました。もう一度お試しください。",
   "comment_removed_successfully": "コメントが正常に削除されました",
   "comment_remove_failed_please_try_again_later": "コメントの削除に失敗しました。もう一度お試しください。",
-  "asset_upload_failed_please_try_again_later": "アセットのアップロードに失敗しました。もう一度お試しください。"
+  "asset_upload_failed_please_try_again_later": "アセットのアップロードに失敗しました。もう一度お試しください。",
+  "issue_could_not_be_added_to_the_cycle_please_try_again": "問題をサイクルに追加できませんでした。もう一度お試しください。",
+  "issue_removed_from_the_cycle_successfully": "問題がサイクルから正常に削除されました",
+  "issue_could_not_be_removed_from_the_cycle_please_try_again": "問題をサイクルから削除できませんでした。もう一度お試しください。",
+  "issue_removed_from_the_module_successfully": "問題がモジュールから正常に削除されました",
+  "issue_could_not_be_removed_from_the_module_please_try_again": "問題をモジュールから削除できませんでした。もう一度お試しください。",
+  "issue_update_failed_please_try_again_later": "問題を更新できませんでした。もう一度お試しください。",
+  "project_issues_count": "{{count, plural, =0{問題なし} one{# 問題} other{# 問題}}",
+  "adding_issue": "{entity}を追加中...",
+  "entity_created_successfully": "{entity}が正常に作成されました",
+  "entity_title_required": "{entity}タイトルは必須です。",
+  "press_enter_to_add_another_entity": "'Enter'を押して別の{entity}を追加",
+  "some_error_occurred_please_try_again": "エラーが発生しました。もう一度お試しください。",
+  "select_date": "日付を選択"
 }

@@ -374,7 +374,6 @@
   "show_empty_groups": "Afficher les groupes vides",
   "clear_all": "Tout effacer",
   "save_view": "Enregistrer la vue",
-  "press_enter_to_add_another": "'Entrer' pour ajouter un autre",
   "epic_title": "Titre de l'épique",
   "issue_title": "Titre du problème",
   "new": "Nouveau",
@@ -393,5 +392,18 @@
   "comment_update_failed_please_try_again_later": "Erreur lors de la mise à jour du commentaire. Veuillez réessayer plus tard.",
   "comment_removed_successfully": "Commentaire supprimé avec succès",
   "comment_remove_failed_please_try_again_later": "Erreur lors de la suppression du commentaire. Veuillez réessayer plus tard.",
-  "asset_upload_failed_please_try_again_later": "Erreur lors de l'upload de l'asset. Veuillez réessayer plus tard."
+  "asset_upload_failed_please_try_again_later": "Erreur lors de l'upload de l'asset. Veuillez réessayer plus tard.",
+  "issue_could_not_be_added_to_the_cycle_please_try_again": "Le problème n'a pas pu être ajouté au cycle. Veuillez réessayer.",
+  "issue_removed_from_the_cycle_successfully": "Le problème a été supprimé du cycle avec succès",
+  "issue_could_not_be_removed_from_the_cycle_please_try_again": "Le problème n'a pas pu être supprimé du cycle. Veuillez réessayer.",
+  "issue_removed_from_the_module_successfully": "Le problème a été supprimé du module avec succès",
+  "issue_could_not_be_removed_from_the_module_please_try_again": "Le problème n'a pas pu être supprimé du module. Veuillez réessayer.",
+  "issue_update_failed_please_try_again_later": "Le problème n'a pas pu être mis à jour. Veuillez réessayer plus tard.",
+  "project_issues_count": "{{count, plural, =0{Aucun problème} one{# problème} other{# problèmes}}}",
+  "adding_issue": "Ajout de {entity}...",
+  "entity_created_successfully": "{entity} créé avec succès",
+  "entity_title_required": "{entity} title is required.",
+  "press_enter_to_add_another_entity": "Appuyez sur 'Entrer' pour ajouter un autre {entity}",
+  "some_error_occurred_please_try_again": "Une erreur est survenue. Veuillez réessayer.",
+  "select_date": "Sélectionner la date"
 }

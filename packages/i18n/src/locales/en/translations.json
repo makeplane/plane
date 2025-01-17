@@ -374,7 +374,6 @@
   "show_empty_groups": "Show empty groups",
   "clear_all": "Clear all",
   "save_view": "Save view",
-  "press_enter_to_add_another": "Press 'Enter' to add another",
   "epic_title": "Epic title",
   "issue_title": "Issue title",
   "new": "New",
@@ -393,5 +392,21 @@
   "comment_update_failed_please_try_again_later": "Comment update failed. Please try again later.",
   "comment_removed_successfully": "Comment removed successfully",
   "comment_remove_failed_please_try_again_later": "Comment remove failed. Please try again later.",
-  "asset_upload_failed_please_try_again_later": "Asset upload failed. Please try again later."
+  "asset_upload_failed_please_try_again_later": "Asset upload failed. Please try again later.",
+  "issue_could_not_be_added_to_the_cycle_please_try_again": "Issue could not be added to the cycle. Please try again.",
+  "issue_removed_from_the_cycle_successfully": "Issue removed from the cycle successfully",
+  "issue_could_not_be_removed_from_the_cycle_please_try_again": "Issue could not be removed from the cycle. Please try again.",
+  "issue_removed_from_the_module_successfully": "Issue removed from the module successfully",
+  "issue_could_not_be_removed_from_the_module_please_try_again": "Issue could not be removed from the module. Please try again.",
+  "issue_update_failed_please_try_again_later": "Issue update failed. Please try again later.",
+  "project_issues_count": {
+    "one": "There is {{count}} issue in this project",
+    "other": "There are {{count}} issues in this project"
+  },
+  "adding": "Adding {entity}...",
+  "entity_created_successfully": "{entity} created successfully",
+  "entity_title_required": "{entity} title is required.",
+  "some_error_occurred_please_try_again": "Some error occurred. Please try again.",
+  "press_enter_to_add_another_entity": "Press 'Enter' to add another {entity}",
+  "select_date": "Select date"
 }

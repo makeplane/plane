@@ -67,8 +67,7 @@ export const IssuesHeader = observer(() => {
           {issuesCount && issuesCount > 0 ? (
             <Tooltip
               isMobile={isMobile}
-              //TODO: translate
-              tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "issues" : "issue"} in this project`}
+              tooltipContent={t("project_issues_count", { count: issuesCount })}
               position="bottom"
             >
               <CountChip count={issuesCount} />

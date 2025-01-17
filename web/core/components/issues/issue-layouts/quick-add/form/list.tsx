@@ -26,7 +26,9 @@ export const ListQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) =>
           />
         </div>
       </form>
-      <div className="px-3 py-2 text-xs italic text-custom-text-200">{`${t("press_enter_to_add_another")} ${isEpic ? t("epic") : t("issue")}`}</div>
+      <div className="px-3 py-2 text-xs italic text-custom-text-200">
+        {t("press_enter_to_add_another_entity", { entity: isEpic ? t("epic") : t("issue") })}
+      </div>
     </div>
   );
 });

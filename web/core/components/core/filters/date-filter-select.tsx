@@ -41,25 +41,27 @@ const dueDateRange: DueDate[] = [
 
 export const DateFilterSelect: React.FC<Props> = ({ title, value, onChange }) => {
   const { t } = useTranslation();
-  return <CustomSelect
-    value={value}
-    label={
-      <div className="flex items-center gap-2 text-xs">
-        {dueDateRange.find((item) => item.value === value)?.icon}
-        <span>
-          {title} {t(dueDateRange.find((item) => item.value === value)?.nameTranslationKey || "")}
-        </span>
-      </div>
-    }
-    onChange={onChange}
-  >
-    {dueDateRange.map((option, index) => (
-      <CustomSelect.Option key={index} value={option.value}>
-        <div className="flex items-center gap-2">
-          <span>{option.icon}</span>
-          {title} {t(option.nameTranslationKey)}
+  return (
+    <CustomSelect
+      value={value}
+      label={
+        <div className="flex items-center gap-2 text-xs">
+          {dueDateRange.find((item) => item.value === value)?.icon}
+          <span>
+            {title} {t(dueDateRange.find((item) => item.value === value)?.nameTranslationKey || "select_date")}
+          </span>
         </div>
-      </CustomSelect.Option>
-    ))}
-  </CustomSelect>
+      }
+      onChange={onChange}
+    >
+      {dueDateRange.map((option, index) => (
+        <CustomSelect.Option key={index} value={option.value}>
+          <div className="flex items-center gap-2">
+            <span>{option.icon}</span>
+            {title} {t(option.nameTranslationKey)}
+          </div>
+        </CustomSelect.Option>
+      ))}
+    </CustomSelect>
+  );
 };

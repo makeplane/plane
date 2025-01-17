@@ -15,13 +15,15 @@ export const KanbanQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) 
             autoComplete="off"
             placeholder={isEpic ? t("epic_title") : t("issue_title")}
             {...register("name", {
-              required: `${isEpic ? t("epic") : t("issue")} ${t("title_is_required")}.`,
+              required: t("entity_title_required", { entity: isEpic ? t("epic") : t("issue") }),
             })}
             className="w-full rounded-md bg-transparent px-2 py-1.5 pl-0 text-sm font-medium leading-5 text-custom-text-200 outline-none"
           />
         </div>
       </form>
-      <div className="px-3 py-2 text-xs italic text-custom-text-200">{`${t("press_enter_to_add_another")} ${isEpic ? t("epic") : t("issue")}`}</div>
+      <div className="px-3 py-2 text-xs italic text-custom-text-200">
+        {t("press_enter_to_add_another_entity", { entity: isEpic ? t("epic") : t("issue") })}
+      </div>
     </div>
   );
 });

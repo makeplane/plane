@@ -2,7 +2,6 @@
 import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
 // helpers
-import { useTranslation } from "@plane/i18n";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
@@ -16,7 +15,6 @@ type TCreateIssueToastActionItems = {
 
 export const CreateIssueToastActionItems: FC<TCreateIssueToastActionItems> = observer((props) => {
   const { workspaceSlug, projectId, issueId, isEpic = false } = props;
-  const { t } = useTranslation();
   // state
   const [copied, setCopied] = useState(false);
   // store hooks
@@ -51,12 +49,12 @@ export const CreateIssueToastActionItems: FC<TCreateIssueToastActionItems> = obs
         rel="noopener noreferrer"
         className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
       >
-        {`${t("view")} ${isEpic ? t("epic") : t("issue")}`}
+        {`View ${isEpic ? "Epic" : "Issue"}`}
       </a>
 
       {copied ? (
         <>
-          <span className="cursor-default px-2 py-1 text-custom-text-200">{t("copied")}</span>
+          <span className="cursor-default px-2 py-1 text-custom-text-200">Copied</span>
         </>
       ) : (
         <>
@@ -64,7 +62,7 @@ export const CreateIssueToastActionItems: FC<TCreateIssueToastActionItems> = obs
             className="cursor-pointer hidden group-hover:flex px-2 py-1 text-custom-text-300 hover:text-custom-text-200 hover:bg-custom-background-90 rounded"
             onClick={copyToClipboard}
           >
-            {t("copy_link")}
+            Copy Link
           </button>
         </>
       )}

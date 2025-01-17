@@ -374,7 +374,6 @@
   "show_empty_groups": "Mostrar grupos vacíos",
   "clear_all": "Limpiar todo",
   "save_view": "Guardar vista",
-  "press_enter_to_add_another": "Presiona 'Enter' para agregar otro",
   "epic_title": "Título de epic",
   "issue_title": "Título de problema",
   "new": "Nuevo",
@@ -393,5 +392,18 @@
   "comment_update_failed_please_try_again_later": "Error al actualizar el comentario. Por favor, inténtalo de nuevo más tarde.",
   "comment_removed_successfully": "Comentario eliminado con éxito",
   "comment_remove_failed_please_try_again_later": "Error al eliminar el comentario. Por favor, inténtalo de nuevo más tarde.",
-  "asset_upload_failed_please_try_again_later": "Error al subir el archivo. Por favor, inténtalo de nuevo más tarde."
+  "asset_upload_failed_please_try_again_later": "Error al subir el archivo. Por favor, inténtalo de nuevo más tarde.",
+  "issue_could_not_be_added_to_the_cycle_please_try_again": "El problema no pudo ser agregado al ciclo. Por favor, inténtalo de nuevo.",
+  "issue_removed_from_the_cycle_successfully": "El problema fue removido del ciclo con éxito",
+  "issue_could_not_be_removed_from_the_cycle_please_try_again": "El problema no pudo ser removido del ciclo. Por favor, inténtalo de nuevo.",
+  "issue_removed_from_the_module_successfully": "El problema fue removido del módulo con éxito",
+  "issue_could_not_be_removed_from_the_module_please_try_again": "El problema no pudo ser removido del módulo. Por favor, inténtalo de nuevo.",
+  "issue_update_failed_please_try_again_later": "El problema no pudo ser actualizado. Por favor, inténtalo de nuevo más tarde.",
+  "project_issues_count": "{{count, plural, =0{Sin problemas} one{# problema} other{# problemas}}}",
+  "adding": "Agregando {entity}...",
+  "entity_created_successfully": "{entity} creado con éxito",
+  "entity_title_required": "El título de {entity} es obligatorio.",
+  "press_enter_to_add_another_entity": "Presiona 'Enter' para agregar otro {entity}",
+  "some_error_occurred_please_try_again": "Ocurrió un error. Por favor, inténtalo de nuevo.",
+  "select_date": "Seleccionar fecha"
 }

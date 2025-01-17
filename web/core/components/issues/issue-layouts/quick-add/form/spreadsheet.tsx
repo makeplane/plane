@@ -25,7 +25,7 @@ export const SpreadsheetQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((pr
         />
       </form>
       <p className="ml-3 mt-3 text-xs italic text-custom-text-200">
-        {`${t("press_enter_to_add_another")} ${isEpic ? t("epic") : t("issue")}`}
+        {t("press_enter_to_add_another_entity", { entity: isEpic ? t("epic") : t("issue") })}
       </p>
     </div>
   );

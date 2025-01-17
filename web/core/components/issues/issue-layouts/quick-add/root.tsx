@@ -116,10 +116,10 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
     if (quickAddCallback) {
       const quickAddPromise = quickAddCallback(projectId.toString(), { ...payload });
       setPromiseToast<any>(quickAddPromise, {
-        loading: `Adding ${isEpic ? "epic" : "issue"}...`,
+        loading: t("adding_issue", { entity: isEpic ? t("epic") : t("issue") }),
         success: {
           title: t("success"),
-          message: () => `${isEpic ? t("epic") : t("issue")} ${t("created_successfully")}.`,
+          message: () => t("entity_created_successfully", { entity: isEpic ? t("epic") : t("issue") }),
           actionItems: (data) => (
             <CreateIssueToastActionItems
               workspaceSlug={workspaceSlug.toString()}
@@ -163,18 +163,18 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
       )}
     >
       {isOpen ? (
-          <QuickAddIssueFormRoot
-            isOpen={isOpen}
-            layout={layout}
-            prePopulatedData={prePopulatedData}
-            projectId={projectId?.toString()}
-            hasError={errors && errors?.name && errors?.name?.message ? true : false}
-            setFocus={setFocus}
-            register={register}
-            onSubmit={handleSubmit(onSubmitHandler)}
-            onClose={() => handleIsOpen(false)}
-            isEpic={isEpic}
-          />
+        <QuickAddIssueFormRoot
+          isOpen={isOpen}
+          layout={layout}
+          prePopulatedData={prePopulatedData}
+          projectId={projectId?.toString()}
+          hasError={errors && errors?.name && errors?.name?.message ? true : false}
+          setFocus={setFocus}
+          register={register}
+          onSubmit={handleSubmit(onSubmitHandler)}
+          onClose={() => handleIsOpen(false)}
+          isEpic={isEpic}
+        />
       ) : (
         <>
           {QuickAddButton && <QuickAddButton isEpic={isEpic} onClick={() => handleIsOpen(true)} />}

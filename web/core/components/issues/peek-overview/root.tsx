@@ -95,9 +95,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
                 path: pathname,
               });
               setToast({
-                title: "Error!",
+                title: t("error"),
                 type: TOAST_TYPE.ERROR,
-                message: "Issue update failed",
+                message: t("issue_update_failed_please_try_again_later"),
               });
             });
         }
@@ -184,8 +184,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         } catch {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Issue could not be added to the cycle. Please try again.",
+            title: t("error"),
+            message: t("issue_could_not_be_added_to_the_cycle_please_try_again"),
           });
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
@@ -213,8 +213,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         } catch {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Issue could not be added to the cycle. Please try again.",
+            title: t("error"),
+            message: t("issue_could_not_be_added_to_the_cycle_please_try_again"),
           });
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
@@ -231,14 +231,14 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         try {
           const removeFromCyclePromise = issues.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
           setPromiseToast(removeFromCyclePromise, {
-            loading: "Removing issue from the cycle...",
+            loading: t("removing_issue_from_the_cycle"),
             success: {
-              title: "Success!",
-              message: () => "Issue removed from the cycle successfully.",
+              title: t("success"),
+              message: () => t("issue_removed_from_the_cycle_successfully"),
             },
             error: {
-              title: "Error!",
-              message: () => "Issue could not be removed from the cycle. Please try again.",
+              title: t("error"),
+              message: () => t("issue_could_not_be_removed_from_the_cycle_please_try_again"),
             },
           });
           await removeFromCyclePromise;
@@ -294,14 +294,14 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         try {
           const removeFromModulePromise = issues.removeIssuesFromModule(workspaceSlug, projectId, moduleId, [issueId]);
           setPromiseToast(removeFromModulePromise, {
-            loading: "Removing issue from the module...",
+            loading: t("removing_issue_from_the_module"),
             success: {
-              title: "Success!",
-              message: () => "Issue removed from the module successfully.",
+              title: t("success"),
+              message: () => t("issue_removed_from_the_module_successfully"),
             },
             error: {
-              title: "Error!",
-              message: () => "Issue could not be removed from the module. Please try again.",
+              title: t("error"),
+              message: () => t("issue_could_not_be_removed_from_the_module_please_try_again"),
             },
           });
           await removeFromModulePromise;
