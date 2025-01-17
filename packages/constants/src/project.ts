@@ -1,6 +1,9 @@
 // icons
 import { Globe2, Lock, LucideIcon } from "lucide-react";
-import { TProjectAppliedDisplayFilterKeys, TProjectOrderByOptions } from "@plane/types";
+import {
+  TProjectAppliedDisplayFilterKeys,
+  TProjectOrderByOptions,
+} from "@plane/types";
 
 export const NETWORK_CHOICES: {
   key: 0 | 2;
@@ -10,32 +13,32 @@ export const NETWORK_CHOICES: {
 }[] = [
   {
     key: 0,
-    label: "Private",
-    description: "Accessible only by invite",
+    label: "workspace_projects.network.private.title",
+    description: "workspace_projects.network.private.description", //"Accessible only by invite",
     icon: Lock,
   },
   {
     key: 2,
-    label: "Public",
-    description: "Anyone in the workspace except Guests can join",
+    label: "workspace_projects.network.public.title",
+    description: "workspace_projects.network.public.description", //"Anyone in the workspace except Guests can join",
     icon: Globe2,
   },
 ];
 
 export const GROUP_CHOICES = {
-  backlog: "Backlog",
-  unstarted: "Unstarted",
-  started: "Started",
-  completed: "Completed",
-  cancelled: "Cancelled",
+  backlog: "workspace_projects.state.backlog",
+  unstarted: "workspace_projects.state.unstarted",
+  started: "workspace_projects.state.started",
+  completed: "workspace_projects.state.completed",
+  cancelled: "workspace_projects.state.cancelled",
 };
 
 export const PROJECT_AUTOMATION_MONTHS = [
-  { label: "1 month", value: 1 },
-  { label: "3 months", value: 3 },
-  { label: "6 months", value: 6 },
-  { label: "9 months", value: 9 },
-  { label: "12 months", value: 12 },
+  { label: "common.months_count", value: 1 },
+  { label: "common.months_count", value: 3 },
+  { label: "common.months_count", value: 6 },
+  { label: "common.months_count", value: 9 },
+  { label: "common.months_count", value: 12 },
 ];
 
 export const PROJECT_UNSPLASH_COVERS = [
@@ -63,19 +66,19 @@ export const PROJECT_ORDER_BY_OPTIONS: {
 }[] = [
   {
     key: "sort_order",
-    label: "Manual",
+    label: "workspace_projects.sort.manual",
   },
   {
     key: "name",
-    label: "Name",
+    label: "workspace_projects.sort.name",
   },
   {
     key: "created_at",
-    label: "Created date",
+    label: "workspace_projects.sort.created_at",
   },
   {
     key: "members_length",
-    label: "Number of members",
+    label: "workspace_projects.sort.members_length",
   },
 ];
 
@@ -85,29 +88,29 @@ export const PROJECT_DISPLAY_FILTER_OPTIONS: {
 }[] = [
   {
     key: "my_projects",
-    label: "My projects",
+    label: "workspace_projects.scope.my_projects",
   },
   {
     key: "archived_projects",
-    label: "Archived",
+    label: "workspace_projects.scope.archived_projects",
   },
 ];
 
 export const PROJECT_ERROR_MESSAGES = {
   permissionError: {
-    title: "You don't have permission to perform this action.",
+    title: "workspace_projects.error.permission",
     message: undefined,
   },
   cycleDeleteError: {
-    title: "Error",
-    message: "Failed to delete cycle",
+    title: "error",
+    message: "workspace_projects.error.cycle_delete",
   },
   moduleDeleteError: {
-    title: "Error",
-    message: "Failed to delete module",
+    title: "error",
+    message: "workspace_projects.error.module_delete",
   },
   issueDeleteError: {
-    title: "Error",
-    message: "Failed to delete issue",
+    title: "error",
+    message: "workspace_projects.error.issue_delete",
   },
 };

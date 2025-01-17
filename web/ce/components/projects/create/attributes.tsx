@@ -1,6 +1,7 @@
 "use client";
 import { FC } from "react";
 import { Controller, useFormContext } from "react-hook-form";
+import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 // ui
@@ -8,7 +9,6 @@ import { CustomSelect } from "@plane/ui";
 // components
 import { MemberDropdown } from "@/components/dropdowns";
 // constants
-import { NETWORK_CHOICES } from "@/constants/project";
 import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { getTabIndex } from "@/helpers/tab-indices.helper";
@@ -40,7 +40,7 @@ const ProjectAttributes: FC<Props> = (props) => {
                     {currentNetwork ? (
                       <>
                         <currentNetwork.icon className="h-3 w-3" />
-                        {currentNetwork.label}
+                        {t(currentNetwork.label)}
                       </>
                     ) : (
                       <span className="text-custom-text-400">{t("select_network")}</span>
@@ -58,8 +58,8 @@ const ProjectAttributes: FC<Props> = (props) => {
                     <div className="flex items-start gap-2">
                       <network.icon className="h-3.5 w-3.5" />
                       <div className="-mt-1">
-                        <p>{network.label}</p>
-                        <p className="text-xs text-custom-text-400">{network.description}</p>
+                        <p>{t(network.label)}</p>
+                        <p className="text-xs text-custom-text-400">{t(network.description)}</p>
                       </div>
                     </div>
                   </CustomSelect.Option>

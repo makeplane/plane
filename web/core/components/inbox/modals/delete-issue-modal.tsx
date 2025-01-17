@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // types
+import { PROJECT_ERROR_MESSAGES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
 // ui
 import { AlertModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // constants
-import { PROJECT_ERROR_MESSAGES } from "@/constants/project";
 // hooks
 import { useProject } from "@/hooks/store";
 
@@ -21,6 +22,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
   const { getProjectById } = useProject();
+  const { t } = useTranslation();
   // derived values
   const projectDetails = data.project_id ? getProjectById(data?.project_id) : undefined;
 
@@ -45,9 +47,9 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
           ? PROJECT_ERROR_MESSAGES.permissionError
           : PROJECT_ERROR_MESSAGES.issueDeleteError;
         setToast({
-          title: currentError.title,
+          title: t(currentError.title),
           type: TOAST_TYPE.ERROR,
-          message: currentError.message,
+          message: currentError.message && t(currentError.message),
         });
       })
       .finally(() => handleClose());

@@ -12,13 +12,13 @@ import { Loader } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/empty-state";
 // constants
+import { StickiesEmptyState } from "@/components/home/widgets/empty-states/stickies";
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useSticky } from "@/hooks/use-stickies";
 import { useStickyOperations } from "../sticky/use-operations";
 import { StickyDNDWrapper } from "./sticky-dnd-wrapper";
 import { getInstructionFromPayload } from "./sticky.helpers";
-import { StickiesEmptyState } from "@/components/home/widgets/empty-states/stickies";
 
 type TStickiesLayout = {
   workspaceSlug: string;

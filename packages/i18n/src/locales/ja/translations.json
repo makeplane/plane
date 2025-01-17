@@ -316,5 +316,43 @@
   "remove_parent_issue": "親問題を削除",
   "add_parent": "親問題を追加",
   "loading_members": "メンバーを読み込んでいます...",
-  "inbox": "受信箱"
+  "inbox": "受信箱",
+  "workspace_projects": {
+    "network": {
+      "private": {
+        "title": "プライベート",
+        "description": "招待のみでアクセス可能"
+      },
+      "public": {
+        "title": "パブリック",
+        "description": "ゲスト以外のワークスペースのメンバーが参加可能"
+      }
+    },
+    "error": {
+      "permission": "この操作を実行する権限がありません。",
+      "cycle_delete": "サイクルの削除に失敗しました",
+      "module_delete": "モジュールの削除に失敗しました",
+      "issue_delete": "課題の削除に失敗しました"
+    },
+    "state": {
+      "backlog": "バックログ",
+      "unstarted": "未着手",
+      "started": "開始済み",
+      "completed": "完了",
+      "cancelled": "キャンセル"
+    },
+    "sort": {
+      "manual": "手動",
+      "name": "名前",
+      "created_at": "作成日",
+      "members_length": "メンバー数"
+    },
+    "scope": {
+      "my_projects": "自分のプロジェクト",
+      "archived_projects": "アーカイブ済み"
+    },
+    "common": {
+      "months_count": "{months, plural, other{#ヶ月}}"
+    }
+  }
 }

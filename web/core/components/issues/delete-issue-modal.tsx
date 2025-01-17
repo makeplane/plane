@@ -2,15 +2,17 @@
 
 import { useEffect, useState } from "react";
 // types
+import { PROJECT_ERROR_MESSAGES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TDeDupeIssue, TIssue } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { PROJECT_ERROR_MESSAGES } from "@/constants/project";
 // hooks
 import { useIssues, useProject, useUser, useUserPermissions } from "@/hooks/store";
 // plane-web
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
@@ -29,6 +31,7 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
   const { issueMap } = useIssues();
   const { getProjectById } = useProject();
   const { allowPermissions } = useUserPermissions();
+  const { t } = useTranslation();
 
   const { data: currentUser } = useUser();
 
@@ -57,9 +60,9 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
 
     if (!authorized) {
       setToast({
-        title: PROJECT_ERROR_MESSAGES.permissionError.title,
+        title: t(PROJECT_ERROR_MESSAGES.permissionError.title),
         type: TOAST_TYPE.ERROR,
-        message: PROJECT_ERROR_MESSAGES.permissionError.message,
+        message: PROJECT_ERROR_MESSAGES.permissionError.message && t(PROJECT_ERROR_MESSAGES.permissionError.message),
       });
       onClose();
       return;
@@ -82,9 +85,9 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
             ? PROJECT_ERROR_MESSAGES.permissionError
             : PROJECT_ERROR_MESSAGES.issueDeleteError;
           setToast({
-            title: currentError.title,
+            title: t(currentError.title),
             type: TOAST_TYPE.ERROR,
-            message: currentError.message,
+            message: currentError.message && t(currentError.message),
           });
         })
         .finally(() => onClose());
