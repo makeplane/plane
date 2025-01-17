@@ -48,9 +48,6 @@ export enum EmptyStateType {
   PROJECT_SETTINGS_LABELS = "project-settings-labels",
   PROJECT_SETTINGS_INTEGRATIONS = "project-settings-integrations",
   PROJECT_SETTINGS_ESTIMATE = "project-settings-estimate",
-  PROJECT_CYCLES = "project-cycles",
-  PROJECT_CYCLE_ACTIVE = "project-cycle-active",
-  PROJECT_CYCLE_ALL = "project-cycle-all",
   // stickies
   STICKIES = "stickies",
   STICKIES_SEARCH = "stickies-search",
@@ -258,38 +255,6 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
     title: "No estimates added",
     description: "Create a set of estimates to communicate the amount of work per issue.",
     path: "/empty-state/project-settings/estimates",
-  },
-  // project cycles
-  [EmptyStateType.PROJECT_CYCLES]: {
-    key: EmptyStateType.PROJECT_CYCLES,
-    title: "Group and timebox your work in Cycles.",
-    description:
-      "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team.",
-    path: "/empty-state/onboarding/cycles",
-    primaryButton: {
-      text: "Set your first cycle",
-      comicBox: {
-        title: "Cycles are repetitive time-boxes.",
-        description:
-          "A sprint, an iteration, and or any other term you use for weekly or fortnightly tracking of work is a cycle.",
-      },
-    },
-    accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  [EmptyStateType.PROJECT_CYCLE_ACTIVE]: {
-    key: EmptyStateType.PROJECT_CYCLE_ACTIVE,
-    title: "No active cycle",
-    description:
-      "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
-    path: "/empty-state/cycle/active",
-  },
-  [EmptyStateType.PROJECT_CYCLE_ALL]: {
-    key: EmptyStateType.PROJECT_CYCLE_ALL,
-    title: "No cycles",
-    description:
-      "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
-    path: "/empty-state/cycle/active",
   },
   // empty filters
   [EmptyStateType.STICKIES]: {

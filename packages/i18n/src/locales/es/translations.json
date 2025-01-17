@@ -493,10 +493,6 @@
           }
         }
       },
-      "all": {
-        "title": "Sin ciclos",
-        "description": "Un ciclo activo incluye cualquier período que abarque la fecha de hoy dentro de su rango. Encuentra el progreso y los detalles del ciclo activo aquí."
-      },
       "no_issues": {
         "title": "No hay problemas añadidos al ciclo",
         "description": "Añade o crea problemas que desees organizar y entregar dentro de este ciclo",

@@ -494,10 +494,6 @@
           }
         }
       },
-      "all": {
-        "title": "Aucun cycle",
-        "description": "Un cycle actif inclut toute période qui englobe la date d'aujourd'hui dans sa plage. Trouvez les progrès et les détails du cycle actif ici."
-      },
       "no_issues": {
         "title": "Aucune tâche ajoutée au cycle",
         "description": "Ajoutez ou créez des tâches que vous souhaitez cadencer et livrer dans ce cycle",
