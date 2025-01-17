@@ -314,6 +314,7 @@
   "remove_parent_issue": "Supprimer le problème parent",
   "add_parent": "Ajouter un parent",
   "loading_members": "Chargement des membres...",
+  "connections": "Connexions",
 
   "workspace_dashboard": {
     "empty_state": {

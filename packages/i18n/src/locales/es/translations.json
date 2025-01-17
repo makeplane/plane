@@ -313,6 +313,7 @@
   "remove_parent_issue": "Eliminar problema padre",
   "add_parent": "Agregar padre",
   "loading_members": "Cargando miembros...",
+  "connections": "Conexiones",
 
   "workspace_dashboard": {
     "empty_state": {

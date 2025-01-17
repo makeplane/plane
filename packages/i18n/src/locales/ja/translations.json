@@ -314,6 +314,7 @@
   "remove_parent_issue": "親問題を削除",
   "add_parent": "親問題を追加",
   "loading_members": "メンバーを読み込んでいます...",
+  "connections": "接続",
 
   "workspace_dashboard": {
     "empty_state": {

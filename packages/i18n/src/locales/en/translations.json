@@ -314,6 +314,7 @@
   "remove_parent_issue": "Remove parent issue",
   "add_parent": "Add parent",
   "loading_members": "Loading members...",
+  "connections" : "Connections",
 
   "workspace_dashboard": {
     "empty_state": {
