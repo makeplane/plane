@@ -29,10 +29,12 @@ import { TRenderQuickActions } from "../list/list-view-types";
 
 type Props = {
   isDefaultView: boolean;
+  isLoading?: boolean;
+  toggleLoading: (value: boolean) => void;
 };
 
 export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
-  const { isDefaultView } = props;
+  const { isDefaultView, isLoading = false, toggleLoading } = props;
   // router
   const { workspaceSlug, globalViewId } = useParams();
   const router = useAppRouter();
@@ -92,7 +94,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
     if (workspaceSlug && globalViewId) fetchNextIssues(workspaceSlug.toString(), globalViewId.toString());
   }, [fetchNextIssues, workspaceSlug, globalViewId]);
 
-  const { isLoading } = useSWR(
+  const { isLoading: globalViewsLoading } = useSWR(
     workspaceSlug ? `WORKSPACE_GLOBAL_VIEWS_${workspaceSlug}` : null,
     async () => {
       if (workspaceSlug) {
@@ -102,11 +104,12 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  useSWR(
+  const { isLoading: issuesLoading } = useSWR(
     workspaceSlug && globalViewId ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${workspaceSlug}_${globalViewId}` : null,
     async () => {
       if (workspaceSlug && globalViewId) {
         clear();
+        toggleLoading(true);
         await fetchFilters(workspaceSlug.toString(), globalViewId.toString());
         await fetchIssues(
           workspaceSlug.toString(),
@@ -118,6 +121,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
           }
         );
         routerFilterParams();
+        toggleLoading(false);
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
@@ -171,7 +175,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
   );
 
   // when the call is not loading and the view does not exist and the view is not a default view, show empty state
-  if (!isLoading && !viewDetails && !isDefaultView) {
+  if (!isLoading && !globalViewsLoading && !issuesLoading && !viewDetails && !isDefaultView) {
     return (
       <EmptyState
         image={emptyView}
@@ -185,7 +189,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
     );
   }
 
-  if (getIssueLoader() === "init-loader" || !globalViewId || !groupedIssueIds) {
+  if ((isLoading && issuesLoading && getIssueLoader() === "init-loader") || !globalViewId || !groupedIssueIds) {
     return <SpreadsheetLayoutLoader />;
   }
 
