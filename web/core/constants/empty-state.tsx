@@ -56,10 +56,8 @@ export enum EmptyStateType {
   PROJECT_ARCHIVED_NO_CYCLES = "project-archived-no-cycles",
   PROJECT_EMPTY_FILTER = "project-empty-filter",
   PROJECT_ARCHIVED_EMPTY_FILTER = "project-archived-empty-filter",
-  PROJECT_DRAFT_EMPTY_FILTER = "project-draft-empty-filter",
   PROJECT_NO_ISSUES = "project-no-issues",
   PROJECT_ARCHIVED_NO_ISSUES = "project-archived-no-issues",
-  PROJECT_DRAFT_NO_ISSUES = "project-draft-no-issues",
   VIEWS_EMPTY_SEARCH = "views-empty-search",
   PROJECTS_EMPTY_SEARCH = "projects-empty-search",
   MEMBERS_EMPTY_SEARCH = "members-empty-search",
@@ -351,16 +349,6 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
     accessType: "project",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
-  [EmptyStateType.PROJECT_DRAFT_EMPTY_FILTER]: {
-    key: EmptyStateType.PROJECT_DRAFT_EMPTY_FILTER,
-    title: "No issues found matching the filters applied",
-    path: "/empty-state/empty-filters/",
-    secondaryButton: {
-      text: "Clear all filters",
-    },
-    accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
   //  project issues
   [EmptyStateType.PROJECT_NO_ISSUES]: {
     key: EmptyStateType.PROJECT_NO_ISSUES,
@@ -390,13 +378,6 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
     },
     accessType: "project",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  [EmptyStateType.PROJECT_DRAFT_NO_ISSUES]: {
-    key: EmptyStateType.PROJECT_DRAFT_NO_ISSUES,
-    title: "No draft issues yet",
-    description:
-      "Quickly stepping away but want to keep your place? No worries – save a draft now. Your issues will be right here waiting for you.",
-    path: "/empty-state/draft/draft-issues-empty",
   },
   [EmptyStateType.VIEWS_EMPTY_SEARCH]: {
     key: EmptyStateType.VIEWS_EMPTY_SEARCH,
