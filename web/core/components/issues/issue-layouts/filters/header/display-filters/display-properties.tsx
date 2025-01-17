@@ -2,6 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
+import { useTranslation } from "@plane/i18n";
 import { IIssueDisplayProperties } from "@plane/types";
 // constants
 import { ISSUE_DISPLAY_PROPERTIES } from "@/constants/issue";
@@ -28,6 +29,7 @@ export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
     moduleViewDisabled = false,
     isEpic = false,
   } = props;
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId: routerProjectId } = useParams();
   // states
@@ -57,7 +59,7 @@ export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title="Display Properties"
+        title={t("display_properties")}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -79,7 +81,7 @@ export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
                   })
                 }
               >
-                {displayProperty.title}
+                {t(displayProperty.titleTranslationKey)}
               </button>
             </>
           ))}

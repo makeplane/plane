@@ -21,6 +21,7 @@ export const ActivityFilterRoot: FC<TActivityFilterRoot> = (props) => {
     return {
       key: filterKey,
       label: value.label,
+      labelTranslationKey: value.labelTranslationKey,
       isSelected: selectedFilters.includes(filterKey),
       onClick: () => toggleFilter(filterKey),
     };

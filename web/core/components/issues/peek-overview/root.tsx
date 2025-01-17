@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // plane types
 import { EIssuesStoreType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 // plane ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
@@ -36,6 +37,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const pathname = usePathname();
   // store hook
   const { allowPermissions } = useUserPermissions();
+
+  const { t } = useTranslation();
 
   const {
     issues: { restoreIssue },
@@ -111,9 +114,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           });
         } catch {
           setToast({
-            title: "Error!",
+            title: t("error"),
             type: TOAST_TYPE.ERROR,
-            message: "Issue delete failed",
+            message: t("issue_delete_failed"),
           });
           captureIssueEvent({
             eventName: ISSUE_DELETED,
@@ -144,8 +147,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           await restoreIssue(workspaceSlug, projectId, issueId);
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Restore success",
-            message: "Your issue can be found in project issues.",
+            title: t("restore_success"),
+            message: t("your_issue_can_be_found_in_project_issues"),
           });
           captureIssueEvent({
             eventName: ISSUE_RESTORED,
@@ -155,8 +158,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         } catch {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Issue could not be restored. Please try again.",
+            title: t("error"),
+            message: t("issue_could_not_be_restored_please_try_again"),
           });
           captureIssueEvent({
             eventName: ISSUE_RESTORED,

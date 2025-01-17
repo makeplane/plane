@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { Circle, ExternalLink } from "lucide-react";
 // plane constants
 import { EIssuesStoreType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Button, LayersIcon, Tooltip, Header } from "@plane/ui";
 // components
@@ -27,6 +28,7 @@ export const IssuesHeader = observer(() => {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
+  const { t } = useTranslation();
   // store hooks
   const {
     issues: { getGroupIssueCount },
@@ -57,12 +59,15 @@ export const IssuesHeader = observer(() => {
 
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              link={<BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />}
+              link={
+                <BreadcrumbLink label={t("issues")} icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />
+              }
             />
           </Breadcrumbs>
           {issuesCount && issuesCount > 0 ? (
             <Tooltip
               isMobile={isMobile}
+              //TODO: translate
               tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "issues" : "issue"} in this project`}
               position="bottom"
             >
@@ -78,7 +83,7 @@ export const IssuesHeader = observer(() => {
             rel="noopener noreferrer"
           >
             <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
-            Public
+            {t("public")}
             <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
           </a>
         ) : (
@@ -102,7 +107,7 @@ export const IssuesHeader = observer(() => {
             }}
             size="sm"
           >
-            <div className="hidden sm:block">Add</div> Issue
+            <div className="hidden sm:block">{t("add")}</div> {t("issue")}
           </Button>
         ) : (
           <></>

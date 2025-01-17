@@ -1,10 +1,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { TQuickAddIssueForm } from "../root";
 
 export const ListQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) => {
   const { ref, projectDetail, register, onSubmit, isEpic } = props;
-
+  const { t } = useTranslation();
   return (
     <div className="shadow-custom-shadow-sm">
       <form
@@ -17,15 +18,15 @@ export const ListQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) =>
           <input
             type="text"
             autoComplete="off"
-            placeholder={isEpic ? "Epic Title" : "Issue Title"}
+            placeholder={isEpic ? t("epic_title") : t("issue_title")}
             {...register("name", {
-              required: `${isEpic ? "Epic" : "Issue"} title is required.`,
+              required: `${isEpic ? t("epic") : t("issue")} ${t("title_is_required")}.`,
             })}
             className="w-full rounded-md bg-transparent px-2 py-3 text-sm font-medium leading-5 text-custom-text-200 outline-none"
           />
         </div>
       </form>
-      <div className="px-3 py-2 text-xs italic text-custom-text-200">{`Press 'Enter' to add another ${isEpic ? "epic" : "issue"}`}</div>
+      <div className="px-3 py-2 text-xs italic text-custom-text-200">{`${t("press_enter_to_add_another")} ${isEpic ? t("epic") : t("issue")}`}</div>
     </div>
   );
 });

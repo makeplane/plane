@@ -8,6 +8,7 @@ import { usePopper } from "react-popper";
 import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 //components
+import { useTranslation } from "@plane/i18n";
 import { DiceIcon } from "@plane/ui";
 //store
 import { cn } from "@/helpers/common.helper";
@@ -35,6 +36,8 @@ interface Props {
 
 export const ModuleOptions = observer((props: Props) => {
   const { projectId, isOpen, referenceElement, placement, multiple } = props;
+  // i18n
+  const { t } = useTranslation();
   // states
   const [query, setQuery] = useState("");
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -97,11 +100,11 @@ export const ModuleOptions = observer((props: Props) => {
   if (!multiple)
     options?.unshift({
       value: null,
-      query: "No module",
+      query: t("no_module"),
       content: (
         <div className="flex items-center gap-2">
           <DiceIcon className="h-3 w-3 flex-shrink-0" />
-          <span className="flex-grow truncate">No module</span>
+          <span className="flex-grow truncate">{t("no_module")}</span>
         </div>
       ),
     });
@@ -125,7 +128,7 @@ export const ModuleOptions = observer((props: Props) => {
             className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search"
+            placeholder={t("search")}
             displayValue={(assigned: any) => assigned?.name}
             onKeyDown={searchInputKeyDown}
           />
@@ -157,10 +160,10 @@ export const ModuleOptions = observer((props: Props) => {
                 </Combobox.Option>
               ))
             ) : (
-              <p className="px-1.5 py-1 italic text-custom-text-400">No matching results</p>
+              <p className="px-1.5 py-1 italic text-custom-text-400">{t("no_matches_found")}</p>
             )
           ) : (
-            <p className="px-1.5 py-1 italic text-custom-text-400">Loading...</p>
+            <p className="px-1.5 py-1 italic text-custom-text-400">{t("loading")}</p>
           )}
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "@plane/types";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
@@ -17,6 +18,8 @@ type Props = {
 export const FilterSubGroupBy: React.FC<Props> = observer((props) => {
   const { displayFilters, handleUpdate, subGroupByOptions, ignoreGroupedFilters } = props;
 
+  const { t } = useTranslation();
+
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
   const selectedGroupBy = displayFilters.group_by ?? null;
@@ -25,7 +28,7 @@ export const FilterSubGroupBy: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title="Sub-group by"
+        title={t("sub_group_by")}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />

@@ -539,7 +539,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       onClick={handleMoveToProjects}
                       disabled={isMoving}
                     >
-                      Add to project
+                      {t("add_to_project")}
                     </Button>
                   )}
                 </div>

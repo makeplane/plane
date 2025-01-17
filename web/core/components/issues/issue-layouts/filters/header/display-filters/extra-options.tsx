@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { IIssueDisplayFilterOptions, TIssueExtraOptions } from "@plane/types";
-
 // components
 import { FilterOption } from "@/components/issues";
 // types
@@ -20,6 +20,8 @@ type Props = {
 export const FilterExtraOptions: React.FC<Props> = observer((props) => {
   const { selectedExtraOptions, handleUpdate, enabledExtraOptions } = props;
 
+  const { t } = useTranslation();
+
   const isExtraOptionEnabled = (option: TIssueExtraOptions) => enabledExtraOptions.includes(option);
 
   return (
@@ -32,7 +34,7 @@ export const FilterExtraOptions: React.FC<Props> = observer((props) => {
             key={option.key}
             isChecked={selectedExtraOptions?.[option.key] ? true : false}
             onClick={() => handleUpdate(option.key, !selectedExtraOptions?.[option.key])}
-            title={option.title}
+            title={t(option.titleTranslationKey)}
           />
         );
       })}

@@ -1,5 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { TIssueGroupingFilters } from "@plane/types";
 
 // components
@@ -16,6 +17,8 @@ type Props = {
 
 export const FilterIssueGrouping: React.FC<Props> = observer((props) => {
   const { selectedIssueType, handleUpdate, isEpic = false } = props;
+  // i18n
+  const { t } = useTranslation();
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
@@ -24,7 +27,7 @@ export const FilterIssueGrouping: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title={`${isEpic ? "Epic" : "Issue"} Grouping`}
+        title={`${isEpic ? t("epic") : t("issue")} ${t("grouping")}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -35,7 +38,7 @@ export const FilterIssueGrouping: React.FC<Props> = observer((props) => {
               key={issueType?.key}
               isChecked={activeIssueType === issueType?.key ? true : false}
               onClick={() => handleUpdate(issueType?.key)}
-              title={`${issueType.title} ${isEpic ? "Epics" : "Issues"}`}
+              title={`${t(issueType?.titleTranslationKey)} ${isEpic ? t("epics") : t("issues")}`}
               multiple={false}
             />
           ))}

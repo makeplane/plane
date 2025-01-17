@@ -4,6 +4,7 @@ import React from "react";
 // plane constants
 import { EIssueLayoutTypes } from "@plane/constants";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/ui";
 // types
 // constants
@@ -20,6 +21,7 @@ type Props = {
 export const LayoutSelection: React.FC<Props> = (props) => {
   const { layouts, onChange, selectedLayout } = props;
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
 
   const handleOnChange = (layoutKey: EIssueLayoutTypes) => {
     if (selectedLayout !== layoutKey) {
@@ -30,7 +32,7 @@ export const LayoutSelection: React.FC<Props> = (props) => {
   return (
     <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
       {ISSUE_LAYOUTS.filter((l) => layouts.includes(l.key)).map((layout) => (
-        <Tooltip key={layout.key} tooltipContent={layout.title} isMobile={isMobile}>
+        <Tooltip key={layout.key} tooltipContent={t(layout.titleTranslationKey)} isMobile={isMobile}>
           <button
             type="button"
             className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${

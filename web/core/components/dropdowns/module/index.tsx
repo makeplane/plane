@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, X } from "lucide-react";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { ComboDropDown, DiceIcon, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -72,6 +73,8 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
   // store hooks
   const { getModuleById } = useModule();
   const { isMobile } = usePlatformOS();
+  // i18n
+  const { t } = useTranslation();
 
   if (Array.isArray(value))
     return (
@@ -84,7 +87,7 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
                 {value.length > 0
                   ? value.length === 1
                     ? `${getModuleById(value[0])?.name || "module"}`
-                    : `${value.length} Module${value.length === 1 ? "" : "s"}`
+                    : `${value.length} ${value.length === 1 ? t("module") : t("modules")}`
                   : placeholder}
               </div>
             )}
@@ -104,7 +107,7 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
                   {!hideIcon && <DiceIcon className="h-2.5 w-2.5 flex-shrink-0" />}
                   {!hideText && (
                     <Tooltip
-                      tooltipHeading="Title"
+                      tooltipHeading={t("title")}
                       tooltipContent={moduleDetails?.name}
                       disabled={!showTooltip}
                       isMobile={isMobile}
@@ -115,7 +118,7 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
                   )}
                   {!disabled && (
                     <Tooltip
-                      tooltipContent="Remove"
+                      tooltipContent={t("remove")}
                       disabled={!showTooltip}
                       isMobile={isMobile}
                       renderByDefault={false}
@@ -195,6 +198,9 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
   // store hooks
   const { isMobile } = usePlatformOS();
 
+  // i18n
+  const { t } = useTranslation();
+
   const { getModuleNameById } = useModule();
 
   const { handleClose, handleKeyDown, handleOnClick } = useDropdown({
@@ -256,7 +262,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
           <DropdownButton
             className={buttonClassName}
             isActive={isOpen}
-            tooltipHeading="Module"
+            tooltipHeading={t("module")}
             tooltipContent={
               Array.isArray(value)
                 ? `${value

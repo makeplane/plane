@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
 // plane constants
 import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
@@ -52,6 +53,8 @@ export const ProjectIssuesMobileHeader = observer(() => {
     },
     [workspaceSlug, projectId, updateFilters]
   );
+
+  const { t } = useTranslation();
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
@@ -104,7 +107,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
           placement="bottom-start"
           customButton={
             <div className="flex flex-start text-sm text-custom-text-200">
-              Layout
+              {t("layout")}
               <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200 my-auto" strokeWidth={2} />
             </div>
           }
@@ -130,7 +133,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
             placement="bottom-end"
             menuButton={
               <span className="flex items-center text-sm text-custom-text-200">
-                Filters
+                {t("filters")}
                 <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200" />
               </span>
             }
@@ -158,7 +161,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
             placement="bottom-end"
             menuButton={
               <span className="flex items-center text-sm text-custom-text-200">
-                Display
+                {t("display")}
                 <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" />
               </span>
             }
@@ -181,7 +184,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
           onClick={() => setAnalyticsModal(true)}
           className="flex flex-grow justify-center border-l border-custom-border-200 text-sm text-custom-text-200"
         >
-          Analytics
+          {t("analytics")}
         </button>
       </div>
     </>

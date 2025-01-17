@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // helpers
 import { PROJECT_CREATED_AT_FILTER_OPTIONS } from "@/constants/filters";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
@@ -14,13 +15,15 @@ type Props = {
 
 export const AppliedDateFilters: React.FC<Props> = observer((props) => {
   const { editable, handleRemove, values } = props;
+  // i18n
+  const { t } = useTranslation();
 
   const getDateLabel = (value: string): string => {
     let dateLabel = "";
 
     const dateDetails = PROJECT_CREATED_AT_FILTER_OPTIONS.find((d) => d.value === value);
 
-    if (dateDetails) dateLabel = dateDetails.name;
+    if (dateDetails) dateLabel = t(dateDetails.nameTranslationKey);
     else {
       const dateParts = value.split(";");
 

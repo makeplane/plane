@@ -7,6 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 
 import { renderFormattedPayloadDate, renderFormattedDate, getDate } from "@/helpers/date-time.helper";
@@ -32,6 +33,7 @@ const defaultValues: TFormValues = {
 };
 
 export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, onSelect }) => {
+  const { t } = useTranslation();
   const { handleSubmit, watch, control } = useForm<TFormValues>({
     defaultValues,
   });
@@ -136,15 +138,15 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                   </div>
                   {watch("filterType") === "range" && (
                     <h6 className="flex items-center gap-1 text-xs">
-                      <span className="text-custom-text-200">After:</span>
+                      <span className="text-custom-text-200">{t("after")}:</span>
                       <span>{renderFormattedDate(watch("date1"))}</span>
-                      <span className="ml-1 text-custom-text-200">Before:</span>
+                      <span className="ml-1 text-custom-text-200">{t("before")}:</span>
                       {!isInvalid && <span>{renderFormattedDate(watch("date2"))}</span>}
                     </h6>
                   )}
                   <div className="flex justify-end gap-4">
                     <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-                      Cancel
+                      {t("cancel")}
                     </Button>
                     <Button
                       variant="primary"
@@ -153,7 +155,7 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                       onClick={handleSubmit(handleFormSubmit)}
                       disabled={isInvalid}
                     >
-                      Apply
+                      {t("apply")}
                     </Button>
                   </div>
                 </form>

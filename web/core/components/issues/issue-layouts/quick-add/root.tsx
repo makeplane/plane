@@ -7,6 +7,7 @@ import { useForm, UseFormRegister } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 // plane constants
 import { EIssueLayoutTypes, EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // types
 import { IProject, TIssue } from "@plane/types";
 // ui
@@ -66,6 +67,8 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
     quickAddCallback,
     isEpic = false,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
@@ -115,8 +118,8 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
       setPromiseToast<any>(quickAddPromise, {
         loading: `Adding ${isEpic ? "epic" : "issue"}...`,
         success: {
-          title: "Success!",
-          message: () => `${isEpic ? "Epic" : "Issue"} created successfully.`,
+          title: t("success"),
+          message: () => `${isEpic ? t("epic") : t("issue")} ${t("created_successfully")}.`,
           actionItems: (data) => (
             <CreateIssueToastActionItems
               workspaceSlug={workspaceSlug.toString()}
@@ -127,8 +130,8 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
           ),
         },
         error: {
-          title: "Error!",
-          message: (err) => err?.message || "Some error occurred. Please try again.",
+          title: t("error"),
+          message: (err) => err?.message || t("some_error_occurred_please_try_again"),
         },
       });
 
@@ -160,18 +163,18 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
       )}
     >
       {isOpen ? (
-        <QuickAddIssueFormRoot
-          isOpen={isOpen}
-          layout={layout}
-          prePopulatedData={prePopulatedData}
-          projectId={projectId?.toString()}
-          hasError={errors && errors?.name && errors?.name?.message ? true : false}
-          setFocus={setFocus}
-          register={register}
-          onSubmit={handleSubmit(onSubmitHandler)}
-          onClose={() => handleIsOpen(false)}
-          isEpic={isEpic}
-        />
+          <QuickAddIssueFormRoot
+            isOpen={isOpen}
+            layout={layout}
+            prePopulatedData={prePopulatedData}
+            projectId={projectId?.toString()}
+            hasError={errors && errors?.name && errors?.name?.message ? true : false}
+            setFocus={setFocus}
+            register={register}
+            onSubmit={handleSubmit(onSubmitHandler)}
+            onClose={() => handleIsOpen(false)}
+            isEpic={isEpic}
+          />
       ) : (
         <>
           {QuickAddButton && <QuickAddButton isEpic={isEpic} onClick={() => handleIsOpen(true)} />}
@@ -182,7 +185,7 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
               onClick={() => handleIsOpen(true)}
             >
               <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-              <span className="text-sm font-medium">{`New ${isEpic ? "Epic" : "Issue"}`}</span>
+              <span className="text-sm font-medium">{`${t("new")} ${isEpic ? t("epic") : t("issue")}`}</span>
             </div>
           )}
         </>

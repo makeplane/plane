@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Check, ListFilter } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { Button, PopoverMenu } from "@plane/ui";
 // helper
 import { cn } from "@/helpers/common.helper";
@@ -14,6 +15,7 @@ type TActivityFilter = {
 
 export const ActivityFilter: FC<TActivityFilter> = observer((props) => {
   const { selectedFilters = [], filterOptions } = props;
+  const { t } = useTranslation();
 
   return (
     <PopoverMenu
@@ -25,7 +27,7 @@ export const ActivityFilter: FC<TActivityFilter> = observer((props) => {
           prependIcon={<ListFilter className="h-3 w-3" />}
           className="relative"
         >
-          <span className="text-custom-text-200">Filters</span>
+          <span className="text-custom-text-200">{t("filters")}</span>
           {selectedFilters.length < filterOptions.length && (
             <span className="absolute h-2 w-2 -right-0.5 -top-0.5 bg-custom-primary-100 rounded-full" />
           )}
@@ -53,7 +55,7 @@ export const ActivityFilter: FC<TActivityFilter> = observer((props) => {
             {item.isSelected && <Check className="h-2.5 w-2.5" />}
           </div>
           <div className={cn("whitespace-nowrap", item.isSelected ? "text-custom-text-100" : "text-custom-text-200")}>
-            {item.label}
+            {t(item.labelTranslationKey)}
           </div>
         </div>
       )}

@@ -3,6 +3,7 @@
 import { ReactNode, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { ComboDropDown, ContrastIcon } from "@plane/ui";
 // helpers
@@ -52,8 +53,9 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     renderByDefault = true,
     currentCycleId,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // states
-
   const [isOpen, setIsOpen] = useState(false);
   const { getCycleNameById } = useCycle();
   // refs
@@ -108,7 +110,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
           <DropdownButton
             className={buttonClassName}
             isActive={isOpen}
-            tooltipHeading="Cycle"
+            tooltipHeading={t("cycle")}
             tooltipContent={selectedName ?? placeholder}
             showTooltip={showTooltip}
             variant={buttonVariant}

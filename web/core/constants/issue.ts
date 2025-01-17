@@ -36,50 +36,54 @@ export type TCreateModalStoreTypes =
 export const ISSUE_PRIORITIES: {
   key: TIssuePriorities;
   title: string;
+  titleTranslationKey: string;
 }[] = [
-  { key: "urgent", title: "Urgent" },
-  { key: "high", title: "High" },
-  { key: "medium", title: "Medium" },
-  { key: "low", title: "Low" },
-  { key: "none", title: "None" },
+  { key: "urgent", title: "Urgent", titleTranslationKey: "urgent" },
+  { key: "high", title: "High", titleTranslationKey: "high" },
+  { key: "medium", title: "Medium", titleTranslationKey: "medium" },
+  { key: "low", title: "Low", titleTranslationKey: "low" },
+  { key: "none", title: "None", titleTranslationKey: "none" },
 ];
 
 export const ISSUE_GROUP_BY_OPTIONS: {
   key: TIssueGroupByOptions;
   title: string;
+  titleTranslationKey: string;
 }[] = [
-  { key: "state", title: "States" },
-  { key: "state_detail.group", title: "State Groups" },
-  { key: "priority", title: "Priority" },
-  { key: "team_project", title: "Team Project" }, // required this on team issues
-  { key: "project", title: "Project" }, // required this on my issues
-  { key: "cycle", title: "Cycle" }, // required this on my issues
-  { key: "module", title: "Module" }, // required this on my issues
-  { key: "labels", title: "Labels" },
-  { key: "assignees", title: "Assignees" },
-  { key: "created_by", title: "Created By" },
-  { key: null, title: "None" },
+  { key: "state", title: "States", titleTranslationKey: "states" },
+  { key: "state_detail.group", title: "State Groups", titleTranslationKey: "state_groups" },
+  { key: "priority", title: "Priority", titleTranslationKey: "priority" },
+  { key: "team_project", title: "Team Project", titleTranslationKey: "team_project" }, // required this on team issues
+  { key: "project", title: "Project", titleTranslationKey: "project" }, // required this on my issues
+  { key: "cycle", title: "Cycle", titleTranslationKey: "cycle" }, // required this on my issues
+  { key: "module", title: "Module", titleTranslationKey: "module" }, // required this on my issues
+  { key: "labels", title: "Labels", titleTranslationKey: "labels" },
+  { key: "assignees", title: "Assignees", titleTranslationKey: "assignees" },
+  { key: "created_by", title: "Created By", titleTranslationKey: "created_by" },
+  { key: null, title: "None", titleTranslationKey: "none" },
 ];
 
 export const ISSUE_ORDER_BY_OPTIONS: {
   key: TIssueOrderByOptions;
   title: string;
+  titleTranslationKey: string;
 }[] = [
-  { key: "sort_order", title: "Manual" },
-  { key: "-created_at", title: "Last Created" },
-  { key: "-updated_at", title: "Last Updated" },
-  { key: "start_date", title: "Start Date" },
-  { key: "target_date", title: "Due Date" },
-  { key: "-priority", title: "Priority" },
+  { key: "sort_order", title: "Manual", titleTranslationKey: "manual" },
+  { key: "-created_at", title: "Last Created", titleTranslationKey: "last_created" },
+  { key: "-updated_at", title: "Last Updated", titleTranslationKey: "last_updated" },
+  { key: "start_date", title: "Start Date", titleTranslationKey: "start_date" },
+  { key: "target_date", title: "Due Date", titleTranslationKey: "due_date" },
+  { key: "-priority", title: "Priority", titleTranslationKey: "priority" },
 ];
 
 export const ISSUE_FILTER_OPTIONS: {
   key: TIssueGroupingFilters;
   title: string;
+  titleTranslationKey: string;
 }[] = [
-  { key: null, title: "All" },
-  { key: "active", title: "Active" },
-  { key: "backlog", title: "Backlog" },
+  { key: null, title: "All", titleTranslationKey: "all" },
+  { key: "active", title: "Active", titleTranslationKey: "active" },
+  { key: "backlog", title: "Backlog", titleTranslationKey: "backlog" },
   // { key: "draft", title: "Draft Issues" },
 ];
 
@@ -109,50 +113,72 @@ export const EPICS_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = 
 export const ISSUE_DISPLAY_PROPERTIES: {
   key: keyof IIssueDisplayProperties;
   title: string;
+  titleTranslationKey: string;
 }[] = [
-  { key: "key", title: "ID" },
-  { key: "issue_type", title: "Issue Type" },
-  { key: "assignee", title: "Assignee" },
-  { key: "start_date", title: "Start date" },
-  { key: "due_date", title: "Due date" },
-  { key: "labels", title: "Labels" },
-  { key: "priority", title: "Priority" },
-  { key: "state", title: "State" },
-  { key: "sub_issue_count", title: "Sub issue count" },
-  { key: "attachment_count", title: "Attachment count" },
-  { key: "link", title: "Link" },
-  { key: "estimate", title: "Estimate" },
-  { key: "modules", title: "Modules" },
-  { key: "cycle", title: "Cycle" },
+  { key: "key", title: "ID", titleTranslationKey: "id" },
+  { key: "issue_type", title: "Issue Type", titleTranslationKey: "issue_type" },
+  { key: "assignee", title: "Assignee", titleTranslationKey: "assignee" },
+  { key: "start_date", title: "Start date", titleTranslationKey: "start_date" },
+  { key: "due_date", title: "Due date", titleTranslationKey: "due_date" },
+  { key: "labels", title: "Labels", titleTranslationKey: "labels" },
+  { key: "priority", title: "Priority", titleTranslationKey: "priority" },
+  { key: "state", title: "State", titleTranslationKey: "state" },
+  { key: "sub_issue_count", title: "Sub issue count", titleTranslationKey: "sub_issue_count" },
+  { key: "attachment_count", title: "Attachment count", titleTranslationKey: "attachment_count" },
+  { key: "link", title: "Link", titleTranslationKey: "link" },
+  { key: "estimate", title: "Estimate", titleTranslationKey: "estimate" },
+  { key: "modules", title: "Modules", titleTranslationKey: "modules" },
+  { key: "cycle", title: "Cycle", titleTranslationKey: "cycle" },
 ];
 
 export const ISSUE_EXTRA_OPTIONS: {
   key: TIssueExtraOptions;
   title: string;
+  titleTranslationKey: string;
 }[] = [
-  { key: "sub_issue", title: "Show sub-issues" }, // in spreadsheet its always false
-  { key: "show_empty_groups", title: "Show empty groups" }, // filter on front-end
+  { key: "sub_issue", title: "Show sub-issues", titleTranslationKey: "show_sub_issues" }, // in spreadsheet its always false
+  { key: "show_empty_groups", title: "Show empty groups", titleTranslationKey: "show_empty_groups" }, // filter on front-end
 ];
 
 export const ISSUE_LAYOUT_MAP = {
-  [EIssueLayoutTypes.LIST]: { key: EIssueLayoutTypes.LIST, title: "List layout", label: "List", icon: List },
-  [EIssueLayoutTypes.KANBAN]: { key: EIssueLayoutTypes.KANBAN, title: "Board layout", label: "Board", icon: Kanban },
+  [EIssueLayoutTypes.LIST]: {
+    key: EIssueLayoutTypes.LIST,
+    title: "List layout",
+    titleTranslationKey: "list_layout",
+    label: "List",
+    labelTranslationKey: "list",
+    icon: List,
+  },
+  [EIssueLayoutTypes.KANBAN]: {
+    key: EIssueLayoutTypes.KANBAN,
+    title: "Board layout",
+    titleTranslationKey: "board_layout",
+    label: "Board",
+    labelTranslationKey: "board",
+    icon: Kanban,
+  },
   [EIssueLayoutTypes.CALENDAR]: {
     key: EIssueLayoutTypes.CALENDAR,
     title: "Calendar layout",
+    titleTranslationKey: "calendar_layout",
     label: "Calendar",
+    labelTranslationKey: "calendar",
     icon: Calendar,
   },
   [EIssueLayoutTypes.SPREADSHEET]: {
     key: EIssueLayoutTypes.SPREADSHEET,
     title: "Table layout",
+    titleTranslationKey: "table_layout",
     label: "Table",
+    labelTranslationKey: "table",
     icon: Sheet,
   },
   [EIssueLayoutTypes.GANTT]: {
     key: EIssueLayoutTypes.GANTT,
     title: "Timeline layout",
+    titleTranslationKey: "timeline_layout",
     label: "Timeline",
+    labelTranslationKey: "timeline",
     icon: GanttChartSquare,
   },
 };
@@ -160,6 +186,7 @@ export const ISSUE_LAYOUT_MAP = {
 export const ISSUE_LAYOUTS: {
   key: EIssueLayoutTypes;
   title: string;
+  titleTranslationKey: string;
   icon: any;
 }[] = Object.values(ISSUE_LAYOUT_MAP);
 

@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // components
@@ -47,6 +48,9 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
     alwaysAllowEditing,
     disableEditing = false,
   } = props;
+
+  const { t } = useTranslation();
+
   // store hooks
   const { allowPermissions } = useUserPermissions();
 
@@ -156,7 +160,7 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
       {isEditingAllowed && (
         <button type="button" onClick={handleClearAllFilters}>
           <Tag>
-            Clear all
+            {t("clear_all")}
             <X size={12} strokeWidth={2} />
           </Tag>
         </button>

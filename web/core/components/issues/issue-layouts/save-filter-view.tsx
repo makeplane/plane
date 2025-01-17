@@ -1,6 +1,7 @@
 "use client";
 
 import { FC, useState } from "react";
+import { useTranslation } from "@plane/i18n";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { Button } from "@plane/ui";
 // components
@@ -18,6 +19,7 @@ interface ISaveFilterView {
 
 export const SaveFilterView: FC<ISaveFilterView> = (props) => {
   const { workspaceSlug, projectId, filterParams } = props;
+  const { t } = useTranslation();
 
   const [viewModal, setViewModal] = useState<boolean>(false);
 
@@ -32,7 +34,7 @@ export const SaveFilterView: FC<ISaveFilterView> = (props) => {
       />
 
       <Button size="sm" onClick={() => setViewModal(true)}>
-        Save View
+        {t("save_view")}
       </Button>
     </div>
   );

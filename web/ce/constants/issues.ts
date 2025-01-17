@@ -7,20 +7,24 @@ export enum EActivityFilterType {
 
 export type TActivityFilters = EActivityFilterType;
 
-export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<EActivityFilterType, { label: string }> = {
-  [EActivityFilterType.ACTIVITY]: {
-    label: "Updates",
-  },
-  [EActivityFilterType.COMMENT]: {
-    label: "Comments",
-  },
-};
+export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<EActivityFilterType, { label: string; labelTranslationKey: string }> =
+  {
+    [EActivityFilterType.ACTIVITY]: {
+      label: "Updates",
+      labelTranslationKey: "updates",
+    },
+    [EActivityFilterType.COMMENT]: {
+      label: "Comments",
+      labelTranslationKey: "comments",
+    },
+  };
 
 export const defaultActivityFilters: TActivityFilters[] = [EActivityFilterType.ACTIVITY, EActivityFilterType.COMMENT];
 
 export type TActivityFilterOption = {
   key: TActivityFilters;
   label: string;
+  labelTranslationKey: string;
   isSelected: boolean;
   onClick: () => void;
 };
