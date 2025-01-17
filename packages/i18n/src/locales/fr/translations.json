@@ -316,5 +316,14 @@
   "remove_parent_issue": "Supprimer le problème parent",
   "add_parent": "Ajouter un parent",
   "loading_members": "Chargement des membres...",
-  "inbox": "Boîte de réception"
+  "inbox": "Boîte de réception",
+  "project_cycles": {
+    "status": {
+      "days_left": "Jours restants",
+      "completed": "Terminé",
+      "yet_to_start": "À démarrer",
+      "in_progress": "En cours",
+      "draft": "Brouillon"
+    }
+  }
 }

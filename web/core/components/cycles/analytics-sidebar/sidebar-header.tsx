@@ -5,13 +5,14 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ArchiveIcon, ArchiveRestoreIcon, ChevronRight, EllipsisIcon, LinkIcon, Trash2 } from "lucide-react";
 // types
+import { CYCLE_STATUS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
 // ui
 import { CustomMenu, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns";
 // constants
-import { CYCLE_STATUS } from "@/constants/cycle";
 import { CYCLE_UPDATED } from "@/constants/event-tracker";
 // helpers
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
@@ -53,6 +54,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
   const { allowPermissions } = useUserPermissions();
   const { updateCycleDetails, restoreCycle } = useCycle();
   const { setTrackElement, captureCycleEvent } = useEventTracker();
+  const { t } = useTranslation();
 
   // form info
   const { control, reset } = useForm({
@@ -283,7 +285,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
                 backgroundColor: `${currentCycle.color}20`,
               }}
             >
-              {currentCycle.title}
+              {t(currentCycle.title)}
             </span>
           )}
         </div>

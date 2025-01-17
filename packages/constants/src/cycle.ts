@@ -1,20 +1,4 @@
 // types
-import { TCycleLayoutOptions, TCycleTabOptions } from "@plane/types";
-
-export const CYCLE_TABS_LIST: {
-  key: TCycleTabOptions;
-  name: string;
-}[] = [
-  {
-    key: "active",
-    name: "Active",
-  },
-  {
-    key: "all",
-    name: "All",
-  },
-];
-
 export const CYCLE_STATUS: {
   label: string;
   value: "current" | "upcoming" | "completed" | "draft";
@@ -24,33 +8,33 @@ export const CYCLE_STATUS: {
   bgColor: string;
 }[] = [
   {
-    label: "day left",
+    label: "project_cycles.status.days_left",
     value: "current",
-    title: "In progress",
+    title: "project_cycles.status.in_progress",
     color: "#F59E0B",
     textColor: "text-amber-500",
     bgColor: "bg-amber-50",
   },
   {
-    label: "Yet to start",
+    label: "project_cycles.status.yet_to_start",
     value: "upcoming",
-    title: "Yet to start",
+    title: "project_cycles.status.yet_to_start",
     color: "#3F76FF",
     textColor: "text-blue-500",
     bgColor: "bg-indigo-50",
   },
   {
-    label: "Completed",
+    label: "project_cycles.status.completed",
     value: "completed",
-    title: "Completed",
+    title: "project_cycles.status.completed",
     color: "#16A34A",
     textColor: "text-green-600",
     bgColor: "bg-green-50",
   },
   {
-    label: "Draft",
+    label: "project_cycles.status.draft",
     value: "draft",
-    title: "Draft",
+    title: "project_cycles.status.draft",
     color: "#525252",
     textColor: "text-custom-text-300",
     bgColor: "bg-custom-background-90",
