@@ -220,7 +220,6 @@
   "join_the_project_to_rearrange": "Rejoindre le projet pour réorganiser",
   "drag_to_rearrange": "Glisser pour réorganiser",
   "congrats": "Félicitations !",
-  "project": "Projet",
   "open_project": "Ouvrir le projet",
   "issues": "Problèmes",
   "cycles": "Cycles",
@@ -417,7 +416,7 @@
   },
 
   "workspace_settings": {
-    "name": "Paramètres de l'espace de travail",
+    "label": "Paramètres de l'espace de travail",
     "empty_state": {
       "api_tokens": {
         "title": "Aucun jeton API créé",
@@ -439,7 +438,7 @@
   },
 
   "profile": {
-    "name": "Profil",
+    "label": "Profil",
     "empty_state": {
       "activity": {
         "title": "Aucune activité pour le moment",
@@ -521,20 +520,11 @@
   "project_cycle_all_empty_state_title": "Aucun cycle",
   "project_cycle_all_empty_state_description": "Un cycle actif inclut toute période qui englobe la date d'aujourd'hui dans sa plage. Trouvez ici les progrès et les détails du cycle actif.",
 
-  "project_empty_filter_empty_state_title": "Aucun problème trouvé correspondant aux filtres appliqués",
-  "project_empty_filter_empty_state_secondary_button_text": "Effacer tous les filtres",
-
   "project_archived_empty_filter_empty_state_title": "Aucun problème trouvé correspondant aux filtres appliqués",
   "project_archived_empty_filter_empty_state_secondary_button_text": "Effacer tous les filtres",
 
   "project_draft_empty_filter_empty_state_title": "Aucun problème trouvé correspondant aux filtres appliqués",
   "project_draft_empty_filter_empty_state_secondary_button_text": "Effacer tous les filtres",
-
-  "project_no_issues_empty_state_title": "Créez un problème et assignez-le à quelqu'un, même à vous-même",
-  "project_no_issues_empty_state_description": "Pensez aux problèmes comme des tâches, du travail, ou des JTBD. Ce que nous aimons. Un problème et ses sous-problèmes sont généralement des actions basées sur le temps assignées aux membres de votre équipe. Votre équipe crée, assigne et complète des problèmes pour faire avancer votre projet vers son objectif.",
-  "project_no_issues_empty_state_primary_button_text": "Créez votre premier problème",
-  "project_no_issues_empty_state_primary_button_comic_title": "Les problèmes sont les blocs de construction dans Plane.",
-  "project_no_issues_empty_state_primary_button_comic_description": "Refaire le design de l'interface Plane, Renouveler l'image de marque de l'entreprise, ou Lancer le nouveau système d'injection de carburant sont des exemples de problèmes qui ont probablement des sous-problèmes.",
 
   "project_archived_no_issues_empty_state_title": "Aucun problème archivé pour le moment",
   "project_archived_no_issues_empty_state_description": "Manuellement ou par automatisation, vous pouvez archiver les problèmes terminés ou annulés. Retrouvez-les ici une fois archivés.",
@@ -552,24 +542,74 @@
   "members_empty_search_empty_state_title": "Aucun membre correspondant",
   "members_empty_search_empty_state_description": "Ajoutez-les au projet s'ils font déjà partie de l'espace de travail",
 
-  "project_module_issues_empty_state_title": "Aucun problème dans le module",
-  "project_module_issues_empty_state_description": "Créez ou ajoutez des problèmes que vous souhaitez accomplir dans le cadre de ce module",
-  "project_module_issues_empty_state_primary_button_text": "Créer un nouveau problème",
-  "project_module_issues_empty_state_secondary_button_text": "Ajouter un problème existant",
+  "project": {
+    "label": "Projet",
+    "empty_state": {
+      "no_issues": {
+        "title": "Créez un problème et assignez-le à quelqu’un, même à vous-même",
+        "description": "Considérez les problèmes comme des emplois, des tâches, des actions ou JTBD (travaux à accomplir). Nous aimons ça. Un problème et ses sous-problèmes sont généralement des actions basées sur le temps assignées aux membres de votre équipe. Votre équipe crée, assigne et termine des problèmes pour faire avancer votre projet vers son objectif.",
+        "primary_button": {
+          "text": "Créez votre premier problème",
+          "comic": {
+            "title": "Les problèmes sont les éléments constitutifs de Plane.",
+            "description": "Redessiner l’interface utilisateur de Plane, Rebrander l’entreprise ou Lancer le nouveau système d’injection de carburant sont des exemples de problèmes qui comportent probablement des sous-problèmes."
+          }
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Aucun problème trouvé correspondant aux filtres appliqués",
+        "secondary_button": {
+          "text": "Effacer tous les filtres"
+        }
+      }
+    }
+  },
 
-  "project_module_empty_state_title": "Associez les jalons de votre projet à des modules et suivez facilement le travail agrégé.",
-  "project_module_empty_state_description": "Un groupe de problèmes appartenant à un parent logique et hiérarchique forme un module. Pensez-y comme un moyen de suivre le travail par jalons de projet. Ils ont leurs propres périodes et échéances ainsi que des analyses pour vous aider à voir à quel point vous êtes proche ou éloigné d'un jalon.",
-  "project_module_empty_state_primary_button_text": "Construisez votre premier module",
-  "project_module_empty_state_primary_button_comic_title": "Les modules aident à regrouper le travail par hiérarchie.",
-  "project_module_empty_state_primary_button_comic_description": "Un module de chariot, un module de châssis et un module d'entrepôt sont de bons exemples de ce regroupement.",
+  "project_module": {
+    "empty_state": {
+      "no_issues": {
+        "title": "Aucun problème dans le module",
+        "description": "Créez ou ajoutez des problèmes que vous souhaitez réaliser dans le cadre de ce module",
+        "primary_button": {
+          "text": "Créer un nouveau problème"
+        },
+        "secondary_button": {
+          "text": "Ajouter un problème existant"
+        }
+      },
+      "general": {
+        "title": "Associez les jalons de votre projet aux modules et suivez facilement le travail global.",
+        "description": "Un groupe de problèmes appartenant à un parent logique et hiérarchique forme un module. Pensez-y comme un moyen de suivre le travail par jalons de projet. Ils ont leurs propres périodes, échéances et analyses pour vous aider à voir votre progression vers un jalon.",
+        "primary_button": {
+          "text": "Construisez votre premier module",
+          "comic": {
+            "title": "Les modules aident à regrouper le travail par hiérarchie.",
+            "description": "Un module de panier, un module de châssis et un module d'entrepôt sont de bons exemples de ce regroupement."
+          }
+        }
+      },
+      "archived": {
+        "title": "Aucun module archivé pour le moment",
+        "description": "Pour organiser votre projet, archivez les modules terminés ou annulés. Retrouvez-les ici une fois archivés."
+      }
+    }
+  },
 
-  "project_archived_no_modules_empty_state_title": "Aucun module archivé pour l'instant",
-  "project_archived_no_modules_empty_state_description": "Pour organiser votre projet, archivez les modules terminés ou annulés. Retrouvez-les ici une fois archivés.",
-
-  "project_view_empty_state_title": "Enregistrez des vues filtrées pour votre projet. Créez-en autant que vous en avez besoin.",
-  "project_view_empty_state_primary_button_text": "Créez votre première vue",
-  "project_view_empty_state_primary_button_comic_title": "Les vues fonctionnent sur les propriétés des problèmes.",
-  "project_view_empty_state_primary_button_comic_description": "Vous pouvez créer une vue à partir d'ici avec autant de propriétés et de filtres que vous le souhaitez.",
+  "project_view": {
+    "empty_state": {
+      "general": {
+        "title": "Enregistrez des vues filtrées pour votre projet. Créez-en autant que nécessaire",
+        "description": "Les vues sont un ensemble de filtres enregistrés que vous utilisez fréquemment ou auxquels vous souhaitez accéder facilement. Tous vos collègues dans un projet peuvent voir les vues de chacun et choisir celle qui correspond le mieux à leurs besoins.",
+        "primary_button": {
+          "text": "Créez votre première vue",
+          "comic": {
+            "title": "Les vues fonctionnent au-dessus des propriétés des problèmes.",
+            "description": "Vous pouvez créer une vue à partir d'ici avec autant de propriétés ou de filtres que vous le souhaitez."
+          }
+        }
+      }
+    }
+  },
 
   "project_page": {
     "empty_state": {
@@ -706,7 +746,7 @@
   },
 
   "inbox": {
-    "name": "Boîte de réception",
+    "label": "Boîte de réception",
     "empty_state": {
       "sidebar_open_tab": {
         "title": "Aucun problème ouvert",

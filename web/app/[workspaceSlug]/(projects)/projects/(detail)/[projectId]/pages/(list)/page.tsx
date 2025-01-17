@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TPageNavigationTabs } from "@plane/types";
 // components
@@ -29,7 +29,7 @@ const ProjectPagesPage = observer(() => {
   // derived values
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
   const pageTitle = project?.name ? `${project?.name} - Pages` : undefined;
-  const canPerformEmptyStateActions = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canPerformEmptyStateActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/disabled-feature/pages" });
 
   const currentPageType = (): TPageNavigationTabs => {

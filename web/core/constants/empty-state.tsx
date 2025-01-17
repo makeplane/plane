@@ -63,11 +63,6 @@ export enum EmptyStateType {
   VIEWS_EMPTY_SEARCH = "views-empty-search",
   PROJECTS_EMPTY_SEARCH = "projects-empty-search",
   MEMBERS_EMPTY_SEARCH = "members-empty-search",
-  PROJECT_MODULE_ISSUES = "project-module-issues",
-  PROJECT_MODULE = "project-module",
-  PROJECT_ARCHIVED_NO_MODULES = "project-archived-no-modules",
-  PROJECT_VIEW = "project-view",
-
   // stickies
   STICKIES = "stickies",
   STICKIES_SEARCH = "stickies-search",
@@ -420,60 +415,6 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
     title: "No matching members",
     description: "Add them to the project if they are already a part of the workspace",
     path: "/empty-state/search/member",
-  },
-  // project module
-  [EmptyStateType.PROJECT_MODULE_ISSUES]: {
-    key: EmptyStateType.PROJECT_MODULE_ISSUES,
-    title: "No issues in the module",
-    description: "Create or add issues which you want to accomplish as part of this module",
-    path: "/empty-state/module-issues/",
-    primaryButton: {
-      text: "Create new issue ",
-    },
-    secondaryButton: {
-      text: "Add an existing issue",
-    },
-    accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  [EmptyStateType.PROJECT_MODULE]: {
-    key: EmptyStateType.PROJECT_MODULE,
-    title: "Map your project milestones to Modules and track aggregated work easily.",
-    description:
-      "A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone.",
-    path: "/empty-state/onboarding/modules",
-    primaryButton: {
-      text: "Build your first module",
-      comicBox: {
-        title: "Modules help group work by hierarchy.",
-        description: "A cart module, a chassis module, and a warehouse module are all good example of this grouping.",
-      },
-    },
-    accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  [EmptyStateType.PROJECT_ARCHIVED_NO_MODULES]: {
-    key: EmptyStateType.PROJECT_ARCHIVED_NO_MODULES,
-    title: "No archived Modules yet",
-    description: "To tidy up your project, archive completed or cancelled modules. Find them here once archived.",
-    path: "/empty-state/archived/empty-modules",
-  },
-  // project views
-  [EmptyStateType.PROJECT_VIEW]: {
-    key: EmptyStateType.PROJECT_VIEW,
-    title: "Save filtered views for your project. Create as many as you need",
-    description:
-      "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best.",
-    path: "/empty-state/onboarding/views",
-    primaryButton: {
-      text: "Create your first view",
-      comicBox: {
-        title: "Views work atop Issue properties.",
-        description: "You can create a view from here with as many properties as filters as you see fit.",
-      },
-    },
-    accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
   [EmptyStateType.STICKIES]: {
     key: EmptyStateType.STICKIES,

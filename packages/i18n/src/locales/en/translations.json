@@ -220,7 +220,6 @@
   "join_the_project_to_rearrange": "Join the project to rearrange",
   "drag_to_rearrange": "Drag to rearrange",
   "congrats": "Congrats!",
-  "project": "Project",
   "open_project": "Open project",
   "issues": "Issues",
   "cycles": "Cycles",
@@ -417,7 +416,7 @@
   },
 
   "workspace_settings": {
-    "name": "Workspace settings",
+    "label": "Workspace settings",
     "empty_state": {
       "api_tokens": {
         "title": "No API tokens created",
@@ -439,7 +438,7 @@
   },
 
   "profile": {
-    "name": "Profile",
+    "label": "Profile",
     "empty_state": {
       "activity": {
         "title": "No activities yet",
@@ -518,20 +517,11 @@
   "project_archived_no_cycles_empty_state_title": "No archived cycles yet",
   "project_archived_no_cycles_empty_state_description": "To tidy up your project, archive completed cycles. Find them here once archived.",
 
-  "project_empty_filter_empty_state_title": "No issues found matching the filters applied",
-  "project_empty_filter_empty_state_secondary_button_text": "Clear all filters",
-
   "project_archived_empty_filter_empty_state_title": "No issues found matching the filters applied",
   "project_archived_empty_filter_empty_state_secondary_button_text": "Clear all filters",
 
   "project_draft_empty_filter_empty_state_title": "No issues found matching the filters applied",
   "project_draft_empty_filter_empty_state_secondary_button_text": "Clear all filters",
-
-  "project_no_issues_empty_state_title": "Create an issue and assign it to someone, even yourself",
-  "project_no_issues_empty_state_description": "Think of issues as jobs, tasks, work, or JTBD. Which we like. An issue and its sub-issues are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes issues to move your project towards its goal.",
-  "project_no_issues_empty_state_primary_button_text": "Create your first issue",
-  "project_no_issues_empty_state_primary_button_comic_title": "Issues are building blocks in Plane.",
-  "project_no_issues_empty_state_primary_button_comic_description": "Redesign the Plane UI, Rebrand the company, or Launch the new fuel injection system are examples of issues that likely have sub-issues.",
 
   "project_archived_no_issues_empty_state_title": "No archived issues yet",
   "project_archived_no_issues_empty_state_description": "Manually or through automation, you can archive issues that are completed or cancelled. Find them here once archived.",
@@ -549,24 +539,74 @@
   "members_empty_search_empty_state_title": "No matching members",
   "members_empty_search_empty_state_description": "Add them to the project if they are already a part of the workspace",
 
-  "project_module_issues_empty_state_title": "No issues in the module",
-  "project_module_issues_empty_state_description": "Create or add issues which you want to accomplish as part of this module",
-  "project_module_issues_empty_state_primary_button_text": "Create new issue",
-  "project_module_issues_empty_state_secondary_button_text": "Add an existing issue",
+  "project": {
+    "label": "Project",
+    "empty_state": {
+      "no_issues": {
+        "title": "Create an issue and assign it to someone, even yourself",
+        "description": "Think of issues as jobs, tasks, work, or JTBD. Which we like. An issue and its sub-issues are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes issues to move your project towards its goal.",
+        "primary_button": {
+          "text": "Create your first issue",
+          "comic": {
+            "title": "Issues are building blocks in Plane.",
+            "description": "Redesign the Plane UI, Rebrand the company, or Launch the new fuel injection system are examples of issues that likely have sub-issues."
+          }
+        }
+      },
+      "issues_empty_filter": {
+        "title": "No issues found matching the filters applied",
+        "secondary_button": {
+          "text": "Clear all filters"
+        }
+      }
+    }
+  },
 
-  "project_module_empty_state_title": "Map your project milestones to Modules and track aggregated work easily.",
-  "project_module_empty_state_description": "A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone.",
-  "project_module_empty_state_primary_button_text": "Build your first module",
-  "project_module_empty_state_primary_button_comic_title": "Modules help group work by hierarchy.",
-  "project_module_empty_state_primary_button_comic_description": "A cart module, a chassis module, and a warehouse module are all good example of this grouping.",
+  "project_module": {
+    "empty_state": {
+      "general": {
+        "title": "Map your project milestones to Modules and track aggregated work easily.",
+        "description": "A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone.",
+        "primary_button": {
+          "text": "Build your first module",
+          "comic": {
+            "title": "Modules help group work by hierarchy.",
+            "description": "A cart module, a chassis module, and a warehouse module are all good example of this grouping."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "No issues in the module",
+        "description": "Create or add issues which you want to accomplish as part of this module",
+        "primary_button": {
+          "text": "Create new issue"
+        },
+        "secondary_button": {
+          "text": "Add an existing issue"
+        }
+      },
+      "archived": {
+        "title": "No archived Modules yet",
+        "description": "To tidy up your project, archive completed or cancelled modules. Find them here once archived."
+      }
+    }
+  },
 
-  "project_archived_no_modules_empty_state_title": "No archived Modules yet",
-  "project_archived_no_modules_empty_state_description": "To tidy up your project, archive completed or cancelled modules. Find them here once archived.",
-
-  "project_view_empty_state_title": "Save filtered views for your project. Create as many as you need",
-  "project_view_empty_state_primary_button_text": "Create your first view",
-  "project_view_empty_state_primary_button_comic_title": "Views work atop Issue properties.",
-  "project_view_empty_state_primary_button_comic_description": "You can create a view from here with as many properties as filters as you see fit.",
+  "project_view": {
+    "empty_state": {
+      "general": {
+        "title": "Save filtered views for your project. Create as many as you need",
+        "description": "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best.",
+        "primary_button": {
+          "text": "Create your first view",
+          "comic": {
+            "title": "Views work atop Issue properties.",
+            "description": "You can create a view from here with as many properties as filters as you see fit."
+          }
+        }
+      }
+    }
+  },
 
   "project_page": {
     "empty_state": {
@@ -703,7 +743,7 @@
   },
 
   "inbox": {
-    "name": "Inbox",
+    "label": "Inbox",
     "empty_state": {
       "sidebar_open_tab": {
         "title": "No open issues",

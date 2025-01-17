@@ -219,7 +219,6 @@
   "join_the_project_to_rearrange": "Únete al proyecto para reordenar",
   "drag_to_rearrange": "Arrastra para reordenar",
   "congrats": "¡Felicitaciones!",
-  "project": "Proyecto",
   "open_project": "Abrir proyecto",
   "issues": "Problemas",
   "cycles": "Ciclos",
@@ -416,7 +415,7 @@
   },
 
   "workspace_settings": {
-    "name": "Configuración del espacio de trabajo",
+    "label": "Configuración del espacio de trabajo",
     "empty_state": {
       "api_tokens": {
         "title": "No se han creado tokens API",
@@ -438,7 +437,7 @@
   },
 
   "profile": {
-    "name": "Perfil",
+    "label": "Perfil",
     "empty_state": {
       "activity": {
         "title": "Aún no hay actividades",
@@ -520,20 +519,11 @@
   "project_cycle_all_empty_state_title": "No hay ciclos",
   "project_cycle_all_empty_state_description": "Un ciclo activo incluye cualquier período que abarque la fecha de hoy dentro de su rango. Encuentra el progreso y los detalles del ciclo activo aquí.",
 
-  "project_empty_filter_empty_state_title": "No se encontraron problemas que coincidan con los filtros aplicados",
-  "project_empty_filter_empty_state_secondary_button_text": "Limpiar todos los filtros",
-
   "project_archived_empty_filter_empty_state_title": "No se encontraron problemas que coincidan con los filtros aplicados",
   "project_archived_empty_filter_empty_state_secondary_button_text": "Limpiar todos los filtros",
 
   "project_draft_empty_filter_empty_state_title": "No se encontraron problemas que coincidan con los filtros aplicados",
   "project_draft_empty_filter_empty_state_secondary_button_text": "Limpiar todos los filtros",
-
-  "project_no_issues_empty_state_title": "Crea un problema y asígnalo a alguien, incluso a ti mismo",
-  "project_no_issues_empty_state_description": "Piensa en los problemas como trabajos, tareas, trabajo o JTBD. Que nos gusta. Un problema y sus sub-problemas son generalmente acciones basadas en tiempo asignadas a miembros de tu equipo. Tu equipo crea, asigna y completa problemas para mover tu proyecto hacia su objetivo.",
-  "project_no_issues_empty_state_primary_button_text": "Crea tu primer problema",
-  "project_no_issues_empty_state_primary_button_comic_title": "Los problemas son bloques de construcción en Plane.",
-  "project_no_issues_empty_state_primary_button_comic_description": "Rediseñar la interfaz de usuario de Plane, Cambiar la marca de la empresa o Lanzar el nuevo sistema de inyección de combustible son ejemplos de problemas que probablemente tengan sub-problemas.",
 
   "project_archived_no_issues_empty_state_title": "No hay problemas archivados aún",
   "project_archived_no_issues_empty_state_description": "Manual o mediante automatización, puedes archivar problemas que están completados o cancelados. Encuéntralos aquí una vez archivados.",
@@ -551,24 +541,74 @@
   "members_empty_search_empty_state_title": "No hay miembros coincidentes",
   "members_empty_search_empty_state_description": "Añádelos al proyecto si ya son parte del espacio de trabajo",
 
-  "project_module_issues_empty_state_title": "No hay problemas en el módulo",
-  "project_module_issues_empty_state_description": "Crea o añade problemas que quieras realizar como parte de este módulo",
-  "project_module_issues_empty_state_primary_button_text": "Crear nuevo problema",
-  "project_module_issues_empty_state_secondary_button_text": "Añadir un problema existente",
+  "project": {
+    "label": "Proyecto",
+    "empty_state": {
+      "no_issues": {
+        "title": "Crea un problema y asígnalo a alguien, incluso a ti mismo",
+        "description": "Piensa en los problemas como trabajos, tareas, acciones, o JTBD (trabajos por hacer). Nos gusta eso. Un problema y sus subproblemas suelen ser acciones basadas en el tiempo asignadas a los miembros de tu equipo. Tu equipo crea, asigna y completa problemas para avanzar el proyecto hacia su objetivo.",
+        "primary_button": {
+          "text": "Crea tu primer problema",
+          "comic": {
+            "title": "Los problemas son bloques de construcción en Plane.",
+            "description": "Rediseñar la interfaz de Plane, Rebrandear la empresa o Lanzar el nuevo sistema de inyección de combustible son ejemplos de problemas que probablemente tengan subproblemas."
+          }
+        }
+      },
+      "issues_empty_filter": {
+        "title": "No se encontraron problemas que coincidan con los filtros aplicados",
+        "secondary_button": {
+          "text": "Borrar todos los filtros"
+        }
+      }
+    }
+  },
 
-  "project_module_empty_state_title": "Mapea los hitos de tu proyecto a Módulos y rastrea el trabajo agregado fácilmente.",
-  "project_module_empty_state_description": "Un grupo de problemas que pertenecen a un padre lógico y jerárquico forman un módulo. Piensa en ellos como una forma de rastrear el trabajo por hitos del proyecto. Tienen sus propios períodos y fechas límite, así como análisis para ayudarte a ver qué tan cerca o lejos estás de un hito.",
-  "project_module_empty_state_primary_button_text": "Construye tu primer módulo",
-  "project_module_empty_state_primary_button_comic_title": "Los Módulos ayudan a agrupar el trabajo por jerarquía.",
-  "project_module_empty_state_primary_button_comic_description": "Un módulo de carrito, un módulo de chasis y un módulo de almacén son todos buenos ejemplos de esta agrupación.",
+  "project_module": {
+    "empty_state": {
+      "no_issues": {
+        "title": "No hay problemas en el módulo",
+        "description": "Crea o agrega problemas que deseas lograr como parte de este módulo",
+        "primary_button": {
+          "text": "Crear nuevo problema"
+        },
+        "secondary_button": {
+          "text": "Agregar un problema existente"
+        }
+      },
+      "general": {
+        "title": "Mapea los hitos de tu proyecto a Módulos y sigue el trabajo agregado fácilmente.",
+        "description": "Un grupo de problemas que pertenecen a un padre lógico y jerárquico forma un módulo. Piénsalos como una forma de rastrear el trabajo por hitos del proyecto. Tienen sus propios períodos y plazos, así como análisis para ayudarte a ver qué tan cerca o lejos estás de un hito.",
+        "primary_button": {
+          "text": "Construye tu primer módulo",
+          "comic": {
+            "title": "Los módulos ayudan a agrupar el trabajo por jerarquía.",
+            "description": "Un módulo de carrito, un módulo de chasis y un módulo de almacén son buenos ejemplos de esta agrupación."
+          }
+        }
+      },
+      "archived": {
+        "title": "Aún no hay módulos archivados",
+        "description": "Para organizar tu proyecto, archiva módulos completados o cancelados. Encuéntralos aquí una vez archivados."
+      }
+    }
+  },
 
-  "project_archived_no_modules_empty_state_title": "Aún no hay Módulos archivados",
-  "project_archived_no_modules_empty_state_description": "Para ordenar tu proyecto, archiva los módulos completados o cancelados. Encuéntralos aquí una vez archivados.",
-
-  "project_view_empty_state_title": "Guarda vistas filtradas para tu proyecto. Crea tantas como necesites",
-  "project_view_empty_state_primary_button_text": "Crea tu primera vista",
-  "project_view_empty_state_primary_button_comic_title": "Las vistas funcionan sobre las propiedades de los Problemas.",
-  "project_view_empty_state_primary_button_comic_description": "Puedes crear una vista desde aquí con tantas propiedades como filtros como consideres adecuado.",
+  "project_view": {
+    "empty_state": {
+      "general": {
+        "title": "Guarda vistas filtradas para tu proyecto. Crea tantas como necesites",
+        "description": "Las vistas son un conjunto de filtros guardados que usas con frecuencia o a los que deseas tener acceso fácil. Todos tus colegas en un proyecto pueden ver las vistas de todos y elegir la que mejor se adapte a sus necesidades.",
+        "primary_button": {
+          "text": "Crea tu primera vista",
+          "comic": {
+            "title": "Las vistas funcionan sobre las propiedades de los problemas.",
+            "description": "Puedes crear una vista desde aquí con tantas propiedades como filtros que consideres necesarios."
+          }
+        }
+      }
+    }
+  },
 
   "project_page": {
     "empty_state": {
@@ -705,7 +745,7 @@
   },
 
   "inbox": {
-    "name": "Bandeja de entrada",
+    "label": "Bandeja de entrada",
     "empty_state": {
       "sidebar_open_tab": {
         "title": "No hay problemas abiertos",

@@ -2,7 +2,7 @@
 import { observer } from "mobx-react";
 // components
 import { useParams, useSearchParams } from "next/navigation";
-import { EUserWorkspaceRoles } from "@plane/constants/src/user";
+import { EUserProjectRoles } from "@plane/constants/src/user";
 import { useTranslation } from "@plane/i18n";
 import { PageHead } from "@/components/core";
 import { DetailedEmptyState } from "@/components/empty-state";
@@ -28,7 +28,7 @@ const ProjectInboxPage = observer(() => {
   const { currentProjectDetails } = useProject();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const canPerformEmptyStateActions = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canPerformEmptyStateActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/disabled-feature/intake" });
 
   // No access to inbox

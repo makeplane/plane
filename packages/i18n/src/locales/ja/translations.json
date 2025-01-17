@@ -220,7 +220,6 @@
   "join_the_project_to_rearrange": "プロジェクトに参加して並べ替え",
   "drag_to_rearrange": "ドラッグして並べ替え",
   "congrats": "おめでとうございます！",
-  "project": "プロジェクト",
   "open_project": "プロジェクトを開く",
   "issues": "問題",
   "cycles": "サイクル",
@@ -417,7 +416,7 @@
   },
 
   "workspace_settings": {
-    "name": "ワークスペース設定",
+    "label": "ワークスペース設定",
     "empty_state": {
       "api_tokens": {
         "title": "APIトークンが作成されていません",
@@ -439,7 +438,7 @@
   },
 
   "profile": {
-    "name": "プロフィール",
+    "label": "プロフィール",
     "empty_state": {
       "activity": {
         "title": "まだアクティビティがありません",
@@ -521,20 +520,11 @@
   "project_cycle_all_empty_state_title": "サイクルがありません",
   "project_cycle_all_empty_state_description": "アクティブなサイクルには、現在の日付が含まれる期間が含まれます。ここでアクティブなサイクルの進捗や詳細を確認できます。",
 
-  "project_empty_filter_empty_state_title": "適用されたフィルターに一致する課題は見つかりません",
-  "project_empty_filter_empty_state_secondary_button_text": "すべてのフィルターをクリア",
-
   "project_archived_empty_filter_empty_state_title": "適用されたフィルターに一致する課題は見つかりません",
   "project_archived_empty_filter_empty_state_secondary_button_text": "すべてのフィルターをクリア",
 
   "project_draft_empty_filter_empty_state_title": "適用されたフィルターに一致する課題は見つかりません",
   "project_draft_empty_filter_empty_state_secondary_button_text": "すべてのフィルターをクリア",
-
-  "project_no_issues_empty_state_title": "課題を作成し、自分自身または他の人に割り当ててください",
-  "project_no_issues_empty_state_description": "課題は仕事、タスク、作業、またはJTBDと考えられます。課題とそのサブ課題は通常、チームメンバーに割り当てられた時間ベースのアクション項目です。チームは課題を作成、割り当て、完了させることでプロジェクトを目標に向かって進めます。",
-  "project_no_issues_empty_state_primary_button_text": "最初の課題を作成する",
-  "project_no_issues_empty_state_primary_button_comic_title": "課題はPlaneの基本構成要素です。",
-  "project_no_issues_empty_state_primary_button_comic_description": "Plane UIの再設計、会社のリブランディング、新しい燃料噴射システムの導入は、サブ課題を含む課題の例です。",
 
   "project_archived_no_issues_empty_state_title": "まだアーカイブされた課題はありません",
   "project_archived_no_issues_empty_state_description": "手動または自動化により、完了またはキャンセルされた課題をアーカイブできます。一度アーカイブされると、ここに表示されます。",
@@ -552,24 +542,74 @@
   "members_empty_search_empty_state_title": "一致するメンバーはありません",
   "members_empty_search_empty_state_description": "すでにワークスペースの一員である場合、プロジェクトに追加してください。",
 
-  "project_module_issues_empty_state_title": "モジュール内に課題がありません",
-  "project_module_issues_empty_state_description": "このモジュールの一部として達成したい課題を作成または追加してください。",
-  "project_module_issues_empty_state_primary_button_text": "新しい課題を作成する",
-  "project_module_issues_empty_state_secondary_button_text": "既存の課題を追加する",
+  "project": {
+    "label": "プロジェクト",
+    "empty_state": {
+      "no_issues": {
+        "title": "課題を作成し、誰かに、または自分に割り当てましょう",
+        "description": "課題を仕事、タスク、行動、またはJTBD（やるべき仕事）と考えてください。それが私たちの好む方法です。課題とそのサブ課題は通常、チームメンバーに割り当てられる時間ベースのアクションです。チームは課題を作成し、割り当て、完了させることで、プロジェクトの目標に向かって進みます。",
+        "primary_button": {
+          "text": "最初の課題を作成",
+          "comic": {
+            "title": "課題はPlaneの構成要素です。",
+            "description": "Plane UIの再設計、会社のリブランド、新しい燃料噴射システムの開始は、サブ課題がある可能性のある課題の例です。"
+          }
+        }
+      },
+      "issues_empty_filter": {
+        "title": "適用されたフィルターに一致する課題は見つかりませんでした",
+        "secondary_button": {
+          "text": "すべてのフィルターをクリア"
+        }
+      }
+    }
+  },
 
-  "project_module_empty_state_title": "モジュールにプロジェクトのマイルストーンをマッピングし、集約された作業を簡単に追跡します。",
-  "project_module_empty_state_description": "論理的で階層的な親に属する課題のグループがモジュールを形成します。プロジェクトのマイルストーンごとに作業を追跡するための方法と考えてください。それぞれのモジュールには独自の期間と期限があり、マイルストーンへの進捗を把握するための分析が備わっています。",
-  "project_module_empty_state_primary_button_text": "最初のモジュールを構築する",
-  "project_module_empty_state_primary_button_comic_title": "モジュールは階層別に作業をグループ化します。",
-  "project_module_empty_state_primary_button_comic_description": "カートモジュール、シャーシモジュール、倉庫モジュールは、このグループ化の良い例です。",
+  "project_module": {
+    "empty_state": {
+      "no_issues": {
+        "title": "モジュールに課題がありません",
+        "description": "このモジュールの一部として達成したい課題を作成または追加してください",
+        "primary_button": {
+          "text": "新しい課題を作成"
+        },
+        "secondary_button": {
+          "text": "既存の課題を追加"
+        }
+      },
+      "general": {
+        "title": "プロジェクトのマイルストーンをモジュールにマッピングし、集計された作業を簡単に追跡します。",
+        "description": "論理的で階層的な親に属する課題のグループがモジュールを形成します。それをプロジェクトのマイルストーンで作業を追跡する方法と考えてください。モジュールには独自の期間と締切があり、分析を通じてマイルストーンへの進捗状況を確認できます。",
+        "primary_button": {
+          "text": "最初のモジュールを構築",
+          "comic": {
+            "title": "モジュールは階層によって作業をグループ化します。",
+            "description": "カートモジュール、シャーシモジュール、倉庫モジュールは、このグループ化の良い例です。"
+          }
+        }
+      },
+      "archived": {
+        "title": "まだアーカイブされたモジュールはありません",
+        "description": "プロジェクトを整理するために、完了またはキャンセルされたモジュールをアーカイブします。アーカイブされたモジュールはここで見つけることができます。"
+      }
+    }
+  },
 
-  "project_archived_no_modules_empty_state_title": "まだアーカイブされたモジュールはありません",
-  "project_archived_no_modules_empty_state_description": "プロジェクトを整理するために、完了またはキャンセルされたモジュールをアーカイブします。一度アーカイブされると、ここに表示されます。",
-
-  "project_view_empty_state_title": "プロジェクトのフィルタリングされたビューを保存します。必要なだけ作成できます。",
-  "project_view_empty_state_primary_button_text": "最初のビューを作成する",
-  "project_view_empty_state_primary_button_comic_title": "ビューは課題のプロパティに基づいて動作します。",
-  "project_view_empty_state_primary_button_comic_description": "ここからプロパティをいくつでもフィルターとして追加してビューを作成できます。",
+  "project_view": {
+    "empty_state": {
+      "general": {
+        "title": "プロジェクト用にフィルタされたビューを保存します。必要なだけ作成してください",
+        "description": "ビューは、頻繁に使用するか、簡単にアクセスしたい保存されたフィルターのセットです。プロジェクト内のすべての同僚が他の人のビューを確認し、自分のニーズに最適なものを選ぶことができます。",
+        "primary_button": {
+          "text": "最初のビューを作成",
+          "comic": {
+            "title": "ビューは課題プロパティの上に機能します。",
+            "description": "ここから必要に応じてプロパティをフィルターとして使用してビューを作成できます。"
+          }
+        }
+      }
+    }
+  },
 
   "project_page": {
     "empty_state": {
@@ -706,7 +746,7 @@
   },
 
   "inbox": {
-    "name": "受信トレイ",
+    "label": "受信トレイ",
     "empty_state": {
       "sidebar_open_tab": {
         "title": "未解決の課題はありません",

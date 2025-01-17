@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 // plane imports
-import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TPageNavigationTabs } from "@plane/types";
 // components
@@ -33,8 +33,8 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
   const pageIds = getCurrentProjectPageIds(pageType);
   const filteredPageIds = getCurrentProjectFilteredPageIds(pageType);
   const canPerformEmptyStateActions = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
+    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
+    EUserPermissionsLevel.PROJECT
   );
   const generalPageResolvedPath = useResolvedAssetPath({
     basePath: "/empty-state/onboarding/pages",
