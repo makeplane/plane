@@ -752,5 +752,36 @@
         "text": "Crea tu primer borrador"
       }
     }
+  },
+
+  "stickies": {
+    "empty_state": {
+      "general": {
+        "title": "Los stickies son notas rápidas y tareas que tomas al vuelo.",
+        "description": "Captura tus pensamientos e ideas sin esfuerzo creando stickies a los que puedes acceder en cualquier momento y lugar.",
+        "primary_button": {
+          "text": "Agregar sticky"
+        }
+      },
+      "search": {
+        "title": "Eso no coincide con ninguno de tus stickies.",
+        "description": "Prueba con un término diferente o avísanos si estás seguro de que tu búsqueda es correcta.",
+        "primary_button": {
+          "text": "Agregar sticky"
+        }
+      }
+    }
+  },
+
+  "home_widgets": {
+    "empty_state": {
+      "general": {
+        "title": "Está tranquilo sin widgets, actívalos",
+        "description": "Parece que todos tus widgets están desactivados. ¡Enciéndelos ahora para mejorar tu experiencia!",
+        "primary_button": {
+          "text": "Gestionar widgets"
+        }
+      }
+    }
   }
 }

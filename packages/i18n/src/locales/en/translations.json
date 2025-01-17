@@ -753,5 +753,36 @@
         "text": "Create your first draft"
       }
     }
+  },
+
+  "stickies": {
+    "empty_state": {
+      "general": {
+        "title": "Stickies are quick notes and to-dos you take down on the fly.",
+        "description": "Capture your thoughts and ideas effortlessly by creating stickies that you can access anytime and from anywhere.",
+        "primary_button": {
+          "text": "Add sticky"
+        }
+      },
+      "search": {
+        "title": "That doesn't match any of your stickies.",
+        "description": "Try a different term or let us know\nif you are sure your search is right. ",
+        "primary_button": {
+          "text": "Add sticky"
+        }
+      }
+    }
+  },
+
+  "home_widgets": {
+    "empty_state": {
+      "general": {
+        "title": "It's Quiet Without Widgets, Turn Them On",
+        "description": "It looks like all your widgets are turned off. Enable them\nnow to enhance your experience!",
+        "primary_button": {
+          "text": "Manage widgets"
+        }
+      }
+    }
   }
 }

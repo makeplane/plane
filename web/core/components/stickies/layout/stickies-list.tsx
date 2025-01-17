@@ -7,18 +7,23 @@ import type { ElementDragPayload } from "@atlaskit/pragmatic-drag-and-drop/eleme
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import Masonry from "react-masonry-component";
-// plane ui
+import { Plus } from "lucide-react";
+// plane imports
+import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 // components
-import { EmptyState } from "@/components/empty-state";
+import { DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
+import { StickiesEmptyState } from "@/components/home/widgets/empty-states/stickies";
 // hooks
+import { useUserPermissions } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useSticky } from "@/hooks/use-stickies";
+// local imports
 import { useStickyOperations } from "../sticky/use-operations";
 import { StickyDNDWrapper } from "./sticky-dnd-wrapper";
 import { getInstructionFromPayload } from "./sticky.helpers";
-import { StickiesEmptyState } from "@/components/home/widgets/empty-states/stickies";
 
 type TStickiesLayout = {
   workspaceSlug: string;
@@ -33,8 +38,11 @@ export const StickiesList = observer((props: TProps) => {
   const { workspaceSlug, intersectionElement, columnCount } = props;
   // navigation
   const pathname = usePathname();
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { getWorkspaceStickyIds, toggleShowNewSticky, searchQuery, loader } = useSticky();
+  const { allowPermissions } = useUserPermissions();
   // sticky operations
   const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
   // derived values
@@ -42,6 +50,14 @@ export const StickiesList = observer((props: TProps) => {
   const itemWidth = `${100 / columnCount}%`;
   const totalRows = Math.ceil(workspaceStickyIds.length / columnCount);
   const isStickiesPage = pathname?.includes("stickies");
+  const hasGuestLevelPermissions = allowPermissions(
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
+    EUserPermissionsLevel.WORKSPACE
+  );
+  const stickiesResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/stickies/stickies" });
+  const stickiesSearchResolvedPath = useResolvedAssetPath({
+    basePath: "/empty-state/stickies/stickies-search",
+  });
 
   // Function to determine if an item is in first or last row
   const getRowPositions = (index: number) => {
@@ -85,17 +101,30 @@ export const StickiesList = observer((props: TProps) => {
     return (
       <div className="size-full grid place-items-center">
         {isStickiesPage ? (
-          <EmptyState
-            type={searchQuery ? EmptyStateType.STICKIES_SEARCH : EmptyStateType.STICKIES}
-            layout={searchQuery ? "screen-simple" : "screen-detailed"}
-            primaryButtonOnClick={() => {
-              toggleShowNewSticky(true);
-              stickyOperations.create();
-            }}
-            primaryButtonConfig={{
-              size: "sm",
-            }}
-          />
+          <>
+            {searchQuery ? (
+              <SimpleEmptyState
+                title={t("stickies.empty_state.search.title")}
+                description={t("stickies.empty_state.search.description")}
+                assetPath={stickiesSearchResolvedPath}
+              />
+            ) : (
+              <DetailedEmptyState
+                title={t("stickies.empty_state.general.title")}
+                description={t("stickies.empty_state.general.description")}
+                assetPath={stickiesResolvedPath}
+                primaryButton={{
+                  prependIcon: <Plus className="size-4" />,
+                  text: t("stickies.empty_state.general.primary_button.text"),
+                  onClick: () => {
+                    toggleShowNewSticky(true);
+                    stickyOperations.create();
+                  },
+                  disabled: !hasGuestLevelPermissions,
+                }}
+              />
+            )}
+          </>
         ) : (
           <StickiesEmptyState />
         )}

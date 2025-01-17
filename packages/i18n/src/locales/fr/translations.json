@@ -753,5 +753,36 @@
         "text": "Créez votre premier brouillon"
       }
     }
+  },
+
+  "stickies": {
+    "empty_state": {
+      "general": {
+        "title": "Les stickies sont des notes rapides et des tâches que vous notez à la volée.",
+        "description": "Capturez vos pensées et vos idées facilement en créant des stickies accessibles à tout moment et de n'importe où.",
+        "primary_button": {
+          "text": "Ajouter un sticky"
+        }
+      },
+      "search": {
+        "title": "Aucun sticky ne correspond à votre recherche.",
+        "description": "Essayez un autre terme ou faites-le nous savoir si vous êtes sûr que votre recherche est correcte.",
+        "primary_button": {
+          "text": "Ajouter un sticky"
+        }
+      }
+    }
+  },
+
+  "home_widgets": {
+    "empty_state": {
+      "general": {
+        "title": "C'est calme sans widgets, activez-les",
+        "description": "Il semble que tous vos widgets soient désactivés. Activez-les maintenant pour améliorer votre expérience !",
+        "primary_button": {
+          "text": "Gérer les widgets"
+        }
+      }
+    }
   }
 }
