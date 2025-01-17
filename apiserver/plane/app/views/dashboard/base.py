@@ -57,7 +57,6 @@ def dashboard_overview_stats(self, request, slug):
             project__project_projectmember__is_active=True,
             project__project_projectmember__member=request.user,
             workspace__slug=slug,
-            assignees__in=[request.user],
         )
         .filter(
             Q(
