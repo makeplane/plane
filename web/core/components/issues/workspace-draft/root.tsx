@@ -34,8 +34,9 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
 
   // fetching issues
   const { isLoading } = useSWR(
-    workspaceSlug && issueIds.length <= 0 ? `WORKSPACE_DRAFT_ISSUES_${workspaceSlug}` : null,
-    workspaceSlug && issueIds.length <= 0 ? async () => await fetchIssues(workspaceSlug, "init-loader") : null
+    workspaceSlug ? `WORKSPACE_DRAFT_ISSUES_${workspaceSlug}` : null,
+    workspaceSlug ? async () => await fetchIssues(workspaceSlug, "init-loader") : null,
+    { revalidateOnFocus: false, revalidateIfStale: false }
   );
 
   // handle nest issues
