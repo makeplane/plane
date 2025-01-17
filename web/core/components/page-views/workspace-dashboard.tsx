@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-// components
+import { useTranslation } from "@plane/i18n";
 import { ContentWrapper } from "@plane/ui";
+// components
 import { DashboardWidgets } from "@/components/dashboard";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { IssuePeekOverview } from "@/components/issues";
@@ -28,6 +30,8 @@ import useSize from "@/hooks/use-window-size";
 import { EUserPermissions } from "@/plane-web/constants";
 
 export const WorkspaceDashboardView = observer(() => {
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const {
     //  captureEvent,
@@ -96,14 +100,14 @@ export const WorkspaceDashboardView = observer(() => {
             </>
           ) : (
             <DetailedEmptyState
-              title="Overview of your projects, activity, and metrics"
-              description="Welcome to Plane, we are excited to have you here. Create your first project and track your issues, and this page will transform into a space that helps you progress. Admins will also see items which help their team progress."
+              title={t("workspace_dashboard.empty_state.general.title")}
+              description={t("workspace_dashboard.empty_state.general.description")}
               assetPath={resolvedPath}
               customPrimaryButton={
                 <ComicBoxButton
-                  label="Build your first project"
-                  title="Everything starts with a project in Plane"
-                  description="A project could be a product’s roadmap, a marketing campaign, or launching a new car."
+                  label={t("workspace_dashboard.empty_state.general.primary_button.text")}
+                  title={t("workspace_dashboard.empty_state.general.primary_button.comic.title")}
+                  description={t("workspace_dashboard.empty_state.general.primary_button.comic.description")}
                   onClick={() => {
                     setTrackElement("Dashboard empty state");
                     toggleCreateProjectModal(true);

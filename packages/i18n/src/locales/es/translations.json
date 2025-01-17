@@ -317,13 +317,15 @@
 
   "workspace_dashboard": {
     "empty_state": {
-      "title": "Resumen de tus proyectos, actividad y métricas",
-      "description": "Bienvenido a Plane, estamos emocionados de tenerte aquí. Crea tu primer proyecto y rastrea tus problemas, y esta página se transformará en un espacio que te ayudará a avanzar. Los administradores también verán elementos que ayudan a su equipo a progresar.",
-      "primary_button": {
-        "text": "Construye tu primer proyecto",
-        "comic": {
-          "title": "Todo comienza con un proyecto en Plane",
-          "description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo coche."
+      "general": {
+        "title": "Resumen de tus proyectos, actividad y métricas",
+        "description": "Bienvenido a Plane, estamos emocionados de tenerte aquí. Crea tu primer proyecto y rastrea tus problemas, y esta página se transformará en un espacio que te ayudará a avanzar. Los administradores también verán elementos que ayudan a su equipo a progresar.",
+        "primary_button": {
+          "text": "Construye tu primer proyecto",
+          "comic": {
+            "title": "Todo comienza con un proyecto en Plane",
+            "description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo coche."
+          }
         }
       }
     }
@@ -331,13 +333,15 @@
 
   "workspace_analytics": {
     "empty_state": {
-      "title": "Rastrea el progreso, cargas de trabajo y asignaciones. Detecta tendencias, elimina bloqueos y acelera el trabajo",
-      "description": "Consulta el alcance frente a la demanda, estimaciones y desbordamiento del alcance. Obtén el rendimiento por miembros del equipo y equipos, y asegúrate de que tu proyecto termine a tiempo.",
-      "primary_button": {
-        "text": "Comienza tu primer proyecto",
-        "comic": {
-          "title": "La analítica funciona mejor con Ciclos + Módulos",
-          "description": "Primero, organiza tus problemas en ciclos y, si puedes, agrupa problemas que abarquen más de un ciclo en módulos. Consulta ambos en el menú de navegación a la izquierda."
+      "general": {
+        "title": "Rastrea el progreso, cargas de trabajo y asignaciones. Detecta tendencias, elimina bloqueos y acelera el trabajo",
+        "description": "Consulta el alcance frente a la demanda, estimaciones y desbordamiento del alcance. Obtén el rendimiento por miembros del equipo y equipos, y asegúrate de que tu proyecto termine a tiempo.",
+        "primary_button": {
+          "text": "Comienza tu primer proyecto",
+          "comic": {
+            "title": "La analítica funciona mejor con Ciclos + Módulos",
+            "description": "Primero, organiza tus problemas en ciclos y, si puedes, agrupa problemas que abarquen más de un ciclo en módulos. Consulta ambos en el menú de navegación a la izquierda."
+          }
         }
       }
     }
@@ -350,17 +354,6 @@
         "description": "Piensa en cada proyecto como el contenedor para trabajo orientado a objetivos. Los proyectos son donde viven Trabajos, Ciclos y Módulos y, junto con tus colegas, te ayudan a lograr ese objetivo. Crea un nuevo proyecto o filtra por proyectos archivados.",
         "primary_button": {
           "text": "Comienza tu primer proyecto",
-          "comic": {
-            "title": "Todo comienza con un proyecto en Plane",
-            "description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo coche."
-          }
-        }
-      },
-      "not_found": {
-        "title": "No existe tal proyecto",
-        "description": "Para crear problemas o gestionar tu trabajo, necesitas crear un proyecto o ser parte de uno.",
-        "primary_button": {
-          "text": "Crear proyecto",
           "comic": {
             "title": "Todo comienza con un proyecto en Plane",
             "description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo coche."
@@ -387,7 +380,7 @@
 
   "workspace_issues": {
     "empty_state": {
-      "all_issues": {
+      "all-issues": {
         "title": "No hay problemas en el proyecto",
         "description": "¡Primer proyecto terminado! Ahora, divide tu trabajo en piezas rastreables con problemas. ¡Vamos!",
         "primary_button": {
@@ -412,7 +405,7 @@
         "title": "Aún no hay problemas",
         "description": "Suscríbete a los problemas que te interesan y rastrea todos ellos aquí."
       },
-      "custom_view": {
+      "custom-view": {
         "title": "Aún no hay problemas",
         "description": "Los problemas que se aplican a los filtros se rastrean aquí."
       }

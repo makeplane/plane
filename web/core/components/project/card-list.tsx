@@ -1,8 +1,10 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
+// plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-// components
+import { useTranslation } from "@plane/i18n";
 import { ContentWrapper } from "@plane/ui";
+// components
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { ProjectCard } from "@/components/project";
 import { ProjectsLoader } from "@/components/ui";
@@ -22,6 +24,8 @@ type TProjectCardListProps = {
 
 export const ProjectCardList = observer((props: TProjectCardListProps) => {
   const { totalProjectIds: totalProjectIdsProps, filteredProjectIds: filteredProjectIdsProps } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
@@ -52,14 +56,14 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
   if (workspaceProjectIds?.length === 0 && !currentWorkspaceDisplayFilters?.archived_projects)
     return (
       <DetailedEmptyState
-        title="No active projects"
-        description="Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal. Create a new project or filter for archived projects."
+        title={t("workspace_projects.empty_state.general.title")}
+        description={t("workspace_projects.empty_state.general.description")}
         assetPath={resolvedPath}
         customPrimaryButton={
           <ComicBoxButton
-            label="Start your first project"
-            title="Everything starts with a project in Plane"
-            description="A project could be a product’s roadmap, a marketing campaign, or launching a new car."
+            label={t("workspace_projects.empty_state.general.primary_button.text")}
+            title={t("workspace_projects.empty_state.general.primary_button.comic.title")}
+            description={t("workspace_projects.empty_state.general.primary_button.comic.description")}
             onClick={() => {
               setTrackElement("Project empty state");
               toggleCreateProjectModal(true);

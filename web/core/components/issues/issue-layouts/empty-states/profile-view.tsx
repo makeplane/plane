@@ -13,7 +13,10 @@ export const ProfileViewEmptyState: React.FC = observer(() => {
   // store hooks
   const { profileViewId } = useParams();
   // derived values
-  const resolvedPath = useResolvedAssetPath({ basePath: `/empty-state/profile/${profileViewId?.toString()}` });
+  const resolvedPath = useResolvedAssetPath({
+    basePath: "/empty-state/profile/",
+    additionalPath: profileViewId?.toString(),
+  });
 
   if (!profileViewId) return null;
 

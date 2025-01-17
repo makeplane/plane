@@ -318,13 +318,15 @@
 
   "workspace_dashboard": {
     "empty_state": {
-      "title": "Vue d'ensemble de vos projets, activités et métriques",
-      "description": "Bienvenue sur Plane, nous sommes ravis de vous accueillir. Créez votre premier projet et suivez vos tâches, et cette page se transformera en un espace qui vous aidera à progresser. Les administrateurs verront également des éléments pour aider leur équipe à progresser.",
-      "primary_button": {
-        "text": "Créez votre premier projet",
-        "comic": {
-          "title": "Tout commence par un projet sur Plane",
-          "description": "Un projet peut être une feuille de route produit, une campagne marketing ou le lancement d'une nouvelle voiture."
+      "general": {
+        "title": "Vue d'ensemble de vos projets, activités et métriques",
+        "description": "Bienvenue sur Plane, nous sommes ravis de vous accueillir. Créez votre premier projet et suivez vos tâches, et cette page se transformera en un espace qui vous aidera à progresser. Les administrateurs verront également des éléments pour aider leur équipe à progresser.",
+        "primary_button": {
+          "text": "Créez votre premier projet",
+          "comic": {
+            "title": "Tout commence par un projet sur Plane",
+            "description": "Un projet peut être une feuille de route produit, une campagne marketing ou le lancement d'une nouvelle voiture."
+          }
         }
       }
     }
@@ -332,13 +334,15 @@
 
   "workspace_analytics": {
     "empty_state": {
-      "title": "Suivez les progrès, les charges de travail et les allocations. Repérez les tendances, éliminez les obstacles et accélérez le travail",
-      "description": "Visualisez l'étendue par rapport à la demande, les estimations et l'expansion des objectifs. Obtenez des performances par membre et par équipe, et assurez-vous que votre projet respecte les délais.",
-      "primary_button": {
-        "text": "Commencez votre premier projet",
-        "comic": {
-          "title": "Les analyses fonctionnent mieux avec Cycles + Modules",
-          "description": "D'abord, cadrez vos tâches dans des Cycles et, si possible, regroupez les tâches qui s'étendent sur plus d'un cycle dans des Modules. Consultez-les dans la navigation à gauche."
+      "general": {
+        "title": "Suivez les progrès, les charges de travail et les allocations. Repérez les tendances, éliminez les obstacles et accélérez le travail",
+        "description": "Visualisez l'étendue par rapport à la demande, les estimations et l'expansion des objectifs. Obtenez des performances par membre et par équipe, et assurez-vous que votre projet respecte les délais.",
+        "primary_button": {
+          "text": "Commencez votre premier projet",
+          "comic": {
+            "title": "Les analyses fonctionnent mieux avec Cycles + Modules",
+            "description": "D'abord, cadrez vos tâches dans des Cycles et, si possible, regroupez les tâches qui s'étendent sur plus d'un cycle dans des Modules. Consultez-les dans la navigation à gauche."
+          }
         }
       }
     }
@@ -351,17 +355,6 @@
         "description": "Considérez chaque projet comme le parent des travaux orientés vers un objectif. Les projets sont l'endroit où vivent les tâches, les Cycles et les Modules, et avec vos collègues, ils vous aident à atteindre cet objectif. Créez un nouveau projet ou filtrez les projets archivés.",
         "primary_button": {
           "text": "Commencez votre premier projet",
-          "comic": {
-            "title": "Tout commence par un projet sur Plane",
-            "description": "Un projet peut être une feuille de route produit, une campagne marketing ou le lancement d'une nouvelle voiture."
-          }
-        }
-      },
-      "not_found": {
-        "title": "Aucun projet correspondant",
-        "description": "Pour créer des tâches ou gérer votre travail, vous devez créer un projet ou en faire partie.",
-        "primary_button": {
-          "text": "Créer un projet",
           "comic": {
             "title": "Tout commence par un projet sur Plane",
             "description": "Un projet peut être une feuille de route produit, une campagne marketing ou le lancement d'une nouvelle voiture."
@@ -388,7 +381,7 @@
 
   "workspace_issues": {
     "empty_state": {
-      "all_issues": {
+      "all-issues": {
         "title": "Aucune tâche dans le projet",
         "description": "Premier projet terminé ! Maintenant, divisez votre travail en morceaux traçables avec des tâches. Allons-y !",
         "primary_button": {
@@ -413,7 +406,7 @@
         "title": "Aucune tâche suivie",
         "description": "Abonnez-vous aux tâches qui vous intéressent, suivez-les toutes ici."
       },
-      "custom_view": {
+      "custom-view": {
         "title": "Aucune tâche trouvée",
         "description": "Les tâches correspondant aux filtres sont affichées ici. Suivez-les toutes ici."
       }

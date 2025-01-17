@@ -318,13 +318,15 @@
 
   "workspace_dashboard": {
     "empty_state": {
-      "title": "Overview of your projects, activity, and metrics",
-      "description": "Welcome to Plane, we are excited to have you here. Create your first project and track your issues, and this page will transform into a space that helps you progress. Admins will also see items which help their team progress.",
-      "primary_button": {
-        "text": "Build your first project",
-        "comic": {
-          "title": "Everything starts with a project in Plane",
-          "description": "A project could be a product's roadmap, a marketing campaign, or launching a new car."
+      "general": {
+        "title": "Overview of your projects, activity, and metrics",
+        "description": "Welcome to Plane, we are excited to have you here. Create your first project and track your issues, and this page will transform into a space that helps you progress. Admins will also see items which help their team progress.",
+        "primary_button": {
+          "text": "Build your first project",
+          "comic": {
+            "title": "Everything starts with a project in Plane",
+            "description": "A project could be a product's roadmap, a marketing campaign, or launching a new car."
+          }
         }
       }
     }
@@ -332,13 +334,15 @@
 
   "workspace_analytics": {
     "empty_state": {
-      "title": "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",
-      "description": "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time.",
-      "primary_button": {
-        "text": "Start your first project",
-        "comic": {
-          "title": "Analytics works best with Cycles + Modules",
-          "description": "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav."
+      "general": {
+        "title": "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",
+        "description": "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time.",
+        "primary_button": {
+          "text": "Start your first project",
+          "comic": {
+            "title": "Analytics works best with Cycles + Modules",
+            "description": "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav."
+          }
         }
       }
     }
@@ -351,17 +355,6 @@
         "description": "Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal. Create a new project or filter for archived projects.",
         "primary_button": {
           "text": "Start your first project",
-          "comic": {
-            "title": "Everything starts with a project in Plane",
-            "description": "A project could be a product's roadmap, a marketing campaign, or launching a new car."
-          }
-        }
-      },
-      "not_found": {
-        "title": "No such project exists",
-        "description": "To create issues or manage your work, you need to create a project or be a part of one.",
-        "primary_button": {
-          "text": "Create Project",
           "comic": {
             "title": "Everything starts with a project in Plane",
             "description": "A project could be a product's roadmap, a marketing campaign, or launching a new car."
@@ -388,7 +381,7 @@
 
   "workspace_issues": {
     "empty_state": {
-      "all_issues": {
+      "all-issues": {
         "title": "No issues in the project",
         "description": "First project done! Now, slice your work into trackable pieces with issues. Let's go!",
         "primary_button": {
@@ -413,7 +406,7 @@
         "title": "No issues yet",
         "description": "Subscribe to issues you are interested in, track all of them here."
       },
-      "custom_view": {
+      "custom-view": {
         "title": "No issues yet",
         "description": "Issues that applies to the filters, track all of them here."
       }

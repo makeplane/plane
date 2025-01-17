@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { Tab } from "@headlessui/react";
 // plane package imports
 import { ANALYTICS_TABS, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Header, EHeaderVariant } from "@plane/ui";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "@/components/analytics";
@@ -20,13 +21,14 @@ import { EUserPermissions } from "@/plane-web/constants";
 const AnalyticsPage = observer(() => {
   const searchParams = useSearchParams();
   const analytics_tab = searchParams.get("analytics_tab");
+  // plane imports
+  const { t } = useTranslation();
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const { workspaceProjectIds, loader } = useProject();
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
-
   // helper hooks
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/analytics" });
   // derived values
@@ -79,14 +81,14 @@ const AnalyticsPage = observer(() => {
             </div>
           ) : (
             <DetailedEmptyState
-              title="Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster"
-              description="See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time."
+              title={t("workspace_analytics.empty_state.general.title")}
+              description={t("workspace_analytics.empty_state.general.description")}
               assetPath={resolvedPath}
               customPrimaryButton={
                 <ComicBoxButton
-                  label="Start your first project"
-                  title="Analytics works best with Cycles + Modules"
-                  description="First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav."
+                  label={t("workspace_analytics.empty_state.general.primary_button.text")}
+                  title={t("workspace_analytics.empty_state.general.primary_button.comic.title")}
+                  description={t("workspace_analytics.empty_state.general.primary_button.comic.description")}
                   onClick={() => {
                     setTrackElement("Analytics empty state");
                     toggleCreateProjectModal(true);
