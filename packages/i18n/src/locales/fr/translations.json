@@ -571,28 +571,35 @@
   "project_view_empty_state_primary_button_comic_title": "Les vues fonctionnent sur les propriétés des problèmes.",
   "project_view_empty_state_primary_button_comic_description": "Vous pouvez créer une vue à partir d'ici avec autant de propriétés et de filtres que vous le souhaitez.",
 
-  "project_page_empty_state_title": "Écrivez une note, un document ou une base de connaissances complète. Demandez à Galileo, l'assistant IA de Plane, de vous aider à démarrer.",
-  "project_page_empty_state_description": "Les pages sont des espaces de réflexion dans Plane. Prenez des notes de réunion, mettez-les en forme facilement, intégrez des problèmes, organisez-les à l'aide d'une bibliothèque de composants, et gardez-les dans le contexte de votre projet. Pour simplifier tout document, invoquez Galileo, l'IA de Plane, avec un raccourci ou un simple clic.",
-  "project_page_empty_state_primary_button_text": "Créez votre première page",
-
-  "project_page_private_empty_state_title": "Aucune page privée pour l'instant",
-  "project_page_private_empty_state_description": "Gardez vos réflexions privées ici. Lorsque vous êtes prêt à les partager, l'équipe est à un clic de vous.",
-  "project_page_private_empty_state_primary_button_text": "Créez votre première page",
-
-  "project_page_public_empty_state_title": "Aucune page publique pour l'instant",
-  "project_page_public_empty_state_description": "Consultez ici les pages partagées avec tout le monde dans votre projet.",
-  "project_page_public_empty_state_primary_button_text": "Créez votre première page",
-
-  "project_page_archived_empty_state_title": "Aucune page archivée pour l'instant",
-  "project_page_archived_empty_state_description": "Archivez les pages qui ne sont plus sur votre radar. Accédez-y ici au besoin.",
-
-  "workspace_page_empty_state_title": "Écrivez une note, un document ou une base de connaissances complète. Demandez à Galileo, l'assistant IA de Plane, de vous aider à démarrer.",
-  "workspace_page_empty_state_description": "Les pages sont des espaces de réflexion dans Plane. Prenez des notes de réunion, mettez-les en forme facilement, intégrez des problèmes, organisez-les à l'aide d'une bibliothèque de composants, et gardez-les dans le contexte de votre projet. Pour simplifier tout document, invoquez Galileo, l'IA de Plane, avec un raccourci ou un simple clic.",
-  "workspace_page_empty_state_primary_button_text": "Créez votre première page",
-
-  "workspace_page_private_empty_state_title": "Aucune page privée pour l'instant",
-  "workspace_page_private_empty_state_description": "Gardez vos réflexions privées ici. Lorsque vous êtes prêt à les partager, l'équipe est à un clic de vous.",
-  "workspace_page_private_empty_state_primary_button_text": "Créez votre première page",
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "Écrivez une note, un document ou une base de connaissances complète. Laissez Galileo, l'assistant IA de Plane, vous aider à démarrer",
+        "description": "Les pages sont un espace pour capturer des idées dans Plane. Prenez des notes de réunion, formatez-les facilement, intégrez des problèmes, organisez-les en utilisant une bibliothèque de composants et gardez-les toutes dans le contexte de votre projet. Pour simplifier tout document, invoquez Galileo, l'IA de Plane, avec un raccourci ou en cliquant sur un bouton.",
+        "primary_button": {
+          "text": "Créez votre première page"
+        }
+      },
+      "private": {
+        "title": "Aucune page privée pour le moment",
+        "description": "Conservez vos pensées privées ici. Lorsque vous êtes prêt à les partager, votre équipe n'est qu'à un clic.",
+        "primary_button": {
+          "text": "Créez votre première page"
+        }
+      },
+      "public": {
+        "title": "Aucune page publique pour le moment",
+        "description": "Consultez ici les pages partagées avec tout le monde dans votre projet.",
+        "primary_button": {
+          "text": "Créez votre première page"
+        }
+      },
+      "archived": {
+        "title": "Aucune page archivée pour le moment",
+        "description": "Archivez les pages qui ne sont pas sur votre radar. Accédez-y ici en cas de besoin."
+      }
+    }
+  },
 
   "command_k": {
     "empty_state": {

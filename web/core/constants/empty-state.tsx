@@ -67,14 +67,6 @@ export enum EmptyStateType {
   PROJECT_MODULE = "project-module",
   PROJECT_ARCHIVED_NO_MODULES = "project-archived-no-modules",
   PROJECT_VIEW = "project-view",
-  PROJECT_PAGE = "project-page",
-  PROJECT_PAGE_PRIVATE = "project-page-private",
-  PROJECT_PAGE_PUBLIC = "project-page-public",
-  PROJECT_PAGE_ARCHIVED = "project-page-archived",
-  WORKSPACE_PAGE = "workspace-page",
-  WORKSPACE_PAGE_PRIVATE = "workspace-page-private",
-  WORKSPACE_PAGE_PUBLIC = "workspace-page-public",
-  WORKSPACE_PAGE_ARCHIVED = "workspace-page-archived",
 
   // stickies
   STICKIES = "stickies",
@@ -482,87 +474,6 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
     },
     accessType: "project",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-  },
-  // project pages
-  [EmptyStateType.PROJECT_PAGE]: {
-    key: EmptyStateType.PROJECT_PAGE,
-    title: "Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started",
-    description:
-      "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button.",
-    path: "/empty-state/onboarding/pages",
-    primaryButton: {
-      text: "Create your first page",
-    },
-    accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  [EmptyStateType.PROJECT_PAGE_PRIVATE]: {
-    key: EmptyStateType.PROJECT_PAGE_PRIVATE,
-    title: "No private pages yet",
-    description: "Keep your private thoughts here. When you're ready to share, the team's just a click away.",
-    path: "/empty-state/pages/private",
-    primaryButton: {
-      text: "Create your first page",
-    },
-    accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  [EmptyStateType.PROJECT_PAGE_PUBLIC]: {
-    key: EmptyStateType.PROJECT_PAGE_PUBLIC,
-    title: "No public pages yet",
-    description: "See pages shared with everyone in your project right here.",
-    path: "/empty-state/pages/public",
-    primaryButton: {
-      text: "Create your first page",
-    },
-    accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  [EmptyStateType.PROJECT_PAGE_ARCHIVED]: {
-    key: EmptyStateType.PROJECT_PAGE_ARCHIVED,
-    title: "No archived pages yet",
-    description: "Archive pages not on your radar. Access them here when needed.",
-    path: "/empty-state/pages/archived",
-  },
-  [EmptyStateType.WORKSPACE_PAGE]: {
-    key: EmptyStateType.WORKSPACE_PAGE,
-    title: "Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started",
-    description:
-      "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button.",
-    path: "/empty-state/onboarding/pages",
-    primaryButton: {
-      text: "Create your first page",
-    },
-    accessType: "workspace",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  [EmptyStateType.WORKSPACE_PAGE_PRIVATE]: {
-    key: EmptyStateType.WORKSPACE_PAGE_PRIVATE,
-    title: "No private pages yet",
-    description: "Keep your private thoughts here. When you're ready to share, the team's just a click away.",
-    path: "/empty-state/pages/private",
-    primaryButton: {
-      text: "Create your first page",
-    },
-    accessType: "workspace",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  [EmptyStateType.WORKSPACE_PAGE_PUBLIC]: {
-    key: EmptyStateType.WORKSPACE_PAGE_PUBLIC,
-    title: "No public pages yet",
-    description: "See pages shared with everyone in your workspace right here.",
-    path: "/empty-state/pages/public",
-    primaryButton: {
-      text: "Create your first page",
-    },
-    accessType: "workspace",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  [EmptyStateType.WORKSPACE_PAGE_ARCHIVED]: {
-    key: EmptyStateType.WORKSPACE_PAGE_ARCHIVED,
-    title: "No archived pages yet",
-    description: "Archive pages not on your radar. Access them here when needed.",
-    path: "/empty-state/pages/archived",
   },
   [EmptyStateType.STICKIES]: {
     key: EmptyStateType.STICKIES,

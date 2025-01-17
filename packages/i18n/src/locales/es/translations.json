@@ -570,28 +570,35 @@
   "project_view_empty_state_primary_button_comic_title": "Las vistas funcionan sobre las propiedades de los Problemas.",
   "project_view_empty_state_primary_button_comic_description": "Puedes crear una vista desde aquí con tantas propiedades como filtros como consideres adecuado.",
 
-  "project_page_empty_state_title": "Escribe una nota, un documento o una base de conocimiento completa. Obtén ayuda de Galileo, el asistente de IA de Plane, para comenzar",
-  "project_page_empty_state_description": "Las páginas son espacios para plasmar pensamientos en Plane. Toma notas de reuniones, dales formato fácilmente, incorpora problemas, organízalos usando una biblioteca de componentes y mantenlos todos en el contexto de tu proyecto. Para hacer un trabajo rápido de cualquier documento, invoca a Galileo, la IA de Plane, con un atajo o el clic de un botón.",
-  "project_page_empty_state_primary_button_text": "Crea tu primera página",
-
-  "project_page_private_empty_state_title": "Aún no hay páginas privadas",
-  "project_page_private_empty_state_description": "Mantén tus pensamientos privados aquí. Cuando estés listo para compartir, el equipo está a solo un clic de distancia.",
-  "project_page_private_empty_state_primary_button_text": "Crea tu primera página",
-
-  "project_page_public_empty_state_title": "Aún no hay páginas públicas",
-  "project_page_public_empty_state_description": "Ve las páginas compartidas con todos en tu proyecto aquí mismo.",
-  "project_page_public_empty_state_primary_button_text": "Crea tu primera página",
-
-  "project_page_archived_empty_state_title": "Aún no hay páginas archivadas",
-  "project_page_archived_empty_state_description": "Archiva las páginas que no estén en tu radar. Accede a ellas aquí cuando las necesites.",
-
-  "workspace_page_empty_state_title": "Escribe una nota, un documento o una base de conocimiento completa. Obtén ayuda de Galileo, el asistente de IA de Plane, para comenzar",
-  "workspace_page_empty_state_description": "Las páginas son espacios para plasmar pensamientos en Plane. Toma notas de reuniones, dales formato fácilmente, incorpora problemas, organízalos usando una biblioteca de componentes y mantenlos todos en el contexto de tu proyecto. Para hacer un trabajo rápido de cualquier documento, invoca a Galileo, la IA de Plane, con un atajo o el clic de un botón.",
-  "workspace_page_empty_state_primary_button_text": "Crea tu primera página",
-
-  "workspace_page_private_empty_state_title": "Aún no hay páginas privadas",
-  "workspace_page_private_empty_state_description": "Mantén tus pensamientos privados aquí. Cuando estés listo para compartir, el equipo está a solo un clic de distancia.",
-  "workspace_page_private_empty_state_primary_button_text": "Crea tu primera página",
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "Escribe una nota, un documento o una base de conocimiento completa. Deja que Galileo, el asistente de IA de Plane, te ayude a empezar",
+        "description": "Las páginas son un espacio para capturar ideas en Plane. Toma notas de reuniones, formatearlas fácilmente, incrusta problemas, organiza usando una biblioteca de componentes y mantén todo en el contexto de tu proyecto. Para simplificar cualquier documento, invoca a Galileo, la IA de Plane, con un atajo o un clic.",
+        "primary_button": {
+          "text": "Crea tu primera página"
+        }
+      },
+      "private": {
+        "title": "Aún no hay páginas privadas",
+        "description": "Guarda aquí tus pensamientos privados. Cuando estés listo para compartirlos, el equipo está a un clic de distancia.",
+        "primary_button": {
+          "text": "Crea tu primera página"
+        }
+      },
+      "public": {
+        "title": "Aún no hay páginas públicas",
+        "description": "Consulta aquí las páginas compartidas con todos en tu proyecto.",
+        "primary_button": {
+          "text": "Crea tu primera página"
+        }
+      },
+      "archived": {
+        "title": "Aún no hay páginas archivadas",
+        "description": "Archiva las páginas que no están en tu radar. Accede a ellas aquí cuando las necesites."
+      }
+    }
+  },
 
   "command_k": {
     "empty_state": {

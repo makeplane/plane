@@ -571,28 +571,35 @@
   "project_view_empty_state_primary_button_comic_title": "ビューは課題のプロパティに基づいて動作します。",
   "project_view_empty_state_primary_button_comic_description": "ここからプロパティをいくつでもフィルターとして追加してビューを作成できます。",
 
-  "project_page_empty_state_title": "メモ、ドキュメント、または完全なナレッジベースを書きます。PlaneのAIアシスタントであるガリレオが開始をお手伝いします。",
-  "project_page_empty_state_description": "ページはPlaneでアイデアを記録するスペースです。会議のメモを取ったり、簡単にフォーマットしたり、課題を埋め込んだり、コンポーネントのライブラリを使用してレイアウトしたりして、すべてをプロジェクトの文脈に保ちます。どんなドキュメントでも簡単に作成するには、ショートカットやボタンをクリックしてガリレオを呼び出してください。",
-  "project_page_empty_state_primary_button_text": "最初のページを作成する",
-
-  "project_page_private_empty_state_title": "まだプライベートページはありません",
-  "project_page_private_empty_state_description": "ここで個人的な考えを記録してください。共有する準備ができたら、チームとワンクリックで共有できます。",
-  "project_page_private_empty_state_primary_button_text": "最初のページを作成する",
-
-  "project_page_public_empty_state_title": "まだ公開されたページはありません",
-  "project_page_public_empty_state_description": "プロジェクト内のすべての人と共有されたページをここで確認してください。",
-  "project_page_public_empty_state_primary_button_text": "最初のページを作成する",
-
-  "project_page_archived_empty_state_title": "まだアーカイブされたページはありません",
-  "project_page_archived_empty_state_description": "レーダーに載っていないページをアーカイブします。必要に応じてここからアクセスできます。",
-
-  "workspace_page_empty_state_title": "メモ、ドキュメント、または完全なナレッジベースを書きます。PlaneのAIアシスタントであるガリレオが開始をお手伝いします。",
-  "workspace_page_empty_state_description": "ページはPlaneでアイデアを記録するスペースです。会議のメモを取ったり、簡単にフォーマットしたり、課題を埋め込んだり、コンポーネントのライブラリを使用してレイアウトしたりして、すべてをプロジェクトの文脈に保ちます。どんなドキュメントでも簡単に作成するには、ショートカットやボタンをクリックしてガリレオを呼び出してください。",
-  "workspace_page_empty_state_primary_button_text": "最初のページを作成する",
-
-  "workspace_page_private_empty_state_title": "まだプライベートページはありません",
-  "workspace_page_private_empty_state_description": "ここで個人的な考えを記録してください。共有する準備ができたら、チームとワンクリックで共有できます。",
-  "workspace_page_private_empty_state_primary_button_text": "最初のページを作成する",
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "メモ、ドキュメント、または完全なナレッジベースを書きましょう。PlaneのAIアシスタントGalileoがスタートをサポートします",
+        "description": "ページはPlaneでアイデアをまとめるスペースです。会議のメモを取る、簡単にフォーマットする、課題を埋め込む、コンポーネントライブラリを使用してレイアウトするなど、すべてをプロジェクトのコンテキスト内に保ちます。どんなドキュメントでも簡単にするために、ショートカットやボタンのクリックでPlaneのAIであるGalileoを呼び出してください。",
+        "primary_button": {
+          "text": "最初のページを作成"
+        }
+      },
+      "private": {
+        "title": "まだプライベートページはありません",
+        "description": "プライベートな考えをここに保存します。共有する準備ができたら、チームはすぐそばにいます。",
+        "primary_button": {
+          "text": "最初のページを作成"
+        }
+      },
+      "public": {
+        "title": "まだ公開ページはありません",
+        "description": "プロジェクト内のすべての人と共有されているページをここで確認してください。",
+        "primary_button": {
+          "text": "最初のページを作成"
+        }
+      },
+      "archived": {
+        "title": "まだアーカイブされたページはありません",
+        "description": "レーダーに載っていないページをアーカイブします。必要なときにここからアクセスしてください。"
+      }
+    }
+  },
 
   "command_k": {
     "empty_state": {
