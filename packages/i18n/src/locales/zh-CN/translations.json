@@ -315,5 +315,14 @@
   "remove_parent_issue": "移除父问题",
   "add_parent": "添加父问题",
   "loading_members": "正在加载成员...",
-  "inbox": "收件箱"
+  "inbox": "收件箱",
+  "project_cycles": {
+    "status": {
+      "days_left": "剩余天数",
+      "completed": "已完成",
+      "yet_to_start": "待开始",
+      "in_progress": "进行中",
+      "draft": "草稿"
+    }
+  }
 }
