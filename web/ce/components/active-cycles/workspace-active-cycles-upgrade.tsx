@@ -3,18 +3,60 @@
 import React from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
+import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope, Search } from "lucide-react";
+// plane imports
+import { MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// ui
 import { ContentWrapper, getButtonStyling } from "@plane/ui";
 // components
 import { ProIcon } from "@/components/common";
-// constants
-import { MARKETING_PRICING_PAGE_LINK } from "@/constants/common";
-import { WORKSPACE_ACTIVE_CYCLES_DETAILS } from "@/constants/cycle";
 // helper
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useUser } from "@/hooks/store";
+
+export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
+  {
+    key: "10000_feet_view",
+    title: "10,000-feet view of all active cycles.",
+    description:
+      "Zoom out to see running cycles across all your projects at once instead of going from Cycle to Cycle in each project.",
+    icon: Folder,
+  },
+  {
+    key: "get_snapshot_of_each_active_cycle",
+    title: "Get a snapshot of each active cycle.",
+    description:
+      "Track high-level metrics for all active cycles, see their state of progress, and get a sense of scope against deadlines.",
+    icon: CircleDashed,
+  },
+  {
+    key: "compare_burndowns",
+    title: "Compare burndowns.",
+    description: "Monitor how each of your teams are performing with a peek into each cycle’s burndown report.",
+    icon: BarChart4,
+  },
+  {
+    key: "quickly_see_make_or_break_issues",
+    title: "Quickly see make-or-break issues. ",
+    description:
+      "Preview high-priority issues for each cycle against due dates. See all of them per cycle in one click.",
+    icon: AlertOctagon,
+  },
+  {
+    key: "zoom_into_cycles_that_need_attention",
+    title: "Zoom into cycles that need attention. ",
+    description: "Investigate the state of any cycle that doesn’t conform to expectations in one click.",
+    icon: Search,
+  },
+  {
+    key: "stay_ahead_of_blockers",
+    title: "Stay ahead of blockers.",
+    description:
+      "Spot challenges from one project to another and see inter-cycle dependencies that aren’t obvious from any other view.",
+    icon: Microscope,
+  },
+];
 
 export const WorkspaceActiveCyclesUpgrade = observer(() => {
   const { t } = useTranslation();

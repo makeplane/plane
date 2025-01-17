@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { IState, TStateGroups } from "@plane/types";
 // components
@@ -14,7 +14,26 @@ type TGroupList = {
 
 export const GroupList: FC<TGroupList> = observer((props) => {
   const { workspaceSlug, projectId, groupedStates } = props;
+  // states
+  const [groupsExpanded, setGroupsExpanded] = useState<Partial<TStateGroups>[]>([]);
 
+  const handleGroupCollapse = (groupKey: TStateGroups) => {
+    setGroupsExpanded((prev) => {
+      if (prev.includes(groupKey)) {
+        return prev.filter((key) => key !== groupKey);
+      }
+      return prev;
+    });
+  };
+
+  const handleExpand = (groupKey: TStateGroups) => {
+    setGroupsExpanded((prev) => {
+      if (prev.includes(groupKey)) {
+        return prev;
+      }
+      return [...prev, groupKey];
+    });
+  };
   return (
     <div className="space-y-5">
       {Object.entries(groupedStates).map(([key, value]) => {
@@ -28,6 +47,9 @@ export const GroupList: FC<TGroupList> = observer((props) => {
             groupKey={groupKey}
             states={groupStates}
             groupedStates={groupedStates}
+            groupsExpanded={groupsExpanded}
+            handleGroupCollapse={handleGroupCollapse}
+            handleExpand={handleExpand}
           />
         );
       })}

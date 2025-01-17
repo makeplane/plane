@@ -2,10 +2,10 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
+import { ANALYTICS_Y_AXIS_VALUES } from "@plane/constants";
 import { TYAxisValues } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
-// constants
-import { ANALYTICS_Y_AXIS_VALUES } from "@/constants/analytics";
 // hooks
 import { useProjectEstimates } from "@/hooks/store";
 // plane web constants

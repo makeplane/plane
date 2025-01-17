@@ -282,6 +282,7 @@
   "create_a_draft": "下書きを作成",
   "save_to_drafts": "下書きに保存",
   "save": "保存",
+  "update": "更新",
   "updating": "更新中",
   "create_new_issue": "新しい問題を作成",
   "editor_is_not_ready_to_discard_changes": "エディターは変更を破棄する準備ができていません",
@@ -314,5 +315,6 @@
   "change_parent_issue": "親問題を変更",
   "remove_parent_issue": "親問題を削除",
   "add_parent": "親問題を追加",
-  "loading_members": "メンバーを読み込んでいます..."
+  "loading_members": "メンバーを読み込んでいます...",
+  "inbox": "受信箱"
 }

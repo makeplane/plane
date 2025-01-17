@@ -9,6 +9,6 @@
   },
   "dependencies": {
     "@plane/constants": "*",
-    "axios": "^1.4.0"
+    "axios": "^1.7.9"
   }
 }

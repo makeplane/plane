@@ -104,6 +104,7 @@ export interface ICycle extends TProgressSnapshot {
   project_detail: IProjectDetails;
   progress: any[];
   version: number;
+  pending_issues: number;
 }
 
 export interface CycleIssueResponse {
@@ -120,9 +121,7 @@ export interface CycleIssueResponse {
   sub_issues_count: number;
 }
 
-export type SelectCycleType =
-  | (ICycle & { actionType: "edit" | "delete" | "create-issue" })
-  | undefined;
+export type SelectCycleType = (ICycle & { actionType: "edit" | "delete" | "create-issue" }) | undefined;
 
 export type CycleDateCheckData = {
   start_date: string;
@@ -132,3 +131,9 @@ export type CycleDateCheckData = {
 
 export type TCycleEstimateType = "issues" | "points";
 export type TCyclePlotType = "burndown" | "burnup";
+
+export type TPublicCycle = {
+  id: string;
+  name: string;
+  status: string;
+};

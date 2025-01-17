@@ -188,12 +188,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                 </div>
               ) : (
                 <>
-                  <Tooltip
-                    tooltipContent={`${favorite.name}`}
-                    position="right"
-                    disabled={!isSidebarCollapsed}
-                    isMobile={isMobile}
-                  >
+                  <Tooltip tooltipContent={`${favorite.name}`} position="right" className="ml-8" isMobile={isMobile}>
                     <div className="flex-grow flex truncate">
                       <Disclosure.Button
                         as="button"

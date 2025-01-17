@@ -573,6 +573,8 @@ class PageDuplicateEndpoint(BaseAPIView):
         page.name = f"{page.name} (Copy)"
         page.description_binary = None
         page.owned_by = request.user
+        page.created_by = request.user
+        page.updated_by = request.user
         page.save()
 
         for project_id in project_ids:

@@ -20,12 +20,25 @@ class CycleWriteSerializer(BaseSerializer):
             data.get("start_date", None) is not None
             and data.get("end_date", None) is not None
         ):
-            project_id = self.initial_data.get("project_id") or self.instance.project_id
+            project_id = (
+                self.initial_data.get("project_id", None)
+                or (self.instance and self.instance.project_id)
+                or self.context.get("project_id", None)
+            )
+            is_start_date_end_date_equal = (
+                True
+                if str(data.get("start_date")) == str(data.get("end_date"))
+                else False
+            )
             data["start_date"] = convert_to_utc(
-                str(data.get("start_date").date()), project_id, is_start_date=True
+                date=str(data.get("start_date").date()),
+                project_id=project_id,
+                is_start_date=True,
             )
             data["end_date"] = convert_to_utc(
-                str(data.get("end_date", None).date()), project_id
+                date=str(data.get("end_date", None).date()),
+                project_id=project_id,
+                is_start_date_end_date_equal=is_start_date_end_date_equal,
             )
         return data
 

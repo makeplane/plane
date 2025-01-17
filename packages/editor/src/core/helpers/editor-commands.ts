@@ -1,10 +1,10 @@
 import { Editor, Range } from "@tiptap/core";
+// types
+import { InsertImageComponentProps } from "@/extensions";
 // extensions
 import { replaceCodeWithText } from "@/extensions/code/utils/replace-code-block-with-text";
 // helpers
 import { findTableAncestor } from "@/helpers/common";
-// types
-import { InsertImageComponentProps } from "@/extensions";
 
 export const setText = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("paragraph").run();
@@ -13,41 +13,51 @@ export const setText = (editor: Editor, range?: Range) => {
 
 export const toggleHeadingOne = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 1 }).run();
+  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleHeading({ level: 1 }).run();
 };
 
 export const toggleHeadingTwo = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 2 }).run();
+  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleHeading({ level: 2 }).run();
 };
 
 export const toggleHeadingThree = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 3 }).run();
+  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleHeading({ level: 3 }).run();
 };
 
 export const toggleHeadingFour = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 4 }).run();
+  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleHeading({ level: 4 }).run();
 };
 
 export const toggleHeadingFive = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 5 }).run();
+  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleHeading({ level: 5 }).run();
 };
 
 export const toggleHeadingSix = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 6 }).run();
+  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleHeading({ level: 6 }).run();
 };
 
 export const toggleBold = (editor: Editor, range?: Range) => {
+  // @ts-expect-error tiptap types are incorrect
   if (range) editor.chain().focus().deleteRange(range).toggleBold().run();
+  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleBold().run();
 };
 
 export const toggleItalic = (editor: Editor, range?: Range) => {
+  // @ts-expect-error tiptap types are incorrect
   if (range) editor.chain().focus().deleteRange(range).toggleItalic().run();
+  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleItalic().run();
 };
 
@@ -153,7 +163,9 @@ export const toggleTaskList = (editor: Editor, range?: Range) => {
 };
 
 export const toggleStrike = (editor: Editor, range?: Range) => {
+  // @ts-expect-error tiptap types are incorrect
   if (range) editor.chain().focus().deleteRange(range).toggleStrike().run();
+  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleStrike().run();
 };
 

@@ -1,7 +1,7 @@
 // nivo
 import { ResponsiveCalendar, CalendarSvgProps } from "@nivo/calendar";
 // types
-import { CHARTS_THEME, DEFAULT_MARGIN } from "@/constants/graph";
+import { CHARTS_THEME, CHART_DEFAULT_MARGIN } from "@plane/constants";
 import { TGraph } from "./types";
 // constants
 
@@ -14,7 +14,7 @@ export const CalendarGraph: React.FC<TGraph & Omit<CalendarSvgProps, "height" | 
 }) => (
   <div style={{ height, width }}>
     <ResponsiveCalendar
-      margin={{ ...DEFAULT_MARGIN, ...(margin ?? {}) }}
+      margin={{ ...CHART_DEFAULT_MARGIN, ...(margin ?? {}) }}
       colors={
         rest.colors ?? [
           "rgba(var(--color-primary-100), 0.2)",

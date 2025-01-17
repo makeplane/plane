@@ -1,13 +1,12 @@
 import { useRef, useEffect } from "react";
 import useSWR from "swr";
-// types
+// plane imports
+import { UserService } from "@plane/services";
 import { IUser } from "@plane/types";
-// services
-import { UserService } from "@/services/user.service";
 
 export const useMention = () => {
   const userService = new UserService();
-  const { data: user, isLoading: userDataLoading } = useSWR("currentUser", async () => userService.currentUser());
+  const { data: user, isLoading: userDataLoading } = useSWR("currentUser", async () => userService.me());
 
   const userRef = useRef<IUser | undefined>();
 

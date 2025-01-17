@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "@plane/constants";
 import { IApiToken } from "@plane/types";
-import { APIService } from "@/api.service";
+import { APIService } from "../api.service";
 
 export class APITokenService extends APIService {
   constructor(BASE_URL?: string) {

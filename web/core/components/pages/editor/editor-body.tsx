@@ -143,7 +143,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       name: currentUser?.display_name ?? "",
       color: generateRandomColor(currentUser?.id ?? ""),
     }),
-    [currentUser]
+    [currentUser?.display_name, currentUser?.id]
   );
 
   if (pageId === undefined || !realtimeConfig) return <PageContentLoader />;

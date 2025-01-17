@@ -87,10 +87,6 @@ export type EditorReadOnlyRefApi = {
     paragraphs: number;
     words: number;
   };
-  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
-  getHeadings: () => IMarking[];
-  emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
-  listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
@@ -106,6 +102,10 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
   setProviderDocument: (value: Uint8Array) => void;
+  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
+  getHeadings: () => IMarking[];
+  emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
+  listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
 }
 
 // editor props

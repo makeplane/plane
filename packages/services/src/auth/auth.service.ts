@@ -9,7 +9,7 @@ import { APIService } from "../api.service";
  * Provides methods for user authentication, password management, and session handling
  * @extends {APIService}
  */
-export default class AuthService extends APIService {
+export class AuthService extends APIService {
   /**
    * Creates an instance of AuthService
    * Initializes with the base API URL
@@ -22,9 +22,10 @@ export default class AuthService extends APIService {
    * Requests a CSRF token for form submission security
    * @returns {Promise<ICsrfTokenData>} Object containing the CSRF token
    * @throws {Error} Throws the complete error object if the request fails
+   * @remarks This method uses the validateStatus: null option to bypass interceptors for unauthorized errors.
    */
   async requestCSRFToken(): Promise<ICsrfTokenData> {
-    return this.get("/auth/get-csrf-token/")
+    return this.get("/auth/get-csrf-token/", { validateStatus: null })
       .then((response) => response.data)
       .catch((error) => {
         throw error;
