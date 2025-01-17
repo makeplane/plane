@@ -3,7 +3,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 // types
-import { TLoader } from "@plane/types";
+import { TEpicStats, TLoader } from "@plane/types";
 // plane web services
 import {
   epicIssueTypeService,
@@ -56,6 +56,8 @@ export interface IIssueTypesStore {
   projectEpics: Record<string, IIssueType>; // epic issue type id -> epic issue type
   epicAnalyticsLoader: Record<string, TLoader>; // epic id -> TLoader
   epicAnalyticsMap: Record<string, TEpicAnalytics>; // epic id -> TEpicAnalytics
+  epicStatsLoader: Record<string, TLoader>; // epic id -> TLoader
+  epicStatsMap: Record<string, TEpicStats>; // epic id -> TEpicStats
   // computed
   data: Record<string, IIssueType>; // all issue type id -> issue type
   // computed functions
@@ -67,6 +69,7 @@ export interface IIssueTypesStore {
   getProjectIssueTypes: (projectId: string, activeOnly: boolean) => Record<string, IIssueType>; // issue type id -> issue type
   getProjectEpicId: (projectId: string) => string | undefined;
   getProjectEpicDetails: (projectId: string) => IIssueType | undefined;
+  getEpicStatsById: (epicId: string) => TEpicStats | undefined;
   getProjectDefaultIssueType: (projectId: string) => IIssueType | undefined;
   getIssueTypeProperties: (issueTypeId: string) => IIssueProperty<EIssuePropertyType>[];
   getIssueTypeIdsWithMandatoryProperties: (projectId: string) => string[];
@@ -103,6 +106,7 @@ export interface IIssueTypesStore {
       decrementStateGroupCount?: TEpicAnalyticsGroup;
     }
   ) => void;
+  fetchEpicStats: (workspaceSlug: string, projectId: string) => Promise<TEpicStats[] | undefined>;
   createType: (typeData: Partial<TIssueType>) => Promise<TIssueType | undefined>;
   deleteType: (typeId: string) => Promise<void>;
 }
@@ -117,6 +121,8 @@ export class IssueTypes implements IIssueTypesStore {
   propertiesFetchedMap: Record<string, boolean> = {};
   issueTypes: Record<string, IIssueType> = {};
   projectEpics: Record<string, IIssueType> = {};
+  epicStatsLoader: Record<string, TLoader> = {};
+  epicStatsMap: Record<string, TEpicStats> = {};
   // root store
   rootStore: RootStore;
   // issue types services
@@ -139,6 +145,8 @@ export class IssueTypes implements IIssueTypesStore {
       propertiesFetchedMap: observable,
       issueTypes: observable,
       projectEpics: observable,
+      epicStatsLoader: observable,
+      epicStatsMap: observable,
       // computed
       data: computed,
       // helper actions
@@ -147,6 +155,7 @@ export class IssueTypes implements IIssueTypesStore {
       enableIssueTypes: action,
       fetchAllPropertiesAndOptions: action,
       fetchEpicAnalytics: action,
+      fetchEpicStats: action,
       createType: action,
       deleteType: action,
       updateEpicAnalytics: action,
@@ -297,6 +306,8 @@ export class IssueTypes implements IIssueTypesStore {
   getEpicAnalyticsById = computedFn((epicId: string) =>
     this.epicAnalyticsMap[epicId] ? this.epicAnalyticsMap[epicId] : undefined
   );
+
+  getEpicStatsById = computedFn((epicId: string) => this.epicStatsMap[epicId]);
 
   /**
    * @description Check if issue type is enabled for the project
@@ -517,6 +528,38 @@ export class IssueTypes implements IIssueTypesStore {
       return analytics;
     } catch (error) {
       this.epicAnalyticsLoader[epicId] = "loaded";
+      throw error;
+    }
+  };
+
+  /**
+   * @description Fetch epic stats
+   * @param workspaceSlug
+   * @param projectId
+   */
+  fetchEpicStats = async (workspaceSlug: string, projectId: string) => {
+    if (!workspaceSlug || !projectId) return;
+    if (!this.epicService.fetchEpicStats) throw new Error("Fetch epic stats service not available.");
+    try {
+      this.epicStatsLoader[projectId] = "init-loader";
+      const response = await this.epicService.fetchEpicStats(workspaceSlug, projectId);
+
+      runInAction(() => {
+        if (!response) return;
+
+        if (!this.epicStatsMap) this.epicStatsMap = {};
+
+        response.forEach((stats) => {
+          if (!stats) return;
+
+          this.epicStatsMap![stats.epic_id] = stats;
+        });
+        this.epicStatsLoader[projectId] = "loaded";
+      });
+
+      return response;
+    } catch (error) {
+      this.epicStatsLoader[projectId] = "loaded";
       throw error;
     }
   };

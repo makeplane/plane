@@ -14,6 +14,8 @@ from plane.ee.views.app.initiative import (
     InitiativeReactionViewSet,
     InitiativeActivityEndpoint,
     InitiativeEpicViewSet,
+    WorkspaceInitiativeAnalytics,
+    InitiativeEpicAnalytics,
 )
 
 urlpatterns = [
@@ -51,6 +53,11 @@ urlpatterns = [
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/analytics/",
         InitiativeAnalyticsEndpoint.as_view(),
         name="initiative-analytics",
+    ),
+    path(
+        "workspaces/<str:slug>/initiatives/analytics/",
+        WorkspaceInitiativeAnalytics.as_view(),
+        name="workspace-analytics",
     ),
     path(
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/links/",
@@ -126,5 +133,10 @@ urlpatterns = [
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/epics/<uuid:epic_id>/",
         InitiativeEpicViewSet.as_view({"delete": "destroy"}),
         name="initiative-epics",
+    ),
+    path(
+        "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/epic-analytics/",
+        InitiativeEpicAnalytics.as_view(),
+        name="initiative-epic-analytics",
     ),
 ]

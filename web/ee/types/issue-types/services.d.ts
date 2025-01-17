@@ -1,3 +1,4 @@
+import { TEpicStats } from "@plane/types";
 import {
   TIssueType,
   TIssueProperty,
@@ -145,4 +146,5 @@ export type TEpicAnalytics = {
 
 export interface IEpicService {
   getIssueProgressAnalytics(workspaceSlug: string, projectId: string, issueId: string): Promise<TEpicAnalytics>;
+  fetchEpicStats(workspaceSlug: string, projectId: string): Promise<TEpicStats[]>;
 }

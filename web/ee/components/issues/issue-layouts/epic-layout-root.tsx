@@ -14,6 +14,7 @@ import { BaseGanttRoot, ProjectAppliedFiltersRoot } from "@/components/issues";
 // hooks
 import { useIssues } from "@/hooks/store";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
+import { useIssueTypes } from "@/plane-web/hooks/store";
 import { EpicPeekOverview } from "../../epics/peek-overview";
 import { EpicCalendarLayout } from "./calendar-epic-root";
 import { EpicKanBanLayout } from "./kanban-epic-root";
@@ -42,12 +43,23 @@ export const ProjectEpicsLayoutRoot: FC = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.EPIC);
+  const { fetchEpicStats } = useIssueTypes();
 
   useSWR(
     workspaceSlug && projectId ? `PROJECT_EPICS_${workspaceSlug}_${projectId}` : null,
     async () => {
       if (workspaceSlug && projectId) {
         await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString());
+      }
+    },
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_EPIC_STATS_${workspaceSlug}_${projectId}` : null,
+    async () => {
+      if (workspaceSlug && projectId) {
+        await fetchEpicStats(workspaceSlug.toString(), projectId.toString());
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }

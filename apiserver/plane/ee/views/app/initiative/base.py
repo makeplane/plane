@@ -30,6 +30,7 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.initiative_activity_task import initiative_activity
+from plane.ee.utils.nested_issue_children import get_all_related_issues
 
 
 class InitiativeEndpoint(BaseAPIView):
@@ -379,3 +380,127 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
         )
 
         return Response(issues, status=status.HTTP_200_OK)
+
+
+class WorkspaceInitiativeAnalytics(BaseAPIView):
+    @check_feature_flag(FeatureFlag.INITIATIVES)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug, project_id=None):
+        initiatives = Initiative.objects.filter(workspace__slug=slug).annotate(
+            project_ids=Coalesce(
+                Subquery(
+                    InitiativeProject.objects.filter(
+                        workspace__slug=slug, initiative_id=OuterRef("pk")
+                    )
+                    .values("initiative_id")
+                    .annotate(project_ids=ArrayAgg("project_id", distinct=True))
+                    .values("project_ids")[:1]
+                ),
+                [],
+            ),
+            epic_ids=Coalesce(
+                Subquery(
+                    InitiativeEpic.objects.filter(
+                        workspace__slug=slug, initiative_id=OuterRef("pk")
+                    )
+                    .values("initiative_id")
+                    .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
+                    .values("epic_ids")[:1]
+                ),
+                [],
+            ),
+        )
+
+        # fetch all the issues in which the user is part of
+        issues = Issue.objects.filter(
+            workspace__slug=slug,
+            project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+        ).values("id", "project_id", "state__group")
+
+        result = []
+
+        for initiative in initiatives:
+            total_issues = issues.filter(
+                Q(
+                    Q(type__is_epic=False) | Q(type__isnull=True),
+                    Q(issue_intake__status__in=[-1, 1, 2])
+                    | Q(issue_intake__status__isnull=True),
+                    project_id__in=initiative.project_ids,
+                    deleted_at__isnull=True,
+                    archived_at__isnull=True,
+                    project__archived_at__isnull=True,
+                    is_draft=False,
+                )
+                | Q(id__in=initiative.epic_ids)
+            ).count()
+            completed_issues = (
+                issues.filter(
+                    Q(
+                        Q(type__is_epic=False) | Q(type__isnull=True),
+                        Q(issue_intake__status__in=[-1, 1, 2])
+                        | Q(issue_intake__status__isnull=True),
+                        project_id__in=initiative.project_ids,
+                        deleted_at__isnull=True,
+                        archived_at__isnull=True,
+                        project__archived_at__isnull=True,
+                        is_draft=False,
+                    )
+                    | Q(id__in=initiative.epic_ids)
+                )
+                .filter(state__group="completed")
+                .count()
+            )
+
+            result.append(
+                {
+                    "initiative_id": initiative.id,
+                    "total_issues": total_issues,
+                    "completed_issues": completed_issues,
+                }
+            )
+
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class InitiativeEpicAnalytics(BaseAPIView):
+    @check_feature_flag(FeatureFlag.INITIATIVES)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug, initiative_id):
+        initiative_epic = InitiativeEpic.objects.filter(
+            workspace__slug=slug, initiative_id=initiative_id
+        ).values_list("epic_id", flat=True)
+
+        # fetch all the issues in which user is part of
+        issues = Issue.objects.filter(
+            workspace__slug=slug,
+            project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+        )
+        result = []
+        for epic_id in initiative_epic:
+
+            # get all the issues of the particular epic
+            issue_ids = get_all_related_issues(epic_id)
+
+            completed_issues = (
+                issues.filter(
+                    id__in=issue_ids, workspace__slug=slug
+                )
+                .filter(state__group="completed")
+                .count()
+            )
+
+            total_issues = issues.filter(
+                id__in=issue_ids, workspace__slug=slug
+            ).count()
+
+            result.append(
+                {
+                    "epic_id": epic_id,
+                    "total_issues": total_issues,
+                    "completed_issues": completed_issues,
+                }
+            )
+
+        return Response(result, status=status.HTTP_200_OK)

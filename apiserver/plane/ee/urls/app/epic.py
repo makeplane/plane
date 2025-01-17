@@ -13,6 +13,7 @@ from plane.ee.views.app.epic import (
     EpicIssuesEndpoint,
     EpicDetailEndpoint,
     WorkspaceEpicEndpoint,
+    EpicListAnalyticsEndpoint,
 )
 from plane.ee.views.app.epic_property import WorkspaceEpicTypeEndpoint
 
@@ -121,6 +122,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:epic_id>/reactions/<str:reaction_code>/",
         EpicReactionViewSet.as_view({"delete": "destroy"}),
         name="project-epic-reactions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/epic-analytics/",
+        EpicListAnalyticsEndpoint.as_view(),
+        name="project-epic-analytics",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:epic_id>/analytics/",

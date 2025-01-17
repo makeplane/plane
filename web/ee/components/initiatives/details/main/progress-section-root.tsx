@@ -1,6 +1,7 @@
 "use client";
 
 import React, { FC } from "react";
+import omit from "lodash/omit";
 import { observer } from "mobx-react";
 import { TStateAnalytics } from "@plane/types";
 // plane web
@@ -23,10 +24,13 @@ export const InitiativeProgressSection: FC<Props> = observer((props) => {
   const initiativeAnalytics = getInitiativeAnalyticsById(initiativeId);
 
   const projectsIds = initiative?.project_ids ?? [];
+  const totalIssues = initiativeAnalytics
+    ? Object.values(omit(initiativeAnalytics, "overdue_issues")).reduce((acc, val) => acc + val, 0)
+    : 0;
 
   const shouldRenderProgressSection = (projectsIds.length ?? 0) > 0;
 
-  if (!shouldRenderProgressSection) return <></>;
+  if (!shouldRenderProgressSection || totalIssues === 0) return <></>;
 
   return <ProgressSection data={initiativeAnalytics as TStateAnalytics} />;
 });
