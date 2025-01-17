@@ -469,14 +469,6 @@
       "labels": {
         "title": "Aucune étiquette pour le moment",
         "description": "Créez des étiquettes pour organiser et filtrer les tâches de votre projet."
-      },
-      "integerations": {
-        "title": "Aucune intégration configurée",
-        "description": "Configurez GitHub et d'autres intégrations pour synchroniser les tâches de votre projet."
-      },
-      "estimates": {
-        "title": "Aucune estimation ajoutée",
-        "description": "Créez un ensemble d'estimations pour communiquer la quantité de travail par tâche."
       }
     }
   },

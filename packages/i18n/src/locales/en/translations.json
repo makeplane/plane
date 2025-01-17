@@ -469,14 +469,6 @@
       "labels": {
         "title": "No labels yet",
         "description": "Create labels to help organize and filter issues in you project."
-      },
-      "integerations": {
-        "title": "No integrations configured",
-        "description": "Configure GitHub and other integrations to sync your project issues."
-      },
-      "estimates": {
-        "title": "No estimates added",
-        "description": "Create a set of estimates to communicate the amount of work per issue."
       }
     }
   },

@@ -45,9 +45,6 @@ export enum EmptyStateType {
   PROFILE_ASSIGNED = "profile-assigned",
   PROFILE_CREATED = "profile-created",
   PROFILE_SUBSCRIBED = "profile-subscribed",
-  PROJECT_SETTINGS_LABELS = "project-settings-labels",
-  PROJECT_SETTINGS_INTEGRATIONS = "project-settings-integrations",
-  PROJECT_SETTINGS_ESTIMATE = "project-settings-estimate",
   // stickies
   STICKIES = "stickies",
   STICKIES_SEARCH = "stickies-search",
@@ -236,25 +233,6 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
     title: "No issues yet",
     description: "Subscribe to issues you are interested in, track all of them here.",
     path: "/empty-state/profile/subscribed",
-  },
-  // project settings
-  [EmptyStateType.PROJECT_SETTINGS_LABELS]: {
-    key: EmptyStateType.PROJECT_SETTINGS_LABELS,
-    title: "No labels yet",
-    description: "Create labels to help organize and filter issues in you project.",
-    path: "/empty-state/project-settings/labels",
-  },
-  [EmptyStateType.PROJECT_SETTINGS_INTEGRATIONS]: {
-    key: EmptyStateType.PROJECT_SETTINGS_INTEGRATIONS,
-    title: "No integrations configured",
-    description: "Configure GitHub and other integrations to sync your project issues.",
-    path: "/empty-state/project-settings/integrations",
-  },
-  [EmptyStateType.PROJECT_SETTINGS_ESTIMATE]: {
-    key: EmptyStateType.PROJECT_SETTINGS_ESTIMATE,
-    title: "No estimates added",
-    description: "Create a set of estimates to communicate the amount of work per issue.",
-    path: "/empty-state/project-settings/estimates",
   },
   // empty filters
   [EmptyStateType.STICKIES]: {

@@ -468,14 +468,6 @@
       "labels": {
         "title": "Aún no hay etiquetas",
         "description": "Crea etiquetas para ayudar a organizar y filtrar problemas en tu proyecto."
-      },
-      "integerations": {
-        "title": "No se han configurado integraciones",
-        "description": "Configura GitHub y otras integraciones para sincronizar los problemas de tu proyecto."
-      },
-      "estimates": {
-        "title": "Aún no hay estimaciones",
-        "description": "Crea un conjunto de estimaciones para comunicar la cantidad de trabajo por problema."
       }
     }
   },
