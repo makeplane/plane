@@ -5,6 +5,7 @@ import { CircularProgressIndicator, Logo, Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { ListItem } from "@/components/core/list";
+import { getProgress } from "@/helpers/common.helper";
 import { useProject, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
@@ -38,9 +39,7 @@ export const ProjectItem = observer((props: Props) => {
 
   if (!projectDetails || !currentWorkspace) return <Spinner />;
 
-  const progress = projectDetails.total_issues
-    ? Math.round((projectDetails.completed_issues / projectDetails.total_issues) * 100)
-    : 0;
+  const progress = getProgress(projectDetails?.completed_issues, projectDetails?.total_issues);
 
   return (
     <ListItem
@@ -71,7 +70,7 @@ export const ProjectItem = observer((props: Props) => {
               state: isProjectGroupingEnabled,
               priority: isProjectGroupingEnabled,
               lead: true,
-              date: true,
+              date: isProjectGroupingEnabled,
             }}
           />
           <div className={cn("hidden md:flex")}>

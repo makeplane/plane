@@ -3,15 +3,16 @@ import { GithubWebhookWorker } from "@/apps/github/workers";
 import { PlaneGithubWebhookWorker } from "@/apps/github/workers/plane";
 import { GitlabWebhookWorker } from "@/apps/gitlab";
 import { JiraDataMigrator } from "@/apps/jira-importer/migrator/jira.migrator";
+import { JiraDataCenterMigrator } from "@/apps/jira-server-importer/migrator";
 import { LinearDataMigrator } from "@/apps/linear-importer/migrator/linear.migrator";
 import { PlaneSlackWebhookWorker } from "@/apps/slack/worker/plane-worker";
 import { SlackInteractionHandler } from "@/apps/slack/worker/worker";
 import { logger } from "@/logger";
+import { SentryInstance } from "@/sentry-config";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "./base";
+import { Lock } from "./base/lock";
 import { TMQEntityOptions } from "./base/types";
-import { JiraDataCenterMigrator } from "@/apps/jira-server-importer/migrator";
-import { SentryInstance } from "@/sentry-config";
 
 class WorkerFactory {
   static createWorker(type: string, mq: MQ, store: Store): TaskHandler {
@@ -48,25 +49,23 @@ interface JobWorkerConfig {
 
 type TaskProps =
   | {
-      type: "mq";
-      headers: TaskHeaders;
-      data: any;
-    }
+    type: "mq";
+    headers: TaskHeaders;
+    data: any;
+  }
   | {
-      type: "store";
-      event: string;
-    };
+    type: "store";
+    event: string;
+  };
 
 export class TaskManager {
   private mq: MQ | undefined;
   private store: Store | undefined;
   private config: JobWorkerConfig;
-  private key: string;
   private workers: Map<string, TaskHandler> = new Map();
 
   constructor(config: JobWorkerConfig) {
     this.config = config;
-    this.key = Math.random().toString(36).substring(10);
 
     process.on("SIGINT", this.cleanup.bind(this));
     process.on("SIGTERM", this.cleanup.bind(this));
@@ -126,12 +125,12 @@ export class TaskManager {
             await this.handleError(msg, error);
             console.log("Error handling task", error);
           }
-          await this.mq?.ackMessage(msg);
         } catch (error) {
           logger.error("Error processing message:");
           console.log(error);
           await this.handleError(msg, error);
         }
+        await this.mq?.ackMessage(msg);
       });
     } catch (error) {
       logger.error("Error starting job worker consumer:", error);
@@ -140,29 +139,52 @@ export class TaskManager {
 
   private async handleTask(props: TaskProps) {
     if (props.type === "store") {
-      // Validate the event recieved
+      // Validate the event received
       const chunks = props.event.split(":");
-      // For Issues: silo:{key}:{worker}:{type}:{action}:{entity}
-      // For Comments: silo:{key}:{worker}:{type}:{action}:{entity}
+      // For Issues: silo:{worker}:{type}:{action}:{entity}
+      // For Comments: silo:{worker}:{type}:{action}:{entity}
 
-      if (chunks.length >= 6 && chunks[0] === "silo" && chunks[1] === this.key) {
-        const worker = this.workers.get(chunks[2]);
+      if (chunks.length >= 5 && chunks[0] === "silo") {
+        const worker = this.workers.get(chunks[1]);
         if (!worker) {
-          throw new Error(`No worker found for route: ${chunks[2]}`);
+          return
         }
         const headers: TaskHeaders = {
-          route: chunks[2],
-          type: chunks[3],
-          jobId: chunks[4],
+          route: chunks[1],
+          type: chunks[2],
+          jobId: chunks[3],
         };
-        const entity = chunks.slice(5).join(":");
-        const data = JSON.parse(entity);
-        await worker.handleTask(headers, data);
+
+        const entity = chunks.slice(4).join(":");
+        // Create a lock with 5 minute TTL since event processing should be quick
+        const lockKey = `silo:lock:${entity}`;
+        const lock = new Lock(this.store!, {
+          type: "custom",
+          lockKey: lockKey,
+          ttl: 15, // 15 seconds TTL
+        });
+
+        // Try to acquire the lock - Redis SETNX ensures atomic operation
+        const acquired = await lock.acquireLock("lock");
+        if (!acquired) {
+          // Another container is processing this event, skip
+          return;
+        }
+
+        try {
+          const data = JSON.parse(entity);
+
+          await new Promise((resolve) => setTimeout(resolve, Math.random() * 200));
+          await worker.handleTask(headers, data);
+        } finally {
+          // Release the lock after processing
+          await lock.releaseLock();
+        }
       }
     } else {
       const worker = this.workers.get(props.headers.route);
       if (!worker) {
-        return console.error(`No worker found for route: ${props.headers.route}`);
+        return
       }
       await worker.handleTask(props.headers, props.data);
     }
@@ -210,9 +232,10 @@ export class TaskManager {
     if (!this.store) return;
     try {
       await this.store.set(
-        `silo:${this.key}:${headers.route}:${headers.type}:${headers.jobId}:${JSON.stringify(data)}`,
+        `silo:${headers.route}:${headers.type}:${headers.jobId}:${JSON.stringify(data)}`,
         "1",
-        ttl
+        ttl,
+        false
       );
     } catch (error) {
       logger.error("Error pushing to job worker queue:", error);

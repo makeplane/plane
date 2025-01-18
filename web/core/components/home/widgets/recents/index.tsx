@@ -74,7 +74,7 @@ export const RecentActivityWidget: React.FC<THomeWidgetProps> = observer((props)
           <FiltersDropdown filters={filters} activeFilter={filter} setActiveFilter={setFilter} />
         </div>
         <div className="flex flex-col items-center justify-center">
-          <RecentsEmptyState />
+          <RecentsEmptyState type={filter} />
         </div>
       </div>
     );

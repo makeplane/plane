@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { Avatar } from "@plane/ui";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { useMember, useUser } from "@/hooks/store";
+import { useMember, useUser, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions } from "@/plane-web/constants";
 import { TProjectUpdatesComment } from "@/plane-web/types";
 import { UpdateQuickActions } from "../quick-actions";
 import { UpdateReaction } from "../update-reaction";
@@ -20,8 +22,16 @@ export const CommentBlock = (props: TProps) => {
   // hooks
   const { getUserDetails } = useMember();
   const { data: currentUser } = useUser();
+  const { allowPermissions } = useUserPermissions();
 
   const creator = commentData && getUserDetails(commentData?.created_by || "");
+
+  const isProjectAdmin = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug.toString(),
+    projectId.toString()
+  );
 
   return (
     <div className="flex mb-4 gap-2">
@@ -36,17 +46,18 @@ export const CommentBlock = (props: TProps) => {
               <div className="text-xs text-custom-text-350">{renderFormattedDate(commentData?.updated_at)}</div>
             </div>
             {/* quick actions */}
-            <UpdateQuickActions
-              isCreator={commentData.created_by === currentUser?.id}
-              updateId={commentData.id}
-              operations={{
-                remove: operations.remove,
-                update: () => {
-                  console.log("here");
-                  setIsEditing(true);
-                },
-              }}
-            />
+            {isProjectAdmin && (
+              <UpdateQuickActions
+                updateId={commentData.id}
+                operations={{
+                  remove: operations.remove,
+                  update: () => {
+                    console.log("here");
+                    setIsEditing(true);
+                  },
+                }}
+              />
+            )}
           </div>
           <div className="text-base mb-2">{commentData?.description}</div>
           <UpdateReaction

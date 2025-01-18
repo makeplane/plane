@@ -172,8 +172,8 @@ const Attributes: React.FC<Props> = observer((props) => {
             }}
             onSelect={(val) => {
               handleUpdateProject({
-                start_date: val?.from ? renderFormattedPayloadDate(val.from)! : undefined,
-                target_date: val?.to ? renderFormattedPayloadDate(val.to)! : undefined,
+                start_date: val?.from ? renderFormattedPayloadDate(val.from)! : null,
+                target_date: val?.to ? renderFormattedPayloadDate(val.to)! : null,
               });
             }}
             placeholder={{

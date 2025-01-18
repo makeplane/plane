@@ -32,7 +32,6 @@ export const useLinks = (workspaceSlug: string) => {
       create: async (data: Partial<TProjectLink>) => {
         try {
           if (!workspaceSlug) throw new Error("Missing required fields");
-          console.log("data", data, workspaceSlug);
           await createLink(workspaceSlug, data);
           setToast({
             message: "The link has been successfully created",

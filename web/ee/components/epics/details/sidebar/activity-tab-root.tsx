@@ -4,6 +4,7 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 // plane package imports
 import { EIssueServiceType, E_SORT_ORDER } from "@plane/constants";
+import { useLocalStorage } from "@plane/hooks";
 import { TIssueActivityComment } from "@plane/types";
 // components
 import { ActivitySortRoot } from "@/components/issues";
@@ -22,7 +23,10 @@ type TEpicDetailActivityRootProps = {
 export const EpicSidebarActivityRoot: FC<TEpicDetailActivityRootProps> = observer((props) => {
   const { epicId } = props;
   // states
-  const [sortOrder, setSortOrder] = React.useState<E_SORT_ORDER>(E_SORT_ORDER.ASC);
+  const { storedValue: sortOrder, setValue: setSortOrder } = useLocalStorage<E_SORT_ORDER>(
+    "epic_activity_sort_order",
+    E_SORT_ORDER.ASC
+  );
   // store hooks
   const {
     activity: { getActivityCommentByIssueId },
@@ -33,7 +37,7 @@ export const EpicSidebarActivityRoot: FC<TEpicDetailActivityRootProps> = observe
   const toggleSortOrder = () => setSortOrder(sortOrder === E_SORT_ORDER.ASC ? E_SORT_ORDER.DESC : E_SORT_ORDER.ASC);
 
   // derived values
-  const activityComments = getActivityCommentByIssueId(epicId, sortOrder);
+  const activityComments = getActivityCommentByIssueId(epicId, sortOrder ?? E_SORT_ORDER.ASC);
 
   const filteredActivityComments = filterActivityOnSelectedFilters(activityComments ?? [], [
     EActivityFilterType.ACTIVITY,
@@ -44,7 +48,7 @@ export const EpicSidebarActivityRoot: FC<TEpicDetailActivityRootProps> = observe
       title="Activity"
       actionElement={
         <ActivitySortRoot
-          sortOrder={sortOrder}
+          sortOrder={sortOrder ?? E_SORT_ORDER.ASC}
           toggleSort={toggleSortOrder}
           className="flex-shrink-0"
           iconClassName="size-3"

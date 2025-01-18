@@ -3,8 +3,7 @@ import { useParams } from "next/navigation";
 import { Plus, X } from "lucide-react";
 import { RecentStickyIcon } from "@plane/ui";
 import { useSticky } from "@/hooks/use-stickies";
-import { STICKY_COLORS } from "../../editor/sticky-editor/color-pallete";
-import { StickiesLayout } from "../stickies-layout";
+import { StickiesTruncated } from "../layout/stickies-truncated";
 import { useStickyOperations } from "../sticky/use-operations";
 import { StickySearch } from "./search";
 
@@ -19,13 +18,13 @@ export const Stickies = observer((props: TProps) => {
   const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
 
   return (
-    <div className="p-6 pb-0">
+    <div className="p-6 pb-0 min-h-[620px]">
       {/* header */}
       <div className="flex items-center justify-between mb-6">
         {/* Title */}
         <div className="text-custom-text-100 flex gap-2">
           <RecentStickyIcon className="size-5 rotate-90" />
-          <p className="text-lg font-medium">My Stickies</p>
+          <p className="text-lg font-medium">Your stickies</p>
         </div>
         {/* actions */}
         <div className="flex gap-2">
@@ -33,7 +32,7 @@ export const Stickies = observer((props: TProps) => {
           <button
             onClick={() => {
               toggleShowNewSticky(true);
-              stickyOperations.create({ color: STICKY_COLORS[0] });
+              stickyOperations.create();
             }}
             className="flex gap-1 text-sm font-medium text-custom-primary-100 my-auto"
             disabled={creatingSticky}
@@ -61,7 +60,7 @@ export const Stickies = observer((props: TProps) => {
       </div>
       {/* content */}
       <div className="mb-4 max-h-[625px] overflow-scroll">
-        <StickiesLayout />
+        <StickiesTruncated />
       </div>
     </div>
   );

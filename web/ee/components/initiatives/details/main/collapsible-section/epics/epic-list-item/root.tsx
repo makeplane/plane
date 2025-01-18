@@ -4,16 +4,17 @@ import React, { useRef } from "react";
 import { observer } from "mobx-react";
 // Plane
 import { EIssueServiceType } from "@plane/constants";
-import { EpicIcon } from "@plane/ui";
+import { CircularProgressIndicator, EpicIcon } from "@plane/ui";
 // components
 import { ListItem } from "@/components/core/list";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn, getProgress } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IdentifierText } from "@/plane-web/components/issues";
+import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local components
 import { EpicProperties } from "./properties";
 import { EpicQuickActions } from "./quick-action";
@@ -31,6 +32,9 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail(EIssueServiceType.EPICS);
+  const {
+    initiative: { getInitiativeEpicStatsById },
+  } = useInitiatives();
   const project = useProject();
   const { isMobile } = usePlatformOS();
 
@@ -39,9 +43,12 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
 
   // derived values
   const issue = getIssueById(epicId);
+  const initiativeEpicStats = getInitiativeEpicStatsById(epicId);
 
   const projectIdentifier = issue?.project_id ? project.getProjectIdentifierById(issue?.project_id) : "";
   const issueSequenceId = issue?.sequence_id;
+
+  const progress = getProgress(initiativeEpicStats?.completed_issues, initiativeEpicStats?.total_issues);
 
   if (!issue) return <></>;
   return (
@@ -60,6 +67,12 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
       }
       quickActionElement={
         <div className="flex shrink-0 items-center gap-2">
+          {initiativeEpicStats && initiativeEpicStats?.total_issues > 0 && (
+            <div className="flex items-center gap-1">
+              <CircularProgressIndicator size={20} percentage={progress} strokeWidth={3} />
+              <span className="text-sm font-medium text-custom-text-300 px-1">{`${progress}%`}</span>
+            </div>
+          )}
           <EpicProperties epicId={epicId} disabled={disabled} />
           <div className={cn("hidden md:flex")}>
             <EpicQuickActions

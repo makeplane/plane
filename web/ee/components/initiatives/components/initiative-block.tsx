@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane
 import { EUserPermissionsLevel } from "@plane/constants";
-import { InitiativeIcon } from "@plane/ui";
+import { CircularProgressIndicator, InitiativeIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
@@ -16,6 +16,7 @@ import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local components
 import { BlockProperties } from "./block-properties";
 import { InitiativeQuickActions } from "./quick-actions";
+import { getProgress } from "@/helpers/common.helper";
 
 type Props = {
   initiativeId: string;
@@ -29,13 +30,14 @@ export const InitiativeBlock = observer((props: Props) => {
 
   // hooks
   const {
-    initiative: { getInitiativeById },
+    initiative: { getInitiativeById, getInitiativeStatsById },
   } = useInitiatives();
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
 
   const initiative = getInitiativeById(initiativeId);
+  const initiativeStats = getInitiativeStatsById(initiativeId);
 
   if (!initiative) return <></>;
 
@@ -43,6 +45,8 @@ export const InitiativeBlock = observer((props: Props) => {
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
+
+  const progress = getProgress(initiativeStats?.completed_issues, initiativeStats?.total_issues);
 
   return (
     <ListItem
@@ -54,7 +58,13 @@ export const InitiativeBlock = observer((props: Props) => {
         </div>
       }
       quickActionElement={
-        <>
+        <div className="flex shrink-0 items-center gap-2">
+          {initiativeStats && initiativeStats.total_issues > 0 && (
+            <div className="flex items-center gap-1">
+              <CircularProgressIndicator size={20} percentage={progress} strokeWidth={3} />
+              <span className="text-sm font-medium text-custom-text-300 px-1">{`${progress}%`}</span>
+            </div>
+          )}
           <BlockProperties initiative={initiative} isSidebarCollapsed={isSidebarCollapsed} disabled={!isEditable} />
           <div
             className={cn("hidden", {
@@ -69,7 +79,7 @@ export const InitiativeBlock = observer((props: Props) => {
               disabled={!isEditable}
             />
           </div>
-        </>
+        </div>
       }
       isMobile={isMobile}
       parentRef={parentRef}

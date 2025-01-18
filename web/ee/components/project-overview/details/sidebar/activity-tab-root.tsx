@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane package imports
 import { E_SORT_ORDER } from "@plane/constants";
+import { useLocalStorage } from "@plane/hooks";
 import { Loader } from "@plane/ui";
 // components
 import { ActivityItem } from "@/components/common";
@@ -26,7 +27,10 @@ const projectActivityService = new ProjectActivityService();
 export const ProjectOverviewSidebarActivityRoot: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = props;
   // states
-  const [sortOrder, setSortOrder] = React.useState<E_SORT_ORDER>(E_SORT_ORDER.ASC);
+  const { storedValue: sortOrder, setValue: setSortOrder } = useLocalStorage<E_SORT_ORDER>(
+    "project_overview_activity_sort_order",
+    E_SORT_ORDER.ASC
+  );
   // store hooks
   const { getProjectById } = useProject();
 
@@ -59,7 +63,7 @@ export const ProjectOverviewSidebarActivityRoot: FC<Props> = observer((props) =>
       title="Activity"
       actionElement={
         <ActivitySortRoot
-          sortOrder={sortOrder}
+          sortOrder={sortOrder ?? E_SORT_ORDER.ASC}
           toggleSort={toggleSortOrder}
           className="flex-shrink-0"
           iconClassName="size-3"
@@ -78,12 +82,12 @@ export const ProjectOverviewSidebarActivityRoot: FC<Props> = observer((props) =>
                 </Loader>
               ) : (
                 <div>
-                  {activity &&
+                  {sortedActivity &&
                     sortedActivity.map((activityComment, index) => (
                       <ActivityItem
                         key={activityComment.id}
                         activity={activityComment}
-                        ends={index === 0 ? "top" : index === activity.length - 1 ? "bottom" : undefined}
+                        ends={index === 0 ? "top" : index === sortedActivity.length - 1 ? "bottom" : undefined}
                       />
                     ))}
                 </div>

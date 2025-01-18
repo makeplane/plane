@@ -176,3 +176,9 @@ export type TInitiativeAnalytics = {
   cancelled_issues: number;
   overdue_issues: number;
 };
+
+export type TInitiativeStats = {
+  initiative_id: string;
+  total_issues: number;
+  completed_issues: number;
+};

@@ -4,12 +4,11 @@ import { FC } from "react";
 // hooks
 // ui
 import { observer } from "mobx-react";
-import { Pencil, Trash2, ExternalLink, EllipsisVertical, Link, Link2 } from "lucide-react";
+import { Pencil, Trash2, ExternalLink, EllipsisVertical, Link2, Link } from "lucide-react";
 import { TOAST_TYPE, setToast, CustomMenu, TContextMenuItem } from "@plane/ui";
 // helpers
-import { cn } from "@plane/utils";
+import { cn, copyTextToClipboard } from "@plane/utils";
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 import { useHome } from "@/hooks/store/use-home";
 import { TLinkOperations } from "./use-links";
 
@@ -37,7 +36,7 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
   };
 
   const handleCopyText = () =>
-    copyUrlToClipboard(viewLink).then(() => {
+    copyTextToClipboard(viewLink).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
@@ -74,7 +73,10 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
   ];
 
   return (
-    <div className="group btn btn-primary flex bg-custom-background-100 px-4 w-[230px] h-[56px] border-[0.5px] border-custom-border-200 rounded-md gap-4 hover:shadow-md">
+    <div
+      onClick={handleOpenInNewTab}
+      className="cursor-pointer group btn btn-primary flex bg-custom-background-100 px-4 w-[230px] h-[56px] border-[0.5px] border-custom-border-200 rounded-md gap-4 hover:shadow-md"
+    >
       <div className="rounded p-2 bg-custom-background-80/40 w-8 h-8 my-auto">
         <Link2 className="h-4 w-4 stroke-2 text-custom-text-350 -rotate-45" />
       </div>

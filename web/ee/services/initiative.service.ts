@@ -1,4 +1,4 @@
-import { TIssue } from "@plane/types";
+import { TEpicStats, TIssue } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 import {
@@ -9,6 +9,7 @@ import {
   TInitiativeActivity,
   TInitiativeProject,
   TInitiativeAnalytics,
+  TInitiativeStats,
 } from "../types/initiative/initiative";
 
 export class InitiativeService extends APIService {
@@ -125,7 +126,7 @@ export class InitiativeService extends APIService {
     linkId: string,
     payload: Partial<TInitiativeLink>
   ): Promise<void> {
-    return this.post(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/links/${linkId}`, payload)
+    return this.patch(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/links/${linkId}`, payload)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -278,6 +279,22 @@ export class InitiativeService extends APIService {
 
   async fetchInitiativeAnalytics(workspaceSlug: string, initiativeId: string): Promise<TInitiativeAnalytics> {
     return this.get(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/analytics/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchInitiativeEpicStats(workspaceSlug: string, initiativeId: string): Promise<TEpicStats[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/epic-analytics/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchInitiativesStats(workspaceSlug: string): Promise<TInitiativeStats[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/initiatives/analytics/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

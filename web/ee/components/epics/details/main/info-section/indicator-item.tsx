@@ -7,6 +7,8 @@ import { observer } from "mobx-react";
 import { EIssueServiceType } from "@plane/constants";
 // ui
 import { CircularProgressIndicator } from "@plane/ui";
+// helpers
+import { getProgress } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import { useIssueTypes } from "@/plane-web/hooks/store";
@@ -35,9 +37,10 @@ export const EpicInfoIndicatorItem: FC<TEpicInfoIndicatorItemProps> = observer((
     ? Object.values(omit(epicAnalytics, "overdue_issues")).reduce((acc, val) => acc + val, 0)
     : 0;
 
-  const completePercentage = epicAnalytics
-    ? Math.round(((epicAnalytics.completed_issues + epicAnalytics.cancelled_issues) / totalIssues) * 100)
-    : 0;
+  const completedIssue = epicAnalytics ? epicAnalytics.completed_issues + epicAnalytics.cancelled_issues : 0;
+
+  const completePercentage = getProgress(completedIssue, totalIssues);
+
   if (!hasSubIssues) return <></>;
   return (
     <div className="flex-shrink-0">

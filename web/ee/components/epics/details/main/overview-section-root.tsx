@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { EIssueServiceType } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
@@ -35,18 +35,21 @@ export const EpicOverviewRoot: FC<Props> = observer((props) => {
   const { storedValue } = useLocalStorage(`tab-epic-detail-overview-${epicId}`, "issues");
 
   // Tabs
-  const OVERVIEW_TABS = [
-    {
-      key: "issues",
-      label: "Issues",
-      content: <EpicIssuesOverviewRoot workspaceSlug={workspaceSlug} projectId={projectId} epicId={epicId} />,
-    },
-    {
-      key: "relations",
-      label: "Relations",
-      content: <EpicRelationsOverviewRoot workspaceSlug={workspaceSlug} projectId={projectId} epicId={epicId} />,
-    },
-  ];
+  const OVERVIEW_TABS = useMemo(
+    () => [
+      {
+        key: "issues",
+        label: "Issues",
+        content: <EpicIssuesOverviewRoot workspaceSlug={workspaceSlug} projectId={projectId} epicId={epicId} />,
+      },
+      {
+        key: "relations",
+        label: "Relations",
+        content: <EpicRelationsOverviewRoot workspaceSlug={workspaceSlug} projectId={projectId} epicId={epicId} />,
+      },
+    ],
+    [workspaceSlug, projectId, epicId]
+  );
 
   // derived values
   const issue = getIssueById(epicId);

@@ -233,8 +233,12 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
         if (results && results.length > 0) {
           // adding issueIds
           const issueIds = results.map((issue) => issue.id);
+          const existingIssueIds = this.issueMapIds[workspaceSlug] ?? [];
+          // new issueIds
+          const newIssueIds = issueIds.filter((issueId) => !existingIssueIds.includes(issueId));
           this.addIssue(results);
-          update(this.issueMapIds, [workspaceSlug], (existingIssueIds = []) => [...issueIds, ...existingIssueIds]);
+          // issue map update
+          update(this.issueMapIds, [workspaceSlug], (existingIssueIds = []) => [...newIssueIds, ...existingIssueIds]);
           this.loader = undefined;
         } else {
           this.loader = "empty-state";

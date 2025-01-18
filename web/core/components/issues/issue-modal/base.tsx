@@ -42,9 +42,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   } = props;
   const issueStoreType = useIssueStoreType();
 
-  const storeType = (issueStoreFromProps ? issueStoreFromProps : issueStoreType === EIssuesStoreType.EPIC)
-    ? EIssuesStoreType.PROJECT
-    : issueStoreType;
+  const storeType = issueStoreFromProps ?? issueStoreType;
   // ref
   const issueTitleRef = useRef<HTMLInputElement>(null);
   // states

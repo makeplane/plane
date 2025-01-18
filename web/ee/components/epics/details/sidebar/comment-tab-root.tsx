@@ -1,9 +1,10 @@
 "use client";
 
-import React, { FC, useMemo, useState } from "react";
+import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane package imports
 import { EIssueServiceType, E_SORT_ORDER } from "@plane/constants";
+import { useLocalStorage } from "@plane/hooks";
 import { TIssueActivityComment } from "@plane/types";
 // components
 import { ActivitySortRoot } from "@/components/issues";
@@ -27,7 +28,10 @@ type TEpicSidebarCommentsRootProps = {
 export const EpicSidebarCommentsRoot: FC<TEpicSidebarCommentsRootProps> = observer((props) => {
   const { workspaceSlug, projectId, epicId, disabled = false } = props;
   // states
-  const [sortOrder, setSortOrder] = useState<E_SORT_ORDER>(E_SORT_ORDER.ASC);
+  const { storedValue: sortOrder, setValue: setSortOrder } = useLocalStorage<E_SORT_ORDER>(
+    "epic_comments_sort_order",
+    E_SORT_ORDER.ASC
+  );
   // store hooks
   const {
     activity: { getActivityCommentByIssueId },
@@ -67,7 +71,7 @@ export const EpicSidebarCommentsRoot: FC<TEpicSidebarCommentsRootProps> = observ
       title="Comments"
       actionElement={
         <ActivitySortRoot
-          sortOrder={sortOrder}
+          sortOrder={sortOrder ?? E_SORT_ORDER.ASC}
           toggleSort={toggleSortOrder}
           className="flex-shrink-0"
           iconClassName="size-3"

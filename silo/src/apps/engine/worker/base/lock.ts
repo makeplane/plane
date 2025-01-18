@@ -1,17 +1,30 @@
 import { Store } from ".";
 
+export type LockConfig = ({
+  type: "default"
+  workspaceId: undefined | string;
+  jobId: undefined | string;
+} | {
+  type: "custom",
+  lockKey: string;
+}) & {
+  ttl?: number;
+};
+
 export class Lock {
   private readonly lockKey: string;
   private readonly lockTTL: number;
 
   constructor(
     private store: Store,
-    workspaceId: string,
-    jobId: string,
-    ttl?: number
+    config: LockConfig
   ) {
-    this.lockKey = `silo:${workspaceId}:${jobId}:lock`;
-    this.lockTTL = ttl ?? 6 * 60 * 60 * 1000; // 6 hours
+    if (config.type === "default") {
+      this.lockKey = `silo:${config.workspaceId}:${config.jobId}:lock`;
+    } else {
+      this.lockKey = config.lockKey;
+    }
+    this.lockTTL = config.ttl ?? 6 * 60 * 60; // 6 hours
   }
 
   async acquireLock(batchId: string): Promise<boolean> {

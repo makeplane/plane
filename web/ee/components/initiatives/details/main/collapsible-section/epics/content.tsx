@@ -56,7 +56,7 @@ export const InitiativeEpicsCollapsibleContent: FC<Props> = observer((props) => 
               }}
               disabled={disabled}
             >
-              <span className={cn(getButtonStyling("accent-primary", "sm"), "font-medium px-2 py-1")}>Add issues</span>
+              <span className={cn(getButtonStyling("accent-primary", "sm"), "font-medium px-2 py-1")}>Add epics</span>
             </button>
           }
         />

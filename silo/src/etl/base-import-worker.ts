@@ -1,13 +1,13 @@
+import { TJobWithConfig, TJobStatus, PlaneEntities } from "@plane/etl/core";
 import { MQ, Store } from "@/apps/engine/worker/base";
+import { Lock } from "@/apps/engine/worker/base/lock";
 import { TBatch, UpdateEventType } from "@/apps/engine/worker/types";
 import { updateJob } from "@/db/query";
 import { wait } from "@/helpers/delay";
 import { logger } from "@/logger";
-import { TaskHandler, TaskHeaders } from "@/types";
-import { TJobWithConfig, TJobStatus, PlaneEntities } from "@plane/etl/core";
-import { getJobForMigration, migrateToPlane } from "./migrator";
-import { Lock } from "@/apps/engine/worker/base/lock";
 import { SentryInstance } from "@/sentry-config";
+import { TaskHandler, TaskHeaders } from "@/types";
+import { getJobForMigration, migrateToPlane } from "./migrator";
 
 export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements TaskHandler {
   private mq: MQ;
@@ -25,7 +25,11 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
   async handleTask(headers: TaskHeaders, data: any): Promise<boolean> {
     try {
       const job = await this.getJobData(headers.jobId);
-      const batchLock = new Lock(this.store, job.workspace_id, headers.jobId);
+      const batchLock = new Lock(this.store, {
+        type: "default",
+        workspaceId: job.workspace_id,
+        jobId: headers.jobId
+      })
 
       if (job.is_cancelled) {
         await batchLock.releaseLock();

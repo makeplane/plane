@@ -5,6 +5,8 @@ import { omit } from "lodash";
 import { observer } from "mobx-react";
 // ui
 import { CircularProgressIndicator } from "@plane/ui";
+// helpers
+import { getProgress } from "@/helpers/common.helper";
 // hooks
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
@@ -33,10 +35,13 @@ export const InitiativeInfoIndicatorItem: FC<Props> = observer((props) => {
     ? Object.values(omit(initiativeAnalytics, "overdue_issues")).reduce((acc, val) => acc + val, 0)
     : 0;
 
-  const completePercentage = initiativeAnalytics
-    ? Math.round(((initiativeAnalytics.completed_issues + initiativeAnalytics.cancelled_issues) / totalIssues) * 100)
+  const completedIssue = initiativeAnalytics
+    ? initiativeAnalytics.completed_issues + initiativeAnalytics.cancelled_issues
     : 0;
-  if (!hasProject) return <></>;
+
+  const completePercentage = getProgress(completedIssue, totalIssues);
+
+  if (!hasProject || totalIssues === 0) return <></>;
   return (
     <div className="flex-shrink-0">
       <CircularProgressIndicator

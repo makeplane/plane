@@ -3,25 +3,37 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Plus, StickyNote as StickyIcon, X } from "lucide-react";
+// plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
+// plane ui
 import { RecentStickyIcon, StickyNoteIcon, Tooltip } from "@plane/ui";
+// plane utils
 import { cn } from "@plane/utils";
+// hooks
 import { useCommandPalette } from "@/hooks/store";
 import { useSticky } from "@/hooks/use-stickies";
+// components
+import { STICKY_COLORS_LIST } from "../editor/sticky-editor/color-palette";
 import { AllStickiesModal } from "./modal";
 import { StickyNote } from "./sticky";
 
 export const StickyActionBar = observer(() => {
-  const { workspaceSlug } = useParams();
+  // states
   const [isExpanded, setIsExpanded] = useState(false);
   const [newSticky, setNewSticky] = useState(false);
   const [showRecentSticky, setShowRecentSticky] = useState(false);
+  // navigation
+  const { workspaceSlug } = useParams();
+  // refs
   const ref = useRef(null);
-
-  // hooks
+  // store hooks
   const { stickies, activeStickyId, recentStickyId, updateActiveStickyId, fetchRecentSticky, toggleShowNewSticky } =
     useSticky();
   const { toggleAllStickiesModal, allStickiesModal } = useCommandPalette();
+  // derived values
+  const recentStickyBackgroundColor = recentStickyId
+    ? STICKY_COLORS_LIST.find((c) => c.key === stickies[recentStickyId].background_color)?.backgroundColor
+    : STICKY_COLORS_LIST[0].backgroundColor;
 
   useSWR(
     workspaceSlug ? `WORKSPACE_STICKIES_RECENT_${workspaceSlug}` : null,
@@ -63,7 +75,7 @@ export const StickyActionBar = observer(() => {
                 <div
                   className="absolute top-0 right-0 h-full w-full"
                   style={{
-                    background: `linear-gradient(to top, ${stickies[recentStickyId]?.color}, transparent)`,
+                    background: `linear-gradient(to top, ${recentStickyBackgroundColor}, transparent)`,
                   }}
                 />
               </div>
@@ -75,9 +87,9 @@ export const StickyActionBar = observer(() => {
             <button
               className="btn btn--icon rounded-full w-10 h-10 flex items-center justify-center shadow-sm bg-custom-background-100"
               onClick={() => setShowRecentSticky(true)}
-              style={{ color: stickies[recentStickyId]?.color }}
+              style={{ color: recentStickyBackgroundColor }}
             >
-              <StickyNoteIcon className={cn("size-5 rotate-90")} color={stickies[recentStickyId]?.color} />
+              <StickyNoteIcon className={cn("size-5 rotate-90")} color={recentStickyBackgroundColor} />
             </button>
           </Tooltip>
         )}

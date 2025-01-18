@@ -4,6 +4,7 @@ import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane package imports
 import { E_SORT_ORDER } from "@plane/constants";
+import { useLocalStorage } from "@plane/hooks";
 import { TFileSignedURLResponse } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { setToast, TOAST_TYPE } from "@plane/ui";
@@ -38,7 +39,10 @@ export type TInitiativeActivityOperations = {
 export const InitiativeSidebarCommentsRoot: FC<Props> = observer((props) => {
   const { workspaceSlug, initiativeId, disabled = false } = props;
   // states
-  const [sortOrder, setSortOrder] = React.useState<E_SORT_ORDER>(E_SORT_ORDER.ASC);
+  const { storedValue: sortOrder, setValue: setSortOrder } = useLocalStorage<E_SORT_ORDER>(
+    "initiative_comments_sort_order",
+    E_SORT_ORDER.ASC
+  );
   // store hooks
   const {
     initiative: {
@@ -152,7 +156,7 @@ export const InitiativeSidebarCommentsRoot: FC<Props> = observer((props) => {
       title="Comments"
       actionElement={
         <ActivitySortRoot
-          sortOrder={sortOrder}
+          sortOrder={sortOrder ?? E_SORT_ORDER.ASC}
           toggleSort={toggleSortOrder}
           className="flex-shrink-0"
           iconClassName="size-3"

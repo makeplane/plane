@@ -53,6 +53,7 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.grouper import issue_group_values, issue_on_results
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
+from plane.ee.utils.nested_issue_children import get_all_related_issues
 
 
 class EpicViewSet(BaseViewSet):
@@ -435,35 +436,6 @@ class EpicUserDisplayPropertyEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-def get_all_related_issues(issue_id):
-    query = """
-    WITH RECURSIVE Descendants AS (
-        -- Base case: Start with the given parent issue
-        SELECT id, parent_id
-        FROM issues
-        WHERE parent_id = %s
-
-        UNION ALL
-
-        -- Recursive case: Find children of each issue
-        SELECT i.id, i.parent_id
-        FROM issues i
-        INNER JOIN Descendants d ON i.parent_id = d.id
-    )
-    SELECT id
-    FROM Descendants;
-    """
-    with connection.cursor() as cursor:
-        cursor.execute(query, [issue_id])
-        result = cursor.fetchall()
-
-    # Extract IDs from the result
-    descendant_ids = [row[0] for row in result]
-
-    # Return as a queryset
-    return descendant_ids
-
-
 class EpicAnalyticsEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
@@ -482,7 +454,7 @@ class EpicAnalyticsEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
         # Annotate the counts for different states in one query
-        issues = Issue.objects.filter(
+        issues = Issue.issue_objects.filter(
             id__in=issue_ids, project_id=project_id, workspace__slug=slug
         ).aggregate(
             backlog_issues=Count("id", filter=Q(state__group="backlog")),
@@ -496,6 +468,7 @@ class EpicAnalyticsEndpoint(BaseAPIView):
 
 
 class EpicDetailEndpoint(BaseAPIView):
+    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
@@ -587,7 +560,7 @@ class EpicDetailEndpoint(BaseAPIView):
 
 
 class WorkspaceEpicEndpoint(BaseAPIView):
-
+    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
         initiative_id = request.query_params.get("initiative_id", None)
@@ -619,3 +592,47 @@ class WorkspaceEpicEndpoint(BaseAPIView):
         )
 
         return Response(epics, status=status.HTTP_200_OK)
+
+
+class EpicListAnalyticsEndpoint(BaseAPIView):
+    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id):
+        epics = (
+            Issue.objects.filter(workspace__slug=slug, project_id=project_id)
+            .filter(Q(type__isnull=False) & Q(type__is_epic=True))
+            .values_list("id", flat=True)
+        )
+
+        # fetch all the issues in which user is part of
+        issues = Issue.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+        )
+
+        result = []
+        for epic_id in epics:
+            # get all the issues of the particular epic
+            issue_ids = get_all_related_issues(epic_id)
+
+            completed_issues = (
+                issues.filter(
+                    id__in=issue_ids, project_id=project_id, workspace__slug=slug
+                )
+                .filter(state__group="completed")
+                .count()
+            )
+
+            total_issues = issues.filter(
+                id__in=issue_ids, project_id=project_id, workspace__slug=slug
+            ).count()
+
+            result.append(
+                {
+                    "epic_id": epic_id,
+                    "total_issues": total_issues,
+                    "completed_issues": completed_issues,
+                }
+            )
+
+        return Response(result, status=status.HTTP_200_OK)

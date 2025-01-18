@@ -1,4 +1,5 @@
 // helpers
+import { STICKIES_PER_PAGE } from "@plane/constants";
 import { TSticky } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -19,13 +20,14 @@ export class StickyService extends APIService {
 
   async getStickies(
     workspaceSlug: string,
-    cursor?: string,
-    per_page?: number
+    cursor: string,
+    query?: string
   ): Promise<{ results: TSticky[]; total_pages: number }> {
     return this.get(`/api/workspaces/${workspaceSlug}/stickies/`, {
       params: {
-        cursor: cursor || `5:0:0`,
-        per_page: per_page || 5,
+        cursor,
+        per_page: STICKIES_PER_PAGE,
+        query,
       },
     })
       .then((res) => res?.data)

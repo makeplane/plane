@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { MessageCircle, Rocket } from "lucide-react";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { useMember, useUser } from "@/hooks/store";
+import { useMember, useUser, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions } from "@/plane-web/constants";
 import { useProjectUpdates } from "@/plane-web/hooks/store/projects/use-project-updates";
 import { EProjectUpdateStatus, TProjectUpdate } from "@/plane-web/types";
 import { CommentList } from "./comments/comment-list";
@@ -49,12 +51,20 @@ export const UpdateBlock = observer((props: TProps) => {
   const { getUserDetails } = useMember();
   const { data: currentUser } = useUser();
   const { getUpdateById } = useProjectUpdates();
+  const { allowPermissions } = useUserPermissions();
 
   const updateData = getUpdateById(updateId);
 
   if (!updateData) return null;
 
   const icon = conf[updateData?.status].icon;
+
+  const isProjectAdmin = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug.toString(),
+    projectId.toString()
+  );
 
   return isEditing ? (
     <NewUpdate
@@ -87,16 +97,17 @@ export const UpdateBlock = observer((props: TProps) => {
               </div>
             </div>
             {/* quick actions */}
-            <UpdateQuickActions
-              isCreator={updateData.created_by === currentUser?.id}
-              updateId={updateData.id}
-              operations={{
-                remove: handleUpdateOperations.remove,
-                update: () => {
-                  setIsEditing(true);
-                },
-              }}
-            />
+            {isProjectAdmin && (
+              <UpdateQuickActions
+                updateId={updateData.id}
+                operations={{
+                  remove: handleUpdateOperations.remove,
+                  update: () => {
+                    setIsEditing(true);
+                  },
+                }}
+              />
+            )}
           </div>
 
           {/* Update */}

@@ -3,6 +3,8 @@ from .base import (
     InitiativeProjectEndpoint,
     InitiativeLabelEndpoint,
     InitiativeAnalyticsEndpoint,
+    WorkspaceInitiativeAnalytics,
+    InitiativeEpicAnalytics,
 )
 
 from .link import InitiativeLinkViewSet
