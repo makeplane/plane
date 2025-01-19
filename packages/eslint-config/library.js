@@ -50,6 +50,11 @@ module.exports = {
         groups: ["builtin", "external", "internal", "parent", "sibling"],
         pathGroups: [
           {
+            pattern: "react",
+            group: "external",
+            position: "before",
+          },
+          {
             pattern: "@plane/**",
             group: "external",
             position: "after",
