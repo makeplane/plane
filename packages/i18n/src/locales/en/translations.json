@@ -316,5 +316,29 @@
   "change_parent_issue": "Change parent issue",
   "remove_parent_issue": "Remove parent issue",
   "add_parent": "Add parent",
-  "loading_members": "Loading members..."
+  "loading_members": "Loading members...",
+  "project_modules": {
+    "status": {
+      "backlog": "Backlog",
+      "planned": "Planned",
+      "in_progress": "In Progress",
+      "paused": "Paused",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "layout": {
+      "list": "List layout",
+      "board": "Gallery layout",
+      "timeline": "Timeline layout"
+    },
+    "order_by": {
+      "name": "Name",
+      "progress": "Progress",
+      "issues": "Number of issues",
+      "due_date": "Due date",
+      "created_at": "Created date",
+      "manual": "Manual"
+    }
+  }
+
 }

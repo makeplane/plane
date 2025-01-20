@@ -2,13 +2,15 @@
 
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
+import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { CustomMenu, Row } from "@plane/ui";
-import { MODULE_VIEW_LAYOUTS } from "@/constants/module";
 import { useModuleFilter, useProject } from "@/hooks/store";
 
 export const ModulesListMobileHeader = observer(() => {
   const { currentProjectDetails } = useProject();
   const { updateDisplayFilters } = useModuleFilter();
+  const { t } = useTranslation();
 
   return (
     <div className="flex justify-start md:hidden">
@@ -35,7 +37,7 @@ export const ModulesListMobileHeader = observer(() => {
               className="flex items-center gap-2"
             >
               <layout.icon className="w-3 h-3" />
-              <div className="text-custom-text-300">{layout.title}</div>
+              <div className="text-custom-text-300">{t(layout.title)}</div>
             </CustomMenu.MenuItem>
           );
         })}

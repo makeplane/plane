@@ -5,8 +5,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ListFilter, Search, X } from "lucide-react";
 // plane helpers
+import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
+import { useTranslation } from "@plane/i18n";
 import { TModuleFilters } from "@plane/types";
 // ui
 import { Tooltip } from "@plane/ui";
@@ -16,12 +18,12 @@ import { cn } from "@plane/utils";
 import { FiltersDropdown } from "@/components/issues";
 import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules/dropdowns";
 // constants
-import { MODULE_VIEW_LAYOUTS } from "@/constants/module";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useModuleFilter } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// i18n
 
 export const ModuleViewHeader: FC = observer(() => {
   // refs
@@ -42,6 +44,7 @@ export const ModuleViewHeader: FC = observer(() => {
     updateFilters,
     updateSearchQuery,
   } = useModuleFilter();
+  const { t } = useTranslation();
 
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "" ? true : false);
@@ -163,7 +166,7 @@ export const ModuleViewHeader: FC = observer(() => {
       </FiltersDropdown>
       <div className="hidden md:flex items-center gap-1 rounded bg-custom-background-80 p-1">
         {MODULE_VIEW_LAYOUTS.map((layout) => (
-          <Tooltip key={layout.key} tooltipContent={layout.title} isMobile={isMobile}>
+          <Tooltip key={layout.key} tooltipContent={t(layout.title)} isMobile={isMobile}>
             <button
               type="button"
               className={cn(
