@@ -37,7 +37,7 @@ const projectPageVersionService = new ProjectPageVersionService();
 const PageDetailsPage = observer(() => {
   const { workspaceSlug, projectId, pageId } = useParams();
   // store hooks
-  const { createPage, getPageById } = usePageStore(EPageStoreType.PROJECT);
+  const { createPage, fetchPageDetails } = usePageStore(EPageStoreType.PROJECT);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
     storeType: EPageStoreType.PROJECT,
@@ -45,7 +45,7 @@ const PageDetailsPage = observer(() => {
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
-  const { canCurrentUserAccessPage, id, name, updateDescription } = page;
+  const { canCurrentUserAccessPage, id, name, updateDescription } = page ?? {};
   // entity search handler
   const fetchEntityCallback = useCallback(
     async (payload: TSearchEntityRequestPayload) =>
@@ -61,7 +61,7 @@ const PageDetailsPage = observer(() => {
   const { error: pageDetailsError } = useSWR(
     workspaceSlug && projectId && pageId ? `PAGE_DETAILS_${pageId}` : null,
     workspaceSlug && projectId && pageId
-      ? () => getPageById(workspaceSlug?.toString(), projectId?.toString(), pageId.toString())
+      ? () => fetchPageDetails(workspaceSlug?.toString(), projectId?.toString(), pageId.toString())
       : null,
     {
       revalidateIfStale: true,
@@ -78,8 +78,8 @@ const PageDetailsPage = observer(() => {
         return await projectPageVersionService.fetchAllVersions(workspaceSlug.toString(), projectId.toString(), pageId);
       },
       fetchDescriptionBinary: async () => {
-        if (!workspaceSlug || !projectId || !page.id) return;
-        return await projectPageService.fetchDescriptionBinary(workspaceSlug.toString(), projectId.toString(), page.id);
+        if (!workspaceSlug || !projectId || !id) return;
+        return await projectPageService.fetchDescriptionBinary(workspaceSlug.toString(), projectId.toString(), id);
       },
       fetchEntity: fetchEntityCallback,
       fetchVersionDetails: async (pageId, versionId) => {
@@ -92,9 +92,9 @@ const PageDetailsPage = observer(() => {
         );
       },
       getRedirectionLink: (pageId) => `/${workspaceSlug}/projects/${projectId}/pages/${pageId}`,
-      updateDescription,
+      updateDescription: updateDescription ?? (async () => {}),
     }),
-    [createPage, fetchEntityCallback, page.id, projectId, updateDescription, workspaceSlug]
+    [createPage, fetchEntityCallback, id, projectId, updateDescription, workspaceSlug]
   );
   // page root config
   const pageRootConfig: TPageRootConfig = useMemo(
@@ -148,6 +148,8 @@ const PageDetailsPage = observer(() => {
         </Link>
       </div>
     );
+
+  if (!page) return null;
 
   return (
     <>

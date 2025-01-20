@@ -45,7 +45,7 @@ export const useFavoriteItemDetails = (workspaceSlug: string, favorite: IFavorit
       itemIcon = getFavoriteItemIcon("project", currentProjectDetails?.logo_props || favoriteItemLogoProps);
       break;
     case "page":
-      itemTitle = getPageName(pageDetail.name || favoriteItemName);
+      itemTitle = getPageName(pageDetail?.name || favoriteItemName);
       itemIcon = getFavoriteItemIcon("page", pageDetail?.logo_props || favoriteItemLogoProps);
       break;
     case "view":

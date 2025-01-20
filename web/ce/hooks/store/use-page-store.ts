@@ -20,5 +20,5 @@ export const usePageStore = <T extends EPageStoreType>(storeType: T): TReturnTyp
     return context.projectPages;
   }
 
-  return context.projectPages;
+  throw new Error(`Invalid store type: ${storeType}`);
 };

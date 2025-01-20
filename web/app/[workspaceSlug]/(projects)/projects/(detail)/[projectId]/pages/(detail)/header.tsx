@@ -38,6 +38,8 @@ export const PageDetailsHeader = observer(() => {
     pageId: pageId?.toString() ?? "",
     storeType: EPageStoreType.PROJECT,
   });
+  if (!page) return null;
+  // derived values
   const { name, logo_props, updatePageLogo, isContentEditable } = page;
   // use platform
   const { isMobile } = usePlatformOS();
