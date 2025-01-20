@@ -316,5 +316,22 @@
   "remove_parent_issue": "Eliminar problema padre",
   "add_parent": "Agregar padre",
   "loading_members": "Cargando miembros...",
-  "inbox": "bandeja de entrada"
+  "inbox": "bandeja de entrada",
+  "project_view": {
+    "access": {
+      "public": "Público",
+      "private": "Privado"
+    },
+    "sort_by": {
+      "created_at": "Fecha de creación",
+      "updated_at": "Fecha de actualización",
+      "name": "Nombre"
+    }
+  },
+  "common": {
+    "order_by": {
+      "asc": "Ascendente",
+      "desc": "Descendente"
+    }
+  }
 }

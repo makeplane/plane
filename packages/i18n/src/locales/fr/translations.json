@@ -316,5 +316,22 @@
   "remove_parent_issue": "Supprimer le problème parent",
   "add_parent": "Ajouter un parent",
   "loading_members": "Chargement des membres...",
-  "inbox": "Boîte de réception"
+  "inbox": "Boîte de réception",
+  "project_view": {
+    "access": {
+      "public": "Public",
+      "private": "Privé"
+    },
+    "sort_by": {
+      "created_at": "Date de création",
+      "updated_at": "Date de modification",
+      "name": "Nom"
+    }
+  },
+  "common": {
+    "order_by": {
+      "asc": "Croissant",
+      "desc": "Décroissant"
+    }
+  }
 }
