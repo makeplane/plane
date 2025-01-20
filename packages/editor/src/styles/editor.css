@@ -25,7 +25,7 @@
 .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;
-  color: rgb(var(--color-text-400));
+  color: var(--color-placeholder);
   pointer-events: none;
   height: 0;
 }
@@ -34,7 +34,7 @@
 .ProseMirror p.is-empty::before {
   content: attr(data-placeholder);
   float: left;
-  color: rgb(var(--color-text-400));
+  color: var(--color-placeholder);
   pointer-events: none;
   height: 0;
 }
@@ -192,7 +192,7 @@ ul[data-type="taskList"] li > div {
 
 ul[data-type="taskList"] li[data-checked="true"] {
   & > div > p.editor-paragraph-block {
-    color: rgb(var(--color-text-400));
+    color: var(--color-placeholder);
   }
 
   [data-text-color] {
