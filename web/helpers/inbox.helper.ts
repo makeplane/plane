@@ -96,7 +96,7 @@ export const INBOX_STATUS: {
   status: TInboxIssueStatus;
   icon: LucideIcon;
   title: string;
-  description: (snoozedTillDate: Date) => string;
+  description: () => string;
   textColor: (snoozeDatePassed: boolean) => string;
   bgColor: (snoozeDatePassed: boolean) => string;
 }[] = INBOX_STATUS_CONSTANTS.map((s) => ({

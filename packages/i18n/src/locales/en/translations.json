@@ -329,7 +329,7 @@
       },
       "snoozed": {
         "title": "Snoozed",
-        "description": "Snoozed"
+        "description": "{days, plural, one{# day} other{# days}} to go"
       },
       "accepted": {
         "title": "Accepted",

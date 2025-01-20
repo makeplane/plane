@@ -329,7 +329,7 @@
       },
       "snoozed": {
         "title": "Reporté",
-        "description": "Reporté"
+        "description": "{days, plural, one{# jour} other{# jours}} restants"
       },
       "accepted": {
         "title": "Accepté",

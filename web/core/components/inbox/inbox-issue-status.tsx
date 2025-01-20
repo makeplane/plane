@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 // helpers
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@/helpers/common.helper";
+import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
 // store
 import { INBOX_STATUS } from "@/helpers/inbox.helper";
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
@@ -24,7 +25,9 @@ export const InboxIssueStatus: React.FC<Props> = observer((props) => {
   const isSnoozedDatePassed = inboxIssue.status === 0 && new Date(inboxIssue.snoozed_till ?? "") < new Date();
   if (!inboxIssueStatusDetail || isSnoozedDatePassed) return <></>;
 
-  const description = t(inboxIssueStatusDetail.description(new Date(inboxIssue.snoozed_till ?? "")));
+  const description = t(inboxIssueStatusDetail.description(), {
+    days: findHowManyDaysLeft(new Date(inboxIssue.snoozed_till ?? "")),
+  });
 
   return (
     <div

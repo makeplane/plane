@@ -328,7 +328,7 @@
       },
       "snoozed": {
         "title": "已暂停",
-        "description": "已暂停"
+        "description": "还剩{days}天"
       },
       "accepted": {
         "title": "已接受",

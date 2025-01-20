@@ -329,7 +329,7 @@
       },
       "snoozed": {
         "title": "Pospuesto",
-        "description": "Pospuesto"
+        "description": "{days, plural, one{# día} other{# días}} restantes"
       },
       "accepted": {
         "title": "Aceptado",

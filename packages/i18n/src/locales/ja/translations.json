@@ -329,7 +329,7 @@
       },
       "snoozed": {
         "title": "スヌーズ中",
-        "description": "スヌーズ中"
+        "description": "残り{days}日"
       },
       "accepted": {
         "title": "承認済み",
