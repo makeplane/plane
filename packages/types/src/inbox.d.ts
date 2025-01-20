@@ -38,10 +38,7 @@ export type TInboxIssueFilter = {
 // sorting filters
 export type TInboxIssueSortingKeys = "order_by" | "sort_by";
 
-export type TInboxIssueSortingOrderByKeys =
-  | "issue__created_at"
-  | "issue__updated_at"
-  | "issue__sequence_id";
+export type TInboxIssueSortingOrderByKeys = "issue__created_at" | "issue__updated_at" | "issue__sequence_id";
 
 export type TInboxIssueSortingSortByKeys = "asc" | "desc";
 

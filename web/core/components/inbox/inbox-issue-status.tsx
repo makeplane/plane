@@ -1,10 +1,11 @@
 import React from "react";
 import { observer } from "mobx-react";
 // constants
-import { INBOX_STATUS } from "@/constants/inbox";
 // helpers
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@/helpers/common.helper";
 // store
+import { INBOX_STATUS } from "@/helpers/inbox.helper";
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
 type Props = {
@@ -15,13 +16,15 @@ type Props = {
 
 export const InboxIssueStatus: React.FC<Props> = observer((props) => {
   const { inboxIssue, iconSize = 16, showDescription = false } = props;
+  //hooks
+  const { t } = useTranslation();
   // derived values
   const inboxIssueStatusDetail = INBOX_STATUS.find((s) => s.status === inboxIssue.status);
 
   const isSnoozedDatePassed = inboxIssue.status === 0 && new Date(inboxIssue.snoozed_till ?? "") < new Date();
   if (!inboxIssueStatusDetail || isSnoozedDatePassed) return <></>;
 
-  const description = inboxIssueStatusDetail.description(new Date(inboxIssue.snoozed_till ?? ""));
+  const description = t(inboxIssueStatusDetail.description(new Date(inboxIssue.snoozed_till ?? "")));
 
   return (
     <div
@@ -34,9 +37,7 @@ export const InboxIssueStatus: React.FC<Props> = observer((props) => {
       <div className={`flex items-center gap-1`}>
         <inboxIssueStatusDetail.icon size={iconSize} className="flex-shrink-0" />
         <div className="font-medium text-xs whitespace-nowrap">
-          {inboxIssue?.status === 0 && inboxIssue?.snoozed_till
-            ? inboxIssueStatusDetail.description(inboxIssue?.snoozed_till)
-            : inboxIssueStatusDetail.title}
+          {inboxIssue?.status === 0 && inboxIssue?.snoozed_till ? description : t(inboxIssueStatusDetail.title)}
         </div>
       </div>
       {showDescription && <div className="text-sm whitespace-nowrap">{description}</div>}

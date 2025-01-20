@@ -316,5 +316,43 @@
   "remove_parent_issue": "Eliminar problema padre",
   "add_parent": "Agregar padre",
   "loading_members": "Cargando miembros...",
-  "inbox": "bandeja de entrada"
+  "inbox": "bandeja de entrada",
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "Pendiente",
+        "description": "Pendiente"
+      },
+      "declined": {
+        "title": "Rechazado",
+        "description": "Rechazado"
+      },
+      "snoozed": {
+        "title": "Pospuesto",
+        "description": "Pospuesto"
+      },
+      "accepted": {
+        "title": "Aceptado",
+        "description": "Aceptado"
+      },
+      "duplicate": {
+        "title": "Duplicado",
+        "description": "Duplicado"
+      }
+    },
+    "source": {
+      "in-app": "en la aplicación"
+    },
+    "order_by": {
+      "created_at": "Creado el",
+      "updated_at": "Actualizado el",
+      "id": "Identificador"
+    }
+  },
+  "common": {
+    "sort": {
+      "asc": "Ascendente",
+      "desc": "Descendente"
+    }
+  }
 }

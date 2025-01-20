@@ -316,5 +316,43 @@
   "change_parent_issue": "Change parent issue",
   "remove_parent_issue": "Remove parent issue",
   "add_parent": "Add parent",
-  "loading_members": "Loading members..."
+  "loading_members": "Loading members...",
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "Pending",
+        "description": "Pending"
+      },
+      "declined": {
+        "title": "Declined",
+        "description": "Declined"
+      },
+      "snoozed": {
+        "title": "Snoozed",
+        "description": "Snoozed"
+      },
+      "accepted": {
+        "title": "Accepted",
+        "description": "Accepted"
+      },
+      "duplicate": {
+        "title": "Duplicate",
+        "description": "Duplicate"
+      }
+    },
+    "source": {
+      "in-app": "in-app"
+    },
+    "order_by": {
+      "created_at": "Created at",
+      "updated_at": "Updated at",
+      "id": "ID"
+    }
+  },
+  "common": {
+    "sort": {
+      "asc": "Ascending",
+      "desc": "Descending"
+    }
+  }
 }

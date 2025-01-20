@@ -316,5 +316,43 @@
   "remove_parent_issue": "親問題を削除",
   "add_parent": "親問題を追加",
   "loading_members": "メンバーを読み込んでいます...",
-  "inbox": "受信箱"
+  "inbox": "受信箱",
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "保留中",
+        "description": "保留中"
+      },
+      "declined": {
+        "title": "却下",
+        "description": "却下"
+      },
+      "snoozed": {
+        "title": "スヌーズ中",
+        "description": "スヌーズ中"
+      },
+      "accepted": {
+        "title": "承認済み",
+        "description": "承認済み"
+      },
+      "duplicate": {
+        "title": "重複",
+        "description": "重複"
+      }
+    },
+    "source": {
+      "in-app": "アプリ内"
+    },
+    "order_by": {
+      "created_at": "作成日時",
+      "updated_at": "更新日時",
+      "id": "識別番号"
+    }
+  },
+  "common": {
+    "sort": {
+      "asc": "昇順",
+      "desc": "降順"
+    }
+  }
 }

@@ -1,16 +1,18 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { TInboxIssueStatus } from "@plane/types";
 // constants
 import { Tag } from "@plane/ui";
-import { INBOX_STATUS } from "@/constants/inbox";
 // hooks
+import { INBOX_STATUS } from "@/helpers/inbox.helper";
 import { useProjectInbox } from "@/hooks/store";
 
 export const InboxIssueAppliedFiltersStatus: FC = observer(() => {
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
+  const { t } = useTranslation();
   // derived values
   const filteredValues = inboxFilters?.status || [];
   const currentOptionDetail = (status: TInboxIssueStatus) => INBOX_STATUS.find((s) => s.status === status) || undefined;
@@ -30,7 +32,7 @@ export const InboxIssueAppliedFiltersStatus: FC = observer(() => {
             <div className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden">
               <optionDetail.icon className={`w-3 h-3 ${optionDetail?.textColor(false)}`} />
             </div>
-            <div className="text-xs truncate">{optionDetail?.title}</div>
+            <div className="text-xs truncate">{t(optionDetail?.title)}</div>
             {handleFilterValue(optionDetail?.status).length >= 1 && (
               <div
                 className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
