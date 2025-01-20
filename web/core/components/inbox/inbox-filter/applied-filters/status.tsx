@@ -1,13 +1,13 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
+import { INBOX_STATUS, TInboxIssueStatus } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TInboxIssueStatus } from "@plane/types";
 // constants
 import { Tag } from "@plane/ui";
 // hooks
-import { INBOX_STATUS } from "@/helpers/inbox.helper";
 import { useProjectInbox } from "@/hooks/store";
+import { InboxStatusIcon } from "../../inbox-status-icon";
 
 export const InboxIssueAppliedFiltersStatus: FC = observer(() => {
   // hooks
@@ -30,7 +30,7 @@ export const InboxIssueAppliedFiltersStatus: FC = observer(() => {
         return (
           <div key={value} className="relative flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
             <div className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden">
-              <optionDetail.icon className={`w-3 h-3 ${optionDetail?.textColor(false)}`} />
+              <InboxStatusIcon type={optionDetail?.status} className={`w-3 h-3 ${optionDetail?.textColor(false)}`} />
             </div>
             <div className="text-xs truncate">{t(optionDetail?.title)}</div>
             {handleFilterValue(optionDetail?.status).length >= 1 && (

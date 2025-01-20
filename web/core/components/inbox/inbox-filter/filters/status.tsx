@@ -1,14 +1,14 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 // types
+import { INBOX_STATUS, TInboxIssueStatus } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TInboxIssueStatus } from "@plane/types";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
 // constants
 // hooks
-import { INBOX_STATUS } from "@/helpers/inbox.helper";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
+import { InboxStatusIcon } from "../../inbox-status-icon";
 
 type Props = {
   searchQuery: string;
@@ -54,7 +54,7 @@ export const FilterStatus: FC<Props> = observer((props) => {
                 key={status.key}
                 isChecked={filterValue?.includes(status.status) ? true : false}
                 onClick={() => handleStatusFilterSelect(status.status)}
-                icon={<status.icon className={`h-3.5 w-3.5 ${status?.textColor(false)}`} />}
+                icon={<InboxStatusIcon type={status.status} className={`h-3.5 w-3.5 ${status?.textColor(false)}`} />}
                 title={t(status.title)}
               />
             ))

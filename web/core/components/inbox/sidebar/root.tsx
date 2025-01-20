@@ -2,7 +2,7 @@
 
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { TInboxIssueCurrentTab } from "@plane/types";
+import { TInboxIssueCurrentTab } from "@plane/constants";
 import { Header, Loader, EHeaderVariant } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/empty-state";

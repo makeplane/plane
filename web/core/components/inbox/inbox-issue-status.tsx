@@ -2,12 +2,13 @@ import React from "react";
 import { observer } from "mobx-react";
 // constants
 // helpers
+import { INBOX_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@/helpers/common.helper";
 import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
 // store
-import { INBOX_STATUS } from "@/helpers/inbox.helper";
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+import { InboxStatusIcon } from "./inbox-status-icon";
 
 type Props = {
   inboxIssue: IInboxIssueStore;
@@ -38,7 +39,7 @@ export const InboxIssueStatus: React.FC<Props> = observer((props) => {
       )}
     >
       <div className={`flex items-center gap-1`}>
-        <inboxIssueStatusDetail.icon size={iconSize} className="flex-shrink-0" />
+        <InboxStatusIcon type={inboxIssue?.status} size={iconSize} className="flex-shrink-0" />
         <div className="font-medium text-xs whitespace-nowrap">
           {inboxIssue?.status === 0 && inboxIssue?.snoozed_till ? description : t(inboxIssueStatusDetail.title)}
         </div>

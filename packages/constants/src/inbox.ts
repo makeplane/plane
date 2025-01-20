@@ -1,5 +1,34 @@
+import { TInboxDuplicateIssueDetails, TIssue } from "@plane/types";
+
+export enum EInboxIssueCurrentTab {
+  OPEN = "open",
+  CLOSED = "closed",
+}
+
+export enum EInboxIssueStatus {
+  PENDING = -2,
+  DECLINED = -1,
+  SNOOZED = 0,
+  ACCEPTED = 1,
+  DUPLICATE = 2,
+}
+
+export type TInboxIssueCurrentTab = EInboxIssueCurrentTab;
+export type TInboxIssueStatus = EInboxIssueStatus;
+export type TInboxIssue = {
+  id: string;
+  status: TInboxIssueStatus;
+  snoozed_till: Date | null;
+  duplicate_to: string | undefined;
+  source: string;
+  issue: TIssue;
+  created_by: string;
+  duplicate_issue_detail: TInboxDuplicateIssueDetails | undefined;
+};
+
 export const INBOX_STATUS: {
   key: string;
+  status: TInboxIssueStatus;
   title: string;
   description: () => string;
   textColor: (snoozeDatePassed: boolean) => string;
@@ -8,6 +37,7 @@ export const INBOX_STATUS: {
   {
     key: "pending",
     title: "inbox_issue.status.pending.title",
+    status: EInboxIssueStatus.PENDING,
     description: () => `inbox_issue.status.pending.description`,
     textColor: (snoozeDatePassed: boolean = false) =>
       snoozeDatePassed ? "" : "text-[#AB6400]",
@@ -17,6 +47,7 @@ export const INBOX_STATUS: {
   {
     key: "declined",
     title: "inbox_issue.status.declined.title",
+    status: EInboxIssueStatus.DECLINED,
     description: () => `inbox_issue.status.declined.description`,
     textColor: (snoozeDatePassed: boolean = false) =>
       snoozeDatePassed ? "" : "text-[#CE2C31]",
@@ -26,6 +57,7 @@ export const INBOX_STATUS: {
   {
     key: "snoozed",
     title: "inbox_issue.status.snoozed.title",
+    status: EInboxIssueStatus.SNOOZED,
     description: () => `inbox_issue.status.snoozed.description`,
     textColor: (snoozeDatePassed: boolean = false) =>
       snoozeDatePassed ? "text-red-500" : "text-custom-text-400",
@@ -35,6 +67,7 @@ export const INBOX_STATUS: {
   {
     key: "accepted",
     title: "inbox_issue.status.accepted.title",
+    status: EInboxIssueStatus.ACCEPTED,
     description: () => `inbox_issue.status.accepted.description`,
     textColor: (snoozeDatePassed: boolean = false) =>
       snoozeDatePassed ? "" : "text-[#3E9B4F]",
@@ -44,6 +77,7 @@ export const INBOX_STATUS: {
   {
     key: "duplicate",
     title: "inbox_issue.status.duplicate.title",
+    status: EInboxIssueStatus.DUPLICATE,
     description: () => `inbox_issue.status.duplicate.description`,
     textColor: (snoozeDatePassed: boolean = false) =>
       snoozeDatePassed ? "" : "text-custom-text-200",
