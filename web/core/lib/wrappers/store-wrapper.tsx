@@ -2,7 +2,7 @@ import { ReactNode, useEffect, FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
-import { useTranslation, Language } from "@plane/i18n";
+import { useTranslation, TLanguage } from "@plane/i18n";
 // helpers
 import { applyTheme, unsetCustomCssVariables } from "@/helpers/theme.helper";
 // hooks
@@ -53,7 +53,7 @@ const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
 
   useEffect(() => {
     if (!userProfile?.language) return;
-    changeLanguage(userProfile?.language as Language);
+    changeLanguage(userProfile?.language as TLanguage);
   }, [userProfile?.language, changeLanguage]);
 
   useEffect(() => {

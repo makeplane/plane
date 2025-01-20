@@ -2,17 +2,22 @@ import React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Briefcase, Hotel, Users } from "lucide-react";
+// helpers
 import { getFileURL } from "@/helpers/file.helper";
+// hooks
 import { useCommandPalette, useEventTracker, useUser, useUserPermissions } from "@/hooks/store";
+// plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants";
 
 export const EmptyWorkspace = () => {
+  // navigation
   const { workspaceSlug } = useParams();
+  // store hooks
   const { allowPermissions } = useUserPermissions();
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const { data: currentUser } = useUser();
-
+  // derived values
   const canCreateProject = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
@@ -83,6 +88,7 @@ export const EmptyWorkspace = () => {
       },
     },
   ];
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {EMPTY_STATE_DATA.map((item) => (

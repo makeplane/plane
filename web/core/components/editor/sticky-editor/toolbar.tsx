@@ -12,7 +12,7 @@ import { Tooltip } from "@plane/ui";
 import { TOOLBAR_ITEMS, ToolbarMenuItem } from "@/constants/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { ColorPalette } from "./color-pallete";
+import { ColorPalette } from "./color-palette";
 
 type Props = {
   executeCommand: (item: ToolbarMenuItem) => void;

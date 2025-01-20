@@ -20,14 +20,14 @@ export const ProjectLinkList: FC<TProjectLinkList> = observer((props) => {
   const { linkOperations, workspaceSlug } = props;
   // hooks
   const {
-    quickLinks: { getLinksByWorkspaceId, toggleLinkModal },
+    quickLinks: { getLinksByWorkspaceId },
   } = useHome();
 
   const links = getLinksByWorkspaceId(workspaceSlug);
 
   if (links === undefined) return <WidgetLoader widgetKey={EWidgetKeys.QUICK_LINKS} />;
 
-  if (links.length === 0) return <LinksEmptyState handleCreate={() => toggleLinkModal(true)} />;
+  if (links.length === 0) return <LinksEmptyState />;
 
   return (
     <div className="relative">
