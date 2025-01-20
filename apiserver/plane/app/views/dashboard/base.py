@@ -133,10 +133,13 @@ def dashboard_overview_stats(self, request, slug):
 
     completed_issues_count = (
         Issue.issue_objects.filter(
+            (
+                Q(assignees__in=[request.user])
+                & Q(issue_assignee__deleted_at__isnull=True)
+            ),
             workspace__slug=slug,
             project__project_projectmember__is_active=True,
             project__project_projectmember__member=request.user,
-            assignees__in=[request.user],
             state__group="completed",
         )
         .filter(
