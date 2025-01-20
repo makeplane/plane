@@ -2,8 +2,9 @@ import { observer } from "mobx-react";
 // icons
 import { X } from "lucide-react";
 // constants
-import { EViewAccess, VIEW_ACCESS_SPECIFIERS } from "@/constants/views";
+import { EViewAccess } from "@plane/constants";
 // helpers
+import { VIEW_ACCESS_SPECIFIERS } from "@/helpers/views.helper";
 
 type Props = {
   editable: boolean | undefined;

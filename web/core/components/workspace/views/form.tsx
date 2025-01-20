@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // constant
-import { EIssueLayoutTypes } from "@plane/constants";
+import { EIssueLayoutTypes, EViewAccess } from "@plane/constants";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, IWorkspaceView } from "@plane/types";
 // ui
@@ -13,7 +13,6 @@ import { Button, Input, TextArea } from "@plane/ui";
 import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
-import { EViewAccess } from "@/constants/views";
 // helpers
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
 // hooks

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Layers, Lock } from "lucide-react";
 // plane constants
-import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType, EViewAccess } from "@plane/constants";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
@@ -17,7 +17,6 @@ import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelect
 // constants
 import { ViewQuickActions } from "@/components/views";
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
-import { EViewAccess } from "@/constants/views";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 import { truncateText } from "@/helpers/string.helper";

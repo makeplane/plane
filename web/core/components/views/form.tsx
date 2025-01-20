@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Layers } from "lucide-react";
 // plane constants
-import { EIssueLayoutTypes } from "@plane/constants";
+import { EIssueLayoutTypes, EViewAccess } from "@plane/constants";
 // types
 import { IProjectView, IIssueFilterOptions, IIssueDisplayProperties, IIssueDisplayFilterOptions } from "@plane/types";
 // ui
@@ -16,7 +16,6 @@ import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDr
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { ETabIndices } from "@/constants/tab-indices";
-import { EViewAccess } from "@/constants/views";
 // helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
