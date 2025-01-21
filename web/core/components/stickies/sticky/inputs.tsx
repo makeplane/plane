@@ -12,7 +12,7 @@ import { useWorkspace } from "@/hooks/store";
 import { StickyEditor } from "../../editor";
 
 type TProps = {
-  stickyData: TSticky | undefined;
+  stickyData: Partial<TSticky> | undefined;
   workspaceSlug: string;
   handleUpdate: (payload: Partial<TSticky>) => void;
   stickyId: string | undefined;

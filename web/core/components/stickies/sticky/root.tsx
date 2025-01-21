@@ -12,7 +12,7 @@ import { useSticky } from "@/hooks/use-stickies";
 import { STICKY_COLORS_LIST } from "../../editor/sticky-editor/color-palette";
 import { StickyDeleteModal } from "../delete-modal";
 import { StickyInput } from "./inputs";
-import { useStickyOperations } from "./use-operations";
+import { getRandomStickyColor, useStickyOperations } from "./use-operations";
 
 type TProps = {
   onClose?: () => void;
@@ -33,7 +33,7 @@ export const StickyNote = observer((props: TProps) => {
   // sticky operations
   const { stickyOperations } = useStickyOperations({ workspaceSlug });
   // derived values
-  const stickyData = stickyId ? stickies[stickyId] : undefined;
+  const stickyData: Partial<TSticky> = stickyId ? stickies[stickyId] : { background_color: getRandomStickyColor() };
   // const isStickiesPage = pathName?.includes("stickies");
   const backgroundColor =
     STICKY_COLORS_LIST.find((c) => c.key === stickyData?.background_color)?.backgroundColor ||
@@ -45,6 +45,7 @@ export const StickyNote = observer((props: TProps) => {
         await stickyOperations.update(stickyId, payload);
       } else {
         await stickyOperations.create({
+          ...stickyData,
           ...payload,
         });
       }
@@ -73,7 +74,7 @@ export const StickyNote = observer((props: TProps) => {
         handleClose={() => setIsDeleteModalOpen(false)}
       />
       <div
-        className={cn("w-full flex flex-col h-fit rounded p-4 group/sticky", className)}
+        className={cn("w-full flex flex-col h-fit rounded p-4 group/sticky max-h-[650px] overflow-y-scroll", className)}
         style={{
           backgroundColor,
         }}
