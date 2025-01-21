@@ -99,7 +99,9 @@ export const InputColorPicker: React.FC<InputColorPickerProps> = (props) => {
                     ref={setPopperElement}
                     style={styles.popper}
                     {...attributes.popper}
-                  ></div>
+                  >
+                    <SketchPicker color={value} onChange={handleColorChange} />
+                  </div>
                 </Popover.Panel>
               </Transition>
             </>
