@@ -1,10 +1,7 @@
 "use client";
 
-// ui
+import { MARKETING_PLANE_ONE_PAGE_LINK } from "@plane/constants";
 import { getButtonStyling } from "@plane/ui";
-// constants
-import { MARKETING_PLANE_ONE_PAGE_LINK } from "@/constants/common";
-// helpers
 import { cn } from "@/helpers/common.helper";
 
 type Props = {

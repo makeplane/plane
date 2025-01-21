@@ -10,7 +10,7 @@ import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 //ui
 // components
-import { Header, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant, Loader } from "@plane/ui";
 import { AppliedFiltersList } from "@/components/issues";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
@@ -27,10 +27,11 @@ import { getAreFiltersEqual } from "../../../utils";
 
 type Props = {
   globalViewId: string;
+  isLoading?: boolean;
 };
 
 export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
-  const { globalViewId } = props;
+  const { globalViewId, isLoading = false } = props;
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -154,14 +155,22 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
         }}
       />
 
-      <AppliedFiltersList
-        labels={workspaceLabels ?? undefined}
-        appliedFilters={appliedFilters ?? {}}
-        handleClearAllFilters={handleClearAllFilters}
-        handleRemoveFilter={handleRemoveFilter}
-        disableEditing={isLocked}
-        alwaysAllowEditing
-      />
+      {isLoading ? (
+        <Loader className="flex flex-wrap items-stretch gap-2 bg-custom-background-100 truncate my-auto">
+          <Loader.Item height="36px" width="150px" />
+          <Loader.Item height="36px" width="100px" />
+          <Loader.Item height="36px" width="300px" />
+        </Loader>
+      ) : (
+        <AppliedFiltersList
+          labels={workspaceLabels ?? undefined}
+          appliedFilters={appliedFilters ?? {}}
+          handleClearAllFilters={handleClearAllFilters}
+          handleRemoveFilter={handleRemoveFilter}
+          disableEditing={isLocked}
+          alwaysAllowEditing
+        />
+      )}
 
       {!isDefaultView ? (
         <UpdateViewComponent

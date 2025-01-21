@@ -37,3 +37,30 @@ export type TIssueCommentMap = {
 export type TIssueCommentIdMap = {
   [issue_id: string]: string[];
 };
+
+export type TIssuePublicComment = {
+  actor_detail: ActorDetail;
+  access: string;
+  actor: string;
+  attachments: any[];
+  comment_html: string;
+  comment_reactions: {
+    actor_detail: ActorDetail;
+    comment: string;
+    id: string;
+    reaction: string;
+  }[];
+  comment_stripped: string;
+  created_at: Date;
+  created_by: string;
+  id: string;
+  is_member: boolean;
+  issue: string;
+  issue_detail: IssueDetail;
+  project: string;
+  project_detail: ProjectDetail;
+  updated_at: Date;
+  updated_by: string;
+  workspace: string;
+  workspace_detail: IWorkspaceLite;
+};

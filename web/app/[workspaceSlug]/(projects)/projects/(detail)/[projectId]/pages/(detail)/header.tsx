@@ -18,6 +18,7 @@ import { getPageName } from "@/helpers/page.helper";
 import { useProjectPage, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
 
 export interface IPagesHeaderProps {
@@ -68,16 +69,7 @@ export const PageDetailsHeader = observer(() => {
               link={
                 <span>
                   <span className="hidden md:block">
-                    <BreadcrumbLink
-                      label={currentProjectDetails?.name ?? "Project"}
-                      icon={
-                        currentProjectDetails && (
-                          <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                            <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                          </span>
-                        )
-                      }
-                    />
+                    <ProjectBreadcrumb />
                   </span>
                   <span className="md:hidden">
                     <BreadcrumbLink

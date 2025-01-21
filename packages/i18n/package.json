@@ -10,7 +10,8 @@
     "lint:errors": "eslint src --ext .ts,.tsx --quiet"
   },
   "dependencies": {
-    "@plane/utils": "*"
+    "@plane/utils": "*",
+    "intl-messageformat": "^10.7.11"
   },
   "devDependencies": {
     "@plane/eslint-config": "*",

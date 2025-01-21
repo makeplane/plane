@@ -1,9 +1,8 @@
 import set from "lodash/set";
 import { observable, action, makeObservable, runInAction } from "mobx";
-// types
+// plane imports
+import { InstanceService } from "@plane/services";
 import { IInstance, IInstanceConfig } from "@plane/types";
-// services
-import { InstanceService } from "@/services/instance.service";
 // store
 import { CoreRootStore } from "@/store/root.store";
 
@@ -59,7 +58,7 @@ export class InstanceStore implements IInstanceStore {
     try {
       this.isLoading = true;
       this.error = undefined;
-      const instanceInfo = await this.instanceService.getInstanceInfo();
+      const instanceInfo = await this.instanceService.info();
       runInAction(() => {
         this.isLoading = false;
         this.instance = instanceInfo.instance;
