@@ -46,6 +46,7 @@ class IssueRelationViewSet(BaseViewSet):
             .order_by("-created_at")
             .distinct()
         )
+
         # get all blocking issues
         blocking_issues = issue_relations.filter(
             relation_type="blocked_by", related_issue_id=issue_id
@@ -97,7 +98,7 @@ class IssueRelationViewSet(BaseViewSet):
         ).values_list("related_issue_id", flat=True)
 
         queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug)
+            Issue.objects.filter(workspace__slug=slug)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
@@ -171,6 +172,7 @@ class IssueRelationViewSet(BaseViewSet):
             "created_by",
             "updated_by",
             "relation_type",
+            "type_id",
         ]
 
         response_data = {
@@ -271,11 +273,10 @@ class IssueRelationViewSet(BaseViewSet):
         related_issue = request.data.get("related_issue", None)
 
         issue_relations = IssueRelation.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
+            workspace__slug=slug, project_id=project_id
         ).filter(
-            Q(issue_id=related_issue, related_issue_id=issue_id) |
-            Q(issue_id=issue_id, related_issue_id=related_issue)
+            Q(issue_id=related_issue, related_issue_id=issue_id)
+            | Q(issue_id=issue_id, related_issue_id=related_issue)
         )
         issue_relations = issue_relations.first()
         current_instance = json.dumps(
