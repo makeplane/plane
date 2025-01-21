@@ -67,7 +67,7 @@ export const Stickies = observer((props: TProps) => {
       </div>
       {/* content */}
       <div className="mb-4 max-h-[625px] overflow-scroll">
-        <StickiesTruncated />
+        <StickiesTruncated handleClose={handleClose} />
       </div>
     </div>
   );
