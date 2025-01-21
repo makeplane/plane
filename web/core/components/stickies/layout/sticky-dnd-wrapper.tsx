@@ -15,123 +15,121 @@ import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { createRoot } from "react-dom/client";
+// plane types
 import { InstructionType } from "@plane/types";
+// plane ui
 import { DropIndicator } from "@plane/ui";
-import { cn } from "@plane/utils";
+// components
 import { StickyNote } from "../sticky";
+// helpers
 import { getInstructionFromPayload } from "./sticky.helpers";
 
-// Draggable Sticky Wrapper Component
-export const StickyDNDWrapper = observer(
-  ({
-    stickyId,
-    workspaceSlug,
-    itemWidth,
-    isLastChild,
-    isInFirstRow,
-    isInLastRow,
-    handleDrop,
-  }: {
-    stickyId: string;
-    workspaceSlug: string;
-    itemWidth: string;
-    isLastChild: boolean;
-    isInFirstRow: boolean;
-    isInLastRow: boolean;
-    handleDrop: (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => void;
-  }) => {
-    const pathName = usePathname();
-    const [isDragging, setIsDragging] = useState(false);
-    const [instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
-    const elementRef = useRef<HTMLDivElement>(null);
+type Props = {
+  stickyId: string;
+  workspaceSlug: string;
+  itemWidth: string;
+  isLastChild: boolean;
+  isInFirstRow: boolean;
+  isInLastRow: boolean;
+  handleDrop: (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => void;
+  handleLayout: () => void;
+};
 
-    useEffect(() => {
-      const element = elementRef.current;
-      if (!element) return;
+export const StickyDNDWrapper = observer((props: Props) => {
+  const { stickyId, workspaceSlug, itemWidth, isLastChild, isInFirstRow, isInLastRow, handleDrop, handleLayout } =
+    props;
+  // states
+  const [isDragging, setIsDragging] = useState(false);
+  const [instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
+  // refs
+  const elementRef = useRef<HTMLDivElement>(null);
+  // navigation
+  const pathname = usePathname();
 
-      const initialData = { id: stickyId, type: "sticky" };
+  useEffect(() => {
+    const element = elementRef.current;
+    if (!element) return;
 
-      if (pathName.includes("stickies"))
-        return combine(
-          draggable({
-            element,
-            dragHandle: element,
-            getInitialData: () => initialData,
-            onDragStart: () => {
-              setIsDragging(true);
-            },
-            onDrop: () => {
-              setIsDragging(false);
-            },
-            onGenerateDragPreview: ({ nativeSetDragImage }) => {
-              setCustomNativeDragPreview({
-                getOffset: pointerOutsideOfPreview({ x: "-200px", y: "0px" }),
-                render: ({ container }) => {
-                  const root = createRoot(container);
-                  root.render(
-                    <div className="scale-50">
-                      <div className="-m-2 max-h-[150px]">
-                        <StickyNote
-                          className={"w-[290px]"}
-                          workspaceSlug={workspaceSlug.toString()}
-                          stickyId={stickyId}
-                          showToolbar={false}
-                        />
-                      </div>
+    const initialData = { id: stickyId, type: "sticky" };
+
+    if (pathname.includes("stickies"))
+      return combine(
+        draggable({
+          element,
+          dragHandle: element,
+          getInitialData: () => initialData,
+          onDragStart: () => {
+            setIsDragging(true);
+          },
+          onDrop: () => {
+            setIsDragging(false);
+          },
+          onGenerateDragPreview: ({ nativeSetDragImage }) => {
+            setCustomNativeDragPreview({
+              getOffset: pointerOutsideOfPreview({ x: "-200px", y: "0px" }),
+              render: ({ container }) => {
+                const root = createRoot(container);
+                root.render(
+                  <div className="scale-50">
+                    <div className="-m-2 max-h-[150px]">
+                      <StickyNote
+                        className={"w-[290px]"}
+                        workspaceSlug={workspaceSlug.toString()}
+                        stickyId={stickyId}
+                        showToolbar={false}
+                      />
                     </div>
-                  );
-                  return () => root.unmount();
-                },
-                nativeSetDragImage,
-              });
-            },
-          }),
-          dropTargetForElements({
-            element,
-            canDrop: ({ source }) => source.data?.type === "sticky",
-            getData: ({ input, element }) => {
-              const blockedStates: InstructionType[] = ["make-child"];
-              if (!isLastChild) {
-                blockedStates.push("reorder-below");
-              }
+                  </div>
+                );
+                return () => root.unmount();
+              },
+              nativeSetDragImage,
+            });
+          },
+        }),
+        dropTargetForElements({
+          element,
+          canDrop: ({ source }) => source.data?.type === "sticky",
+          getData: ({ input, element }) => {
+            const blockedStates: InstructionType[] = ["make-child"];
+            if (!isLastChild) {
+              blockedStates.push("reorder-below");
+            }
 
-              return attachInstruction(initialData, {
-                input,
-                element,
-                currentLevel: 1,
-                indentPerLevel: 0,
-                mode: isLastChild ? "last-in-group" : "standard",
-                block: blockedStates,
-              });
-            },
-            onDrag: ({ self, source, location }) => {
-              const instruction = getInstructionFromPayload(self, source, location);
-              setInstruction(instruction);
-            },
-            onDragLeave: () => {
-              setInstruction(undefined);
-            },
-            onDrop: ({ self, source, location }) => {
-              setInstruction(undefined);
-              handleDrop(self, source, location);
-            },
-          })
-        );
-    }, [stickyId, isDragging]);
+            return attachInstruction(initialData, {
+              input,
+              element,
+              currentLevel: 1,
+              indentPerLevel: 0,
+              mode: isLastChild ? "last-in-group" : "standard",
+              block: blockedStates,
+            });
+          },
+          onDrag: ({ self, source, location }) => {
+            const instruction = getInstructionFromPayload(self, source, location);
+            setInstruction(instruction);
+          },
+          onDragLeave: () => {
+            setInstruction(undefined);
+          },
+          onDrop: ({ self, source, location }) => {
+            setInstruction(undefined);
+            handleDrop(self, source, location);
+          },
+        })
+      );
+  }, [handleDrop, isDragging, isLastChild, pathname, stickyId, workspaceSlug]);
 
-    return (
-      <div className="relative" style={{ width: itemWidth }}>
-        {!isInFirstRow && <DropIndicator isVisible={instruction === "reorder-above"} />}
-        <div
-          ref={elementRef}
-          className={cn("flex min-h-[300px] box-border p-2", {
-            "opacity-50": isDragging,
-          })}
-        >
-          <StickyNote key={stickyId || "new"} workspaceSlug={workspaceSlug} stickyId={stickyId} />
-        </div>
-        {!isInLastRow && <DropIndicator isVisible={instruction === "reorder-below"} />}
-      </div>
-    );
-  }
-);
+  return (
+    <div className="flex min-h-[300px] box-border p-2 flex-col" style={{ width: itemWidth }}>
+      {!isInFirstRow && <DropIndicator isVisible={instruction === "reorder-above"} />}
+      <StickyNote
+        key={stickyId || "new"}
+        workspaceSlug={workspaceSlug}
+        stickyId={stickyId}
+        handleLayout={handleLayout}
+      />
+      {!isInLastRow && <DropIndicator isVisible={instruction === "reorder-below"} />}
+    </div>
+  );
+});
