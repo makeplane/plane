@@ -35,9 +35,14 @@ from plane.db.models import (
     ProjectMember,
     ProjectPage,
     WorkspaceMember,
-    
 )
-from plane.ee.models import TeamSpaceMember, TeamSpacePage, TeamSpaceProject
+from plane.ee.models import (
+    TeamSpaceMember,
+    TeamSpacePage,
+    TeamSpaceProject,
+    Initiative,
+    TeamSpace,
+)
 
 
 class GlobalSearchEndpoint(BaseAPIView):
@@ -216,6 +221,66 @@ class GlobalSearchEndpoint(BaseAPIView):
             "name", "id", "project_id", "project__identifier", "workspace__slug"
         )
 
+    def filter_initiatives(self, query, slug, project_id, workspace_search):
+        fields = ["name"]
+        q = Q()
+        for field in fields:
+            q |= Q(**{f"{field}__icontains": query})
+
+        return (
+            Initiative.objects.filter(q, workspace__slug=slug)
+            .distinct()
+            .values("name", "id", "workspace__slug")
+        )
+
+    def filter_epics(self, query, slug, project_id, workspace_search):
+        fields = ["name", "sequence_id", "project__identifier"]
+        q = Q()
+        for field in fields:
+            if field == "sequence_id":
+                sequences = re.findall(r"\b\d+\b", query)
+                for sequence_id in sequences:
+                    q |= Q(**{"sequence_id": sequence_id})
+            else:
+                q |= Q(**{f"{field}__icontains": query})
+
+        epics = Issue.objects.filter(
+            q,
+            project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
+            workspace__slug=slug,
+            type__is_epic=True,
+        )
+
+        if workspace_search == "false" and project_id:
+            epics = epics.filter(project_id=project_id)
+
+        return epics.distinct().values(
+            "name",
+            "id",
+            "sequence_id",
+            "project__identifier",
+            "project_id",
+            "workspace__slug",
+            "type_id",
+        )
+
+    def filter_teams(self, query, slug, project_id, workspace_search):
+        fields = ["name"]
+
+        q = Q()
+        for field in fields:
+            q |= Q(**{f"{field}__icontains": query})
+
+        return (
+            TeamSpace.objects.filter(
+                q, workspace__slug=slug, members__member_id=self.request.user.id
+            )
+            .distinct()
+            .values("name", "id", "workspace__slug")
+        )
+
     def get(self, request, slug):
         query = request.query_params.get("search", False)
         workspace_search = request.query_params.get("workspace_search", "false")
@@ -232,6 +297,9 @@ class GlobalSearchEndpoint(BaseAPIView):
                         "module": [],
                         "issue_view": [],
                         "page": [],
+                        "initiative": [],
+                        "epic": [],
+                        "team": [],
                     }
                 },
                 status=status.HTTP_200_OK,
@@ -245,6 +313,9 @@ class GlobalSearchEndpoint(BaseAPIView):
             "module": self.filter_modules,
             "issue_view": self.filter_views,
             "page": self.filter_pages,
+            "initiative": self.filter_initiatives,
+            "epic": self.filter_epics,
+            "team": self.filter_teams,
         }
 
         results = {}
@@ -312,9 +383,7 @@ class SearchEndpoint(BaseAPIView):
                         )
                         .distinct()
                         .values(
-                            "member__avatar_url",
-                            "member__display_name",
-                            "member__id",
+                            "member__avatar_url", "member__display_name", "member__id"
                         )
                         .order_by("-created_at")[:count]
                     )
@@ -466,8 +535,8 @@ class SearchEndpoint(BaseAPIView):
                     ).values_list("member_id", flat=True)
 
                     team_space_pages = TeamSpacePage.objects.filter(
-                    workspace__slug=slug, team_space_id=team_id
-                ).values_list("page_id", flat=True)
+                        workspace__slug=slug, team_space_id=team_id
+                    ).values_list("page_id", flat=True)
 
                     fields = ["name"]
                     q = Q()
@@ -479,8 +548,8 @@ class SearchEndpoint(BaseAPIView):
                     pages = (
                         Page.objects.filter(
                             q,
-                            Q(pk__in=team_space_pages) | 
-                            Q(
+                            Q(pk__in=team_space_pages)
+                            | Q(
                                 project_ids__overlap=team_projects,
                                 access=0,
                                 owned_by_id__in=member_ids,
