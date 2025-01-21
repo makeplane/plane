@@ -4,6 +4,8 @@ import { Controller, useForm } from "react-hook-form";
 import { EditorRefApi } from "@plane/editor";
 // plane types
 import { TSticky } from "@plane/types";
+// plane utils
+import { isCommentEmpty } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 // components
@@ -67,7 +69,11 @@ export const StickyInput = (props: TProps) => {
               onChange(description_html);
               handleSubmit(handleFormSubmit)();
             }}
-            placeholder="Click to type here"
+            placeholder={(_, value) => {
+              const isContentEmpty = isCommentEmpty(value);
+              if (!isContentEmpty) return "";
+              return "Click to type here";
+            }}
             containerClassName="px-0 text-base min-h-[250px] w-full"
             uploadFile={async () => ""}
             showToolbar={showToolbar}
