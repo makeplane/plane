@@ -4,7 +4,8 @@ import { FC, ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-
+// plane imports
+import { useTranslation } from "@plane/i18n";
 // components
 import { JoinProject } from "@/components/auth-screens";
 import { LogoSpinner } from "@/components/common";
@@ -40,6 +41,8 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { children, isLoading: isParentLoading = false } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
@@ -178,14 +181,14 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100">
         <DetailedEmptyState
-          title="No such project exists"
-          description="To create issues or manage your work, you need to create a project or be a part of one."
+          title={t("workspace_projects.empty_state.general.title")}
+          description={t("workspace_projects.empty_state.general.description")}
           assetPath={resolvedPath}
           customPrimaryButton={
             <ComicBoxButton
-              label="Create Project"
-              title="Everything starts with a project in Plane"
-              description="A project could be a product’s roadmap, a marketing campaign, or launching a new car."
+              label={t("workspace_projects.empty_state.general.primary_button.text")}
+              title={t("workspace_projects.empty_state.general.primary_button.comic.title")}
+              description={t("workspace_projects.empty_state.general.primary_button.comic.description")}
               onClick={() => {
                 setTrackElement("Project empty state");
                 toggleCreateProjectModal(true);

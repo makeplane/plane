@@ -265,7 +265,7 @@ export const CommandModal: React.FC = observer(() => {
 
                       {!isLoading && resultsCount === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
                         <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-                          <SimpleEmptyState title={t("command_k.empty_State.search.title")} assetPath={resolvedPath} />
+                          <SimpleEmptyState title={t("command_k.empty_state.search.title")} assetPath={resolvedPath} />
                         </div>
                       )}
 
