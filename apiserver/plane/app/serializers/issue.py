@@ -33,6 +33,8 @@ from plane.db.models import (
     IssueVote,
     IssueRelation,
     State,
+    IssueVersion,
+    IssueDescriptionVersion,
 )
 
 
@@ -666,4 +668,65 @@ class IssueSubscriberSerializer(BaseSerializer):
     class Meta:
         model = IssueSubscriber
         fields = "__all__"
+        read_only_fields = ["workspace", "project", "issue"]
+
+
+class IssueVersionDetailSerializer(BaseSerializer):
+    class Meta:
+        model = IssueVersion
+        fields = [
+            "id",
+            "workspace",
+            "project",
+            "issue",
+            "parent",
+            "state",
+            "estimate_point",
+            "name",
+            "priority",
+            "start_date",
+            "target_date",
+            "assignees",
+            "sequence_id",
+            "labels",
+            "sort_order",
+            "completed_at",
+            "archived_at",
+            "is_draft",
+            "external_source",
+            "external_id",
+            "type",
+            "cycle",
+            "modules",
+            "meta",
+            "name",
+            "last_saved_at",
+            "owned_by",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = ["workspace", "project", "issue"]
+
+
+class IssueDescriptionVersionDetailSerializer(BaseSerializer):
+    class Meta:
+        model = IssueDescriptionVersion
+        fields = [
+            "id",
+            "workspace",
+            "project",
+            "issue",
+            "description_binary",
+            "description_html",
+            "description_stripped",
+            "description_json",
+            "last_saved_at",
+            "owned_by",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
         read_only_fields = ["workspace", "project", "issue"]
