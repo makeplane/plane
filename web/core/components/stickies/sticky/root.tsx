@@ -20,9 +20,10 @@ type TProps = {
   className?: string;
   stickyId: string | undefined;
   showToolbar?: boolean;
+  handleLayout?: () => void;
 };
 export const StickyNote = observer((props: TProps) => {
-  const { onClose, workspaceSlug, className = "", stickyId, showToolbar } = props;
+  const { onClose, workspaceSlug, className = "", stickyId, showToolbar, handleLayout } = props;
   // navigation
   // const pathName = usePathname();
   // states
@@ -87,7 +88,10 @@ export const StickyNote = observer((props: TProps) => {
         <StickyInput
           stickyData={stickyData}
           workspaceSlug={workspaceSlug}
-          handleUpdate={debouncedFormSave}
+          handleUpdate={(payload) => {
+            handleLayout?.();
+            debouncedFormSave(payload);
+          }}
           stickyId={stickyId}
           handleDelete={() => setIsDeleteModalOpen(true)}
           handleChange={handleChange}

@@ -19,8 +19,6 @@ import { createRoot } from "react-dom/client";
 import { InstructionType } from "@plane/types";
 // plane ui
 import { DropIndicator } from "@plane/ui";
-// plane utils
-import { cn } from "@plane/utils";
 // components
 import { StickyNote } from "../sticky";
 // helpers
@@ -34,10 +32,12 @@ type Props = {
   isInFirstRow: boolean;
   isInLastRow: boolean;
   handleDrop: (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => void;
+  handleLayout: () => void;
 };
 
 export const StickyDNDWrapper = observer((props: Props) => {
-  const { stickyId, workspaceSlug, itemWidth, isLastChild, isInFirstRow, isInLastRow, handleDrop } = props;
+  const { stickyId, workspaceSlug, itemWidth, isLastChild, isInFirstRow, isInLastRow, handleDrop, handleLayout } =
+    props;
   // states
   const [isDragging, setIsDragging] = useState(false);
   const [instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
@@ -121,17 +121,14 @@ export const StickyDNDWrapper = observer((props: Props) => {
   }, [handleDrop, isDragging, isLastChild, pathname, stickyId, workspaceSlug]);
 
   return (
-    <div className="relative" style={{ width: itemWidth }}>
+    <div className="flex min-h-[300px] box-border p-2 flex-col" style={{ width: itemWidth }}>
       {!isInFirstRow && <DropIndicator isVisible={instruction === "reorder-above"} />}
-      <div
-        // TODO: removed dragging logic for now, add it later
-        // ref={elementRef}
-        className={cn("flex min-h-[300px] box-border p-2", {
-          "opacity-50": isDragging,
-        })}
-      >
-        <StickyNote key={stickyId || "new"} workspaceSlug={workspaceSlug} stickyId={stickyId} />
-      </div>
+      <StickyNote
+        key={stickyId || "new"}
+        workspaceSlug={workspaceSlug}
+        stickyId={stickyId}
+        handleLayout={handleLayout}
+      />
       {!isInLastRow && <DropIndicator isVisible={instruction === "reorder-below"} />}
     </div>
   );

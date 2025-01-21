@@ -41,6 +41,14 @@ export const StickiesList = observer((props: TProps) => {
   const itemWidth = `${100 / columnCount}%`;
   const totalRows = Math.ceil(workspaceStickyIds.length / columnCount);
   const isStickiesPage = pathname?.includes("stickies");
+  const masonryRef = useRef<any>(null);
+
+  const handleLayout = () => {
+    if (masonryRef.current) {
+      // Force reflow
+      masonryRef.current.performLayout();
+    }
+  };
 
   // Function to determine if an item is in first or last row
   const getRowPositions = (index: number) => {
@@ -99,7 +107,7 @@ export const StickiesList = observer((props: TProps) => {
   return (
     <div className="transition-opacity duration-300 ease-in-out">
       {/* @ts-expect-error type mismatch here */}
-      <Masonry elementType="div">
+      <Masonry elementType="div" ref={masonryRef}>
         {workspaceStickyIds.map((stickyId, index) => {
           const { isInFirstRow, isInLastRow } = getRowPositions(index);
           return (
@@ -112,6 +120,7 @@ export const StickiesList = observer((props: TProps) => {
               isLastChild={index === workspaceStickyIds.length - 1}
               isInFirstRow={isInFirstRow}
               isInLastRow={isInLastRow}
+              handleLayout={handleLayout}
             />
           );
         })}
