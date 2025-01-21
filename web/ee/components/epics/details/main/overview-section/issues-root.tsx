@@ -1,15 +1,22 @@
 "use client";
 import React, { FC, useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
+// plane imports
 import { EIssueServiceType } from "@plane/constants";
 import { TIssue } from "@plane/types";
+import { getButtonStyling, LayersIcon } from "@plane/ui";
 // components
+import { SubIssuesActionButton } from "@/components/issues";
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
 import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/sub-issues/helper";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
 import { IssueList } from "@/components/issues/sub-issues/issues-list";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
+// plane web imports
+import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common";
 
 type Props = {
   workspaceSlug: string;
@@ -51,6 +58,9 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
     },
   });
   // store hooks
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail(EIssueServiceType.EPICS);
   const { toggleCreateIssueModal, toggleDeleteIssueModal } = useIssueDetail();
 
   // helpers
@@ -92,7 +102,30 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
     issueCrudState.delete.parentIssueId &&
     issueCrudState.delete.issue.id;
 
+  // derived values
+  const issue = getIssueById(epicId);
   const shouldRenderUpdateIssueModal = issueCrudState?.update?.toggle && issueCrudState?.update?.issue;
+  const hasSubIssues = (issue?.sub_issues_count ?? 0) > 0;
+
+  if (!hasSubIssues) {
+    return (
+      <SectionEmptyState
+        heading="No issues yet"
+        subHeading="Start adding issues manage and track the progress of the epic."
+        icon={<LayersIcon className="size-4" />}
+        actionElement={
+          <SubIssuesActionButton
+            issueId={epicId}
+            issueServiceType={EIssueServiceType.EPICS}
+            disabled={disabled}
+            customButton={
+              <span className={cn(getButtonStyling("accent-primary", "sm"), "font-medium px-2 py-1")}>Add issues</span>
+            }
+          />
+        }
+      />
+    );
+  }
 
   return (
     <>
