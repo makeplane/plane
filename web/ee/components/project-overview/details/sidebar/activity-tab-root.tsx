@@ -37,8 +37,6 @@ export const ProjectOverviewSidebarActivityRoot: FC<Props> = observer((props) =>
   // derived values
   const project = getProjectById(projectId);
 
-  if (!project) return null;
-
   // handlers
   const toggleSortOrder = () => setSortOrder(sortOrder === E_SORT_ORDER.ASC ? E_SORT_ORDER.DESC : E_SORT_ORDER.ASC);
 
@@ -57,6 +55,8 @@ export const ProjectOverviewSidebarActivityRoot: FC<Props> = observer((props) =>
     () => (activity ? (sortOrder === E_SORT_ORDER.DESC ? [...activity].reverse() : activity) : []),
     [sortOrder, activity]
   );
+
+  if (!project) return null;
 
   return (
     <SidebarContentWrapper
