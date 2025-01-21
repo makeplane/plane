@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef } from "react";
-import { DebouncedFunc } from "lodash";
 import { Controller, useForm } from "react-hook-form";
 // plane editor
 import { EditorRefApi } from "@plane/editor";
@@ -13,7 +12,7 @@ import { StickyEditor } from "../../editor";
 type TProps = {
   stickyData: TSticky | undefined;
   workspaceSlug: string;
-  handleUpdate: DebouncedFunc<(payload: Partial<TSticky>) => Promise<void>>;
+  handleUpdate: (payload: Partial<TSticky>) => void;
   stickyId: string | undefined;
   showToolbar?: boolean;
   handleChange: (data: Partial<TSticky>) => Promise<void>;
