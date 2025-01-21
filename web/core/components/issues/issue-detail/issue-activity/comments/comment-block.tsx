@@ -57,9 +57,11 @@ export const IssueCommentBlock: FC<TIssueCommentBlock> = observer((props) => {
       >
         {comment.actor_detail.avatar_url && comment.actor_detail.avatar_url !== "" ? (
           <img
-            src={getFileURL(comment.actor_detail.avatar_url)}
+            src={getFileURL(comment.actor_detail?.avatar_url)}
             alt={
-              comment.actor_detail.is_bot ? comment.actor_detail.first_name + " Bot" : comment.actor_detail.display_name
+              comment.actor_detail?.is_bot
+                ? comment.actor_detail?.first_name + " Bot"
+                : comment.actor_detail?.display_name
             }
             height={30}
             width={30}
@@ -67,9 +69,9 @@ export const IssueCommentBlock: FC<TIssueCommentBlock> = observer((props) => {
           />
         ) : (
           <>
-            {comment.actor_detail.is_bot
-              ? comment.actor_detail.first_name.charAt(0)
-              : comment.actor_detail.display_name.charAt(0)}
+            {comment.actor_detail?.is_bot
+              ? comment.actor_detail?.first_name.charAt(0)
+              : comment.actor_detail?.display_name.charAt(0)}
           </>
         )}
         <div
@@ -93,9 +95,9 @@ export const IssueCommentBlock: FC<TIssueCommentBlock> = observer((props) => {
         <div className="w-full truncate space-y-1">
           <div>
             <div className="text-xs capitalize">
-              {comment.actor_detail.is_bot
-                ? comment.actor_detail.first_name + " Bot"
-                : comment.actor_detail.display_name}
+              {comment.actor_detail?.is_bot
+                ? comment.actor_detail?.first_name + " Bot"
+                : comment.actor_detail?.display_name}
             </div>
             <div className="text-xs text-custom-text-200">commented {calculateTimeAgo(comment.created_at)}</div>
           </div>

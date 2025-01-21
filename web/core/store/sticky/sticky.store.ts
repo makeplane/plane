@@ -96,7 +96,7 @@ export class StickyStore implements IStickyStore {
   };
 
   fetchRecentSticky = async (workspaceSlug: string) => {
-    const response = await this.stickyService.getStickies(workspaceSlug, "1:0:0");
+    const response = await this.stickyService.getStickies(workspaceSlug, "1:0:0", undefined, 1);
     runInAction(() => {
       this.recentStickyId = response.results[0]?.id;
       this.stickies[response.results[0]?.id] = response.results[0];

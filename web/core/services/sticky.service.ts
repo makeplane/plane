@@ -21,12 +21,13 @@ export class StickyService extends APIService {
   async getStickies(
     workspaceSlug: string,
     cursor: string,
-    query?: string
+    query?: string,
+    per_page?: number
   ): Promise<{ results: TSticky[]; total_pages: number }> {
     return this.get(`/api/workspaces/${workspaceSlug}/stickies/`, {
       params: {
         cursor,
-        per_page: STICKIES_PER_PAGE,
+        per_page: per_page || STICKIES_PER_PAGE,
         query,
       },
     })
