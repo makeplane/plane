@@ -129,7 +129,8 @@ const getPriorityColumns = () => {
 
   return priorities.map((priority) => ({
     id: priority.key,
-    name: priority.title,
+    name: "",
+    i18n_name: priority.titleTranslationKey,
     icon: <PriorityIcon priority={priority?.key} />,
     payload: { priority: priority.key },
   }));

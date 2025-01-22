@@ -14,7 +14,7 @@ import UpcomingIssuesLight from "@/public/empty-state/dashboard/light/upcoming-i
 // gradients for issues by priority widget graph bars
 export const PRIORITY_GRAPH_GRADIENTS = [
   linearGradientDef(
-    "gradientUrgent",
+    "gradient_urgent",
     [
       { offset: 0, color: "#A90408" },
       { offset: 100, color: "#DF4D51" },
@@ -27,7 +27,7 @@ export const PRIORITY_GRAPH_GRADIENTS = [
     }
   ),
   linearGradientDef(
-    "gradientHigh",
+    "gradient_high",
     [
       { offset: 0, color: "#FE6B00" },
       { offset: 100, color: "#FFAC88" },
@@ -40,7 +40,7 @@ export const PRIORITY_GRAPH_GRADIENTS = [
     }
   ),
   linearGradientDef(
-    "gradientMedium",
+    "gradient_medium",
     [
       { offset: 0, color: "#F5AC00" },
       { offset: 100, color: "#FFD675" },
@@ -53,7 +53,7 @@ export const PRIORITY_GRAPH_GRADIENTS = [
     }
   ),
   linearGradientDef(
-    "gradientLow",
+    "gradient_low",
     [
       { offset: 0, color: "#1B46DE" },
       { offset: 100, color: "#4F9BF4" },
@@ -66,7 +66,7 @@ export const PRIORITY_GRAPH_GRADIENTS = [
     }
   ),
   linearGradientDef(
-    "gradientNone",
+    "gradient_none",
     [
       { offset: 0, color: "#A0A1A9" },
       { offset: 100, color: "#B9BBC6" },

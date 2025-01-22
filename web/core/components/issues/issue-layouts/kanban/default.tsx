@@ -1,5 +1,7 @@
 import { MutableRefObject } from "react";
 import { observer } from "mobx-react";
+// i18n
+import { useTranslation } from "@plane/i18n";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -89,6 +91,8 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     subGroupIndex = 0,
     isEpic = false,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // store hooks
   const storeType = useIssueStoreType();
   const issueKanBanView = useKanbanView();
@@ -160,7 +164,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                     group_by={group_by}
                     column_id={subList.id}
                     icon={subList.icon}
-                    title={subList.name}
+                    title={subList.i18n_name ? t(subList.i18n_name) : subList.name}
                     count={getGroupIssueCount(subList.id, undefined, false) ?? 0}
                     issuePayload={subList.payload}
                     disableIssueCreation={disableIssueCreation || isGroupByCreatedBy}

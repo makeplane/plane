@@ -3,7 +3,7 @@ import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import { v4 as uuidv4 } from "uuid";
 // plane constants
-import { EIssueLayoutTypes } from "@plane/constants";
+import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 // types
 import {
   IIssueDisplayFilterOptions,
@@ -18,8 +18,6 @@ import {
   TUnGroupedIssues,
 } from "@plane/types";
 import { IGanttBlock } from "@/components/gantt-chart";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { orderArrayBy } from "@/helpers/array.helper";
@@ -105,7 +103,7 @@ export const handleIssueQueryParamsByLayout = (
 
   if (!layout) return null;
 
-  const layoutOptions = ISSUE_DISPLAY_FILTERS_BY_LAYOUT[viewType][layout];
+  const layoutOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE[viewType][layout];
 
   // add filters query params
   layoutOptions.filters.forEach((option) => {

@@ -13,7 +13,7 @@ import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane constants
-import { EIssueLayoutTypes, ALL_ISSUES, EIssueServiceType } from "@plane/constants";
+import { EIssueLayoutTypes, ALL_ISSUES, EIssueServiceType, ISSUE_PRIORITIES } from "@plane/constants";
 // types
 import {
   TIssue,
@@ -32,8 +32,6 @@ import {
 } from "@plane/types";
 // components
 import { IBlockUpdateDependencyData } from "@/components/gantt-chart";
-// constants
-import { ISSUE_PRIORITIES } from "@/constants/issue";
 // helpers
 import { convertToISODateString } from "@/helpers/date-time.helper";
 // local-db

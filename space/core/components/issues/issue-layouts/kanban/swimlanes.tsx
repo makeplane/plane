@@ -1,5 +1,6 @@
 import { MutableRefObject, useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 // types
 import {
   GroupByColumnTypes,
@@ -131,10 +132,15 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
           const subGroupByVisibilityToggle = visibilitySubGroupByGroupCount(groupCount, showEmptyGroup);
 
           if (subGroupByVisibilityToggle === false) return <></>;
-
+          const { t } = useTranslation();
           return (
             <div key={`${subGroupBy}_${group.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
-              <HeaderGroupByCard groupBy={groupBy} icon={group.icon} title={group.name} count={groupCount} />
+              <HeaderGroupByCard
+                groupBy={groupBy}
+                icon={group.icon}
+                title={group.i18n_name ? t(group.i18n_name) : group.name}
+                count={groupCount}
+              />
             </div>
           );
         })}
@@ -230,6 +236,9 @@ const SubGroup: React.FC<ISubGroup> = observer((props) => {
     scrollableContainerRef,
   } = props;
 
+  // hooks
+  const { t } = useTranslation();
+
   const [isExpanded, setIsExpanded] = useState(true);
 
   const toggleExpanded = () => {
@@ -263,7 +272,7 @@ const SubGroup: React.FC<ISubGroup> = observer((props) => {
           <div className="sticky left-0 flex-shrink-0">
             <HeaderSubGroupByCard
               icon={group.icon}
-              title={group.name || ""}
+              title={group.i18n_name ? t(group.i18n_name) : group.name}
               count={issueCount}
               isExpanded={isExpanded}
               toggleExpanded={toggleExpanded}

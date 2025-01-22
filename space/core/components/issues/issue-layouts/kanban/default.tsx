@@ -1,6 +1,7 @@
 import { MutableRefObject } from "react";
 import isNil from "lodash/isNil";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 // types
 import {
   GroupByColumnTypes,
@@ -53,6 +54,9 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     showEmptyGroup = true,
   } = props;
 
+  // hooks
+  const { t } = useTranslation();
+
   const member = useMember();
   const label = useLabel();
   const cycle = useCycle();
@@ -95,7 +99,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                   <HeaderGroupByCard
                     groupBy={groupBy}
                     icon={subList.icon}
-                    title={subList.name}
+                    title={subList.i18n_name ? t(subList.i18n_name) : subList.name}
                     count={getGroupIssueCount(subList.id, undefined, false) ?? 0}
                   />
                 </div>

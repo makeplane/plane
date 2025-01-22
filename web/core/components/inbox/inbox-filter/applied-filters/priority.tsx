@@ -3,15 +3,16 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
+import { ISSUE_PRIORITIES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssuePriorities } from "@plane/types";
 import { PriorityIcon, Tag } from "@plane/ui";
-// constants
-import { ISSUE_PRIORITIES } from "@/constants/issue";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
 
 export const InboxIssueAppliedFiltersPriority: FC = observer(() => {
   // hooks
+  const { t } = useTranslation();
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   // derived values
   const filteredValues = inboxFilters?.priority || [];
@@ -35,7 +36,7 @@ export const InboxIssueAppliedFiltersPriority: FC = observer(() => {
             <div className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden">
               <PriorityIcon priority={optionDetail.key} className="h-3 w-3" />
             </div>
-            <div className="text-xs truncate">{optionDetail?.title}</div>
+            <div className="text-xs truncate">{t(optionDetail?.titleTranslationKey)}</div>
             <div
               className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
               onClick={() => handleInboxIssueFilters("priority", handleFilterValue(optionDetail?.key))}

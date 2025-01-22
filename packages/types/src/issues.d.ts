@@ -15,7 +15,7 @@ import type {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
   TIssueGroupingFilters,
-  TIssueExtraOptions
+  TIssueExtraOptions,
 } from "@plane/types";
 
 export interface IIssueCycle {
@@ -223,6 +223,7 @@ export type GroupByColumnTypes =
 export interface IGroupByColumn {
   id: string;
   name: string;
+  i18n_name?: string;
   icon?: ReactElement | undefined;
   payload: Partial<TIssue>;
   isDropDisabled?: boolean;

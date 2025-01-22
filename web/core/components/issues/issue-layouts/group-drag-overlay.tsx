@@ -1,8 +1,8 @@
 import { AlertCircle } from "lucide-react";
 // Plane
+import { ISSUE_ORDER_BY_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssueOrderByOptions } from "@plane/types";
-// constants
-import { ISSUE_ORDER_BY_OPTIONS } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // Plane-web
@@ -31,8 +31,13 @@ export const GroupDragOverlay = (props: Props) => {
     isEpic = false,
   } = props;
 
+  // hooks
+  const { t } = useTranslation();
+
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
-  const readableOrderBy = ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderByObj.key === orderBy)?.title;
+  const readableOrderBy = t(
+    ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderByObj.key === orderBy)?.titleTranslationKey || ""
+  );
 
   return (
     <div

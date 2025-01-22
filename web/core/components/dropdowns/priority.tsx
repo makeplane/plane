@@ -5,13 +5,12 @@ import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, SignalHigh } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { TIssuePriorities } from "@plane/types";
 // ui
 import { ComboDropDown, PriorityIcon, Tooltip } from "@plane/ui";
-// constants
-import { ISSUE_PRIORITIES } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -121,7 +120,11 @@ const BorderButton = (props: ButtonProps) => {
           ) : (
             <SignalHigh className="size-3" />
           ))}
-        {!hideText && <span className="flex-grow truncate">{t(priorityDetails?.key ?? "priority") ?? placeholder}</span>}
+        {!hideText && (
+          <span className="flex-grow truncate">
+            {t(priorityDetails?.titleTranslationKey ?? "common.priority") ?? placeholder}
+          </span>
+        )}
         {dropdownArrow && (
           <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
@@ -204,7 +207,11 @@ const BackgroundButton = (props: ButtonProps) => {
           ) : (
             <SignalHigh className="size-3" />
           ))}
-        {!hideText && <span className="flex-grow truncate">{t(priorityDetails?.key ?? "priority") ?? placeholder}</span>}
+        {!hideText && (
+          <span className="flex-grow truncate">
+            {t(priorityDetails?.titleTranslationKey ?? "common.priority") ?? placeholder}
+          </span>
+        )}
         {dropdownArrow && (
           <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
@@ -244,7 +251,7 @@ const TransparentButton = (props: ButtonProps) => {
   return (
     <Tooltip
       tooltipHeading={t("priority")}
-      tooltipContent={t(priorityDetails?.key ?? "none")}
+      tooltipContent={t(priorityDetails?.titleTranslationKey ?? "none")}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -289,7 +296,11 @@ const TransparentButton = (props: ButtonProps) => {
           ) : (
             <SignalHigh className="size-3" />
           ))}
-        {!hideText && <span className="flex-grow truncate">{t(priorityDetails?.key ?? "priority") ?? placeholder}</span>}
+        {!hideText && (
+          <span className="flex-grow truncate">
+            {t(priorityDetails?.titleTranslationKey ?? "common.priority") ?? placeholder}
+          </span>
+        )}
         {dropdownArrow && (
           <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
@@ -299,6 +310,8 @@ const TransparentButton = (props: ButtonProps) => {
 };
 
 export const PriorityDropdown: React.FC<Props> = (props) => {
+  //hooks
+  const { t } = useTranslation();
   const {
     button,
     buttonClassName,
@@ -312,7 +325,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     highlightUrgent = true,
     onChange,
     onClose,
-    placeholder = "Priority",
+    placeholder = t("common.priority"),
     placement,
     showTooltip = false,
     tabIndex,
@@ -340,8 +353,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
       },
     ],
   });
-  //hooks
-  const { t } = useTranslation();
+
   // next-themes
   // TODO: remove this after new theming implementation
   const { resolvedTheme } = useTheme();

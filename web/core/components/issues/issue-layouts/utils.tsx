@@ -11,7 +11,7 @@ import uniq from "lodash/uniq";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { ContrastIcon } from "lucide-react";
 // plane types
-import { EIssuesStoreType } from "@plane/constants";
+import { EIssuesStoreType, ISSUE_PRIORITIES } from "@plane/constants";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -30,8 +30,6 @@ import {
 import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
-// constants
-import { ISSUE_PRIORITIES } from "@/constants/issue";
 import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
@@ -85,7 +83,8 @@ export const getGroupByColumns = ({
     return [
       {
         id: "All Issues",
-        name: isEpic ? "All Epics" : "All Issues",
+        name: "",
+        i18n_name: isEpic ? "epic.all" : "issue.all",
         payload: {},
         icon: undefined,
       },
@@ -159,7 +158,8 @@ const getCycleColumns = (): IGroupByColumn[] | undefined => {
   });
   cycles.push({
     id: "None",
-    name: "None",
+    name: "",
+    i18n_name: "common.none",
     icon: <ContrastIcon className="h-3.5 w-3.5" />,
     payload: {},
   });
@@ -186,7 +186,8 @@ const getModuleColumns = (): IGroupByColumn[] | undefined => {
   });
   modules.push({
     id: "None",
-    name: "None",
+    name: "",
+    i18n_name: "common.none",
     icon: <DiceIcon className="h-3.5 w-3.5" />,
     payload: {},
   });
@@ -229,7 +230,8 @@ const getPriorityColumns = (): IGroupByColumn[] => {
   // map priorities to group by columns
   return priorities.map((priority) => ({
     id: priority.key,
-    name: priority.title,
+    name: "", // name is hardcoded so i18n_name is used
+    i18n_name: priority.titleTranslationKey,
     icon: <PriorityIcon priority={priority?.key} />,
     payload: { priority: priority.key },
   }));
