@@ -300,11 +300,21 @@ class IssueRelationSerializer(BaseSerializer):
         source="related_issue.sequence_id", read_only=True
     )
     name = serializers.CharField(source="related_issue.name", read_only=True)
+    type_id = serializers.UUIDField(source="issue.type.id", read_only=True)
+    is_epic = serializers.BooleanField(source="issue.type.is_epic", read_only=True)
     relation_type = serializers.CharField(read_only=True)
 
     class Meta:
         model = IssueRelation
-        fields = ["id", "project_id", "sequence_id", "relation_type", "name"]
+        fields = [
+            "id",
+            "project_id",
+            "sequence_id",
+            "relation_type",
+            "name",
+            "type_id",
+            "is_epic",
+        ]
         read_only_fields = ["workspace", "project"]
 
 
@@ -315,11 +325,21 @@ class RelatedIssueSerializer(BaseSerializer):
     )
     sequence_id = serializers.IntegerField(source="issue.sequence_id", read_only=True)
     name = serializers.CharField(source="issue.name", read_only=True)
+    type_id = serializers.UUIDField(source="issue.type.id", read_only=True)
+    is_epic = serializers.BooleanField(source="issue.type.is_epic", read_only=True)
     relation_type = serializers.CharField(read_only=True)
 
     class Meta:
         model = IssueRelation
-        fields = ["id", "project_id", "sequence_id", "relation_type", "name"]
+        fields = [
+            "id",
+            "project_id",
+            "sequence_id",
+            "relation_type",
+            "name",
+            "type_id",
+            "is_epic",
+        ]
         read_only_fields = ["workspace", "project"]
 
 
