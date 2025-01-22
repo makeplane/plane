@@ -47,7 +47,7 @@ class IssueSearchEndpoint(BaseAPIView):
         )
 
         if workspace_search == "false":
-            issues = search_issues(query, issues_and_epics)
+            issues = issues.filter(project_id=project_id)
 
         if query:
             issues = search_issues(query, issues)
@@ -89,7 +89,6 @@ class IssueSearchEndpoint(BaseAPIView):
                 issues = issues.filter(~Q(pk=issue_id), ~Q(pk__in=related_issue_ids))
 
         if sub_issue == "true" and issue_id:
-            issues = search_issues(query, issues)
             issue = Issue.objects.filter(pk=issue_id).first()
             if issue:
                 issues = issues.filter(~Q(pk=issue_id), parent__isnull=True)
