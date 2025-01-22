@@ -34,17 +34,17 @@ export const useLinks = (workspaceSlug: string) => {
           if (!workspaceSlug) throw new Error("Missing required fields");
           await createLink(workspaceSlug, data);
           setToast({
-            message: "The link has been successfully created",
+            message: "quick_links.toasts.created.message",
             type: TOAST_TYPE.SUCCESS,
-            title: "Link created",
+            title: "quick_links.toasts.created.title",
           });
           toggleLinkModal(false);
         } catch (error: any) {
           console.error("error", error);
           setToast({
-            message: error?.data?.error ?? "The link could not be created",
+            message: error?.data?.error ?? "quick_links.toasts.not_created.message",
             type: TOAST_TYPE.ERROR,
-            title: "Link not created",
+            title: "quick_links.toasts.not_created.title",
           });
           throw error;
         }
@@ -54,16 +54,16 @@ export const useLinks = (workspaceSlug: string) => {
           if (!workspaceSlug) throw new Error("Missing required fields");
           await updateLink(workspaceSlug, linkId, data);
           setToast({
-            message: "The link has been successfully updated",
+            message: "quick_links.toasts.updated.message",
             type: TOAST_TYPE.SUCCESS,
-            title: "Link updated",
+            title: "quick_links.toasts.updated.title",
           });
           toggleLinkModal(false);
         } catch (error) {
           setToast({
-            message: "The link could not be updated",
+            message: "quick_links.toasts.not_updated.message",
             type: TOAST_TYPE.ERROR,
-            title: "Link not updated",
+            title: "quick_links.toasts.not_updated.title",
           });
           throw error;
         }
@@ -73,15 +73,15 @@ export const useLinks = (workspaceSlug: string) => {
           if (!workspaceSlug) throw new Error("Missing required fields");
           await removeLink(workspaceSlug, linkId);
           setToast({
-            message: "The link has been successfully removed",
+            message: "quick_links.toasts.removed.message",
             type: TOAST_TYPE.SUCCESS,
-            title: "Link removed",
+            title: "quick_links.toasts.removed.title",
           });
         } catch (error) {
           setToast({
-            message: "The link could not be removed",
+            message: "quick_links.toasts.not_removed.message",
             type: TOAST_TYPE.ERROR,
-            title: "Link not removed",
+            title: "quick_links.toasts.not_removed.title",
           });
         }
       },

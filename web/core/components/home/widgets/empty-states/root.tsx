@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Briefcase, Hotel, Users } from "lucide-react";
 // helpers
+import { useTranslation } from "@plane/i18n";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useCommandPalette, useEventTracker, useUser, useUserPermissions } from "@/hooks/store";
@@ -17,6 +18,7 @@ export const EmptyWorkspace = () => {
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const { data: currentUser } = useUser();
+  const { t } = useTranslation();
   // derived values
   const canCreateProject = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -26,11 +28,11 @@ export const EmptyWorkspace = () => {
   const EMPTY_STATE_DATA = [
     {
       id: "create-project",
-      title: "Create a project",
-      description: "Create your first project now to get started",
+      title: "home.empty.create_project.title",
+      description: "home.empty.create_project.description",
       icon: <Briefcase className="w-[40px] h-[40px] text-custom-primary-100" />,
       cta: {
-        text: "Create Project",
+        text: "home.empty.create_project.cta",
         onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
           if (!canCreateProject) return;
           e.preventDefault();
@@ -42,28 +44,28 @@ export const EmptyWorkspace = () => {
     },
     {
       id: "invite-team",
-      title: "Invite your team",
-      description: "The sub text will be of two lines and that will be placed.",
+      title: "home.empty.invite_team.title",
+      description: "home.empty.invite_team.description",
       icon: <Users className="w-[40px] h-[40px] text-custom-primary-100" />,
       cta: {
-        text: "Invite now",
+        text: "home.empty.invite_team.cta",
         link: `/${workspaceSlug}/settings/members`,
       },
     },
     {
       id: "configure-workspace",
-      title: "Configure your workspace",
-      description: "The sub text will be of two lines and that will be placed.",
+      title: "home.empty.configure_workspace.title",
+      description: "home.empty.configure_workspace.description",
       icon: <Hotel className="w-[40px] h-[40px] text-custom-primary-100" />,
       cta: {
-        text: "Configure workspace",
+        text: "home.empty.configure_workspace.cta",
         link: "settings",
       },
     },
     {
       id: "personalize-account",
-      title: "Personalize your account",
-      description: "The sub text will be of two lines and that will be placed.",
+      title: "home.empty.personalize_account.title",
+      description: "home.empty.personalize_account.description",
       icon:
         currentUser?.avatar_url && currentUser?.avatar_url.trim() !== "" ? (
           <Link href={`/${workspaceSlug}/profile/${currentUser?.id}`}>
@@ -83,7 +85,7 @@ export const EmptyWorkspace = () => {
           </Link>
         ),
       cta: {
-        text: "Personalize account",
+        text: "home.empty.personalize_account.cta",
         link: "/profile",
       },
     },
@@ -99,22 +101,22 @@ export const EmptyWorkspace = () => {
           <div className="flex items-center justify-center bg-custom-primary-100/10 rounded-full w-[80px] h-[80px] mb-4">
             <span className="text-3xl my-auto">{item.icon}</span>
           </div>
-          <h3 className="text-lg font-medium text-custom-text-100 mb-2">{item.title}</h3>
-          <p className="text-sm text-custom-text-200 mb-4 w-[80%] flex-1">{item.description}</p>
+          <h3 className="text-lg font-medium text-custom-text-100 mb-2">{t(item.title)}</h3>
+          <p className="text-sm text-custom-text-200 mb-4 w-[80%] flex-1">{t(item.description)}</p>
 
           {item.cta.link ? (
             <Link
               href={item.cta.link}
               className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium"
             >
-              {item.cta.text}
+              {t(item.cta.text)}
             </Link>
           ) : (
             <button
               className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium"
               onClick={item.cta.onClick}
             >
-              {item.cta.text}
+              {t(item.cta.text)}
             </button>
           )}
         </div>

@@ -159,7 +159,6 @@
   "enter_god_mode": "Enter god mode",
   "workspace_logo": "Workspace logo",
   "new_issue": "New issue",
-  "home": "Home",
   "your_work": "Your work",
   "drafts": "Drafts",
   "projects": "Projects",
@@ -316,5 +315,137 @@
   "change_parent_issue": "Change parent issue",
   "remove_parent_issue": "Remove parent issue",
   "add_parent": "Add parent",
-  "loading_members": "Loading members..."
+  "loading_members": "Loading members...",
+
+  "view_link_copied_to_clipboard": "View link copied to clipboard.",
+  "required": "Required",
+  "optional": "Optional",
+  "Cancel": "Cancel",
+  "Update": "Update",
+  "Add": "Add",
+  "Updating": "Updating",
+  "Adding": "Adding",
+  "edit": "Edit",
+  "open_in_new_tab": "Open in new tab",
+  "delete": "Delete",
+  "good": "Good",
+  "morning": "morning",
+  "afternoon": "afternoon",
+  "evening": "evening",
+  "show_all": "Show all",
+  "show_less": "Show less",
+
+
+  "toast": {
+    "success": "Success!",
+    "error": "Error!"
+  },
+
+  "home": {
+    "empty": {
+      "create_project": {
+        "title": "Create a project",
+        "description": "Create your first project now to get started",
+        "cta": "Create Project"
+      },
+      "invite_team": {
+        "title": "Invite your team",
+        "description": "The sub text will be of two lines and that will be placed.",
+        "cta": "Invite now"
+      },
+      "configure_workspace": {
+        "title": "Configure your workspace",
+        "description": "The sub text will be of two lines and that will be placed.",
+        "cta": "Configure workspace"
+      },
+      "personalize_account": {
+        "title": "Personalize your account",
+        "description": "The sub text will be of two lines and that will be placed.",
+        "cta": "Personalize account"
+      }
+    },
+    "quick_links": {
+      "empty": "Add any links you need for quick access to your work.",
+      "add": "Add quick Link",
+      "title": "quick {count, plural, one{# link} other{# links}}",
+      "quick_links": {
+        "title": "Quick links",
+        "toasts": {
+          "created": {
+            "title": "Link created",
+            "message": "The link has been successfully created"
+          },
+          "not_created": {
+            "title": "Link not created",
+            "message": "The link could not be created"
+          },
+          "updated": {
+            "title": "Link updated",
+            "message": "The link has been successfully updated"
+          },
+          "not_updated": {
+            "title": "Link not updated",
+            "message": "The link could not be updated"
+          },
+          "removed": {
+            "title": "Link removed",
+            "message": "The link has been successfully removed"
+          },
+          "not_removed": {
+            "title": "Link not removed",
+            "message": "The link could not be removed"
+          }
+        }
+      }
+    },
+    "recents": {
+      "title": "Recents",
+      "empty": {
+        "project": "Your recent projects will appear here once you visit one.",
+        "page": "Your recent pages will appear here once you visit one.",
+        "issue": "Your recent issues will appear here once you visit one.",
+        "default": "You don't have any recent items yet."
+      },
+      "filters": {
+        "all": "All items",
+        "projects": "Projects",
+        "pages": "Pages",
+        "issues": "Issues"
+      }
+    },
+    "my_stickies": {
+      "title": "Your stickies"
+    },
+    "new_at_plane": {
+      "title": "New at Plane"
+    },
+    "quick_tutorial": {
+      "title": "Quick tutorial"
+    },
+    "widget": {
+      "reordered_successfully": "Widget reordered successfully.",
+      "reordering_failed": "Error occurred while reordering widget."
+    },
+    "manage_widgets": "Manage widgets",
+    "title": "Home",
+    "star_us_on_github": "Star us on GitHub"
+  },
+
+  "stickies": {
+    "empty": "No stickies yet. Add one to start making quick notes."
+  },
+
+  "link": {
+    "modal": {
+      "url": {
+        "text": "URL",
+        "required": "URL is invalid",
+        "placeholder": "Type or paste a URL"
+      },
+      "title": {
+        "text": "Display title",
+        "placeholder": "What you'd like to see this link as"
+      }
+    }
+  }
 }

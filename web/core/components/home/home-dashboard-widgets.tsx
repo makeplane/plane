@@ -25,27 +25,27 @@ export const HOME_WIDGETS_LIST: {
   quick_links: {
     component: DashboardQuickLinks,
     fullWidth: false,
-    title: "Quick links",
+    title: "home.quick_links.title",
   },
   recents: {
     component: RecentActivityWidget,
     fullWidth: false,
-    title: "Recents",
+    title: "home.recents.title",
   },
   my_stickies: {
     component: StickiesWidget,
     fullWidth: false,
-    title: "Your stickies",
+    title: "home.my_stickies.title",
   },
   new_at_plane: {
     component: null,
     fullWidth: false,
-    title: "New at Plane",
+    title: "home.new_at_plane.title",
   },
   quick_tutorial: {
     component: null,
     fullWidth: false,
-    title: "Quick tutorial",
+    title: "home.quick_tutorial.title",
   },
 };
 

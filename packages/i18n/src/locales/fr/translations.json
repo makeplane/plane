@@ -158,7 +158,6 @@
   "enter_god_mode": "Entrer en mode dieu",
   "workspace_logo": "Logo de l'espace de travail",
   "new_issue": "Nouveau problème",
-  "home": "Accueil",
   "your_work": "Votre travail",
   "drafts": "Brouillons",
   "projects": "Projets",
@@ -316,5 +315,134 @@
   "remove_parent_issue": "Supprimer le problème parent",
   "add_parent": "Ajouter un parent",
   "loading_members": "Chargement des membres...",
-  "inbox": "Boîte de réception"
+  "inbox": "Boîte de réception",
+
+  "view_link_copied_to_clipboard": "Lien de vue copié dans le presse-papiers.",
+  "required": "Requis",
+  "optional": "Optionnel",
+  "Cancel": "Annuler",
+  "Update": "Mettre à jour",
+  "Add": "Ajouter",
+  "Updating": "Mise à jour",
+  "Adding": "Ajout",
+  "edit": "Modifier",
+  "open_in_new_tab": "Ouvrir dans un nouvel onglet",
+  "delete": "Supprimer",
+  "good": "Bonjour",
+  "morning": "matin",
+  "afternoon": "après-midi",
+  "evening": "soir",
+  "show_all": "Tout afficher",
+  "show_less": "Afficher moins",
+
+  "toast": {
+    "success": "Succès !",
+    "error": "Erreur !"
+  },
+
+  "home": {
+    "empty": {
+      "create_project": {
+        "title": "Créer un projet",
+        "description": "Créez votre premier projet maintenant pour commencer",
+        "cta": "Créer un projet"
+      },
+      "invite_team": {
+        "title": "Inviter votre équipe",
+        "description": "Le sous-texte sera sur deux lignes et sera placé ici.",
+        "cta": "Inviter maintenant"
+      },
+      "configure_workspace": {
+        "title": "Configurer votre espace de travail",
+        "description": "Le sous-texte sera sur deux lignes et sera placé ici.",
+        "cta": "Configurer l'espace de travail"
+      },
+      "personalize_account": {
+        "title": "Personnaliser votre compte",
+        "description": "Le sous-texte sera sur deux lignes et sera placé ici.",
+        "cta": "Personnaliser le compte"
+      }
+    },
+    "quick_links": {
+      "empty": "Ajoutez des liens pour un accès rapide à votre travail.",
+      "add": "Ajouter un lien rapide",
+      "title": "lien{count, plural, one{# lien} other{# liens}} rapide",
+      "quick_links": {
+        "title": "Liens rapides",
+        "toasts": {
+          "created": {
+            "title": "Lien créé",
+            "message": "Le lien a été créé avec succès"
+          },
+          "not_created": {
+            "title": "Lien non créé",
+            "message": "Le lien n'a pas pu être créé"
+          },
+          "updated": {
+            "title": "Lien mis à jour",
+            "message": "Le lien a été mis à jour avec succès"
+          },
+          "not_updated": {
+            "title": "Lien non mis à jour",
+            "message": "Le lien n'a pas pu être mis à jour"
+          },
+          "removed": {
+            "title": "Lien supprimé",
+            "message": "Le lien a été supprimé avec succès"
+          },
+          "not_removed": {
+            "title": "Lien non supprimé",
+            "message": "Le lien n'a pas pu être supprimé"
+          }
+        }
+      }
+    },
+    "recents": {
+      "title": "Récents",
+      "empty": {
+        "project": "Vos projets récents apparaîtront ici une fois que vous en aurez visité un.",
+        "page": "Vos pages récentes apparaîtront ici une fois que vous en aurez visité une.",
+        "issue": "Vos problèmes récents apparaîtront ici une fois que vous en aurez visité un.",
+        "default": "Vous n'avez pas encore d'éléments récents."
+      },
+      "filters": {
+        "all": "Tous les éléments",
+        "projects": "Projets",
+        "pages": "Pages",
+        "issues": "Problèmes"
+      }
+    },
+    "my_stickies": {
+      "title": "Vos notes"
+    },
+    "new_at_plane": {
+      "title": "Nouveau chez Plane"
+    },
+    "quick_tutorial": {
+      "title": "Tutoriel rapide"
+    },
+    "widget": {
+      "reordered_successfully": "Widget réorganisé avec succès.",
+      "reordering_failed": "Une erreur s'est produite lors de la réorganisation du widget."
+    },
+    "manage_widgets": "Gérer les widgets",
+    "title": "Accueil",
+    "star_us_on_github": "Étoilez-nous sur GitHub"
+  },
+  "stickies": {
+    "empty": "Pas encore de notes. Ajoutez-en une pour commencer à prendre des notes rapides."
+  },
+  "link": {
+    "modal": {
+      "url": {
+        "text": "URL",
+        "required": "L'URL n'est pas valide",
+        "placeholder": "Tapez ou collez une URL"
+      },
+      "title": {
+        "text": "Titre d'affichage",
+        "placeholder": "Comment souhaitez-vous voir ce lien"
+      }
+    }
+  }
 }

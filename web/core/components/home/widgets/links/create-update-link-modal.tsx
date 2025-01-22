@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane types
 // plane ui
+import { useTranslation } from "@plane/i18n";
 import { TLink, TLinkEditableFields } from "@plane/types";
 import { Button, Input, ModalCore } from "@plane/ui";
 import { TLinkOperations } from "./use-links";
@@ -40,6 +41,7 @@ export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) 
   } = useForm<TLinkCreateFormFieldOptions>({
     defaultValues,
   });
+  const { t } = useTranslation();
 
   const onClose = () => {
     if (handleOnClose) handleOnClose();
@@ -67,18 +69,19 @@ export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) 
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
           <h3 className="text-xl font-medium text-custom-text-200">
-            {preloadedData?.id ? "Update" : "Add"} quick link
+            {preloadedData?.id ? t("Update") : t("Add")} {t("home.quick_links.title", { count: 1 })}
           </h3>
           <div className="mt-2 space-y-3">
             <div>
               <label htmlFor="url" className="mb-2 text-custom-text-200 text-base font-medium">
-                URL
+                {t("link.modal.url.text")}
+                <span className="text-[10px] block">{t("required")}</span>
               </label>
               <Controller
                 control={control}
                 name="url"
                 rules={{
-                  required: "URL is required",
+                  required: t("link.modal.url.required"),
                 }}
                 render={({ field: { value, onChange, ref } }) => (
                   <Input
@@ -88,17 +91,17 @@ export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) 
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.url)}
-                    placeholder="Type or paste a URL"
+                    placeholder={t("link.modal.url.placeholder")}
                     className="w-full"
                   />
                 )}
               />
-              {errors.url && <span className="text-xs text-red-500">URL is invalid</span>}
+              {errors.url && <span className="text-xs text-red-500">{t("link.modal.url.required")}</span>}
             </div>
             <div>
               <label htmlFor="title" className="mb-2 text-custom-text-200 text-base font-medium">
-                Display title
-                <span className="text-[10px] block">Optional</span>
+                {t("link.modal.title.text")}
+                <span className="text-[10px] block">{t("optional")}</span>
               </label>
               <Controller
                 control={control}
@@ -111,7 +114,7 @@ export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) 
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.title)}
-                    placeholder="What you'd like to see this link as"
+                    placeholder={t("link.modal.title.placeholder")}
                     className="w-full"
                   />
                 )}
@@ -121,10 +124,11 @@ export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) 
         </div>
         <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
           <Button variant="neutral-primary" size="sm" onClick={onClose}>
-            Cancel
+            {t("Cancel")}
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-            {preloadedData?.id ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Adding" : "Add"} quick link
+            {preloadedData?.id ? (isSubmitting ? t("Updating") : t("Update")) : isSubmitting ? t("Adding") : t("Add")}{" "}
+            {t("home.quick_links.title", { count: 1 })}
           </Button>
         </div>
       </form>

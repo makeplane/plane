@@ -315,5 +315,7 @@
   "remove_parent_issue": "移除父问题",
   "add_parent": "添加父问题",
   "loading_members": "正在加载成员...",
-  "inbox": "收件箱"
+  "inbox": "收件箱",
+  "show_all": "显示全部",
+  "show_less": "显示较少"
 }

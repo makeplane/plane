@@ -1,7 +1,7 @@
 import { TLogoProps } from "./common";
 import { TIssuePriorities } from "./issues";
 
-export type TRecentActivityFilterKeys = "all item" | "issue" | "page" | "project";
+export type TRecentActivityFilterKeys = "all" | "issue" | "page" | "project";
 export type THomeWidgetKeys = "quick_links" | "recents" | "my_stickies" | "quick_tutorial" | "new_at_plane";
 
 export type THomeWidgetProps = {

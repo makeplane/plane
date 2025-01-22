@@ -158,7 +158,6 @@
   "enter_god_mode": "Entrar en modo dios",
   "workspace_logo": "Logo del espacio de trabajo",
   "new_issue": "Nuevo problema",
-  "home": "Inicio",
   "your_work": "Tu trabajo",
   "drafts": "Borradores",
   "projects": "Proyectos",
@@ -316,5 +315,134 @@
   "remove_parent_issue": "Eliminar problema padre",
   "add_parent": "Agregar padre",
   "loading_members": "Cargando miembros...",
-  "inbox": "bandeja de entrada"
+  "inbox": "bandeja de entrada",
+
+  "view_link_copied_to_clipboard": "Enlace de vista copiado al portapapeles.",
+  "required": "Requerido",
+  "optional": "Opcional",
+  "Cancel": "Cancelar",
+  "Update": "Actualizar",
+  "Add": "Añadir",
+  "Updating": "Actualizando",
+  "Adding": "Añadiendo",
+  "edit": "Editar",
+  "open_in_new_tab": "Abrir en nueva pestaña",
+  "delete": "Eliminar",
+  "good": "Buenos",
+  "morning": "días",
+  "afternoon": "tardes",
+  "evening": "noches",
+  "show_all": "Mostrar todo",
+  "show_less": "Mostrar menos",
+
+  "toast": {
+    "success": "¡Éxito!",
+    "error": "¡Error!"
+  },
+
+  "home": {
+    "empty": {
+      "create_project": {
+        "title": "Crear un proyecto",
+        "description": "Crea tu primer proyecto ahora para comenzar",
+        "cta": "Crear proyecto"
+      },
+      "invite_team": {
+        "title": "Invitar a tu equipo",
+        "description": "El subtexto será de dos líneas y se colocará aquí.",
+        "cta": "Invitar ahora"
+      },
+      "configure_workspace": {
+        "title": "Configurar tu espacio de trabajo",
+        "description": "El subtexto será de dos líneas y se colocará aquí.",
+        "cta": "Configurar espacio de trabajo"
+      },
+      "personalize_account": {
+        "title": "Personalizar tu cuenta",
+        "description": "El subtexto será de dos líneas y se colocará aquí.",
+        "cta": "Personalizar cuenta"
+      }
+    },
+    "quick_links": {
+      "empty": "Agrega cualquier enlace que necesites para acceso rápido a tu trabajo.",
+      "add": "Agregar enlace rápido",
+      "title": "enlace{count, plural, one{# enlace} other{# enlaces}} rápido",
+      "quick_links": {
+        "title": "Enlaces rápidos",
+        "toasts": {
+          "created": {
+            "title": "Enlace creado",
+            "message": "El enlace se ha creado exitosamente"
+          },
+          "not_created": {
+            "title": "Enlace no creado",
+            "message": "No se pudo crear el enlace"
+          },
+          "updated": {
+            "title": "Enlace actualizado",
+            "message": "El enlace se ha actualizado exitosamente"
+          },
+          "not_updated": {
+            "title": "Enlace no actualizado",
+            "message": "No se pudo actualizar el enlace"
+          },
+          "removed": {
+            "title": "Enlace eliminado",
+            "message": "El enlace se ha eliminado exitosamente"
+          },
+          "not_removed": {
+            "title": "Enlace no eliminado",
+            "message": "No se pudo eliminar el enlace"
+          }
+        }
+      }
+    },
+    "recents": {
+      "title": "Recientes",
+      "empty": {
+        "project": "Tus proyectos recientes aparecerán aquí una vez que visites uno.",
+        "page": "Tus páginas recientes aparecerán aquí una vez que visites una.",
+        "issue": "Tus problemas recientes aparecerán aquí una vez que visites uno.",
+        "default": "Aún no tienes elementos recientes."
+      },
+      "filters": {
+        "all": "Todos los elementos",
+        "projects": "Proyectos",
+        "pages": "Páginas",
+        "issues": "Problemas"
+      }
+    },
+    "my_stickies": {
+      "title": "Tus notas"
+    },
+    "new_at_plane": {
+      "title": "Nuevo en Plane"
+    },
+    "quick_tutorial": {
+      "title": "Tutorial rápido"
+    },
+    "widget": {
+      "reordered_successfully": "Widget reordenado exitosamente.",
+      "reordering_failed": "Ocurrió un error al reordenar el widget."
+    },
+    "manage_widgets": "Administrar widgets",
+    "title": "Inicio",
+    "star_us_on_github": "Danos una estrella en GitHub"
+  },
+  "stickies": {
+    "empty": "Aún no hay notas. Agrega una para comenzar a tomar notas rápidas."
+  },
+  "link": {
+    "modal": {
+      "url": {
+        "text": "URL",
+        "required": "La URL no es válida",
+        "placeholder": "Escribe o pega una URL"
+      },
+      "title": {
+        "text": "Título de visualización",
+        "placeholder": "Cómo te gustaría ver este enlace"
+      }
+    }
+  }
 }
