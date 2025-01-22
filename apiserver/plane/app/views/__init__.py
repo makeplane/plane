@@ -141,6 +141,8 @@ from .issue.sub_issue import SubIssuesEndpoint
 
 from .issue.subscriber import IssueSubscriberViewSet
 
+from .issue.version import IssueVersionEndpoint, IssueDescriptionVersionEndpoint
+
 from .module.base import (
     ModuleViewSet,
     ModuleLinkViewSet,

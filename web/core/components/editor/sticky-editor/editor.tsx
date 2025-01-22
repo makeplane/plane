@@ -43,7 +43,6 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
     showToolbarInitially = true,
     showToolbar = true,
     parentClassName = "",
-    placeholder = "Add comment...",
     uploadFile,
     ...rest
   } = props;
@@ -78,7 +77,6 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         mentionHandler={{
           renderComponent: () => <></>,
         }}
-        placeholder={placeholder}
         containerClassName={cn(containerClassName, "relative")}
         {...rest}
       />

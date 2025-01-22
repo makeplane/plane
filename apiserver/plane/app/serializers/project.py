@@ -128,7 +128,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
                     "member__avatar": member.member.avatar,
                     "member__avatar_url": member.member.avatar_url,
                 }
-                for member in project_members if member.is_active and not member.member.is_bot
+                for member in project_members if (member.is_active and member.member and not member.member.is_bot)
             ]
         return []
 

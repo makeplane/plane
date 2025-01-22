@@ -142,6 +142,7 @@ export interface IWorkspaceSearchResults {
     module: IWorkspaceDefaultSearchResult[];
     issue_view: IWorkspaceDefaultSearchResult[];
     page: IWorkspacePageSearchResult[];
+    epic: IWorkspaceIssueSearchResult[];
   };
 }
 
