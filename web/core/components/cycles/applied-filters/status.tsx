@@ -27,7 +27,7 @@ export const AppliedStatusFilters: React.FC<Props> = observer((props) => {
               statusDetails?.textColor
             )}
           >
-            {statusDetails && t(statusDetails?.title)}
+            {statusDetails && t(statusDetails?.i18n_title)}
             {editable && (
               <button
                 type="button"

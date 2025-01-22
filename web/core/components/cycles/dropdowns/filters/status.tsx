@@ -38,7 +38,7 @@ export const FilterStatus: React.FC<Props> = observer((props) => {
                 key={status.value}
                 isChecked={appliedFilters?.includes(status.value) ? true : false}
                 onClick={() => handleUpdate(status.value)}
-                title={t(status.title)}
+                title={t(status.i18n_title)}
               />
             ))
           ) : (

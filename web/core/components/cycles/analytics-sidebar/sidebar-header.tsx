@@ -285,7 +285,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
                 backgroundColor: `${currentCycle.color}20`,
               }}
             >
-              {t(currentCycle.title)}
+              {t(currentCycle.i18n_title)}
             </span>
           )}
         </div>
