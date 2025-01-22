@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane types
-import { TSearchEntityRequestPayload } from "@plane/types";
+import { TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // plane ui
 import { getButtonStyling } from "@plane/ui";
@@ -109,13 +109,17 @@ const PageDetailsPage = observer(() => {
         workspaceId,
         workspaceSlug: workspaceSlug?.toString() ?? "",
       }),
-      webhookConnectionParams: {
-        documentType: "project_page",
-        projectId: projectId?.toString() ?? "",
-        workspaceSlug: workspaceSlug?.toString() ?? "",
-      },
     }),
     [getEditorFileHandlers, id, projectId, uploadEditorAsset, workspaceId, workspaceSlug]
+  );
+
+  const webhookConnectionParams: TWebhookConnectionQueryParams = useMemo(
+    () => ({
+      documentType: "project_page",
+      projectId: projectId?.toString() ?? "",
+      workspaceSlug: workspaceSlug?.toString() ?? "",
+    }),
+    [projectId, workspaceSlug]
   );
 
   if ((!page || !id) && !pageDetailsError)
@@ -150,6 +154,7 @@ const PageDetailsPage = observer(() => {
             config={pageRootConfig}
             handlers={pageRootHandlers}
             page={page}
+            webhookConnectionParams={webhookConnectionParams}
             workspaceSlug={workspaceSlug?.toString() ?? ""}
           />
           <IssuePeekOverview />

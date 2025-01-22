@@ -6,7 +6,7 @@ export type TReadOnlyFileHandler = {
 };
 
 export type TFileHandler = TReadOnlyFileHandler & {
-  getAssetUploadStatus: (blockId: string) => number;
+  assetsUploadStatus: Record<string, number>; // blockId => progress percentage
   cancel: () => void;
   delete: DeleteImage;
   upload: UploadImage;

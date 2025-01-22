@@ -1,6 +1,6 @@
 import debounce from "lodash/debounce";
 import set from "lodash/set";
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
 // plane types
@@ -10,8 +10,8 @@ import { FileService } from "@/services/file.service";
 import { TAttachmentUploadStatus } from "../issue/issue-details/attachment.store";
 
 export interface IEditorAssetStore {
-  // observables
-  assetUploadStatus: Record<string, TAttachmentUploadStatus>; // assetId => TAttachmentUploadStatus
+  // computed
+  assetsUploadPercentage: Record<string, number>;
   // helper methods
   getAssetUploadStatusByEditorBlockId: (blockId: string) => TAttachmentUploadStatus | undefined;
   // actions
@@ -32,14 +32,16 @@ export interface IEditorAssetStore {
 
 export class EditorAssetStore implements IEditorAssetStore {
   // observables
-  assetUploadStatus: Record<string, TAttachmentUploadStatus> = {};
+  assetsUploadStatus: Record<string, TAttachmentUploadStatus> = {};
   // services
   fileService: FileService;
 
   constructor() {
     makeObservable(this, {
       // observables
-      assetUploadStatus: observable,
+      assetsUploadStatus: observable,
+      // computed
+      assetsUploadPercentage: computed,
       // actions
       uploadEditorAsset: action,
     });
@@ -47,10 +49,20 @@ export class EditorAssetStore implements IEditorAssetStore {
     this.fileService = new FileService();
   }
 
+  get assetsUploadPercentage() {
+    const assetsStatus = this.assetsUploadStatus;
+    const assetsPercentage: Record<string, number> = {};
+    Object.keys(assetsStatus).forEach((blockId) => {
+      const asset = assetsStatus[blockId];
+      if (asset) assetsPercentage[blockId] = asset.progress;
+    });
+    return assetsPercentage;
+  }
+
   // helper methods
   getAssetUploadStatusByEditorBlockId: IEditorAssetStore["getAssetUploadStatusByEditorBlockId"] = computedFn(
     (blockId) => {
-      const blockDetails = this.assetUploadStatus[blockId];
+      const blockDetails = this.assetsUploadStatus[blockId];
       if (!blockDetails) return undefined;
       return blockDetails;
     }
@@ -59,7 +71,7 @@ export class EditorAssetStore implements IEditorAssetStore {
   // actions
   private debouncedUpdateProgress = debounce((blockId: string, progress: number) => {
     runInAction(() => {
-      set(this.assetUploadStatus, [blockId, "progress"], progress);
+      set(this.assetsUploadStatus, [blockId, "progress"], progress);
     });
   }, 16);
 
@@ -70,7 +82,7 @@ export class EditorAssetStore implements IEditorAssetStore {
     try {
       // update attachment upload status
       runInAction(() => {
-        set(this.assetUploadStatus, [blockId], {
+        set(this.assetsUploadStatus, [blockId], {
           id: tempId,
           name: file.name,
           progress: 0,
@@ -102,7 +114,7 @@ export class EditorAssetStore implements IEditorAssetStore {
       throw error;
     } finally {
       runInAction(() => {
-        delete this.assetUploadStatus[blockId];
+        delete this.assetsUploadStatus[blockId];
       });
     }
   };

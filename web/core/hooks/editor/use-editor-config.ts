@@ -20,7 +20,7 @@ type TArgs = {
 
 export const useEditorConfig = () => {
   // store hooks
-  const { getAssetUploadStatusByEditorBlockId } = useEditorAsset();
+  const { assetsUploadPercentage } = useEditorAsset();
   // file size
   const { maxFileSize } = useFileSize();
 
@@ -65,7 +65,7 @@ export const useEditorConfig = () => {
           workspaceId,
           workspaceSlug,
         }),
-        getAssetUploadStatus: (blockId) => getAssetUploadStatusByEditorBlockId(blockId)?.progress ?? 0,
+        assetsUploadStatus: assetsUploadPercentage,
         upload: uploadFile,
         delete: async (src: string) => {
           if (src?.startsWith("http")) {
@@ -86,7 +86,7 @@ export const useEditorConfig = () => {
         },
       };
     },
-    [getAssetUploadStatusByEditorBlockId, getReadOnlyEditorFileHandlers, maxFileSize]
+    [assetsUploadPercentage, getReadOnlyEditorFileHandlers, maxFileSize]
   );
 
   return {

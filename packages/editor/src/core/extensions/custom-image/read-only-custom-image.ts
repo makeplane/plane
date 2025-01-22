@@ -56,6 +56,7 @@ export const CustomReadOnlyImageExtension = (props: TReadOnlyFileHandler) => {
         markdown: {
           serialize() {},
         },
+        assetsUploadStatus: {},
       };
     },
 

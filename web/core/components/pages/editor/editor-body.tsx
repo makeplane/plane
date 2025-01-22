@@ -34,7 +34,6 @@ import { TPageInstance } from "@/store/pages/base-page";
 
 export type TEditorBodyConfig = {
   fileHandler: TFileHandler;
-  webhookConnectionParams: TWebhookConnectionQueryParams;
 };
 
 export type TEditorBodyHandlers = {
@@ -50,6 +49,7 @@ type Props = {
   handlers: TEditorBodyHandlers;
   page: TPageInstance;
   sidePeekVisible: boolean;
+  webhookConnectionParams: TWebhookConnectionQueryParams;
   workspaceSlug: string;
 };
 
@@ -62,6 +62,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     handlers,
     page,
     sidePeekVisible,
+    webhookConnectionParams,
     workspaceSlug,
   } = props;
   // store hooks
@@ -132,13 +133,13 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       // Construct realtime config
       return {
         url: WS_LIVE_URL.toString(),
-        queryParams: config.webhookConnectionParams,
+        queryParams: webhookConnectionParams,
       };
     } catch (error) {
       console.error("Error creating realtime config", error);
       return undefined;
     }
-  }, [config.webhookConnectionParams]);
+  }, [webhookConnectionParams]);
 
   const userConfig = useMemo(
     () => ({
