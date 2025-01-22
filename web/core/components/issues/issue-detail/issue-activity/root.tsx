@@ -13,15 +13,12 @@ import { IssueCommentCreate } from "@/components/issues";
 import { ActivitySortRoot, IssueActivityCommentRoot } from "@/components/issues/issue-detail";
 // constants
 // hooks
-import { useIssueDetail, useProject, useUser, useUserPermissions } from "@/hooks/store";
+import { useEditorAsset, useIssueDetail, useProject, useUser, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { ActivityFilterRoot, IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog";
 // plane web constants
 import { TActivityFilters, defaultActivityFilters } from "@/plane-web/constants/issues";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
-// services
-import { FileService } from "@/services/file.service";
-const fileService = new FileService();
 
 type TIssueActivity = {
   workspaceSlug: string;
@@ -35,7 +32,7 @@ export type TActivityOperations = {
   createComment: (data: Partial<TIssueComment>) => Promise<TIssueComment>;
   updateComment: (commentId: string, data: Partial<TIssueComment>) => Promise<void>;
   removeComment: (commentId: string) => Promise<void>;
-  uploadCommentAsset: (file: File, commentId?: string) => Promise<TFileSignedURLResponse>;
+  uploadCommentAsset: (blockId: string, file: File, commentId?: string) => Promise<TFileSignedURLResponse>;
 };
 
 export const IssueActivity: FC<TIssueActivity> = observer((props) => {
@@ -46,6 +43,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
     defaultActivityFilters
   );
   const { setValue: setSortOrder, storedValue: sortOrder } = useLocalStorage("activity_sort_order", E_SORT_ORDER.ASC);
+  // store hooks
   const {
     issue: { getIssueById },
     createComment,
@@ -55,7 +53,8 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const { projectPermissionsByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { getProjectById } = useProject();
   const { data: currentUser } = useUser();
-  //derived values
+  const { uploadEditorAsset } = useEditorAsset();
+  // derived values
   const issue = issueId ? getIssueById(issueId) : undefined;
   const currentUserProjectRole = projectPermissionsByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
   const isAdmin = (currentUserProjectRole ?? EUserPermissions.GUEST) === EUserPermissions.ADMIN;
@@ -92,7 +91,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
             message: "Comment created successfully.",
           });
           return comment;
-        } catch (error) {
+        } catch {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
@@ -109,7 +108,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
             type: TOAST_TYPE.SUCCESS,
             message: "Comment updated successfully.",
           });
-        } catch (error) {
+        } catch {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
@@ -126,7 +125,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
             type: TOAST_TYPE.SUCCESS,
             message: "Comment removed successfully.",
           });
-        } catch (error) {
+        } catch {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
@@ -134,18 +133,19 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
           });
         }
       },
-      uploadCommentAsset: async (file, commentId) => {
+      uploadCommentAsset: async (blockId, file, commentId) => {
         try {
           if (!workspaceSlug || !projectId) throw new Error("Missing fields");
-          const res = await fileService.uploadProjectAsset(
-            workspaceSlug,
-            projectId,
-            {
+          const res = await uploadEditorAsset({
+            blockId,
+            data: {
               entity_identifier: commentId ?? "",
               entity_type: EFileAssetType.COMMENT_DESCRIPTION,
             },
-            file
-          );
+            file,
+            projectId,
+            workspaceSlug,
+          });
           return res;
         } catch (error) {
           console.log("Error in uploading comment asset:", error);
@@ -153,7 +153,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
         }
       },
     }),
-    [workspaceSlug, projectId, issueId, createComment, updateComment, removeComment]
+    [workspaceSlug, projectId, issueId, createComment, updateComment, uploadEditorAsset, removeComment]
   );
 
   const project = getProjectById(projectId);

@@ -21,8 +21,8 @@ import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/compon
 import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
-import { useUser } from "@/hooks/store";
-import { useEditorMention } from "@/hooks/use-editor-mention";
+import { useEditorMention } from "@/hooks/editor";
+import { useUser, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
@@ -66,8 +66,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   } = props;
   // store hooks
   const { data: currentUser } = useUser();
+  const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const { id: pageId, name: pageTitle, isContentEditable, updateTitle } = page;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   // issue-embed
   const { issueEmbedProps } = useIssueEmbed({
     fetchEmbedSuggestions: handlers.fetchEntity,
@@ -96,10 +98,11 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         editorRef={editorRef}
         isOpen={isOpen}
         onClose={onClose}
+        workspaceId={workspaceId}
         workspaceSlug={workspaceSlug?.toString() ?? ""}
       />
     ),
-    [editorRef, workspaceSlug]
+    [editorRef, workspaceId, workspaceSlug]
   );
 
   const handleServerConnect = useCallback(() => {

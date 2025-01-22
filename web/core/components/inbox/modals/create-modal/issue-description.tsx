@@ -17,13 +17,10 @@ import { ETabIndices } from "@/constants/tab-indices";
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
-import { useProjectInbox } from "@/hooks/store";
+import { useEditorAsset, useProjectInbox } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
-// services
-import { FileService } from "@/services/file.service";
-const fileService = new FileService();
 const workspaceService = new WorkspaceService();
 
 type TInboxIssueDescription = {
@@ -51,6 +48,8 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
     onEnterKeyPress,
     onAssetUpload,
   } = props;
+  // store hooks
+  const { uploadEditorAsset } = useEditorAsset();
   // hooks
   const { loader } = useProjectInbox();
   const { isMobile } = usePlatformOS();
@@ -84,17 +83,18 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
       containerClassName={containerClassName}
       onEnterKeyPress={onEnterKeyPress}
       tabIndex={getIndex("description_html")}
-      uploadFile={async (file) => {
+      uploadFile={async (blockId, file) => {
         try {
-          const { asset_id } = await fileService.uploadProjectAsset(
-            workspaceSlug,
-            projectId,
-            {
+          const { asset_id } = await uploadEditorAsset({
+            blockId,
+            data: {
               entity_identifier: data.id ?? "",
               entity_type: EFileAssetType.ISSUE_DESCRIPTION,
             },
-            file
-          );
+            file,
+            projectId,
+            workspaceSlug,
+          });
           onAssetUpload?.(asset_id);
           return asset_id;
         } catch (error) {

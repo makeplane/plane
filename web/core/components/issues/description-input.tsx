@@ -15,13 +15,10 @@ import { TIssueOperations } from "@/components/issues/issue-detail";
 // helpers
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useEditorAsset, useWorkspace } from "@/hooks/store";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
-// services
-import { FileService } from "@/services/file.service";
 const workspaceService = new WorkspaceService();
-const fileService = new FileService();
 
 export type IssueDescriptionInputProps = {
   containerClassName?: string;
@@ -49,16 +46,18 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     setIsSubmitting,
     placeholder,
   } = props;
-
+  // states
+  const [localIssueDescription, setLocalIssueDescription] = useState({
+    id: issueId,
+    description_html: initialValue,
+  });
+  // store hooks
+  const { uploadEditorAsset } = useEditorAsset();
+  // form info
   const { handleSubmit, reset, control } = useForm<TIssue>({
     defaultValues: {
       description_html: initialValue,
     },
-  });
-
-  const [localIssueDescription, setLocalIssueDescription] = useState({
-    id: issueId,
-    description_html: initialValue,
   });
 
   const handleDescriptionFormSubmit = useCallback(
@@ -129,17 +128,18 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                   })
                 }
                 containerClassName={containerClassName}
-                uploadFile={async (file) => {
+                uploadFile={async (blockId, file) => {
                   try {
-                    const { asset_id } = await fileService.uploadProjectAsset(
-                      workspaceSlug,
-                      projectId,
-                      {
+                    const { asset_id } = await uploadEditorAsset({
+                      blockId,
+                      data: {
                         entity_identifier: issueId,
                         entity_type: EFileAssetType.ISSUE_DESCRIPTION,
                       },
-                      file
-                    );
+                      file,
+                      projectId,
+                      workspaceSlug,
+                    });
                     return asset_id;
                   } catch (error) {
                     console.log("Error in uploading issue asset:", error);
@@ -152,6 +152,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                 id={issueId}
                 initialValue={localIssueDescription.description_html ?? ""}
                 containerClassName={containerClassName}
+                workspaceId={workspaceId}
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
               />

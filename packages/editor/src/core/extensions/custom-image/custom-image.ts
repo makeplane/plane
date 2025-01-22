@@ -4,12 +4,12 @@ import { ReactNodeViewRenderer } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
 // extensions
 import { CustomImageNode } from "@/extensions/custom-image";
+// helpers
+import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // plugins
 import { TrackImageDeletionPlugin, TrackImageRestorationPlugin, isFileValid } from "@/plugins/image";
 // types
 import { TFileHandler } from "@/types";
-// helpers
-import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 
 export type InsertImageComponentProps = {
   file?: File;
@@ -21,7 +21,7 @@ declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     imageComponent: {
       insertImageComponent: ({ file, pos, event }: InsertImageComponentProps) => ReturnType;
-      uploadImage: (file: File) => () => Promise<string> | undefined;
+      uploadImage: (blockId: string, file: File) => () => Promise<string> | undefined;
       getImageSource?: (path: string) => () => Promise<string>;
       restoreImage: (src: string) => () => Promise<void>;
     };
@@ -105,7 +105,6 @@ export const CustomImageExtension = (props: TFileHandler) => {
       this.editor.state.doc.descendants((node) => {
         if (node.type.name === this.name) {
           if (!node.attrs.src?.startsWith("http")) return;
-
           imageSources.add(node.attrs.src);
         }
       });
@@ -134,7 +133,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
     addCommands() {
       return {
         insertImageComponent:
-          (props: { file?: File; pos?: number; event: "insert" | "drop" }) =>
+          (props) =>
           ({ commands }) => {
             // Early return if there's an invalid file being dropped
             if (
@@ -182,12 +181,12 @@ export const CustomImageExtension = (props: TFileHandler) => {
               attrs: attributes,
             });
           },
-        uploadImage: (file: File) => async () => {
-          const fileUrl = await upload(file);
+        uploadImage: (blockId, file) => async () => {
+          const fileUrl = await upload(blockId, file);
           return fileUrl;
         },
-        getImageSource: (path: string) => async () => await getAssetSrc(path),
-        restoreImage: (src: string) => async () => {
+        getImageSource: (path) => async () => await getAssetSrc(path),
+        restoreImage: (src) => async () => {
           await restoreImageFn(src);
         },
       };
