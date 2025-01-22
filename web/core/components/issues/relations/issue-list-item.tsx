@@ -53,20 +53,26 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
   } = useIssueDetail(issueServiceType);
   const project = useProject();
   const { getProjectStates } = useProjectState();
-  const { handleRedirection } = useIssuePeekOverviewRedirection();
   const { isMobile } = usePlatformOS();
-
   // derived values
   const issue = getIssueById(relationIssueId);
+  const { handleRedirection } = useIssuePeekOverviewRedirection(!!issue?.is_epic);
   const projectDetail = (issue && issue.project_id && project.getProjectById(issue.project_id)) || undefined;
   const currentIssueStateDetail =
     (issue?.project_id && getProjectStates(issue?.project_id)?.find((state) => issue?.state_id == state.id)) ||
     undefined;
-
   if (!issue) return <></>;
+  const issueLink = `/${workspaceSlug}/projects/${projectId}/${issue.is_epic ? "epics" : "issues"}/${issue.id}`;
 
   // handlers
-  const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile);
+  const handleIssuePeekOverview = (issue: TIssue) => {
+    if (issueServiceType === EIssueServiceType.ISSUES && issue.is_epic) {
+      // open epics in new tab
+      window.open(issueLink, "_blank");
+      return;
+    }
+    handleRedirection(workspaceSlug, issue, isMobile);
+  };
 
   const handleEditIssue = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
@@ -85,7 +91,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
   const handleCopyIssueLink = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
     e.preventDefault();
-    issueOperations.copyText(`${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`);
+    issueOperations.copyText(issueLink);
   };
 
   const handleRemoveRelation = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -98,7 +104,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
     <div key={relationIssueId}>
       <ControlLink
         id={`issue-${issue.id}`}
-        href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
+        href={issueLink}
         onClick={() => handleIssuePeekOverview(issue)}
         className="w-full cursor-pointer"
       >
