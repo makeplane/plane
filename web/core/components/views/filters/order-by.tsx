@@ -36,7 +36,7 @@ export const ViewOrderByDropdown: React.FC<Props> = (props) => {
       customButton={
         <span className={buttonClassName}>
           {!isMobile && icon}
-          <span className="flex-shrink-0"> {orderByDetails?.label && t(orderByDetails?.label)}</span>
+          <span className="flex-shrink-0"> {orderByDetails?.i18n_label && t(orderByDetails?.i18n_label)}</span>
           <ChevronDown className={chevronClassName} strokeWidth={2} />
         </span>
       }
@@ -55,7 +55,7 @@ export const ViewOrderByDropdown: React.FC<Props> = (props) => {
             })
           }
         >
-          {t(option.label)}
+          {t(option.i18n_label)}
           {sortKey === option.key && <Check className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
@@ -73,7 +73,7 @@ export const ViewOrderByDropdown: React.FC<Props> = (props) => {
                 });
             }}
           >
-            {t(option.label)}
+            {t(option.i18n_label)}
             {isSelected && <Check className="h-3 w-3" />}
           </CustomMenu.MenuItem>
         );

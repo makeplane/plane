@@ -17,7 +17,7 @@ export const AppliedAccessFilters: React.FC<Props> = observer((props) => {
 
   const getAccessLabel = (val: EViewAccess) => {
     const value = VIEW_ACCESS_SPECIFIERS.find((option) => option.key === val);
-    return value?.label;
+    return value?.i18n_label;
   };
 
   return (

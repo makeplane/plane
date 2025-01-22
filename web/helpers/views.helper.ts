@@ -7,7 +7,7 @@ const VIEW_ACCESS_ICONS = {
 };
 export const VIEW_ACCESS_SPECIFIERS: {
   key: EViewAccess;
-  label: string;
+  i18n_label: string;
   icon: LucideIcon;
 }[] = VIEW_ACCESS_SPECIFIERS_CONSTANTS.map((option) => ({
   ...option,
