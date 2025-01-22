@@ -16,11 +16,11 @@ export interface IEditorAssetStore {
   getAssetUploadStatusByEditorBlockId: (blockId: string) => TAttachmentUploadStatus | undefined;
   // actions
   uploadEditorAsset: ({
-    workspaceSlug,
     blockId,
     data,
     file,
     projectId,
+    workspaceSlug,
   }: {
     blockId: string;
     data: TFileEntityInfo;
@@ -50,9 +50,9 @@ export class EditorAssetStore implements IEditorAssetStore {
   // helper methods
   getAssetUploadStatusByEditorBlockId: IEditorAssetStore["getAssetUploadStatusByEditorBlockId"] = computedFn(
     (blockId) => {
-      if (!blockId) return undefined;
-      const assetUploadStatus = this.assetUploadStatus[blockId] ?? undefined;
-      return assetUploadStatus;
+      const blockDetails = this.assetUploadStatus[blockId];
+      if (!blockDetails) return undefined;
+      return blockDetails;
     }
   );
 
@@ -63,14 +63,10 @@ export class EditorAssetStore implements IEditorAssetStore {
     });
   }, 16);
 
-  uploadEditorAsset: IEditorAssetStore["uploadEditorAsset"] = async ({
-    blockId,
-    data,
-    file,
-    projectId,
-    workspaceSlug,
-  }) => {
+  uploadEditorAsset: IEditorAssetStore["uploadEditorAsset"] = async (args) => {
+    const { blockId, data, file, projectId, workspaceSlug } = args;
     const tempId = uuidv4();
+
     try {
       // update attachment upload status
       runInAction(() => {

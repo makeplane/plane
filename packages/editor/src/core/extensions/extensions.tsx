@@ -32,10 +32,10 @@ import {
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
-// types
-import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
+// types
+import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
 
 type TArguments = {
   disabledExtensions: TExtensions[];
