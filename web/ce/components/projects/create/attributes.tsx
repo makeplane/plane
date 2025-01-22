@@ -40,7 +40,7 @@ const ProjectAttributes: FC<Props> = (props) => {
                     {currentNetwork ? (
                       <>
                         <currentNetwork.icon className="h-3 w-3" />
-                        {t(currentNetwork.label)}
+                        {t(currentNetwork.i18n_label)}
                       </>
                     ) : (
                       <span className="text-custom-text-400">{t("select_network")}</span>
@@ -58,7 +58,7 @@ const ProjectAttributes: FC<Props> = (props) => {
                     <div className="flex items-start gap-2">
                       <network.icon className="h-3.5 w-3.5" />
                       <div className="-mt-1">
-                        <p>{t(network.label)}</p>
+                        <p>{t(network.i18n_label)}</p>
                         <p className="text-xs text-custom-text-400">{t(network.description)}</p>
                       </div>
                     </div>

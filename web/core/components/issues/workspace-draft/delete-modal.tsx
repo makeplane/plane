@@ -54,9 +54,10 @@ export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
 
     if (!authorized) {
       setToast({
-        title: t(PROJECT_ERROR_MESSAGES.permissionError.title),
+        title: t(PROJECT_ERROR_MESSAGES.permissionError.i18n_title),
         type: TOAST_TYPE.ERROR,
-        message: PROJECT_ERROR_MESSAGES.permissionError.message && t(PROJECT_ERROR_MESSAGES.permissionError.message),
+        message:
+          PROJECT_ERROR_MESSAGES.permissionError.i18n_message && t(PROJECT_ERROR_MESSAGES.permissionError.i18n_message),
       });
       onClose();
       return;
@@ -77,9 +78,9 @@ export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
             ? PROJECT_ERROR_MESSAGES.permissionError
             : PROJECT_ERROR_MESSAGES.issueDeleteError;
           setToast({
-            title: t(currentError.title),
+            title: t(currentError.i18n_title),
             type: TOAST_TYPE.ERROR,
-            message: currentError.message && t(currentError.message),
+            message: currentError.i18n_message && t(currentError.i18n_message),
           });
         })
         .finally(() => onClose());

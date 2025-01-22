@@ -36,13 +36,13 @@ export const ProjectOrderByDropdown: React.FC<Props> = (props) => {
           {isMobile ? (
             <div className="flex text-sm items-center gap-2 neutral-primary text-custom-text-200">
               <ArrowDownWideNarrow className="h-3 w-3" />
-              {orderByDetails && t(orderByDetails?.label)}
+              {orderByDetails && t(orderByDetails?.i18n_label)}
               <ChevronDown className="h-3 w-3" strokeWidth={2} />
             </div>
           ) : (
             <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-200")}>
               <ArrowDownWideNarrow className="h-3 w-3" />
-              {orderByDetails && t(orderByDetails?.label)}
+              {orderByDetails && t(orderByDetails?.i18n_label)}
               <ChevronDown className="h-3 w-3" strokeWidth={2} />
             </div>
           )}
@@ -61,7 +61,7 @@ export const ProjectOrderByDropdown: React.FC<Props> = (props) => {
             else onChange(option.key);
           }}
         >
-          {option && t(option?.label)}
+          {option && t(option?.i18n_label)}
           {value?.includes(option.key) && <Check className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}

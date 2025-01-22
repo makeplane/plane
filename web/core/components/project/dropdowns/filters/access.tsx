@@ -19,7 +19,7 @@ export const FilterAccess: React.FC<Props> = observer((props) => {
   const { t } = useTranslation();
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
-  const filteredOptions = NETWORK_CHOICES.filter((a) => a.label.includes(searchQuery.toLowerCase()));
+  const filteredOptions = NETWORK_CHOICES.filter((a) => a.i18n_label.includes(searchQuery.toLowerCase()));
 
   return (
     <>
@@ -37,7 +37,7 @@ export const FilterAccess: React.FC<Props> = observer((props) => {
                 isChecked={appliedFilters?.includes(`${access.key}`) ? true : false}
                 onClick={() => handleUpdate(`${access.key}`)}
                 icon={<access.icon className="h-3 w-3" />}
-                title={t(access.label)}
+                title={t(access.i18n_label)}
               />
             ))
           ) : (

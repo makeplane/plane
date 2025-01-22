@@ -61,9 +61,9 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
             ? PROJECT_ERROR_MESSAGES.permissionError
             : PROJECT_ERROR_MESSAGES.cycleDeleteError;
           setToast({
-            title: t(currentError.title),
+            title: t(currentError.i18n_title),
             type: TOAST_TYPE.ERROR,
-            message: currentError.message && t(currentError.message),
+            message: currentError.i18n_message && t(currentError.i18n_message),
           });
           captureCycleEvent({
             eventName: CYCLE_DELETED,

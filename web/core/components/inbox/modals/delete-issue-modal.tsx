@@ -47,9 +47,9 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
           ? PROJECT_ERROR_MESSAGES.permissionError
           : PROJECT_ERROR_MESSAGES.issueDeleteError;
         setToast({
-          title: t(currentError.title),
+          title: t(currentError.i18n_title),
           type: TOAST_TYPE.ERROR,
-          message: currentError.message && t(currentError.message),
+          message: currentError.i18n_message && t(currentError.i18n_message),
         });
       })
       .finally(() => handleClose());

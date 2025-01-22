@@ -119,8 +119,8 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                     >
                       <>
                         {PROJECT_AUTOMATION_MONTHS.map((month) => (
-                          <CustomSelect.Option key={month.label} value={month.value}>
-                            {t(month.label, { month: month.value })}
+                          <CustomSelect.Option key={month.i18n_label} value={month.value}>
+                            {t(month.i18n_label, { month: month.value })}
                           </CustomSelect.Option>
                         ))}
                         <button
