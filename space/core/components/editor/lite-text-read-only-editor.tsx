@@ -12,15 +12,17 @@ type LiteTextReadOnlyEditorWrapperProps = Omit<
   "disabledExtensions" | "fileHandler" | "mentionHandler"
 > & {
   anchor: string;
+  workspaceId: string;
 };
 
 export const LiteTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, LiteTextReadOnlyEditorWrapperProps>(
-  ({ anchor, ...props }, ref) => (
+  ({ anchor, workspaceId, ...props }, ref) => (
     <LiteTextReadOnlyEditorWithRef
       ref={ref}
       disabledExtensions={[]}
       fileHandler={getReadOnlyEditorFileHandlers({
         anchor,
+        workspaceId,
       })}
       mentionHandler={{
         renderComponent: (props) => <EditorMentionsRoot {...props} />,
