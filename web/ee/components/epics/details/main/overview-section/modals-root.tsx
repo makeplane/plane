@@ -174,7 +174,7 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
         projectId={projectId}
         isOpen={isRelationModalOpen?.issueId === epicId && isRelationModalOpen?.relationType === relationKey}
         handleClose={handleRelationOnClose}
-        searchParams={{ issue_relation: true }}
+        searchParams={{ issue_relation: true, issue_id: epicId }}
         handleOnSubmit={handleExistingIssueModalOnSubmit}
         workspaceLevelToggle
       />
