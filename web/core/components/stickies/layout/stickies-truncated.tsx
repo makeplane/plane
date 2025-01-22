@@ -15,7 +15,7 @@ type StickiesTruncatedProps = {
 };
 
 export const StickiesTruncated = observer((props: StickiesTruncatedProps) => {
-  const { handleClose } = props;
+  const { handleClose = () => {} } = props;
   // navigation
   const { workspaceSlug } = useParams();
   // store hooks
