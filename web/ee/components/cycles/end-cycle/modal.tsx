@@ -101,11 +101,14 @@ export const EndCycleModal: FC<EndCycleModalProps> = (props) => {
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.LG}>
       <div className="p-4">
         <h3 className="text-lg font-medium">
-          {completeCycle ? `Comple cycle ${cycleName}?` : "Choose what happens to incomplete work items."}
+          {completeCycle ? `Sure you want to end this cycle now?` : "Choose what happens to incomplete issues."}
         </h3>
         <p className="text-sm text-custom-text-300 mt-1">
           {completeCycle ? (
-            <>Congrats, Great work! All work issues are done - ready for review.</>
+            <>
+              You can&rsquo;t edit this cycle after it ends and all data in the cycle when you end it will be frozen for
+              analytics.
+            </>
           ) : (
             <>
               You have <span className="text-custom-80 font-semibold">{transferrableIssuesCount}</span>
@@ -162,8 +165,14 @@ export const EndCycleModal: FC<EndCycleModalProps> = (props) => {
           <Button variant="neutral-primary" size="sm" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="danger" size="sm" type="submit" disabled={!!loadingState} onClick={handleSubmit}>
-            {loadingState ? loadingState : completeCycle ? "Complete Cycle" : "End Cycle"}
+          <Button
+            variant={completeCycle ? "primary" : "danger"}
+            size="sm"
+            type="submit"
+            disabled={!!loadingState}
+            onClick={handleSubmit}
+          >
+            {loadingState ? loadingState : completeCycle ? "Let's do it" : "End Cycle"}
           </Button>
         </div>
       </div>
