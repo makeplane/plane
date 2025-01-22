@@ -31,7 +31,7 @@ export const ModuleOrderByDropdown: React.FC<Props> = (props) => {
       customButton={
         <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
           {!isDescending ? <ArrowUpWideNarrow className="size-3 " /> : <ArrowDownWideNarrow className="size-3 " />}
-          {orderByDetails && t(orderByDetails?.label)}
+          {orderByDetails && t(orderByDetails?.i18n_label)}
           <ChevronDown className="size-3" strokeWidth={2} />
         </div>
       }
@@ -48,7 +48,7 @@ export const ModuleOrderByDropdown: React.FC<Props> = (props) => {
             else onChange(option.key);
           }}
         >
-          {t(option.label)}
+          {t(option.i18n_label)}
           {value?.includes(option.key) && <Check className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}

@@ -27,7 +27,7 @@ export const AppliedStatusFilters: React.FC<Props> = observer((props) => {
         return (
           <div key={status} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
             <ModuleStatusIcon status={statusDetails.value} height="12px" width="12px" />
-            {t(statusDetails.label)}
+            {t(statusDetails.i18n_label)}
             {editable && (
               <button
                 type="button"

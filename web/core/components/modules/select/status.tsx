@@ -37,7 +37,7 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error, tabIndex }
                 ) : (
                   <DoubleCircleIcon className={`h-3 w-3 ${error ? "text-red-500" : "text-custom-text-200"}`} />
                 )}
-                {(selectedValue && t(selectedValue?.label)) ?? (
+                {(selectedValue && t(selectedValue?.i18n_label)) ?? (
                   <span className={`${error ? "text-red-500" : "text-custom-text-200"}`}>Status</span>
                 )}
               </div>
@@ -50,7 +50,7 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error, tabIndex }
               <CustomSelect.Option key={status.value} value={status.value}>
                 <div className="flex items-center gap-2">
                   <ModuleStatusIcon status={status.value} />
-                  {t(status.label)}
+                  {t(status.i18n_label)}
                 </div>
               </CustomSelect.Option>
             ))}

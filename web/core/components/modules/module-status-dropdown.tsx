@@ -30,7 +30,7 @@ export const ModuleStatusDropdown: FC<Props> = observer((props: Props) => {
             backgroundColor: moduleStatus ? `${moduleStatus.color}20` : "#a3a3a220",
           }}
         >
-          {(moduleStatus && t(moduleStatus?.label)) ?? t("project_modules.status.backlog")}
+          {(moduleStatus && t(moduleStatus?.i18n_label)) ?? t("project_modules.status.backlog")}
         </span>
       }
       value={moduleStatus?.value}
@@ -43,7 +43,7 @@ export const ModuleStatusDropdown: FC<Props> = observer((props: Props) => {
         <CustomSelect.Option key={status.value} value={status.value}>
           <div className="flex items-center gap-2">
             <ModuleStatusIcon status={status.value} />
-            {t(status.label)}
+            {t(status.i18n_label)}
           </div>
         </CustomSelect.Option>
       ))}

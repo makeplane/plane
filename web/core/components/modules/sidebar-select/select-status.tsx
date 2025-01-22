@@ -53,7 +53,7 @@ export const SidebarStatusSelect: React.FC<Props> = ({ control, submitChanges, w
                 <CustomSelect.Option key={option.value} value={option.value}>
                   <div className="flex items-center gap-2">
                     <span className="h-2 w-2 flex-shrink-0 rounded-full" style={{ backgroundColor: option.color }} />
-                    {t(option.label)}
+                    {t(option.i18n_label)}
                   </div>
                 </CustomSelect.Option>
               ))}

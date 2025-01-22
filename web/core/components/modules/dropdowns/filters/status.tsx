@@ -40,7 +40,7 @@ export const FilterStatus: React.FC<Props> = observer((props) => {
                 isChecked={appliedFilters?.includes(status.value) ? true : false}
                 onClick={() => handleUpdate(status.value)}
                 icon={<ModuleStatusIcon status={status.value} />}
-                title={t(status.label)}
+                title={t(status.i18n_label)}
               />
             ))
           ) : (

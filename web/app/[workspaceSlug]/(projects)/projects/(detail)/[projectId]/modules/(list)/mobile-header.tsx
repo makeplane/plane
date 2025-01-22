@@ -5,6 +5,7 @@ import { ChevronDown } from "lucide-react";
 import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CustomMenu, Row } from "@plane/ui";
+import { ModuleLayoutIcon } from "@/components/modules";
 import { useModuleFilter, useProject } from "@/hooks/store";
 
 export const ModulesListMobileHeader = observer(() => {
@@ -36,8 +37,8 @@ export const ModulesListMobileHeader = observer(() => {
               }}
               className="flex items-center gap-2"
             >
-              <layout.icon className="w-3 h-3" />
-              <div className="text-custom-text-300">{t(layout.title)}</div>
+              <ModuleLayoutIcon layoutType={layout.key} />
+              <div className="text-custom-text-300">{t(layout.i18n_title)}</div>
             </CustomMenu.MenuItem>
           );
         })}
