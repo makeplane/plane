@@ -73,7 +73,7 @@ class IssueSearchEndpoint(BaseAPIView):
         if issue_relation == "true" and issue_id:
             issues = search_issues(query, issues_and_epics)
 
-            issue = Issue.issue_objects.filter(pk=issue_id).first()
+            issue = Issue.objects.filter(pk=issue_id).first()
 
             related_issue_ids = (
                 IssueRelation.objects.filter(Q(related_issue=issue) | Q(issue=issue))

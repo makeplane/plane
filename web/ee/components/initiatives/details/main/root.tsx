@@ -16,10 +16,12 @@ type Props = {
   workspaceSlug: string;
   initiativeId: string;
   disabled?: boolean;
+  toggleEpicModal: (value?: boolean) => void;
+  toggleProjectModal: (value?: boolean) => void;
 };
 
 export const InitiativeMainContentRoot: FC<Props> = observer((props) => {
-  const { workspaceSlug, initiativeId, disabled = false } = props;
+  const { workspaceSlug, initiativeId, disabled = false, toggleEpicModal, toggleProjectModal } = props;
   // store hooks
   const { initiativesSidebarCollapsed } = useAppTheme();
 
@@ -27,7 +29,13 @@ export const InitiativeMainContentRoot: FC<Props> = observer((props) => {
     <MainWrapper isSidebarOpen={!initiativesSidebarCollapsed}>
       <InitiativeInfoSection workspaceSlug={workspaceSlug} initiativeId={initiativeId} disabled={disabled} />
       <InitiativeProgressSection initiativeId={initiativeId} />
-      <InitiativeCollapsibleSection workspaceSlug={workspaceSlug} initiativeId={initiativeId} disabled={disabled} />
+      <InitiativeCollapsibleSection
+        workspaceSlug={workspaceSlug}
+        initiativeId={initiativeId}
+        disabled={disabled}
+        toggleEpicModal={toggleEpicModal}
+        toggleProjectModal={toggleProjectModal}
+      />
       <InitiativeModalsRoot workspaceSlug={workspaceSlug} initiativeId={initiativeId} />
     </MainWrapper>
   );
