@@ -34,7 +34,7 @@ export const InboxIssueOrderByDropdown: FC = observer(() => {
       ) : (
         <ArrowDownWideNarrow className="size-3 " />
       )}
-      {t(orderByDetails?.label || "inbox_issue.order_by.created_at")}
+      {t(orderByDetails?.i18n_label || "inbox_issue.order_by.created_at")}
       <ChevronDown className="size-3" strokeWidth={2} />
     </div>
   );
@@ -51,7 +51,7 @@ export const InboxIssueOrderByDropdown: FC = observer(() => {
           className="flex items-center justify-between gap-2"
           onClick={() => handleInboxIssueSorting("order_by", option.key as TInboxIssueSortingOrderByKeys)}
         >
-          {t(option.label)}
+          {t(option.i18n_label)}
           {inboxSorting?.order_by?.includes(option.key) && <Check className="size-3" />}
         </CustomMenu.MenuItem>
       ))}
@@ -62,7 +62,7 @@ export const InboxIssueOrderByDropdown: FC = observer(() => {
           className="flex items-center justify-between gap-2"
           onClick={() => handleInboxIssueSorting("sort_by", option.key as TInboxIssueSortingSortByKeys)}
         >
-          {t(option.label)}
+          {t(option.i18n_label)}
           {inboxSorting?.sort_by?.includes(option.key) && <Check className="size-3" />}
         </CustomMenu.MenuItem>
       ))}

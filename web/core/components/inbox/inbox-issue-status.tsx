@@ -26,7 +26,7 @@ export const InboxIssueStatus: React.FC<Props> = observer((props) => {
   const isSnoozedDatePassed = inboxIssue.status === 0 && new Date(inboxIssue.snoozed_till ?? "") < new Date();
   if (!inboxIssueStatusDetail || isSnoozedDatePassed) return <></>;
 
-  const description = t(inboxIssueStatusDetail.description(), {
+  const description = t(inboxIssueStatusDetail.i18n_description(), {
     days: findHowManyDaysLeft(new Date(inboxIssue.snoozed_till ?? "")),
   });
 
@@ -41,7 +41,7 @@ export const InboxIssueStatus: React.FC<Props> = observer((props) => {
       <div className={`flex items-center gap-1`}>
         <InboxStatusIcon type={inboxIssue?.status} size={iconSize} className="flex-shrink-0" />
         <div className="font-medium text-xs whitespace-nowrap">
-          {inboxIssue?.status === 0 && inboxIssue?.snoozed_till ? description : t(inboxIssueStatusDetail.title)}
+          {inboxIssue?.status === 0 && inboxIssue?.snoozed_till ? description : t(inboxIssueStatusDetail.i18n_title)}
         </div>
       </div>
       {showDescription && <div className="text-sm whitespace-nowrap">{description}</div>}

@@ -32,7 +32,7 @@ export const InboxIssueAppliedFiltersStatus: FC = observer(() => {
             <div className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden">
               <InboxStatusIcon type={optionDetail?.status} className={`w-3 h-3 ${optionDetail?.textColor(false)}`} />
             </div>
-            <div className="text-xs truncate">{t(optionDetail?.title)}</div>
+            <div className="text-xs truncate">{t(optionDetail?.i18n_title)}</div>
             {handleFilterValue(optionDetail?.status).length >= 1 && (
               <div
                 className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
