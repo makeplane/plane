@@ -922,7 +922,7 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
     key: EmptyStateType.STICKIES,
     title: "Stickies are quick notes and to-dos you take down on the fly.",
     description:
-      "Capture your thoughts and ideas effortlessly by creating stickies that you can access anytime and from anywhere.",
+      "Capture ideas, ahas, brainwaves, light-bulb moments without scrambling for a pen and paper, hunting for the recorder app on your phone, or firing up a notes app only to forget all about it later. Keep them all right next to your work so you can easily come back, build them up, or well, discard them.",
     path: "/empty-state/stickies/stickies",
     primaryButton: {
       icon: <Plus className="size-4" />,
@@ -945,8 +945,8 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
   },
   [EmptyStateType.HOME_WIDGETS]: {
     key: EmptyStateType.HOME_WIDGETS,
-    title: "It's Quiet Without Widgets, Turn Them On",
-    description: "It looks like all your widgets are turned off. Enable them\nnow to enhance your experience!",
+    title: "So much to add, yet such empty",
+    description: "You have turned off all your widgets. Turn some or\nall of them back on to see delightful things.",
     path: "/empty-state/dashboard/widgets",
     primaryButton: {
       icon: <Shapes className="size-4" />,

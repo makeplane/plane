@@ -1,38 +1,41 @@
 import { Briefcase, FileText, History } from "lucide-react";
+// plane ui
 import { LayersIcon } from "@plane/ui";
 
+const getDisplayContent = (type: string) => {
+  switch (type) {
+    case "project":
+      return {
+        icon: Briefcase,
+        text: "Projects you go into or have assigned work in will show up here.",
+      };
+    case "page":
+      return {
+        icon: FileText,
+        text: "Create, see, or change something on pages you have access to and see them here.",
+      };
+    case "issue":
+      return {
+        icon: LayersIcon,
+        text: "Let's see some issues to see them show up here.",
+      };
+    default:
+      return {
+        icon: History,
+        text: "Whatever you see and act on in Plane will show up here.",
+      };
+  }
+};
+
 export const RecentsEmptyState = ({ type }: { type: string }) => {
-  const getDisplayContent = () => {
-    switch (type) {
-      case "project":
-        return {
-          icon: <Briefcase size={30} className="text-custom-text-400/40" />,
-          text: "Your recent projects will appear here once you visit one.",
-        };
-      case "page":
-        return {
-          icon: <FileText size={30} className="text-custom-text-400/40" />,
-          text: "Your recent pages will appear here once you visit one.",
-        };
-      case "issue":
-        return {
-          icon: <LayersIcon className="text-custom-text-400/40 w-[30px] h-[30px]" />,
-          text: "Your recent issues will appear here once you visit one.",
-        };
-      default:
-        return {
-          icon: <History size={30} className="text-custom-text-400/40" />,
-          text: "You don’t have any recent items yet.",
-        };
-    }
-  };
-  const { icon, text } = getDisplayContent();
+  const displayContent = getDisplayContent(type);
 
   return (
-    <div className="min-h-[120px] flex w-full justify-center py-6 bg-custom-border-100 rounded">
-      <div className="m-auto flex gap-2">
-        {icon} <div className="text-custom-text-400 text-sm text-center my-auto">{text}</div>
+    <div className="min-h-[110px] w-full flex items-center justify-center gap-2 py-6 bg-custom-background-90 text-custom-text-400 rounded">
+      <div className="flex-shrink-0 size-[30px] grid place-items-center">
+        <displayContent.icon className="size-6" />
       </div>
+      <p className="text-sm text-center font-medium">{displayContent.text}</p>
     </div>
   );
 };
