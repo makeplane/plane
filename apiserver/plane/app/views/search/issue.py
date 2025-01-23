@@ -47,6 +47,7 @@ class IssueSearchEndpoint(BaseAPIView):
 
         if workspace_search == "false":
             issues = issues.filter(project_id=project_id)
+            issues_and_epics = issues_and_epics.filter(project_id=project_id)
 
         if query:
             issues = search_issues(query, issues)
