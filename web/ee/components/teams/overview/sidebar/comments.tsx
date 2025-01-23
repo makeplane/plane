@@ -5,7 +5,6 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
-import { E_SORT_ORDER } from "@plane/constants";
 import { TFileSignedURLResponse } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { setToast, TOAST_TYPE } from "@plane/ui";
@@ -52,7 +51,7 @@ export const TeamsOverviewSidebarComments: FC<TTeamSidebarCommentsRootProps> = o
   // derived values
   const teamCommentsLoader = getTeamCommentsLoader(teamId);
   const teamComments = getTeamComments(teamId);
-  const teamCommentsSortOrder = getTeamCommentsSortOrder(teamId);
+  const teamCommentsSortOrder = getTeamCommentsSortOrder();
 
   const activityOperations: TTeamActivityOperations = useMemo(
     () => ({
@@ -139,8 +138,8 @@ export const TeamsOverviewSidebarComments: FC<TTeamSidebarCommentsRootProps> = o
               <Spinner size={12} className="animate-spin" />
             ) : null}
             <ActivitySortRoot
-              sortOrder={teamCommentsSortOrder as E_SORT_ORDER} //TODO: fix this by changing store types.
-              toggleSort={() => toggleTeamCommentsSortOrder(teamId)}
+              sortOrder={teamCommentsSortOrder}
+              toggleSort={() => toggleTeamCommentsSortOrder()}
               className="py-1"
               iconClassName="size-3"
             />

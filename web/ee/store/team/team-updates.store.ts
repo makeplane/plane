@@ -3,9 +3,10 @@ import orderBy from "lodash/orderBy";
 import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { action, autorun, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
+import { E_SORT_ORDER } from "@plane/constants";
 import { TLoader, TTeamActivity, TTeamReaction } from "@plane/types";
 // plane web imports
 import { TeamUpdatesService } from "@/plane-web/services/teams/team-updates.service";
@@ -18,18 +19,18 @@ export interface ITeamUpdatesStore {
   teamCommentLoader: Record<string, TLoader>; // teamId => loader
   teamActivityMap: Record<string, TTeamActivity[]>; // teamId => activities
   teamCommentsMap: Record<string, TTeamComment[]>; // teamId => comments
-  teamActivitySortOrder: Record<string, "asc" | "desc">; // teamId => sortOrder
-  teamCommentsSortOrder: Record<string, "asc" | "desc">; // teamId => sortOrder
+  teamActivitySortOrder: E_SORT_ORDER | undefined; // teamId => sortOrder
+  teamCommentsSortOrder: E_SORT_ORDER | undefined; // teamId => sortOrder
   // computed functions
   getTeamActivitiesLoader: (teamId: string) => TLoader | undefined;
   getTeamCommentsLoader: (teamId: string) => TLoader | undefined;
   getTeamActivities: (teamId: string) => TTeamActivity[] | undefined;
   getTeamComments: (teamId: string) => TTeamComment[] | undefined;
-  getTeamActivitySortOrder: (teamId: string) => "asc" | "desc";
-  getTeamCommentsSortOrder: (teamId: string) => "asc" | "desc";
+  getTeamActivitySortOrder: () => E_SORT_ORDER;
+  getTeamCommentsSortOrder: () => E_SORT_ORDER;
   // helper action
-  toggleTeamActivitySortOrder: (teamId: string) => void;
-  toggleTeamCommentsSortOrder: (teamId: string) => void;
+  toggleTeamActivitySortOrder: () => void;
+  toggleTeamCommentsSortOrder: () => void;
   // actions
   fetchTeamActivities: (workspaceSlug: string, teamId: string) => Promise<TTeamActivity[]>;
   fetchTeamComments: (workspaceSlug: string, teamId: string) => Promise<TTeamComment[]>;
@@ -62,8 +63,8 @@ export class TeamUpdatesStore implements ITeamUpdatesStore {
   teamCommentLoader: Record<string, TLoader> = {}; // teamId => loader
   teamActivityMap: Record<string, TTeamActivity[]> = {}; // teamId => activities
   teamCommentsMap: Record<string, TTeamComment[]> = {}; // teamId => comments
-  teamActivitySortOrder: Record<string, "asc" | "desc"> = {}; // teamId => sortOrder
-  teamCommentsSortOrder: Record<string, "asc" | "desc"> = {}; // teamId => sortOrder
+  teamActivitySortOrder: ITeamUpdatesStore["teamActivitySortOrder"] = undefined; // teamId => sortOrder
+  teamCommentsSortOrder: ITeamUpdatesStore["teamCommentsSortOrder"] = undefined; // teamId => sortOrder
   // store
   rootStore: RootStore;
   // service
@@ -94,6 +95,34 @@ export class TeamUpdatesStore implements ITeamUpdatesStore {
     this.rootStore = _rootStore;
     // service
     this.teamUpdatesService = new TeamUpdatesService();
+
+    // autorun to get or set team activity sort order to local storage
+    autorun(() => {
+      if (typeof localStorage === "undefined") return;
+      if (this.teamActivitySortOrder === undefined) {
+        // Initialize sort order if not set
+        const storedSortOrder =
+          (localStorage.getItem(`team-activity-sort-order`) as E_SORT_ORDER | undefined) ?? E_SORT_ORDER.ASC;
+        this.teamActivitySortOrder = storedSortOrder;
+      } else {
+        // Update local storage if sort order is set
+        localStorage.setItem(`team-activity-sort-order`, this.teamActivitySortOrder);
+      }
+    });
+
+    // autorun to get or set team comments sort order to local storage
+    autorun(() => {
+      if (typeof localStorage === "undefined") return;
+      if (this.teamCommentsSortOrder === undefined) {
+        // Initialize sort order if not set
+        const storedSortOrder =
+          (localStorage.getItem(`team-comments-sort-order`) as E_SORT_ORDER | undefined) ?? E_SORT_ORDER.DESC;
+        this.teamCommentsSortOrder = storedSortOrder;
+      } else {
+        // Update local storage if sort order is set
+        localStorage.setItem(`team-comments-sort-order`, this.teamCommentsSortOrder);
+      }
+    });
   }
 
   // computed functions
@@ -114,7 +143,7 @@ export class TeamUpdatesStore implements ITeamUpdatesStore {
    * @param teamId
    */
   getTeamActivities = computedFn((teamId: string) =>
-    orderBy(this.teamActivityMap[teamId], "created_at", this.getTeamActivitySortOrder(teamId))
+    orderBy(this.teamActivityMap[teamId], "created_at", this.teamActivitySortOrder)
   );
 
   /**
@@ -122,36 +151,36 @@ export class TeamUpdatesStore implements ITeamUpdatesStore {
    * @param teamId
    */
   getTeamComments = computedFn((teamId: string) =>
-    orderBy(this.teamCommentsMap[teamId], "created_at", this.getTeamCommentsSortOrder(teamId))
+    orderBy(this.teamCommentsMap[teamId], "created_at", this.teamCommentsSortOrder)
   );
 
   /**
    * Get team activity sort order
    * @param teamId
    */
-  getTeamActivitySortOrder = computedFn((teamId: string) => this.teamActivitySortOrder[teamId] ?? "asc");
+  getTeamActivitySortOrder = computedFn(() => this.teamActivitySortOrder ?? E_SORT_ORDER.ASC);
 
   /**
    * Get team comments sort order
    * @param teamId
    */
-  getTeamCommentsSortOrder = computedFn((teamId: string) => this.teamCommentsSortOrder[teamId] ?? "desc");
+  getTeamCommentsSortOrder = computedFn(() => this.teamCommentsSortOrder ?? E_SORT_ORDER.DESC);
 
   // helper actions
   /**
    * Toggle team activity sort order
    * @param teamId
    */
-  toggleTeamActivitySortOrder = (teamId: string) => {
-    set(this.teamActivitySortOrder, teamId, this.teamActivitySortOrder[teamId] === "asc" ? "desc" : "asc");
+  toggleTeamActivitySortOrder = () => {
+    this.teamActivitySortOrder = this.teamActivitySortOrder === E_SORT_ORDER.ASC ? E_SORT_ORDER.DESC : E_SORT_ORDER.ASC;
   };
 
   /**
    * Toggle team comments sort order
    * @param teamId
    */
-  toggleTeamCommentsSortOrder = (teamId: string) => {
-    set(this.teamCommentsSortOrder, teamId, this.teamCommentsSortOrder[teamId] === "asc" ? "desc" : "asc");
+  toggleTeamCommentsSortOrder = () => {
+    this.teamCommentsSortOrder = this.teamCommentsSortOrder === E_SORT_ORDER.ASC ? E_SORT_ORDER.DESC : E_SORT_ORDER.ASC;
   };
 
   // actions
