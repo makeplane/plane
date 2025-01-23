@@ -4,7 +4,6 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
-import { E_SORT_ORDER } from "@plane/constants";
 import { TTeamActivity } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
@@ -54,7 +53,7 @@ export const TeamsOverviewSidebarActivity: FC<TTeamActivityProps> = observer((pr
   // derived values
   const teamActivitiesLoader = getTeamActivitiesLoader(teamId);
   const teamActivities = getTeamActivities(teamId);
-  const teamActivitySortOrder = getTeamActivitySortOrder(teamId);
+  const teamActivitySortOrder = getTeamActivitySortOrder();
 
   return (
     <div className="relative flex flex-col gap-y-2 h-full overflow-hidden">
@@ -64,8 +63,8 @@ export const TeamsOverviewSidebarActivity: FC<TTeamActivityProps> = observer((pr
           <span className="flex items-center gap-2">
             {teamActivitiesLoader === "mutation" ? <Spinner size={12} className="animate-spin" /> : null}
             <ActivitySortRoot
-              sortOrder={teamActivitySortOrder as E_SORT_ORDER} //TODO: fix this by changing store types.
-              toggleSort={() => toggleTeamActivitySortOrder(teamId)}
+              sortOrder={teamActivitySortOrder}
+              toggleSort={() => toggleTeamActivitySortOrder()}
               className="py-1"
               iconClassName="size-3"
             />
