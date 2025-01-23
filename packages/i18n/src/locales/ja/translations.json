@@ -222,7 +222,6 @@
   "join_the_project_to_rearrange": "プロジェクトに参加して並べ替え",
   "drag_to_rearrange": "ドラッグして並べ替え",
   "congrats": "おめでとうございます！",
-  "project": "プロジェクト",
   "open_project": "プロジェクトを開く",
   "issues": "問題",
   "cycles": "サイクル",
@@ -442,6 +441,9 @@
         "error": "コメントのアセットのアップロードに失敗しました。後で再試行してください。"
       }
     }
+  },
+  "project": {
+    "label": "{count, plural, one {プロジェクト} other {プロジェクト}}"
   },
   "view": {
     "create": {

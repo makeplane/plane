@@ -36,9 +36,9 @@ export const ProjectIssuesMobileHeader = observer(() => {
   // i18n
   const { t } = useTranslation();
   const layouts = [
-    { key: "list", title: t("issue.layouts.list"), icon: List },
-    { key: "kanban", title: t("issue.layouts.kanban"), icon: Kanban },
-    { key: "calendar", title: t("issue.layouts.calendar"), icon: Calendar },
+    { key: "list", titleTranslationKey: "issue.layouts.list", icon: List },
+    { key: "kanban", titleTranslationKey: "issue.layouts.kanban", icon: Kanban },
+    { key: "calendar", titleTranslationKey: "issue.layouts.calendar", icon: Calendar },
   ];
   const [analyticsModal, setAnalyticsModal] = useState(false);
   const { workspaceSlug, projectId } = useParams() as {
@@ -133,7 +133,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
               className="flex items-center gap-2"
             >
               <IssueLayoutIcon layout={ISSUE_LAYOUTS[index].key} className="h-3 w-3" />
-              <div className="text-custom-text-300">{layout.title}</div>
+              <div className="text-custom-text-300">{t(layout.titleTranslationKey)}</div>
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>

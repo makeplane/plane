@@ -222,7 +222,6 @@
   "join_the_project_to_rearrange": "Únete al proyecto para reordenar",
   "drag_to_rearrange": "Arrastra para reordenar",
   "congrats": "¡Felicitaciones!",
-  "project": "Proyecto",
   "open_project": "Abrir proyecto",
   "issues": "Problemas",
   "cycles": "Ciclos",
@@ -316,5 +315,142 @@
   "remove_parent_issue": "Eliminar problema padre",
   "add_parent": "Agregar padre",
   "loading_members": "Cargando miembros...",
-  "inbox": "bandeja de entrada"
+  "inbox": "bandeja de entrada",
+  "common": {
+    "all": "Todos",
+    "states": "Estados",
+    "state": "Estado",
+    "state_groups": "Grupos de estado",
+    "priority": "Prioridad",
+    "team_project": "Proyecto de equipo",
+    "project": "Proyecto",
+    "cycle": "Ciclo",
+    "cycles": "Ciclos",
+    "module": "Módulo",
+    "modules": "Módulos",
+    "labels": "Etiquetas",
+    "assignees": "Asignados",
+    "assignee": "Asignado",
+    "created_by": "Creado por",
+    "none": "Ninguno",
+    "link": "Enlace",
+    "estimate": "Estimación",
+    "layout": "Diseño",
+    "filters": "Filtros",
+    "display": "Mostrar",
+    "load_more": "Cargar más",
+    "no_matches_found": "No se encontraron coincidencias",
+    "activity": "Actividad",
+    "analytics": "Analítica",
+    "success": "Éxito",
+    "error": "Error",
+    "group_by": "Agrupar por",
+    "search": "Buscar",
+    "epic": "Épica",
+    "issue": "Problema",
+    "warning": "Advertencia",
+    "updating": "Actualizando",
+    "update": "Actualizar",
+    "creating": "Creando",
+    "cancel": "Cancelar",
+    "description": "Descripción",
+    "title": "Título",
+    "order_by": {
+      "label": "Ordenar por",
+      "manual": "Manual",
+      "last_created": "Último creado",
+      "last_updated": "Última actualización",
+      "start_date": "Fecha de inicio",
+      "due_date": "Fecha de vencimiento"
+    },
+    "comments": "Comentarios",
+    "updates": "Actualizaciones"
+  },
+  "form": {
+    "title": {
+      "required": "El título es obligatorio",
+      "max_length": "El título debe tener menos de {length} caracteres"
+    }
+  },
+  "entity": {
+    "grouping_title": "Agrupación de {entity}",
+    "priority": "{entity}",
+    "all": "Todos los {entity}",
+    "drop_here_to_move": "Suelte aquí para mover el {entity}"
+  },
+  "epic": {
+    "all": "Todas las épicas",
+    "label": "{count, plural, one {Épica} other {Épicas}}"
+  },
+  "issue": {
+    "label": "{count, plural, one {Problema} other {Problemas}}",
+    "all": "Todos los problemas",
+    "add": "Agregar problema",
+    "priority": {
+      "urgent": "Urgente",
+      "high": "Alta",
+      "medium": "Media",
+      "low": "Baja"
+    },
+    "display": {
+      "properties": {
+        "label": "Propiedades de visualización",
+        "id": "ID",
+        "issue_type": "Tipo de problema",
+        "sub_issue_count": "Cantidad de subproblemas",
+        "attachment_count": "Cantidad de archivos adjuntos"
+      },
+      "extra": {
+        "show_sub_issues": "Mostrar subproblemas",
+        "show_empty_groups": "Mostrar grupos vacíos"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "Este diseño está ordenado por",
+      "list": "Lista",
+      "kanban": "Tablero",
+      "calendar": "Calendario",
+      "spreadsheet": "Hoja de cálculo",
+      "gantt": "Línea de tiempo",
+      "title": {
+        "list": "Diseño de lista",
+        "kanban": "Diseño de tablero",
+        "calendar": "Diseño de calendario",
+        "spreadsheet": "Diseño de hoja de cálculo",
+        "gantt": "Diseño de línea de tiempo"
+      }
+    },
+    "states": {
+      "active": "Activo",
+      "backlog": "Pendientes"
+    },
+    "comments": {
+      "create": {
+        "success": "Comentario creado con éxito",
+        "error": "Error al crear el comentario. Por favor, inténtalo de nuevo más tarde."
+      },
+      "update": {
+        "success": "Comentario actualizado con éxito",
+        "error": "Error al actualizar el comentario. Por favor, inténtalo de nuevo más tarde."
+      },
+      "remove": {
+        "success": "Comentario eliminado con éxito",
+        "error": "Error al eliminar el comentario. Por favor, inténtalo de nuevo más tarde."
+      },
+      "upload": {
+        "error": "Error al subir el archivo. Por favor, inténtalo de nuevo más tarde."
+      }
+    }
+  },
+  "project": {
+    "label": "{count, plural, one {Proyecto} other {Proyectos}}"
+  },
+  "view": {
+    "create": {
+      "label": "Crear vista"
+    },
+    "update": {
+      "label": "Actualizar vista"
+    }
+  }
 }
