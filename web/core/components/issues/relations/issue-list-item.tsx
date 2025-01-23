@@ -166,14 +166,14 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                   </div>
                 </CustomMenu.MenuItem>
 
-                    {!disabled && (
-                      <CustomMenu.MenuItem onClick={handleRemoveRelation}>
-                        <div className="flex items-center gap-2">
-                          <X className="h-3.5 w-3.5" strokeWidth={2} />
-                          <span>Remove relation</span>
-                        </div>
-                      </CustomMenu.MenuItem>
-                    )}
+                {!disabled && (
+                  <CustomMenu.MenuItem onClick={handleRemoveRelation}>
+                    <div className="flex items-center gap-2">
+                      <X className="h-3.5 w-3.5" strokeWidth={2} />
+                      <span>Remove relation</span>
+                    </div>
+                  </CustomMenu.MenuItem>
+                )}
 
                 {!disabled && (
                   <CustomMenu.MenuItem onClick={handleDeleteIssue}>
