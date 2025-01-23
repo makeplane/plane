@@ -65,7 +65,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
 
   // handlers
   const handleIssuePeekOverview = (issue: TIssue) => {
-    if (issueServiceType === EIssueServiceType.ISSUES && issue.is_epic) {
+    if (issue.is_epic) {
       // open epics in new tab
       window.open(issueLink, "_blank");
       return;
