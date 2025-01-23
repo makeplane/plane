@@ -6,6 +6,7 @@ import { IUser } from "@plane/types";
 import { Button } from "@plane/ui";
 // hooks
 import { useCurrentTime } from "@/hooks/use-current-time";
+import { useTranslation } from "@plane/i18n";
 
 export interface IUserGreetingsView {
   user: IUser;
@@ -16,6 +17,7 @@ export const UserGreetingsView: FC<IUserGreetingsView> = (props) => {
   const { user, handleWidgetModal } = props;
   // current time hook
   const { currentTime } = useCurrentTime();
+  const { t } = useTranslation();
 
   const hour = new Intl.DateTimeFormat("en-US", {
     hour12: false,
@@ -23,8 +25,11 @@ export const UserGreetingsView: FC<IUserGreetingsView> = (props) => {
   }).format(currentTime);
 
   const date = new Intl.DateTimeFormat("en-US", {
-    month: "short",
     day: "numeric",
+  }).format(currentTime);
+
+  const month = new Intl.DateTimeFormat("en-US", {
+    month: "short",
   }).format(currentTime);
 
   const weekDay = new Intl.DateTimeFormat("en-US", {
@@ -39,6 +44,12 @@ export const UserGreetingsView: FC<IUserGreetingsView> = (props) => {
   }).format(currentTime);
 
   const greeting = parseInt(hour, 10) < 12 ? "morning" : parseInt(hour, 10) < 18 ? "afternoon" : "evening";
+  const translatedTime = t(`date_time.date.format.full`, {
+    day: t(`date_time.date.days.${weekDay}`),
+    date,
+    month: t(`date_time.date.months_short.${month}`),
+    time: timeString,
+  });
 
   return (
     <div className="flex justify-between">
@@ -48,9 +59,7 @@ export const UserGreetingsView: FC<IUserGreetingsView> = (props) => {
         </h3>
         <h6 className="flex items-center gap-2 font-medium text-custom-text-400">
           <div>{greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙️"}</div>
-          <div>
-            {weekDay}, {date} {timeString}
-          </div>
+          <div>{translatedTime}</div>
         </h6>
       </div>
       <Button variant="neutral-primary" size="sm" onClick={handleWidgetModal} className="my-auto mb-0">

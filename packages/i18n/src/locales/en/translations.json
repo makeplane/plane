@@ -328,6 +328,37 @@
       "mo": "mois",
       "y": "an"   
     },
+
+    "date": {
+      "days": {
+        "Monday": "Monday",
+        "Tuesday": "Tuesday",
+        "Wednesday": "Wednesday",
+        "Thursday": "Thursday",
+        "Friday": "Friday",
+        "Saturday": "Saturday",
+        "Sunday": "Sunday"
+      },
+      "months_short": {
+        "Jan": "Jan",
+        "Feb": "Feb",
+        "Mar": "Mar",
+        "Apr": "Apr",
+        "May": "May",
+        "Jun": "Jun",
+        "Jul": "Jul",
+        "Aug": "Aug",
+        "Sep": "Sep",
+        "Oct": "Oct",
+        "Nov": "Nov",
+        "Dec": "Dec"
+      },
+      "format": {
+        "full": "{day}, {month} {date} {time}",
+        "shortDate": "{month} {date}",
+        "timeOnly": "{hours}:{minutes}"
+      }
+    },
     "standard": {
       "less_than_x_seconds": {
         "past": "{time, plural, one{less than # second} other{less than # seconds}} ago",

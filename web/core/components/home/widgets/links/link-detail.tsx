@@ -9,7 +9,7 @@ import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast, CustomMenu, TContextMenuItem } from "@plane/ui";
 // helpers
 import { cn, copyTextToClipboard } from "@plane/utils";
-import { calculateI18nTimeAgo } from "@/helpers/date-time.helper";
+import { calculateI18nTimeAgo, calculateTimeAgo } from "@/helpers/date-time.helper";
 import { useHome } from "@/hooks/store/use-home";
 import { TLinkOperations } from "./use-links";
 

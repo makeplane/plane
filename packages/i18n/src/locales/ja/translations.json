@@ -327,6 +327,36 @@
       "mo": "ヶ月",
       "y": "年"
     },
+    "date": {
+      "days": {
+        "Monday": "月曜日",
+        "Tuesday": "火曜日",
+        "Wednesday": "水曜日",
+        "Thursday": "木曜日",
+        "Friday": "金曜日",
+        "Saturday": "土曜日",
+        "Sunday": "日曜日"
+      },
+      "months_short": {
+        "Jan": "1月",
+        "Feb": "2月",
+        "Mar": "3月",
+        "Apr": "4月",
+        "May": "5月",
+        "Jun": "6月",
+        "Jul": "7月",
+        "Aug": "8月",
+        "Sep": "9月",
+        "Oct": "10月",
+        "Nov": "11月",
+        "Dec": "12月"
+      },
+      "format": {
+        "full": "{month}{date}日 ({day}) {time}",
+        "shortDate": "{month}{date}日",
+        "timeOnly": "{hours}:{minutes}"
+      }
+    },
     "standard": {
       "less_than_x_seconds": {
         "past": "{time}秒未満前",
