@@ -37,7 +37,6 @@ class IssueSearchEndpoint(BaseAPIView):
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
-                project_id=project_id,
             )
             .filter(deleted_at__isnull=True)
             .filter(state__is_triage=False)
