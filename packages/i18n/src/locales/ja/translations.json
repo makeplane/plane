@@ -376,7 +376,8 @@
   "entity": {
     "grouping_title": "{entity}グループ化",
     "priority": "",
-    "all": "すべての{entity}"
+    "all": "すべての{entity}",
+    "drop_here_to_move": "ここにドロップして{entity}を移動"
   },
   "epic": {
     "all": "すべてのエピック",
@@ -406,6 +407,7 @@
       }
     },
     "layouts": {
+      "ordered_by_label": "このレイアウトは",
       "list": "リスト",
       "kanban": "ボード",
       "calendar": "カレンダー",

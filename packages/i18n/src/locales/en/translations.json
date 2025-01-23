@@ -223,7 +223,6 @@
   "join_the_project_to_rearrange": "Join the project to rearrange",
   "drag_to_rearrange": "Drag to rearrange",
   "congrats": "Congrats!",
-  "project": "Project",
   "open_project": "Open project",
   "issues": "Issues",
   "cycles": "Cycles",
@@ -376,7 +375,8 @@
   "entity": {
     "grouping_title": "{entity} Grouping",
     "priority": "{entity} ",
-    "all": "All {entity}"
+    "all": "All {entity}",
+    "drop_here_to_move": "Drop here to move the {entity}"
   },
   "epic": {
     "all": "All Epics",
@@ -406,6 +406,7 @@
       }
     },
     "layouts": {
+      "ordered_by_label": "This layout is ordered by",
       "list": "List",
       "kanban": "Board",
       "calendar": "Calendar",
@@ -440,6 +441,9 @@
         "error": "Asset upload failed. Please try again later."
       }
     }
+  },
+  "project": {
+    "label": "{count, plural, one {Project} other {Projects}}"
   },
   "view": {
     "create": {

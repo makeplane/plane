@@ -496,7 +496,7 @@ export enum EActivityFilterType {
 export type TActivityFilters = EActivityFilterType;
 
 export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<
-  EActivityFilterType,
+  TActivityFilters,
   { labelTranslationKey: string }
 > = {
   [EActivityFilterType.ACTIVITY]: {
@@ -521,10 +521,10 @@ export const defaultActivityFilters: TActivityFilters[] = [
 
 export const filterActivityOnSelectedFilters = (
   activity: TIssueActivityComment[],
-  filter: TActivityFilters[]
+  filters: TActivityFilters[]
 ): TIssueActivityComment[] =>
   activity.filter((activity) =>
-    filter.includes(activity.activity_type as TActivityFilters)
+    filters.includes(activity.activity_type as TActivityFilters)
   );
 
 export const ENABLE_ISSUE_DEPENDENCIES = false;
