@@ -23,6 +23,8 @@ export const useRelationOperations = (
   const { updateIssue, removeIssue } = useIssueDetail(issueServiceType);
   const { captureIssueEvent } = useEventTracker();
   const pathname = usePathname();
+  // derived values
+  const entityName = issueServiceType === EIssueServiceType.ISSUES ? "Issue" : "Epic";
 
   const issueOperations: TRelationIssueOperations = useMemo(
     () => ({
@@ -32,7 +34,7 @@ export const useRelationOperations = (
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Link Copied!",
-            message: "Issue link copied to clipboard.",
+            message: `${entityName} link copied to clipboard.`,
           });
         });
       },
@@ -51,7 +53,7 @@ export const useRelationOperations = (
           setToast({
             title: "Success!",
             type: TOAST_TYPE.SUCCESS,
-            message: "Issue updated successfully",
+            message: `${entityName} updated successfully`,
           });
         } catch (error) {
           captureIssueEvent({
@@ -66,7 +68,7 @@ export const useRelationOperations = (
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
-            message: "Issue update failed",
+            message: `${entityName} update failed`,
           });
         }
       },
