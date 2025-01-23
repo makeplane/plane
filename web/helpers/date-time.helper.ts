@@ -349,6 +349,67 @@ export function calculateTimeAgoShort(date: string | number | Date | null): stri
   return `${Math.floor(diffInYears)}y`;
 }
 
+export function calculateI18nTimeAgoShort(date: string | number | Date | null): {
+  i18n_key: string;
+  time: number;
+} {
+  if (!date) {
+    return {
+      i18n_key: "",
+      time: 0,
+    };
+  }
+
+  const parsedDate = typeof date === "string" ? parseISO(date) : new Date(date);
+  const now = new Date();
+  const diffInSeconds = (now.getTime() - parsedDate.getTime()) / 1000;
+
+  if (diffInSeconds < 60) {
+    return {
+      i18n_key: "date_time.units_short.s",
+      time: Math.floor(diffInSeconds),
+    };
+  }
+
+  const diffInMinutes = diffInSeconds / 60;
+  if (diffInMinutes < 60) {
+    return {
+      i18n_key: "date_time.units_short.m",
+      time: Math.floor(diffInMinutes),
+    };
+  }
+
+  const diffInHours = diffInMinutes / 60;
+  if (diffInHours < 24) {
+    return {
+      i18n_key: "date_time.units_short.h",
+      time: Math.floor(diffInHours),
+    };
+  }
+
+  const diffInDays = diffInHours / 24;
+  if (diffInDays < 30) {
+    return {
+      i18n_key: "date_time.units_short.d",
+      time: Math.floor(diffInDays),
+    };
+  }
+
+  const diffInMonths = diffInDays / 30;
+  if (diffInMonths < 12) {
+    return {
+      i18n_key: "date_time.units_short.mo",
+      time: Math.floor(diffInMonths),
+    };
+  }
+
+  const diffInYears = diffInMonths / 12;
+  return {
+    i18n_key: "date_time.units_short.y",
+    time: Math.floor(diffInYears),
+  };
+}
+
 // Date Validation Helpers
 /**
  * @returns {string} boolean value depending on whether the date is greater than today

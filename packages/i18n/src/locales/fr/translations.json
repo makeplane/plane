@@ -318,6 +318,15 @@
   "loading_members": "Chargement des membres...",
   "inbox": "Boîte de réception",
   "date_time": {
+    "units_short": {
+      "s": "s",
+      "m": "min",
+      "h": "h",
+      "d": "j",
+      "w": "sem",
+      "mo": "mois",
+      "y": "an"
+    },
     "standard": {
       "less_than_x_seconds": {
         "past": "il y a {time, plural, one{moins d'une seconde} other{moins de # secondes}}",

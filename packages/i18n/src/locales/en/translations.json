@@ -319,6 +319,15 @@
   "loading_members": "Loading members...",
 
   "date_time" : {
+    "units_short": {
+      "s": "s",
+      "m": "min",
+      "h": "h",
+      "d": "j",
+      "w": "sem",
+      "mo": "mois",
+      "y": "an"   
+    },
     "standard": {
       "less_than_x_seconds": {
         "past": "{time, plural, one{less than # second} other{less than # seconds}} ago",

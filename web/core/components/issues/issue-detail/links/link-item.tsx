@@ -8,12 +8,13 @@ import { TIssueServiceType } from "@plane/types";
 // ui
 import { Tooltip, TOAST_TYPE, setToast, CustomMenu } from "@plane/ui";
 // helpers
-import { calculateTimeAgoShort } from "@/helpers/date-time.helper";
+import { calculateI18nTimeAgoShort } from "@/helpers/date-time.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { TLinkOperationsModal } from "./create-update-link-modal";
+import { useTranslation } from "@plane/i18n";
 
 type TIssueLinkItem = {
   linkId: string;
@@ -32,6 +33,7 @@ export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
     link: { getLinkById },
   } = useIssueDetail(issueServiceType);
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
 
@@ -39,6 +41,7 @@ export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
     toggleIssueLinkModalStore(modalToggle);
     setIssueLinkData(linkDetail);
   };
+  const { i18n_key, time } = calculateI18nTimeAgoShort(linkDetail.created_at);
   return (
     <>
       <div
@@ -60,7 +63,8 @@ export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
         </div>
         <div className="flex items-center gap-1 flex-shrink-0">
           <p className="p-1 text-xs align-bottom leading-5 text-custom-text-400 group-hover-text-custom-text-200">
-            {calculateTimeAgoShort(linkDetail.created_at)}
+            {time}
+            {t(i18n_key)}
           </p>
           <span
             onClick={() => {

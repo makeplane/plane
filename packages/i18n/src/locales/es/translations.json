@@ -318,6 +318,15 @@
   "loading_members": "Cargando miembros...",
   "inbox": "bandeja de entrada",
   "date_time": {
+    "units_short": {
+      "s": "s",
+      "m": "min",
+      "h": "h",
+      "d": "d",
+      "w": "sem",
+      "mo": "mes",
+      "y": "año"
+    },
     "standard": {
       "less_than_x_seconds": {
         "past": "hace {time, plural, one{menos de un segundo} other{menos de # segundos}}",

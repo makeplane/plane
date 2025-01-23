@@ -317,6 +317,15 @@
   "loading_members": "正在加载成员...",
   "inbox": "收件箱",
   "date_time": {
+    "units_short": {
+      "s": "秒",
+      "m": "分",
+      "h": "小时",
+      "d": "天",
+      "w": "周",
+      "mo": "月",
+      "y": "年"  
+    },
     "standard": {
       "less_than_x_seconds": {
         "past": "{time, plural, one{不到1秒} other{不到#秒}}前",
