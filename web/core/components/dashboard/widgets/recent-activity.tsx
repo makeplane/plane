@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { History } from "lucide-react";
 // types
+import { useTranslation } from "@plane/i18n";
 import { TRecentActivityWidgetResponse } from "@plane/types";
 // components
 import { Card, Avatar, getButtonStyling } from "@plane/ui";
@@ -12,7 +13,7 @@ import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
 import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { calculateI18nTimeAgo } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useDashboard, useUser } from "@/hooks/store";
@@ -23,6 +24,7 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
   // store hooks
   const { data: currentUser } = useUser();
+  const { t } = useTranslation();
   // derived values
   const { fetchWidgetStats, getWidgetStats } = useDashboard();
   const widgetStats = getWidgetStats<TRecentActivityWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
@@ -44,51 +46,52 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
       </Link>
       {widgetStats.length > 0 ? (
         <div className="mt-4 space-y-6">
-          {widgetStats.map((activity) => (
-            <div key={activity.id} className="flex gap-5">
-              <div className="flex-shrink-0">
-                {activity.field ? (
-                  activity.new_value === "restore" ? (
-                    <History className="h-3.5 w-3.5 text-custom-text-200" />
-                  ) : (
-                    <div className="flex h-6 w-6 justify-center">
-                      <ActivityIcon activity={activity} />
-                    </div>
-                  )
-                ) : activity.actor_detail.avatar_url && activity.actor_detail.avatar_url !== "" ? (
-                  <Avatar
-                    src={getFileURL(activity.actor_detail.avatar_url)}
-                    name={activity.actor_detail.display_name}
-                    size={24}
-                    className="h-full w-full rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs text-white">
-                    {activity.actor_detail.is_bot
-                      ? activity.actor_detail.first_name.charAt(0)
-                      : activity.actor_detail.display_name.charAt(0)}
-                  </div>
-                )}
-              </div>
-              <div className="-mt-2 break-words">
-                <p className="inline text-sm text-custom-text-200">
-                  <span className="font-medium text-custom-text-100">
-                    {currentUser?.id === activity.actor_detail.id ? "You" : activity.actor_detail?.display_name}{" "}
-                  </span>
+          {widgetStats.map((activity) => {
+            const { i18n_time_ago, time } = calculateI18nTimeAgo(activity.created_at);
+            return (
+              <div key={activity.id} className="flex gap-5">
+                <div className="flex-shrink-0">
                   {activity.field ? (
-                    <ActivityMessage activity={activity} showIssue />
+                    activity.new_value === "restore" ? (
+                      <History className="h-3.5 w-3.5 text-custom-text-200" />
+                    ) : (
+                      <div className="flex h-6 w-6 justify-center">
+                        <ActivityIcon activity={activity} />
+                      </div>
+                    )
+                  ) : activity.actor_detail.avatar_url && activity.actor_detail.avatar_url !== "" ? (
+                    <Avatar
+                      src={getFileURL(activity.actor_detail.avatar_url)}
+                      name={activity.actor_detail.display_name}
+                      size={24}
+                      className="h-full w-full rounded-full object-cover"
+                    />
                   ) : (
-                    <span>
-                      created <IssueLink activity={activity} />
-                    </span>
+                    <div className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs text-white">
+                      {activity.actor_detail.is_bot
+                        ? activity.actor_detail.first_name.charAt(0)
+                        : activity.actor_detail.display_name.charAt(0)}
+                    </div>
                   )}
-                </p>
-                <p className="text-xs text-custom-text-200 whitespace-nowrap">
-                  {calculateTimeAgo(activity.created_at)}
-                </p>
+                </div>
+                <div className="-mt-2 break-words">
+                  <p className="inline text-sm text-custom-text-200">
+                    <span className="font-medium text-custom-text-100">
+                      {currentUser?.id === activity.actor_detail.id ? "You" : activity.actor_detail?.display_name}{" "}
+                    </span>
+                    {activity.field ? (
+                      <ActivityMessage activity={activity} showIssue />
+                    ) : (
+                      <span>
+                        created <IssueLink activity={activity} />
+                      </span>
+                    )}
+                  </p>
+                  <p className="text-xs text-custom-text-200 whitespace-nowrap">{t(i18n_time_ago, { time })}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
           <Link
             href={redirectionLink}
             className={cn(

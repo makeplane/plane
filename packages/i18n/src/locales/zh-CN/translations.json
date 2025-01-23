@@ -315,5 +315,63 @@
   "remove_parent_issue": "移除父问题",
   "add_parent": "添加父问题",
   "loading_members": "正在加载成员...",
-  "inbox": "收件箱"
+  "inbox": "收件箱",
+  "date_time": {
+    "standard": {
+      "less_than_x_seconds": {
+        "past": "{time, plural, one{不到1秒} other{不到#秒}}前",
+        "future": "{time, plural, one{不到1秒} other{不到#秒}}后"
+      },
+      "less_than_x_minutes": {
+        "past": "不到1分钟前",
+        "future": "不到1分钟后"
+      },
+      "x_minutes": {
+        "past": "{time, plural, one{#分钟} other{#分钟}}前",
+        "future": "{time, plural, one{#分钟} other{#分钟}}后"
+      },
+      "about_x_hours": {
+        "past": "大约{time, plural, one{#小时} other{#小时}}前",
+        "future": "大约{time, plural, one{#小时} other{#小时}}后"
+      },
+      "x_days": {
+        "past": "{time, plural, one{#天} other{#天}}前",
+        "future": "{time, plural, one{#天} other{#天}}后"
+      },
+      "about_x_months": {
+        "past": "大约{time, plural, one{#个月} other{#个月}}前",
+        "future": "大约{time, plural, one{#个月} other{#个月}}后"
+      },
+      "about_x_years": {
+        "past": "大约{time, plural, one{#年} other{#年}}前",
+        "future": "大约{time, plural, one{#年} other{#年}}后"
+      },
+      "over_x_years": {
+        "past": "超过{time, plural, one{#年} other{#年}}前",
+        "future": "超过{time, plural, one{#年} other{#年}}后"
+      },
+      "almost_x_years": {
+        "past": "接近{time, plural, one{#年} other{#年}}前",
+        "future": "接近{time, plural, one{#年} other{#年}}后"
+      }
+    },
+    "include_seconds": {
+      "less_than_5_seconds": {
+        "past": "不到5秒前",
+        "future": "不到5秒后"
+      },
+      "less_than_10_seconds": {
+        "past": "不到10秒前",
+        "future": "不到10秒后"
+      },
+      "less_than_20_seconds": {
+        "past": "不到20秒前",
+        "future": "不到20秒后"
+      },
+      "half_a_minute": {
+        "past": "半分钟前",
+        "future": "半分钟后"
+      }
+    }
+  }
 }

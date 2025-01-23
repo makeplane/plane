@@ -316,5 +316,63 @@
   "remove_parent_issue": "Eliminar problema padre",
   "add_parent": "Agregar padre",
   "loading_members": "Cargando miembros...",
-  "inbox": "bandeja de entrada"
+  "inbox": "bandeja de entrada",
+  "date_time": {
+    "standard": {
+      "less_than_x_seconds": {
+        "past": "hace {time, plural, one{menos de un segundo} other{menos de # segundos}}",
+        "future": "en {time, plural, one{menos de un segundo} other{menos de # segundos}}"
+      },
+      "less_than_x_minutes": {
+        "past": "hace menos de un minuto",
+        "future": "en menos de un minuto"
+      },
+      "x_minutes": {
+        "past": "hace {time, plural, one{# minuto} other{# minutos}}",
+        "future": "en {time, plural, one{# minuto} other{# minutos}}"
+      },
+      "about_x_hours": {
+        "past": "hace {time, plural, one{aproximadamente # hora} other{aproximadamente # horas}}",
+        "future": "en {time, plural, one{aproximadamente # hora} other{aproximadamente # horas}}"
+      },
+      "x_days": {
+        "past": "hace {time, plural, one{# día} other{# días}}",
+        "future": "en {time, plural, one{# día} other{# días}}"
+      },
+      "about_x_months": {
+        "past": "hace {time, plural, one{aproximadamente # mes} other{aproximadamente # meses}}",
+        "future": "en {time, plural, one{aproximadamente # mes} other{aproximadamente # meses}}"
+      },
+      "about_x_years": {
+        "past": "hace {time, plural, one{aproximadamente # año} other{aproximadamente # años}}",
+        "future": "en {time, plural, one{aproximadamente # año} other{aproximadamente # años}}"
+      },
+      "over_x_years": {
+        "past": "hace {time, plural, one{más de # año} other{más de # años}}",
+        "future": "en {time, plural, one{más de # año} other{más de # años}}"
+      },
+      "almost_x_years": {
+        "past": "hace {time, plural, one{casi # año} other{casi # años}}",
+        "future": "en {time, plural, one{casi # año} other{casi # años}}"
+      }
+    },
+    "include_seconds": {
+      "less_than_5_seconds": {
+        "past": "hace menos de 5 segundos",
+        "future": "en menos de 5 segundos"
+      },
+      "less_than_10_seconds": {
+        "past": "hace menos de 10 segundos",
+        "future": "en menos de 10 segundos"
+      },
+      "less_than_20_seconds": {
+        "past": "hace menos de 20 segundos",
+        "future": "en menos de 20 segundos"
+      },
+      "half_a_minute": {
+        "past": "hace medio minuto",
+        "future": "en medio minuto"
+      }
+    }
+  }
 }

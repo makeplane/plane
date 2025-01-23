@@ -1,8 +1,9 @@
+import { useTranslation } from "@plane/i18n";
 import { TActivityEntityData, TIssueEntityData } from "@plane/types";
 import { LayersIcon, PriorityIcon, StateGroupIcon, Tooltip } from "@plane/ui";
 import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns";
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { calculateI18nTimeAgo } from "@/helpers/date-time.helper";
 import { useIssueDetail, useProjectState } from "@/hooks/store";
 import { IssueIdentifier } from "@/plane-web/components/issues";
 
@@ -16,9 +17,11 @@ export const RecentIssue = (props: BlockProps) => {
   // hooks
   const { getStateById } = useProjectState();
   const { setPeekIssue } = useIssueDetail();
+  const { t } = useTranslation();
   // derived values
   const issueDetails: TIssueEntityData = activity.entity_data as TIssueEntityData;
   const state = getStateById(issueDetails?.state);
+  const { i18n_time_ago, time } = calculateI18nTimeAgo(activity.visited_at);
 
   return (
     <ListItem
@@ -47,7 +50,7 @@ export const RecentIssue = (props: BlockProps) => {
             </div>
           )}
           <div className="text-custom-text-200 font-medium text-sm whitespace-nowrap">{issueDetails?.name}</div>
-          <div className="font-medium text-xs text-custom-text-400">{calculateTimeAgo(activity.visited_at)}</div>
+          <div className="font-medium text-xs text-custom-text-400">{t(i18n_time_ago, { time })} </div>
         </div>
       }
       quickActionElement={

@@ -316,5 +316,63 @@
   "remove_parent_issue": "親問題を削除",
   "add_parent": "親問題を追加",
   "loading_members": "メンバーを読み込んでいます...",
-  "inbox": "受信箱"
+  "inbox": "受信箱",
+  "date_time": {
+    "standard": {
+      "less_than_x_seconds": {
+        "past": "{time}秒未満前",
+        "future": "{time}秒未満後"
+      },
+      "less_than_x_minutes": {
+        "past": "1分未満前",
+        "future": "1分未満後"
+      },
+      "x_minutes": {
+        "past": "{time}分前",
+        "future": "{time}分後"
+      },
+      "about_x_hours": {
+        "past": "約{time}時間前",
+        "future": "約{time}時間後"
+      },
+      "x_days": {
+        "past": "{time}日前",
+        "future": "{time}日後"
+      },
+      "about_x_months": {
+        "past": "約{time}ヶ月前",
+        "future": "約{time}ヶ月後"
+      },
+      "about_x_years": {
+        "past": "約{time}年前",
+        "future": "約{time}年後"
+      },
+      "over_x_years": {
+        "past": "{time}年以上前",
+        "future": "{time}年以上後"
+      },
+      "almost_x_years": {
+        "past": "ほぼ{time}年前",
+        "future": "ほぼ{time}年後"
+      }
+    },
+    "include_seconds": {
+      "less_than_5_seconds": {
+        "past": "5秒未満前",
+        "future": "5秒未満後"
+      },
+      "less_than_10_seconds": {
+        "past": "10秒未満前",
+        "future": "10秒未満後"
+      },
+      "less_than_20_seconds": {
+        "past": "20秒未満前",
+        "future": "20秒未満後"
+      },
+      "half_a_minute": {
+        "past": "30秒前",
+        "future": "30秒後"
+      }
+    }
+  }
 }

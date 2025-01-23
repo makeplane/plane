@@ -5,10 +5,11 @@ import { FC } from "react";
 // ui
 import { observer } from "mobx-react";
 import { Pencil, Trash2, ExternalLink, EllipsisVertical, Link2, Link } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast, CustomMenu, TContextMenuItem } from "@plane/ui";
 // helpers
 import { cn, copyTextToClipboard } from "@plane/utils";
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { calculateI18nTimeAgo } from "@/helpers/date-time.helper";
 import { useHome } from "@/hooks/store/use-home";
 import { TLinkOperations } from "./use-links";
 
@@ -24,6 +25,7 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
   const {
     quickLinks: { getLinkById, toggleLinkModal, setLinkData },
   } = useHome();
+  const { t } = useTranslation();
 
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
@@ -71,6 +73,7 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
       icon: Trash2,
     },
   ];
+  const { i18n_time_ago, time } = calculateI18nTimeAgo(linkDetail.created_at);
 
   return (
     <div
@@ -82,7 +85,7 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
       </div>
       <div className="my-auto flex-1">
         <div className="text-sm font-medium truncate">{linkDetail.title || linkDetail.url}</div>
-        <div className="text-xs font-medium text-custom-text-400">{calculateTimeAgo(linkDetail.created_at)}</div>
+        <div className="text-xs font-medium text-custom-text-400">{t(i18n_time_ago, { time })}</div>
       </div>
 
       <CustomMenu

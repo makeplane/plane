@@ -1,9 +1,10 @@
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@plane/i18n";
 import { TActivityEntityData, TProjectEntityData } from "@plane/types";
 import { Logo } from "@plane/ui";
 import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns";
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { calculateI18nTimeAgo } from "@/helpers/date-time.helper";
 
 type BlockProps = {
   activity: TActivityEntityData;
@@ -14,8 +15,11 @@ export const RecentProject = (props: BlockProps) => {
   const { activity, ref, workspaceSlug } = props;
   // router
   const router = useRouter();
+  // hooks
+  const { t } = useTranslation();
   // derived values
   const projectDetails: TProjectEntityData = activity.entity_data as TProjectEntityData;
+  const { i18n_time_ago, time } = calculateI18nTimeAgo(activity.visited_at);
 
   return (
     <ListItem
@@ -33,7 +37,7 @@ export const RecentProject = (props: BlockProps) => {
             </div>
           </div>
           <div className="text-custom-text-200 font-medium text-sm whitespace-nowrap">{projectDetails?.name}</div>
-          <div className="font-medium text-xs text-custom-text-400">{calculateTimeAgo(activity.visited_at)}</div>
+          <div className="font-medium text-xs text-custom-text-400">{t(i18n_time_ago, { time })} </div>
         </div>
       }
       quickActionElement={

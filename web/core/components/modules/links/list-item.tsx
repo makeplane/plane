@@ -1,11 +1,12 @@
 import { observer } from "mobx-react";
 import { Copy, LinkIcon, Pencil, Trash2 } from "lucide-react";
 // plane types
+import { useTranslation } from "@plane/i18n";
 import { ILinkDetails } from "@plane/types";
 // plane ui
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // helpers
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { calculateI18nTimeAgo } from "@/helpers/date-time.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useMember } from "@/hooks/store";
@@ -22,6 +23,7 @@ export const ModulesLinksListItem: React.FC<Props> = observer((props) => {
   const { handleDeleteLink, handleEditLink, isEditingAllowed, link } = props;
   // store hooks
   const { getUserDetails } = useMember();
+  const { t } = useTranslation();
   // derived values
   const createdByDetails = getUserDetails(link.created_by);
   // platform os
@@ -36,6 +38,7 @@ export const ModulesLinksListItem: React.FC<Props> = observer((props) => {
       })
     );
   };
+  const { i18n_time_ago, time } = calculateI18nTimeAgo(link.created_at);
 
   return (
     <div className="relative flex flex-col rounded-md bg-custom-background-90 p-2.5">
@@ -88,7 +91,7 @@ export const ModulesLinksListItem: React.FC<Props> = observer((props) => {
       </div>
       <div className="px-5">
         <p className="mt-0.5 stroke-[1.5] text-xs text-custom-text-300">
-          Added {calculateTimeAgo(link.created_at)}
+          Added {t(i18n_time_ago, { time })}
           <br />
           {createdByDetails && (
             <>by {createdByDetails?.is_bot ? createdByDetails?.first_name + " Bot" : createdByDetails?.display_name}</>

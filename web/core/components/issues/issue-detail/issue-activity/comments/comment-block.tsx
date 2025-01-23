@@ -2,7 +2,8 @@ import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { MessageCircle } from "lucide-react";
 // helpers
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { useTranslation } from "@plane/i18n";
+import { calculateI18nTimeAgo } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
@@ -20,10 +21,12 @@ export const IssueCommentBlock: FC<TIssueCommentBlock> = observer((props) => {
   const {
     comment: { getCommentById },
   } = useIssueDetail();
+  const { t } = useTranslation();
 
   const comment = getCommentById(commentId);
 
   if (!comment) return <></>;
+  const { i18n_time_ago, time } = calculateI18nTimeAgo(comment.created_at);
   return (
     <div className={`relative flex gap-3 ${ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`}`}>
       <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-custom-background-80" aria-hidden />
@@ -59,7 +62,7 @@ export const IssueCommentBlock: FC<TIssueCommentBlock> = observer((props) => {
                 ? comment.actor_detail?.first_name + " Bot"
                 : comment.actor_detail?.display_name}
             </div>
-            <div className="text-xs text-custom-text-200">commented {calculateTimeAgo(comment.created_at)}</div>
+            <div className="text-xs text-custom-text-200">commented {t(i18n_time_ago, { time })}</div>
           </div>
           <div>{children}</div>
         </div>

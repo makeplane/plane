@@ -156,12 +156,14 @@ export const findHowManyDaysLeft = (
 };
 
 // Time Difference Helpers
+
 /**
  * @returns {string} formatted date in the form of amount of time passed since the event happened
  * @description Returns time passed since the event happened
  * @param {string | Date} time
  * @example calculateTimeAgo("2023-01-01") // 1 year ago
  */
+
 export const calculateTimeAgo = (time: string | number | Date | null): string => {
   if (!time) return "";
   // Parse the time to check if it is valid
@@ -172,6 +174,143 @@ export const calculateTimeAgo = (time: string | number | Date | null): string =>
   const distance = formatDistanceToNow(parsedTime, { addSuffix: true });
   return distance;
 };
+
+export const calculateI18nTimeAgo = (time: string | number | Date | null): TimeDistanceResult => {
+  if (!time) return { i18n_time_ago: "", time: null };
+
+  const parsedTime = typeof time === "string" || typeof time === "number" ? parseISO(String(time)) : time;
+
+  if (!parsedTime) return { i18n_time_ago: "", time: null };
+
+  const diffInSeconds = (Date.now() - parsedTime.getTime()) / 1000;
+  const distance = getTimeDistance(Math.abs(diffInSeconds));
+
+  return distance;
+};
+interface TimeDistanceResult {
+  i18n_time_ago: string;
+  time: number | null;
+}
+
+/**
+ * Calculates relative time distance and returns appropriate translation keys
+ */
+function getTimeDistance(diffInSeconds: number): TimeDistanceResult {
+  const absSeconds = Math.abs(diffInSeconds);
+  const direction = diffInSeconds > 0 ? "past" : "future";
+
+  // Convert to larger time units
+  const minutes = Math.round(absSeconds / 60);
+  const hours = Math.round(absSeconds / 3600);
+  const days = Math.round(absSeconds / 86400);
+  const months = Math.round(absSeconds / 2592000);
+  const years = Math.round(absSeconds / 31536000);
+
+  // Seconds-based intervals (<1 minute)
+  if (absSeconds < 30)
+    return {
+      i18n_time_ago: `date_time.standard.less_than_x_seconds.${direction}`,
+      time: 30,
+    };
+  if (absSeconds < 5)
+    return {
+      i18n_time_ago: `date_time.include_seconds.less_than_5_seconds.${direction}`,
+      time: null,
+    };
+  if (absSeconds < 10)
+    return {
+      i18n_time_ago: `date_time.include_seconds.less_than_10_seconds.${direction}`,
+      time: null,
+    };
+  if (absSeconds < 20)
+    return {
+      i18n_time_ago: `date_time.include_seconds.less_than_20_seconds.${direction}`,
+      time: null,
+    };
+  if (absSeconds < 40)
+    return {
+      i18n_time_ago: `date_time.include_seconds.half_a_minute.${direction}`,
+      time: null,
+    };
+  if (absSeconds < 60)
+    return {
+      i18n_time_ago: `date_time.standard.less_than_x_minutes.${direction}`,
+      time: null,
+    };
+
+  // Minutes to Years
+  if (absSeconds < 90)
+    return {
+      i18n_time_ago: `date_time.standard.x_minutes.${direction}`,
+      time: 1,
+    };
+  if (absSeconds < 2670)
+    return {
+      i18n_time_ago: `date_time.standard.x_minutes.${direction}`,
+      time: minutes,
+    };
+  if (absSeconds < 5370)
+    return {
+      i18n_time_ago: `date_time.standard.about_x_hours.${direction}`,
+      time: 1,
+    };
+  if (absSeconds < 86370)
+    return {
+      i18n_time_ago: `date_time.standard.about_x_hours.${direction}`,
+      time: hours,
+    };
+  if (absSeconds < 151200)
+    return {
+      i18n_time_ago: `date_time.standard.x_days.${direction}`,
+      time: 1,
+    };
+  if (absSeconds < 2592000)
+    return {
+      i18n_time_ago: `date_time.standard.x_days.${direction}`,
+      time: days,
+    };
+  if (absSeconds < 3888000)
+    return {
+      i18n_time_ago: `date_time.standard.about_x_months.${direction}`,
+      time: 1,
+    };
+  if (absSeconds < 31536000)
+    return {
+      i18n_time_ago: `date_time.standard.about_x_months.${direction}`,
+      time: months,
+    };
+  if (absSeconds < 47304000)
+    return {
+      i18n_time_ago: `date_time.standard.about_x_years.${direction}`,
+      time: 1,
+    };
+  if (absSeconds < 56160000)
+    return {
+      i18n_time_ago: `date_time.standard.over_x_years.${direction}`,
+      time: 1,
+    };
+  if (absSeconds < 63072000)
+    return {
+      i18n_time_ago: `date_time.standard.almost_x_years.${direction}`,
+      time: 2,
+    };
+
+  // Multiple years
+  if (months % 12 < 3)
+    return {
+      i18n_time_ago: `date_time.standard.about_x_years.${direction}`,
+      time: years,
+    };
+  if (months % 12 < 9)
+    return {
+      i18n_time_ago: `date_time.standard.over_x_years.${direction}`,
+      time: years,
+    };
+  return {
+    i18n_time_ago: `date_time.standard.almost_x_years.${direction}`,
+    time: years + 1,
+  };
+}
 
 export function calculateTimeAgoShort(date: string | number | Date | null): string {
   if (!date) {

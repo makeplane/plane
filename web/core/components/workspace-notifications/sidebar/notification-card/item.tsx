@@ -3,12 +3,13 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { Avatar, Row } from "@plane/ui";
 // components
 import { NotificationOption } from "@/components/workspace-notifications";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { calculateTimeAgo, renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
+import { calculateI18nTimeAgo, renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 import { sanitizeCommentForNotification } from "@/helpers/notification.helper";
 import { replaceUnderscoreIfSnakeCase, stripAndTruncateHTML } from "@/helpers/string.helper";
@@ -26,6 +27,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
   const { currentSelectedNotificationId, setCurrentSelectedNotificationId } = useWorkspaceNotifications();
   const { asJson: notification, markNotificationAsRead } = useNotification(notificationId);
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
+  const { t } = useTranslation();
   // states
   const [isSnoozeStateModalOpen, setIsSnoozeStateModalOpen] = useState(false);
   const [customSnoozeModal, setCustomSnoozeModal] = useState(false);
@@ -56,6 +58,9 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
       }
     }
   };
+  const { i18n_time_ago, time } = notification?.created_at
+    ? calculateI18nTimeAgo(notification?.created_at)
+    : { i18n_time_ago: "", time: "" };
 
   if (!workspaceSlug || !notificationId || !notification?.id || !notificationField) return <></>;
 
@@ -165,7 +170,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
                 </p>
               ) : (
                 <p className="mt-auto flex-shrink-0 text-custom-text-300">
-                  {notification.created_at && calculateTimeAgo(notification.created_at)}
+                  {notification.created_at && t(i18n_time_ago, { time })}
                 </p>
               )}
             </div>

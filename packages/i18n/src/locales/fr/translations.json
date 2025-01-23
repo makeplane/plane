@@ -316,5 +316,63 @@
   "remove_parent_issue": "Supprimer le problème parent",
   "add_parent": "Ajouter un parent",
   "loading_members": "Chargement des membres...",
-  "inbox": "Boîte de réception"
+  "inbox": "Boîte de réception",
+  "date_time": {
+    "standard": {
+      "less_than_x_seconds": {
+        "past": "il y a {time, plural, one{moins d'une seconde} other{moins de # secondes}}",
+        "future": "dans {time, plural, one{moins d'une seconde} other{moins de # secondes}}"
+      },
+      "less_than_x_minutes": {
+        "past": "il y a moins d'une minute",
+        "future": "dans moins d'une minute"
+      },
+      "x_minutes": {
+        "past": "il y a {time, plural, one{# minute} other{# minutes}}",
+        "future": "dans {time, plural, one{# minute} other{# minutes}}"
+      },
+      "about_x_hours": {
+        "past": "il y a {time, plural, one{environ # heure} other{environ # heures}}",
+        "future": "dans {time, plural, one{environ # heure} other{environ # heures}}"
+      },
+      "x_days": {
+        "past": "il y a {time, plural, one{# jour} other{# jours}}",
+        "future": "dans {time, plural, one{# jour} other{# jours}}"
+      },
+      "about_x_months": {
+        "past": "il y a {time, plural, one{environ # mois} other{environ # mois}}",
+        "future": "dans {time, plural, one{environ # mois} other{environ # mois}}"
+      },
+      "about_x_years": {
+        "past": "il y a {time, plural, one{environ # an} other{environ # ans}}",
+        "future": "dans {time, plural, one{environ # an} other{environ # ans}}"
+      },
+      "over_x_years": {
+        "past": "il y a {time, plural, one{plus d'un an} other{plus de # ans}}",
+        "future": "dans {time, plural, one{plus d'un an} other{plus de # ans}}"
+      },
+      "almost_x_years": {
+        "past": "il y a {time, plural, one{presque # an} other{presque # ans}}",
+        "future": "dans {time, plural, one{presque # an} other{presque # ans}}"
+      }
+    },
+    "include_seconds": {
+      "less_than_5_seconds": {
+        "past": "il y a moins de 5 secondes",
+        "future": "dans moins de 5 secondes"
+      },
+      "less_than_10_seconds": {
+        "past": "il y a moins de 10 secondes",
+        "future": "dans moins de 10 secondes"
+      },
+      "less_than_20_seconds": {
+        "past": "il y a moins de 20 secondes",
+        "future": "dans moins de 20 secondes"
+      },
+      "half_a_minute": {
+        "past": "il y a 30 secondes",
+        "future": "dans 30 secondes"
+      }
+    }
+  }
 }

@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { XCircle } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { IApiToken } from "@plane/types";
 // components
 import { Tooltip } from "@plane/ui";
 import { DeleteApiTokenModal } from "@/components/api-token";
-import { renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
+import { renderFormattedDate, calculateI18nTimeAgo } from "@/helpers/date-time.helper";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // ui
 // helpers
@@ -22,6 +23,9 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   // hooks
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
+
+  const { i18n_time_ago, time } = calculateI18nTimeAgo(token.expired_at);
 
   return (
     <>
@@ -54,7 +58,7 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
               ? token.expired_at
                 ? `Expires ${renderFormattedDate(token.expired_at!)}`
                 : "Never expires"
-              : `Expired ${calculateTimeAgo(token.expired_at)}`}
+              : `Expired ${t(i18n_time_ago, { time })}`}
           </p>
         </div>
       </div>

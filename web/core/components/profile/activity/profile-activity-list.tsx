@@ -5,13 +5,14 @@ import useSWR from "swr";
 // icons
 import { History, MessageSquare } from "lucide-react";
 // hooks
+import { useTranslation } from "@plane/i18n";
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
 import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
 import { ActivitySettingsLoader } from "@/components/ui";
 // constants
 import { USER_ACTIVITY } from "@/constants/fetch-keys";
 // helpers
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { calculateI18nTimeAgo } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useUser } from "@/hooks/store";
@@ -32,7 +33,7 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
   const { cursor, perPage, updateResultsCount, updateTotalPages, updateEmptyState } = props;
   // store hooks
   const { data: currentUser } = useUser();
-
+  const { t } = useTranslation();
   const { data: userProfileActivity } = useSWR(
     USER_ACTIVITY({
       cursor,
@@ -60,6 +61,7 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
       {userProfileActivity ? (
         <ul role="list">
           {userProfileActivity.results.map((activityItem: any) => {
+            const { i18n_time_ago, time } = calculateI18nTimeAgo(activityItem.created_at);
             if (activityItem.field === "comment")
               return (
                 <div key={activityItem.id} className="mt-2">
@@ -92,9 +94,7 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                             ? activityItem.actor_detail.first_name + " Bot"
                             : activityItem.actor_detail.display_name}
                         </div>
-                        <p className="mt-0.5 text-xs text-custom-text-200">
-                          Commented {calculateTimeAgo(activityItem.created_at)}
-                        </p>
+                        <p className="mt-0.5 text-xs text-custom-text-200">Commented {t(i18n_time_ago, { time })}</p>
                       </div>
                       <div className="issue-comments-section p-0">
                         <RichTextReadOnlyEditor
@@ -177,9 +177,7 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                             )}{" "}
                             <div className="inline gap-1">
                               {message}{" "}
-                              <span className="flex-shrink-0 whitespace-nowrap">
-                                {calculateTimeAgo(activityItem.created_at)}
-                              </span>
+                              <span className="flex-shrink-0 whitespace-nowrap">{t(i18n_time_ago, { time })}</span>
                             </div>
                           </div>
                         </div>

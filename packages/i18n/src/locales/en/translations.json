@@ -316,5 +316,64 @@
   "change_parent_issue": "Change parent issue",
   "remove_parent_issue": "Remove parent issue",
   "add_parent": "Add parent",
-  "loading_members": "Loading members..."
+  "loading_members": "Loading members...",
+
+  "date_time" : {
+    "standard": {
+      "less_than_x_seconds": {
+        "past": "{time, plural, one{less than # second} other{less than # seconds}} ago",
+        "future": "in {time, plural, one{less than # second} other{less than # seconds}}"
+      },
+      "less_than_x_minutes": {
+        "past": "less than a minute ago",
+        "future": "in less than a minute"
+      },
+      "x_minutes": {
+        "past": "{time, plural, one{# minute} other{# minutes}} ago",
+        "future": "in {time, plural, one{# minute} other{# minutes}}"
+      },
+      "about_x_hours": {
+        "past": "{time, plural, one{about # hour} other{about # hours}} ago",
+        "future": "in {time, plural, one{about # hour} other{about # hours}}"
+      },
+      "x_days": {
+        "past": "{time, plural, one{# day} other{# days}} ago",
+        "future": "in {time, plural, one{# day} other{# days}}"
+      },
+      "about_x_months": {
+        "past": "{time, plural, one{about # month} other{about # months}} ago",
+        "future": "in {time, plural, one{about # month} other{about # months}}"
+      },
+      "about_x_years": {
+        "past": "{time, plural, one{about # year} other{about # years}} ago",
+        "future": "in {time, plural, one{about # year} other{about # years}}"
+      },
+      "over_x_years": {
+        "past": "{time, plural, one{over # year} other{over # years}} ago",
+        "future": "in {time, plural, one{over # year} other{over # years}}"
+      },
+      "almost_x_years": {
+        "past": "{time, plural, one{almost # year} other{almost # years}} ago",
+        "future": "in {time, plural, one{almost # year} other{almost # years}}"
+      }
+    },
+    "include_seconds": {
+      "less_than_5_seconds": {
+        "past": "less than 5 seconds ago",
+        "future": "in less than 5 seconds"
+      },
+      "less_than_10_seconds": {
+        "past": "less than 10 seconds ago",
+        "future": "in less than 10 seconds"
+      },
+      "less_than_20_seconds": {
+        "past": "less than 20 seconds ago",
+        "future": "in less than 20 seconds"
+      },
+      "half_a_minute": {
+        "past": "half a minute ago",
+        "future": "in half a minute"
+      }
+    }
+  }
 }

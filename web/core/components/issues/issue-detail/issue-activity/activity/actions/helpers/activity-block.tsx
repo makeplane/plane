@@ -3,8 +3,9 @@
 import { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
 // hooks
+import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/ui";
-import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
+import { renderFormattedTime, renderFormattedDate, calculateI18nTimeAgo } from "@/helpers/date-time.helper";
 import { useIssueDetail } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // ui
@@ -26,10 +27,12 @@ export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (pr
   const {
     activity: { getActivityById },
   } = useIssueDetail();
+  const { t } = useTranslation();
 
   const activity = getActivityById(activityId);
   const { isMobile } = usePlatformOS();
   if (!activity) return <></>;
+  const { i18n_time_ago, time } = calculateI18nTimeAgo(activity.created_at);
   return (
     <div
       className={`relative flex items-center gap-3 text-xs ${
@@ -48,7 +51,7 @@ export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (pr
             isMobile={isMobile}
             tooltipContent={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
           >
-            <span className="whitespace-nowrap"> {calculateTimeAgo(activity.created_at)}</span>
+            <span className="whitespace-nowrap"> {t(i18n_time_ago, { time })}</span>
           </Tooltip>
         </span>
       </div>

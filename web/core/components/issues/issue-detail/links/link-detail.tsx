@@ -4,11 +4,12 @@ import { FC } from "react";
 // hooks
 // ui
 import { Pencil, Trash2, LinkIcon, ExternalLink } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // icons
 // types
 // helpers
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { calculateI18nTimeAgo } from "@/helpers/date-time.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 import { useIssueDetail, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -31,6 +32,7 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
   } = useIssueDetail();
   const { getUserDetails } = useMember();
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
 
@@ -40,7 +42,7 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
   };
 
   const createdByDetails = getUserDetails(linkDetail.created_by_id);
-
+  const { i18n_time_ago, time } = calculateI18nTimeAgo(linkDetail.created_at);
   return (
     <div key={linkId}>
       <div className="relative flex flex-col rounded-md bg-custom-background-90 p-2.5">
@@ -107,7 +109,7 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
 
         <div className="px-5">
           <p className="mt-0.5 stroke-[1.5] text-xs text-custom-text-300">
-            Added {calculateTimeAgo(linkDetail.created_at)}
+            Added {t(i18n_time_ago, { time })}
             <br />
             {createdByDetails && (
               <>
