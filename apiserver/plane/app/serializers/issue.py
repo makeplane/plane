@@ -300,9 +300,18 @@ class IssueRelationSerializer(BaseSerializer):
         source="related_issue.sequence_id", read_only=True
     )
     name = serializers.CharField(source="related_issue.name", read_only=True)
-    type_id = serializers.UUIDField(source="issue.type.id", read_only=True)
-    is_epic = serializers.BooleanField(source="issue.type.is_epic", read_only=True)
+    type_id = serializers.UUIDField(source="related_issue.type.id", read_only=True)
     relation_type = serializers.CharField(read_only=True)
+    is_epic = serializers.BooleanField(
+        source="related_issue.type.is_epic", read_only=True
+    )
+    state_id = serializers.UUIDField(source="related_issue.state.id", read_only=True)
+    priority = serializers.CharField(source="related_issue.priority", read_only=True)
+    assignee_ids = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
+        write_only=True,
+        required=False,
+    )
 
     class Meta:
         model = IssueRelation
@@ -314,6 +323,9 @@ class IssueRelationSerializer(BaseSerializer):
             "name",
             "type_id",
             "is_epic",
+            "state_id",
+            "priority",
+            "assignee_ids",
         ]
         read_only_fields = ["workspace", "project"]
 
@@ -326,8 +338,15 @@ class RelatedIssueSerializer(BaseSerializer):
     sequence_id = serializers.IntegerField(source="issue.sequence_id", read_only=True)
     name = serializers.CharField(source="issue.name", read_only=True)
     type_id = serializers.UUIDField(source="issue.type.id", read_only=True)
-    is_epic = serializers.BooleanField(source="issue.type.is_epic", read_only=True)
     relation_type = serializers.CharField(read_only=True)
+    is_epic = serializers.BooleanField(source="issue.type.is_epic", read_only=True)
+    state_id = serializers.UUIDField(source="issue.state.id", read_only=True)
+    priority = serializers.CharField(source="issue.priority", read_only=True)
+    assignee_ids = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
+        write_only=True,
+        required=False,
+    )
 
     class Meta:
         model = IssueRelation
@@ -339,6 +358,9 @@ class RelatedIssueSerializer(BaseSerializer):
             "name",
             "type_id",
             "is_epic",
+            "state_id",
+            "priority",
+            "assignee_ids",
         ]
         read_only_fields = ["workspace", "project"]
 
