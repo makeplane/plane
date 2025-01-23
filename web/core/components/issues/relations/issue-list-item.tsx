@@ -16,8 +16,8 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 import { TIssueRelationTypes } from "@/plane-web/types";
-//
-import { TRelationIssueOperations } from "../issue-detail-widgets/relations/helper";
+// local imports
+import { useRelationOperations } from "../issue-detail-widgets/relations/helper";
 
 type Props = {
   workspaceSlug: string;
@@ -26,7 +26,6 @@ type Props = {
   relationKey: TIssueRelationTypes;
   relationIssueId: string;
   disabled: boolean;
-  issueOperations: TRelationIssueOperations;
   handleIssueCrudState: (key: "update" | "delete", issueId: string, issue?: TIssue | null) => void;
   issueServiceType?: TIssueServiceType;
 };
@@ -39,7 +38,6 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
     relationKey,
     relationIssueId,
     disabled = false,
-    issueOperations,
     handleIssueCrudState,
     issueServiceType = EIssueServiceType.ISSUES,
   } = props;
@@ -57,6 +55,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
   // derived values
   const issue = getIssueById(relationIssueId);
   const { handleRedirection } = useIssuePeekOverviewRedirection(!!issue?.is_epic);
+  const issueOperations = useRelationOperations(!!issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const projectDetail = (issue && issue.project_id && project.getProjectById(issue.project_id)) || undefined;
   const currentIssueStateDetail =
     (issue?.project_id && getProjectStates(issue?.project_id)?.find((state) => issue?.state_id == state.id)) ||
@@ -134,62 +133,58 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                 <span className="w-full truncate text-sm text-custom-text-100">{issue.name}</span>
               </Tooltip>
             </div>
-            {!issue.is_epic && (
-              <>
-                <div
-                  className="flex-shrink-0 text-sm"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                >
-                  <RelationIssueProperty
-                    workspaceSlug={workspaceSlug}
-                    issueId={relationIssueId}
-                    disabled={disabled}
-                    issueOperations={issueOperations}
-                    issueServiceType={issueServiceType}
-                  />
-                </div>
-                <div className="flex-shrink-0 text-sm">
-                  <CustomMenu placement="bottom-end" ellipsis>
-                    {!disabled && (
-                      <CustomMenu.MenuItem onClick={handleEditIssue}>
-                        <div className="flex items-center gap-2">
-                          <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
-                          <span>Edit issue</span>
-                        </div>
-                      </CustomMenu.MenuItem>
-                    )}
+            <div
+              className="flex-shrink-0 text-sm"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              <RelationIssueProperty
+                workspaceSlug={workspaceSlug}
+                issueId={relationIssueId}
+                disabled={disabled}
+                issueOperations={issueOperations}
+                issueServiceType={issueServiceType}
+              />
+            </div>
+            <div className="flex-shrink-0 text-sm">
+              <CustomMenu placement="bottom-end" ellipsis>
+                {!disabled && (
+                  <CustomMenu.MenuItem onClick={handleEditIssue}>
+                    <div className="flex items-center gap-2">
+                      <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
+                      <span>Edit</span>
+                    </div>
+                  </CustomMenu.MenuItem>
+                )}
 
-                    <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
-                      <div className="flex items-center gap-2">
-                        <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
-                        <span>Copy issue link</span>
-                      </div>
-                    </CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
+                  <div className="flex items-center gap-2">
+                    <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                    <span>Copy link</span>
+                  </div>
+                </CustomMenu.MenuItem>
 
-                    {!disabled && (
-                      <CustomMenu.MenuItem onClick={handleRemoveRelation}>
-                        <div className="flex items-center gap-2">
-                          <X className="h-3.5 w-3.5" strokeWidth={2} />
-                          <span>Remove relation</span>
-                        </div>
-                      </CustomMenu.MenuItem>
-                    )}
+                {!disabled && (
+                  <CustomMenu.MenuItem onClick={handleRemoveRelation}>
+                    <div className="flex items-center gap-2">
+                      <X className="h-3.5 w-3.5" strokeWidth={2} />
+                      <span>Remove relation</span>
+                    </div>
+                  </CustomMenu.MenuItem>
+                )}
 
-                    {!disabled && (
-                      <CustomMenu.MenuItem onClick={handleDeleteIssue}>
-                        <div className="flex items-center gap-2">
-                          <Trash className="h-3.5 w-3.5" strokeWidth={2} />
-                          <span>Delete issue</span>
-                        </div>
-                      </CustomMenu.MenuItem>
-                    )}
-                  </CustomMenu>
-                </div>
-              </>
-            )}
+                {!disabled && (
+                  <CustomMenu.MenuItem onClick={handleDeleteIssue}>
+                    <div className="flex items-center gap-2">
+                      <Trash className="h-3.5 w-3.5" strokeWidth={2} />
+                      <span>Delete</span>
+                    </div>
+                  </CustomMenu.MenuItem>
+                )}
+              </CustomMenu>
+            </div>
           </div>
         )}
       </ControlLink>
