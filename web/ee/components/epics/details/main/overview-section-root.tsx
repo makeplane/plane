@@ -37,7 +37,7 @@ export const EpicOverviewRoot: FC<Props> = observer((props) => {
       {
         key: "relations",
         label: "Relations",
-        content: <EpicRelationsOverviewRoot workspaceSlug={workspaceSlug} projectId={projectId} epicId={epicId} />,
+        content: <EpicRelationsOverviewRoot workspaceSlug={workspaceSlug} epicId={epicId} />,
       },
     ],
     [workspaceSlug, projectId, epicId]

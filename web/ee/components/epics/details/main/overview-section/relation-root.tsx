@@ -15,13 +15,12 @@ import { SectionEmptyState } from "@/plane-web/components/common/layout/main/com
 
 type Props = {
   workspaceSlug: string;
-  projectId: string;
   epicId: string;
   disabled?: boolean;
 };
 
 export const EpicRelationsOverviewRoot: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, epicId, disabled = false } = props;
+  const { workspaceSlug, epicId, disabled = false } = props;
   // store hooks
   const {
     relation: { getRelationsByIssueId },
@@ -56,7 +55,6 @@ export const EpicRelationsOverviewRoot: FC<Props> = observer((props) => {
       ) : (
         <RelationsCollapsibleContent
           workspaceSlug={workspaceSlug}
-          projectId={projectId}
           issueId={epicId}
           disabled={disabled}
           issueServiceType={EIssueServiceType.EPICS}
