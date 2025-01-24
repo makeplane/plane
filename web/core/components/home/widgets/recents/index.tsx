@@ -24,7 +24,6 @@ const filters: { name: TRecentActivityFilterKeys; icon?: React.ReactNode }[] = [
   { name: "all item" },
   { name: "issue", icon: <LayersIcon className="flex-shrink-0 size-4" /> },
   { name: "page", icon: <FileText className="flex-shrink-0 size-4" /> },
-  { name: "workspace_page", icon: <FileText className="flex-shrink-0 size-4" /> },
   { name: "project", icon: <Briefcase className="flex-shrink-0 size-4" /> },
 ];
 
