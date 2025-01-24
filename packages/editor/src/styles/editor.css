@@ -105,14 +105,14 @@ ul[data-type="taskList"] li > div {
 }
 
 ul[data-type="taskList"] li > label input[type="checkbox"] {
-  border: 1px solid rgba(var(--color-border-300)) !important;
+  border: 1px solid rgba(var(--color-text-100), 0.2) !important;
   outline: none;
   border-radius: 2px;
   transform: scale(1.05);
 }
 
 .ProseMirror[contenteditable="true"] input[type="checkbox"]:hover {
-  background-color: rgba(var(--color-background-80));
+  background-color: rgba(var(--color-text-100), 0.1);
 }
 
 .ProseMirror[contenteditable="false"] input[type="checkbox"] {
