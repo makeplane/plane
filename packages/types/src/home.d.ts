@@ -12,9 +12,9 @@ export type TPageEntityData = {
   id: string;
   name: string;
   logo_props: TLogoProps;
-  project_id: string;
+  project_id?: string;
   owned_by: string;
-  project_identifier: string;
+  project_identifier?: string;
 };
 
 export type TProjectEntityData = {

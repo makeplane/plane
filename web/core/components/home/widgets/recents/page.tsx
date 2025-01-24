@@ -49,9 +49,11 @@ export const RecentPage = (props: BlockProps) => {
                 )}
               </>
             </div>
-            <div className="font-medium text-custom-sidebar-text-400 text-sm whitespace-nowrap">
-              {pageDetails?.project_identifier}
-            </div>
+            {pageDetails?.project_identifier && (
+              <div className="font-medium text-custom-sidebar-text-400 text-sm whitespace-nowrap">
+                {pageDetails?.project_identifier}
+              </div>
+            )}
           </div>
           <div className="text-custom-text-200 font-medium text-sm whitespace-nowrap">{pageDetails?.name}</div>
           <div className="font-medium text-xs text-custom-text-400">{calculateTimeAgo(activity.visited_at)}</div>
