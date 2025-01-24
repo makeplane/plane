@@ -565,8 +565,14 @@ class WorkspaceEpicEndpoint(BaseAPIView):
     def get(self, request, slug):
         initiative_id = request.query_params.get("initiative_id", None)
 
-        epics_query = Issue.objects.filter(workspace__slug=slug).filter(
-            Q(type__isnull=False) & Q(type__is_epic=True)
+        epics_query = Issue.objects.filter(
+            workspace__slug=slug,
+            project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+        ).filter(
+            Q(type__isnull=False)
+            & Q(type__is_epic=True)
+            & Q(project__deleted_at__isnull=True)
         )
 
         if initiative_id:
@@ -605,10 +611,7 @@ class EpicListAnalyticsEndpoint(BaseAPIView):
         )
 
         # fetch all the issues in which user is part of
-        issues = Issue.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-        )
+        issues = Issue.objects.filter(workspace__slug=slug, project_id=project_id)
 
         result = []
         for epic_id in epics:
