@@ -16,6 +16,7 @@ import {
   TSearchResponse,
   TSearchEntityRequestPayload,
   TWidgetEntityData,
+  TActivityEntityData,
 } from "@plane/types";
 import { APIService } from "@/services/api.service";
 // helpers
@@ -282,7 +283,7 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  // quick links
+  // quicklinks
   async fetchWorkspaceLinks(workspaceSlug: string): Promise<TLink[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/quick-links/`)
       .then((response) => response?.data)
@@ -329,7 +330,7 @@ export class WorkspaceService extends APIService {
   }
 
   // recents
-  async fetchWorkspaceRecents(workspaceSlug: string, entity_name?: string) {
+  async fetchWorkspaceRecents(workspaceSlug: string, entity_name?: string): Promise<TActivityEntityData[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/recent-visits/`, {
       params: {
         entity_name,

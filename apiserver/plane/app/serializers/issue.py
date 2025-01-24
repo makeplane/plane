@@ -203,6 +203,7 @@ class IssueCreateSerializer(BaseSerializer):
                     for user in assignees
                 ],
                 batch_size=10,
+                ignore_conflicts=True,
             )
 
         if labels is not None:
@@ -220,6 +221,7 @@ class IssueCreateSerializer(BaseSerializer):
                     for label in labels
                 ],
                 batch_size=10,
+                ignore_conflicts=True,
             )
 
         # Time updation occues even when other related models are updated
