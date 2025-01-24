@@ -117,6 +117,10 @@ export class IssueService extends APIService {
         if (response.data && this.serviceType === EIssueServiceType.ISSUES) {
           updateIssue({ ...response.data, is_local_update: 1 });
         }
+        // add is_epic flag when the service type is epic
+        if (response.data && this.serviceType === EIssueServiceType.EPICS) {
+          response.data.is_epic = true;
+        }
         return response?.data;
       })
       .catch((error) => {
