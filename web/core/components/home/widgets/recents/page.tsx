@@ -1,10 +1,16 @@
 import { useRouter } from "next/navigation";
 import { FileText } from "lucide-react";
+// plane types
 import { TActivityEntityData, TPageEntityData } from "@plane/types";
+// plane ui
 import { Avatar, Logo } from "@plane/ui";
+// plane utils
 import { getFileURL } from "@plane/utils";
+// components
 import { ListItem } from "@/components/core/list";
+// helpers
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
+// hooks
 import { useMember } from "@/hooks/store";
 
 type BlockProps = {
@@ -12,15 +18,20 @@ type BlockProps = {
   ref: React.RefObject<HTMLDivElement>;
   workspaceSlug: string;
 };
+
 export const RecentPage = (props: BlockProps) => {
   const { activity, ref, workspaceSlug } = props;
   // router
   const router = useRouter();
-  // hooks
+  // store hooks
   const { getUserDetails } = useMember();
   // derived values
-  const pageDetails: TPageEntityData = activity.entity_data as TPageEntityData;
+  const pageDetails = activity.entity_data as TPageEntityData;
   const ownerDetails = getUserDetails(pageDetails?.owned_by);
+  const pageLink = pageDetails.project_id
+    ? `/${workspaceSlug}/projects/${pageDetails.project_id}/pages/${pageDetails.id}`
+    : `/${workspaceSlug}/pages/${pageDetails.id}`;
+
   return (
     <ListItem
       key={activity.id}
@@ -58,7 +69,7 @@ export const RecentPage = (props: BlockProps) => {
       onItemClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        router.push(`/${workspaceSlug}/projects/${pageDetails?.project_id}/pages/${pageDetails.id}`);
+        router.push(pageLink);
       }}
     />
   );
