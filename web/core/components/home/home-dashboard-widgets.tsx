@@ -25,7 +25,7 @@ export const HOME_WIDGETS_LIST: {
   quick_links: {
     component: DashboardQuickLinks,
     fullWidth: false,
-    title: "Quick links",
+    title: "Quicklinks",
   },
   recents: {
     component: RecentActivityWidget,
