@@ -431,7 +431,7 @@
       },
       "update": {
         "success": "Comentario actualizado con éxito",
-        "error": "Error al actualizar el comentario. Por favor, inténtalo de nuevo más tarde."
+        "error": "Error al actualizar el comentario. Por favor, inténtalo más tarde."
       },
       "remove": {
         "success": "Comentario eliminado con éxito",
