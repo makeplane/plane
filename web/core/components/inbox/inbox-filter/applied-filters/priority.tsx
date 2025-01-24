@@ -27,7 +27,7 @@ export const InboxIssueAppliedFiltersPriority: FC = observer(() => {
   if (filteredValues.length === 0) return <></>;
   return (
     <Tag>
-      <div className="text-xs text-custom-text-200">Priority</div>
+      <div className="text-xs text-custom-text-200">{t("common.priority")}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
@@ -36,7 +36,7 @@ export const InboxIssueAppliedFiltersPriority: FC = observer(() => {
             <div className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden">
               <PriorityIcon priority={optionDetail.key} className="h-3 w-3" />
             </div>
-            <div className="text-xs truncate">{t(optionDetail?.titleTranslationKey)}</div>
+            <div className="text-xs truncate">{optionDetail?.title}</div>
             <div
               className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
               onClick={() => handleInboxIssueFilters("priority", handleFilterValue(optionDetail?.key))}

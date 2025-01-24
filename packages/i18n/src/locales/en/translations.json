@@ -410,13 +410,13 @@
       "list": "List",
       "kanban": "Board",
       "calendar": "Calendar",
-      "spreadsheet": "Spreadsheet",
+      "spreadsheet": "Table",
       "gantt": "Timeline",
       "title": {
         "list": "List Layout",
         "kanban": "Board Layout",
         "calendar": "Calendar Layout",
-        "spreadsheet": "Spreadsheet Layout",
+        "spreadsheet": "Table Layout",
         "gantt": "Timeline Layout"
       }
     },

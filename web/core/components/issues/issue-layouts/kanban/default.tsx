@@ -164,7 +164,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                     group_by={group_by}
                     column_id={subList.id}
                     icon={subList.icon}
-                    title={subList.i18n_name ? t(subList.i18n_name) : subList.name}
+                    title={subList.name}
                     count={getGroupIssueCount(subList.id, undefined, false) ?? 0}
                     issuePayload={subList.payload}
                     disableIssueCreation={disableIssueCreation || isGroupByCreatedBy}

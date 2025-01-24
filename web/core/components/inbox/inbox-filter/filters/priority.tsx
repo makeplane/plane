@@ -47,7 +47,7 @@ export const FilterPriority: FC<Props> = observer((props) => {
                 isChecked={filterValue?.includes(priority.key) ? true : false}
                 onClick={() => handleInboxIssueFilters("priority", handleFilterValue(priority.key))}
                 icon={<PriorityIcon priority={priority.key} className="h-3.5 w-3.5" />}
-                title={t(priority.titleTranslationKey)}
+                title={priority.title}
               />
             ))
           ) : (

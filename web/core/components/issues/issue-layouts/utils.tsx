@@ -83,8 +83,7 @@ export const getGroupByColumns = ({
     return [
       {
         id: "All Issues",
-        name: "",
-        i18n_name: isEpic ? "epic.all" : "issue.all",
+        name: `All ${isEpic ? "Epics" : "Issues"}`,
         payload: {},
         icon: undefined,
       },
@@ -158,8 +157,7 @@ const getCycleColumns = (): IGroupByColumn[] | undefined => {
   });
   cycles.push({
     id: "None",
-    name: "",
-    i18n_name: "common.none",
+    name: "None",
     icon: <ContrastIcon className="h-3.5 w-3.5" />,
     payload: {},
   });
@@ -186,8 +184,7 @@ const getModuleColumns = (): IGroupByColumn[] | undefined => {
   });
   modules.push({
     id: "None",
-    name: "",
-    i18n_name: "common.none",
+    name: "None",
     icon: <DiceIcon className="h-3.5 w-3.5" />,
     payload: {},
   });
@@ -230,8 +227,7 @@ const getPriorityColumns = (): IGroupByColumn[] => {
   // map priorities to group by columns
   return priorities.map((priority) => ({
     id: priority.key,
-    name: "", // name is hardcoded so i18n_name is used
-    i18n_name: priority.titleTranslationKey,
+    name: priority.title,
     icon: <PriorityIcon priority={priority?.key} />,
     payload: { priority: priority.key },
   }));

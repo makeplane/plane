@@ -263,7 +263,7 @@ export const ListGroup = observer((props: Props) => {
           groupID={group.id}
           groupBy={group_by}
           icon={group.icon}
-          title={group.i18n_name ? t(group.i18n_name) : group.name}
+          title={group.name}
           count={groupIssueCount}
           issuePayload={group.payload}
           canEditProperties={canEditProperties}
