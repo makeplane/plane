@@ -30,7 +30,7 @@ class TeamSpaceCommentEndpoint(TeamBaseEndpoint):
         TeamSpacePermission,
     ]
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id, pk=None):
         if pk:
             comment = TeamSpaceComment.objects.get(
@@ -45,7 +45,7 @@ class TeamSpaceCommentEndpoint(TeamBaseEndpoint):
         serializer = TeamSpaceCommentSerializer(comments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def post(self, request, slug, team_space_id):
         # Get workspace
         workspace = Workspace.objects.get(slug=slug)
@@ -70,7 +70,7 @@ class TeamSpaceCommentEndpoint(TeamBaseEndpoint):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def patch(self, request, slug, team_space_id, pk):
         comment = TeamSpaceComment.objects.get(
             workspace__slug=slug, team_space_id=team_space_id, id=pk
@@ -100,7 +100,7 @@ class TeamSpaceCommentEndpoint(TeamBaseEndpoint):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def delete(self, request, slug, team_space_id, pk):
         comment = TeamSpaceComment.objects.get(
             workspace__slug=slug, team_space_id=team_space_id, id=pk
@@ -137,7 +137,7 @@ class TeamSpaceCommentReactionEndpoint(TeamBaseEndpoint):
             .distinct()
         )
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def post(self, request, slug, team_space_id, comment_id):
         workspace = Workspace.objects.get(slug=slug)
         serializer = TeamSpaceCommentReactionSerializer(data=request.data)
@@ -160,7 +160,7 @@ class TeamSpaceCommentReactionEndpoint(TeamBaseEndpoint):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def delete(self, request, slug, team_space_id, comment_id, reaction_code):
         team_space_comment_reaction = TeamSpaceCommentReaction.objects.get(
             workspace__slug=slug,

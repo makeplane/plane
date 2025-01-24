@@ -32,7 +32,7 @@ const EpicsSettingsPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <div className={`w-full h-full overflow-hidden `}>
-        <WithFeatureFlagHOC flag="EPICS_SETTINGS" fallback={<EpicsUpgrade />} workspaceSlug={workspaceSlug?.toString()}>
+        <WithFeatureFlagHOC flag="EPICS" fallback={<EpicsUpgrade />} workspaceSlug={workspaceSlug?.toString()}>
           <EpicsRoot />
         </WithFeatureFlagHOC>
       </div>

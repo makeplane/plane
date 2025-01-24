@@ -76,7 +76,7 @@ const TeamsSettingsPage = observer(() => {
           Teams is a feature for organizing your workspace into teams.
         </span>
       </div>
-      <WithFeatureFlagHOC flag="TEAMS" fallback={<TeamsUpgrade />} workspaceSlug={workspaceSlug?.toString()}>
+      <WithFeatureFlagHOC flag="TEAMSPACES" fallback={<TeamsUpgrade />} workspaceSlug={workspaceSlug?.toString()}>
         <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-custom-border-100">
           <div className="flex items-center gap-4">
             <div className="size-10 bg-custom-background-90 rounded-md flex items-center justify-center">

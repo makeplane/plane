@@ -118,7 +118,7 @@ class TeamSpacePageEndpoint(TeamBaseEndpoint):
             .distinct()
         )
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id, pk=None):
         if pk:
             page = self.get_queryset().get(workspace__slug=slug, pk=pk)
@@ -158,7 +158,7 @@ class TeamSpacePageEndpoint(TeamBaseEndpoint):
         serializer = TeamSpacePageSerializer(pages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def post(self, request, slug, team_space_id):
         workspace = Workspace.objects.get(slug=slug)
         serializer = TeamSpacePageSerializer(
@@ -205,7 +205,7 @@ class TeamSpacePageEndpoint(TeamBaseEndpoint):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def patch(self, request, slug, team_space_id, pk):
         team_space_page = TeamSpacePage.objects.filter(
             page_id=pk, team_space_id=team_space_id
@@ -255,7 +255,7 @@ class TeamSpacePageEndpoint(TeamBaseEndpoint):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def delete(self, request, slug, team_space_id, pk):
         team_space_page = TeamSpacePage.objects.filter(
             page_id=pk, team_space_id=team_space_id
@@ -332,7 +332,7 @@ class TeamSpacePageDuplicateEndpoint(TeamBaseEndpoint):
         TeamSpacePermission,
     ]
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def post(self, request, slug, team_space_id, pk):
         workspace = Workspace.objects.get(slug=slug)
         page = Page.objects.filter(pk=pk, workspace__slug=slug).first()
@@ -404,7 +404,7 @@ class TeamSpacePageArchiveEndpoint(TeamBaseEndpoint):
         TeamSpacePermission,
     ]
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def post(self, request, slug, team_space_id, pk):
         # Check the page is part of the team space
         if not TeamSpacePage.objects.filter(page_id=pk, workspace__slug=slug).exists():
@@ -444,7 +444,7 @@ class TeamSpacePageUnarchiveEndpoint(TeamBaseEndpoint):
         TeamSpacePermission,
     ]
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def post(self, request, slug, team_space_id, pk):
         # Check the page is part of the team space
         if not TeamSpacePage.objects.filter(page_id=pk, workspace__slug=slug).exists():
@@ -478,7 +478,7 @@ class TeamSpacePageLockEndpoint(TeamBaseEndpoint):
         TeamSpacePermission,
     ]
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def post(self, request, slug, team_space_id, pk):
         # Check the page is part of the team space
         if not TeamSpacePage.objects.filter(page_id=pk, workspace__slug=slug).exists():
@@ -506,7 +506,7 @@ class TeamSpacePageLockEndpoint(TeamBaseEndpoint):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def delete(self, request, slug, team_space_id, pk):
         # Check the page is part of the team space
         if not TeamSpacePage.objects.filter(page_id=pk, workspace__slug=slug).exists():
@@ -541,7 +541,7 @@ class TeamSpacePagesDescriptionEndpoint(TeamBaseEndpoint):
         TeamSpacePermission,
     ]
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id, pk):
         # Get the team space page
         if not TeamSpacePage.objects.filter(
@@ -571,7 +571,7 @@ class TeamSpacePagesDescriptionEndpoint(TeamBaseEndpoint):
         response["Content-Disposition"] = 'attachment; filename="page_description.bin"'
         return response
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def patch(self, request, slug, team_space_id, pk):
         # Get the team space page
         if not TeamSpacePage.objects.filter(
@@ -645,7 +645,7 @@ class TeamSpacePageVersionEndpoint(TeamBaseEndpoint):
         TeamSpacePermission,
     ]
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id, page_id, pk=None):
         # Get the team space page
         if not TeamSpacePage.objects.filter(
@@ -683,7 +683,7 @@ class TeamSpacePageFavoriteEndpoint(TeamBaseEndpoint):
         TeamSpacePermission,
     ]
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def post(self, request, slug, pk):
         workspace = Workspace.objects.get(slug=slug)
         _ = UserFavorite.objects.create(
@@ -694,7 +694,7 @@ class TeamSpacePageFavoriteEndpoint(TeamBaseEndpoint):
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def delete(self, request, slug, pk):
         page_favorite = UserFavorite.objects.get(
             project__isnull=True,

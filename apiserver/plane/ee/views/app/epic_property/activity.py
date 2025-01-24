@@ -12,7 +12,7 @@ from plane.app.permissions import allow_permission, ROLE
 
 
 class EpicPropertyActivityEndpoint(BaseAPIView):
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, epic_id):
         # Get the filters

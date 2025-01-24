@@ -30,7 +30,7 @@ export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const isSelfManagedUpgradeDisabled = subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== "FREE";
   // derived values
-  const isEpicsSettingsEnabled = useFlag(workspaceSlug, "EPICS_SETTINGS");
+  const isEpicsSettingsEnabled = useFlag(workspaceSlug, "EPICS");
   const resolvedEmptyStatePath = `/empty-state/epics/epics-${resolvedTheme === "light" ? "light" : "dark"}.webp`;
   // handlers
   const handleEnableEpic = async () => {

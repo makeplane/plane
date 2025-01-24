@@ -76,7 +76,7 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
         return self.type_logo_props.get(property_type)
 
     # list issue properties and get issue property by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def get(self, request, slug, project_id, type_id, property_id=None):
         if self.workspace_slug and self.project_id and self.type_id:
             # list of issue properties
@@ -102,7 +102,7 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     # create issue property
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def post(self, request, slug, project_id, type_id):
         if self.workspace_slug and self.project_id and self.type_id:
             workspace = Workspace.objects.get(slug=self.workspace_slug)
@@ -164,7 +164,7 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     # update issue property by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def patch(self, request, slug, project_id, type_id, property_id):
         if (
             self.workspace_slug
@@ -190,7 +190,7 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
             return Response(issue_property_serializer.data, status=status.HTTP_200_OK)
 
     # delete issue property by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def delete(self, request, slug, project_id, type_id, property_id):
         if (
             self.workspace_slug

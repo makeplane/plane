@@ -142,7 +142,7 @@ class TeamSpaceEndpoint(TeamBaseEndpoint):
     @allow_permission(
         level="WORKSPACE", allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST]
     )
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id=None):
         # Get team space by pk
         if team_space_id:
@@ -156,7 +156,7 @@ class TeamSpaceEndpoint(TeamBaseEndpoint):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission(level="WORKSPACE", allowed_roles=[ROLE.ADMIN])
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def post(self, request, slug):
         try:
             workspace = Workspace.objects.get(slug=slug)
@@ -226,7 +226,7 @@ class TeamSpaceEndpoint(TeamBaseEndpoint):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission(level="WORKSPACE", allowed_roles=[ROLE.ADMIN])
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def patch(self, request, slug, team_space_id):
         try:
             # Get team space by pk
@@ -316,7 +316,7 @@ class TeamSpaceEndpoint(TeamBaseEndpoint):
             )
 
     @allow_permission(level="WORKSPACE", allowed_roles=[ROLE.ADMIN])
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def delete(self, request, slug, team_space_id):
         """
         Delete team space by pk

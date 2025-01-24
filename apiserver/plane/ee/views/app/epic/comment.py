@@ -55,7 +55,7 @@ class EpicCommentViewSet(BaseViewSet):
         )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def create(self, request, slug, project_id, epic_id):
         project = Project.objects.get(pk=project_id)
         epic = Issue.objects.get(pk=epic_id)
@@ -92,7 +92,7 @@ class EpicCommentViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueComment)
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def partial_update(self, request, slug, project_id, epic_id, pk):
         epic_comment = IssueComment.objects.get(
             workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk
@@ -121,7 +121,7 @@ class EpicCommentViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueComment)
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def destroy(self, request, slug, project_id, epic_id, pk):
         epic_comment = IssueComment.objects.get(
             workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk

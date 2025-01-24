@@ -127,7 +127,7 @@ class TeamSpaceCycleEndpoint(TeamBaseEndpoint):
             .distinct()
         )
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id):
         project_ids = TeamSpaceProject.objects.filter(
             workspace__slug=slug, team_space_id=team_space_id

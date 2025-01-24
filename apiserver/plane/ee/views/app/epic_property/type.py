@@ -19,7 +19,7 @@ from plane.payment.flags.flag import FeatureFlag
 class WorkspaceEpicTypeEndpoint(BaseAPIView):
     permission_classes = [WorkspaceEntityPermission]
 
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def get(self, request, slug):
         # Get all epics for the workspace
         epics = (

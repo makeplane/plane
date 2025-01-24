@@ -73,7 +73,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
             )
         )
 
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def get(self, request, slug, project_id, draft_issue_id, issue_property_id=None):
         # Get a single issue property value
         if issue_property_id:
@@ -111,7 +111,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
 
         return Response(response, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def post(self, request, slug, project_id, draft_issue_id):
         try:
             # Create a new issue property value
@@ -180,7 +180,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
         except (ValidationError, ValueError) as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def patch(self, request, slug, project_id, draft_issue_id, property_id):
         try:
             # Get the issue property

@@ -41,7 +41,7 @@ class EpicLinkViewSet(BaseViewSet):
             .distinct()
         )
 
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def create(self, request, slug, project_id, epic_id):
         serializer = EpicLinkSerializer(data=request.data)
         if serializer.is_valid():
@@ -60,7 +60,7 @@ class EpicLinkViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def partial_update(self, request, slug, project_id, epic_id, pk):
         epic_link = IssueLink.objects.get(
             workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk
@@ -86,7 +86,7 @@ class EpicLinkViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def destroy(self, request, slug, project_id, epic_id, pk):
         epic_link = IssueLink.objects.get(
             workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk

@@ -76,7 +76,7 @@ class EpicPropertyValueEndpoint(BaseAPIView):
             )
         )
 
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def get(self, request, slug, project_id, epic_id, epic_property_id=None):
         # Get a single epic property value
         if epic_property_id:
@@ -116,7 +116,7 @@ class EpicPropertyValueEndpoint(BaseAPIView):
 
         return Response(response, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.EPICS_SETTINGS)
+    @check_feature_flag(FeatureFlag.EPICS)
     def post(self, request, slug, project_id, epic_id):
         try:
             # Create a new epic property value
@@ -197,7 +197,7 @@ class EpicPropertyValueEndpoint(BaseAPIView):
         except (ValidationError, ValueError) as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-    @check_feature_flag(FeatureFlag.EPICS_SETTINGS)
+    @check_feature_flag(FeatureFlag.EPICS)
     def patch(self, request, slug, project_id, epic_id, property_id):
         try:
             # Get the epic property

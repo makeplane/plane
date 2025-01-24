@@ -5,7 +5,7 @@ class FeatureFlag(Enum):
     # Workspace level active cycles
     WORKSPACE_ACTIVE_CYCLES = "WORKSPACE_ACTIVE_CYCLES"
     # Bulk operations on issues
-    BULK_OPS = "BULK_OPS"
+    BULK_OPS_ONE = "BULK_OPS_ONE"
     # Publish Views
     VIEW_PUBLISH = "VIEW_PUBLISH"
     # Make views public or private
@@ -20,16 +20,14 @@ class FeatureFlag(Enum):
     PAGE_PUBLISH = "PAGE_PUBLISH"
     # Estimate with time
     ESTIMATE_WITH_TIME = "ESTIMATE_WITH_TIME"
-    # Issue list
-    ISSUE_TYPE_DISPLAY = "ISSUE_TYPE_DISPLAY"
-    # Settings
-    ISSUE_TYPE_SETTINGS = "ISSUE_TYPE_SETTINGS"
+    # Issue types
+    ISSUE_TYPES = "ISSUE_TYPES"
     # Issue Worklog
     ISSUE_WORKLOG = "ISSUE_WORKLOG"
     # Project Grouping
     PROJECT_GROUPING = "PROJECT_GROUPING"
     # Active cycle progress
-    ACTIVE_CYCLE_PRO = "ACTIVE_CYCLE_PRO"
+    CYCLE_PROGRESS_CHARTS = "CYCLE_PROGRESS_CHARTS"
     # Pro file size limit
     FILE_SIZE_LIMIT_PRO = "FILE_SIZE_LIMIT_PRO"
     # Intake publish
@@ -39,11 +37,9 @@ class FeatureFlag(Enum):
     # Initiatives
     INITIATIVES = "INITIATIVES"
     # Team space
-    TEAMS = "TEAMS"
-    # Epic display
-    EPICS_DISPLAY = "EPICS_DISPLAY"
-    # Epic settings
-    EPICS_SETTINGS = "EPICS_SETTINGS"
+    TEAMSPACES = "TEAMSPACES"
+    # Epics
+    EPICS = "EPICS"
     # Workflows
     WORKFLOWS = "WORKFLOWS"
     # Project Overview

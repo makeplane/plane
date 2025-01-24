@@ -39,8 +39,8 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
   const isIssueTypeDisplayEnabled = isIssueTypeOrEpicEnabledForProject(
     workspaceSlug,
     projectId,
-    "ISSUE_TYPE_DISPLAY",
-    "EPICS_DISPLAY"
+    "ISSUE_TYPES",
+    "EPICS"
   );
   const issuePropertiesLoader = getProjectIssuePropertiesLoader(projectId);
 

@@ -112,7 +112,7 @@ class EpicPropertyEndpoint(BaseAPIView):
         options_serializer = IssuePropertyOptionSerializer(options, many=True)
         return options_serializer.data
 
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def get(self, request, slug, project_id, pk=None):
         # Get a single epic property
         if pk:
@@ -136,7 +136,7 @@ class EpicPropertyEndpoint(BaseAPIView):
         serializer = IssuePropertySerializer(issue_properties, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.EPICS_SETTINGS)
+    @check_feature_flag(FeatureFlag.EPICS)
     def post(self, request, slug, project_id):
         try:
             # Get the epic
@@ -232,7 +232,7 @@ class EpicPropertyEndpoint(BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
-    @check_feature_flag(FeatureFlag.EPICS_SETTINGS)
+    @check_feature_flag(FeatureFlag.EPICS)
     def patch(self, request, slug, project_id, pk):
         # Get the epic
         epic_id = (
@@ -343,7 +343,7 @@ class EpicPropertyEndpoint(BaseAPIView):
         }
         return Response(response, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.EPICS_SETTINGS)
+    @check_feature_flag(FeatureFlag.EPICS)
     def delete(self, request, slug, project_id, pk):
         # Get the epic
         epic_id = (

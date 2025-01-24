@@ -24,7 +24,7 @@ export const AppliedIssueTypeFilters: React.FC<Props> = observer((props) => {
   const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(
     workspaceSlug?.toString(),
     projectId?.toString(),
-    "ISSUE_TYPE_DISPLAY"
+    "ISSUE_TYPES"
   );
 
   // Return null if issue type is not enabled for the project

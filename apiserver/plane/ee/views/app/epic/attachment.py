@@ -32,7 +32,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
     model = FileAsset
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def post(self, request, slug, project_id, epic_id):
         name = request.data.get("name")
         type = request.data.get("type", False)
@@ -97,7 +97,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
         )
 
     @allow_permission([ROLE.ADMIN], creator=True, model=FileAsset)
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def delete(self, request, slug, project_id, epic_id, pk):
         epic_attachment = FileAsset.objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id
@@ -121,7 +121,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def get(self, request, slug, project_id, epic_id, pk=None):
         if pk:
             # Get the asset
@@ -157,7 +157,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def patch(self, request, slug, project_id, epic_id, pk):
         epic_attachment = FileAsset.objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id

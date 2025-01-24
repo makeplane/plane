@@ -23,7 +23,7 @@ class TeamSpaceActivityEndpoint(TeamBaseEndpoint):
     permission_classes = [TeamSpacePermission]
 
     @method_decorator(gzip_page)
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id):
         filters = {}
         if request.GET.get("created_at__gt", None) is not None:

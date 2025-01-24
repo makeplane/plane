@@ -11,7 +11,7 @@ interface IActiveCycleDetails {
 
 export const ActiveCycleRoot = (props: IActiveCycleDetails) => {
   const { workspaceSlug, projectId, cycleId, showHeader = true } = props;
-  const isFeatureEnabled = useFlag(workspaceSlug.toString(), "ACTIVE_CYCLE_PRO");
+  const isFeatureEnabled = useFlag(workspaceSlug.toString(), "CYCLE_PROGRESS_CHARTS");
   const ActiveCycle = useMemo(
     () =>
       dynamic(

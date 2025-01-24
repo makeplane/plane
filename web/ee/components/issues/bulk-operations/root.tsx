@@ -29,7 +29,7 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
   const { isSelectionActive, selectedEntityIds } = useMultipleSelectStore();
   const { togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
-  const isBulkOpsEnabled = useFlag(workspaceSlug?.toString(), "BULK_OPS");
+  const isBulkOpsEnabled = useFlag(workspaceSlug?.toString(), "BULK_OPS_ONE");
   const { handleClearSelection } = selectionHelpers;
 
   useEffect(() => {

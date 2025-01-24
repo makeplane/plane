@@ -101,7 +101,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 bulk_issue_property_values, batch_size=10
             )
 
-    @check_feature_flag(FeatureFlag.BULK_OPS)
+    @check_feature_flag(FeatureFlag.BULK_OPS_ONE)
     def post(self, request, slug, project_id):
         issue_ids = request.data.get("issue_ids", [])
         if not len(issue_ids):
@@ -502,7 +502,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 class BulkArchiveIssuesEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
 
-    @check_feature_flag(FeatureFlag.BULK_OPS)
+    @check_feature_flag(FeatureFlag.BULK_OPS_ONE)
     def post(self, request, slug, project_id):
         issue_ids = request.data.get("issue_ids", [])
 
@@ -551,7 +551,7 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
 class BulkSubscribeIssuesEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
 
-    @check_feature_flag(FeatureFlag.BULK_OPS)
+    @check_feature_flag(FeatureFlag.BULK_OPS_ONE)
     def post(self, request, slug, project_id):
         issue_ids = request.data.get("issue_ids", [])
         workspace = Workspace.objects.filter(slug=slug).first()

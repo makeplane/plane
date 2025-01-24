@@ -41,8 +41,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   // derived values
   const isFreeMemberCountExceeded = subscriptionDetail?.is_free_member_count_exceeded;
   const isWorkspaceSettingsRoute = pathname.includes(`/${workspaceSlug}/settings`);
-  const isIssueTypesEnabled = useFlag(workspaceSlug?.toString(), "ISSUE_TYPE_DISPLAY", false);
-  const isEpicsEnabled = useFlag(workspaceSlug?.toString(), "EPICS_DISPLAY", false);
+  const isIssueTypesEnabled = useFlag(workspaceSlug?.toString(), "ISSUE_TYPES", false);
+  const isEpicsEnabled = useFlag(workspaceSlug?.toString(), "EPICS", false);
   const isProjectStateEnabled =
     workspaceFeatures[workspaceSlug.toString()] &&
     workspaceFeatures[workspaceSlug.toString()][EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED];

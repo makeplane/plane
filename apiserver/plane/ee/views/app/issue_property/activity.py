@@ -14,7 +14,7 @@ from plane.payment.flags.flag import FeatureFlag
 class IssuePropertyActivityEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
 
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def get(self, request, slug, project_id, issue_id):
         # Get the filters
         filters = {}

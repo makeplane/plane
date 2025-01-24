@@ -17,7 +17,7 @@ from plane.payment.flags.flag import FeatureFlag
 class IssuePropertyOptionEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
 
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def get(self, request, slug, project_id, issue_property_id=None, pk=None):
         # Get a single issue property option
         if pk:
@@ -61,7 +61,7 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
 
         return Response(response_map, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def post(self, request, slug, project_id, issue_property_id):
         # Create a new issue property option
         # Only allow when property type is option
@@ -111,7 +111,7 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
         # Save the default value
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def patch(self, request, slug, project_id, issue_property_id, pk):
         # Update an issue property option
         issue_property_option = IssuePropertyOption.objects.get(
@@ -148,7 +148,7 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
         # Return the data
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def delete(self, request, slug, project_id, issue_property_id, pk):
         # Delete an issue property option
         issue_property_option = IssuePropertyOption.objects.get(

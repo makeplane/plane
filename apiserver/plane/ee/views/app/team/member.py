@@ -66,7 +66,7 @@ class TeamSpaceMembersEndpoint(TeamBaseEndpoint):
             batch_size=100,
         )
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id=None, pk=None):
         # Get team space member by pk
         if pk:
@@ -97,7 +97,7 @@ class TeamSpaceMembersEndpoint(TeamBaseEndpoint):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission(level="WORKSPACE", allowed_roles=[ROLE.ADMIN, ROLE.MEMBER])
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def post(self, request, slug, team_space_id):
         member_ids = request.data.get("member_ids", [])
 
@@ -183,7 +183,7 @@ class TeamSpaceMembersEndpoint(TeamBaseEndpoint):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @allow_permission(level="WORKSPACE", allowed_roles=[ROLE.ADMIN, ROLE.MEMBER])
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def delete(self, request, slug, team_space_id, pk):
         # Get team space member
         team_space_member = TeamSpaceMember.objects.get(

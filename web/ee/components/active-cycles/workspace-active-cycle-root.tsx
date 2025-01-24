@@ -11,7 +11,7 @@ export type ActiveCycleInfoCardProps = {
 
 export const WorkspaceActiveCycleRoot = (props: ActiveCycleInfoCardProps) => {
   const { workspaceSlug, cycle } = props;
-  const isFeatureEnabled = useFlag(workspaceSlug.toString(), "ACTIVE_CYCLE_PRO");
+  const isFeatureEnabled = useFlag(workspaceSlug.toString(), "CYCLE_PROGRESS_CHARTS");
   const ActiveCycle = useMemo(
     () =>
       dynamic(

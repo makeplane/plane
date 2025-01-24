@@ -30,7 +30,7 @@ class TeamSpaceViewEndpoint(TeamBaseEndpoint):
         TeamSpacePermission,
     ]
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id, pk=None):
         # Check if the view is part of the team
         if pk:
@@ -136,7 +136,7 @@ class TeamSpaceViewEndpoint(TeamBaseEndpoint):
         serializer = TeamSpaceViewSerializer(team_issue_views, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def post(self, request, slug, team_space_id):
         serializer = TeamSpaceViewSerializer(data=request.data)
         workspace = Workspace.objects.get(slug=slug)
@@ -196,7 +196,7 @@ class TeamSpaceViewEndpoint(TeamBaseEndpoint):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def patch(self, request, slug, team_space_id, pk):
         # Check if the view is part of the team
         if not TeamSpaceView.objects.filter(
@@ -240,7 +240,7 @@ class TeamSpaceViewEndpoint(TeamBaseEndpoint):
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def delete(self, request, slug, team_space_id, pk):
         # Check if the views if of the team or project
         team_space_view = TeamSpaceView.objects.filter(

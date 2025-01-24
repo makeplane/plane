@@ -43,8 +43,8 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
     const isIssueTypeDisplayEnabled = isIssueTypeOrEpicEnabledForProject(
       workspaceSlug?.toString(),
       projectId,
-      "ISSUE_TYPE_DISPLAY",
-      "EPICS_DISPLAY"
+      "ISSUE_TYPES",
+      "EPICS"
     );
     const issueTypeDetails = issueType?.asJSON;
     const activeProperties = issueType?.activeProperties;

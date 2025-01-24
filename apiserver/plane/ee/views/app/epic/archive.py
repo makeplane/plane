@@ -93,7 +93,7 @@ class EpicArchiveViewSet(BaseViewSet):
 
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def list(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
         show_sub_issues = request.GET.get("show_sub_issues", "true")
@@ -206,7 +206,7 @@ class EpicArchiveViewSet(BaseViewSet):
             )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def retrieve(self, request, slug, project_id, pk=None):
         issue = (
             self.get_queryset()
@@ -243,7 +243,7 @@ class EpicArchiveViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def archive(self, request, slug, project_id, pk=None):
         issue = Issue.issue_objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
@@ -279,7 +279,7 @@ class EpicArchiveViewSet(BaseViewSet):
         )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def unarchive(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
             workspace__slug=slug,

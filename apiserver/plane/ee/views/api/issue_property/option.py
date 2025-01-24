@@ -44,7 +44,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
         return self.kwargs.get("option_id", None)
 
     # list issue property options and get issue property option by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def get(self, request, slug, project_id, property_id, option_id=None):
         if self.workspace_slug and self.project_id and self.property_id:
             # list of issue properties
@@ -70,7 +70,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     # create issue property option
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def post(self, request, slug, project_id, property_id):
         if self.workspace_slug and self.project_id and self.property_id:
             workspace = Workspace.objects.get(slug=self.workspace_slug)
@@ -166,7 +166,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
             )
 
     # update issue property option by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def patch(self, request, slug, project_id, property_id, option_id):
         if (
             self.workspace_slug
@@ -210,7 +210,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
             return Response(property_option_serializer.data, status=status.HTTP_200_OK)
 
     # delete issue property option by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def delete(self, request, slug, project_id, property_id, option_id):
         if (
             self.workspace_slug

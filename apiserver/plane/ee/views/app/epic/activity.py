@@ -27,7 +27,7 @@ class EpicActivityEndpoint(BaseAPIView):
 
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def get(self, request, slug, project_id, epic_id):
         filters = {}
         if request.GET.get("created_at__gt", None) is not None:
@@ -46,9 +46,7 @@ class EpicActivityEndpoint(BaseAPIView):
             .select_related("actor", "workspace", "issue", "project")
         ).order_by("created_at")
 
-        if not check_workspace_feature_flag(
-            feature_key=FeatureFlag.EPICS_DISPLAY, slug=slug
-        ):
+        if not check_workspace_feature_flag(feature_key=FeatureFlag.EPICS, slug=slug):
             epic_activities = epic_activities.filter(~Q(field="type"))
 
         epic_comments = (

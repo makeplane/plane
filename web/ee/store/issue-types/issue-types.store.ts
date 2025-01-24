@@ -39,11 +39,11 @@ type TIssueTypesPropertiesOptions = {
 };
 
 type IssueTypeFlagKeys = keyof {
-  [K in keyof typeof E_FEATURE_FLAGS as K extends "ISSUE_TYPE_DISPLAY" | "ISSUE_TYPE_SETTINGS" ? K : never]: unknown;
+  [K in keyof typeof E_FEATURE_FLAGS as K extends "ISSUE_TYPES" ? K : never]: unknown;
 };
 
 type EpicIssueTypeFlagKeys = keyof {
-  [K in keyof typeof E_FEATURE_FLAGS as K extends "EPICS_SETTINGS" | "EPICS_DISPLAY" ? K : never]: unknown;
+  [K in keyof typeof E_FEATURE_FLAGS as K extends "EPICS" ? K : never]: unknown;
 };
 
 export interface IIssueTypesStore {
@@ -469,8 +469,8 @@ export class IssueTypes implements IIssueTypesStore {
     if (!workspaceSlug || !projectId) {
       return { issueProperties: [], issuePropertyOptions: {} };
     }
-    const isIssueTypeEnabled = this.isIssueTypeEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPE_DISPLAY");
-    const isEpicsEnabled = this.isEpicEnabledForProject(workspaceSlug, projectId, "EPICS_DISPLAY");
+    const isIssueTypeEnabled = this.isIssueTypeEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPES");
+    const isEpicsEnabled = this.isEpicEnabledForProject(workspaceSlug, projectId, "EPICS");
     // Fetch issue type data
     let issueProperties: TIssueProperty<EIssuePropertyType>[] = [];
     let issuePropertyOptions: TIssuePropertyOptionsPayload = {};
@@ -657,7 +657,7 @@ export class IssueTypes implements IIssueTypesStore {
   fetchAllIssueTypes = async (workspaceSlug: string) => {
     if (!workspaceSlug) return Promise.resolve([]);
     const isIssueTypesEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace(
-      "ISSUE_TYPE_DISPLAY",
+      "ISSUE_TYPES",
       false
     );
     if (!isIssueTypesEnabled) return Promise.resolve([]);
@@ -670,7 +670,7 @@ export class IssueTypes implements IIssueTypesStore {
    */
   fetchAllEpics = async (workspaceSlug: string) => {
     if (!workspaceSlug) return Promise.resolve([]);
-    const isEpicsEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("EPICS_DISPLAY", false);
+    const isEpicsEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("EPICS", false);
     if (!isEpicsEnabled) return Promise.resolve([]);
     return this.epicIssueTypesService.fetchAll({ workspaceSlug });
   };

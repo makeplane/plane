@@ -27,7 +27,7 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
   const [enableIssueTypeConfirmation, setEnableIssueTypeConfirmation] = useState<boolean>(false);
   const isSelfManagedUpgradeDisabled = subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== "FREE";
   // derived values
-  const isIssueTypeSettingsEnabled = useFlag(workspaceSlug, "ISSUE_TYPE_SETTINGS");
+  const isIssueTypeSettingsEnabled = useFlag(workspaceSlug, "ISSUE_TYPES");
   const resolvedEmptyStatePath = `/empty-state/issue-types/issue-type-${resolvedTheme === "light" ? "light" : "dark"}.svg`;
   // handlers
   const handleEnableIssueTypes = async () => {

@@ -21,7 +21,7 @@ export const IssueTypesRoot = observer(() => {
   const isIssueTypeSettingsEnabled = isIssueTypeEnabledForProject(
     workspaceSlug?.toString(),
     projectId?.toString(),
-    "ISSUE_TYPE_SETTINGS"
+    "ISSUE_TYPES"
   );
 
   const handleEditIssueTypeIdChange = (issueTypeId: string) => {

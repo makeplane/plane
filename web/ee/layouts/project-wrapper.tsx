@@ -21,9 +21,9 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const isIssueTypeEnabled = isIssueTypeEnabledForProject(
     workspaceSlug?.toString(),
     projectId?.toString(),
-    "ISSUE_TYPE_DISPLAY"
+    "ISSUE_TYPES"
   );
-  const isEpicEnabled = isEpicEnabledForProject(workspaceSlug?.toString(), projectId?.toString(), "EPICS_DISPLAY");
+  const isEpicEnabled = isEpicEnabledForProject(workspaceSlug?.toString(), projectId?.toString(), "EPICS");
 
   // fetching all issue types and properties
   useSWR(

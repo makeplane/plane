@@ -39,7 +39,7 @@ class EpicReactionViewSet(BaseViewSet):
             .distinct()
         )
 
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id, epic_id):
         serializer = EpicReactionSerializer(data=request.data)
@@ -60,7 +60,7 @@ class EpicReactionViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def destroy(self, request, slug, project_id, epic_id, reaction_code):
         epic_reaction = IssueReaction.objects.get(
             workspace__slug=slug,

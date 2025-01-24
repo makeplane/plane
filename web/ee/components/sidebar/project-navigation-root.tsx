@@ -45,7 +45,7 @@ export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = observer((props
     <>
       <WithFeatureFlagHOC
         workspaceSlug={workspaceSlug?.toString()}
-        flag="EPICS_DISPLAY"
+        flag="EPICS"
         fallback={<ProjectNavigation workspaceSlug={workspaceSlug} projectId={projectId} />}
       >
         <ProjectNavigation

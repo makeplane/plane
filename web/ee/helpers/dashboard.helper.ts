@@ -22,7 +22,7 @@ export const isUserFeatureEnabled = (featureKey: string) => {
 
 const WorkspaceFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefined> = {
   projects: undefined,
-  teams: E_FEATURE_FLAGS.TEAMS,
+  teams: E_FEATURE_FLAGS.TEAMSPACES,
   "all-issues": undefined,
   "active-cycles": E_FEATURE_FLAGS.WORKSPACE_ACTIVE_CYCLES,
   analytics: undefined,

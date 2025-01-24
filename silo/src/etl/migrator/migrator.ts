@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+import { FeatureFlagService, TJobWithConfig, E_FEATURE_FLAGS, PlaneEntities } from "@plane/etl/core";
 import {
   EIssuePropertyType,
   ExCycle,
@@ -13,24 +15,22 @@ import {
   Client as PlaneClient,
   PlaneUser,
 } from "@plane/sdk";
+import { celeryProducer } from "@/apps/engine/worker";
 import { env } from "@/env";
 import { protect } from "@/lib";
-import { v4 as uuidv4 } from "uuid";
 import { logger } from "@/logger";
-import { FeatureFlagService, TJobWithConfig, E_FEATURE_FLAGS, PlaneEntities } from "@plane/etl/core";
 import { createAllCycles } from "./cycles.migrator";
 import { getCredentialsForMigration, validateJobForMigration } from "./helpers";
-import { generateIssuePayload } from "./issues.migrator";
-import { createLabelsForIssues } from "./labels.migrator";
-import { createAllModules } from "./modules.migrator";
-import { createStates } from "./states.migrator";
-import { createUsers } from "./users.migrator";
 import {
   createOrUpdateIssueTypes,
   createOrUpdateIssueProperties,
   createOrUpdateIssuePropertiesOptions,
 } from "./issue-types";
-import { celeryProducer } from "@/apps/engine/worker";
+import { generateIssuePayload } from "./issues.migrator";
+import { createLabelsForIssues } from "./labels.migrator";
+import { createAllModules } from "./modules.migrator";
+import { createStates } from "./states.migrator";
+import { createUsers } from "./users.migrator";
 
 export async function migrateToPlane(job: TJobWithConfig, data: PlaneEntities[], meta: any) {
   validateJobForMigration(job);
@@ -157,7 +157,7 @@ export async function migrateToPlane(job: TJobWithConfig, data: PlaneEntities[],
   const isIssueTypeFeatureEnabled = await featureFlagService.featureFlags({
     workspace_slug: job.workspace_slug,
     user_id: job.initiator_id,
-    flag_key: E_FEATURE_FLAGS.ISSUE_TYPE_SETTINGS,
+    flag_key: E_FEATURE_FLAGS.ISSUE_TYPES,
   });
 
   if (isIssueTypeFeatureEnabled) {

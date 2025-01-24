@@ -17,7 +17,7 @@ from plane.payment.flags.flag import FeatureFlag
 class EpicPropertyOptionEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
 
-    @check_feature_flag(FeatureFlag.EPICS_DISPLAY)
+    @check_feature_flag(FeatureFlag.EPICS)
     def get(self, request, slug, project_id, epic_property_id=None, pk=None):
         # Get a single epic property option
         if pk:
@@ -59,7 +59,7 @@ class EpicPropertyOptionEndpoint(BaseAPIView):
 
         return Response(response_map, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.EPICS_SETTINGS)
+    @check_feature_flag(FeatureFlag.EPICS)
     def post(self, request, slug, project_id, epic_property_id):
         # Create a new epic property option
         # Only allow when property type is option
@@ -109,7 +109,7 @@ class EpicPropertyOptionEndpoint(BaseAPIView):
         # Save the default value
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @check_feature_flag(FeatureFlag.EPICS_SETTINGS)
+    @check_feature_flag(FeatureFlag.EPICS)
     def patch(self, request, slug, project_id, epic_property_id, pk):
         # Update an epic property option
         epic_property_option = IssuePropertyOption.objects.get(
@@ -146,7 +146,7 @@ class EpicPropertyOptionEndpoint(BaseAPIView):
         # Return the data
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.EPICS_SETTINGS)
+    @check_feature_flag(FeatureFlag.EPICS)
     def delete(self, request, slug, project_id, epic_property_id, pk):
         # Delete an epic property option
         epic_property_option = IssuePropertyOption.objects.get(

@@ -105,8 +105,8 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
   const isIssueTypeOrEpicDisplayEnabled = isIssueTypeOrEpicEnabledForProject(
     workspaceSlug?.toString(),
     projectId,
-    "ISSUE_TYPE_DISPLAY",
-    "EPICS_DISPLAY"
+    "ISSUE_TYPES",
+    "EPICS"
   );
   const shouldRenderIssueTypeIcon = displayProperties ? displayProperties.issue_type : true;
   const shouldRenderIssueID = displayProperties ? displayProperties.key : true;

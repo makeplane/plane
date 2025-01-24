@@ -112,7 +112,7 @@ class IssuePropertyEndpoint(BaseAPIView):
         options_serializer = IssuePropertyOptionSerializer(options, many=True)
         return options_serializer.data
 
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def get(self, request, slug, project_id, issue_type_id=None, pk=None):
         # Get a single issue property
         if pk:
@@ -143,7 +143,7 @@ class IssuePropertyEndpoint(BaseAPIView):
         serializer = IssuePropertySerializer(issue_types, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def post(self, request, slug, project_id, issue_type_id):
         try:
             # Get the options
@@ -228,7 +228,7 @@ class IssuePropertyEndpoint(BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def patch(self, request, slug, project_id, issue_type_id, pk):
         # Update an issue properties
         issue_property = IssueProperty.objects.get(
@@ -329,7 +329,7 @@ class IssuePropertyEndpoint(BaseAPIView):
         }
         return Response(response, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def delete(self, request, slug, project_id, issue_type_id, pk):
         # Delete an issue properties
         issue_property = IssueProperty.objects.get(

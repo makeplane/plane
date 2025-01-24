@@ -173,7 +173,7 @@ export class TeamStore implements ITeamStore {
     if (loader === EWorkspaceFeatureLoader.INIT_LOADER) return undefined;
     return (
       isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_TEAMS_ENABLED) &&
-      getFeatureFlagForCurrentWorkspace("TEAMS", false)
+      getFeatureFlagForCurrentWorkspace("TEAMSPACES", false)
     );
   }
 

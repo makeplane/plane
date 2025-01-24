@@ -27,7 +27,7 @@ from .base import TeamBaseEndpoint
 class TeamSpaceEntitiesEndpoint(TeamBaseEndpoint):
     permission_classes = [WorkspaceUserPermission, TeamSpacePermission]
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id):
         # Get team entities count
         team_page_count = TeamSpacePage.objects.filter(
@@ -123,7 +123,7 @@ class TeamSpaceProgressChartEndpoint(TeamBaseEndpoint):
 
         return sorted([v for v in date_range.values()], key=lambda x: x[key])
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id):
         project_ids = TeamSpaceProject.objects.filter(
             team_space_id=team_space_id
@@ -373,8 +373,7 @@ class TeamSpaceRelationEndpoint(TeamBaseEndpoint):
 
         return blocked_by_issues
 
-
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id):
         # Get all the project ids
         project_ids = TeamSpaceProject.objects.filter(
@@ -472,7 +471,7 @@ class TeamSpaceStatisticsEndpoint(TeamBaseEndpoint):
         )
         return Response(issue_map, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.TEAMS)
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id):
         # Get all the project ids
         project_ids = TeamSpaceProject.objects.filter(

@@ -37,7 +37,7 @@ class CycleUpdatesViewSet(BaseViewSet):
             .distinct()
         )
 
-    @check_feature_flag(FeatureFlag.ACTIVE_CYCLE_PRO)
+    @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
     def list(self, request, slug, project_id, cycle_id):
         cycle_updates = (
             EntityUpdates.objects.filter(
@@ -62,7 +62,7 @@ class CycleUpdatesViewSet(BaseViewSet):
         serializer = UpdatesSerializer(cycle_updates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.ACTIVE_CYCLE_PRO)
+    @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
     def comments_list(self, request, slug, project_id, cycle_id, update_id):
         cycle_updates = EntityUpdates.objects.filter(
             workspace__slug=slug,
@@ -78,7 +78,7 @@ class CycleUpdatesViewSet(BaseViewSet):
         serializer = UpdatesSerializer(cycle_updates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.ACTIVE_CYCLE_PRO)
+    @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id, cycle_id):
         workspace = Workspace.objects.get(slug=slug)
@@ -127,7 +127,7 @@ class CycleUpdatesViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @check_feature_flag(FeatureFlag.ACTIVE_CYCLE_PRO)
+    @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=EntityUpdates)
     def partial_update(self, request, slug, project_id, cycle_id, pk):
         cycle_update = EntityUpdates.objects.get(
@@ -139,7 +139,7 @@ class CycleUpdatesViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @check_feature_flag(FeatureFlag.ACTIVE_CYCLE_PRO)
+    @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=EntityUpdates)
     def destroy(self, request, slug, project_id, cycle_id, pk):
         cycle_update = EntityUpdates.objects.get(

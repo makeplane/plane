@@ -90,7 +90,7 @@ class IssueTypeAPIEndpoint(BaseAPIView):
         }
 
     # list issue types and get issue type by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def get(self, request, slug, project_id, type_id=None):
         if self.workspace_slug and self.project_id:
             # list of issue types
@@ -140,7 +140,7 @@ class IssueTypeAPIEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # create issue type
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def post(self, request, slug, project_id):
         if self.workspace_slug and self.project_id:
             workspace = Workspace.objects.get(slug=self.workspace_slug)
@@ -200,7 +200,7 @@ class IssueTypeAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     # update issue type by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def patch(self, request, slug, project_id, type_id):
         if self.workspace_slug and self.project_id and self.type_id:
             issue_type = self.model.objects.get(
@@ -250,7 +250,7 @@ class IssueTypeAPIEndpoint(BaseAPIView):
                 return Response(issue_type_serializer.data, status=status.HTTP_200_OK)
 
     # delete issue type by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def delete(self, request, slug, project_id, type_id):
         if self.workspace_slug and self.project_id and self.type_id:
             issue_type = self.model.objects.get(pk=self.type_id, is_epic=False)

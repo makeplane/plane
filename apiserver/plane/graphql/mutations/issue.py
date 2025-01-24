@@ -84,7 +84,7 @@ class IssueMutation:
         issue_type_id = None
         # validating issue type and assigning thr default issue type
         is_feature_flagged = await get_feature_flag(
-            workspace.slug, str(user.id), "ISSUE_TYPE_DISPLAY"
+            workspace.slug, str(user.id), "ISSUE_TYPES"
         )
 
         if is_feature_flagged:

@@ -114,7 +114,7 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
       const isIssueTypesDisplayEnabled = this.store.issueTypes.isIssueTypeEnabledForProject(
         workspaceSlug,
         projectId,
-        "ISSUE_TYPE_DISPLAY"
+        "ISSUE_TYPES"
       );
       await Promise.all([
         // fetching the worklogs for the issue if worklogs are enabled
