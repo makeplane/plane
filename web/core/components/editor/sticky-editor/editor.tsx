@@ -12,7 +12,7 @@ import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
-import { Toolbar } from "./toolbar";
+import { StickyEditorToolbar } from "./toolbar";
 
 interface StickyEditorWrapperProps
   extends Omit<ILiteTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
@@ -87,7 +87,7 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
             isFocused ? "max-h-[200px] opacity-100 scale-y-100 mt-3" : "max-h-0 opacity-0 scale-y-0 invisible"
           )}
         >
-          <Toolbar
+          <StickyEditorToolbar
             executeCommand={(item) => {
               // TODO: update this while toolbar homogenization
               // @ts-expect-error type mismatch here
