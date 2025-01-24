@@ -26,8 +26,8 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
     formState: { errors, isSubmitting },
   } = useForm<AIFormValues>({
     defaultValues: {
-      OPENAI_API_KEY: config["OPENAI_API_KEY"],
-      GPT_ENGINE: config["GPT_ENGINE"],
+      LLM_API_KEY: config["LLM_API_KEY"],
+      LLM_MODEL: config["LLM_MODEL"],
     },
   });
 
@@ -54,7 +54,7 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
       required: false,
     },
     {
-      key: "OPENAI_API_KEY",
+      key: "LLM_API_KEY",
       type: "password",
       label: "API key",
       description: (
@@ -71,7 +71,7 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
         </>
       ),
       placeholder: "sk-asddassdfasdefqsdfasd23das3dasdcasd",
-      error: Boolean(errors.OPENAI_API_KEY),
+      error: Boolean(errors.LLM_API_KEY),
       required: false,
     },
   ];
