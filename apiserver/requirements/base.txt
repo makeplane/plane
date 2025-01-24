@@ -4,7 +4,7 @@
 Django==4.2.18
 # rest framework
 djangorestframework==3.15.2
-# postgres 
+# postgres
 psycopg==3.1.18
 psycopg-binary==3.2.3
 psycopg-c==3.1.18
@@ -38,8 +38,6 @@ django-crum==0.7.9
 uvicorn==0.29.0
 # sockets
 channels==4.1.0
-# ai
-litellm==1.51.0
 # slack
 slack-sdk==3.27.1
 # apm
@@ -79,3 +77,5 @@ strawberry-graphql-django==0.48.0
 djangorestframework-simplejwt==5.3.1
 # firebase admin
 firebase-admin==6.6.0
+# ai
+openai==1.60.0
