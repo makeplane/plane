@@ -21,7 +21,6 @@ import { useRelationOperations } from "../issue-detail-widgets/relations/helper"
 
 type Props = {
   workspaceSlug: string;
-  projectId: string;
   issueId: string;
   relationKey: TIssueRelationTypes;
   relationIssueId: string;
@@ -33,7 +32,6 @@ type Props = {
 export const RelationIssueListItem: FC<Props> = observer((props) => {
   const {
     workspaceSlug,
-    projectId,
     issueId,
     relationKey,
     relationIssueId,
@@ -57,15 +55,16 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
   const { handleRedirection } = useIssuePeekOverviewRedirection(!!issue?.is_epic);
   const issueOperations = useRelationOperations(!!issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const projectDetail = (issue && issue.project_id && project.getProjectById(issue.project_id)) || undefined;
+  const projectId = issue?.project_id;
   const currentIssueStateDetail =
     (issue?.project_id && getProjectStates(issue?.project_id)?.find((state) => issue?.state_id == state.id)) ||
     undefined;
-  if (!issue) return <></>;
+  if (!issue || !projectId) return <></>;
   const issueLink = `/${workspaceSlug}/projects/${projectId}/${issue.is_epic ? "epics" : "issues"}/${issue.id}`;
 
   // handlers
   const handleIssuePeekOverview = (issue: TIssue) => {
-    if (issueServiceType === EIssueServiceType.ISSUES && issue.is_epic) {
+    if (issue.is_epic) {
       // open epics in new tab
       window.open(issueLink, "_blank");
       return;
