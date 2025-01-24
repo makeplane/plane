@@ -33,9 +33,9 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
 
   const aiFormFields: TControllerInputFormField[] = [
     {
-      key: "GPT_ENGINE",
+      key: "LLM_MODEL",
       type: "text",
-      label: "GPT_ENGINE",
+      label: "LLM Model",
       description: (
         <>
           Choose an OpenAI engine.{" "}
@@ -50,7 +50,7 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
         </>
       ),
       placeholder: "gpt-4o-mini",
-      error: Boolean(errors.GPT_ENGINE),
+      error: Boolean(errors.LLM_MODEL),
       required: false,
     },
     {
