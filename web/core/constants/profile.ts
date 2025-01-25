@@ -10,7 +10,7 @@ export const PROFILE_ACTION_LINKS: {
   Icon: React.FC<LucideProps>;
 }[] = [
   {
-    key: "profile",
+    key: "profile.label",
     label: "Profile",
     href: `/profile`,
     highlight: (pathname: string) => pathname === "/profile/",
