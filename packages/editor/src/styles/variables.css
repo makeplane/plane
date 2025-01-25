@@ -1,4 +1,6 @@
 .editor-container {
+  --color-placeholder: rgba(var(--color-text-100), 0.5);
+
   /* font sizes and line heights */
   &.large-font {
     --font-size-h1: 1.75rem;

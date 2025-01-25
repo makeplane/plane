@@ -34,14 +34,14 @@ export const DashboardQuickLinks = observer((props: THomeWidgetProps) => {
       />
       <div className="mb-2">
         <div className="flex items-center justify-between mb-4">
-          <div className="text-base font-semibold text-custom-text-350">Quick links</div>
+          <div className="text-base font-semibold text-custom-text-350">Quicklinks</div>
           <button
             onClick={() => {
               toggleLinkModal(true);
             }}
             className="flex gap-1 text-sm font-medium text-custom-primary-100 my-auto"
           >
-            <Plus className="size-4 my-auto" /> <span>Add quick link</span>
+            <Plus className="size-4 my-auto" /> <span>Add quicklink</span>
           </button>
         </div>
         <div className="flex flex-wrap w-full">

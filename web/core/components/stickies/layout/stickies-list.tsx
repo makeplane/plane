@@ -11,10 +11,8 @@ import { Plus } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Loader } from "@plane/ui";
 // components
 import { DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
-// constants
 import { StickiesEmptyState } from "@/components/home/widgets/empty-states/stickies";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
@@ -22,6 +20,7 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useSticky } from "@/hooks/use-stickies";
 // local imports
 import { useStickyOperations } from "../sticky/use-operations";
+import { StickiesLoader } from "./stickies-loader";
 import { StickyDNDWrapper } from "./sticky-dnd-wrapper";
 import { getInstructionFromPayload } from "./sticky.helpers";
 
@@ -58,6 +57,14 @@ export const StickiesList = observer((props: TProps) => {
   const stickiesSearchResolvedPath = useResolvedAssetPath({
     basePath: "/empty-state/stickies/stickies-search",
   });
+  const masonryRef = useRef<any>(null);
+
+  const handleLayout = () => {
+    if (masonryRef.current) {
+      // Force reflow
+      masonryRef.current.performLayout();
+    }
+  };
 
   // Function to determine if an item is in first or last row
   const getRowPositions = (index: number) => {
@@ -88,13 +95,7 @@ export const StickiesList = observer((props: TProps) => {
   };
 
   if (loader === "init-loader") {
-    return (
-      <div className="min-h-[500px] overflow-scroll pb-2">
-        <Loader>
-          <Loader.Item height="300px" width="255px" />
-        </Loader>
-      </div>
-    );
+    return <StickiesLoader />;
   }
 
   if (loader === "loaded" && workspaceStickyIds.length === 0) {
@@ -135,7 +136,7 @@ export const StickiesList = observer((props: TProps) => {
   return (
     <div className="transition-opacity duration-300 ease-in-out">
       {/* @ts-expect-error type mismatch here */}
-      <Masonry elementType="div">
+      <Masonry elementType="div" ref={masonryRef}>
         {workspaceStickyIds.map((stickyId, index) => {
           const { isInFirstRow, isInLastRow } = getRowPositions(index);
           return (
@@ -148,6 +149,7 @@ export const StickiesList = observer((props: TProps) => {
               isLastChild={index === workspaceStickyIds.length - 1}
               isInFirstRow={isInFirstRow}
               isInLastRow={isInLastRow}
+              handleLayout={handleLayout}
             />
           );
         })}
