@@ -968,6 +968,7 @@
   },
 
   "notification": {
+    "label": "Notifications",
     "empty_state": {
       "detail": {
         "title": "Sélectionnez pour voir les détails."
@@ -980,6 +981,23 @@
         "title": "Aucune tâche assignée",
         "description": "Les mises à jour des problèmes qui vous sont assignés peuvent être \n vues ici."
       }
+    },
+    "tabs": {
+      "all": "Toutes",
+      "mentions": "Mentions"
+    },
+    "filter_type_options": {
+      "assigned_to_me": "Assignées à moi",
+      "created_by_me": "Créées par moi",
+      "subscribed_by_me": "Suivies par moi"
+    },
+    "snooze_options": {
+      "1_day": "1 jour",
+      "3_days": "3 jours",
+      "5_days": "5 jours",
+      "1_week": "1 semaine",
+      "2_weeks": "2 semaines",
+      "custom": "Personnalisé"
     }
   },
 

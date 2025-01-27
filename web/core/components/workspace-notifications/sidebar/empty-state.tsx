@@ -2,11 +2,12 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { ENotificationTab } from "@plane/constants";
 // components
 import { useTranslation } from "@plane/i18n";
 import { SimpleEmptyState } from "@/components/empty-state";
 // constants
-import { ENotificationTab } from "@/constants/notification";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export const NotificationEmptyState: FC = observer(() => {

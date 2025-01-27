@@ -355,7 +355,7 @@
         "description": "Elige tu foto, colores y más.",
         "cta": "Personalizar ahora"
       },
-      "widgets":  {
+      "widgets": {
         "title": "Está tranquilo sin widgets, actívalos",
         "description": "Parece que todos tus widgets están desactivados. ¡Enciéndelos ahora para mejorar tu experiencia!",
         "primary_button": {
@@ -393,16 +393,15 @@
           "title": "Enlace no eliminado",
           "message": "No se pudo eliminar el enlace"
         }
-        
       }
     },
     "recents": {
       "title": "Recientes",
       "empty": {
-          "project": "Tus proyectos recientes aparecerán aquí cuando visites uno.",
-          "page": "Tus páginas recientes aparecerán aquí cuando visites una.",
-          "issue": "Tus problemas recientes aparecerán aquí cuando visites uno.",
-          "default": "Aún no tienes elementos recientes."
+        "project": "Tus proyectos recientes aparecerán aquí cuando visites uno.",
+        "page": "Tus páginas recientes aparecerán aquí cuando visites una.",
+        "issue": "Tus problemas recientes aparecerán aquí cuando visites uno.",
+        "default": "Aún no tienes elementos recientes."
       },
       "filters": {
         "all": "Todos los elementos",
@@ -429,7 +428,6 @@
     "star_us_on_github": "Danos una estrella en GitHub"
   },
 
-  
   "link": {
     "modal": {
       "url": {
@@ -973,6 +971,7 @@
   },
 
   "notification": {
+    "label": "Notificaciones",
     "empty_state": {
       "detail": {
         "title": "Selecciona para ver los detalles."
@@ -985,6 +984,23 @@
         "title": "No hay problemas asignados",
         "description": "Las actualizaciones de los problemas asignados a ti se \n pueden ver aquí"
       }
+    },
+    "tabs": {
+      "all": "Todas",
+      "mentions": "Menciones"
+    },
+    "filter_type_options": {
+      "assigned_to_me": "Asignadas a mí",
+      "created_by_me": "Creadas por mí",
+      "subscribed_by_me": "Suscritas por mí"
+    },
+    "snooze_options": {
+      "1_day": "1 día",
+      "3_days": "3 días",
+      "5_days": "5 días",
+      "1_week": "1 semana",
+      "2_weeks": "2 semanas",
+      "custom": "Personalizado"
     }
   },
 
