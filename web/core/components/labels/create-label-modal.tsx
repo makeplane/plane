@@ -7,13 +7,14 @@ import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";
 import { ChevronDown } from "lucide-react";
 import { Dialog, Popover, Transition } from "@headlessui/react";
+// plane imports
+import { ETabIndices } from "@plane/constants";
 // types
 import type { IIssueLabel, IState } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "@/constants/label";
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks

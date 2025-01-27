@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
+// plane imports
+import { ETabIndices } from "@plane/constants";
 // types
 import { ICycle } from "@plane/types";
 // ui
@@ -9,7 +11,6 @@ import { Button, Input, TextArea } from "@plane/ui";
 // components
 import { DateRangeDropdown, ProjectDropdown } from "@/components/dropdowns";
 // constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";

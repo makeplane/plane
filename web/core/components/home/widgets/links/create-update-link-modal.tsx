@@ -69,7 +69,7 @@ export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) 
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
           <h3 className="text-xl font-medium text-custom-text-200">
-            {preloadedData?.id ? t("Update") : t("Add")} {t("home.quick_links.title")}
+            {preloadedData?.id ? t("update") : t("add")} {t("home.quick_links.title")}
           </h3>
           <div className="mt-2 space-y-3">
             <div>
@@ -127,7 +127,7 @@ export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) 
             {t("Cancel")}
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-            {preloadedData?.id ? (isSubmitting ? t("Updating") : t("Update")) : isSubmitting ? t("Adding") : t("Add")}{" "}
+            {preloadedData?.id ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")}{" "}
             {t("home.quick_links.title")}
           </Button>
         </div>

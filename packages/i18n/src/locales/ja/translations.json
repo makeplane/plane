@@ -18,6 +18,7 @@
   "add_members": "メンバーを追加",
   "remove_members": "メンバーを削除",
   "add": "追加",
+  "adding": "追加中",
   "remove": "削除",
   "add_new": "新規追加",
   "remove_selected": "選択項目を削除",
@@ -316,10 +317,6 @@
   "required": "必須",
   "optional": "任意",
   "Cancel": "キャンセル",
-  "Update": "更新",
-  "Add": "追加",
-  "Updating": "更新中",
-  "Adding": "追加中",
   "edit": "編集",
   "open_in_new_tab": "新しいタブで開く",
   "delete": "削除",
@@ -506,6 +503,10 @@
       "asc": "昇順",
       "desc": "降順"
     },
+    "sort": {
+      "asc": "昇順",
+      "desc": "降順"
+    },
     "comments": "コメント",
     "updates": "更新"
   },
@@ -600,6 +601,39 @@
     },
     "update": {
       "label": "ビューを更新"
+    }
+  },
+
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "保留中",
+        "description": "保留中"
+      },
+      "declined": {
+        "title": "却下",
+        "description": "却下"
+      },
+      "snoozed": {
+        "title": "スヌーズ中",
+        "description": "残り{days}日"
+      },
+      "accepted": {
+        "title": "承認済み",
+        "description": "承認済み"
+      },
+      "duplicate": {
+        "title": "重複",
+        "description": "重複"
+      }
+    },
+    "source": {
+      "in-app": "アプリ内"
+    },
+    "order_by": {
+      "created_at": "作成日時",
+      "updated_at": "更新日時",
+      "id": "識別番号"
     }
   },
 
@@ -702,6 +736,26 @@
 
   "workspace_settings": {
     "label": "ワークスペース設定",
+    "settings": {
+      "general": {
+        "title": "一般"
+      },
+      "members": {
+        "title": "メンバー"
+      },
+      "billing-and-plans": {
+        "title": "請求とプラン"
+      },
+      "exports": {
+        "title": "エクスポート"
+      },
+      "webhooks": {
+        "title": "Webhooks"
+      },
+      "api-tokens": {
+        "title": "APIトークン"
+      }
+    },
     "empty_state": {
       "api_tokens": {
         "title": "APIトークンが作成されていません",
@@ -1130,5 +1184,66 @@
         "message": "付箋を削除できませんでした"
       }
     }
+  },
+
+  "role_details": {
+    "guest": {
+      "title": "ゲスト",
+      "description": "組織の外部メンバーはゲストとして招待できます。"
+    },
+    "member": {
+      "title": "メンバー",
+      "description": "プロジェクト、サイクル、モジュール内のエンティティの読み取り、書き込み、編集、削除が可能"
+    },
+    "admin": {
+      "title": "管理者",
+      "description": "ワークスペース内のすべての権限が有効。"
+    }
+  },
+
+  "user_roles": {
+    "product_or_project_manager": "プロダクト/プロジェクトマネージャー",
+    "development_or_engineering": "開発/エンジニアリング",
+    "founder_or_executive": "創業者/エグゼクティブ",
+    "freelancer_or_consultant": "フリーランス/コンサルタント",
+    "marketing_or_growth": "マーケティング/グロース",
+    "sales_or_business_development": "営業/事業開発",
+    "support_or_operations": "サポート/オペレーション",
+    "student_or_professor": "学生/教授",
+    "human_or_resources": "人事",
+    "other": "その他"
+  },
+
+  "importer": {
+    "github": {
+      "title": "Github",
+      "description": "GitHubリポジトリから課題をインポートして同期します。"
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Jiraプロジェクトから課題とエピックをインポートします。"
+    }
+  },
+
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "課題をCSVファイルにエクスポートします。"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "課題をExcelファイルにエクスポートします。"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "課題をJSONファイルにエクスポートします。"
+    }
+  },
+
+  "default_global_view": {
+    "all_issues": "すべての課題",
+    "assigned": "割り当て済み",
+    "created": "作成済み",
+    "subscribed": "購読済み"
   }
 }

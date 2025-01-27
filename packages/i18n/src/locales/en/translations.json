@@ -18,6 +18,7 @@
   "add_members": "Add members",
   "remove_members": "Remove members",
   "add": "Add",
+  "adding": "Adding",
   "remove": "Remove",
   "add_new": "Add new",
   "remove_selected": "Remove selected",
@@ -316,10 +317,6 @@
   "required": "Required",
   "optional": "Optional",
   "Cancel": "Cancel",
-  "Update": "Update",
-  "Add": "Add",
-  "Updating": "Updating",
-  "Adding": "Adding",
   "edit": "Edit",
   "open_in_new_tab": "Open in new tab",
   "delete": "Delete",
@@ -329,7 +326,7 @@
   "evening": "evening",
   "show_all": "Show all",
   "show_less": "Show less",
-  "no_data_yet": "No Data yet",    
+  "no_data_yet": "No Data yet",
   "connections": "Connections",
 
   "project_view": {
@@ -505,6 +502,10 @@
       "asc": "Ascending",
       "desc": "Descending"
     },
+    "sort": {
+      "asc": "Ascending",
+      "desc": "Descending"
+    },
     "comments": "Comments",
     "updates": "Updates"
   },
@@ -599,6 +600,39 @@
     },
     "update": {
       "label": "Update View"
+    }
+  },
+
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "Pending",
+        "description": "Pending"
+      },
+      "declined": {
+        "title": "Declined",
+        "description": "Declined"
+      },
+      "snoozed": {
+        "title": "Snoozed",
+        "description": "{days, plural, one{# day} other{# days}} to go"
+      },
+      "accepted": {
+        "title": "Accepted",
+        "description": "Accepted"
+      },
+      "duplicate": {
+        "title": "Duplicate",
+        "description": "Duplicate"
+      }
+    },
+    "source": {
+      "in-app": "in-app"
+    },
+    "order_by": {
+      "created_at": "Created at",
+      "updated_at": "Updated at",
+      "id": "ID"
     }
   },
 
@@ -701,6 +735,26 @@
 
   "workspace_settings": {
     "label": "Workspace settings",
+    "settings": {
+      "general": {
+        "title": "General"
+      },
+      "members": {
+        "title": "Members"
+      },
+      "billing-and-plans": {
+        "title": "Billing & Plans"
+      },
+      "exports": {
+        "title": "Exports"
+      },
+      "webhooks": {
+        "title": "Webhooks"
+      },
+      "api-tokens": {
+        "title": "API Tokens"
+      }
+    },
     "empty_state": {
       "api_tokens": {
         "title": "No API tokens created",
@@ -1074,60 +1128,120 @@
   },
 
   "stickies": {
-      "title": "Your stickies",
-      "placeholder": "click to type here",
-      "all": "All stickies",
-      "no-data": "Jot down an idea, capture an aha, or record a brainwave. Add a sticky to get started.",
-      "add": "Add sticky",
-      "search_placeholder": "Search by title",
-      "delete": "Delete sticky",
-      "delete_confirmation": "Are you sure you want to delete this sticky?",
-      "empty_state": {
-          "simple": "Jot down an idea, capture an aha, or record a brainwave. Add a sticky to get started.",
-          "general": {
-              "title": "Stickies are quick notes and to-dos you take down on the fly.",
-              "description": "Capture your thoughts and ideas effortlessly by creating stickies that you can access anytime and from anywhere.",
-              "primary_button": {
-                  "text": "Add sticky"
-              }
-          },
-          "search": {
-              "title": "That doesn't match any of your stickies.",
-              "description": "Try a different term or let us know\nif you are sure your search is right. ",
-              "primary_button": {
-                  "text": "Add sticky"
-              }
-          }
+    "title": "Your stickies",
+    "placeholder": "click to type here",
+    "all": "All stickies",
+    "no-data": "Jot down an idea, capture an aha, or record a brainwave. Add a sticky to get started.",
+    "add": "Add sticky",
+    "search_placeholder": "Search by title",
+    "delete": "Delete sticky",
+    "delete_confirmation": "Are you sure you want to delete this sticky?",
+    "empty_state": {
+      "simple": "Jot down an idea, capture an aha, or record a brainwave. Add a sticky to get started.",
+      "general": {
+        "title": "Stickies are quick notes and to-dos you take down on the fly.",
+        "description": "Capture your thoughts and ideas effortlessly by creating stickies that you can access anytime and from anywhere.",
+        "primary_button": {
+          "text": "Add sticky"
+        }
       },
-      "toasts": {
-          "errors": {
-              "wrong_name": "The sticky name cannot be longer than 100 characters.",
-              "already_exists": "There already exists a sticky with no description"
-          },
-          "created": {
-              "title": "Sticky created",
-              "message": "The sticky has been successfully created"
-          },
-          "not_created": {
-              "title": "Sticky not created",
-              "message": "The sticky could not be created"
-          },
-          "updated": {
-              "title": "Sticky updated",
-              "message": "The sticky has been successfully updated"
-          },
-          "not_updated": {
-              "title": "Sticky not updated",
-              "message": "The sticky could not be updated"
-          },
-          "removed": {
-              "title": "Sticky removed",
-              "message": "The sticky has been successfully removed"
-          },
-          "not_removed": {
-              "title": "Sticky not removed",
-              "message": "The sticky could not be removed"
-          }
+      "search": {
+        "title": "That doesn't match any of your stickies.",
+        "description": "Try a different term or let us know\nif you are sure your search is right. ",
+        "primary_button": {
+          "text": "Add sticky"
+        }
       }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "The sticky name cannot be longer than 100 characters.",
+        "already_exists": "There already exists a sticky with no description"
+      },
+      "created": {
+        "title": "Sticky created",
+        "message": "The sticky has been successfully created"
+      },
+      "not_created": {
+        "title": "Sticky not created",
+        "message": "The sticky could not be created"
+      },
+      "updated": {
+        "title": "Sticky updated",
+        "message": "The sticky has been successfully updated"
+      },
+      "not_updated": {
+        "title": "Sticky not updated",
+        "message": "The sticky could not be updated"
+      },
+      "removed": {
+        "title": "Sticky removed",
+        "message": "The sticky has been successfully removed"
+      },
+      "not_removed": {
+        "title": "Sticky not removed",
+        "message": "The sticky could not be removed"
+      }
+    }
+  },
+
+  "role_details": {
+    "guest": {
+      "title": "Guest",
+      "description": "External members of organizations can be invited as guests."
+    },
+    "member": {
+      "title": "Member",
+      "description": "Ability to read, write, edit, and delete entities inside projects, cycles, and modules"
+    },
+    "admin": {
+      "title": "Admin",
+      "description": "All permissions set to true within the workspace."
+    }
+  },
+
+  "user_roles": {
+    "product_or_project_manager": "Product / Project Manager",
+    "development_or_engineering": "Development / Engineering",
+    "founder_or_executive": "Founder / Executive",
+    "freelancer_or_consultant": "Freelancer / Consultant",
+    "marketing_or_growth": "Marketing / Growth",
+    "sales_or_business_development": "Sales / Business Development",
+    "support_or_operations": "Support / Operations",
+    "student_or_professor": "Student / Professor",
+    "human_or_resources": "Human / Resources",
+    "other": "Other"
+  },
+
+  "importer": {
+    "github": {
+      "title": "Github",
+      "description": "Import issues from GitHub repositories and sync them."
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Import issues and epics from Jira projects and epics."
+    }
+  },
+
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Export issues to a CSV file."
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Export issues to a Excel file."
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Export issues to a JSON file."
+    }
+  },
+  "default_global_view": {
+    "all_issues": "All issues",
+    "assigned": "Assigned",
+    "created": "Created",
+    "subscribed": "Subscribed"
   }
 }
