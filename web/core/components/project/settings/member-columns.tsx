@@ -133,7 +133,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
     <>
       {isRoleNonEditable ? (
         <div className="w-32 flex ">
-          <span>{ROLE[rowData.role as keyof typeof ROLE]}</span>
+          <span>{ROLE[rowData.role]}</span>
         </div>
       ) : (
         <Controller
@@ -162,7 +162,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
               }}
               label={
                 <div className="flex ">
-                  <span>{ROLE[rowData.role as keyof typeof ROLE]}</span>
+                  <span>{ROLE[rowData.role]}</span>
                 </div>
               }
               buttonClassName={`!px-0 !justify-start hover:bg-custom-background-100 ${errors.role ? "border-red-500" : "border-none"}`}
