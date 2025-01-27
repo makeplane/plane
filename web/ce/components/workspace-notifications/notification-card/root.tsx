@@ -2,10 +2,11 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
 // components
 import { NotificationItem } from "@/components/workspace-notifications";
 // constants
-import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store";
 

@@ -1058,6 +1058,7 @@
   },
 
   "notification": {
+    "label": "Notificaciones",
     "empty_state": {
       "detail": {
         "title": "Selecciona para ver los detalles."
@@ -1070,6 +1071,23 @@
         "title": "No hay problemas asignados",
         "description": "Las actualizaciones de los problemas asignados a ti se \n pueden ver aquí"
       }
+    },
+    "tabs": {
+      "all": "Todas",
+      "mentions": "Menciones"
+    },
+    "filter": {
+      "assigned": "Asignadas a mí",
+      "created": "Creadas por mí",
+      "subscribed": "Suscritas por mí"
+    },
+    "snooze": {
+      "1_day": "1 día",
+      "3_days": "3 días",
+      "5_days": "5 días",
+      "1_week": "1 semana",
+      "2_weeks": "2 semanas",
+      "custom": "Personalizado"
     }
   },
 
