@@ -2,6 +2,8 @@ import React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Briefcase, Hotel, Users } from "lucide-react";
+// plane ui
+import { useTranslation } from "@plane/i18n";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
@@ -9,7 +11,7 @@ import { useCommandPalette, useEventTracker, useUser, useUserPermissions } from 
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants";
 
-export const EmptyWorkspace = () => {
+export const NoProjectsEmptyState = () => {
   // navigation
   const { workspaceSlug } = useParams();
   // store hooks
@@ -17,6 +19,7 @@ export const EmptyWorkspace = () => {
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const { data: currentUser } = useUser();
+  const { t } = useTranslation();
   // derived values
   const canCreateProject = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -26,11 +29,11 @@ export const EmptyWorkspace = () => {
   const EMPTY_STATE_DATA = [
     {
       id: "create-project",
-      title: "Create a project",
-      description: "Create your first project now to get started",
+      title: "home.empty.create_project.title",
+      description: "home.empty.create_project.description",
       icon: <Briefcase className="w-[40px] h-[40px] text-custom-primary-100" />,
       cta: {
-        text: "Create Project",
+        text: "home.empty.create_project.cta",
         onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
           if (!canCreateProject) return;
           e.preventDefault();
@@ -42,28 +45,28 @@ export const EmptyWorkspace = () => {
     },
     {
       id: "invite-team",
-      title: "Invite your team",
-      description: "The sub text will be of two lines and that will be placed.",
+      title: "home.empty.invite_team.title",
+      description: "home.empty.invite_team.description",
       icon: <Users className="w-[40px] h-[40px] text-custom-primary-100" />,
       cta: {
-        text: "Invite now",
+        text: "home.empty.invite_team.cta",
         link: `/${workspaceSlug}/settings/members`,
       },
     },
     {
       id: "configure-workspace",
-      title: "Configure your workspace",
-      description: "The sub text will be of two lines and that will be placed.",
+      title: "home.empty.configure_workspace.title",
+      description: "home.empty.configure_workspace.description",
       icon: <Hotel className="w-[40px] h-[40px] text-custom-primary-100" />,
       cta: {
-        text: "Configure workspace",
+        text: "home.empty.configure_workspace.cta",
         link: "settings",
       },
     },
     {
       id: "personalize-account",
-      title: "Personalize your account",
-      description: "The sub text will be of two lines and that will be placed.",
+      title: "home.empty.personalize_account.title",
+      description: "home.empty.personalize_account.description",
       icon:
         currentUser?.avatar_url && currentUser?.avatar_url.trim() !== "" ? (
           <Link href={`/${workspaceSlug}/profile/${currentUser?.id}`}>
@@ -83,38 +86,39 @@ export const EmptyWorkspace = () => {
           </Link>
         ),
       cta: {
-        text: "Personalize account",
+        text: "home.empty.personalize_account.cta",
         link: "/profile",
       },
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
       {EMPTY_STATE_DATA.map((item) => (
         <div
           key={item.id}
-          className="flex flex-col items-center justify-center py-8 bg-custom-background-100 rounded-lg text-center border border-custom-border-200/40"
+          className="flex flex-col items-center justify-center p-6 bg-custom-background-100 rounded-lg text-center border border-custom-border-200/40"
         >
-          <div className="flex items-center justify-center bg-custom-primary-100/10 rounded-full w-[80px] h-[80px] mb-4">
+          <div className="grid place-items-center bg-custom-primary-100/10 rounded-full size-24 mb-3">
             <span className="text-3xl my-auto">{item.icon}</span>
           </div>
-          <h3 className="text-lg font-medium text-custom-text-100 mb-2">{item.title}</h3>
-          <p className="text-sm text-custom-text-200 mb-4 w-[80%] flex-1">{item.description}</p>
+          <h3 className="text-lg font-medium text-custom-text-100 mb-2">{t(item.title)}</h3>
+          <p className="text-sm text-custom-text-200 mb-4 w-[80%] flex-1">{t(item.description)}</p>
 
           {item.cta.link ? (
             <Link
               href={item.cta.link}
               className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium"
             >
-              {item.cta.text}
+              {t(item.cta.text)}
             </Link>
           ) : (
             <button
+              type="button"
               className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium"
               onClick={item.cta.onClick}
             >
-              {item.cta.text}
+              {t(item.cta.text)}
             </button>
           )}
         </div>

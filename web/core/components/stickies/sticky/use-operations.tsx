@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 // plane types
+import { useTranslation } from "@plane/i18n";
 import { InstructionType, TSticky } from "@plane/types";
 // plane ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
@@ -36,13 +37,14 @@ export const useStickyOperations = (props: TProps) => {
   // store hooks
   const { stickies, getWorkspaceStickyIds, createSticky, updateSticky, deleteSticky, updateStickyPosition } =
     useSticky();
+  const { t } = useTranslation();
 
   const isValid = (data: Partial<TSticky>) => {
     if (data.name && data.name.length > 100) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Sticky not updated",
-        message: "The sticky name cannot be longer than 100 characters.",
+        title: t("stickies.toasts.not_updated.title"),
+        message: t("stickies.toasts.errors.wrong_name"),
       });
       return false;
     }
@@ -63,9 +65,9 @@ export const useStickyOperations = (props: TProps) => {
             const latestSticky = stickies[workspaceStickIds[0]];
             if (latestSticky && (!latestSticky.description_html || isCommentEmpty(latestSticky.description_html))) {
               setToast({
-                message: "There already exists a sticky with no description",
+                message: t("stickies.toasts.errors.already_exists"),
                 type: TOAST_TYPE.WARNING,
-                title: "Sticky already created",
+                title: t("stickies.toasts.not_created.title"),
               });
               return;
             }
@@ -75,15 +77,15 @@ export const useStickyOperations = (props: TProps) => {
           await createSticky(workspaceSlug, payload);
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Sticky created",
-            message: "The sticky has been successfully created.",
+            title: t("stickies.toasts.created.title"),
+            message: t("stickies.toasts.created.message"),
           });
         } catch (error: any) {
           console.error("Error in creating sticky:", error);
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Sticky not created",
-            message: error?.data?.error ?? "The sticky could not be created.",
+            title: t("stickies.toasts.not_created.title"),
+            message: error?.data?.error ?? t("stickies.toasts.not_created.message"),
           });
         }
       },
@@ -96,8 +98,8 @@ export const useStickyOperations = (props: TProps) => {
           console.error("Error in updating sticky:", error);
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Sticky not updated",
-            message: "The sticky could not be updated.",
+            title: t("stickies.toasts.not_updated.title"),
+            message: t("stickies.toasts.not_updated.message"),
           });
         }
       },
@@ -107,15 +109,15 @@ export const useStickyOperations = (props: TProps) => {
           await deleteSticky(workspaceSlug, stickyId);
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Sticky removed",
-            message: "The sticky has been removed successfully.",
+            title: t("stickies.toasts.removed.title"),
+            message: t("stickies.toasts.removed.message"),
           });
         } catch (error) {
           console.error("Error in removing sticky:", error);
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Sticky not removed",
-            message: "The sticky could not be removed.",
+            title: t("stickies.toasts.not_removed.title"),
+            message: t("stickies.toasts.not_removed.message"),
           });
         }
       },
@@ -132,8 +134,8 @@ export const useStickyOperations = (props: TProps) => {
           console.error("Error in updating sticky position:", error);
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Sticky not updated",
-            message: "The sticky could not be updated.",
+            title: t("stickies.toasts.not_updated.title"),
+            message: t("stickies.toasts.not_updated.message"),
           });
         }
       },

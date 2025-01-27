@@ -1,48 +1,38 @@
-import React from "react";
-// icons
-import { Activity, Bell, CircleUser, KeyRound, LucideProps, Settings2 } from "lucide-react";
-
 export const PROFILE_ACTION_LINKS: {
   key: string;
-  label: string;
+  i18n_label: string;
   href: string;
   highlight: (pathname: string) => boolean;
-  Icon: React.FC<LucideProps>;
 }[] = [
   {
     key: "profile",
-    label: "Profile",
+    i18n_label: "profile.actions.profile",
     href: `/profile`,
     highlight: (pathname: string) => pathname === "/profile/",
-    Icon: CircleUser,
   },
   {
     key: "security",
-    label: "Security",
+    i18n_label: "profile.actions.security",
     href: `/profile/security`,
     highlight: (pathname: string) => pathname === "/profile/security/",
-    Icon: KeyRound,
   },
   {
     key: "activity",
-    label: "Activity",
+    i18n_label: "profile.actions.activity",
     href: `/profile/activity`,
     highlight: (pathname: string) => pathname === "/profile/activity/",
-    Icon: Activity,
   },
   {
     key: "appearance",
-    label: "Appearance",
+    i18n_label: "profile.actions.appearance",
     href: `/profile/appearance`,
     highlight: (pathname: string) => pathname.includes("/profile/appearance"),
-    Icon: Settings2,
   },
   {
     key: "notifications",
-    label: "Notifications",
+    i18n_label: "profile.actions.notifications",
     href: `/profile/notifications`,
     highlight: (pathname: string) => pathname === "/profile/notifications/",
-    Icon: Bell,
   },
 ];
 
@@ -50,7 +40,7 @@ export const PROFILE_VIEWER_TAB = [
   {
     key: "summary",
     route: "",
-    label: "Summary",
+    i18n_label: "profile.tabs.summary",
     selected: "/",
   },
 ];
@@ -59,24 +49,25 @@ export const PROFILE_ADMINS_TAB = [
   {
     key: "assigned",
     route: "assigned",
-    label: "Assigned",
+    i18n_label: "profile.tabs.assigned",
     selected: "/assigned/",
   },
   {
+    key: "created",
     route: "created",
-    label: "Created",
+    i18n_label: "profile.tabs.created",
     selected: "/created/",
   },
   {
     key: "subscribed",
     route: "subscribed",
-    label: "Subscribed",
+    i18n_label: "profile.tabs.subscribed",
     selected: "/subscribed/",
   },
   {
     key: "activity",
     route: "activity",
-    label: "Activity",
+    i18n_label: "profile.tabs.activity",
     selected: "/activity/",
   },
 ];

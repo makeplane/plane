@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { Control, Controller } from "react-hook-form";
 import { LayoutPanelTop } from "lucide-react";
+// plane imports
+import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { ISearchIssueResponse, TIssue } from "@plane/types";
@@ -21,8 +23,6 @@ import {
 } from "@/components/dropdowns";
 import { ParentIssuesListModal } from "@/components/issues";
 import { IssueLabelSelect } from "@/components/issues/select";
-// constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";

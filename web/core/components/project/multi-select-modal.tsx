@@ -4,16 +4,16 @@ import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane ui
+import { useTranslation } from "@plane/i18n";
 import { Button, Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
-import { EmptyState } from "@/components/empty-state";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProject } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 type Props = {
   isOpen: boolean;
@@ -31,6 +31,8 @@ export const ProjectMultiSelectModal: React.FC<Props> = observer((props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   // refs
   const moveButtonRef = useRef<HTMLButtonElement>(null);
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { getProjectById } = useProject();
   // derived values
@@ -43,6 +45,9 @@ export const ProjectMultiSelectModal: React.FC<Props> = observer((props) => {
     const project = projectDetailsMap.get(id);
     const projectQuery = `${project?.identifier} ${project?.name}`.toLowerCase();
     return projectQuery.includes(searchTerm.toLowerCase());
+  });
+  const filteredProjectResolvedPath = useResolvedAssetPath({
+    basePath: "/empty-state/search/project",
   });
 
   useEffect(() => {
@@ -114,7 +119,11 @@ export const ProjectMultiSelectModal: React.FC<Props> = observer((props) => {
         >
           {filteredProjectIds.length === 0 ? (
             <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-              <EmptyState type={EmptyStateType.PROJECTS_EMPTY_SEARCH} layout="screen-simple" />
+              <SimpleEmptyState
+                title={t("workspace_projects.empty_state.filter.title")}
+                description={t("workspace_projects.empty_state.filter.description")}
+                assetPath={filteredProjectResolvedPath}
+              />
             </div>
           ) : (
             <ul

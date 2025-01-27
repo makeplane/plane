@@ -1,6 +1,8 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { LayoutPanelTop } from "lucide-react";
+// plane imports
+import { ETabIndices } from "@plane/constants";
 import { ISearchIssueResponse, TIssue } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // components
@@ -15,8 +17,6 @@ import {
 } from "@/components/dropdowns";
 import { ParentIssuesListModal } from "@/components/issues";
 import { IssueLabelSelect } from "@/components/issues/select";
-// constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
