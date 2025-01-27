@@ -25,9 +25,6 @@ on:
         required: false
         default: false
         type: boolean
-  push:
-    branches:
-      - master
 
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
