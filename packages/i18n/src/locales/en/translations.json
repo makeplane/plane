@@ -345,23 +345,23 @@
     "empty": {
       "create_project": {
         "title": "Create a project",
-        "description": "Create your first project now to get started",
-        "cta": "Create Project"
+        "description": "Most things start with a project in Plane.",
+        "cta": "Get started"
       },
       "invite_team": {
         "title": "Invite your team",
-        "description": "The sub text will be of two lines and that will be placed.",
-        "cta": "Invite now"
+        "description": "Build, ship, and manage with coworkers.",
+        "cta": "Get them in"
       },
       "configure_workspace": {
-        "title": "Configure your workspace",
-        "description": "The sub text will be of two lines and that will be placed.",
-        "cta": "Configure workspace"
+        "title": "Set up your workspace.",
+        "description": "Turn features on or off or go beyond that.",
+        "cta": "Configure this workspace"
       },
       "personalize_account": {
-        "title": "Personalize your account",
-        "description": "The sub text will be of two lines and that will be placed.",
-        "cta": "Personalize account"
+        "title": "Make Plane yours.",
+        "description": "Choose your picture, colors, and more.",
+        "cta": "Personalize now"
       }
     },
     "quick_links": {

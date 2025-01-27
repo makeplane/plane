@@ -344,23 +344,23 @@
     "empty": {
       "create_project": {
         "title": "Crear un proyecto",
-        "description": "Crea tu primer proyecto ahora para comenzar",
-        "cta": "Crear proyecto"
+        "description": "La mayoría de las cosas comienzan con un proyecto en Plane.",
+        "cta": "Comenzar"
       },
       "invite_team": {
         "title": "Invitar a tu equipo",
-        "description": "El subtexto será de dos líneas y se colocará aquí.",
-        "cta": "Invitar ahora"
+        "description": "Construye, implementa y gestiona con tus compañeros.",
+        "cta": "Hazlos entrar"
       },
       "configure_workspace": {
-        "title": "Configurar tu espacio de trabajo",
-        "description": "El subtexto será de dos líneas y se colocará aquí.",
-        "cta": "Configurar espacio de trabajo"
+        "title": "Configura tu espacio de trabajo",
+        "description": "Activa o desactiva funciones o ve más allá.",
+        "cta": "Configurar este espacio"
       },
       "personalize_account": {
-        "title": "Personalizar tu cuenta",
-        "description": "El subtexto será de dos líneas y se colocará aquí.",
-        "cta": "Personalizar cuenta"
+        "title": "Haz Plane tuyo",
+        "description": "Elige tu foto, colores y más.",
+        "cta": "Personalizar ahora"
       }
     },
     "quick_links": {

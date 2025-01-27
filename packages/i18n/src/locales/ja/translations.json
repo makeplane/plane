@@ -344,23 +344,23 @@
     "empty": {
       "create_project": {
         "title": "プロジェクトを作成",
-        "description": "最初のプロジェクトを作成して始めましょう",
-        "cta": "プロジェクトを作成"
+        "description": "Planeでは、ほとんどのことがプロジェクトから始まります。",
+        "cta": "始める"
       },
       "invite_team": {
         "title": "チームを招待",
-        "description": "サブテキストは2行になり、ここに配置されます。",
-        "cta": "今すぐ招待"
+        "description": "同僚と共に構築、展開、管理しましょう。",
+        "cta": "招待する"
       },
       "configure_workspace": {
         "title": "ワークスペースを設定",
-        "description": "サブテキストは2行になり、ここに配置されます。",
-        "cta": "ワークスペースを設定"
+        "description": "機能のオン/オフを切り替えたり、さらに詳細な設定が可能です。",
+        "cta": "このワークスペースを設定"
       },
       "personalize_account": {
-        "title": "アカウントをカスタマイズ",
-        "description": "サブテキストは2行になり、ここに配置されます。",
-        "cta": "アカウントをカスタマイズ"
+        "title": "Planeをあなた専用に",
+        "description": "写真、カラー、その他の設定を選択できます。",
+        "cta": "今すぐカスタマイズ"
       }
     },
     "quick_links": {

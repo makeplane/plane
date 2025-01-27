@@ -29,7 +29,7 @@ export const FiltersDropdown: FC<TFiltersDropdown> = observer((props) => {
         }}
       >
         {filter.icon && <div>{filter.icon}</div>}
-        <div className="truncate font-medium text-xs capitalize">{t(`${filter.i18n_key}`)}</div>
+        <div className="truncate font-medium text-xs capitalize">{t(filter.i18n_key)}</div>
       </CustomMenu.MenuItem>
     ));
 
@@ -41,7 +41,7 @@ export const FiltersDropdown: FC<TFiltersDropdown> = observer((props) => {
       placement="bottom-start"
       customButton={
         <button className="flex hover:bg-custom-background-80 px-2 py-1 rounded gap-1 capitalize border border-custom-border-200">
-          <span className="font-medium text-sm my-auto"> {t(`${title}`)}</span>
+          <span className="font-medium text-sm my-auto"> {t(title || "")}</span>
           <ChevronDown className={cn("size-3 my-auto text-custom-text-300 hover:text-custom-text-200 duration-300")} />
         </button>
       }

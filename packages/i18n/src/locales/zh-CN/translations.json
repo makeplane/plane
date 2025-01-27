@@ -158,7 +158,6 @@
   "enter_god_mode": "进入上帝模式",
   "workspace_logo": "工作区徽标",
   "new_issue": "新建问题",
-  "home": "首页",
   "your_work": "您的工作",
   "drafts": "草稿",
   "projects": "项目",
@@ -317,5 +316,118 @@
   "loading_members": "正在加载成员...",
   "inbox": "收件箱",
   "show_all": "显示全部",
-  "show_less": "显示较少"
+  "show_less": "显示较少",
+
+  "toast": {
+    "success": "成功！",
+    "error": "错误！"
+  },
+
+  "home": {
+    "empty": {
+      "create_project": {
+        "title": "创建项目",
+        "description": "在Plane中，大多数事情都从项目开始。",
+        "cta": "开始使用"
+      },
+      "invite_team": {
+        "title": "邀请团队",
+        "description": "与同事一起构建、部署和管理。",
+        "cta": "邀请成员"
+      },
+      "configure_workspace": {
+        "title": "设置工作空间",
+        "description": "开启或关闭功能，或进行更多设置。",
+        "cta": "配置此工作空间"
+      },
+      "personalize_account": {
+        "title": "让Plane更个性化",
+        "description": "选择您的头像、颜色等更多设置。",
+        "cta": "立即个性化"
+      }
+    },
+    "quick_links": {
+      "empty": "添加任何您需要快速访问工作的链接。",
+      "add": "添加快捷链接",
+      "title": "快捷{count, plural, one{# 链接} other{# 链接}}",
+      "quick_links": {
+        "title": "快捷链接",
+        "toasts": {
+          "created": {
+            "title": "链接已创建",
+            "message": "链接已成功创建"
+          },
+          "not_created": {
+            "title": "链接未创建",
+            "message": "无法创建链接"
+          },
+          "updated": {
+            "title": "链接已更新",
+            "message": "链接已成功更新"
+          },
+          "not_updated": {
+            "title": "链接未更新",
+            "message": "无法更新链接"
+          },
+          "removed": {
+            "title": "链接已删除",
+            "message": "链接已成功删除"
+          },
+          "not_removed": {
+            "title": "链接未删除",
+            "message": "无法删除链接"
+          }
+        }
+      }
+    },
+    "recents": {
+      "title": "最近",
+      "empty": {
+        "project": "访问项目后，您的最近项目将显示在此处。",
+        "page": "访问页面后，您的最近页面将显示在此处。",
+        "issue": "访问问题后，您的最近问题将显示在此处。",
+        "default": "您还没有任何最近项目。"
+      },
+      "filters": {
+        "all": "所有项目",
+        "projects": "项目",
+        "pages": "页面",
+        "issues": "问题"
+      }
+    },
+    "my_stickies": {
+      "title": "您的便签"
+    },
+    "new_at_plane": {
+      "title": "Plane 新功能"
+    },
+    "quick_tutorial": {
+      "title": "快速教程"
+    },
+    "widget": {
+      "reordered_successfully": "小部件重新排序成功。",
+      "reordering_failed": "重新排序小部件时发生错误。"
+    },
+    "manage_widgets": "管理小部件",
+    "title": "首页",
+    "star_us_on_github": "在 GitHub 上为我们加星"
+  },
+
+  "stickies": {
+    "empty": "暂无便签。添加一个开始做快速笔记。"
+  },
+
+  "link": {
+    "modal": {
+      "url": {
+        "text": "网址",
+        "required": "网址无效",
+        "placeholder": "输入或粘贴网址"
+      },
+      "title": {
+        "text": "显示标题",
+        "placeholder": "您希望将此链接显示为什么"
+      }
+    }
+  }
 }
