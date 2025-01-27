@@ -2,14 +2,14 @@
 
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { TInboxIssueCurrentTab } from "@plane/types";
 import { Header, Loader, EHeaderVariant } from "@plane/ui";
 // components
-import { EmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state";
 import { FiltersRoot, InboxIssueAppliedFilters, InboxIssueList } from "@/components/inbox";
 import { InboxSidebarLoader } from "@/components/ui";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";
@@ -17,6 +17,7 @@ import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";
 import { useProject, useProjectInbox } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 type IInboxSidebarProps = {
   workspaceSlug: string;
@@ -38,9 +39,13 @@ const tabNavigationOptions: { key: TInboxIssueCurrentTab; label: string }[] = [
 
 export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssueId, setIsMobileSidebar } = props;
+  // router
+  const router = useAppRouter();
   // ref
   const containerRef = useRef<HTMLDivElement>(null);
   const [elementRef, setElementRef] = useState<HTMLDivElement | null>(null);
+  // plane hooks
+  const { t } = useTranslation();
   // store
   const { currentProjectDetails } = useProject();
   const {
@@ -52,8 +57,11 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     fetchInboxPaginationIssues,
     getAppliedFiltersCount,
   } = useProjectInbox();
-
-  const router = useAppRouter();
+  // derived values
+  const sidebarAssetPath = useResolvedAssetPath({ basePath: "/empty-state/intake/intake-issue" });
+  const sidebarFilterAssetPath = useResolvedAssetPath({
+    basePath: "/empty-state/intake/filter-issue",
+  });
 
   const fetchNextPages = useCallback(() => {
     if (!workspaceSlug || !projectId) return;
@@ -128,16 +136,25 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
               />
             ) : (
               <div className="flex items-center justify-center h-full w-full">
-                <EmptyState
-                  type={
-                    getAppliedFiltersCount > 0
-                      ? EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE
-                      : currentTab === EInboxIssueCurrentTab.OPEN
-                        ? EmptyStateType.INBOX_SIDEBAR_OPEN_TAB
-                        : EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB
-                  }
-                  layout="screen-simple"
-                />
+                {getAppliedFiltersCount > 0 ? (
+                  <SimpleEmptyState
+                    title={t("inbox.empty_state.sidebar_filter.title")}
+                    description={t("inbox.empty_state.sidebar_filter.description")}
+                    assetPath={sidebarFilterAssetPath}
+                  />
+                ) : currentTab === EInboxIssueCurrentTab.OPEN ? (
+                  <SimpleEmptyState
+                    title={t("inbox.empty_state.sidebar_open_tab.title")}
+                    description={t("inbox.empty_state.sidebar_open_tab.description")}
+                    assetPath={sidebarAssetPath}
+                  />
+                ) : (
+                  <SimpleEmptyState
+                    title={t("inbox.empty_state.sidebar_closed_tab.title")}
+                    description={t("inbox.empty_state.sidebar_closed_tab.description")}
+                    assetPath={sidebarAssetPath}
+                  />
+                )}
               </div>
             )}
             <div ref={setElementRef}>

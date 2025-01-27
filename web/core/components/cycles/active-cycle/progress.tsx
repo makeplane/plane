@@ -4,14 +4,14 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // plane package imports
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ICycle, IIssueFilterOptions } from "@plane/types";
 import { LinearProgressIndicator, Loader } from "@plane/ui";
 // components
-import { EmptyState } from "@/components/empty-state";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state";
 // hooks
 import { useProjectState } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export type ActiveCycleProgressProps = {
   cycle: ICycle | null;
@@ -22,9 +22,10 @@ export type ActiveCycleProgressProps = {
 
 export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props) => {
   const { handleFiltersUpdate, cycle } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { groupedProjectStates } = useProjectState();
-
   // derived values
   const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
@@ -40,6 +41,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props
         backlog: cycle?.backlog_issues,
       }
     : {};
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/progress" });
 
   return cycle && cycle.hasOwnProperty("started_issues") ? (
     <div className="flex flex-col min-h-[17rem] gap-5 py-4 px-3.5 bg-custom-background-100 border border-custom-border-200 rounded-lg">
@@ -101,7 +103,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props
         </div>
       ) : (
         <div className="flex items-center justify-center h-full w-full">
-          <EmptyState type={EmptyStateType.ACTIVE_CYCLE_PROGRESS_EMPTY_STATE} layout="screen-simple" size="sm" />
+          <SimpleEmptyState title={t("active_cycle.empty_state.progress.title")} assetPath={resolvedPath} />
         </div>
       )}
     </div>

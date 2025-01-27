@@ -441,15 +441,59 @@
       }
     }
   },
+
   "project": {
     "label": "{count, plural, one {项目} other {项目}}"
   },
+
   "view": {
     "create": {
       "label": "创建视图"
     },
     "update": {
       "label": "更新视图"
+    }
+  },
+
+  "user_profile": {
+    "title": "你的工作",
+    "work": "工作",
+    "details": {
+      "joined_on": "加入时间",
+      "time_zone": "时区"
+    },
+    "stats": {
+      "workload": "工作量",
+      "overview": "概述",
+      "created": "已创建问题",
+      "assigned": "已分配问题",
+      "subscribed": "已订阅问题",
+      "state_distribution": {
+        "title": "按状态显示的问题",
+        "empty": "创建问题以在图表中按状态查看它们，以便更好地分析。"
+      },
+      "priority_distribution": {
+        "title": "按优先级显示的问题",
+        "empty": "创建问题以在图表中按优先级查看它们，以便更好地分析。"
+      },
+      "recent_activity": {
+        "title": "最近活动",
+        "empty": "我们找不到数据。请查看您的输入"
+      }
+    },
+    "actions": {
+      "profile": "个人资料",
+      "security": "安全",
+      "activity": "活动",
+      "appearance": "外观",
+      "notifications": "通知"
+    },
+    "tabs": {
+      "summary": "摘要",
+      "assigned": "已分配",
+      "created": "已创建",
+      "subscribed": "已订阅",
+      "activity": "活动"
     }
   }
 }
