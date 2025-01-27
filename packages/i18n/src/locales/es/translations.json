@@ -672,6 +672,42 @@
   },
 
   "workspace_projects": {
+    "network": {
+      "private": {
+        "title": "Privado",
+        "description": "Accesible solo por invitación"
+      },
+      "public": {
+        "title": "Público",
+        "description": "Cualquiera en el espacio de trabajo excepto invitados puede unirse"
+      }
+    },
+    "error": {
+      "permission": "No tienes permiso para realizar esta acción.",
+      "cycle_delete": "Error al eliminar el ciclo",
+      "module_delete": "Error al eliminar el módulo",
+      "issue_delete": "Error al eliminar la incidencia"
+    },
+    "state": {
+      "backlog": "Pendientes",
+      "unstarted": "Sin comenzar",
+      "started": "Iniciado",
+      "completed": "Completado",
+      "cancelled": "Cancelado"
+    },
+    "sort": {
+      "manual": "Manual",
+      "name": "Nombre",
+      "created_at": "Fecha de creación",
+      "members_length": "Número de miembros"
+    },
+    "scope": {
+      "my_projects": "Mis proyectos",
+      "archived_projects": "Archivados"
+    },
+    "common": {
+      "months_count": "{months, plural, one{# mes} other{# meses}}"
+    },
     "empty_state": {
       "general": {
         "title": "No hay proyectos activos",

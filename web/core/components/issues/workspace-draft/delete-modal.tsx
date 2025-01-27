@@ -2,14 +2,16 @@
 
 import { useEffect, useState } from "react";
 // types
+import { PROJECT_ERROR_MESSAGES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TWorkspaceDraftIssue } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { PROJECT_ERROR_MESSAGES } from "@/constants/project";
 // hooks
 import { useIssues, useUser, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
@@ -25,7 +27,7 @@ export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
   // store hooks
   const { issueMap } = useIssues();
   const { allowPermissions } = useUserPermissions();
-
+  const { t } = useTranslation();
   const { data: currentUser } = useUser();
 
   // derived values
@@ -52,9 +54,10 @@ export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
 
     if (!authorized) {
       setToast({
-        title: PROJECT_ERROR_MESSAGES.permissionError.title,
+        title: t(PROJECT_ERROR_MESSAGES.permissionError.i18n_title),
         type: TOAST_TYPE.ERROR,
-        message: PROJECT_ERROR_MESSAGES.permissionError.message,
+        message:
+          PROJECT_ERROR_MESSAGES.permissionError.i18n_message && t(PROJECT_ERROR_MESSAGES.permissionError.i18n_message),
       });
       onClose();
       return;
@@ -75,9 +78,9 @@ export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
             ? PROJECT_ERROR_MESSAGES.permissionError
             : PROJECT_ERROR_MESSAGES.issueDeleteError;
           setToast({
-            title: currentError.title,
+            title: t(currentError.i18n_title),
             type: TOAST_TYPE.ERROR,
-            message: currentError.message,
+            message: currentError.i18n_message && t(currentError.i18n_message),
           });
         })
         .finally(() => onClose());

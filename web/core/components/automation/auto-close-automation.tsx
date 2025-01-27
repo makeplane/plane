@@ -5,13 +5,14 @@ import { observer } from "mobx-react";
 // icons
 import { ArchiveX } from "lucide-react";
 // types
+import { PROJECT_AUTOMATION_MONTHS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 // ui
 import { CustomSelect, CustomSearchSelect, ToggleSwitch, StateGroupIcon, DoubleCircleIcon, Loader } from "@plane/ui";
 // component
 import { SelectMonthModal } from "@/components/automation";
 // constants
-import { PROJECT_AUTOMATION_MONTHS } from "@/constants/project";
 // hooks
 import { useProject, useProjectState, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
@@ -28,6 +29,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
   const { allowPermissions } = useUserPermissions();
+  const { t } = useTranslation();
 
   // const stateGroups = projectStateStore.groupedProjectStates ?? undefined;
 
@@ -117,8 +119,8 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                     >
                       <>
                         {PROJECT_AUTOMATION_MONTHS.map((month) => (
-                          <CustomSelect.Option key={month.label} value={month.value}>
-                            {month.label}
+                          <CustomSelect.Option key={month.i18n_label} value={month.value}>
+                            {t(month.i18n_label, { month: month.value })}
                           </CustomSelect.Option>
                         ))}
                         <button

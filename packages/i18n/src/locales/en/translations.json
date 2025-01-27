@@ -312,7 +312,7 @@
   "change_parent_issue": "Change parent issue",
   "remove_parent_issue": "Remove parent issue",
   "add_parent": "Add parent",
-  "loading_members": "Loading members...",
+  "loading_members": "Loading members...",      
   "view_link_copied_to_clipboard": "View link copied to clipboard.",
   "required": "Required",
   "optional": "Optional",
@@ -669,6 +669,42 @@
   },
 
   "workspace_projects": {
+    "network": {
+        "private": {
+          "title": "Private",
+          "description": "Accessible only by invite"
+        },
+        "public": {
+          "title": "Public",
+          "description": "Anyone in the workspace except Guests can join"
+        }
+      },
+      "error": {
+        "permission": "You don't have permission to perform this action.",
+        "cycle_delete": "Failed to delete cycle",
+        "module_delete": "Failed to delete module",
+        "issue_delete": "Failed to delete issue"
+      },
+      "state": {
+        "backlog": "Backlog",
+        "unstarted": "Unstarted",
+        "started": "Started",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
+      "sort": {
+        "manual": "Manual",
+        "name": "Name",
+        "created_at": "Created date",
+        "members_length": "Number of members"
+      },
+      "scope": {
+        "my_projects": "My projects",
+        "archived_projects": "Archived"
+      },
+    "common": {
+      "months_count": "{months, plural, one{# month} other{# months}}"
+    },
     "empty_state": {
       "general": {
         "title": "No active projects",
