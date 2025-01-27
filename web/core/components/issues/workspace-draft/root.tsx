@@ -4,12 +4,13 @@ import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
+import { EDraftIssuePaginationType } from "@plane/constants";
 import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants/src/user";
 import { useTranslation } from "@plane/i18n";
 // components
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 // constants
-import { EDraftIssuePaginationType } from "@/constants/workspace-drafts";
+
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks

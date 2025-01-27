@@ -18,6 +18,7 @@
   "add_members": "Add members",
   "remove_members": "Remove members",
   "add": "Add",
+  "adding": "Adding",
   "remove": "Remove",
   "add_new": "Add new",
   "remove_selected": "Remove selected",
@@ -156,7 +157,6 @@
   "enter_god_mode": "Enter god mode",
   "workspace_logo": "Workspace logo",
   "new_issue": "New issue",
-  "home": "Home",
   "your_work": "Your work",
   "drafts": "Drafts",
   "projects": "Projects",
@@ -313,8 +313,132 @@
   "remove_parent_issue": "Remove parent issue",
   "add_parent": "Add parent",
   "loading_members": "Loading members...",
+  "view_link_copied_to_clipboard": "View link copied to clipboard.",
+  "required": "Required",
+  "optional": "Optional",
+  "Cancel": "Cancel",
+  "edit": "Edit",
+  "open_in_new_tab": "Open in new tab",
+  "delete": "Delete",
+  "good": "Good",
+  "morning": "morning",
+  "afternoon": "afternoon",
+  "evening": "evening",
+  "show_all": "Show all",
+  "show_less": "Show less",
   "no_data_yet": "No Data yet",
   "connections": "Connections",
+
+  "toast": {
+    "success": "Success!",
+    "error": "Error!"
+  },
+
+  "home": {
+    "empty": {
+      "create_project": {
+        "title": "Create a project",
+        "description": "Most things start with a project in Plane.",
+        "cta": "Get started"
+      },
+      "invite_team": {
+        "title": "Invite your team",
+        "description": "Build, ship, and manage with coworkers.",
+        "cta": "Get them in"
+      },
+      "configure_workspace": {
+        "title": "Set up your workspace.",
+        "description": "Turn features on or off or go beyond that.",
+        "cta": "Configure this workspace"
+      },
+      "personalize_account": {
+        "title": "Make Plane yours.",
+        "description": "Choose your picture, colors, and more.",
+        "cta": "Personalize now"
+      },
+      "widgets": {
+        "title": "It's Quiet Without Widgets, Turn Them On",
+        "description": "It looks like all your widgets are turned off. Enable them\nnow to enhance your experience!",
+        "primary_button": {
+          "text": "Manage widgets"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "Save links to work things that you'd like handy.",
+      "add": "Add quick Link",
+      "title": "Quicklink",
+      "title_plural": "Quicklinks",
+      "toasts": {
+        "created": {
+          "title": "Link created",
+          "message": "The link has been successfully created"
+        },
+        "not_created": {
+          "title": "Link not created",
+          "message": "The link could not be created"
+        },
+        "updated": {
+          "title": "Link updated",
+          "message": "The link has been successfully updated"
+        },
+        "not_updated": {
+          "title": "Link not updated",
+          "message": "The link could not be updated"
+        },
+        "removed": {
+          "title": "Link removed",
+          "message": "The link has been successfully removed"
+        },
+        "not_removed": {
+          "title": "Link not removed",
+          "message": "The link could not be removed"
+        }
+      }
+    },
+    "recents": {
+      "title": "Recents",
+      "empty": {
+        "project": "Your recent projects will appear here once you visit one.",
+        "page": "Your recent pages will appear here once you visit one.",
+        "issue": "Your recent issues will appear here once you visit one.",
+        "default": "You don't have any recent items yet."
+      },
+      "filters": {
+        "all": "All items",
+        "projects": "Projects",
+        "pages": "Pages",
+        "issues": "Issues"
+      }
+    },
+    "new_at_plane": {
+      "title": "New at Plane"
+    },
+    "quick_tutorial": {
+      "title": "Quick tutorial"
+    },
+    "widget": {
+      "reordered_successfully": "Widget reordered successfully.",
+      "reordering_failed": "Error occurred while reordering widget."
+    },
+    "manage_widgets": "Manage widgets",
+    "title": "Home",
+    "star_us_on_github": "Star us on GitHub"
+  },
+
+  "link": {
+    "modal": {
+      "url": {
+        "text": "URL",
+        "required": "URL is invalid",
+        "placeholder": "Type or paste a URL"
+      },
+      "title": {
+        "text": "Display title",
+        "placeholder": "What you'd like to see this link as"
+      }
+    }
+  },
 
   "common": {
     "all": "All",
@@ -952,7 +1076,16 @@
   },
 
   "stickies": {
+    "title": "Your stickies",
+    "placeholder": "click to type here",
+    "all": "All stickies",
+    "no-data": "Jot down an idea, capture an aha, or record a brainwave. Add a sticky to get started.",
+    "add": "Add sticky",
+    "search_placeholder": "Search by title",
+    "delete": "Delete sticky",
+    "delete_confirmation": "Are you sure you want to delete this sticky?",
     "empty_state": {
+      "simple": "Jot down an idea, capture an aha, or record a brainwave. Add a sticky to get started.",
       "general": {
         "title": "Stickies are quick notes and to-dos you take down on the fly.",
         "description": "Capture your thoughts and ideas effortlessly by creating stickies that you can access anytime and from anywhere.",
@@ -967,17 +1100,35 @@
           "text": "Add sticky"
         }
       }
-    }
-  },
-
-  "home_widgets": {
-    "empty_state": {
-      "general": {
-        "title": "It's Quiet Without Widgets, Turn Them On",
-        "description": "It looks like all your widgets are turned off. Enable them\nnow to enhance your experience!",
-        "primary_button": {
-          "text": "Manage widgets"
-        }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "The sticky name cannot be longer than 100 characters.",
+        "already_exists": "There already exists a sticky with no description"
+      },
+      "created": {
+        "title": "Sticky created",
+        "message": "The sticky has been successfully created"
+      },
+      "not_created": {
+        "title": "Sticky not created",
+        "message": "The sticky could not be created"
+      },
+      "updated": {
+        "title": "Sticky updated",
+        "message": "The sticky has been successfully updated"
+      },
+      "not_updated": {
+        "title": "Sticky not updated",
+        "message": "The sticky could not be updated"
+      },
+      "removed": {
+        "title": "Sticky removed",
+        "message": "The sticky has been successfully removed"
+      },
+      "not_removed": {
+        "title": "Sticky not removed",
+        "message": "The sticky could not be removed"
       }
     }
   },
