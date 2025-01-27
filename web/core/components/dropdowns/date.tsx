@@ -187,6 +187,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
                 autoFocus
                 disabled={disabledDays}
                 mode="single"
+                fixedWeeks
               />
             </div>
           </Combobox.Options>,
