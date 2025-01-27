@@ -1,7 +1,6 @@
 import { useCallback, useState } from "react";
 import { debounce } from "lodash";
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
 import { Minimize2 } from "lucide-react";
 // plane types
 import { TSticky } from "@plane/types";
@@ -13,8 +12,7 @@ import { useSticky } from "@/hooks/use-stickies";
 import { STICKY_COLORS_LIST } from "../../editor/sticky-editor/color-palette";
 import { StickyDeleteModal } from "../delete-modal";
 import { StickyInput } from "./inputs";
-import { StickyItemDragHandle } from "./sticky-item-drag-handle";
-import { useStickyOperations } from "./use-operations";
+import { getRandomStickyColor, useStickyOperations } from "./use-operations";
 
 type TProps = {
   onClose?: () => void;
@@ -22,11 +20,12 @@ type TProps = {
   className?: string;
   stickyId: string | undefined;
   showToolbar?: boolean;
+  handleLayout?: () => void;
 };
 export const StickyNote = observer((props: TProps) => {
-  const { onClose, workspaceSlug, className = "", stickyId, showToolbar } = props;
+  const { onClose, workspaceSlug, className = "", stickyId, showToolbar, handleLayout } = props;
   // navigation
-  const pathName = usePathname();
+  // const pathName = usePathname();
   // states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // store hooks
@@ -34,8 +33,8 @@ export const StickyNote = observer((props: TProps) => {
   // sticky operations
   const { stickyOperations } = useStickyOperations({ workspaceSlug });
   // derived values
-  const stickyData = stickyId ? stickies[stickyId] : undefined;
-  const isStickiesPage = pathName?.includes("stickies");
+  const stickyData: Partial<TSticky> = stickyId ? stickies[stickyId] : { background_color: getRandomStickyColor() };
+  // const isStickiesPage = pathName?.includes("stickies");
   const backgroundColor =
     STICKY_COLORS_LIST.find((c) => c.key === stickyData?.background_color)?.backgroundColor ||
     STICKY_COLORS_LIST[0].backgroundColor;
@@ -46,6 +45,7 @@ export const StickyNote = observer((props: TProps) => {
         await stickyOperations.update(stickyId, payload);
       } else {
         await stickyOperations.create({
+          ...stickyData,
           ...payload,
         });
       }
@@ -74,12 +74,12 @@ export const StickyNote = observer((props: TProps) => {
         handleClose={() => setIsDeleteModalOpen(false)}
       />
       <div
-        className={cn("w-full flex flex-col h-fit rounded p-4 group/sticky", className)}
+        className={cn("w-full flex flex-col h-fit rounded p-4 group/sticky max-h-[650px] overflow-y-scroll", className)}
         style={{
           backgroundColor,
         }}
       >
-        {isStickiesPage && <StickyItemDragHandle isDragging={false} />}{" "}
+        {/* {isStickiesPage && <StickyItemDragHandle isDragging={false} />}{" "} */}
         {onClose && (
           <button type="button" className="flex w-full" onClick={onClose}>
             <Minimize2 className="size-4 m-auto mr-0" />
@@ -89,7 +89,10 @@ export const StickyNote = observer((props: TProps) => {
         <StickyInput
           stickyData={stickyData}
           workspaceSlug={workspaceSlug}
-          handleUpdate={debouncedFormSave}
+          handleUpdate={(payload) => {
+            handleLayout?.();
+            debouncedFormSave(payload);
+          }}
           stickyId={stickyId}
           handleDelete={() => setIsDeleteModalOpen(true)}
           handleChange={handleChange}

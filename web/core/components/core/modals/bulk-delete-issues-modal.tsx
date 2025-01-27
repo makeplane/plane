@@ -6,19 +6,18 @@ import { useParams } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
+// plane imports
 import { EIssuesStoreType } from "@plane/constants";
-// types
+import { useTranslation } from "@plane/i18n";
 import { ISearchIssueResponse, IUser } from "@plane/types";
-// ui
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { EmptyState } from "@/components/empty-state";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state";
 // hooks
 import { useIssues } from "@/hooks/store";
 import useDebounce from "@/hooks/use-debounce";
 // services
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { ProjectService } from "@/services/project";
 // local components
 import { BulkDeleteIssuesModalItem } from "./bulk-delete-issues-modal-item";
@@ -39,16 +38,19 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose } = props;
   // router params
   const { workspaceSlug, projectId } = useParams();
-  // hooks
-  const {
-    issues: { removeBulkIssues },
-  } = useIssues(EIssuesStoreType.PROJECT);
   // states
   const [query, setQuery] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-
+  // hooks
+  const {
+    issues: { removeBulkIssues },
+  } = useIssues(EIssuesStoreType.PROJECT);
+  const { t } = useTranslation();
+  // derived values
   const debouncedSearchTerm: string = useDebounce(query, 500);
+  const searchResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
+  const issuesResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/issues" });
 
   useEffect(() => {
     if (!isOpen || !workspaceSlug || !projectId) return;
@@ -131,12 +133,11 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
       </li>
     ) : (
       <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-        <EmptyState
-          type={
-            query === "" ? EmptyStateType.ISSUE_RELATION_EMPTY_STATE : EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE
-          }
-          layout="screen-simple"
-        />
+        {query === "" ? (
+          <SimpleEmptyState title={t("issue_relation.empty_state.no_issues.title")} assetPath={issuesResolvedPath} />
+        ) : (
+          <SimpleEmptyState title={t("issue_relation.empty_state.search.title")} assetPath={searchResolvedPath} />
+        )}
       </div>
     );
 

@@ -13,11 +13,9 @@ import { IImporterService } from "@plane/types";
 // ui
 import { Button } from "@plane/ui";
 // components
-import { EmptyState } from "@/components/empty-state";
 import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "@/components/integration";
 import { ImportExportSettingsLoader } from "@/components/ui";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 import { IMPORTERS_LIST } from "@/constants/workspace";
 // hooks
@@ -28,6 +26,7 @@ import { IntegrationService } from "@/services/integrations";
 // services
 const integrationService = new IntegrationService();
 
+// FIXME: [Deprecated] Remove this component
 const IntegrationGuide = observer(() => {
   // states
   const [refreshing, setRefreshing] = useState(false);
@@ -137,7 +136,7 @@ const IntegrationGuide = observer(() => {
                     </div>
                   ) : (
                     <div className="flex h-full w-full items-center justify-center">
-                      <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_IMPORT} size="sm" />
+                      {/* <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_IMPORT} size="sm" /> */}
                     </div>
                   )
                 ) : (

@@ -10,7 +10,12 @@ import { useSticky } from "@/hooks/use-stickies";
 import { ContentOverflowWrapper } from "../../core/content-overflow-HOC";
 import { StickiesLayout } from "./stickies-list";
 
-export const StickiesTruncated = observer(() => {
+type StickiesTruncatedProps = {
+  handleClose?: () => void;
+};
+
+export const StickiesTruncated = observer((props: StickiesTruncatedProps) => {
+  const { handleClose = () => {} } = props;
   // navigation
   const { workspaceSlug } = useParams();
   // store hooks
@@ -33,6 +38,7 @@ export const StickiesTruncated = observer(() => {
           className={cn(
             "gap-1 w-full text-custom-primary-100 text-sm font-medium transition-opacity duration-300 bg-custom-background-90/20"
           )}
+          onClick={handleClose}
         >
           Show all
         </Link>

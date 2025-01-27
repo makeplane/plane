@@ -6,26 +6,39 @@ import { useParams } from "next/navigation";
 // icons
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
 // plane constants
-import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import {
+  EIssueLayoutTypes,
+  EIssueFilterType,
+  EIssuesStoreType,
+  ISSUE_LAYOUTS,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
+} from "@plane/constants";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues/issue-layouts";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "@/constants/issue";
+import {
+  DisplayFiltersSelection,
+  FilterSelection,
+  FiltersDropdown,
+  IssueLayoutIcon,
+} from "@/components/issues/issue-layouts";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 
 export const ProjectIssuesMobileHeader = observer(() => {
+  // i18n
+  const { t } = useTranslation();
   const layouts = [
-    { key: "list", title: "List", icon: List },
-    { key: "kanban", title: "Board", icon: Kanban },
-    { key: "calendar", title: "Calendar", icon: Calendar },
+    { key: "list", titleTranslationKey: "issue.layouts.list", icon: List },
+    { key: "kanban", titleTranslationKey: "issue.layouts.kanban", icon: Kanban },
+    { key: "calendar", titleTranslationKey: "issue.layouts.calendar", icon: Calendar },
   ];
   const [analyticsModal, setAnalyticsModal] = useState(false);
   const { workspaceSlug, projectId } = useParams() as {
@@ -104,7 +117,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
           placement="bottom-start"
           customButton={
             <div className="flex flex-start text-sm text-custom-text-200">
-              Layout
+              {t("common.layout")}
               <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200 my-auto" strokeWidth={2} />
             </div>
           }
@@ -119,18 +132,18 @@ export const ProjectIssuesMobileHeader = observer(() => {
               }}
               className="flex items-center gap-2"
             >
-              <layout.icon className="h-3 w-3" />
-              <div className="text-custom-text-300">{layout.title}</div>
+              <IssueLayoutIcon layout={ISSUE_LAYOUTS[index].key} className="h-3 w-3" />
+              <div className="text-custom-text-300">{t(layout.titleTranslationKey)}</div>
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
         <div className="flex flex-grow items-center justify-center border-l border-custom-border-200 text-sm text-custom-text-200">
           <FiltersDropdown
-            title="Filters"
+            title={t("common.filters")}
             placement="bottom-end"
             menuButton={
               <span className="flex items-center text-sm text-custom-text-200">
-                Filters
+                {t("common.filters")}
                 <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200" />
               </span>
             }
@@ -142,7 +155,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
               displayFilters={issueFilters?.displayFilters ?? {}}
               handleDisplayFiltersUpdate={handleDisplayFilters}
               layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
               }
               labels={projectLabels}
               memberIds={projectMemberIds ?? undefined}
@@ -154,18 +167,18 @@ export const ProjectIssuesMobileHeader = observer(() => {
         </div>
         <div className="flex flex-grow items-center justify-center border-l border-custom-border-200 text-sm text-custom-text-200">
           <FiltersDropdown
-            title="Display"
+            title={t("common.display")}
             placement="bottom-end"
             menuButton={
               <span className="flex items-center text-sm text-custom-text-200">
-                Display
+                {t("common.display")}
                 <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" />
               </span>
             }
           >
             <DisplayFiltersSelection
               layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
               }
               displayFilters={issueFilters?.displayFilters ?? {}}
               handleDisplayFiltersUpdate={handleDisplayFilters}
@@ -181,7 +194,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
           onClick={() => setAnalyticsModal(true)}
           className="flex flex-grow justify-center border-l border-custom-border-200 text-sm text-custom-text-200"
         >
-          Analytics
+          {t("common.analytics")}
         </button>
       </div>
     </>
