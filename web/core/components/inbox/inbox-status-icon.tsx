@@ -2,7 +2,7 @@ import { AlertTriangle, CheckCircle2, Clock, Copy, XCircle } from "lucide-react"
 import { TInboxIssueStatus, EInboxIssueStatus } from "@plane/constants";
 import { cn } from "@plane/utils";
 
-export const ICONS = {
+export const ICON_PROPERTIES = {
   [EInboxIssueStatus.PENDING]: {
     icon: AlertTriangle,
     textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "text-[#AB6400]"),
@@ -41,6 +41,6 @@ export const InboxStatusIcon = ({
   renderColor?: boolean;
 }) => {
   if (type === undefined) return null;
-  const Icon = ICONS[type];
+  const Icon = ICON_PROPERTIES[type];
   return <Icon.icon size={size} className={cn(`w-3 h-3 ${renderColor && Icon?.textColor(false)}`, className)} />;
 };

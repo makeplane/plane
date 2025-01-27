@@ -8,7 +8,7 @@ import { cn } from "@/helpers/common.helper";
 import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
 // store
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
-import { ICONS, InboxStatusIcon } from "./inbox-status-icon";
+import { ICON_PROPERTIES, InboxStatusIcon } from "./inbox-status-icon";
 
 type Props = {
   inboxIssue: IInboxIssueStore;
@@ -29,7 +29,7 @@ export const InboxIssueStatus: React.FC<Props> = observer((props) => {
   const description = t(inboxIssueStatusDetail.i18n_description(), {
     days: findHowManyDaysLeft(new Date(inboxIssue.snoozed_till ?? "")),
   });
-  const statusIcon = ICONS[inboxIssue?.status];
+  const statusIcon = ICON_PROPERTIES[inboxIssue?.status];
 
   return (
     <div
