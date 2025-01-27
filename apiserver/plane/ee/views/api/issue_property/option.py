@@ -44,7 +44,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
         return self.kwargs.get("option_id", None)
 
     # list issue property options and get issue property option by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def get(self, request, slug, project_id, property_id, option_id=None):
         if self.workspace_slug and self.project_id and self.property_id:
             # list of issue properties
@@ -53,6 +53,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                     workspace__slug=self.workspace_slug,
                     project_id=self.project_id,
                     property_id=self.property_id,
+                    property__issue_type__is_epic=False,
                 )
                 serializer = self.serializer_class(issue_properties, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -63,12 +64,13 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 property_id=self.property_id,
                 pk=self.option_id,
+                property__issue_type__is_epic=False,
             )
             serializer = self.serializer_class(issue_property)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     # create issue property option
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def post(self, request, slug, project_id, property_id):
         if self.workspace_slug and self.project_id and self.property_id:
             workspace = Workspace.objects.get(slug=self.workspace_slug)
@@ -85,6 +87,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                     property_id=self.property_id,
                     external_source=request.data.get("external_source"),
                     external_id=request.data.get("external_id"),
+                    property__issue_type__is_epic=False,
                 )
                 if (
                     external_id
@@ -97,6 +100,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                         property_id=self.property_id,
                         external_source=request.data.get("external_source"),
                         external_id=external_id,
+                        property__issue_type__is_epic=False,
                     ).first()
                     return Response(
                         {
@@ -112,6 +116,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                     project_id=self.project_id,
                     property_id=self.property_id,
                     is_default=True,
+                    property__issue_type__is_epic=False,
                 )
                 if (
                     default_option_exists.exists()
@@ -125,7 +130,9 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
 
                 # getting the last sort order from the database
                 last_sort_order = self.model.objects.filter(
-                    project=project, property=issue_property
+                    project=project,
+                    property=issue_property,
+                    property__issue_type__is_epic=False,
                 ).aggregate(largest=models.Max("sort_order"))["largest"]
 
                 # Set the sort order for the new option
@@ -149,18 +156,17 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                     project_id=self.project_id,
                     property_id=self.property_id,
                     pk=property_option_serializer.data["id"],
+                    property__issue_type__is_epic=False,
                 )
                 serializer = self.serializer_class(property_option)
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED
-                )
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(
                 {"error": "Issue Property type is not OPTION"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
     # update issue property option by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def patch(self, request, slug, project_id, property_id, option_id):
         if (
             self.workspace_slug
@@ -174,6 +180,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 property_id=self.property_id,
                 is_default=True,
+                property__issue_type__is_epic=False,
             )
             if (
                 default_option_exists.exists()
@@ -190,6 +197,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 property_id=self.property_id,
                 pk=self.option_id,
+                property__issue_type__is_epic=False,
             )
 
             data = request.data
@@ -197,40 +205,12 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                 property_option, data=data, partial=True
             )
             property_option_serializer.is_valid(raise_exception=True)
-
-            # check if issue type with the same external id and external source already exists
-            external_id = request.data.get("external_id")
-            external_existing_property_option = self.model.objects.filter(
-                workspace__slug=self.workspace_slug,
-                project_id=self.project_id,
-                property_id=self.property_id,
-                external_source=request.data.get(
-                    "external_source", property_option.external_source
-                ),
-                external_id=external_id,
-            )
-            if (
-                external_id
-                and (property_option.external_id != external_id)
-                and external_existing_property_option.exists()
-            ):
-                return Response(
-                    {
-                        "error": "Issue property with the same external id and external source already exists",
-                        "id": str(property_option.id),
-                    },
-                    status=status.HTTP_409_CONFLICT,
-                )
-
             property_option_serializer.save()
 
-            return Response(
-                property_option_serializer.data,
-                status=status.HTTP_200_OK,
-            )
+            return Response(property_option_serializer.data, status=status.HTTP_200_OK)
 
     # delete issue property option by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def delete(self, request, slug, project_id, property_id, option_id):
         if (
             self.workspace_slug
@@ -243,6 +223,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 property_id=self.property_id,
                 pk=self.option_id,
+                property__issue_type__is_epic=False,
             )
             property_option.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)

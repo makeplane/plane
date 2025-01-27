@@ -10,9 +10,9 @@ export const shouldRenderDisplayProperty = (props: TShouldRenderDisplayProperty)
     ? store.issueTypes.isIssueTypeEnabledForProject(
         workspaceSlug?.toString(),
         projectId?.toString(),
-        "ISSUE_TYPE_DISPLAY"
+      "ISSUE_TYPES"
       )
-    : store.featureFlags.flags[workspaceSlug]?.ISSUE_TYPE_DISPLAY;
+    : store.featureFlags.flags[workspaceSlug]?.ISSUE_TYPES;
 
   switch (key) {
     case "issue_type":

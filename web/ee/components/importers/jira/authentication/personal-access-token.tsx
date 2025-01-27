@@ -2,6 +2,8 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { stripTrailingSlash } from "@plane/etl/core";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
@@ -40,6 +42,7 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
   const handlePATAuthentication = async () => {
     try {
       setIsLoading(true);
+      formData.hostname = stripTrailingSlash(formData.hostname);
       await authWithPAT(formData);
     } catch (error) {
       setToast({

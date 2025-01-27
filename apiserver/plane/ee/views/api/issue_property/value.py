@@ -1,10 +1,6 @@
 # Django imports
 from django.db.models import F, Value, Case, When
-from django.db.models import (
-    Q,
-    CharField,
-    Func,
-)
+from django.db.models import Q, CharField, Func
 from django.db.models.functions import Cast
 from django.contrib.postgres.aggregates import ArrayAgg
 
@@ -15,11 +11,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import Workspace
-from plane.ee.models import (
-    IssueProperty,
-    IssuePropertyValue,
-    PropertyTypeEnum,
-)
+from plane.ee.models import IssueProperty, IssuePropertyValue, PropertyTypeEnum
 from plane.ee.serializers.api import IssuePropertyValueAPISerializer
 from plane.ee.utils.external_issue_property_validator import (
     externalIssuePropertyValueValidator,
@@ -86,15 +78,11 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
                     ),
                     When(
                         property__property_type=PropertyTypeEnum.DECIMAL,
-                        then=Cast(
-                            F("value_decimal"), output_field=CharField()
-                        ),
+                        then=Cast(F("value_decimal"), output_field=CharField()),
                     ),
                     When(
                         property__property_type=PropertyTypeEnum.BOOLEAN,
-                        then=Cast(
-                            F("value_boolean"), output_field=CharField()
-                        ),
+                        then=Cast(F("value_boolean"), output_field=CharField()),
                     ),
                     When(
                         property__property_type=PropertyTypeEnum.RELATION,
@@ -104,18 +92,16 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
                         property__property_type=PropertyTypeEnum.OPTION,
                         then=Cast(F("value_option"), output_field=CharField()),
                     ),
-                    default=Value(
-                        ""
-                    ),  # Default value if none of the conditions match
+                    default=Value(""),  # Default value if none of the conditions match
                     output_field=CharField(),
                 ),
                 filter=Q(property_id=F("property_id")),
                 distinct=True,
-            ),
+            )
         )
 
     # list issue property options and get issue property option by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def get(self, request, slug, project_id, issue_id, property_id):
         if (
             self.workspace_slug
@@ -129,14 +115,15 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 issue_id=self.issue_id,
                 property_id=self.property_id,
+                property__issue_type__is_epic=False,
             )
-            issue_property_values = self.query_annotator(
-                issue_property_values
-            ).values("property_id", "values")
+            issue_property_values = self.query_annotator(issue_property_values).values(
+                "property_id", "values"
+            )
             return Response(issue_property_values, status=status.HTTP_200_OK)
 
     # create issue property option
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def post(self, request, slug, project_id, issue_id, property_id):
         if (
             self.workspace_slug
@@ -153,14 +140,14 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 issue_id=self.issue_id,
                 property_id=self.property_id,
+                property__issue_type__is_epic=False,
             )
 
             issue_property_values = request.data.get("values", [])
 
             if not issue_property_values:
                 return Response(
-                    {"error": "Value is required"},
-                    status=status.HTTP_400_BAD_REQUEST,
+                    {"error": "Value is required"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
             # validate the property value
@@ -176,9 +163,7 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
 
                     # check if issue property with the same external id and external source already exists
                     property_external_id = value.get("external_id", None)
-                    property_external_source = value.get(
-                        "external_source", None
-                    )
+                    property_external_source = value.get("external_source", None)
 
                     # Save the values
                     bulk_external_issue_property_values.append(
@@ -207,11 +192,10 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 issue_id=self.issue_id,
                 property=issue_property,
+                property__issue_type__is_epic=False,
             )
-            issue_property_values = self.query_annotator(
-                issue_property_values
-            ).values("property_id", "values")
+            issue_property_values = self.query_annotator(issue_property_values).values(
+                "property_id", "values"
+            )
 
-            return Response(
-                issue_property_values, status=status.HTTP_201_CREATED
-            )
+            return Response(issue_property_values, status=status.HTTP_201_CREATED)

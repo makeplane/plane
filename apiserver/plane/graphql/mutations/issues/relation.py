@@ -44,16 +44,12 @@ class IssueRelationMutation:
 
         issue_relations = [
             IssueRelation(
-                issue_id=(
-                    related_issue_id if relation_type == "blocking" else issue
-                ),
+                issue_id=(related_issue_id if relation_type == "blocking" else issue),
                 related_issue_id=(
                     issue if relation_type == "blocking" else related_issue_id
                 ),
                 relation_type=(
-                    "blocked_by"
-                    if relation_type == "blocking"
-                    else relation_type
+                    "blocked_by" if relation_type == "blocking" else relation_type
                 ),
                 project_id=project,
                 workspace_id=workspace_details.id,
@@ -65,9 +61,7 @@ class IssueRelationMutation:
 
         await sync_to_async(
             lambda: IssueRelation.objects.bulk_create(
-                issue_relations,
-                batch_size=10,
-                ignore_conflicts=True,
+                issue_relations, batch_size=10, ignore_conflicts=True
             )
         )()
 
@@ -105,9 +99,7 @@ class IssueRelationMutation:
             lambda: IssueRelation.objects.get(
                 workspace__slug=slug,
                 project_id=project,
-                issue_id=(
-                    related_issue if relation_type == "blocking" else issue
-                ),
+                issue_id=(related_issue if relation_type == "blocking" else issue),
                 related_issue_id=(
                     issue if relation_type == "blocking" else related_issue
                 ),
@@ -121,19 +113,14 @@ class IssueRelationMutation:
 
         # current issue relation
         current_issue_relation_instance = (
-            await convert_issue_relation_properties_to_activity_dict(
-                issue_relation
-            )
+            await convert_issue_relation_properties_to_activity_dict(issue_relation)
         )
 
         # Track the issue relation activity
         issue_activity.delay(
             type="issue_relation.activity.created",
             requested_data=json.dumps(
-                {
-                    "related_issue": related_issue,
-                    "relation_type": relation_type,
-                }
+                {"related_issue": related_issue, "relation_type": relation_type}
             ),
             actor_id=str(info.context.user.id),
             issue_id=str(issue),

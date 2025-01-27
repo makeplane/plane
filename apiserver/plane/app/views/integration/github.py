@@ -20,16 +20,11 @@ from plane.app.serializers import (
     GithubCommentSyncSerializer,
 )
 from plane.utils.integrations.github import get_github_repos
-from plane.app.permissions import (
-    ProjectBasePermission,
-    ProjectEntityPermission,
-)
+from plane.app.permissions import ProjectBasePermission, ProjectEntityPermission
 
 
 class GithubRepositoriesEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectBasePermission,
-    ]
+    permission_classes = [ProjectBasePermission]
 
     def get(self, request, slug, workspace_integration_id):
         page = request.GET.get("page", 1)
@@ -53,9 +48,7 @@ class GithubRepositoriesEndpoint(BaseAPIView):
 
 
 class GithubRepositorySyncViewSet(BaseViewSet):
-    permission_classes = [
-        ProjectBasePermission,
-    ]
+    permission_classes = [ProjectBasePermission]
 
     serializer_class = GithubRepositorySyncSerializer
     model = GithubRepositorySync
@@ -108,10 +101,7 @@ class GithubRepositorySyncViewSet(BaseViewSet):
         )
 
         # Create a Label for github
-        label = Label.objects.filter(
-            name="GitHub",
-            project_id=project_id,
-        ).first()
+        label = Label.objects.filter(name="GitHub", project_id=project_id).first()
 
         if label is None:
             label = Label.objects.create(
@@ -144,9 +134,7 @@ class GithubRepositorySyncViewSet(BaseViewSet):
 
 
 class GithubIssueSyncViewSet(BaseViewSet):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     serializer_class = GithubIssueSyncSerializer
     model = GithubIssueSync
@@ -187,9 +175,7 @@ class BulkCreateGithubIssueSyncEndpoint(BaseAPIView):
 
 
 class GithubCommentSyncViewSet(BaseViewSet):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     serializer_class = GithubCommentSyncSerializer
     model = GithubCommentSync

@@ -9,23 +9,16 @@ from django.utils import timezone
 
 # Module Imports
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
-from plane.db.models import (
-    Notification,
-)
+from plane.db.models import Notification
 
 
 @strawberry.type
 class NotificationMutation:
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def read_notification(
-        self,
-        info: Info,
-        slug: str,
-        notification: strawberry.ID,
+        self, info: Info, slug: str, notification: strawberry.ID
     ) -> bool:
         notification = await sync_to_async(Notification.objects.get)(
             receiver=info.context.user, workspace__slug=slug, pk=notification
@@ -35,9 +28,7 @@ class NotificationMutation:
         return True
 
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def mark_all_read_notification(self, info: Info, slug: str) -> bool:
         # Fetch all notifications for the user in the specified workspace

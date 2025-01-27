@@ -81,8 +81,7 @@ class ServiceApiTokenEndpoint(BaseAPIView):
             workspace=workspace,
             is_service=True,
             user=request.user,
-            expired_at__isnull=False,
-            expired_at__gt=timezone.now(),
+            expired_at__isnull=True,
         ).first()
 
         if api_token:
@@ -98,7 +97,6 @@ class ServiceApiTokenEndpoint(BaseAPIView):
                 workspace=workspace,
                 user_type=user_type,
                 is_service=True,
-                expired_at=(timezone.now() + timedelta(days=7)),
             )
             return Response(
                 {"token": str(api_token.token)}, status=status.HTTP_201_CREATED

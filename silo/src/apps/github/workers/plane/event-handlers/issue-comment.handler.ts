@@ -1,12 +1,16 @@
 import { MQ, Store } from "@/apps/engine/worker/base";
-import { GithubEntityConnection } from "@/apps/github/types";
+import { GithubEntityConnection, GithubWorkspaceConnection } from "@/apps/github/types";
 import { getCredentialsByWorkspaceId } from "@/db/query";
 import { env } from "@/env";
 import { getConnectionDetailsForPlane } from "@/helpers/connection";
 import { logger } from "@/logger";
 import { TaskHeaders } from "@/types";
+// plane imports
 import { ExIssue, ExIssueComment, Client as PlaneClient, PlaneWebhookPayload } from "@plane/sdk";
-import { createGithubService, GithubService } from "@silo/github";
+import { TServiceCredentials } from "@plane/etl/core";
+import { createGithubService, GithubService, ContentParser } from "@plane/etl/github";
+
+import { imagePrefix } from "./issue.handler";
 
 export const handleIssueCommentWebhook = async (
   headers: TaskHeaders,
@@ -46,7 +50,7 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
     // Get the issue associated with the comment
     const issue = await planeClient.issue.getIssue(
       entityConnection.workspaceSlug,
-      entityConnection.projectId,
+      entityConnection.projectId ?? "",
       payload.issue
     );
 
@@ -62,18 +66,29 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
 
     const comment = await planeClient.issueComment.getComment(
       entityConnection.workspaceSlug,
-      entityConnection.projectId,
+      entityConnection.projectId ?? "",
       payload.issue,
       payload.id
     );
 
-    const githubComment = await createOrUpdateGitHubComment(githubService, issue, comment, entityConnection);
+    const githubComment = await createOrUpdateGitHubComment(
+      githubService,
+      issue,
+      comment,
+      workspaceConnection,
+      entityConnection,
+      credentials
+    );
     await store.set(`silo:comment:${githubComment.data.id}`, "true");
 
-    if (!comment.external_id || !comment.external_source) {
+    if (
+      !comment.external_id ||
+      !comment.external_source ||
+      (comment.external_source && comment.external_source !== "GITHUB")
+    ) {
       await planeClient.issueComment.update(
         entityConnection.workspaceSlug,
-        entityConnection.projectId,
+        entityConnection.projectId ?? "",
         payload.issue,
         payload.id,
         {
@@ -91,13 +106,18 @@ const createOrUpdateGitHubComment = async (
   githubService: GithubService,
   issue: ExIssue,
   comment: ExIssueComment,
-  entityConnection: GithubEntityConnection
+  workspaceConnection: GithubWorkspaceConnection,
+  entityConnection: GithubEntityConnection,
+  credentials: TServiceCredentials
 ) => {
-  const owner = entityConnection.entitySlug.split("/")[0];
-  const repo = entityConnection.entitySlug.split("/")[1];
+  const owner = (entityConnection.entitySlug ?? "").split("/")[0];
+  const repo = (entityConnection.entitySlug ?? "").split("/")[1];
 
-  const htmlToRemove = /<p>Comment (created|updated) on GitHub By <a.*?>.*?<\/a><\/p>$/gm;
+  const assetImagePrefix = imagePrefix + workspaceConnection.workspaceId + "/" + credentials.user_id;
+
+  const htmlToRemove = /Comment (updated|created) on GitHub By \[(.*?)\]\((.*?)\)/gim;
   const cleanHtml = comment.comment_html.replace(htmlToRemove, "");
+  const markdown = ContentParser.toMarkdown(cleanHtml, assetImagePrefix);
 
   // Find the credentials for the comment creator
   const userCredentials = await getCredentialsByWorkspaceId(
@@ -115,9 +135,9 @@ const createOrUpdateGitHubComment = async (
     });
   }
 
-  if (comment.external_id && comment.external_source === "GITHUB") {
-    return userGithubService.updateIssueComment(owner, repo, Number(comment.external_id), cleanHtml);
+  if (comment.external_id && comment.external_source && comment.external_source === "GITHUB") {
+    return userGithubService.updateIssueComment(owner, repo, Number(comment.external_id), markdown);
   } else {
-    return userGithubService.createIssueComment(owner, repo, Number(issue.external_id), cleanHtml);
+    return userGithubService.createIssueComment(owner, repo, Number(issue.external_id), markdown);
   }
 };

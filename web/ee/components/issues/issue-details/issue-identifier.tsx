@@ -68,7 +68,12 @@ export const IssueTypeIdentifier: FC<TIssueTypeIdentifier> = observer((props) =>
   return (
     <Tooltip tooltipContent={issueType?.name} disabled={!issueType?.name} position="top-left">
       <div className="flex flex-shrink-0">
-        <IssueTypeLogo icon_props={issueType?.logo_props?.icon} size={size} isDefault={issueType?.is_default} />
+        <IssueTypeLogo
+          icon_props={issueType?.logo_props?.icon}
+          size={size}
+          isDefault={issueType?.is_default}
+          isEpic={issueType?.is_epic}
+        />
       </div>
     </Tooltip>
   );
@@ -89,7 +94,7 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-  const { loader: issueTypesLoader, isIssueTypeEnabledForProject } = useIssueTypes();
+  const { loader: issueTypesLoader, isIssueTypeOrEpicEnabledForProject } = useIssueTypes();
   // Determine if the component is using store data or not
   const isUsingStoreData = "issueId" in props;
   // derived values
@@ -97,15 +102,16 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
   const issueTypeId = isUsingStoreData ? issue?.type_id : props.issueTypeId;
   const projectIdentifier = isUsingStoreData ? getProjectIdentifierById(projectId) : props.projectIdentifier;
   const issueSequenceId = isUsingStoreData ? issue?.sequence_id : props.issueSequenceId;
-  const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(
+  const isIssueTypeOrEpicDisplayEnabled = isIssueTypeOrEpicEnabledForProject(
     workspaceSlug?.toString(),
     projectId,
-    "ISSUE_TYPE_DISPLAY"
+    "ISSUE_TYPES",
+    "EPICS"
   );
   const shouldRenderIssueTypeIcon = displayProperties ? displayProperties.issue_type : true;
   const shouldRenderIssueID = displayProperties ? displayProperties.key : true;
 
-  if (!isIssueTypeDisplayEnabled) {
+  if (!isIssueTypeOrEpicDisplayEnabled) {
     const baseProps = {
       projectId,
       size,
@@ -134,7 +140,7 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
   }
 
   return (
-    <div className="flex flex-shrink-0 items-center space-x-2">
+    <div className={cn("flex flex-shrink-0 items-center", size === "xs" ? "space-x-1" : "space-x-2")}>
       {shouldRenderIssueTypeIcon && issueTypeId && <IssueTypeIdentifier issueTypeId={issueTypeId} size={size} />}
       {shouldRenderIssueID && (
         <IdentifierText

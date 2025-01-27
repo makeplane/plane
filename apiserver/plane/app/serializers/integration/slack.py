@@ -7,8 +7,4 @@ class SlackProjectSyncSerializer(BaseSerializer):
     class Meta:
         model = SlackProjectSync
         fields = "__all__"
-        read_only_fields = [
-            "project",
-            "workspace",
-            "workspace_integration",
-        ]
+        read_only_fields = ["project", "workspace", "workspace_integration"]

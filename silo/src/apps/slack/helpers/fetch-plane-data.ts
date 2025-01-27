@@ -8,7 +8,5 @@ export type PlaneProjectAssets = {
 
 export const fetchPlaneAssets = async (slug: string, projectId: string, planeClient: PlaneClient) => {
   const states = await planeClient.state.list(slug, projectId);
-  const members = await planeClient.users.list(slug, projectId);
-  const labels = await planeClient.label.list(slug, projectId);
-  return { states, members, labels };
+  return { states };
 };

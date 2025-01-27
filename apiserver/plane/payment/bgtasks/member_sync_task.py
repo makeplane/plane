@@ -11,9 +11,7 @@ from celery import shared_task
 # Module imports
 from plane.db.models import WorkspaceMember, Workspace
 from plane.utils.exception_logger import log_exception
-from plane.payment.utils.workspace_license_request import (
-    resync_workspace_license,
-)
+from plane.payment.utils.workspace_license_request import resync_workspace_license
 
 
 @shared_task
@@ -28,9 +26,7 @@ def member_sync_task(slug):
             # Get all active workspace members
             workspace_members = (
                 WorkspaceMember.objects.filter(
-                    workspace_id=workspace_id,
-                    is_active=True,
-                    member__is_bot=False,
+                    workspace_id=workspace_id, is_active=True, member__is_bot=False
                 )
                 .annotate(
                     user_email=F("member__email"),

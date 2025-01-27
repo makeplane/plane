@@ -8,6 +8,6 @@ export const hideFloatingBot = () => {
 export const showFloatingBot = () => {
   const floatingBot = document.getElementById("floating-bot");
   if (floatingBot) {
-    floatingBot.style.display = "block";
+    floatingBot.style.display = "flex";
   }
 };

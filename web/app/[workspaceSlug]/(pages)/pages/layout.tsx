@@ -2,13 +2,13 @@
 
 // layouts
 import { useParams } from "next/navigation";
-import { WorkspaceAuthWrapper } from "@/layouts/auth-layout";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // plane web components
 import { PagesAppCommandPalette } from "@/plane-web/components/command-palette";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { WorkspacePagesUpgrade } from "@/plane-web/components/pages";
+import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 // local components
 import { PagesAppSidebar } from "./sidebar";
 

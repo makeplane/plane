@@ -12,7 +12,6 @@ BATCH_SIZE = 3000
 
 @shared_task
 def delete_api_logs():
-
     if settings.MONGO_DB_URL:
         # Get the logs older than 30 days to delete
         logs_to_delete = APIActivityLog.objects.filter(
@@ -49,8 +48,12 @@ def delete_api_logs():
                         "user_agent": log.user_agent,
                         "created_at": log.created_at,
                         "updated_at": log.updated_at,
-                        "created_by": str(log.created_by_id) if log.created_by_id else None,
-                        "updated_by": str(log.updated_by_id) if log.updated_by_id else None,
+                        "created_by": str(log.created_by_id)
+                        if log.created_by_id
+                        else None,
+                        "updated_by": str(log.updated_by_id)
+                        if log.updated_by_id
+                        else None,
                     }
                 )
                 # If batch size is reached, yield the batch

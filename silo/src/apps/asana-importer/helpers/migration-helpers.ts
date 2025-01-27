@@ -7,9 +7,9 @@ import {
   updateJob,
 } from "@/db/query";
 // silo asana
-import { AsanaConfig, AsanaService, createAsanaService } from "@silo/asana";
+import { AsanaConfig, AsanaService, createAsanaService } from "@plane/etl/asana";
 // silo core
-import { TJobWithConfig, TServiceCredentials } from "@silo/core";
+import { TJobWithConfig, TServiceCredentials } from "@plane/etl/core";
 // auth
 import { asanaAuth } from "../auth/auth";
 

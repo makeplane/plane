@@ -2,11 +2,11 @@
 
 import { FC } from "react";
 // types
+import { AsanaSection } from "@plane/etl/asana";
 import { IState } from "@plane/types";
 // ui
 import { StateGroupIcon } from "@plane/ui";
 // silo types
-import { AsanaSection } from "@silo/asana";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 

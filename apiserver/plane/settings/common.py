@@ -254,6 +254,7 @@ if AMQP_URL:
 else:
     CELERY_BROKER_URL = f"amqp://{RABBITMQ_USER}:{RABBITMQ_PASSWORD}@{RABBITMQ_HOST}:{RABBITMQ_PORT}/{RABBITMQ_VHOST}"
 
+
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
@@ -264,6 +265,7 @@ CELERY_IMPORTS = (
     # scheduled tasks
     "plane.bgtasks.issue_automation_task",
     "plane.bgtasks.exporter_expired_task",
+    "plane.bgtasks.data_import_task",
     "plane.bgtasks.file_asset_task",
     "plane.bgtasks.email_notification_task",
     "plane.bgtasks.api_logs_task",
@@ -275,6 +277,9 @@ CELERY_IMPORTS = (
     "plane.payment.bgtasks.free_seat_sync",
     # management tasks
     "plane.bgtasks.dummy_data_task",
+    # issue version tasks
+    "plane.bgtasks.issue_version_sync",
+    "plane.bgtasks.issue_description_version_sync",
 )
 
 # Sentry Settings
@@ -383,6 +388,18 @@ ATTACHMENT_MIME_TYPES = [
     "application/vnd.openxmlformats-officedocument.presentationml.presentation",
     "text/plain",
     "application/rtf",
+    "application/vnd.oasis.opendocument.spreadsheet",
+    "application/vnd.oasis.opendocument.text",
+    "application/vnd.oasis.opendocument.presentation",
+    "application/vnd.oasis.opendocument.graphics",
+    # Microsoft Visio
+    "application/vnd.visio",
+    # Netpbm format
+    "image/x-portable-graymap",
+    "image/x-portable-bitmap",
+    "image/x-portable-pixmap",
+    # Open Office Bae
+    "application/vnd.oasis.opendocument.database",
     # Audio
     "audio/mpeg",
     "audio/wav",
@@ -462,6 +479,11 @@ SIMPLE_JWT = {
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
 }
+
+# silo settings
+SILO_HOSTNAME = os.environ.get("SILO_BASE_URL", "")
+SILO_BASE_PATH = os.environ.get("SILO_BASE_PATH", "/silo")
+SILO_URL = f"{SILO_HOSTNAME}{SILO_BASE_PATH}"
 
 
 # firebase settings

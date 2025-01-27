@@ -1,11 +1,12 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-// constants
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // types
-import { TAppConnection } from "@silo/slack";
+import { TAppConnection } from "@plane/etl/slack";
+import { IWebhook } from "@plane/types";
 // plane web services
 import { SlackIntegrationService } from "@/plane-web/services/integrations/slack.service";
+import internalWebhookService from "@/plane-web/services/internal-webhook.service";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 // base integration store
@@ -17,18 +18,20 @@ export interface ISlackStore extends IntegrationBaseStore {
   isUserConnectionLoading: boolean;
   appConnections: Record<string, TAppConnection>;
   isUserConnected: boolean;
+  webhookConnection: Record<string, boolean>; // workspaceId -> boolean
   // computed
   isAppConnected: boolean;
+  isWebhookConnected: boolean;
   appConnectionIds: string[] | undefined;
   // helper actions
   getAppByConnectionId: (connectionId: string) => TAppConnection | undefined;
   // actions
-  fetchAppConnections: () => Promise<void>;
-  fetchUserConnectionStatus: () => Promise<void>;
+  fetchAppConnections: (workspaceId?: string) => Promise<void>;
+  fetchUserConnectionStatus: (workspaceId?: string) => Promise<void>;
   connectApp: () => Promise<string>;
   disconnectApp: (connectionId: string) => Promise<void>;
-  connectUser: () => Promise<string>;
-  disconnectUser: () => Promise<void>;
+  connectUser: (workspaceId?: string, workspaceSlug?: string, profileRedirect?: boolean) => Promise<string>;
+  disconnectUser: (workspaceId?: string) => Promise<void>;
 }
 
 export class SlackStore extends IntegrationBaseStore implements ISlackStore {
@@ -37,6 +40,7 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
   isUserConnectionLoading: boolean = true;
   appConnections: Record<string, TAppConnection> = {}; // connection id -> app connection
   isUserConnected: boolean = false;
+  webhookConnection: Record<string, boolean> = {};
   // service
   service: SlackIntegrationService;
 
@@ -49,9 +53,11 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
       isUserConnectionLoading: observable.ref,
       appConnections: observable,
       isUserConnected: observable,
+      webhookConnection: observable,
       // computed
       isAppConnected: computed,
       appConnectionIds: computed,
+      isWebhookConnected: computed,
       // actions
       fetchAppConnections: action,
       fetchUserConnectionStatus: action,
@@ -59,6 +65,7 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
       disconnectApp: action,
       connectUser: action,
       disconnectUser: action,
+      fetchWebhookConnection: action,
     });
 
     // service instance
@@ -74,6 +81,16 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
     return Object.values(this.appConnections).map((appConnection) => appConnection.connectionId);
   }
 
+  /**
+   * @description check if the webhook is connected
+   * @returns { boolean }
+   */
+  get isWebhookConnected(): boolean {
+    const workspaceId = this.rootStore.workspaceRoot.currentWorkspace?.id;
+    if (!workspaceId) return false;
+    return this.webhookConnection[workspaceId] || false;
+  }
+
   // helper actions
   getAppByConnectionId = (connectionId: string) => this.appConnections[connectionId];
 
@@ -82,12 +99,13 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
    * @description fetch the app connections
    * @returns { Promise<void> }
    */
-  fetchAppConnections = async (): Promise<void> => {
+  fetchAppConnections = async (workspaceId?: string): Promise<void> => {
     this.isAppConnectionLoading = true;
+    this.appConnections = {};
     try {
-      const workspaceId = this.rootStore.workspaceRoot.currentWorkspace?.id;
-      if (!workspaceId) throw new Error("Workspace ID is required");
-      const response = await this.service.getAppConnection(workspaceId);
+      const workspace = workspaceId ?? this.rootStore.workspaceRoot.currentWorkspace?.id;
+      if (!workspace) throw new Error("Workspace ID is required");
+      const response = await this.service.getAppConnection(workspace);
       if (response) {
         response.forEach((appConnection) => {
           set(this.appConnections, appConnection.connectionId, appConnection);
@@ -102,13 +120,14 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
    * @description fetch the user connection status
    * @returns { Promise<void> }
    */
-  fetchUserConnectionStatus = async (): Promise<void> => {
+  fetchUserConnectionStatus = async (workspaceId?: string): Promise<void> => {
     this.isUserConnectionLoading = true;
+    this.isUserConnected = false;
     try {
-      const workspaceId = this.rootStore.workspaceRoot.currentWorkspace?.id;
+      const workspace = workspaceId ?? this.rootStore.workspaceRoot.currentWorkspace?.id;
       const userId = this.rootStore.user.data?.id;
-      if (!workspaceId || !userId) throw new Error("Workspace ID and User ID are required");
-      const response = await this.service.getUserConnectionStatus(workspaceId, userId);
+      if (!workspace || !userId) throw new Error("Workspace ID and User ID are required");
+      const response = await this.service.getUserConnectionStatus(workspace, userId);
       this.isUserConnected = response.isConnected;
     } finally {
       this.isUserConnectionLoading = false;
@@ -131,6 +150,7 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
       workspaceSlug,
       userId,
     });
+    await this.fetchWebhookConnection(`${SILO_BASE_PATH}/api/slack/plane/events`);
     return response;
   };
 
@@ -153,16 +173,17 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
    * @description connect the user
    * @returns { Promise<void> }
    */
-  connectUser = async (): Promise<string> => {
-    const workspaceId = this.rootStore.workspaceRoot.currentWorkspace?.id;
-    const workspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
+  connectUser = async (workspaceId?: string, workspaceSlug?: string, profileRedirect?: boolean): Promise<string> => {
+    const workspace_id = workspaceId ?? this.rootStore.workspaceRoot.currentWorkspace?.id;
+    const workspace_slug = workspaceSlug ?? this.rootStore.workspaceRoot.currentWorkspace?.slug;
     const userId = this.rootStore.user.data?.id;
-    if (!workspaceId || !workspaceSlug || !userId || !this.externalApiToken)
+    if (!workspace_id || !workspace_slug || !userId)
       throw new Error("Workspace ID, Workspace Slug, User ID and External API Token are required");
+
     const response = await this.service.getUserConnectionURL({
-      apiToken: this.externalApiToken,
-      workspaceId,
-      workspaceSlug,
+      workspaceId: workspace_id,
+      workspaceSlug: workspace_slug,
+      profileRedirect,
       userId,
     });
     return response;
@@ -172,11 +193,11 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
    * @description disconnect the user
    * @returns { Promise<void> }
    */
-  disconnectUser = async (): Promise<void> => {
-    const workspaceId = this.rootStore.workspaceRoot.currentWorkspace?.id;
+  disconnectUser = async (workspaceId?: string): Promise<void> => {
+    const workspace = workspaceId ?? this.rootStore.workspaceRoot.currentWorkspace?.id;
     const userId = this.rootStore.user.data?.id;
-    if (!workspaceId || !userId) throw new Error("Workspace ID and User ID are required");
-    await this.service.disconnectUser(workspaceId, userId);
+    if (!workspace || !userId) throw new Error("Workspace ID and User ID are required");
+    await this.service.disconnectUser(workspace, userId);
     set(this, "isUserConnected", false);
   };
 }

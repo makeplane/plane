@@ -2,8 +2,8 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { AsanaEnumOption } from "@plane/etl/asana";
 import { PriorityIcon } from "@plane/ui";
-import { AsanaEnumOption } from "@silo/asana";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web types

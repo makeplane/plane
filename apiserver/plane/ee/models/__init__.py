@@ -9,6 +9,7 @@ from .issue_properties import (
 
 from .draft import DraftIssuePropertyValue
 
+
 from .issue import (
     IssueWorkLog,
     EntityUpdates,
@@ -27,7 +28,14 @@ from .project import (
     ProjectCommentReaction,
     ProjectFeature,
 )
-from .workspace import WorkspaceFeature, WorkspaceLicense, WorkspaceActivity
+from .workspace import (
+    WorkspaceFeature,
+    WorkspaceLicense,
+    WorkspaceActivity,
+    WorkspaceCredential,
+    WorkspaceConnection,
+    WorkspaceEntityConnection,
+)
 
 from .intake import IntakeSetting
 from .initiative import (
@@ -40,6 +48,7 @@ from .initiative import (
     InitiativeCommentReaction,
     InitiativeReaction,
     InitiativeUserProperty,
+    InitiativeEpic,
 )
 from .team import (
     TeamSpace,
@@ -54,4 +63,6 @@ from .team import (
     TeamSpaceUserProperty,
 )
 
-from .workflow import Workflow, WorkflowTransition, WorkflowTransitionActor
+from .workflow import Workflow, WorkflowTransition
+
+from .job import ImportReport, ImportJob

@@ -4,11 +4,14 @@ import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane web services
+import { PaymentService } from "@/plane-web/services/payment.service";
 import selfHostedSubscriptionService from "@/plane-web/services/self-hosted-subscription.service";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 // plane web types
 import { TSelfHostedSubscription } from "@/plane-web/types/self-hosted-subscription";
+
+const paymentService = new PaymentService();
 
 export interface ISelfHostedSubscriptionStore {
   // observables
@@ -124,7 +127,7 @@ export class SelfHostedSubscriptionStore implements ISelfHostedSubscriptionStore
    */
   syncLicense = async (workspaceSlug: string): Promise<void> => {
     try {
-      await selfHostedSubscriptionService.syncLicense(workspaceSlug);
+      await paymentService.refreshWorkspaceCurrentPlan(workspaceSlug);
       await Promise.all([
         this.rootStore.workspaceSubscription.fetchWorkspaceSubscribedPlan(workspaceSlug),
         this.rootStore.featureFlags.fetchFeatureFlags(workspaceSlug),

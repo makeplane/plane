@@ -1,8 +1,4 @@
-import type {
-  GithubRepositoriesResponse,
-  ISearchIssueResponse,
-  TProjectIssuesSearchParams,
-} from "@plane/types";
+import type { GithubRepositoriesResponse, ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // plane web types

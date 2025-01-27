@@ -64,7 +64,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
     const issueTypeId = watch("type_id");
     // if issue type is not enabled for the project or no issue type id, return 0
     const isIssueTypeDisplayEnabled =
-      !!projectId && isIssueTypeEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPE_DISPLAY");
+      !!projectId && isIssueTypeEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPES");
     if (!isIssueTypeDisplayEnabled || !issueTypeId) return 0;
     // all properties for the issue type
     const properties = getIssueTypeProperties(issueTypeId);
@@ -80,7 +80,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
     const issueTypeId = watch("type_id");
     // if issue type is not enabled for the project, skip validation
     const isIssueTypeDisplayEnabled =
-      !!projectId && isIssueTypeEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPE_DISPLAY");
+      !!projectId && isIssueTypeEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPES");
     if (!isIssueTypeDisplayEnabled) return true;
     // if no issue type id or no issue property values, skip validation
     if (!issueTypeId) return true;
@@ -114,7 +114,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
     // check if issue property values are empty
     if (Object.keys(issuePropertyValues).length === 0) return;
     // check if issue type display is enabled
-    const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPE_DISPLAY");
+    const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPES");
     if (!isIssueTypeDisplayEnabled) return;
     // get issue type details
     const issueType = issueTypeId ? getIssueTypeById(issueTypeId) : null;

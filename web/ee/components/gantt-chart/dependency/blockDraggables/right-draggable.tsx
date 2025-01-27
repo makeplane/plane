@@ -3,7 +3,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 // Plane
-import { cn } from "@plane/editor";
+import { cn } from "@plane/utils";
 // components
 import { IGanttBlock } from "@/components/gantt-chart";
 import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
@@ -98,7 +98,7 @@ export const RightDependencyDraggable = observer((props: RightDependencyDraggabl
             if (!sourceData || sourceData.id === block.id || sourceData.dragInstanceId !== "GANTT_DEPENDENCY")
               return false;
 
-            //@ts-ignore
+            //@ts-expect-error
             if (relatedBlockIds.includes(sourceData.id)) return false;
 
             return true;

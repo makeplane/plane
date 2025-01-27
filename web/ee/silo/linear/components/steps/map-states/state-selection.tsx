@@ -1,9 +1,9 @@
 "use client";
 
 import { FC } from "react";
+import { LinearState } from "@plane/etl/linear";
 import { IState } from "@plane/types";
 import { StateGroupIcon } from "@plane/ui";
-import { LinearState } from "@silo/linear";
 // silo ui components
 import { Dropdown } from "@/plane-web/silo/ui";
 

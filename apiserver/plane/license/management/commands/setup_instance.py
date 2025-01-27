@@ -53,16 +53,12 @@ class Command(BaseCommand):
 
             # Get or create an instance admin
             _, created = InstanceAdmin.objects.get_or_create(
-                user=user,
-                instance=instance,
-                defaults={"role": 20, "is_verified": True},
+                user=user, instance=instance, defaults={"role": 20, "is_verified": True}
             )
 
             if not created:
                 self.stdout.write(
-                    self.style.WARNING(
-                        "given email is already an instance admin"
-                    )
+                    self.style.WARNING("given email is already an instance admin")
                 )
 
             self.stdout.write(self.style.SUCCESS("Successful"))

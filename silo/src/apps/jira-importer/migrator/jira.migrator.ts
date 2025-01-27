@@ -1,5 +1,5 @@
 import { TBatch } from "@/apps/engine/worker/types";
-import { PlaneEntities, TJobWithConfig } from "@silo/core";
+import { PlaneEntities, TJobWithConfig } from "@plane/etl/core";
 import { updateJob } from "@/db/query";
 import { env } from "@/env";
 import { BaseDataMigrator } from "@/etl/base-import-worker";
@@ -16,7 +16,7 @@ import {
   pullLabels,
   pullSprints,
   pullUsers,
-} from "@silo/jira";
+} from "@plane/etl/jira";
 import { Issue as IJiraIssue } from "jira.js/out/version3/models";
 import {
   createJiraClient,
@@ -65,14 +65,16 @@ export class JiraDataMigrator extends BaseDataMigrator<JiraConfig, JiraEntity> {
     const projectKey = job.config.meta.project.key;
 
     /* -------------- Pull Jira Data --------------- */
-    const users = pullUsers(job.config.meta.users);
-    const labels = await pullLabels(client);
-    const issues = await pullIssues(client, projectKey);
-    const sprints = await pullSprints(client, projectId);
-    const comments = await pullComments(issues, client);
-    const components = await pullComponents(client, projectKey);
-    const issueTypes = await pullIssueTypes(client, projectId);
+    const users = job.config.meta.skipUserImport ? [] : pullUsers(job.config.meta.users);
+    const [labels, sprints, components, issueTypes] = await Promise.all([
+      pullLabels(client),
+      pullSprints(client, projectId),
+      pullComponents(client, projectKey),
+      pullIssueTypes(client, projectId),
+    ]);
     const issueFields = await pullIssueFields(client, issueTypes, projectId);
+    const issues = await pullIssues(client, projectKey);
+    const comments = await pullComments(issues, client);
     /* -------------- Pull Jira Data --------------- */
 
     // Update Job for the actual start time of the migration
@@ -105,23 +107,6 @@ export class JiraDataMigrator extends BaseDataMigrator<JiraConfig, JiraEntity> {
 
     const resourceUrl = job.config?.meta.resource?.url || credentials.source_hostname;
     const transformedIssue = getTransformedIssues(job, entities, resourceUrl);
-
-    /* Todo: Remove this antipattern logic when issue types come to plane */
-    if (job.config?.meta.issueType) {
-      if (job.config.meta.issueType === "create_as_label") {
-        for (const issue of transformedIssue) {
-          // For each label of an issue, if the transformed labels doesn't
-          // contain the label, we need to add it to the transformed labels
-          if (issue.labels) {
-            issue.labels.forEach((label) => {
-              if (!entities.labels.includes(label)) {
-                entities.labels.push(label);
-              }
-            });
-          }
-        }
-      }
-    }
 
     // Add a new label for the issues that are imported from Jira
     entities.labels.push("JIRA IMPORTED");

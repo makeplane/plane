@@ -1,5 +1,31 @@
 import { ACTIONS } from "../helpers/constants";
 import { PlainTextOption } from "../helpers/slack-options";
+import { PlainTextElement } from "@slack/types";
+import {
+  CheckboxInputBlock,
+  MultiExternalSelectInputBlock,
+  PlainTextInputBlock,
+  StaticSelectInputBlock,
+} from "./custom-blocks";
+
+export type IssueModalViewFull = {
+  type: "modal";
+  private_metadata: string;
+  title: PlainTextElement;
+  submit: PlainTextElement;
+  close: PlainTextElement;
+  blocks: IssueModalViewBlocks;
+};
+
+export type IssueModalViewBlocks = [
+  StaticSelectInputBlock,
+  PlainTextInputBlock,
+  PlainTextInputBlock,
+  StaticSelectInputBlock,
+  StaticSelectInputBlock,
+  MultiExternalSelectInputBlock,
+  ...(CheckboxInputBlock | undefined)[],
+];
 
 export const createIssueModalViewFull = (
   {
@@ -7,19 +33,16 @@ export const createIssueModalViewFull = (
     projectOptions,
     stateOptions,
     priorityOptions,
-    labelOptions,
-    assigneeOptions,
   }: {
     selectedProject: PlainTextOption;
     projectOptions: Array<PlainTextOption>;
     stateOptions: Array<PlainTextOption>;
     priorityOptions: Array<PlainTextOption>;
-    labelOptions: Array<PlainTextOption>;
-    assigneeOptions: Array<PlainTextOption>;
   },
   title?: string,
-  privateMetadata: string = "{}"
-) => ({
+  privateMetadata: string = "{}",
+  showThreadSync: boolean = true
+): IssueModalViewFull => ({
   type: "modal",
   private_metadata: privateMetadata,
   title: {
@@ -37,6 +60,7 @@ export const createIssueModalViewFull = (
     text: "Discard Issue",
     emoji: true,
   },
+  // @ts-ignore
   blocks: [
     {
       dispatch_action: true,
@@ -66,7 +90,6 @@ export const createIssueModalViewFull = (
           type: "plain_text",
           text: "Issue Title",
         },
-        initial_value: title ?? "",
         action_id: ACTIONS.ISSUE_TITLE,
       },
       label: {
@@ -82,6 +105,7 @@ export const createIssueModalViewFull = (
         type: "plain_text_input",
         action_id: ACTIONS.ISSUE_DESCRIPTION,
         multiline: true,
+        initial_value: title ?? "",
         placeholder: {
           type: "plain_text",
           text: "Issue Description (Optional)",
@@ -131,51 +155,52 @@ export const createIssueModalViewFull = (
         emoji: true,
       },
     },
-    ...(labelOptions.length > 0
-      ? [
-        {
-          type: "input",
-          optional: true,
-          element: {
-            type: "multi_static_select",
-            placeholder: {
-              type: "plain_text",
-              text: "Labels (Optional)",
-              emoji: true,
-            },
-            options: labelOptions,
-            action_id: ACTIONS.ISSUE_LABELS,
-          },
-          label: {
-            type: "plain_text",
-            text: "Labels",
-            emoji: true,
-          },
-        },
-      ]
-      : []),
     {
       type: "input",
       optional: true,
       element: {
-        type: "checkboxes",
-        options: [
-          {
-            text: {
-              type: "plain_text",
-              text: "Sync slack comments with plane comments and vice versa",
-              emoji: true,
-            },
-            value: "true",
-          },
-        ],
-        action_id: "enable_thread_sync",
+        type: "multi_external_select",
+        placeholder: {
+          type: "plain_text",
+          text: "Labels (Optional)",
+          emoji: true,
+        },
+        min_query_length: 3,
+        action_id: ACTIONS.ISSUE_LABELS,
+        initial_options: [],
       },
       label: {
         type: "plain_text",
-        text: "Thread Sync",
+        text: "Labels",
         emoji: true,
       },
     },
+    ...(showThreadSync
+      ? [
+          {
+            type: "input",
+            optional: true,
+            element: {
+              type: "checkboxes",
+              options: [
+                {
+                  text: {
+                    type: "plain_text",
+                    text: "Sync slack comments with plane comments and vice versa",
+                    emoji: true,
+                  },
+                  value: "true",
+                },
+              ],
+              action_id: "enable_thread_sync",
+            },
+            label: {
+              type: "plain_text",
+              text: "Thread Sync",
+              emoji: true,
+            },
+          },
+        ]
+      : []),
   ],
 });

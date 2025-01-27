@@ -1,7 +1,7 @@
 import { getEntityConnectionByEntitySlug } from "@/db/query/connection";
 import { WebhookIssueCommentPayload } from "@plane/sdk";
 import { getConnectionDetails } from "../../helpers/connection-details";
-import { SlackMessageResponse } from "@silo/slack";
+import { SlackMessageResponse } from "@plane/etl/slack";
 import { getCredentialsByWorkspaceId } from "@/db/query";
 
 export const handleIssueCommentWebhook = async (payload: WebhookIssueCommentPayload) => {
@@ -26,12 +26,12 @@ const handleCommentSync = async (payload: WebhookIssueCommentPayload) => {
     if (credentials && credentials.length > 0 && credentials[0].source_access_token) {
       await slackService.sendMessageAsUser(
         slackData.channel,
-        entityConnection[0].entityId,
+        entityConnection[0].entityId ?? "",
         data.data.comment_stripped,
         credentials[0].source_access_token
       );
     } else {
-      await slackService.sendThreadMessage(slackData.channel, entityConnection[0].entityId, data.data.comment_stripped);
+      await slackService.sendThreadMessage(slackData.channel, entityConnection[0].entityId ?? "", data.data.comment_stripped);
     }
   }
 };

@@ -5,11 +5,13 @@ import { useFlag } from "@/plane-web/hooks/store";
 interface IActiveCycleDetails {
   workspaceSlug: string;
   projectId: string;
+  cycleId?: string;
+  showHeader?: boolean;
 }
 
 export const ActiveCycleRoot = (props: IActiveCycleDetails) => {
-  const { workspaceSlug, projectId } = props;
-  const isFeatureEnabled = useFlag(workspaceSlug.toString(), "ACTIVE_CYCLE_PRO");
+  const { workspaceSlug, projectId, cycleId, showHeader = true } = props;
+  const isFeatureEnabled = useFlag(workspaceSlug.toString(), "CYCLE_PROGRESS_CHARTS");
   const ActiveCycle = useMemo(
     () =>
       dynamic(
@@ -29,5 +31,12 @@ export const ActiveCycleRoot = (props: IActiveCycleDetails) => {
     [isFeatureEnabled]
   );
 
-  return <ActiveCycle workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />;
+  return (
+    <ActiveCycle
+      workspaceSlug={workspaceSlug.toString()}
+      projectId={projectId.toString()}
+      cycleId={cycleId}
+      showHeader={showHeader}
+    />
+  );
 };

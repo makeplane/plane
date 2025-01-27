@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseAPIView
-from plane.db.models import Issue, ProjectMember
+from plane.db.models import Issue, ProjectMember, IssueRelation
 from plane.utils.issue_search import search_issues
 
 
@@ -19,9 +19,9 @@ class IssueSearchEndpoint(BaseAPIView):
         issue_relation = request.query_params.get("issue_relation", "false")
         cycle = request.query_params.get("cycle", "false")
         module = request.query_params.get("module", False)
+        epic = request.query_params.get("epic", "false")
         sub_issue = request.query_params.get("sub_issue", "false")
         target_date = request.query_params.get("target_date", True)
-
         issue_id = request.query_params.get("issue_id", False)
 
         issues = Issue.issue_objects.filter(
@@ -31,34 +31,65 @@ class IssueSearchEndpoint(BaseAPIView):
             project__archived_at__isnull=True,
         )
 
+        issues_and_epics = (
+            Issue.objects.filter(
+                workspace__slug=slug,
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
+            )
+            .filter(deleted_at__isnull=True)
+            .filter(state__is_triage=False)
+            .exclude(archived_at__isnull=False)
+            .exclude(project__archived_at__isnull=False)
+            .exclude(is_draft=True)
+        )
+
         if workspace_search == "false":
             issues = issues.filter(project_id=project_id)
+            issues_and_epics = issues_and_epics.filter(project_id=project_id)
 
         if query:
             issues = search_issues(query, issues)
 
-        if parent == "true" and issue_id:
+        if epic == "true" and issue_id:
+            issues = search_issues(query, issues_and_epics)
+
             issue = Issue.issue_objects.filter(pk=issue_id).first()
+
             if issue:
                 issues = issues.filter(
                     ~Q(pk=issue_id), ~Q(pk=issue.parent_id), ~Q(parent_id=issue_id)
                 )
-        if issue_relation == "true" and issue_id:
+
+        if parent == "true" and issue_id:
             issue = Issue.issue_objects.filter(pk=issue_id).first()
+
             if issue:
                 issues = issues.filter(
-                    ~Q(pk=issue_id),
-                    ~(
-                        Q(issue_related__issue=issue)
-                        & Q(issue_related__deleted_at__isnull=True)
-                    ),
-                    ~(
-                        Q(issue_relation__related_issue=issue)
-                        & Q(issue_relation__deleted_at__isnull=True)
-                    ),
+                    ~Q(pk=issue_id), ~Q(pk=issue.parent_id), ~Q(parent_id=issue_id)
                 )
+
+        if issue_relation == "true" and issue_id:
+            issues = search_issues(query, issues_and_epics)
+
+            issue = Issue.objects.filter(pk=issue_id).first()
+
+            related_issue_ids = (
+                IssueRelation.objects.filter(Q(related_issue=issue) | Q(issue=issue))
+                .values_list("issue_id", "related_issue_id")
+                .distinct()
+            )
+
+            related_issue_ids = [
+                item for sublist in related_issue_ids for item in sublist
+            ]
+
+            if issue:
+                issues = issues.filter(~Q(pk=issue_id), ~Q(pk__in=related_issue_ids))
+
         if sub_issue == "true" and issue_id:
-            issue = Issue.issue_objects.filter(pk=issue_id).first()
+            issue = Issue.objects.filter(pk=issue_id).first()
             if issue:
                 issues = issues.filter(~Q(pk=issue_id), parent__isnull=True)
             if issue.parent:

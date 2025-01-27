@@ -4,8 +4,8 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
-import { cn } from "@plane/editor";
 import { CustomMenu, Loader } from "@plane/ui";
+import { cn } from "@plane/utils";
 // plane web constants
 import { PROJECT_SCOPES } from "@/plane-web/constants/project";
 // plane web hooks

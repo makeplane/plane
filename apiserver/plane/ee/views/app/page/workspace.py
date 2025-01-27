@@ -58,12 +58,8 @@ def unarchive_archive_page_and_descendants(page_id, archived_at):
 class WorkspacePageViewSet(BaseViewSet):
     serializer_class = WorkspacePageSerializer
     model = Page
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
-    search_fields = [
-        "name",
-    ]
+    permission_classes = [WorkspaceEntityPermission]
+    search_fields = ["name"]
 
     def get_queryset(self):
         subquery = UserFavorite.objects.filter(
@@ -103,9 +99,7 @@ class WorkspacePageViewSet(BaseViewSet):
             data=request.data,
             context={
                 "owned_by_id": request.user.id,
-                "description_html": request.data.get(
-                    "description_html", "<p></p>"
-                ),
+                "description_html": request.data.get("description_html", "<p></p>"),
                 "workspace_id": workspace.id,
             },
         )
@@ -122,23 +116,16 @@ class WorkspacePageViewSet(BaseViewSet):
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def partial_update(self, request, slug, pk):
         try:
-            page = Page.objects.get(
-                pk=pk,
-                workspace__slug=slug,
-            )
+            page = Page.objects.get(pk=pk, workspace__slug=slug)
 
             if page.is_locked:
                 return Response(
-                    {"error": "Page is locked"},
-                    status=status.HTTP_400_BAD_REQUEST,
+                    {"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
             parent = request.data.get("parent", None)
             if parent:
-                _ = Page.objects.get(
-                    pk=parent,
-                    workspace__slug=slug,
-                )
+                _ = Page.objects.get(pk=parent, workspace__slug=slug)
 
             # Only update access if the page owner is the requesting  user
             if (
@@ -163,18 +150,14 @@ class WorkspacePageViewSet(BaseViewSet):
                     page_transaction.delay(
                         new_value=request.data,
                         old_value=json.dumps(
-                            {
-                                "description_html": page_description,
-                            },
+                            {"description_html": page_description},
                             cls=DjangoJSONEncoder,
                         ),
                         page_id=pk,
                     )
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Page.DoesNotExist:
             return Response(
                 {
@@ -188,21 +171,16 @@ class WorkspacePageViewSet(BaseViewSet):
         page = self.get_queryset().filter(pk=pk).first()
         if page is None:
             return Response(
-                {"error": "Page not found"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND
             )
         else:
             return Response(
-                WorkspacePageDetailSerializer(page).data,
-                status=status.HTTP_200_OK,
+                WorkspacePageDetailSerializer(page).data, status=status.HTTP_200_OK
             )
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def lock(self, request, slug, pk):
-        page = Page.objects.filter(
-            pk=pk,
-            workspace__slug=slug,
-        ).first()
+        page = Page.objects.filter(pk=pk, workspace__slug=slug).first()
 
         page.is_locked = True
         page.save()
@@ -210,10 +188,7 @@ class WorkspacePageViewSet(BaseViewSet):
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def unlock(self, request, slug, pk):
-        page = Page.objects.filter(
-            pk=pk,
-            workspace__slug=slug,
-        ).first()
+        page = Page.objects.filter(pk=pk, workspace__slug=slug).first()
 
         page.is_locked = False
         page.save()
@@ -249,17 +224,12 @@ class WorkspacePageViewSet(BaseViewSet):
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def archive(self, request, slug, pk):
-        page = Page.objects.get(
-            pk=pk,
-            workspace__slug=slug,
-        )
+        page = Page.objects.get(pk=pk, workspace__slug=slug)
 
         # only the owner or admin can archive the page
         if (
             ProjectMember.objects.filter(
-                member=request.user,
-                is_active=True,
-                role__lte=15,
+                member=request.user, is_active=True, role__lte=15
             ).exists()
             and request.user.id != page.owned_by_id
         ):
@@ -270,24 +240,16 @@ class WorkspacePageViewSet(BaseViewSet):
 
         unarchive_archive_page_and_descendants(pk, datetime.now())
 
-        return Response(
-            {"archived_at": str(datetime.now())},
-            status=status.HTTP_200_OK,
-        )
+        return Response({"archived_at": str(datetime.now())}, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def unarchive(self, request, slug, pk):
-        page = Page.objects.get(
-            pk=pk,
-            workspace__slug=slug,
-        )
+        page = Page.objects.get(pk=pk, workspace__slug=slug)
 
         # only the owner or admin can un archive the page
         if (
             ProjectMember.objects.filter(
-                member=request.user,
-                is_active=True,
-                role__lte=15,
+                member=request.user, is_active=True, role__lte=15
             ).exists()
             and request.user.id != page.owned_by_id
         ):
@@ -307,17 +269,12 @@ class WorkspacePageViewSet(BaseViewSet):
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def destroy(self, request, slug, pk):
-        page = Page.objects.get(
-            pk=pk,
-            workspace__slug=slug,
-        )
+        page = Page.objects.get(pk=pk, workspace__slug=slug)
 
         # only the owner and admin can delete the page
         if (
             ProjectMember.objects.filter(
-                member=request.user,
-                is_active=True,
-                role__gt=20,
+                member=request.user, is_active=True, role__gt=20
             ).exists()
             or request.user.id != page.owned_by_id
         ):
@@ -333,31 +290,46 @@ class WorkspacePageViewSet(BaseViewSet):
             )
 
         # remove parent from all the children
-        _ = Page.objects.filter(parent_id=pk, workspace__slug=slug).update(
-            parent=None
-        )
+        _ = Page.objects.filter(parent_id=pk, workspace__slug=slug).update(parent=None)
 
         page.delete()
         # Delete the deploy board
         DeployBoard.objects.filter(
-            entity_name="page",
-            entity_identifier=pk,
-            workspace__slug=slug,
+            entity_name="page", entity_identifier=pk, workspace__slug=slug
         ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class WorkspacePageDuplicateEndpoint(BaseAPIView):
+    permission_classes = [WorkspaceEntityPermission]
+
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
+    def post(self, request, slug, pk):
+        page = Page.objects.filter(pk=pk, workspace__slug=slug).first()
+
+        page.pk = None
+        page.name = f"{page.name} (Copy)"
+        page.owned_by = request.user
+        page.description_binary = None
+        page.created_by = request.user
+        page.updated_by = request.user
+        page.save()
+
+        # capture the page transaction
+        page_transaction.delay(
+            {"description_html": page.description_html}, None, page.id
+        )
+        page = Page.objects.get(pk=page.id)
+        serializer = WorkspacePageDetailSerializer(page)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
 class WorkspacePagesDescriptionViewSet(BaseViewSet):
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
+    permission_classes = [WorkspaceEntityPermission]
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def retrieve(self, request, slug, pk):
-        page = Page.objects.get(
-            pk=pk,
-            workspace__slug=slug,
-        )
+        page = Page.objects.get(pk=pk, workspace__slug=slug)
         binary_data = page.description_binary
 
         def stream_data():
@@ -369,9 +341,7 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
         response = StreamingHttpResponse(
             stream_data(), content_type="application/octet-stream"
         )
-        response["Content-Disposition"] = (
-            'attachment; filename="page_description.bin"'
-        )
+        response["Content-Disposition"] = 'attachment; filename="page_description.bin"'
         return response
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
@@ -398,10 +368,7 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
 
         # Serialize the existing instance
         existing_instance = json.dumps(
-            {
-                "description_html": page.description_html,
-            },
-            cls=DjangoJSONEncoder,
+            {"description_html": page.description_html}, cls=DjangoJSONEncoder
         )
 
         # Get the base64 data from the request
@@ -414,13 +381,12 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
             # capture the page transaction
             if request.data.get("description_html"):
                 page_transaction.delay(
-                    new_value=request.data,
-                    old_value=existing_instance,
-                    page_id=pk,
+                    new_value=request.data, old_value=existing_instance, page_id=pk
                 )
             # Store the updated binary data
             page.description_binary = new_binary_data
             page.description_html = request.data.get("description_html")
+            page.description = request.data.get("description")
             page.save()
             # Return a success response
             page_version.delay(
@@ -440,17 +406,14 @@ class WorkspacePageVersionEndpoint(BaseAPIView):
         if pk:
             # Return a single page version
             page_version = PageVersion.objects.get(
-                workspace__slug=slug,
-                page_id=page_id,
-                pk=pk,
+                workspace__slug=slug, page_id=page_id, pk=pk
             )
             # Serialize the page version
             serializer = WorkspacePageVersionDetailSerializer(page_version)
             return Response(serializer.data, status=status.HTTP_200_OK)
         # Return all page versions
         page_versions = PageVersion.objects.filter(
-            workspace__slug=slug,
-            page_id=page_id,
+            workspace__slug=slug, page_id=page_id
         )
         # Serialize the page versions
         serializer = WorkspacePageVersionSerializer(page_versions, many=True)
@@ -458,7 +421,6 @@ class WorkspacePageVersionEndpoint(BaseAPIView):
 
 
 class WorkspacePageFavoriteEndpoint(BaseAPIView):
-
     model = UserFavorite
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)

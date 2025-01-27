@@ -23,7 +23,7 @@ class EstimatePointType:
     @strawberry.field
     def workspace(self) -> int:
         return self.workspace_id
-    
+
     @strawberry.field
     def estimate(self) -> int:
         return self.estimate_id

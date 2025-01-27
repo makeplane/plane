@@ -2,8 +2,8 @@ import set from "lodash/set";
 import unset from "lodash/unset";
 import { action, computed, makeObservable, observable } from "mobx";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { TServiceAuthConfiguration } from "@silo/core";
-import { LinearAuthState, LinearPATAuthState } from "@silo/linear";
+import { TServiceAuthConfiguration } from "@plane/etl/core";
+import { LinearAuthState, LinearPATAuthState } from "@plane/etl/linear";
 // plane web services
 import { LinearAuthService } from "@/plane-web/services/importers/linear/auth.service";
 // store types

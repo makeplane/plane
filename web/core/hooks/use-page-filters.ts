@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from "react";
 // plane editor
 import { TEditorFontSize, TEditorFontStyle } from "@plane/editor";
 // hooks
@@ -22,39 +23,61 @@ export const usePageFilters = () => {
     DEFAULT_PERSONALIZATION_VALUES
   );
   // stored values
-  const isFullWidth = !!pagesConfig?.full_width;
-  const fontSize = pagesConfig?.font_size ?? DEFAULT_PERSONALIZATION_VALUES.font_size;
-  const fontStyle = pagesConfig?.font_style ?? DEFAULT_PERSONALIZATION_VALUES.font_style;
+  const isFullWidth = useMemo(() => !!pagesConfig?.full_width, [pagesConfig?.full_width]);
+  const fontSize = useMemo(
+    () => pagesConfig?.font_size ?? DEFAULT_PERSONALIZATION_VALUES.font_size,
+    [pagesConfig?.font_size]
+  );
+  const fontStyle = useMemo(
+    () => pagesConfig?.font_style ?? DEFAULT_PERSONALIZATION_VALUES.font_style,
+    [pagesConfig?.font_style]
+  );
   // update action
-  const handleUpdateConfig = (payload: Partial<TPagesPersonalizationConfig>) =>
-    setPagesConfig({
-      ...(pagesConfig ?? DEFAULT_PERSONALIZATION_VALUES),
-      ...payload,
-    });
+  const handleUpdateConfig = useCallback(
+    (payload: Partial<TPagesPersonalizationConfig>) => {
+      setPagesConfig({
+        ...(pagesConfig ?? DEFAULT_PERSONALIZATION_VALUES),
+        ...payload,
+      });
+    },
+    [pagesConfig, setPagesConfig]
+  );
   /**
    * @description action to update full_width value
    * @param {boolean} value
    */
-  const handleFullWidth = (value: boolean) =>
-    handleUpdateConfig({
-      full_width: value,
-    });
+  const handleFullWidth = useCallback(
+    (value: boolean) => {
+      handleUpdateConfig({
+        full_width: value,
+      });
+    },
+    [handleUpdateConfig]
+  );
   /**
    * @description action to update font_size value
    * @param {TEditorFontSize} value
    */
-  const handleFontSize = (value: TEditorFontSize) =>
-    handleUpdateConfig({
-      font_size: value,
-    });
+  const handleFontSize = useCallback(
+    (value: TEditorFontSize) => {
+      handleUpdateConfig({
+        font_size: value,
+      });
+    },
+    [handleUpdateConfig]
+  );
   /**
    * @description action to update font_size value
    * @param {TEditorFontSize} value
    */
-  const handleFontStyle = (value: TEditorFontStyle) =>
-    handleUpdateConfig({
-      font_style: value,
-    });
+  const handleFontStyle = useCallback(
+    (value: TEditorFontStyle) => {
+      handleUpdateConfig({
+        font_style: value,
+      });
+    },
+    [handleUpdateConfig]
+  );
 
   return {
     fontSize,

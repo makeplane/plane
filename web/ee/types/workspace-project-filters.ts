@@ -9,6 +9,7 @@ export type TProjectBaseFilters = "All projects" | "My projects" | "Private" | "
 export enum EProjectScope {
   ALL_PROJECTS = "ALL_PROJECTS",
   MY_PROJECTS = "MY_PROJECTS",
+  TEAM_PROJECTS = "TEAM_PROJECTS",
 }
 export type TProjectScope = EProjectScope;
 

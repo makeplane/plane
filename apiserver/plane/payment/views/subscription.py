@@ -14,16 +14,11 @@ from plane.app.permissions.workspace import WorkspaceOwnerPermission
 from plane.db.models import Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.ee.models import WorkspaceLicense
 from plane.utils.exception_logger import log_exception
-from plane.payment.utils.workspace_license_request import (
-    resync_workspace_license,
-)
+from plane.payment.utils.workspace_license_request import resync_workspace_license
 
 
 class SubscriptionEndpoint(BaseAPIView):
-
-    permission_classes = [
-        WorkspaceOwnerPermission,
-    ]
+    permission_classes = [WorkspaceOwnerPermission]
 
     def post(self, request, slug):
         try:
@@ -53,9 +48,7 @@ class SubscriptionEndpoint(BaseAPIView):
             )
         except requests.exceptions.RequestException as e:
             if e.response.status_code == 400:
-                return Response(
-                    e.response.json(), status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             log_exception(e)
             return Response(
                 {"error": "error in checking workspace subscription"},
@@ -64,10 +57,7 @@ class SubscriptionEndpoint(BaseAPIView):
 
 
 class UpgradeSubscriptionEndpoint(BaseAPIView):
-
-    permission_classes = [
-        WorkspaceOwnerPermission,
-    ]
+    permission_classes = [WorkspaceOwnerPermission]
 
     def post(self, request, slug):
         try:
@@ -110,9 +100,7 @@ class UpgradeSubscriptionEndpoint(BaseAPIView):
             )
         except requests.exceptions.RequestException as e:
             if e.response and e.response.status_code == 400:
-                return Response(
-                    e.response.json(), status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             log_exception(e)
             return Response(
                 {"error": "error in upgrading workspace subscription"},
@@ -121,20 +109,11 @@ class UpgradeSubscriptionEndpoint(BaseAPIView):
 
 
 class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
-
-    permission_classes = [
-        WorkspaceOwnerPermission,
-    ]
+    permission_classes = [WorkspaceOwnerPermission]
 
     def post(self, request, slug):
         try:
-
-            if settings.IS_MULTI_TENANT:
-                return Response(
-                    {"error": "Forbidden"},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
-
+            # Get the workspace
             workspace = Workspace.objects.get(slug=slug)
 
             quantity = request.data.get(
@@ -149,15 +128,11 @@ class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
 
             # Check the active paid users in the workspace
             workspace_member_count = WorkspaceMember.objects.filter(
-                workspace__slug=slug,
-                is_active=True,
-                member__is_bot=False,
-                member__gt=10,
+                workspace__slug=slug, is_active=True, member__is_bot=False, role__gt=10
             ).count()
 
             invited_member_count = WorkspaceMemberInvite.objects.filter(
-                workspace__slug=slug,
-                role__gt=10,
+                workspace__slug=slug, role__gt=10
             ).count()
 
             # Check if the quantity is less than the active paid users in the workspace
@@ -202,18 +177,14 @@ class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
                     workspace_license.save()
 
                 # Return the response
-                return Response(
-                    {"seats": response["seats"]}, status=status.HTTP_200_OK
-                )
+                return Response({"seats": response["seats"]}, status=status.HTTP_200_OK)
             return Response(
                 {"error": "error in checking workspace subscription"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except requests.exceptions.RequestException as e:
             if e.response and e.response.status_code == 400:
-                return Response(
-                    e.response.json(), status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             log_exception(e)
             return Response(
                 {"error": "Error in purchasing workspace subscription"},
@@ -222,33 +193,20 @@ class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
 
 
 class RemoveUnusedSeatsEndpoint(BaseAPIView):
-
-    permission_classes = [
-        WorkspaceOwnerPermission,
-    ]
+    permission_classes = [WorkspaceOwnerPermission]
 
     def post(self, request, slug):
         try:
-
-            if settings.IS_MULTI_TENANT:
-                return Response(
-                    {"error": "Forbidden"},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
-
+            # Get the workspace
             workspace = Workspace.objects.get(slug=slug)
 
             # Check the active paid users in the workspace
             workspace_member_count = WorkspaceMember.objects.filter(
-                workspace__slug=slug,
-                is_active=True,
-                member__is_bot=False,
-                member__gt=10,
+                workspace__slug=slug, is_active=True, member__is_bot=False, role__gt=10
             ).count()
 
             invited_member_count = WorkspaceMemberInvite.objects.filter(
-                workspace__slug=slug,
-                role__gt=10,
+                workspace__slug=slug, role__gt=10
             ).count()
 
             # Fetch the workspace subcription
@@ -294,18 +252,14 @@ class RemoveUnusedSeatsEndpoint(BaseAPIView):
                     workspace_license.save()
 
                 # Return the response
-                return Response(
-                    {"seats": response["seats"]}, status=status.HTTP_200_OK
-                )
+                return Response({"seats": response["seats"]}, status=status.HTTP_200_OK)
             return Response(
                 {"error": "error in checking workspace subscription"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except requests.exceptions.RequestException as e:
             if e.response and e.response.status_code == 400:
-                return Response(
-                    e.response.json(), status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             log_exception(e)
             return Response(
                 {"error": "Error in purchasing workspace subscription"},

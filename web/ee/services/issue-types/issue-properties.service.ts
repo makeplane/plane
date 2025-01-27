@@ -1,16 +1,28 @@
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // plane web types
-import { EIssuePropertyType, TIssueProperty, TIssuePropertyPayload, TIssuePropertyResponse } from "@/plane-web/types";
+import {
+  EIssuePropertyType,
+  IIssuePropertiesService,
+  TCreateIssuePropertyPayload,
+  TDeleteIssuePropertyPayload,
+  TFetchIssuePropertiesPayload,
+  TIssueProperty,
+  TIssuePropertyResponse,
+  TUpdateIssuePropertyPayload,
+} from "@/plane-web/types";
 // services
 import { APIService } from "@/services/api.service";
 
-export class IssuePropertiesService extends APIService {
+class IssuePropertiesService extends APIService implements IIssuePropertiesService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async fetchAll(workspaceSlug: string, projectId: string): Promise<TIssueProperty<EIssuePropertyType>[]> {
+  async fetchAll({
+    workspaceSlug,
+    projectId,
+  }: TFetchIssuePropertiesPayload): Promise<TIssueProperty<EIssuePropertyType>[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -18,12 +30,12 @@ export class IssuePropertiesService extends APIService {
       });
   }
 
-  async create(
-    workspaceSlug: string,
-    projectId: string,
-    issueTypeId: string,
-    data: TIssuePropertyPayload
-  ): Promise<TIssuePropertyResponse> {
+  async create({
+    workspaceSlug,
+    projectId,
+    issueTypeId,
+    data,
+  }: TCreateIssuePropertyPayload): Promise<TIssuePropertyResponse> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/issue-properties/`,
       data
@@ -34,13 +46,13 @@ export class IssuePropertiesService extends APIService {
       });
   }
 
-  async update(
-    workspaceSlug: string,
-    projectId: string,
-    issueTypeId: string,
-    issuePropertyId: string,
-    data: TIssuePropertyPayload
-  ): Promise<TIssuePropertyResponse> {
+  async update({
+    workspaceSlug,
+    projectId,
+    issueTypeId,
+    issuePropertyId,
+    data,
+  }: TUpdateIssuePropertyPayload): Promise<TIssuePropertyResponse> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/issue-properties/${issuePropertyId}/`,
       data
@@ -51,12 +63,12 @@ export class IssuePropertiesService extends APIService {
       });
   }
 
-  async deleteProperty(
-    workspaceSlug: string,
-    projectId: string,
-    issueTypeId: string,
-    issuePropertyId: string
-  ): Promise<void> {
+  async deleteProperty({
+    workspaceSlug,
+    projectId,
+    issueTypeId,
+    issuePropertyId,
+  }: TDeleteIssuePropertyPayload): Promise<void> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/issue-properties/${issuePropertyId}/`
     )
@@ -66,3 +78,5 @@ export class IssuePropertiesService extends APIService {
       });
   }
 }
+
+export const issuePropertyService = new IssuePropertiesService();

@@ -18,39 +18,29 @@ from plane.utils.exception_logger import log_exception
 
 
 class SAMLAdapter(Adapter):
-
     provider = "saml"
     auth = None
     saml_config = {}
 
-    def __init__(
-        self,
-        request,
-    ):
-        (
-            SAML_ENTITY_ID,
-            SAML_SSO_URL,
-            SAML_LOGOUT_URL,
-            SAML_CERTIFICATE,
-        ) = get_configuration_value(
-            [
-                {
-                    "key": "SAML_ENTITY_ID",
-                    "default": os.environ.get("SAML_ENTITY_ID"),
-                },
-                {
-                    "key": "SAML_SSO_URL",
-                    "default": os.environ.get("SAML_SSO_URL"),
-                },
-                {
-                    "key": "SAML_LOGOUT_URL",
-                    "default": os.environ.get("SAML_LOGOUT_URL"),
-                },
-                {
-                    "key": "SAML_CERTIFICATE",
-                    "default": os.environ.get("SAML_CERTIFICATE"),
-                },
-            ]
+    def __init__(self, request):
+        (SAML_ENTITY_ID, SAML_SSO_URL, SAML_LOGOUT_URL, SAML_CERTIFICATE) = (
+            get_configuration_value(
+                [
+                    {
+                        "key": "SAML_ENTITY_ID",
+                        "default": os.environ.get("SAML_ENTITY_ID"),
+                    },
+                    {"key": "SAML_SSO_URL", "default": os.environ.get("SAML_SSO_URL")},
+                    {
+                        "key": "SAML_LOGOUT_URL",
+                        "default": os.environ.get("SAML_LOGOUT_URL"),
+                    },
+                    {
+                        "key": "SAML_CERTIFICATE",
+                        "default": os.environ.get("SAML_CERTIFICATE"),
+                    },
+                ]
+            )
         )
 
         if not (SAML_ENTITY_ID and SAML_SSO_URL and SAML_CERTIFICATE):
@@ -71,19 +61,11 @@ class SAMLAdapter(Adapter):
 
         # Generate configuration
         self.saml_config = saml_config
-        auth = OneLogin_Saml2_Auth(
-            req,
-            saml_config,
-        )
+        auth = OneLogin_Saml2_Auth(req, saml_config)
         self.auth = auth
 
     def generate_saml_configuration(
-        self,
-        request,
-        entity_id,
-        sso_url,
-        logout_url,
-        idp_certificate,
+        self, request, entity_id, sso_url, logout_url, idp_certificate
     ):
         return {
             "strict": True,
@@ -153,17 +135,13 @@ class SAMLAdapter(Adapter):
                 # Log the errors
                 log_exception(Exception(errors))
                 raise AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES[
-                        "SAML_PROVIDER_ERROR"
-                    ],
+                    error_code=AUTHENTICATION_ERROR_CODES["SAML_PROVIDER_ERROR"],
                     error_message="SAML_PROVIDER_ERROR",
                 )
             # Log the errors
             log_exception(Exception(errors))
             raise AuthenticationException(
-                error_message=AUTHENTICATION_ERROR_CODES[
-                    "SAML_PROVIDER_ERROR"
-                ],
+                error_message=AUTHENTICATION_ERROR_CODES["SAML_PROVIDER_ERROR"],
                 error_code="SAML_PROVIDER_ERROR",
             )
         attributes = self.auth.get_attributes()
@@ -176,16 +154,13 @@ class SAMLAdapter(Adapter):
 
         if not email:
             raise AuthenticationException(
-                error_message=AUTHENTICATION_ERROR_CODES[
-                    "SAML_PROVIDER_ERROR"
-                ],
+                error_message=AUTHENTICATION_ERROR_CODES["SAML_PROVIDER_ERROR"],
                 error_code="SAML_PROVIDER_ERROR",
             )
 
         first_name = (
             attributes.get("first_name")[0]
-            if attributes.get("first_name")
-            and len(attributes.get("first_name"))
+            if attributes.get("first_name") and len(attributes.get("first_name"))
             else ""
         )
 

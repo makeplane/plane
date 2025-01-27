@@ -1,4 +1,4 @@
-import { TJobWithConfig } from "@silo/core";
+import { TJobWithConfig } from "@plane/etl/core";
 
 export type WorkerEventType = "initiate" | "transform" | "push" | "finished";
 export type UpdateEventType =

@@ -4,13 +4,20 @@ import strawberry
 
 @strawberry.type
 class FeatureFlagType:
-    bulk_ops: bool
-    bulk_ops_advanced: bool
+    bulk_ops: bool  # deprecated
+    bulk_ops_one: bool
+
+    bulk_ops_advanced: bool  # deprecated
+    bulk_ops_pro: bool
+
     collaboration_cursor: bool
     editor_ai_ops: bool
     estimate_with_time: bool
-    issue_type_display: bool
-    issue_type_settings: bool
+
+    issue_type_display: bool  # deprecated
+    issue_type_settings: bool  # deprecated
+    issue_types: bool
+
     oidc_saml_auth: bool
     page_issue_embeds: bool
     page_publish: bool
@@ -21,8 +28,12 @@ class FeatureFlagType:
     workspace_pages: bool
     issue_worklog: bool
     project_grouping: bool
-    active_cycle_pro: bool
-    no_load: bool
+
+    active_cycle_pro: bool  # deprecated
+    cycle_progress_charts: bool
+
+    no_load: bool  # deprecated
+
     file_size_limit_pro: bool
     pi_chat: bool
     pi_dedupe: bool

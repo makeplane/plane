@@ -59,7 +59,6 @@ def create_xlsx_file(data):
 
 
 def upload_to_s3(files, workspace_id, token_id, slug, provider):
-
     expires_in = 7 * 24 * 60 * 60
     file_name, file_obj = files[0]
     file_obj = BytesIO(file_obj.read())
@@ -76,9 +75,7 @@ def upload_to_s3(files, workspace_id, token_id, slug, provider):
             file_obj,
             settings.AWS_STORAGE_BUCKET_NAME,
             file_name,
-            ExtraArgs={
-                "ContentType": f"application/{provider}",
-            },
+            ExtraArgs={"ContentType": f"application/{provider}"},
         )
 
         # Generate presigned url for the uploaded file with different base
@@ -92,14 +89,10 @@ def upload_to_s3(files, workspace_id, token_id, slug, provider):
 
         presigned_url = presign_s3.generate_presigned_url(
             "get_object",
-            Params={
-                "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
-                "Key": file_name,
-            },
+            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": file_name},
             ExpiresIn=expires_in,
         )
     else:
-
         # If endpoint url is present, use it
         if settings.AWS_S3_ENDPOINT_URL:
             s3 = boto3.client(
@@ -122,18 +115,13 @@ def upload_to_s3(files, workspace_id, token_id, slug, provider):
             file_obj,
             settings.AWS_STORAGE_BUCKET_NAME,
             file_name,
-            ExtraArgs={
-                "ContentType": f"application/{provider}",
-            },
+            ExtraArgs={"ContentType": f"application/{provider}"},
         )
 
         # Generate presigned url for the uploaded file
         presigned_url = s3.generate_presigned_url(
             "get_object",
-            Params={
-                "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
-                "Key": file_name,
-            },
+            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": file_name},
             ExpiresIn=expires_in,
         )
 
@@ -157,8 +145,7 @@ def generate_table_row(worklog):
         ),
         (
             f"{worklog['logged_by__first_name']} {worklog['logged_by__last_name']}"
-            if worklog["logged_by__first_name"]
-            and worklog["logged_by__last_name"]
+            if worklog["logged_by__first_name"] and worklog["logged_by__last_name"]
             else ""
         ),
         dateConverter(worklog["created_at"]),
@@ -174,9 +161,7 @@ def generate_csv(header, workspace_id, worklogs, files):
     """
     Generate CSV export for all the passed issues.
     """
-    rows = [
-        header,
-    ]
+    rows = [header]
     for worklog in worklogs:
         row = generate_table_row(worklog)
 
@@ -195,9 +180,7 @@ def generate_xlsx(header, workspace_id, worklogs, files):
 
 
 @shared_task
-def worklogs_export_task(
-    provider, workspace_id, user_id, token_id, slug, filters
-):
+def worklogs_export_task(provider, workspace_id, user_id, token_id, slug, filters):
     try:
         exporter_instance = ExporterHistory.objects.get(token=token_id)
         exporter_instance.status = "processing"
@@ -231,28 +214,14 @@ def worklogs_export_task(
         )
 
         # CSV header
-        header = [
-            "Project",
-            "Issue",
-            "Logged by",
-            "Logged On",
-            "Duration",
-        ]
+        header = ["Project", "Issue", "Logged by", "Logged On", "Duration"]
 
-        EXPORTER_MAPPER = {
-            "csv": generate_csv,
-            "xlsx": generate_xlsx,
-        }
+        EXPORTER_MAPPER = {"csv": generate_csv, "xlsx": generate_xlsx}
 
         files = []
         exporter = EXPORTER_MAPPER.get(provider)
         if exporter is not None:
-            exporter(
-                header,
-                workspace_id,
-                worklogs,
-                files,
-            )
+            exporter(header, workspace_id, worklogs, files)
 
         upload_to_s3(files, workspace_id, token_id, slug, provider)
 

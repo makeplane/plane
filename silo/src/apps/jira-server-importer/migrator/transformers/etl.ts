@@ -9,7 +9,7 @@ import {
   ExIssue as PlaneIssue,
   PlaneUser,
 } from "@plane/sdk";
-import { TIssuePropertyValuesPayload, TJobWithConfig } from "@silo/core";
+import { TIssuePropertyValuesPayload, TJobWithConfig } from "@plane/etl/core";
 import {
   JiraCustomFieldKeys,
   OPTION_CUSTOM_FIELD_TYPES,
@@ -28,7 +28,7 @@ import {
   transformUser,
   transformIssueFields,
   transformIssuePropertyValues,
-} from "@silo/jira-server";
+} from "@plane/etl/jira-server";
 
 /* ------------------ Transformers ----------------------
 The file contains transformers for the jira entities, responsible

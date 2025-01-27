@@ -3,20 +3,44 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { EIssuesStoreType } from "@plane/constants";
 // ui
-import { ArchiveIcon, Breadcrumbs, Tooltip, Header } from "@plane/ui";
+import { ArchiveIcon, Breadcrumbs, Tooltip, Header, ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
 // components
-import { BreadcrumbLink, Logo } from "@/components/common";
-// constants
-import { PROJECT_ARCHIVES_BREADCRUMB_LIST } from "@/constants/archives";
-import { EIssuesStoreType } from "@/constants/issue";
+import { BreadcrumbLink } from "@/components/common";
 // hooks
 import { useIssues, useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 
 type TProps = {
   activeTab: "issues" | "cycles" | "modules";
+};
+
+const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
+  [key: string]: {
+    label: string;
+    href: string;
+    icon: React.FC<React.SVGAttributes<SVGElement> & { className?: string }>;
+  };
+} = {
+  issues: {
+    label: "Issues",
+    href: "/issues",
+    icon: LayersIcon,
+  },
+  cycles: {
+    label: "Cycles",
+    href: "/cycles",
+    icon: ContrastIcon,
+  },
+  modules: {
+    label: "Modules",
+    href: "/modules",
+    icon: DiceIcon,
+  },
 };
 
 export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
@@ -28,7 +52,7 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
   const {
     issues: { getGroupIssueCount },
   } = useIssues(EIssuesStoreType.ARCHIVED);
-  const { currentProjectDetails, loader } = useProject();
+  const { loader } = useProject();
   // hooks
   const { isMobile } = usePlatformOS();
 
@@ -42,21 +66,7 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
       <Header.LeftItem>
         <div className="flex items-center gap-2.5">
           <Breadcrumbs onBack={router.back} isLoading={loader}>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  label={currentProjectDetails?.name ?? "Project"}
-                  icon={
-                    currentProjectDetails && (
-                      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                      </span>
-                    )
-                  }
-                />
-              }
-            />
+            <ProjectBreadcrumb />
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={

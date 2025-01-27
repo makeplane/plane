@@ -17,8 +17,10 @@ from plane.graphql.permissions.project import (
     ProjectAdminPermission,
 )
 from plane.graphql.types.project import ProjectType
+from plane.graphql.utils.roles import Roles
 from plane.db.models import (
     Workspace,
+    WorkspaceMember,
     Project,
     ProjectMember,
     UserFavorite,
@@ -30,9 +32,7 @@ from plane.db.models import (
 @strawberry.type
 class ProjectMutation:
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def createProject(
         self,
@@ -61,36 +61,27 @@ class ProjectMutation:
             )
         except Exception:
             message = "Project with this identifier already exists"
-            error_extensions = {
-                "code": "IDENTIFIER_ALREADY_EXISTS",
-                "statusCode": 400,
-            }
+            error_extensions = {"code": "IDENTIFIER_ALREADY_EXISTS", "statusCode": 400}
             raise GraphQLError(message, extensions=error_extensions)
 
         # add the user as a admin of the project
         _ = await sync_to_async(ProjectMember.objects.create)(
-            project=project,
-            member=info.context.user,
-            role=20,
+            project=project, member=info.context.user, role=20
         )
         # creating the issue property for the user
         _ = await sync_to_async(IssueUserProperty.objects.create)(
-            project_id=project.id,
-            user_id=info.context.user.id,
+            project_id=project.id, user_id=info.context.user.id
         )
 
         # if lead was passed we can add the user as a lead
         if project_lead:
             # add the user as a admin of the project
             _ = await sync_to_async(ProjectMember.objects.create)(
-                project=project,
-                member_id=project_lead,
-                role=20,
+                project=project, member_id=project_lead, role=20
             )
             # creating the issue property for the user
             _ = await sync_to_async(IssueUserProperty.objects.create)(
-                project_id=project.id,
-                user_id=project_lead,
+                project_id=project.id, user_id=project_lead
             )
 
         # Default states
@@ -148,9 +139,7 @@ class ProjectMutation:
         return project
 
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[ProjectMemberPermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
     )
     async def updateProject(
         self,
@@ -185,9 +174,7 @@ class ProjectMutation:
         return project
 
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[ProjectAdminPermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectAdminPermission()])]
     )
     async def deleteProject(self, id: strawberry.ID) -> bool:
         project = await sync_to_async(Project.objects.get)(id=id)
@@ -198,9 +185,7 @@ class ProjectMutation:
 @strawberry.type
 class ProjectInviteMutation:
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[ProjectMemberPermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
     )
     async def inviteProjectMembers(
         self, info: Info, slug: str, project: strawberry.ID, emails: JSON
@@ -211,10 +196,55 @@ class ProjectInviteMutation:
         for email in emails:
             # add the user as a admin of the project
             _ = await sync_to_async(ProjectMember.objects.create)(
-                project=project,
-                member=email.get("user"),
-                role=email.get("role"),
+                project=project, member=email.get("user"), role=email.get("role")
             )
+        return True
+
+
+@strawberry.type
+class JoinProjectMutation:
+    @strawberry.mutation(
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
+    )
+    async def joinProject(self, info: Info, slug: str, project: strawberry.ID) -> bool:
+        workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
+        project = await sync_to_async(Project.objects.get)(id=project)
+
+        # validating is the user is in the workspace or not
+        try:
+            workspace_member = await sync_to_async(WorkspaceMember.objects.get)(
+                workspace=workspace, member=info.context.user
+            )
+        except WorkspaceMember.DoesNotExist:
+            message = "User is not part of the workspace"
+            error_extensions = {"code": "USER_NOT_PART_OF_WORKSPACE", "statusCode": 400}
+            raise GraphQLError(message, extensions=error_extensions)
+
+        workspace_role = workspace_member.role
+
+        # validating the workspace role
+        if workspace_role not in [Roles.ADMIN.value, Roles.MEMBER.value]:
+            message = "User does not have permission to join the project"
+            error_extensions = {
+                "code": "USER_DOES_NOT_HAVE_PERMISSION",
+                "statusCode": 400,
+            }
+            raise GraphQLError(message, extensions=error_extensions)
+
+        # add the user as a admin of the project
+        user = info.context.user
+        _ = await sync_to_async(ProjectMember.objects.create)(
+            workspace=workspace,
+            project=project,
+            member=user,
+            role=workspace_role,
+            created_by=user,
+        )
+        # creating the issue property for the user
+        _ = await sync_to_async(IssueUserProperty.objects.create)(
+            workspace=workspace, project=project, user=user, created_by=user
+        )
+
         return True
 
 

@@ -1,14 +1,14 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { UseFormRegister, UseFormSetFocus } from "react-hook-form";
+// plane constants
+import { EIssueLayoutTypes } from "@plane/constants";
 // types
 import { TIssue } from "@plane/types";
 // hooks
 import { QuickAddIssueFormRoot as BaseQuickAddIssueFormRoot } from "@/ce/components/issues/quick-add/";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues";
-// constants
-import { EIssueLayoutTypes } from "@/constants/issue";
 // plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
@@ -22,6 +22,7 @@ export type TQuickAddIssueFormRoot = {
   register: UseFormRegister<TIssue>;
   onSubmit: () => void;
   onClose: () => void;
+  isEpic?: boolean;
 };
 
 export const QuickAddIssueFormRoot: FC<TQuickAddIssueFormRoot> = observer((props) => {
@@ -35,6 +36,7 @@ export const QuickAddIssueFormRoot: FC<TQuickAddIssueFormRoot> = observer((props
     register,
     onSubmit,
     onClose,
+    isEpic = false,
   } = props;
   // store hooks
   const { getProjectDefaultIssueType } = useIssueTypes();
@@ -56,6 +58,7 @@ export const QuickAddIssueFormRoot: FC<TQuickAddIssueFormRoot> = observer((props
           register={register}
           onSubmit={onSubmit}
           onClose={onClose}
+          isEpic={isEpic}
         />
       )}
     </>

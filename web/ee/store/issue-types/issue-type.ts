@@ -6,8 +6,6 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // types
 import { computedFn } from "mobx-utils";
 import { TLogoProps } from "@plane/types";
-// services
-import { IssuePropertiesService, IssueTypesService } from "@/plane-web/services/issue-types";
 // plane web store
 import { IIssueProperty, IssueProperty } from "@/plane-web/store/issue-types";
 import { RootStore } from "@/plane-web/store/root.store";
@@ -18,7 +16,16 @@ import {
   TIssueProperty,
   TIssuePropertyOption,
   TIssueType,
+  IIssuePropertiesService,
+  IIssueTypesService,
+  TIssueTypeStoreServices,
 } from "@/plane-web/types";
+
+type TIssueTypeStore = {
+  root: RootStore;
+  services: TIssueTypeStoreServices;
+  issueTypeData: TIssueType;
+};
 
 export interface IIssueType extends TIssueType {
   properties: IIssueProperty<EIssuePropertyType>[];
@@ -28,7 +35,7 @@ export interface IIssueType extends TIssueType {
   // computed function
   getPropertyById: <T extends EIssuePropertyType>(propertyId: string) => IIssueProperty<T> | undefined;
   // actions
-  updateType: (issueTypeData: Partial<TIssueType>) => Promise<TIssueType | undefined>;
+  updateType: (issueTypeData: Partial<TIssueType>, shouldSync?: boolean) => Promise<TIssueType | undefined>;
   addOrUpdateProperty: (
     propertyData: TIssueProperty<EIssuePropertyType>,
     propertyOptions: TIssuePropertyOption[]
@@ -47,6 +54,7 @@ export class IssueType implements IIssueType {
   is_default: boolean | undefined = undefined;
   issue_exists: boolean | undefined = undefined;
   level: number | undefined = undefined;
+  is_epic: boolean | undefined = undefined;
   project_ids: string[] | undefined = undefined;
   workspace: string | undefined = undefined;
   created_at: Date | undefined = undefined;
@@ -55,14 +63,13 @@ export class IssueType implements IIssueType {
   updated_by: string | undefined = undefined;
   // issue properties
   properties: IIssueProperty<EIssuePropertyType>[] = [];
+  // root store
+  rootStore: RootStore;
   // service
-  service: IssueTypesService;
-  issuePropertyService: IssuePropertiesService;
+  service: IIssueTypesService;
+  issuePropertyService: IIssuePropertiesService;
 
-  constructor(
-    private store: RootStore,
-    issueTypeData: TIssueType
-  ) {
+  constructor(protected store: TIssueTypeStore) {
     makeObservable(this, {
       id: observable.ref,
       name: observable.ref,
@@ -72,6 +79,7 @@ export class IssueType implements IIssueType {
       is_default: observable.ref,
       issue_exists: observable.ref,
       level: observable.ref,
+      is_epic: observable.ref,
       project_ids: observable.ref,
       workspace: observable.ref,
       created_at: observable.ref,
@@ -89,6 +97,10 @@ export class IssueType implements IIssueType {
       deleteProperty: action,
     });
 
+    const { root, services, issueTypeData } = store;
+    // root store
+    this.rootStore = root;
+    // issue type data
     this.id = issueTypeData.id;
     this.name = issueTypeData.name;
     this.description = issueTypeData.description;
@@ -97,6 +109,7 @@ export class IssueType implements IIssueType {
     this.is_default = issueTypeData.is_default;
     this.issue_exists = issueTypeData.issue_exists;
     this.level = issueTypeData.level;
+    this.is_epic = issueTypeData.is_epic;
     this.project_ids = issueTypeData.project_ids;
     this.workspace = issueTypeData.workspace;
     this.created_at = issueTypeData.created_at;
@@ -105,8 +118,8 @@ export class IssueType implements IIssueType {
     this.updated_by = issueTypeData.updated_by;
     this.properties = [];
     // service
-    this.service = new IssueTypesService();
-    this.issuePropertyService = new IssuePropertiesService();
+    this.service = services.issueTypes;
+    this.issuePropertyService = services.issueProperties;
   }
 
   // computed
@@ -123,6 +136,7 @@ export class IssueType implements IIssueType {
       is_default: this.is_default,
       issue_exists: this.issue_exists,
       level: this.level,
+      is_epic: this.is_epic,
       project_ids: this.project_ids,
       workspace: this.workspace,
       created_at: this.created_at,
@@ -154,13 +168,22 @@ export class IssueType implements IIssueType {
   /**
    * @description Update issue type
    * @param issueTypeData Issue type data
+   * @param shouldSync If False then only issue type is to be updated in the store not call API to update
    */
-  updateType = async (issueTypeData: Partial<TIssueType>) => {
-    const { workspaceSlug, projectId } = this.store.router;
+  updateType = async (issueTypeData: Partial<TIssueType>, shouldSync: boolean = true) => {
+    const { workspaceSlug, projectId } = this.rootStore.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
-
     try {
-      const issueType = await this.service.update(workspaceSlug, projectId, this.id, issueTypeData);
+      let issueType: Partial<TIssueType> = issueTypeData;
+      if (shouldSync) {
+        if (!this.service.update) throw new Error("Issue type update service not available.");
+        issueType = await this.service.update({
+          workspaceSlug,
+          projectId,
+          issueTypeId: this.id,
+          data: issueTypeData,
+        });
+      }
       runInAction(() => {
         for (const key in issueType) {
           if (issueType.hasOwnProperty(key)) {
@@ -190,7 +213,11 @@ export class IssueType implements IIssueType {
         issueProperty = existingProperty;
         issueProperty.updatePropertyData(issuePropertyData);
       } else {
-        issueProperty = new IssueProperty<EIssuePropertyType>(this.store, issuePropertyData);
+        issueProperty = new IssueProperty({
+          root: this.rootStore,
+          services: this.store.services,
+          propertyData: issuePropertyData,
+        });
       }
       update(this, "properties", (properties) => uniq(concat(properties, issueProperty)));
       if (propertyOptions && propertyOptions.length) {
@@ -207,16 +234,16 @@ export class IssueType implements IIssueType {
    * @param {TIssuePropertyPayload} propertyData Issue property data
    */
   createProperty = async (propertyData: TIssuePropertyPayload) => {
-    const { workspaceSlug, projectId } = this.store.router;
+    const { workspaceSlug, projectId } = this.rootStore.router;
     if (!workspaceSlug || !projectId || !this.id) return;
 
     try {
-      const issuePropertyResponse = await this.issuePropertyService.create(
+      const issuePropertyResponse = await this.issuePropertyService.create({
         workspaceSlug,
         projectId,
-        this.id,
-        propertyData
-      );
+        issueTypeId: this.id,
+        data: propertyData,
+      });
       const { options, ...issuePropertyData } = issuePropertyResponse;
       runInAction(() => {
         this.addOrUpdateProperty(issuePropertyData, options);
@@ -233,11 +260,16 @@ export class IssueType implements IIssueType {
    * @param propertyId Issue property ID
    */
   deleteProperty = async (propertyId: string) => {
-    const { workspaceSlug, projectId } = this.store.router;
+    const { workspaceSlug, projectId } = this.rootStore.router;
     if (!workspaceSlug || !projectId || !this.id) return;
 
     try {
-      await this.issuePropertyService.deleteProperty(workspaceSlug, projectId, this.id, propertyId);
+      await this.issuePropertyService.deleteProperty({
+        workspaceSlug,
+        projectId,
+        issueTypeId: this.id,
+        issuePropertyId: propertyId,
+      });
       runInAction(() => {
         const updatedProperties = this.properties.filter((property) => property.id !== propertyId);
         set(this, "properties", updatedProperties);

@@ -2,9 +2,9 @@
 
 import { FC, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
+import { IStateConfig, JiraStatus } from "@plane/etl/jira";
 import { ExState } from "@plane/sdk";
 import { Button, Loader } from "@plane/ui";
-import { IStateConfig, JiraStatus } from "@silo/jira";
 // silo hooks
 import { usePlaneProjectStates } from "@/plane-web/silo/hooks";
 // silo components

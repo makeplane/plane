@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-import { CredentialService, TServiceAuthConfiguration, TImporterKeys } from "@silo/core";
+import { CredentialService, TServiceAuthConfiguration, TImporterKeys } from "@plane/etl/core";
 // silo hooks
 import { useBaseImporter } from "@/plane-web/silo/hooks";
 

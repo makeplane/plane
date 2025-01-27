@@ -18,7 +18,7 @@ import {
   ProjectScopeDropdown,
   ProjectSearch,
 } from "@/plane-web/components/projects/";
-import { useFlag, useWorkspaceFeatures, E_FEATURE_FLAGS } from "@/plane-web/hooks/store";
+import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 
 export const ProjectsListHeader = observer(() => {
@@ -30,10 +30,9 @@ export const ProjectsListHeader = observer(() => {
 
   // derived values
   const workspaceId = currentWorkspace?.id || undefined;
+  const isProjectGroupingFlagEnabled = useFlag(workspaceSlug.toString(), "PROJECT_GROUPING");
   const isProjectGroupingEnabled =
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
-    useFlag(workspaceSlug.toString(), E_FEATURE_FLAGS.PROJECT_GROUPING);
-
+    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFlagEnabled;
   const isArchived = pathname.includes("/archives");
 
   if (!workspaceSlug || !workspaceId) return <></>;
@@ -59,13 +58,16 @@ export const ProjectsListHeader = observer(() => {
         </div>
         <div className="flex items-center gap-4">
           {/* search */}
-          <ProjectSearch workspaceSlug={workspaceSlug.toString()} />
-
+          <ProjectSearch />
           <div className="hidden md:flex gap-4">
             {/* layout selection */}
             {!isArchived && <ProjectLayoutSelection workspaceSlug={workspaceSlug.toString()} />}{" "}
             {/* attributes dropdown */}
-            <ProjectAttributesDropdown workspaceSlug={workspaceSlug.toString()} workspaceId={workspaceId} isArchived={isArchived}/>
+            <ProjectAttributesDropdown
+              workspaceSlug={workspaceSlug.toString()}
+              workspaceId={workspaceId}
+              isArchived={isArchived}
+            />
             {/* display filters dropdown */}
             <ProjectDisplayFiltersDropdown workspaceSlug={workspaceSlug.toString()} isArchived={isArchived} />
           </div>

@@ -1,10 +1,8 @@
 import { set } from "lodash";
 import { action, makeObservable, observable, runInAction } from "mobx";
-// services
-import {
-  InstanceFeatureFlagService,
-  TInstanceFeatureFlagsResponse,
-} from "@/plane-admin/services/instance-feature-flag.service";
+// plane imports
+import { InstanceFeatureFlagService } from "@plane/services";
+import { TInstanceFeatureFlagsResponse } from "@plane/types";
 
 const instanceFeatureFlagService = new InstanceFeatureFlagService();
 
@@ -33,7 +31,7 @@ export class InstanceFeatureFlagsStore implements IInstanceFeatureFlagsStore {
 
   fetchInstanceFeatureFlags = async () => {
     try {
-      const response = await instanceFeatureFlagService.getInstanceFeatureFlags();
+      const response = await instanceFeatureFlagService.list();
       runInAction(() => {
         if (response) {
           Object.keys(response).forEach((key) => {

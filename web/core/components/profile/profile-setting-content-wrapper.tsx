@@ -1,8 +1,10 @@
 "use client";
 import React, { FC } from "react";
-import { isDesktopApp } from "@todesktop/client-core/platform/todesktop";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// plane web components
+import { isSidebarToggleVisible } from "@/plane-web/components/desktop";
+// local components
 import { SidebarHamburgerToggle } from "../core";
 
 type Props = {
@@ -14,7 +16,7 @@ export const ProfileSettingContentWrapper: FC<Props> = (props) => {
   const { children, className = "" } = props;
   return (
     <div className="flex h-full flex-col">
-      {!isDesktopApp() && (
+      {isSidebarToggleVisible() && (
         <div className="block flex-shrink-0 border-b border-custom-border-200 p-4 md:hidden">
           <SidebarHamburgerToggle />
         </div>

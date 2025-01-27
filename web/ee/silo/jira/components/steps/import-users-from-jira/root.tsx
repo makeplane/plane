@@ -2,9 +2,9 @@
 
 import { FC, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { Button } from "@plane/ui";
 // helpers
-import { E_IMPORTER_KEYS } from "@silo/core";
 import { cn } from "@/helpers/common.helper";
 // silo components
 import { useSyncConfig } from "@/plane-web/silo/hooks";

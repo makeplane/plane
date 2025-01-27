@@ -14,7 +14,7 @@ type Props = {
 export const SidebarChartRoot: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, cycleId } = props;
 
-  const isFeatureEnabled = useFlag(workspaceSlug.toString(), "ACTIVE_CYCLE_PRO");
+  const isFeatureEnabled = useFlag(workspaceSlug.toString(), "CYCLE_PROGRESS_CHARTS");
 
   const SidebarChart = useMemo(
     () =>

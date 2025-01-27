@@ -1,9 +1,9 @@
 "use client";
 
 import { FC, useEffect } from "react";
+import { TJob, TJobStatus } from "@plane/etl/core";
+import { JiraConfig } from "@plane/etl/jira";
 import { Button } from "@plane/ui";
-import { TJob, TJobStatus } from "@silo/core";
-import { JiraConfig } from "@silo/jira";
 // silo hooks
 import { useBaseImporter } from "@/plane-web/silo/hooks";
 import { useJiraSyncJobs } from "@/plane-web/silo/hooks/context/use-jira-sync-jobs";
@@ -42,7 +42,10 @@ export const SummaryRoot: FC = () => {
 
   useEffect(() => {
     if (jiraProjectLabels && jiraProjectLabels.length > 0) {
-      handleSyncJobConfig("label", jiraProjectLabels);
+      handleSyncJobConfig(
+        "label",
+        jiraProjectLabels.map((label) => label.name)
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jiraProjectLabels]);

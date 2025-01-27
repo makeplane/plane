@@ -23,6 +23,8 @@ import { getTabIndex } from "@/helpers/tab-indices.helper";
 import { useInstance, useWorkspace } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web services
+import { WorkspaceService } from "@/plane-web/services";
 // services
 import { AIService } from "@/services/ai.service";
 import { FileService } from "@/services/file.service";
@@ -47,6 +49,7 @@ type TIssueDescriptionEditorProps = {
 };
 
 // services
+const workspaceService = new WorkspaceService();
 const aiService = new AIService();
 const fileService = new FileService();
 
@@ -188,6 +191,12 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                 ref={editorRef}
                 tabIndex={getIndex("description_html")}
                 placeholder={getDescriptionPlaceholder}
+                searchMentionCallback={async (payload) =>
+                  await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+                    ...payload,
+                    project_id: projectId?.toString() ?? "",
+                  })
+                }
                 containerClassName="pt-3 min-h-[120px]"
                 uploadFile={async (file) => {
                   try {

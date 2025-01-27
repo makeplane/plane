@@ -88,7 +88,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
 
   // debounced duplicate issues swr
   const { duplicateIssues } = useDebouncedDuplicateIssues(
-    workspaceSlug?.toString(),
+    workspaceSlug,
     projectDetails?.workspace.toString(),
     projectId,
     {

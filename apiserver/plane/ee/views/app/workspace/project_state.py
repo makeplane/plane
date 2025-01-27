@@ -2,15 +2,16 @@
 from rest_framework import status
 from rest_framework.response import Response
 
+# Django imports
+from django.db import IntegrityError
+
 # Module imports
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.db.models import Workspace
 from plane.ee.models import ProjectState, ProjectAttribute
 from plane.ee.views.base import BaseAPIView
-from plane.ee.serializers import (
-    ProjectStateSerializer,
-)
+from plane.ee.serializers import ProjectStateSerializer
 from plane.app.permissions import WorkSpaceBasePermission
 
 # EE imports
@@ -21,18 +22,16 @@ from plane.ee.utils.workspace_feature import (
 
 
 class WorkspaceProjectStatesEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkSpaceBasePermission,
-    ]
+    permission_classes = [WorkSpaceBasePermission]
 
     @check_feature_flag(FeatureFlag.PROJECT_GROUPING)
     def get(self, request, slug):
         if check_workspace_feature(
             slug, WorkspaceFeatureContext.IS_PROJECT_GROUPING_ENABLED
         ):
-            project_states = ProjectState.objects.filter(
-                workspace__slug=slug
-            ).order_by("sequence")
+            project_states = ProjectState.objects.filter(workspace__slug=slug).order_by(
+                "sequence"
+            )
             serializer = ProjectStateSerializer(project_states, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(
@@ -45,14 +44,19 @@ class WorkspaceProjectStatesEndpoint(BaseAPIView):
         if check_workspace_feature(
             slug, WorkspaceFeatureContext.IS_PROJECT_GROUPING_ENABLED
         ):
-            workspace = Workspace.objects.get(slug=slug)
-            serializer = ProjectStateSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save(workspace=workspace)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            try:
+                workspace = Workspace.objects.get(slug=slug)
+                serializer = ProjectStateSerializer(data=request.data)
+                if serializer.is_valid():
+                    serializer.save(workspace=workspace)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            except IntegrityError as e:
+                if "already exists" in str(e):
+                    return Response(
+                        {"name": "The state name is already taken"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
         return Response(
             {"error": "Project grouping is not enabled for this workspace"},
             status=status.HTTP_400_BAD_REQUEST,
@@ -72,9 +76,7 @@ class WorkspaceProjectStatesEndpoint(BaseAPIView):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(
             {"error": "Project grouping is not enabled for this workspace"},
             status=status.HTTP_400_BAD_REQUEST,
@@ -115,9 +117,7 @@ class WorkspaceProjectStatesEndpoint(BaseAPIView):
 
 
 class WorkspaceProjectStatesDefaultEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkSpaceBasePermission,
-    ]
+    permission_classes = [WorkSpaceBasePermission]
 
     @check_feature_flag(FeatureFlag.PROJECT_GROUPING)
     def post(self, request, slug, pk):
@@ -125,12 +125,12 @@ class WorkspaceProjectStatesDefaultEndpoint(BaseAPIView):
             slug, WorkspaceFeatureContext.IS_PROJECT_GROUPING_ENABLED
         ):
             # Select all the states which are marked as default
-            _ = ProjectState.objects.filter(
-                workspace__slug=slug, default=True
-            ).update(default=False)
-            _ = ProjectState.objects.filter(
-                workspace__slug=slug, pk=pk
-            ).update(default=True)
+            _ = ProjectState.objects.filter(workspace__slug=slug, default=True).update(
+                default=False
+            )
+            _ = ProjectState.objects.filter(workspace__slug=slug, pk=pk).update(
+                default=True
+            )
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(
             {"error": "Project grouping is not enabled for this workspace"},

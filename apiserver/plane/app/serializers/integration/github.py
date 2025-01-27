@@ -26,20 +26,11 @@ class GithubIssueSyncSerializer(BaseSerializer):
     class Meta:
         model = GithubIssueSync
         fields = "__all__"
-        read_only_fields = [
-            "project",
-            "workspace",
-            "repository_sync",
-        ]
+        read_only_fields = ["project", "workspace", "repository_sync"]
 
 
 class GithubCommentSyncSerializer(BaseSerializer):
     class Meta:
         model = GithubCommentSync
         fields = "__all__"
-        read_only_fields = [
-            "project",
-            "workspace",
-            "repository_sync",
-            "issue_sync",
-        ]
+        read_only_fields = ["project", "workspace", "repository_sync", "issue_sync"]

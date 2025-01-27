@@ -14,9 +14,7 @@ from plane.app.authentication.session import BaseSessionAuthentication
 
 
 class MobileSignOutAuthEndpoint(APIView):
-    authentication_classes = [
-        BaseSessionAuthentication,
-    ]
+    authentication_classes = [BaseSessionAuthentication]
 
     def post(self, request):
         # Get user
@@ -29,11 +27,9 @@ class MobileSignOutAuthEndpoint(APIView):
             # Logout user
             logout(request)
             return Response(
-                {"message": "User sign out successfully"},
-                status=status.HTTP_200_OK,
+                {"message": "User sign out successfully"}, status=status.HTTP_200_OK
             )
         except Exception:
             return Response(
-                {"message": "Something went wrong"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"message": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST
             )

@@ -1,8 +1,15 @@
 import { Controller, Get, Post } from "@/lib";
-import { Request, Response } from "express";
-import { createJiraService, JiraProject, JiraV2Service } from "@silo/jira-server";
+import { NextFunction, Request, Response } from "express";
+// etl
+import { createJiraService, JiraProject, JiraV2Service } from "@plane/etl/jira-server";
+import { JiraResource } from "@plane/etl/jira";
+// db
 import { createOrUpdateCredentials, getCredentialsByWorkspaceId } from "@/db/query";
-import { JiraResource } from "@silo/jira";
+// helpers
+import { createPlaneClient } from "@/helpers/utils";
+import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
+import { getValidCredentials } from "@/helpers/credential";
+import { responseHandler } from "@/helpers/response-handler";
 
 @Controller("/api/jira-server")
 class JiraDataCenterController {
@@ -43,7 +50,7 @@ class JiraDataCenterController {
 
       res.status(200).json(credential);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -62,7 +69,7 @@ class JiraDataCenterController {
       };
       return res.json([resource]);
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -75,11 +82,10 @@ class JiraDataCenterController {
       const projects: JiraProject[] = await jiraClient.getResourceProjects();
       return res.json(projects);
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
-  // Doesn't work
   @Post("/states")
   async getStates(req: Request, res: Response) {
     const { workspaceId, userId, projectId } = req.body;
@@ -89,7 +95,7 @@ class JiraDataCenterController {
       const statuses = await jiraClient.getProjectStatuses(projectId);
       return res.json(statuses);
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -102,7 +108,7 @@ class JiraDataCenterController {
       const priorities = await jiraClient.getIssuePriorities();
       return res.json(priorities);
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -115,7 +121,7 @@ class JiraDataCenterController {
       const labels = await jiraClient.getAllProjectLabels(projectId);
       return res.json(labels);
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -130,7 +136,7 @@ class JiraDataCenterController {
         count: issueCount,
       });
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -143,32 +149,38 @@ class JiraDataCenterController {
       const statuses = await jiraClient.getProjectIssueTypes(projectId);
       return res.json(statuses);
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
-  @Post("/test")
-  async getFields(req: Request, res: Response) {
-    const { workspaceId, userId, projectId } = req.body;
+  @Get("/additional-users/:workspaceId/:workspaceSlug/:userId")
+  async getUserDifferential(req: Request, res: Response) {
+    const { workspaceId, workspaceSlug, userId } = req.params;
 
     try {
-      const jiraClient = await createJiraClient(workspaceId, userId);
-      const statuses = await jiraClient.getJiraUsers();
-      return res.json(statuses);
-    } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      const [planeClient, jiraClient] = await Promise.all([
+        createPlaneClient(workspaceId, userId, "JIRA_SERVER"),
+        createJiraClient(workspaceId, userId),
+      ]);
+      const [workspaceMembers, jiraActiveMembers] = await Promise.all([
+        planeClient.users.listAllUsers(workspaceSlug),
+        jiraClient.getJiraUsers(),
+      ]);
+      const billableMembers = workspaceMembers.filter((member) => member.role > 10);
+      const additionalUsers = compareAndGetAdditionalUsers(billableMembers, jiraActiveMembers);
+
+      return res.json({
+        additionalUserCount: additionalUsers.length,
+        occupiedUserCount: billableMembers.length,
+      });
+    } catch (error) {
+      responseHandler(res, 500, error);
     }
   }
 }
 
 const createJiraClient = async (workspaceId: string, userId: string): Promise<JiraV2Service> => {
-  const credentials = await getCredentialsByWorkspaceId(workspaceId, userId, "JIRA_SERVER");
-
-  if (!credentials || credentials.length === 0) {
-    throw new Error("No jira credentials available for the given workspaceId and userId");
-  }
-
-  const jiraCredentials = credentials[0];
+  const jiraCredentials = await getValidCredentials(workspaceId, userId, "JIRA_SERVER");
 
   if (!jiraCredentials.source_hostname || !jiraCredentials.source_access_token || !jiraCredentials.user_email) {
     throw new Error("Invalid Jira credentials");

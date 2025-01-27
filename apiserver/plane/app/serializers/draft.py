@@ -85,7 +85,9 @@ class DraftIssueCreateSerializer(BaseSerializer):
         if not issue_type:
             # Get default issue type
             issue_type = IssueType.objects.filter(
-                project_issue_types__project_id=project_id, is_default=True
+                project_issue_types__project_id=project_id,
+                is_epic=False,
+                is_default=True,
             ).first()
             issue_type = issue_type
 

@@ -1,9 +1,18 @@
 # Python imports
+import json
 from itertools import groupby
+
+# Django imports
+from django.db.utils import IntegrityError
 
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
+
+# Django imports
+from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
+
 
 # Module imports
 from .. import BaseViewSet
@@ -11,6 +20,7 @@ from plane.app.serializers import StateSerializer
 from plane.app.permissions import ROLE, allow_permission
 from plane.db.models import State, Issue
 from plane.utils.cache import invalidate_cache
+from plane.ee.bgtasks.project_activites_task import project_activity
 
 
 class StateViewSet(BaseViewSet):
@@ -37,11 +47,33 @@ class StateViewSet(BaseViewSet):
     @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
-        serializer = StateSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(project_id=project_id)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            serializer = StateSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(project_id=project_id)
+                project_activity.delay(
+                    type="project.activity.updated",
+                    requested_data=json.dumps(
+                        {"project_state": serializer.data.get("id")},
+                        cls=DjangoJSONEncoder,
+                    ),
+                    actor_id=str(request.user.id),
+                    project_id=str(project_id),
+                    current_instance=json.dumps(
+                        {"project_state": None}, cls=DjangoJSONEncoder
+                    ),
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError as e:
+            if "already exists" in str(e):
+                return Response(
+                    {"name": "The state name is already taken"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
@@ -91,5 +123,18 @@ class StateViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        project_activity.delay(
+            type="project.activity.updated",
+            requested_data=json.dumps({"project_state": None}, cls=DjangoJSONEncoder),
+            actor_id=str(request.user.id),
+            project_id=str(project_id),
+            current_instance=json.dumps(
+                {"project_state": pk, "state_name": state.name}, cls=DjangoJSONEncoder
+            ),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
         state.delete()
+
         return Response(status=status.HTTP_204_NO_CONTENT)

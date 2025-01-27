@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from "axios";
-import { E_IMPORTER_KEYS } from "@silo/core";
-import { JiraResource, JiraProject, JiraStates, JiraPriority, ILabelConfig } from "@silo/jira/";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
+import { JiraResource, JiraProject, JiraStates, JiraPriority } from "@plane/etl/jira";
+import { IAdditionalUsersResponse } from "@plane/types";
 
 export class JiraServerDataService {
   protected baseURL: string;
@@ -99,9 +100,13 @@ export class JiraServerDataService {
    * @property userId: string
    * @returns project | undefined
    */
-  async getProjectLabels(workspaceId: string, userId: string): Promise<ILabelConfig[] | undefined> {
+  async getProjectLabels(workspaceId: string, userId: string, projectId: string): Promise<string[] | undefined> {
     return this.axiosInstance
-      .post(`/api/${E_IMPORTER_KEYS.JIRA_SERVER.toLowerCase().replaceAll("_", "-")}/labels/`, { workspaceId, userId })
+      .post(`/api/${E_IMPORTER_KEYS.JIRA_SERVER.toLowerCase().replaceAll("_", "-")}/labels/`, {
+        workspaceId,
+        userId,
+        projectId,
+      })
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -122,6 +127,28 @@ export class JiraServerDataService {
         userId,
         projectId,
       })
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description get additional users while import
+   * @property workspaceId: string
+   * @property userId: string
+   * @property workspaceSlug: string
+   */
+  async getAdditionalUsers(
+    workspaceId: string,
+    userId: string,
+    workspaceSlug: string
+  ): Promise<IAdditionalUsersResponse | undefined> {
+    return this.axiosInstance
+      .get(
+        `/api/${E_IMPORTER_KEYS.JIRA_SERVER.toLowerCase().replaceAll("_", "-")}/additional-users/${workspaceId}/${workspaceSlug}/${userId}`,
+        {}
+      )
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;

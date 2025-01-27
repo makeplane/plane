@@ -1,5 +1,5 @@
+import { SlackUpdateCredential } from "@plane/etl/slack";
 import { createOrUpdateCredentials } from "@/db/query";
-import { SlackUpdateCredential } from "@silo/slack";
 
 export const getRefreshCredentialHandler =
   (workspaceId: string, userId: string, targetAccessToken: string) => async (response: SlackUpdateCredential) => {

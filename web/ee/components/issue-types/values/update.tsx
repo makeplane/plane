@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { EIssueServiceType } from "@plane/constants";
 // ui
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 // ce components
@@ -19,23 +20,31 @@ import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // plane web types
 import { TIssuePropertyValues } from "@/plane-web/types";
 
-const issuePropertyValuesService = new IssuePropertyValuesService();
-
 export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPropertyValuesUpdateProps> = observer(
   (props) => {
-    const { issueId, issueTypeId, projectId, workspaceSlug, isDisabled } = props;
+    const {
+      issueId,
+      issueTypeId,
+      projectId,
+      workspaceSlug,
+      isDisabled,
+      issueServiceType = EIssueServiceType.ISSUES,
+    } = props;
     // states
     const [issuePropertyValues, setIssuePropertyValues] = React.useState<TIssuePropertyValues>({});
     // store hooks
-    const { isIssueTypeEnabledForProject, getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } =
+    const { isIssueTypeOrEpicEnabledForProject, getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } =
       useIssueTypes();
     const issueType = useIssueType(issueTypeId);
     const { fetchPropertyActivities } = useIssuePropertiesActivity();
+    // services
+    const issuePropertyValuesService = new IssuePropertyValuesService(issueServiceType);
     // derived values
-    const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(
+    const isIssueTypeDisplayEnabled = isIssueTypeOrEpicEnabledForProject(
       workspaceSlug?.toString(),
       projectId,
-      "ISSUE_TYPE_DISPLAY"
+      "ISSUE_TYPES",
+      "EPICS"
     );
     const issueTypeDetails = issueType?.asJSON;
     const activeProperties = issueType?.activeProperties;

@@ -7,15 +7,47 @@ from plane.db.models import BaseModel
 
 
 def get_default_filters():
-    return {}
+    return {
+        "priority": None,
+        "state": None,
+        "state_group": None,
+        "assignees": None,
+        "created_by": None,
+        "labels": None,
+        "start_date": None,
+        "target_date": None,
+        "subscriber": None,
+    }
 
 
 def get_default_display_filters():
-    return {}
+    return {
+        "group_by": "state_detail.group",
+        "order_by": "-created_at",
+        "type": None,
+        "sub_issue": True,
+        "show_empty_groups": True,
+        "layout": "list",
+        "calendar_date_range": "",
+    }
 
 
 def get_default_display_properties():
-    return {}
+    return {
+        "assignee": True,
+        "attachment_count": True,
+        "created_on": True,
+        "due_date": True,
+        "estimate": True,
+        "key": True,
+        "labels": True,
+        "link": True,
+        "priority": True,
+        "start_date": True,
+        "state": True,
+        "sub_issue_count": True,
+        "updated_on": True,
+    }
 
 
 class TeamSpace(BaseModel):

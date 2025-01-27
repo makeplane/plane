@@ -2,42 +2,25 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane editor
 import { DocumentReadOnlyEditorWithRef, TDisplayConfig } from "@plane/editor";
-// plane types
-import { IUserLite } from "@plane/types";
 // plane ui
 import { Loader } from "@plane/ui";
 // components
+import { EditorMentionsRoot } from "@/components/editor";
 import { TVersionEditorProps } from "@/components/pages";
 // helpers
 import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
-import { useMember, useUser } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { IssueEmbedCard } from "@/plane-web/components/pages";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-import { useWorkspaceMention } from "@/plane-web/hooks/use-workspace-mention";
 
 export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
   const { activeVersion, currentVersionDescription, isCurrentVersionActive, versionDetails } = props;
   // params
   const { workspaceSlug } = useParams();
-  // store hooks
-  const { data: currentUser } = useUser();
-  const {
-    getUserDetails,
-    workspace: { workspaceMemberIds },
-  } = useMember();
   const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
-  // derived values
-  const workspaceMemberDetails = workspaceMemberIds?.map((id) => getUserDetails(id) as IUserLite);
-  // use-mention
-  const { mentionHighlights } = useWorkspaceMention({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
-    members: workspaceMemberDetails,
-    user: currentUser,
-  });
   // page filters
   const { fontSize, fontStyle } = usePageFilters();
 
@@ -103,7 +86,7 @@ export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observ
         workspaceSlug: workspaceSlug?.toString() ?? "",
       })}
       mentionHandler={{
-        highlights: mentionHighlights,
+        renderComponent: (props) => <EditorMentionsRoot {...props} />,
       }}
       embedHandler={{
         issue: {

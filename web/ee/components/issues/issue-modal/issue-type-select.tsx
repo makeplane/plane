@@ -32,7 +32,7 @@ export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props:
   const { isIssueTypeEnabledForProject, getIssueTypeIdsWithMandatoryProperties } = useIssueTypes();
   // derived values
   const isIssueTypeDisplayEnabled =
-    !!projectId && isIssueTypeEnabledForProject(workspaceSlug?.toString(), projectId, "ISSUE_TYPE_DISPLAY");
+    !!projectId && isIssueTypeEnabledForProject(workspaceSlug?.toString(), projectId, "ISSUE_TYPES");
   // Information for issue types with mandatory fields
   let optionTooltip: TIssueTypeOptionTooltip = {};
   if (showMandatoryFieldInfo) {

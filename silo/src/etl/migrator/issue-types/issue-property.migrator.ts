@@ -64,7 +64,7 @@ export const createOrUpdateIssueProperties = async (
       }
     } catch (error) {
       logger.error(
-        `[${jobId.slice(0, 7)}] Error while creating or updating the issue property: ${issueProperty.display_name}`,
+        `[${jobId.slice(0, 7)}] Error while ${method === "create" ? "creating" : "updating"} the issue property: ${issueProperty.display_name}`,
         error
       );
     }
@@ -115,7 +115,7 @@ export const createOrUpdateIssuePropertiesOptions = async (
       }
     } catch (error) {
       logger.error(
-        `[${jobId.slice(0, 7)}] Error while creating or updating the issue property option: ${issuePropertyOption.name}`,
+        `[${jobId.slice(0, 7)}] Error while ${method === "create" ? "creating" : "updating"} the issue property option: ${issuePropertyOption.name}`,
         error
       );
     }

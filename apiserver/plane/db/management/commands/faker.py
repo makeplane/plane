@@ -10,7 +10,6 @@ class Command(BaseCommand):
     help = "Create dump issues, cycles etc. for a project in a given workspace"
 
     def handle(self, *args: Any, **options: Any) -> str | None:
-
         try:
             workspace_name = input("Workspace Name: ")
             workspace_slug = input("Workspace slug: ")
@@ -23,10 +22,7 @@ class Command(BaseCommand):
 
             creator = input("Your email: ")
 
-            if (
-                creator == ""
-                or not User.objects.filter(email=creator).exists()
-            ):
+            if creator == "" or not User.objects.filter(email=creator).exists():
                 raise CommandError(
                     "User email is required and should be existing in Database"
                 )
@@ -36,26 +32,16 @@ class Command(BaseCommand):
             members = input("Enter Member emails (comma separated): ")
             members = members.split(",") if members != "" else []
 
-            issue_count = int(
-                input("Number of issues to be created: ")
-            )
-            cycle_count = int(
-                input("Number of cycles to be created: ")
-            )
-            module_count = int(
-                input("Number of modules to be created: ")
-            )
+            issue_count = int(input("Number of issues to be created: "))
+            cycle_count = int(input("Number of cycles to be created: "))
+            module_count = int(input("Number of modules to be created: "))
 
             # Create workspace
             workspace = Workspace.objects.create(
-                slug=workspace_slug,
-                name=workspace_name,
-                owner=user,
+                slug=workspace_slug, name=workspace_name, owner=user
             )
             # Create workspace member
-            WorkspaceMember.objects.create(
-                workspace=workspace, role=20, member=user
-            )
+            WorkspaceMember.objects.create(workspace=workspace, role=20, member=user)
 
             from plane.bgtasks.create_faker import create_fake_data
 
@@ -68,12 +54,8 @@ class Command(BaseCommand):
                 module_count=module_count,
             )
 
-            self.stdout.write(
-                self.style.SUCCESS("Data is pushed to the queue")
-            )
+            self.stdout.write(self.style.SUCCESS("Data is pushed to the queue"))
             return
         except Exception as e:
-            self.stdout.write(
-                self.style.ERROR(f"Command errored out {str(e)}")
-            )
+            self.stdout.write(self.style.ERROR(f"Command errored out {str(e)}"))
             return

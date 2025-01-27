@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 // types
-import { SlackAuthState, TAppConnection, TUserConnectionStatus } from "@silo/slack";
+import { SlackAuthState, SlackUserAuthState, TAppConnection, TUserConnectionStatus } from "@plane/etl/slack";
 
 export class SlackIntegrationService {
   protected baseURL: string;
@@ -30,7 +30,7 @@ export class SlackIntegrationService {
    * @param { SlackAuthState } payload
    * @returns { Promise<string> }
    */
-  async getUserConnectionURL(payload: SlackAuthState): Promise<string> {
+  async getUserConnectionURL(payload: SlackUserAuthState): Promise<string> {
     return this.axiosInstance
       .post(`/api/slack/user/auth/url`, payload)
       .then((res) => res.data)

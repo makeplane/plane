@@ -83,8 +83,6 @@ async def issue_information_query_execute(
             .order_by(F(order_by_group).asc(nulls_last=True))
             .values(groupKey=F(order_by_group), totalIssues=F("total_issues"))
         )
-        group_by_info = [
-            item for item in group_by_info if item["groupKey"] is not None
-        ]
+        group_by_info = [item for item in group_by_info if item["groupKey"] is not None]
 
     return total_issues_count, group_by_info

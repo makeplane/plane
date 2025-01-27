@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from "axios";
-import { JiraAuthState, JiraPATAuthState } from "@silo/jira";
+import { JiraAuthState, JiraPATAuthState } from "@plane/etl/jira";
 
 export class ImporterAuthService {
   protected baseURL: string;

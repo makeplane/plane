@@ -6,6 +6,7 @@ import requests
 # Django imports
 from django.utils import timezone
 from django.conf import settings
+from django.core import serializers
 
 # Strawberry imports
 import strawberry
@@ -17,7 +18,6 @@ from strawberry.permission import PermissionExtension
 from typing import Optional
 from asgiref.sync import sync_to_async
 
-
 # Module imports
 from plane.graphql.types.issue import IssuesType, IssueUserPropertyType
 from plane.graphql.permissions.project import (
@@ -25,6 +25,7 @@ from plane.graphql.permissions.project import (
     ProjectMemberPermission,
 )
 from plane.db.models import (
+    Project,
     Issue,
     IssueUserProperty,
     IssueAssignee,
@@ -33,21 +34,17 @@ from plane.db.models import (
     FileAsset,
     IssueSubscriber,
     IssueType,
+    CycleIssue,
+    ModuleIssue,
 )
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
-from plane.graphql.utils.issue_activity import (
-    convert_issue_properties_to_activity_dict,
-)
+from plane.graphql.utils.issue_activity import convert_issue_properties_to_activity_dict
 
 
 @sync_to_async
 def get_feature_flag(workspace_slug: str, user_id: str, flag_key: str):
     url = f"{settings.FEATURE_FLAG_SERVER_BASE_URL}/api/feature-flags/"
-    json = {
-        "workspace_slug": workspace_slug,
-        "user_id": user_id,
-        "flag_key": flag_key,
-    }
+    json = {"workspace_slug": workspace_slug, "user_id": user_id, "flag_key": flag_key}
     headers = {
         "content-type": "application/json",
         "x-api-key": settings.FEATURE_FLAG_SERVER_AUTH_TOKEN,
@@ -60,9 +57,7 @@ def get_feature_flag(workspace_slug: str, user_id: str, flag_key: str):
 @strawberry.type
 class IssueMutation:
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[ProjectMemberPermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
     )
     async def createIssue(
         self,
@@ -79,15 +74,17 @@ class IssueMutation:
         estimatePoint: Optional[str] = None,
         startDate: Optional[datetime] = None,
         targetDate: Optional[datetime] = None,
+        cycle_id: Optional[strawberry.ID] = None,
+        module_ids: Optional[list[strawberry.ID]] = None,
     ) -> IssuesType:
+        user = info.context.user
         workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
+        project_details = await sync_to_async(Project.objects.get)(id=project)
 
         issue_type_id = None
         # validating issue type and assigning thr default issue type
         is_feature_flagged = await get_feature_flag(
-            workspace.slug,
-            str(info.context.user.id),
-            "ISSUE_TYPE_DISPLAY",
+            workspace.slug, str(user.id), "ISSUE_TYPES"
         )
 
         if is_feature_flagged:
@@ -122,14 +119,14 @@ class IssueMutation:
             await sync_to_async(IssueAssignee.objects.bulk_create)(
                 [
                     IssueAssignee(
-                        assignee_id=user,
+                        assignee_id=assignee,
                         issue=issue,
                         workspace=workspace,
                         project_id=project,
-                        created_by_id=info.context.user.id,
-                        updated_by_id=info.context.user.id,
+                        created_by_id=user.id,
+                        updated_by_id=user.id,
                     )
-                    for user in assignees
+                    for assignee in assignees
                 ],
                 batch_size=10,
             )
@@ -142,8 +139,8 @@ class IssueMutation:
                         issue=issue,
                         project_id=project,
                         workspace=workspace,
-                        created_by_id=info.context.user.id,
-                        updated_by_id=info.context.user.id,
+                        created_by_id=user.id,
+                        updated_by_id=user.id,
                     )
                     for label in labels
                 ],
@@ -182,17 +179,84 @@ class IssueMutation:
             notification=True,
             project_id=str(project),
             issue_id=str(issue.id),
-            actor_id=str(info.context.user.id),
+            actor_id=str(user.id),
             current_instance=None,
             requested_data=json.dumps(activity_payload),
         )
 
+        issue_id = issue.id
+        project_id = project_details.id
+        # creating the cycle for the issue
+        if cycle_id is not None:
+            created_cycle = await sync_to_async(CycleIssue.objects.create)(
+                issue_id=issue_id,
+                cycle_id=cycle_id,
+                project_id=project_details.id,
+                workspace_id=workspace.id,
+                created_by_id=user.id,
+                updated_by_id=user.id,
+            )
+
+            issue_activity.delay(
+                type="cycle.activity.created",
+                requested_data=json.dumps({"cycles_list": list(str(issue_id))}),
+                actor_id=str(user.id),
+                issue_id=None,
+                project_id=str(project_id),
+                current_instance=json.dumps(
+                    {
+                        "updated_cycle_issues": [],
+                        "created_cycle_issues": serializers.serialize(
+                            "json", [created_cycle]
+                        ),
+                    }
+                ),
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=info.context.request.META.get("HTTP_ORIGIN"),
+            )
+
+        # creating the modules for the issue
+        if module_ids and len(module_ids) > 0:
+            await sync_to_async(
+                lambda: ModuleIssue.objects.bulk_create(
+                    [
+                        ModuleIssue(
+                            issue_id=issue_id,
+                            module_id=module_id,
+                            project_id=project_id,
+                            workspace_id=workspace.id,
+                            created_by_id=user.id,
+                            updated_by_id=user.id,
+                        )
+                        for module_id in module_ids
+                    ],
+                    batch_size=10,
+                    ignore_conflicts=True,
+                )
+            )()
+
+            await sync_to_async(
+                lambda: [
+                    issue_activity.delay(
+                        type="module.activity.created",
+                        requested_data=json.dumps({"module_id": str(module_id)}),
+                        actor_id=str(user.id),
+                        issue_id=str(issue_id),
+                        project_id=str(project_id),
+                        current_instance=None,
+                        epoch=int(timezone.now().timestamp()),
+                        notification=True,
+                        origin=info.context.request.META.get("HTTP_ORIGIN"),
+                    )
+                    for module_id in module_ids
+                ]
+            )()
+
         return issue
 
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[ProjectMemberPermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
     )
     async def updateIssue(
         self,
@@ -214,9 +278,7 @@ class IssueMutation:
         issue = await sync_to_async(Issue.objects.get)(id=id)
 
         # activity tacking data
-        current_issue_activity = (
-            await convert_issue_properties_to_activity_dict(issue)
-        )
+        current_issue_activity = await convert_issue_properties_to_activity_dict(issue)
         activity_payload = {}
 
         if name is not None:
@@ -237,12 +299,20 @@ class IssueMutation:
         if estimatePoint is not None:
             issue.estimate_point_id = estimatePoint
             activity_payload["estimate_point"] = estimatePoint
+
         if startDate is not None:
             issue.start_date = startDate
             activity_payload["start_date"] = startDate.strftime("%Y-%m-%d")
+        else:
+            issue.start_date = None
+            activity_payload["start_date"] = None
+
         if targetDate is not None:
             issue.target_date = targetDate
             activity_payload["target_date"] = targetDate.strftime("%Y-%m-%d")
+        else:
+            issue.target_date = None
+            activity_payload["target_date"] = None
 
         workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
 
@@ -252,9 +322,7 @@ class IssueMutation:
         # creating or updating the assignees
         if assignees is not None:
             activity_payload["assignee_ids"] = assignees
-            await sync_to_async(
-                IssueAssignee.objects.filter(issue=issue).delete
-            )()
+            await sync_to_async(IssueAssignee.objects.filter(issue=issue).delete)()
             if len(assignees) > 0:
                 await sync_to_async(IssueAssignee.objects.bulk_create)(
                     [
@@ -307,16 +375,10 @@ class IssueMutation:
         return issue
 
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[ProjectMemberPermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
     )
     async def deleteIssue(
-        self,
-        info: Info,
-        slug: str,
-        project: str,
-        issue: str,
+        self, info: Info, slug: str, project: str, issue: str
     ) -> bool:
         issue = await sync_to_async(Issue.issue_objects.get)(
             id=issue, project_id=project, workspace__slug=slug
@@ -326,9 +388,7 @@ class IssueMutation:
             raise Exception("You are not authorized to delete this issue")
 
         # activity tracking data
-        current_issue_activity = (
-            await convert_issue_properties_to_activity_dict(issue)
-        )
+        current_issue_activity = await convert_issue_properties_to_activity_dict(issue)
         await sync_to_async(issue.delete)()
 
         # Track the issue
@@ -372,58 +432,12 @@ class IssueUserPropertyMutation:
 
 
 @strawberry.type
-class IssueAttachmentMutation:
-    # @strawberry.mutation(
-    #     extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    # )
-    # def upload_file(self, file: Upload, info: Info) -> bool:
-    #     content = file.read()
-    #     filename = file.filename
-    #     @strawberry.mutation(
-    #         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    #     )
-    #     async def upload_file(self, file: Upload, info: Info) -> bool:
-    #         content = await sync_to_async(file.read)()
-    #         filename = file.filename
-
-    #         # Save the file using Django's file storage
-    #         await sync_to_async(default_storage.save)(filename, content)
-
-    #         return True
-
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def deleteIssueAttachment(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        issue: strawberry.ID,
-        attachment: strawberry.ID,
-    ) -> bool:
-        issue_attachment = await sync_to_async(FileAsset.objects.get)(
-            id=attachment,
-            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-            entity_identifier=issue,
-            project_id=project,
-            workspace__slug=slug,
-        )
-        await sync_to_async(issue_attachment.delete)()
-        return True
-
-
-@strawberry.type
 class IssueSubscriptionMutation:
     @strawberry.mutation(
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def subscribeIssue(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        issue: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
     ) -> bool:
         issue = await sync_to_async(IssueSubscriber.objects.create)(
             issue_id=issue, project_id=project, subscriber=info.context.user
@@ -434,11 +448,7 @@ class IssueSubscriptionMutation:
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def unSubscribeIssue(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        issue: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
     ) -> bool:
         issue_subscriber = await sync_to_async(IssueSubscriber.objects.get)(
             issue_id=issue,

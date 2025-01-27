@@ -57,7 +57,7 @@ class ModuleType:
     async def total_issues(self, info: Info) -> int:
         total_issues = await sync_to_async(
             lambda: Issue.issue_objects.filter(
-                issue_module__module_id=self.id
+                issue_module__module_id=self.id, issue_module__deleted_at__isnull=True
             ).count()
         )()
         return total_issues
@@ -66,7 +66,9 @@ class ModuleType:
     async def completed_issues(self, info: Info) -> int:
         total_issues = await sync_to_async(
             lambda: Issue.issue_objects.filter(
-                issue_module__module_id=self.id, state__group="completed"
+                issue_module__module_id=self.id,
+                issue_module__deleted_at__isnull=True,
+                state__group="completed",
             ).count()
         )()
         return total_issues

@@ -7,7 +7,6 @@ import useSWR from "swr";
 import { AuthenticationRoot, Dashboard, StepsRoot, DashboardLoaderRoot } from "@/plane-web/components/importers/asana";
 //  plane web hooks
 import { useFlag, useAsanaImporter } from "@/plane-web/hooks/store";
-import { E_FEATURE_FLAGS } from "@/plane-web/types/feature-flag";
 
 const AsanaImporter: FC = observer(() => {
   const {
@@ -25,8 +24,7 @@ const AsanaImporter: FC = observer(() => {
   const workspaceSlug = workspace?.slug || undefined;
   const workspaceId = workspace?.id || undefined;
   const userId = user?.id || undefined;
-  const isFeatureEnabled =
-    (workspaceSlug && useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.ASANA_IMPORTER)) || false;
+  const isFeatureEnabled = useFlag(workspaceSlug?.toString(), "ASANA_IMPORTER");
 
   // fetching external api token
   const { isLoading: externalApiTokenIsLoading } = useSWR(

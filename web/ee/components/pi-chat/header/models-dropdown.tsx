@@ -3,8 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
-import { cn } from "@plane/editor";
 import { CustomMenu, PiChatLogo } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { TAiModels } from "@/plane-web/types";
 
 export type TModelsDropdown = {

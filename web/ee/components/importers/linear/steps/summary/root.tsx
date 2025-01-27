@@ -2,13 +2,15 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { Button } from "@plane/ui";
-import { E_IMPORTER_KEYS, E_JOB_STATUS, TJob, TJobStatus } from "@silo/core";
-import { LinearConfig } from "@silo/linear";
+import useSWR from "swr";
+// plane imports
+import { E_IMPORTER_KEYS, E_JOB_STATUS, TJob, TJobStatus } from "@plane/etl/core";
+import { LinearConfig } from "@plane/etl/linear";
+import { Button, Loader } from "@plane/ui";
 // plane web components
-import { StepperNavigation } from "@/plane-web/components/importers/ui";
+import { StepperNavigation, AddSeatsAlertBanner, SkipUserImport } from "@/plane-web/components/importers/ui";
 // plane web hooks
-import { useLinearImporter } from "@/plane-web/hooks/store";
+import { useLinearImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web types
 import { E_LINEAR_IMPORTER_STEPS } from "@/plane-web/types/importers/linear";
 
@@ -20,16 +22,20 @@ export const SummaryRoot: FC = observer(() => {
     importerData,
     currentStep,
     configData,
+    handleSyncJobConfig,
     auth: { apiTokenVerification },
     job: { createJobConfig, createJob, startJob },
     handleDashboardView,
     handleStepper,
     resetImporterData,
-    data: { linearStateIdsByTeamId },
+    data: { linearStateIdsByTeamId, additionalUsersData, fetchAdditionalUsers },
     // setDashboardView,
   } = useLinearImporter();
+  const { currentWorkspaceSubscriptionAvailableSeats } = useWorkspaceSubscription();
+
   // states
   const [createConfigLoader, setCreateConfigLoader] = useState<boolean>(false);
+  const [userSkipToggle, setuserSkipToggle] = useState<boolean>(false);
   // derived values
   const workspaceSlug = workspace?.slug || undefined;
   const workspaceId = workspace?.id || undefined;
@@ -38,6 +44,11 @@ export const SummaryRoot: FC = observer(() => {
   const planeProjectId = importerData[E_LINEAR_IMPORTER_STEPS.SELECT_PLANE_PROJECT]?.projectId;
   const linearTeamId = importerData[E_LINEAR_IMPORTER_STEPS.CONFIGURE_LINEAR]?.teamId;
   const linearStates = (linearTeamId && linearStateIdsByTeamId(linearTeamId)) || [];
+
+  const handleUserSkipToggle = (flag: boolean) => {
+    setuserSkipToggle(flag);
+    handleSyncJobConfig("skipUserImport", flag);
+  };
 
   const handleOnClickNext = async () => {
     if (planeProjectId) {
@@ -77,6 +88,19 @@ export const SummaryRoot: FC = observer(() => {
     }
   };
 
+  const { isLoading: isJiraAdditionalUsersDataLoading } = useSWR(
+    workspaceId && userId && workspaceSlug && linearTeamId
+      ? `IMPORTER_LINEAR_ADDITIONAL_USERS_${workspaceId}_${userId}_${workspaceSlug}_${linearTeamId}`
+      : null,
+    workspaceId && userId && workspaceSlug && linearTeamId
+      ? async () => fetchAdditionalUsers(workspaceId, userId, workspaceSlug, linearTeamId)
+      : null,
+    { errorRetryCount: 0 }
+  );
+
+  const extraSeatRequired = additionalUsersData?.additionalUserCount - currentWorkspaceSubscriptionAvailableSeats;
+  const isNextBtnDisabled = Boolean(extraSeatRequired > 0 && !userSkipToggle);
+
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
       {/* content */}
@@ -97,10 +121,32 @@ export const SummaryRoot: FC = observer(() => {
         </div>
       </div>
 
+      {/* user import warning and skip */}
+      {isJiraAdditionalUsersDataLoading ? (
+        <Loader.Item height="35px" width="100%" />
+      ) : extraSeatRequired && !userSkipToggle ? (
+        <AddSeatsAlertBanner
+          additionalUserCount={additionalUsersData?.additionalUserCount}
+          extraSeatRequired={extraSeatRequired}
+        />
+      ) : (
+        <></>
+      )}
+      <SkipUserImport
+        importSourceName="Linear"
+        userSkipToggle={userSkipToggle}
+        handleUserSkipToggle={handleUserSkipToggle}
+      />
+
       {/* stepper button */}
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
-          <Button variant="primary" size="sm" onClick={handleOnClickNext} disabled={createConfigLoader}>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={handleOnClickNext}
+            disabled={createConfigLoader || isNextBtnDisabled}
+          >
             {createConfigLoader ? "Configuring..." : "Confirm"}
           </Button>
         </StepperNavigation>

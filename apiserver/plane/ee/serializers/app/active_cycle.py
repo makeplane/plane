@@ -4,9 +4,7 @@ from rest_framework import serializers
 # Module imports
 from plane.ee.serializers import BaseSerializer, ProjectLiteSerializer
 
-from plane.db.models import (
-    Cycle,
-)
+from plane.db.models import Cycle
 
 
 class WorkspaceActiveCycleSerializer(BaseSerializer):

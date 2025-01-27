@@ -11,7 +11,6 @@ from plane.db.models import Cycle
 from plane.app.permissions import WorkspaceViewerPermission
 from plane.app.serializers.cycle import CycleSerializer
 
-
 class WorkspaceCyclesEndpoint(BaseAPIView):
     permission_classes = [WorkspaceViewerPermission]
 

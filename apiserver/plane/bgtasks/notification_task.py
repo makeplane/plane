@@ -20,7 +20,7 @@ from plane.db.models import (
     UserNotificationPreference,
     ProjectMember,
 )
-from django.db.models import Subquery
+from django.db.models import Subquery, Q
 from plane.app.serializers import NotificationSerializer
 from plane.graphql.bgtasks.push_notification import issue_push_notifications
 
@@ -34,7 +34,6 @@ from bs4 import BeautifulSoup
 
 def update_mentions_for_issue(issue, project, new_mentions, removed_mention):
     aggregated_issue_mentions = []
-
     for mention_id in new_mentions:
         aggregated_issue_mentions.append(
             IssueMention(
@@ -127,7 +126,9 @@ def extract_mentions(issue_instance):
         data = json.loads(issue_instance)
         html = data.get("description_html")
         soup = BeautifulSoup(html, "html.parser")
-        mention_tags = soup.find_all("mention-component", attrs={"target": "users"})
+        mention_tags = soup.find_all(
+            "mention-component", attrs={"entity_name": "user_mention"}
+        )
 
         mentions = [mention_tag["entity_identifier"] for mention_tag in mention_tags]
 
@@ -141,7 +142,9 @@ def extract_comment_mentions(comment_value):
     try:
         mentions = []
         soup = BeautifulSoup(comment_value, "html.parser")
-        mentions_tags = soup.find_all("mention-component", attrs={"target": "users"})
+        mentions_tags = soup.find_all(
+            "mention-component", attrs={"entity_name": "user_mention"}
+        )
         for mention_tag in mentions_tags:
             mentions.append(mention_tag["entity_identifier"])
         return list(set(mentions))
@@ -183,6 +186,7 @@ def create_mention_notification(
                 "sequence_id": issue.sequence_id,
                 "state_name": issue.state.name,
                 "state_group": issue.state.group,
+                "type_id": str(issue.type_id),
             },
             "issue_activity": {
                 "id": str(activity.get("id")),
@@ -257,12 +261,9 @@ def notifications(
             new_mentions = get_new_mentions(
                 requested_instance=requested_data, current_instance=current_instance
             )
-
-            new_mentions = [
-                str(mention)
-                for mention in new_mentions
-                if mention in set(project_members)
-            ]
+            new_mentions = list(
+                set(new_mentions) & {str(member) for member in project_members}
+            )
             removed_mention = get_removed_mentions(
                 requested_instance=requested_data, current_instance=current_instance
             )
@@ -322,7 +323,11 @@ def notifications(
                 .values_list("subscriber", flat=True)
             )
 
-            issue = Issue.objects.filter(pk=issue_id).first()
+            issue = (
+                Issue.objects.filter(pk=issue_id)
+                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
+                .first()
+            )
 
             if subscriber:
                 # add the user to issue subscriber
@@ -422,6 +427,7 @@ def notifications(
                                     "sequence_id": issue.sequence_id,
                                     "state_name": issue.state.name,
                                     "state_group": issue.state.group,
+                                    "type_id": str(issue.type_id),
                                 },
                                 "issue_activity": {
                                     "id": str(issue_activity.get("id")),
@@ -469,6 +475,7 @@ def notifications(
                                         "sequence_id": issue.sequence_id,
                                         "state_name": issue.state.name,
                                         "state_group": issue.state.group,
+                                        "type_id": str(issue.type_id),
                                     },
                                     "issue_activity": {
                                         "id": str(issue_activity.get("id")),
@@ -557,6 +564,7 @@ def notifications(
                                             "workspace_slug": str(
                                                 issue.project.workspace.slug
                                             ),
+                                            "type_id": str(issue.type_id),
                                         },
                                         "issue_activity": {
                                             "id": str(issue_activity.get("id")),
@@ -626,6 +634,7 @@ def notifications(
                                         "workspace_slug": str(
                                             issue.project.workspace.slug
                                         ),
+                                        "type_id": str(issue.type_id),
                                     },
                                     "issue_activity": {
                                         "id": str(last_activity.id),
@@ -663,6 +672,7 @@ def notifications(
                                             "sequence_id": issue.sequence_id,
                                             "state_name": issue.state.name,
                                             "state_group": issue.state.group,
+                                            "type_id": str(issue.type_id),
                                         },
                                         "issue_activity": {
                                             "id": str(last_activity.id),
@@ -720,6 +730,7 @@ def notifications(
                                                 "sequence_id": issue.sequence_id,
                                                 "state_name": issue.state.name,
                                                 "state_group": issue.state.group,
+                                                "type_id": str(issue.type_id),
                                             },
                                             "issue_activity": {
                                                 "id": str(issue_activity.get("id")),

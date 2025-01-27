@@ -24,7 +24,6 @@ class WorkspaceFeature(BaseModel):
 
 
 class WorkspaceLicense(BaseModel):
-
     class PlanChoice(models.TextChoices):
         FREE = "FREE", "Free"
         PRO = "PRO", "Pro"
@@ -42,10 +41,7 @@ class WorkspaceLicense(BaseModel):
         "db.Workspace", on_delete=models.CASCADE, related_name="license"
     )
     recurring_interval = models.CharField(
-        choices=RecurringIntervalChoice.choices,
-        max_length=255,
-        blank=True,
-        null=True,
+        choices=RecurringIntervalChoice.choices, max_length=255, blank=True, null=True
     )
     current_period_end_date = models.DateTimeField(null=True, blank=True)
     current_period_start_date = models.DateTimeField(null=True, blank=True)
@@ -79,18 +75,12 @@ class WorkspaceLicense(BaseModel):
 
 
 class WorkspaceActivity(WorkspaceBaseModel):
-    verb = models.CharField(
-        max_length=255, verbose_name="Action", default="created"
-    )
+    verb = models.CharField(max_length=255, verbose_name="Action", default="created")
     field = models.CharField(
         max_length=255, verbose_name="Field Name", blank=True, null=True
     )
-    old_value = models.TextField(
-        verbose_name="Old Value", blank=True, null=True
-    )
-    new_value = models.TextField(
-        verbose_name="New Value", blank=True, null=True
-    )
+    old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
+    new_value = models.TextField(verbose_name="New Value", blank=True, null=True)
     comment = models.TextField(verbose_name="Comment", blank=True)
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -110,3 +100,127 @@ class WorkspaceActivity(WorkspaceBaseModel):
 
     def __str__(self):
         return f"{self.workspace.name} {self.verb}"
+
+
+class WorkspaceCredential(BaseModel):
+    source = models.CharField(max_length=20)  # importer type
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="credentials"
+    )
+    user = models.ForeignKey(
+        "db.User", on_delete=models.CASCADE, related_name="credentials"
+    )
+    # Source being the type of importer where issues are imported example: jira
+    source_access_token = models.TextField(null=True, blank=True)
+    source_refresh_token = models.TextField(null=True, blank=True)
+    source_hostname = models.TextField(null=True, blank=True)
+    # Target being Plane where issues are imported to.
+    target_access_token = models.TextField(null=True, blank=True)
+    target_refresh_token = models.TextField(null=True, blank=True)
+    target_hostname = models.TextField(null=True, blank=True)
+    # other values
+    is_pat = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Workspace Credential"
+        verbose_name_plural = "Workspace Credentials"
+        db_table = "workspace_credentials"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.workspace.name} {self.source}"
+
+
+class WorkspaceConnection(BaseModel):
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="connections"
+    )
+    credential = models.ForeignKey(
+        "ee.WorkspaceCredential", on_delete=models.CASCADE, related_name="connections", null=True, blank=True
+    )
+    target_hostname = models.TextField(null=True, blank=True)
+    source_hostname = models.TextField(null=True, blank=True)
+    # IntegrationType enum
+    connection_type = models.CharField(max_length=50)
+    # Id of the org from integrator
+    connection_id = models.CharField(max_length=255)
+    connection_data = models.JSONField(default=dict)
+    connection_slug = models.TextField(null=True, blank=True)
+    scopes = models.JSONField(default=list)
+    config = models.JSONField(default=dict)
+
+    class Meta:
+        verbose_name = "Workspace Connection"
+        verbose_name_plural = "Workspace Connections"
+        db_table = "workspace_connections"
+        ordering = ("-created_at",)
+
+    def delete(self, *args, **kwargs):
+        credential = self.credential
+        super().delete(*args, **kwargs)
+        # Deactivate the credential if no other connections reference it
+        if not WorkspaceConnection.objects.filter(credential=credential).exists():
+            credential.is_active = False
+            credential.save()
+
+class WorkspaceEntityConnection(BaseModel):
+    type = models.CharField(max_length=30, blank=True, null=True)
+    workspace_connection = models.ForeignKey(
+        "ee.WorkspaceConnection",
+        on_delete=models.CASCADE,
+        related_name="entity_connections",
+    )
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="entity_connections"
+    )
+    project = models.ForeignKey(
+        "db.Project", on_delete=models.CASCADE, related_name="entity_connections"
+    )
+    issue = models.ForeignKey(
+        "db.Issue", on_delete=models.CASCADE, related_name="entity_connections"
+    )
+    entity_type = models.CharField(max_length=30, blank=True, null=True)
+    entity_id = models.CharField(max_length=255, blank=True, null=True)
+    entity_slug = models.CharField(max_length=255, blank=True, null=True)
+    entity_data = models.JSONField(default=dict)
+    config = models.JSONField(default=dict)
+
+    class Meta:
+        verbose_name = "Workspace Entity Connection"
+        verbose_name_plural = "Workspace Entity Connections"
+        db_table = "workspace_entity_connections"
+
+
+class WorkspaceMemberActivityModel(BaseModel):
+    class WorkspaceMemberActivityType(models.TextChoices):
+        JOINED = "JOINED", "JOINED"
+        REMOVED = "REMOVED", "Removed"
+        LEFT = "LEFT", "Left"
+        ROLE_CHANGED = "ROLE_CHANGED", "Role Changed"
+
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="member_activities"
+    )
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="workspace_member_activities",
+    )
+    type = models.CharField(max_length=255, default=WorkspaceMemberActivityType.JOINED)
+    workspace_member = models.ForeignKey(
+        "db.WorkspaceMember", on_delete=models.CASCADE, related_name="activities"
+    )
+    old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
+    new_value = models.TextField(verbose_name="New Value", blank=True, null=True)
+    epoch = models.FloatField(null=True)
+
+    class Meta:
+        verbose_name = "Workspace Member Activity"
+        verbose_name_plural = "Workspace Member Activities"
+        db_table = "workspace_member_activities"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.workspace.name} {self.type}"

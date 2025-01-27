@@ -33,9 +33,7 @@ def bulk_update_issues(issues, fields):
 
 # remove methods
 @sync_to_async
-def get_sub_issue_details(
-    issueId: strawberry.ID, parentIssueId: strawberry.ID
-):
+def get_sub_issue_details(issueId: strawberry.ID, parentIssueId: strawberry.ID):
     return Issue.issue_objects.get(id=issueId, parent=parentIssueId)
 
 
@@ -52,9 +50,7 @@ def update_issue_parent(
 class SubIssueMutation:
     # adding issue relation
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[ProjectMemberPermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
     )
     async def createSubIssue(
         self,
@@ -75,9 +71,7 @@ class SubIssueMutation:
             _ = [
                 issue_activity.delay(
                     type="issue.activity.updated",
-                    requested_data=json.dumps(
-                        {"parent_id": str(parentIssueId)}
-                    ),
+                    requested_data=json.dumps({"parent_id": str(parentIssueId)}),
                     actor_id=str(info.context.user.id),
                     issue_id=str(sub_issue_id),
                     project_id=str(project),
@@ -95,9 +89,7 @@ class SubIssueMutation:
 
     # removing issue relation
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[ProjectMemberPermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
     )
     async def removeSubIssue(
         self,

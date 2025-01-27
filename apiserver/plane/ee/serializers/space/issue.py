@@ -20,22 +20,13 @@ from plane.db.models import (
 class IssueCreateSerializer(BaseSerializer):
     # ids
     state_id = serializers.PrimaryKeyRelatedField(
-        source="state",
-        queryset=State.objects.all(),
-        required=False,
-        allow_null=True,
+        source="state", queryset=State.objects.all(), required=False, allow_null=True
     )
     type_id = serializers.PrimaryKeyRelatedField(
-        source="type",
-        queryset=IssueType.objects.all(),
-        required=False,
-        allow_null=True,
+        source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
     )
     parent_id = serializers.PrimaryKeyRelatedField(
-        source="parent",
-        queryset=Issue.objects.all(),
-        required=False,
-        allow_null=True,
+        source="parent", queryset=Issue.objects.all(), required=False, allow_null=True
     )
     label_ids = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
@@ -74,9 +65,7 @@ class IssueCreateSerializer(BaseSerializer):
             and data.get("target_date", None) is not None
             and data.get("start_date", None) > data.get("target_date", None)
         ):
-            raise serializers.ValidationError(
-                "Start date cannot exceed target date"
-            )
+            raise serializers.ValidationError("Start date cannot exceed target date")
         return data
 
     def create(self, validated_data):
@@ -93,15 +82,15 @@ class IssueCreateSerializer(BaseSerializer):
         if not issue_type:
             # Get default issue type
             issue_type = IssueType.objects.filter(
-                project_issue_types__project_id=project_id, is_default=True
+                project_issue_types__project_id=project_id,
+                is_epic=False,
+                is_default=True,
             ).first()
             issue_type = issue_type
 
         # Create Issue
         issue = Issue.objects.create(
-            **validated_data,
-            project_id=project_id,
-            type=issue_type,
+            **validated_data, project_id=project_id, type=issue_type
         )
         issue.save(created_by_id=created_by_id)
 

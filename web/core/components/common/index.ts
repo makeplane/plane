@@ -6,3 +6,4 @@ export * from "./logo";
 export * from "./pro-icon";
 export * from "./custom-error";
 export * from "./count-chip";
+export * from "./activity";

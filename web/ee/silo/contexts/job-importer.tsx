@@ -3,7 +3,7 @@
 
 import { createContext, ReactNode } from "react";
 import useSWR, { KeyedMutator, SWRResponse } from "swr";
-import { JobService, TJob, TJobConfigResponse, TJobWithConfig, TImporterKeys } from "@silo/core";
+import { JobService, TJob, TJobConfigResponse, TJobWithConfig, TImporterKeys } from "@plane/etl/core";
 // silo hooks
 import { useApiServiceToken, useBaseImporter } from "@/plane-web/silo/hooks";
 

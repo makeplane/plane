@@ -4,7 +4,7 @@ import { Issue, Issue as LinearIssue } from "@linear/sdk";
 import { updateJob } from "@/db/query";
 import { env } from "@/env";
 import { BaseDataMigrator } from "@/etl/base-import-worker";
-import { TJobWithConfig, PlaneEntities } from "@silo/core";
+import { TJobWithConfig, PlaneEntities } from "@plane/etl/core";
 import {
   pullComments,
   pullCycles,
@@ -15,7 +15,7 @@ import {
   TLinearIssueWithChildren,
   LinearConfig,
   LinearEntity,
-} from "@silo/linear";
+} from "@plane/etl/linear";
 import { getRandomColor } from "../helpers/generic-helpers";
 import {
   createLinearClient,
@@ -51,7 +51,7 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
       return [];
     }
 
-    const users = await pullUsers(client, job.config.meta.teamId);
+    const users = job.config.meta.skipUserImport ? [] : await pullUsers(client, job.config.meta.teamId);
     const labels = await pullLabels(client);
     const issues = await pullIssues(client, job.config.meta.teamId);
     const cycles = await pullCycles(client, job.config.meta.teamId);
@@ -112,10 +112,7 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
     const buildIssueTree = (issues: LinearIssue[]) => {
       // Create a map of issues by their external_id for quick lookup
       const issueMap = new Map<string, TLinearIssueWithChildren>(
-        data.issues.map((issue: LinearIssue) => [
-          issue.id,
-          { ...issue, children: [] } as unknown as TLinearIssueWithChildren,
-        ])
+        data.issues.map((issue: any) => [issue.id, { ...issue, children: [] } as unknown as TLinearIssueWithChildren]) // TODO: fix types
       );
 
       // Build the tree structure
@@ -148,7 +145,7 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
       while (queue.length > 0) {
         const { node, level } = queue.shift()!;
         const { children, ...issueWithoutChildren } = node;
-        result.push(issueWithoutChildren as LinearIssue);
+        result.push(issueWithoutChildren as any); // TODO: fix types
 
         if (children && children.length > 0) {
           children.forEach((child) => {
@@ -188,7 +185,7 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
       return batches;
     };
 
-    const batches = batchIssues(data.issues, batchSize);
+    const batches = batchIssues(data.issues as any, batchSize); // TODO: fix types
 
     const finalBatches: TBatch<LinearEntity>[] = [];
 
@@ -223,7 +220,7 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
         },
         data: [
           {
-            issues: batch,
+            issues: batch as any,
             issue_comments: associatedComments,
             cycles: cycles,
             labels: data.labels,

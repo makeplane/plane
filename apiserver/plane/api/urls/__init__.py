@@ -5,11 +5,14 @@ from .cycle import urlpatterns as cycle_patterns
 from .module import urlpatterns as module_patterns
 from .intake import urlpatterns as intake_patterns
 from .member import urlpatterns as member_patterns
+from .user import urlpatterns as user_patterns
 from .asset import urlpatterns as asset_patterns
 from .issue_type import urlpatterns as issue_type_patterns
 
 # ee imports
 from plane.ee.urls.api.issue_property import urlpatterns as ee_issue_property_patterns
+from plane.ee.urls.api.workspace import urlpatterns as ee_workspace_patterns
+from plane.ee.urls.api.job import urlpatterns as ee_job_patterns
 
 urlpatterns = [
     *project_patterns,
@@ -17,9 +20,12 @@ urlpatterns = [
     *issue_patterns,
     *cycle_patterns,
     *module_patterns,
+    *user_patterns,
     *intake_patterns,
     *member_patterns,
     *issue_type_patterns,
     *asset_patterns,
     *ee_issue_property_patterns,
+    *ee_workspace_patterns,
+    *ee_job_patterns
 ]

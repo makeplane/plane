@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, Dispatch, ReactNode, SetStateAction, useState } from "react";
-import { JiraConfig } from "@silo/jira";
+import { JiraConfig } from "@plane/etl/jira";
 // silo hooks
 import { useBaseImporter } from "@/plane-web/silo/hooks";
 // silo constants

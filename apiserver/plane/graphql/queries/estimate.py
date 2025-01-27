@@ -9,17 +9,12 @@ import strawberry
 
 @strawberry.type
 class EstimatePointQuery:
-
     @strawberry.field(
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def estimatePoints(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID
     ) -> list[EstimatePointType]:
-
         estimate_points = await sync_to_async(list)(
             EstimatePoint.objects.filter(
                 workspace__slug=slug, project_id=project

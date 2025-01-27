@@ -36,15 +36,11 @@ class SAMLAuthInitiateEndpoint(View):
             instance = Instance.objects.first()
             if instance is None or not instance.is_setup_done:
                 raise AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES[
-                        "INSTANCE_NOT_CONFIGURED"
-                    ],
+                    error_code=AUTHENTICATION_ERROR_CODES["INSTANCE_NOT_CONFIGURED"],
                     error_message="INSTANCE_NOT_CONFIGURED",
                 )
             # Provider
-            provider = SAMLAdapter(
-                request=request,
-            )
+            provider = SAMLAdapter(request=request)
             # Get the auth url
             return_url = provider.get_auth_url()
             return HttpResponseRedirect(return_url)
@@ -53,8 +49,7 @@ class SAMLAuthInitiateEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "?" + urlencode(params),
+                base_host(request=request, is_app=True), "?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
@@ -82,7 +77,6 @@ class SAMLCallbackEndpoint(View):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class SAMLLogoutEndpoint(View):
-
     def get(self, request, *args, **kwargs):
         logout(request=request)
         return HttpResponseRedirect(base_host(request=request, is_app=True))
@@ -90,7 +84,6 @@ class SAMLLogoutEndpoint(View):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class SAMLMetadataEndpoint(View):
-
     def get(self, request):
         xml_template = f"""<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
                   entityID="{request.scheme}://{request.get_host()}/auth/saml/metadata/">

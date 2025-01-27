@@ -3,6 +3,7 @@
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Info, Lock } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // plane types
 import { IProject, IWorkspace } from "@plane/types";
 // plane ui
@@ -16,16 +17,15 @@ import {
   CustomEmojiIconPicker,
   EmojiIconPickerTypes,
   Tooltip,
-  // CustomSearchSelect,
 } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 import { ImagePickerPopover } from "@/components/core";
+import { TimezoneSelect } from "@/components/global";
 // constants
 import { PROJECT_UPDATED } from "@/constants/event-tracker";
 import { NETWORK_CHOICES } from "@/constants/project";
 // helpers
-// import { TTimezone, TIME_ZONES } from "@/constants/timezones";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getFileURL } from "@/helpers/file.helper";
@@ -34,6 +34,7 @@ import { useEventTracker, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { ProjectService } from "@/services/project";
+
 export interface IProjectDetailsForm {
   project: IProject;
   workspaceSlug: string;
@@ -43,6 +44,7 @@ export interface IProjectDetailsForm {
 const projectService = new ProjectService();
 export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { project, workspaceSlug, projectId, isAdmin } = props;
+  const { t } = useTranslation();
   // states
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -68,20 +70,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   });
   // derived values
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
-  // const getTimeZoneLabel = (timezone: TTimezone | undefined) => {
-  //   if (!timezone) return undefined;
-  //   return (
-  //     <div className="flex gap-1.5">
-  //       <span className="text-custom-text-400">{timezone.gmtOffset}</span>
-  //       <span className="text-custom-text-200">{timezone.name}</span>
-  //     </div>
-  //   );
-  // };
-  // const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
-  //   value: timeZone.value,
-  //   query: timeZone.name + " " + timeZone.gmtOffset + " " + timeZone.value,
-  //   content: getTimeZoneLabel(timeZone),
-  // }));
   const coverImage = watch("cover_image_url");
 
   useEffect(() => {
@@ -146,7 +134,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       description: formData.description,
 
       logo_props: formData.logo_props,
-      // timezone: formData.timezone,
+      timezone: formData.timezone,
     };
     // if unsplash or a pre-defined image is uploaded, delete the old uploaded asset
     if (formData.cover_image_url?.startsWith("http")) {
@@ -275,7 +263,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           <span className="text-xs text-red-500">{errors?.name?.message}</span>
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">Description</h4>
+          <h4 className="text-sm">Summary</h4>
           <Controller
             name="description"
             control={control}
@@ -284,7 +272,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 id="description"
                 name="description"
                 value={value}
-                placeholder="Enter project description"
+                placeholder="Enter project summary"
                 onChange={onChange}
                 className="min-h-[102px] text-sm font-medium"
                 hasError={Boolean(errors?.description)}
@@ -375,8 +363,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                         <div className="flex items-start gap-2">
                           <network.icon className="h-3.5 w-3.5" />
                           <div className="-mt-1">
-                            <p>{network.label}</p>
-                            <p className="text-xs text-custom-text-400">{network.description}</p>
+                            <p>{t(network.label)}</p>
+                            <p className="text-xs text-custom-text-400">{t(network.description)}</p>
                           </div>
                         </div>
                       </CustomSelect.Option>
@@ -386,31 +374,27 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               }}
             />
           </div>
-          {/* <div className="flex flex-col gap-1 col-span-1 sm:col-span-2 xl:col-span-1">
+          <div className="flex flex-col gap-1 col-span-1 sm:col-span-2 xl:col-span-1">
             <h4 className="text-sm">Project Timezone</h4>
             <Controller
               name="timezone"
               control={control}
               rules={{ required: "Please select a timezone" }}
               render={({ field: { value, onChange } }) => (
-                <CustomSearchSelect
-                  value={value}
-                  label={
-                    value
-                      ? (getTimeZoneLabel(TIME_ZONES.find((t) => t.value === value)) ?? value)
-                      : "Select a timezone"
-                  }
-                  options={timeZoneOptions}
-                  onChange={onChange}
-                  buttonClassName={errors.timezone ? "border-red-500" : "border-none"}
-                  className="rounded-md border-[0.5px] !border-custom-border-200"
-                  optionsClassName="w-72"
-                  input
-                />
+                <>
+                  <TimezoneSelect
+                    value={value}
+                    onChange={(value: string) => {
+                      onChange(value);
+                    }}
+                    error={Boolean(errors.timezone)}
+                    buttonClassName="border-none"
+                  />
+                </>
               )}
             />
             {errors.timezone && <span className="text-xs text-red-500">{errors.timezone.message}</span>}
-          </div> */}
+          </div>
         </div>
         <div className="flex items-center justify-between py-2">
           <>

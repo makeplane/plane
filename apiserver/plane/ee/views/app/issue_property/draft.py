@@ -1,11 +1,7 @@
 # Django imports
 from django.db.models import F, Value, Case, When
 from django.core.exceptions import ValidationError
-from django.db.models import (
-    Q,
-    CharField,
-    Func,
-)
+from django.db.models import Q, CharField, Func
 from django.db.models.functions import Cast
 from django.contrib.postgres.aggregates import ArrayAgg
 
@@ -14,11 +10,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.ee.models import (
-    IssueProperty,
-    DraftIssuePropertyValue,
-    PropertyTypeEnum,
-)
+from plane.ee.models import IssueProperty, DraftIssuePropertyValue, PropertyTypeEnum
 from plane.db.models import Project, DraftIssue
 from plane.ee.views.base import BaseAPIView
 from plane.ee.permissions import ProjectEntityPermission
@@ -27,17 +19,13 @@ from plane.ee.utils.issue_property_validators import (
     SAVE_MAPPER,
     VALIDATOR_MAPPER,
 )
-from plane.ee.utils.draft_issue_property_validators import (
-    draft_issue_property_savers,
-)
+from plane.ee.utils.draft_issue_property_validators import draft_issue_property_savers
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
 
 class DraftIssuePropertyValueEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     def query_annotator(self, query):
         return query.values("property_id").annotate(
@@ -63,15 +51,11 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
                     ),
                     When(
                         property__property_type=PropertyTypeEnum.DECIMAL,
-                        then=Cast(
-                            F("value_decimal"), output_field=CharField()
-                        ),
+                        then=Cast(F("value_decimal"), output_field=CharField()),
                     ),
                     When(
                         property__property_type=PropertyTypeEnum.BOOLEAN,
-                        then=Cast(
-                            F("value_boolean"), output_field=CharField()
-                        ),
+                        then=Cast(F("value_boolean"), output_field=CharField()),
                     ),
                     When(
                         property__property_type=PropertyTypeEnum.RELATION,
@@ -81,20 +65,16 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
                         property__property_type=PropertyTypeEnum.OPTION,
                         then=Cast(F("value_option"), output_field=CharField()),
                     ),
-                    default=Value(
-                        ""
-                    ),  # Default value if none of the conditions match
+                    default=Value(""),  # Default value if none of the conditions match
                     output_field=CharField(),
                 ),
                 filter=Q(property_id=F("property_id")),
                 distinct=True,
-            ),
+            )
         )
 
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
-    def get(
-        self, request, slug, project_id, draft_issue_id, issue_property_id=None
-    ):
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    def get(self, request, slug, project_id, draft_issue_id, issue_property_id=None):
         # Get a single issue property value
         if issue_property_id:
             issue_property_value = DraftIssuePropertyValue.objects.filter(
@@ -104,9 +84,9 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
                 property_id=issue_property_id,
             )
 
-            issue_property_value = self.query_annotator(
-                issue_property_value
-            ).values("property_id", "value")
+            issue_property_value = self.query_annotator(issue_property_value).values(
+                "property_id", "value"
+            )
 
             return Response(issue_property_value, status=status.HTTP_200_OK)
 
@@ -119,21 +99,19 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
         )
 
         # Annotate the query
-        issue_property_values = self.query_annotator(
-            issue_property_values
-        ).values("property_id", "values")
+        issue_property_values = self.query_annotator(issue_property_values).values(
+            "property_id", "values"
+        )
 
         # Create dictionary of property_id and values
         response = {
-            str(issue_property_value["property_id"]): issue_property_value[
-                "values"
-            ]
+            str(issue_property_value["property_id"]): issue_property_value["values"]
             for issue_property_value in issue_property_values
         }
 
         return Response(response, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def post(self, request, slug, project_id, draft_issue_id):
         try:
             # Create a new issue property value
@@ -150,9 +128,9 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
             )
 
             # Get all issue property values
-            existing_prop_values = self.query_annotator(
-                existing_prop_queryset
-            ).values("property_id", "values")
+            existing_prop_values = self.query_annotator(existing_prop_queryset).values(
+                "property_id", "values"
+            )
 
             # Get issue
             issue = DraftIssue.objects.get(pk=draft_issue_id)
@@ -169,6 +147,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_id=project_id,
                 issue_type_id=issue_type_id,
+                issue_type__is_epic=False,
             )
 
             # Validate the data
@@ -190,8 +169,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
 
             # Delete the old values
             existing_prop_queryset.filter(
-                property_id__in=issue_property_ids,
-                draft_issue__type_id=issue_type_id,
+                property_id__in=issue_property_ids, draft_issue__type_id=issue_type_id
             ).delete()
             # Bulk create the issue property values
             DraftIssuePropertyValue.objects.bulk_create(
@@ -200,18 +178,16 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
 
             return Response(status=status.HTTP_201_CREATED)
         except (ValidationError, ValueError) as e:
-            return Response(
-                {"error": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def patch(self, request, slug, project_id, draft_issue_id, property_id):
         try:
             # Get the issue property
             issue_property = IssueProperty.objects.get(
                 workspace__slug=slug,
                 project_id=project_id,
+                issue_type__is_epic=False,
                 pk=property_id,
             )
 
@@ -220,6 +196,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
                 project_id=project_id,
                 draft_issue_id=draft_issue_id,
                 property_id=property_id,
+                property__issue_type__is_epic=False,
             )
 
             # Get the value
@@ -230,10 +207,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
                 not values or not [v for v in values if v]
             ):
                 return Response(
-                    {
-                        "error": issue_property.display_name
-                        + " is a required property"
-                    },
+                    {"error": issue_property.display_name + " is a required property"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -253,7 +227,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
                 property_values = saver(
                     values=values,
                     issue_property=issue_property,
-                    draft_issue_id=draft_issue_id,
+                    issue_id=draft_issue_id,
                     existing_values=[],
                     workspace_id=issue_property.workspace_id,
                     project_id=issue_property.project_id,
@@ -270,7 +244,4 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
 
             return Response(status=status.HTTP_204_NO_CONTENT)
         except (ValidationError, ValueError) as e:
-            return Response(
-                {"error": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

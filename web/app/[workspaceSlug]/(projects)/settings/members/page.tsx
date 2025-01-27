@@ -10,6 +10,7 @@ import { IWorkspaceBulkInviteFormData } from "@plane/types";
 import { Button, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
+import { CountChip } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "@/components/workspace";
 // constants
@@ -43,7 +44,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { captureEvent } = useEventTracker();
   const {
-    workspace: { inviteMembersToWorkspace },
+    workspace: { workspaceMemberIds, inviteMembersToWorkspace },
   } = useMember();
   const { currentWorkspace } = useWorkspace();
 
@@ -53,12 +54,11 @@ const WorkspaceMembersSettingsPage = observer(() => {
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const {
-    currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
-    // updateSubscribedPlan
-  } = useWorkspaceSubscription();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   // derived values
-  const isSelfHostedProWorkspace = subscriptionDetail?.is_self_managed && subscriptionDetail?.product === "PRO";
+  const isOfflineSubscription = subscriptionDetail?.is_offline_payment;
+  const isProOrBusinessWorkspace =
+    subscriptionDetail && !isOfflineSubscription && ["PRO", "BUSINESS"].includes(subscriptionDetail?.product);
 
   const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {
     if (!workspaceSlug) return;
@@ -82,9 +82,6 @@ const WorkspaceMembersSettingsPage = observer(() => {
           title: "Success!",
           message: "Invitations sent successfully.",
         });
-        // updateSubscribedPlan(workspaceSlug?.toString(), {
-        //   total_seats: (subscriptionDetail?.total_seats ?? 1) + data.emails.length,
-        // });
       })
       .catch((err) => {
         captureEvent(MEMBER_INVITED, {
@@ -127,7 +124,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           setUpdateWorkspaceSeatsModal(true);
         }}
       />
-      {isSelfHostedProWorkspace && updateWorkspaceSeatVariant && (
+      {isProOrBusinessWorkspace && updateWorkspaceSeatVariant && (
         <UpdateWorkspaceSeatsModal
           isOpen={updateWorkspaceSeatsModal}
           variant={updateWorkspaceSeatVariant}
@@ -137,7 +134,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           }}
         />
       )}
-      {isSelfHostedProWorkspace && (
+      {isProOrBusinessWorkspace && (
         <RemoveUnusedSeatsModal
           isOpen={removeUnusedSeatsConfirmationModal}
           handleClose={() => setRemoveUnusedSeatsConfirmationModal(false)}
@@ -149,7 +146,12 @@ const WorkspaceMembersSettingsPage = observer(() => {
         })}
       >
         <div className="flex justify-between gap-4 pb-3.5 items-start">
-          <h4 className="text-xl font-medium">Members</h4>
+          <h4 className="flex items-center gap-2.5 text-xl font-medium">
+            Members
+            {workspaceMemberIds && workspaceMemberIds.length > 0 && (
+              <CountChip count={workspaceMemberIds.length} className="h-5 m-auto" />
+            )}
+          </h4>
           <div className="ml-auto flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
             <Search className="h-3.5 w-3.5 text-custom-text-400" />
             <input
@@ -165,7 +167,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
               Add member
             </Button>
           )}
-          {isSelfHostedProWorkspace && canPerformWorkspaceAdminActions && (
+          {isProOrBusinessWorkspace && canPerformWorkspaceAdminActions && (
             <CustomMenu
               customButton={
                 <Button variant="neutral-primary" size="sm" className="flex items-center justify-center gap-1">

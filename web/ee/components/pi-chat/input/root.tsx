@@ -1,8 +1,9 @@
 import { useCallback, useRef } from "react";
 import { useParams } from "next/navigation";
 import { ArrowUp, FileText } from "lucide-react";
-import { cn, PiChatEditor } from "@plane/editor";
+import { PiChatEditor } from "@plane/editor";
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { useUser } from "@/hooks/store";
 import { IssueIdentifier } from "@/plane-web/components/issues";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
@@ -16,10 +17,13 @@ type TEditCommands = {
 };
 type TProps = {
   isFullScreen: boolean;
+  className?: string;
+  onSubmit?: () => void;
+  activeChatId?: string;
 };
 
 export const InputBox = (props: TProps) => {
-  const { isFullScreen } = props;
+  const { isFullScreen, className, onSubmit, activeChatId } = props;
   // store hooks
   const { getAnswer, searchCallback, isPiTyping } = usePiChat();
   const { data: currentUser } = useUser();
@@ -37,8 +41,9 @@ export const InputBox = (props: TProps) => {
       if (!query) return;
       getAnswer(query, currentUser?.id);
       editorCommands.current?.clear();
+      onSubmit?.();
     },
-    [currentUser, editorCommands, getAnswer]
+    [currentUser, editorCommands, getAnswer, onSubmit, activeChatId]
   );
 
   const getMentionSuggestions = async (query: string) => {
@@ -55,7 +60,7 @@ export const InputBox = (props: TProps) => {
             projectId={item.project_id || ""}
             projectIdentifier={item.project__identifier || ""}
             issueSequenceId={item.sequence_id || ""}
-            textContainerClassName="text-custom-sidebar-text-400 text-xs"
+            textContainerClassName="text-custom-sidebar-text-400 text-xs whitespace-nowrap"
           />
         );
       case "cycle":
@@ -88,11 +93,7 @@ export const InputBox = (props: TProps) => {
   };
 
   return (
-    <form
-      className={cn(
-        "flex flex-col absolute bottom-3 inset-x-10 bg-pi-50 left-1/2 transform -translate-x-1/2 w-full px-2 md:px-0"
-      )}
-    >
+    <form className={className}>
       <div className="bg-custom-background-100 w-full rounded-[28px] p-2 flex gap-3 shadow-sm border-[4px] border-pi-100">
         {/* Focus */}
         <FocusFilter />

@@ -20,9 +20,10 @@ import {
   TIssuePropertyTypeKeys,
   UploadData,
 } from "@plane/sdk";
-import { TPropertyValuesPayload, TServiceCredentials } from "@silo/core";
+import { TIssuePropertyValuesPayload, TPropertyValuesPayload, TServiceCredentials } from "@plane/etl/core";
 import { HTMLElement, parse } from "node-html-parser";
 import { IssueCreatePayload, IssueWithParentPayload } from "./types";
+import { BulkIssuePayload } from "@/types";
 
 // A wrapper for better readability
 export const createOrphanIssues = async (payload: IssueCreatePayload): Promise<ExIssue[]> =>
@@ -96,6 +97,221 @@ export const createIssuesWithParent = async (payload: IssueWithParentPayload): P
   }
 
   return result;
+};
+
+type BulkIssueCreatePayload = IssueCreatePayload & {
+  issueComments: ExIssueComment[];
+  modules: { id: string; issues: string[] }[];
+  cycles: { id: string; issues: string[] }[];
+};
+
+export const getAssociatedComments = async (
+  jobId: string,
+  credentials: TServiceCredentials,
+  comments: Partial<ExIssueComment>[],
+  users: PlaneUser[],
+  issueId: string,
+  planeClient: PlaneClient,
+  workspaceSlug: string
+): Promise<ExIssueComment[]> => {
+  const processedComments = await Promise.all(
+    comments
+      .filter((comment) => comment !== undefined && comment.issue === issueId)
+      .map(async (comment: Partial<ExIssueComment>) => {
+        // Process any attachments in the comment
+        const [processedComment, assetIds] = await processCommentAttachments(
+          jobId,
+          credentials,
+          comment,
+          planeClient,
+          workspaceSlug
+        );
+
+        const actor = users.find((user) => user.display_name === comment.actor);
+        const createdBy = users.find((user) => user.display_name === comment.created_by);
+
+        return {
+          ...processedComment,
+          file_assets: assetIds,
+          actor: actor?.id || null,
+          created_by: createdBy?.id || null,
+        };
+      })
+  );
+
+  return processedComments as ExIssueComment[];
+};
+
+export const generateIssuePayload = async (payload: BulkIssueCreatePayload): Promise<ExIssue[]> => {
+  const {
+    jobId,
+    planeLabels,
+    issues,
+    planeClient,
+    workspaceSlug,
+    users,
+    credentials,
+    planeIssueTypes,
+    issueComments,
+    planeIssueProperties,
+    planeIssuePropertiesOptions,
+    planeIssuePropertyValues,
+  } = payload;
+  const bulkIssuePayload: BulkIssuePayload[] = [];
+
+  for (const issue of issues) {
+    try {
+      // Process attachments first
+      const [processedIssue, assets] = await processAttachments(jobId, credentials, issue, planeClient, workspaceSlug);
+
+      // Get the entities for the issue
+      processedIssue.labels = getPlaneIssueLabels(processedIssue, planeLabels);
+      processedIssue.created_by = getIssueCreatedBy(processedIssue, users) ?? "";
+      processedIssue.assignees = getIssueAssignees(processedIssue, users);
+      processedIssue.type_id = getIssueType(processedIssue, planeIssueTypes)?.id;
+      processedIssue.links = processedIssue.links ? processedIssue.links.filter((link) => link !== undefined) : [];
+      processedIssue.parent = processedIssue.parent ? processedIssue.parent : null;
+
+      // Get the association for the issue
+      const associatedCycles = payload.cycles.filter((cycle) => cycle.issues.includes(processedIssue.external_id));
+      const associatedModules = payload.modules.filter((module) => module.issues.includes(processedIssue.external_id));
+      const associatedComments = await getAssociatedComments(
+        jobId,
+        credentials,
+        issueComments,
+        users,
+        processedIssue.external_id,
+        planeClient,
+        workspaceSlug
+      );
+      const associatedIssuePropertyValues = getAssociatedIssuePropertyValues({
+        issueId: processedIssue.external_id,
+        planeUsers: users,
+        planeIssueProperties,
+        planeIssuePropertiesOptions,
+        planeIssuePropertyValues,
+      });
+
+      bulkIssuePayload.push({
+        ...processedIssue,
+        file_assets: assets,
+        comments: associatedComments,
+        cycles: associatedCycles.map((cycle) => cycle.id),
+        modules: associatedModules.map((module) => module.id),
+        issue_property_values: associatedIssuePropertyValues,
+      });
+    } catch (error) {
+      console.log("Error occured inside `CreateIssues`", error);
+      logger.error(`[${jobId.slice(0, 7)}] Error while creating the issue: ${issue.external_id}`, error);
+    }
+  }
+
+  return bulkIssuePayload;
+};
+
+const processAttachments = async (
+  jobId: string,
+  credentials: TServiceCredentials,
+  issue: ExIssue,
+  planeClient: PlaneClient,
+  workspaceSlug: string
+): Promise<[ExIssue, string[]]> => {
+  if (!issue.attachments || issue.attachments.length === 0) return [issue, []];
+
+  const processedIssue = { ...issue };
+  const assets = [];
+
+  for (const attachment of issue.attachments) {
+    try {
+      // Set up auth token based on source
+      let sourceAccessToken = credentials.source_access_token;
+      let authPrefix = "Bearer";
+
+      if (credentials.source === "JIRA" && env.JIRA_OAUTH_ENABLED == "0") {
+        const token = `${credentials.user_email}:${credentials.source_access_token}`;
+        sourceAccessToken = Buffer.from(token).toString("base64");
+        authPrefix = "Basic";
+      }
+
+      let authToken: string | undefined = `${authPrefix} ${sourceAccessToken}`;
+      if (credentials.source === "ASANA") {
+        sourceAccessToken = "";
+        authPrefix = "";
+        authToken = undefined;
+      }
+
+      if (credentials.source === "LINEAR" && env.LINEAR_OAUTH_ENABLED !== "1") {
+        sourceAccessToken = credentials.source_access_token;
+        authToken = sourceAccessToken;
+      }
+
+      // Download the file
+      const blob = await downloadFile(attachment.asset, authToken);
+      if (!blob) continue;
+
+      // Upload the asset and mark it as uploaded in one go
+      const assetId = await protect(
+        planeClient.assets.uploadAsset.bind(planeClient.assets),
+        workspaceSlug,
+        blob,
+        attachment.attributes.name,
+        blob.size,
+        {
+          external_id: attachment.external_id,
+          external_source: attachment.external_source,
+        }
+      );
+
+      // Update description with new asset URL
+      const url = new URL(attachment.asset);
+      let sourceAttachmentPathname = "";
+      if (url.pathname.includes("rest")) {
+        sourceAttachmentPathname = splitStringTillPart(new URL(attachment.asset).pathname, "rest");
+      } else {
+        if (credentials.source === "JIRA_SERVER") {
+          sourceAttachmentPathname = convertJiraImageURL(attachment.asset);
+        } else {
+          sourceAttachmentPathname = attachment.asset;
+        }
+      }
+
+      processedIssue.description_html = replaceImageComponent(
+        processedIssue.description_html,
+        assetId,
+        sourceAttachmentPathname,
+        credentials.source
+      );
+
+      assets.push(assetId);
+    } catch (error) {
+      console.log("Error occured inside `processAttachments`", error);
+      logger.error(`[${jobId.slice(0, 7)}] Error processing attachment for issue "${issue.name}":`, error);
+    }
+  }
+
+  return [processedIssue, assets];
+};
+
+export const getAssociatedIssuePropertyValues = (props: {
+  issueId: string;
+  planeUsers: PlaneUser[];
+  planeIssueProperties: ExIssueProperty[];
+  planeIssuePropertiesOptions: ExIssuePropertyOption[];
+  planeIssuePropertyValues?: TIssuePropertyValuesPayload;
+}) => {
+  let associatedIssuePropertyValues: { id: string; values: ExIssuePropertyValue }[] = [];
+  const { issueId, planeUsers, planeIssueProperties, planeIssuePropertiesOptions, planeIssuePropertyValues } = props;
+  if (planeIssuePropertyValues && planeIssuePropertyValues[issueId]) {
+    associatedIssuePropertyValues =
+      getIssuePropertyValues({
+        planeUsers,
+        planeIssueProperties,
+        planeIssuePropertiesOptions,
+        issuePropertyValues: planeIssuePropertyValues[issueId],
+      }) ?? [];
+  }
+
+  return associatedIssuePropertyValues;
 };
 
 export const createIssues = async (payload: IssueCreatePayload): Promise<ExIssue[]> => {
@@ -177,7 +393,6 @@ export const createIssues = async (payload: IssueCreatePayload): Promise<ExIssue
       await wait(issueWaitTime);
     } catch (error) {
       console.log("Error occured inside `CreateIssues`", error);
-      // Check if the error is an API error response
       logger.error(`[${jobId.slice(0, 7)}] Error while creating the issue: ${issue.external_id}`, error);
     }
   }
@@ -351,7 +566,6 @@ const createIssueAttachments = async (
 
           // Update the description html if the attachment is uploaded successfully
           if (response.attachment.asset) {
-            const attachmentUrl = response.attachment.asset;
             const url = new URL(attachment.asset);
             let sourceAttachmentPathname = "";
             if (url.pathname.includes("rest")) {
@@ -513,6 +727,57 @@ const createIssuePropertyValues = async (props: {
   await Promise.all(issuePropertyValuePromises);
 };
 
+const getIssuePropertyValues = (props: {
+  planeUsers: PlaneUser[];
+  planeIssueProperties: ExIssueProperty[];
+  planeIssuePropertiesOptions: ExIssuePropertyOption[];
+  issuePropertyValues: TPropertyValuesPayload;
+}) => {
+  const { planeUsers, planeIssueProperties, planeIssuePropertiesOptions, issuePropertyValues } = props;
+
+  const values: {
+    id: string;
+    values: ExIssuePropertyValue;
+  }[] = [];
+  // If there are no issue property values, then return
+  if (!issuePropertyValues || Object.keys(issuePropertyValues).length === 0) return;
+
+  // Create a map for the issue properties and options
+  const issuePropertiesMap = new Map(
+    planeIssueProperties.map((issueProperty) => [issueProperty.external_id, issueProperty])
+  );
+  const issuePropertiesOptionsMap = new Map(
+    planeIssuePropertiesOptions.map((issuePropertyOption) => [issuePropertyOption.external_id, issuePropertyOption])
+  );
+
+  // Create the issue property values
+  Object.entries(issuePropertyValues)
+    .map(([propertyId, propertyValues]) => {
+      // Check if the issue property is valid
+      const issueProperty = issuePropertiesMap.get(propertyId);
+      if (!issueProperty || !issueProperty.id) return;
+      // Get the issue property type key
+      const issuePropertyTypeKey = getIssuePropertyTypeKey(issueProperty.property_type, issueProperty.relation_type);
+      if (!issuePropertyTypeKey) return;
+      // Create the property values payload
+      const propertyValuesPayload = generatePropertyValuesPayload(
+        issuePropertyTypeKey,
+        propertyValues,
+        issuePropertiesOptionsMap,
+        planeUsers
+      );
+      if (propertyValuesPayload.length > 0) {
+        values.push({
+          id: issueProperty.id,
+          values: propertyValuesPayload,
+        });
+      }
+    })
+    .filter(Boolean);
+
+  return values;
+};
+
 /* ------------------------------ Helper Methods ---------------------------- */
 const getPlaneIssueLabels = (issue: ExIssue, planeLabels: ExIssueLabel[]): string[] => {
   if (issue.labels) {
@@ -594,85 +859,6 @@ const generatePropertyValuesPayload = (
       return [];
   }
 };
-
-// const replaceImageComponent = (
-//   description_html: string,
-//   assetId: string,
-//   existingURL: string,
-//   source: string
-// ): string => {
-//   if (!description_html || !assetId || !existingURL) {
-//     return description_html;
-//   }
-//
-//   if (source === "LINEAR") {
-//     // Handle Linear's markdown image format
-//     const imageRegex = /!\[(.*?)\]\((.*?)\)/g;
-//
-//     return description_html.replace(imageRegex, (match, altText, url) => {
-//       // Check if this is the image we want to replace
-//       if (url === existingURL) {
-//         return `<image-component src="${assetId}" alt="${altText}"/>`;
-//       }
-//       return match;
-//     });
-//   } else {
-//     try {
-//       console.log("=========================================");
-//       // Parse the HTML string
-//       const root = parse(description_html);
-//       console.log("ROOT", root.toString());
-//
-//       // Remove surrounding <p> tags if present
-//       const pTag = root.querySelector("p");
-//       if (pTag && pTag.childNodes.length === 1 && pTag.parentNode === root) {
-//         root.innerHTML = pTag.innerHTML;
-//       }
-//
-//       const spanTag = root.querySelector("span");
-//       console.log("ROOTTTTTTTTTT", root);
-//       console.log("SPAN TAG", spanTag);
-//       if (spanTag && spanTag.childNodes.length === 1 && spanTag.parentNode === root) {
-//         root.innerHTML = spanTag.innerHTML;
-//         console.log("SPAN TAG", spanTag);
-//       }
-//
-//       console.log("ROOT AFTER", root.toString());
-//       // Find all img tags
-//       const imgTags = root.querySelectorAll("img");
-//       console.log("IMG TAGS", imgTags);
-//       console.log("EXISTING URL", existingURL);
-//
-//       // Replace only img tags that match the existingURL
-//       imgTags.forEach((img: HTMLElement) => {
-//         const imgSrc = img.getAttribute("src");
-//         console.log("IMG SRC", imgSrc);
-//         console.log("EXISTING URL", existingURL);
-//
-//         // Check if the image source matches the existing URL
-//         if (imgSrc === existingURL) {
-//           // Get height and width from original img tag
-//           const height = img.getAttribute("height");
-//           const width = img.getAttribute("width");
-//
-//           // Build attributes string
-//           const heightAttr = height ? ` height="${height}"` : "";
-//           const widthAttr = width ? ` width="${width}"` : "";
-//
-//           // Create new component with preserved dimensions
-//           const imageComponent = `<image-component src=${assetId} ${heightAttr}${widthAttr}/>`;
-//           console.log("IMAGE COMPONENT", imageComponent);
-//           img.replaceWith(imageComponent);
-//         }
-//       });
-//
-//       console.log("=========================================");
-//       return root.toString();
-//     } catch (error) {
-//       return description_html;
-//     }
-//   }
-// };
 
 const replaceImageComponent = (
   description_html: string,
@@ -763,3 +949,110 @@ function convertJiraImageURL(originalURL: string): string {
     return originalURL;
   }
 }
+
+const processCommentAttachments = async (
+  jobId: string,
+  credentials: TServiceCredentials,
+  comment: Partial<ExIssueComment>,
+  planeClient: PlaneClient,
+  workspaceSlug: string
+): Promise<[Partial<ExIssueComment>, string[]]> => {
+  const processedComment = { ...comment };
+  try {
+    // Extract image URLs from comment HTML
+    const assetIds = [];
+    const imageUrls = extractImageUrlsFromHtml(processedComment.comment_html || "");
+    for (const imageUrl of imageUrls) {
+      // Set up auth token based on source
+      let sourceAccessToken = credentials.source_access_token;
+      let authPrefix = "Bearer";
+
+      if (credentials.source === "JIRA" && env.JIRA_OAUTH_ENABLED == "0") {
+        const token = `${credentials.user_email}:${credentials.source_access_token}`;
+        sourceAccessToken = Buffer.from(token).toString("base64");
+        authPrefix = "Basic";
+      }
+
+      let authToken: string | undefined = `${authPrefix} ${sourceAccessToken}`;
+      if (credentials.source === "ASANA") {
+        sourceAccessToken = "";
+        authPrefix = "";
+        authToken = undefined;
+      }
+
+      if (credentials.source === "LINEAR" && env.LINEAR_OAUTH_ENABLED !== "1") {
+        sourceAccessToken = credentials.source_access_token;
+        authToken = sourceAccessToken;
+      }
+
+      // Download the file
+      const blob = await downloadFile(imageUrl, authToken);
+      if (!blob) continue;
+
+      // Generate a filename from the URL
+      const fileName = getFileNameFromUrl(imageUrl);
+
+      // Upload the asset and mark it as uploaded in one go
+      const assetId = await protect(
+        planeClient.assets.uploadAsset.bind(planeClient.assets),
+        workspaceSlug,
+        blob,
+        fileName,
+        blob.size,
+        {
+          external_source: credentials.source,
+        }
+      );
+
+      assetIds.push(assetId);
+
+      // Update comment HTML with new asset URL
+      const url = new URL(imageUrl);
+      let sourceAttachmentPathname = "";
+      if (url.pathname.includes("rest")) {
+        sourceAttachmentPathname = splitStringTillPart(url.pathname, "rest");
+      } else {
+        if (credentials.source === "JIRA_SERVER") {
+          sourceAttachmentPathname = convertJiraImageURL(imageUrl);
+        } else {
+          sourceAttachmentPathname = imageUrl;
+        }
+      }
+
+      processedComment.comment_html = replaceImageComponent(
+        processedComment.comment_html || "",
+        assetId,
+        sourceAttachmentPathname,
+        credentials.source
+      );
+    }
+
+    return [processedComment, assetIds];
+  } catch (error) {
+    console.log("Error occurred inside `processCommentAttachments`", error);
+    logger.error(`[${jobId.slice(0, 7)}] Error processing attachments for comment:`, error);
+  }
+
+  return [processedComment, []];
+};
+
+// Helper function to extract image URLs from HTML
+const extractImageUrlsFromHtml = (html: string): string[] => {
+  const urls: string[] = [];
+  const regex = /<img[^>]+src="([^">]+)"/g;
+  let match;
+
+  while ((match = regex.exec(html)) !== null) {
+    urls.push(match[1]);
+  }
+
+  return urls;
+};
+
+// Helper function to get filename from URL
+const getFileNameFromUrl = (url: string): string => {
+  const urlObj = new URL(url);
+  const pathname = urlObj.pathname;
+  const filename = pathname.split("/").pop();
+  return filename || "image";
+};

@@ -12,7 +12,9 @@ import { cn } from "@/helpers/common.helper";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web services
-import selfHostedSubscriptionService from "@/plane-web/services/self-hosted-subscription.service";
+import { PaymentService } from "@/plane-web/services/payment.service";
+
+const paymentService = new PaymentService();
 
 export type TUpdateSeatVariant = "ADD_SEATS" | "REMOVE_SEATS";
 
@@ -58,9 +60,12 @@ export const UpdateWorkspaceSeatsModal: React.FC<Props> = observer((props) => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [numberOfSeats, setNumberOfSeats] = useState<string>("1");
   const [error, setError] = useState<string>("");
+  // derived values
+  const isSelfHosted = subscribedPlan?.is_self_managed;
 
   useEffect(() => {
     if (error) setError("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [numberOfSeats]);
 
   const handleClose = () => {
@@ -100,7 +105,7 @@ export const UpdateWorkspaceSeatsModal: React.FC<Props> = observer((props) => {
     }
 
     setIsSubmitting(true);
-    await selfHostedSubscriptionService
+    await paymentService
       .updateWorkspaceSeats(workspaceSlug?.toString(), updatedSeats)
       .then((response) => {
         setToast({
@@ -201,7 +206,7 @@ export const UpdateWorkspaceSeatsModal: React.FC<Props> = observer((props) => {
                 <Info className="size-3 mt-0.5" />
               </div>
               <div>
-                <p>Ensure you are online and connected until this goes through successfully.</p>
+                {isSelfHosted && <p>Ensure you are online and connected until this goes through successfully.</p>}
                 <p>We will charge your card on file for the additional seats.</p>
               </div>
             </div>

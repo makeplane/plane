@@ -12,18 +12,15 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class IssuePropertyActivityEndpoint(BaseAPIView):
+    permission_classes = [ProjectEntityPermission]
 
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def get(self, request, slug, project_id, issue_id):
         # Get the filters
         filters = {}
         if request.GET.get("created_at__gt", None) is not None:
             filters = {"created_at__gt": request.GET.get("created_at__gt")}
-        
+
         # Get the order by
         order_by = request.GET.get("order_by", "-created_at")
 
@@ -32,7 +29,8 @@ class IssuePropertyActivityEndpoint(BaseAPIView):
             workspace__slug=slug,
             project_id=project_id,
             issue_id=issue_id,
-            **filters
+            property__issue_type__is_epic=False,
+            **filters,
         ).order_by(order_by)
 
         # Serialize the data

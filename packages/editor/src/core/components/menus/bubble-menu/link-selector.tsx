@@ -1,8 +1,10 @@
 import { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef } from "react";
 import { Editor } from "@tiptap/core";
 import { Check, Link, Trash } from "lucide-react";
+// plane utils
+import { cn } from "@plane/utils";
 // helpers
-import { cn, isValidHttpUrl } from "@/helpers/common";
+import { isValidHttpUrl } from "@/helpers/common";
 import { setLinkEditor, unsetLinkEditor } from "@/helpers/editor-commands";
 
 type Props = {

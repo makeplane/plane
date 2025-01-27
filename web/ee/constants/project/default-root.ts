@@ -14,7 +14,7 @@ type TProjectScopeMapObject<T> = { key: T; label: string };
 type TProjectScopeMap = {
   [key in EProjectScope]: TProjectScopeMapObject<key>;
 };
-export const PROJECT_SCOPE_MAP: TProjectScopeMap = {
+export const PROJECT_SCOPE_MAP: Partial<TProjectScopeMap> = {
   [EProjectScope.MY_PROJECTS]: {
     key: EProjectScope.MY_PROJECTS,
     label: "Your projects",

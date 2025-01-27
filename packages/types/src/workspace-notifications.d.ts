@@ -19,6 +19,7 @@ export type TNotificationIssueLite = {
   name: string | undefined;
   state_name: string | undefined;
   state_group: string | undefined;
+  type_id: string | undefined;
 };
 
 export type TNotificationData = {
@@ -31,11 +32,12 @@ export type TNotificationData = {
     verb: "created" | "updated" | "deleted";
     new_value: string | undefined;
     old_value: string | undefined;
+    new_identifier: string | undefined;
   };
 };
 
 export type TNotification = {
-  id: string | undefined;
+  id: string;
   title: string | undefined;
   data: TNotificationData | undefined;
   entity_identifier: string | undefined;

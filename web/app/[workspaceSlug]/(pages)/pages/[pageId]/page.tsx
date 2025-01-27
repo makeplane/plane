@@ -1,28 +1,59 @@
 "use client";
 
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+// plane types
+import { TSearchEntityRequestPayload } from "@plane/types";
+import { EFileAssetType } from "@plane/types/src/enums";
 // ui
 import { getButtonStyling } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { IssuePeekOverview } from "@/components/issues";
+import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { getEditorFileHandlers } from "@/helpers/editor.helper";
+// hooks
+import { useWorkspace } from "@/hooks/store";
 // plane web hooks
-import { WorkspacePageRoot } from "@/plane-web/components/pages";
 import { useWorkspacePageDetails, useWorkspacePages } from "@/plane-web/hooks/store";
+import { useFileSize } from "@/plane-web/hooks/use-file-size";
+// plane web services
+import { WorkspaceService } from "@/plane-web/services";
+import { WorkspacePageService, WorkspacePageVersionService } from "@/plane-web/services/page";
+import { FileService } from "@/services/file.service";
+// services
+const fileService = new FileService();
+const workspaceService = new WorkspaceService();
+const workspacePageService = new WorkspacePageService();
+const workspacePageVersionService = new WorkspacePageVersionService();
 
 const PageDetailsPage = observer(() => {
   // router
   const { workspaceSlug, pageId } = useParams();
   // store hooks
-  const { fetchPageById } = useWorkspacePages();
+  const { getWorkspaceBySlug } = useWorkspace();
+  const { createPage, fetchPageById } = useWorkspacePages();
   const page = useWorkspacePageDetails(pageId?.toString() ?? "");
-  const { id, name } = page;
+  // derived values
+  const workspaceId = useMemo(
+    () => (workspaceSlug ? (getWorkspaceBySlug(workspaceSlug?.toString())?.id ?? "") : ""),
+    [getWorkspaceBySlug, workspaceSlug]
+  );
+  const { id, name, updateDescription } = page;
+  // entity search handler
+  const fetchEntityCallback = useCallback(
+    async (payload: TSearchEntityRequestPayload) =>
+      await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", payload),
+    [workspaceSlug]
+  );
+  // file size
+  const { maxFileSize } = useFileSize();
   // fetch page details
   const { error: pageDetailsError } = useSWR(
     pageId ? `PAGE_DETAILS_${pageId}` : null,
@@ -32,6 +63,54 @@ const PageDetailsPage = observer(() => {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
     }
+  );
+  // page root handlers
+  const pageRootHandlers: TPageRootHandlers = useMemo(
+    () => ({
+      create: createPage,
+      fetchAllVersions: async (pageId) => {
+        if (!workspaceSlug) return;
+        return await workspacePageVersionService.fetchAllVersions(workspaceSlug.toString(), pageId);
+      },
+      fetchDescriptionBinary: async () => {
+        if (!workspaceSlug || !page.id) return;
+        return await workspacePageService.fetchDescriptionBinary(workspaceSlug.toString(), page.id);
+      },
+      fetchEntity: fetchEntityCallback,
+      fetchVersionDetails: async (pageId, versionId) => {
+        if (!workspaceSlug) return;
+        return await workspacePageVersionService.fetchVersionById(workspaceSlug.toString(), pageId, versionId);
+      },
+      getRedirectionLink: (pageId) => `/${workspaceSlug}/pages/${pageId}`,
+      updateDescription,
+    }),
+    [createPage, fetchEntityCallback, page.id, updateDescription, workspaceSlug]
+  );
+  // page root config
+  const pageRootConfig: TPageRootConfig = useMemo(
+    () => ({
+      fileHandler: getEditorFileHandlers({
+        maxFileSize,
+        uploadFile: async (file) => {
+          const { asset_id } = await fileService.uploadWorkspaceAsset(
+            workspaceSlug?.toString() ?? "",
+            {
+              entity_identifier: id ?? "",
+              entity_type: EFileAssetType.PAGE_DESCRIPTION,
+            },
+            file
+          );
+          return asset_id;
+        },
+        workspaceId,
+        workspaceSlug: workspaceSlug?.toString() ?? "",
+      }),
+      webhookConnectionParams: {
+        documentType: "workspace_page",
+        workspaceSlug: workspaceSlug?.toString() ?? "",
+      },
+    }),
+    [id, maxFileSize, workspaceId, workspaceSlug]
   );
 
   if ((!page || !id) && !pageDetailsError)
@@ -59,7 +138,12 @@ const PageDetailsPage = observer(() => {
       <PageHead title={name} />
       <div className="flex h-full flex-col justify-between">
         <div className="size-full flex-shrink-0 flex flex-col overflow-hidden">
-          <WorkspacePageRoot page={page} workspaceSlug={workspaceSlug.toString()} />
+          <PageRoot
+            config={pageRootConfig}
+            handlers={pageRootHandlers}
+            page={page}
+            workspaceSlug={workspaceSlug.toString()}
+          />
           <IssuePeekOverview />
         </div>
       </div>

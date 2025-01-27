@@ -10,21 +10,14 @@ from asgiref.sync import sync_to_async
 
 # Module imports
 from plane.db.models import Device
-from plane.graphql.types.device import (
-    DeviceInformationType,
-    DeviceInformationEnumType,
-)
+from plane.graphql.types.device import DeviceInformationType, DeviceInformationEnumType
 from plane.graphql.permissions.workspace import IsAuthenticated
 
 
 @sync_to_async
-def get_device_information(
-    user, device_id, device_type=DeviceInformationEnumType
-):
+def get_device_information(user, device_id, device_type=DeviceInformationEnumType):
     return Device.objects.filter(
-        user=user,
-        device_id=device_id,
-        device_type=device_type,
+        user=user, device_id=device_id, device_type=device_type
     ).first()
 
 
@@ -43,9 +36,7 @@ class DeviceInformationMutation:
         is_active: Optional[bool] = True,
     ) -> DeviceInformationType:
         user = info.context.user
-        device_details = await get_device_information(
-            user, device_id, device_type
-        )
+        device_details = await get_device_information(user, device_id, device_type)
 
         if not device_details:
             device_info = await sync_to_async(Device.objects.create)(

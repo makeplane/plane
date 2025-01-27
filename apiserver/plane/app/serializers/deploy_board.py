@@ -7,15 +7,9 @@ from plane.db.models import DeployBoard
 
 class DeployBoardSerializer(BaseSerializer):
     project_details = ProjectLiteSerializer(read_only=True, source="project")
-    workspace_detail = WorkspaceLiteSerializer(
-        read_only=True, source="workspace"
-    )
+    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
 
     class Meta:
         model = DeployBoard
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "anchor",
-        ]
+        read_only_fields = ["workspace", "project", "anchor"]

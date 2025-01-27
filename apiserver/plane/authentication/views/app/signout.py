@@ -22,9 +22,7 @@ class SignOutAuthEndpoint(View):
 
             # Check if the last medium of user is oidc
             if request.user.last_login_medium == "oidc":
-                provider = OIDCOAuthProvider(
-                    request=request,
-                )
+                provider = OIDCOAuthProvider(request=request)
                 logout_url = provider.logout(
                     logout_url=f"{base_host(request=request, is_app=True)}/auth/oidc/logout/"
                 )
@@ -33,9 +31,7 @@ class SignOutAuthEndpoint(View):
 
             # Check if the last medium of user is saml
             if request.user.last_login_medium == "saml":
-                provider = SAMLAdapter(
-                    request=request,
-                )
+                provider = SAMLAdapter(request=request)
                 logout_url = provider.logout()
                 if logout_url:
                     return HttpResponseRedirect(logout_url)

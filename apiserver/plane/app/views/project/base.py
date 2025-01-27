@@ -42,7 +42,7 @@ from plane.bgtasks.webhook_task import model_activity
 from plane.bgtasks.recent_visited_task import recent_visited_task
 
 # EE imports
-from plane.ee.models import ProjectState, ProjectAttribute
+from plane.ee.models import ProjectState, ProjectAttribute, ProjectFeature
 from plane.ee.utils.workspace_feature import (
     WorkspaceFeatureContext,
     check_workspace_feature,
@@ -50,6 +50,7 @@ from plane.ee.utils.workspace_feature import (
 from plane.ee.serializers.app.project import ProjectAttributeSerializer
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+from plane.ee.bgtasks.project_activites_task import project_activity
 
 
 class ProjectViewSet(BaseViewSet):
@@ -150,6 +151,39 @@ class ProjectViewSet(BaseViewSet):
                     workspace__slug=self.kwargs.get("slug"), project_id=OuterRef("pk")
                 ).values("target_date")
             )
+            # EE: project extra details
+            .annotate(
+                total_issues=Issue.issue_objects.filter(project_id=OuterRef("pk"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                completed_issues=Issue.issue_objects.filter(
+                    project_id=OuterRef("pk"), state__group="completed"
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                is_epic_enabled=Exists(
+                    ProjectFeature.objects.filter(
+                        workspace__slug=self.kwargs.get("slug"),
+                        project_id=OuterRef("pk"),
+                        is_epic_enabled=True,
+                    )
+                )
+            )
+            .annotate(
+                is_project_updates_enabled=Exists(
+                    ProjectFeature.objects.filter(
+                        workspace__slug=self.kwargs.get("slug"),
+                        project_id=OuterRef("pk"),
+                        is_project_updates_enabled=True,
+                    )
+                )
+            )
             # EE: project_grouping ends
             .prefetch_related(
                 Prefetch(
@@ -235,6 +269,7 @@ class ProjectViewSet(BaseViewSet):
                 archived_issues=Issue.objects.filter(
                     project_id=self.kwargs.get("pk"), archived_at__isnull=False
                 )
+                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -245,6 +280,7 @@ class ProjectViewSet(BaseViewSet):
                     archived_at__isnull=False,
                     parent__isnull=False,
                 )
+                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -253,6 +289,7 @@ class ProjectViewSet(BaseViewSet):
                 draft_issues=Issue.objects.filter(
                     project_id=self.kwargs.get("pk"), is_draft=True
                 )
+                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -263,6 +300,7 @@ class ProjectViewSet(BaseViewSet):
                     is_draft=True,
                     parent__isnull=False,
                 )
+                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -418,6 +456,17 @@ class ProjectViewSet(BaseViewSet):
                     origin=request.META.get("HTTP_ORIGIN"),
                 )
 
+                project_activity.delay(
+                    type="project.activity.created",
+                    requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                    actor_id=str(request.user.id),
+                    project_id=str(project.id),
+                    current_instance=None,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
+
                 serializer = ProjectListSerializer(project)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -453,10 +502,10 @@ class ProjectViewSet(BaseViewSet):
 
             workspace = Workspace.objects.get(slug=slug)
 
-            project = Project.objects.get(pk=pk)
+            project = self.get_queryset().get(pk=pk)
             intake_view = request.data.get("inbox_view", project.intake_view)
             current_instance = json.dumps(
-                ProjectSerializer(project).data, cls=DjangoJSONEncoder
+                ProjectListSerializer(project).data, cls=DjangoJSONEncoder
             )
             if project.archived_at:
                 return Response(
@@ -498,16 +547,6 @@ class ProjectViewSet(BaseViewSet):
                             role=20,
                         )
 
-                    # Create the triage state in Backlog group
-                    State.objects.get_or_create(
-                        name="Triage",
-                        group="triage",
-                        description="Default state for managing all Intake Issues",
-                        project_id=pk,
-                        color="#ff7700",
-                        is_triage=True,
-                    )
-
                 # EE: project_grouping starts
                 # validating the PROJECT_GROUPING feature flag is enabled
                 if check_workspace_feature_flag(
@@ -530,7 +569,6 @@ class ProjectViewSet(BaseViewSet):
                             if project_attribute_serializer.is_valid():
                                 project_attribute_serializer.save()
                 # EE: project_grouping ends
-
                 project = self.get_queryset().filter(pk=serializer.data["id"]).first()
 
                 model_activity.delay(
@@ -542,6 +580,17 @@ class ProjectViewSet(BaseViewSet):
                     slug=slug,
                     origin=request.META.get("HTTP_ORIGIN"),
                 )
+                project_activity.delay(
+                    type="project.activity.updated",
+                    requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                    actor_id=str(request.user.id),
+                    project_id=str(pk),
+                    current_instance=current_instance,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
+
                 serializer = ProjectListSerializer(project)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -596,8 +645,24 @@ class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        current_instance = json.dumps(
+            ProjectSerializer(project).data, cls=DjangoJSONEncoder
+        )
         project.archived_at = timezone.now()
         project.save()
+        project_activity.delay(
+            type="project.activity.updated",
+            requested_data=json.dumps(
+                {"archived_at": str(timezone.now().date())}
+            ),
+            actor_id=str(request.user.id),
+            project_id=str(project_id),
+            current_instance=current_instance,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+
         UserFavorite.objects.filter(
             project_id=project_id, workspace__slug=slug
         ).delete()
@@ -608,8 +673,24 @@ class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def delete(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        current_instance = json.dumps(
+            ProjectSerializer(project).data, cls=DjangoJSONEncoder
+        )
         project.archived_at = None
         project.save()
+        project_activity.delay(
+            type="project.activity.updated",
+            requested_data=json.dumps(
+                {"archived_at": None}
+            ),
+            actor_id=str(request.user.id),
+            project_id=str(project_id),
+            current_instance=current_instance,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -787,5 +868,42 @@ class DeployBoardViewSet(BaseViewSet):
 
         project_deploy_board.save()
 
+        project_activity.delay(
+            type="project.activity.updated",
+            requested_data=json.dumps(
+                {"deploy_board": True}
+            ),
+            actor_id=str(request.user.id),
+            project_id=str(project_id),
+            current_instance=json.dumps(
+                {"deploy_board": False}
+            ),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+
         serializer = DeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+    def destroy(self, request, slug, project_id, pk):
+        project_deploy_board = DeployBoard.objects.get(
+            entity_name="project", entity_identifier=project_id, project_id=project_id, pk=pk
+        )
+        project_deploy_board.delete()
+        project_activity.delay(
+            type="project.activity.updated",
+            requested_data=json.dumps(
+                {"deploy_board": False}
+            ),
+            actor_id=str(request.user.id),
+            project_id=str(project_id),
+            current_instance=json.dumps(
+                {"deploy_board": True}
+            ),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)

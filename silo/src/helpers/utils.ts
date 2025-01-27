@@ -1,5 +1,8 @@
 import { parse, HTMLElement } from "node-html-parser";
 import axios from "axios";
+import { getValidCredentials } from "./credential";
+import { Client as PlaneClient } from "@plane/sdk";
+import { env } from "@/env";
 
 export const removeSpanAroundImg = (htmlContent: string): string => {
   // Parse the HTML content
@@ -84,3 +87,17 @@ export const uploadFile = async ({ url, data }: UploadFileParams): Promise<boole
     throw error;
   }
 };
+
+export const createPlaneClient = async (workspaceId: string, userId: string, source: string): Promise<PlaneClient> => {
+try {
+  const credential = await getValidCredentials(workspaceId, userId, source);
+
+  return new PlaneClient({
+    baseURL: env.API_BASE_URL,
+    apiToken: credential.target_access_token || "",
+  });
+  
+  } catch (error) {
+    throw error 
+  }
+}

@@ -1,6 +1,6 @@
 import { env } from "@/env";
 import { Controller, Get, Post } from "@/lib";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { jiraAuth } from "../auth/auth";
 import {
   createJiraService,
@@ -11,10 +11,13 @@ import {
   JiraResource,
   JiraService,
   JiraTokenResponse,
-} from "@silo/jira";
+} from "@plane/etl/jira";
 import { createOrUpdateCredentials, getCredentialsByWorkspaceId } from "@/db/query";
 import axios, { AxiosInstance } from "axios";
 import { Credentials } from "@/types";
+import { createPlaneClient } from "@/helpers/utils";
+import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
+import { responseHandler } from "@/helpers/response-handler";
 
 class JiraApiError extends Error {
   constructor(
@@ -35,82 +38,87 @@ class JiraController {
 
   @Post("/auth/url")
   async getAuthURL(req: Request, res: Response) {
-    if (env.JIRA_OAUTH_ENABLED === "0") {
-      return res.status(400).send({
-        message: "Bad Request, OAuth is not enabled for Jira.",
-      });
-    }
+    try {
+      if (env.JIRA_OAUTH_ENABLED === "0") {
+        return res.status(400).send({
+          message: "Bad Request, OAuth is not enabled for Jira.",
+        });
+      }
 
-    const body: JiraAuthState = req.body;
-    if (!body.workspaceId || !body.apiToken) {
-      return res.status(400).send({
-        message: "Bad Request, expected both apiToken and workspaceId to be present.",
-      });
+      const body: JiraAuthState = req.body;
+      if (!body.workspaceId || !body.apiToken) {
+        return res.status(400).send({
+          message: "Bad Request, expected both apiToken and workspaceId to be present.",
+        });
+      }
+      const response = jiraAuth.getAuthorizationURL(body);
+      res.send(response);
+    } catch (error) {
+      responseHandler(res, 500, error);
     }
-    const baseUrl = env.SILO_API_BASE_URL;
-    const response = jiraAuth.getAuthorizationURL(body, baseUrl);
-    res.send(response);
   }
 
   @Get("/auth/callback")
   async authCallback(req: Request, res: Response) {
-    if (env.JIRA_OAUTH_ENABLED === "0") {
-      return res.status(400).send({
-        message: "Invalid Callback, OAuth is not enabled for Jira.",
+    try {
+      if (env.JIRA_OAUTH_ENABLED === "0") {
+        return res.status(400).send({
+          message: "Invalid Callback, OAuth is not enabled for Jira.",
+        });
+      }
+      const query: JiraAuthPayload | any = req.query;
+      if (!query.code) {
+        return res.status(400).send("code not found in the query params");
+      }
+      const stringifiedJsonState = query.state as string;
+      // Decode the base64 encoded state string and parse it to JSON
+      const state: JiraAuthState = JSON.parse(Buffer.from(stringifiedJsonState, "base64").toString());
+      let tokenResponse: JiraTokenResponse;
+      try {
+        const baseUrl = env.SILO_API_BASE_URL;
+        const tokenInfo = await jiraAuth.getAccessToken(query.code as string, state);
+        tokenResponse = tokenInfo.tokenResponse;
+      } catch (error: any) {
+        console.log("Error occured while fetching token details", error.response.data);
+        res.status(400).send(error.response.data);
+        return;
+      }
+
+      if (!tokenResponse) {
+        res.status(400).send("failed to fetch token details");
+        return;
+      }
+
+      // Create a new credentials record in the database for the recieved token
+      await createOrUpdateCredentials(state.workspaceId, state.userId, {
+        source_access_token: tokenResponse.access_token,
+        source_refresh_token: tokenResponse.refresh_token,
+        target_access_token: state.apiToken,
+        source: "JIRA",
+        workspace_id: state.workspaceId,
       });
-    }
-    const query: JiraAuthPayload | any = req.query;
-    if (!query.code) {
-      return res.status(400).send("code not found in the query params");
-    }
-    const stringifiedJsonState = query.state as string;
-    // Decode the base64 encoded state string and parse it to JSON
-    const state: JiraAuthState = JSON.parse(Buffer.from(stringifiedJsonState, "base64").toString());
-    let tokenResponse: JiraTokenResponse;
-    try {
-      const baseUrl = env.SILO_API_BASE_URL;
-      const tokenInfo = await jiraAuth.getAccessToken(query.code as string, state, baseUrl);
-      tokenResponse = tokenInfo.tokenResponse;
-    } catch (error: any) {
-      console.log("Error occured while fetching token details", error.response.data);
-      res.status(400).send(error.response.data);
-      return;
-    }
 
-    if (!tokenResponse) {
-      res.status(400).send("failed to fetch token details");
-      return;
-    }
 
-    // Create a new credentials record in the database for the recieved token
-    await createOrUpdateCredentials(state.workspaceId, state.userId, {
-      source_access_token: tokenResponse.access_token,
-      source_refresh_token: tokenResponse.refresh_token,
-      target_access_token: state.apiToken,
-      source: "JIRA",
-      workspace_id: state.workspaceId,
-    });
-
-    try {
       // As we are using base path as /jira, we can redirect to /jira
       res.redirect(`${env.APP_BASE_URL}/${state.workspaceSlug}/settings/imports/jira/`);
     } catch (error: any) {
-      res.status(500).send(error.response.data);
+      responseHandler(res, 500, error);
     }
   }
 
   @Post("/auth/refresh")
   async refreshAccessToken(req: Request, res: Response) {
-    if (env.JIRA_OAUTH_ENABLED === "0") {
-      return res.status(400).send({
-        message: "Invalid Callback, OAuth is not enabled for Jira.",
-      });
-    }
-    const { refreshToken, workspaceId, userId } = req.body;
-    if (!refreshToken || !workspaceId) {
-      return res.status(400).send({ message: "Bad Request" });
-    }
     try {
+      if (env.JIRA_OAUTH_ENABLED === "0") {
+        return res.status(400).send({
+          message: "Invalid Callback, OAuth is not enabled for Jira.",
+        });
+      }
+      const { refreshToken, workspaceId, userId } = req.body;
+      if (!refreshToken || !workspaceId) {
+        return res.status(400).send({ message: "Bad Request" });
+      }
+
       const { access_token, refresh_token, expires_in } = await jiraAuth.getRefreshToken(refreshToken);
 
       // Update the credentials record in the database with the new token
@@ -146,8 +154,9 @@ class JiraController {
           hostname: hostname,
         });
 
-        await jiraService.getResourceProjects();
+        // await jiraService.getResourceProjects();
       } catch (error: any) {
+        console.log("error in jira upsertCredentials", error);
         return res.status(401).send({ message: "Invalid personal access token" });
       }
 
@@ -164,7 +173,7 @@ class JiraController {
 
       res.status(200).json(credential);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -208,6 +217,7 @@ class JiraController {
       const resources = await fetchJiraResources(axiosInstance, credentials);
       return res.json(resources);
     } catch (error) {
+      console.error("error in get resources", error);
       handleError(error, res);
     }
   }
@@ -228,7 +238,7 @@ class JiraController {
       );
       return res.json(projects);
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -242,7 +252,7 @@ class JiraController {
       // const statuses = await jiraClient.getResourceStatuses();
       return res.json(statuses);
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -255,7 +265,7 @@ class JiraController {
       const statuses = await jiraClient.getIssuePriorities();
       return res.json(statuses);
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -266,9 +276,9 @@ class JiraController {
     try {
       const jiraClient = await createJiraClient(workspaceId, userId, cloudId);
       const labels = await jiraClient.getResourceLabels();
-      return res.json(labels);
+      return res.json(labels?.values);
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -281,7 +291,7 @@ class JiraController {
       const issueCount = await jiraClient.getNumberOfIssues(projectId);
       return res.json(issueCount);
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -294,7 +304,37 @@ class JiraController {
       const statuses = await jiraClient.getProjectIssueTypes(projectId);
       return res.json(statuses);
     } catch (error: any) {
-      return res.status(401).send({ message: error.message });
+      responseHandler(res, 500, error);
+    }
+  }
+
+  @Post("/additional-users/:workspaceId/:workspaceSlug/:userId")
+  async getUserDifferential(req: Request, res: Response) {
+    try {
+      const { workspaceId, workspaceSlug, userId } = req.params;
+      const { userData } = req.body;
+
+      if (!Array.isArray(userData) || userData.length === 0) {
+        return res.status(400).send({ message: "No emails provided" });
+      }
+
+      if (typeof userData[0]?.email !== "string") {
+        return res.status(400).send({ message: "Emails must be strings" });
+      }
+
+      const jiraEmails = userData?.map((x) => x.email);
+
+      const planeClient = await createPlaneClient(workspaceId, userId, "JIRA");
+      const workspaceMembers = await planeClient.users.listAllUsers(workspaceSlug);
+      const billableMembers = workspaceMembers.filter((member) => member.role > 10);
+      const additionalUsers = compareAndGetAdditionalUsers(billableMembers, jiraEmails);
+
+      return res.json({
+        additionalUserCount: additionalUsers.length,
+        occupiedUserCount: billableMembers.length,
+      });
+    } catch (error) {
+      responseHandler(res, 500, error);
     }
   }
 }

@@ -1,3 +1,6 @@
+# Python imports
+import base64
+
 # Strawberry imports
 import strawberry
 from strawberry.types import Info
@@ -19,9 +22,7 @@ from plane.db.models import Page, ProjectPage, UserFavorite, Workspace, Project
 @strawberry.type
 class WorkspacePageMutation:
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def updateWorkspacePage(
         self,
@@ -61,13 +62,19 @@ class PageMutation:
         description_html: Optional[str] = "",
         logo_props: Optional[JSON] = {},
         access: int = 2,
+        description_binary: Optional[str] = None,
     ) -> PageType:
         workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
         project_details = await sync_to_async(Project.objects.get)(id=project)
+
+        if description_binary is not None:
+            description_binary = base64.b64decode(description_binary)
+
         page = await sync_to_async(Page.objects.create)(
             workspace=workspace,
             name=name,
             description_html=description_html,
+            description_binary=description_binary,
             logo_props=logo_props,
             access=access,
             owned_by=info.context.user,
@@ -118,11 +125,7 @@ class PageFavoriteMutation:
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def favoritePage(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        page: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, page: strawberry.ID
     ) -> bool:
         _ = await sync_to_async(UserFavorite.objects.create)(
             entity_identifier=page,
@@ -136,11 +139,7 @@ class PageFavoriteMutation:
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def unFavoritePage(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        page: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, page: strawberry.ID
     ) -> bool:
         page_favorite = await sync_to_async(UserFavorite.objects.get)(
             entity_identifier=page,

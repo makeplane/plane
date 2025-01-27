@@ -10,5 +10,5 @@ urlpatterns = [
         "workspaces/<slug:slug>/rephrase-grammar/",
         RephraseGrammarEndpoint.as_view(),
         name="rephrase-grammar",
-    ),
+    )
 ]

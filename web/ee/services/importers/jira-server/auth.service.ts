@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
-import { E_IMPORTER_KEYS, TServiceAuthConfiguration } from "@silo/core";
-import { JiraAuthState, JiraPATAuthState } from "@silo/jira";
+import { E_IMPORTER_KEYS, TServiceAuthConfiguration } from "@plane/etl/core";
+import { JiraAuthState, JiraPATAuthState } from "@plane/etl/jira";
 
 export class JiraServerAuthService {
   protected baseURL: string;

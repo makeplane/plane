@@ -27,14 +27,10 @@ class WorkspaceFeaturesEndpoint(BaseAPIView):
             "is_project_grouping_enabled", False
         )
         workspace = Workspace.objects.get(slug=slug)
-        workspace_feature = WorkspaceFeature.objects.get(
-            workspace_id=workspace.id
-        )
+        workspace_feature = WorkspaceFeature.objects.get(workspace_id=workspace.id)
 
         if is_project_grouping_enabled:
-            project_states = ProjectState.objects.filter(
-                workspace__slug=slug
-            ).first()
+            project_states = ProjectState.objects.filter(workspace__slug=slug).first()
 
             if not project_states:
                 # Default states
@@ -95,17 +91,15 @@ class WorkspaceFeaturesEndpoint(BaseAPIView):
                 )
 
             default_state = ProjectState.objects.filter(
-                workspace__slug=slug,
-                default=True,
+                workspace__slug=slug, default=True
             ).first()
 
             project_attribute_project_ids = ProjectAttribute.objects.filter(
-                workspace__slug=slug,
+                workspace__slug=slug
             ).values_list("project_id", flat=True)
 
             projects_ids = Project.objects.filter(
-                ~Q(id__in=project_attribute_project_ids),
-                workspace__slug=slug,
+                ~Q(id__in=project_attribute_project_ids), workspace__slug=slug
             ).values_list("id", flat=True)
 
             # bulk create all the project attributes

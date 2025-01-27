@@ -95,10 +95,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
         # Check if the request is valid
         if not name or not size:
             return Response(
-                {
-                    "error": "Invalid request.",
-                    "status": False,
-                },
+                {"error": "Invalid request.", "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -138,10 +135,12 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
 
         # Get the presigned URL
         storage = S3Storage(request=request)
+
         # Generate a presigned URL to share an S3 object
         presigned_url = storage.generate_presigned_post(
             object_name=asset_key, file_type=type, file_size=size_limit
         )
+
         # Return the presigned URL
         return Response(
             {

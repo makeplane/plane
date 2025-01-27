@@ -1,5 +1,7 @@
 # Python imports
 import json
+import pytz
+
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -60,6 +62,7 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 # Module imports
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.webhook_task import model_activity
+from plane.utils.timezone_converter import convert_to_utc, user_timezone_converter
 
 
 class CycleViewSet(BaseViewSet):
@@ -75,6 +78,19 @@ class CycleViewSet(BaseViewSet):
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
+
+        project = Project.objects.get(id=self.kwargs.get("project_id"))
+
+        # Fetch project for the specific record or pass project_id dynamically
+        project_timezone = project.timezone
+
+        # Convert the current time (timezone.now()) to the project's timezone
+        local_tz = pytz.timezone(project_timezone)
+        current_time_in_project_tz = timezone.now().astimezone(local_tz)
+
+        # Convert project local time back to UTC for comparison (start_date is stored in UTC)
+        current_time_in_utc = current_time_in_project_tz.astimezone(pytz.utc)
+
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -125,14 +141,26 @@ class CycleViewSet(BaseViewSet):
                 )
             )
             .annotate(
+                pending_issues=Count(
+                    "issue_cycle__issue__id",
+                    distinct=True,
+                    filter=Q(
+                        issue_cycle__issue__state__group__in=["backlog", "unstarted", "started"],
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
+                    ),
+                )
+            )
+            .annotate(
                 status=Case(
                     When(
-                        Q(start_date__lte=timezone.now())
-                        & Q(end_date__gte=timezone.now()),
+                        Q(start_date__lte=current_time_in_utc)
+                        & Q(end_date__gte=current_time_in_utc),
                         then=Value("CURRENT"),
                     ),
-                    When(start_date__gt=timezone.now(), then=Value("UPCOMING")),
-                    When(end_date__lt=timezone.now(), then=Value("COMPLETED")),
+                    When(start_date__gt=current_time_in_utc, then=Value("UPCOMING")),
+                    When(end_date__lt=current_time_in_utc, then=Value("COMPLETED")),
                     When(
                         Q(start_date__isnull=True) & Q(end_date__isnull=True),
                         then=Value("DRAFT"),
@@ -168,10 +196,22 @@ class CycleViewSet(BaseViewSet):
         # Update the order by
         queryset = queryset.order_by("-is_favorite", "-created_at")
 
+        project = Project.objects.get(id=self.kwargs.get("project_id"))
+
+        # Fetch project for the specific record or pass project_id dynamically
+        project_timezone = project.timezone
+
+        # Convert the current time (timezone.now()) to the project's timezone
+        local_tz = pytz.timezone(project_timezone)
+        current_time_in_project_tz = timezone.now().astimezone(local_tz)
+
+        # Convert project local time back to UTC for comparison (start_date is stored in UTC)
+        current_time_in_utc = current_time_in_project_tz.astimezone(pytz.utc)
+
         # Current Cycle
         if cycle_view == "current":
             queryset = queryset.filter(
-                start_date__lte=timezone.now(), end_date__gte=timezone.now()
+                start_date__lte=current_time_in_utc, end_date__gte=current_time_in_utc
             )
 
             data = queryset.values(
@@ -194,11 +234,14 @@ class CycleViewSet(BaseViewSet):
                 "is_favorite",
                 "total_issues",
                 "completed_issues",
+                "pending_issues",
                 "assignee_ids",
                 "status",
                 "version",
                 "created_by",
             )
+            datetime_fields = ["start_date", "end_date"]
+            data = user_timezone_converter(data, datetime_fields, project_timezone)
 
             if data:
                 return Response(data, status=status.HTTP_200_OK)
@@ -223,11 +266,16 @@ class CycleViewSet(BaseViewSet):
             # meta fields
             "is_favorite",
             "total_issues",
+            "pending_issues",
             "completed_issues",
             "assignee_ids",
             "status",
             "version",
             "created_by",
+        )
+        datetime_fields = ["start_date", "end_date"]
+        data = user_timezone_converter(
+            data, datetime_fields, request.user.user_timezone
         )
         return Response(data, status=status.HTTP_200_OK)
 
@@ -240,7 +288,9 @@ class CycleViewSet(BaseViewSet):
             request.data.get("start_date", None) is not None
             and request.data.get("end_date", None) is not None
         ):
-            serializer = CycleWriteSerializer(data=request.data)
+            serializer = CycleWriteSerializer(
+                data=request.data, context={"project_id": project_id}
+            )
             if serializer.is_valid():
                 serializer.save(project_id=project_id, owned_by=request.user)
                 cycle = (
@@ -273,6 +323,11 @@ class CycleViewSet(BaseViewSet):
                         "created_by",
                     )
                     .first()
+                )
+
+                datetime_fields = ["start_date", "end_date"]
+                cycle = user_timezone_converter(
+                    cycle, datetime_fields, request.user.user_timezone
                 )
 
                 # Send the model activity
@@ -327,7 +382,9 @@ class CycleViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        serializer = CycleWriteSerializer(cycle, data=request.data, partial=True)
+        serializer = CycleWriteSerializer(
+            cycle, data=request.data, partial=True, context={"project_id": project_id}
+        )
         if serializer.is_valid():
             serializer.save()
             cycle = queryset.values(
@@ -356,6 +413,11 @@ class CycleViewSet(BaseViewSet):
                 "status",
                 "created_by",
             ).first()
+
+            datetime_fields = ["start_date", "end_date"]
+            cycle = user_timezone_converter(
+                cycle, datetime_fields, request.user.user_timezone
+            )
 
             # Send the model activity
             model_activity.delay(
@@ -425,6 +487,10 @@ class CycleViewSet(BaseViewSet):
             )
 
         queryset = queryset.first()
+        datetime_fields = ["start_date", "end_date"]
+        data = user_timezone_converter(
+            data, datetime_fields, request.user.user_timezone
+        )
 
         recent_visited_task.delay(
             slug=slug,
@@ -499,6 +565,18 @@ class CycleDateCheckEndpoint(BaseAPIView):
                 {"error": "Start date and end date both are required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        is_start_date_end_date_equal = (
+            True if str(start_date) == str(end_date) else False
+        )
+        start_date = convert_to_utc(
+            date=str(start_date), project_id=project_id, is_start_date=True
+        )
+        end_date = convert_to_utc(
+            date=str(end_date),
+            project_id=project_id,
+            is_start_date_end_date_equal=is_start_date_end_date_equal,
+        )
 
         # Check if any cycle intersects in the given interval
         cycles = Cycle.objects.filter(
@@ -974,9 +1052,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 }
             )
 
-        _ = CycleIssue.objects.bulk_update(
-            updated_cycles, ["cycle_id"], batch_size=100
-        )
+        _ = CycleIssue.objects.bulk_update(updated_cycles, ["cycle_id"], batch_size=100)
 
         estimate_type = Project.objects.filter(
             workspace__slug=slug,
@@ -998,8 +1074,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         estimate_point_id=cycle_issue.issue.estimate_point_id,
                         estimate_value=(
                             cycle_issue.issue.estimate_point.value
-                            if estimate_type
-                            and cycle_issue.issue.estimate_point
+                            if estimate_type and cycle_issue.issue.estimate_point
                             else None
                         ),
                         workspace_id=cycle_issue.workspace_id,
@@ -1024,8 +1099,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         estimate_point_id=cycle_issue.issue.estimate_point_id,
                         estimate_value=(
                             cycle_issue.issue.estimate_point.value
-                            if estimate_type
-                            and cycle_issue.issue.estimate_point
+                            if estimate_type and cycle_issue.issue.estimate_point
                             else None
                         ),
                         workspace_id=cycle_issue.workspace_id,
@@ -1481,22 +1555,17 @@ class CycleAnalyticsEndpoint(BaseAPIView):
 
 
 class CycleIssueStateAnalyticsEndpoint(BaseAPIView):
-
-    @check_feature_flag(FeatureFlag.ACTIVE_CYCLE_PRO)
+    @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, cycle_id):
         workspace = Workspace.objects.get(slug=slug)
         cycle_state_progress = EntityProgress.objects.filter(
-            cycle_id=cycle_id,
-            entity_type="CYCLE",
-            workspace__slug=slug,
+            cycle_id=cycle_id, entity_type="CYCLE", workspace__slug=slug
         ).order_by("progress_date")
 
         # Generate today's data
         today_data = track_entity_issue_state_progress(
-            current_date=timezone.now(),
-            cycles=[(cycle_id, workspace.id)],
-            save=False,
+            current_date=timezone.now(), cycles=[(cycle_id, workspace.id)], save=False
         )
 
         # Combine existing data with today's data

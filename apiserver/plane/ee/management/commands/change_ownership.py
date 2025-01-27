@@ -11,9 +11,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         # Positional argument
-        parser.add_argument(
-            "--email", type=str, help="user email", required=True
-        )
+        parser.add_argument("--email", type=str, help="user email", required=True)
         parser.add_argument(
             "--workspace_slug", type=str, help="workspace slug", required=True
         )

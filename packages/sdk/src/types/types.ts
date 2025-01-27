@@ -90,12 +90,7 @@ type IIsssue = {
   type_id: string | undefined;
 };
 
-export type TStateGroups =
-  | "backlog"
-  | "unstarted"
-  | "started"
-  | "completed"
-  | "cancelled";
+export type TStateGroups = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
 
 export interface IState {
   id: string;
@@ -107,13 +102,7 @@ export interface IState {
   sequence: number;
 }
 
-export type TModuleStatus =
-  | "backlog"
-  | "planned"
-  | "in-progress"
-  | "paused"
-  | "completed"
-  | "cancelled";
+export type TModuleStatus = "backlog" | "planned" | "in-progress" | "paused" | "completed" | "cancelled";
 
 export interface IModule {
   total_issues: number;
@@ -216,7 +205,18 @@ type IProject = {
   cover_image: string;
   archive_in: number;
   close_in: number;
-  logo_props: Record<string, any>;
+  logo_props: {
+    in_use: "emoji" | "icon";
+    emoji?: {
+      value?: string;
+      url?: string;
+    };
+    icon?: {
+      name?: string;
+      color?: string;
+      background_color?: string;
+    };
+  };
   archived_at: string | null;
   start_date: string | null;
   target_date: string | null;
@@ -234,6 +234,12 @@ export type ExState = IState &
   ExBase & {
     status: "to_be_created";
   };
+
+export type ExIssueLink = {
+  name: string;
+  url: string;
+};
+
 export type ExIssue = IIsssue &
   ExBase & {
     links?: {
@@ -268,7 +274,7 @@ type UserMandatePayload = {
 
 export type PlaneUser = ExUser & UserMandatePayload;
 
-export type UserCreatePayload = Omit<Optional<ExUser>, "id"> &
+export type UserCreatePayload = Optional<ExUser> &
   UserMandatePayload & {
     project_id: string;
   };
@@ -329,5 +335,31 @@ export interface AttachmentResponse {
   asset_id: string;
   upload_data: UploadData;
   attachment: Attachment;
+  asset_url: string;
+}
+
+export interface ExAsset {
+  id: string;
+  attributes: {
+    name: string;
+    type: string;
+    size: number;
+  };
+  asset: string;
+  asset_url: string;
+  workspace_id: string;
+  created_by: string;
+  external_id?: string;
+  external_source?: string;
+  entity_type: string;
+  is_uploaded: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AssetUploadResponse {
+  already_exists: boolean;
+  upload_data: UploadData;
+  asset_id: string;
   asset_url: string;
 }

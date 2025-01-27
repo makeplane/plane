@@ -1,7 +1,7 @@
 import { Issue as LinearIssue } from "@linear/sdk";
 import { getCredentialsByWorkspaceId, getJobById, updateJob } from "@/db/query";
-import { TServiceCredentials, TJobWithConfig } from "@silo/core";
-import { LinearConfig, LinearCycle, LinearService } from "@silo/linear";
+import { TServiceCredentials, TJobWithConfig } from "@plane/etl/core";
+import { LinearConfig, LinearCycle, LinearService } from "@plane/etl/linear";
 import { env } from "@/env";
 
 export async function getJobData(jobId: string): Promise<TJobWithConfig<LinearConfig>> {

@@ -2,26 +2,21 @@
 
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
+// plane constants
+import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
-// ui
 import { Button } from "@plane/ui";
-
+// components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
-import {
-  EIssueFilterType,
-  EIssuesStoreType,
-  EIssueLayoutTypes,
-  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
-} from "@/constants/issue";
+import { ISSUE_STORE_TO_FILTERS_MAP } from "@/constants/issue";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useLabel, useProjectState, useMember, useIssues } from "@/hooks/store";
 // plane web types
 import { TProject } from "@/plane-web/types";
-// local components
 import { ProjectAnalyticsModal } from "../analytics";
 
 type Props = {
@@ -29,8 +24,16 @@ type Props = {
   projectId: string;
   workspaceSlug: string;
   canUserCreateIssue: boolean | undefined;
+  storeType?: EIssuesStoreType.PROJECT | EIssuesStoreType.EPIC;
 };
-const HeaderFilters = observer(({ currentProjectDetails, projectId, workspaceSlug, canUserCreateIssue }: Props) => {
+const HeaderFilters = observer((props: Props) => {
+  const {
+    currentProjectDetails,
+    projectId,
+    workspaceSlug,
+    canUserCreateIssue,
+    storeType = EIssuesStoreType.PROJECT,
+  } = props;
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // store hooks
@@ -39,11 +42,12 @@ const HeaderFilters = observer(({ currentProjectDetails, projectId, workspaceSlu
   } = useMember();
   const {
     issuesFilter: { issueFilters, updateFilters },
-  } = useIssues(EIssuesStoreType.PROJECT);
-
+  } = useIssues(storeType);
   const { projectStates } = useProjectState();
   const { projectLabels } = useLabel();
+  // derived values
   const activeLayout = issueFilters?.displayFilters?.layout;
+  const layoutDisplayFiltersOptions = ISSUE_STORE_TO_FILTERS_MAP[storeType]?.[activeLayout];
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
@@ -113,23 +117,26 @@ const HeaderFilters = observer(({ currentProjectDetails, projectId, workspaceSlu
           handleFiltersUpdate={handleFiltersUpdate}
           displayFilters={issueFilters?.displayFilters ?? {}}
           handleDisplayFiltersUpdate={handleDisplayFilters}
-          layoutDisplayFiltersOptions={activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined}
+          layoutDisplayFiltersOptions={layoutDisplayFiltersOptions}
           labels={projectLabels}
           memberIds={projectMemberIds ?? undefined}
+          projectId={projectId}
           states={projectStates}
           cycleViewDisabled={!currentProjectDetails?.cycle_view}
           moduleViewDisabled={!currentProjectDetails?.module_view}
+          isEpic={storeType === EIssuesStoreType.EPIC}
         />
       </FiltersDropdown>
       <FiltersDropdown title="Display" placement="bottom-end">
         <DisplayFiltersSelection
-          layoutDisplayFiltersOptions={activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined}
+          layoutDisplayFiltersOptions={layoutDisplayFiltersOptions}
           displayFilters={issueFilters?.displayFilters ?? {}}
           handleDisplayFiltersUpdate={handleDisplayFilters}
           displayProperties={issueFilters?.displayProperties ?? {}}
           handleDisplayPropertiesUpdate={handleDisplayProperties}
           cycleViewDisabled={!currentProjectDetails?.cycle_view}
           moduleViewDisabled={!currentProjectDetails?.module_view}
+          isEpic={storeType === EIssuesStoreType.EPIC}
         />
       </FiltersDropdown>
       {canUserCreateIssue ? (

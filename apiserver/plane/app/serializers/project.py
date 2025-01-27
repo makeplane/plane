@@ -90,6 +90,7 @@ class ProjectLiteSerializer(BaseSerializer):
 
 class ProjectListSerializer(DynamicBaseSerializer):
     total_issues = serializers.IntegerField(read_only=True)
+    completed_issues = serializers.IntegerField(read_only=True)
     archived_issues = serializers.IntegerField(read_only=True)
     archived_sub_issues = serializers.IntegerField(read_only=True)
     draft_issues = serializers.IntegerField(read_only=True)
@@ -110,6 +111,8 @@ class ProjectListSerializer(DynamicBaseSerializer):
     priority = serializers.CharField(read_only=True)
     start_date = serializers.DateTimeField(read_only=True)
     target_date = serializers.DateTimeField(read_only=True)
+    is_epic_enabled = serializers.BooleanField(read_only=True)
+    is_project_updates_enabled = serializers.BooleanField(read_only=True)
     # EE: project_grouping ends
     inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
 
@@ -125,7 +128,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
                     "member__avatar": member.member.avatar,
                     "member__avatar_url": member.member.avatar_url,
                 }
-                for member in project_members
+                for member in project_members if (member.is_active and member.member and not member.member.is_bot)
             ]
         return []
 

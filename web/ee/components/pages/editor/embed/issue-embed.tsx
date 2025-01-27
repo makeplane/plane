@@ -36,7 +36,7 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
   } = useIssueDetail();
 
   // derived values
-  const projectRole = workspaceProjectsPermissions?.[workspaceSlug][projectId];
+  const projectRole = workspaceProjectsPermissions?.[workspaceSlug]?.[projectId];
   const issueDetails = getIssueById(issueId);
 
   // auth

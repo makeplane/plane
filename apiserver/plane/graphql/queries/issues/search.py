@@ -34,9 +34,7 @@ def get_issue_details(issue_id):
 class IssuesSearchQuery:
     # getting issues which are not related
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
 
     # getting issue relation issues
@@ -66,9 +64,7 @@ class IssuesSearchQuery:
 
         # module issues
         if module:
-            issue_queryset = issue_queryset.exclude(
-                issue_module__module=module
-            )
+            issue_queryset = issue_queryset.exclude(issue_module__module=module)
 
         # cycle issues
         if cycle:
@@ -78,10 +74,7 @@ class IssuesSearchQuery:
         if relationType and issue:
             issue_queryset = issue_queryset.filter(
                 ~Q(pk=issue),
-                ~Q(
-                    issue_related__issue=issue,
-                    issue_related__deleted_at__isnull=True,
-                ),
+                ~Q(issue_related__issue=issue, issue_related__deleted_at__isnull=True),
                 ~Q(
                     issue_relation__related_issue=issue,
                     issue_related__deleted_at__isnull=True,
@@ -91,13 +84,9 @@ class IssuesSearchQuery:
         # sub issues
         if subIssues and issue:
             current_issue = await get_issue_details(issue)
-            issue_queryset = issue_queryset.filter(
-                Q(parent__isnull=True), ~Q(pk=issue)
-            )
+            issue_queryset = issue_queryset.filter(Q(parent__isnull=True), ~Q(pk=issue))
             if current_issue.parent_id:
-                issue_queryset = issue_queryset.filter(
-                    ~Q(pk=current_issue.parent_id)
-                )
+                issue_queryset = issue_queryset.filter(~Q(pk=current_issue.parent_id))
 
         # apply search filter
         q = Q()
@@ -116,13 +105,7 @@ class IssuesSearchQuery:
             lambda: list(
                 issue_queryset.filter(q)
                 .distinct()
-                .values(
-                    "id",
-                    "sequence_id",
-                    "name",
-                    "project",
-                    "project__identifier",
-                )
+                .values("id", "sequence_id", "name", "project", "project__identifier")
             )
         )()
 

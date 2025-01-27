@@ -18,12 +18,7 @@ from plane.graphql.permissions.project import (
     ProjectMemberPermission,
     ProjectBasePermission,
 )
-from plane.db.models import (
-    Project,
-    ModuleIssue,
-    UserFavorite,
-    ModuleUserProperties,
-)
+from plane.db.models import Project, ModuleIssue, UserFavorite, ModuleUserProperties
 from plane.graphql.types.module import ModuleUserPropertyType
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
 
@@ -31,9 +26,7 @@ from plane.graphql.bgtasks.issue_activity_task import issue_activity
 @strawberry.type
 class ModuleIssueMutation:
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[ProjectMemberPermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
     )
     async def create_module_issues(
         self,
@@ -83,9 +76,7 @@ class ModuleIssueMutation:
         return True
 
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[ProjectMemberPermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
     )
     async def delete_module_issue(
         self,
@@ -96,10 +87,7 @@ class ModuleIssueMutation:
         issue: strawberry.ID,
     ) -> bool:
         module_issue = await sync_to_async(ModuleIssue.objects.filter)(
-            module_id=module,
-            project_id=project,
-            workspace__slug=slug,
-            issue_id=issue,
+            module_id=module, project_id=project, workspace__slug=slug, issue_id=issue
         )
         await sync_to_async(issue_activity.delay)(
             requested_data=json.dumps({"module_id": str(module)}),
@@ -125,11 +113,7 @@ class ModuleFavoriteMutation:
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def favoriteModule(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        module: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, module: strawberry.ID
     ) -> bool:
         _ = await sync_to_async(UserFavorite.objects.create)(
             entity_identifier=module,
@@ -143,11 +127,7 @@ class ModuleFavoriteMutation:
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def unFavoriteModule(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        module: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, module: strawberry.ID
     ) -> bool:
         module_favorite = await sync_to_async(UserFavorite.objects.get)(
             entity_identifier=module,
@@ -176,9 +156,7 @@ class ModuleIssueUserPropertyMutation:
         display_filters: JSON,
         display_properties: JSON,
     ) -> ModuleUserPropertyType:
-        module_issue_properties = await sync_to_async(
-            ModuleUserProperties.objects.get
-        )(
+        module_issue_properties = await sync_to_async(ModuleUserProperties.objects.get)(
             workspace__slug=slug,
             project_id=project,
             module_id=module,

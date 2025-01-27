@@ -31,9 +31,7 @@ from typing import Optional
 @strawberry.type
 class NotificationQuery:
     @strawberry.field(
-        extensions=[
-            PermissionExtension(permissions=[WorkspaceBasePermission()])
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def notifications(
         self,
@@ -103,8 +101,7 @@ class NotificationQuery:
                 .annotate(
                     created=Exists(
                         Issue.objects.filter(
-                            created_by=info.context.user,
-                            pk=OuterRef("issue_id"),
+                            created_by=info.context.user, pk=OuterRef("issue_id")
                         )
                     )
                 )

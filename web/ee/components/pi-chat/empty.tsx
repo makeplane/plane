@@ -5,8 +5,8 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 // ui
 import { Crown } from "lucide-react";
-import { cn } from "@plane/editor";
 import { Button } from "@plane/ui";
+import { cn } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";

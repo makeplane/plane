@@ -8,7 +8,7 @@ from dateutil.relativedelta import relativedelta
 
 # Django imports
 from django.db import IntegrityError
-from django.db.models import Count, F, Func, OuterRef, Prefetch, Q
+from django.db.models import Count, F, Func, OuterRef, Prefetch, Q, Subquery
 from django.db.models.fields import DateField
 from django.db.models.functions import Cast, ExtractDay, ExtractWeek
 from django.http import HttpResponse
@@ -25,7 +25,11 @@ from plane.app.permissions import (
 )
 
 # Module imports
-from plane.app.serializers import WorkSpaceSerializer, WorkspaceThemeSerializer
+from plane.app.serializers import (
+    WorkSpaceSerializer,
+    WorkspaceThemeSerializer,
+    WorkspaceUserMeSerializer,
+)
 from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.db.models import (
     Issue,
@@ -34,6 +38,7 @@ from plane.db.models import (
     WorkspaceMember,
     WorkspaceTheme,
 )
+from plane.ee.models import WorkspaceLicense
 from plane.app.permissions import ROLE, allow_permission
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
@@ -42,7 +47,6 @@ from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.license.utils.instance_value import get_configuration_value
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 from django.conf import settings
-
 
 
 class WorkSpaceViewSet(BaseViewSet):
@@ -158,23 +162,29 @@ class WorkSpaceViewSet(BaseViewSet):
 
         # Fetch the workspace subcription
         if settings.PAYMENT_SERVER_BASE_URL:
-            # Make a cancel request to the payment server
-            response = requests.post(
-                f"{settings.PAYMENT_SERVER_BASE_URL}/api/subscriptions/check/",
-                headers={
-                    "content-type": "application/json",
-                    "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
-                },
-                json={"workspace_id": str(workspace.id)},
-            )
-            # Check if the response is successful
-            response.raise_for_status()
-            # Return the response
-            response = response.json()
-            # Check if the response contains the product key
-            if response.get("subscription_exists"):
+            try:
+                # Make a cancel request to the payment server
+                response = requests.post(
+                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/licenses/{str(workspace.id)}/workspace-delete/",
+                    headers={
+                        "content-type": "application/json",
+                        "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                    },
+                )
+                # Check if the response is successful
+                response.raise_for_status()
+                # Return the response
+                response = response.json()
+                # Check if the response contains the product key
+                super().destroy(request, *args, **kwargs)
+                return Response(response, status=status.HTTP_200_OK)
+            except requests.exceptions.RequestException as e:
+                if e.response and e.response.status_code == 400:
+                    return Response(
+                        e.response.json(), status=status.HTTP_400_BAD_REQUEST
+                    )
                 return Response(
-                    {"error": "workspace has active subscription"},
+                    {"error": "error in checking workspace subscription"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             else:
@@ -222,9 +232,16 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             .filter(
                 workspace_member__member=request.user, workspace_member__is_active=True
             )
+            .annotate(
+                current_plan=Subquery(
+                    WorkspaceLicense.objects.filter(workspace_id=OuterRef("id")).values(
+                        "plan"
+                    )[:1]
+                )
+            )
             .distinct()
         )
-        workspaces = WorkSpaceSerializer(
+        workspaces = WorkspaceUserMeSerializer(
             self.filter_queryset(workspace),
             fields=fields if fields else None,
             many=True,

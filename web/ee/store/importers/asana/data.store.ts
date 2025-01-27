@@ -3,8 +3,9 @@ import { computedFn } from "mobx-utils";
 // constants
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // silo types
-import { AsanaWorkspace, AsanaProject, AsanaSection, AsanaCustomField, AsanaEnumOption } from "@silo/asana";
+import { AsanaWorkspace, AsanaProject, AsanaSection, AsanaCustomField, AsanaEnumOption } from "@plane/etl/asana";
 // plane web services
+import { IAdditionalUsersResponse } from "@plane/types";
 import { AsanaService } from "@/plane-web/services/importers/asana/data.service";
 // plane web store types
 import { RootStore } from "@/plane-web/store/root.store";
@@ -18,6 +19,7 @@ export interface IAsanaDataStore {
   asanaSections: Record<string, Record<string, AsanaSection>>; // projectGid -> sectionGid -> section
   asanaPriorities: Record<string, Record<string, AsanaCustomField>>; // projectGid -> priorityGid -> priority
   asanaTaskCount: Record<string, number>; // projectGid -> issueCount
+  additionalUsersData: IAdditionalUsersResponse;
   // computed
   asanaWorkspaceIds: string[];
   // computed functions
@@ -47,6 +49,12 @@ export interface IAsanaDataStore {
     projectGid: string
   ) => Promise<AsanaCustomField[] | undefined>;
   fetchAsanaTaskCount: (workspaceId: string, userId: string, projectGid: string) => Promise<number | undefined>;
+  fetchAdditionalUsers: (
+    workspaceId: string,
+    userId: string,
+    workspaceSlug: string,
+    workspaceGid: string,
+  ) => Promise<IAdditionalUsersResponse | undefined>;
 }
 
 export class AsanaDataStore implements IAsanaDataStore {
@@ -58,6 +66,10 @@ export class AsanaDataStore implements IAsanaDataStore {
   asanaSections: Record<string, Record<string, AsanaSection>> = {}; // projectGid -> sectionGid -> section
   asanaPriorities: Record<string, Record<string, AsanaCustomField>> = {}; // projectGid -> priorityGid -> priority
   asanaTaskCount: Record<string, number> = {}; // projectGid -> issueCount
+  additionalUsersData: IAdditionalUsersResponse = {
+    additionalUserCount: 0,
+    occupiedUserCount: 0
+  };
   // service
   service: AsanaService;
 
@@ -79,6 +91,7 @@ export class AsanaDataStore implements IAsanaDataStore {
       fetchAsanaSections: action,
       fetchAsanaPriorities: action,
       fetchAsanaTaskCount: action,
+      fetchAdditionalUsers: action
     });
     this.service = new AsanaService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
   }
@@ -344,4 +357,30 @@ export class AsanaDataStore implements IAsanaDataStore {
       this.isLoading = false;
     }
   };
+
+    /**
+   * @description Fetches additional users on import
+   * @param { string } workspaceId
+   * @param { string } userId
+   * @param { string } workspaceSlug
+   * @returns { Promise<IAdditionalUsersResponse | undefined> }
+   */
+    fetchAdditionalUsers = async (
+      workspaceId: string,
+      userId: string,
+      workspaceSlug: string,
+      workspaceGid: string
+    ): Promise<IAdditionalUsersResponse | undefined> => {
+      try {
+        const additionalUserResponse = (await this.service.getAdditionalUsers(workspaceId, userId, workspaceSlug, workspaceGid)) as IAdditionalUsersResponse;
+        if (additionalUserResponse?.additionalUserCount) {
+          runInAction(() => {
+            this.additionalUsersData = additionalUserResponse
+          });
+        }
+        return additionalUserResponse;
+      } catch (error) {
+        this.error = error as unknown as object;
+      }
+    };
 }

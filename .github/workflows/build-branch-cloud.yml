@@ -223,17 +223,13 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     steps:
-      - id: checkout_files
-        name: Checkout Files
-        uses: actions/checkout@v4
-
       - name: Admin Build and Push
-        uses: ./.github/actions/build-push-cloud
+        uses: makeplane/actions/build-push@v1.0.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
-          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_admin }}
@@ -256,17 +252,13 @@ jobs:
           echo ${{ needs.branch_build_setup.outputs.vault_secrets }} | base64 -d > vault_secrets.json
           jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' vault_secrets.json >> $GITHUB_ENV
 
-      - id: checkout_files
-        name: Checkout Files
-        uses: actions/checkout@v4
-
       - name: Web Build and Push
-        uses: ./.github/actions/build-push-cloud
+        uses: makeplane/actions/build-push@v1.0.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
-          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_web }}
@@ -289,17 +281,13 @@ jobs:
           echo ${{ needs.branch_build_setup.outputs.vault_secrets }} | base64 -d > vault_secrets.json
           jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' vault_secrets.json >> $GITHUB_ENV
 
-      - id: checkout_files
-        name: Checkout Files
-        uses: actions/checkout@v4
-
       - name: Space Build and Push
-        uses: ./.github/actions/build-push-cloud
+        uses: makeplane/actions/build-push@v1.0.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
-          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_space }}
@@ -317,17 +305,13 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     steps:
-      - id: checkout_files
-        name: Checkout Files
-        uses: actions/checkout@v4
-
       - name: Live Build and Push
-        uses: ./.github/actions/build-push-cloud
+        uses: makeplane/actions/build-push@v1.0.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
-          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_live }}
@@ -344,17 +328,13 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     steps:
-      - id: checkout_files
-        name: Checkout Files
-        uses: actions/checkout@v4
-
       - name: Silo Build and Push
-        uses: ./.github/actions/build-push-cloud
+        uses: makeplane/actions/build-push@v1.0.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
-          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_silo }}
@@ -367,17 +347,13 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     steps:
-      - id: checkout_files
-        name: Checkout Files
-        uses: actions/checkout@v4
-
       - name: Backend Build and Push
-        uses: ./.github/actions/build-push-cloud
+        uses: makeplane/actions/build-push@v1.0.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
-          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_backend }}

@@ -3,8 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { JiraResource } from "@plane/etl/jira";
 import { Loader } from "@plane/ui";
-import { JiraResource } from "@silo/jira";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web hooks

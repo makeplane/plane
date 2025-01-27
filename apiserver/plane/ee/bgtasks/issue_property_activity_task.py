@@ -5,11 +5,7 @@ from django.utils import timezone
 from celery import shared_task
 
 # Module imports
-from plane.ee.models import (
-    IssuePropertyActivity,
-    PropertyTypeEnum,
-    IssueProperty,
-)
+from plane.ee.models import IssuePropertyActivity, PropertyTypeEnum, IssueProperty
 from plane.db.models import Issue
 
 
@@ -44,11 +40,7 @@ def track_property_text(
         return
 
     # Case 2: If the existing value is not empty and the requested value is empty
-    if (
-        existing_value
-        and requested_value
-        and existing_value[0] != requested_value[0]
-    ):
+    if existing_value and requested_value and existing_value[0] != requested_value[0]:
         bulk_property_activity.append(
             IssuePropertyActivity(
                 workspace_id=property.workspace_id,
@@ -376,11 +368,7 @@ def track_property_file(
 
 @shared_task
 def issue_property_activity(
-    existing_values,
-    requested_values,
-    issue_id,
-    user_id,
-    epoch,
+    existing_values, requested_values, issue_id, user_id, epoch
 ):
     """
     This function is used to create an activity for the issue property changes.
@@ -419,9 +407,7 @@ def issue_property_activity(
         existing_value = existing_values.get(str(property.id), [])
 
         # Get the requested value
-        requested_value = requested_values.get(
-            str(property.id), existing_value
-        )
+        requested_value = requested_values.get(str(property.id), existing_value)
 
         # Get the activity mapper
         func = ACTIVITY_MAPPER.get(property.property_type)

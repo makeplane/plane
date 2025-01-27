@@ -2,6 +2,7 @@
 
 import { FC, useState, useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
+import { TNameDescriptionLoader } from "@plane/types";
 // components
 import { TextArea } from "@plane/ui";
 // types
@@ -14,8 +15,8 @@ export type IssueTitleInputProps = {
   disabled?: boolean;
   value: string | undefined | null;
   workspaceSlug: string;
-  isSubmitting: "submitting" | "submitted" | "saved";
-  setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
+  isSubmitting: TNameDescriptionLoader;
+  setIsSubmitting: (value: TNameDescriptionLoader) => void;
   issueOperations: TIssueOperations;
   projectId: string;
   issueId: string;

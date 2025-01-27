@@ -24,7 +24,6 @@ from rest_framework.response import Response
 
 
 class IntakeSettingEndpoint(BaseAPIView):
-
     @check_feature_flag(FeatureFlag.INTAKE_SETTINGS)
     def get(self, request, slug, project_id):
         intake = Intake.objects.filter(
@@ -42,9 +41,7 @@ class IntakeSettingEndpoint(BaseAPIView):
             )
 
         intake_settings, _ = IntakeSetting.objects.get_or_create(
-            workspace__slug=slug,
-            project_id=project_id,
-            intake=intake,
+            workspace__slug=slug, project_id=project_id, intake=intake
         )
 
         intake_settings = (
@@ -61,8 +58,7 @@ class IntakeSettingEndpoint(BaseAPIView):
         )
 
         return Response(
-            IntakeSettingSerializer(intake_settings).data,
-            status=status.HTTP_200_OK,
+            IntakeSettingSerializer(intake_settings).data, status=status.HTTP_200_OK
         )
 
     @check_feature_flag(FeatureFlag.INTAKE_SETTINGS)
@@ -73,15 +69,12 @@ class IntakeSettingEndpoint(BaseAPIView):
 
         if not intake:
             return Response(
-                {"error": "Intake does not exist"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Intake does not exist"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         intake_settings = (
             IntakeSetting.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                intake=intake,
+                workspace__slug=slug, project_id=project_id, intake=intake
             )
             .annotate(
                 anchor=DeployBoard.objects.filter(
@@ -107,9 +100,7 @@ class IntakeSettingEndpoint(BaseAPIView):
             if created:
                 intake_settings = (
                     IntakeSetting.objects.filter(
-                        workspace__slug=slug,
-                        project_id=project_id,
-                        intake=intake,
+                        workspace__slug=slug, project_id=project_id, intake=intake
                     )
                     .annotate(
                         anchor=DeployBoard.objects.filter(
@@ -123,7 +114,7 @@ class IntakeSettingEndpoint(BaseAPIView):
                 )
 
             user, new_user = User.objects.get_or_create(
-                email=f"{intake.id}-intake@plane.so",
+                email=f"{workspace.id}-intake@plane.so",
                 is_bot=True,
                 bot_type="INTAKE_BOT",
                 defaults={
@@ -135,18 +126,14 @@ class IntakeSettingEndpoint(BaseAPIView):
             )
             if new_user:
                 APIToken.objects.get_or_create(
-                    user=user,
-                    user_type=1,
-                    workspace_id=workspace.id,
+                    user=user, user_type=1, workspace_id=workspace.id
                 )
                 WorkspaceMember.objects.get_or_create(
-                    workspace_id=workspace.id,
-                    member_id=user.id,
-                    role=20,
+                    workspace_id=workspace.id, member_id=user.id, role=20
                 )
-                project_ids = Project.objects.filter(
-                    workspace__slug=slug
-                ).values_list("pk", flat=True)
+                project_ids = Project.objects.filter(workspace__slug=slug).values_list(
+                    "pk", flat=True
+                )
                 ProjectMember.objects.bulk_create(
                     [
                         ProjectMember(

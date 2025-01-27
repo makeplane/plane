@@ -1,9 +1,12 @@
 "use client";
 
 import { CommandPalette } from "@/components/command-palette";
-import { WorkspaceAuthWrapper } from "@/layouts/auth-layout";
+import { StickyActionBar } from "@/components/stickies";
 import { AuthenticationWrapper } from "@/lib/wrappers";
-import { FloatingBot } from "@/plane-web/components/pi-chat";
+// plane web components
+import { PiChatFloatingBot } from "@/plane-web/components/pi-chat";
+import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
+import { FloatingActionsRoot } from "./floating-action-bar";
 import { AppSidebar } from "./sidebar";
 
 export default function WorkspaceLayout({ children }: { children: React.ReactNode }) {
@@ -16,7 +19,10 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
           <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
             {children}
           </main>
-          <FloatingBot />
+          <FloatingActionsRoot>
+            <StickyActionBar />
+            <PiChatFloatingBot />
+          </FloatingActionsRoot>
         </div>
       </WorkspaceAuthWrapper>
     </AuthenticationWrapper>

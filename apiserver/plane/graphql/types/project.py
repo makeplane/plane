@@ -31,7 +31,7 @@ class ProjectType:
     cycle_view: bool
     issue_views_view: bool
     page_view: bool
-    inbox_view: bool
+    intake_view: bool
     cover_image: Optional[str]
     estimate: Optional[strawberry.ID]
     archive_in: int
@@ -44,7 +44,7 @@ class ProjectType:
     total_members: int
     total_issues: int
     total_active_issues: int
-    role: int
+    role: Optional[int]
     cover_image_url: Optional[str]
 
     @strawberry.field
@@ -77,15 +77,13 @@ class ProjectType:
         return projects
 
     @strawberry.field
-    async def role(self, info: strawberry.Info) -> int:
+    async def role(self, info: strawberry.Info) -> Optional[int]:
         project_member = await sync_to_async(
-            lambda: ProjectMember.objects.get(
-                project_id=self.id,
-                is_active=True,
-                member_id=info.context.user.id,
-            )
+            lambda: ProjectMember.objects.filter(
+                project_id=self.id, is_active=True, member_id=info.context.user.id
+            ).first()
         )()
-        return project_member.role
+        return project_member.role if project_member else None
 
     @strawberry.field
     async def total_issues(self, info: Info) -> int:
@@ -131,3 +129,5 @@ class ProjectLiteType:
     id: strawberry.ID
     name: str
     identifier: str
+    is_member: Optional[bool]
+    logo_props: JSON

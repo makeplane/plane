@@ -2,7 +2,7 @@ import { useContext } from "react";
 // mobx store
 import { StoreContext } from "@/lib/store-context";
 // types
-import { ICommandPaletteStore } from "@/store/command-palette.store";
+import { ICommandPaletteStore } from "@/plane-web/store/command-palette.store";
 
 export const useCommandPalette = (): ICommandPaletteStore => {
   const context = useContext(StoreContext);

@@ -7,6 +7,16 @@ from plane.ee.views.api import (
 )
 
 # App imports
+from plane.ee.views.app.project import (
+    ProjectLinkViewSet,
+    ProjectAnalyticsEndpoint,
+    ProjectUpdatesViewSet,
+    ProjectAttachmentV2Endpoint,
+    ProjectReactionViewSet,
+    ProjectActivityEndpoint,
+)
+from plane.ee.views.app.update import UpdatesReactionViewSet
+
 from plane.ee.views.app.ai import RephraseGrammarEndpoint
 from plane.ee.views.app.cycle import WorkspaceActiveCycleEndpoint
 from plane.ee.views.app.issue import (
@@ -23,6 +33,8 @@ from plane.ee.views.app.page import (
     WorkspacePagesDescriptionViewSet,
     WorkspacePageVersionEndpoint,
     WorkspacePageFavoriteEndpoint,
+    WorkspacePageDuplicateEndpoint,
+    MovePageEndpoint,
 )
 from plane.ee.views.app.views import (
     IssueViewEEViewSet,
@@ -37,9 +49,13 @@ from plane.ee.views.app.workspace import (
     WorkspaceProjectStatesDefaultEndpoint,
     WorkspaceInviteCheckEndpoint,
 )
+from plane.ee.views.app.webhook import InternalWebhookEndpoint
+from plane.ee.views.app.project import ProjectFeatureEndpoint
 
 from plane.ee.views.app.issue_property import IssuePropertyEndpoint
 from plane.ee.views.app.intake import IntakeSettingEndpoint
+from plane.ee.views.app.epic import EpicViewSet, EpicLinkViewSet
+from plane.ee.views.app.inbox import InboxViewSet
 
 # Space imports
 from plane.ee.views.space.page import (
@@ -56,3 +72,34 @@ from plane.ee.views.space.intake import (
     IntakePublishedIssueEndpoint,
     IntakeMetaPublishedIssueEndpoint,
 )
+
+# workspace connection views
+from plane.ee.views.app.workspace.credential import (
+    WorkspaceCredentialView,
+    VerifyWorkspaceCredentialView,
+)
+from plane.ee.views.app.workspace.connection import (
+    WorkspaceConnectionView,
+    WorkspaceUserConnectionView,
+)
+from plane.ee.views.app.workspace.entity_connection import WorkspaceEntityConnectionView
+
+
+from plane.ee.views.api.workspace.credential import (
+    WorkspaceCredentialAPIView,
+    VerifyWorkspaceCredentialAPIView,
+)
+from plane.ee.views.api.workspace.connection import (
+    WorkspaceConnectionAPIView,
+    WorkspaceUserConnectionAPIView,
+)
+from plane.ee.views.api.workspace.entity_connection import (
+    WorkspaceEntityConnectionAPIView,
+)
+
+# jobs views
+from plane.ee.views.app.job.base import ImportJobView
+from plane.ee.views.app.job.report import ImportReportView
+
+from plane.ee.views.api.job.base import ImportJobAPIView
+from plane.ee.views.api.job.report import ImportReportAPIView

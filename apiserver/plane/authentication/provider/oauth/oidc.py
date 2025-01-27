@@ -27,18 +27,12 @@ class OIDCOAuthProvider(OauthAdapter):
             OIDC_AUTHORIZE_URL,
         ) = get_configuration_value(
             [
-                {
-                    "key": "OIDC_CLIENT_ID",
-                    "default": os.environ.get("OIDC_CLIENT_ID"),
-                },
+                {"key": "OIDC_CLIENT_ID", "default": os.environ.get("OIDC_CLIENT_ID")},
                 {
                     "key": "OIDC_CLIENT_SECRET",
                     "default": os.environ.get("OIDC_CLIENT_SECRET"),
                 },
-                {
-                    "key": "OIDC_TOKEN_URL",
-                    "default": os.environ.get("OIDC_TOKEN_URL"),
-                },
+                {"key": "OIDC_TOKEN_URL", "default": os.environ.get("OIDC_TOKEN_URL")},
                 {
                     "key": "OIDC_USERINFO_URL",
                     "default": os.environ.get("OIDC_USERINFO_URL"),
@@ -62,9 +56,7 @@ class OIDCOAuthProvider(OauthAdapter):
                 error_message="OIDC_NOT_CONFIGURED",
             )
 
-        redirect_uri = (
-            f"{request.scheme}://{request.get_host()}/auth/oidc/callback/"
-        )
+        redirect_uri = f"{request.scheme}://{request.get_host()}/auth/oidc/callback/"
         url_params = {
             "client_id": OIDC_CLIENT_ID,
             "response_type": "code",
@@ -96,8 +88,7 @@ class OIDCOAuthProvider(OauthAdapter):
             "grant_type": "authorization_code",
         }
         token_response = self.get_user_token(
-            data=data,
-            headers={"Content-Type": "application/x-www-form-urlencoded"},
+            data=data, headers={"Content-Type": "application/x-www-form-urlencoded"}
         )
         super().set_token_data(
             {
@@ -105,16 +96,14 @@ class OIDCOAuthProvider(OauthAdapter):
                 "refresh_token": token_response.get("refresh_token", None),
                 "access_token_expired_at": (
                     datetime.fromtimestamp(
-                        token_response.get("expires_in"),
-                        tz=pytz.utc,
+                        token_response.get("expires_in"), tz=pytz.utc
                     )
                     if token_response.get("expires_in")
                     else None
                 ),
                 "refresh_token_expired_at": (
                     datetime.fromtimestamp(
-                        token_response.get("refresh_token_expired_at"),
-                        tz=pytz.utc,
+                        token_response.get("refresh_token_expired_at"), tz=pytz.utc
                     )
                     if token_response.get("refresh_token_expired_at")
                     else None
@@ -139,12 +128,7 @@ class OIDCOAuthProvider(OauthAdapter):
 
     def logout(self, logout_url=None):
         (OIDC_LOGOUT_URL,) = get_configuration_value(
-            [
-                {
-                    "key": "OIDC_LOGOUT_URL",
-                    "default": os.environ.get("OIDC_LOGOUT_URL"),
-                },
-            ]
+            [{"key": "OIDC_LOGOUT_URL", "default": os.environ.get("OIDC_LOGOUT_URL")}]
         )
 
         account = Account.objects.filter(

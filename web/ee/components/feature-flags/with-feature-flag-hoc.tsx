@@ -1,7 +1,8 @@
 import { ReactNode } from "react";
 import { observer } from "mobx-react";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 // plane web hooks
-import { E_FEATURE_FLAGS, useFlag } from "@/plane-web/hooks/store/use-flag";
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
 interface IWithFeatureFlagHOC {
   workspaceSlug: string;

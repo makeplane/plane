@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.24.0",
+  "version": "0.24.1",
   "private": true,
   "scripts": {
     "dev": "turbo run develop",
@@ -30,27 +30,21 @@
     "@nivo/scatterplot": "^0.88.0",
     "@plane/constants": "*",
     "@plane/editor": "*",
+    "@plane/etl": "*",
     "@plane/hooks": "*",
+    "@plane/i18n": "*",
     "@plane/sdk": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
     "@plane/utils": "*",
     "@popperjs/core": "^2.11.8",
-    "@silo/asana": "*",
     "@react-pdf/renderer": "^3.4.5",
-    "@sentry/nextjs": "^8.32.0",
-    "@silo/core": "*",
-    "@silo/github": "*",
-    "@silo/gitlab": "*",
-    "@silo/jira": "*",
-    "@silo/linear": "*",
-    "@silo/slack": "*",
-    "@todesktop/client-core": "^1.9.0",
-    "axios": "^1.7.4",
+    "@todesktop/client-core": "^1.12.4",
+    "axios": "^1.7.9",
     "clsx": "^2.0.0",
     "cmdk": "^1.0.0",
     "comlink": "^4.4.1",
-    "date-fns": "^2.30.0",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.0.3",
     "isomorphic-dompurify": "^2.12.0",
     "lodash": "^4.17.21",
@@ -71,6 +65,7 @@
     "react-dropzone": "^14.2.3",
     "react-hook-form": "7.51.5",
     "react-markdown": "^8.0.7",
+    "react-masonry-component": "^6.3.0",
     "react-pdf-html": "^2.1.2",
     "react-popper": "^2.3.0",
     "recharts": "^2.12.7",
@@ -85,6 +80,7 @@
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
+    "@plane/tailwind-config": "*",
     "@plane/typescript-config": "*",
     "@types/dompurify": "^3.0.5",
     "@types/lodash": "^4.14.202",
@@ -97,7 +93,13 @@
     "@types/uuid": "^8.3.4",
     "@types/zxcvbn": "^4.4.4",
     "prettier": "^3.2.5",
-    "tailwind-config-custom": "*",
     "typescript": "5.3.3"
+  },
+  "resolutions": {
+    "nanoid": "^3.3.8",
+    "@todesktop/client-util/nanoid": "^3.3.8"
+  },
+  "peerDependencies": {
+    "nanoid": "^3.3.8"
   }
 }

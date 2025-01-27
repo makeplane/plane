@@ -3,25 +3,24 @@
 import { FC, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane constants
+import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
 import { Breadcrumbs, LayersIcon, Tooltip } from "@plane/ui";
 // components
-import { BreadcrumbLink, Logo } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
-import {
-  EIssueFilterType,
-  EIssuesStoreType,
-  EIssueLayoutTypes,
-  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
-} from "@/constants/issue";
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 
 export const ProjectDraftIssueHeader: FC = observer(() => {
   // router
@@ -95,21 +94,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div className="flex items-center gap-2.5">
           <Breadcrumbs isLoading={loader}>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  label={currentProjectDetails?.name ?? "Project"}
-                  icon={
-                    currentProjectDetails && (
-                      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                      </span>
-                    )
-                  }
-                />
-              }
-            />
+            <ProjectBreadcrumb />
 
             <Breadcrumbs.BreadcrumbItem
               type="text"

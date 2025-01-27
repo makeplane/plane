@@ -1,10 +1,12 @@
 import { env } from "@/env";
 import { Controller, Get, Post } from "@/lib";
-import { Request, Response } from "express";
-import { LinearTokenResponse, createLinearService, LinearAuthPayload, LinearAuthState } from "@silo/linear";
+import { NextFunction, Request, Response } from "express";
+import { LinearTokenResponse, createLinearService, LinearAuthPayload, LinearAuthState } from "@plane/etl/linear";
 import { createOrUpdateCredentials, getCredentialsByWorkspaceId } from "@/db/query";
 import { linearAuth } from "../auth/auth";
-import { TServiceCredentials } from "@silo/core";
+import { createPlaneClient } from "@/helpers/utils";
+import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
+import { responseHandler } from "@/helpers/response-handler";
 
 @Controller("/api/linear")
 class LinearController {
@@ -15,54 +17,58 @@ class LinearController {
 
   @Post("/auth/url")
   async getAuthURL(req: Request, res: Response) {
-    if (env.LINEAR_OAUTH_ENABLED === "0") {
-      return res.status(400).send({
-        message: "Bad Request, OAuth is not enabled for Linear.",
-      });
-    }
+    try {
+      if (env.LINEAR_OAUTH_ENABLED === "0") {
+        return res.status(400).send({
+          message: "Bad Request, OAuth is not enabled for Linear.",
+        });
+      }
 
-    const body: LinearAuthState = req.body;
-    if (!body.workspaceId || !body.apiToken) {
-      return res.status(400).send({
-        message: "Bad Request, expected both apiToken and workspaceId to be present.",
-      });
+      const body: LinearAuthState = req.body;
+      if (!body.workspaceId || !body.apiToken) {
+        return res.status(400).send({
+          message: "Bad Request, expected both apiToken and workspaceId to be present.",
+        });
+      }
+      const response = linearAuth.getAuthorizationURL(body);
+      res.send(response);
+
+    } catch (error) {
+      responseHandler(res, 500, error);
     }
-    const hostname = env.SILO_API_BASE_URL;
-    const response = linearAuth.getAuthorizationURL(body, hostname);
-    res.send(response);
   }
 
   @Get("/auth/callback")
   async authCallback(req: Request, res: Response) {
-    if (env.LINEAR_OAUTH_ENABLED === "0") {
-      return res.status(400).send({
-        message: "Invalid Callback, OAuth is not enabled for Linear.",
-      });
-    }
-    const query: LinearAuthPayload | any = req.query;
-    if (!query.code || !query.state) {
-      return res.status(400).send("code not found in the query params");
-    }
-    const stringifiedJsonState = query.state as string;
-    // Decode the base64 encoded state string and parse it to JSON
-    const state: LinearAuthState = JSON.parse(Buffer.from(stringifiedJsonState, "base64").toString());
-    let tokenResponse: LinearTokenResponse;
     try {
-      const hostname = env.SILO_API_BASE_URL;
-      const tokenInfo = await linearAuth.getAccessToken(query.code as string, state, hostname);
-      tokenResponse = tokenInfo.tokenResponse;
-    } catch (error: any) {
-      console.log("Error occured while fetching token details", error.response.data);
-      res.status(400).send(error.response.data);
-      return;
-    }
+      if (env.LINEAR_OAUTH_ENABLED === "0") {
+        return res.status(400).send({
+          message: "Invalid Callback, OAuth is not enabled for Linear.",
+        });
+      }
+      const query: LinearAuthPayload | any = req.query;
+      if (!query.code || !query.state) {
+        return res.status(400).send("code not found in the query params");
+      }
+      const stringifiedJsonState = query.state as string;
+      // Decode the base64 encoded state string and parse it to JSON
+      const state: LinearAuthState = JSON.parse(Buffer.from(stringifiedJsonState, "base64").toString());
+      let tokenResponse: LinearTokenResponse;
+      try {
+        const tokenInfo = await linearAuth.getAccessToken(query.code as string, state);
+        tokenResponse = tokenInfo.tokenResponse;
+      } catch (error: any) {
+        console.log("Error occured while fetching token details", error.response.data);
+        res.status(400).send(error.response.data);
+        return;
+      }
 
-    if (!tokenResponse) {
-      res.status(400).send("failed to fetch token details");
-      return;
-    }
+      if (!tokenResponse) {
+        res.status(400).send("failed to fetch token details");
+        return;
+      }
 
-    try {
+
       // Create a new credentials record in the database for the recieved token
       await createOrUpdateCredentials(state.workspaceId, state.userId, {
         source_access_token: tokenResponse.access_token,
@@ -74,7 +80,7 @@ class LinearController {
       // As we are using base path as /linear, we can redirect to /linear
       res.redirect(`${env.APP_BASE_URL}/${state.workspaceSlug}/settings/imports/linear/`);
     } catch (error: any) {
-      res.status(500).send(error.response.data);
+      responseHandler(res, 500, error);
     }
   }
 
@@ -85,8 +91,6 @@ class LinearController {
       if (!workspaceId || !userId || !apiToken || !personalAccessToken) {
         res.status(400).json({ message: "Workspace ID, User ID, API Token and Personal Access Token are required" });
       }
-
-      const payload = req.body as TServiceCredentials;
 
       // Verify the credentials for validity
       try {
@@ -106,7 +110,7 @@ class LinearController {
       });
       return res.status(200).json(credential);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error);
     }
   }
 
@@ -123,7 +127,7 @@ class LinearController {
       const org = await linearServiceInstance.organization();
       res.send(org);
     } catch (error: any) {
-      res.status(500).send(error?.response?.data);
+      responseHandler(res, 500, error);
     }
   }
 
@@ -143,7 +147,7 @@ class LinearController {
       const teams = await linearServiceInstance.getTeamsWithoutPagination();
       res.send(teams);
     } catch (error: any) {
-      res.status(500).send(error?.response?.data);
+      responseHandler(res, 500, error);
     }
   }
 
@@ -163,7 +167,7 @@ class LinearController {
       const teams = await linearServiceInstance.getTeamStatusesWithoutPagination(teamId);
       res.send(teams);
     } catch (error: any) {
-      res.status(500).send(error.response.data);
+      responseHandler(res, 500, error);
     }
   }
 
@@ -184,7 +188,40 @@ class LinearController {
       res.json(teams);
     } catch (error: any) {
       console.log(error);
-      res.sendStatus(500).send(error);
+      responseHandler(res, 500, error);
+    }
+  }
+
+  @Get("/additional-users/:workspaceId/:workspaceSlug/:userId/:teamId")
+  async getUserDifferential(req: Request, res: Response) {
+    const { workspaceId, workspaceSlug, userId, teamId } = req.params;
+
+    try {
+      const [planeClient, linearClient] = await Promise.all([
+        createPlaneClient(workspaceId, userId, "LINEAR"),
+        linearService(workspaceId, userId),
+      ]);
+
+      const [workspaceMembers, linearUsers] = await Promise.all([
+        planeClient.users.listAllUsers(workspaceSlug),
+        linearClient.getTeamMembers(teamId),
+      ]);
+
+      const billableMembers = workspaceMembers.filter((member) => member.role > 10);
+      const additionalUsers = compareAndGetAdditionalUsers(
+        billableMembers,
+        linearUsers.nodes.map((user) => user.email)
+      );
+
+      return res.json({
+        additionalUserCount: additionalUsers.length,
+        occupiedUserCount: billableMembers.length,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        return res.status(401).json({ error: error.message });
+      }
+      responseHandler(res, 500, error);
     }
   }
 }

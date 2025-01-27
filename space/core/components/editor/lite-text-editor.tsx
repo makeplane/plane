@@ -2,13 +2,11 @@ import React from "react";
 // editor
 import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
 // components
-import { IssueCommentToolbar } from "@/components/editor";
+import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
-// hooks
-import { useMention } from "@/hooks/use-mention";
 
 interface LiteTextEditorWrapperProps
   extends Omit<ILiteTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
@@ -29,8 +27,6 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     uploadFile,
     ...rest
   } = props;
-  // use-mention
-  const { mentionHighlights } = useMention();
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
     return !!ref && typeof ref === "object" && "current" in ref;
   }
@@ -49,8 +45,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           workspaceId,
         })}
         mentionHandler={{
-          highlights: mentionHighlights,
-          // suggestions disabled for now
+          renderComponent: (props) => <EditorMentionsRoot {...props} />,
         }}
         {...rest}
         // overriding the containerClassName to add relative class passed

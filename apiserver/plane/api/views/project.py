@@ -258,7 +258,9 @@ class ProjectAPIEndpoint(BaseAPIView):
                 ProjectSerializer(project).data, cls=DjangoJSONEncoder
             )
 
-            intake_view = request.data.get("inbox_view", project.intake_view)
+            intake_view = request.data.get(
+                "inbox_view", request.data.get("intake_view", project.intake_view)
+            )
 
             if project.archived_at:
                 return Response(
@@ -285,16 +287,6 @@ class ProjectAPIEndpoint(BaseAPIView):
                             project=project,
                             is_default=True,
                         )
-
-                    # Create the triage state in Backlog group
-                    State.objects.get_or_create(
-                        name="Triage",
-                        group="triage",
-                        description="Default state for managing all Intake Issues",
-                        project_id=pk,
-                        color="#ff7700",
-                        is_triage=True,
-                    )
 
                 project = self.get_queryset().filter(pk=serializer.data["id"]).first()
 

@@ -7,12 +7,8 @@ from plane.db.models import Cycle, UserFavorite, Label, User
 
 # ee imports
 from plane.ee.views.base import BaseAPIView
-from plane.ee.permissions import (
-    WorkspaceUserPermission,
-)
-from plane.ee.serializers import (
-    WorkspaceActiveCycleSerializer,
-)
+from plane.ee.permissions import WorkspaceUserPermission
+from plane.ee.serializers import WorkspaceActiveCycleSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
@@ -20,9 +16,7 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class WorkspaceActiveCycleEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceUserPermission,
-    ]
+    permission_classes = [WorkspaceUserPermission]
 
     @check_feature_flag(FeatureFlag.WORKSPACE_ACTIVE_CYCLES)
     def get(self, request, slug):
@@ -48,17 +42,13 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
             .prefetch_related(
                 Prefetch(
                     "issue_cycle__issue__assignees",
-                    queryset=User.objects.only(
-                        "avatar", "first_name", "id"
-                    ).distinct(),
+                    queryset=User.objects.only("avatar", "first_name", "id").distinct(),
                 )
             )
             .prefetch_related(
                 Prefetch(
                     "issue_cycle__issue__labels",
-                    queryset=Label.objects.only(
-                        "name", "color", "id"
-                    ).distinct(),
+                    queryset=Label.objects.only("name", "color", "id").distinct(),
                 )
             )
             .annotate(
@@ -81,8 +71,7 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
             request=request,
             queryset=active_cycles,
             on_results=lambda active_cycles: WorkspaceActiveCycleSerializer(
-                active_cycles,
-                many=True,
+                active_cycles, many=True
             ).data,
             default_per_page=int(request.GET.get("per_page", 3)),
         )

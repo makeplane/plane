@@ -1,7 +1,7 @@
 import { getCredentialsById } from "@/db/query";
 import { getWorkspaceConnectionByConnectionId } from "@/db/query/connection";
 import { getRefreshCredentialHandler } from "./update-credentials";
-import { createSlackService } from "@silo/slack";
+import { createSlackService } from "@plane/etl/slack";
 import { slackAuth } from "../auth/auth";
 import { Client as PlaneClient } from "@plane/sdk";
 

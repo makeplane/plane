@@ -8,7 +8,6 @@ from plane.payment.views.base import BaseAPIView
 
 
 class FeatureFlagProxyEndpoint(BaseAPIView):
-
     def get(self, request, slug):
         url = f"{settings.FEATURE_FLAG_SERVER_BASE_URL}/api/feature-flags/"
         json = {"workspace_slug": slug, "user_id": str(request.user.id)}

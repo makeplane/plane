@@ -1,4 +1,4 @@
-import { getCredentialsByWorkspaceId } from "@/db/query";
+import { getCredentialsByWorkspaceId, getCredentialsForUser } from "@/db/query";
 import {
   createEntityConnection,
   createWorkspaceConnection,
@@ -11,8 +11,11 @@ import {
   getWorkspaceConnections,
   updateEntityConnection,
 } from "@/db/query/connection";
+import { responseHandler } from "@/helpers/response-handler";
 import { Controller, Delete, Get, Post } from "@/lib";
-import { Request, Response } from "express";
+import { WorkspaceConnection } from "@/types";
+import { TServiceCredentials } from "@plane/etl/core";
+import { NextFunction, Request, Response } from "express";
 import z from "zod";
 
 const createWorkspaceConnectionSchema = z.object({
@@ -40,7 +43,48 @@ export class ConnectionsController {
       );
       res.status(200).json(connections);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error)
+    }
+  }
+
+  @Get("/:workspaceId/user/:userId")
+  async getUserConnections(req: Request, res: Response) {
+    try {
+      const { workspaceId, userId } = req.params;
+
+      // Get the workspace connections and credentials for the user
+      const connections = await getWorkspaceConnections(workspaceId);
+      const credentials = await getCredentialsForUser(workspaceId, userId);
+
+      // Create a Map for lookup with credential source and credentials
+      const credentialMap = new Map<string, TServiceCredentials>();
+      credentials.forEach((credential) => {
+        if (credential.source) {
+          credentialMap.set(credential.source, credential as TServiceCredentials);
+        }
+      });
+
+      const resultConnections: (WorkspaceConnection<any> & { isUserConnected: boolean })[] = [];
+
+      // Check if the user is connected to the connection
+      // If the user is connected then add the connection to the result
+      connections.forEach((connection) => {
+        if (credentialMap.has(`${connection.connectionType}-USER`)) {
+          resultConnections.push({
+            ...connection,
+            isUserConnected: true,
+          });
+        } else {
+          resultConnections.push({
+            ...connection,
+            isUserConnected: false,
+          });
+        }
+      });
+
+      res.status(200).json(resultConnections);
+    } catch (error: any) {
+      responseHandler(res, 500, error)
     }
   }
 
@@ -77,7 +121,7 @@ export class ConnectionsController {
 
       res.status(201).json(connection);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error)
     }
   }
 
@@ -88,7 +132,7 @@ export class ConnectionsController {
       const deletedConnection = await deleteWorkspaceConnection(id);
       res.status(200).json(deletedConnection);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error)
     }
   }
 
@@ -98,7 +142,7 @@ export class ConnectionsController {
       const connection = await createEntityConnection(req.body);
       res.status(201).json(connection);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error)
     }
   }
 
@@ -113,7 +157,7 @@ export class ConnectionsController {
         res.status(404).json({ error: "Entity connection not found" });
       }
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error)
     }
   }
 
@@ -128,7 +172,7 @@ export class ConnectionsController {
         res.status(404).json({ error: "Entity connection not found" });
       }
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error)
     }
   }
 
@@ -139,7 +183,7 @@ export class ConnectionsController {
       const connections = await getEntityConnectionByWorkspaceAndProjectId(workspaceId, projectId);
       res.status(200).json(connections);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error)
     }
   }
 
@@ -150,7 +194,7 @@ export class ConnectionsController {
       const connections = await getAllEntityConnections(workspaceId, projectId);
       res.status(200).json(connections);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error)
     }
   }
 
@@ -161,7 +205,7 @@ export class ConnectionsController {
       const updatedConnection = await updateEntityConnection(id, req.body);
       res.status(200).json(updatedConnection);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error)
     }
   }
 
@@ -172,7 +216,7 @@ export class ConnectionsController {
       const deletedConnection = await deleteEntityConnection(id);
       res.status(200).json(deletedConnection);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      responseHandler(res, 500, error)
     }
   }
 }

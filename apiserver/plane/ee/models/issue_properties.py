@@ -32,15 +32,9 @@ class IssueProperty(WorkspaceBaseModel):
     description = models.TextField(blank=True, null=True)
     logo_props = models.JSONField(blank=True, default=dict)
     sort_order = models.FloatField(default=65535)
-    property_type = models.CharField(
-        max_length=255,
-        choices=PropertyTypeEnum.choices,
-    )
+    property_type = models.CharField(max_length=255, choices=PropertyTypeEnum.choices)
     relation_type = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True,
-        choices=RelationTypeEnum.choices,
+        max_length=255, blank=True, null=True, choices=RelationTypeEnum.choices
     )
     is_required = models.BooleanField(default=False)
     default_value = ArrayField(models.TextField(), blank=True, default=list)
@@ -70,9 +64,9 @@ class IssueProperty(WorkspaceBaseModel):
         self.name = slugify(self.display_name)
         if self._state.adding:
             # Get the maximum sequence value from the database
-            last_id = IssueProperty.objects.filter(
-                project=self.project
-            ).aggregate(largest=models.Max("sort_order"))["largest"]
+            last_id = IssueProperty.objects.filter(project=self.project).aggregate(
+                largest=models.Max("sort_order")
+            )["largest"]
             # if last_id is not None
             if last_id is not None:
                 self.sort_order = last_id + 10000
@@ -93,11 +87,7 @@ class IssuePropertyOption(WorkspaceBaseModel):
     logo_props = models.JSONField(blank=True, default=dict)
     is_active = models.BooleanField(default=True)
     parent = models.ForeignKey(
-        "self",
-        on_delete=models.CASCADE,
-        related_name="children",
-        null=True,
-        blank=True,
+        "self", on_delete=models.CASCADE, related_name="children", null=True, blank=True
     )
     is_default = models.BooleanField(default=False)
     external_source = models.CharField(max_length=255, null=True, blank=True)

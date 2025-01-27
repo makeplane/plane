@@ -8,7 +8,13 @@ import { IPaymentProduct, TProductSubscriptionType } from "@plane/types";
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 // types
 // plane web components
-import { CloudFreePlanCard, OnePlanCard, ProPlanCard, SelfHostedFreePlanCard } from "@/plane-web/components/license";
+import {
+  CloudFreePlanCard,
+  OnePlanCard,
+  ProPlanCard,
+  BusinessPlanCard,
+  SelfHostedFreePlanCard,
+} from "@/plane-web/components/license";
 import { PlansComparison } from "@/plane-web/components/workspace/billing";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
@@ -164,6 +170,10 @@ export const BillingRoot = observer(() => {
               {subscriptionDetail.product === "ONE" && <OnePlanCard />}
               {subscriptionDetail.product === "PRO" && (
                 <ProPlanCard upgradeLoader={upgradeLoader} handleUpgrade={handleStripeCheckout} />
+              )}
+
+              {subscriptionDetail.product === "BUSINESS" && (
+                <BusinessPlanCard upgradeLoader={upgradeLoader} handleUpgrade={handleStripeCheckout} />
               )}
             </>
           )}

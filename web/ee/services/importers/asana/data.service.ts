@@ -1,5 +1,7 @@
 import axios, { AxiosInstance } from "axios";
-import { AsanaCustomField, AsanaProject, AsanaProjectTaskCount, AsanaSection, AsanaWorkspace } from "@silo/asana";
+import { AsanaCustomField, AsanaProject, AsanaProjectTaskCount, AsanaSection, AsanaWorkspace } from "@plane/etl/asana";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
+import { IAdditionalUsersResponse } from "@plane/types";
 
 export class AsanaService {
   protected baseURL: string;
@@ -99,6 +101,29 @@ export class AsanaService {
   ): Promise<AsanaProjectTaskCount | undefined> {
     return this.axiosInstance
       .get(`/api/asana/project-task-count?workspaceId=${workspaceId}&userId=${userId}&projectGid=${projectGid}`)
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description get additional users while import
+   * @property workspaceId: string
+   * @property userId: string
+   * @property workspaceSlug: string
+   */
+  async getAdditionalUsers(
+    workspaceId: string,
+    userId: string,
+    workspaceSlug: string,
+    workspaceGid: string
+  ): Promise<IAdditionalUsersResponse | undefined> {
+    return this.axiosInstance
+      .get(
+        `/api/${E_IMPORTER_KEYS.ASANA.toLowerCase().replaceAll("_", "-")}/additional-users/${workspaceId}/${workspaceSlug}/${userId}/${workspaceGid}`,
+        {}
+      )
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;

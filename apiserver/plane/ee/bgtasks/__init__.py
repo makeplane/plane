@@ -1,1 +1,2 @@
 from .bulk_issue_activities_task import bulk_issue_activity
+from .initiative_activity_task import initiative_activity

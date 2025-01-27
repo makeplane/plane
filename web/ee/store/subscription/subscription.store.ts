@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-catch */
 import set from "lodash/set";
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // types
 import { IWorkspaceProductSubscription } from "@plane/types";
 // services
@@ -19,6 +19,7 @@ export interface IWorkspaceSubscriptionStore {
   isPaidPlanModalOpen: boolean;
   isSuccessPlanModalOpen: boolean;
   currentWorkspaceSubscribedPlanDetail: IWorkspaceProductSubscription | undefined;
+  currentWorkspaceSubscriptionAvailableSeats: number;
   updateSubscribedPlan: (workspaceSlug: string, payload: Partial<IWorkspaceProductSubscription>) => void;
   togglePaidPlanModal: (value?: boolean) => void;
   handleSuccessModalToggle: (isOpen?: boolean) => void;
@@ -38,17 +39,43 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
       isPaidPlanModalOpen: observable.ref,
       isSuccessPlanModalOpen: observable,
       currentWorkspaceSubscribedPlanDetail: computed,
+      currentWorkspaceSubscriptionAvailableSeats: computed,
       updateSubscribedPlan: action,
       togglePaidPlanModal: action,
       fetchWorkspaceSubscribedPlan: action,
       refreshWorkspaceSubscribedPlan: action,
       freeTrialSubscription: action,
     });
+    // Reactions to fetch current plan details when workspace members change
+    reaction(
+      () => ({
+        workspaceMemberIds: this.rootStore.memberRoot.workspace.workspaceMemberIds,
+        workspaceMemberInvitationIds: this.rootStore.memberRoot.workspace.workspaceMemberInvitationIds,
+      }),
+      ({ workspaceMemberIds, workspaceMemberInvitationIds }) => {
+        const workspaceSlug = this.rootStore.router.workspaceSlug;
+        if (!workspaceSlug || !workspaceMemberIds || !workspaceMemberInvitationIds) return;
+        if (
+          this.currentWorkspaceSubscribedPlanDetail?.occupied_seats ===
+          workspaceMemberIds.length + workspaceMemberInvitationIds.length
+        )
+          return;
+        this.fetchWorkspaceSubscribedPlan(workspaceSlug);
+      }
+    );
   }
 
   get currentWorkspaceSubscribedPlanDetail() {
     if (!this.rootStore.router.workspaceSlug) return undefined;
     return this.subscribedPlan[this.rootStore.router.workspaceSlug] || undefined;
+  }
+
+  get currentWorkspaceSubscriptionAvailableSeats() {
+    if (this.currentWorkspaceSubscribedPlanDetail?.product == 'FREE') {
+      return (this.currentWorkspaceSubscribedPlanDetail.free_seats || 12) - (this.currentWorkspaceSubscribedPlanDetail.occupied_seats || 0)
+    } else {
+      return (this.currentWorkspaceSubscribedPlanDetail?.purchased_seats || 12) - (this.currentWorkspaceSubscribedPlanDetail?.billable_members || 0)
+    }
   }
 
   updateSubscribedPlan = (workspaceSlug: string, payload: Partial<IWorkspaceProductSubscription>) => {
@@ -92,8 +119,9 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
           show_trial_banner: response?.show_trial_banner ?? false,
           free_seats: response?.free_seats ?? 0,
           billable_members: response?.billable_members ?? 1,
-          total_seats: response?.total_seats ?? 1,
-          show_cloud_seats_banner: response?.show_cloud_seats_banner ?? false,
+          occupied_seats: response?.occupied_seats ?? 1,
+          show_seats_banner: response?.show_seats_banner ?? false,
+          is_free_member_count_exceeded: response?.is_free_member_count_exceeded ?? false,
         });
       });
       return response;
@@ -109,8 +137,9 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
           show_payment_button: true,
           free_seats: 0,
           billable_members: 1,
-          total_seats: 1,
-          show_cloud_seats_banner: false,
+          occupied_seats: 1,
+          show_seats_banner: false,
+          is_free_member_count_exceeded: false,
         });
       });
       throw error;

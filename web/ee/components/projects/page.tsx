@@ -11,7 +11,7 @@ import { useWorkspace } from "@/hooks/store";
 // plane web components
 import { WorkspaceProjectsRoot } from "@/plane-web/components/projects";
 import { useProjectFilter, useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { E_FEATURE_FLAGS, useFlag } from "@/plane-web/hooks/store/use-flag";
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
 
@@ -26,9 +26,9 @@ export const ProjectPageRoot = observer(() => {
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Projects` : undefined;
   const currentWorkspaceId = currentWorkspace?.id;
+  const isProjectGroupingFlagEnabled = useFlag(workspaceSlug.toString(), "PROJECT_GROUPING");
   const isProjectGroupingEnabled =
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
-    useFlag(workspaceSlug.toString(), E_FEATURE_FLAGS.PROJECT_GROUPING);
+    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFlagEnabled;
   const isArchived = pathname.includes("/archives");
 
   useEffect(() => {

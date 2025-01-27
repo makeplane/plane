@@ -2,7 +2,7 @@
 
 import useSWR from "swr";
 // hooks
-import { useStates } from "@/hooks/store";
+import { useMember, useStates } from "@/hooks/store";
 // components
 import { PageDetailsMainContent } from "@/plane-web/components/pages";
 
@@ -16,10 +16,12 @@ export default function PageDetailsPage(props: Props) {
   const { params } = props;
   // params
   const { anchor } = params;
-  // store
+  // store hooks
   const { fetchStates } = useStates();
+  const { fetchMembers } = useMember();
 
   useSWR(anchor ? `PUBLIC_STATES_${anchor}` : null, anchor ? () => fetchStates(anchor) : null);
+  useSWR(anchor ? `PUBLIC_MEMBERS_${anchor}` : null, anchor ? () => fetchMembers(anchor) : null);
 
   return <PageDetailsMainContent anchor={params.anchor.toString()} />;
 }

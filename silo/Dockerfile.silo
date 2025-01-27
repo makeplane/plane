@@ -1,4 +1,4 @@
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 # The web Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
 # Make sure you update this Dockerfile, the Dockerfile in the web workspace and copy that over to Dockerfile in the docs.
 
@@ -32,9 +32,28 @@ ENV TURBO_TELEMETRY_DISABLED 1
 
 RUN yarn turbo build --filter=silo
 
+# Sentry source maps upload stage
+FROM base AS sentry-upload
+WORKDIR /app
+
+# Environment variables for Sentry (use --build-arg to pass them securely during build)
+ARG SENTRY_AUTH_TOKEN
+ARG SENTRY_ORG
+ARG SENTRY_PROJECT
+ARG SENTRY_RELEASE_VERSION
+
+ENV SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN
+ENV SENTRY_ORG=$SENTRY_ORG
+ENV SENTRY_PROJECT=$SENTRY_PROJECT
+ENV SENTRY_RELEASE_VERSION=$SENTRY_RELEASE_VERSION
+
+# Run the Sentry source maps upload
+RUN yarn sentry:sourcemaps
+
 FROM base AS runner
 WORKDIR /app
 
+COPY --from=installer /app/packages ./packages
 COPY --from=installer /app/silo/dist ./silo
 COPY --from=installer /app/silo/package.json ./silo/package.json
 COPY --from=installer /app/silo/src/db/migrations ./silo/src/db/migrations

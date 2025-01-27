@@ -207,6 +207,7 @@ class IssueSerializer(BaseSerializer):
                     for assignee_id in assignees
                 ],
                 batch_size=10,
+                ignore_conflicts=True,
             )
 
         if labels is not None:
@@ -224,6 +225,7 @@ class IssueSerializer(BaseSerializer):
                     for label_id in labels
                 ],
                 batch_size=10,
+                ignore_conflicts=True,
             )
 
         # Time updation occues even when other related models are updated
@@ -237,17 +239,37 @@ class IssueSerializer(BaseSerializer):
                 from .user import UserLiteSerializer
 
                 data["assignees"] = UserLiteSerializer(
-                    instance.assignees.all(), many=True
+                    User.objects.filter(
+                        pk__in=IssueAssignee.objects.filter(issue=instance).values_list(
+                            "assignee_id", flat=True
+                        )
+                    ),
+                    many=True,
                 ).data
             else:
                 data["assignees"] = [
-                    str(assignee.id) for assignee in instance.assignees.all()
+                    str(assignee)
+                    for assignee in IssueAssignee.objects.filter(
+                        issue=instance
+                    ).values_list("assignee_id", flat=True)
                 ]
         if "labels" in self.fields:
             if "labels" in self.expand:
-                data["labels"] = LabelSerializer(instance.labels.all(), many=True).data
+                data["labels"] = LabelSerializer(
+                    Label.objects.filter(
+                        pk__in=IssueLabel.objects.filter(issue=instance).values_list(
+                            "label_id", flat=True
+                        )
+                    ),
+                    many=True,
+                ).data
             else:
-                data["labels"] = [str(label.id) for label in instance.labels.all()]
+                data["labels"] = [
+                    str(label)
+                    for label in IssueLabel.objects.filter(issue=instance).values_list(
+                        "label_id", flat=True
+                    )
+                ]
 
         return data
 
@@ -417,3 +439,4 @@ class IssueExpandSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+

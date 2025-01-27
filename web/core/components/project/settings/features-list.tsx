@@ -2,6 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 import { ToggleSwitch, Tooltip, setPromiseToast } from "@plane/ui";
 // hooks
@@ -11,7 +12,7 @@ import { UpgradeBadge } from "@/plane-web/components/workspace";
 // plane web constants
 import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
 // plane web hooks
-import { E_FEATURE_FLAGS, useFlag } from "@/plane-web/hooks/store/use-flag";
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
 type Props = {
   workspaceSlug: string;
@@ -22,6 +23,7 @@ type Props = {
 export const ProjectFeaturesList: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, isAdmin } = props;
   // store hooks
+  const { t } = useTranslation();
   const { captureEvent } = useEventTracker();
   const { data: currentUser } = useUser();
   const { getProjectById, updateProject } = useProject();
@@ -65,8 +67,8 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
         return (
           <div key={featureSectionKey} className="">
             <div className="flex flex-col justify-center pb-2 border-b border-custom-border-100">
-              <h3 className="text-xl font-medium">{feature.title}</h3>
-              <h4 className="text-sm leading-5 text-custom-text-200">{feature.description}</h4>
+              <h3 className="text-xl font-medium">{t(feature.key)}</h3>
+              <h4 className="text-sm leading-5 text-custom-text-200">{t(`${feature.key}_description`)}</h4>
             </div>
             {Object.keys(feature.featureList).map((featureItemKey) => {
               const featureItem = feature.featureList[featureItemKey];
@@ -82,21 +84,17 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h4 className="text-sm font-medium leading-5">{featureItem.title}</h4>
+                          <h4 className="text-sm font-medium leading-5">{t(featureItem.key)}</h4>
                           {featureItem.isPro && (
                             <Tooltip tooltipContent="Pro feature" position="top">
                               <UpgradeBadge
-                                flag={
-                                  featureItem.property === "is_time_tracking_enabled"
-                                    ? E_FEATURE_FLAGS.ISSUE_WORKLOG
-                                    : undefined
-                                }
+                                flag={featureItem.property === "is_time_tracking_enabled" ? "ISSUE_WORKLOG" : undefined}
                               />
                             </Tooltip>
                           )}
                         </div>
                         <p className="text-sm leading-5 tracking-tight text-custom-text-300">
-                          {featureItem.description}
+                          {t(`${featureItem.key}_description`)}
                         </p>
                       </div>
                     </div>

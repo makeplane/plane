@@ -33,13 +33,28 @@ export const PublishPageModal: React.FC<Props> = observer((props) => {
 
   const handlePublish = async () => {
     setIsPublishing(true);
-    await publishPage({}).finally(() => setIsPublishing(false));
+    await publishPage({})
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Page could not be published. Please try again later.",
+        });
+      })
+      .finally(() => setIsPublishing(false));
   };
 
   const handleUnpublish = async () => {
     setIsUnpublishing(true);
     await unpublishPage()
       .then(() => handleClose())
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Page could not be unpublished. Please try again later.",
+        });
+      })
       .finally(() => setIsUnpublishing(false));
   };
 

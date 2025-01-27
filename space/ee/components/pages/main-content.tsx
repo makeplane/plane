@@ -6,11 +6,12 @@ import { FileText } from "lucide-react";
 import { DocumentReadOnlyEditorWithRef, EditorRefApi } from "@plane/editor";
 // ui
 import { Logo } from "@plane/ui";
+// components
+import { EditorMentionsRoot } from "@/components/editor";
 // helpers
 import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { usePublish } from "@/hooks/store";
-import { useMention } from "@/hooks/use-mention";
 // plane web components
 import { IssueEmbedCard } from "@/plane-web/components/pages";
 // plane web hooks
@@ -28,8 +29,6 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
   const publishSettings = usePublish(anchor);
   const { fetchPageDetails } = usePagesList();
   const pageDetails = usePage(anchor);
-  // mention hook
-  const { mentionHighlights } = useMention();
 
   useSWR(anchor ? `PAGE_DETAILS_${anchor}` : null, anchor ? () => fetchPageDetails(anchor) : null, {
     revalidateIfStale: false,
@@ -70,7 +69,7 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
               anchor,
             })}
             mentionHandler={{
-              highlights: mentionHighlights,
+              renderComponent: (props) => <EditorMentionsRoot {...props} />,
             }}
             embedHandler={{
               issue: {

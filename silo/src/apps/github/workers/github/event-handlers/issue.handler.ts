@@ -4,8 +4,13 @@ import { env } from "@/env";
 import { getCredentialsForTargetToken } from "@/helpers/credential";
 import { logger } from "@/logger";
 import { ExIssue, Client as PlaneClient } from "@plane/sdk";
-import { TServiceCredentials } from "@silo/core";
-import { createGithubService, GithubIssueDedupPayload, transformGitHubIssue, WebhookGitHubIssue } from "@silo/github";
+import { TServiceCredentials } from "@plane/etl/core";
+import {
+  createGithubService,
+  GithubIssueDedupPayload,
+  transformGitHubIssue,
+  WebhookGitHubIssue,
+} from "@plane/etl/github";
 
 export type IssueWebhookActions =
   | "assigned"
@@ -30,14 +35,14 @@ const SYNC_LABEL = "plane";
 export const handleIssueEvents = async (store: Store, action: IssueWebhookActions, data: unknown) => {
   // If the issue number exist inside the store, skip it
   // @ts-ignore
-  if (data && data.issue && data.issue.number) {
+  if (data && data.issueNumber) {
     // @ts-ignore
-    const exist = await store.get(`silo:issue:${data.issue.number}`);
+    const exist = await store.get(`silo:issue:${data.issueNumber}`);
     if (exist) {
       logger.info("[GITHUB][ISSUES] Event Processed Successfully, confirmed by target");
       // Remove the webhook from the store
       // @ts-ignore
-      await store.del(`silo:issue:${data.issue.number}`);
+      await store.del(`silo:issue:${data.issueNumber}`);
       return true;
     }
   }
@@ -51,6 +56,9 @@ export const shouldSync = (labels: { name: string }[]): boolean =>
 
 export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPayload) => {
   try {
+    logger.info(
+      `[GITHUB][ISSUE] Received webhook event from github 🐱 --------- [CREATE|UPDATE]`
+    );
     const planeCredentials = await getCredentialsForTargetToken(data.installationId.toString());
 
     const { workspaceConnection, entityConnection } = await getConnectionDetails({
@@ -68,38 +76,41 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
     let issue: ExIssue | null = null;
 
     const ghService = createGithubService(env.GITHUB_APP_ID, env.GITHUB_PRIVATE_KEY, data.installationId.toString());
-
     const ghIssue = await ghService.getIssue(data.owner, data.repositoryName, Number(data.issueNumber));
-    // Get the issue associated with the issue number and id
+    const bodyHtml = await ghService.getBodyHtml(data.owner, data.repositoryName, Number(data.issueNumber));
+    // replace the issue body with the html body
 
     try {
       issue = await planeClient.issue.getIssueWithExternalId(
         entityConnection.workspaceSlug,
-        entityConnection.projectId,
+        entityConnection.projectId ?? "",
         data.issueNumber.toString(),
         "GITHUB"
       );
-    } catch (error) {
-      logger.info("Issue not found in Plane, will create a new one");
-    }
+    } catch (error) { }
 
-    const planeUsers = await planeClient.users.list(entityConnection.workspaceSlug, entityConnection.projectId);
+    const planeUsers = await planeClient.users.list(entityConnection.workspaceSlug, entityConnection.projectId ?? "");
 
     const userMap: Record<string, string> = Object.fromEntries(
       workspaceConnection.config.userMap.map((obj) => [obj.githubUser.login, obj.planeUser.id])
     );
 
-    const planeIssue = transformGitHubIssue(
+    const planeIssue = await transformGitHubIssue(
       ghIssue.data as WebhookGitHubIssue,
+      bodyHtml ?? "<p></p>",
+      encodeURI(env.SILO_API_BASE_URL + env.SILO_BASE_PATH + "/api/assets/github"),
+      planeClient,
       data.repositoryName,
       userMap,
       entityConnection.workspaceSlug,
+      entityConnection.projectId ?? "",
       planeUsers,
+      ghService,
       issue ? true : false
     );
 
-    const states = (await planeClient.state.list(entityConnection.workspaceSlug, entityConnection.projectId)).results;
-    const users = await planeClient.users.list(entityConnection.workspaceSlug, entityConnection.projectId);
+    const states = (await planeClient.state.list(entityConnection.workspaceSlug, entityConnection.projectId ?? "")).results;
+    const users = await planeClient.users.list(entityConnection.workspaceSlug, entityConnection.projectId ?? "");
 
     if (planeIssue.state) {
       const state = states.find((s) => s.name === planeIssue.state);
@@ -109,7 +120,12 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
     }
 
     if (planeIssue.labels) {
-      const labels = (await planeClient.label.list(entityConnection.workspaceSlug, entityConnection.projectId)).results;
+      const labels = (await planeClient.label.list(entityConnection.workspaceSlug, entityConnection.projectId ?? "")).results;
+      const githubLabel = labels.find((l) => l.name.toLowerCase() === "github");
+
+      if (githubLabel) {
+        planeIssue.labels.push(githubLabel.name);
+      }
 
       if (
         ghIssue.data.labels &&
@@ -121,7 +137,7 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
         const labelPromises = labelsToCreate.map(async (label: any) => {
           const createdLabel = await planeClient.label.create(
             entityConnection.workspaceSlug,
-            entityConnection.projectId,
+            entityConnection.projectId ?? "",
             {
               name: label.name,
               color: `#${label.color}`,
@@ -166,25 +182,33 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
     }
 
     if (issue) {
-      await planeClient.issue.update(entityConnection.workspaceSlug, entityConnection.projectId, issue.id, planeIssue);
-      await store.set(`silo:issue:${issue.id}`, "true", 7);
+      await planeClient.issue.update(entityConnection.workspaceSlug, entityConnection.projectId ?? "", issue.id, planeIssue);
+      await store.set(`silo:issue:${issue.id}`, "true");
     } else {
       const createdIssue = await planeClient.issue.create(
         entityConnection.workspaceSlug,
-        entityConnection.projectId,
+        entityConnection.projectId ?? "",
         planeIssue
       );
 
-      // Get the project for the issue
-      const project = await planeClient.project.getProject(entityConnection.workspaceSlug, entityConnection.projectId);
+      // Create link to issue created in GitHub
+      const createLink = async () => {
+        const linkTitle = `[${entityConnection.entitySlug}] ${ghIssue?.data.title} #${ghIssue?.data.number}`;
+        const linkUrl = ghIssue?.data.html_url;
+        await planeClient.issue.createLink(entityConnection.workspaceSlug, entityConnection.projectId ?? "", createdIssue.id, linkTitle, linkUrl);
+      }
 
-      const comment = `Synced Issue with [Plane](${env.APP_BASE_URL}) Workspace 🔄\n\n[${project.identifier}-${createdIssue.sequence_id} ${createdIssue.name}](${env.APP_BASE_URL}/${entityConnection.workspaceSlug}/projects/${entityConnection.projectId}/issues/${createdIssue.id})`;
-      await ghService.createIssueComment(data.owner, data.repositoryName, Number(data.issueNumber), comment);
+      const createLinkBack = async () => {
+        // Get the project for the issue
+        const project = await planeClient.project.getProject(entityConnection.workspaceSlug, entityConnection.projectId ?? "");
+        const comment = `Synced Issue with [Plane](${env.APP_BASE_URL}) Workspace 🔄\n\n[${project.identifier}-${createdIssue.sequence_id} ${createdIssue.name}](${env.APP_BASE_URL}/${entityConnection.workspaceSlug}/projects/${entityConnection.projectId}/issues/${createdIssue.id})`;
+        await ghService.createIssueComment(data.owner, data.repositoryName, Number(data.issueNumber), comment);
+      }
 
-      // If the issue is created, make a comment on github about the same
-      await store.set(`silo:issue:${createdIssue.id}`, "true", 7);
+      await Promise.all([createLink(), createLinkBack(), store.set(`silo:issue:${createdIssue.id}`, "true")]);
     }
   } catch (error) {
-    logger.error("Error syncing issue with Plane");
+    logger.error("Error syncing issue with Plane", error);
+    throw error;
   }
 };

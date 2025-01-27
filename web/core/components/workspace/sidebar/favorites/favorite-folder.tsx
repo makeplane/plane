@@ -27,6 +27,7 @@ import { CustomMenu, Tooltip, DropIndicator, FavoriteFolderIcon, DragHandle } fr
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
+import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
 import { FavoriteRoot } from "./favorite-items";
@@ -45,7 +46,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
   const { favorite, handleRemoveFromFavorites, isLastChild, handleDrop } = props;
   // store hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
-
+  const { getGroupedFavorites } = useFavorite();
   const { isMobile } = usePlatformOS();
   const { workspaceSlug } = useParams();
   // states
@@ -57,6 +58,12 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
   // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   const elementRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (favorite.children === undefined && workspaceSlug) {
+      getGroupedFavorites(workspaceSlug.toString(), favorite.id);
+    }
+  }, [favorite.id, favorite.children, workspaceSlug, getGroupedFavorites]);
 
   useEffect(() => {
     const element = elementRef.current;
@@ -123,7 +130,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
       })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDragging, favorite.id]);
+  }, [isDragging, favorite.id, isLastChild, favorite.id]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
@@ -168,20 +175,20 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                     "justify-center": isSidebarCollapsed,
                   })}
                 >
-                  <Disclosure.Button as="button" className="size-8 aspect-square flex-shrink-0 grid place-items-center">
-                    <div className="size-4 grid place-items-center flex-shrink-0">
-                      <FavoriteFolderIcon />
-                    </div>
-                  </Disclosure.Button>
+                  <Tooltip tooltipContent={favorite.name} position="right" isMobile={isMobile}>
+                    <Disclosure.Button
+                      as="button"
+                      className="size-8 aspect-square flex-shrink-0 grid place-items-center"
+                    >
+                      <div className="size-4 grid place-items-center flex-shrink-0">
+                        <FavoriteFolderIcon />
+                      </div>
+                    </Disclosure.Button>
+                  </Tooltip>
                 </div>
               ) : (
                 <>
-                  <Tooltip
-                    tooltipContent={`${favorite.name}`}
-                    position="right"
-                    disabled={!isSidebarCollapsed}
-                    isMobile={isMobile}
-                  >
+                  <Tooltip tooltipContent={`${favorite.name}`} position="right" className="ml-8" isMobile={isMobile}>
                     <div className="flex-grow flex truncate">
                       <Disclosure.Button
                         as="button"

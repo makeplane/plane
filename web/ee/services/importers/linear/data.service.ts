@@ -1,5 +1,7 @@
 import axios, { AxiosInstance } from "axios";
-import { LinearTeam, LinearState, LinearOrganization } from "@silo/linear";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
+import { LinearTeam, LinearState, LinearOrganization } from "@plane/etl/linear";
+import { IAdditionalUsersResponse } from "@plane/types";
 
 export class LinearService {
   protected baseURL: string;
@@ -60,6 +62,29 @@ export class LinearService {
   async getTeamIssueCount(workspaceId: string, userId: string, teamId: string): Promise<number | undefined> {
     return this.axiosInstance
       .post(`/api/linear/team-issue-count`, { workspaceId, userId, teamId })
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description get additional users while import
+   * @property workspaceId: string
+   * @property userId: string
+   * @property workspaceSlug: string
+   */
+  async getAdditionalUsers(
+    workspaceId: string,
+    userId: string,
+    workspaceSlug: string,
+    teamId: string
+  ): Promise<IAdditionalUsersResponse | undefined> {
+    return this.axiosInstance
+      .get(
+        `/api/${E_IMPORTER_KEYS.LINEAR.toLowerCase().replaceAll("_", "-")}/additional-users/${workspaceId}/${workspaceSlug}/${userId}/${teamId}`,
+        {}
+      )
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;

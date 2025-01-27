@@ -25,11 +25,7 @@ class IssueRelationQuery:
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )
     async def issueRelation(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        issue: strawberry.ID,
+        self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
     ) -> IssueRelationType:
         # construct the issue relation query
         issue_relation_query = (
@@ -63,9 +59,7 @@ class IssueRelationQuery:
 
         # constructing the issue query
         issue_queryset = (
-            Issue.issue_objects.filter(
-                workspace__slug=slug, project_id=project
-            )
+            Issue.issue_objects.filter(workspace__slug=slug, project_id=project)
             .filter(
                 project__project_projectmember__member=info.context.user,
                 project__project_projectmember__is_active=True,
@@ -89,8 +83,7 @@ class IssueRelationQuery:
         )
 
         relation_response = IssueRelationType(
-            blocking=blocking_issues,
-            blocked_by=blocked_by_issues,
+            blocking=blocking_issues, blocked_by=blocked_by_issues
         )
 
         return relation_response

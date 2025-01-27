@@ -1,4 +1,4 @@
-import { LinearPATAuthState } from "@silo/linear";
+import { LinearPATAuthState } from "@plane/etl/linear";
 // plane web types
 import { TStepperBlock } from "@/plane-web/types/importers";
 

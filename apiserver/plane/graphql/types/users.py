@@ -61,6 +61,9 @@ class ProfileType:
     billing_address: Optional[str]
     has_billing_address: bool
     company_name: str
+    mobile_timezone_auto_set: bool
+    is_mobile_onboarded: bool
+    mobile_onboarding_step = Optional[JSON]
 
     @strawberry.field
     def user(self) -> int:
@@ -134,9 +137,7 @@ class UserFavoriteType:
             )()
             if project:
                 return UserFavoriteEntityData(
-                    id=project.id,
-                    name=project.name,
-                    logo_props=project.logo_props,
+                    id=project.id, name=project.name, logo_props=project.logo_props
                 )
             return None
         # where entity_identifier is cycle_id and entity_type is cycle
@@ -146,9 +147,7 @@ class UserFavoriteType:
             )()
             if cycle:
                 return UserFavoriteEntityData(
-                    id=cycle.id,
-                    name=cycle.name,
-                    logo_props=cycle.logo_props,
+                    id=cycle.id, name=cycle.name, logo_props=cycle.logo_props
                 )
             return None
         # where entity_identifier is module id and entity_type is module
@@ -158,9 +157,7 @@ class UserFavoriteType:
             )()
             if module:
                 return UserFavoriteEntityData(
-                    id=module.id,
-                    name=module.name,
-                    logo_props=module.logo_props,
+                    id=module.id, name=module.name, logo_props=module.logo_props
                 )
             return None
         # where entity_identifier is issue id and entity_type is issue
@@ -192,9 +189,7 @@ class UserFavoriteType:
             )()
             if page:
                 return UserFavoriteEntityData(
-                    id=page.id,
-                    name=page.name,
-                    logo_props=page.logo_props,
+                    id=page.id, name=page.name, logo_props=page.logo_props
                 )
             return None
         # where entity_identifier and entity_type is None
@@ -230,9 +225,7 @@ class UserRecentVisitType:
             )()
             if project:
                 return UserFavoriteEntityData(
-                    id=project.id,
-                    name=project.name,
-                    logo_props=project.logo_props,
+                    id=project.id, name=project.name, logo_props=project.logo_props
                 )
             return None
         # where entity_identifier is cycle_id and entity_name is cycle
@@ -242,9 +235,7 @@ class UserRecentVisitType:
             )()
             if cycle:
                 return UserFavoriteEntityData(
-                    id=cycle.id,
-                    name=cycle.name,
-                    logo_props=cycle.logo_props,
+                    id=cycle.id, name=cycle.name, logo_props=cycle.logo_props
                 )
             return None
         # where entity_identifier is module id and entity_name is module
@@ -254,9 +245,7 @@ class UserRecentVisitType:
             )()
             if module:
                 return UserFavoriteEntityData(
-                    id=module.id,
-                    name=module.name,
-                    logo_props=module.logo_props,
+                    id=module.id, name=module.name, logo_props=module.logo_props
                 )
             return None
         # where entity_identifier is issue id and entity_name is issue
@@ -288,9 +277,7 @@ class UserRecentVisitType:
             )()
             if page:
                 return UserFavoriteEntityData(
-                    id=page.id,
-                    name=page.name,
-                    logo_props=page.logo_props,
+                    id=page.id, name=page.name, logo_props=page.logo_props
                 )
             return None
         # where entity_identifier and entity_name is None

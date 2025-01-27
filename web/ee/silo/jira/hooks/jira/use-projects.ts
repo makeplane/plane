@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import useSWR from "swr";
-import { JiraProject } from "@silo/jira";
+import { JiraProject } from "@plane/etl/jira";
 // hooks
 import { useBaseImporter } from "@/plane-web/silo/hooks";
 import { useImporter } from "@/plane-web/silo/jira/hooks";

@@ -1,4 +1,4 @@
-from .base import BaseSerializer
+from .base import BaseSerializer, DynamicBaseSerializer
 from .user import (
     UserSerializer,
     UserLiteSerializer,
@@ -19,6 +19,11 @@ from .workspace import (
     WorkspaceMemberAdminSerializer,
     WorkspaceMemberMeSerializer,
     WorkspaceUserPropertiesSerializer,
+    WorkspaceUserLinkSerializer,
+    WorkspaceRecentVisitSerializer,
+    WorkspaceHomePreferenceSerializer,
+    StickySerializer,
+    WorkspaceUserMeSerializer,
 )
 from .project import (
     ProjectSerializer,
@@ -68,6 +73,8 @@ from .issue import (
     IssueReactionLiteSerializer,
     IssueAttachmentLiteSerializer,
     IssueLinkLiteSerializer,
+    IssueVersionDetailSerializer,
+    IssueDescriptionVersionDetailSerializer,
 )
 
 from .module import (

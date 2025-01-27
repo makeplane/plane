@@ -37,12 +37,8 @@ def track_labels(
     issue_activities,
     epoch,
 ):
-    requested_labels = set(
-        [str(lab) for lab in requested_data.get("label_ids", [])]
-    )
-    current_labels = set(
-        [str(lab) for lab in current_instance.get("label_ids", [])]
-    )
+    requested_labels = set([str(lab) for lab in requested_data.get("label_ids", [])])
+    current_labels = set([str(lab) for lab in current_instance.get("label_ids", [])])
 
     added_labels = requested_labels - current_labels
 
@@ -136,20 +132,14 @@ def create_cycle_issue_activity(
     issue_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
 
     if requested_data.get("cycle_id") and current_instance.get("cycle_id"):
-        new_cycle = Cycle.objects.filter(
-            pk=requested_data.get("cycle_id")
-        ).first()
-        old_cycle = Cycle.objects.filter(
-            pk=current_instance.get("cycle_id")
-        ).first()
+        new_cycle = Cycle.objects.filter(pk=requested_data.get("cycle_id")).first()
+        old_cycle = Cycle.objects.filter(pk=current_instance.get("cycle_id")).first()
 
         issue_activities.append(
             IssueActivity(
@@ -197,14 +187,9 @@ def update_issue_activity(
     issue_activities,
     epoch,
 ):
-    ISSUE_ACTIVITY_MAPPER = {
-        "label_ids": track_labels,
-        "assignee_ids": track_assignees,
-    }
+    ISSUE_ACTIVITY_MAPPER = {"label_ids": track_labels, "assignee_ids": track_assignees}
 
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -277,9 +262,7 @@ def bulk_issue_activity(
             )
 
         # Save all the values to database
-        issue_activities_created = IssueActivity.objects.bulk_create(
-            issue_activities
-        )
+        issue_activities_created = IssueActivity.objects.bulk_create(issue_activities)
         # Post the updates to segway for integrations and webhooks
         if len(issue_activities_created):
             for activity in issue_activities_created:
@@ -300,19 +283,13 @@ def bulk_issue_activity(
                     ),
                     verb=activity.verb,
                     field=(
-                        "description"
-                        if activity.field == "comment"
-                        else activity.field
+                        "description" if activity.field == "comment" else activity.field
                     ),
                     old_value=(
-                        activity.old_value
-                        if activity.old_value != ""
-                        else None
+                        activity.old_value if activity.old_value != "" else None
                     ),
                     new_value=(
-                        activity.new_value
-                        if activity.new_value != ""
-                        else None
+                        activity.new_value if activity.new_value != "" else None
                     ),
                     actor_id=activity.actor_id,
                     current_site=origin,
@@ -329,9 +306,7 @@ def bulk_issue_activity(
                 project_id=project_id,
                 subscriber=subscriber,
                 issue_activities_created=json.dumps(
-                    IssueActivitySerializer(
-                        issue_activities_created, many=True
-                    ).data,
+                    IssueActivitySerializer(issue_activities_created, many=True).data,
                     cls=DjangoJSONEncoder,
                 ),
                 requested_data=requested_data,

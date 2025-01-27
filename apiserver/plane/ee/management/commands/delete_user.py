@@ -11,9 +11,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         # Positional argument
-        parser.add_argument(
-            "--email", type=str, help="user email", required=True
-        )
+        parser.add_argument("--email", type=str, help="user email", required=True)
 
     def handle_lingering_constraints(self, user):
         """Delete the related objects from the blacklistedtoken and outstandingtoken tables"""

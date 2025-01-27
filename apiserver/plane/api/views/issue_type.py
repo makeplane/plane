@@ -14,10 +14,7 @@ from rest_framework.response import Response
 from plane.api.views.base import BaseAPIView
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import Workspace, Project, IssueType, ProjectIssueType
-from plane.api.serializers import (
-    IssueTypeAPISerializer,
-    ProjectIssueTypeAPISerializer,
-)
+from plane.api.serializers import IssueTypeAPISerializer, ProjectIssueTypeAPISerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
@@ -85,9 +82,7 @@ class IssueTypeAPIEndpoint(BaseAPIView):
         return {
             "in_use": "icon",
             "icon": {
-                "name": self.logo_icons[
-                    random.randint(0, len(self.logo_icons) - 1)
-                ],
+                "name": self.logo_icons[random.randint(0, len(self.logo_icons) - 1)],
                 "background_color": self.logo_backgrounds[
                     random.randint(0, len(self.logo_backgrounds) - 1)
                 ],
@@ -95,34 +90,43 @@ class IssueTypeAPIEndpoint(BaseAPIView):
         }
 
     # list issue types and get issue type by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def get(self, request, slug, project_id, type_id=None):
-        # list of issue types
-        if self.type_id is None:
-            issue_types = self.model.objects.filter(
+        if self.workspace_slug and self.project_id:
+            # list of issue types
+            if self.type_id is None:
+                issue_types = self.model.objects.filter(
+                    workspace__slug=self.workspace_slug,
+                    project_issue_types__project_id=self.project_id,
+                    is_epic=False,
+                ).annotate(
+                    project_ids=Coalesce(
+                        Subquery(
+                            ProjectIssueType.objects.filter(
+                                issue_type=OuterRef("pk"), workspace__slug=slug
+                            )
+                            .values("issue_type")
+                            .annotate(project_ids=ArrayAgg("project_id", distinct=True))
+                            .values("project_ids")
+                        ),
+                        [],
+                    )
+                )
+                serializer = self.serializer_class(issue_types, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+
+            # getting issue type by id
+            issue_type = self.model.objects.get(
                 workspace__slug=self.workspace_slug,
                 project_issue_types__project_id=self.project_id,
-            ).annotate(
-                project_ids=Coalesce(
-                    Subquery(
-                        ProjectIssueType.objects.filter(
-                            issue_type=OuterRef("pk"), workspace__slug=slug
-                        )
-                        .values("issue_type")
-                        .annotate(
-                            project_ids=ArrayAgg("project_id", distinct=True)
-                        )
-                        .values("project_ids")
-                    ),
-                    [],
-                )
+                pk=self.type_id,
+                is_epic=False,
             )
             return self.paginate(
                 request=request,
                 queryset=(issue_types),
                 on_results=lambda issues: IssueTypeAPISerializer(
-                    issues,
-                    many=True,
+                    issues, many=True
                 ).data,
             )
 
@@ -136,7 +140,7 @@ class IssueTypeAPIEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # create issue type
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def post(self, request, slug, project_id):
         if self.workspace_slug and self.project_id:
             workspace = Workspace.objects.get(slug=self.workspace_slug)
@@ -149,6 +153,7 @@ class IssueTypeAPIEndpoint(BaseAPIView):
                 project_issue_types__project=project_id,
                 external_source=request.data.get("external_source"),
                 external_id=request.data.get("external_id"),
+                is_epic=False,
             )
             if (
                 external_id
@@ -160,6 +165,7 @@ class IssueTypeAPIEndpoint(BaseAPIView):
                     project_issue_types__project=project_id,
                     external_source=request.data.get("external_source"),
                     external_id=external_id,
+                    is_epic=False,
                 ).first()
                 return Response(
                     {
@@ -178,33 +184,30 @@ class IssueTypeAPIEndpoint(BaseAPIView):
 
             # adding the issue type to the project
             project_issue_type_serializer = ProjectIssueTypeAPISerializer(
-                data={
-                    "issue_type": issue_type_serializer.data["id"],
-                }
+                data={"issue_type": issue_type_serializer.data["id"]}
             )
             project_issue_type_serializer.is_valid(raise_exception=True)
-            project_issue_type_serializer.save(
-                project=project,
-                level=0,
-            )
+            project_issue_type_serializer.save(project=project, level=0)
 
             # getting the issue type
             issue_type = self.model.objects.get(
                 workspace=workspace,
                 project_issue_types__project=project,
                 pk=issue_type_serializer.data["id"],
+                is_epic=False,
             )
             serializer = self.serializer_class(issue_type)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     # update issue type by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def patch(self, request, slug, project_id, type_id):
         if self.workspace_slug and self.project_id and self.type_id:
             issue_type = self.model.objects.get(
                 workspace__slug=self.workspace_slug,
                 project_issue_types__project_id=self.project_id,
                 pk=self.type_id,
+                is_epic=False,
             )
 
             data = request.data
@@ -228,6 +231,7 @@ class IssueTypeAPIEndpoint(BaseAPIView):
                         "external_source", issue_type.external_source
                     ),
                     external_id=external_id,
+                    is_epic=False,
                 )
                 if (
                     external_id
@@ -243,14 +247,12 @@ class IssueTypeAPIEndpoint(BaseAPIView):
                     )
 
                 issue_type_serializer.save()
-                return Response(
-                    issue_type_serializer.data, status=status.HTTP_200_OK
-                )
+                return Response(issue_type_serializer.data, status=status.HTTP_200_OK)
 
     # delete issue type by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def delete(self, request, slug, project_id, type_id):
         if self.workspace_slug and self.project_id and self.type_id:
-            issue_type = self.model.objects.get(pk=self.type_id)
+            issue_type = self.model.objects.get(pk=self.type_id, is_epic=False)
             issue_type.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)

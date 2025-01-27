@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
-import { cn } from "@plane/editor";
 import { TCycleEstimateType, TCyclePlotType } from "@plane/types";
 import { CustomSelect, Row } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { EstimateTypeDropdown } from "@/components/cycles";
 
 type options = {

@@ -4,7 +4,7 @@ import { ReactRenderer, Range } from "@tiptap/react";
 import tippy from "tippy.js";
 import { v4 as uuidv4 } from "uuid";
 // helpers
-import { cn } from "@/helpers/common";
+import { cn } from "@plane/utils";
 // types
 import { TEmbedItem } from "@/types";
 

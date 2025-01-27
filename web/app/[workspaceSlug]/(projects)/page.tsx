@@ -3,8 +3,8 @@
 import { observer } from "mobx-react";
 // components
 import { PageHead, AppHeader, ContentWrapper } from "@/components/core";
-import { WorkspaceDashboardView } from "@/components/page-views";
 // hooks
+import { WorkspaceHomeView } from "@/components/home";
 import { useWorkspace } from "@/hooks/store";
 // local components
 import { WorkspaceDashboardHeader } from "./header";
@@ -19,7 +19,7 @@ const WorkspaceDashboardPage = observer(() => {
       <AppHeader header={<WorkspaceDashboardHeader />} />
       <ContentWrapper>
         <PageHead title={pageTitle} />
-        <WorkspaceDashboardView />
+        <WorkspaceHomeView />
       </ContentWrapper>
     </>
   );

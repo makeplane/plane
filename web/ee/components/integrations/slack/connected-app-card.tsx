@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Unplug } from "lucide-react";
+import { TAppConnection } from "@plane/etl/slack";
 import { Button, CustomMenu } from "@plane/ui";
-import { TAppConnection } from "@silo/slack";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";

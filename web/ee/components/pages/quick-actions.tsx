@@ -9,10 +9,10 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 // plane web components
 import { WorkspacePageDeleteModal } from "@/plane-web/components/pages";
 // store
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
-  page: IPage;
+  page: TPageInstance;
   pageLink: string;
   parentRef: React.RefObject<HTMLElement>;
 };

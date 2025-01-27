@@ -61,7 +61,7 @@ class InstanceEndpoint(BaseAPIView):
             POSTHOG_API_KEY,
             POSTHOG_HOST,
             UNSPLASH_ACCESS_KEY,
-            OPENAI_API_KEY,
+            LLM_API_KEY,
             IS_INTERCOM_ENABLED,
             INTERCOM_APP_ID,
             SILO_BASE_URL,
@@ -133,8 +133,8 @@ class InstanceEndpoint(BaseAPIView):
                     "default": os.environ.get("UNSPLASH_ACCESS_KEY", ""),
                 },
                 {
-                    "key": "OPENAI_API_KEY",
-                    "default": os.environ.get("OPENAI_API_KEY", ""),
+                    "key": "LLM_API_KEY",
+                    "default": os.environ.get("LLM_API_KEY", ""),
                 },
                 # Intercom settings
                 {
@@ -180,7 +180,7 @@ class InstanceEndpoint(BaseAPIView):
         data["has_unsplash_configured"] = bool(UNSPLASH_ACCESS_KEY)
 
         # Open AI settings
-        data["has_openai_configured"] = bool(OPENAI_API_KEY)
+        data["has_openai_configured"] = bool(LLM_API_KEY)
 
         # File size settings
         data["file_size_limit"] = float(os.environ.get("FILE_SIZE_LIMIT", 5242880))
@@ -198,14 +198,10 @@ class InstanceEndpoint(BaseAPIView):
         data["app_base_url"] = settings.APP_BASE_URL
         #
         data["payment_server_base_url"] = (
-            settings.PAYMENT_SERVER_BASE_URL
-            if settings.IS_MULTI_TENANT
-            else ""
+            settings.PAYMENT_SERVER_BASE_URL if settings.IS_MULTI_TENANT else ""
         )
         data["prime_server_base_url"] = settings.PRIME_SERVER_BASE_URL
-        data["feature_flag_server_base_url"] = (
-            settings.FEATURE_FLAG_SERVER_BASE_URL
-        )
+        data["feature_flag_server_base_url"] = settings.FEATURE_FLAG_SERVER_BASE_URL
         data["silo_base_url"] = SILO_BASE_URL
         data["instance_changelog_url"] = settings.INSTANCE_CHANGELOG_URL
 

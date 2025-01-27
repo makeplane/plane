@@ -37,7 +37,7 @@ export const IssueTypeSwitcher: React.FC<TIssueTypeSwitcherProps> = observer((pr
   const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(
     workspaceSlug?.toString(),
     issue.project_id,
-    "ISSUE_TYPE_DISPLAY"
+    "ISSUE_TYPES"
   );
 
   if (!isIssueTypeDisplayEnabled) {

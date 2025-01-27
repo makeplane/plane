@@ -5,7 +5,6 @@ from django.urls import path
 from plane.ee.views.app.workflow import (
     ProjectWorkflowEndpoint,
     WorkflowTransitionEndpoint,
-    WorkflowTransitionActorEndpoint,
 )
 
 
@@ -25,9 +24,5 @@ urlpatterns = [
         WorkflowTransitionEndpoint.as_view(),
         name="workflow-transitions",
     ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/workflow-transitions/<uuid:workflow_transition_id>/actors/",
-        WorkflowTransitionActorEndpoint.as_view(),
-        name="workflow-transition-actors",
-    ),
+
 ]

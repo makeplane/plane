@@ -21,6 +21,7 @@ export type IPaymentProduct = {
   type: Omit<TProductSubscriptionType, "FREE">;
   payment_quantity: number;
   prices: IPaymentProductPrice[];
+  is_active: boolean;
 };
 
 export type IWorkspaceProductSubscription = {
@@ -45,6 +46,13 @@ export type IWorkspaceProductSubscription = {
   show_trial_banner: boolean;
   free_seats: number | null;
   billable_members: number | null;
-  total_seats: number | null;
-  show_cloud_seats_banner: boolean;
+  occupied_seats: number | null;
+  show_seats_banner: boolean;
+  is_free_member_count_exceeded: boolean;
+};
+
+export type TMemberInviteCheck = {
+  invite_allowed: boolean;
+  allowed_admin_members: number;
+  allowed_guests: number;
 };

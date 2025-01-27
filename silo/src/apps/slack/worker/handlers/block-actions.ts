@@ -1,30 +1,54 @@
 import { fetchPlaneAssets } from "@/apps/slack/helpers/fetch-plane-data";
 import { convertToSlackOption, convertToSlackOptions } from "@/apps/slack/helpers/slack-options";
 import { createIssueModalViewFull } from "@/apps/slack/views";
-import { TBlockActionModalPayload, TBlockActionPayload, TSlackPayload } from "@silo/slack";
+import { TBlockActionModalPayload, TBlockActionPayload, TSlackPayload } from "@plane/etl/slack";
 import { ACTIONS, ENTITIES, PLANE_PRIORITIES } from "../../helpers/constants";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { createCommentModal } from "../../views/create-comment-modal";
+import { SlackPrivateMetadata } from "../../types/types";
+import { createSlackLinkback } from "../../views/issue-linkback";
+import axios from "axios";
+import { logger } from "@/logger";
+import { createWebLinkModal } from "../../views/create-weblink-modal";
 
 export const handleBlockActions = async (data: TBlockActionPayload) => {
   switch (data.actions[0].action_id) {
     case ACTIONS.PROJECT:
-      // When a user selects a project from the dropdown in create issue, this is the action that is triggered.
       return await handleProjectSelectAction(data as TBlockActionModalPayload);
     case ACTIONS.LINKBACK_STATE_CHANGE:
       return await handleLinkbackStateChange(data);
-    case ACTIONS.ASSIGN_TO_ME:
-      return await handleAssignToMeAction(data);
     case ACTIONS.LINKBACK_SWITCH_PRIORITY:
       return await handleSwitchPriorityAction(data);
     case ACTIONS.LINKBACK_SWITCH_CYCLE:
       return await handleSwitchCycleAction(data);
+    case ACTIONS.LINKBACK_OVERFLOW_ACTIONS:
+      return await handleOverflowActions(data);
     case ACTIONS.LINKBACK_CREATE_COMMENT:
       return await handleCreateCommentAction(data);
+    case ACTIONS.LINKBACK_ADD_WEB_LINK:
+      return await handleCreateWebLinkAction(data);
     default:
       return false;
   }
 };
+
+async function handleOverflowActions(data: TBlockActionPayload) {
+  if (data.actions[0].type !== "overflow") return;
+
+  const selection = data.actions[0].selected_option;
+  if (!selection) return;
+
+  switch (selection.text.text) {
+    case "Add Link":
+      return await handleCreateWebLinkAction(data);
+    case "Comment":
+      return await handleCreateCommentAction(data);
+    case "Assign to me":
+      return await handleAssignToMeAction(data);
+    default:
+      return false;
+  }
+}
 
 async function handleSwitchCycleAction(data: TBlockActionPayload) {
   if (data.actions[0].type !== "static_select") return;
@@ -46,26 +70,55 @@ async function handleSwitchCycleAction(data: TBlockActionPayload) {
       data.user.id,
       `Issue cycle successfully updated to ${selection.text.text}. 😄`,
       data.channel.id,
-      data.message.thread_ts
+      data.message?.thread_ts
     );
   }
 }
 
 async function handleCreateCommentAction(data: TBlockActionPayload) {
-  if (data.actions[0].type !== "button") return;
-  const { workspaceConnection, slackService, planeClient } = await getConnectionDetails(data.team.id);
-  const value = data.actions[0].value;
+  if (data.actions[0].type !== "overflow") return;
+  const { slackService } = await getConnectionDetails(data.team.id);
+  const value = data.actions[0].selected_option.value;
   // Show modal for creating a comment
   const values = value.split(".");
   if (values.length === 2) {
-    const projectId = values[0];
-    const issueId = values[1];
-    const issue = await planeClient.issue.getIssue(workspaceConnection.workspaceSlug, projectId, issueId);
-    const modal = createCommentModal(issue.name, {
-      thread_ts: data.message.thread_ts,
-      channel: data.channel.id,
-      user: data.user.id,
-      value: value,
+    const modal = createCommentModal({
+      type: data.type,
+      user: data.user,
+      response_url: data.response_url,
+      actions: data.actions,
+      message: {
+        thread_ts: data.message?.thread_ts || data.container.message_ts,
+      },
+      value: data.actions[0].selected_option.value,
+      channel: data.channel,
+      message_ts: data.container.message_ts,
+    });
+    try {
+      await slackService.openModal(data.trigger_id, modal);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}
+
+async function handleCreateWebLinkAction(data: TBlockActionPayload) {
+  if (data.actions[0].type !== "overflow") return;
+  const { slackService } = await getConnectionDetails(data.team.id);
+  const value = data.actions[0].selected_option.value;
+  const values = value.split(".");
+  if (values.length === 2) {
+    const modal = createWebLinkModal({
+      type: data.type,
+      user: data.user,
+      response_url: data.response_url,
+      actions: data.actions,
+      message: {
+        thread_ts: data.message?.thread_ts || data.container.message_ts,
+      },
+      value: data.actions[0].selected_option.value,
+      channel: data.channel,
+      message_ts: data.container.message_ts,
     });
     try {
       await slackService.openModal(data.trigger_id, modal);
@@ -77,6 +130,9 @@ async function handleCreateCommentAction(data: TBlockActionPayload) {
 
 async function handleSwitchPriorityAction(data: TBlockActionPayload) {
   if (data.actions[0].type !== "static_select") return;
+
+  const isThreadSync =
+    data.message && data.message.text && data.message.text.includes("Synced with Plane") ? true : false;
 
   const selection = data.actions[0].selected_option;
   if (!selection) return;
@@ -92,12 +148,47 @@ async function handleSwitchPriorityAction(data: TBlockActionPayload) {
       priority: value[2],
     });
 
-    await slackService.sendEphemeralMessage(
-      data.user.id,
-      `Issue priority successfully updated to ${selection.text.text}. 😄`,
-      data.channel.id,
-      data.message.thread_ts
+    const issue = await planeClient.issue.getIssue(workspaceConnection.workspaceSlug, projectId, issueId);
+    const project = await planeClient.project.getProject(workspaceConnection.workspaceSlug, projectId);
+    const states = await planeClient.state.list(workspaceConnection.workspaceSlug, projectId);
+    const members = await planeClient.users.list(workspaceConnection.workspaceSlug, projectId);
+
+    // Create updated linkback
+    const updatedLinkback = createSlackLinkback(
+      workspaceConnection.workspaceSlug,
+      project,
+      members,
+      states.results,
+      issue,
+      isThreadSync
     );
+
+    // Update the unfurl using response_url with proper Slack message format
+    if (data.response_url) {
+      try {
+        await axios.post(data.response_url, {
+          blocks: updatedLinkback.blocks,
+        });
+      } catch (error) {
+        logger.error("Could not update unfurl", error);
+        console.error(error);
+      }
+    }
+
+    if (data.message?.thread_ts) {
+      await slackService.sendEphemeralMessage(
+        data.user.id,
+        `Issue state successfully updated to ${selection.text.text}.`,
+        data.channel.id,
+        data.message?.thread_ts
+      );
+    } else {
+      await slackService.sendThreadMessage(
+        data.channel.id,
+        data.container.message_ts,
+        `Issue state successfully updated to ${selection.text.text}.`
+      );
+    }
   }
 }
 
@@ -112,20 +203,26 @@ async function handleProjectSelectAction(data: TBlockActionModalPayload) {
   const projects = await planeClient.project.list(workspaceConnection.workspaceSlug);
   const selectedProject = await planeClient.project.getProject(workspaceConnection.workspaceSlug, selection.value);
   const projectAssets = await fetchPlaneAssets(workspaceConnection.workspaceSlug, selection.value, planeClient);
-  const metadata = JSON.parse(data.view.private_metadata) as TSlackPayload;
+  const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata;
 
-  if (metadata && metadata.type === "message_action") {
+  if (
+    (metadata && metadata.entityPayload.type === "message_action") ||
+    metadata.entityPayload.type === "shortcut" ||
+    metadata.entityPayload.type === "command"
+  ) {
     const modal = createIssueModalViewFull(
       {
         selectedProject: convertToSlackOption(selectedProject),
         projectOptions: convertToSlackOptions(projects.results),
         priorityOptions: convertToSlackOptions(PLANE_PRIORITIES),
         stateOptions: convertToSlackOptions(projectAssets.states.results),
-        assigneeOptions: convertToSlackOptions(projectAssets.members),
-        labelOptions: convertToSlackOptions(projectAssets.labels.results),
       },
-      metadata.message.text,
-      JSON.stringify({ entityType: ENTITIES.ISSUE_SUBMISSION, entityPayload: metadata })
+      // If the payload type is a message_action then only take the text from the message
+      metadata.entityType === ENTITIES.SHORTCUT_PROJECT_SELECTION && metadata.entityPayload.type === "message_action"
+        ? metadata.entityPayload.message?.text
+        : "",
+      JSON.stringify({ entityType: ENTITIES.ISSUE_SUBMISSION, entityPayload: metadata.entityPayload }),
+      metadata.entityPayload.type === "command" ? false : true
     );
 
     try {
@@ -138,6 +235,8 @@ async function handleProjectSelectAction(data: TBlockActionModalPayload) {
 
 async function handleLinkbackStateChange(data: TBlockActionPayload) {
   if (data.actions[0].type === "static_select") {
+    const isThreadSync =
+      data.message && data.message.text && data.message.text.includes("Synced with Plane") ? true : false;
     const selection = data.actions[0].selected_option;
     if (!selection) return;
 
@@ -154,22 +253,58 @@ async function handleLinkbackStateChange(data: TBlockActionPayload) {
         state: stateId,
       });
 
-      await slackService.sendEphemeralMessage(
-        data.user.id,
-        `Issue state successfully updated to ${stateFull.name}. 😄`,
-        data.channel.id,
-        data.message.thread_ts
+      // Get updated issue data
+      const issue = await planeClient.issue.getIssue(workspaceConnection.workspaceSlug, projectId, issueId);
+      const project = await planeClient.project.getProject(workspaceConnection.workspaceSlug, projectId);
+      const states = await planeClient.state.list(workspaceConnection.workspaceSlug, projectId);
+      const members = await planeClient.users.list(workspaceConnection.workspaceSlug, projectId);
+
+      // Create updated linkback
+      const updatedLinkback = createSlackLinkback(
+        workspaceConnection.workspaceSlug,
+        project,
+        members,
+        states.results,
+        issue,
+        isThreadSync
       );
+
+      // Update the unfurl using response_url with proper Slack message format
+      if (data.response_url) {
+        try {
+          await axios.post(data.response_url, {
+            blocks: updatedLinkback.blocks,
+          });
+        } catch (error) {
+          logger.error("Could not update unfurl", error);
+          console.error(error);
+        }
+      }
+
+      if (data.message?.thread_ts) {
+        await slackService.sendEphemeralMessage(
+          data.user.id,
+          `Issue state successfully updated to ${stateFull.name}. 😄`,
+          data.channel.id,
+          data.message?.thread_ts
+        );
+      } else {
+        await slackService.sendThreadMessage(
+          data.channel.id,
+          data.container.message_ts,
+          `Issue state successfully updated to ${stateFull.name}. 😄`
+        );
+      }
     }
   }
 }
 
 async function handleAssignToMeAction(data: TBlockActionPayload) {
-  if (data.actions[0].type !== "button") return;
+  if (data.actions[0].type !== "overflow") return;
 
   const { workspaceConnection, slackService, planeClient } = await getConnectionDetails(data.team.id);
   const user = await slackService.getUserInfo(data.user.id);
-  const issue = data.actions[0].value.split(".");
+  const issue = data.actions[0].selected_option.value.split(".");
   if (issue.length === 2) {
     const projectId = issue[0];
     const issueId = issue[1];
@@ -182,12 +317,20 @@ async function handleAssignToMeAction(data: TBlockActionPayload) {
         assignees: [member.id],
       });
 
-      await slackService.sendEphemeralMessage(
-        data.user.id,
-        "Issue successfully assigned to you. 😄",
-        data.channel.id,
-        data.message.thread_ts
-      );
+      if (data.message?.thread_ts) {
+        await slackService.sendEphemeralMessage(
+          data.user.id,
+          `Issue successfully assigned to you.`,
+          data.channel.id,
+          data.message?.thread_ts
+        );
+      } else {
+        await slackService.sendThreadMessage(
+          data.channel.id,
+          data.container.message_ts,
+          `Issue successfully assigned to you.`
+        );
+      }
     }
   }
 }

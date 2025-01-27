@@ -1,7 +1,7 @@
 import { db } from "@/db/config/db.config";
 import { and, eq, desc } from "drizzle-orm";
 import * as schema from "../schema";
-import { TImporterKeys, TIntegrationKeys } from "@silo/core";
+import { TImporterKeys, TIntegrationKeys } from "@plane/etl/core";
 
 /* ------------------- Create Job ------------------- */
 // Create the job based on the data that defined
@@ -86,6 +86,8 @@ export const updateJob = async (id: string, jobData: any) =>
   await db.update(schema.jobs).set(jobData).where(eq(schema.jobs.id, id));
 
 export const deleteJob = async (id: string) => await db.delete(schema.jobs).where(eq(schema.jobs.id, id));
+export const cancelJob = async (id: string) =>
+  await db.update(schema.jobs).set({ is_cancelled: true, status: "CANCELLED" }).where(eq(schema.jobs.id, id));
 
 /* --------------------- Create Job Config --------------------- */
 // Creates the job config based on the data that defined

@@ -11,7 +11,6 @@ import strawberry_django
 from strawberry.scalars import JSON
 from strawberry.types import Info
 
-
 # Module Imports
 from plane.db.models import (
     Issue,
@@ -77,8 +76,14 @@ class IssuesType:
         return self.state_id
 
     @strawberry.field
-    def parent(self) -> int:
-        return self.parent_id
+    async def parent(self) -> Optional[str]:
+        parent_issue_project_id = await sync_to_async(
+            lambda: self.parent.project_id if self.parent else None
+        )()
+        issue_project_id = await sync_to_async(lambda: self.project_id)()
+        if parent_issue_project_id == issue_project_id:
+            return str(self.parent_id)
+        return None
 
     @strawberry.field
     def project(self) -> int:

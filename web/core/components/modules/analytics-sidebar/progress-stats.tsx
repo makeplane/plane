@@ -135,14 +135,14 @@ export const LabelStatComponent = observer((props: TLabelStatComponent) => {
               <SingleProgressStats
                 key={label.id}
                 title={
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="block h-3 w-3 rounded-full"
+                  <div className="flex items-center gap-2 truncate">
+                    <div
+                      className="h-3 w-3 rounded-full flex-shrink-0"
                       style={{
                         backgroundColor: label.color ?? "transparent",
                       }}
                     />
-                    <span className="text-xs">{label.title ?? "No labels"}</span>
+                    <p className="text-xs text-ellipsis truncate">{label.title ?? "No labels"}</p>
                   </div>
                 }
                 completed={label.completed}

@@ -4,6 +4,8 @@ from datetime import timedelta
 
 from django.utils import timezone
 
+from plane.db.models.issue import IssueRelation
+
 # The date from pattern
 pattern = re.compile(r"\d+_(weeks|months)$")
 
@@ -523,6 +525,41 @@ def filter_issue_type(params, issue_filter, method, prefix=""):
     return issue_filter
 
 
+def filter_team_project(params, issue_filter, method, prefix=""):
+    if method == "GET":
+        projects = [
+            item for item in params.get("team_project").split(",") if item != "null"
+        ]
+        projects = filter_valid_uuids(projects)
+        if len(projects) and "" not in projects:
+            issue_filter[f"{prefix}project__in"] = projects
+    else:
+        if (
+            params.get("team_project", None)
+            and len(params.get("team_project"))
+            and params.get("team_project") != "null"
+        ):
+            issue_filter[f"{prefix}project__in"] = params.get("team_project")
+    return issue_filter
+
+
+def filter_dependencies(params, issue_filter, method, prefix=""):
+    dependency_type = params.get("dependency_type", "all")
+
+    if dependency_type == "blocking":
+        issue_ids = IssueRelation.objects.filter(
+            relation_type="blocked_by"
+        ).values_list("issue_id", flat=True)
+        issue_filter[f"{prefix}id__in"] = issue_ids
+
+    if dependency_type == "blocked_by":
+        issue_ids = IssueRelation.objects.filter(
+            relation_type="blocked_by"
+        ).values_list("related_issue_id", flat=True)
+        issue_filter[f"{prefix}id__in"] = issue_ids
+    return issue_filter
+
+
 def issue_filters(query_params, method, prefix=""):
     issue_filter = {}
 
@@ -553,6 +590,8 @@ def issue_filters(query_params, method, prefix=""):
         "subscriber": filter_subscribed_issues,
         "start_target_date": filter_start_target_date_issues,
         "issue_type": filter_issue_type,
+        "team_project": filter_team_project,
+        "dependency_type": filter_dependencies,
     }
 
     for key, value in ISSUE_FILTER.items():

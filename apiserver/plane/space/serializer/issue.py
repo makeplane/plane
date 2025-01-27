@@ -308,9 +308,7 @@ class IssueCreateSerializer(BaseSerializer):
             ).first()
 
         issue = Issue.objects.create(
-            **validated_data,
-            project_id=project_id,
-            type=issue_type,
+            **validated_data, project_id=project_id, type=issue_type
         )
 
         # Issue Audit Users

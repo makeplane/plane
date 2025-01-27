@@ -14,11 +14,13 @@ import useCycleDetails from "./use-cycle-details";
 type IActiveCycleDetails = {
   workspaceSlug: string;
   projectId: string;
+  cycleId?: string;
+  showHeader?: boolean;
 };
 
 export const ActiveCycleBase: React.FC<IActiveCycleDetails> = observer((props) => {
-  const { workspaceSlug, projectId } = props;
-  const cycleDetails = useCycleDetails({ workspaceSlug, projectId });
+  const { workspaceSlug, projectId, cycleId } = props;
+  const cycleDetails = useCycleDetails({ workspaceSlug, projectId, cycleId });
 
   if (!cycleDetails.cycle || isEmpty(cycleDetails.cycle))
     return (
@@ -29,25 +31,21 @@ export const ActiveCycleBase: React.FC<IActiveCycleDetails> = observer((props) =
 
   return (
     <>
-      <Disclosure as="div" className="flex flex-shrink-0 flex-col border-b border-custom-border-200" defaultOpen>
-        {({ open }) => (
-          <>
-            <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
-              <CycleProgressHeader
-                cycleDetails={cycleDetails.cycle}
-                progress={cycleDetails.cycleProgress}
-                projectId={projectId}
-                cycleId={cycleDetails.cycle?.id || "  "}
-                workspaceSlug={workspaceSlug}
-                progressLoader={cycleDetails.progressLoader}
-              />
-            </Disclosure.Button>
-            <Disclosure.Panel>
-              <ActiveCycleDetail {...cycleDetails} />
-            </Disclosure.Panel>
-          </>
-        )}
-      </Disclosure>
+      <div className="flex flex-shrink-0 flex-col border-b border-custom-border-200">
+        <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
+          <CycleProgressHeader
+            cycleDetails={cycleDetails.cycle}
+            progress={cycleDetails.cycleProgress}
+            projectId={projectId}
+            cycleId={cycleDetails.cycle?.id || "  "}
+            workspaceSlug={workspaceSlug}
+            progressLoader={cycleDetails.progressLoader}
+          />
+        </div>
+        <div>
+          <ActiveCycleDetail {...cycleDetails} />
+        </div>
+      </div>
     </>
   );
 });

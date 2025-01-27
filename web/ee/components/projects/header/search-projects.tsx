@@ -8,12 +8,7 @@ import { cn } from "@/helpers/common.helper";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
 
-type TProjectSearch = {
-  workspaceSlug: string;
-};
-
-export const ProjectSearch: FC<TProjectSearch> = observer((props) => {
-  const {} = props;
+export const ProjectSearch: FC = observer(() => {
   // hooks
   const { searchQuery, updateSearchQuery } = useProjectFilter();
   // refs

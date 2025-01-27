@@ -22,9 +22,4 @@ class IssueWorkLogSerializer(BaseSerializer):
             "logged_by",
             "issue_detail",
         ]
-        read_only_fields = [
-            "logged_by",
-            "issue",
-            "workspace",
-            "project",
-        ]
+        read_only_fields = ["logged_by", "issue", "workspace", "project"]

@@ -1,10 +1,10 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Briefcase, RefreshCcw } from "lucide-react";
+import { AsanaConfig } from "@plane/etl/asana";
+import { E_JOB_STATUS, TJobWithConfig } from "@plane/etl/core";
 import { TLogoProps } from "@plane/types";
 import { Button, Logo } from "@plane/ui";
-import { AsanaConfig } from "@silo/asana";
-import { E_JOB_STATUS, TJobWithConfig } from "@silo/core";
 // helpers
 import { renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
 // plane web components

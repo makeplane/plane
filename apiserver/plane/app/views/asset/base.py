@@ -54,7 +54,6 @@ class FileAssetEndpoint(BaseAPIView):
 
 
 class FileAssetViewSet(BaseViewSet):
-
     authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
 
     def restore(self, request, workspace_id, asset_key):

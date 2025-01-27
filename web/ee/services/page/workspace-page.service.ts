@@ -124,7 +124,7 @@ export class WorkspacePageService extends APIService {
       });
   }
 
-  async updateDescriptionBinary(workspaceSlug: string, pageId: string, data: TDocumentPayload): Promise<any> {
+  async updateDescription(workspaceSlug: string, pageId: string, data: TDocumentPayload): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/pages/${pageId}/description/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -132,17 +132,8 @@ export class WorkspacePageService extends APIService {
       });
   }
 
-  async searchEmbed<T>(
-    workspaceSlug: string,
-    params: {
-      query_type: TPageEmbedType;
-      count?: number;
-      query: string;
-    }
-  ): Promise<T | undefined> {
-    return this.get(`/api/workspaces/${workspaceSlug}/entity-search/`, {
-      params,
-    })
+  async duplicate(workspaceSlug: string, pageId: string): Promise<TPage> {
+    return this.post(`/api/workspaces/${workspaceSlug}/pages/${pageId}/duplicate/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

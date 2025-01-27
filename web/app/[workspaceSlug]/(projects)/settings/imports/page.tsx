@@ -14,7 +14,6 @@ import { ImportersList } from "@/plane-web/components/importers";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useFlag } from "@/plane-web/hooks/store";
-import { E_FEATURE_FLAGS } from "@/plane-web/types/feature-flag";
 
 const ImportsPage = observer(() => {
   // router
@@ -26,7 +25,7 @@ const ImportsPage = observer(() => {
   // derived values
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Imports` : undefined;
-  const importersEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.SILO_IMPORTERS);
+  const importersEnabled = useFlag(workspaceSlug?.toString(), "SILO_IMPORTERS");
 
   if (!isAdmin)
     return (

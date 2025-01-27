@@ -56,7 +56,7 @@ export const IssueTypeActivity: FC<TIssueTypeActivity> = observer((props) => {
 
   const isIssueTypeDisplayEnabled =
     workspaceSlug && activity?.project
-      ? isIssueTypeEnabledForProject(workspaceSlug?.toString(), activity?.project, "ISSUE_TYPE_DISPLAY")
+      ? isIssueTypeEnabledForProject(workspaceSlug?.toString(), activity?.project, "ISSUE_TYPES")
       : false;
 
   if (!isIssueTypeDisplayEnabled) return <BaseIssueTypeActivity {...props} />;

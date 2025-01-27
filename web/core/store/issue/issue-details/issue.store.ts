@@ -1,7 +1,8 @@
 import { makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
+import { EIssueServiceType } from "@plane/constants";
 // types
-import { TIssue } from "@plane/types";
+import { TIssue, TIssueServiceType } from "@plane/types";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // services
@@ -46,11 +47,13 @@ export class IssueStore implements IIssueStore {
   // root store
   rootIssueDetailStore: IIssueDetail;
   // services
+  serviceType;
   issueService;
+  epicService;
   issueArchiveService;
   issueDraftService;
 
-  constructor(rootStore: IIssueDetail) {
+  constructor(rootStore: IIssueDetail, serviceType: TIssueServiceType) {
     makeObservable(this, {
       fetchingIssueDetails: observable.ref,
       localDBIssueDescription: observable.ref,
@@ -58,8 +61,10 @@ export class IssueStore implements IIssueStore {
     // root store
     this.rootIssueDetailStore = rootStore;
     // services
-    this.issueService = new IssueService();
-    this.issueArchiveService = new IssueArchiveService();
+    this.serviceType = serviceType;
+    this.issueService = new IssueService(serviceType);
+    this.epicService = new IssueService(EIssueServiceType.EPICS);
+    this.issueArchiveService = new IssueArchiveService(serviceType);
     this.issueDraftService = new IssueDraftService();
   }
 
@@ -90,7 +95,9 @@ export class IssueStore implements IIssueStore {
     let issue: TIssue | undefined;
 
     // fetch issue from local db
-    issue = await persistence.getIssue(issueId);
+    if (this.serviceType === EIssueServiceType.ISSUES) {
+      issue = await persistence.getIssue(issueId);
+    }
 
     this.fetchingIssueDetails = issueId;
 
@@ -112,10 +119,26 @@ export class IssueStore implements IIssueStore {
 
     // store handlers from issue detail
     // parent
-    if (issue && issue?.parent && issue?.parent?.id && issue?.parent?.project_id) {
-      this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
-        this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
-      });
+    if (
+      issue &&
+      issue?.parent &&
+      issue?.parent?.id &&
+      issue?.parent?.project_id &&
+      this.serviceType === EIssueServiceType.ISSUES
+    ) {
+      // if typeId exists in epic projectEpics
+      if (
+        this.rootIssueDetailStore.rootIssueStore.rootStore.issueTypes.getProjectEpicId(projectId) ===
+        issue?.parent.type_id
+      ) {
+        this.epicService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
+          this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
+        });
+      } else {
+        this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
+          this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
+        });
+      }
     }
     // assignees
     // labels
@@ -181,6 +204,7 @@ export class IssueStore implements IIssueStore {
       updated_by: issue?.updated_by,
       is_draft: issue?.is_draft,
       is_subscribed: issue?.is_subscribed,
+      is_epic: issue?.is_epic,
     };
 
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);
@@ -190,15 +214,32 @@ export class IssueStore implements IIssueStore {
   };
 
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
-    await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
-    await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
+    const currentStore =
+      this.serviceType === EIssueServiceType.EPICS
+        ? this.rootIssueDetailStore.rootIssueStore.projectEpics
+        : this.rootIssueDetailStore.rootIssueStore.projectIssues;
+
+    await Promise.all([
+      currentStore.updateIssue(workspaceSlug, projectId, issueId, data),
+      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId),
+    ]);
   };
 
-  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
-    this.rootIssueDetailStore.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    const currentStore =
+      this.serviceType === EIssueServiceType.EPICS
+        ? this.rootIssueDetailStore.rootIssueStore.projectEpics
+        : this.rootIssueDetailStore.rootIssueStore.projectIssues;
+    currentStore.removeIssue(workspaceSlug, projectId, issueId);
+  };
 
-  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
-    this.rootIssueDetailStore.rootIssueStore.projectIssues.archiveIssue(workspaceSlug, projectId, issueId);
+  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    const currentStore =
+      this.serviceType === EIssueServiceType.EPICS
+        ? this.rootIssueDetailStore.rootIssueStore.projectEpics
+        : this.rootIssueDetailStore.rootIssueStore.projectIssues;
+    currentStore.archiveIssue(workspaceSlug, projectId, issueId);
+  };
 
   addCycleToIssue = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
     await this.rootIssueDetailStore.rootIssueStore.cycleIssues.addCycleToIssue(

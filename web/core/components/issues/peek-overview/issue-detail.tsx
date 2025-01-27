@@ -1,6 +1,8 @@
 "use-client";
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
+// types
+import { TNameDescriptionLoader } from "@plane/types";
 // components
 import { IssueParentDetail, TIssueOperations } from "@/components/issues";
 // helpers
@@ -25,8 +27,8 @@ interface IPeekOverviewIssueDetails {
   issueOperations: TIssueOperations;
   disabled: boolean;
   isArchived: boolean;
-  isSubmitting: "submitting" | "submitted" | "saved";
-  setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
+  isSubmitting: TNameDescriptionLoader;
+  setIsSubmitting: (value: TNameDescriptionLoader) => void;
 }
 
 export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer((props) => {
@@ -56,7 +58,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
   const projectDetails = issue?.project_id ? getProjectById(issue?.project_id) : undefined;
   // debounced duplicate issues swr
   const { duplicateIssues } = useDebouncedDuplicateIssues(
-    workspaceSlug?.toString(),
+    workspaceSlug,
     projectDetails?.workspace.toString(),
     projectDetails?.id,
     {

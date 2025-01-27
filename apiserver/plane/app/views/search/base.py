@@ -2,10 +2,21 @@
 import re
 
 # Django imports
-from django.db.models import Q, OuterRef, Subquery, Value, UUIDField, CharField
+from django.db import models
+from django.db.models import (
+    Q,
+    OuterRef,
+    Subquery,
+    Value,
+    UUIDField,
+    CharField,
+    When,
+    Case,
+)
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Concat
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
@@ -21,8 +32,16 @@ from plane.db.models import (
     Module,
     Page,
     IssueView,
-    ProjectPage,
     ProjectMember,
+    ProjectPage,
+    WorkspaceMember,
+)
+from plane.ee.models import (
+    TeamSpaceMember,
+    TeamSpacePage,
+    TeamSpaceProject,
+    Initiative,
+    TeamSpace,
 )
 
 
@@ -91,7 +110,6 @@ class GlobalSearchEndpoint(BaseAPIView):
             "workspace__slug",
             "type_id",
         )[:100]
-
 
     def filter_cycles(self, query, slug, project_id, workspace_search):
         fields = ["name"]
@@ -203,6 +221,66 @@ class GlobalSearchEndpoint(BaseAPIView):
             "name", "id", "project_id", "project__identifier", "workspace__slug"
         )
 
+    def filter_initiatives(self, query, slug, project_id, workspace_search):
+        fields = ["name"]
+        q = Q()
+        for field in fields:
+            q |= Q(**{f"{field}__icontains": query})
+
+        return (
+            Initiative.objects.filter(q, workspace__slug=slug)
+            .distinct()
+            .values("name", "id", "workspace__slug")
+        )
+
+    def filter_epics(self, query, slug, project_id, workspace_search):
+        fields = ["name", "sequence_id", "project__identifier"]
+        q = Q()
+        for field in fields:
+            if field == "sequence_id":
+                sequences = re.findall(r"\b\d+\b", query)
+                for sequence_id in sequences:
+                    q |= Q(**{"sequence_id": sequence_id})
+            else:
+                q |= Q(**{f"{field}__icontains": query})
+
+        epics = Issue.objects.filter(
+            q,
+            project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
+            workspace__slug=slug,
+            type__is_epic=True,
+        )
+
+        if workspace_search == "false" and project_id:
+            epics = epics.filter(project_id=project_id)
+
+        return epics.distinct().values(
+            "name",
+            "id",
+            "sequence_id",
+            "project__identifier",
+            "project_id",
+            "workspace__slug",
+            "type_id",
+        )
+
+    def filter_teams(self, query, slug, project_id, workspace_search):
+        fields = ["name"]
+
+        q = Q()
+        for field in fields:
+            q |= Q(**{f"{field}__icontains": query})
+
+        return (
+            TeamSpace.objects.filter(
+                q, workspace__slug=slug, members__member_id=self.request.user.id
+            )
+            .distinct()
+            .values("name", "id", "workspace__slug")
+        )
+
     def get(self, request, slug):
         query = request.query_params.get("search", False)
         workspace_search = request.query_params.get("workspace_search", "false")
@@ -219,6 +297,9 @@ class GlobalSearchEndpoint(BaseAPIView):
                         "module": [],
                         "issue_view": [],
                         "page": [],
+                        "initiative": [],
+                        "epic": [],
+                        "team": [],
                     }
                 },
                 status=status.HTTP_200_OK,
@@ -232,6 +313,9 @@ class GlobalSearchEndpoint(BaseAPIView):
             "module": self.filter_modules,
             "issue_view": self.filter_views,
             "page": self.filter_pages,
+            "initiative": self.filter_initiatives,
+            "epic": self.filter_epics,
+            "team": self.filter_teams,
         }
 
         results = {}
@@ -243,199 +327,697 @@ class GlobalSearchEndpoint(BaseAPIView):
 
 
 class SearchEndpoint(BaseAPIView):
-    def get(self, request, slug, project_id):
+    def get(self, request, slug):
         query = request.query_params.get("query", False)
-        query_type = request.query_params.get("query_type", "issue")
+        query_types = request.query_params.get("query_type", "user_mention").split(",")
+        query_types = [qt.strip() for qt in query_types]
         count = int(request.query_params.get("count", 5))
+        project_id = request.query_params.get("project_id", None)
+        issue_id = request.query_params.get("issue_id", None)
+        team_id = request.query_params.get("team_id", None)
 
-        if query_type == "mention":
-            fields = ["member__first_name", "member__last_name"]
-            q = Q()
+        response_data = {}
 
-            if query:
-                for field in fields:
-                    q |= Q(**{f"{field}__icontains": query})
-            users = (
-                ProjectMember.objects.filter(
-                    q,
-                    project__project_projectmember__member=self.request.user,
-                    project__project_projectmember__is_active=True,
-                    project_id=project_id,
-                    workspace__slug=slug,
-                )
-                .order_by("-created_at")
-                .values(
-                    "member__first_name",
-                    "member__last_name",
-                    "member__avatar",
-                    "member__display_name",
-                    "member__id",
-                )[:count]
-            )
+        if team_id:
+            team_projects = TeamSpaceProject.objects.filter(
+                team_space_id=team_id, workspace__slug=slug
+            ).values_list("project_id", flat=True)
 
-            fields = ["name"]
-            q = Q()
+            for query_type in query_types:
+                if query_type == "user_mention":
+                    fields = [
+                        "member__first_name",
+                        "member__last_name",
+                        "member__display_name",
+                    ]
+                    q = Q()
 
-            if query:
-                for field in fields:
-                    q |= Q(**{f"{field}__icontains": query})
+                    if query:
+                        for field in fields:
+                            q |= Q(**{f"{field}__icontains": query})
 
-            pages = (
-                Page.objects.filter(
-                    q,
-                    project__project_projectmember__member=self.request.user,
-                    project__project_projectmember__is_active=True,
-                    workspace__slug=slug,
-                    access=0,
-                )
-                .order_by("-created_at")
-                .values("name", "id")[:count]
-            )
-            return Response(
-                {"users": users, "pages": pages}, status=status.HTTP_200_OK
-            )
+                    users = (
+                        TeamSpaceMember.objects.filter(
+                            q,
+                            workspace__slug=slug,
+                            member__is_bot=False,
+                            team_space_id=team_id,
+                        )
+                        .annotate(
+                            member__avatar_url=Case(
+                                When(
+                                    member__avatar_asset__isnull=False,
+                                    then=Concat(
+                                        Value("/api/assets/v2/static/"),
+                                        "member__avatar_asset",
+                                        Value("/"),
+                                    ),
+                                ),
+                                When(
+                                    member__avatar_asset__isnull=True,
+                                    then="member__avatar",
+                                ),
+                                default=Value(None),
+                                output_field=CharField(),
+                            )
+                        )
+                        .distinct()
+                        .values(
+                            "member__avatar_url", "member__display_name", "member__id"
+                        )
+                        .order_by("-created_at")[:count]
+                    )
 
-        if query_type == "project":
-            fields = ["name", "identifier"]
-            q = Q()
+                    response_data["user_mention"] = list(users)
 
-            if query:
-                for field in fields:
-                    q |= Q(**{f"{field}__icontains": query})
-            projects = (
-                Project.objects.filter(
-                    q,
-                    Q(project_projectmember__member=self.request.user)
-                    | Q(network=2),
-                    workspace__slug=slug,
-                )
-                .order_by("-created_at")
-                .distinct()
-                .values("name", "id", "identifier", "workspace__slug")[:count]
-            )
-            return Response(projects, status=status.HTTP_200_OK)
+                elif query_type == "project":
+                    fields = ["name", "identifier"]
+                    q = Q()
 
-        if query_type == "issue":
-            fields = ["name", "sequence_id", "project__identifier"]
-            q = Q()
+                    if query:
+                        for field in fields:
+                            q |= Q(**{f"{field}__icontains": query})
+                    projects = (
+                        Project.objects.filter(
+                            q,
+                            Q(project_projectmember__member=self.request.user)
+                            | Q(network=2),
+                            workspace__slug=slug,
+                        )
+                        .order_by("-created_at")
+                        .distinct()
+                        .values(
+                            "name", "id", "identifier", "logo_props", "workspace__slug"
+                        )[:count]
+                    )
+                    response_data["project"] = list(projects)
 
-            if query:
-                for field in fields:
-                    if field == "sequence_id":
-                        # Match whole integers only (exclude decimal numbers)
-                        sequences = re.findall(r"\b\d+\b", query)
-                        for sequence_id in sequences:
-                            q |= Q(**{"sequence_id": sequence_id})
+                elif query_type == "issue":
+                    fields = ["name", "sequence_id", "project__identifier"]
+                    q = Q()
+
+                    if query:
+                        for field in fields:
+                            if field == "sequence_id":
+                                sequences = re.findall(r"\b\d+\b", query)
+                                for sequence_id in sequences:
+                                    q |= Q(**{"sequence_id": sequence_id})
+                            else:
+                                q |= Q(**{f"{field}__icontains": query})
+
+                    issues = (
+                        Issue.issue_objects.filter(
+                            q,
+                            project__project_projectmember__member=self.request.user,
+                            project__project_projectmember__is_active=True,
+                            workspace__slug=slug,
+                            project_id__in=team_projects,
+                        )
+                        .order_by("-created_at")
+                        .distinct()
+                        .values(
+                            "name",
+                            "id",
+                            "sequence_id",
+                            "project__identifier",
+                            "project_id",
+                            "priority",
+                            "state_id",
+                            "type_id",
+                        )[:count]
+                    )
+                    response_data["issue"] = list(issues)
+
+                elif query_type == "cycle":
+                    fields = ["name"]
+                    q = Q()
+
+                    if query:
+                        for field in fields:
+                            q |= Q(**{f"{field}__icontains": query})
+
+                    cycles = (
+                        Cycle.objects.filter(
+                            q,
+                            project__project_projectmember__member=self.request.user,
+                            project__project_projectmember__is_active=True,
+                            workspace__slug=slug,
+                            project__in=team_projects,
+                        )
+                        .annotate(
+                            status=Case(
+                                When(
+                                    Q(start_date__lte=timezone.now())
+                                    & Q(end_date__gte=timezone.now()),
+                                    then=Value("CURRENT"),
+                                ),
+                                When(
+                                    start_date__gt=timezone.now(),
+                                    then=Value("UPCOMING"),
+                                ),
+                                When(
+                                    end_date__lt=timezone.now(), then=Value("COMPLETED")
+                                ),
+                                When(
+                                    Q(start_date__isnull=True)
+                                    & Q(end_date__isnull=True),
+                                    then=Value("DRAFT"),
+                                ),
+                                default=Value("DRAFT"),
+                                output_field=CharField(),
+                            )
+                        )
+                        .order_by("-created_at")
+                        .distinct()
+                        .values(
+                            "name",
+                            "id",
+                            "project_id",
+                            "project__identifier",
+                            "status",
+                            "workspace__slug",
+                        )[:count]
+                    )
+                    response_data["cycle"] = list(cycles)
+
+                elif query_type == "module":
+                    fields = ["name"]
+                    q = Q()
+
+                    if query:
+                        for field in fields:
+                            q |= Q(**{f"{field}__icontains": query})
+
+                    modules = (
+                        Module.objects.filter(
+                            q,
+                            project__project_projectmember__member=self.request.user,
+                            project__project_projectmember__is_active=True,
+                            workspace__slug=slug,
+                            project_id__in=team_projects,
+                        )
+                        .order_by("-created_at")
+                        .distinct()
+                        .values(
+                            "name",
+                            "id",
+                            "project_id",
+                            "project__identifier",
+                            "status",
+                            "workspace__slug",
+                        )[:count]
+                    )
+                    response_data["module"] = list(modules)
+
+                elif query_type == "page":
+                    member_ids = TeamSpaceMember.objects.filter(
+                        team_space_id=team_id
+                    ).values_list("member_id", flat=True)
+
+                    team_space_pages = TeamSpacePage.objects.filter(
+                        workspace__slug=slug, team_space_id=team_id
+                    ).values_list("page_id", flat=True)
+
+                    fields = ["name"]
+                    q = Q()
+
+                    if query:
+                        for field in fields:
+                            q |= Q(**{f"{field}__icontains": query})
+
+                    pages = (
+                        Page.objects.filter(
+                            q,
+                            Q(pk__in=team_space_pages)
+                            | Q(
+                                project_ids__overlap=team_projects,
+                                access=0,
+                                owned_by_id__in=member_ids,
+                            ),
+                            workspace__slug=slug,
+                            projects__project_projectmember__member=self.request.user,
+                            projects__project_projectmember__is_active=True,
+                        )
+                        .order_by("-created_at")
+                        .distinct()
+                        .values(
+                            "name",
+                            "id",
+                            "logo_props",
+                            "projects__id",
+                            "workspace__slug",
+                        )[:count]
+                    )
+                    response_data["page"] = list(pages)
+            return Response(response_data, status=status.HTTP_200_OK)
+
+        if project_id:
+            for query_type in query_types:
+                if query_type == "user_mention":
+                    fields = [
+                        "member__first_name",
+                        "member__last_name",
+                        "member__display_name",
+                    ]
+                    q = Q()
+
+                    if query:
+                        for field in fields:
+                            q |= Q(**{f"{field}__icontains": query})
+
+                    users = (
+                        ProjectMember.objects.filter(
+                            q,
+                            is_active=True,
+                            workspace__slug=slug,
+                            member__is_bot=False,
+                            project_id=project_id,
+                        )
+                        .annotate(
+                            member__avatar_url=Case(
+                                When(
+                                    member__avatar_asset__isnull=False,
+                                    then=Concat(
+                                        Value("/api/assets/v2/static/"),
+                                        "member__avatar_asset",
+                                        Value("/"),
+                                    ),
+                                ),
+                                When(
+                                    member__avatar_asset__isnull=True,
+                                    then="member__avatar",
+                                ),
+                                default=Value(None),
+                                output_field=CharField(),
+                            )
+                        )
+                        .order_by("-created_at")
+                    )
+
+                    if issue_id:
+                        issue_created_by = (
+                            Issue.objects.filter(id=issue_id)
+                            .values_list("created_by_id", flat=True)
+                            .first()
+                        )
+                        users = (
+                            users.filter(Q(role__gt=10) | Q(member_id=issue_created_by))
+                            .distinct()
+                            .values(
+                                "member__avatar_url",
+                                "member__display_name",
+                                "member__id",
+                            )
+                        )
                     else:
-                        q |= Q(**{f"{field}__icontains": query})
+                        users = (
+                            users.filter(Q(role__gt=10))
+                            .distinct()
+                            .values(
+                                "member__avatar_url",
+                                "member__display_name",
+                                "member__id",
+                            )
+                        )
 
-            issues = (
-                Issue.issue_objects.filter(
-                    q,
-                    project__project_projectmember__member=self.request.user,
-                    project__project_projectmember__is_active=True,
-                    workspace__slug=slug,
-                    project_id=project_id,
-                )
-                .order_by("-created_at")
-                .distinct()
-                .values(
-                    "name",
-                    "id",
-                    "sequence_id",
-                    "project__identifier",
-                    "project_id",
-                    "priority",
-                    "state_id",
-                    "type_id",
-                )[:count]
-            )
-            return Response(issues, status=status.HTTP_200_OK)
+                    response_data["user_mention"] = list(users[:count])
 
-        if query_type == "cycle":
-            fields = ["name"]
-            q = Q()
+                elif query_type == "project":
+                    fields = ["name", "identifier"]
+                    q = Q()
 
-            if query:
-                for field in fields:
-                    q |= Q(**{f"{field}__icontains": query})
+                    if query:
+                        for field in fields:
+                            q |= Q(**{f"{field}__icontains": query})
+                    projects = (
+                        Project.objects.filter(
+                            q,
+                            Q(project_projectmember__member=self.request.user)
+                            | Q(network=2),
+                            workspace__slug=slug,
+                        )
+                        .order_by("-created_at")
+                        .distinct()
+                        .values(
+                            "name", "id", "identifier", "logo_props", "workspace__slug"
+                        )[:count]
+                    )
+                    response_data["project"] = list(projects)
 
-            cycles = (
-                Cycle.objects.filter(
-                    q,
-                    project__project_projectmember__member=self.request.user,
-                    project__project_projectmember__is_active=True,
-                    workspace__slug=slug,
-                )
-                .order_by("-created_at")
-                .distinct()
-                .values(
-                    "name",
-                    "id",
-                    "project_id",
-                    "project__identifier",
-                    "workspace__slug",
-                )[:count]
-            )
-            return Response(cycles, status=status.HTTP_200_OK)
+                elif query_type == "issue":
+                    fields = ["name", "sequence_id", "project__identifier"]
+                    q = Q()
 
-        if query_type == "module":
-            fields = ["name"]
-            q = Q()
+                    if query:
+                        for field in fields:
+                            if field == "sequence_id":
+                                sequences = re.findall(r"\b\d+\b", query)
+                                for sequence_id in sequences:
+                                    q |= Q(**{"sequence_id": sequence_id})
+                            else:
+                                q |= Q(**{f"{field}__icontains": query})
 
-            if query:
-                for field in fields:
-                    q |= Q(**{f"{field}__icontains": query})
+                    issues = (
+                        Issue.issue_objects.filter(
+                            q,
+                            project__project_projectmember__member=self.request.user,
+                            project__project_projectmember__is_active=True,
+                            workspace__slug=slug,
+                            project_id=project_id,
+                        )
+                        .order_by("-created_at")
+                        .distinct()
+                        .values(
+                            "name",
+                            "id",
+                            "sequence_id",
+                            "project__identifier",
+                            "project_id",
+                            "priority",
+                            "state_id",
+                            "type_id",
+                        )[:count]
+                    )
+                    response_data["issue"] = list(issues)
 
-            modules = (
-                Module.objects.filter(
-                    q,
-                    project__project_projectmember__member=self.request.user,
-                    project__project_projectmember__is_active=True,
-                    workspace__slug=slug,
-                )
-                .order_by("-created_at")
-                .distinct()
-                .values(
-                    "name",
-                    "id",
-                    "project_id",
-                    "project__identifier",
-                    "workspace__slug",
-                )[:count]
-            )
-            return Response(modules, status=status.HTTP_200_OK)
+                elif query_type == "cycle":
+                    fields = ["name"]
+                    q = Q()
 
-        if query_type == "page":
-            fields = ["name"]
-            q = Q()
+                    if query:
+                        for field in fields:
+                            q |= Q(**{f"{field}__icontains": query})
 
-            if query:
-                for field in fields:
-                    q |= Q(**{f"{field}__icontains": query})
+                    cycles = (
+                        Cycle.objects.filter(
+                            q,
+                            project__project_projectmember__member=self.request.user,
+                            project__project_projectmember__is_active=True,
+                            workspace__slug=slug,
+                            project_id=project_id,
+                        )
+                        .annotate(
+                            status=Case(
+                                When(
+                                    Q(start_date__lte=timezone.now())
+                                    & Q(end_date__gte=timezone.now()),
+                                    then=Value("CURRENT"),
+                                ),
+                                When(
+                                    start_date__gt=timezone.now(),
+                                    then=Value("UPCOMING"),
+                                ),
+                                When(
+                                    end_date__lt=timezone.now(), then=Value("COMPLETED")
+                                ),
+                                When(
+                                    Q(start_date__isnull=True)
+                                    & Q(end_date__isnull=True),
+                                    then=Value("DRAFT"),
+                                ),
+                                default=Value("DRAFT"),
+                                output_field=CharField(),
+                            )
+                        )
+                        .order_by("-created_at")
+                        .distinct()
+                        .values(
+                            "name",
+                            "id",
+                            "project_id",
+                            "project__identifier",
+                            "status",
+                            "workspace__slug",
+                        )[:count]
+                    )
+                    response_data["cycle"] = list(cycles)
 
-            pages = (
-                Page.objects.filter(
-                    q,
-                    projects__project_projectmember__member=self.request.user,
-                    projects__project_projectmember__is_active=True,
-                    projects__id=project_id,
-                    workspace__slug=slug,
-                    access=0,
-                )
-                .order_by("-created_at")
-                .distinct()
-                .values(
-                    "name",
-                    "id",
-                    "projects__id",
-                    "project__identifier",
-                    "workspace__slug",
-                )[:count]
-            )
-            return Response(pages, status=status.HTTP_200_OK)
+                elif query_type == "module":
+                    fields = ["name"]
+                    q = Q()
 
-        return Response(
-            {"error": "Please provide a valid query"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+                    if query:
+                        for field in fields:
+                            q |= Q(**{f"{field}__icontains": query})
+
+                    modules = (
+                        Module.objects.filter(
+                            q,
+                            project__project_projectmember__member=self.request.user,
+                            project__project_projectmember__is_active=True,
+                            workspace__slug=slug,
+                            project_id=project_id,
+                        )
+                        .order_by("-created_at")
+                        .distinct()
+                        .values(
+                            "name",
+                            "id",
+                            "project_id",
+                            "project__identifier",
+                            "status",
+                            "workspace__slug",
+                        )[:count]
+                    )
+                    response_data["module"] = list(modules)
+
+                elif query_type == "page":
+                    fields = ["name"]
+                    q = Q()
+
+                    if query:
+                        for field in fields:
+                            q |= Q(**{f"{field}__icontains": query})
+
+                    pages = (
+                        Page.objects.filter(
+                            q,
+                            projects__project_projectmember__member=self.request.user,
+                            projects__project_projectmember__is_active=True,
+                            projects__id=project_id,
+                            workspace__slug=slug,
+                            access=0,
+                        )
+                        .order_by("-created_at")
+                        .distinct()
+                        .values(
+                            "name",
+                            "id",
+                            "logo_props",
+                            "projects__id",
+                            "workspace__slug",
+                        )[:count]
+                    )
+                    response_data["page"] = list(pages)
+            return Response(response_data, status=status.HTTP_200_OK)
+
+        else:
+            for query_type in query_types:
+                if query_type == "user_mention":
+                    fields = [
+                        "member__first_name",
+                        "member__last_name",
+                        "member__display_name",
+                    ]
+                    q = Q()
+
+                    if query:
+                        for field in fields:
+                            q |= Q(**{f"{field}__icontains": query})
+                    users = (
+                        WorkspaceMember.objects.filter(
+                            q,
+                            is_active=True,
+                            workspace__slug=slug,
+                            member__is_bot=False,
+                        )
+                        .annotate(
+                            member__avatar_url=Case(
+                                When(
+                                    member__avatar_asset__isnull=False,
+                                    then=Concat(
+                                        Value("/api/assets/v2/static/"),
+                                        "member__avatar_asset",
+                                        Value("/"),
+                                    ),
+                                ),
+                                When(
+                                    member__avatar_asset__isnull=True,
+                                    then="member__avatar",
+                                ),
+                                default=Value(None),
+                                output_field=models.CharField(),
+                            )
+                        )
+                        .order_by("-created_at")
+                        .values(
+                            "member__avatar_url", "member__display_name", "member__id"
+                        )[:count]
+                    )
+                    response_data["user_mention"] = list(users)
+
+                elif query_type == "project":
+                    fields = ["name", "identifier"]
+                    q = Q()
+
+                    if query:
+                        for field in fields:
+                            q |= Q(**{f"{field}__icontains": query})
+                    projects = (
+                        Project.objects.filter(
+                            q,
+                            Q(project_projectmember__member=self.request.user)
+                            | Q(network=2),
+                            workspace__slug=slug,
+                        )
+                        .order_by("-created_at")
+                        .distinct()
+                        .values(
+                            "name", "id", "identifier", "logo_props", "workspace__slug"
+                        )[:count]
+                    )
+                    response_data["project"] = list(projects)
+
+                elif query_type == "issue":
+                    fields = ["name", "sequence_id", "project__identifier"]
+                    q = Q()
+
+                    if query:
+                        for field in fields:
+                            if field == "sequence_id":
+                                sequences = re.findall(r"\b\d+\b", query)
+                                for sequence_id in sequences:
+                                    q |= Q(**{"sequence_id": sequence_id})
+                            else:
+                                q |= Q(**{f"{field}__icontains": query})
+
+                    issues = (
+                        Issue.issue_objects.filter(
+                            q,
+                            project__project_projectmember__member=self.request.user,
+                            project__project_projectmember__is_active=True,
+                            workspace__slug=slug,
+                        )
+                        .order_by("-created_at")
+                        .distinct()
+                        .values(
+                            "name",
+                            "id",
+                            "sequence_id",
+                            "project__identifier",
+                            "project_id",
+                            "priority",
+                            "state_id",
+                            "type_id",
+                        )[:count]
+                    )
+                    response_data["issue"] = list(issues)
+
+                elif query_type == "cycle":
+                    fields = ["name"]
+                    q = Q()
+
+                    if query:
+                        for field in fields:
+                            q |= Q(**{f"{field}__icontains": query})
+
+                    cycles = (
+                        Cycle.objects.filter(
+                            q,
+                            project__project_projectmember__member=self.request.user,
+                            project__project_projectmember__is_active=True,
+                            workspace__slug=slug,
+                        )
+                        .annotate(
+                            status=Case(
+                                When(
+                                    Q(start_date__lte=timezone.now())
+                                    & Q(end_date__gte=timezone.now()),
+                                    then=Value("CURRENT"),
+                                ),
+                                When(
+                                    start_date__gt=timezone.now(),
+                                    then=Value("UPCOMING"),
+                                ),
+                                When(
+                                    end_date__lt=timezone.now(), then=Value("COMPLETED")
+                                ),
+                                When(
+                                    Q(start_date__isnull=True)
+                                    & Q(end_date__isnull=True),
+                                    then=Value("DRAFT"),
+                                ),
+                                default=Value("DRAFT"),
+                                output_field=CharField(),
+                            )
+                        )
+                        .order_by("-created_at")
+                        .distinct()
+                        .values(
+                            "name",
+                            "id",
+                            "project_id",
+                            "project__identifier",
+                            "status",
+                            "workspace__slug",
+                        )[:count]
+                    )
+                    response_data["cycle"] = list(cycles)
+
+                elif query_type == "module":
+                    fields = ["name"]
+                    q = Q()
+
+                    if query:
+                        for field in fields:
+                            q |= Q(**{f"{field}__icontains": query})
+
+                    modules = (
+                        Module.objects.filter(
+                            q,
+                            project__project_projectmember__member=self.request.user,
+                            project__project_projectmember__is_active=True,
+                            workspace__slug=slug,
+                        )
+                        .order_by("-created_at")
+                        .distinct()
+                        .values(
+                            "name",
+                            "id",
+                            "project_id",
+                            "project__identifier",
+                            "status",
+                            "workspace__slug",
+                        )[:count]
+                    )
+                    response_data["module"] = list(modules)
+
+                elif query_type == "page":
+                    fields = ["name"]
+                    q = Q()
+
+                    if query:
+                        for field in fields:
+                            q |= Q(**{f"{field}__icontains": query})
+
+                    pages = (
+                        Page.objects.filter(
+                            q,
+                            projects__project_projectmember__member=self.request.user,
+                            projects__project_projectmember__is_active=True,
+                            workspace__slug=slug,
+                            access=0,
+                            is_global=True,
+                        )
+                        .order_by("-created_at")
+                        .distinct()
+                        .values(
+                            "name",
+                            "id",
+                            "logo_props",
+                            "projects__id",
+                            "workspace__slug",
+                        )[:count]
+                    )
+                    response_data["page"] = list(pages)
+            return Response(response_data, status=status.HTTP_200_OK)

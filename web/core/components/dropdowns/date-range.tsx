@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { DateRange, DayPicker, Matcher } from "react-day-picker";
 import { usePopper } from "react-popper";
-import { ArrowRight, CalendarDays } from "lucide-react";
+import { ArrowRight, CalendarCheck2, CalendarDays } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
 import { Button, ComboDropDown } from "@plane/ui";
@@ -33,7 +33,6 @@ type Props = {
     from?: boolean;
     to?: boolean;
   };
-  icon?: React.ReactNode;
   minDate?: Date;
   maxDate?: Date;
   onSelect: (range: DateRange | undefined) => void;
@@ -50,6 +49,7 @@ type Props = {
     to: Date | undefined;
   };
   renderByDefault?: boolean;
+  renderPlaceholder?: boolean;
 };
 
 export const DateRangeDropdown: React.FC<Props> = (props) => {
@@ -68,7 +68,6 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
       from: true,
       to: true,
     },
-    icon = <CalendarDays className="h-3 w-3 flex-shrink-0" />,
     minDate,
     maxDate,
     onSelect,
@@ -82,6 +81,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
     tabIndex,
     value,
     renderByDefault = true,
+    renderPlaceholder = true,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -166,15 +166,15 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
         <span
           className={cn("h-full flex items-center justify-center gap-1 rounded-sm flex-grow", buttonFromDateClassName)}
         >
-          {!hideIcon.from && icon}
-          {dateRange.from ? renderFormattedDate(dateRange.from) : placeholder.from}
+          {!hideIcon.from && <CalendarDays className="h-3 w-3 flex-shrink-0" />}
+          {dateRange.from ? renderFormattedDate(dateRange.from) : renderPlaceholder ? placeholder.from : ""}
         </span>
         <ArrowRight className="h-3 w-3 flex-shrink-0" />
         <span
           className={cn("h-full flex items-center justify-center gap-1 rounded-sm flex-grow", buttonToDateClassName)}
         >
-          {!hideIcon.to && icon}
-          {dateRange.to ? renderFormattedDate(dateRange.to) : placeholder.to}
+          {!hideIcon.to && <CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+          {dateRange.to ? renderFormattedDate(dateRange.to) : renderPlaceholder ? placeholder.to : ""}
         </span>
       </DropdownButton>
     </button>

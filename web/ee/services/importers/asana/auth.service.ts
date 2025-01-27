@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
-import { AsanaAuthState, AsanaPATAuthState } from "@silo/asana";
-import { E_IMPORTER_KEYS, TServiceAuthConfiguration } from "@silo/core";
+import { AsanaAuthState, AsanaPATAuthState } from "@plane/etl/asana";
+import { E_IMPORTER_KEYS, TServiceAuthConfiguration } from "@plane/etl/core";
 
 export class AsanaAuthService {
   protected baseURL: string;

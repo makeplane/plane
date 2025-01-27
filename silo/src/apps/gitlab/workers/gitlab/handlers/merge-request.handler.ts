@@ -6,7 +6,7 @@ import { createOrUpdateCredentials, getCredentialsById } from "@/db/query";
 import { logger } from "@/logger";
 import { Credentials } from "@/types";
 import { Client } from "@plane/sdk";
-import { createGitLabService, GitlabMergeRequestEvent, GitlabNote, GitLabService } from "@silo/gitlab";
+import { createGitLabService, GitlabMergeRequestEvent, GitlabNote, GitLabService } from "@plane/etl/gitlab";
 import { env } from "@/env";
 
 const getConnectionAndCredentials = async (
@@ -119,58 +119,85 @@ const handleComment = async (
 };
 
 export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
-  const result = await getConnectionAndCredentials(data);
-  if (!result) return;
+  try {
+    const result = await getConnectionAndCredentials(data);
+    if (!result) return;
 
-  const [{ workspaceConnection, entityConnection }, credentials] = result;
+    const [{ workspaceConnection, entityConnection, projectConnections }, credentials] = result;
 
-  const { closingReferences, nonClosingReferences } = getReferredIssues(
-    data.object_attributes.title,
-    data.object_attributes.description
-  );
-  if (closingReferences.length === 0 && nonClosingReferences.length === 0) {
-    logger.info(`[GITLAB] No issue references found for project ${data.project.id}, skipping...`);
-    return;
-  }
+    const { closingReferences, nonClosingReferences } = getReferredIssues(
+      data.object_attributes.title,
+      data.object_attributes.description
+    );
+    if (closingReferences.length === 0 && nonClosingReferences.length === 0) {
+      logger.info(`[GITLAB] No issue references found for project ${data.project.id}, skipping...`);
+      return;
+    }
 
-  const targetState = getTargetState(data, entityConnection);
-  if (!targetState) return;
+    const referredIssues = ["MR_CLOSED", "MR_MERGED"].includes(classifyMergeRequestEvent(data))
+      ? closingReferences
+      : [...closingReferences, ...nonClosingReferences];
 
-  const referredIssues = ["MR_CLOSED", "MR_MERGED"].includes(classifyMergeRequestEvent(data))
-    ? closingReferences
-    : [...closingReferences, ...nonClosingReferences];
 
-  const planeClient = new Client({
-    apiToken: credentials.target_access_token!,
-    baseURL: workspaceConnection.targetHostname,
-  });
-
-  const refreshTokenCallback = async (access_token: string, refresh_token: string) => {
-    await createOrUpdateCredentials(workspaceConnection.workspaceId, credentials.user_id!, {
-      id: credentials.id,
-      target_access_token: credentials.target_access_token,
-      source_access_token: access_token,
-      source_refresh_token: refresh_token,
-      source: "GITLAB",
+    const planeClient = new Client({
+      apiToken: credentials.target_access_token!,
+      baseURL: workspaceConnection.targetHostname,
     });
-  };
 
-  const gitlabService = createGitLabService(
-    credentials.source_access_token!,
-    credentials.source_refresh_token!,
-    refreshTokenCallback,
-    workspaceConnection.sourceHostname!
-  );
+    const refreshTokenCallback = async (access_token: string, refresh_token: string) => {
+      await createOrUpdateCredentials(workspaceConnection.workspaceId, credentials.user_id!, {
+        id: credentials.id,
+        target_access_token: credentials.target_access_token,
+        source_access_token: access_token,
+        source_refresh_token: refresh_token,
+        source: "GITLAB",
+      });
+    };
 
-  const updatedIssues = await Promise.all(
-    referredIssues.map((reference) =>
-      updateIssue(planeClient, entityConnection, reference, targetState, data.project.id)
-    )
-  );
+    const gitlabService = createGitLabService(
+      credentials.source_access_token!,
+      credentials.source_refresh_token!,
+      refreshTokenCallback,
+      workspaceConnection.sourceHostname!
+    );
 
-  const validIssues = updatedIssues.filter((issue): issue is IssueWithReference => issue !== null);
+    // we need to get the plane project attached to referred issues and then get target state for each and then do the updates
+    // get the exissues from identifiers it'll have the project attached
+    // loop through the referred issues, check if it has a plane project attached and then update the state using project connection target state
 
-  const body = createCommentBody(validIssues, nonClosingReferences, workspaceConnection);
+    const allReferredIssues = await Promise.all(
+      referredIssues.map(async (reference) => {
+        const issue = await planeClient.issue.getIssueByIdentifier(
+          entityConnection.workspaceSlug,
+          reference.identifier,
+          reference.sequence
+        );
+        return { reference, issue };
+      })
+    );
 
-  await handleComment(gitlabService, data.project.id, data.object_attributes.iid, body);
+    logger.info(`target_access_token ${JSON.stringify(allReferredIssues)}`);
+
+    const updatedIssues = await Promise.all(
+      allReferredIssues.map(async (referredIssue) => {
+        const targetProject = projectConnections.find((project) => project.projectId === referredIssue.issue.project);
+        if (targetProject) {
+          const targetState = getTargetState(data, targetProject);
+          if (!targetState) return null;
+          logger.info("updating item");
+          return updateIssue(planeClient, entityConnection, referredIssue.reference, targetState, data.project.id);
+        }
+        return null;
+      })
+    );
+
+    const validIssues = updatedIssues.filter((issue): issue is IssueWithReference => issue !== null);
+
+    const body = createCommentBody(validIssues, nonClosingReferences, workspaceConnection);
+
+    await handleComment(gitlabService, data.project.id, data.object_attributes.iid, body);
+  } catch (error: unknown) {
+    logger.error(`[GITLAB] Error handling merge request: ${(error as Error)?.stack}`);
+    throw error;
+  }
 };

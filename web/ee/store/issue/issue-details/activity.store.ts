@@ -1,14 +1,15 @@
 import orderBy from "lodash/orderBy";
 import { makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
-import { TIssueActivityComment } from "@plane/types";
+// plane package imports
+import { EIssueServiceType, E_SORT_ORDER } from "@plane/constants";
+import { TIssueActivityComment, TIssueServiceType } from "@plane/types";
 // ce store
 import {
   IIssueActivityStoreActions as IIssueActivityStoreActionsCe,
   IIssueActivityStore as IIssueActivityStoreCe,
   IssueActivityStore as IssueActivityStoreCe,
 } from "@/ce/store/issue/issue-details/activity.store";
-// plane web constants
 import { EActivityFilterType, EActivityFilterTypeEE } from "@/plane-web/constants/issues";
 // plane web store types
 import { RootStore } from "@/plane-web/store/root.store";
@@ -25,23 +26,30 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
   // services
   issueActivityService;
 
-  constructor(protected store: RootStore) {
+  constructor(
+    protected store: RootStore,
+    serviceType: TIssueServiceType = EIssueServiceType.ISSUES
+  ) {
     super(store);
     makeObservable(this, {
       // actions
     });
     // services
-    this.issueActivityService = new IssueActivityService();
+    this.serviceType = serviceType;
+    this.issueActivityService = new IssueActivityService(this.serviceType);
   }
 
-  getActivityCommentByIssueId = computedFn((issueId: string) => {
+  getActivityCommentByIssueId = computedFn((issueId: string, sortOrder: E_SORT_ORDER) => {
     const workspace = this.store.workspaceRoot.currentWorkspace;
     if (!workspace?.id || !issueId) return undefined;
+
+    const currentStore =
+      this.serviceType === EIssueServiceType.EPICS ? this.store.issue.epicDetail : this.store.issue.issueDetail;
 
     let activityComments: TIssueActivityComment[] = [];
 
     const activities = this.getActivitiesByIssueId(issueId) || [];
-    const comments = this.store.issue.issueDetail.comment.getCommentsByIssueId(issueId) || [];
+    const comments = currentStore.comment.getCommentsByIssueId(issueId) || [];
     const worklogs = this.store.workspaceWorklogs.worklogIdsByIssueId(workspace?.id, issueId) || [];
     const additionalPropertiesActivities =
       this.store.issuePropertiesActivity.getPropertyActivityIdsByIssueId(issueId) || [];
@@ -57,7 +65,7 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
     });
 
     comments.forEach((commentId) => {
-      const comment = this.store.issue.issueDetail.comment.getCommentById(commentId);
+      const comment = currentStore.comment.getCommentById(commentId);
       if (!comment) return;
       activityComments.push({
         id: comment.id,
@@ -86,7 +94,7 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
       });
     });
 
-    activityComments = orderBy(activityComments, (e)=>new Date(e.created_at || 0), this.sortOrder);
+    activityComments = orderBy(activityComments, (e) => new Date(e.created_at || 0), sortOrder);
 
     return activityComments;
   });
@@ -106,7 +114,7 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
       const isIssueTypesDisplayEnabled = this.store.issueTypes.isIssueTypeEnabledForProject(
         workspaceSlug,
         projectId,
-        "ISSUE_TYPE_DISPLAY"
+        "ISSUE_TYPES"
       );
       await Promise.all([
         // fetching the worklogs for the issue if worklogs are enabled

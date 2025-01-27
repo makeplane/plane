@@ -1,24 +1,51 @@
 /* eslint-disable no-useless-catch */
 
-import { action, computed, makeObservable } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 
 // store
+import { ProjectService } from "@/plane-web/services";
+import { TProject, TProjectFeatures } from "@/plane-web/types";
 import { ProjectStore as CeProjectStore, IProjectStore as ICeProjectStore } from "@/store/project/project.store";
 import { CoreRootStore } from "@/store/root.store";
+import { IProjectAttachmentStore, ProjectAttachmentStore } from "./project-details/attachment.store";
+import { IProjectLinkStore, ProjectLinkStore } from "./project-details/link.store";
+import { IProjectReactionStore, ProjectReactionStore } from "./project-details/project_reaction.store";
+import { IProjectUpdateStore, ProjectUpdateStore } from "./project-details/updates.store";
 
 export interface IProjectStore extends ICeProjectStore {
+  reactionStore: IProjectReactionStore;
+  attachmentStore: IProjectAttachmentStore;
+  featuresLoader: boolean;
+  features: Record<string, TProjectFeatures>;
   //computed
   publicProjectIds: string[];
   privateProjectIds: string[];
   myProjectIds: string[];
   // actions
   filteredProjectCount: (filter: string) => number | undefined;
+  toggleFeatures: (workspaceSlug: string, projectId: string, data: Partial<TProject>) => Promise<void>;
+  fetchFeatures: (workspaceSlug: string, projectId: string) => Promise<void>;
+  // store
+  linkStore: IProjectLinkStore;
+  updatesStore: IProjectUpdateStore;
 }
 
 export class ProjectStore extends CeProjectStore implements IProjectStore {
+  features: Record<string, TProjectFeatures> = {};
+  featuresLoader: boolean = false;
+  //store
+  linkStore: IProjectLinkStore;
+  attachmentStore: IProjectAttachmentStore;
+  updatesStore: IProjectUpdateStore;
+  reactionStore: IProjectReactionStore;
+  // services
+  projectService;
   constructor(public store: CoreRootStore) {
     super(store);
     makeObservable(this, {
+      // observables
+      featuresLoader: observable.ref,
+      features: observable,
       // computed
       publicProjectIds: computed,
       privateProjectIds: computed,
@@ -26,6 +53,13 @@ export class ProjectStore extends CeProjectStore implements IProjectStore {
       // actions
       filteredProjectCount: action,
     });
+    this.linkStore = new ProjectLinkStore(this);
+    this.attachmentStore = new ProjectAttachmentStore(this);
+    this.updatesStore = new ProjectUpdateStore();
+    this.reactionStore = new ProjectReactionStore();
+
+    // services
+    this.projectService = new ProjectService();
   }
 
   // computed
@@ -89,6 +123,39 @@ export class ProjectStore extends CeProjectStore implements IProjectStore {
         return this.myProjectIds.length;
       default:
         return 0;
+    }
+  };
+
+  // actions
+  fetchFeatures = async (workspaceSlug: string, projectId: string): Promise<void> => {
+    try {
+      this.featuresLoader = true;
+      const response = await this.projectService.getFeatures(workspaceSlug, projectId);
+      runInAction(() => {
+        this.features[projectId] = response;
+      });
+    } catch (error) {
+      console.error("Error fetching project features", error);
+      throw error;
+    } finally {
+      runInAction(() => {
+        this.featuresLoader = false;
+      });
+    }
+  };
+
+  toggleFeatures = async (workspaceSlug: string, projectId: string, data: Partial<TProject>): Promise<void> => {
+    const initialState = this.features[projectId];
+    try {
+      this.features[projectId] = {
+        ...this.features[projectId],
+        ...data,
+      };
+      await this.projectService.toggleFeatures(workspaceSlug, projectId, data);
+    } catch (error) {
+      console.error(error);
+      this.features[projectId] = initialState;
+      throw error;
     }
   };
 }

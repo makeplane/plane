@@ -3,13 +3,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 // icons
-import { Rocket, Search } from "lucide-react";
+import { Search } from "lucide-react";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // types
 import { ISearchIssueResponse } from "@plane/types";
 // ui
-import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // components
 import { IssueSearchModalEmptyState } from "@/components/core";
 // helpers
@@ -18,9 +18,9 @@ import { getTabIndex } from "@/helpers/tab-indices.helper";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
 // services
 import { ProjectService } from "@/services/project";
+import { ParentIssuesListItem } from "./parent-issues-list-item";
 
 type Props = {
   isOpen: boolean;
@@ -29,6 +29,7 @@ type Props = {
   onChange: (issue: ISearchIssueResponse) => void;
   projectId: string | undefined;
   issueId?: string;
+  searchEpic?: boolean;
 };
 
 // services
@@ -41,12 +42,12 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   onChange,
   projectId,
   issueId,
+  searchEpic = false,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   const { isMobile } = usePlatformOS();
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
 
@@ -57,7 +58,6 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   const handleClose = () => {
     onClose();
     setSearchTerm("");
-    setIsWorkspaceLevel(false);
   };
 
   useEffect(() => {
@@ -69,16 +69,17 @@ export const ParentIssuesListModal: React.FC<Props> = ({
     projectService
       .projectIssuesSearch(workspaceSlug as string, projectId as string, {
         search: debouncedSearchTerm,
-        parent: true,
+        parent: searchEpic ? undefined : true,
         issue_id: issueId,
-        workspace_search: isWorkspaceLevel,
+        workspace_search: false,
+        epic: searchEpic ? true : undefined,
       })
       .then((res) => setIssues(res))
       .finally(() => {
         setIsSearching(false);
         setIsLoading(false);
       });
-  }, [debouncedSearchTerm, isOpen, issueId, isWorkspaceLevel, projectId, workspaceSlug]);
+  }, [debouncedSearchTerm, isOpen, issueId, projectId, workspaceSlug]);
 
   return (
     <>
@@ -128,28 +129,6 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       tabIndex={baseTabIndex}
                     />
                   </div>
-                  <div className="flex p-2 sm:justify-end">
-                    <Tooltip tooltipContent="Toggle workspace level search" isMobile={isMobile}>
-                      <div
-                        className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-xs ${
-                          isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"
-                        }`}
-                      >
-                        <ToggleSwitch
-                          value={isWorkspaceLevel}
-                          onChange={() => setIsWorkspaceLevel((prevData) => !prevData)}
-                          label="Workspace level"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
-                          className="flex-shrink-0"
-                        >
-                          Workspace Level
-                        </button>
-                      </div>
-                    </Tooltip>
-                  </div>
                   <Combobox.Options
                     static
                     className="max-h-80 scroll-py-2 overflow-y-auto vertical-scrollbar scrollbar-md"
@@ -194,33 +173,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                                   } ${selected ? "text-custom-text-100" : ""}`
                                 }
                               >
-                                <div className="flex flex-grow items-center gap-2 truncate">
-                                  <span
-                                    className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                    style={{
-                                      backgroundColor: issue.state__color,
-                                    }}
-                                  />
-                                  <span className="flex-shrink-0">
-                                    <IssueIdentifier
-                                      projectId={issue.project_id}
-                                      issueTypeId={issue.type_id}
-                                      projectIdentifier={issue.project__identifier}
-                                      issueSequenceId={issue.sequence_id}
-                                      textContainerClassName="text-xs text-custom-text-200"
-                                    />
-                                  </span>{" "}
-                                  <span className="truncate">{issue.name}</span>
-                                </div>
-                                <a
-                                  href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
-                                  target="_blank"
-                                  className="z-1 relative hidden flex-shrink-0 text-custom-text-200 hover:text-custom-text-100 group-hover:block"
-                                  rel="noopener noreferrer"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <Rocket className="h-4 w-4" />
-                                </a>
+                                <ParentIssuesListItem workspaceSlug={workspaceSlug?.toString()} issue={issue} />
                               </Combobox.Option>
                             ))}
                           </ul>

@@ -2,8 +2,9 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { JiraResource, JiraProject, JiraStatus, ILabelConfig, JiraPriority } from "@silo/jira";
+import { JiraResource, JiraProject, JiraStatus, ILabelConfig, JiraPriority } from "@plane/etl/jira";
 // plane web services
+import { IAdditionalUsersResponse } from "@plane/types";
 import { JiraServerDataService } from "@/plane-web/services/importers/jira-server/data.service";
 // plane web store types
 import { RootStore } from "@/plane-web/store/root.store";
@@ -15,9 +16,10 @@ export interface IJiraServerDataStore {
   jiraResources: Record<string, JiraResource>; // resourceId -> resource
   jiraProjects: Record<string, Record<string, JiraProject>>; // resourceId -> projectId -> project
   jiraStates: Record<string, Record<string, JiraStatus>>; // projectId -> stateId -> state
-  jiraLabels: Record<string, Record<string, ILabelConfig>>; // projectId -> labelName -> label
+  jiraLabels: string[]; // projectId -> labelName -> label
   jiraPriorities: Record<string, Record<string, JiraPriority>>; // projectId -> priorityId -> priority
   jiraIssueCount: Record<string, number>; // projectId -> issueCount
+  additionalUsersData: IAdditionalUsersResponse;
   // computed
   jiraResourceIds: string[];
   // computed functions
@@ -28,7 +30,6 @@ export interface IJiraServerDataStore {
   getJiraResourceById: (resourceId: string) => JiraResource | undefined;
   getJiraProjectById: (resourceId: string, projectId: string) => JiraProject | undefined;
   getJiraStateById: (projectId: string, stateId: string) => JiraStatus | undefined;
-  getJiraLabelById: (projectId: string, labelName: string) => ILabelConfig | undefined;
   getJiraPriorityById: (projectId: string, priorityId: string) => JiraPriority | undefined;
   getJiraIssueCountByProjectId: (projectId: string) => number;
   // actions
@@ -45,7 +46,7 @@ export interface IJiraServerDataStore {
     userId: string,
     resourceId: string,
     projectId: string
-  ) => Promise<ILabelConfig[] | undefined>;
+  ) => Promise<string[] | undefined>;
   fetchJiraPriorities: (
     workspaceId: string,
     userId: string,
@@ -58,6 +59,11 @@ export interface IJiraServerDataStore {
     resourceId: string,
     projectId: string
   ) => Promise<number | undefined>;
+  fetchAdditionalUsers: (
+    workspaceId: string,
+    userId: string,
+    workspaceSlug: string,
+  ) => Promise<IAdditionalUsersResponse | undefined>;
 }
 
 export class JiraServerDataStore implements IJiraServerDataStore {
@@ -67,9 +73,13 @@ export class JiraServerDataStore implements IJiraServerDataStore {
   jiraResources: Record<string, JiraResource> = {}; // resourceId -> resource
   jiraProjects: Record<string, Record<string, JiraProject>> = {}; // resourceId -> projectId -> project
   jiraStates: Record<string, Record<string, JiraStatus>> = {}; // projectId -> stateId -> state
-  jiraLabels: Record<string, Record<string, ILabelConfig>> = {}; // projectId -> labelName -> label
+  jiraLabels: string[] = []; // projectId -> labelName -> label
   jiraPriorities: Record<string, Record<string, JiraPriority>> = {}; // projectId -> priorityId -> priority
   jiraIssueCount: Record<string, number> = {}; // projectId -> issueCount
+  additionalUsersData: IAdditionalUsersResponse = {
+    additionalUserCount: 0,
+    occupiedUserCount: 0
+  };
   // service
   service: JiraServerDataService;
 
@@ -84,6 +94,7 @@ export class JiraServerDataStore implements IJiraServerDataStore {
       jiraLabels: observable,
       jiraPriorities: observable,
       jiraIssueCount: observable,
+      additionalUsersData: observable,
       // computed
       jiraResourceIds: computed,
       // actions
@@ -93,6 +104,7 @@ export class JiraServerDataStore implements IJiraServerDataStore {
       fetchJiraLabels: action,
       fetchJiraPriorities: action,
       fetchJiraIssueCount: action,
+      fetchAdditionalUsers: action
     });
 
     this.service = new JiraServerDataService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
@@ -135,11 +147,7 @@ export class JiraServerDataStore implements IJiraServerDataStore {
    * @param { string } projectId
    * @returns { string[] | undefined }
    */
-  jiraLabelIdsByProjectId = computedFn((projectId: string): string[] => {
-    const projectLabels = this.jiraLabels[projectId];
-    if (!projectLabels) return [];
-    return Object.keys(projectLabels);
-  });
+  jiraLabelIdsByProjectId = computedFn((projectId: string): string[] => []);
 
   /**
    * @description Returns the list of priority ids by project id
@@ -167,16 +175,6 @@ export class JiraServerDataStore implements IJiraServerDataStore {
    */
   getJiraProjectById = computedFn(
     (resourceId: string, projectId: string): JiraProject | undefined => this.jiraProjects[resourceId]?.[projectId]
-  );
-
-  /**
-   * @description Returns the label by project id and label name
-   * @param { string } projectId
-   * @param { string } labelName
-   * @returns { ILabelConfig | undefined }
-   */
-  getJiraLabelById = computedFn(
-    (projectId: string, labelName: string): ILabelConfig | undefined => this.jiraLabels[projectId]?.[labelName]
   );
 
   /**
@@ -322,22 +320,20 @@ export class JiraServerDataStore implements IJiraServerDataStore {
     userId: string,
     resourceId: string,
     projectId: string
-  ): Promise<ILabelConfig[] | undefined> => {
+  ): Promise<string[] | undefined> => {
     this.isLoading = true;
     this.error = {};
 
     try {
-      const labelResponse = await this.service.getProjectLabels(workspaceId, userId);
-      const labels = labelResponse?.values || [];
-      // if (labels) {
-      //   runInAction(() => {
-      //     labels.forEach((label) => {
-      //       if (label.name) set(this.jiraLabels, [projectId, label.name], label);
-      //     });
-      //   });
-      // }
+      const labelResponse = await this.service.getProjectLabels(workspaceId, userId, projectId);
+      const labels = labelResponse || [];
+      if (labels) {
+        runInAction(() => {
+          this.jiraLabels = labels;
+        });
+      }
       this.isLoading = false;
-      return labelResponse;
+      return labels;
     } catch (error) {
       this.error = error as unknown as object;
       this.isLoading = false;
@@ -407,4 +403,30 @@ export class JiraServerDataStore implements IJiraServerDataStore {
       this.isLoading = false;
     }
   };
+
+  /**
+   * @description Fetches additional users on import
+   * @param { string } workspaceId
+   * @param { string } userId
+   * @param { string } workspaceSlug
+   * @returns { Promise<IAdditionalUsersResponse | undefined> }
+   */
+  fetchAdditionalUsers = async (
+    workspaceId: string,
+    userId: string,
+    workspaceSlug: string,
+  ): Promise<IAdditionalUsersResponse | undefined> => {
+    try {
+      const additionalUserResponse = (await this.service.getAdditionalUsers(workspaceId, userId, workspaceSlug)) as IAdditionalUsersResponse;
+      if (additionalUserResponse?.additionalUserCount) {
+        runInAction(() => {
+          this.additionalUsersData = additionalUserResponse
+        });
+      }
+      return additionalUserResponse;
+    } catch (error) {
+      this.error = error as unknown as object;
+    }
+  };
+
 }

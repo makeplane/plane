@@ -1,25 +1,24 @@
 import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
-// plane web services
-import { PageService } from "@/plane-web/services/page.service";
+// plane imports
+import { SitesPagePublishService } from "@plane/services";
+import { TPublicPageResponse } from "@plane/types";
 // plane web store
 import { IPage, Page } from "@/plane-web/store/pages";
 import { RootStore } from "@/plane-web/store/root.store";
-// plane web types
-import { TPageResponse } from "@/plane-web/types";
 
 export interface IPagesListStore {
   // observables
-  data: Record<string, IPage>; // anchor => TPageResponse
+  data: Record<string, IPage>; // anchor => TPublicPageResponse
   // actions
-  fetchPageDetails: (anchor: string) => Promise<TPageResponse>;
+  fetchPageDetails: (anchor: string) => Promise<TPublicPageResponse>;
 }
 
 export class PagesListStore implements IPagesListStore {
   // observables
   data: Record<string, IPage> = {}; // anchor => IPage
   // services
-  pageService: PageService;
+  pageService: SitesPagePublishService;
 
   constructor(public rootStore: RootStore) {
     makeObservable(this, {
@@ -29,7 +28,7 @@ export class PagesListStore implements IPagesListStore {
       fetchPageDetails: action,
     });
     // services
-    this.pageService = new PageService();
+    this.pageService = new SitesPagePublishService();
   }
 
   /**
@@ -37,7 +36,7 @@ export class PagesListStore implements IPagesListStore {
    * @param {string} anchor
    */
   fetchPageDetails = async (anchor: string) => {
-    const response = await this.pageService.fetchPageDetails(anchor);
+    const response = await this.pageService.retrieve(anchor);
     runInAction(() => {
       set(this.data, [anchor], new Page(this.rootStore, response));
     });

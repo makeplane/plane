@@ -1,10 +1,11 @@
 import { Dispatch, FC, SetStateAction } from "react";
 import { Editor } from "@tiptap/react";
 import { ALargeSmall, Ban } from "lucide-react";
+// plane utils
+import { cn } from "@plane/utils";
 // constants
 import { COLORS_LIST } from "@/constants/common";
 // helpers
-import { cn } from "@/helpers/common";
 import { BackgroundColorItem, TextColorItem } from "../menu-items";
 
 type Props = {
@@ -70,7 +71,7 @@ export const BubbleMenuColorSelector: FC<Props> = (props) => {
               <button
                 type="button"
                 className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-custom-border-400 hover:bg-custom-background-80 transition-colors"
-                onClick={() => TextColorItem(editor).command(undefined)}
+                onClick={() => TextColorItem(editor).command({ color: undefined })}
               >
                 <Ban className="size-4" />
               </button>
@@ -93,7 +94,7 @@ export const BubbleMenuColorSelector: FC<Props> = (props) => {
               <button
                 type="button"
                 className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-custom-border-400 hover:bg-custom-background-80 transition-colors"
-                onClick={() => BackgroundColorItem(editor).command(undefined)}
+                onClick={() => BackgroundColorItem(editor).command({ color: undefined })}
               >
                 <Ban className="size-4" />
               </button>

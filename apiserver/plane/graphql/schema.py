@@ -8,6 +8,7 @@ from .queries.workspace import (
     WorkspaceIssuesInformationQuery,
     WorkspaceIssuesQuery,
     YourWorkQuery,
+    WorkspaceLicenseQuery,
 )
 from .queries.users import UserQuery, UserFavoritesQuery, UserRecentVisitQuery
 from .queries.users import ProfileQuery
@@ -38,18 +39,20 @@ from .queries.module import (
     ModuleIssueUserPropertyQuery,
 )
 from .queries.search import GlobalSearchQuery
-from .queries.link import IssueLinkQuery
 from .queries.estimate import EstimatePointQuery
 from .queries.issues import (
     IssueRelationQuery,
     IssuesSearchQuery,
     SubIssuesQuery,
     IssueAttachmentQuery,
+    IssueLinkQuery,
 )
 from .queries.dashboard import userInformationQuery
 from .queries.external import UnsplashImagesQuery, ProjectCoversQuery
 from .queries.feature_flag import FeatureFlagQuery
 from .queries.version_check import VersionCheckQuery
+from .queries.timezone import TimezoneListQuery
+from .queries.asset import WorkspaceAssetQuery, ProjectAssetQuery
 
 # mutations
 from .mutations.workspace import WorkspaceMutation, WorkspaceInviteMutation
@@ -57,15 +60,15 @@ from .mutations.project import (
     ProjectMutation,
     ProjectInviteMutation,
     ProjectFavoriteMutation,
+    JoinProjectMutation,
 )
 from .mutations.issue import (
     IssueMutation,
     IssueUserPropertyMutation,
-    IssueAttachmentMutation,
     IssueSubscriptionMutation,
 )
 from .mutations.notification import NotificationMutation
-from .mutations.user import ProfileMutation
+from .mutations.user import ProfileMutation, UserMutation
 from .mutations.page import PageMutation, PageFavoriteMutation, WorkspacePageMutation
 from .mutations.cycle import (
     CycleIssueMutation,
@@ -77,14 +80,22 @@ from .mutations.module import (
     ModuleFavoriteMutation,
     ModuleIssueUserPropertyMutation,
 )
-from .mutations.link import IssueLinkMutation
 from .mutations.favorite import UserFavoriteMutation
 from .mutations.issues import (
     IssueRelationMutation,
     IssueCommentMutation,
     SubIssueMutation,
+    IssueModuleMutation,
+    IssueCycleMutation,
+    IssueLinkMutation,
+    IssueAttachmentMutation,
 )
 from .mutations.device import DeviceInformationMutation
+from .mutations.asset import (
+    UserAssetMutation,
+    WorkspaceAssetMutation,
+    ProjectAssetMutation,
+)
 
 
 # combined query class for all
@@ -136,6 +147,10 @@ class Query(
     FeatureFlagQuery,
     VersionCheckQuery,
     WorkspacePageQuery,
+    WorkspaceLicenseQuery,
+    TimezoneListQuery,
+    WorkspaceAssetQuery,
+    ProjectAssetQuery,
 ):
     pass
 
@@ -156,7 +171,6 @@ class Mutation(
     IssueAttachmentMutation,
     CycleIssueMutation,
     ModuleIssueMutation,
-    IssueLinkMutation,
     IssueSubscriptionMutation,
     CycleFavoriteMutation,
     ModuleFavoriteMutation,
@@ -169,6 +183,14 @@ class Mutation(
     PageMutation,
     DeviceInformationMutation,
     WorkspacePageMutation,
+    JoinProjectMutation,
+    IssueModuleMutation,
+    IssueCycleMutation,
+    UserAssetMutation,
+    UserMutation,
+    WorkspaceAssetMutation,
+    ProjectAssetMutation,
+    IssueLinkMutation,
 ):
     pass
 

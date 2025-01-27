@@ -1,11 +1,19 @@
+import { CeleryProducer } from "./celery";
 import { TaskManager } from "./manager";
 
-const taskManager = new TaskManager({
+export const importTaskManger = new TaskManager({
   workerTypes: {
     jira: "jira",
     linear: "linear",
     asana: "asana",
     jira_server: "jira_server",
+  },
+  retryAttempts: 3,
+  retryDelay: 1000,
+});
+
+export const integrationTaskManager = new TaskManager({
+  workerTypes: {
     "slack-interaction": "slack-interaction",
     "github-webhook": "github-webhook",
     "gitlab-webhook": "gitlab-webhook",
@@ -16,4 +24,4 @@ const taskManager = new TaskManager({
   retryDelay: 1000,
 });
 
-export default taskManager;
+export const celeryProducer = new CeleryProducer();

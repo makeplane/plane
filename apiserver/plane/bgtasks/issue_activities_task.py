@@ -8,6 +8,7 @@ from celery import shared_task
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
+from django.db.models import Q
 
 from plane.app.serializers import IssueActivitySerializer
 from plane.bgtasks.notification_task import notifications
@@ -103,8 +104,8 @@ def track_description(
                     event_id=issue_id,
                     verb="updated",
                     field="description",
-                    old_value=current_instance.get("description_html"),
-                    new_value=requested_data.get("description_html"),
+                    old_value=None,
+                    new_value=None,
                     current_site=origin,
                     actor_id=actor_id,
                     slug=workspace.slug,
@@ -621,7 +622,7 @@ def track_type(
         )
 
 
-def create_issue_activity(
+def create_epic_activity(
     requested_data,
     current_instance,
     issue_id,
@@ -631,31 +632,20 @@ def create_issue_activity(
     issue_activities,
     epoch,
 ):
-    issue = Issue.objects.get(pk=issue_id)
+    epic = Issue.objects.get(pk=issue_id)
     issue_activity = IssueActivity.objects.create(
         issue_id=issue_id,
         project_id=project_id,
         workspace_id=workspace_id,
-        comment="created the issue",
+        comment="created the epic",
         verb="created",
+        field="epic",
         actor_id=actor_id,
         epoch=epoch,
     )
-    issue_activity.created_at = issue.created_at
-    issue_activity.actor_id = issue.created_by_id
+    issue_activity.created_at = epic.created_at
+    issue_activity.actor_id = epic.created_by_id
     issue_activity.save(update_fields=["created_at", "actor_id"])
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    if requested_data.get("assignee_ids") is not None:
-        track_assignees(
-            requested_data,
-            current_instance,
-            issue_id,
-            project_id,
-            workspace_id,
-            actor_id,
-            issue_activities,
-            epoch,
-        )
 
 
 def update_issue_activity(
@@ -1615,6 +1605,43 @@ def create_intake_activity(
         )
 
 
+def create_issue_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    issue = Issue.objects.get(pk=issue_id)
+    issue_activity = IssueActivity.objects.create(
+        issue_id=issue_id,
+        project_id=project_id,
+        workspace_id=workspace_id,
+        comment="created the issue",
+        verb="created",
+        actor_id=actor_id,
+        epoch=epoch,
+    )
+    issue_activity.created_at = issue.created_at
+    issue_activity.actor_id = issue.created_by_id
+    issue_activity.save(update_fields=["created_at", "actor_id"])
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    if requested_data.get("assignee_ids") is not None:
+        track_assignees(
+            requested_data,
+            current_instance,
+            issue_id,
+            project_id,
+            workspace_id,
+            actor_id,
+            issue_activities,
+            epoch,
+        )
+
+
 # Receive message from room group
 @shared_task
 def issue_activity(
@@ -1637,18 +1664,21 @@ def issue_activity(
         workspace_id = project.workspace_id
 
         if issue_id is not None:
-            if origin:
+            issue = (
+                Issue.objects.filter(pk=issue_id)
+                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
+                .first()
+            )
+            if origin and issue:
                 ri = redis_instance()
                 # set the request origin in redis
                 ri.set(str(issue_id), origin, ex=600)
-            issue = Issue.objects.filter(pk=issue_id).first()
             if issue:
                 try:
                     issue.updated_at = timezone.now()
                     issue.save(update_fields=["updated_at"])
                 except Exception:
                     pass
-
         ACTIVITY_MAPPER = {
             "issue.activity.created": create_issue_activity,
             "issue.activity.updated": update_issue_activity,
@@ -1677,6 +1707,7 @@ def issue_activity(
             "issue_draft.activity.updated": update_draft_issue_activity,
             "issue_draft.activity.deleted": delete_draft_issue_activity,
             "intake.activity.created": create_intake_activity,
+            "epic.activity.created": create_epic_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)

@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
+// plane constants
+import { EIssuesStoreType } from "@plane/constants";
 // ui
 import { TOAST_TYPE, setToast, AlertModalCore, EModalPosition, EModalWidth } from "@plane/ui";
 // constants
 import { EErrorCodes, ERROR_DETAILS } from "@/constants/errors";
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssues } from "@/hooks/store";
 

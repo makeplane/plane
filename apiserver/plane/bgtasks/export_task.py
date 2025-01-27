@@ -13,6 +13,7 @@ from celery import shared_task
 # Django imports
 from django.conf import settings
 from django.utils import timezone
+from django.db.models import Q
 from openpyxl import Workbook
 
 # Module imports
@@ -315,9 +316,15 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                     project__project_projectmember__is_active=True,
                     project__archived_at__isnull=True,
                 )
-                .select_related("project", "workspace", "state", "parent", "created_by")
+                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
+                .select_related(
+                    "project", "workspace", "state", "parent", "created_by"
+                )
                 .prefetch_related(
-                    "assignees", "labels", "issue_cycle__cycle", "issue_module__module"
+                    "assignees",
+                    "labels",
+                    "issue_cycle__cycle",
+                    "issue_module__module",
                 )
                 .values(
                     "id",

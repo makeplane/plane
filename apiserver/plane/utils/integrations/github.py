@@ -10,9 +10,7 @@ from django.conf import settings
 
 def get_jwt_token():
     app_id = os.environ.get("GITHUB_APP_ID", "")
-    secret = bytes(
-        os.environ.get("GITHUB_APP_PRIVATE_KEY", ""), encoding="utf8"
-    )
+    secret = bytes(os.environ.get("GITHUB_APP_PRIVATE_KEY", ""), encoding="utf8")
     current_timestamp = int(datetime.now().timestamp())
     due_date = datetime.now() + timedelta(minutes=10)
     expiry = int(due_date.timestamp())
@@ -49,20 +47,14 @@ def get_github_repos(access_tokens_url, repositories_url):
         "Accept": "application/vnd.github+json",
     }
 
-    oauth_response = requests.post(
-        access_tokens_url,
-        headers=headers,
-    ).json()
+    oauth_response = requests.post(access_tokens_url, headers=headers).json()
 
     oauth_token = oauth_response.get("token", "")
     headers = {
         "Authorization": "Bearer " + str(oauth_token),
         "Accept": "application/vnd.github+json",
     }
-    response = requests.get(
-        repositories_url,
-        headers=headers,
-    ).json()
+    response = requests.get(repositories_url, headers=headers).json()
     return response
 
 
@@ -87,10 +79,7 @@ def get_github_repo_details(access_tokens_url, owner, repo):
         "X-GitHub-Api-Version": "2022-11-28",
     }
 
-    oauth_response = requests.post(
-        access_tokens_url,
-        headers=headers,
-    ).json()
+    oauth_response = requests.post(access_tokens_url, headers=headers).json()
 
     oauth_token = oauth_response.get("token")
     headers = {
@@ -98,8 +87,7 @@ def get_github_repo_details(access_tokens_url, owner, repo):
         "Accept": "application/vnd.github+json",
     }
     open_issues = requests.get(
-        f"https://api.github.com/repos/{owner}/{repo}",
-        headers=headers,
+        f"https://api.github.com/repos/{owner}/{repo}", headers=headers
     ).json()["open_issues_count"]
 
     total_labels = 0
@@ -142,9 +130,7 @@ def get_release_notes():
             "Accept": "application/vnd.github.v3+json",
         }
     else:
-        headers = {
-            "Accept": "application/vnd.github.v3+json",
-        }
+        headers = {"Accept": "application/vnd.github.v3+json"}
     url = "https://api.github.com/repos/makeplane/plane/releases?per_page=5&page=1"
     response = requests.get(url, headers=headers)
 

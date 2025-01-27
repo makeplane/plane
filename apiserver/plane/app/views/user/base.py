@@ -272,16 +272,11 @@ class ProfileEndpoint(BaseAPIView):
 
 
 class UserTokenVerificationEndpoint(BaseAPIView):
-
     authentication_classes = [JWTAuthentication]
 
     def get(self, request):
         if request.user:
-            return Response(
-                {"user_id": request.user.id},
-                status=status.HTTP_200_OK,
-            )
+            return Response({"user_id": request.user.id}, status=status.HTTP_200_OK)
         return Response(
-            {"error": "Invalid verification token"},
-            status=status.HTTP_401_UNAUTHORIZED,
+            {"error": "Invalid verification token"}, status=status.HTTP_401_UNAUTHORIZED
         )

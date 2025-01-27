@@ -1,10 +1,9 @@
 "use client";
 
 import React from "react";
-// ui
+// plane internal packages
+import { WEB_BASE_URL } from "@plane/constants";
 import { AlertModalCore, Button } from "@plane/ui";
-// helpers
-import { WEB_BASE_URL } from "@/helpers/common.helper";
 
 export const UpgradeButton: React.FC = () => {
   // states

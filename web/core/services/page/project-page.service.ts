@@ -1,5 +1,5 @@
 // types
-import { TDocumentPayload, TPage, TPageEmbedType } from "@plane/types";
+import { TDocumentPayload, TPage } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -47,7 +47,12 @@ export class ProjectPageService extends APIService {
       });
   }
 
-  async updateAccess(workspaceSlug: string, projectId: string, pageId: string, data: Partial<TPage>): Promise<void> {
+  async updateAccess(
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+    data: Pick<TPage, "access">
+  ): Promise<void> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/access/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -146,25 +151,7 @@ export class ProjectPageService extends APIService {
       });
   }
 
-  async searchEmbed<T>(
-    workspaceSlug: string,
-    projectId: string,
-    params: {
-      query_type: TPageEmbedType;
-      count?: number;
-      query: string;
-    }
-  ): Promise<T | undefined> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/search/`, {
-      params,
-    })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async updateDescriptionYJS(
+  async updateDescription(
     workspaceSlug: string,
     projectId: string,
     pageId: string,
@@ -174,6 +161,24 @@ export class ProjectPageService extends APIService {
       .then((response) => response?.data)
       .catch((error) => {
         throw error;
+      });
+  }
+
+  async duplicate(workspaceSlug: string, projectId: string, pageId: string): Promise<TPage> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/duplicate/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async move(workspaceSlug: string, projectId: string, pageId: string, newProjectId: string): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/move/`, {
+      new_project_id: newProjectId,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
       });
   }
 }

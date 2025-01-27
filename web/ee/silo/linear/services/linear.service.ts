@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from "axios";
-import { LinearTeam, LinearState, LinearOrganization } from "@silo/linear";
+import { LinearTeam, LinearState, LinearOrganization } from "@plane/etl/linear";
 
 export class LinearService {
   protected baseURL: string;

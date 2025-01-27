@@ -18,9 +18,9 @@ import {
   AsanaTaskWithChildren,
   pullAttachments,
   pullComments,
-} from "@silo/asana";
+} from "@plane/etl/asana";
 // silo core
-import { TJobWithConfig, PlaneEntities } from "@silo/core";
+import { TJobWithConfig, PlaneEntities } from "@plane/etl/core";
 // asana migrator helpers
 import { createAsanaClient, getJobCredentials, getJobData, resetJobIfStarted } from "../helpers/migration-helpers";
 import {
@@ -54,7 +54,7 @@ export class AsanaDataMigrator extends BaseDataMigrator<AsanaConfig, AsanaEntity
     const workspaceGid = job.config.meta.workspace.gid;
     const projectGid = job.config.meta.project.gid;
     // pull data
-    const users = await pullUsers(client, workspaceGid);
+    const users = job.config.meta.skipUserImport ? [] : await pullUsers(client, workspaceGid);
     const tasks = await pullTasks(client, projectGid);
     const tags = await pullTags(client, workspaceGid);
     const fields = await pullCustomFields(client, projectGid);

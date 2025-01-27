@@ -5,8 +5,7 @@ import Image from "next/image";
 // ui
 import { Button } from "@plane/ui";
 // plane web components
-import { PaidPlanUpgradeModal } from "@/ce/components/workspace/upgrade";
-import { PlaneOneEditionBadge } from "@/plane-web/components/license";
+import { PaidPlanUpgradeModal, PlaneOneEditionBadge } from "@/plane-web/components/license";
 import { SubscriptionActivationModal } from "@/plane-web/components/workspace";
 // plane web hooks
 import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";

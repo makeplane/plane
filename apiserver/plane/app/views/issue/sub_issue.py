@@ -20,7 +20,7 @@ from plane.app.serializers import IssueSerializer
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import Issue, IssueLink, FileAsset, CycleIssue
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.utils.user_timezone_converter import user_timezone_converter
+from plane.utils.timezone_converter import user_timezone_converter
 from collections import defaultdict
 
 
@@ -170,11 +170,11 @@ class SubIssuesEndpoint(BaseAPIView):
         _ = [
             issue_activity.delay(
                 type="issue.activity.updated",
-                requested_data=json.dumps({"parent": str(issue_id)}),
+                requested_data=json.dumps({"parent_id": str(issue_id)}),
                 actor_id=str(request.user.id),
                 issue_id=str(sub_issue_id),
                 project_id=str(project_id),
-                current_instance=json.dumps({"parent": str(sub_issue_id)}),
+                current_instance=json.dumps({"parent_id": str(sub_issue_id)}),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),

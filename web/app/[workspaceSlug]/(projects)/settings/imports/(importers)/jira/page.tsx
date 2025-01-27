@@ -7,7 +7,6 @@ import useSWR from "swr";
 import { AuthenticationRoot, Dashboard, StepsRoot, DashboardLoaderRoot } from "@/plane-web/components/importers/jira";
 //  plane web hooks
 import { useFlag, useJiraImporter } from "@/plane-web/hooks/store";
-import { E_FEATURE_FLAGS } from "@/plane-web/types/feature-flag";
 
 const JiraImporter: FC = observer(() => {
   const {
@@ -25,8 +24,7 @@ const JiraImporter: FC = observer(() => {
   const workspaceSlug = workspace?.slug || undefined;
   const workspaceId = workspace?.id || undefined;
   const userId = user?.id || undefined;
-  const isFeatureEnabled =
-    (workspaceSlug && useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.JIRA_IMPORTER)) || false;
+  const isFeatureEnabled = useFlag(workspaceSlug?.toString(), "JIRA_IMPORTER");
 
   // fetching external api token
   const { isLoading: externalApiTokenIsLoading } = useSWR(
@@ -63,7 +61,7 @@ const JiraImporter: FC = observer(() => {
 
   if (!externalApiToken || !currentAuth)
     return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">
+      <div className="text-custom-text-200 flex h-full justify-center items-center">
         Not able to access the external api token. Please try again later.
       </div>
     );

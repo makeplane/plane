@@ -9,9 +9,7 @@ PAGINATOR_MAX_LIMIT = 100
 
 
 class Cursor:
-    def __init__(
-        self, page_size=PAGINATOR_MAX_LIMIT, current_page=0, offset=0
-    ):
+    def __init__(self, page_size=PAGINATOR_MAX_LIMIT, current_page=0, offset=0):
         self.page_size = page_size
         self.current_page = current_page
         self.offset = offset
@@ -24,15 +22,10 @@ class Cursor:
         cursor_bits = cursor.split(":")
         if len(cursor_bits) != 3:
             return ValueError("Invalid cursor format")
-        return self(
-            int(cursor_bits[0]), int(cursor_bits[1]), int(cursor_bits[2])
-        )
+        return self(int(cursor_bits[0]), int(cursor_bits[1]), int(cursor_bits[2]))
 
 
-def paginate(
-    results_object,
-    cursor: Optional[str] = None,
-):
+def paginate(results_object, cursor: Optional[str] = None):
     """
     Paginator Information Results
     """

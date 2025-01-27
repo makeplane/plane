@@ -1,9 +1,9 @@
 "use client";
 
 import { FC } from "react";
+import { JiraStatus } from "@plane/etl/jira";
 import { IState } from "@plane/types";
 import { StateGroupIcon } from "@plane/ui";
-import { JiraStatus } from "@silo/jira";
 // silo ui components
 import { Dropdown } from "@/plane-web/silo/ui";
 

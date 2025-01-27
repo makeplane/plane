@@ -1,5 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { BubbleMenu, BubbleMenuProps, Editor, isNodeSelection } from "@tiptap/react";
+// plane utils
+import { cn } from "@plane/utils";
 // components
 import {
   BoldItem,
@@ -13,8 +15,6 @@ import {
 } from "@/components/menus";
 // extensions
 import { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
-// helpers
-import { cn } from "@/helpers/common";
 // local components
 import { TextAlignmentSelector } from "./alignment-selector";
 
@@ -87,12 +87,9 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
   }, []);
 
   return (
-    <BubbleMenu
-      {...bubbleMenuProps}
-      className="flex py-2 divide-x divide-custom-border-200 rounded-lg border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-rg"
-    >
+    <BubbleMenu {...bubbleMenuProps}>
       {!isSelecting && (
-        <>
+        <div className="flex py-2 divide-x divide-custom-border-200 rounded-lg border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-rg">
           <div className="px-2">
             {!props.editor.isActive("table") && (
               <BubbleMenuNodeSelector
@@ -161,7 +158,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
               editor.commands.setTextSelection(pos ?? 0);
             }}
           />
-        </>
+        </div>
       )}
     </BubbleMenu>
   );

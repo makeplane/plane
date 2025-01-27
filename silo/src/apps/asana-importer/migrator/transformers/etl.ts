@@ -20,9 +20,9 @@ import {
   transformTask,
   transformUser,
   transformComments,
-} from "@silo/asana";
+} from "@plane/etl/asana";
 // silo core
-import { TIssuePropertyValuesPayload, TJobWithConfig } from "@silo/core";
+import { TIssuePropertyValuesPayload, TJobWithConfig } from "@plane/etl/core";
 
 /* ------------------ Transformers ----------------------
 This file contains transformers for Asana entities, responsible

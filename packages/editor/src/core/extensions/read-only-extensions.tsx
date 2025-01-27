@@ -19,8 +19,7 @@ import {
   TableCell,
   TableRow,
   Table,
-  CustomMention,
-  HeadingListExtension,
+  CustomMentionExtension,
   CustomReadOnlyImageExtension,
   CustomTextAlignExtension,
   CustomCalloutReadOnlyExtension,
@@ -29,22 +28,21 @@ import {
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 // types
-import { IMentionHighlight, TExtensions, TFileHandler } from "@/types";
+import { TExtensions, TFileHandler, TReadOnlyMentionHandler } from "@/types";
 // plane editor extensions
 import { CoreReadOnlyEditorAdditionalExtensions } from "@/plane-editor/extensions";
 
 type Props = {
   disabledExtensions: TExtensions[];
   fileHandler: Pick<TFileHandler, "getAssetSrc">;
-  mentionConfig: {
-    mentionHighlights?: () => Promise<IMentionHighlight[]>;
-  };
+  mentionHandler: TReadOnlyMentionHandler;
 };
 
 export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
-  const { disabledExtensions, fileHandler, mentionConfig } = props;
+  const { disabledExtensions, fileHandler, mentionHandler } = props;
 
   return [
+    // @ts-expect-error tiptap types are incorrect
     StarterKit.configure({
       bulletList: {
         HTMLAttributes: {
@@ -133,13 +131,9 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
     TableHeader,
     TableCell,
     TableRow,
-    CustomMention({
-      mentionHighlights: mentionConfig.mentionHighlights,
-      readonly: true,
-    }),
+    CustomMentionExtension(mentionHandler),
     CharacterCount,
     CustomColorExtension,
-    HeadingListExtension,
     CustomTextAlignExtension,
     CustomCalloutReadOnlyExtension,
     ...CoreReadOnlyEditorAdditionalExtensions({

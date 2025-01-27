@@ -43,45 +43,27 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
     type_logo_props = {
         PropertyTypeEnum.TEXT: {
             "in_use": "icon",
-            "icon": {
-                "name": "AlignLeft",
-                "color": "#6d7b8a",
-            },
+            "icon": {"name": "AlignLeft", "color": "#6d7b8a"},
         },
         PropertyTypeEnum.DECIMAL: {
             "in_use": "icon",
-            "icon": {
-                "name": "Hash",
-                "color": "#6d7b8a",
-            },
+            "icon": {"name": "Hash", "color": "#6d7b8a"},
         },
         PropertyTypeEnum.OPTION: {
             "in_use": "icon",
-            "icon": {
-                "name": "CircleChevronDown",
-                "color": "#6d7b8a",
-            },
+            "icon": {"name": "CircleChevronDown", "color": "#6d7b8a"},
         },
         PropertyTypeEnum.BOOLEAN: {
             "in_use": "icon",
-            "icon": {
-                "name": "ToggleLeft",
-                "color": "#6d7b8a",
-            },
+            "icon": {"name": "ToggleLeft", "color": "#6d7b8a"},
         },
         PropertyTypeEnum.DATETIME: {
             "in_use": "icon",
-            "icon": {
-                "name": "Calendar",
-                "color": "#6d7b8a",
-            },
+            "icon": {"name": "Calendar", "color": "#6d7b8a"},
         },
         f"{PropertyTypeEnum.RELATION}_{RelationTypeEnum.USER}": {
             "in_use": "icon",
-            "icon": {
-                "name": "UsersRound",
-                "color": "#6d7b8a",
-            },
+            "icon": {"name": "UsersRound", "color": "#6d7b8a"},
         },
     }
 
@@ -94,7 +76,7 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
         return self.type_logo_props.get(property_type)
 
     # list issue properties and get issue property by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def get(self, request, slug, project_id, type_id, property_id=None):
         if self.workspace_slug and self.project_id and self.type_id:
             # list of issue properties
@@ -103,6 +85,7 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
                     workspace__slug=self.workspace_slug,
                     project_id=self.project_id,
                     issue_type_id=self.type_id,
+                    issue_type__is_epic=False,
                 )
                 serializer = self.serializer_class(issue_properties, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -113,12 +96,13 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 issue_type_id=self.type_id,
                 pk=self.property_id,
+                issue_type__is_epic=False,
             )
             serializer = self.serializer_class(issue_property)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     # create issue property
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def post(self, request, slug, project_id, type_id):
         if self.workspace_slug and self.project_id and self.type_id:
             workspace = Workspace.objects.get(slug=self.workspace_slug)
@@ -131,6 +115,7 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
                 workspace__slug=self.workspace_slug,
                 project_id=self.project_id,
                 issue_type_id=self.type_id,
+                issue_type__is_epic=False,
                 external_source=request.data.get("external_source"),
                 external_id=request.data.get("external_id"),
             )
@@ -145,6 +130,7 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
                     issue_type_id=self.type_id,
                     external_source=request.data.get("external_source"),
                     external_id=external_id,
+                    issue_type__is_epic=False,
                 ).first()
                 return Response(
                     {
@@ -172,12 +158,13 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 issue_type_id=self.type_id,
                 pk=issue_property_serializer.data["id"],
+                issue_type__is_epic=False,
             )
             serializer = self.serializer_class(issue_property)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     # update issue property by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def patch(self, request, slug, project_id, type_id, property_id):
         if (
             self.workspace_slug
@@ -186,10 +173,11 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
             and self.property_id
         ):
             issue_property = self.model.objects.get(
-                workspace__slug=self.workspace_slug,
-                project_id=self.project_id,
-                issue_type_id=self.type_id,
-                pk=self.property_id,
+                workspace__slug=slug,
+                project_id=project_id,
+                issue_type_id=type_id,
+                pk=property_id,
+                issue_type__is_epic=False,
             )
 
             data = request.data
@@ -197,39 +185,12 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
                 issue_property, data=data, partial=True
             )
             issue_property_serializer.is_valid(raise_exception=True)
-
-            # check if issue type with the same external id and external source already exists
-            external_id = request.data.get("external_id")
-            external_existing_issue_property = self.model.objects.filter(
-                workspace__slug=self.workspace_slug,
-                project_id=self.project_id,
-                issue_type_id=self.type_id,
-                external_source=request.data.get(
-                    "external_source", issue_property.external_source
-                ),
-                external_id=external_id,
-            )
-            if (
-                external_id
-                and (issue_property.external_id != external_id)
-                and external_existing_issue_property.exists()
-            ):
-                return Response(
-                    {
-                        "error": "Issue property with the same external id and external source already exists",
-                        "id": str(issue_property.id),
-                    },
-                    status=status.HTTP_409_CONFLICT,
-                )
-
             issue_property_serializer.save()
 
-            return Response(
-                issue_property_serializer.data, status=status.HTTP_200_OK
-            )
+            return Response(issue_property_serializer.data, status=status.HTTP_200_OK)
 
     # delete issue property by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def delete(self, request, slug, project_id, type_id, property_id):
         if (
             self.workspace_slug
@@ -242,6 +203,7 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 issue_type_id=self.type_id,
                 pk=self.property_id,
+                issue_type__is_epic=False,
             )
             issue_property.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)

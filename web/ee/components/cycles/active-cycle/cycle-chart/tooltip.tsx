@@ -9,7 +9,7 @@ type Props = {
   endDate: string;
 };
 const CustomTooltip = ({ active, payload, label, plotType, endDate }: Props) => {
-  if (active && payload && payload.length) {
+  if (active && payload && payload.length && label) {
     payload = payload[0]?.payload;
     const [year, month, day] = label?.split("-");
     const monthName = new Date(label).toLocaleString("default", { month: "short" });

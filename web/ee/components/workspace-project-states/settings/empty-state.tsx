@@ -12,7 +12,7 @@ export const WorkspaceProjectStatesEmptyState: FC<Props> = ({ toggleProjectGroup
   const { resolvedTheme } = useTheme();
 
   // derived values
-  const resolvedEmptyStatePath = `/projects/project-states-${resolvedTheme?.includes("dark") ? "dark" : "light"}.svg`;
+  const resolvedEmptyStatePath = `/projects/project-states-${resolvedTheme?.includes("dark") ? "dark" : "light"}.webp`;
 
   return (
     <div className="w-[600px] m-auto mt-12">

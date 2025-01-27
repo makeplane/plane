@@ -3,6 +3,8 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
 import { CalendarCheck } from "lucide-react";
+// plane constants
+import { EIssuesStoreType } from "@plane/constants";
 // types
 import { IActiveCycle } from "@plane/types";
 // ui
@@ -11,7 +13,6 @@ import { Tooltip, Loader, PriorityIcon } from "@plane/ui";
 import { StateDropdown } from "@/components/dropdowns";
 // constants
 import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
-import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
 // hooks

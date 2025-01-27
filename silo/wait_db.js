@@ -1,4 +1,4 @@
-const postgres = require("postgres");
+import postgres from "postgres"
 
 const MAX_RETRIES = 10;
 const RETRY_INTERVAL = 5000;

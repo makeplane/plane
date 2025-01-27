@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+import { FeatureFlagService, TJobWithConfig, E_FEATURE_FLAGS, PlaneEntities } from "@plane/etl/core";
 import {
   EIssuePropertyType,
   ExCycle,
@@ -13,22 +15,22 @@ import {
   Client as PlaneClient,
   PlaneUser,
 } from "@plane/sdk";
+import { celeryProducer } from "@/apps/engine/worker";
 import { env } from "@/env";
 import { protect } from "@/lib";
 import { logger } from "@/logger";
-import { FeatureFlagService, TJobWithConfig, E_FEATURE_FLAGS, PlaneEntities } from "@silo/core";
-import { createCycles } from "./cycles.migrator";
+import { createAllCycles } from "./cycles.migrator";
 import { getCredentialsForMigration, validateJobForMigration } from "./helpers";
-import { createIssues, createOrUpdateIssueComment } from "./issues.migrator";
-import { createLabelsForIssues } from "./labels.migrator";
-import { createModules } from "./modules.migrator";
-import { createStates } from "./states.migrator";
-import { createUsers } from "./users.migrator";
 import {
   createOrUpdateIssueTypes,
   createOrUpdateIssueProperties,
   createOrUpdateIssuePropertiesOptions,
 } from "./issue-types";
+import { generateIssuePayload } from "./issues.migrator";
+import { createLabelsForIssues } from "./labels.migrator";
+import { createAllModules } from "./modules.migrator";
+import { createStates } from "./states.migrator";
+import { createUsers } from "./users.migrator";
 
 export async function migrateToPlane(job: TJobWithConfig, data: PlaneEntities[], meta: any) {
   validateJobForMigration(job);
@@ -100,19 +102,11 @@ export async function migrateToPlane(job: TJobWithConfig, data: PlaneEntities[],
   const planeIssuePropertiesOptions: ExIssuePropertyOption[] = [];
   let defaultIssueType: ExIssueType | undefined = undefined;
 
-  let shouldContinue = true;
-
   // Get the labels and issues from the Plane API
   try {
-    const response: any = await protect(
-      planeClient.label.list.bind(planeClient.label),
-      job.workspace_slug,
-      job.project_id
-    );
+    const response = await protect(planeClient.label.list.bind(planeClient.label), job.workspace_slug, job.project_id);
     planeLabels = response.results;
     planeUsers = await protect(planeClient.users.list.bind(planeClient.users), job.workspace_slug, job.project_id);
-    console.log(planeUsers);
-    shouldContinue = false;
   } catch (error) {
     logger.error(
       `[${job.id}] Error while fetching the labels and users from the Plane API, which needs to be available to continue the migration`,
@@ -160,7 +154,11 @@ export async function migrateToPlane(job: TJobWithConfig, data: PlaneEntities[],
   );
 
   /* ------------------- Issue Types -------------------- */
-  const isIssueTypeFeatureEnabled = true;
+  const isIssueTypeFeatureEnabled = await featureFlagService.featureFlags({
+    workspace_slug: job.workspace_slug,
+    user_id: job.initiator_id,
+    flag_key: E_FEATURE_FLAGS.ISSUE_TYPES,
+  });
 
   if (isIssueTypeFeatureEnabled) {
     // 2. Check if issue type is enabled for the project or not.
@@ -184,7 +182,7 @@ export async function migrateToPlane(job: TJobWithConfig, data: PlaneEntities[],
           job.workspace_slug,
           job.project_id
         );
-        response.results.forEach((issueType: ExIssueType) => {
+        response.forEach((issueType: ExIssueType) => {
           existingIssueTypes.set(issueType.external_id, issueType);
           if (issueType.is_default) {
             defaultIssueType = issueType;
@@ -321,16 +319,19 @@ export async function migrateToPlane(job: TJobWithConfig, data: PlaneEntities[],
       } catch (error) {
         logger.error(`[${job.id}] Error while fetching the issue properties from the Plane API`, error);
       }
+
       // Create the issue properties that are not present in Plane
       const issuePropertiesOptionToCreate = issue_property_options?.filter(
-        (issuePropertyOption) => !existingIssuePropertyOptions.has(issuePropertyOption.external_id || "")
+        (issuePropertyOption) => !existingIssuePropertyOptions.has(issuePropertyOption.external_id?.toString() || "")
       );
 
       // Update the issue properties that are present in Plane
       const issuePropertiesOptionToUpdate = issue_property_options
-        ?.filter((issuePropertyOption) => existingIssuePropertyOptions.has(issuePropertyOption.external_id || ""))
+        ?.filter((issuePropertyOption) =>
+          existingIssuePropertyOptions.has(issuePropertyOption.external_id?.toString() || "")
+        )
         .map((issuePropertyOption) => ({
-          ...existingIssuePropertyOptions.get(issuePropertyOption.external_id || ""),
+          ...existingIssuePropertyOptions.get(issuePropertyOption.external_id?.toString() || ""),
           ...issuePropertyOption,
         }));
 
@@ -369,67 +370,54 @@ export async function migrateToPlane(job: TJobWithConfig, data: PlaneEntities[],
   // Batch Start Index
   const issueProcessIndex = meta.batch_start;
 
-  const createdIssues = await createIssues({
+  const planeCycles = await createAllCycles(
+    job.id,
+    cycles as ExCycle[],
+    planeClient,
+    job.workspace_slug,
+    job.project_id
+  );
+  const planeModules = await createAllModules(
+    job.id,
+    modules as ExModule[],
+    planeClient,
+    job.workspace_slug,
+    job.project_id
+  );
+
+  const generatedPayload = await generateIssuePayload({
     jobId: job.id,
     meta,
-    planeLabels,
     issueProcessIndex,
     planeClient,
     workspaceSlug: job.workspace_slug,
     projectId: job.project_id,
-    users: planeUsers,
-    issues: issues as ExIssue[],
     credentials: credentials,
+
+    // Issues that needs to be processed
+    issues: issues as ExIssue[],
+
+    // Plane Properties, that are sent
+    users: planeUsers,
+    cycles: planeCycles,
+    modules: planeModules,
+    planeLabels: planeLabels,
+    issueComments: issue_comments as ExIssueComment[],
+
+    // Issue Types
     planeIssueTypes,
     planeIssueProperties,
     planeIssuePropertiesOptions,
-    planeIssuePropertyValues: isIssueTypeFeatureEnabled && issue_property_values ? issue_property_values : {},
+    planeIssuePropertyValues: issue_property_values ? issue_property_values : {},
   });
 
-  const allIssues = createdIssues;
-
-  // Create comments for the issues migrated
-  const commentPromises = issue_comments.map(async (comment) => {
-    const issue = allIssues.find((issue) => issue.external_id === comment.issue);
-    const actor = planeUsers.find((user) => user.display_name === comment.actor);
-    const createdBy = planeUsers.find((user) => user.display_name === comment.created_by);
-
-    if (issue) {
-      comment.issue = issue.id;
-      if (actor && createdBy) {
-        comment.actor = actor.id;
-        comment.created_by = createdBy.id;
-      } else {
-        delete comment.actor;
-        delete comment.created_by;
-      }
-      return createOrUpdateIssueComment(
-        job.id,
-        comment as ExIssueComment,
-        planeClient,
-        job.workspace_slug,
-        job.project_id,
-        issue.id
-      );
-    }
-  });
-
-  const cyclesPromise = createCycles(
-    job.id,
-    cycles as ExCycle[],
-    allIssues,
-    planeClient,
+  await celeryProducer.registerTask(
+    generatedPayload,
     job.workspace_slug,
-    job.project_id
-  );
-  const modulesPromise = createModules(
+    job.project_id,
     job.id,
-    modules as ExModule[],
-    allIssues,
-    planeClient,
-    job.workspace_slug,
-    job.project_id
+    credentials.user_id,
+    uuidv4(),
+    "plane.bgtasks.data_import_task.import_data"
   );
-
-  await Promise.all([...commentPromises, cyclesPromise, modulesPromise]);
 }

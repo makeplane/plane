@@ -2,8 +2,8 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { JiraPriority } from "@plane/etl/jira";
 import { PriorityIcon } from "@plane/ui";
-import { JiraPriority } from "@silo/jira";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web types

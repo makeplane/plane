@@ -5,7 +5,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 // editor
+import { EIssuesStoreType } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import type { TIssue, ISearchIssueResponse, TWorkspaceDraftIssue } from "@plane/types";
 // hooks
@@ -23,7 +26,7 @@ import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getTextContent } from "@/helpers/editor.helper";
-import { getChangedIssuefields } from "@/helpers/issue.helper";
+import { getChangedIssuefields } from "@/helpers/issue-modal.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
@@ -72,9 +75,11 @@ export interface IssueFormProps {
   isDuplicateModalOpen: boolean;
   handleDuplicateIssueModal: (isOpen: boolean) => void;
   isProjectSelectionDisabled?: boolean;
+  storeType: EIssuesStoreType;
 }
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
+  const { t } = useTranslation();
   const {
     data,
     issueTitleRef,
@@ -86,15 +91,16 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     isCreateMoreToggleEnabled,
     onCreateMoreToggleChange,
     isDraft,
-    moveToIssue,
-    modalTitle = `${data?.id ? "Update" : isDraft ? "Create a draft" : "Create new issue"}`,
+    moveToIssue = false,
+    modalTitle = `${data?.id ? t("update") : isDraft ? t("create_a_draft") : t("create_new_issue")}`,
     primaryButtonText = {
-      default: `${data?.id ? "Update" : isDraft ? "Save to Drafts" : "Save"}`,
-      loading: `${data?.id ? "Updating" : "Saving"}`,
+      default: `${data?.id ? t("update") : isDraft ? t("save_to_drafts") : t("save")}`,
+      loading: `${data?.id ? t("updating") : t("saving")}`,
     },
     isDuplicateModalOpen,
     handleDuplicateIssueModal,
     isProjectSelectionDisabled = false,
+    storeType,
   } = props;
 
   // states
@@ -195,8 +201,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     if (!editorRef.current?.isEditorReadyToDiscard()) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Editor is not ready to discard changes.",
+        title: t("error"),
+        message: t("editor_is_not_ready_to_discard_changes"),
       });
       return;
     }
@@ -374,7 +380,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     disabled={!!data?.id || !!data?.sourceIssueId || isProjectSelectionDisabled}
                     handleFormChange={handleFormChange}
                   />
-                  {projectId && (
+                  {projectId && storeType !== EIssuesStoreType.EPIC && (
                     <IssueTypeSelect
                       control={control}
                       projectId={projectId}
@@ -388,7 +394,11 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   <DeDupeButtonRoot
                     workspaceSlug={workspaceSlug?.toString()}
                     isDuplicateModalOpen={isDuplicateModalOpen}
-                    label={`${duplicateIssues.length} duplicate issue${duplicateIssues.length > 1 ? "s" : ""} found!`}
+                    label={
+                      duplicateIssues.length === 1
+                        ? `${duplicateIssues.length} ${t("duplicate_issue_found")}`
+                        : `${duplicateIssues.length} ${t("duplicate_issues_found")}`
+                    }
                     handleOnClick={() => handleDuplicateIssueModal(!isDuplicateModalOpen)}
                   />
                 )}
@@ -488,7 +498,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     role="button"
                   >
                     <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
-                    <span className="text-xs">Create more</span>
+                    <span className="text-xs">{t("create_more")}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-2">
@@ -508,7 +518,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     }}
                     tabIndex={getIndex("discard_button")}
                   >
-                    Discard
+                    {t("discard")}
                   </Button>
                   <Button
                     variant={moveToIssue ? "neutral-primary" : "primary"}

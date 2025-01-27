@@ -24,9 +24,7 @@ class Task(Enum):
 
 
 class RephraseGrammarEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
+    permission_classes = [WorkspaceEntityPermission]
 
     # Function to get system prompt based on task
     def get_system_prompt(self, task, casual_score=5, formal_score=5):
@@ -132,7 +130,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
             """
             tone_specific_instructions = {
                 (10, 0): """
-                Extremely Casual 
+                Extremely Casual
                 1. Use the simplest, most conversational language possible.
                 2. Write as if speaking to a close friend or family member.
                 3. Use lots of contractions, slang, and colloquialisms.
@@ -143,7 +141,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
                 8. Use emotive language and exclamations where appropriate.
                 """,
                 (9, 1): """
-                Very Casual 
+                Very Casual
                 1. Use simple, conversational language.
                 2. Include contractions and some common colloquialisms.
                 3. Keep sentences short and straightforward.
@@ -153,7 +151,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
                 7. Use a personal, engaging tone throughout.
                 """,
                 (8, 2): """
-                Casual 
+                Casual
                 1. Use everyday language with some more complex words.
                 2. Mix short and medium-length sentences.
                 3. Use contractions frequently.
@@ -163,7 +161,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
                 7. Simplify complex ideas but retain some field-specific terms with explanations.
                 """,
                 (7, 3): """
-                Somewhat Casual 
+                Somewhat Casual
                 1. Balance everyday language with more sophisticated vocabulary.
                 2. Use a mix of simple and complex sentences.
                 3. Include contractions in most cases.
@@ -173,7 +171,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
                 7. Address the reader directly, but less frequently than in more casual styles.
                 """,
                 (6, 4): """
-                Neutral Leaning Casual 
+                Neutral Leaning Casual
                 1. Use a balanced mix of casual and formal language.
                 2. Construct sentences of varying complexity.
                 3. Use contractions in some cases, but not always.
@@ -183,7 +181,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
                 7. Address the reader directly occasionally, but not consistently.
                 """,
                 (5, 5): """
-                Neutral 
+                Neutral
                 1. Strike a perfect balance between casual and formal language.
                 2. Use a varied vocabulary that includes both common and more sophisticated words.
                 3. Construct sentences of mixed complexity.
@@ -194,7 +192,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
                 8. Address the reader directly only when it serves a clear purpose.
                 """,
                 (4, 6): """
-                Neutral Leaning Formal 
+                Neutral Leaning Formal
                 1. Use more sophisticated vocabulary, but keep some casual elements.
                 2. Construct mostly complex sentences with some simpler ones for balance.
                 3. Use contractions occasionally, but prefer full forms.
@@ -204,7 +202,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
                 7. Address the reader directly only when necessary for clarity or emphasis.
                 """,
                 (3, 7): """
-                Somewhat Formal 
+                Somewhat Formal
                 1. Use more advanced vocabulary and complex sentence structures.
                 2. Minimize use of contractions.
                 3. Maintain a professional and objective tone.
@@ -214,7 +212,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
                 7. Present information in a more detached, analytical manner.
                 """,
                 (2, 8): """
-                Formal 
+                Formal
                 1. Use sophisticated vocabulary and complex sentence structures.
                 2. Avoid contractions entirely.
                 3. Maintain a highly professional and objective tone.
@@ -224,7 +222,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
                 7. Present information in a scholarly, analytical manner.
                 """,
                 (1, 9): """
-                Very Formal 
+                Very Formal
                 1. Use advanced, academic vocabulary and intricate sentence structures.
                 2. Construct complex, multi-clause sentences.
                 3. Maintain a strictly professional, detached tone.
@@ -234,7 +232,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
                 7. Use impersonal constructions throughout.
                 """,
                 (0, 10): """
-                Extremely Formal 
+                Extremely Formal
                 1. Use the most advanced, scholarly vocabulary possible.
                 2. Construct highly complex, multi-layered sentences.
                 3. Maintain an extremely formal, impersonal tone throughout.
@@ -267,7 +265,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
             - Use <ul> and <li> tags for unordered lists.
             - Use <ol> and <li> tags for ordered lists.
             - Use <code> tags for inline code.
-            - Use <pre> tags for code blocks.        
+            - Use <pre> tags for code blocks.
         9. Respect privacy and avoid sensationalism when addressing sensitive topics.
         10. Provide DIRECT answers without introductory phrases or explanations of your role.
         11. Do not include any prefixes (such as "Answer:" or "Response:") in your response.
@@ -276,9 +274,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
             )
 
         else:
-            return False, {
-                "error": "Invalid task. Please provide a correct task name."
-            }
+            return False, {"error": "Invalid task. Please provide a correct task name."}
 
     def post(self, request, slug):
         # Get the task
@@ -325,21 +321,21 @@ class RephraseGrammarEndpoint(BaseAPIView):
                 )
 
         # Get the configuration value
-        OPENAI_API_KEY, GPT_ENGINE = get_configuration_value(
+        LLM_API_KEY, LLM_MODEL = get_configuration_value(
             [
                 {
-                    "key": "OPENAI_API_KEY",
-                    "default": os.environ.get("OPENAI_API_KEY", None),
+                    "key": "LLM_API_KEY",
+                    "default": os.environ.get("LLM_API_KEY", None),
                 },
                 {
-                    "key": "GPT_ENGINE",
-                    "default": os.environ.get("GPT_ENGINE", "gpt-4o-mini"),
+                    "key": "LLM_MODEL",
+                    "default": os.environ.get("LLM_MODEL", "gpt-4o-mini"),
                 },
             ]
         )
 
         # Check the keys
-        if not OPENAI_API_KEY or not GPT_ENGINE:
+        if not LLM_API_KEY or not LLM_MODEL:
             return Response(
                 {"error": "OpenAI API key and engine are required"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -349,11 +345,9 @@ class RephraseGrammarEndpoint(BaseAPIView):
         message_list = [{"role": "user", "content": text_input}]
 
         # Create the client
-        client = OpenAI(api_key=OPENAI_API_KEY)
+        client = OpenAI(api_key=LLM_API_KEY)
 
-        processed, response = self.get_system_prompt(
-            task, casual_score, formal_score
-        )
+        processed, response = self.get_system_prompt(task, casual_score, formal_score)
 
         # If error
         if not processed:
@@ -361,23 +355,12 @@ class RephraseGrammarEndpoint(BaseAPIView):
 
         # Create the completion
         completion = client.chat.completions.create(
-            model=GPT_ENGINE,
-            messages=[
-                {
-                    "role": "system",
-                    "content": response,
-                },
-                *message_list,
-            ],
+            model=LLM_MODEL,
+            messages=[{"role": "system", "content": response}, *message_list],
             temperature=0.1,
         )
 
         # Get the response
         response = completion.choices[0].message.content.strip()
 
-        return Response(
-            {
-                "response": response,
-            },
-            status=status.HTTP_200_OK,
-        )
+        return Response({"response": response}, status=status.HTTP_200_OK)

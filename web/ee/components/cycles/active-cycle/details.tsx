@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
-import { cn } from "@plane/editor";
+// plane imports
 import { TCycleEstimateType, TCyclePlotType } from "@plane/types";
 import { Loader, Row } from "@plane/ui";
+import { cn } from "@plane/utils";
+// components
 import { EmptyState } from "@/components/empty-state";
 import { EmptyStateType } from "@/constants/empty-state";
 import { TProgressChartData } from "@/helpers/cycle.helper";

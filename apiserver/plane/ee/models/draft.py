@@ -11,9 +11,7 @@ class DraftIssuePropertyValue(WorkspaceBaseModel):
         "db.DraftIssue", on_delete=models.CASCADE, related_name="draft_issue_properties"
     )
     property = models.ForeignKey(
-        IssueProperty,
-        on_delete=models.CASCADE,
-        related_name="draft_issue_values",
+        IssueProperty, on_delete=models.CASCADE, related_name="draft_issue_values"
     )
     value_text = models.TextField(blank=True)
     value_boolean = models.BooleanField(default=False)

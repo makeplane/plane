@@ -18,7 +18,7 @@ export const createCycles = async (
     // Create the cycle and get the cycle id
     let cycleId = "";
     try {
-      const createdCycle: any = await protect(
+      const createdCycle: ExCycle = await protect(
         planeClient.cycles.create.bind(planeClient.cycles),
         workspaceSlug,
         projectId,
@@ -81,4 +81,38 @@ export const createCycles = async (
       }
     }
   }
+};
+
+export const createAllCycles = async (
+  jobId: string,
+  cycles: ExCycle[],
+  planeClient: PlaneClient,
+  workspaceSlug: string,
+  projectId: string
+): Promise<{ id: string; issues: string[] }[]> => {
+  const createdCycles: { id: string; issues: string[] }[] = [];
+
+  for (const cycle of cycles) {
+    // Create the cycle and get the cycle id
+    try {
+      const createdCycle: ExCycle = await protect(
+        planeClient.cycles.create.bind(planeClient.cycles),
+        workspaceSlug,
+        projectId,
+        cycle
+      );
+      createdCycles.push({ id: createdCycle.id, issues: cycle.issues });
+    } catch (error) {
+      if (AssertAPIErrorResponse(error)) {
+        if (error.error && error.error.includes("already exists")) {
+          logger.info(`[${jobId.slice(0, 7)}] Cycle "${cycle.name}" already exists. Skipping...`);
+          createdCycles.push({ id: error.id, issues: cycle.issues });
+        }
+      } else {
+        logger.error(`[${jobId.slice(0, 7)}] Error while creating the cycle: ${cycle.name}`, error);
+      }
+    }
+  }
+
+  return createdCycles;
 };

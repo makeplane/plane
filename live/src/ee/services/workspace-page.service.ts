@@ -1,5 +1,5 @@
 // types
-import { TPage } from "@plane/types";
+import { TDocumentPayload, TPage } from "@plane/types";
 // services
 import { API_BASE_URL, APIService } from "../../core/services/api.service.js";
 
@@ -51,11 +51,7 @@ export class WorkspacePageService extends APIService {
   async updateDescription(
     workspaceSlug: string,
     pageId: string,
-    data: {
-      description_binary: string;
-      description_html: string;
-      description: object;
-    },
+    data: TDocumentPayload,
     cookie: string
   ): Promise<any> {
     return this.patch(

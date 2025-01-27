@@ -1,8 +1,8 @@
 "use client";
 
 import { FC } from "react";
+import { JiraPriority } from "@plane/etl/jira";
 import { PriorityIcon } from "@plane/ui";
-import { JiraPriority } from "@silo/jira";
 // silo types
 import { TPlanePriorityData } from "@/plane-web/silo/types/common";
 // silo ui components

@@ -1,7 +1,8 @@
 "use client";
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { TIssue } from "@plane/types";
+import { EIssueServiceType } from "@plane/constants";
+import { TIssue, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { ISSUE_DELETED, ISSUE_UPDATED } from "@/constants/event-tracker";
@@ -16,10 +17,14 @@ export type TRelationIssueOperations = {
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 };
 
-export const useRelationOperations = (): TRelationIssueOperations => {
-  const { updateIssue, removeIssue } = useIssueDetail();
+export const useRelationOperations = (
+  issueServiceType: TIssueServiceType = EIssueServiceType.ISSUES
+): TRelationIssueOperations => {
+  const { updateIssue, removeIssue } = useIssueDetail(issueServiceType);
   const { captureIssueEvent } = useEventTracker();
   const pathname = usePathname();
+  // derived values
+  const entityName = issueServiceType === EIssueServiceType.ISSUES ? "Issue" : "Epic";
 
   const issueOperations: TRelationIssueOperations = useMemo(
     () => ({
@@ -29,7 +34,7 @@ export const useRelationOperations = (): TRelationIssueOperations => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Link Copied!",
-            message: "Issue link copied to clipboard.",
+            message: `${entityName} link copied to clipboard.`,
           });
         });
       },
@@ -48,7 +53,7 @@ export const useRelationOperations = (): TRelationIssueOperations => {
           setToast({
             title: "Success!",
             type: TOAST_TYPE.SUCCESS,
-            message: "Issue updated successfully",
+            message: `${entityName} updated successfully`,
           });
         } catch (error) {
           captureIssueEvent({
@@ -63,7 +68,7 @@ export const useRelationOperations = (): TRelationIssueOperations => {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
-            message: "Issue update failed",
+            message: `${entityName} update failed`,
           });
         }
       },

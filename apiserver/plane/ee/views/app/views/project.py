@@ -3,15 +3,9 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import (
-    ProjectEntityPermission,
-)
-from plane.app.serializers import (
-    IssueViewSerializer,
-)
-from plane.db.models import (
-    IssueView,
-)
+from plane.app.permissions import ProjectEntityPermission
+from plane.app.serializers import IssueViewSerializer
+from plane.db.models import IssueView
 from plane.ee.views.base import BaseViewSet
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -20,9 +14,7 @@ from plane.payment.flags.flag import FeatureFlag
 class IssueViewEEViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
     model = IssueView
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     def lock(self, request, slug, project_id, pk):
         issue_view = IssueView.objects.filter(

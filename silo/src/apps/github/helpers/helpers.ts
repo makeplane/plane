@@ -1,6 +1,6 @@
 import { getEntityConnectionByEntityId, getWorkspaceConnections } from "@/db/query/connection";
 import { verifyEntityConnection, verifyWorkspaceConnection } from "@/types";
-import { TServiceCredentials } from "@silo/core";
+import { TServiceCredentials } from "@plane/etl/core";
 import { GithubConnectionDetails, githubEntityConnectionSchema, githubWorkspaceConnectionSchema } from "../types";
 
 export const getConnectionDetails = async (props: {
@@ -41,7 +41,7 @@ export const getConnectionDetails = async (props: {
   };
 };
 
-import { GithubWebhookPayload } from "@silo/github";
+import { GithubWebhookPayload } from "@plane/etl/github";
 
 export type MergeRequestEvent =
   | "DRAFT_MR_OPENED"
