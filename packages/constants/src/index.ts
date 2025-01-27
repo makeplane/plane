@@ -9,6 +9,7 @@ export * from "./graph";
 export * from "./instance";
 export * from "./issue";
 export * from "./metadata";
+export * from "./notification";
 export * from "./state";
 export * from "./swr";
 export * from "./tab-indices";
