@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 // icons
 import { SquareUser } from "lucide-react";
 // types
+import { MODULE_STATUS } from "@plane/constants";
 import { IModule } from "@plane/types";
 // ui
 import { FavoriteStar, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
@@ -15,7 +16,6 @@ import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // constants
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
-import { MODULE_STATUS } from "@/constants/module";
 // hooks
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { useEventTracker, useMember, useModule, useUserPermissions } from "@/hooks/store";

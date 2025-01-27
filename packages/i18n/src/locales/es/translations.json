@@ -1283,5 +1283,29 @@
     "assigned": "Asignados",
     "created": "Creados",
     "subscribed": "Suscritos"
+  },
+  
+  "project_modules": {
+    "status": {
+      "backlog": "Pendientes",
+      "planned": "Planificado",
+      "in_progress": "En progreso",
+      "paused": "Pausado",
+      "completed": "Completado",
+      "cancelled": "Cancelado"
+    },
+    "layout": {
+      "list": "Vista lista",
+      "board": "Vista galería",
+      "timeline": "Vista cronológica"
+    },
+    "order_by": {
+      "name": "Nombre",
+      "progress": "Progreso",
+      "issues": "Número de problemas",
+      "due_date": "Fecha de vencimiento",
+      "created_at": "Fecha de creación",
+      "manual": "Manual"
+    } 
   }
 }

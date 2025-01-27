@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane types
+import { MODULE_STATUS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
 import {
@@ -46,7 +48,7 @@ import {
   MODULE_LINK_UPDATED,
   MODULE_UPDATED,
 } from "@/constants/event-tracker";
-import { MODULE_STATUS } from "@/constants/module";
+
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
@@ -84,7 +86,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = useParams();
 
   // store hooks
-
+  const { t } = useTranslation();
   const { allowPermissions } = useUserPermissions();
 
   const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink, restoreModule } =
@@ -374,7 +376,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                         backgroundColor: moduleStatus ? `${moduleStatus.color}20` : "#a3a3a220",
                       }}
                     >
-                      {moduleStatus?.label ?? "Backlog"}
+                      {(moduleStatus && t(moduleStatus?.i18n_label)) ?? t("project_modules.status.backlog")}
                     </span>
                   }
                   value={value}
@@ -387,7 +389,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                     <CustomSelect.Option key={status.value} value={status.value}>
                       <div className="flex items-center gap-2">
                         <ModuleStatusIcon status={status.value} />
-                        {status.label}
+                        {t(status.i18n_label)}
                       </div>
                     </CustomSelect.Option>
                   ))}

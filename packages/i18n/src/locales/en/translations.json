@@ -1279,5 +1279,28 @@
     "assigned": "Assigned",
     "created": "Created",
     "subscribed": "Subscribed"
+  },
+  "project_modules": {
+    "status": {
+      "backlog": "Backlog",
+      "planned": "Planned",
+      "in_progress": "In Progress",
+      "paused": "Paused",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "layout": {
+      "list": "List layout",
+      "board": "Gallery layout",
+      "timeline": "Timeline layout"
+    },
+    "order_by": {
+      "name": "Name",
+      "progress": "Progress",
+      "issues": "Number of issues",
+      "due_date": "Due date",
+      "created_at": "Created date",
+      "manual": "Manual"
+    }
   }
 }
