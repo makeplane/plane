@@ -5,11 +5,11 @@ import { useParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { X } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
+// plane imports
+import { allTimeIn30MinutesInterval12HoursFormat } from "@plane/constants";
 import { Button, CustomSelect } from "@plane/ui";
 // components
 import { DateDropdown } from "@/components/dropdowns";
-// constants
-import { allTimeIn30MinutesInterval12HoursFormat } from "@/constants/notification";
 // helpers
 import { getDate } from "@/helpers/date-time.helper";
 

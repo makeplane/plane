@@ -1,12 +1,13 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { CheckCheck, RefreshCw } from "lucide-react";
+// plane imports
+import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
 import { Spinner, Tooltip } from "@plane/ui";
 // components
 import { NotificationFilter, NotificationHeaderMenuOption } from "@/components/workspace-notifications";
 // constants
 import { NOTIFICATIONS_READ } from "@/constants/event-tracker";
-import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
 import { useEventTracker, useWorkspaceNotifications } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

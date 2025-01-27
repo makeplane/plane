@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
+import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { LogoSpinner } from "@/components/common";
@@ -12,7 +13,6 @@ import { PageHead } from "@/components/core";
 import { SimpleEmptyState } from "@/components/empty-state";
 import { InboxContentRoot } from "@/components/inbox";
 import { IssuePeekOverview } from "@/components/issues";
-import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
 import { useIssueDetail, useUserPermissions, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

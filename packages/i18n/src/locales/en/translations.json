@@ -1064,6 +1064,7 @@
   },
 
   "notification": {
+    "label": "Notifications",
     "empty_state": {
       "detail": {
         "title": "Select to view details."
@@ -1076,6 +1077,23 @@
         "title": "No issues assigned",
         "description": "Updates for issues assigned to you can be \n seen here"
       }
+    },
+    "tabs": {
+      "all": "All",
+      "mentions": "Mentions"
+    },
+    "filter": {
+      "assigned": "Assigned to me",
+      "created": "Created by me",
+      "subscribed": "Subscribed by me"
+    },
+    "snooze": {
+      "1_day": "1 day",
+      "3_days": "3 days",
+      "5_days": "5 days",
+      "1_week": "1 week",
+      "2_weeks": "2 weeks",
+      "custom": "Custom"
     }
   },
 
