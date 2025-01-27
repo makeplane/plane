@@ -3,7 +3,7 @@
 
   --rdp-cell-size: 40px;
   /* Size of the day cells. */
-  --rdp-caption-font-size: 1.15rem;
+  --rdp-caption-font-size: 1rem;
   /* Font size for the caption labels. */
   --rdp-caption-navigation-size: 1.25rem;
   /* Font size for the caption labels. */
@@ -70,7 +70,7 @@
 
 .rdp-day:not(.rdp-disabled) .rdp-day_button:hover {
   background-color: var(--rdp-background-color);
-} 
+}
 
 .rdp-selected .rdp-day_button {
   background-color: var(--rdp-accent-color);
@@ -119,28 +119,11 @@
   height: var(--rdp-cell-size);
   padding: 0;
   text-transform: uppercase;
-
 }
 
 /* ---------- */
 /* Top Nav  */
 /* ---------- */
-
-.rdp-caption_label {
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  margin: 0;
-  padding: 0 0.25em;
-  white-space: nowrap;
-  color: currentColor;
-  border: 0;
-  border: 2px solid transparent;
-  font-family: inherit;
-  font-size: var(--rdp-caption-font-size);
-  font-weight: 600;
-}
-
 
 .rdp-nav {
   box-sizing: border-box;
@@ -154,14 +137,14 @@
   align-items: center;
 }
 
-.rdp-button_next, .rdp-button_previous {
+.rdp-button_next,
+.rdp-button_previous {
   border: none;
   background: none;
   padding: 0;
   margin: 0;
   cursor: pointer;
   font: inherit;
-  color: inherit;
   -moz-appearance: none;
   -webkit-appearance: none;
   display: inline-flex;
@@ -169,15 +152,22 @@
   justify-content: center;
   position: relative;
   appearance: none;
-  
   width: var(--rdp-caption-navigation-size);
   height: var(--rdp-caption-navigation-size);
   padding: 0.25em;
   border-radius: 2px;
 }
 
-.rdp-button_next:hover, .rdp-button_previous:hover,
-.rdp-button_next:focus-visible, .rdp-button_previous:focus-visible {
+.rdp-chevron {
+  fill: rgba(var(--color-text-200));
+  height: 0.75rem;
+  width: 0.75rem;
+}
+
+.rdp-button_next:hover,
+.rdp-button_previous:hover,
+.rdp-button_next:focus-visible,
+.rdp-button_previous:focus-visible {
   background-color: rgba(var(--color-background-80)) !important;
 }
 
@@ -194,6 +184,8 @@
 
 .rdp-dropdown {
   appearance: none;
+  --webkit-appearance: none;
+  --moz-appearance: none;
   position: absolute;
   z-index: 2;
   top: 0;
@@ -202,17 +194,17 @@
   width: 100%;
   margin: 0;
   padding: 0;
-  cursor: inherit;
   opacity: 0;
   border: none;
-  background-color: transparent;
   font-family: inherit;
-  font-size: inherit;
+  font-size: 1rem;
   line-height: inherit;
-
-}
-.rdp-dropdown:hover {
   cursor: pointer;
+  background: transparent;
+
+  &:hover {
+    background-color: rgba(var(--color-background-80)) !important;
+  }
 }
 
 .rdp-dropdown_root {
@@ -220,7 +212,6 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-
 }
 
 .rdp-months_dropdown {
@@ -232,10 +223,35 @@
   color: unset;
 }
 
-.rdp-dropdown:focus-visible:not([data-disabled="true"]) + .rdp-caption_label {
-  background-color: var(--rdp-background-color);
-  border: var(--rdp-outline);
-  border-radius: 6px;
+.rdp-caption_label {
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0 0.25em;
+  white-space: nowrap;
+  color: currentColor;
+  border: 0;
+  border: 2px solid transparent;
+  font-family: inherit;
+  font-size: var(--rdp-caption-font-size);
+  font-weight: 600;
+  background: transparent;
+  border-radius: 4px;
+}
+
+.rdp-dropdown:not([data-disabled="true"]) {
+  &:focus-visible + .rdp-caption_label {
+    border: var(--rdp-outline);
+    border-radius: 6px;
+  }
+
+  &:hover {
+    & + .rdp-caption_label {
+      background-color: rgba(var(--color-background-80)) !important;
+    }
+  }
 }
 
 .rdp-dropdown_icon {
@@ -283,7 +299,7 @@
   display: none;
 }
 
-.rdp-range_middle .rdp-day_button{
+.rdp-range_middle .rdp-day_button {
   background-color: transparent;
   color: inherit;
 }
@@ -293,4 +309,3 @@
   background-color: var(--rdp-background-color);
   color: inherit;
 }
-

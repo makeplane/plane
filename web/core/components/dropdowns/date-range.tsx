@@ -52,6 +52,8 @@ type Props = {
   renderPlaceholder?: boolean;
 };
 
+const defaultClassNames = getDefaultClassNames();
+
 export const DateRangeDropdown: React.FC<Props> = (props) => {
   const {
     applyButtonText = "Apply changes",
@@ -133,8 +135,6 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
     setDateRange(value);
   }, [value]);
 
-  const defaultClassNames = getDefaultClassNames();
-
   const comboButton = (
     <button
       ref={setReferenceElement}
@@ -207,7 +207,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
           >
             <DayPicker
               captionLayout="dropdown"
-              classNames={{root: `${defaultClassNames.root} p-3 rounded-md`}}
+              classNames={{ root: `${defaultClassNames.root} p-3 rounded-md` }}
               selected={dateRange}
               onSelect={(val) => {
                 // if both the dates are not required, immediately call onSelect
@@ -220,7 +220,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
               mode="range"
               disabled={disabledDays}
               showOutsideDays
-              initialFocus
+              autoFocus
               footer={
                 bothRequired && (
                   <div className="grid grid-cols-2 items-center gap-3.5 pt-6 relative">

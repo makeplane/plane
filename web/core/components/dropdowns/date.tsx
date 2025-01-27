@@ -33,6 +33,8 @@ type Props = TDropdownProps & {
   renderByDefault?: boolean;
 };
 
+const defaultClassNames = getDefaultClassNames();
+
 export const DateDropdown: React.FC<Props> = (props) => {
   const {
     buttonClassName = "",
@@ -79,8 +81,6 @@ export const DateDropdown: React.FC<Props> = (props) => {
   });
 
   const isDateSelected = value && value.toString().trim() !== "";
-
-  const defaultClassNames = getDefaultClassNames();
 
   const onOpen = () => {
     if (referenceElement) referenceElement.focus();
@@ -177,14 +177,14 @@ export const DateDropdown: React.FC<Props> = (props) => {
             >
               <DayPicker
                 captionLayout="dropdown"
-                classNames={{root: `${defaultClassNames.root} p-3 rounded-md`}}
+                classNames={{ root: `${defaultClassNames.root} p-3 rounded-md` }}
                 selected={getDate(value)}
                 defaultMonth={getDate(value)}
                 onSelect={(date) => {
                   dropdownOnChange(date ?? null);
                 }}
                 showOutsideDays
-                initialFocus
+                autoFocus
                 disabled={disabledDays}
                 mode="single"
               />
