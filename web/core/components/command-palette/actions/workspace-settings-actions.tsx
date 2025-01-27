@@ -6,7 +6,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { WORKSPACE_SETTINGS_LINKS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-
+// components
+import { SettingIcon } from "@/components/icons";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -48,7 +49,7 @@ export const CommandPaletteWorkspaceSettingsActions: React.FC<Props> = (props) =
             >
               <Link href={`/${workspaceSlug}${setting.href}`}>
                 <div className="flex items-center gap-2 text-custom-text-200">
-                  <setting.Icon className="h-4 w-4 text-custom-text-200" />
+                  <SettingIcon className="h-4 w-4 text-custom-text-200" />
                   {t(setting.i18n_label)}
                 </div>
               </Link>
