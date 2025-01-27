@@ -4,7 +4,13 @@ import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane constants
-import { ALL_ISSUES, EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import {
+  ALL_ISSUES,
+  EIssueLayoutTypes,
+  EIssueFilterType,
+  EIssuesStoreType,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
+} from "@plane/constants";
 import { IIssueDisplayFilterOptions } from "@plane/types";
 // hooks
 // components
@@ -12,8 +18,6 @@ import { EmptyState } from "@/components/common";
 import { SpreadsheetView } from "@/components/issues/issue-layouts";
 import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
 import { SpreadsheetLayoutLoader } from "@/components/ui";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // hooks
 import { useGlobalView, useIssues, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -71,11 +75,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
       Object.keys(routeFilters).forEach((key) => {
         const filterKey: any = key;
         const filterValue = routeFilters[key]?.toString() || undefined;
-        if (
-          ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet.filters.includes(filterKey) &&
-          filterKey &&
-          filterValue
-        )
+        if (ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.spreadsheet.filters.includes(filterKey) && filterKey && filterValue)
           issueFilters = { ...issueFilters, [filterKey]: filterValue.split(",") };
       });
 
