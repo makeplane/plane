@@ -8,7 +8,7 @@ export const STICKY_COLORS_LIST: {
   {
     key: "gray",
     label: "Gray",
-    backgroundColor: "var(--editor-colors-gray-background)",
+    backgroundColor: "rgba(var(--color-background-90))",
   },
   {
     key: "peach",

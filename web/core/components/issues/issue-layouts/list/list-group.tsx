@@ -5,7 +5,9 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 // plane constants
-import { EIssueLayoutTypes } from "@plane/constants";
+import { EIssueLayoutTypes, DRAG_ALLOWED_GROUPS } from "@plane/constants";
+// plane i18n
+import { useTranslation } from "@plane/i18n";
 // plane ui
 import {
   IGroupByColumn,
@@ -21,8 +23,6 @@ import { Row, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { ListLoaderItemRow } from "@/components/ui";
-// constants
-import { DRAG_ALLOWED_GROUPS } from "@/constants/issue";
 // hooks
 import { useProjectState } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
@@ -101,7 +101,7 @@ export const ListGroup = observer((props: Props) => {
   const [dragColumnOrientation, setDragColumnOrientation] = useState<"justify-start" | "justify-end">("justify-start");
   const isExpanded = !collapsedGroups?.group_by.includes(group.id);
   const groupRef = useRef<HTMLDivElement | null>(null);
-
+  const { t } = useTranslation();
   const projectState = useProjectState();
 
   const {
@@ -132,7 +132,7 @@ export const ListGroup = observer((props: Props) => {
       }
       onClick={() => loadMoreIssues(group.id)}
     >
-      Load More &darr;
+      {t("common.load_more")} &darr;
     </div>
   );
 
@@ -211,10 +211,10 @@ export const ListGroup = observer((props: Props) => {
           if (!source || !destination) return;
 
           if (isWorkflowDropDisabled || group.isDropDisabled) {
-            group.dropErrorMessage &&
+            if (group.dropErrorMessage)
               setToast({
                 type: TOAST_TYPE.WARNING,
-                title: "Warning!",
+                title: t("common.warning"),
                 message: group.dropErrorMessage,
               });
             return;
@@ -263,7 +263,7 @@ export const ListGroup = observer((props: Props) => {
           groupID={group.id}
           groupBy={group_by}
           icon={group.icon}
-          title={group.name || ""}
+          title={group.name}
           count={groupIssueCount}
           issuePayload={group.payload}
           canEditProperties={canEditProperties}

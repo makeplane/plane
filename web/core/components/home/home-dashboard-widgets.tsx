@@ -1,14 +1,14 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane types
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { THomeWidgetKeys, THomeWidgetProps } from "@plane/types";
 // components
-import { EmptyState } from "@/components/empty-state";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state";
 // hooks
 import { useHome } from "@/hooks/store/use-home";
 // plane web components
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { HomePageHeader } from "@/plane-web/components/home/header";
 import { StickiesWidget } from "../stickies";
 import { RecentActivityWidget } from "./widgets";
@@ -25,7 +25,7 @@ export const HOME_WIDGETS_LIST: {
   quick_links: {
     component: DashboardQuickLinks,
     fullWidth: false,
-    title: "Quick links",
+    title: "Quicklinks",
   },
   recents: {
     component: RecentActivityWidget,
@@ -52,8 +52,12 @@ export const HOME_WIDGETS_LIST: {
 export const DashboardWidgets = observer(() => {
   // router
   const { workspaceSlug } = useParams();
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { toggleWidgetSettings, widgetsMap, showWidgetSettings, orderedWidgets, isAnyWidgetEnabled } = useHome();
+  // derived values
+  const noWidgetsResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/dashboard/widgets" });
 
   if (!workspaceSlug) return null;
 
@@ -80,14 +84,10 @@ export const DashboardWidgets = observer(() => {
         </div>
       ) : (
         <div className="h-full w-full grid place-items-center">
-          <EmptyState
-            type={EmptyStateType.HOME_WIDGETS}
-            layout="screen-simple"
-            primaryButtonOnClick={() => toggleWidgetSettings(true)}
-            primaryButtonConfig={{
-              size: "sm",
-              variant: "neutral-primary",
-            }}
+          <SimpleEmptyState
+            title={t("home_widgets.empty_state.general.title")}
+            description={t("home_widgets.empty_state.general.description")}
+            assetPath={noWidgetsResolvedPath}
           />
         </div>
       )}

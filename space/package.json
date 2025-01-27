@@ -20,6 +20,7 @@
     "@mui/material": "^5.14.1",
     "@plane/constants": "*",
     "@plane/editor": "*",
+    "@plane/i18n": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
     "@plane/services": "*",
