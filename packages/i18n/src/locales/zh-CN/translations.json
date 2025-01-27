@@ -771,12 +771,12 @@
       "all": "全部",
       "mentions": "提及"
     },
-    "filter_type_options": {
-      "assigned_to_me": "分配给我的",
-      "created_by_me": "我创建的",
-      "subscribed_by_me": "我订阅的"
+    "filter": {
+      "assigned": "分配给我的",
+      "created": "我创建的",
+      "subscribed": "我订阅的"
     },
-    "snooze_options": {
+    "snooze": {
       "1_day": "1天",
       "3_days": "3天",
       "5_days": "5天",

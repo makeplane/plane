@@ -986,12 +986,12 @@
       "all": "Toutes",
       "mentions": "Mentions"
     },
-    "filter_type_options": {
-      "assigned_to_me": "Assignées à moi",
-      "created_by_me": "Créées par moi",
-      "subscribed_by_me": "Suivies par moi"
+    "filter": {
+      "assigned": "Assignées à moi",
+      "created": "Créées par moi",
+      "subscribed": "Suivies par moi"
     },
-    "snooze_options": {
+    "snooze": {
       "1_day": "1 jour",
       "3_days": "3 jours",
       "5_days": "5 jours",

@@ -989,12 +989,12 @@
       "all": "Todas",
       "mentions": "Menciones"
     },
-    "filter_type_options": {
-      "assigned_to_me": "Asignadas a mí",
-      "created_by_me": "Creadas por mí",
-      "subscribed_by_me": "Suscritas por mí"
+    "filter": {
+      "assigned": "Asignadas a mí",
+      "created": "Creadas por mí",
+      "subscribed": "Suscritas por mí"
     },
-    "snooze_options": {
+    "snooze": {
       "1_day": "1 día",
       "3_days": "3 días",
       "5_days": "5 días",

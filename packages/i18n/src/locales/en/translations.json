@@ -987,12 +987,12 @@
       "all": "All",
       "mentions": "Mentions"
     },
-    "filter_type_options": {
-      "assigned_to_me": "Assigned to me",
-      "created_by_me": "Created by me",
-      "subscribed_by_me": "Subscribed by me"
+    "filter": {
+      "assigned": "Assigned to me",
+      "created": "Created by me",
+      "subscribed": "Subscribed by me"
     },
-    "snooze_options": {
+    "snooze": {
       "1_day": "1 day",
       "3_days": "3 days",
       "5_days": "5 days",
