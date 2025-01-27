@@ -1,6 +1,5 @@
 import { MutableRefObject, useState } from "react";
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
 // types
 import {
   GroupByColumnTypes,
@@ -234,9 +233,6 @@ const SubGroup: React.FC<ISubGroup> = observer((props) => {
     showEmptyGroup,
     scrollableContainerRef,
   } = props;
-
-  // hooks
-  const { t } = useTranslation();
 
   const [isExpanded, setIsExpanded] = useState(true);
 

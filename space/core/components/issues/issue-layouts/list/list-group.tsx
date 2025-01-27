@@ -109,7 +109,7 @@ export const ListGroup = observer((props: Props) => {
         <HeaderGroupByCard
           groupID={group.id}
           icon={group.icon}
-          title={group.i18n_name ? t(group.i18n_name) : group.name}
+          title={group.name || ""}
           count={groupIssueCount}
           toggleListGroup={toggleListGroup}
         />
