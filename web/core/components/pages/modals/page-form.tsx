@@ -3,6 +3,8 @@
 import { FormEvent, useState } from "react";
 // types
 import { FileText } from "lucide-react";
+// plane imports
+import { ETabIndices } from "@plane/constants";
 import { TPage } from "@plane/types";
 // ui
 import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
@@ -10,7 +12,6 @@ import { Logo } from "@/components/common";
 // constants
 import { AccessField } from "@/components/common/access-field";
 import { EPageAccess, PAGE_ACCESS_SPECIFIERS } from "@/constants/page";
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
