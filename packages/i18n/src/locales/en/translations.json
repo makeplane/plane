@@ -327,7 +327,6 @@
   "show_all": "Show all",
   "show_less": "Show less",
   "no_data_yet": "No Data yet",
-  "connections": "Connections",
 
   "project_view": {
     "access": {
@@ -498,7 +497,6 @@
       "last_updated": "Last updated",
       "start_date": "Start date",
       "due_date": "Due date",
-
       "asc": "Ascending",
       "desc": "Descending"
     },
@@ -595,6 +593,7 @@
   },
 
   "view": {
+    "label": "{count, plural, one {View} other {Views}}",
     "create": {
       "label": "Create View"
     },
