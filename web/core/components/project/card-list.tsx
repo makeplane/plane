@@ -1,14 +1,18 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
-// components
+// plane imports
+import { EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ContentWrapper } from "@plane/ui";
-import { EmptyState } from "@/components/empty-state";
+// components
+import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { ProjectCard } from "@/components/project";
 import { ProjectsLoader } from "@/components/ui";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useProjectFilter } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject, useProjectFilter, useUserPermissions } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// plane-web
+import { EUserPermissions } from "@/plane-web/constants";
 // assets
 import AllFiltersImage from "@/public/empty-state/project/all-filters.svg";
 import NameFilterImage from "@/public/empty-state/project/name-filter.svg";
@@ -20,6 +24,8 @@ type TProjectCardListProps = {
 
 export const ProjectCardList = observer((props: TProjectCardListProps) => {
   const { totalProjectIds: totalProjectIdsProps, filteredProjectIds: filteredProjectIdsProps } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
@@ -30,20 +36,41 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
     loader,
   } = useProject();
   const { searchQuery, currentWorkspaceDisplayFilters } = useProjectFilter();
+  const { allowPermissions } = useUserPermissions();
+
+  // helper hooks
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/projects" });
+
   // derived values
   const workspaceProjectIds = totalProjectIdsProps ?? storeWorkspaceProjectIds;
   const filteredProjectIds = filteredProjectIdsProps ?? storeFilteredProjectIds;
+
+  // permissions
+  const canPerformEmptyStateActions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   if (!filteredProjectIds || !workspaceProjectIds || loader) return <ProjectsLoader />;
 
   if (workspaceProjectIds?.length === 0 && !currentWorkspaceDisplayFilters?.archived_projects)
     return (
-      <EmptyState
-        type={EmptyStateType.WORKSPACE_PROJECTS}
-        primaryButtonOnClick={() => {
-          setTrackElement("Project empty state");
-          toggleCreateProjectModal(true);
-        }}
+      <DetailedEmptyState
+        title={t("workspace_projects.empty_state.general.title")}
+        description={t("workspace_projects.empty_state.general.description")}
+        assetPath={resolvedPath}
+        customPrimaryButton={
+          <ComicBoxButton
+            label={t("workspace_projects.empty_state.general.primary_button.text")}
+            title={t("workspace_projects.empty_state.general.primary_button.comic.title")}
+            description={t("workspace_projects.empty_state.general.primary_button.comic.description")}
+            onClick={() => {
+              setTrackElement("Project empty state");
+              toggleCreateProjectModal(true);
+            }}
+            disabled={!canPerformEmptyStateActions}
+          />
+        }
       />
     );
 

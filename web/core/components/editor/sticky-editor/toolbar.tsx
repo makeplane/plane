@@ -23,7 +23,7 @@ type Props = {
 
 const toolbarItems = TOOLBAR_ITEMS.sticky;
 
-export const Toolbar: React.FC<Props> = (props) => {
+export const StickyEditorToolbar: React.FC<Props> = (props) => {
   const { executeCommand, editorRef, handleColorChange, handleDelete } = props;
 
   // State to manage active states of toolbar items
@@ -69,7 +69,11 @@ export const Toolbar: React.FC<Props> = (props) => {
             </p>
           }
         >
-          <button onClick={() => setShowColorPalette(!showColorPalette)} className="flex text-custom-text-300">
+          <button
+            type="button"
+            onClick={() => setShowColorPalette(!showColorPalette)}
+            className="flex text-custom-text-100/50"
+          >
             <Palette className="size-4 my-auto" />
           </button>
         </Tooltip>
@@ -95,7 +99,7 @@ export const Toolbar: React.FC<Props> = (props) => {
                         type="button"
                         onClick={() => executeCommand(item)}
                         className={cn(
-                          "grid place-items-center aspect-square rounded-sm p-0.5 text-custom-text-300",
+                          "grid place-items-center aspect-square rounded-sm p-0.5 text-custom-text-100/50",
                           {}
                         )}
                       >
@@ -122,7 +126,7 @@ export const Toolbar: React.FC<Props> = (props) => {
           </p>
         }
       >
-        <button onClick={handleDelete} className="my-auto text-custom-text-300">
+        <button type="button" onClick={handleDelete} className="my-auto text-custom-text-100/50">
           <Trash2 className="size-4" />
         </button>
       </Tooltip>

@@ -38,7 +38,6 @@
   "deactivate_account_description": "Al desactivar una cuenta, todos los datos y recursos dentro de esa cuenta se eliminarán permanentemente y no se podrán recuperar.",
   "profile_settings": "Configuración de perfil",
   "your_account": "Tu cuenta",
-  "profile": "Perfil",
   "security": "Seguridad",
   "activity": "Actividad",
   "appearance": "Apariencia",
@@ -114,7 +113,6 @@
   "plane_logo": "Logo de Plane",
   "workspace_creation_disabled": "Creación de espacio de trabajo deshabilitada",
   "workspace_request_subject": "Solicitando un nuevo espacio de trabajo",
-  "workspace_request_body": "Hola administrador(es) de instancia,\n\nPor favor, crea un nuevo espacio de trabajo con la URL [/nombre-del-espacio-de-trabajo] para [propósito de crear el espacio de trabajo].\n\nGracias,\n{{firstName}} {{lastName}}\n{{email}}",
   "creating_workspace": "Creando espacio de trabajo",
   "workspace_created_successfully": "Espacio de trabajo creado con éxito",
   "create_workspace_page": "Página de creación de espacio de trabajo",
@@ -154,7 +152,6 @@
   "stay_ahead_of_blockers_description": "Detecta desafíos de un proyecto a otro y ve dependencias entre ciclos que no son obvias desde ninguna otra vista.",
   "analytics": "Analítica",
   "workspace_invites": "Invitaciones al espacio de trabajo",
-  "workspace_settings": "Configuración del espacio de trabajo",
   "enter_god_mode": "Entrar en modo dios",
   "workspace_logo": "Logo del espacio de trabajo",
   "new_issue": "Nuevo problema",
@@ -222,7 +219,6 @@
   "join_the_project_to_rearrange": "Únete al proyecto para reordenar",
   "drag_to_rearrange": "Arrastra para reordenar",
   "congrats": "¡Felicitaciones!",
-  "project": "Proyecto",
   "open_project": "Abrir proyecto",
   "issues": "Problemas",
   "cycles": "Ciclos",
@@ -316,8 +312,652 @@
   "remove_parent_issue": "Eliminar problema padre",
   "add_parent": "Agregar padre",
   "loading_members": "Cargando miembros...",
-  "inbox": "bandeja de entrada",
+  "no_data_yet": "Sin datos aún",
+  "connections": "Conexiones",
+
   "common": {
-    "filters": "Filtros"
+    "all": "Todos",
+    "states": "Estados",
+    "state": "Estado",
+    "state_groups": "Grupos de estado",
+    "priority": "Prioridad",
+    "team_project": "Proyecto de equipo",
+    "project": "Proyecto",
+    "cycle": "Ciclo",
+    "cycles": "Ciclos",
+    "module": "Módulo",
+    "modules": "Módulos",
+    "labels": "Etiquetas",
+    "assignees": "Asignados",
+    "assignee": "Asignado",
+    "created_by": "Creado por",
+    "none": "Ninguno",
+    "link": "Enlace",
+    "estimate": "Estimación",
+    "layout": "Diseño",
+    "filters": "Filtros",
+    "display": "Mostrar",
+    "load_more": "Cargar más",
+    "no_matches_found": "No se encontraron coincidencias",
+    "activity": "Actividad",
+    "analytics": "Analítica",
+    "success": "Éxito",
+    "error": "Error",
+    "group_by": "Agrupar por",
+    "search": "Buscar",
+    "epic": "Épica",
+    "issue": "Problema",
+    "warning": "Advertencia",
+    "updating": "Actualizando",
+    "update": "Actualizar",
+    "creating": "Creando",
+    "cancel": "Cancelar",
+    "description": "Descripción",
+    "title": "Título",
+    "order_by": {
+      "label": "Ordenar por",
+      "manual": "Manual",
+      "last_created": "Último creado",
+      "last_updated": "Última actualización",
+      "start_date": "Fecha de inicio",
+      "due_date": "Fecha de vencimiento"
+    },
+    "comments": "Comentarios",
+    "updates": "Actualizaciones"
+  },
+
+  "form": {
+    "title": {
+      "required": "El título es obligatorio",
+      "max_length": "El título debe tener menos de {length} caracteres"
+    }
+  },
+
+  "entity": {
+    "grouping_title": "Agrupación de {entity}",
+    "priority": "{entity}",
+    "all": "Todos los {entity}",
+    "drop_here_to_move": "Suelte aquí para mover el {entity}"
+  },
+
+  "epic": {
+    "all": "Todas las épicas",
+    "label": "{count, plural, one {Épica} other {Épicas}}"
+  },
+
+  "issue": {
+    "label": "{count, plural, one {Problema} other {Problemas}}",
+    "all": "Todos los problemas",
+    "add": "Agregar problema",
+    "priority": {
+      "urgent": "Urgente",
+      "high": "Alta",
+      "medium": "Media",
+      "low": "Baja"
+    },
+    "display": {
+      "properties": {
+        "label": "Propiedades de visualización",
+        "id": "ID",
+        "issue_type": "Tipo de problema",
+        "sub_issue_count": "Cantidad de subproblemas",
+        "attachment_count": "Cantidad de archivos adjuntos"
+      },
+      "extra": {
+        "show_sub_issues": "Mostrar subproblemas",
+        "show_empty_groups": "Mostrar grupos vacíos"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "Este diseño está ordenado por",
+      "list": "Lista",
+      "kanban": "Tablero",
+      "calendar": "Calendario",
+      "spreadsheet": "Hoja de cálculo",
+      "gantt": "Línea de tiempo",
+      "title": {
+        "list": "Diseño de lista",
+        "kanban": "Diseño de tablero",
+        "calendar": "Diseño de calendario",
+        "spreadsheet": "Diseño de hoja de cálculo",
+        "gantt": "Diseño de línea de tiempo"
+      }
+    },
+    "states": {
+      "active": "Activo",
+      "backlog": "Pendientes"
+    },
+    "comments": {
+      "create": {
+        "success": "Comentario creado con éxito",
+        "error": "Error al crear el comentario. Por favor, inténtalo de nuevo más tarde."
+      },
+      "update": {
+        "success": "Comentario actualizado con éxito",
+        "error": "Error al actualizar el comentario. Por favor, inténtalo más tarde."
+      },
+      "remove": {
+        "success": "Comentario eliminado con éxito",
+        "error": "Error al eliminar el comentario. Por favor, inténtalo de nuevo más tarde."
+      },
+      "upload": {
+        "error": "Error al subir el archivo. Por favor, inténtalo de nuevo más tarde."
+      }
+    }
+  },
+
+  "project": {
+    "label": "{count, plural, one {Proyecto} other {Proyectos}}"
+  },
+
+  "view": {
+    "create": {
+      "label": "Crear vista"
+    },
+    "update": {
+      "label": "Actualizar vista"
+    }
+  },
+
+  "workspace_dashboard": {
+    "empty_state": {
+      "general": {
+        "title": "Resumen de tus proyectos, actividad y métricas",
+        "description": "Bienvenido a Plane, estamos emocionados de tenerte aquí. Crea tu primer proyecto y rastrea tus problemas, y esta página se transformará en un espacio que te ayudará a avanzar. Los administradores también verán elementos que ayudan a su equipo a progresar.",
+        "primary_button": {
+          "text": "Construye tu primer proyecto",
+          "comic": {
+            "title": "Todo comienza con un proyecto en Plane",
+            "description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo coche."
+          }
+        }
+      }
+    }
+  },
+
+  "workspace_analytics": {
+    "empty_state": {
+      "general": {
+        "title": "Rastrea el progreso, cargas de trabajo y asignaciones. Detecta tendencias, elimina bloqueos y acelera el trabajo",
+        "description": "Consulta el alcance frente a la demanda, estimaciones y desbordamiento del alcance. Obtén el rendimiento por miembros del equipo y equipos, y asegúrate de que tu proyecto termine a tiempo.",
+        "primary_button": {
+          "text": "Comienza tu primer proyecto",
+          "comic": {
+            "title": "La analítica funciona mejor con Ciclos + Módulos",
+            "description": "Primero, organiza tus problemas en ciclos y, si puedes, agrupa problemas que abarquen más de un ciclo en módulos. Consulta ambos en el menú de navegación a la izquierda."
+          }
+        }
+      }
+    }
+  },
+
+  "workspace_projects": {
+    "empty_state": {
+      "general": {
+        "title": "No hay proyectos activos",
+        "description": "Piensa en cada proyecto como el contenedor para trabajo orientado a objetivos. Los proyectos son donde viven Trabajos, Ciclos y Módulos y, junto con tus colegas, te ayudan a lograr ese objetivo. Crea un nuevo proyecto o filtra por proyectos archivados.",
+        "primary_button": {
+          "text": "Comienza tu primer proyecto",
+          "comic": {
+            "title": "Todo comienza con un proyecto en Plane",
+            "description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo coche."
+          }
+        }
+      },
+      "no_projects": {
+        "title": "Sin proyectos",
+        "description": "Para crear problemas o gestionar tu trabajo, necesitas crear un proyecto o ser parte de uno.",
+        "primary_button": {
+          "text": "Comienza tu primer proyecto",
+          "comic": {
+            "title": "Todo comienza con un proyecto en Plane",
+            "description": "Un proyecto podría ser la hoja de ruta de un producto, una campaña de marketing o el lanzamiento de un nuevo coche."
+          }
+        }
+      },
+      "filter": {
+        "title": "No hay proyectos coincidentes",
+        "description": "No se detectaron proyectos con los criterios coincidentes. \n Crea un nuevo proyecto en su lugar."
+      }
+    }
+  },
+
+  "workspace_issues": {
+    "empty_state": {
+      "all-issues": {
+        "title": "No hay problemas en el proyecto",
+        "description": "¡Primer proyecto terminado! Ahora, divide tu trabajo en piezas rastreables con problemas. ¡Vamos!",
+        "primary_button": {
+          "text": "Crear nuevo problema"
+        }
+      },
+      "assigned": {
+        "title": "Aún no hay problemas",
+        "description": "Los problemas asignados a ti se pueden rastrear desde aquí.",
+        "primary_button": {
+          "text": "Crear nuevo problema"
+        }
+      },
+      "created": {
+        "title": "Aún no hay problemas",
+        "description": "Todos los problemas creados por ti aparecen aquí. Rastréalos directamente.",
+        "primary_button": {
+          "text": "Crear nuevo problema"
+        }
+      },
+      "subscribed": {
+        "title": "Aún no hay problemas",
+        "description": "Suscríbete a los problemas que te interesan y rastrea todos ellos aquí."
+      },
+      "custom-view": {
+        "title": "Aún no hay problemas",
+        "description": "Los problemas que se aplican a los filtros se rastrean aquí."
+      }
+    }
+  },
+
+  "workspace_settings": {
+    "label": "Configuración del espacio de trabajo",
+    "empty_state": {
+      "api_tokens": {
+        "title": "No se han creado tokens API",
+        "description": "Las APIs de Plane pueden ser usadas para integrar tus datos en Plane con cualquier sistema externo. Crea un token para comenzar."
+      },
+      "webhooks": {
+        "title": "No se han agregado webhooks",
+        "description": "Crea webhooks para recibir actualizaciones en tiempo real y automatizar acciones."
+      },
+      "exports": {
+        "title": "Aún no hay exportaciones",
+        "description": "Cada vez que exportes, también tendrás una copia aquí para referencia."
+      },
+      "imports": {
+        "title": "Aún no hay importaciones",
+        "description": "Encuentra todas tus importaciones previas aquí y descárgalas."
+      }
+    }
+  },
+
+  "profile": {
+    "label": "Perfil",
+    "page_label": "Tu trabajo",
+    "work": "Trabajo",
+    "details": {
+      "joined_on": "Se unió el",
+      "time_zone": "Zona horaria"
+    },
+    "stats": {
+      "workload": "Carga de trabajo",
+      "overview": "Resumen",
+      "created": "Problemas creados",
+      "assigned": "Problemas asignados",
+      "subscribed": "Problemas suscritos",
+      "state_distribution": {
+        "title": "Problemas por estado",
+        "empty": "Crea problemas para verlos por estados en el gráfico para un mejor análisis."
+      },
+      "priority_distribution": {
+        "title": "Problemas por prioridad",
+        "empty": "Crea problemas para verlos por prioridad en el gráfico para un mejor análisis."
+      },
+      "recent_activity": {
+        "title": "Actividad reciente",
+        "empty": "No pudimos encontrar datos. Por favor revisa tus entradas"
+      }
+    },
+    "actions": {
+      "profile": "Perfil",
+      "security": "Seguridad",
+      "activity": "Actividad",
+      "appearance": "Apariencia",
+      "notifications": "Notificaciones"
+    },
+    "tabs": {
+      "summary": "Resumen",
+      "assigned": "Asignados",
+      "created": "Creados",
+      "subscribed": "Suscritos",
+      "activity": "Actividad"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "Aún no hay actividades",
+        "description": "¡Comienza creando un nuevo problema! Añade detalles y propiedades a él. Explora más en Plane para ver tu actividad."
+      },
+      "assigned": {
+        "title": "No tienes problemas asignados",
+        "description": "Los problemas asignados a ti se pueden rastrear desde aquí."
+      },
+      "created": {
+        "title": "Aún no hay problemas",
+        "description": "Todos los problemas creados por ti aparecen aquí. Rastréalos directamente."
+      },
+      "subscribed": {
+        "title": "Aún no hay problemas",
+        "description": "Suscríbete a los problemas que te interesan y rastrea todos ellos aquí."
+      }
+    }
+  },
+
+  "project_settings": {
+    "empty_state": {
+      "labels": {
+        "title": "Aún no hay etiquetas",
+        "description": "Crea etiquetas para ayudar a organizar y filtrar problemas en tu proyecto."
+      }
+    }
+  },
+
+  "project_cycles": {
+    "empty_state": {
+      "general": {
+        "title": "Agrupa y organiza tu trabajo en Ciclos.",
+        "description": "Divide el trabajo en partes organizadas por plazos, retrocede desde la fecha límite de tu proyecto para establecer fechas y haz un progreso tangible como equipo.",
+        "primary_button": {
+          "text": "Configura tu primer ciclo",
+          "comic": {
+            "title": "Los ciclos son bloques de tiempo repetitivos.",
+            "description": "Un sprint, una iteración o cualquier otro término que uses para el seguimiento semanal o quincenal del trabajo es un ciclo."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "No hay problemas añadidos al ciclo",
+        "description": "Añade o crea problemas que desees organizar y entregar dentro de este ciclo",
+        "primary_button": {
+          "text": "Crear nuevo problema"
+        },
+        "secondary_button": {
+          "text": "Añadir problema existente"
+        }
+      },
+      "completed_no_issues": {
+        "title": "No hay problemas en el ciclo",
+        "description": "No hay problemas en el ciclo. Los problemas se han transferido o están ocultos. Para ver problemas ocultos, si los hay, actualiza las propiedades de visualización en consecuencia."
+      },
+      "active": {
+        "title": "No hay ciclo activo",
+        "description": "Un ciclo activo incluye cualquier período que abarque la fecha de hoy dentro de su rango. Encuentra el progreso y los detalles del ciclo activo aquí."
+      },
+      "archived": {
+        "title": "No hay ciclos archivados todavía",
+        "description": "Para organizar tu proyecto, archiva ciclos completados. Encuéntralos aquí una vez archivados."
+      }
+    }
+  },
+
+  "project_issues": {
+    "empty_state": {
+      "no_issues": {
+        "title": "Crea un problema y asígnalo a alguien, incluso a ti mismo",
+        "description": "Piensa en los problemas como trabajos, tareas, acciones, o JTBD (trabajos por hacer). Nos gusta eso. Un problema y sus subproblemas suelen ser acciones basadas en el tiempo asignadas a los miembros de tu equipo. Tu equipo crea, asigna y completa problemas para avanzar el proyecto hacia su objetivo.",
+        "primary_button": {
+          "text": "Crea tu primer problema",
+          "comic": {
+            "title": "Los problemas son bloques de construcción en Plane.",
+            "description": "Rediseñar la interfaz de Plane, Rebrandear la empresa o Lanzar el nuevo sistema de inyección de combustible son ejemplos de problemas que probablemente tengan subproblemas."
+          }
+        }
+      },
+      "no_archived_issues": {
+        "title": "Aún no hay problemas archivados",
+        "description": "De forma manual o mediante automatización, puedes archivar problemas que estén completados o cancelados. Encuéntralos aquí una vez archivados.",
+        "primary_button": {
+          "text": "Configurar automatización"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "No se encontraron problemas que coincidan con los filtros aplicados",
+        "secondary_button": {
+          "text": "Borrar todos los filtros"
+        }
+      }
+    }
+  },
+
+  "project_module": {
+    "empty_state": {
+      "no_issues": {
+        "title": "No hay problemas en el módulo",
+        "description": "Crea o agrega problemas que deseas lograr como parte de este módulo",
+        "primary_button": {
+          "text": "Crear nuevo problema"
+        },
+        "secondary_button": {
+          "text": "Agregar un problema existente"
+        }
+      },
+      "general": {
+        "title": "Mapea los hitos de tu proyecto a Módulos y sigue el trabajo agregado fácilmente.",
+        "description": "Un grupo de problemas que pertenecen a un padre lógico y jerárquico forma un módulo. Piénsalos como una forma de rastrear el trabajo por hitos del proyecto. Tienen sus propios períodos y plazos, así como análisis para ayudarte a ver qué tan cerca o lejos estás de un hito.",
+        "primary_button": {
+          "text": "Construye tu primer módulo",
+          "comic": {
+            "title": "Los módulos ayudan a agrupar el trabajo por jerarquía.",
+            "description": "Un módulo de carrito, un módulo de chasis y un módulo de almacén son buenos ejemplos de esta agrupación."
+          }
+        }
+      },
+      "archived": {
+        "title": "Aún no hay módulos archivados",
+        "description": "Para organizar tu proyecto, archiva módulos completados o cancelados. Encuéntralos aquí una vez archivados."
+      }
+    }
+  },
+
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "Guarda vistas filtradas para tu proyecto. Crea tantas como necesites",
+        "description": "Las vistas son un conjunto de filtros guardados que usas con frecuencia o a los que deseas tener acceso fácil. Todos tus colegas en un proyecto pueden ver las vistas de todos y elegir la que mejor se adapte a sus necesidades.",
+        "primary_button": {
+          "text": "Crea tu primera vista",
+          "comic": {
+            "title": "Las vistas funcionan sobre las propiedades de los problemas.",
+            "description": "Puedes crear una vista desde aquí con tantas propiedades como filtros que consideres necesarios."
+          }
+        }
+      },
+      "filter": {
+        "title": "No hay vistas coincidentes",
+        "description": "Ninguna vista coincide con los criterios de búsqueda. \n Crea una nueva vista en su lugar."
+      }
+    }
+  },
+
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "Escribe una nota, un documento o una base de conocimiento completa. Deja que Galileo, el asistente de IA de Plane, te ayude a empezar",
+        "description": "Las páginas son un espacio para capturar ideas en Plane. Toma notas de reuniones, formatearlas fácilmente, incrusta problemas, organiza usando una biblioteca de componentes y mantén todo en el contexto de tu proyecto. Para simplificar cualquier documento, invoca a Galileo, la IA de Plane, con un atajo o un clic.",
+        "primary_button": {
+          "text": "Crea tu primera página"
+        }
+      },
+      "private": {
+        "title": "Aún no hay páginas privadas",
+        "description": "Guarda aquí tus pensamientos privados. Cuando estés listo para compartirlos, el equipo está a un clic de distancia.",
+        "primary_button": {
+          "text": "Crea tu primera página"
+        }
+      },
+      "public": {
+        "title": "Aún no hay páginas públicas",
+        "description": "Consulta aquí las páginas compartidas con todos en tu proyecto.",
+        "primary_button": {
+          "text": "Crea tu primera página"
+        }
+      },
+      "archived": {
+        "title": "Aún no hay páginas archivadas",
+        "description": "Archiva las páginas que no están en tu radar. Accede a ellas aquí cuando las necesites."
+      }
+    }
+  },
+
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "No se encontraron resultados"
+      }
+    }
+  },
+
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "No se encontraron problemas coincidentes"
+      },
+      "general": {
+        "title": "No se encontraron problemas"
+      }
+    }
+  },
+
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "Aún no hay comentarios",
+        "description": "Los comentarios pueden usarse como un espacio de discusión y seguimiento para los problemas"
+      }
+    }
+  },
+
+  "notification": {
+    "empty_state": {
+      "detail": {
+        "title": "Selecciona para ver los detalles."
+      },
+      "all": {
+        "title": "No hay problemas asignados",
+        "description": "Las actualizaciones de los problemas asignados a ti se \n pueden ver aquí"
+      },
+      "mentions": {
+        "title": "No hay problemas asignados",
+        "description": "Las actualizaciones de los problemas asignados a ti se \n pueden ver aquí"
+      }
+    }
+  },
+
+  "active_cycle": {
+    "empty_state": {
+      "progress": {
+        "title": "Agrega problemas al ciclo para ver su progreso."
+      },
+      "chart": {
+        "title": "Agrega problemas al ciclo para ver el gráfico de burndown."
+      },
+      "priority_issue": {
+        "title": "Observa de un vistazo los problemas de alta prioridad abordados en el ciclo."
+      },
+      "assignee": {
+        "title": "Asigna responsables a los problemas para ver un desglose del trabajo por responsables."
+      },
+      "label": {
+        "title": "Agrega etiquetas a los problemas para ver el desglose del trabajo por etiquetas."
+      }
+    }
+  },
+
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "La entrada no está habilitada para el proyecto.",
+        "description": "La entrada te ayuda a gestionar las solicitudes entrantes para tu proyecto y agregarlas como problemas en tu flujo de trabajo. Habilita la entrada desde la configuración del proyecto para gestionar solicitudes.",
+        "primary_button": {
+          "text": "Gestionar funciones"
+        }
+      },
+      "cycle": {
+        "title": "Los ciclos no están habilitados para este proyecto.",
+        "description": "Divide el trabajo en bloques de tiempo, trabaja hacia atrás desde la fecha límite de tu proyecto para establecer fechas y logra avances tangibles como equipo. Habilita la función de ciclos para tu proyecto para comenzar a usarlos.",
+        "primary_button": {
+          "text": "Gestionar funciones"
+        }
+      },
+      "module": {
+        "title": "Los módulos no están habilitados para el proyecto.",
+        "description": "Los módulos son los bloques de construcción de tu proyecto. Habilita módulos desde la configuración del proyecto para comenzar a usarlos.",
+        "primary_button": {
+          "text": "Gestionar funciones"
+        }
+      },
+      "page": {
+        "title": "Las páginas no están habilitadas para el proyecto.",
+        "description": "Las páginas son los bloques de construcción de tu proyecto. Habilita páginas desde la configuración del proyecto para comenzar a usarlas.",
+        "primary_button": {
+          "text": "Gestionar funciones"
+        }
+      },
+      "view": {
+        "title": "Las vistas no están habilitadas para el proyecto.",
+        "description": "Las vistas son los bloques de construcción de tu proyecto. Habilita vistas desde la configuración del proyecto para comenzar a usarlas.",
+        "primary_button": {
+          "text": "Gestionar funciones"
+        }
+      }
+    }
+  },
+
+  "inbox": {
+    "label": "Bandeja de entrada",
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "No hay problemas abiertos",
+        "description": "Encuentra los problemas abiertos aquí. Crea un nuevo problema."
+      },
+      "sidebar_closed_tab": {
+        "title": "No hay problemas cerrados",
+        "description": "Todos los problemas, ya sean aceptados o rechazados, se pueden encontrar aquí."
+      },
+      "sidebar_filter": {
+        "title": "No hay problemas coincidentes",
+        "description": "Ningún problema coincide con el filtro aplicado en la entrada. Crea un nuevo problema."
+      },
+      "detail": {
+        "title": "Selecciona un problema para ver sus detalles."
+      }
+    }
+  },
+
+  "workspace_draft_issues": {
+    "empty_state": {
+      "title": "Los problemas a medio escribir, y pronto, los comentarios aparecerán aquí.",
+      "description": "Para probar esto, comienza a agregar un problema y déjalo a medias o crea tu primer borrador abajo. 😉",
+      "primary_button": {
+        "text": "Crea tu primer borrador"
+      }
+    }
+  },
+
+  "stickies": {
+    "empty_state": {
+      "general": {
+        "title": "Los stickies son notas rápidas y tareas que tomas al vuelo.",
+        "description": "Captura tus pensamientos e ideas sin esfuerzo creando stickies a los que puedes acceder en cualquier momento y lugar.",
+        "primary_button": {
+          "text": "Agregar sticky"
+        }
+      },
+      "search": {
+        "title": "Eso no coincide con ninguno de tus stickies.",
+        "description": "Prueba con un término diferente o avísanos si estás seguro de que tu búsqueda es correcta.",
+        "primary_button": {
+          "text": "Agregar sticky"
+        }
+      }
+    }
+  },
+
+  "home_widgets": {
+    "empty_state": {
+      "general": {
+        "title": "Está tranquilo sin widgets, actívalos",
+        "description": "Parece que todos tus widgets están desactivados. ¡Enciéndelos ahora para mejorar tu experiencia!",
+        "primary_button": {
+          "text": "Gestionar widgets"
+        }
+      }
+    }
   }
 }
