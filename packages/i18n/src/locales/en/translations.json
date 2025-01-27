@@ -882,6 +882,13 @@
   },
 
   "project_cycles": {
+    "status": {
+      "days_left": "Days left",
+      "completed": "Completed",
+      "yet_to_start": "Yet to start",
+      "in_progress": "In progress",
+      "draft": "Draft"
+    },
     "empty_state": {
       "general": {
         "title": "Group and timebox your work in Cycles.",

@@ -880,6 +880,13 @@
   },
 
   "project_cycles": {
+    "status": {
+      "days_left": "Jours restants",
+      "completed": "Terminé",
+      "yet_to_start": "À démarrer",
+      "in_progress": "En cours",
+      "draft": "Brouillon"
+    },
     "empty_state": {
       "general": {
         "title": "Groupez et cadrez votre travail en cycles.",

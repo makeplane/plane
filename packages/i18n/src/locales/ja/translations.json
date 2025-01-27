@@ -883,6 +883,13 @@
   },
 
   "project_cycles": {
+    "status": {
+      "days_left": "残り日数",
+      "completed": "完了",
+      "yet_to_start": "未着手",
+      "in_progress": "進行中",
+      "draft": "下書き"
+    },
     "empty_state": {
       "general": {
         "title": "作業をサイクルにまとめ、フレーム化します。",

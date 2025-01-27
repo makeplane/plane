@@ -883,6 +883,13 @@
   },
 
   "project_cycles": {
+    "status": {
+      "days_left": "Días restantes",
+      "completed": "Completado",
+      "yet_to_start": "Por comenzar",
+      "in_progress": "En progreso", 
+      "draft": "Borrador"
+    },
     "empty_state": {
       "general": {
         "title": "Agrupa y organiza tu trabajo en Ciclos.",

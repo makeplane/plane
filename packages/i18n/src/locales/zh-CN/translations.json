@@ -878,6 +878,15 @@
       "manual": "手动"
     }
   },
+  "project_cycles": {
+    "status": {
+      "days_left": "剩余天数",
+      "completed": "已完成",
+      "yet_to_start": "待开始",
+      "in_progress": "进行中",
+      "draft": "草稿"
+    }
+  },
   "notification": {
     "label": "通知",
     "tabs": {

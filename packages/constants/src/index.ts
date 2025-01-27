@@ -16,6 +16,7 @@ export * from "./tab-indices";
 export * from "./user";
 export * from "./workspace";
 export * from "./stickies";
+export * from "./cycle";
 export * from "./module";
 export * from "./project";
 export * from "./views";
