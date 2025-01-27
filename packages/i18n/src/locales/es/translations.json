@@ -313,6 +313,8 @@
   "remove_parent_issue": "Eliminar problema padre",
   "add_parent": "Agregar padre",
   "loading_members": "Cargando miembros...",
+  "inbox": "bandeja de entrada",
+  "no_data_yet": "Sin datos aún",
   "connections": "Conexiones",
 
   "workspace_dashboard": {
@@ -436,6 +438,45 @@
 
   "profile": {
     "label": "Perfil",
+    "page_label": "Tu trabajo",
+    "work": "Trabajo",
+    "details": {
+      "joined_on": "Se unió el",
+      "time_zone": "Zona horaria"
+    },
+    "stats": {
+      "workload": "Carga de trabajo",
+      "overview": "Resumen",
+      "created": "Problemas creados",
+      "assigned": "Problemas asignados",
+      "subscribed": "Problemas suscritos",
+      "state_distribution": {
+        "title": "Problemas por estado",
+        "empty": "Crea problemas para verlos por estados en el gráfico para un mejor análisis."
+      },
+      "priority_distribution": {
+        "title": "Problemas por prioridad",
+        "empty": "Crea problemas para verlos por prioridad en el gráfico para un mejor análisis."
+      },
+      "recent_activity": {
+        "title": "Actividad reciente",
+        "empty": "No pudimos encontrar datos. Por favor revisa tus entradas"
+      }
+    },
+    "actions": {
+      "profile": "Perfil",
+      "security": "Seguridad",
+      "activity": "Actividad",
+      "appearance": "Apariencia",
+      "notifications": "Notificaciones"
+    },
+    "tabs": {
+      "summary": "Resumen",
+      "assigned": "Asignados",
+      "created": "Creados",
+      "subscribed": "Suscritos",
+      "activity": "Actividad"
+    },
     "empty_state": {
       "activity": {
         "title": "Aún no hay actividades",
