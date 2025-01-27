@@ -32,7 +32,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="shortcut icon" href={`${SPACE_BASE_PATH}/favicon/favicon.ico`} />
       </head>
       <body>
-        <AppProvider>{children}</AppProvider>
+        <AppProvider>
+          <>{children}</>
+        </AppProvider>
       </body>
     </html>
   );

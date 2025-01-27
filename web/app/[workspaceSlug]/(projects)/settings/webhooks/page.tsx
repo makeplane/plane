@@ -4,18 +4,18 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// ui
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
-import { EmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state";
 import { WebhookSettingsLoader } from "@/components/ui";
 import { WebhooksList, CreateWebhookModal } from "@/components/web-hooks";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useUserPermissions, useWebhook, useWorkspace } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const WebhooksListPage = observer(() => {
@@ -23,13 +23,15 @@ const WebhooksListPage = observer(() => {
   const [showCreateWebhookModal, setShowCreateWebhookModal] = useState(false);
   // router
   const { workspaceSlug } = useParams();
+  // plane hooks
+  const { t } = useTranslation();
   // mobx store
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
-
   const { fetchWebhooks, webhooks, clearSecretKey, webhookSecretKey, createWebhook } = useWebhook();
   const { currentWorkspace } = useWorkspace();
-
+  // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/workspace-settings/webhooks" });
 
   useSWR(
     workspaceSlug && canPerformWorkspaceAdminActions ? `WEBHOOKS_LIST_${workspaceSlug}` : null,
@@ -81,7 +83,11 @@ const WebhooksListPage = observer(() => {
               </Button>
             </div>
             <div className="h-full w-full flex items-center justify-center">
-              <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_WEBHOOKS} />
+              <DetailedEmptyState
+                title={t("workspace_settings.empty_state.webhooks.title")}
+                description={t("workspace_settings.empty_state.webhooks.description")}
+                assetPath={resolvedPath}
+              />
             </div>
           </div>
         )}

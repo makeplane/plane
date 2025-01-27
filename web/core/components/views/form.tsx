@@ -5,7 +5,9 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Layers } from "lucide-react";
 // plane constants
-import { EIssueLayoutTypes, EViewAccess } from "@plane/constants";
+import { EIssueLayoutTypes, EViewAccess, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { IProjectView, IIssueFilterOptions, IIssueDisplayProperties, IIssueDisplayFilterOptions } from "@plane/types";
 // ui
@@ -13,8 +15,6 @@ import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, TextArea } from "
 // components
 import { Logo } from "@/components/common";
 import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
@@ -44,6 +44,8 @@ const defaultValues: Partial<IProjectView> = {
 
 export const ProjectViewForm: React.FC<Props> = observer((props) => {
   const { handleFormSubmit, handleClose, data, preLoadedData } = props;
+  // i18n
+  const { t } = useTranslation();
   // state
   const [isOpen, setIsOpen] = useState(false);
   // store hooks
@@ -139,7 +141,9 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">{data ? "Update" : "Create"} view</h3>
+        <h3 className="text-xl font-medium text-custom-text-200">
+          {data ? t("view.update.label") : t("view.create.label")}
+        </h3>
         <div className="space-y-3">
           <div className="flex items-start gap-2 w-full">
             <EmojiIconPicker
@@ -186,10 +190,10 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                 control={control}
                 name="name"
                 rules={{
-                  required: "Title is required",
+                  required: t("form.title.required"),
                   maxLength: {
                     value: 255,
-                    message: "Title should be less than 255 characters",
+                    message: t("form.title.max_length", { length: 255 }),
                   },
                 }}
                 render={({ field: { value, onChange } }) => (
@@ -200,7 +204,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     value={value}
                     onChange={onChange}
                     hasError={Boolean(errors.name)}
-                    placeholder="Title"
+                    placeholder={t("common.title")}
                     className="w-full text-base"
                     tabIndex={getIndex("name")}
                     autoFocus
@@ -218,7 +222,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                 <TextArea
                   id="description"
                   name="description"
-                  placeholder="Description"
+                  placeholder={t("common.description")}
                   className="w-full text-base resize-none min-h-24"
                   hasError={Boolean(errors?.description)}
                   value={value}
@@ -251,7 +255,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     control={control}
                     name="filters"
                     render={({ field: { onChange, value: filters } }) => (
-                      <FiltersDropdown title="Filters" tabIndex={getIndex("filters")}>
+                      <FiltersDropdown title={t("common.filters")} tabIndex={getIndex("filters")}>
                         <FilterSelection
                           filters={filters ?? {}}
                           handleFiltersUpdate={(key, value) => {
@@ -271,7 +275,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                               [key]: newValues,
                             });
                           }}
-                          layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[displayFilters.layout]}
+                          layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[displayFilters.layout]}
                           labels={projectLabels ?? undefined}
                           memberIds={projectMemberIds ?? undefined}
                           states={projectStates}
@@ -287,9 +291,9 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     control={control}
                     name="display_properties"
                     render={({ field: { onChange: onDisplayPropertiesChange, value: displayProperties } }) => (
-                      <FiltersDropdown title="Display">
+                      <FiltersDropdown title={t("common.display")}>
                         <DisplayFiltersSelection
-                          layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[displayFilters.layout]}
+                          layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[displayFilters.layout]}
                           displayFilters={displayFilters ?? {}}
                           handleDisplayFiltersUpdate={(updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
                             onDisplayFiltersChange({
@@ -331,10 +335,16 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
         <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
-          Cancel
+          {t("common.cancel")}
         </Button>
         <Button variant="primary" size="sm" type="submit" tabIndex={getIndex("submit")} loading={isSubmitting}>
-          {data ? (isSubmitting ? "Updating" : "Update View") : isSubmitting ? "Creating" : "Create View"}
+          {data
+            ? isSubmitting
+              ? t("common.updating")
+              : t("view.update.label")
+            : isSubmitting
+              ? t("common.creating")
+              : t("view.create.label")}
         </Button>
       </div>
     </form>

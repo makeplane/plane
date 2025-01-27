@@ -15,3 +15,5 @@ export * from "./user";
 export * from "./workspace";
 export * from "./stickies";
 export * from "./views";
+export * from "./profile";
+export * from "./workspace-drafts";
