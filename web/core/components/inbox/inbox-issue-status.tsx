@@ -8,7 +8,7 @@ import { cn } from "@/helpers/common.helper";
 import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
 // store
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
-import { InboxStatusIcon } from "./inbox-status-icon";
+import { ICONS, InboxStatusIcon } from "./inbox-status-icon";
 
 type Props = {
   inboxIssue: IInboxIssueStore;
@@ -29,17 +29,18 @@ export const InboxIssueStatus: React.FC<Props> = observer((props) => {
   const description = t(inboxIssueStatusDetail.i18n_description(), {
     days: findHowManyDaysLeft(new Date(inboxIssue.snoozed_till ?? "")),
   });
+  const statusIcon = ICONS[inboxIssue?.status];
 
   return (
     <div
       className={cn(
-        `relative flex flex-col gap-1 p-1.5 py-0.5 rounded ${inboxIssueStatusDetail.textColor(
+        `relative flex flex-col gap-1 p-1.5 py-0.5 rounded ${statusIcon.textColor(
           isSnoozedDatePassed
-        )} ${inboxIssueStatusDetail.bgColor(isSnoozedDatePassed)}`
+        )} ${statusIcon.bgColor(isSnoozedDatePassed)}`
       )}
     >
       <div className={`flex items-center gap-1`}>
-        <InboxStatusIcon type={inboxIssue?.status} size={iconSize} className="flex-shrink-0" />
+        <InboxStatusIcon type={inboxIssue?.status} size={iconSize} className="flex-shrink-0" renderColor={false} />
         <div className="font-medium text-xs whitespace-nowrap">
           {inboxIssue?.status === 0 && inboxIssue?.snoozed_till ? description : t(inboxIssueStatusDetail.i18n_title)}
         </div>
