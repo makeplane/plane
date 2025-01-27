@@ -3,12 +3,13 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { Trash2 } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
+// plane imports
+import { ROLE } from "@plane/constants";
 // plane types
 import { IUser, IWorkspaceMember } from "@plane/types";
 // plane ui
 import { CustomSelect, PopoverMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { ROLE } from "@/constants/workspace";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks

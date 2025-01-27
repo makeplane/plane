@@ -797,5 +797,66 @@
         }
       }
     }
+  },
+
+  "role_details": {
+    "guest": {
+      "title": "ゲスト",
+      "description": "組織の外部メンバーはゲストとして招待できます。"
+    },
+    "member": {
+      "title": "メンバー",
+      "description": "プロジェクト、サイクル、モジュール内のエンティティの読み取り、書き込み、編集、削除が可能"
+    },
+    "admin": {
+      "title": "管理者",
+      "description": "ワークスペース内のすべての権限が有効。"
+    }
+  },
+
+  "user_roles": {
+    "product_or_project_manager": "プロダクト/プロジェクトマネージャー",
+    "development_or_engineering": "開発/エンジニアリング",
+    "founder_or_executive": "創業者/エグゼクティブ",
+    "freelancer_or_consultant": "フリーランス/コンサルタント",
+    "marketing_or_growth": "マーケティング/グロース",
+    "sales_or_business_development": "営業/事業開発",
+    "support_or_operations": "サポート/オペレーション",
+    "student_or_professor": "学生/教授",
+    "human_or_resources": "人事",
+    "other": "その他"
+  },
+
+  "importer": {
+    "github": {
+      "title": "Github",
+      "description": "GitHubリポジトリから課題をインポートして同期します。"
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Jiraプロジェクトから課題とエピックをインポートします。"
+    }
+  },
+
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "課題をCSVファイルにエクスポートします。"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "課題をExcelファイルにエクスポートします。"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "課題をJSONファイルにエクスポートします。"
+    }
+  },
+
+  "default_global_view": {
+    "all_issues": "すべての課題",
+    "assigned": "割り当て済み",
+    "created": "作成済み",
+    "subscribed": "購読済み"
   }
 }

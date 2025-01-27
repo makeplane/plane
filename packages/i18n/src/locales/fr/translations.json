@@ -797,5 +797,66 @@
         }
       }
     }
+  },
+
+  "role_details": {
+    "guest": {
+      "title": "Invité",
+      "description": "Les membres externes des organisations peuvent être invités en tant qu'invités."
+    },
+    "member": {
+      "title": "Membre",
+      "description": "Capacité à lire, écrire, modifier et supprimer des entités dans les projets, cycles et modules"
+    },
+    "admin": {
+      "title": "Administrateur",
+      "description": "Toutes les autorisations définies sur vrai dans l'espace de travail."
+    }
+  },
+
+  "user_roles": {
+    "product_or_project_manager": "Chef de Produit / Projet",
+    "development_or_engineering": "Développement / Ingénierie",
+    "founder_or_executive": "Fondateur / Dirigeant",
+    "freelancer_or_consultant": "Freelance / Consultant",
+    "marketing_or_growth": "Marketing / Croissance",
+    "sales_or_business_development": "Ventes / Développement Commercial",
+    "support_or_operations": "Support / Opérations",
+    "student_or_professor": "Étudiant / Professeur",
+    "human_or_resources": "Ressources Humaines",
+    "other": "Autre"
+  },
+
+  "importer": {
+    "github": {
+      "title": "Github",
+      "description": "Importer des problèmes depuis les dépôts GitHub et les synchroniser."
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Importer des problèmes et des épopées depuis les projets Jira."
+    }
+  },
+
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Exporter les problèmes vers un fichier CSV."
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Exporter les problèmes vers un fichier Excel."
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Exporter les problèmes vers un fichier JSON."
+    }
+  },
+
+  "default_global_view": {
+    "all_issues": "Tous les problèmes",
+    "assigned": "Assignés",
+    "created": "Créés",
+    "subscribed": "Abonnés"
   }
 }

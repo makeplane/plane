@@ -355,5 +355,61 @@
   "remove_parent_issue": "移除父问题",
   "add_parent": "添加父问题",
   "loading_members": "正在加载成员...",
-  "inbox": "收件箱"
+  "inbox": "收件箱",
+  "role_details": {
+    "guest": {
+      "title": "访客",
+      "description": "组织的外部成员可以被邀请为访客。"
+    },
+    "member": {
+      "title": "成员",
+      "description": "可以在项目、周期和模块内读取、写入、编辑和删除实体"
+    },
+    "admin": {
+      "title": "管理员",
+      "description": "工作区内的所有权限都设置为允许。"
+    }
+  },
+  "user_roles": {
+    "product_or_project_manager": "产品/项目经理",
+    "development_or_engineering": "开发/工程",
+    "founder_or_executive": "创始人/高管",
+    "freelancer_or_consultant": "自由职业者/顾问",
+    "marketing_or_growth": "市场营销/增长",
+    "sales_or_business_development": "销售/业务发展",
+    "support_or_operations": "支持/运营",
+    "student_or_professor": "学生/教授",
+    "human_or_resources": "人力资源",
+    "other": "其他"
+  },
+  "importer": {
+    "github": {
+      "title": "Github",
+      "description": "从 GitHub 仓库导入问题并同步。"
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "从 Jira 项目导入问题和史诗。"
+    }
+  },
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "将问题导出为 CSV 文件。"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "将问题导出为 Excel 文件。"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "将问题导出为 JSON 文件。"
+    }
+  },
+  "default_global_view": {
+    "all_issues": "所有问题",
+    "assigned": "已分配",
+    "created": "已创建",
+    "subscribed": "已订阅"
+  }
 }

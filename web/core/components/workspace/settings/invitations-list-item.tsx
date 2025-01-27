@@ -4,12 +4,13 @@ import { useState, FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronDown, XCircle } from "lucide-react";
+// plane imports
+import { ROLE } from "@plane/constants";
 // ui
 import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // constants
-import { ROLE } from "@/constants/workspace";
 // hooks
 import { useMember, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

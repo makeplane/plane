@@ -796,5 +796,66 @@
         }
       }
     }
+  },
+
+  "role_details": {
+    "guest": {
+      "title": "Invitado",
+      "description": "Los miembros externos de las organizaciones pueden ser invitados como invitados."
+    },
+    "member": {
+      "title": "Miembro",
+      "description": "Capacidad para leer, escribir, editar y eliminar entidades dentro de proyectos, ciclos y módulos"
+    },
+    "admin": {
+      "title": "Administrador",
+      "description": "Todos los permisos establecidos como verdaderos dentro del espacio de trabajo."
+    }
+  },
+
+  "user_roles": {
+    "product_or_project_manager": "Gerente de Producto / Proyecto",
+    "development_or_engineering": "Desarrollo / Ingeniería",
+    "founder_or_executive": "Fundador / Ejecutivo",
+    "freelancer_or_consultant": "Freelancer / Consultor",
+    "marketing_or_growth": "Marketing / Crecimiento",
+    "sales_or_business_development": "Ventas / Desarrollo de Negocios",
+    "support_or_operations": "Soporte / Operaciones",
+    "student_or_professor": "Estudiante / Profesor",
+    "human_or_resources": "Recursos Humanos",
+    "other": "Otro"
+  },
+
+  "importer": {
+    "github": {
+      "title": "Github",
+      "description": "Importar problemas desde repositorios de GitHub y sincronizarlos."
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Importar problemas y épicas desde proyectos de Jira."
+    }
+  },
+
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Exportar problemas a un archivo CSV."
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Exportar problemas a un archivo Excel."
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Exportar problemas a un archivo JSON."
+    }
+  },
+
+  "default_global_view": {
+    "all_issues": "Todos los problemas",
+    "assigned": "Asignados",
+    "created": "Creados",
+    "subscribed": "Suscritos"
   }
 }
