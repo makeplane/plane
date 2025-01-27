@@ -32,6 +32,19 @@ import { IntegrationService } from "@/services/integrations";
 
 const integrationService = new IntegrationService();
 
+const getExporterLogo = (provider: string) => {
+  switch (provider) {
+    case "csv":
+      return CSVLogo;
+    case "excel":
+      return ExcelLogo;
+    case "json":
+      return JSONLogo;
+    default:
+      return "";
+  }
+};
+
 const IntegrationGuide = observer(() => {
   // states
   const [refreshing, setRefreshing] = useState(false);
@@ -81,19 +94,6 @@ const IntegrationGuide = observer(() => {
 
     return () => clearInterval(interval);
   }, [exporterServices]);
-
-  const getExporterLogo = (provider: string) => {
-    switch (provider) {
-      case "csv":
-        return CSVLogo;
-      case "excel":
-        return ExcelLogo;
-      case "json":
-        return JSONLogo;
-      default:
-        return "";
-    }
-  };
 
   return (
     <>

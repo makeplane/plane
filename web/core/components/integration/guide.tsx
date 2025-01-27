@@ -31,6 +31,17 @@ import { IntegrationService } from "@/services/integrations";
 // services
 const integrationService = new IntegrationService();
 
+const getImporterLogo = (provider: string) => {
+  switch (provider) {
+    case "github":
+      return GithubLogo;
+    case "jira":
+      return JiraLogo;
+    default:
+      return "";
+  }
+};
+
 // FIXME: [Deprecated] Remove this component
 const IntegrationGuide = observer(() => {
   // states
@@ -54,17 +65,6 @@ const IntegrationGuide = observer(() => {
   const handleDeleteImport = (importService: IImporterService) => {
     setImportToDelete(importService);
     setDeleteImportModal(true);
-  };
-
-  const getImporterLogo = (provider: string) => {
-    switch (provider) {
-      case "github":
-        return GithubLogo;
-      case "jira":
-        return JiraLogo;
-      default:
-        return "";
-    }
   };
 
   return (
