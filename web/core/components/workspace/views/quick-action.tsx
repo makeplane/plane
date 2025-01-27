@@ -5,13 +5,13 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { ExternalLink, LinkIcon, Pencil, Trash2, Lock } from "lucide-react";
 // types
+import { EViewAccess } from "@plane/constants";
 import { IWorkspaceView } from "@plane/types";
 // ui
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "@/components/workspace";
 // constants
-import { EViewAccess } from "@/constants/views";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";

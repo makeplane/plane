@@ -5,9 +5,8 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
+import { TInboxIssue, TInboxIssueCurrentTab } from "@plane/constants";
 import {
-  TInboxIssue,
-  TInboxIssueCurrentTab,
   TInboxIssueFilter,
   TInboxIssueSorting,
   TInboxIssuePaginationInfo,

@@ -1,4 +1,4 @@
-import { EViewAccess } from "@/constants/views";
+import { EViewAccess } from "@plane/constants";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { WorkspaceService as CoreWorkspaceService } from "@/services/workspace.service";
 

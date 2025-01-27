@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Control, Controller } from "react-hook-form";
 import { Sparkle } from "lucide-react";
+// plane imports
+import { ETabIndices } from "@plane/constants";
 // editor
 import { EditorRefApi } from "@plane/editor";
 // types
@@ -14,8 +16,6 @@ import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { GptAssistantPopover } from "@/components/core";
 import { RichTextEditor } from "@/components/editor";
-// constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";

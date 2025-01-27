@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-// components
-import { FilterHeader, FilterOption } from "@/components/issues";
 // constants
-import { NETWORK_CHOICES } from "@/constants/project";
+import { NETWORK_CHOICES } from "@plane/constants";
+// components
+import { useTranslation } from "@plane/i18n";
+import { FilterHeader, FilterOption } from "@/components/issues";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -15,9 +16,10 @@ export const FilterAccess: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);
+  const { t } = useTranslation();
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
-  const filteredOptions = NETWORK_CHOICES.filter((a) => a.label.includes(searchQuery.toLowerCase()));
+  const filteredOptions = NETWORK_CHOICES.filter((a) => a.i18n_label.includes(searchQuery.toLowerCase()));
 
   return (
     <>
@@ -35,7 +37,7 @@ export const FilterAccess: React.FC<Props> = observer((props) => {
                 isChecked={appliedFilters?.includes(`${access.key}`) ? true : false}
                 onClick={() => handleUpdate(`${access.key}`)}
                 icon={<access.icon className="h-3 w-3" />}
-                title={access.label}
+                title={t(access.i18n_label)}
               />
             ))
           ) : (

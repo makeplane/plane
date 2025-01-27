@@ -358,6 +358,18 @@
   "show_less": "显示较少",
   "no_data_yet": "暂无数据",
 
+  "project_view": {
+    "access": {
+      "public": "公开",
+      "private": "私密"
+    },
+    "sort_by": {
+      "created_at": "创建时间",
+      "updated_at": "更新时间",
+      "name": "名称"
+    }
+  },
+  
   "toast": {
     "success": "成功！",
     "error": "错误！"
@@ -509,7 +521,13 @@
       "last_created": "最近创建",
       "last_updated": "最近更新",
       "start_date": "开始日期",
-      "due_date": "截止日期"
+      "due_date": "截止日期",
+      "asc": "升序",
+      "desc": "降序"
+    },
+    "sort": {
+      "asc": "升序",
+      "desc": "降序"
     },
     "comments": "评论",
     "updates": "更新"
@@ -601,6 +619,39 @@
     },
     "update": {
       "label": "更新视图"
+    }
+  },
+
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "待处理",
+        "description": "待处理"
+      },
+      "declined": {
+        "title": "已拒绝",
+        "description": "已拒绝"
+      },
+      "snoozed": {
+        "title": "已暂停",
+        "description": "还剩{days}天"
+      },
+      "accepted": {
+        "title": "已接受",
+        "description": "已接受"
+      },
+      "duplicate": {
+        "title": "重复",
+        "description": "重复"
+      }
+    },
+    "source": {
+      "in-app": "应用内"
+    },
+    "order_by": {
+      "created_at": "创建时间",
+      "updated_at": "更新时间",
+      "id": "编号"
     }
   },
 
@@ -765,6 +816,69 @@
     }
   },
 
+
+  "workspace_projects": {
+    "network": {
+      "private": {
+        "title": "私有",
+        "description": "仅限邀请访问"
+      },
+      "public": {
+        "title": "公开",
+        "description": "除访客外的工作区所有成员都可加入"
+      }
+    },
+    "error": {
+      "permission": "您没有执行此操作的权限。",
+      "cycle_delete": "删除周期失败",
+      "module_delete": "删除模块失败",
+      "issue_delete": "删除问题失败"
+    },
+    "state": {
+      "backlog": "待办",
+      "unstarted": "未开始",
+      "started": "进行中",
+      "completed": "已完成",
+      "cancelled": "已取消"
+    },
+    "sort": {
+      "manual": "手动",
+      "name": "名称",
+      "created_at": "创建日期",
+      "members_length": "成员数量"
+    },
+    "scope": {
+      "my_projects": "我的项目",
+      "archived_projects": "已归档"
+    },
+    "common": {
+      "months_count": "{months, plural, one{#个月} other{#个月}}"
+    }
+  },
+
+  "project_modules": {
+    "status": {
+      "backlog": "待办",
+      "planned": "已规划",
+      "in_progress": "进行中",
+      "paused": "已暂停",
+      "completed": "已完成",
+      "cancelled": "已取消"
+    },
+    "layout": {
+      "list": "列表视图",
+      "board": "画廊视图",
+      "timeline": "时间轴视图"
+    },
+    "order_by": {
+      "name": "名称",
+      "progress": "进度",
+      "issues": "问题数量",
+      "due_date": "截止日期",
+      "created_at": "创建日期",
+      "manual": "手动"
+    }
+  },
   "notification": {
     "label": "通知",
     "tabs": {
@@ -784,5 +898,5 @@
       "2_weeks": "2周",
       "custom": "自定义"
     }
-  }
+  } 
 }

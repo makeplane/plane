@@ -4,13 +4,14 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { ArchiveRestore } from "lucide-react";
 // types
+import { PROJECT_AUTOMATION_MONTHS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 // ui
 import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
 // component
 import { SelectMonthModal } from "@/components/automation";
 // constants
-import { PROJECT_AUTOMATION_MONTHS } from "@/constants/project";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
@@ -27,6 +28,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
   const [monthModal, setmonthModal] = useState(false);
   // store hooks
   const { allowPermissions } = useUserPermissions();
+  const { t } = useTranslation();
 
   const { currentProjectDetails } = useProject();
 
@@ -90,8 +92,8 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
                   >
                     <>
                       {PROJECT_AUTOMATION_MONTHS.map((month) => (
-                        <CustomSelect.Option key={month.label} value={month.value}>
-                          <span className="text-sm">{month.label}</span>
+                        <CustomSelect.Option key={month.i18n_label} value={month.value}>
+                          <span className="text-sm">{t(month.i18n_label, { month: month.value })}</span>
                         </CustomSelect.Option>
                       ))}
 

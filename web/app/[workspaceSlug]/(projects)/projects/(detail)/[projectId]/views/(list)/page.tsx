@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
-import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel, EUserProjectRoles, EViewAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TViewFilterProps } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
@@ -13,7 +13,6 @@ import { DetailedEmptyState } from "@/components/empty-state";
 import { ProjectViewsList } from "@/components/views";
 import { ViewAppliedFiltersList } from "@/components/views/applied-filters";
 // constants
-import { EViewAccess } from "@/constants/views";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks

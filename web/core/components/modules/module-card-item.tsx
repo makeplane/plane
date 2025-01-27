@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { Info, SquareUser } from "lucide-react";
 // plane package imports
-import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
+import { MODULE_STATUS, PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
 import { IModule } from "@plane/types";
 import {
   Card,
@@ -25,7 +25,6 @@ import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // constants
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
-import { MODULE_STATUS } from "@/constants/module";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { generateQueryParams } from "@/helpers/router.helper";

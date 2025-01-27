@@ -3,6 +3,7 @@
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Info, Lock } from "lucide-react";
+import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane types
 import { IProject, IWorkspace } from "@plane/types";
@@ -24,7 +25,6 @@ import { ImagePickerPopover } from "@/components/core";
 import { TimezoneSelect } from "@/components/global";
 // constants
 import { PROJECT_UPDATED } from "@/constants/event-tracker";
-import { NETWORK_CHOICES } from "@/constants/project";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
@@ -52,6 +52,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { captureProjectEvent } = useEventTracker();
   const { updateProject } = useProject();
   const { isMobile } = usePlatformOS();
+
   // form info
   const {
     handleSubmit,
@@ -207,7 +208,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 <span>{watch("identifier")} .</span>
                 <span className="flex items-center gap-1.5">
                   {project.network === 0 && <Lock className="h-2.5 w-2.5 text-white " />}
-                  {currentNetwork?.label}
+                  {currentNetwork && t(currentNetwork?.i18n_label)}
                 </span>
               </span>
             </div>
@@ -346,7 +347,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                         {selectedNetwork ? (
                           <>
                             <selectedNetwork.icon className="h-3.5 w-3.5" />
-                            {selectedNetwork.label}
+                            {t(selectedNetwork.i18n_label)}
                           </>
                         ) : (
                           <span className="text-custom-text-400">Select network</span>
@@ -363,7 +364,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                         <div className="flex items-start gap-2">
                           <network.icon className="h-3.5 w-3.5" />
                           <div className="-mt-1">
-                            <p>{t(network.label)}</p>
+                            <p>{t(network.i18n_label)}</p>
                             <p className="text-xs text-custom-text-400">{t(network.description)}</p>
                           </div>
                         </div>

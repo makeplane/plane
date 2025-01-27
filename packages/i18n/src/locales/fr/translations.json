@@ -330,6 +330,18 @@
   "no_data_yet": "Pas encore de données",
   "connections": "Connexions",
 
+  "project_view": {
+    "access": {
+      "public": "Public",
+      "private": "Privé"
+    },
+    "sort_by": {
+      "created_at": "Date de création",
+      "updated_at": "Date de modification",
+      "name": "Nom"
+    }
+  },
+
   "toast": {
     "success": "Succès !",
     "error": "Erreur !"
@@ -488,7 +500,13 @@
       "last_created": "Dernière création",
       "last_updated": "Dernière mise à jour",
       "start_date": "Date de début",
-      "due_date": "Date d'échéance"
+      "due_date": "Date d'échéance",
+      "asc": "Croissant",
+      "desc": "Décroissant"
+    },
+    "sort": {
+      "asc": "Croissant",
+      "desc": "Décroissant"
     },
     "comments": "Commentaires",
     "updates": "Mises à jour"
@@ -583,6 +601,39 @@
     }
   },
 
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "En attente",
+        "description": "En attente"
+      },
+      "declined": {
+        "title": "Refusé",
+        "description": "Refusé"
+      },
+      "snoozed": {
+        "title": "Reporté",
+        "description": "{days, plural, one{# jour} other{# jours}} restants"
+      },
+      "accepted": {
+        "title": "Accepté",
+        "description": "Accepté"
+      },
+      "duplicate": {
+        "title": "Doublon",
+        "description": "Doublon"
+      }
+    },
+    "source": {
+      "in-app": "dans l'application"
+    },
+    "order_by": {
+      "created_at": "Créé le",
+      "updated_at": "Mis à jour le",
+      "id": "Identifiant"
+    }
+  },
+
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -616,6 +667,42 @@
   },
 
   "workspace_projects": {
+    "network": {
+      "private": {
+        "title": "Privé",
+        "description": "Accessible uniquement sur invitation"
+      },
+      "public": {
+        "title": "Public",
+        "description": "Tout le monde dans l'espace de travail sauf les invités peut rejoindre"
+      }
+    },
+    "error": {
+      "permission": "Vous n'avez pas la permission d'effectuer cette action.",
+      "cycle_delete": "Échec de la suppression du cycle",
+      "module_delete": "Échec de la suppression du module",
+      "issue_delete": "Échec de la suppression du problème"
+    },
+    "state": {
+      "backlog": "Backlog",
+      "unstarted": "Non démarré",
+      "started": "Démarré",
+      "completed": "Terminé",
+      "cancelled": "Annulé"
+    },
+    "sort": {
+      "manual": "Manuel",
+      "name": "Nom",
+      "created_at": "Date de création",
+      "members_length": "Nombre de membres"
+    },
+    "scope": {
+      "my_projects": "Mes projets",
+      "archived_projects": "Archivés"
+    },
+    "common": {
+      "months_count": "{months, plural, one{# mois} other{# mois}}"
+    },
     "empty_state": {
       "general": {
         "title": "Aucun projet actif",
@@ -1209,5 +1296,29 @@
     "assigned": "Assignés",
     "created": "Créés",
     "subscribed": "Abonnés"
+  },
+
+  "project_modules": {
+    "status": {
+      "backlog": "Backlog",
+      "planned": "Planifié",
+      "in_progress": "En cours",
+      "paused": "En pause",
+      "completed": "Terminé",
+      "cancelled": "Annulé"
+    },
+    "layout": {
+      "list": "Vue liste",
+      "board": "Vue galerie",
+      "timeline": "Vue chronologique"
+    },
+    "order_by": {
+      "name": "Nom",
+      "progress": "Progression",
+      "issues": "Nombre de problèmes",
+      "due_date": "Date d'échéance",
+      "created_at": "Date de création",
+      "manual": "Manuel"
+    }
   }
 }
