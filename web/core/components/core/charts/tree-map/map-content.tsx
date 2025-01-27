@@ -241,8 +241,8 @@ export const CustomTreeMapContent: React.FC<any> = ({
                 y={pY + pHeight - LAYOUT.TEXT.PADDING_LEFT}
                 textAnchor="start"
                 className={cn(
-                  "text-xs font-extralight tracking-wider select-none",
-                  textClassName || "text-custom-text-400"
+                  "text-sm font-extralight tracking-wider select-none",
+                  textClassName || "text-custom-text-300"
                 )}
                 fill="currentColor"
               >
@@ -252,8 +252,8 @@ export const CustomTreeMapContent: React.FC<any> = ({
                     {bottom.labelTruncated
                       ? truncateText(
                           label,
-                          availableTextWidth - calculateContentWidth(value, LAYOUT.TEXT.FONT_SIZES.XS) - 4,
-                          LAYOUT.TEXT.FONT_SIZES.XS
+                        availableTextWidth - calculateContentWidth(value, LAYOUT.TEXT.FONT_SIZES.SM) - 4,
+                        LAYOUT.TEXT.FONT_SIZES.SM
                         )
                       : label}
                   </tspan>
