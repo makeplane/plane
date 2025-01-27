@@ -3,24 +3,24 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
-// import Link from "next/link";
+import Link from "next/link";
 import { useTheme } from "next-themes";
-// import { Crown } from "lucide-react";
+import { Crown } from "lucide-react";
 // ui
 import { Button, getButtonStyling } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web hooks
-// import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // assets
 import TeamsUpgradeDark from "@/public/empty-state/teams/dark-upgrade.webp";
 import TeamsUpgradeLight from "@/public/empty-state/teams/light-upgrade.webp";
 
 export const TeamsUpgrade: FC = observer(() => {
   const { resolvedTheme } = useTheme();
-  // const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
-  // const isSelfManagedUpgradeDisabled = subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== "FREE";
+  const isSelfManagedUpgradeDisabled = subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== "FREE";
 
   return (
     <div className="pr-10">
@@ -32,13 +32,12 @@ export const TeamsUpgrade: FC = observer(() => {
       >
         <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>
           <div className="w-full xl:max-w-[300px]">
-            <div className="text-2xl font-semibold">Organize work even better with Teams.</div>
+            <div className="text-2xl font-semibold">Organize work even better with Teamspaces.</div>
             <div className="text-sm">
-              Get Teams with a Pro or higher subscription and organize people + their work into a separate space.
+              Get Teamspaces with a Pro or higher subscription and organize people + their work into a separate space.
             </div>
             <div className="flex mt-6 gap-4 flex-wrap">
-              <Button disabled>Coming Soon</Button>
-              {/* {isSelfManagedUpgradeDisabled ? (
+              {isSelfManagedUpgradeDisabled ? (
                 <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
                   <Crown className="h-3.5 w-3.5" />
                   Get Pro
@@ -56,7 +55,7 @@ export const TeamsUpgrade: FC = observer(() => {
                 onClick={() => {}}
               >
                 Get custom quote
-              </Link> */}
+              </Link>
             </div>
           </div>
         </div>

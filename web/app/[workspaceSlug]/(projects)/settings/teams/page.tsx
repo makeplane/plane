@@ -71,9 +71,9 @@ const TeamsSettingsPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <div className="border-b border-custom-border-200 pb-3 tracking-tight">
-        <h3 className="text-xl font-medium">Teams</h3>
+        <h3 className="text-xl font-medium">Teamspaces</h3>
         <span className="text-custom-sidebar-text-400 text-sm font-medium">
-          Teams is a feature for organizing your workspace into teams.
+          See your team’s work in a separate space with linked projects, tasks, team charts, pages, and views.
         </span>
       </div>
       <WithFeatureFlagHOC flag="TEAMSPACES" fallback={<TeamsUpgrade />} workspaceSlug={workspaceSlug?.toString()}>
@@ -83,8 +83,10 @@ const TeamsSettingsPage = observer(() => {
               <TeamsIcon className="size-5 text-custom-text-300" />
             </div>
             <div className="leading-tight">
-              <h5 className="font-medium">Enable Teams</h5>
-              <span className="text-custom-sidebar-text-400 text-sm">Set bigger goals to monitor the progress</span>
+              <h5 className="font-medium">Turn on Teamspaces for this workspace.</h5>
+              <span className="text-custom-sidebar-text-400 text-sm">
+                Once turned on, you can’t turn this feature off.
+              </span>
             </div>
           </div>
           <Tooltip tooltipContent={"Teams can't be disabled"} disabled={!isTeamsFeatureEnabled} position="left">

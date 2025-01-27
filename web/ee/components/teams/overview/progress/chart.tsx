@@ -55,7 +55,6 @@ export const TeamProgressChart: React.FC<TTeamProgressChartProps> = observer((pr
   // derived values
   const teamEntitiesLoader = getTeamEntitiesLoaderById(teamId);
   const loader = getTeamProgressChartLoader(teamId);
-  const isLoading = loader === "init-loader" || teamEntitiesLoader === "init-loader";
   const isUpdating = loader && ["init-loader", "mutation"].includes(loader);
   // Format data in case of date
   const modifiedData = useMemo(() => {
@@ -94,7 +93,7 @@ export const TeamProgressChart: React.FC<TTeamProgressChartProps> = observer((pr
         />
         {isUpdating && <Spinner size={14} className="animate-spin flex-shrink-0 mx-1" />}
       </div>
-      {isLoading ? (
+      {teamEntitiesLoader === "init-loader" || isUpdating ? (
         <Loader className="w-full h-96 flex items-center justify-center">
           <Loader.Item width="96%" height="100%" />
         </Loader>

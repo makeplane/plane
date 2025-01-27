@@ -143,7 +143,7 @@ export const TeamStatisticsMap: React.FC<TTeamStatisticsMapProps> = observer((pr
 
   return (
     <>
-      {isLoading ? (
+      {isUpdating ? (
         <Loader className="w-full h-96 flex items-center justify-center">
           <Loader.Item width="100%" height="100%" />
         </Loader>
