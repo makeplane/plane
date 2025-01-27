@@ -22,7 +22,7 @@ import { RecentProject } from "./project";
 const WIDGET_KEY = EWidgetKeys.RECENT_ACTIVITY;
 const workspaceService = new WorkspaceService();
 const filters: { name: TRecentActivityFilterKeys; icon?: React.ReactNode; i18n_key: string }[] = [
-  { name: "all", i18n_key: "home.recents.filters.all" },
+  { name: "all item", i18n_key: "home.recents.filters.all" },
   { name: "issue", icon: <LayersIcon className="w-4 h-4" />, i18n_key: "home.recents.filters.issues" },
   { name: "page", icon: <FileText size={16} />, i18n_key: "home.recents.filters.pages" },
   { name: "project", icon: <Briefcase size={16} />, i18n_key: "home.recents.filters.projects" },
