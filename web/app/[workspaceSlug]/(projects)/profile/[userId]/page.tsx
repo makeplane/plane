@@ -37,11 +37,7 @@ export default function ProfileOverviewPage() {
     const group = userProfile?.state_distribution.find((g) => g.state_group === t(key));
 
     if (group) return group;
-    else
-      return {
-        state_group: t(GROUP_CHOICES[key as keyof typeof GROUP_CHOICES].i18n_label) as TStateGroups,
-        state_count: 0,
-      };
+    else return { state_group: t(key) as TStateGroups, state_count: 0 };
   });
 
   return (
