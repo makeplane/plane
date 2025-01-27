@@ -154,7 +154,47 @@
   "stay_ahead_of_blockers_description": "发现项目间的挑战，查看其他视图中不明显的周期依赖关系。",
   "analytics": "分析",
   "workspace_invites": "工作区邀请",
-  "workspace_settings": "工作区设置",
+  "workspace_settings": {
+    "label": "工作区设置",
+    "settings": {
+      "general": {
+        "title": "常规"
+      },
+      "members": {
+        "title": "会员"
+      },
+      "billing-and-plans": {
+        "title": "账单与计划"
+      },
+      "exports": {
+        "title": "导出"
+      },
+      "webhooks": {
+        "title": "网络钩子"
+      },
+      "api-tokens": {
+        "title": "API 令牌"
+      }
+    },
+    "empty_state": {
+      "api_tokens": {
+        "title": "尚未创建 API 令牌",
+        "description": "Plane API 可用于将您在 Plane 中的数据与任何外部系统集成。创建令牌即可开始使用。"
+      },
+      "webhooks": {
+        "title": "尚未添加网络钩子",
+        "description": "创建网络钩子以接收实时更新并自动执行操作。"
+      },
+      "exports": {
+        "title": "尚无导出记录",
+        "description": "每次导出时，您都可以在此处找到参考副本。"
+      },
+      "imports": {
+        "title": "尚无导入记录",
+        "description": "在此处查找所有以前的导入记录并下载。"
+      }
+    }
+  },
   "enter_god_mode": "进入上帝模式",
   "workspace_logo": "工作区徽标",
   "new_issue": "新建问题",

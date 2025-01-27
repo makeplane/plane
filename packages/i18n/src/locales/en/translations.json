@@ -415,6 +415,26 @@
 
   "workspace_settings": {
     "label": "Workspace settings",
+    "settings": {
+      "general": {
+        "title": "General"
+      },
+      "members": {
+        "title": "Members"
+      },
+      "billing-and-plans": {
+        "title": "Billing & Plans"
+      },
+      "exports": {
+        "title": "Exports"
+      },
+      "webhooks": {
+        "title": "Webhooks"
+      },
+      "api-tokens": {
+        "title": "API Tokens"
+      }
+    },
     "empty_state": {
       "api_tokens": {
         "title": "No API tokens created",

@@ -415,6 +415,26 @@
 
   "workspace_settings": {
     "label": "ワークスペース設定",
+    "settings": {
+      "general": {
+        "title": "一般"
+      },
+      "members": {
+        "title": "メンバー"
+      },
+      "billing-and-plans": {
+        "title": "請求とプラン"
+      },
+      "exports": {
+        "title": "エクスポート"
+      },
+      "webhooks": {
+        "title": "Webhooks"
+      },
+      "api-tokens": {
+        "title": "APIトークン"
+      }
+    },
     "empty_state": {
       "api_tokens": {
         "title": "APIトークンが作成されていません",
