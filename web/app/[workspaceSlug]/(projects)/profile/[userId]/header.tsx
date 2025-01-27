@@ -46,7 +46,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
 
   const isCurrentUser = currentUser?.id === userId;
 
-  const breadcrumbLabel = isCurrentUser ? t("user_profile.title") : `${userName} ${t("user_profile.work")}`;
+  const breadcrumbLabel = isCurrentUser ? t("profile.page_label") : `${userName} ${t("profile.work")}`;
 
   return (
     <Header>

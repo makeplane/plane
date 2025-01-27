@@ -14,7 +14,7 @@ export const ProfileWorkload: React.FC<Props> = ({ stateDistribution }) => {
 
   return (
     <div className="space-y-2">
-      <h3 className="text-lg font-medium">{t("user_profile.stats.workload")}</h3>
+      <h3 className="text-lg font-medium">{t("profile.stats.workload")}</h3>
       <div className="grid grid-cols-1 justify-stretch gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {stateDistribution.map((group) => (
           <div key={group.state_group}>

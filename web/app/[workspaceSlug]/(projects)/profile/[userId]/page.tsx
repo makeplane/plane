@@ -42,7 +42,7 @@ export default function ProfileOverviewPage() {
 
   return (
     <>
-      <PageHead title={t("user_profile.title")} />
+      <PageHead title={t("profile.page_label")} />
       <ContentWrapper className="space-y-7">
         <ProfileStats userProfile={userProfile} />
         <ProfileWorkload stateDistribution={stateDistribution} />

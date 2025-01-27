@@ -23,26 +23,26 @@ export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
     {
       icon: CreateIcon,
       route: "created",
-      i18n_title: "user_profile.stats.created",
+      i18n_title: "profile.stats.created",
       value: userProfile?.created_issues ?? "...",
     },
     {
       icon: UserCircle2,
       route: "assigned",
-      i18n_title: "user_profile.stats.assigned",
+      i18n_title: "profile.stats.assigned",
       value: userProfile?.assigned_issues ?? "...",
     },
     {
       icon: LayerStackIcon,
       route: "subscribed",
-      i18n_title: "user_profile.stats.subscribed",
+      i18n_title: "profile.stats.subscribed",
       value: userProfile?.subscribed_issues ?? "...",
     },
   ];
 
   return (
     <div className="space-y-2">
-      <h3 className="text-lg font-medium">{t("user_profile.stats.overview")}</h3>
+      <h3 className="text-lg font-medium">{t("profile.stats.overview")}</h3>
       {userProfile ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {overviewCards.map((card) => (

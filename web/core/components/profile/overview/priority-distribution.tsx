@@ -19,7 +19,7 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
   const { t } = useTranslation();
   return (
     <div className="flex flex-col space-y-2">
-      <h3 className="text-lg font-medium">{t("user_profile.stats.priority_distribution.title")}</h3>
+      <h3 className="text-lg font-medium">{t("profile.stats.priority_distribution.title")}</h3>
       {userProfile ? (
         <Card>
           {userProfile.priority_distribution.length > 0 ? (
@@ -72,7 +72,7 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
             <div className="flex-grow p-7">
               <ProfileEmptyState
                 title={t("no_data_yet")}
-                description={t("user_profile.stats.priority_distribution.empty")}
+                description={t("profile.stats.priority_distribution.empty")}
                 image={emptyBarGraph}
               />
             </div>

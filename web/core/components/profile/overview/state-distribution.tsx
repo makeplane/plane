@@ -16,13 +16,12 @@ type Props = {
 };
 
 export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, userProfile }) => {
-  if (!userProfile) return null;
-
   const { t } = useTranslation();
+  if (!userProfile) return null;
 
   return (
     <div className="flex flex-col space-y-2">
-      <h3 className="text-lg font-medium">{t("user_profile.stats.state_distribution.title")}</h3>
+      <h3 className="text-lg font-medium">{t("profile.stats.state_distribution.title")}</h3>
       <Card className="h-full">
         {userProfile.state_distribution.length > 0 ? (
           <div className="grid grid-cols-1 gap-x-6 md:grid-cols-2">
@@ -81,7 +80,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
         ) : (
           <ProfileEmptyState
             title={t("no_data_yet")}
-            description={t("user_profile.stats.state_distribution.empty")}
+            description={t("profile.stats.state_distribution.empty")}
             image={stateGraph}
           />
         )}

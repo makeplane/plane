@@ -57,11 +57,11 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
 
   const userDetails = [
     {
-      i18n_label: "user_profile.details.joined_on",
+      i18n_label: "profile.details.joined_on",
       value: renderFormattedDate(userData?.date_joined ?? ""),
     },
     {
-      i18n_label: "user_profile.details.time_zone",
+      i18n_label: "profile.details.time_zone",
       value: <ProfileSidebarTime timeZone={userData?.user_timezone} />,
     },
   ];

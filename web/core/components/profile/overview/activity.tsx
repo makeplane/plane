@@ -41,7 +41,7 @@ export const ProfileActivity = observer(() => {
 
   return (
     <div className="space-y-2">
-      <h3 className="text-lg font-medium">{t("user_profile.stats.recent_activity.title")}</h3>
+      <h3 className="text-lg font-medium">{t("profile.stats.recent_activity.title")}</h3>
       <Card>
         {userProfileActivity ? (
           userProfileActivity.results.length > 0 ? (
@@ -84,7 +84,7 @@ export const ProfileActivity = observer(() => {
           ) : (
             <ProfileEmptyState
               title={t("no_data_yet")}
-              description={t("user_profile.stats.recent_activity.empty")}
+              description={t("profile.stats.recent_activity.empty")}
               image={recentActivityEmptyState}
             />
           )
