@@ -9,7 +9,8 @@ import { TIssue } from "@plane/types";
 import { QuickAddIssueFormRoot as BaseQuickAddIssueFormRoot } from "@/ce/components/issues/quick-add/";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues";
-// plane web hooks
+// plane web imports
+import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 export type TQuickAddIssueFormRoot = {
@@ -39,15 +40,23 @@ export const QuickAddIssueFormRoot: FC<TQuickAddIssueFormRoot> = observer((props
     isEpic = false,
   } = props;
   // store hooks
-  const { getProjectDefaultIssueType } = useIssueTypes();
+  const { getProjectDefaultIssueType, getProjectEpicDetails } = useIssueTypes();
   // derived values
   const defaultIssueType = getProjectDefaultIssueType(projectId);
-  const mandatoryFields = defaultIssueType?.activeProperties.filter((property) => property.is_required) ?? [];
+  const projectEpics = getProjectEpicDetails(projectId);
+  const activeProperties = isEpic ? projectEpics?.activeProperties : defaultIssueType?.activeProperties;
+  const mandatoryFields = activeProperties?.filter((property) => property.is_required) ?? [];
 
   return (
     <>
       {mandatoryFields.length > 0 ? (
-        <CreateUpdateIssueModal isOpen={isOpen} onClose={onClose} data={prePopulatedData} />
+        <>
+          {isEpic ? (
+            <CreateUpdateEpicModal isOpen={isOpen} onClose={onClose} data={prePopulatedData} />
+          ) : (
+            <CreateUpdateIssueModal isOpen={isOpen} onClose={onClose} data={prePopulatedData} />
+          )}
+        </>
       ) : (
         <BaseQuickAddIssueFormRoot
           isOpen={isOpen}
