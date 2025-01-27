@@ -220,7 +220,6 @@
   "join_the_project_to_rearrange": "プロジェクトに参加して並べ替え",
   "drag_to_rearrange": "ドラッグして並べ替え",
   "congrats": "おめでとうございます！",
-  "project": "プロジェクト",
   "open_project": "プロジェクトを開く",
   "issues": "問題",
   "cycles": "サイクル",
@@ -317,12 +316,156 @@
   "no_data_yet": "まだデータがありません",
   "connections": "接続",
 
+  "common": {
+    "all": "すべて",
+    "states": "ステータス",
+    "state": "ステータス",
+    "state_groups": "ステータスグループ",
+    "priority": "優先度",
+    "team_project": "チームプロジェクト",
+    "project": "プロジェクト",
+    "cycle": "サイクル",
+    "cycles": "サイクル",
+    "module": "モジュール",
+    "modules": "モジュール",
+    "labels": "ラベル",
+    "assignees": "アサイン者",
+    "assignee": "アサイン者",
+    "created_by": "作成者",
+    "none": "なし",
+    "link": "リンク",
+    "estimate": "見積もり",
+    "layout": "レイアウト",
+    "filters": "フィルター",
+    "display": "表示",
+    "load_more": "もっと見る",
+    "no_matches_found": "一致する結果はありません",
+    "activity": "アクティビティ",
+    "analytics": "分析",
+    "success": "成功",
+    "error": "エラー",
+    "group_by": "グループ化",
+    "search": "検索",
+    "epic": "エピック",
+    "issue": "問題",
+    "warning": "警告",
+    "updating": "更新中",
+    "update": "更新",
+    "creating": "作成中",
+    "cancel": "キャンセル",
+    "description": "説明",
+    "title": "タイトル",
+    "order_by": {
+      "label": "オーダー",
+      "manual": "手動",
+      "last_created": "最後に作成",
+      "last_updated": "最後に更新",
+      "start_date": "開始日",
+      "due_date": "期限日"
+    },
+    "comments": "コメント",
+    "updates": "更新"
+  },
+
+  "form": {
+    "title": {
+      "required": "タイトルは必須です",
+      "max_length": "タイトルは{length}文字未満である必要があります"
+    }
+  },
+
+  "entity": {
+    "grouping_title": "{entity}グループ化",
+    "priority": "",
+    "all": "すべての{entity}",
+    "drop_here_to_move": "ここにドロップして{entity}を移動"
+  },
+
+  "epic": {
+    "all": "すべてのエピック",
+    "label": "{count, plural, one {エピック} other {エピック}}"
+  },
+
+  "issue": {
+    "label": "{count, plural, one {問題} other {問題}}",
+    "all": "すべての問題",
+    "add": "問題を追加",
+    "priority": {
+      "urgent": "緊急",
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "display": {
+      "properties": {
+        "label": "表示プロパティ",
+        "id": "ID",
+        "issue_type": "課題タイプ",
+        "sub_issue_count": "サブ課題数",
+        "attachment_count": "添付ファイル数"
+      },
+      "extra": {
+        "show_sub_issues": "サブ課題を表示",
+        "show_empty_groups": "空のグループを表示"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "このレイアウトは",
+      "list": "リスト",
+      "kanban": "ボード",
+      "calendar": "カレンダー",
+      "spreadsheet": "表",
+      "gantt": "ガントチャート",
+      "title": {
+        "list": "リストレイアウト",
+        "kanban": "ボードレイアウト",
+        "calendar": "カレンダーレイアウト",
+        "spreadsheet": "テーブルレイアウト",
+        "gantt": "タイムラインレイアウト"
+      }
+    },
+    "states": {
+      "active": "アクティブ",
+      "backlog": "バックログ"
+    },
+    "comments": {
+      "create": {
+        "success": "コメントが正常に作成されました。",
+        "error": "コメントの作成に失敗しました。後で再試行してください。"
+      },
+      "update": {
+        "success": "コメントが正常に更新されました。",
+        "error": "コメントの更新に失敗しました。後で再試行してください。"
+      },
+      "remove": {
+        "success": "コメントが正常に削除されました。",
+        "error": "コメントの削除に失敗しました。後で再試行してください。"
+      },
+      "upload": {
+        "error": "コメントのアセットのアップロードに失敗しました。後で再試行してください。"
+      }
+    }
+  },
+
+  "project": {
+    "label": "{count, plural, one {プロジェクト} other {プロジェクト}}"
+  },
+
+  "view": {
+    "create": {
+      "label": "ビューを作成"
+    },
+    "update": {
+      "label": "ビューを更新"
+    }
+  },
+
   "workspace_dashboard": {
-      "empty_state": {
-        "general": {
-          "title": "プロジェクト、アクティビティ、指標の概要",
-          "description": "Planeへようこそ！私たちはあなたを迎えることができて嬉しいです。最初のプロジェクトを作成してタスクを追跡し、このページが進捗を助けるスペースに変わります。管理者は、チームを前進させるための要素も見ることができます。",
-          "primary_button": {
+    "empty_state": {
+      "general": {
+        "title": "プロジェクト、アクティビティ、指標の概要",
+        "description": "Planeへようこそ！私たちはあなたを迎えることができて嬉しいです。最初のプロジェクトを作成してタスクを追跡し、このページが進捗を助けるスペースに変わります。管理者は、チームを前進させるための要素も見ることができます。",
+        "primary_button": {
           "text": "最初のプロジェクトを作成",
           "comic": {
             "title": "すべてはPlaneでのプロジェクトから始まります",

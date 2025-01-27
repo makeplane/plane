@@ -314,9 +314,148 @@
   "remove_parent_issue": "Supprimer le problème parent",
   "add_parent": "Ajouter un parent",
   "loading_members": "Chargement des membres...",
-  "inbox": "Boîte de réception",
   "no_data_yet": "Pas encore de données",
   "connections": "Connexions",
+
+  "common": {
+    "all": "Tout",
+    "states": "États",
+    "state": "État",
+    "state_groups": "Groupes d'états",
+    "priority": "Priorité",
+    "team_project": "Projet d'équipe",
+    "project": "Projet",
+    "cycle": "Cycle",
+    "cycles": "Cycles",
+    "module": "Module",
+    "modules": "Modules",
+    "labels": "Étiquettes",
+    "assignees": "Assignés",
+    "assignee": "Assigné",
+    "created_by": "Créé par",
+    "none": "Aucun",
+    "link": "Lien",
+    "estimate": "Estimation",
+    "layout": "Disposition",
+    "filters": "Filtres",
+    "display": "Affichage",
+    "load_more": "Charger plus",
+    "no_matches_found": "Aucun résultat trouvé",
+    "activity": "Activité",
+    "analytics": "Analyses",
+    "success": "Succès",
+    "error": "Erreur",
+    "group_by": "Grouper par",
+    "search": "Rechercher",
+    "epic": "Épopée",
+    "issue": "Problème",
+    "warning": "Avertissement",
+    "updating": "Mise à jour",
+    "update": "Mettre à jour",
+    "creating": "Création",
+    "cancel": "Annuler",
+    "description": "Description",
+    "title": "Titre",
+    "order_by": {
+      "label": "Trier par",
+      "manual": "Manuel",
+      "last_created": "Dernière création",
+      "last_updated": "Dernière mise à jour",
+      "start_date": "Date de début",
+      "due_date": "Date d'échéance"
+    },
+    "comments": "Commentaires",
+    "updates": "Mises à jour"
+  },
+
+  "form": {
+    "title": {
+      "required": "Le titre est requis",
+      "max_length": "Le titre ne doit pas dépasser {length} caractères"
+    }
+  },
+
+  "entity": {
+    "grouping_title": "Groupement de {entity}",
+    "priority": "{entity}",
+    "all": "Tous les {entity}",
+    "drop_here_to_move": "Déposer ici pour déplacer {entity}"
+  },
+
+  "epic": {
+    "all": "Toutes les épopées",
+    "label": "{count, plural, one {Épopée} other {Épopées}}"
+  },
+
+  "issue": {
+    "label": "{count, plural, one {Problème} other {Problèmes}}",
+    "all": "Tous les problèmes",
+    "add": "Ajouter un problème",
+    "priority": {
+      "urgent": "Urgent",
+      "high": "Haute",
+      "medium": "Moyenne",
+      "low": "Basse"
+    },
+    "display": {
+      "properties": {
+        "label": "Propriétés d'affichage",
+        "id": "ID",
+        "issue_type": "Type de problème",
+        "sub_issue_count": "Nombre de sous-problèmes",
+        "attachment_count": "Nombre de pièces jointes"
+      },
+      "extra": {
+        "show_sub_issues": "Afficher les sous-problèmes",
+        "show_empty_groups": "Afficher les groupes vides"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "Cette disposition est triée par",
+      "list": "Liste",
+      "kanban": "Tableau",
+      "calendar": "Calendrier",
+      "spreadsheet": "Feuille de calcul",
+      "gantt": "Chronologie",
+      "title": {
+        "list": "Disposition en liste",
+        "kanban": "Disposition en tableau",
+        "calendar": "Disposition en calendrier",
+        "spreadsheet": "Disposition en feuille de calcul",
+        "gantt": "Disposition en chronologie"
+      }
+    },
+    "states": {
+      "active": "Actif",
+      "backlog": "Backlog"
+    },
+    "comments": {
+      "create": {
+        "success": "Commentaire créé avec succès",
+        "error": "Échec de la création du commentaire. Veuillez réessayer plus tard."
+      },
+      "update": {
+        "success": "Commentaire mis à jour avec succès",
+        "error": "Échec de la mise à jour du commentaire. Veuillez réessayer plus tard."
+      },
+      "remove": {
+        "success": "Commentaire supprimé avec succès",
+        "error": "Échec de la suppression du commentaire. Veuillez réessayer plus tard."
+      },
+      "upload": {
+        "error": "Échec du téléchargement du fichier. Veuillez réessayer plus tard."
+      }
+    }
+  },
+  
+  "view": {
+    "create": {
+      "label": "Créer une vue"
+    },
+    "update": {
+      "label": "Mettre à jour la vue"
+    }
+  },
 
   "workspace_dashboard": {
     "empty_state": {

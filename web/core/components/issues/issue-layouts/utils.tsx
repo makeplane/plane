@@ -11,7 +11,7 @@ import uniq from "lodash/uniq";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { ContrastIcon } from "lucide-react";
 // plane types
-import { EIssuesStoreType } from "@plane/constants";
+import { EIssuesStoreType, ISSUE_PRIORITIES } from "@plane/constants";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -30,8 +30,6 @@ import {
 import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
-// constants
-import { ISSUE_PRIORITIES } from "@/constants/issue";
 import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
@@ -85,7 +83,7 @@ export const getGroupByColumns = ({
     return [
       {
         id: "All Issues",
-        name: isEpic ? "All Epics" : "All Issues",
+        name: `All ${isEpic ? "Epics" : "Issues"}`,
         payload: {},
         icon: undefined,
       },
