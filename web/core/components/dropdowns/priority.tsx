@@ -76,7 +76,7 @@ const BorderButton = (props: ButtonProps) => {
   return (
     <Tooltip
       tooltipHeading={t("priority")}
-      tooltipContent={priorityDetails?.title ?? "None"}
+      tooltipContent={priorityDetails?.title ?? t("common.none")}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
