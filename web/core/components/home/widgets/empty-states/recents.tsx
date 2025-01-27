@@ -1,41 +1,41 @@
 import { Briefcase, FileText, History } from "lucide-react";
-// plane ui
+import { useTranslation } from "@plane/i18n";
 import { LayersIcon } from "@plane/ui";
 
 const getDisplayContent = (type: string) => {
   switch (type) {
     case "project":
       return {
-        icon: Briefcase,
-        text: "Projects you go into or have assigned work in will show up here.",
+        icon: <Briefcase size={30} className="text-custom-text-400/40" />,
+        text: "home.recents.empty.project",
       };
     case "page":
       return {
-        icon: FileText,
-        text: "Create, see, or change something on pages you have access to and see them here.",
+        icon: <FileText size={30} className="text-custom-text-400/40" />,
+        text: "home.recents.empty.page",
       };
     case "issue":
       return {
-        icon: LayersIcon,
-        text: "Let's see some issues to see them show up here.",
+        icon: <LayersIcon className="text-custom-text-400/40 w-[30px] h-[30px]" />,
+        text: "home.recents.empty.issue",
       };
     default:
       return {
-        icon: History,
-        text: "Whatever you see and act on in Plane will show up here.",
+        icon: <History size={30} className="text-custom-text-400/40" />,
+        text: "home.recents.empty.default",
       };
   }
 };
-
 export const RecentsEmptyState = ({ type }: { type: string }) => {
-  const displayContent = getDisplayContent(type);
+  const { t } = useTranslation();
+
+  const { icon, text } = getDisplayContent(type);
 
   return (
-    <div className="min-h-[110px] w-full flex items-center justify-center gap-2 py-6 bg-custom-background-90 text-custom-text-400 rounded">
-      <div className="flex-shrink-0 size-[30px] grid place-items-center">
-        <displayContent.icon className="size-6" />
+    <div className="min-h-[120px] flex w-full justify-center py-6 bg-custom-border-100 rounded">
+      <div className="m-auto flex gap-2">
+        {icon} <div className="text-custom-text-400 text-sm text-center my-auto">{t(text)}</div>
       </div>
-      <p className="text-sm text-center font-medium">{displayContent.text}</p>
     </div>
   );
 };
