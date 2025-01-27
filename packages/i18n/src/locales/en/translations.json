@@ -1306,18 +1306,6 @@
     "subscribed": "Subscribed"
   },
 
-  "home_widgets": {
-    "empty_state": {
-      "general": {
-        "title": "It's Quiet Without Widgets, Turn Them On",
-        "description": "It looks like all your widgets are turned off. Enable them\nnow to enhance your experience!",
-        "primary_button": {
-          "text": "Manage widgets"
-        }
-      }
-    }
-  },
-
   "themes": {
     "theme_options": {
       "system_preference": {

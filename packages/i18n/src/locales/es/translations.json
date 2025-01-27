@@ -1308,18 +1308,6 @@
     "subscribed": "Suscritos"
   },
 
-  "home_widgets": {
-    "empty_state": {
-      "general": {
-        "title": "Está tranquilo sin widgets, actívalos",
-        "description": "Parece que todos tus widgets están desactivados. ¡Enciéndelos ahora para mejorar tu experiencia!",
-        "primary_button": {
-          "text": "Gestionar widgets"
-        }
-      }
-    }
-  },
-
   "themes": {
     "theme_options": {
       "system_preference": {

@@ -7,18 +7,21 @@ import {
 
 export const NETWORK_CHOICES: {
   key: 0 | 2;
+  labelKey: string;
   i18n_label: string;
   description: string;
   icon: LucideIcon;
 }[] = [
   {
     key: 0,
+    labelKey: "Private",
     i18n_label: "workspace_projects.network.private.title",
     description: "workspace_projects.network.private.description", //"Accessible only by invite",
     icon: Lock,
   },
   {
     key: 2,
+    labelKey: "Public",
     i18n_label: "workspace_projects.network.public.title",
     description: "workspace_projects.network.public.description", //"Anyone in the workspace except Guests can join",
     icon: Globe2,

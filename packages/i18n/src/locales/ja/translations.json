@@ -1308,18 +1308,6 @@
     "subscribed": "購読済み"
   },
 
-  "home_widgets": {
-    "empty_state": {
-      "general": {
-        "title": "ウィジェットがないと静かですね、オンにしましょう",
-        "description": "すべてのウィジェットがオフになっているようです。 今すぐ有効にして、体験を向上させましょう！",
-        "primary_button": {
-          "text": "ウィジェットを管理"
-        }
-      }
-    }
-  },
-
   "themes": {
     "theme_options": {
       "system_preference": {
