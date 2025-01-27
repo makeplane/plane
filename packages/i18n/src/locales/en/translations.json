@@ -316,5 +316,47 @@
   "change_parent_issue": "Change parent issue",
   "remove_parent_issue": "Remove parent issue",
   "add_parent": "Add parent",
-  "loading_members": "Loading members..."
+  "loading_members": "Loading members...",
+  "no_data_yet": "No Data yet",
+  "user_profile": {
+    "title": "Your work",
+    "work": "Work",
+    "details": {
+        "joined_on": "Joined on",
+        "time_zone": "Timezone"
+      },
+    "stats": {
+      "workload": "Workload",
+      "overview": "Overview",
+      "created": "Issues created",
+      "assigned": "Issues assigned",
+      "subscribed": "Issues subscribed",
+      "state_distribution": {
+        "title": "Issues by state",
+        "empty": "Create issues to view the them by states in the graph for better analysis."
+      },
+      "priority_distribution": {
+        "title": "Issues by Priority",
+        "empty": "Create issues to view the them by priority in the graph for better analysis."
+      },
+      "recent_activity": {
+        "title": "Recent activity",
+        "empty": "We couldn't find data. Kindly view your inputs"
+      }
+    },
+    "actions": {
+      "profile": "Profile",
+      "security": "Security",
+      "activity": "Activity",
+      "appearance": "Appearance",
+      "notifications": "Notifications"
+    },
+    "tabs": {
+      "summary": "Summary",
+      "assigned": "Assigned",
+      "created": "Created",
+      "subscribed": "Subscribed",
+      "activity": "Activity"
+    }
+  }
 }

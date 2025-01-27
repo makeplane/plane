@@ -316,5 +316,47 @@
   "remove_parent_issue": "親問題を削除",
   "add_parent": "親問題を追加",
   "loading_members": "メンバーを読み込んでいます...",
-  "inbox": "受信箱"
+  "inbox": "受信箱",
+  "no_data_yet": "まだデータがありません",
+  "user_profile": {
+    "title": "あなたの作業",
+    "work": "作業",
+    "details": {
+      "joined_on": "参加日",
+      "time_zone": "タイムゾーン"
+    },
+    "stats": {
+      "workload": "作業負荷",
+      "overview": "概要",
+      "created": "作成した課題",
+      "assigned": "割り当てられた課題",
+      "subscribed": "購読中の課題",
+      "state_distribution": {
+        "title": "状態別の課題",
+        "empty": "より良い分析のために、グラフで状態別に表示する課題を作成してください。"
+      },
+      "priority_distribution": {
+        "title": "優先度別の課題",
+        "empty": "より良い分析のために、グラフで優先度別に表示する課題を作成してください。"
+      },
+      "recent_activity": {
+        "title": "最近の活動",
+        "empty": "データが見つかりませんでした。入力内容を確認してください"
+      }
+    },
+    "actions": {
+      "profile": "プロフィール",
+      "security": "セキュリティ",
+      "activity": "アクティビティ",
+      "appearance": "外観",
+      "notifications": "通知"
+    },
+    "tabs": {
+      "summary": "サマリー",
+      "assigned": "割り当て済み",
+      "created": "作成済み",
+      "subscribed": "購読中",
+      "activity": "アクティビティ"
+    }
+  }
 }

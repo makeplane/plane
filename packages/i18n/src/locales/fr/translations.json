@@ -316,5 +316,47 @@
   "remove_parent_issue": "Supprimer le problème parent",
   "add_parent": "Ajouter un parent",
   "loading_members": "Chargement des membres...",
-  "inbox": "Boîte de réception"
+  "inbox": "Boîte de réception",
+  "no_data_yet": "Pas encore de données",
+  "user_profile": {
+    "title": "Votre travail",
+    "work": "Travail",
+    "details": {
+      "joined_on": "Inscrit le",
+      "time_zone": "Fuseau horaire"
+    },
+    "stats": {
+      "workload": "Charge de travail",
+      "overview": "Aperçu",
+      "created": "Problèmes créés",
+      "assigned": "Problèmes assignés",
+      "subscribed": "Problèmes suivis",
+      "state_distribution": {
+        "title": "Problèmes par état",
+        "empty": "Créez des problèmes pour les visualiser par état dans le graphique pour une meilleure analyse."
+      },
+      "priority_distribution": {
+        "title": "Problèmes par priorité",
+        "empty": "Créez des problèmes pour les visualiser par priorité dans le graphique pour une meilleure analyse."
+      },
+      "recent_activity": {
+        "title": "Activité récente",
+        "empty": "Nous n'avons pas trouvé de données. Veuillez consulter vos entrées"
+      }
+    },
+    "actions": {
+      "profile": "Profil",
+      "security": "Sécurité",
+      "activity": "Activité",
+      "appearance": "Apparence",
+      "notifications": "Notifications"
+    },
+    "tabs": {
+      "summary": "Résumé",
+      "assigned": "Assignés",
+      "created": "Créés",
+      "subscribed": "Suivis",
+      "activity": "Activité"
+    }
+  }
 }
