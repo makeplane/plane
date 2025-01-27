@@ -447,7 +447,7 @@
       }
     }
   },
-  
+
   "view": {
     "create": {
       "label": "Créer une vue"
@@ -620,7 +620,7 @@
     "empty_state": {
       "activity": {
         "title": "Aucune activité pour le moment",
-        "description": "Commencez par créer une nouvelle tâche ! Ajoutez des détails et des propriétés à celle-ci. Explorez davantage Plane pour voir votre activité."
+        "description": "Commencez par créer une nouvelle tâche ! Ajoutez des détails et des propriétés à celle-ci. Explorez davantage Plane pour voir votre activité."
       },
       "assigned": {
         "title": "Aucune tâche assignée",
@@ -687,13 +687,13 @@
   "project_issues": {
     "empty_state": {
       "no_issues": {
-        "title": "Créez un problème et assignez-le à quelqu’un, même à vous-même",
+        "title": "Créez un problème et assignez-le à quelqu'un, même à vous-même",
         "description": "Considérez les problèmes comme des emplois, des tâches, des actions ou JTBD (travaux à accomplir). Nous aimons ça. Un problème et ses sous-problèmes sont généralement des actions basées sur le temps assignées aux membres de votre équipe. Votre équipe crée, assigne et termine des problèmes pour faire avancer votre projet vers son objectif.",
         "primary_button": {
           "text": "Créez votre premier problème",
           "comic": {
             "title": "Les problèmes sont les éléments constitutifs de Plane.",
-            "description": "Redessiner l’interface utilisateur de Plane, Rebrander l’entreprise ou Lancer le nouveau système d’injection de carburant sont des exemples de problèmes qui comportent probablement des sous-problèmes."
+            "description": "Redessiner l'interface utilisateur de Plane, Rebrander l'entreprise ou Lancer le nouveau système d'injection de carburant sont des exemples de problèmes qui comportent probablement des sous-problèmes."
           }
         }
       },
@@ -955,6 +955,29 @@
         "primary_button": {
           "text": "Gérer les widgets"
         }
+      }
+    }
+  },
+
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "Préférence système"
+      },
+      "light": {
+        "label": "Clair"
+      },
+      "dark": {
+        "label": "Sombre"
+      },
+      "light_contrast": {
+        "label": "Contraste élevé clair"
+      },
+      "dark_contrast": {
+        "label": "Contraste élevé sombre"
+      },
+      "custom": {
+        "label": "Thème personnalisé"
       }
     }
   }

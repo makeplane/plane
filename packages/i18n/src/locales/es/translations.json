@@ -959,5 +959,28 @@
         }
       }
     }
+  },
+
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "Preferencia del sistema"
+      },
+      "light": {
+        "label": "Claro"
+      },
+      "dark": {
+        "label": "Oscuro"
+      },
+      "light_contrast": {
+        "label": "Alto contraste claro"
+      },
+      "dark_contrast": {
+        "label": "Alto contraste oscuro"
+      },
+      "custom": {
+        "label": "Tema personalizado"
+      }
+    }
   }
 }

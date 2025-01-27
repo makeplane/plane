@@ -960,5 +960,28 @@
         }
       }
     }
+  },
+
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "システム設定"
+      },
+      "light": {
+        "label": "ライト"
+      },
+      "dark": {
+        "label": "ダーク"
+      },
+      "light_contrast": {
+        "label": "ライト高コントラスト"
+      },
+      "dark_contrast": {
+        "label": "ダーク高コントラスト"
+      },
+      "custom": {
+        "label": "カスタムテーマ"
+      }
+    }
   }
 }
