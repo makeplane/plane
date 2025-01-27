@@ -1,5 +1,5 @@
 import { chainCommands } from "@tiptap/pm/commands";
-import { Fragment, NodeRange, type Node as ProsemirrorNode, Slice } from "@tiptap/pm/model";
+import { Fragment, type Node as ProsemirrorNode, Slice } from "@tiptap/pm/model";
 import { type Command, type EditorState, Selection, TextSelection, type Transaction } from "@tiptap/pm/state";
 import { canSplit } from "@tiptap/pm/transform";
 
@@ -10,7 +10,6 @@ import { isBlockNodeSelection } from "../utils/is-block-node-selection";
 import { isListNode } from "../utils/is-list-node";
 import { isTextSelection } from "../utils/is-text-selection";
 
-import { dedentNodeRange } from "./dedent-list";
 import { enterWithoutLift } from "./enter-without-lift";
 
 /**
@@ -92,34 +91,11 @@ const splitListCommand: Command = (state, dispatch): boolean => {
   const parentEmpty = parent.content.size === 0;
 
   // When the cursor is inside the first child of the list:
-  //    If the parent block is empty, dedent the list;
-  //    otherwise split and create a new list node.
+  //    Split and create a new list node.
   // When the cursor is inside the second or further children of the list:
   //    Create a new paragraph.
   if (indexInList === 0) {
-    if (parentEmpty) {
-      const $listEnd = state.doc.resolve($from.end(listDepth));
-
-      const listParentDepth = listDepth - 1;
-      const listParent = $from.node(listParentDepth);
-      const indexInListParent = $from.index(listParentDepth);
-      const isLastChildInListParent = indexInListParent === listParent.childCount - 1;
-
-      // If the list is the last child of the list parent, we want to dedent
-      // the whole list; otherwise, we only want to dedent the list content
-      // (and thus unwrap these content from the list node)
-      const range = isLastChildInListParent
-        ? new NodeRange($from, $listEnd, listParentDepth)
-        : new NodeRange($from, $listEnd, listDepth);
-      const tr = state.tr;
-      if (range && dedentNodeRange(range, tr)) {
-        dispatch?.(tr);
-        return true;
-      }
-      return false;
-    } else {
-      return doSplitList(state, listNode, dispatch);
-    }
+    return doSplitList(state, listNode, dispatch);
   } else {
     if (parentEmpty) {
       return enterWithoutLift(state, dispatch);

@@ -1,6 +1,7 @@
 import { Node } from "@tiptap/core";
 import { inputRules } from "@tiptap/pm/inputrules";
 import { keymap } from "@tiptap/pm/keymap";
+import { ResolvedPos } from "@tiptap/pm/model";
 import {
   ListAttributes,
   IndentListOptions,
@@ -26,7 +27,7 @@ declare module "@tiptap/core" {
   }
 }
 
-const { attrs, parseDOM, toDOM, content, group, definingForContent, definingAsContext } = createListSpec();
+const { attrs, parseDOM, toDOM, content, group } = createListSpec();
 const listKeymapPlugin = keymap(listKeymap);
 const listInputRulePlugin = inputRules({ rules: listInputRules });
 
@@ -34,8 +35,7 @@ export const FlatListExtension = Node.create({
   name: "list",
   content,
   group,
-  definingForContent,
-  definingAsContext,
+  defining: true,
   selectable: true,
   draggable: true,
   addAttributes() {
@@ -75,12 +75,16 @@ export const FlatListExtension = Node.create({
         },
     };
   },
+
   addKeyboardShortcuts(this) {
     return {
       Tab: ({ editor }) => {
         const { selection } = editor.state;
         const { $from } = selection;
-        if (editor.isActive(this.name)) {
+
+        const isBetweenListNodes = isBetweenLists($from);
+
+        if (editor.isActive(this.name) || isBetweenListNodes) {
           const indentList = createIndentListCommand({ from: $from.pos });
           return indentList(editor.state, editor.view.dispatch);
         }
@@ -106,6 +110,40 @@ export const FlatListExtension = Node.create({
     };
   },
   addProseMirrorPlugins() {
-    return [...createListPlugins({ schema: this.editor.schema }), listKeymapPlugin, listInputRulePlugin];
+    return [
+      ...createListPlugins({
+        schema: this.editor.schema,
+      }),
+      listKeymapPlugin,
+      listInputRulePlugin,
+    ];
   },
 });
+
+function isBetweenLists($pos: ResolvedPos): boolean {
+  let foundBefore = false;
+  let foundAfter = false;
+
+  // Single loop to check both directions
+  for (let depth = $pos.depth; depth >= 0; depth--) {
+    const node = $pos.node(depth);
+    const index = $pos.index(depth);
+
+    // Check previous sibling if not found yet
+    if (!foundBefore && index > 0) {
+      foundBefore = node.child(index - 1).type.name === "list";
+    }
+
+    // Check next sibling if not found yet
+    if (!foundAfter && index < node.childCount - 1) {
+      foundAfter = node.child(index + 1).type.name === "list";
+    }
+
+    // Early exit if both conditions are met
+    if (foundBefore && foundAfter) {
+      return true;
+    }
+  }
+
+  return false;
+}

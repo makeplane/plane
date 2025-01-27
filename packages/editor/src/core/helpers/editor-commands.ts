@@ -63,53 +63,37 @@ export const toggleItalic = (editor: Editor, range?: Range) => {
 
 export const toggleFlatOrderedList = (editor: Editor, range?: Range) => {
   if (range)
-    editor
-      .chain()
-      .focus()
-      .deleteRange(range)
-      .createList({
-        kind: "ordered",
-      })
-      .run();
+    editor.chain().focus().deleteRange(range).createList({
+      kind: "ordered",
+      collapsed: false,
+    });
   else editor.chain().focus().createList({ kind: "ordered", collapsed: false });
 };
 
 export const toggleFlatBulletList = (editor: Editor, range?: Range) => {
   if (range)
-    editor
-      .chain()
-      .focus()
-      .deleteRange(range)
-      .createList({
-        kind: "bullet",
-      })
-      .run();
+    editor.chain().focus().deleteRange(range).createList({
+      kind: "bullet",
+      collapsed: false,
+    });
   else editor.chain().focus().createList({ kind: "bullet", collapsed: false });
 };
 
 export const toggleFlatTaskList = (editor: Editor, range?: Range) => {
   if (range)
-    editor
-      .chain()
-      .focus()
-      .deleteRange(range)
-      .createList({
-        kind: "task",
-      })
-      .run();
+    editor.chain().focus().deleteRange(range).createList({
+      kind: "task",
+      collapsed: false,
+    });
   else editor.chain().focus().createList({ kind: "task", collapsed: false });
 };
 
 export const toggleFlatToggleList = (editor: Editor, range?: Range) => {
   if (range)
-    editor
-      .chain()
-      .focus()
-      .deleteRange(range)
-      .createList({
-        kind: "toggle",
-      })
-      .run();
+    editor.chain().focus().deleteRange(range).createList({
+      kind: "toggle",
+      collapsed: false,
+    });
   else editor.chain().focus().createList({ kind: "toggle", collapsed: false });
 };
 
