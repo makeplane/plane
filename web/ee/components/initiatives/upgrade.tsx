@@ -28,12 +28,12 @@ export const InitiativesUpgrade: FC<Props> = observer((props) => {
   // store hooks
   const { resolvedTheme } = useTheme();
   const { isWorkspaceFeatureEnabled, updateWorkspaceFeature } = useWorkspaceFeatures();
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
 
   // derived values
   const isInitiativesFeatureFlagEnabled = useFlag(workspaceSlug, "INITIATIVES");
   const isInitiativesFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_INITIATIVES_ENABLED);
-  const isSelfManagedUpgradeDisabled = subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== "FREE";
+  const isPlaneOneInstance = subscriptionDetail?.is_self_managed && subscriptionDetail?.product === "ONE";
 
   // handlers
   const handleEnableInitiatives = async () => {
@@ -62,6 +62,30 @@ export const InitiativesUpgrade: FC<Props> = observer((props) => {
     }
   };
 
+  const getUpgradeButton = () => {
+    if (isInitiativesFeatureFlagEnabled) {
+      return redirect ? (
+        <a href={`/${workspaceSlug}/settings/initiatives/`} className={getButtonStyling("primary", "md")}>
+          Enable
+        </a>
+      ) : (
+        <Button disabled={isLoading} onClick={() => handleEnableInitiatives()}>
+          Enable
+        </Button>
+      );
+    }
+
+    if (isPlaneOneInstance) {
+      return (
+        <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
+          Upgrade to higher subscription
+        </a>
+      );
+    }
+
+    return <Button disabled>Coming Soon</Button>;
+  };
+
   return (
     <div className="pr-10">
       <div
@@ -77,27 +101,7 @@ export const InitiativesUpgrade: FC<Props> = observer((props) => {
               Group projects like you group issues—by state, priority, or any other—and track their progress in one
               click.
             </div>
-            <div className="flex mt-6 gap-4 flex-wrap">
-              {isInitiativesFeatureFlagEnabled ? (
-                redirect ? (
-                  <a href={`/${workspaceSlug}/settings/initiatives/`} className={getButtonStyling("primary", "md")}>
-                    Enable
-                  </a>
-                ) : (
-                  <Button disabled={isLoading} onClick={() => handleEnableInitiatives()}>
-                    Enable
-                  </Button>
-                )
-              ) : isSelfManagedUpgradeDisabled ? (
-                <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
-                  Get Pro
-                </a>
-              ) : (
-                <Button disabled={isLoading} onClick={() => togglePaidPlanModal(true)}>
-                  Upgrade
-                </Button>
-              )}
-            </div>
+            <div className="flex mt-6 gap-4 flex-wrap">{getUpgradeButton()}</div>
           </div>
         </div>
         <Image

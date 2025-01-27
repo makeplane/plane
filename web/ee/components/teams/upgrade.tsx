@@ -20,7 +20,24 @@ export const TeamsUpgrade: FC = observer(() => {
   const { resolvedTheme } = useTheme();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
-  const isSelfManagedUpgradeDisabled = subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== "FREE";
+  const isPlaneOneInstance = subscriptionDetail?.is_self_managed && subscriptionDetail?.product === "ONE";
+
+  const getUpgradeButton = () => {
+    if (isPlaneOneInstance) {
+      return (
+        <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
+          Upgrade to higher subscription
+        </a>
+      );
+    }
+
+    return (
+      <Button variant="primary" onClick={() => togglePaidPlanModal(true)}>
+        <Crown className="h-3.5 w-3.5" />
+        Upgrade
+      </Button>
+    );
+  };
 
   return (
     <div className="pr-10">
@@ -37,17 +54,7 @@ export const TeamsUpgrade: FC = observer(() => {
               Get Teamspaces with a Pro or higher subscription and organize people + their work into a separate space.
             </div>
             <div className="flex mt-6 gap-4 flex-wrap">
-              {isSelfManagedUpgradeDisabled ? (
-                <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
-                  <Crown className="h-3.5 w-3.5" />
-                  Get Pro
-                </a>
-              ) : (
-                <Button variant="primary" onClick={() => togglePaidPlanModal(true)}>
-                  <Crown className="h-3.5 w-3.5" />
-                  Upgrade
-                </Button>
-              )}
+              {getUpgradeButton()}
               <Link
                 target="_blank"
                 href="https://plane.so/contact"
