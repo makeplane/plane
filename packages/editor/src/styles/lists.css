@@ -5,10 +5,10 @@
       position: absolute;
       right: 100%;
       top: 2px;
-      height: 28px;
+      height: 100%;
       width: 28px;
-      display: grid;
-      place-items: center;
+      display: flex;
+      justify-content: center;
 
       label,
       &::before {
