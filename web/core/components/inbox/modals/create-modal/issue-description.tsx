@@ -2,6 +2,8 @@
 
 import { FC, RefObject } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { ETabIndices } from "@plane/constants";
 // editor
 import { EditorRefApi } from "@plane/editor";
 // types
@@ -11,8 +13,6 @@ import { EFileAssetType } from "@plane/types/src/enums";
 import { Loader } from "@plane/ui";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
-// constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";

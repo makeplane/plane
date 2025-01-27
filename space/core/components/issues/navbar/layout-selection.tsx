@@ -5,6 +5,8 @@ import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 // ui
 import { SITES_ISSUE_LAYOUTS } from "@plane/constants";
+// plane i18n
+import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/ui";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
@@ -19,6 +21,8 @@ type Props = {
 
 export const IssuesLayoutSelection: FC<Props> = observer((props) => {
   const { anchor } = props;
+  // hooks
+  const { t } = useTranslation();
   // router
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -45,7 +49,7 @@ export const IssuesLayoutSelection: FC<Props> = observer((props) => {
         if (!layoutOptions[layout.key]) return;
 
         return (
-          <Tooltip key={layout.key} tooltipContent={layout.title}>
+          <Tooltip key={layout.key} tooltipContent={t(layout.titleTranslationKey)}>
             <button
               type="button"
               className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${

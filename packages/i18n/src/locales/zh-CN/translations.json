@@ -154,11 +154,50 @@
   "stay_ahead_of_blockers_description": "发现项目间的挑战，查看其他视图中不明显的周期依赖关系。",
   "analytics": "分析",
   "workspace_invites": "工作区邀请",
-  "workspace_settings": "工作区设置",
+  "workspace_settings": {
+    "label": "工作区设置",
+    "settings": {
+      "general": {
+        "title": "常规"
+      },
+      "members": {
+        "title": "会员"
+      },
+      "billing-and-plans": {
+        "title": "账单与计划"
+      },
+      "exports": {
+        "title": "导出"
+      },
+      "webhooks": {
+        "title": "网络钩子"
+      },
+      "api-tokens": {
+        "title": "API 令牌"
+      }
+    },
+    "empty_state": {
+      "api_tokens": {
+        "title": "尚未创建 API 令牌",
+        "description": "Plane API 可用于将您在 Plane 中的数据与任何外部系统集成。创建令牌即可开始使用。"
+      },
+      "webhooks": {
+        "title": "尚未添加网络钩子",
+        "description": "创建网络钩子以接收实时更新并自动执行操作。"
+      },
+      "exports": {
+        "title": "尚无导出记录",
+        "description": "每次导出时，您都可以在此处找到参考副本。"
+      },
+      "imports": {
+        "title": "尚无导入记录",
+        "description": "在此处查找所有以前的导入记录并下载。"
+      }
+    }
+  },
   "enter_god_mode": "进入上帝模式",
   "workspace_logo": "工作区徽标",
   "new_issue": "新建问题",
-  "home": "首页",
   "your_work": "您的工作",
   "drafts": "草稿",
   "projects": "项目",
@@ -222,7 +261,6 @@
   "join_the_project_to_rearrange": "加入项目以重新排序",
   "drag_to_rearrange": "拖动以重新排序",
   "congrats": "恭喜！",
-  "project": "项目",
   "open_project": "打开项目",
   "issues": "问题",
   "cycles": "周期",
@@ -316,6 +354,529 @@
   "add_parent": "添加父问题",
   "loading_members": "正在加载成员...",
   "inbox": "收件箱",
+  "show_all": "显示全部",
+  "show_less": "显示较少",
+  "no_data_yet": "暂无数据",
+
+  "project_view": {
+    "access": {
+      "public": "公开",
+      "private": "私密"
+    },
+    "sort_by": {
+      "created_at": "创建时间",
+      "updated_at": "更新时间",
+      "name": "名称"
+    }
+  },
+  
+  "toast": {
+    "success": "成功！",
+    "error": "错误！"
+  },
+
+  "home": {
+    "empty": {
+      "create_project": {
+        "title": "创建项目",
+        "description": "在Plane中，大多数事情都从项目开始。",
+        "cta": "开始使用"
+      },
+      "invite_team": {
+        "title": "邀请团队",
+        "description": "与同事一起构建、部署和管理。",
+        "cta": "邀请成员"
+      },
+      "configure_workspace": {
+        "title": "设置工作空间",
+        "description": "开启或关闭功能，或进行更多设置。",
+        "cta": "配置此工作空间"
+      },
+      "personalize_account": {
+        "title": "让Plane更个性化",
+        "description": "选择您的头像、颜色等更多设置。",
+        "cta": "立即个性化"
+      }
+    },
+    "quick_links": {
+      "empty": "保存您想随手可得的工作相关链接。",
+      "add": "添加快捷链接",
+      "title": "快捷链接",
+      "title_plural": "快捷链接",
+      "toasts": {
+        "created": {
+          "title": "链接已创建",
+          "message": "链接已成功创建"
+        },
+        "not_created": {
+          "title": "链接未创建",
+          "message": "无法创建链接"
+        },
+        "updated": {
+          "title": "链接已更新",
+          "message": "链接已成功更新"
+        },
+        "not_updated": {
+          "title": "链接未更新",
+          "message": "无法更新链接"
+        },
+        "removed": {
+          "title": "链接已删除",
+          "message": "链接已成功删除"
+        },
+        "not_removed": {
+          "title": "链接未删除",
+          "message": "无法删除链接"
+        }
+      }
+    },
+    "recents": {
+      "title": "最近",
+      "empty": {
+        "project": "访问项目后，您的最近项目将显示在这里。",
+        "page": "访问页面后，您的最近页面将显示在这里。",
+        "issue": "访问问题后，您的最近问题将显示在这里。",
+        "default": "您还没有任何最近项目。"
+      },
+      "filters": {
+        "all": "所有项目",
+        "projects": "项目",
+        "pages": "页面",
+        "issues": "问题"
+      }
+    },
+    "my_stickies": {
+      "title": "您的便签"
+    },
+    "new_at_plane": {
+      "title": "Plane 新功能"
+    },
+    "quick_tutorial": {
+      "title": "快速教程"
+    },
+    "widget": {
+      "reordered_successfully": "小部件重新排序成功。",
+      "reordering_failed": "重新排序小部件时发生错误。"
+    },
+    "manage_widgets": "管理小部件",
+    "title": "首页",
+    "star_us_on_github": "在 GitHub 上为我们加星"
+  },
+
+  "link": {
+    "modal": {
+      "url": {
+        "text": "网址",
+        "required": "网址无效",
+        "placeholder": "输入或粘贴网址"
+      },
+      "title": {
+        "text": "显示标题",
+        "placeholder": "您希望将此链接显示为什么"
+      }
+    }
+  },
+  "common": {
+    "all": "全部",
+    "states": "状态",
+    "state": "状态",
+    "state_groups": "状态组",
+    "priority": "优先级",
+    "team_project": "团队项目",
+    "project": "项目",
+    "cycle": "周期",
+    "cycles": "周期",
+    "module": "模块",
+    "modules": "模块",
+    "labels": "标签",
+    "assignees": "分配人",
+    "assignee": "分配人",
+    "created_by": "创建者",
+    "none": "无",
+    "link": "链接",
+    "estimate": "估算",
+    "layout": "布局",
+    "filters": "筛选",
+    "display": "显示",
+    "load_more": "加载更多",
+    "no_matches_found": "未找到匹配项",
+    "activity": "活动",
+    "analytics": "分析",
+    "success": "成功",
+    "error": "错误",
+    "group_by": "分组方式",
+    "search": "搜索",
+    "epic": "史诗",
+    "issue": "问题",
+    "warning": "警告",
+    "updating": "更新中",
+    "update": "更新",
+    "creating": "创建中",
+    "cancel": "取消",
+    "description": "描述",
+    "title": "标题",
+    "order_by": {
+      "label": "排序方式",
+      "manual": "手动",
+      "last_created": "最近创建",
+      "last_updated": "最近更新",
+      "start_date": "开始日期",
+      "due_date": "截止日期",
+      "asc": "升序",
+      "desc": "降序"
+    },
+    "sort": {
+      "asc": "升序",
+      "desc": "降序"
+    },
+    "comments": "评论",
+    "updates": "更新"
+  },
+  "form": {
+    "title": {
+      "required": "标题为必填项",
+      "max_length": "标题不能超过{length}个字符"
+    }
+  },
+  "entity": {
+    "grouping_title": "{entity}分组",
+    "priority": "{entity}",
+    "all": "所有{entity}",
+    "drop_here_to_move": "拖放至此以移动{entity}"
+  },
+  "epic": {
+    "all": "所有史诗",
+    "label": "{count, plural, one {史诗} other {史诗}}"
+  },
+  "issue": {
+    "label": "{count, plural, one {问题} other {问题}}",
+    "all": "所有问题",
+    "add": "添加问题",
+    "priority": {
+      "urgent": "紧急",
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "display": {
+      "properties": {
+        "label": "显示属性",
+        "id": "ID",
+        "issue_type": "问题类型",
+        "sub_issue_count": "子问题数量",
+        "attachment_count": "附件数量"
+      },
+      "extra": {
+        "show_sub_issues": "显示子问题",
+        "show_empty_groups": "显示空分组"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "当前排序方式",
+      "list": "列表",
+      "kanban": "看板",
+      "calendar": "日历",
+      "spreadsheet": "表格",
+      "gantt": "时间线",
+      "title": {
+        "list": "列表视图",
+        "kanban": "看板视图",
+        "calendar": "日历视图",
+        "spreadsheet": "表格视图",
+        "gantt": "时间线视图"
+      }
+    },
+    "states": {
+      "active": "进行中",
+      "backlog": "待办"
+    },
+    "comments": {
+      "create": {
+        "success": "评论创建成功",
+        "error": "评论创建失败，请稍后重试"
+      },
+      "update": {
+        "success": "评论更新成功",
+        "error": "评论更新失败，请稍后重试"
+      },
+      "remove": {
+        "success": "评论删除成功",
+        "error": "评论删除失败，请稍后重试"
+      },
+      "upload": {
+        "error": "资源上传失败，请稍后重试"
+      }
+    }
+  },
+
+  "project": {
+    "label": "{count, plural, one {项目} other {项目}}"
+  },
+
+  "view": {
+    "create": {
+      "label": "创建视图"
+    },
+    "update": {
+      "label": "更新视图"
+    }
+  },
+
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "待处理",
+        "description": "待处理"
+      },
+      "declined": {
+        "title": "已拒绝",
+        "description": "已拒绝"
+      },
+      "snoozed": {
+        "title": "已暂停",
+        "description": "还剩{days}天"
+      },
+      "accepted": {
+        "title": "已接受",
+        "description": "已接受"
+      },
+      "duplicate": {
+        "title": "重复",
+        "description": "重复"
+      }
+    },
+    "source": {
+      "in-app": "应用内"
+    },
+    "order_by": {
+      "created_at": "创建时间",
+      "updated_at": "更新时间",
+      "id": "编号"
+    }
+  },
+
+  "user_profile": {
+    "title": "你的工作",
+    "work": "工作",
+    "details": {
+      "joined_on": "加入时间",
+      "time_zone": "时区"
+    },
+    "stats": {
+      "workload": "工作量",
+      "overview": "概述",
+      "created": "已创建问题",
+      "assigned": "已分配问题",
+      "subscribed": "已订阅问题",
+      "state_distribution": {
+        "title": "按状态显示的问题",
+        "empty": "创建问题以在图表中按状态查看它们，以便更好地分析。"
+      },
+      "priority_distribution": {
+        "title": "按优先级显示的问题",
+        "empty": "创建问题以在图表中按优先级查看它们，以便更好地分析。"
+      },
+      "recent_activity": {
+        "title": "最近活动",
+        "empty": "我们找不到数据。请查看您的输入"
+      }
+    },
+    "actions": {
+      "profile": "个人资料",
+      "security": "安全",
+      "activity": "活动",
+      "appearance": "外观",
+      "notifications": "通知"
+    },
+    "tabs": {
+      "summary": "摘要",
+      "assigned": "已分配",
+      "created": "已创建",
+      "subscribed": "已订阅",
+      "activity": "活动"
+    }
+  },
+
+  "role_details": {
+    "guest": {
+      "title": "访客",
+      "description": "组织的外部成员可以被邀请为访客。"
+    },
+    "member": {
+      "title": "成员",
+      "description": "可以在项目、周期和模块内读取、写入、编辑和删除实体"
+    },
+    "admin": {
+      "title": "管理员",
+      "description": "工作区内的所有权限都设置为允许。"
+    }
+  },
+
+  "user_roles": {
+    "product_or_project_manager": "产品/项目经理",
+    "development_or_engineering": "开发/工程",
+    "founder_or_executive": "创始人/高管",
+    "freelancer_or_consultant": "自由职业者/顾问",
+    "marketing_or_growth": "市场营销/增长",
+    "sales_or_business_development": "销售/业务发展",
+    "support_or_operations": "支持/运营",
+    "student_or_professor": "学生/教授",
+    "human_or_resources": "人力资源",
+    "other": "其他"
+  },
+
+  "importer": {
+    "github": {
+      "title": "Github",
+      "description": "从 GitHub 仓库导入问题并同步。"
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "从 Jira 项目导入问题和史诗。"
+    }
+  },
+
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "将问题导出为 CSV 文件。"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "将问题导出为 Excel 文件。"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "将问题导出为 JSON 文件。"
+    }
+  },
+
+  "default_global_view": {
+    "all_issues": "所有问题",
+    "assigned": "已分配",
+    "created": "已创建",
+    "subscribed": "已订阅"
+  },
+
+  "stickies": {
+    "title": "便签",
+    "placeholder": "点击此处输入",
+    "all": "所有便签",
+    "no-data": "记下想法，捕捉灵感，或记录突发奇想。添加便签即可开始。",
+    "add": "添加便签",
+    "search_placeholder": "按标题搜索",
+    "delete": "删除便签",
+    "delete_confirmation": "确定要删除这个便签吗？",
+    "empty_state": {
+      "simple": "记下想法，捕捉灵感，或记录突发奇想。添加便签即可开始。",
+      "general": {
+        "title": "便签是您随手记下的快速笔记和待办事项。",
+        "description": "通过创建便签轻松捕捉您的想法和创意，随时随地都可以访问。",
+        "primary_button": {
+          "text": "添加便签"
+        }
+      },
+      "search": {
+        "title": "没有找到匹配的便签。",
+        "description": "尝试使用不同的搜索词，或如果您确定搜索正确，\n请告诉我们。",
+        "primary_button": {
+          "text": "添加便签"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "便签名称不能超过100个字符。",
+        "already_exists": "已存在一个没有描述的便签"
+      },
+      "created": {
+        "title": "便签已创建",
+        "message": "便签已成功创建"
+      },
+      "not_created": {
+        "title": "便签未创建",
+        "message": "无法创建便签"
+      },
+      "updated": {
+        "title": "便签已更新",
+        "message": "便签已成功更新"
+      },
+      "not_updated": {
+        "title": "便签未更新",
+        "message": "无法更新便签"
+      },
+      "removed": {
+        "title": "便签已删除",
+        "message": "便签已成功删除"
+      },
+      "not_removed": {
+        "title": "便签未删除",
+        "message": "无法删除便签"
+      }
+    }
+  },
+  "workspace_projects": {
+    "network": {
+      "private": {
+        "title": "私有",
+        "description": "仅限邀请访问"
+      },
+      "public": {
+        "title": "公开",
+        "description": "除访客外的工作区所有成员都可加入"
+      }
+    },
+    "error": {
+      "permission": "您没有执行此操作的权限。",
+      "cycle_delete": "删除周期失败",
+      "module_delete": "删除模块失败",
+      "issue_delete": "删除问题失败"
+    },
+    "state": {
+      "backlog": "待办",
+      "unstarted": "未开始",
+      "started": "进行中",
+      "completed": "已完成",
+      "cancelled": "已取消"
+    },
+    "sort": {
+      "manual": "手动",
+      "name": "名称",
+      "created_at": "创建日期",
+      "members_length": "成员数量"
+    },
+    "scope": {
+      "my_projects": "我的项目",
+      "archived_projects": "已归档"
+    },
+    "common": {
+      "months_count": "{months, plural, one{#个月} other{#个月}}"
+    }
+  },
+
+  "project_modules": {
+    "status": {
+      "backlog": "待办",
+      "planned": "已规划",
+      "in_progress": "进行中",
+      "paused": "已暂停",
+      "completed": "已完成",
+      "cancelled": "已取消"
+    },
+    "layout": {
+      "list": "列表视图",
+      "board": "画廊视图",
+      "timeline": "时间轴视图"
+    },
+    "order_by": {
+      "name": "名称",
+      "progress": "进度",
+      "issues": "问题数量",
+      "due_date": "截止日期",
+      "created_at": "创建日期",
+      "manual": "手动"
+    }
+  },
   "project_cycles": {
     "status": {
       "days_left": "剩余天数",

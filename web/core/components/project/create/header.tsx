@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { X } from "lucide-react";
+// plane imports
+import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane types
 import { IProject } from "@plane/types";
@@ -8,8 +10,6 @@ import { IProject } from "@plane/types";
 import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo } from "@plane/ui";
 // components
 import { ImagePickerPopover } from "@/components/core";
-// constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getFileURL } from "@/helpers/file.helper";

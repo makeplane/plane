@@ -43,8 +43,6 @@ const GeneralSettingsPage = observer(() => {
   );
 
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - General Settings` : undefined;
-  // const currentNetwork = NETWORK_CHOICES.find((n) => n.key === projectDetails?.network);
-  // const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
 
   return (
     <>

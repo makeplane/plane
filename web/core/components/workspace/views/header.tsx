@@ -3,6 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { Plus } from "lucide-react";
+// plane imports
+import { DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
 // types
 import { TStaticViewTypes } from "@plane/types";
 // components
@@ -14,7 +16,6 @@ import {
 } from "@/components/workspace";
 // constants
 import { GLOBAL_VIEW_OPENED } from "@/constants/event-tracker";
-import { DEFAULT_GLOBAL_VIEWS_LIST } from "@/constants/workspace";
 // store hooks
 import { useEventTracker, useGlobalView, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
@@ -48,7 +49,7 @@ const ViewTab = observer((props: { viewId: string }) => {
 const DefaultViewTab = (props: {
   tab: {
     key: TStaticViewTypes;
-    label: string;
+    i18n_label: string;
   };
 }) => {
   const { tab } = props;

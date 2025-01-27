@@ -1,16 +1,17 @@
 import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { ICycle, TCycleEstimateType } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
-import { EmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
-import { useCycle, useProjectEstimates } from "@/hooks/store";
+import { useCycle } from "@/hooks/store";
 // plane web constants
-import { EEstimateSystem } from "@/plane-web/constants/estimates";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { EstimateTypeDropdown } from "../dropdowns/estimate-type-dropdown";
 
 export type ActiveCycleProductivityProps = {
@@ -21,11 +22,13 @@ export type ActiveCycleProductivityProps = {
 
 export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // hooks
   const { getEstimateTypeByCycleId, setEstimateType } = useCycle();
-
   // derived values
   const estimateType: TCycleEstimateType = (cycle && getEstimateTypeByCycleId(cycle.id)) || "issues";
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/chart" });
 
   const onChange = async (value: TCycleEstimateType) => {
     if (!workspaceSlug || !projectId || !cycle || !cycle.id) return;
@@ -95,7 +98,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
         ) : (
           <>
             <div className="flex items-center justify-center h-full w-full">
-              <EmptyState type={EmptyStateType.ACTIVE_CYCLE_CHART_EMPTY_STATE} layout="screen-simple" size="sm" />
+              <SimpleEmptyState title={t("active_cycle.empty_state.chart.title")} assetPath={resolvedPath} />
             </div>
           </>
         )}

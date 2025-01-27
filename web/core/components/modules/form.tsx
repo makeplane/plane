@@ -2,14 +2,14 @@
 
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
+// plane imports
+import { ETabIndices } from "@plane/constants";
 import { IModule } from "@plane/types";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
 // components
 import { DateRangeDropdown, ProjectDropdown, MemberDropdown } from "@/components/dropdowns";
 import { ModuleStatusSelect } from "@/components/modules";
-// constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";

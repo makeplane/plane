@@ -22,6 +22,7 @@ import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 // types
 import { TRenderQuickActions } from "./list-view-types";
 
@@ -276,6 +277,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
         <div className="flex flex-shrink-0 items-center gap-2">
           {!issue?.tempId ? (
             <>
+              {isEpic && <IssueStats issueId={issue.id} />}
               <IssueProperties
                 className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-grow md:flex-shrink-0" : "lg:flex-grow lg:flex-shrink-0"} items-center gap-2 whitespace-nowrap`}
                 issue={issue}

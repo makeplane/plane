@@ -1,10 +1,10 @@
 import { X } from "lucide-react";
+import { EViewAccess } from "@plane/constants";
 import { TViewFilterProps } from "@plane/types";
 // components
 import { Tag } from "@plane/ui";
 import { AppliedDateFilters, AppliedMembersFilters } from "@/components/common/applied-filters";
 // constants
-import { EViewAccess } from "@/constants/views";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 import { AppliedAccessFilters } from "./access";

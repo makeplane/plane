@@ -18,6 +18,7 @@
   "add_members": "メンバーを追加",
   "remove_members": "メンバーを削除",
   "add": "追加",
+  "adding": "追加中",
   "remove": "削除",
   "add_new": "新規追加",
   "remove_selected": "選択項目を削除",
@@ -38,7 +39,6 @@
   "deactivate_account_description": "アカウントを無効化すると、そのアカウント内のすべてのデータとリソースが完全に削除され、復元することはできません。",
   "profile_settings": "プロフィール設定",
   "your_account": "アカウント",
-  "profile": "プロフィール",
   "security": "セキュリティ",
   "activity": "アクティビティ",
   "appearance": "アピアンス",
@@ -154,11 +154,9 @@
   "stay_ahead_of_blockers_description": "プロジェクト間の課題を見つけ、他のビューからは明らかでないサイクル間の依存関係を確認します。",
   "analytics": "分析",
   "workspace_invites": "ワークスペースの招待",
-  "workspace_settings": "ワークスペース設定",
   "enter_god_mode": "ゴッドモードに入る",
   "workspace_logo": "ワークスペースロゴ",
   "new_issue": "新しい問題",
-  "home": "ホーム",
   "your_work": "あなたの作業",
   "drafts": "下書き",
   "projects": "プロジェクト",
@@ -222,7 +220,6 @@
   "join_the_project_to_rearrange": "プロジェクトに参加して並べ替え",
   "drag_to_rearrange": "ドラッグして並べ替え",
   "congrats": "おめでとうございます！",
-  "project": "プロジェクト",
   "open_project": "プロジェクトを開く",
   "issues": "問題",
   "cycles": "サイクル",
@@ -316,7 +313,574 @@
   "remove_parent_issue": "親問題を削除",
   "add_parent": "親問題を追加",
   "loading_members": "メンバーを読み込んでいます...",
-  "inbox": "受信箱",
+  "view_link_copied_to_clipboard": "表示リンクがクリップボードにコピーされました。",
+  "required": "必須",
+  "optional": "任意",
+  "Cancel": "キャンセル",
+  "edit": "編集",
+  "open_in_new_tab": "新しいタブで開く",
+  "delete": "削除",
+  "good": "お",
+  "morning": "はよう",
+  "afternoon": "昼",
+  "evening": "晩は",
+  "show_all": "すべて表示",
+  "show_less": "表示を減らす",
+  "no_data_yet": "まだデータがありません",
+  "connections": "接続",
+
+  "project_view": {
+    "access": {
+      "public": "公開",
+      "private": "非公開"
+    },
+    "sort_by": {
+      "created_at": "作成日時",
+      "updated_at": "更新日時",
+      "name": "名前"
+    }
+  },
+  
+  "toast": {
+    "success": "成功！",
+    "error": "エラー！"
+  },
+
+  "home": {
+    "empty": {
+      "create_project": {
+        "title": "プロジェクトを作成",
+        "description": "Planeでは、ほとんどのことがプロジェクトから始まります。",
+        "cta": "始める"
+      },
+      "invite_team": {
+        "title": "チームを招待",
+        "description": "同僚と共に構築、展開、管理しましょう。",
+        "cta": "招待する"
+      },
+      "configure_workspace": {
+        "title": "ワークスペースを設定",
+        "description": "機能のオン/オフを切り替えたり、さらに詳細な設定が可能です。",
+        "cta": "このワークスペースを設定"
+      },
+      "personalize_account": {
+        "title": "Planeをあなた専用に",
+        "description": "写真、カラー、その他の設定を選択できます。",
+        "cta": "今すぐカスタマイズ"
+      },
+      "widgets": {
+        "title": "ウィジェットがないと静かですね、オンにしましょう",
+        "description": "すべてのウィジェットがオフになっているようです。 今すぐ有効にして、体験を向上させましょう！",
+        "primary_button": {
+          "text": "ウィジェットを管理"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "すぐに使いたい作業用リンクを保存します。",
+      "add": "クイックリンクを追加",
+      "title": "クイックリンク",
+      "title_plural": "クイックリンク",
+      "toasts": {
+        "created": {
+          "title": "リンクが作成されました",
+          "message": "リンクの作成に成功しました"
+        },
+        "not_created": {
+          "title": "リンクが作成されませんでした",
+          "message": "リンクを作成できませんでした"
+        },
+        "updated": {
+          "title": "リンクが更新されました",
+          "message": "リンクの更新に成功しました"
+        },
+        "not_updated": {
+          "title": "リンクが更新されませんでした",
+          "message": "リンクを更新できませんでした"
+        },
+        "removed": {
+          "title": "リンクが削除されました",
+          "message": "リンクの削除に成功しました"
+        },
+        "not_removed": {
+          "title": "リンクが削除されませんでした",
+          "message": "リンクを削除できませんでした"
+        }
+      }
+    },
+    "recents": {
+      "title": "最近",
+      "empty": {
+          "project": "プロジェクトを訪問すると、最近のプロジェクトがここに表示されます。",
+          "page": "ページを訪問すると、最近のページがここに表示されます。",
+          "issue": "課題を訪問すると、最近の課題がここに表示されます。",
+          "default": "最近のアイテムはまだありません。" 
+      },
+      "filters": {
+        "all": "すべてのアイテム",
+        "projects": "プロジェクト",
+        "pages": "ページ",
+        "issues": "課題"
+      }
+    },
+    "my_stickies": {
+      "title": "付箋"
+    },
+    "new_at_plane": {
+      "title": "Planeの新機能"
+    },
+    "quick_tutorial": {
+      "title": "クイックチュートリアル"
+    },
+    "widget": {
+      "reordered_successfully": "ウィジェットの並び替えに成功しました。",
+      "reordering_failed": "ウィジェットの並び替え中にエラーが発生しました。"
+    },
+    "manage_widgets": "ウィジェットの管理",
+    "title": "ホーム",
+    "star_us_on_github": "GitHubでスターをつける"
+  },
+  "link": {
+    "modal": {
+      "url": {
+        "text": "URL",
+        "required": "URLが無効です",
+        "placeholder": "URLを入力または貼り付け"
+      },
+      "title": {
+        "text": "表示タイトル",
+        "placeholder": "このリンクをどのように表示したいか"
+      }
+    }
+  },
+  
+  "common": {
+    "all": "すべて",
+    "states": "ステータス",
+    "state": "ステータス",
+    "state_groups": "ステータスグループ",
+    "priority": "優先度",
+    "team_project": "チームプロジェクト",
+    "project": "プロジェクト",
+    "cycle": "サイクル",
+    "cycles": "サイクル",
+    "module": "モジュール",
+    "modules": "モジュール",
+    "labels": "ラベル",
+    "assignees": "アサイン者",
+    "assignee": "アサイン者",
+    "created_by": "作成者",
+    "none": "なし",
+    "link": "リンク",
+    "estimate": "見積もり",
+    "layout": "レイアウト",
+    "filters": "フィルター",
+    "display": "表示",
+    "load_more": "もっと見る",
+    "no_matches_found": "一致する結果はありません",
+    "activity": "アクティビティ",
+    "analytics": "分析",
+    "success": "成功",
+    "error": "エラー",
+    "group_by": "グループ化",
+    "search": "検索",
+    "epic": "エピック",
+    "issue": "問題",
+    "warning": "警告",
+    "updating": "更新中",
+    "update": "更新",
+    "creating": "作成中",
+    "cancel": "キャンセル",
+    "description": "説明",
+    "title": "タイトル",
+    "order_by": {
+      "label": "オーダー",
+      "manual": "手動",
+      "last_created": "最後に作成",
+      "last_updated": "最後に更新",
+      "start_date": "開始日",
+      "due_date": "期限日",
+      "asc": "昇順",
+      "desc": "降順"
+    },
+    "sort": {
+      "asc": "昇順",
+      "desc": "降順"
+    },
+    "comments": "コメント",
+    "updates": "更新"
+  },
+
+  "form": {
+    "title": {
+      "required": "タイトルは必須です",
+      "max_length": "タイトルは{length}文字未満である必要があります"
+    }
+  },
+
+  "entity": {
+    "grouping_title": "{entity}グループ化",
+    "priority": "",
+    "all": "すべての{entity}",
+    "drop_here_to_move": "ここにドロップして{entity}を移動"
+  },
+
+  "epic": {
+    "all": "すべてのエピック",
+    "label": "{count, plural, one {エピック} other {エピック}}"
+  },
+
+  "issue": {
+    "label": "{count, plural, one {問題} other {問題}}",
+    "all": "すべての問題",
+    "add": "問題を追加",
+    "priority": {
+      "urgent": "緊急",
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "display": {
+      "properties": {
+        "label": "表示プロパティ",
+        "id": "ID",
+        "issue_type": "課題タイプ",
+        "sub_issue_count": "サブ課題数",
+        "attachment_count": "添付ファイル数"
+      },
+      "extra": {
+        "show_sub_issues": "サブ課題を表示",
+        "show_empty_groups": "空のグループを表示"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "このレイアウトは",
+      "list": "リスト",
+      "kanban": "ボード",
+      "calendar": "カレンダー",
+      "spreadsheet": "表",
+      "gantt": "ガントチャート",
+      "title": {
+        "list": "リストレイアウト",
+        "kanban": "ボードレイアウト",
+        "calendar": "カレンダーレイアウト",
+        "spreadsheet": "テーブルレイアウト",
+        "gantt": "タイムラインレイアウト"
+      }
+    },
+    "states": {
+      "active": "アクティブ",
+      "backlog": "バックログ"
+    },
+    "comments": {
+      "create": {
+        "success": "コメントが正常に作成されました。",
+        "error": "コメントの作成に失敗しました。後で再試行してください。"
+      },
+      "update": {
+        "success": "コメントが正常に更新されました。",
+        "error": "コメントの更新に失敗しました。後で再試行してください。"
+      },
+      "remove": {
+        "success": "コメントが正常に削除されました。",
+        "error": "コメントの削除に失敗しました。後で再試行してください。"
+      },
+      "upload": {
+        "error": "コメントのアセットのアップロードに失敗しました。後で再試行してください。"
+      }
+    }
+  },
+
+  "project": {
+    "label": "{count, plural, one {プロジェクト} other {プロジェクト}}"
+  },
+
+  "view": {
+    "create": {
+      "label": "ビューを作成"
+    },
+    "update": {
+      "label": "ビューを更新"
+    }
+  },
+
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "保留中",
+        "description": "保留中"
+      },
+      "declined": {
+        "title": "却下",
+        "description": "却下"
+      },
+      "snoozed": {
+        "title": "スヌーズ中",
+        "description": "残り{days}日"
+      },
+      "accepted": {
+        "title": "承認済み",
+        "description": "承認済み"
+      },
+      "duplicate": {
+        "title": "重複",
+        "description": "重複"
+      }
+    },
+    "source": {
+      "in-app": "アプリ内"
+    },
+    "order_by": {
+      "created_at": "作成日時",
+      "updated_at": "更新日時",
+      "id": "識別番号"
+    }
+  },
+
+  "workspace_dashboard": {
+    "empty_state": {
+      "general": {
+        "title": "プロジェクト、アクティビティ、指標の概要",
+        "description": "Planeへようこそ！私たちはあなたを迎えることができて嬉しいです。最初のプロジェクトを作成してタスクを追跡し、このページが進捗を助けるスペースに変わります。管理者は、チームを前進させるための要素も見ることができます。",
+        "primary_button": {
+          "text": "最初のプロジェクトを作成",
+          "comic": {
+            "title": "すべてはPlaneでのプロジェクトから始まります",
+            "description": "プロジェクトは製品ロードマップ、マーケティングキャンペーン、新車の発売など、さまざまなものになります。"
+          }
+        }
+      }
+    }
+  },
+
+  "workspace_analytics": {
+    "empty_state": {
+      "general": {
+        "title": "進捗、作業負荷、割り当てを追跡します。傾向を見つけ、障害を取り除き、作業を加速させます",
+        "description": "需要に対するスコープ、見積もり、目標の進展を視覚化します。メンバーやチームごとのパフォーマンスを確認し、プロジェクトが期限内に進むことを確認します。",
+        "primary_button": {
+          "text": "最初のプロジェクトを開始",
+          "comic": {
+            "title": "分析はサイクル＋モジュールでより効果的に機能します",
+            "description": "まず、タスクをサイクルにフレーム化し、可能であれば複数のサイクルにまたがるタスクをモジュールにグループ化します。左側のナビゲーションで確認してください。"
+          }
+        }
+      }
+    }
+  },
+
+  "workspace_projects": {
+    "network": {
+      "private": {
+        "title": "プライベート",
+        "description": "招待のみでアクセス可能"
+      },
+      "public": {
+        "title": "パブリック",
+        "description": "ゲスト以外のワークスペースのメンバーが参加可能"
+      }
+    },
+    "error": {
+      "permission": "この操作を実行する権限がありません。",
+      "cycle_delete": "サイクルの削除に失敗しました",
+      "module_delete": "モジュールの削除に失敗しました",
+      "issue_delete": "課題の削除に失敗しました"
+    },
+    "state": {
+      "backlog": "バックログ",
+      "unstarted": "未着手",
+      "started": "開始済み",
+      "completed": "完了",
+      "cancelled": "キャンセル"
+    },
+    "sort": {
+      "manual": "手動",
+      "name": "名前",
+      "created_at": "作成日",
+      "members_length": "メンバー数"
+    },
+    "scope": {
+      "my_projects": "自分のプロジェクト",
+      "archived_projects": "アーカイブ済み"
+    },
+    "common": {
+      "months_count": "{months, plural, other{#ヶ月}}"
+    },
+    "empty_state": {
+      "general": {
+        "title": "アクティブなプロジェクトがありません",
+        "description": "各プロジェクトは目標志向の作業の親と見なされます。プロジェクトはタスク、サイクル、モジュールが存在する場所であり、同僚とともに目標を達成するのに役立ちます。新しいプロジェクトを作成するか、アーカイブされたプロジェクトをフィルタリングしてください。",
+        "primary_button": {
+          "text": "最初のプロジェクトを開始",
+          "comic": {
+            "title": "すべてはPlaneでのプロジェクトから始まります",
+            "description": "プロジェクトは製品ロードマップ、マーケティングキャンペーン、新車の発売など、さまざまなものになります。"
+          }
+        }
+      },
+      "no_projects": {
+        "title": "プロジェクトがありません",
+        "description": "タスクを作成したり作業を管理するには、プロジェクトを作成するか、その一部である必要があります。",
+        "primary_button": {
+          "text": "最初のプロジェクトを開始",
+          "comic": {
+            "title": "すべてはPlaneでのプロジェクトから始まります",
+            "description": "プロジェクトは製品ロードマップ、マーケティングキャンペーン、新車の発売など、さまざまなものになります。"
+          }
+        }
+      },
+      "filter": {
+        "title": "一致するプロジェクトがありません",
+        "description": "一致する条件のプロジェクトが見つかりませんでした。\n 代わりに新しいプロジェクトを作成してください。"
+      }
+    }
+  },
+
+  "workspace_issues": {
+    "empty_state": {
+      "all-issues": {
+        "title": "プロジェクトにタスクがありません",
+        "description": "最初のプロジェクトが完了しました！次に、追跡可能なチャンクに分割してタスクを作成します。始めましょう！",
+        "primary_button": {
+          "text": "新しいタスクを作成"
+        }
+      },
+      "assigned": {
+        "title": "割り当てられたタスクがありません",
+        "description": "割り当てられたタスクをここで追跡できます。",
+        "primary_button": {
+          "text": "新しいタスクを作成"
+        }
+      },
+      "created": {
+        "title": "作成されたタスクがありません",
+        "description": "作成したすべてのタスクはここにあります。直接ここで追跡してください。",
+        "primary_button": {
+          "text": "新しいタスクを作成"
+        }
+      },
+      "subscribed": {
+        "title": "フォローしているタスクがありません",
+        "description": "興味のあるタスクをフォローして、すべてここで追跡してください。"
+      },
+      "custom-view": {
+        "title": "タスクが見つかりません",
+        "description": "フィルタに一致するタスクがここに表示されます。すべてここで追跡してください。"
+      }
+    }
+  },
+
+  "workspace_settings": {
+    "label": "ワークスペース設定",
+    "settings": {
+      "general": {
+        "title": "一般"
+      },
+      "members": {
+        "title": "メンバー"
+      },
+      "billing-and-plans": {
+        "title": "請求とプラン"
+      },
+      "exports": {
+        "title": "エクスポート"
+      },
+      "webhooks": {
+        "title": "Webhooks"
+      },
+      "api-tokens": {
+        "title": "APIトークン"
+      }
+    },
+    "empty_state": {
+      "api_tokens": {
+        "title": "APIトークンが作成されていません",
+        "description": "Plane APIは、外部システムでPlaneデータを統合するために使用できます。トークンを作成して始めましょう。"
+      },
+      "webhooks": {
+        "title": "Webhookが追加されていません",
+        "description": "リアルタイム更新を受け取り、アクションを自動化するためにWebhookを作成します。"
+      },
+      "exports": {
+        "title": "エクスポートはまだありません",
+        "description": "エクスポートするたびに、コピーがここにも参照用として利用可能になります。"
+      },
+      "imports": {
+        "title": "インポートはまだありません",
+        "description": "過去のインポート履歴をすべてここで確認し、ダウンロードできます。"
+      }
+    }
+  },
+
+  "profile": {
+    "label": "プロフィール",
+    "page_label": "あなたの作業",
+    "work": "作業",
+    "details": {
+      "joined_on": "参加日",
+      "time_zone": "タイムゾーン"
+    },
+    "stats": {
+      "workload": "作業負荷",
+      "overview": "概要",
+      "created": "作成した課題",
+      "assigned": "割り当てられた課題",
+      "subscribed": "購読中の課題",
+      "state_distribution": {
+        "title": "状態別の課題",
+        "empty": "より良い分析のために、グラフで状態別に表示する課題を作成してください。"
+      },
+      "priority_distribution": {
+        "title": "優先度別の課題",
+        "empty": "より良い分析のために、グラフで優先度別に表示する課題を作成してください。"
+      },
+      "recent_activity": {
+        "title": "最近の活動",
+        "empty": "データが見つかりませんでした。入力内容を確認してください"
+      }
+    },
+    "actions": {
+      "profile": "プロフィール",
+      "security": "セキュリティ",
+      "activity": "アクティビティ",
+      "appearance": "外観",
+      "notifications": "通知"
+    },
+    "tabs": {
+      "summary": "サマリー",
+      "assigned": "割り当て済み",
+      "created": "作成済み",
+      "subscribed": "購読中",
+      "activity": "アクティビティ"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "まだアクティビティがありません",
+        "description": "新しいタスクを作成することから始めましょう！詳細やプロパティを追加してください。Planeをさらに探索して、アクティビティを確認してください。"
+      },
+      "assigned": {
+        "title": "割り当てられたタスクがありません",
+        "description": "割り当てられたタスクをここで追跡できます。"
+      },
+      "created": {
+        "title": "作成されたタスクがありません",
+        "description": "作成したすべてのタスクはここにあります。直接ここで追跡してください。"
+      },
+      "subscribed": {
+        "title": "フォローしているタスクがありません",
+        "description": "興味のあるタスクをフォローして、すべてここで追跡してください。"
+      }
+    }
+  },
+
+  "project_settings": {
+    "empty_state": {
+      "labels": {
+        "title": "ラベルがありません",
+        "description": "ラベルを作成して、プロジェクトのタスクを整理し、フィルタリングします。"
+      }
+    }
+  },
 
   "project_cycles": {
     "status": {
@@ -325,6 +889,430 @@
       "yet_to_start": "未着手",
       "in_progress": "進行中",
       "draft": "下書き"
+    },
+    "empty_state": {
+      "general": {
+        "title": "作業をサイクルにまとめ、フレーム化します。",
+        "description": "作業を定義された期間に分割し、期限から逆算して締め切りを設定し、チームで具体的な進捗を達成します。",
+        "primary_button": {
+          "text": "最初のサイクルを設定",
+          "comic": {
+            "title": "サイクルは繰り返し期間です。",
+            "description": "スプリント、イテレーション、または週次・隔週の作業追跡に使用するその他の用語がサイクルです。"
+          }
+        }
+      },
+      "no_issues": {
+        "title": "サイクルに追加されたタスクがありません",
+        "description": "このサイクル内でタイムフレーム化し、配信したいタスクを追加または作成してください。",
+        "primary_button": {
+          "text": "新しいタスクを作成"
+        },
+        "secondary_button": {
+          "text": "既存のタスクを追加"
+        }
+      },
+      "completed_no_issues": {
+        "title": "サイクルに課題がありません",
+        "description": "サイクルに課題がありません。課題は転送されるか非表示になっています。非表示の課題がある場合は、表示プロパティを更新して確認してください。"
+      },
+      "active": {
+        "title": "アクティブなサイクルがありません",
+        "description": "アクティブなサイクルは、今日の日付を含む範囲がある期間を指します。ここでアクティブなサイクルの進捗と詳細を確認してください。"
+      },
+      "archived": {
+        "title": "まだアーカイブされたサイクルはありません",
+        "description": "プロジェクトを整理するには、完了したサイクルをアーカイブしてください。アーカイブされたサイクルはここで見つけることができます。"
+      }
+    }
+  },
+
+  "project_issues": {
+    "empty_state": {
+      "no_issues": {
+        "title": "課題を作成し、誰かに、または自分に割り当てましょう",
+        "description": "課題を仕事、タスク、行動、またはJTBD（やるべき仕事）と考えてください。それが私たちの好む方法です。課題とそのサブ課題は通常、チームメンバーに割り当てられる時間ベースのアクションです。チームは課題を作成し、割り当て、完了させることで、プロジェクトの目標に向かって進みます。",
+        "primary_button": {
+          "text": "最初の課題を作成",
+          "comic": {
+            "title": "課題はPlaneの構成要素です。",
+            "description": "Plane UIの再設計、会社のリブランド、新しい燃料噴射システムの開始は、サブ課題がある可能性のある課題の例です。"
+          }
+        }
+      },
+      "no_archived_issues": {
+        "title": "まだアーカイブされた課題はありません",
+        "description": "手動または自動化を使用して、完了またはキャンセルされた課題をアーカイブできます。アーカイブされた課題はここで見つけることができます。",
+        "primary_button": {
+          "text": "自動化を設定"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "適用されたフィルターに一致する課題は見つかりませんでした",
+        "secondary_button": {
+          "text": "すべてのフィルターをクリア"
+        }
+      }
+    }
+  },
+
+  "project_module": {
+    "empty_state": {
+      "no_issues": {
+        "title": "モジュールに課題がありません",
+        "description": "このモジュールの一部として達成したい課題を作成または追加してください",
+        "primary_button": {
+          "text": "新しい課題を作成"
+        },
+        "secondary_button": {
+          "text": "既存の課題を追加"
+        }
+      },
+      "general": {
+        "title": "プロジェクトのマイルストーンをモジュールにマッピングし、集計された作業を簡単に追跡します。",
+        "description": "論理的で階層的な親に属する課題のグループがモジュールを形成します。それをプロジェクトのマイルストーンで作業を追跡する方法と考えてください。モジュールには独自の期間と締切があり、分析を通じてマイルストーンへの進捗状況を確認できます。",
+        "primary_button": {
+          "text": "最初のモジュールを構築",
+          "comic": {
+            "title": "モジュールは階層によって作業をグループ化します。",
+            "description": "カートモジュール、シャーシモジュール、倉庫モジュールは、このグループ化の良い例です。"
+          }
+        }
+      },
+      "archived": {
+        "title": "まだアーカイブされたモジュールはありません",
+        "description": "プロジェクトを整理するために、完了またはキャンセルされたモジュールをアーカイブします。アーカイブされたモジュールはここで見つけることができます。"
+      }
+    }
+  },
+
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "プロジェクト用にフィルタされたビューを保存します。必要なだけ作成してください",
+        "description": "ビューは、頻繁に使用するか、簡単にアクセスしたい保存されたフィルターのセットです。プロジェクト内のすべての同僚が他の人のビューを確認し、自分のニーズに最適なものを選ぶことができます。",
+        "primary_button": {
+          "text": "最初のビューを作成",
+          "comic": {
+            "title": "ビューは課題プロパティの上に機能します。",
+            "description": "ここから必要に応じてプロパティをフィルターとして使用してビューを作成できます。"
+          }
+        }
+      },
+      "filter": {
+        "title": "一致するビューがありません",
+        "description": "検索条件に一致するビューはありません。 \n 代わりに新しいビューを作成してください。"
+      }
+    }
+  },
+
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "メモ、ドキュメント、または完全なナレッジベースを書きましょう。PlaneのAIアシスタントGalileoがスタートをサポートします",
+        "description": "ページはPlaneでアイデアをまとめるスペースです。会議のメモを取る、簡単にフォーマットする、課題を埋め込む、コンポーネントライブラリを使用してレイアウトするなど、すべてをプロジェクトのコンテキスト内に保ちます。どんなドキュメントでも簡単にするために、ショートカットやボタンのクリックでPlaneのAIであるGalileoを呼び出してください。",
+        "primary_button": {
+          "text": "最初のページを作成"
+        }
+      },
+      "private": {
+        "title": "まだプライベートページはありません",
+        "description": "プライベートな考えをここに保存します。共有する準備ができたら、チームはすぐそばにいます。",
+        "primary_button": {
+          "text": "最初のページを作成"
+        }
+      },
+      "public": {
+        "title": "まだ公開ページはありません",
+        "description": "プロジェクト内のすべての人と共有されているページをここで確認してください。",
+        "primary_button": {
+          "text": "最初のページを作成"
+        }
+      },
+      "archived": {
+        "title": "まだアーカイブされたページはありません",
+        "description": "レーダーに載っていないページをアーカイブします。必要なときにここからアクセスしてください。"
+      }
+    }
+  },
+
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "結果が見つかりません"
+      }
+    }
+  },
+
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "一致する課題が見つかりませんでした"
+      },
+      "general": {
+        "title": "課題が見つかりません"
+      }
+    }
+  },
+
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "まだコメントはありません",
+        "description": "コメントは課題の議論やフォローアップスペースとして使用できます"
+      }
+    }
+  },
+
+  "notification": {
+    "empty_state": {
+      "detail": {
+        "title": "詳細を表示するには選択してください。"
+      },
+      "all": {
+        "title": "割り当てられた問題はありません",
+        "description": "あなたに割り当てられた問題の更新情報はここで確認できます。"
+      },
+      "mentions": {
+        "title": "割り当てられた問題はありません",
+        "description": "あなたに割り当てられた問題の更新情報はここで確認できます。"
+      }
+    }
+  },
+
+  "active_cycle": {
+    "empty_state": {
+      "progress": {
+        "title": "サイクルに課題を追加して進捗を確認してください。"
+      },
+      "chart": {
+        "title": "サイクルに課題を追加してバーンダウンチャートを確認してください。"
+      },
+      "priority_issue": {
+        "title": "サイクル内で処理された高優先度の課題を一目で把握できます。"
+      },
+      "assignee": {
+        "title": "課題に担当者を追加して、担当者ごとの作業の内訳を確認してください。"
+      },
+      "label": {
+        "title": "課題にラベルを追加して、ラベルごとの作業の内訳を確認してください。"
+      }
+    }
+  },
+
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "プロジェクトにインテークが有効化されていません。",
+        "description": "インテークは、プロジェクトへのリクエストを管理し、それらをワークフローの課題として追加するのに役立ちます。プロジェクト設定からインテークを有効化してリクエストを管理してください。",
+        "primary_button": {
+          "text": "機能を管理"
+        }
+      },
+      "cycle": {
+        "title": "このプロジェクトでサイクルが有効化されていません。",
+        "description": "作業をタイムボックス化されたチャンクに分割し、プロジェクトの期限から逆算して日程を設定し、チームとして具体的な進捗を実現します。プロジェクトでサイクル機能を有効化して利用を開始してください。",
+        "primary_button": {
+          "text": "機能を管理"
+        }
+      },
+      "module": {
+        "title": "プロジェクトにモジュールが有効化されていません。",
+        "description": "モジュールはプロジェクトの構成要素です。プロジェクト設定からモジュールを有効化して利用を開始してください。",
+        "primary_button": {
+          "text": "機能を管理"
+        }
+      },
+      "page": {
+        "title": "プロジェクトにページが有効化されていません。",
+        "description": "ページはプロジェクトの構成要素です。プロジェクト設定からページを有効化して利用を開始してください。",
+        "primary_button": {
+          "text": "機能を管理"
+        }
+      },
+      "view": {
+        "title": "プロジェクトにビューが有効化されていません。",
+        "description": "ビューはプロジェクトの構成要素です。プロジェクト設定からビューを有効化して利用を開始してください。",
+        "primary_button": {
+          "text": "機能を管理"
+        }
+      }
+    }
+  },
+
+  "inbox": {
+    "label": "受信トレイ",
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "未解決の課題はありません",
+        "description": "ここに未解決の課題が表示されます。新しい課題を作成してください。"
+      },
+      "sidebar_closed_tab": {
+        "title": "完了した課題はありません",
+        "description": "受け入れ済みまたは却下済みのすべての課題がここに表示されます。"
+      },
+      "sidebar_filter": {
+        "title": "一致する課題はありません",
+        "description": "入力で適用されたフィルターに一致する課題はありません。新しい課題を作成してください。"
+      },
+      "detail": {
+        "title": "詳細を表示するには課題を選択してください。"
+      }
+    }
+  },
+
+  "workspace_draft_issues": {
+    "empty_state": {
+      "title": "書きかけの課題や、もうすぐコメントもここに表示されます。",
+      "description": "これを試すには、課題の作成を始めて途中で中断するか、下に最初の下書きを作成してください。😉",
+      "primary_button": {
+        "text": "最初の下書きを作成"
+      }
+    }
+  },
+
+  "stickies": {
+    "title": "付箋メモ",
+    "placeholder": "ここをクリックして入力",
+    "all": "すべての付箋",
+    "no-data": "アイデアをメモしたり、ひらめきやアイデアを記録しましょう。付箋を追加して始めましょう。",
+    "add": "付箋を追加",
+    "search_placeholder": "タイトルで検索",
+    "delete": "付箋を削除",
+    "delete_confirmation": "この付箋を削除してもよろしいですか？",
+    "empty_state": {
+      "simple": "アイデアをメモしたり、ひらめきやアイデアを記録しましょう。付箋を追加して始めましょう。",
+      "general": {
+        "title": "付箋は、その場で書き留める簡単なメモやToDoリストです。",
+        "description": "いつでもどこからでもアクセスできる付箋を作成して、思いやアイデアを簡単に記録できます。",
+        "primary_button": {
+          "text": "付箋を追加"
+        }
+      },
+      "search": {
+        "title": "該当する付箋が見つかりません。",
+        "description": "別の検索語を試すか、\n検索が正しい場合はお知らせください。",
+        "primary_button": {
+          "text": "付箋を追加"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "付箋の名前は100文字を超えることはできません。",
+        "already_exists": "説明のない付箋がすでに存在します"
+      },
+      "created": {
+        "title": "付箋が作成されました",
+        "message": "付箋が正常に作成されました"
+      },
+      "not_created": {
+        "title": "付箋を作成できません",
+        "message": "付箋を作成できませんでした"
+      },
+      "updated": {
+        "title": "付箋が更新されました",
+        "message": "付箋が正常に更新されました"
+      },
+      "not_updated": {
+        "title": "付箋を更新できません",
+        "message": "付箋を更新できませんでした"
+      },
+      "removed": {
+        "title": "付箋が削除されました",
+        "message": "付箋が正常に削除されました"
+      },
+      "not_removed": {
+        "title": "付箋を削除できません",
+        "message": "付箋を削除できませんでした"
+      }
+    }
+  },
+
+  "role_details": {
+    "guest": {
+      "title": "ゲスト",
+      "description": "組織の外部メンバーはゲストとして招待できます。"
+    },
+    "member": {
+      "title": "メンバー",
+      "description": "プロジェクト、サイクル、モジュール内のエンティティの読み取り、書き込み、編集、削除が可能"
+    },
+    "admin": {
+      "title": "管理者",
+      "description": "ワークスペース内のすべての権限が有効。"
+    }
+  },
+
+  "user_roles": {
+    "product_or_project_manager": "プロダクト/プロジェクトマネージャー",
+    "development_or_engineering": "開発/エンジニアリング",
+    "founder_or_executive": "創業者/エグゼクティブ",
+    "freelancer_or_consultant": "フリーランス/コンサルタント",
+    "marketing_or_growth": "マーケティング/グロース",
+    "sales_or_business_development": "営業/事業開発",
+    "support_or_operations": "サポート/オペレーション",
+    "student_or_professor": "学生/教授",
+    "human_or_resources": "人事",
+    "other": "その他"
+  },
+
+  "importer": {
+    "github": {
+      "title": "Github",
+      "description": "GitHubリポジトリから課題をインポートして同期します。"
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Jiraプロジェクトから課題とエピックをインポートします。"
+    }
+  },
+
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "課題をCSVファイルにエクスポートします。"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "課題をExcelファイルにエクスポートします。"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "課題をJSONファイルにエクスポートします。"
+    }
+  },
+
+  "default_global_view": {
+    "all_issues": "すべての課題",
+    "assigned": "割り当て済み",
+    "created": "作成済み",
+    "subscribed": "購読済み"
+  },
+
+  
+  "project_modules": {
+    "status": {
+      "backlog": "バックログ",
+      "planned": "計画済み",
+      "in_progress": "進行中",
+      "paused": "一時停止",
+      "completed": "完了",
+      "cancelled": "キャンセル"
+    },
+    "layout": {
+      "list": "リスト表示",
+      "board": "ギャラリー表示",
+      "timeline": "タイムライン表示"
+    },
+    "order_by": {
+      "name": "名前",
+      "progress": "進捗",
+      "issues": "課題数",
+      "due_date": "期限",
+      "created_at": "作成日",
+      "manual": "手動"
     }
   }
+  
 }
