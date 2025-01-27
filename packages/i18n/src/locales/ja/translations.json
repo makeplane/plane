@@ -312,7 +312,7 @@
   "change_parent_issue": "親問題を変更",
   "remove_parent_issue": "親問題を削除",
   "add_parent": "親問題を追加",
-  "loading_members": "メンバーを読み込んでいます...",
+  "loading_members": "メンバーを読み込んでいます...",  
   "view_link_copied_to_clipboard": "表示リンクがクリップボードにコピーされました。",
   "required": "必須",
   "optional": "任意",
@@ -329,6 +329,18 @@
   "no_data_yet": "まだデータがありません",
   "connections": "接続",
 
+  "project_view": {
+    "access": {
+      "public": "公開",
+      "private": "非公開"
+    },
+    "sort_by": {
+      "created_at": "作成日時",
+      "updated_at": "更新日時",
+      "name": "名前"
+    }
+  },
+  
   "toast": {
     "success": "成功！",
     "error": "エラー！"
@@ -487,7 +499,9 @@
       "last_created": "最後に作成",
       "last_updated": "最後に更新",
       "start_date": "開始日",
-      "due_date": "期限日"
+      "due_date": "期限日",
+      "asc": "昇順",
+      "desc": "降順"
     },
     "sort": {
       "asc": "昇順",

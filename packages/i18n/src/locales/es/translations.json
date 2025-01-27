@@ -328,6 +328,18 @@
   "no_data_yet": "Sin datos aún",
   "connections": "Conexiones",
 
+  "project_view": {
+    "access": {
+      "public": "Público",
+      "private": "Privado"
+    },
+    "sort_by": {
+      "created_at": "Fecha de creación",
+      "updated_at": "Fecha de actualización",
+      "name": "Nombre"
+    }
+  },
+  
   "toast": {
     "success": "¡Éxito!",
     "error": "¡Error!"
@@ -489,7 +501,9 @@
       "last_created": "Último creado",
       "last_updated": "Última actualización",
       "start_date": "Fecha de inicio",
-      "due_date": "Fecha de vencimiento"
+      "due_date": "Fecha de vencimiento",
+      "asc": "Ascendente",
+      "desc": "Descendente"
     },
     "sort": {
       "asc": "Ascendente",

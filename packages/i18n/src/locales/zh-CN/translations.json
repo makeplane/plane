@@ -359,6 +359,18 @@
   "show_less": "显示较少",
   "no_data_yet": "暂无数据",
 
+  "project_view": {
+    "access": {
+      "public": "公开",
+      "private": "私密"
+    },
+    "sort_by": {
+      "created_at": "创建时间",
+      "updated_at": "更新时间",
+      "name": "名称"
+    }
+  },
+  
   "toast": {
     "success": "成功！",
     "error": "错误！"
@@ -510,7 +522,9 @@
       "last_created": "最近创建",
       "last_updated": "最近更新",
       "start_date": "开始日期",
-      "due_date": "截止日期"
+      "due_date": "截止日期",
+      "asc": "升序",
+      "desc": "降序"
     },
     "sort": {
       "asc": "升序",
