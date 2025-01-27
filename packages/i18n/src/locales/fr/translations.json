@@ -1298,6 +1298,40 @@
     "subscribed": "Abonnés"
   },
 
+  "home_widgets": {
+    "empty_state": {
+      "general": {
+        "title": "C'est calme sans widgets, activez-les",
+        "description": "Il semble que tous vos widgets soient désactivés. Activez-les maintenant pour améliorer votre expérience !",
+        "primary_button": {
+          "text": "Gérer les widgets"
+        }
+      }
+    }
+  },
+
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "Préférence système"
+      },
+      "light": {
+        "label": "Clair"
+      },
+      "dark": {
+        "label": "Sombre"
+      },
+      "light_contrast": {
+        "label": "Contraste élevé clair"
+      },
+      "dark_contrast": {
+        "label": "Contraste élevé sombre"
+      },
+      "custom": {
+        "label": "Thème personnalisé"
+      }
+    }
+  },
   "project_modules": {
     "status": {
       "backlog": "Backlog",

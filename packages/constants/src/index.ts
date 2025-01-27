@@ -19,6 +19,7 @@ export * from "./stickies";
 export * from "./module";
 export * from "./project";
 export * from "./views";
+export * from "./themes";
 export * from "./inbox";
 export * from "./profile";
 export * from "./workspace-drafts";

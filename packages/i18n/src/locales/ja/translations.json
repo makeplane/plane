@@ -340,7 +340,7 @@
       "name": "名前"
     }
   },
-  
+
   "toast": {
     "success": "成功！",
     "error": "エラー！"
@@ -1207,36 +1207,36 @@
           "text": "付箋を追加"
         }
       }
+    }
+  },
+  "toasts": {
+    "errors": {
+      "wrong_name": "付箋の名前は100文字を超えることはできません。",
+      "already_exists": "説明のない付箋がすでに存在します"
     },
-    "toasts": {
-      "errors": {
-        "wrong_name": "付箋の名前は100文字を超えることはできません。",
-        "already_exists": "説明のない付箋がすでに存在します"
-      },
-      "created": {
-        "title": "付箋が作成されました",
-        "message": "付箋が正常に作成されました"
-      },
-      "not_created": {
-        "title": "付箋を作成できません",
-        "message": "付箋を作成できませんでした"
-      },
-      "updated": {
-        "title": "付箋が更新されました",
-        "message": "付箋が正常に更新されました"
-      },
-      "not_updated": {
-        "title": "付箋を更新できません",
-        "message": "付箋を更新できませんでした"
-      },
-      "removed": {
-        "title": "付箋が削除されました",
-        "message": "付箋が正常に削除されました"
-      },
-      "not_removed": {
-        "title": "付箋を削除できません",
-        "message": "付箋を削除できませんでした"
-      }
+    "created": {
+      "title": "付箋が作成されました",
+      "message": "付箋が正常に作成されました"
+    },
+    "not_created": {
+      "title": "付箋を作成できません",
+      "message": "付箋を作成できませんでした"
+    },
+    "updated": {
+      "title": "付箋が更新されました",
+      "message": "付箋が正常に更新されました"
+    },
+    "not_updated": {
+      "title": "付箋を更新できません",
+      "message": "付箋を更新できませんでした"
+    },
+    "removed": {
+      "title": "付箋が削除されました",
+      "message": "付箋が正常に削除されました"
+    },
+    "not_removed": {
+      "title": "付箋を削除できません",
+      "message": "付箋を削除できませんでした"
     }
   },
 
@@ -1301,7 +1301,40 @@
     "subscribed": "購読済み"
   },
 
-  
+  "home_widgets": {
+    "empty_state": {
+      "general": {
+        "title": "ウィジェットがないと静かですね、オンにしましょう",
+        "description": "すべてのウィジェットがオフになっているようです。 今すぐ有効にして、体験を向上させましょう！",
+        "primary_button": {
+          "text": "ウィジェットを管理"
+        }
+      }
+    }
+  },
+
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "システム設定"
+      },
+      "light": {
+        "label": "ライト"
+      },
+      "dark": {
+        "label": "ダーク"
+      },
+      "light_contrast": {
+        "label": "ライト高コントラスト"
+      },
+      "dark_contrast": {
+        "label": "ダーク高コントラスト"
+      },
+      "custom": {
+        "label": "カスタムテーマ"
+      }
+    }
+  },
   "project_modules": {
     "status": {
       "backlog": "バックログ",
@@ -1325,5 +1358,4 @@
       "manual": "手動"
     }
   }
-  
 }

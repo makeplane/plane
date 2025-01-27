@@ -339,7 +339,7 @@
       "name": "Nombre"
     }
   },
-  
+
   "toast": {
     "success": "¡Éxito!",
     "error": "¡Error!"
@@ -1300,7 +1300,41 @@
     "created": "Creados",
     "subscribed": "Suscritos"
   },
-  
+
+  "home_widgets": {
+    "empty_state": {
+      "general": {
+        "title": "Está tranquilo sin widgets, actívalos",
+        "description": "Parece que todos tus widgets están desactivados. ¡Enciéndelos ahora para mejorar tu experiencia!",
+        "primary_button": {
+          "text": "Gestionar widgets"
+        }
+      }
+    }
+  },
+
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "Preferencia del sistema"
+      },
+      "light": {
+        "label": "Claro"
+      },
+      "dark": {
+        "label": "Oscuro"
+      },
+      "light_contrast": {
+        "label": "Alto contraste claro"
+      },
+      "dark_contrast": {
+        "label": "Alto contraste oscuro"
+      },
+      "custom": {
+        "label": "Tema personalizado"
+      }
+    }
+  },
   "project_modules": {
     "status": {
       "backlog": "Pendientes",
@@ -1322,6 +1356,6 @@
       "due_date": "Fecha de vencimiento",
       "created_at": "Fecha de creación",
       "manual": "Manual"
-    } 
+    }
   }
 }

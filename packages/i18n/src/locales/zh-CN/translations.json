@@ -369,7 +369,7 @@
       "name": "名称"
     }
   },
-  
+
   "toast": {
     "success": "成功！",
     "error": "错误！"
@@ -816,7 +816,6 @@
     }
   },
 
-
   "workspace_projects": {
     "network": {
       "private": {
@@ -898,5 +897,27 @@
       "2_weeks": "2周",
       "custom": "自定义"
     }
-  } 
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "系统偏好"
+      },
+      "light": {
+        "label": "明亮"
+      },
+      "dark": {
+        "label": "暗黑"
+      },
+      "light_contrast": {
+        "label": "高对比度明亮"
+      },
+      "dark_contrast": {
+        "label": "高对比度暗黑"
+      },
+      "custom": {
+        "label": "自定义主题"
+      }
+    }
+  }
 }
