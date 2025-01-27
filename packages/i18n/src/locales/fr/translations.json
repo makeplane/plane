@@ -490,6 +490,10 @@
       "start_date": "Date de début",
       "due_date": "Date d'échéance"
     },
+    "sort": {
+      "asc": "Croissant",
+      "desc": "Décroissant"
+    },
     "comments": "Commentaires",
     "updates": "Mises à jour"
   },
@@ -580,6 +584,39 @@
     },
     "update": {
       "label": "Mettre à jour la vue"
+    }
+  },
+
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "En attente",
+        "description": "En attente"
+      },
+      "declined": {
+        "title": "Refusé",
+        "description": "Refusé"
+      },
+      "snoozed": {
+        "title": "Reporté",
+        "description": "{days, plural, one{# jour} other{# jours}} restants"
+      },
+      "accepted": {
+        "title": "Accepté",
+        "description": "Accepté"
+      },
+      "duplicate": {
+        "title": "Doublon",
+        "description": "Doublon"
+      }
+    },
+    "source": {
+      "in-app": "dans l'application"
+    },
+    "order_by": {
+      "created_at": "Créé le",
+      "updated_at": "Mis à jour le",
+      "id": "Identifiant"
     }
   },
 

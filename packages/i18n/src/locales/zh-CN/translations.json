@@ -354,6 +354,7 @@
   "add_parent": "添加父问题",
   "loading_members": "正在加载成员...",
   "inbox": "收件箱",
+
   "show_all": "显示全部",
   "show_less": "显示较少",
   "no_data_yet": "暂无数据",
@@ -511,6 +512,10 @@
       "start_date": "开始日期",
       "due_date": "截止日期"
     },
+    "sort": {
+      "asc": "升序",
+      "desc": "降序"
+    },
     "comments": "评论",
     "updates": "更新"
   },
@@ -601,6 +606,39 @@
     },
     "update": {
       "label": "更新视图"
+    }
+  },
+
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "待处理",
+        "description": "待处理"
+      },
+      "declined": {
+        "title": "已拒绝",
+        "description": "已拒绝"
+      },
+      "snoozed": {
+        "title": "已暂停",
+        "description": "还剩{days}天"
+      },
+      "accepted": {
+        "title": "已接受",
+        "description": "已接受"
+      },
+      "duplicate": {
+        "title": "重复",
+        "description": "重复"
+      }
+    },
+    "source": {
+      "in-app": "应用内"
+    },
+    "order_by": {
+      "created_at": "创建时间",
+      "updated_at": "更新时间",
+      "id": "编号"
     }
   },
 

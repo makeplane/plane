@@ -489,6 +489,10 @@
       "start_date": "開始日",
       "due_date": "期限日"
     },
+    "sort": {
+      "asc": "昇順",
+      "desc": "降順"
+    },
     "comments": "コメント",
     "updates": "更新"
   },
@@ -583,6 +587,39 @@
     },
     "update": {
       "label": "ビューを更新"
+    }
+  },
+
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "保留中",
+        "description": "保留中"
+      },
+      "declined": {
+        "title": "却下",
+        "description": "却下"
+      },
+      "snoozed": {
+        "title": "スヌーズ中",
+        "description": "残り{days}日"
+      },
+      "accepted": {
+        "title": "承認済み",
+        "description": "承認済み"
+      },
+      "duplicate": {
+        "title": "重複",
+        "description": "重複"
+      }
+    },
+    "source": {
+      "in-app": "アプリ内"
+    },
+    "order_by": {
+      "created_at": "作成日時",
+      "updated_at": "更新日時",
+      "id": "識別番号"
     }
   },
 
