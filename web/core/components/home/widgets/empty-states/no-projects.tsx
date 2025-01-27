@@ -2,15 +2,16 @@ import React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Briefcase, Hotel, Users } from "lucide-react";
-// helpers
+// plane ui
 import { useTranslation } from "@plane/i18n";
+// helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useCommandPalette, useEventTracker, useUser, useUserPermissions } from "@/hooks/store";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants";
 
-export const EmptyWorkspace = () => {
+export const NoProjectsEmptyState = () => {
   // navigation
   const { workspaceSlug } = useParams();
   // store hooks
@@ -92,13 +93,13 @@ export const EmptyWorkspace = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
       {EMPTY_STATE_DATA.map((item) => (
         <div
           key={item.id}
-          className="flex flex-col items-center justify-center py-8 bg-custom-background-100 rounded-lg text-center border border-custom-border-200/40"
+          className="flex flex-col items-center justify-center p-6 bg-custom-background-100 rounded-lg text-center border border-custom-border-200/40"
         >
-          <div className="flex items-center justify-center bg-custom-primary-100/10 rounded-full w-[80px] h-[80px] mb-4">
+          <div className="grid place-items-center bg-custom-primary-100/10 rounded-full size-24 mb-3">
             <span className="text-3xl my-auto">{item.icon}</span>
           </div>
           <h3 className="text-lg font-medium text-custom-text-100 mb-2">{t(item.title)}</h3>
@@ -113,6 +114,7 @@ export const EmptyWorkspace = () => {
             </Link>
           ) : (
             <button
+              type="button"
               className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium"
               onClick={item.cta.onClick}
             >

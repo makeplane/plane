@@ -317,6 +317,7 @@
   "inbox": "收件箱",
   "show_all": "显示全部",
   "show_less": "显示较少",
+  "no_data_yet": "暂无数据",
 
   "toast": {
     "success": "成功！",
@@ -347,46 +348,44 @@
       }
     },
     "quick_links": {
-      "empty": "添加任何您需要快速访问工作的链接。",
+      "empty": "保存您想随手可得的工作相关链接。",
       "add": "添加快捷链接",
-      "title": "快捷{count, plural, one{# 链接} other{# 链接}}",
-      "quick_links": {
-        "title": "快捷链接",
-        "toasts": {
-          "created": {
-            "title": "链接已创建",
-            "message": "链接已成功创建"
-          },
-          "not_created": {
-            "title": "链接未创建",
-            "message": "无法创建链接"
-          },
-          "updated": {
-            "title": "链接已更新",
-            "message": "链接已成功更新"
-          },
-          "not_updated": {
-            "title": "链接未更新",
-            "message": "无法更新链接"
-          },
-          "removed": {
-            "title": "链接已删除",
-            "message": "链接已成功删除"
-          },
-          "not_removed": {
-            "title": "链接未删除",
-            "message": "无法删除链接"
-          }
+      "title": "快捷链接",
+      "title_plural": "快捷链接",
+      "toasts": {
+        "created": {
+          "title": "链接已创建",
+          "message": "链接已成功创建"
+        },
+        "not_created": {
+          "title": "链接未创建",
+          "message": "无法创建链接"
+        },
+        "updated": {
+          "title": "链接已更新",
+          "message": "链接已成功更新"
+        },
+        "not_updated": {
+          "title": "链接未更新",
+          "message": "无法更新链接"
+        },
+        "removed": {
+          "title": "链接已删除",
+          "message": "链接已成功删除"
+        },
+        "not_removed": {
+          "title": "链接未删除",
+          "message": "无法删除链接"
         }
       }
     },
     "recents": {
       "title": "最近",
       "empty": {
-        "project": "访问项目后，您的最近项目将显示在此处。",
-        "page": "访问页面后，您的最近页面将显示在此处。",
-        "issue": "访问问题后，您的最近问题将显示在此处。",
-        "default": "您还没有任何最近项目。"
+          "project": "访问项目后，您的最近项目将显示在这里。",
+          "page": "访问页面后，您的最近页面将显示在这里。",
+          "issue": "访问问题后，您的最近问题将显示在这里。",
+          "default": "您还没有任何最近项目。"
       },
       "filters": {
         "all": "所有项目",
@@ -413,9 +412,7 @@
     "star_us_on_github": "在 GitHub 上为我们加星"
   },
 
-  "stickies": {
-    "empty": "暂无便签。添加一个开始做快速笔记。"
-  },
+
 
   "link": {
     "modal": {
@@ -427,6 +424,104 @@
       "title": {
         "text": "显示标题",
         "placeholder": "您希望将此链接显示为什么"
+      }
+    }
+  },
+  "user_profile": {
+    "title": "你的工作",
+    "work": "工作",
+    "details": {
+      "joined_on": "加入时间",
+      "time_zone": "时区"
+    },
+    "stats": {
+      "workload": "工作量",
+      "overview": "概述",
+      "created": "已创建问题",
+      "assigned": "已分配问题",
+      "subscribed": "已订阅问题",
+      "state_distribution": {
+        "title": "按状态显示的问题",
+        "empty": "创建问题以在图表中按状态查看它们，以便更好地分析。"
+      },
+      "priority_distribution": {
+        "title": "按优先级显示的问题",
+        "empty": "创建问题以在图表中按优先级查看它们，以便更好地分析。"
+      },
+      "recent_activity": {
+        "title": "最近活动",
+        "empty": "我们找不到数据。请查看您的输入"
+      }
+    },
+    "actions": {
+      "profile": "个人资料",
+      "security": "安全",
+      "activity": "活动",
+      "appearance": "外观",
+      "notifications": "通知"
+    },
+    "tabs": {
+      "summary": "摘要",
+      "assigned": "已分配",
+      "created": "已创建",
+      "subscribed": "已订阅",
+      "activity": "活动"
+    }
+  },
+  "stickies": {
+    "title": "便签",
+    "placeholder": "点击此处输入",
+    "all": "所有便签",
+    "no-data": "记下想法，捕捉灵感，或记录突发奇想。添加便签即可开始。",
+    "add": "添加便签",
+    "search_placeholder": "按标题搜索",
+    "delete": "删除便签",
+    "delete_confirmation": "确定要删除这个便签吗？",
+    "empty_state": {
+      "simple": "记下想法，捕捉灵感，或记录突发奇想。添加便签即可开始。",
+      "general": {
+        "title": "便签是您随手记下的快速笔记和待办事项。",
+        "description": "通过创建便签轻松捕捉您的想法和创意，随时随地都可以访问。",
+        "primary_button": {
+          "text": "添加便签"
+        }
+      },
+      "search": {
+        "title": "没有找到匹配的便签。",
+        "description": "尝试使用不同的搜索词，或如果您确定搜索正确，\n请告诉我们。",
+        "primary_button": {
+          "text": "添加便签"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "便签名称不能超过100个字符。",
+        "already_exists": "已存在一个没有描述的便签"
+      },
+      "created": {
+        "title": "便签已创建",
+        "message": "便签已成功创建"
+      },
+      "not_created": {
+        "title": "便签未创建",
+        "message": "无法创建便签"
+      },
+      "updated": {
+        "title": "便签已更新",
+        "message": "便签已成功更新"
+      },
+      "not_updated": {
+        "title": "便签未更新",
+        "message": "无法更新便签"
+      },
+      "removed": {
+        "title": "便签已删除",
+        "message": "便签已成功删除"
+      },
+      "not_removed": {
+        "title": "便签未删除",
+        "message": "无法删除便签"
       }
     }
   }

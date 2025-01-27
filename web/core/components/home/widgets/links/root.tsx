@@ -36,10 +36,7 @@ export const DashboardQuickLinks = observer((props: THomeWidgetProps) => {
       />
       <div className="mb-2">
         <div className="flex items-center justify-between mb-4">
-          <div className="text-base font-semibold text-custom-text-350">
-            {" "}
-            {t("home.quick_links.title", { count: 2 })}
-          </div>
+          <div className="text-base font-semibold text-custom-text-350">{t("home.quick_links.title_plural")}</div>
           <button
             onClick={() => {
               toggleLinkModal(true);
