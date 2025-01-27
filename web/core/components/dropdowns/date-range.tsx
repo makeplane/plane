@@ -221,6 +221,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
               disabled={disabledDays}
               showOutsideDays
               autoFocus
+              fixedWeeks
               footer={
                 bothRequired && (
                   <div className="grid grid-cols-2 items-center gap-3.5 pt-6 relative">
