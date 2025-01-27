@@ -11,6 +11,7 @@ export * from "./issue";
 export * from "./metadata";
 export * from "./state";
 export * from "./swr";
+export * from "./tab-indices";
 export * from "./user";
 export * from "./workspace";
 export * from "./stickies";

@@ -8,6 +8,8 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import useSWR, { mutate } from "swr";
 import { CheckCircle2 } from "lucide-react";
+// plane imports
+import { ROLE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { IWorkspaceMemberInvitation } from "@plane/types";
@@ -18,7 +20,6 @@ import { EmptyState } from "@/components/common";
 // constants
 import { MEMBER_ACCEPTED } from "@/constants/event-tracker";
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
-import { ROLE } from "@/constants/workspace";
 // helpers
 import { truncateText } from "@/helpers/string.helper";
 import { getUserRole } from "@/helpers/user.helper";

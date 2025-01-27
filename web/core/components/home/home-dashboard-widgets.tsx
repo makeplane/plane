@@ -25,27 +25,27 @@ export const HOME_WIDGETS_LIST: {
   quick_links: {
     component: DashboardQuickLinks,
     fullWidth: false,
-    title: "Quicklinks",
+    title: "home.quick_links.title_plural",
   },
   recents: {
     component: RecentActivityWidget,
     fullWidth: false,
-    title: "Recents",
+    title: "home.recents.title",
   },
   my_stickies: {
     component: StickiesWidget,
     fullWidth: false,
-    title: "Your stickies",
+    title: "home.my_stickies.title",
   },
   new_at_plane: {
     component: null,
     fullWidth: false,
-    title: "New at Plane",
+    title: "home.new_at_plane.title",
   },
   quick_tutorial: {
     component: null,
     fullWidth: false,
-    title: "Quick tutorial",
+    title: "home.quick_tutorial.title",
   },
 };
 
@@ -85,8 +85,8 @@ export const DashboardWidgets = observer(() => {
       ) : (
         <div className="h-full w-full grid place-items-center">
           <SimpleEmptyState
-            title={t("home_widgets.empty_state.general.title")}
-            description={t("home_widgets.empty_state.general.description")}
+            title={t("home.empty.widgets.title")}
+            description={t("home.empty.widgets.description")}
             assetPath={noWidgetsResolvedPath}
           />
         </div>

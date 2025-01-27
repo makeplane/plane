@@ -18,6 +18,7 @@
   "add_members": "Ajouter des membres",
   "remove_members": "Supprimer des membres",
   "add": "Ajouter",
+  "adding": "Ajout",
   "remove": "Supprimer",
   "add_new": "Ajouter un nouveau",
   "remove_selected": "Supprimer la sélection",
@@ -156,7 +157,6 @@
   "enter_god_mode": "Entrer en mode dieu",
   "workspace_logo": "Logo de l'espace de travail",
   "new_issue": "Nouveau problème",
-  "home": "Accueil",
   "your_work": "Votre travail",
   "drafts": "Brouillons",
   "projects": "Projets",
@@ -314,8 +314,134 @@
   "remove_parent_issue": "Supprimer le problème parent",
   "add_parent": "Ajouter un parent",
   "loading_members": "Chargement des membres...",
+  "view_link_copied_to_clipboard": "Lien de vue copié dans le presse-papiers.",
+  "required": "Requis",
+  "optional": "Optionnel",
+  "Cancel": "Annuler",
+  "edit": "Modifier",
+  "open_in_new_tab": "Ouvrir dans un nouvel onglet",
+  "delete": "Supprimer",
+  "good": "Bonjour",
+  "morning": "matin",
+  "afternoon": "après-midi",
+  "evening": "soir",
+  "show_all": "Tout afficher",
+  "show_less": "Afficher moins",
   "no_data_yet": "Pas encore de données",
   "connections": "Connexions",
+
+  "toast": {
+    "success": "Succès !",
+    "error": "Erreur !"
+  },
+
+  "home": {
+    "empty": {
+      "create_project": {
+        "title": "Créer un projet",
+        "description": "La plupart des choses commencent par un projet dans Plane.",
+        "cta": "Commencer"
+      },
+      "invite_team": {
+        "title": "Inviter votre équipe",
+        "description": "Construisez, déployez et gérez avec vos collègues.",
+        "cta": "Les faire entrer"
+      },
+      "configure_workspace": {
+        "title": "Configurez votre espace de travail",
+        "description": "Activez ou désactivez des fonctionnalités ou allez plus loin.",
+        "cta": "Configurer cet espace"
+      },
+      "personalize_account": {
+        "title": "Faites de Plane le vôtre",
+        "description": "Choisissez votre photo, vos couleurs et plus encore.",
+        "cta": "Personnaliser maintenant"
+      },
+      "widgets": {
+        "title": "C'est calme sans widgets, activez-les",
+        "description": "Il semble que tous vos widgets soient désactivés. Activez-les maintenant pour améliorer votre expérience !",
+        "primary_button": {
+          "text": "Gérer les widgets"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "Enregistrez des liens vers des éléments de travail que vous souhaitez avoir à portée de main.",
+      "add": "Ajouter un lien rapide",
+      "title": "Lien rapide",
+      "title_plural": "Liens rapides",
+      "toasts": {
+        "created": {
+          "title": "Lien créé",
+          "message": "Le lien a été créé avec succès"
+        },
+        "not_created": {
+          "title": "Lien non créé",
+          "message": "Le lien n'a pas pu être créé"
+        },
+        "updated": {
+          "title": "Lien mis à jour",
+          "message": "Le lien a été mis à jour avec succès"
+        },
+        "not_updated": {
+          "title": "Lien non mis à jour",
+          "message": "Le lien n'a pas pu être mis à jour"
+        },
+        "removed": {
+          "title": "Lien supprimé",
+          "message": "Le lien a été supprimé avec succès"
+        },
+        "not_removed": {
+          "title": "Lien non supprimé",
+          "message": "Le lien n'a pas pu être supprimé"
+        }
+      }
+    },
+    "recents": {
+      "title": "Récents",
+      "empty": {
+        "project": "Vos projets récents apparaîtront ici une fois que vous en aurez visité un.",
+        "page": "Vos pages récentes apparaîtront ici une fois que vous en aurez visité une.",
+        "issue": "Vos problèmes récents apparaîtront ici une fois que vous en aurez visité un.",
+        "default": "Vous n'avez pas encore d'éléments récents."
+      },
+      "filters": {
+        "all": "Tous les éléments",
+        "projects": "Projets",
+        "pages": "Pages",
+        "issues": "Problèmes"
+      }
+    },
+    "my_stickies": {
+      "title": "Vos notes"
+    },
+    "new_at_plane": {
+      "title": "Nouveau chez Plane"
+    },
+    "quick_tutorial": {
+      "title": "Tutoriel rapide"
+    },
+    "widget": {
+      "reordered_successfully": "Widget réorganisé avec succès.",
+      "reordering_failed": "Une erreur s'est produite lors de la réorganisation du widget."
+    },
+    "manage_widgets": "Gérer les widgets",
+    "title": "Accueil",
+    "star_us_on_github": "Étoilez-nous sur GitHub"
+  },
+  "link": {
+    "modal": {
+      "url": {
+        "text": "URL",
+        "required": "L'URL n'est pas valide",
+        "placeholder": "Tapez ou collez une URL"
+      },
+      "title": {
+        "text": "Titre d'affichage",
+        "placeholder": "Comment souhaitez-vous voir ce lien"
+      }
+    }
+  },
 
   "common": {
     "all": "Tout",
@@ -524,7 +650,7 @@
     "empty_state": {
       "all-issues": {
         "title": "Aucune tâche dans le projet",
-        "description": "Premier projet terminé ! Maintenant, divisez votre travail en morceaux traçables avec des tâches. Allons-y !",
+        "description": "Premier projet terminé ! Maintenant, divisez votre travail en morceaux traçables avec des tâches. Allons-y !",
         "primary_button": {
           "text": "Créer une nouvelle tâche"
         }
@@ -556,6 +682,26 @@
 
   "workspace_settings": {
     "label": "Paramètres de l'espace de travail",
+    "settings": {
+      "general": {
+        "title": "Général"
+      },
+      "members": {
+        "title": "Membres"
+      },
+      "billing-and-plans": {
+        "title": "Facturation et plans"
+      },
+      "exports": {
+        "title": "Exportations"
+      },
+      "webhooks": {
+        "title": "Webhooks"
+      },
+      "api-tokens": {
+        "title": "Jetons API"
+      }
+    },
     "empty_state": {
       "api_tokens": {
         "title": "Aucun jeton API créé",
@@ -929,24 +1075,123 @@
   },
 
   "stickies": {
+    "title": "Vos pense-bêtes",
+    "placeholder": "cliquez pour écrire ici",
+    "all": "Tous les pense-bêtes",
+    "no-data": "Notez une idée, capturez un éclair de génie ou enregistrez une réflexion. Ajoutez un pense-bête pour commencer.",
+    "add": "Ajouter un pense-bête",
+    "search_placeholder": "Rechercher par titre",
+    "delete": "Supprimer le pense-bête",
+    "delete_confirmation": "Êtes-vous sûr de vouloir supprimer ce pense-bête ?",
     "empty_state": {
+      "simple": "Notez une idée, capturez un éclair de génie ou enregistrez une réflexion. Ajoutez un pense-bête pour commencer.",
       "general": {
-        "title": "Les stickies sont des notes rapides et des tâches que vous notez à la volée.",
-        "description": "Capturez vos pensées et vos idées facilement en créant des stickies accessibles à tout moment et de n'importe où.",
+        "title": "Les pense-bêtes sont des notes rapides et des tâches que vous prenez à la volée.",
+        "description": "Capturez vos pensées et vos idées sans effort en créant des pense-bêtes accessibles à tout moment et de n'importe où.",
         "primary_button": {
-          "text": "Ajouter un sticky"
+          "text": "Ajouter un pense-bête"
         }
       },
       "search": {
-        "title": "Aucun sticky ne correspond à votre recherche.",
-        "description": "Essayez un autre terme ou faites-le nous savoir si vous êtes sûr que votre recherche est correcte.",
+        "title": "Cela ne correspond à aucun de vos pense-bêtes.",
+        "description": "Essayez un terme différent ou informez-nous\nsi vous êtes sûr que votre recherche est correcte.",
         "primary_button": {
-          "text": "Ajouter un sticky"
+          "text": "Ajouter un pense-bête"
         }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Le nom du pense-bête ne peut pas dépasser 100 caractères.",
+        "already_exists": "Il existe déjà un pense-bête sans description"
+      },
+      "created": {
+        "title": "Pense-bête créé",
+        "message": "Le pense-bête a été créé avec succès"
+      },
+      "not_created": {
+        "title": "Pense-bête non créé",
+        "message": "Le pense-bête n'a pas pu être créé"
+      },
+      "updated": {
+        "title": "Pense-bête mis à jour",
+        "message": "Le pense-bête a été mis à jour avec succès"
+      },
+      "not_updated": {
+        "title": "Pense-bête non mis à jour",
+        "message": "Le pense-bête n'a pas pu être mis à jour"
+      },
+      "removed": {
+        "title": "Pense-bête supprimé",
+        "message": "Le pense-bête a été supprimé avec succès"
+      },
+      "not_removed": {
+        "title": "Pense-bête non supprimé",
+        "message": "Le pense-bête n'a pas pu être supprimé"
       }
     }
   },
 
+  "role_details": {
+    "guest": {
+      "title": "Invité",
+      "description": "Les membres externes des organisations peuvent être invités en tant qu'invités."
+    },
+    "member": {
+      "title": "Membre",
+      "description": "Capacité à lire, écrire, modifier et supprimer des entités dans les projets, cycles et modules"
+    },
+    "admin": {
+      "title": "Administrateur",
+      "description": "Toutes les autorisations définies sur vrai dans l'espace de travail."
+    }
+  },
+
+  "user_roles": {
+    "product_or_project_manager": "Chef de Produit / Projet",
+    "development_or_engineering": "Développement / Ingénierie",
+    "founder_or_executive": "Fondateur / Dirigeant",
+    "freelancer_or_consultant": "Freelance / Consultant",
+    "marketing_or_growth": "Marketing / Croissance",
+    "sales_or_business_development": "Ventes / Développement Commercial",
+    "support_or_operations": "Support / Opérations",
+    "student_or_professor": "Étudiant / Professeur",
+    "human_or_resources": "Ressources Humaines",
+    "other": "Autre"
+  },
+
+  "importer": {
+    "github": {
+      "title": "Github",
+      "description": "Importer des problèmes depuis les dépôts GitHub et les synchroniser."
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Importer des problèmes et des épopées depuis les projets Jira."
+    }
+  },
+
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Exporter les problèmes vers un fichier CSV."
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Exporter les problèmes vers un fichier Excel."
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Exporter les problèmes vers un fichier JSON."
+    }
+  },
+
+  "default_global_view": {
+    "all_issues": "Tous les problèmes",
+    "assigned": "Assignés",
+    "created": "Créés",
+    "subscribed": "Abonnés"
+  },
   "home_widgets": {
     "empty_state": {
       "general": {
