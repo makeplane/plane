@@ -329,6 +329,18 @@
   "no_data_yet": "まだデータがありません",
   "connections": "接続",
 
+  "project_view": {
+    "access": {
+      "public": "公開",
+      "private": "非公開"
+    },
+    "sort_by": {
+      "created_at": "作成日時",
+      "updated_at": "更新日時",
+      "name": "名前"
+    }
+  },
+
   "toast": {
     "success": "成功！",
     "error": "エラー！"
@@ -487,7 +499,9 @@
       "last_created": "最後に作成",
       "last_updated": "最後に更新",
       "start_date": "開始日",
-      "due_date": "期限日"
+      "due_date": "期限日",
+      "asc": "昇順",
+      "desc": "降順"
     },
     "sort": {
       "asc": "昇順",
@@ -656,6 +670,42 @@
   },
 
   "workspace_projects": {
+    "network": {
+      "private": {
+        "title": "プライベート",
+        "description": "招待のみでアクセス可能"
+      },
+      "public": {
+        "title": "パブリック",
+        "description": "ゲスト以外のワークスペースのメンバーが参加可能"
+      }
+    },
+    "error": {
+      "permission": "この操作を実行する権限がありません。",
+      "cycle_delete": "サイクルの削除に失敗しました",
+      "module_delete": "モジュールの削除に失敗しました",
+      "issue_delete": "課題の削除に失敗しました"
+    },
+    "state": {
+      "backlog": "バックログ",
+      "unstarted": "未着手",
+      "started": "開始済み",
+      "completed": "完了",
+      "cancelled": "キャンセル"
+    },
+    "sort": {
+      "manual": "手動",
+      "name": "名前",
+      "created_at": "作成日",
+      "members_length": "メンバー数"
+    },
+    "scope": {
+      "my_projects": "自分のプロジェクト",
+      "archived_projects": "アーカイブ済み"
+    },
+    "common": {
+      "months_count": "{months, plural, other{#ヶ月}}"
+    },
     "empty_state": {
       "general": {
         "title": "アクティブなプロジェクトがありません",
@@ -1265,6 +1315,29 @@
       "custom": {
         "label": "カスタムテーマ"
       }
+    }
+  },
+  "project_modules": {
+    "status": {
+      "backlog": "バックログ",
+      "planned": "計画済み",
+      "in_progress": "進行中",
+      "paused": "一時停止",
+      "completed": "完了",
+      "cancelled": "キャンセル"
+    },
+    "layout": {
+      "list": "リスト表示",
+      "board": "ギャラリー表示",
+      "timeline": "タイムライン表示"
+    },
+    "order_by": {
+      "name": "名前",
+      "progress": "進捗",
+      "issues": "課題数",
+      "due_date": "期限",
+      "created_at": "作成日",
+      "manual": "手動"
     }
   }
 }

@@ -328,6 +328,18 @@
   "no_data_yet": "Sin datos aún",
   "connections": "Conexiones",
 
+  "project_view": {
+    "access": {
+      "public": "Público",
+      "private": "Privado"
+    },
+    "sort_by": {
+      "created_at": "Fecha de creación",
+      "updated_at": "Fecha de actualización",
+      "name": "Nombre"
+    }
+  },
+
   "toast": {
     "success": "¡Éxito!",
     "error": "¡Error!"
@@ -487,7 +499,9 @@
       "last_created": "Último creado",
       "last_updated": "Última actualización",
       "start_date": "Fecha de inicio",
-      "due_date": "Fecha de vencimiento"
+      "due_date": "Fecha de vencimiento",
+      "asc": "Ascendente",
+      "desc": "Descendente"
     },
     "sort": {
       "asc": "Ascendente",
@@ -656,6 +670,42 @@
   },
 
   "workspace_projects": {
+    "network": {
+      "private": {
+        "title": "Privado",
+        "description": "Accesible solo por invitación"
+      },
+      "public": {
+        "title": "Público",
+        "description": "Cualquiera en el espacio de trabajo excepto invitados puede unirse"
+      }
+    },
+    "error": {
+      "permission": "No tienes permiso para realizar esta acción.",
+      "cycle_delete": "Error al eliminar el ciclo",
+      "module_delete": "Error al eliminar el módulo",
+      "issue_delete": "Error al eliminar la incidencia"
+    },
+    "state": {
+      "backlog": "Pendientes",
+      "unstarted": "Sin comenzar",
+      "started": "Iniciado",
+      "completed": "Completado",
+      "cancelled": "Cancelado"
+    },
+    "sort": {
+      "manual": "Manual",
+      "name": "Nombre",
+      "created_at": "Fecha de creación",
+      "members_length": "Número de miembros"
+    },
+    "scope": {
+      "my_projects": "Mis proyectos",
+      "archived_projects": "Archivados"
+    },
+    "common": {
+      "months_count": "{months, plural, one{# mes} other{# meses}}"
+    },
     "empty_state": {
       "general": {
         "title": "No hay proyectos activos",
@@ -1265,6 +1315,29 @@
       "custom": {
         "label": "Tema personalizado"
       }
+    }
+  },
+  "project_modules": {
+    "status": {
+      "backlog": "Pendientes",
+      "planned": "Planificado",
+      "in_progress": "En progreso",
+      "paused": "Pausado",
+      "completed": "Completado",
+      "cancelled": "Cancelado"
+    },
+    "layout": {
+      "list": "Vista lista",
+      "board": "Vista galería",
+      "timeline": "Vista cronológica"
+    },
+    "order_by": {
+      "name": "Nombre",
+      "progress": "Progreso",
+      "issues": "Número de problemas",
+      "due_date": "Fecha de vencimiento",
+      "created_at": "Fecha de creación",
+      "manual": "Manual"
     }
   }
 }

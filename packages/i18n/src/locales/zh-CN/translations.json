@@ -354,11 +354,22 @@
   "add_parent": "添加父问题",
   "loading_members": "正在加载成员...",
   "inbox": "收件箱",
-
   "show_all": "显示全部",
   "show_less": "显示较少",
   "no_data_yet": "暂无数据",
 
+  "project_view": {
+    "access": {
+      "public": "公开",
+      "private": "私密"
+    },
+    "sort_by": {
+      "created_at": "创建时间",
+      "updated_at": "更新时间",
+      "name": "名称"
+    }
+  },
+  
   "toast": {
     "success": "成功！",
     "error": "错误！"
@@ -510,7 +521,9 @@
       "last_created": "最近创建",
       "last_updated": "最近更新",
       "start_date": "开始日期",
-      "due_date": "截止日期"
+      "due_date": "截止日期",
+      "asc": "升序",
+      "desc": "降序"
     },
     "sort": {
       "asc": "升序",
@@ -802,6 +815,68 @@
       }
     }
   },
+  "workspace_projects": {
+    "network": {
+      "private": {
+        "title": "私有",
+        "description": "仅限邀请访问"
+      },
+      "public": {
+        "title": "公开",
+        "description": "除访客外的工作区所有成员都可加入"
+      }
+    },
+    "error": {
+      "permission": "您没有执行此操作的权限。",
+      "cycle_delete": "删除周期失败",
+      "module_delete": "删除模块失败",
+      "issue_delete": "删除问题失败"
+    },
+    "state": {
+      "backlog": "待办",
+      "unstarted": "未开始",
+      "started": "进行中",
+      "completed": "已完成",
+      "cancelled": "已取消"
+    },
+    "sort": {
+      "manual": "手动",
+      "name": "名称",
+      "created_at": "创建日期",
+      "members_length": "成员数量"
+    },
+    "scope": {
+      "my_projects": "我的项目",
+      "archived_projects": "已归档"
+    },
+    "common": {
+      "months_count": "{months, plural, one{#个月} other{#个月}}"
+    }
+  },
+
+  "project_modules": {
+    "status": {
+      "backlog": "待办",
+      "planned": "已规划",
+      "in_progress": "进行中",
+      "paused": "已暂停",
+      "completed": "已完成",
+      "cancelled": "已取消"
+    },
+    "layout": {
+      "list": "列表视图",
+      "board": "画廊视图",
+      "timeline": "时间轴视图"
+    },
+    "order_by": {
+      "name": "名称",
+      "progress": "进度",
+      "issues": "问题数量",
+      "due_date": "截止日期",
+      "created_at": "创建日期",
+      "manual": "手动"
+    }
+  }
 
   "themes": {
     "theme_options": {
@@ -825,4 +900,5 @@
       }
     }
   }
+  
 }

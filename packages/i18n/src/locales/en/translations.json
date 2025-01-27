@@ -329,6 +329,18 @@
   "no_data_yet": "No Data yet",
   "connections": "Connections",
 
+  "project_view": {
+    "access": {
+      "public": "Public",
+      "private": "Private"
+    },
+    "sort_by": {
+      "created_at": "Created at",
+      "updated_at": "Updated at",
+      "name": "Name"
+    }
+  },
+
   "toast": {
     "success": "Success!",
     "error": "Error!"
@@ -485,7 +497,10 @@
       "last_created": "Last created",
       "last_updated": "Last updated",
       "start_date": "Start date",
-      "due_date": "Due date"
+      "due_date": "Due date",
+
+      "asc": "Ascending",
+      "desc": "Descending"
     },
     "sort": {
       "asc": "Ascending",
@@ -654,6 +669,42 @@
   },
 
   "workspace_projects": {
+    "network": {
+      "private": {
+        "title": "Private",
+        "description": "Accessible only by invite"
+      },
+      "public": {
+        "title": "Public",
+        "description": "Anyone in the workspace except Guests can join"
+      }
+    },
+    "error": {
+      "permission": "You don't have permission to perform this action.",
+      "cycle_delete": "Failed to delete cycle",
+      "module_delete": "Failed to delete module",
+      "issue_delete": "Failed to delete issue"
+    },
+    "state": {
+      "backlog": "Backlog",
+      "unstarted": "Unstarted",
+      "started": "Started",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "sort": {
+      "manual": "Manual",
+      "name": "Name",
+      "created_at": "Created date",
+      "members_length": "Number of members"
+    },
+    "scope": {
+      "my_projects": "My projects",
+      "archived_projects": "Archived"
+    },
+    "common": {
+      "months_count": "{months, plural, one{# month} other{# months}}"
+    },
     "empty_state": {
       "general": {
         "title": "No active projects",
@@ -1262,6 +1313,29 @@
       "custom": {
         "label": "Custom theme"
       }
+    }
+  },
+  "project_modules": {
+    "status": {
+      "backlog": "Backlog",
+      "planned": "Planned",
+      "in_progress": "In Progress",
+      "paused": "Paused",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "layout": {
+      "list": "List layout",
+      "board": "Gallery layout",
+      "timeline": "Timeline layout"
+    },
+    "order_by": {
+      "name": "Name",
+      "progress": "Progress",
+      "issues": "Number of issues",
+      "due_date": "Due date",
+      "created_at": "Created date",
+      "manual": "Manual"
     }
   }
 }

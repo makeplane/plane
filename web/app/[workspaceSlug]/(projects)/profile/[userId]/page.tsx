@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // types
+import { GROUP_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IUserStateDistribution, TStateGroups } from "@plane/types";
 // components
@@ -17,7 +18,6 @@ import {
 } from "@/components/profile";
 // constants
 import { USER_PROFILE_DATA } from "@/constants/fetch-keys";
-import { GROUP_CHOICES } from "@/constants/project";
 // services
 import { UserService } from "@/services/user.service";
 
