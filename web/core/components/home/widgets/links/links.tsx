@@ -38,9 +38,9 @@ export const ProjectLinkList: FC<TProjectLinkList> = observer((props) => {
         buttonClassName="bg-custom-background-90/20"
       >
         <div className="flex gap-2 mb-2 flex-wrap flex-1">
-          {links &&
-            links.length > 0 &&
-            links.map((linkId) => <ProjectLinkDetail key={linkId} linkId={linkId} linkOperations={linkOperations} />)}
+          {links.map((linkId) => (
+            <ProjectLinkDetail key={linkId} linkId={linkId} linkOperations={linkOperations} />
+          ))}
         </div>
       </ContentOverflowWrapper>
     </div>

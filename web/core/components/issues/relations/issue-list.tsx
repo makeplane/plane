@@ -8,8 +8,6 @@ import { TIssue, TIssueServiceType } from "@plane/types";
 import { RelationIssueListItem } from "@/components/issues/relations";
 // Plane-web
 import { TIssueRelationTypes } from "@/plane-web/types";
-//
-import { TRelationIssueOperations } from "../issue-detail-widgets/relations/helper";
 
 type Props = {
   workspaceSlug: string;
@@ -17,7 +15,6 @@ type Props = {
   issueId: string;
   issueIds: string[];
   relationKey: TIssueRelationTypes;
-  issueOperations: TRelationIssueOperations;
   handleIssueCrudState: (key: "update" | "delete", issueId: string, issue?: TIssue | null) => void;
   disabled?: boolean;
   issueServiceType?: TIssueServiceType;
@@ -31,7 +28,6 @@ export const RelationIssueList: FC<Props> = observer((props) => {
     issueIds,
     relationKey,
     disabled = false,
-    issueOperations,
     handleIssueCrudState,
     issueServiceType = EIssueServiceType.ISSUES,
   } = props;
@@ -50,7 +46,6 @@ export const RelationIssueList: FC<Props> = observer((props) => {
             relationIssueId={relationIssueId}
             disabled={disabled}
             handleIssueCrudState={handleIssueCrudState}
-            issueOperations={issueOperations}
             issueServiceType={issueServiceType}
           />
         ))}

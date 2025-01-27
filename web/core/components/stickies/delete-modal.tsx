@@ -7,7 +7,7 @@ import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 
 interface IStickyDelete {
   isOpen: boolean;
-  handleSubmit: () => void;
+  handleSubmit: () => Promise<void>;
   handleClose: () => void;
 }
 
@@ -20,11 +20,11 @@ export const StickyDeleteModal: React.FC<IStickyDelete> = observer((props) => {
     try {
       setLoader(true);
       await handleSubmit();
-    } catch (error) {
+    } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Warning!",
-        message: "Something went wrong please try again later.",
+        message: "Something went wrong. Please try again later.",
       });
     } finally {
       setLoader(false);
@@ -38,7 +38,7 @@ export const StickyDeleteModal: React.FC<IStickyDelete> = observer((props) => {
       isSubmitting={loader}
       isOpen={isOpen}
       title="Delete sticky"
-      content={<>Are you sure you want to delete the sticky? </>}
+      content="Are you sure you want to delete the sticky?"
     />
   );
 });
