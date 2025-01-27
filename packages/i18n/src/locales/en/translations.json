@@ -487,6 +487,10 @@
       "start_date": "Start date",
       "due_date": "Due date"
     },
+    "sort": {
+      "asc": "Ascending",
+      "desc": "Descending"
+    },
     "comments": "Comments",
     "updates": "Updates"
   },
@@ -581,6 +585,39 @@
     },
     "update": {
       "label": "Update View"
+    }
+  },
+
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "Pending",
+        "description": "Pending"
+      },
+      "declined": {
+        "title": "Declined",
+        "description": "Declined"
+      },
+      "snoozed": {
+        "title": "Snoozed",
+        "description": "{days, plural, one{# day} other{# days}} to go"
+      },
+      "accepted": {
+        "title": "Accepted",
+        "description": "Accepted"
+      },
+      "duplicate": {
+        "title": "Duplicate",
+        "description": "Duplicate"
+      }
+    },
+    "source": {
+      "in-app": "in-app"
+    },
+    "order_by": {
+      "created_at": "Created at",
+      "updated_at": "Updated at",
+      "id": "ID"
     }
   },
 

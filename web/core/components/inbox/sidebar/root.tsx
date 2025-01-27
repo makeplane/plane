@@ -3,8 +3,8 @@
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { TInboxIssueCurrentTab } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TInboxIssueCurrentTab } from "@plane/types";
 import { Header, Loader, EHeaderVariant } from "@plane/ui";
 // components
 import { SimpleEmptyState } from "@/components/empty-state";

@@ -491,6 +491,10 @@
       "start_date": "Fecha de inicio",
       "due_date": "Fecha de vencimiento"
     },
+    "sort": {
+      "asc": "Ascendente",
+      "desc": "Descendente"
+    },
     "comments": "Comentarios",
     "updates": "Actualizaciones"
   },
@@ -585,6 +589,39 @@
     },
     "update": {
       "label": "Actualizar vista"
+    }
+  },
+
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "Pendiente",
+        "description": "Pendiente"
+      },
+      "declined": {
+        "title": "Rechazado",
+        "description": "Rechazado"
+      },
+      "snoozed": {
+        "title": "Pospuesto",
+        "description": "{days, plural, one{# día} other{# días}} restantes"
+      },
+      "accepted": {
+        "title": "Aceptado",
+        "description": "Aceptado"
+      },
+      "duplicate": {
+        "title": "Duplicado",
+        "description": "Duplicado"
+      }
+    },
+    "source": {
+      "in-app": "en la aplicación"
+    },
+    "order_by": {
+      "created_at": "Creado el",
+      "updated_at": "Actualizado el",
+      "id": "Identificador"
     }
   },
 
