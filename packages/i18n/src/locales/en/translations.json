@@ -960,5 +960,28 @@
         }
       }
     }
+  },
+
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "System preference"
+      },
+      "light": {
+        "label": "Light"
+      },
+      "dark": {
+        "label": "Dark"
+      },
+      "light_contrast": {
+        "label": "Light high contrast"
+      },
+      "dark_contrast": {
+        "label": "Dark high contrast"
+      },
+      "custom": {
+        "label": "Custom theme"
+      }
+    }
   }
 }

@@ -14,5 +14,6 @@ export * from "./swr";
 export * from "./user";
 export * from "./workspace";
 export * from "./stickies";
+export * from "./themes";
 export * from "./profile";
 export * from "./workspace-drafts";
