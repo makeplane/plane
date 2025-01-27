@@ -1,11 +1,11 @@
 import { ComputedDatum } from "@nivo/bar";
 import { Theme } from "@nivo/core";
+import { ISSUE_PRIORITIES } from "@plane/constants";
 // components
 import { TIssuePriorities } from "@plane/types";
 import { BarGraph } from "@/components/ui";
 // helpers
 import { PRIORITY_GRAPH_GRADIENTS } from "@/constants/dashboard";
-import { ISSUE_PRIORITIES } from "@/constants/issue";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
 // types
 // constants
@@ -73,7 +73,7 @@ export const IssuesByPriorityGraph: React.FC<Props> = (props) => {
         match: {
           id: p.key,
         },
-        id: `gradient${p.title}`,
+        id: `gradient_${p.key}`,
       }))}
       onClick={(datum) => {
         if (onBarClick) onBarClick(datum);

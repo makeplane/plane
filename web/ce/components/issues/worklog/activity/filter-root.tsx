@@ -2,9 +2,9 @@
 
 import { FC } from "react";
 // components
+import { TActivityFilters, ACTIVITY_FILTER_TYPE_OPTIONS, TActivityFilterOption } from "@plane/constants";
 import { ActivityFilter } from "@/components/issues";
 // plane web constants
-import { TActivityFilters, ACTIVITY_FILTER_TYPE_OPTIONS, TActivityFilterOption } from "@/plane-web/constants/issues";
 
 export type TActivityFilterRoot = {
   selectedFilters: TActivityFilters[];
@@ -20,7 +20,7 @@ export const ActivityFilterRoot: FC<TActivityFilterRoot> = (props) => {
     const filterKey = key as TActivityFilters;
     return {
       key: filterKey,
-      label: value.label,
+      labelTranslationKey: value.labelTranslationKey,
       isSelected: selectedFilters.includes(filterKey),
       onClick: () => toggleFilter(filterKey),
     };

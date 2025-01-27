@@ -262,7 +262,6 @@
   "join_the_project_to_rearrange": "加入项目以重新排序",
   "drag_to_rearrange": "拖动以重新排序",
   "congrats": "恭喜！",
-  "project": "项目",
   "open_project": "打开项目",
   "issues": "问题",
   "cycles": "周期",
@@ -356,6 +355,188 @@
   "add_parent": "添加父问题",
   "loading_members": "正在加载成员...",
   "inbox": "收件箱",
+  "common": {
+    "all": "全部",
+    "states": "状态",
+    "state": "状态",
+    "state_groups": "状态组",
+    "priority": "优先级",
+    "team_project": "团队项目",
+    "project": "项目",
+    "cycle": "周期",
+    "cycles": "周期",
+    "module": "模块",
+    "modules": "模块",
+    "labels": "标签",
+    "assignees": "分配人",
+    "assignee": "分配人",
+    "created_by": "创建者",
+    "none": "无",
+    "link": "链接",
+    "estimate": "估算",
+    "layout": "布局",
+    "filters": "筛选",
+    "display": "显示",
+    "load_more": "加载更多",
+    "no_matches_found": "未找到匹配项",
+    "activity": "活动",
+    "analytics": "分析",
+    "success": "成功",
+    "error": "错误",
+    "group_by": "分组方式",
+    "search": "搜索",
+    "epic": "史诗",
+    "issue": "问题",
+    "warning": "警告",
+    "updating": "更新中",
+    "update": "更新",
+    "creating": "创建中",
+    "cancel": "取消",
+    "description": "描述",
+    "title": "标题",
+    "order_by": {
+      "label": "排序方式",
+      "manual": "手动",
+      "last_created": "最近创建",
+      "last_updated": "最近更新",
+      "start_date": "开始日期",
+      "due_date": "截止日期"
+    },
+    "comments": "评论",
+    "updates": "更新"
+  },
+  "form": {
+    "title": {
+      "required": "标题为必填项",
+      "max_length": "标题不能超过{length}个字符"
+    }
+  },
+  "entity": {
+    "grouping_title": "{entity}分组",
+    "priority": "{entity}",
+    "all": "所有{entity}",
+    "drop_here_to_move": "拖放至此以移动{entity}"
+  },
+  "epic": {
+    "all": "所有史诗",
+    "label": "{count, plural, one {史诗} other {史诗}}"
+  },
+  "issue": {
+    "label": "{count, plural, one {问题} other {问题}}",
+    "all": "所有问题",
+    "add": "添加问题",
+    "priority": {
+      "urgent": "紧急",
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "display": {
+      "properties": {
+        "label": "显示属性",
+        "id": "ID",
+        "issue_type": "问题类型",
+        "sub_issue_count": "子问题数量",
+        "attachment_count": "附件数量"
+      },
+      "extra": {
+        "show_sub_issues": "显示子问题",
+        "show_empty_groups": "显示空分组"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "当前排序方式",
+      "list": "列表",
+      "kanban": "看板",
+      "calendar": "日历",
+      "spreadsheet": "表格",
+      "gantt": "时间线",
+      "title": {
+        "list": "列表视图",
+        "kanban": "看板视图",
+        "calendar": "日历视图",
+        "spreadsheet": "表格视图",
+        "gantt": "时间线视图"
+      }
+    },
+    "states": {
+      "active": "进行中",
+      "backlog": "待办"
+    },
+    "comments": {
+      "create": {
+        "success": "评论创建成功",
+        "error": "评论创建失败，请稍后重试"
+      },
+      "update": {
+        "success": "评论更新成功",
+        "error": "评论更新失败，请稍后重试"
+      },
+      "remove": {
+        "success": "评论删除成功",
+        "error": "评论删除失败，请稍后重试"
+      },
+      "upload": {
+        "error": "资源上传失败，请稍后重试"
+      }
+    }
+  },
+
+  "project": {
+    "label": "{count, plural, one {项目} other {项目}}"
+  },
+
+  "view": {
+    "create": {
+      "label": "创建视图"
+    },
+    "update": {
+      "label": "更新视图"
+    }
+  },
+
+  "user_profile": {
+    "title": "你的工作",
+    "work": "工作",
+    "details": {
+      "joined_on": "加入时间",
+      "time_zone": "时区"
+    },
+    "stats": {
+      "workload": "工作量",
+      "overview": "概述",
+      "created": "已创建问题",
+      "assigned": "已分配问题",
+      "subscribed": "已订阅问题",
+      "state_distribution": {
+        "title": "按状态显示的问题",
+        "empty": "创建问题以在图表中按状态查看它们，以便更好地分析。"
+      },
+      "priority_distribution": {
+        "title": "按优先级显示的问题",
+        "empty": "创建问题以在图表中按优先级查看它们，以便更好地分析。"
+      },
+      "recent_activity": {
+        "title": "最近活动",
+        "empty": "我们找不到数据。请查看您的输入"
+      }
+    },
+    "actions": {
+      "profile": "个人资料",
+      "security": "安全",
+      "activity": "活动",
+      "appearance": "外观",
+      "notifications": "通知"
+    },
+    "tabs": {
+      "summary": "摘要",
+      "assigned": "已分配",
+      "created": "已创建",
+      "subscribed": "已订阅",
+      "activity": "活动"
+    }
+  }
+
   "role_details": {
     "guest": {
       "title": "访客",

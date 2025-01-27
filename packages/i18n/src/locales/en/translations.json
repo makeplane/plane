@@ -220,7 +220,6 @@
   "join_the_project_to_rearrange": "Join the project to rearrange",
   "drag_to_rearrange": "Drag to rearrange",
   "congrats": "Congrats!",
-  "project": "Project",
   "open_project": "Open project",
   "issues": "Issues",
   "cycles": "Cycles",
@@ -314,7 +313,152 @@
   "remove_parent_issue": "Remove parent issue",
   "add_parent": "Add parent",
   "loading_members": "Loading members...",
+  "no_data_yet": "No Data yet",
   "connections": "Connections",
+
+  "common": {
+    "all": "All",
+    "states": "States",
+    "state": "State",
+    "state_groups": "State groups",
+    "priority": "Priority",
+    "team_project": "Team project",
+    "project": "Project",
+    "cycle": "Cycle",
+    "cycles": "Cycles",
+    "module": "Module",
+    "modules": "Modules",
+    "labels": "Labels",
+    "assignees": "Assignees",
+    "assignee": "Assignee",
+    "created_by": "Created by",
+    "none": "None",
+    "link": "Link",
+    "estimate": "Estimate",
+    "layout": "Layout",
+    "filters": "Filters",
+    "display": "Display",
+    "load_more": "Load more",
+    "no_matches_found": "No matches found",
+    "activity": "Activity",
+    "analytics": "Analytics",
+    "success": "Success",
+    "error": "Error",
+    "group_by": "Group by",
+    "search": "Search",
+    "epic": "Epic",
+    "issue": "Issue",
+    "warning": "Warning",
+    "updating": "Updating",
+    "update": "Update",
+    "creating": "Creating",
+    "cancel": "Cancel",
+    "description": "Description",
+    "title": "Title",
+    "order_by": {
+      "label": "Order by",
+      "manual": "Manual",
+      "last_created": "Last created",
+      "last_updated": "Last updated",
+      "start_date": "Start date",
+      "due_date": "Due date"
+    },
+    "comments": "Comments",
+    "updates": "Updates"
+  },
+
+  "form": {
+    "title": {
+      "required": "Title is required",
+      "max_length": "Title should be less than {length} characters"
+    }
+  },
+
+  "entity": {
+    "grouping_title": "{entity} Grouping",
+    "priority": "{entity} ",
+    "all": "All {entity}",
+    "drop_here_to_move": "Drop here to move the {entity}"
+  },
+
+  "epic": {
+    "all": "All Epics",
+    "label": "{count, plural, one {Epic} other {Epics}}"
+  },
+
+  "issue": {
+    "label": "{count, plural, one {Issue} other {Issues}}",
+    "all": "All Issues",
+    "add": "Add Issue",
+    "priority": {
+      "urgent": "Urgent",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "display": {
+      "properties": {
+        "label": "Display Properties",
+        "id": "ID",
+        "issue_type": "Issue Type",
+        "sub_issue_count": "Sub issue count",
+        "attachment_count": "Attachment count"
+      },
+      "extra": {
+        "show_sub_issues": "Show sub-issues",
+        "show_empty_groups": "Show empty groups"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "This layout is ordered by",
+      "list": "List",
+      "kanban": "Board",
+      "calendar": "Calendar",
+      "spreadsheet": "Table",
+      "gantt": "Timeline",
+      "title": {
+        "list": "List Layout",
+        "kanban": "Board Layout",
+        "calendar": "Calendar Layout",
+        "spreadsheet": "Table Layout",
+        "gantt": "Timeline Layout"
+      }
+    },
+    "states": {
+      "active": "Active",
+      "backlog": "Backlog"
+    },
+    "comments": {
+      "create": {
+        "success": "Comment created successfully",
+        "error": "Comment creation failed. Please try again later."
+      },
+      "update": {
+        "success": "Comment updated successfully",
+        "error": "Comment update failed. Please try again later."
+      },
+      "remove": {
+        "success": "Comment removed successfully",
+        "error": "Comment remove failed. Please try again later."
+      },
+      "upload": {
+        "error": "Asset upload failed. Please try again later."
+      }
+    }
+  },
+
+  "project": {
+    "label": "{count, plural, one {Project} other {Projects}}"
+  },
+
+  "view": {
+    "create": {
+      "label": "Create View"
+    },
+    "update": {
+      "label": "Update View"
+    }
+  },
 
   "workspace_dashboard": {
     "empty_state": {
@@ -457,6 +601,45 @@
 
   "profile": {
     "label": "Profile",
+    "page_label": "Your work",
+    "work": "Work",
+    "details": {
+      "joined_on": "Joined on",
+      "time_zone": "Timezone"
+    },
+    "stats": {
+      "workload": "Workload",
+      "overview": "Overview",
+      "created": "Issues created",
+      "assigned": "Issues assigned",
+      "subscribed": "Issues subscribed",
+      "state_distribution": {
+        "title": "Issues by state",
+        "empty": "Create issues to view the them by states in the graph for better analysis."
+      },
+      "priority_distribution": {
+        "title": "Issues by Priority",
+        "empty": "Create issues to view the them by priority in the graph for better analysis."
+      },
+      "recent_activity": {
+        "title": "Recent activity",
+        "empty": "We couldn't find data. Kindly view your inputs"
+      }
+    },
+    "actions": {
+      "profile": "Profile",
+      "security": "Security",
+      "activity": "Activity",
+      "appearance": "Appearance",
+      "notifications": "Notifications"
+    },
+    "tabs": {
+      "summary": "Summary",
+      "assigned": "Assigned",
+      "created": "Created",
+      "subscribed": "Subscribed",
+      "activity": "Activity"
+    },
     "empty_state": {
       "activity": {
         "title": "No activities yet",

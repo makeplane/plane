@@ -1,7 +1,6 @@
 import { observable, action, makeObservable } from "mobx";
-import { EIssuesStoreType } from "@plane/constants";
+import { EIssuesStoreType, TCreateModalStoreTypes } from "@plane/constants";
 // services
-import { TCreateModalStoreTypes } from "@/constants/issue";
 // types / constants
 import { DEFAULT_CREATE_PAGE_MODAL_DATA, EPageAccess, TCreatePageModal } from "@/constants/page";
 
