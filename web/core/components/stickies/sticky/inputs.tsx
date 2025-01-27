@@ -1,19 +1,20 @@
 import { useCallback, useEffect, useRef } from "react";
-import { DebouncedFunc } from "lodash";
 import { Controller, useForm } from "react-hook-form";
 // plane editor
 import { EditorRefApi } from "@plane/editor";
 // plane types
 import { TSticky } from "@plane/types";
+// plane utils
+import { isCommentEmpty } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 // components
 import { StickyEditor } from "../../editor";
 
 type TProps = {
-  stickyData: TSticky | undefined;
+  stickyData: Partial<TSticky> | undefined;
   workspaceSlug: string;
-  handleUpdate: DebouncedFunc<(payload: Partial<TSticky>) => Promise<void>>;
+  handleUpdate: (payload: Partial<TSticky>) => void;
   stickyId: string | undefined;
   showToolbar?: boolean;
   handleChange: (data: Partial<TSticky>) => Promise<void>;
@@ -68,7 +69,11 @@ export const StickyInput = (props: TProps) => {
               onChange(description_html);
               handleSubmit(handleFormSubmit)();
             }}
-            placeholder="Click to type here"
+            placeholder={(_, value) => {
+              const isContentEmpty = isCommentEmpty(value);
+              if (!isContentEmpty) return "";
+              return "Click to type here";
+            }}
             containerClassName="px-0 text-base min-h-[250px] w-full"
             uploadFile={async () => ""}
             showToolbar={showToolbar}

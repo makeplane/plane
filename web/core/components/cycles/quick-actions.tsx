@@ -183,7 +183,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
         </div>
       )}
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
-      <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
+      <CustomMenu ellipsis placement="bottom-end" closeOnSelect maxHeight="lg">
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (

@@ -2,10 +2,10 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { ETabIndices } from "@plane/constants";
 import { TIssue } from "@plane/types";
 import { Input } from "@plane/ui";
-// constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks

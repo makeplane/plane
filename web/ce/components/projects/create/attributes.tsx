@@ -1,15 +1,13 @@
 "use client";
 import { FC } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { NETWORK_CHOICES } from "@plane/constants";
+import { NETWORK_CHOICES, ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 // ui
 import { CustomSelect } from "@plane/ui";
 // components
 import { MemberDropdown } from "@/components/dropdowns";
-// constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 

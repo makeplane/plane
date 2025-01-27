@@ -39,3 +39,6 @@ export const debounce = (func: any, wait: number, immediate: boolean = false) =>
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
 export const convertRemToPixel = (rem: number): number => rem * 0.9 * 16;
+
+export const getProgress = (completed: number | undefined, total: number | undefined) =>
+  total && total > 0 ? Math.round(((completed ?? 0) / total) * 100) : 0;

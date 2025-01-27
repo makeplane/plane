@@ -3,14 +3,14 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 // plane constants
-import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType, ISSUE_STORE_TO_FILTERS_MAP } from "@plane/constants";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { Button } from "@plane/ui";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
-// constants
-import { ISSUE_STORE_TO_FILTERS_MAP } from "@/constants/issue";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
@@ -34,6 +34,8 @@ const HeaderFilters = observer((props: Props) => {
     canUserCreateIssue,
     storeType = EIssuesStoreType.PROJECT,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // store hooks
@@ -111,7 +113,11 @@ const HeaderFilters = observer((props: Props) => {
         onChange={(layout) => handleLayoutChange(layout)}
         selectedLayout={activeLayout}
       />
-      <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
+      <FiltersDropdown
+        title={t("common.filters")}
+        placement="bottom-end"
+        isFiltersApplied={isIssueFilterActive(issueFilters)}
+      >
         <FilterSelection
           filters={issueFilters?.filters ?? {}}
           handleFiltersUpdate={handleFiltersUpdate}
@@ -127,7 +133,7 @@ const HeaderFilters = observer((props: Props) => {
           isEpic={storeType === EIssuesStoreType.EPIC}
         />
       </FiltersDropdown>
-      <FiltersDropdown title="Display" placement="bottom-end">
+      <FiltersDropdown title={t("common.display")} placement="bottom-end">
         <DisplayFiltersSelection
           layoutDisplayFiltersOptions={layoutDisplayFiltersOptions}
           displayFilters={issueFilters?.displayFilters ?? {}}
@@ -141,7 +147,7 @@ const HeaderFilters = observer((props: Props) => {
       </FiltersDropdown>
       {canUserCreateIssue ? (
         <Button className="hidden md:block" onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
-          Analytics
+          {t("common.analytics")}
         </Button>
       ) : (
         <></>

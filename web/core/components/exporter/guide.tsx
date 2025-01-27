@@ -8,24 +8,42 @@ import { useParams, useSearchParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 // icons
 import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
-// ui
+// plane imports
+import { EXPORTERS_LIST } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // components
-import { EmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state";
 import { Exporter, SingleExport } from "@/components/exporter";
 import { ImportExportSettingsLoader } from "@/components/ui";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 import { EXPORT_SERVICES_LIST } from "@/constants/fetch-keys";
-import { EXPORTERS_LIST } from "@/constants/workspace";
 // hooks
 import { useProject, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// services images
+import CSVLogo from "@/public/services/csv.svg";
+import ExcelLogo from "@/public/services/excel.svg";
+import JSONLogo from "@/public/services/json.svg";
 // services
 import { IntegrationService } from "@/services/integrations";
 
 const integrationService = new IntegrationService();
+
+const getExporterLogo = (provider: string) => {
+  switch (provider) {
+    case "csv":
+      return CSVLogo;
+    case "excel":
+      return ExcelLogo;
+    case "json":
+      return JSONLogo;
+    default:
+      return "";
+  }
+};
 
 const IntegrationGuide = observer(() => {
   // states
@@ -37,11 +55,14 @@ const IntegrationGuide = observer(() => {
   const { workspaceSlug } = useParams();
   const searchParams = useSearchParams();
   const provider = searchParams.get("provider");
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { data: currentUser, canPerformAnyCreateAction } = useUser();
   const { allowPermissions } = useUserPermissions();
-
   const { workspaceProjectIds } = useProject();
+  // derived values
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/workspace-settings/exports" });
 
   const { data: exporterServices } = useSWR(
     workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug as string, cursor, `${per_page}`) : null,
@@ -87,11 +108,16 @@ const IntegrationGuide = observer(() => {
                 <div className="flex w-full items-start justify-between gap-4">
                   <div className="item-center flex gap-2.5">
                     <div className="relative h-10 w-10 flex-shrink-0">
-                      <Image src={service.logo} layout="fill" objectFit="cover" alt={`${service.title} Logo`} />
+                      <Image
+                        src={getExporterLogo(service?.provider)}
+                        layout="fill"
+                        objectFit="cover"
+                        alt={`${t(service.i18n_title)} Logo`}
+                      />
                     </div>
                     <div>
-                      <h3 className="flex items-center gap-4 text-sm font-medium">{service.title}</h3>
-                      <p className="text-sm tracking-tight text-custom-text-200">{service.description}</p>
+                      <h3 className="flex items-center gap-4 text-sm font-medium">{t(service.i18n_title)}</h3>
+                      <p className="text-sm tracking-tight text-custom-text-200">{t(service.i18n_description)}</p>
                     </div>
                   </div>
                   <div className="flex-shrink-0">
@@ -164,7 +190,11 @@ const IntegrationGuide = observer(() => {
                   </div>
                 ) : (
                   <div className="flex h-full w-full items-center justify-center">
-                    <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_EXPORT} size="sm" />
+                    <DetailedEmptyState
+                      title={t("workspace_settings.empty_state.exports.title")}
+                      description={t("workspace_settings.empty_state.exports.description")}
+                      assetPath={resolvedPath}
+                    />
                   </div>
                 )
               ) : (
