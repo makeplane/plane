@@ -26,10 +26,6 @@ on:
         default: false
         required: true
 
-  push:
-    branches:
-      - master
-
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
   VAULT_KP_PREFIX: plane-ee-cloud-builds
