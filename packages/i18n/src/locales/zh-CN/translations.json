@@ -154,7 +154,47 @@
   "stay_ahead_of_blockers_description": "发现项目间的挑战，查看其他视图中不明显的周期依赖关系。",
   "analytics": "分析",
   "workspace_invites": "工作区邀请",
-  "workspace_settings": "工作区设置",
+  "workspace_settings": {
+    "label": "工作区设置",
+    "settings": {
+      "general": {
+        "title": "常规"
+      },
+      "members": {
+        "title": "会员"
+      },
+      "billing-and-plans": {
+        "title": "账单与计划"
+      },
+      "exports": {
+        "title": "导出"
+      },
+      "webhooks": {
+        "title": "网络钩子"
+      },
+      "api-tokens": {
+        "title": "API 令牌"
+      }
+    },
+    "empty_state": {
+      "api_tokens": {
+        "title": "尚未创建 API 令牌",
+        "description": "Plane API 可用于将您在 Plane 中的数据与任何外部系统集成。创建令牌即可开始使用。"
+      },
+      "webhooks": {
+        "title": "尚未添加网络钩子",
+        "description": "创建网络钩子以接收实时更新并自动执行操作。"
+      },
+      "exports": {
+        "title": "尚无导出记录",
+        "description": "每次导出时，您都可以在此处找到参考副本。"
+      },
+      "imports": {
+        "title": "尚无导入记录",
+        "description": "在此处查找所有以前的导入记录并下载。"
+      }
+    }
+  },
   "enter_god_mode": "进入上帝模式",
   "workspace_logo": "工作区徽标",
   "new_issue": "新建问题",
@@ -381,10 +421,10 @@
     "recents": {
       "title": "最近",
       "empty": {
-          "project": "访问项目后，您的最近项目将显示在这里。",
-          "page": "访问页面后，您的最近页面将显示在这里。",
-          "issue": "访问问题后，您的最近问题将显示在这里。",
-          "default": "您还没有任何最近项目。"
+        "project": "访问项目后，您的最近项目将显示在这里。",
+        "page": "访问页面后，您的最近页面将显示在这里。",
+        "issue": "访问问题后，您的最近问题将显示在这里。",
+        "default": "您还没有任何最近项目。"
       },
       "filters": {
         "all": "所有项目",
@@ -605,6 +645,68 @@
       "activity": "活动"
     }
   },
+
+  "role_details": {
+    "guest": {
+      "title": "访客",
+      "description": "组织的外部成员可以被邀请为访客。"
+    },
+    "member": {
+      "title": "成员",
+      "description": "可以在项目、周期和模块内读取、写入、编辑和删除实体"
+    },
+    "admin": {
+      "title": "管理员",
+      "description": "工作区内的所有权限都设置为允许。"
+    }
+  },
+
+  "user_roles": {
+    "product_or_project_manager": "产品/项目经理",
+    "development_or_engineering": "开发/工程",
+    "founder_or_executive": "创始人/高管",
+    "freelancer_or_consultant": "自由职业者/顾问",
+    "marketing_or_growth": "市场营销/增长",
+    "sales_or_business_development": "销售/业务发展",
+    "support_or_operations": "支持/运营",
+    "student_or_professor": "学生/教授",
+    "human_or_resources": "人力资源",
+    "other": "其他"
+  },
+
+  "importer": {
+    "github": {
+      "title": "Github",
+      "description": "从 GitHub 仓库导入问题并同步。"
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "从 Jira 项目导入问题和史诗。"
+    }
+  },
+
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "将问题导出为 CSV 文件。"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "将问题导出为 Excel 文件。"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "将问题导出为 JSON 文件。"
+    }
+  },
+
+  "default_global_view": {
+    "all_issues": "所有问题",
+    "assigned": "已分配",
+    "created": "已创建",
+    "subscribed": "已订阅"
+  },
+
   "stickies": {
     "title": "便签",
     "placeholder": "点击此处输入",

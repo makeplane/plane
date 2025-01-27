@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
+import { DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
 // components
 import { PageHead } from "@/components/core";
 import { AllIssueLayoutRoot, GlobalViewsAppliedFiltersRoot } from "@/components/issues";
 import { GlobalViewsHeader } from "@/components/workspace";
 // constants
-import { DEFAULT_GLOBAL_VIEWS_LIST } from "@/constants/workspace";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 

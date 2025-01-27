@@ -650,7 +650,7 @@
     "empty_state": {
       "all-issues": {
         "title": "Aucune tâche dans le projet",
-        "description": "Premier projet terminé ! Maintenant, divisez votre travail en morceaux traçables avec des tâches. Allons-y !",
+        "description": "Premier projet terminé ! Maintenant, divisez votre travail en morceaux traçables avec des tâches. Allons-y !",
         "primary_button": {
           "text": "Créer une nouvelle tâche"
         }
@@ -682,6 +682,26 @@
 
   "workspace_settings": {
     "label": "Paramètres de l'espace de travail",
+    "settings": {
+      "general": {
+        "title": "Général"
+      },
+      "members": {
+        "title": "Membres"
+      },
+      "billing-and-plans": {
+        "title": "Facturation et plans"
+      },
+      "exports": {
+        "title": "Exportations"
+      },
+      "webhooks": {
+        "title": "Webhooks"
+      },
+      "api-tokens": {
+        "title": "Jetons API"
+      }
+    },
     "empty_state": {
       "api_tokens": {
         "title": "Aucun jeton API créé",
@@ -746,7 +766,7 @@
     "empty_state": {
       "activity": {
         "title": "Aucune activité pour le moment",
-        "description": "Commencez par créer une nouvelle tâche ! Ajoutez des détails et des propriétés à celle-ci. Explorez davantage Plane pour voir votre activité."
+        "description": "Commencez par créer une nouvelle tâche ! Ajoutez des détails et des propriétés à celle-ci. Explorez davantage Plane pour voir votre activité."
       },
       "assigned": {
         "title": "Aucune tâche assignée",
@@ -813,13 +833,13 @@
   "project_issues": {
     "empty_state": {
       "no_issues": {
-        "title": "Créez un problème et assignez-le à quelqu’un, même à vous-même",
+        "title": "Créez un problème et assignez-le à quelqu'un, même à vous-même",
         "description": "Considérez les problèmes comme des emplois, des tâches, des actions ou JTBD (travaux à accomplir). Nous aimons ça. Un problème et ses sous-problèmes sont généralement des actions basées sur le temps assignées aux membres de votre équipe. Votre équipe crée, assigne et termine des problèmes pour faire avancer votre projet vers son objectif.",
         "primary_button": {
           "text": "Créez votre premier problème",
           "comic": {
             "title": "Les problèmes sont les éléments constitutifs de Plane.",
-            "description": "Redessiner l’interface utilisateur de Plane, Rebrander l’entreprise ou Lancer le nouveau système d’injection de carburant sont des exemples de problèmes qui comportent probablement des sous-problèmes."
+            "description": "Redessiner l'interface utilisateur de Plane, Rebrander l'entreprise ou Lancer le nouveau système d'injection de carburant sont des exemples de problèmes qui comportent probablement des sous-problèmes."
           }
         }
       },
@@ -1110,5 +1130,66 @@
         "message": "Le pense-bête n'a pas pu être supprimé"
       }
     }
+  },
+
+  "role_details": {
+    "guest": {
+      "title": "Invité",
+      "description": "Les membres externes des organisations peuvent être invités en tant qu'invités."
+    },
+    "member": {
+      "title": "Membre",
+      "description": "Capacité à lire, écrire, modifier et supprimer des entités dans les projets, cycles et modules"
+    },
+    "admin": {
+      "title": "Administrateur",
+      "description": "Toutes les autorisations définies sur vrai dans l'espace de travail."
+    }
+  },
+
+  "user_roles": {
+    "product_or_project_manager": "Chef de Produit / Projet",
+    "development_or_engineering": "Développement / Ingénierie",
+    "founder_or_executive": "Fondateur / Dirigeant",
+    "freelancer_or_consultant": "Freelance / Consultant",
+    "marketing_or_growth": "Marketing / Croissance",
+    "sales_or_business_development": "Ventes / Développement Commercial",
+    "support_or_operations": "Support / Opérations",
+    "student_or_professor": "Étudiant / Professeur",
+    "human_or_resources": "Ressources Humaines",
+    "other": "Autre"
+  },
+
+  "importer": {
+    "github": {
+      "title": "Github",
+      "description": "Importer des problèmes depuis les dépôts GitHub et les synchroniser."
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Importer des problèmes et des épopées depuis les projets Jira."
+    }
+  },
+
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Exporter les problèmes vers un fichier CSV."
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Exporter les problèmes vers un fichier Excel."
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Exporter les problèmes vers un fichier JSON."
+    }
+  },
+
+  "default_global_view": {
+    "all_issues": "Tous les problèmes",
+    "assigned": "Assignés",
+    "created": "Créés",
+    "subscribed": "Abonnés"
   }
 }

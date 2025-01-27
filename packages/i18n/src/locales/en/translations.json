@@ -683,6 +683,26 @@
 
   "workspace_settings": {
     "label": "Workspace settings",
+    "settings": {
+      "general": {
+        "title": "General"
+      },
+      "members": {
+        "title": "Members"
+      },
+      "billing-and-plans": {
+        "title": "Billing & Plans"
+      },
+      "exports": {
+        "title": "Exports"
+      },
+      "webhooks": {
+        "title": "Webhooks"
+      },
+      "api-tokens": {
+        "title": "API Tokens"
+      }
+    },
     "empty_state": {
       "api_tokens": {
         "title": "No API tokens created",
@@ -1111,5 +1131,65 @@
         "message": "The sticky could not be removed"
       }
     }
+  },
+
+  "role_details": {
+    "guest": {
+      "title": "Guest",
+      "description": "External members of organizations can be invited as guests."
+    },
+    "member": {
+      "title": "Member",
+      "description": "Ability to read, write, edit, and delete entities inside projects, cycles, and modules"
+    },
+    "admin": {
+      "title": "Admin",
+      "description": "All permissions set to true within the workspace."
+    }
+  },
+
+  "user_roles": {
+    "product_or_project_manager": "Product / Project Manager",
+    "development_or_engineering": "Development / Engineering",
+    "founder_or_executive": "Founder / Executive",
+    "freelancer_or_consultant": "Freelancer / Consultant",
+    "marketing_or_growth": "Marketing / Growth",
+    "sales_or_business_development": "Sales / Business Development",
+    "support_or_operations": "Support / Operations",
+    "student_or_professor": "Student / Professor",
+    "human_or_resources": "Human / Resources",
+    "other": "Other"
+  },
+
+  "importer": {
+    "github": {
+      "title": "Github",
+      "description": "Import issues from GitHub repositories and sync them."
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Import issues and epics from Jira projects and epics."
+    }
+  },
+
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Export issues to a CSV file."
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Export issues to a Excel file."
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Export issues to a JSON file."
+    }
+  },
+  "default_global_view": {
+    "all_issues": "All issues",
+    "assigned": "Assigned",
+    "created": "Created",
+    "subscribed": "Subscribed"
   }
 }
