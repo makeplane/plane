@@ -4,7 +4,6 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // types
 import { GROUP_CHOICES } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 import { IUserStateDistribution, TStateGroups } from "@plane/types";
 // components
 import { ContentWrapper } from "@plane/ui";
@@ -26,7 +25,6 @@ const userService = new UserService();
 
 export default function ProfileOverviewPage() {
   const { workspaceSlug, userId } = useParams();
-  const { t } = useTranslation();
 
   const { data: userProfile } = useSWR(
     workspaceSlug && userId ? USER_PROFILE_DATA(workspaceSlug.toString(), userId.toString()) : null,
@@ -34,10 +32,10 @@ export default function ProfileOverviewPage() {
   );
 
   const stateDistribution: IUserStateDistribution[] = Object.keys(GROUP_CHOICES).map((key) => {
-    const group = userProfile?.state_distribution.find((g) => g.state_group === t(key));
+    const group = userProfile?.state_distribution.find((g) => g.state_group === key);
 
     if (group) return group;
-    else return { state_group: t(key) as TStateGroups, state_count: 0 };
+    else return { state_group: key as TStateGroups, state_count: 0 };
   });
 
   return (
