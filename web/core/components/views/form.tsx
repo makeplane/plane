@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Layers } from "lucide-react";
 // plane constants
-import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { ETabIndices, EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
@@ -15,7 +15,6 @@ import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, TextArea } from "
 // components
 import { Logo } from "@/components/common";
 import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
-import { ETabIndices } from "@/constants/tab-indices";
 import { EViewAccess } from "@/constants/views";
 // helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";

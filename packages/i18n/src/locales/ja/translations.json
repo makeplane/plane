@@ -18,6 +18,7 @@
   "add_members": "メンバーを追加",
   "remove_members": "メンバーを削除",
   "add": "追加",
+  "adding": "追加中",
   "remove": "削除",
   "add_new": "新規追加",
   "remove_selected": "選択項目を削除",
@@ -156,7 +157,6 @@
   "enter_god_mode": "ゴッドモードに入る",
   "workspace_logo": "ワークスペースロゴ",
   "new_issue": "新しい問題",
-  "home": "ホーム",
   "your_work": "あなたの作業",
   "drafts": "下書き",
   "projects": "プロジェクト",
@@ -313,9 +313,135 @@
   "remove_parent_issue": "親問題を削除",
   "add_parent": "親問題を追加",
   "loading_members": "メンバーを読み込んでいます...",
+  "view_link_copied_to_clipboard": "表示リンクがクリップボードにコピーされました。",
+  "required": "必須",
+  "optional": "任意",
+  "Cancel": "キャンセル",
+  "edit": "編集",
+  "open_in_new_tab": "新しいタブで開く",
+  "delete": "削除",
+  "good": "お",
+  "morning": "はよう",
+  "afternoon": "昼",
+  "evening": "晩は",
+  "show_all": "すべて表示",
+  "show_less": "表示を減らす",
   "no_data_yet": "まだデータがありません",
   "connections": "接続",
 
+  "toast": {
+    "success": "成功！",
+    "error": "エラー！"
+  },
+
+  "home": {
+    "empty": {
+      "create_project": {
+        "title": "プロジェクトを作成",
+        "description": "Planeでは、ほとんどのことがプロジェクトから始まります。",
+        "cta": "始める"
+      },
+      "invite_team": {
+        "title": "チームを招待",
+        "description": "同僚と共に構築、展開、管理しましょう。",
+        "cta": "招待する"
+      },
+      "configure_workspace": {
+        "title": "ワークスペースを設定",
+        "description": "機能のオン/オフを切り替えたり、さらに詳細な設定が可能です。",
+        "cta": "このワークスペースを設定"
+      },
+      "personalize_account": {
+        "title": "Planeをあなた専用に",
+        "description": "写真、カラー、その他の設定を選択できます。",
+        "cta": "今すぐカスタマイズ"
+      },
+      "widgets": {
+        "title": "ウィジェットがないと静かですね、オンにしましょう",
+        "description": "すべてのウィジェットがオフになっているようです。 今すぐ有効にして、体験を向上させましょう！",
+        "primary_button": {
+          "text": "ウィジェットを管理"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "すぐに使いたい作業用リンクを保存します。",
+      "add": "クイックリンクを追加",
+      "title": "クイックリンク",
+      "title_plural": "クイックリンク",
+      "toasts": {
+        "created": {
+          "title": "リンクが作成されました",
+          "message": "リンクの作成に成功しました"
+        },
+        "not_created": {
+          "title": "リンクが作成されませんでした",
+          "message": "リンクを作成できませんでした"
+        },
+        "updated": {
+          "title": "リンクが更新されました",
+          "message": "リンクの更新に成功しました"
+        },
+        "not_updated": {
+          "title": "リンクが更新されませんでした",
+          "message": "リンクを更新できませんでした"
+        },
+        "removed": {
+          "title": "リンクが削除されました",
+          "message": "リンクの削除に成功しました"
+        },
+        "not_removed": {
+          "title": "リンクが削除されませんでした",
+          "message": "リンクを削除できませんでした"
+        }
+      }
+    },
+    "recents": {
+      "title": "最近",
+      "empty": {
+          "project": "プロジェクトを訪問すると、最近のプロジェクトがここに表示されます。",
+          "page": "ページを訪問すると、最近のページがここに表示されます。",
+          "issue": "課題を訪問すると、最近の課題がここに表示されます。",
+          "default": "最近のアイテムはまだありません。" 
+      },
+      "filters": {
+        "all": "すべてのアイテム",
+        "projects": "プロジェクト",
+        "pages": "ページ",
+        "issues": "課題"
+      }
+    },
+    "my_stickies": {
+      "title": "付箋"
+    },
+    "new_at_plane": {
+      "title": "Planeの新機能"
+    },
+    "quick_tutorial": {
+      "title": "クイックチュートリアル"
+    },
+    "widget": {
+      "reordered_successfully": "ウィジェットの並び替えに成功しました。",
+      "reordering_failed": "ウィジェットの並び替え中にエラーが発生しました。"
+    },
+    "manage_widgets": "ウィジェットの管理",
+    "title": "ホーム",
+    "star_us_on_github": "GitHubでスターをつける"
+  },
+  "link": {
+    "modal": {
+      "url": {
+        "text": "URL",
+        "required": "URLが無効です",
+        "placeholder": "URLを入力または貼り付け"
+      },
+      "title": {
+        "text": "表示タイトル",
+        "placeholder": "このリンクをどのように表示したいか"
+      }
+    }
+  },
+  
   "common": {
     "all": "すべて",
     "states": "ステータス",
@@ -596,6 +722,26 @@
 
   "workspace_settings": {
     "label": "ワークスペース設定",
+    "settings": {
+      "general": {
+        "title": "一般"
+      },
+      "members": {
+        "title": "メンバー"
+      },
+      "billing-and-plans": {
+        "title": "請求とプラン"
+      },
+      "exports": {
+        "title": "エクスポート"
+      },
+      "webhooks": {
+        "title": "Webhooks"
+      },
+      "api-tokens": {
+        "title": "APIトークン"
+      }
+    },
     "empty_state": {
       "api_tokens": {
         "title": "APIトークンが作成されていません",
@@ -969,33 +1115,121 @@
   },
 
   "stickies": {
+    "title": "付箋メモ",
+    "placeholder": "ここをクリックして入力",
+    "all": "すべての付箋",
+    "no-data": "アイデアをメモしたり、ひらめきやアイデアを記録しましょう。付箋を追加して始めましょう。",
+    "add": "付箋を追加",
+    "search_placeholder": "タイトルで検索",
+    "delete": "付箋を削除",
+    "delete_confirmation": "この付箋を削除してもよろしいですか？",
     "empty_state": {
+      "simple": "アイデアをメモしたり、ひらめきやアイデアを記録しましょう。付箋を追加して始めましょう。",
       "general": {
-        "title": "スティッキーは、その場で素早く取るメモやタスクです。",
-        "description": "いつでもどこでもアクセスできるスティッキーを作成して、思いついたアイデアを簡単にキャプチャしましょう。",
+        "title": "付箋は、その場で書き留める簡単なメモやToDoリストです。",
+        "description": "いつでもどこからでもアクセスできる付箋を作成して、思いやアイデアを簡単に記録できます。",
         "primary_button": {
-          "text": "スティッキーを追加"
+          "text": "付箋を追加"
         }
       },
       "search": {
-        "title": "一致するスティッキーはありません。",
-        "description": "別の用語を試すか、検索が正しい場合はお知らせください。",
+        "title": "該当する付箋が見つかりません。",
+        "description": "別の検索語を試すか、\n検索が正しい場合はお知らせください。",
         "primary_button": {
-          "text": "スティッキーを追加"
+          "text": "付箋を追加"
         }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "付箋の名前は100文字を超えることはできません。",
+        "already_exists": "説明のない付箋がすでに存在します"
+      },
+      "created": {
+        "title": "付箋が作成されました",
+        "message": "付箋が正常に作成されました"
+      },
+      "not_created": {
+        "title": "付箋を作成できません",
+        "message": "付箋を作成できませんでした"
+      },
+      "updated": {
+        "title": "付箋が更新されました",
+        "message": "付箋が正常に更新されました"
+      },
+      "not_updated": {
+        "title": "付箋を更新できません",
+        "message": "付箋を更新できませんでした"
+      },
+      "removed": {
+        "title": "付箋が削除されました",
+        "message": "付箋が正常に削除されました"
+      },
+      "not_removed": {
+        "title": "付箋を削除できません",
+        "message": "付箋を削除できませんでした"
       }
     }
   },
 
-  "home_widgets": {
-    "empty_state": {
-      "general": {
-        "title": "ウィジェットがないと静かですね、オンにしましょう",
-        "description": "すべてのウィジェットがオフになっているようです。 今すぐ有効にして、体験を向上させましょう！",
-        "primary_button": {
-          "text": "ウィジェットを管理"
-        }
-      }
+  "role_details": {
+    "guest": {
+      "title": "ゲスト",
+      "description": "組織の外部メンバーはゲストとして招待できます。"
+    },
+    "member": {
+      "title": "メンバー",
+      "description": "プロジェクト、サイクル、モジュール内のエンティティの読み取り、書き込み、編集、削除が可能"
+    },
+    "admin": {
+      "title": "管理者",
+      "description": "ワークスペース内のすべての権限が有効。"
     }
+  },
+
+  "user_roles": {
+    "product_or_project_manager": "プロダクト/プロジェクトマネージャー",
+    "development_or_engineering": "開発/エンジニアリング",
+    "founder_or_executive": "創業者/エグゼクティブ",
+    "freelancer_or_consultant": "フリーランス/コンサルタント",
+    "marketing_or_growth": "マーケティング/グロース",
+    "sales_or_business_development": "営業/事業開発",
+    "support_or_operations": "サポート/オペレーション",
+    "student_or_professor": "学生/教授",
+    "human_or_resources": "人事",
+    "other": "その他"
+  },
+
+  "importer": {
+    "github": {
+      "title": "Github",
+      "description": "GitHubリポジトリから課題をインポートして同期します。"
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Jiraプロジェクトから課題とエピックをインポートします。"
+    }
+  },
+
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "課題をCSVファイルにエクスポートします。"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "課題をExcelファイルにエクスポートします。"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "課題をJSONファイルにエクスポートします。"
+    }
+  },
+
+  "default_global_view": {
+    "all_issues": "すべての課題",
+    "assigned": "割り当て済み",
+    "created": "作成済み",
+    "subscribed": "購読済み"
   }
 }

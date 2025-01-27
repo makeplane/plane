@@ -18,6 +18,7 @@
   "add_members": "Agregar miembros",
   "remove_members": "Eliminar miembros",
   "add": "Agregar",
+  "adding": "Añadiendo",
   "remove": "Eliminar",
   "add_new": "Agregar nuevo",
   "remove_selected": "Eliminar seleccionados",
@@ -155,7 +156,6 @@
   "enter_god_mode": "Entrar en modo dios",
   "workspace_logo": "Logo del espacio de trabajo",
   "new_issue": "Nuevo problema",
-  "home": "Inicio",
   "your_work": "Tu trabajo",
   "drafts": "Borradores",
   "projects": "Proyectos",
@@ -312,8 +312,137 @@
   "remove_parent_issue": "Eliminar problema padre",
   "add_parent": "Agregar padre",
   "loading_members": "Cargando miembros...",
+  "view_link_copied_to_clipboard": "Enlace de vista copiado al portapapeles.",
+  "required": "Requerido",
+  "optional": "Opcional",
+  "Cancel": "Cancelar",
+  "edit": "Editar",
+  "open_in_new_tab": "Abrir en nueva pestaña",
+  "delete": "Eliminar",
+  "good": "Buenos",
+  "morning": "días",
+  "afternoon": "tardes",
+  "evening": "noches",
+  "show_all": "Mostrar todo",
+  "show_less": "Mostrar menos",
   "no_data_yet": "Sin datos aún",
   "connections": "Conexiones",
+
+  "toast": {
+    "success": "¡Éxito!",
+    "error": "¡Error!"
+  },
+
+  "home": {
+    "empty": {
+      "create_project": {
+        "title": "Crear un proyecto",
+        "description": "La mayoría de las cosas comienzan con un proyecto en Plane.",
+        "cta": "Comenzar"
+      },
+      "invite_team": {
+        "title": "Invitar a tu equipo",
+        "description": "Construye, implementa y gestiona con tus compañeros.",
+        "cta": "Hazlos entrar"
+      },
+      "configure_workspace": {
+        "title": "Configura tu espacio de trabajo",
+        "description": "Activa o desactiva funciones o ve más allá.",
+        "cta": "Configurar este espacio"
+      },
+      "personalize_account": {
+        "title": "Haz Plane tuyo",
+        "description": "Elige tu foto, colores y más.",
+        "cta": "Personalizar ahora"
+      },
+      "widgets":  {
+        "title": "Está tranquilo sin widgets, actívalos",
+        "description": "Parece que todos tus widgets están desactivados. ¡Enciéndelos ahora para mejorar tu experiencia!",
+        "primary_button": {
+          "text": "Gestionar widgets"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "Guarda enlaces a cosas de trabajo que te gustaría tener a mano.",
+      "add": "Añadir enlace rápido",
+      "title": "Enlace rápido",
+      "title_plural": "Enlaces rápidos",
+      "toasts": {
+        "created": {
+          "title": "Enlace creado",
+          "message": "El enlace se ha creado exitosamente"
+        },
+        "not_created": {
+          "title": "Enlace no creado",
+          "message": "No se pudo crear el enlace"
+        },
+        "updated": {
+          "title": "Enlace actualizado",
+          "message": "El enlace se ha actualizado exitosamente"
+        },
+        "not_updated": {
+          "title": "Enlace no actualizado",
+          "message": "No se pudo actualizar el enlace"
+        },
+        "removed": {
+          "title": "Enlace eliminado",
+          "message": "El enlace se ha eliminado exitosamente"
+        },
+        "not_removed": {
+          "title": "Enlace no eliminado",
+          "message": "No se pudo eliminar el enlace"
+        }
+        
+      }
+    },
+    "recents": {
+      "title": "Recientes",
+      "empty": {
+          "project": "Tus proyectos recientes aparecerán aquí cuando visites uno.",
+          "page": "Tus páginas recientes aparecerán aquí cuando visites una.",
+          "issue": "Tus problemas recientes aparecerán aquí cuando visites uno.",
+          "default": "Aún no tienes elementos recientes."
+      },
+      "filters": {
+        "all": "Todos los elementos",
+        "projects": "Proyectos",
+        "pages": "Páginas",
+        "issues": "Problemas"
+      }
+    },
+    "my_stickies": {
+      "title": "Tus notas"
+    },
+    "new_at_plane": {
+      "title": "Nuevo en Plane"
+    },
+    "quick_tutorial": {
+      "title": "Tutorial rápido"
+    },
+    "widget": {
+      "reordered_successfully": "Widget reordenado exitosamente.",
+      "reordering_failed": "Ocurrió un error al reordenar el widget."
+    },
+    "manage_widgets": "Administrar widgets",
+    "title": "Inicio",
+    "star_us_on_github": "Danos una estrella en GitHub"
+  },
+
+  
+  "link": {
+    "modal": {
+      "url": {
+        "text": "URL",
+        "required": "La URL no es válida",
+        "placeholder": "Escribe o pega una URL"
+      },
+      "title": {
+        "text": "Título de visualización",
+        "placeholder": "Cómo te gustaría ver este enlace"
+      }
+    }
+  },
 
   "common": {
     "all": "Todos",
@@ -595,6 +724,26 @@
 
   "workspace_settings": {
     "label": "Configuración del espacio de trabajo",
+    "settings": {
+      "general": {
+        "title": "General"
+      },
+      "members": {
+        "title": "Miembros"
+      },
+      "billing-and-plans": {
+        "title": "Facturación y planes"
+      },
+      "exports": {
+        "title": "Exportaciones"
+      },
+      "webhooks": {
+        "title": "Webhooks"
+      },
+      "api-tokens": {
+        "title": "Tokens API"
+      }
+    },
     "empty_state": {
       "api_tokens": {
         "title": "No se han creado tokens API",
@@ -968,33 +1117,121 @@
   },
 
   "stickies": {
+    "title": "Tus notas adhesivas",
+    "placeholder": "haz clic para escribir aquí",
+    "all": "Todas las notas",
+    "no-data": "Anota una idea, captura un momento eureka o registra una inspiración. Añade una nota para empezar.",
+    "add": "Añadir nota",
+    "search_placeholder": "Buscar por título",
+    "delete": "Eliminar nota",
+    "delete_confirmation": "¿Estás seguro de que quieres eliminar esta nota?",
     "empty_state": {
+      "simple": "Anota una idea, captura un momento eureka o registra una inspiración. Añade una nota para empezar.",
       "general": {
-        "title": "Los stickies son notas rápidas y tareas que tomas al vuelo.",
-        "description": "Captura tus pensamientos e ideas sin esfuerzo creando stickies a los que puedes acceder en cualquier momento y lugar.",
+        "title": "Las notas son apuntes rápidos y tareas que tomas sobre la marcha.",
+        "description": "Captura tus pensamientos e ideas sin esfuerzo creando notas que puedes acceder en cualquier momento y desde cualquier lugar.",
         "primary_button": {
-          "text": "Agregar sticky"
+          "text": "Añadir nota"
         }
       },
       "search": {
-        "title": "Eso no coincide con ninguno de tus stickies.",
-        "description": "Prueba con un término diferente o avísanos si estás seguro de que tu búsqueda es correcta.",
+        "title": "Esto no coincide con ninguna de tus notas.",
+        "description": "Prueba un término diferente o avísanos\nsi estás seguro de que tu búsqueda es correcta.",
         "primary_button": {
-          "text": "Agregar sticky"
+          "text": "Añadir nota"
         }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "El nombre de la nota no puede tener más de 100 caracteres.",
+        "already_exists": "Ya existe una nota sin descripción"
+      },
+      "created": {
+        "title": "Nota creada",
+        "message": "La nota se ha creado con éxito"
+      },
+      "not_created": {
+        "title": "Nota no creada",
+        "message": "No se pudo crear la nota"
+      },
+      "updated": {
+        "title": "Nota actualizada",
+        "message": "La nota se ha actualizado con éxito"
+      },
+      "not_updated": {
+        "title": "Nota no actualizada",
+        "message": "No se pudo actualizar la nota"
+      },
+      "removed": {
+        "title": "Nota eliminada",
+        "message": "La nota se ha eliminado con éxito"
+      },
+      "not_removed": {
+        "title": "Nota no eliminada",
+        "message": "No se pudo eliminar la nota"
       }
     }
   },
 
-  "home_widgets": {
-    "empty_state": {
-      "general": {
-        "title": "Está tranquilo sin widgets, actívalos",
-        "description": "Parece que todos tus widgets están desactivados. ¡Enciéndelos ahora para mejorar tu experiencia!",
-        "primary_button": {
-          "text": "Gestionar widgets"
-        }
-      }
+  "role_details": {
+    "guest": {
+      "title": "Invitado",
+      "description": "Los miembros externos de las organizaciones pueden ser invitados como invitados."
+    },
+    "member": {
+      "title": "Miembro",
+      "description": "Capacidad para leer, escribir, editar y eliminar entidades dentro de proyectos, ciclos y módulos"
+    },
+    "admin": {
+      "title": "Administrador",
+      "description": "Todos los permisos establecidos como verdaderos dentro del espacio de trabajo."
     }
+  },
+
+  "user_roles": {
+    "product_or_project_manager": "Gerente de Producto / Proyecto",
+    "development_or_engineering": "Desarrollo / Ingeniería",
+    "founder_or_executive": "Fundador / Ejecutivo",
+    "freelancer_or_consultant": "Freelancer / Consultor",
+    "marketing_or_growth": "Marketing / Crecimiento",
+    "sales_or_business_development": "Ventas / Desarrollo de Negocios",
+    "support_or_operations": "Soporte / Operaciones",
+    "student_or_professor": "Estudiante / Profesor",
+    "human_or_resources": "Recursos Humanos",
+    "other": "Otro"
+  },
+
+  "importer": {
+    "github": {
+      "title": "Github",
+      "description": "Importar problemas desde repositorios de GitHub y sincronizarlos."
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "Importar problemas y épicas desde proyectos de Jira."
+    }
+  },
+
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Exportar problemas a un archivo CSV."
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Exportar problemas a un archivo Excel."
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Exportar problemas a un archivo JSON."
+    }
+  },
+
+  "default_global_view": {
+    "all_issues": "Todos los problemas",
+    "assigned": "Asignados",
+    "created": "Creados",
+    "subscribed": "Suscritos"
   }
 }
