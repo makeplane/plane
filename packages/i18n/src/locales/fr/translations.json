@@ -18,6 +18,7 @@
   "add_members": "Ajouter des membres",
   "remove_members": "Supprimer des membres",
   "add": "Ajouter",
+  "adding": "Ajout",
   "remove": "Supprimer",
   "add_new": "Ajouter un nouveau",
   "remove_selected": "Supprimer la sélection",
@@ -313,15 +314,10 @@
   "remove_parent_issue": "Supprimer le problème parent",
   "add_parent": "Ajouter un parent",
   "loading_members": "Chargement des membres...",
-
   "view_link_copied_to_clipboard": "Lien de vue copié dans le presse-papiers.",
   "required": "Requis",
   "optional": "Optionnel",
   "Cancel": "Annuler",
-  "Update": "Mettre à jour",
-  "Add": "Ajouter",
-  "Updating": "Mise à jour",
-  "Adding": "Ajout",
   "edit": "Modifier",
   "open_in_new_tab": "Ouvrir dans un nouvel onglet",
   "delete": "Supprimer",
@@ -370,44 +366,44 @@
       }
     },
     "quick_links": {
-        "empty": "Enregistrez des liens vers des éléments de travail que vous souhaitez avoir à portée de main.",
-        "add": "Ajouter un lien rapide",
-        "title": "Lien rapide",
-        "title_plural": "Liens rapides",
-        "toasts": {
-          "created": {
-            "title": "Lien créé",
-            "message": "Le lien a été créé avec succès"
-          },
-          "not_created": {
-            "title": "Lien non créé",
-            "message": "Le lien n'a pas pu être créé"
-          },
-          "updated": {
-            "title": "Lien mis à jour",
-            "message": "Le lien a été mis à jour avec succès"
-          },
-          "not_updated": {
-            "title": "Lien non mis à jour",
-            "message": "Le lien n'a pas pu être mis à jour"
-          },
-          "removed": {
-            "title": "Lien supprimé",
-            "message": "Le lien a été supprimé avec succès"
-          },
-          "not_removed": {
-            "title": "Lien non supprimé",
-            "message": "Le lien n'a pas pu être supprimé"
-          }
+      "empty": "Enregistrez des liens vers des éléments de travail que vous souhaitez avoir à portée de main.",
+      "add": "Ajouter un lien rapide",
+      "title": "Lien rapide",
+      "title_plural": "Liens rapides",
+      "toasts": {
+        "created": {
+          "title": "Lien créé",
+          "message": "Le lien a été créé avec succès"
+        },
+        "not_created": {
+          "title": "Lien non créé",
+          "message": "Le lien n'a pas pu être créé"
+        },
+        "updated": {
+          "title": "Lien mis à jour",
+          "message": "Le lien a été mis à jour avec succès"
+        },
+        "not_updated": {
+          "title": "Lien non mis à jour",
+          "message": "Le lien n'a pas pu être mis à jour"
+        },
+        "removed": {
+          "title": "Lien supprimé",
+          "message": "Le lien a été supprimé avec succès"
+        },
+        "not_removed": {
+          "title": "Lien non supprimé",
+          "message": "Le lien n'a pas pu être supprimé"
         }
-      },
+      }
+    },
     "recents": {
       "title": "Récents",
       "empty": {
-          "project": "Vos projets récents apparaîtront ici une fois que vous en aurez visité un.",
-          "page": "Vos pages récentes apparaîtront ici une fois que vous en aurez visité une.",
-          "issue": "Vos problèmes récents apparaîtront ici une fois que vous en aurez visité un.",
-          "default": "Vous n'avez pas encore d'éléments récents."
+        "project": "Vos projets récents apparaîtront ici une fois que vous en aurez visité un.",
+        "page": "Vos pages récentes apparaîtront ici une fois que vous en aurez visité une.",
+        "issue": "Vos problèmes récents apparaîtront ici une fois que vous en aurez visité un.",
+        "default": "Vous n'avez pas encore d'éléments récents."
       },
       "filters": {
         "all": "Tous les éléments",
@@ -446,7 +442,7 @@
       }
     }
   },
-  
+
   "common": {
     "all": "Tout",
     "states": "États",
@@ -577,7 +573,7 @@
       }
     }
   },
-  
+
   "view": {
     "create": {
       "label": "Créer une vue"
