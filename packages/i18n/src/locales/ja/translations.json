@@ -1281,5 +1281,31 @@
     "assigned": "割り当て済み",
     "created": "作成済み",
     "subscribed": "購読済み"
+  },
+
+  
+  "project_modules": {
+    "status": {
+      "backlog": "バックログ",
+      "planned": "計画済み",
+      "in_progress": "進行中",
+      "paused": "一時停止",
+      "completed": "完了",
+      "cancelled": "キャンセル"
+    },
+    "layout": {
+      "list": "リスト表示",
+      "board": "ギャラリー表示",
+      "timeline": "タイムライン表示"
+    },
+    "order_by": {
+      "name": "名前",
+      "progress": "進捗",
+      "issues": "課題数",
+      "due_date": "期限",
+      "created_at": "作成日",
+      "manual": "手動"
+    }
   }
+  
 }

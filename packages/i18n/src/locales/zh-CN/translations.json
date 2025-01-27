@@ -852,5 +852,30 @@
     "common": {
       "months_count": "{months, plural, one{#个月} other{#个月}}"
     }
+  },
+
+  "project_modules": {
+    "status": {
+      "backlog": "待办",
+      "planned": "已规划",
+      "in_progress": "进行中",
+      "paused": "已暂停",
+      "completed": "已完成",
+      "cancelled": "已取消"
+    },
+    "layout": {
+      "list": "列表视图",
+      "board": "画廊视图",
+      "timeline": "时间轴视图"
+    },
+    "order_by": {
+      "name": "名称",
+      "progress": "进度",
+      "issues": "问题数量",
+      "due_date": "截止日期",
+      "created_at": "创建日期",
+      "manual": "手动"
+    }
   }
+  
 }
