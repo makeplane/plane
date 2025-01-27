@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { DayPicker, Matcher } from "react-day-picker";
+import { DayPicker, Matcher, getDefaultClassNames } from "react-day-picker";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { CalendarDays, X } from "lucide-react";
@@ -79,6 +79,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
   });
 
   const isDateSelected = value && value.toString().trim() !== "";
+
+  const defaultClassNames = getDefaultClassNames();
 
   const onOpen = () => {
     if (referenceElement) referenceElement.focus();
@@ -166,7 +168,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
           <Combobox.Options data-prevent-outside-click static>
             <div
               className={cn(
-                "my-1 bg-custom-background-100 shadow-custom-shadow-rg rounded-md overflow-hidden p-3 z-20",
+                "my-1 bg-custom-background-100 shadow-custom-shadow-rg overflow-hidden z-20",
                 optionsClassName
               )}
               ref={setPopperElement}
@@ -174,6 +176,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
               {...attributes.popper}
             >
               <DayPicker
+                captionLayout="dropdown"
+                classNames={{root: `${defaultClassNames.root} p-3 rounded-md`}}
                 selected={getDate(value)}
                 defaultMonth={getDate(value)}
                 onSelect={(date) => {
