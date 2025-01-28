@@ -1081,12 +1081,12 @@
       "mark_unsnooze": "Un snooze"
     },
     "toasts": {
-      "read": "Notification marked as read",
-      "unread": "Notification marked as unread",
-      "archived": "Notification marked as archived",
-      "unarchived": "Notification marked as un archived",
-      "snoozed": "Notification snoozed",
-      "unsnoozed": "Notification un snoozed"
+      "read": "Inbox marked as read",
+      "unread": "Inbox marked as unread",
+      "archived": "Inbox marked as archived",
+      "unarchived": "Inbox marked as un archived",
+      "snoozed": "Inbox snoozed",
+      "unsnoozed": "Inbox un snoozed"
     },
     "empty_state": {
       "detail": {
