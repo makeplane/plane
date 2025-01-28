@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // plane editor
 import { EditorRefApi } from "@plane/editor";
 // plane types
 import { TSticky } from "@plane/types";
 // plane utils
-import { isCommentEmpty } from "@plane/utils";
+import { cn, isCommentEmpty } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 // components
@@ -25,10 +26,13 @@ export const StickyInput = (props: TProps) => {
   const { stickyData, workspaceSlug, handleUpdate, stickyId, handleDelete, handleChange, showToolbar } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
+  // navigation
+  const pathname = usePathname();
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id?.toString() ?? "";
+  const isStickiesPage = pathname?.includes("stickies");
   // form info
   const { handleSubmit, reset, control } = useForm<TSticky>({
     defaultValues: {
@@ -74,10 +78,15 @@ export const StickyInput = (props: TProps) => {
               if (!isContentEmpty) return "";
               return "Click to type here";
             }}
-            containerClassName="px-0 text-base min-h-[250px] w-full"
+            containerClassName={cn(
+              "w-full min-h-[256px] max-h-[540px] overflow-y-scroll vertical-scrollbar scrollbar-sm p-4 text-base",
+              {
+                "max-h-[588px]": isStickiesPage,
+              }
+            )}
             uploadFile={async () => ""}
             showToolbar={showToolbar}
-            parentClassName={"border-none p-0"}
+            parentClassName="border-none p-0"
             handleDelete={handleDelete}
             handleColorChange={handleChange}
             ref={editorRef}
