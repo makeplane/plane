@@ -6,7 +6,8 @@ import "@/styles/command-pallette.css";
 import "@/styles/emoji.css";
 import "@/styles/react-day-picker.css";
 // meta data info
-import { SITE_NAME, SITE_DESCRIPTION } from "@/constants/meta";
+
+import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
 // helpers
 import { API_BASE_URL, cn } from "@/helpers/common.helper";
 // local

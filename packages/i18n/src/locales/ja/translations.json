@@ -329,10 +329,6 @@
   "no_data_yet": "まだデータがありません",
 
   "project_view": {
-    "access": {
-      "public": "公開",
-      "private": "非公開"
-    },
     "sort_by": {
       "created_at": "作成日時",
       "updated_at": "更新日時",
@@ -492,6 +488,10 @@
     "cancel": "キャンセル",
     "description": "説明",
     "title": "タイトル",
+    "access": {
+      "public": "公開",
+      "private": "非公開"
+    },
     "order_by": {
       "label": "オーダー",
       "manual": "手動",

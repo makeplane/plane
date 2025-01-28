@@ -328,10 +328,6 @@
   "no_data_yet": "Sin datos aún",
 
   "project_view": {
-    "access": {
-      "public": "Público",
-      "private": "Privado"
-    },
     "sort_by": {
       "created_at": "Fecha de creación",
       "updated_at": "Fecha de actualización",
@@ -492,6 +488,10 @@
     "cancel": "Cancelar",
     "description": "Descripción",
     "title": "Título",
+    "access": {
+      "public": "Público",
+      "private": "Privado"
+    },
     "order_by": {
       "label": "Ordenar por",
       "manual": "Manual",
@@ -887,7 +887,7 @@
       "days_left": "Días restantes",
       "completed": "Completado",
       "yet_to_start": "Por comenzar",
-      "in_progress": "En progreso", 
+      "in_progress": "En progreso",
       "draft": "Borrador"
     },
     "empty_state": {

@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 // editor
-import { ETabIndices,EIssuesStoreType } from "@plane/constants";
+import { ETabIndices, EIssuesStoreType } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 // i18n
 import { useTranslation } from "@plane/i18n";
@@ -538,7 +538,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       onClick={handleMoveToProjects}
                       disabled={isMoving}
                     >
-                      Add to project
+                      {t("add_to_project")}
                     </Button>
                   )}
                 </div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // types
+import { STATE_GROUPS } from "@plane/constants";
 import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
 // components
 import { Card } from "@plane/ui";
@@ -14,7 +15,6 @@ import {
 import { PieGraph } from "@/components/ui";
 // constants
 import { EDurationFilters, STATE_GROUP_GRAPH_COLORS, STATE_GROUP_GRAPH_GRADIENTS } from "@/constants/dashboard";
-import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { getCustomDates } from "@/helpers/dashboard.helper";
 // hooks
