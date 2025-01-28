@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Tab } from "@headlessui/react";
+import { EDurationFilters, FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "@plane/constants";
 import { TCreatedIssuesWidgetFilters, TCreatedIssuesWidgetResponse } from "@plane/types";
 // hooks
 import { Card } from "@plane/ui";
@@ -13,7 +14,6 @@ import {
   WidgetLoader,
   WidgetProps,
 } from "@/components/dashboard/widgets";
-import { EDurationFilters, FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "@/constants/dashboard";
 import { getCustomDates, getRedirectionFilters, getTabKey } from "@/helpers/dashboard.helper";
 import { useDashboard } from "@/hooks/store";
 // components
