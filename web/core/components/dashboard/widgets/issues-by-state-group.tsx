@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
+// plane imports
+import { STATE_GROUPS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // types
 import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
 // components
@@ -14,7 +17,6 @@ import {
 import { PieGraph } from "@/components/ui";
 // constants
 import { EDurationFilters, STATE_GROUP_GRAPH_COLORS, STATE_GROUP_GRAPH_GRADIENTS } from "@/constants/dashboard";
-import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { getCustomDates } from "@/helpers/dashboard.helper";
 // hooks
@@ -32,6 +34,7 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
   const router = useAppRouter();
   // store hooks
   const { fetchWidgetStats, getWidgetDetails, getWidgetStats, updateDashboardWidgetFilters } = useDashboard();
+  const { t } = useTranslation();
   // derived values
   const widgetDetails = getWidgetDetails(workspaceSlug, dashboardId, WIDGET_KEY);
   const widgetStats = getWidgetStats<TIssuesByStateGroupsWidgetResponse[]>(workspaceSlug, dashboardId, WIDGET_KEY);
@@ -181,7 +184,7 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
                   match: {
                     id: p.key,
                   },
-                  id: `gradient${p.label}`,
+                  id: `gradient${t(p.i18n_label)}`,
                 }))}
                 onClick={(datum, e) => {
                   e.preventDefault();

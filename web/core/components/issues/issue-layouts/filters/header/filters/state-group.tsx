@@ -2,12 +2,12 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { STATE_GROUPS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // components
 import { StateGroupIcon } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";
-// icons
-import { STATE_GROUPS } from "@/constants/state";
-// constants
 
 type Props = {
   appliedFilters: string[] | null;
@@ -20,6 +20,8 @@ export const FilterStateGroup: React.FC<Props> = observer((props) => {
 
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
+
+  const { t } = useTranslation();
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
@@ -49,7 +51,7 @@ export const FilterStateGroup: React.FC<Props> = observer((props) => {
                   isChecked={appliedFilters?.includes(stateGroup.key) ? true : false}
                   onClick={() => handleUpdate(stateGroup.key)}
                   icon={<StateGroupIcon stateGroup={stateGroup.key} />}
-                  title={stateGroup.label}
+                  title={t(stateGroup.i18n_label)}
                 />
               ))}
               {filteredOptions.length > 5 && (

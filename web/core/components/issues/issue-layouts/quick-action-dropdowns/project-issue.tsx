@@ -6,14 +6,12 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 // types
-import { EIssuesStoreType } from "@plane/constants";
+import { ARCHIVABLE_STATE_GROUPS, EIssuesStoreType } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // ui
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
-// constants
-import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";

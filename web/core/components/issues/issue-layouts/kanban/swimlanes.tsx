@@ -71,7 +71,7 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
                 group_by={group_by}
                 column_id={_list.id}
                 icon={_list.icon}
-                title={_list.name}
+                title={t(_list.name)}
                 count={groupCount}
                 collapsedGroups={collapsedGroups}
                 handleCollapsedGroups={handleCollapsedGroups}
@@ -167,7 +167,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   <HeaderSubGroupByCard
                     column_id={_list.id}
                     icon={_list.icon}
-                    title={_list.name}
+                    title={t(_list.name)}
                     count={issueCount}
                     collapsedGroups={collapsedGroups}
                     handleCollapsedGroups={handleCollapsedGroups}

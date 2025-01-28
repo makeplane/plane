@@ -29,7 +29,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props
   // derived values
   const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
-    name: group.title,
+    name: t(group.i18n_title),
     value: cycle && cycle.total_issues > 0 ? (cycle[group.key as keyof ICycle] as number) : 0,
     color: group.color,
   }));

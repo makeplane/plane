@@ -1349,5 +1349,12 @@
       "created_at": "Created date",
       "manual": "Manual"
     }
+  },
+  "state_group": {
+    "backlog": "Backlog",
+    "unstarted": "Unstarted",
+    "started": "Started",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
   }
 }

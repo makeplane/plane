@@ -1,10 +1,10 @@
 import { format } from "date-fns";
 import get from "lodash/get";
 import set from "lodash/set";
+// plane imports
+import { STATE_GROUPS, COMPLETED_STATE_GROUPS } from "@plane/constants";
 // types
 import { ICycle, IEstimatePoint, IModule, IState, TIssue } from "@plane/types";
-// constants
-import { STATE_GROUPS, COMPLETED_STATE_GROUPS } from "@/constants/state";
 // helper
 import { getDate } from "./date-time.helper";
 

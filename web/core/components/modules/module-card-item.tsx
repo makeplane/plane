@@ -7,6 +7,7 @@ import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { Info, SquareUser } from "lucide-react";
 // plane package imports
 import { MODULE_STATUS, PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IModule } from "@plane/types";
 import {
   Card,
@@ -53,6 +54,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails } = useModule();
   const { getUserDetails } = useMember();
   const { captureEvent } = useEventTracker();
+  const { t } = useTranslation();
 
   // derived values
   const moduleDetails = getModuleById(moduleId);
@@ -186,7 +188,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
-    name: group.title,
+    name: t(group.i18n_title),
     value: moduleTotalIssues > 0 ? (moduleDetails[group.key as keyof IModule] as number) : 0,
     color: group.color,
   }));

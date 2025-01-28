@@ -1,9 +1,8 @@
-// types
+// plane imports
+import { STATE_GROUPS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IUserStateDistribution } from "@plane/types";
 import { Card, ECardDirection, ECardSpacing } from "@plane/ui";
-import { STATE_GROUPS } from "@/constants/state";
-// constants
 
 type Props = {
   stateDistribution: IUserStateDistribution[];
@@ -32,7 +31,7 @@ export const ProfileWorkload: React.FC<Props> = ({ stateDistribution }) => {
                       ? "Not started"
                       : group.state_group === "started"
                         ? "Working on"
-                        : STATE_GROUPS[group.state_group].label}
+                        : t(STATE_GROUPS[group.state_group].i18n_label)}
                   </span>
                   <p className="text-xl font-semibold">{group.state_count}</p>
                 </div>

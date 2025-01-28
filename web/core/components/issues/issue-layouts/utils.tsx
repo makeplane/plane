@@ -11,7 +11,7 @@ import uniq from "lodash/uniq";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { ContrastIcon } from "lucide-react";
 // plane types
-import { EIssuesStoreType, ISSUE_PRIORITIES } from "@plane/constants";
+import { EIssuesStoreType, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -30,7 +30,6 @@ import {
 import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
-import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
@@ -209,10 +208,11 @@ const getStateColumns = (): IGroupByColumn[] | undefined => {
 
 const getStateGroupColumns = (): IGroupByColumn[] => {
   const stateGroups = STATE_GROUPS;
+
   // map state groups to group by columns
   return Object.values(stateGroups).map((stateGroup) => ({
     id: stateGroup.key,
-    name: stateGroup.label,
+    name: stateGroup.i18n_label,
     icon: (
       <div className="h-3.5 w-3.5 rounded-full">
         <StateGroupIcon stateGroup={stateGroup.key} width="14" height="14" />
