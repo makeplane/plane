@@ -36,6 +36,7 @@ import { TPageInstance } from "@/store/pages/base-page";
 
 export type TPageActions =
   | "full-screen"
+  | "sticky-toolbar"
   | "copy-markdown"
   | "toggle-lock"
   | "toggle-access"
