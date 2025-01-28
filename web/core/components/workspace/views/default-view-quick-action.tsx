@@ -42,13 +42,13 @@ export const DefaultWorkspaceViewQuickActions: React.FC<Props> = observer((props
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
-      title: "Open in new tab",
+      title: "open_in_new_tab",
       icon: ExternalLink,
     },
     {
       key: "copy-link",
       action: handleCopyText,
-      title: "Copy link",
+      title: "copy_link",
       icon: LinkIcon,
     },
   ];
@@ -114,7 +114,7 @@ export const DefaultWorkspaceViewQuickActions: React.FC<Props> = observer((props
             >
               {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
               <div>
-                <h5>{item.title}</h5>
+                <h5>{t(item.title || "")}</h5>
                 {item.description && (
                   <p
                     className={cn("text-custom-text-300 whitespace-pre-line", {

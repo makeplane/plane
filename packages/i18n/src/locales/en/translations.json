@@ -766,7 +766,8 @@
     }
   },
 
-  "workspace_issues": {
+  "workspace_views": {
+    "add_view": "Add view",
     "empty_state": {
       "all-issues": {
         "title": "No issues in the project",
