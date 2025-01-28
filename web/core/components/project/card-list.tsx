@@ -83,11 +83,11 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
             className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
             alt="No matching projects"
           />
-          <h5 className="mb-1 mt-7 text-xl font-medium">{t("project.list.empty_state.title")}</h5>
+          <h5 className="mb-1 mt-7 text-xl font-medium">{t("workspace_projects.empty_state.filter.title")}</h5>
           <p className="whitespace-pre-line text-base text-custom-text-400">
             {searchQuery.trim() === ""
-              ? t("project.list.empty_state.description.filters")
-              : t("project.list.empty_state.description.search")}
+              ? t("workspace_projects.empty_state.filter.description")
+              : t("workspace_projects.empty_state.search.description")}
           </p>
         </div>
       </div>

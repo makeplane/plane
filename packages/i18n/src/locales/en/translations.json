@@ -592,25 +592,6 @@
     }
   },
 
-  "project": {
-    "label": "{count, plural, one {Project} other {Projects}}",
-    "create": {
-      "label": "Add Project"
-    },
-    "list": {
-      "empty_state": {
-        "title": "No matching projects",
-        "description": {
-          "filters": "Remove the filters to see all projects",
-          "search": "No projects detected with the matching criteria.\nCreate a new project instead"
-        }
-      },
-      "applied_filters": {
-        "info": "{filteredProjects} of {totalProjects} projects match the applied filters."
-      }
-    }
-  },
-
   "view": {
     "label": "{count, plural, one {View} other {Views}}",
     "create": {
@@ -687,6 +668,10 @@
   },
 
   "workspace_projects": {
+    "label": "{count, plural, one {Project} other {Projects}}",
+    "create": {
+      "label": "Add Project"
+    },
     "network": {
       "private": {
         "title": "Private",
@@ -749,6 +734,9 @@
       "filter": {
         "title": "No matching projects",
         "description": "No projects detected with the matching criteria. \n Create a new project instead."
+      },
+      "search": {
+        "description": "No projects detected with the matching criteria.\nCreate a new project instead"
       }
     }
   },

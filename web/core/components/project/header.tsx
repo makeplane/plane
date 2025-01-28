@@ -41,7 +41,7 @@ export const ProjectsBaseHeader = observer(() => {
             type="text"
             link={
               <BreadcrumbLink
-                label={t("project.label", { count: 2 })}
+                label={t("workspace_projects.label", { count: 2 })}
                 icon={<Briefcase className="h-4 w-4 text-custom-text-300" />}
               />
             }
@@ -63,8 +63,8 @@ export const ProjectsBaseHeader = observer(() => {
             }}
             className="items-center gap-1"
           >
-            <span className="hidden sm:inline-block">{t("project.create.label")}</span>
-            <span className="inline-block sm:hidden">{t("project.label", { count: 1 })}</span>
+            <span className="hidden sm:inline-block">{t("workspace_projects.create.label")}</span>
+            <span className="inline-block sm:hidden">{t("workspace_projects.label", { count: 1 })}</span>
           </Button>
         ) : (
           <></>

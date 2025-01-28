@@ -31,7 +31,7 @@ const Root = observer(() => {
   } = useProjectFilter();
   // derived values
   const pageTitle = currentWorkspace?.name
-    ? `${currentWorkspace?.name} - ${t("project.label", { count: 2 })}`
+    ? `${currentWorkspace?.name} - ${t("workspace_projects.label", { count: 2 })}`
     : undefined;
 
   const isArchived = pathname.includes("/archives");
