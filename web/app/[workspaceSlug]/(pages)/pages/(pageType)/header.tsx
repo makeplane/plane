@@ -7,7 +7,7 @@ import { FileText, ListFilter } from "lucide-react";
 // types
 import { TPage, TPageNavigationTabs } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, setToast, TOAST_TYPE } from "@plane/ui";
+import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 import { FiltersDropdown } from "@/components/issues";
@@ -70,64 +70,62 @@ export const PageTypeHeader: React.FC<Props> = observer((props) => {
   }, [clearAllFilters, pathname, updateFilters]);
 
   return (
-    <>
-      <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 py-4">
-        <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-          <div>
-            <Breadcrumbs>
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={
-                  <BreadcrumbLink
-                    href={`/${workspaceSlug}/pages`}
-                    label="Pages"
-                    icon={<FileText className="size-4 text-custom-text-300" />}
-                  />
-                }
-              />
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={<BreadcrumbLink label={`${capitalizeFirstLetter(pageType)} pages`} />}
-              />
-            </Breadcrumbs>
-          </div>
-        </div>
-        <div className="h-full flex items-center gap-2 self-end">
-          <PageSearchInput
-            searchQuery={filters.searchQuery}
-            updateSearchQuery={(val) => updateFilters("searchQuery", val)}
-          />
-          <PageOrderByDropdown
-            sortBy={filters.sortBy}
-            sortKey={filters.sortKey}
-            onChange={(val) => {
-              if (val.key) updateFilters("sortKey", val.key);
-              if (val.order) updateFilters("sortBy", val.order);
-            }}
-          />
-          <FiltersDropdown
-            icon={<ListFilter className="h-3 w-3" />}
-            title="Filters"
-            placement="bottom-end"
-            isFiltersApplied={isFiltersApplied}
-          >
-            <PageFiltersSelection
-              filters={filters}
-              handleFiltersUpdate={updateFilters}
-              memberIds={workspaceMemberIds ?? undefined}
+    <Header>
+      <Header.LeftItem>
+        <div>
+          <Breadcrumbs>
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              link={
+                <BreadcrumbLink
+                  href={`/${workspaceSlug}/pages`}
+                  label="Pages"
+                  icon={<FileText className="size-4 text-custom-text-300" />}
+                />
+              }
             />
-          </FiltersDropdown>
-          <Button
-            variant="primary"
-            size="sm"
-            className="flex-shrink-0"
-            onClick={handleCreatePage}
-            loading={isCreatingPage}
-          >
-            {isCreatingPage ? "Adding" : "Add page"}
-          </Button>
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              link={<BreadcrumbLink label={`${capitalizeFirstLetter(pageType)} pages`} />}
+            />
+          </Breadcrumbs>
         </div>
-      </div>
-    </>
+      </Header.LeftItem>
+      <Header.RightItem className="h-full flex items-center gap-2 self-end">
+        <PageSearchInput
+          searchQuery={filters.searchQuery}
+          updateSearchQuery={(val) => updateFilters("searchQuery", val)}
+        />
+        <PageOrderByDropdown
+          sortBy={filters.sortBy}
+          sortKey={filters.sortKey}
+          onChange={(val) => {
+            if (val.key) updateFilters("sortKey", val.key);
+            if (val.order) updateFilters("sortBy", val.order);
+          }}
+        />
+        <FiltersDropdown
+          icon={<ListFilter className="h-3 w-3" />}
+          title="Filters"
+          placement="bottom-end"
+          isFiltersApplied={isFiltersApplied}
+        >
+          <PageFiltersSelection
+            filters={filters}
+            handleFiltersUpdate={updateFilters}
+            memberIds={workspaceMemberIds ?? undefined}
+          />
+        </FiltersDropdown>
+        <Button
+          variant="primary"
+          size="sm"
+          className="flex-shrink-0"
+          onClick={handleCreatePage}
+          loading={isCreatingPage}
+        >
+          {isCreatingPage ? "Adding" : "Add page"}
+        </Button>
+      </Header.RightItem>
+    </Header>
   );
 });

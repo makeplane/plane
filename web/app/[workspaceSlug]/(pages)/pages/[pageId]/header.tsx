@@ -7,7 +7,7 @@ import { FileText } from "lucide-react";
 // types
 import { TLogoProps } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, setToast } from "@plane/ui";
+import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, Header, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 // helpers
@@ -80,8 +80,8 @@ export const PageDetailsHeader = observer(() => {
         publishPage={(data) => publishWorkspacePage(pageId.toString(), data)}
         unpublishPage={() => unpublishWorkspacePage(pageId.toString())}
       />
-      <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 py-4">
-        <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+      <Header>
+        <Header.LeftItem>
           <div>
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
@@ -145,24 +145,26 @@ export const PageDetailsHeader = observer(() => {
               />
             </Breadcrumbs>
           </div>
-        </div>
-        {isDeployed && (
-          <a
-            href={publishLink}
-            className="px-3 py-1.5 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />
-            Live
-          </a>
-        )}
-        {isPublishAllowed && (
-          <Button variant="outline-primary" size="sm" onClick={() => setIsPublishModalOpen(true)}>
-            {isDeployed ? "Unpublish" : "Publish"}
-          </Button>
-        )}
-      </div>
+        </Header.LeftItem>
+        <Header.RightItem>
+          {isDeployed && (
+            <a
+              href={publishLink}
+              className="px-3 py-1.5 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />
+              Live
+            </a>
+          )}
+          {isPublishAllowed && (
+            <Button variant="outline-primary" size="sm" onClick={() => setIsPublishModalOpen(true)}>
+              {isDeployed ? "Unpublish" : "Publish"}
+            </Button>
+          )}
+        </Header.RightItem>
+      </Header>
     </>
   );
 });
