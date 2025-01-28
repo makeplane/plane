@@ -4,6 +4,8 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { ArchiveRestoreIcon, Link2, MoveDiagonal, MoveRight, Trash2 } from "lucide-react";
+// plane imports
+import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
 // types
 import { TNameDescriptionLoader } from "@plane/types";
 // ui
@@ -19,7 +21,6 @@ import {
 } from "@plane/ui";
 // components
 import { IssueSubscription, NameDescriptionUpdateStatus } from "@/components/issues";
-import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";

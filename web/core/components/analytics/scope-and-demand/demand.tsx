@@ -1,8 +1,9 @@
+// plane imports
+import { STATE_GROUPS } from "@plane/constants";
 // types
 import { IDefaultAnalyticsResponse, TStateGroups } from "@plane/types";
 // constants
 import { Card } from "@plane/ui";
-import { STATE_GROUPS } from "@/constants/state";
 
 type Props = {
   defaultAnalytics: IDefaultAnalyticsResponse;

@@ -3,7 +3,7 @@ import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import { v4 as uuidv4 } from "uuid";
 // plane constants
-import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE, STATE_GROUPS } from "@plane/constants";
 // types
 import {
   IIssueDisplayFilterOptions,
@@ -18,7 +18,6 @@ import {
   TUnGroupedIssues,
 } from "@plane/types";
 import { IGanttBlock } from "@/components/gantt-chart";
-import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { orderArrayBy } from "@/helpers/array.helper";
 import { getDate } from "@/helpers/date-time.helper";
