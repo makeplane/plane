@@ -395,8 +395,6 @@ class WorkspaceUserPreference(BaseModel):
         CYCLES = "cycles", "Cycles"
         VIEWS = "views", "Views"
         ANALYTICS = "analytics", "Analytics"
-        TEAMS = "teams", "Teams"
-        INITIATIVES = "initiatives", "Initiatives"
         PROJECTS = "projects", "Projects"
 
     workspace = models.ForeignKey(
