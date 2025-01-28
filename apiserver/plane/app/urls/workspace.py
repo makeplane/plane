@@ -31,6 +31,7 @@ from plane.app.views import (
     UserRecentVisitViewSet,
     WorkspaceHomePreferenceViewSet,
     WorkspaceStickyViewSet,
+    WorkspaceUserPreferenceViewSet,
 )
 
 
@@ -257,5 +258,16 @@ urlpatterns = [
             {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
         ),
         name="workspace-sticky",
+    ),
+    # User Preference
+    path(
+        "workspaces/<str:slug>/user-preferences/",
+        WorkspaceUserPreferenceViewSet.as_view(),
+        name="workspace-user-preference",
+    ),
+    path(
+        "workspaces/<str:slug>/user-preferences/<str:key>/",
+        WorkspaceUserPreferenceViewSet.as_view(),
+        name="workspace-user-preference",
     ),
 ]

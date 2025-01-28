@@ -22,6 +22,7 @@ from plane.db.models import (
     ProjectMember,
     WorkspaceHomePreference,
     Sticky,
+    WorkspaceUserPreference,
 )
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
@@ -258,3 +259,10 @@ class StickySerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = ["workspace", "owner"]
         extra_kwargs = {"name": {"required": False}}
+
+
+class WorkspaceUserPreferenceSerializer(BaseSerializer):
+    class Meta:
+        model = WorkspaceUserPreference
+        fields = ["key", "is_pinned", "sort_order"]
+        read_only_fields = ["workspace", "created_by", "updated_by"]
