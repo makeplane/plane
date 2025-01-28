@@ -490,6 +490,7 @@
     "cancel": "Cancel",
     "description": "Description",
     "title": "Title",
+    "attachment": "Attachment",
     "order_by": {
       "label": "Order by",
       "manual": "Manual",
@@ -498,11 +499,14 @@
       "start_date": "Start date",
       "due_date": "Due date",
       "asc": "Ascending",
-      "desc": "Descending"
+      "desc": "Descending",
+      "updated_on": "Updated on"
     },
     "sort": {
       "asc": "Ascending",
-      "desc": "Descending"
+      "desc": "Descending",
+      "created_on": "Created on",
+      "updated_on": "Updated on"
     },
     "comments": "Comments",
     "updates": "Updates"
@@ -543,7 +547,9 @@
         "id": "ID",
         "issue_type": "Issue Type",
         "sub_issue_count": "Sub issue count",
-        "attachment_count": "Attachment count"
+        "attachment_count": "Attachment count",
+        "created_on": "Created on",
+        "sub_issue": "Sub-issue"
       },
       "extra": {
         "show_sub_issues": "Show sub-issues",
