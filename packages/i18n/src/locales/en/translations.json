@@ -333,7 +333,7 @@
   "show_all": "Show all",
   "show_less": "Show less",
   "no_data_yet": "No Data yet",
-  "Syncing": "Syncing",
+  "syncing": "Syncing",
   "add_work_item": "Add work item",
   "advanced_description_placeholder": "Press '/' for commands...",
   "create_work_item": "Create work item",
