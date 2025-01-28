@@ -11,14 +11,13 @@ import { useIssueDetail } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string;
-  projectId: string;
   issueId: string;
   disabled?: boolean;
   issueServiceType?: TIssueServiceType;
 };
 
 export const RelationsCollapsible: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, disabled = false, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const { workspaceSlug, issueId, disabled = false, issueServiceType = EIssueServiceType.ISSUES } = props;
   // store hooks
   const { openWidgets, toggleOpenWidget } = useIssueDetail(issueServiceType);
 
@@ -41,7 +40,6 @@ export const RelationsCollapsible: FC<Props> = observer((props) => {
     >
       <RelationsCollapsibleContent
         workspaceSlug={workspaceSlug}
-        projectId={projectId}
         issueId={issueId}
         disabled={disabled}
         issueServiceType={issueServiceType}
