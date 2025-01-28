@@ -359,10 +359,6 @@
   "no_data_yet": "暂无数据",
 
   "project_view": {
-    "access": {
-      "public": "公开",
-      "private": "私密"
-    },
     "sort_by": {
       "created_at": "创建时间",
       "updated_at": "更新时间",
@@ -515,6 +511,10 @@
     "cancel": "取消",
     "description": "描述",
     "title": "标题",
+    "access": {
+      "public": "公开",
+      "private": "私密"
+    },
     "order_by": {
       "label": "排序方式",
       "manual": "手动",
