@@ -678,7 +678,7 @@ class IssueViewSet(BaseViewSet):
             workspace__slug=slug,
             entity_identifier=pk,
             entity_name="issue",
-        ).delete()
+        ).delete(soft=False)
         issue_activity.delay(
             type="issue.activity.deleted",
             requested_data=json.dumps({"issue_id": str(pk)}),

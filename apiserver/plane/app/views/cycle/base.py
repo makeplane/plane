@@ -550,7 +550,7 @@ class CycleViewSet(BaseViewSet):
             workspace__slug=slug,
             entity_identifier=pk,
             entity_name="cycle",
-        ).delete()
+        ).delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

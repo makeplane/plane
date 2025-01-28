@@ -502,7 +502,7 @@ class IssueViewViewSet(BaseViewSet):
                 workspace__slug=slug,
                 entity_identifier=pk,
                 entity_name="view",
-            ).delete()
+            ).delete(soft=False)
         else:
             return Response(
                 {"error": "Only admin or owner can delete the view"},
