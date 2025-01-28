@@ -326,7 +326,6 @@
   "show_all": "Mostrar todo",
   "show_less": "Mostrar menos",
   "no_data_yet": "Sin datos aún",
-  "connections": "Conexiones",
 
   "project_view": {
     "access": {
@@ -596,6 +595,7 @@
   },
 
   "view": {
+    "label": "{count, plural, one {Vista} other {Vistas}}",
     "create": {
       "label": "Crear vista"
     },

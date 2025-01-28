@@ -327,7 +327,6 @@
   "show_all": "すべて表示",
   "show_less": "表示を減らす",
   "no_data_yet": "まだデータがありません",
-  "connections": "接続",
 
   "project_view": {
     "access": {
@@ -596,6 +595,7 @@
   },
 
   "view": {
+    "label": "{count, plural, one {ビュー} other {ビュー}}",
     "create": {
       "label": "ビューを作成"
     },

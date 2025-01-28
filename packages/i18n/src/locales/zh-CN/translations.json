@@ -614,6 +614,7 @@
   },
 
   "view": {
+    "label": "{count, plural, one {视图} other {视图}}",
     "create": {
       "label": "创建视图"
     },
