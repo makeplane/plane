@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, Fragment, useState } from "react";
-import { DayPicker } from "react-day-picker";
+import { DayPicker, getDefaultClassNames } from "react-day-picker";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button } from "@plane/ui";
@@ -17,6 +17,8 @@ export const InboxIssueSnoozeModal: FC<InboxIssueSnoozeModalProps> = (props) => 
   const { isOpen, handleClose, value, onConfirm } = props;
   // states
   const [date, setDate] = useState(value || new Date());
+
+  const defaultClassNames = getDefaultClassNames();
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -46,6 +48,8 @@ export const InboxIssueSnoozeModal: FC<InboxIssueSnoozeModalProps> = (props) => 
               <Dialog.Panel className="relative flex transform rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <div className="flex h-full w-full flex-col gap-y-1">
                   <DayPicker
+                    captionLayout="dropdown"
+                    classNames={{root: `${defaultClassNames.root} rounded-md border border-custom-border-200 p-3`}}
                     selected={date ? new Date(date) : undefined}
                     defaultMonth={date ? new Date(date) : undefined}
                     onSelect={(date) => {
@@ -53,7 +57,6 @@ export const InboxIssueSnoozeModal: FC<InboxIssueSnoozeModalProps> = (props) => 
                       setDate(date);
                     }}
                     mode="single"
-                    className="rounded-md border border-custom-border-200 p-3"
                     disabled={[
                       {
                         before: new Date(),
