@@ -143,7 +143,7 @@ export const GlobalIssuesHeader = observer(() => {
           )}
 
           <Button variant="primary" size="sm" onClick={() => setCreateViewModal(true)}>
-            {t("workspace_issues.add_view")}
+            {t("workspace_views.add_view")}
           </Button>
         </Header.RightItem>
       </Header>
