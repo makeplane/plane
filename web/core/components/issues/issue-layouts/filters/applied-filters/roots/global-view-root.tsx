@@ -6,7 +6,7 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { DEFAULT_GLOBAL_VIEWS_LIST, EIssueFilterType, EIssuesStoreType, EViewAccess } from "@plane/constants";
+import { DEFAULT_GLOBAL_VIEWS_LIST, EIssueFilterType, EIssuesStoreType, EViewAccess, GLOBAL_VIEW_UPDATED } from "@plane/constants";
 import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 //ui
 // components
@@ -15,7 +15,6 @@ import { AppliedFiltersList } from "@/components/issues";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 // constants
-import { GLOBAL_VIEW_UPDATED } from "@plane/constants";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks

@@ -4,8 +4,7 @@ import { useParams } from "next/navigation";
 // icons
 import { Plus } from "lucide-react";
 // plane imports
-import { DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
-// types
+import { DEFAULT_GLOBAL_VIEWS_LIST, GLOBAL_VIEW_OPENED } from "@plane/constants";
 import { TStaticViewTypes } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
@@ -15,7 +14,6 @@ import {
   WorkspaceViewQuickActions,
 } from "@/components/workspace";
 // constants
-import { GLOBAL_VIEW_OPENED } from "@plane/constants";
 // store hooks
 import { useEventTracker, useGlobalView, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";

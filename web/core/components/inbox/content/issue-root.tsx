@@ -4,6 +4,7 @@ import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // plane types
+import { ISSUE_ARCHIVED, ISSUE_DELETED } from "@plane/constants";
 import { TIssue, TNameDescriptionLoader } from "@plane/types";
 // plane ui
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
@@ -18,7 +19,6 @@ import {
   IssueAttachmentRoot,
 } from "@/components/issues";
 // constants
-import { ISSUE_ARCHIVED, ISSUE_DELETED } from "@plane/constants";
 // helpers
 import { getTextContent } from "@/helpers/editor.helper";
 // hooks

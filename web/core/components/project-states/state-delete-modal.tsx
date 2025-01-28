@@ -4,11 +4,11 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
+import { STATE_DELETED } from "@plane/constants";
 import type { IState } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { STATE_DELETED } from "@plane/constants";
 // hooks
 import { useEventTracker, useProjectState } from "@/hooks/store";
 

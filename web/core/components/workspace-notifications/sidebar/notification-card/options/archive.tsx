@@ -3,11 +3,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { ArchiveRestore } from "lucide-react";
+import { NOTIFICATION_ARCHIVED } from "@plane/constants";
 import { ArchiveIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { NotificationItemOptionButton } from "@/components/workspace-notifications";
 // constants
-import { NOTIFICATION_ARCHIVED } from "@plane/constants";
 // hooks
 import { useEventTracker, useWorkspaceNotifications } from "@/hooks/store";
 // store
