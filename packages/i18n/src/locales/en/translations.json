@@ -277,7 +277,6 @@
   "issue_updated_successfully": "Issue updated successfully",
   "issue_could_not_be_updated": "Issue could not be updated",
   "create_a_draft": "Create a draft",
-  "draft_an_issue": "Draft an issue",
   "save_to_drafts": "Save to Drafts",
   "save": "Save",
   "update": "Update",
@@ -1182,6 +1181,7 @@
   },
 
   "workspace_draft_issues": {
+    "draft_an_issue": "Draft an issue",
     "empty_state": {
       "title": "Half-written issues, and soon, comments will show up here.",
       "description": "To try this out, start adding an issue and leave it mid-way or create your first draft below. 😉",

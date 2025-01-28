@@ -67,7 +67,7 @@ export const WorkspaceDraftHeader = observer(() => {
               onClick={() => setIsDraftIssueModalOpen(true)}
               disabled={!isAuthorizedUser}
             >
-              {t("draft_an_issue")}
+              {t("workspace_draft_issues.draft_an_issue")}
             </Button>
           )}
         </Header.RightItem>
