@@ -58,7 +58,7 @@ export const AppliedFilters: FC<TAppliedFilters> = observer((props) => {
         })}
         <button type="button" onClick={handleClearFilters}>
           <Tag>
-            Clear all
+            {t("common.clear_all")}
             <X size={12} strokeWidth={2} />
           </Tag>
         </button>
