@@ -37,7 +37,7 @@ export const SidebarUserMenu = observer(() => {
     },
     {
       key: "notifications",
-      labelTranslationKey: "inbox.label",
+      labelTranslationKey: "notification.label",
       href: `/${workspaceSlug.toString()}/notifications/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
       Icon: Inbox,

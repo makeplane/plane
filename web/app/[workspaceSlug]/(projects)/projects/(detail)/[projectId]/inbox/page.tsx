@@ -51,7 +51,13 @@ const ProjectInboxPage = observer(() => {
     );
 
   // derived values
-  const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Intake` : "Plane - Intake";
+  const pageTitle = currentProjectDetails?.name
+    ? t("inbox_issue.page_label", {
+        workspace: currentProjectDetails?.name,
+      })
+    : t("inbox_issue.page_label", {
+        workspace: "Plane",
+      });
 
   const currentNavigationTab = navigationTab
     ? navigationTab === "open"
