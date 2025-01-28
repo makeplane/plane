@@ -331,7 +331,6 @@
   "show_less": "Show less",
   "no_data_yet": "No Data yet",
   "unassigned": "Unassigned",
-  "export_as_csv": "Export as CSV",
   "work_items": "Work items",
 
   "project_view": {
@@ -662,13 +661,16 @@
     "label": "Analytics",
     "page_label": "{workspace} - Analytics",
     "open_tasks": "Total open tasks",
-    "pending_work_items": "Pending work items",
     "error": "There was some error in fetching the data.",
     "work_items_closed_in": "Work items closed in",
     "selected_projects": "Selected projects",
     "total_members": "Total members",
     "total_cycles": "Total cycles",
     "total_modules": "Total modules",
+    "pending_work_items":{
+      "title": "Pending work items",
+      "empty_state": "Analysis of pending work items by co-workers appears here."
+    },
     "work_items_closed_in_a_year": {
       "title": "Work items closed in a year",
       "empty_state": "Close work items to view analysis of the same in the form of a graph."
@@ -1348,7 +1350,8 @@
   "exporter": {
     "csv": {
       "title": "CSV",
-      "description": "Export issues to a CSV file."
+      "description": "Export issues to a CSV file.",
+      "short_description": "Export as csv"
     },
     "xlsx": {
       "title": "Excel",

@@ -192,7 +192,7 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
           <div className={cn(isProjectLevel ? "hidden md:block" : "", "capitalize")}>{t("refresh")}</div>
         </Button>
         <Button variant="primary" prependIcon={<Download className="h-3.5 w-3.5" />} onClick={exportAnalytics}>
-          <div className={cn(isProjectLevel ? "hidden md:block" : "")}>{t("export_as_csv")}</div>
+          <div className={cn(isProjectLevel ? "hidden md:block" : "")}>{t("exporter.csv.short_description")}</div>
         </Button>
       </div>
     </div>

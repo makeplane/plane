@@ -22,7 +22,7 @@ export const AnalyticsScope: React.FC<Props> = ({ pendingUnAssignedIssuesUser, p
       <div className="divide-y divide-custom-border-200">
         <div>
           <div className="flex items-center justify-between">
-            <h6 className="text-base font-medium">{t("workspace_analytics.pending_work_items")}</h6>
+            <h6 className="text-base font-medium">{t("workspace_analytics.pending_work_items.title")}</h6>
             {pendingUnAssignedIssuesUser && (
               <div className="relative flex items-center py-1 px-3 rounded-md gap-2  text-xs text-custom-primary-100  bg-custom-primary-100/10">
                 {t("unassigned")}: {pendingUnAssignedIssuesUser.count}
@@ -86,8 +86,8 @@ export const AnalyticsScope: React.FC<Props> = ({ pendingUnAssignedIssuesUser, p
           ) : (
             <div className="px-7 py-4">
               <ProfileEmptyState
-                title="No Data yet"
-                description="Analysis of pending issues by co-workers appears here."
+                title={t("no_data_yet")}
+                description={t("workspace_analytics.pending_work_items.empty_state")}
                 image={emptyBarGraph}
               />
             </div>
