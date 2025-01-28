@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
-import { DateRange, DayPicker, Matcher } from "react-day-picker";
+import { DateRange, DayPicker, Matcher, getDefaultClassNames } from "react-day-picker";
 import { usePopper } from "react-popper";
 import { ArrowRight, CalendarCheck2, CalendarDays } from "lucide-react";
 import { Combobox } from "@headlessui/react";
@@ -51,6 +51,8 @@ type Props = {
   renderByDefault?: boolean;
   renderPlaceholder?: boolean;
 };
+
+const defaultClassNames = getDefaultClassNames();
 
 export const DateRangeDropdown: React.FC<Props> = (props) => {
   const {
@@ -198,12 +200,14 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
-            className="my-1 bg-custom-background-100 shadow-custom-shadow-rg rounded-md overflow-hidden p-3"
+            className="my-1 bg-custom-background-100 shadow-custom-shadow-rg overflow-hidden"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
           >
             <DayPicker
+              captionLayout="dropdown"
+              classNames={{ root: `${defaultClassNames.root} p-3 rounded-md` }}
               selected={dateRange}
               onSelect={(val) => {
                 // if both the dates are not required, immediately call onSelect
@@ -216,7 +220,8 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
               mode="range"
               disabled={disabledDays}
               showOutsideDays
-              initialFocus
+              autoFocus
+              fixedWeeks
               footer={
                 bothRequired && (
                   <div className="grid grid-cols-2 items-center gap-3.5 pt-6 relative">
