@@ -330,6 +330,9 @@
   "show_all": "Show all",
   "show_less": "Show less",
   "no_data_yet": "No Data yet",
+  "unassigned": "Unassigned",
+  "export_as_csv": "Export as CSV",
+  "workitems": "Work items",
 
   "project_view": {
     "sort_by": {
@@ -656,6 +659,32 @@
   },
 
   "workspace_analytics": {
+    "label": "Analytics",
+    "page_label": "{workspace} - Analytics",
+    "open_tasks": "Total open tasks",
+    "pending_workitems": "Pending work items",
+    "error": "There was some error in fetching the data.",
+    "workitems_closed_in": "Work items closed in",
+    "selected_projects": "Selected projects",
+    "total_members": "Total members",
+    "total_cycles": "Total cycles",
+    "total_modules": "Total modules",
+    "workitems_closed_in_a_year": {
+      "title": "Work items closed in a year",
+      "empty_state": "Close work items to view analysis of the same in the form of a graph."
+    },
+    "most_workitems_created":{
+      "title": "Most work items created",
+      "empty_state": "Co-workers and the number of work items created by them appears here."
+    },
+    "most_workitems_closed":{
+      "title": "Most work items closed",
+      "empty_state": "Co-workers and the number of work items closed by them appears here."
+    },
+    "tabs": {
+      "scope_and_demand": "Scope and Demand",
+      "custom": "Custom Analytics"
+    },
     "empty_state": {
       "general": {
         "title": "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",

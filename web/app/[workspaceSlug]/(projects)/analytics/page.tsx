@@ -32,7 +32,9 @@ const AnalyticsPage = observer(() => {
   // helper hooks
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/analytics" });
   // derived values
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Analytics` : undefined;
+  const pageTitle = currentWorkspace?.name
+    ? t(`workspace_analytics.page_label`, { workspace: currentWorkspace?.name })
+    : undefined;
 
   // permissions
   const canPerformEmptyStateActions = allowPermissions(
@@ -59,7 +61,7 @@ const AnalyticsPage = observer(() => {
                               selected ? "text-custom-primary-100 " : "hover:text-custom-text-200"
                             }`}
                           >
-                            {tab.title}
+                            {t(tab.i18n_title)}
                             <div
                               className={`border absolute bottom-0 right-0 left-0 rounded-t-md ${selected ? "border-custom-primary-100" : "border-transparent group-hover:border-custom-border-200"}`}
                             />
