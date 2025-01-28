@@ -1,5 +1,3 @@
-"use client";
-
 // types
 import { TIssuesListTypes } from "@plane/types";
 
