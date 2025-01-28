@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
 // constants
-import { GROUP_WORKSPACE } from "@/constants/event-tracker";
+import { GROUP_WORKSPACE } from "@plane/constants";
 // helpers
 import { getUserRole } from "@/helpers/user.helper";
 // hooks

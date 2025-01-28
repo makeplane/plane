@@ -3,7 +3,7 @@
 import { useState, FC } from "react";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
-import { PROJECT_UNSPLASH_COVERS } from "@plane/constants";
+import { PROJECT_UNSPLASH_COVERS, PROJECT_CREATED } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
@@ -11,7 +11,6 @@ import { setToast, TOAST_TYPE } from "@plane/ui";
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
 import ProjectCreateButtons from "@/components/project/create/project-create-buttons";
-import { PROJECT_CREATED } from "@/constants/event-tracker";
 // helpers
 import { getRandomEmoji } from "@/helpers/emoji.helper";
 // hooks

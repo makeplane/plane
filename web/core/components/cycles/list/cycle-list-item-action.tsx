@@ -6,6 +6,7 @@ import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, Users } from "lucide-react";
 // types
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@plane/constants";
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
 import {
@@ -24,7 +25,6 @@ import { CycleQuickActions, TransferIssuesModal } from "@/components/cycles";
 import { DateRangeDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // constants
-import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";

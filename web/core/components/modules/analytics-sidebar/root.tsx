@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane types
-import { MODULE_STATUS } from "@plane/constants";
+import { MODULE_STATUS ,MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
@@ -42,12 +42,6 @@ import {
   ModuleAnalyticsProgress,
   ModuleLinksList,
 } from "@/components/modules";
-import {
-  MODULE_LINK_CREATED,
-  MODULE_LINK_DELETED,
-  MODULE_LINK_UPDATED,
-  MODULE_UPDATED,
-} from "@/constants/event-tracker";
 
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";

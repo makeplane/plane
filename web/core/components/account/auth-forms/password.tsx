@@ -6,16 +6,11 @@ import Link from "next/link";
 // icons
 import { Eye, EyeOff, Info, X, XCircle } from "lucide-react";
 // ui
+import { FORGOT_PASSWORD, SIGN_IN_WITH_CODE, SIGN_IN_WITH_PASSWORD, SIGN_UP_WITH_PASSWORD } from "@plane/constants";
 import { Button, Input, Spinner } from "@plane/ui";
 // components
 import { ForgotPasswordPopover, PasswordStrengthMeter } from "@/components/account";
 // constants
-import {
-  FORGOT_PASSWORD,
-  SIGN_IN_WITH_CODE,
-  SIGN_IN_WITH_PASSWORD,
-  SIGN_UP_WITH_PASSWORD,
-} from "@/constants/event-tracker";
 // helpers
 import { EAuthModes, EAuthSteps } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";

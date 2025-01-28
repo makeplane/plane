@@ -5,15 +5,13 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ArchiveIcon, ArchiveRestoreIcon, ChevronRight, EllipsisIcon, LinkIcon, Trash2 } from "lucide-react";
 // types
-import { CYCLE_STATUS } from "@plane/constants";
+import { CYCLE_STATUS, CYCLE_UPDATED } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
 // ui
 import { CustomMenu, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns";
-// constants
-import { CYCLE_UPDATED } from "@/constants/event-tracker";
 // helpers
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";

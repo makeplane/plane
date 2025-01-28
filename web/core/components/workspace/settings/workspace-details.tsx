@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
 // constants
-import { ORGANIZATION_SIZE } from "@plane/constants";
+import { ORGANIZATION_SIZE, WORKSPACE_UPDATED } from "@plane/constants";
 // types
 import { IWorkspace } from "@plane/types";
 // ui
@@ -13,8 +13,6 @@ import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
 import { WorkspaceImageUploadModal } from "@/components/core";
-// constants
-import { WORKSPACE_UPDATED } from "@/constants/event-tracker";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";

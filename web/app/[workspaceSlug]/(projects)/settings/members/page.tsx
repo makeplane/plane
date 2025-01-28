@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Search } from "lucide-react";
 // types
+import { MEMBER_INVITED } from "@plane/constants";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
@@ -13,7 +14,6 @@ import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "@/components/workspace";
 // constants
-import { MEMBER_INVITED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getUserRole } from "@/helpers/user.helper";

@@ -3,15 +3,13 @@
 import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
+import { ORGANIZATION_SIZE, RESTRICTED_URLS, WORKSPACE_CREATED } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // constants
 // types
 import { IWorkspace } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
-import { WORKSPACE_CREATED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -209,7 +207,8 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
         </div>
         <div className="space-y-1 text-sm">
           <span>
-            {t("how_many_people_will_use_this_workspace")}<span className="ml-0.5 text-red-500">*</span>
+            {t("how_many_people_will_use_this_workspace")}
+            <span className="ml-0.5 text-red-500">*</span>
           </span>
           <div className="w-full">
             <Controller

@@ -6,9 +6,9 @@ import Link from "next/link";
 // ui
 import { useTheme } from "next-themes";
 // components
+import { NAVIGATE_TO_SIGNIN } from "@plane/constants";
 import { AuthRoot } from "@/components/account";
 // constants
-import { NAVIGATE_TO_SIGNIN } from "@/constants/event-tracker";
 // helpers
 import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
 // hooks

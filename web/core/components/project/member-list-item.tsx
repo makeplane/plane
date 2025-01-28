@@ -2,11 +2,11 @@
 
 import { observer } from "mobx-react";
 
+import { PROJECT_MEMBER_LEAVE } from "@plane/constants";
 import { TOAST_TYPE, Table, setToast } from "@plane/ui";
 // components
 import { ConfirmProjectMemberRemove } from "@/components/project";
 // constants
-import { PROJECT_MEMBER_LEAVE } from "@/constants/event-tracker";
 
 // hooks
 import { useEventTracker, useMember, useProject, useUser, useUserPermissions } from "@/hooks/store";
