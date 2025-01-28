@@ -1,9 +1,35 @@
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { TIssuesListTypes } from "@plane/types";
-// types
-import { CREATED_ISSUES_EMPTY_STATES } from "@/constants/dashboard";
-// constants
+import CompletedIssuesDark from "@/public/empty-state/dashboard/dark/completed-issues.svg";
+import OverdueIssuesDark from "@/public/empty-state/dashboard/dark/overdue-issues.svg";
+import UpcomingIssuesDark from "@/public/empty-state/dashboard/dark/upcoming-issues.svg";
+import CompletedIssuesLight from "@/public/empty-state/dashboard/light/completed-issues.svg";
+import OverdueIssuesLight from "@/public/empty-state/dashboard/light/overdue-issues.svg";
+import UpcomingIssuesLight from "@/public/empty-state/dashboard/light/upcoming-issues.svg";
+
+export const CREATED_ISSUES_EMPTY_STATES = {
+  pending: {
+    title: "Issues created by you that are pending\nwill show up here.",
+    darkImage: UpcomingIssuesDark,
+    lightImage: UpcomingIssuesLight,
+  },
+  upcoming: {
+    title: "Upcoming issues you created\nwill show up here.",
+    darkImage: UpcomingIssuesDark,
+    lightImage: UpcomingIssuesLight,
+  },
+  overdue: {
+    title: "Issues created by you that are past their\ndue date will show up here.",
+    darkImage: OverdueIssuesDark,
+    lightImage: OverdueIssuesLight,
+  },
+  completed: {
+    title: "Issues created by you that you have\nmarked completed will show up here.",
+    darkImage: CompletedIssuesDark,
+    lightImage: CompletedIssuesLight,
+  },
+};
 
 type Props = {
   type: TIssuesListTypes;
