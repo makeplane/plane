@@ -17,5 +17,3 @@ from .module import ModuleSerializer, ModuleIssueSerializer, ModuleLiteSerialize
 from .intake import IntakeIssueSerializer
 from .estimate import EstimatePointSerializer
 from .issue_type import IssueTypeAPISerializer, ProjectIssueTypeAPISerializer
-from .user import UserLiteSerializer
-
