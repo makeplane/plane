@@ -67,8 +67,8 @@ export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
         .then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: `draft deleted.`,
+            title: `${t("success")}!`,
+            message: t("workspace_draft_issues.toast.deleted.success"),
           });
           onClose();
         })
@@ -92,8 +92,8 @@ export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
       handleSubmit={handleIssueDelete}
       isSubmitting={isDeleting}
       isOpen={isOpen}
-      title={t("delete_modal.title")}
-      content={<>{t("delete_modal.description")}</>}
+      title={t("workspace_draft_issues.delete_modal.title")}
+      content={<>{t("workspace_draft_issues.delete_modal.description")}</>}
       primaryButtonText={{
         loading: t("deleting"),
         default: t("delete"),

@@ -323,6 +323,9 @@
   "deleting": "Deleting",
   "make_a_copy": "Make a copy",
   "move_to_project": "Move to project",
+  "deleting": "Deleting",
+  "make_a_copy": "Make a copy",
+  "move_to_project": "Move to project",
   "good": "Good",
   "morning": "morning",
   "afternoon": "afternoon",
@@ -1212,6 +1215,7 @@
 
   "workspace_draft_issues": {
     "draft_an_issue": "Draft an issue",
+    "draft_an_issue": "Draft an issue",
     "empty_state": {
       "title": "Half-written issues, and soon, comments will show up here.",
       "description": "To try this out, start adding an issue and leave it mid-way or create your first draft below. 😉",
@@ -1222,6 +1226,15 @@
     "delete_modal": {
       "title": "Delete draft",
       "description": "Are you sure you want to delete this draft? This can't be undone."
+    },
+    "toasts": {
+      "created": {
+        "success": "Draft created",
+        "error": "Issue could not be created. Please try again."
+      },
+      "deleted": {
+        "success": "Draft deleted"
+      }
     }
   },
 
