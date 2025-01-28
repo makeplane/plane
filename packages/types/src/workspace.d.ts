@@ -1,10 +1,4 @@
-import type {
-  ICycle,
-  IProjectMember,
-  IUser,
-  IUserLite,
-  IWorkspaceViewProps,
-} from "@plane/types";
+import type { ICycle, IProjectMember, IUser, IUserLite, IWorkspaceViewProps } from "@plane/types";
 import { TUserPermissions } from "./enums";
 
 export interface IWorkspace {
@@ -93,6 +87,7 @@ export interface IWorkspaceMemberMe {
   view_props: IWorkspaceViewProps;
   workspace: string;
   draft_issue_count: number;
+  active_cycles_count: number;
 }
 
 export interface ILastActiveWorkspaceDetails {
@@ -147,6 +142,7 @@ export interface IWorkspaceSearchResults {
     module: IWorkspaceDefaultSearchResult[];
     issue_view: IWorkspaceDefaultSearchResult[];
     page: IWorkspacePageSearchResult[];
+    epic: IWorkspaceIssueSearchResult[];
   };
 }
 
@@ -226,4 +222,8 @@ export interface IWorkspaceAnalyticsResponse {
 
 export type TWorkspacePaginationInfo = TPaginationInfo & {
   results: IWorkspace[];
+};
+
+export type TWorkspaceEpicsSearchParams = {
+  initiative_id?: string;
 };
