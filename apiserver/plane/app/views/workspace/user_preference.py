@@ -70,5 +70,5 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(
-            {"detail": "Preference not found"}, status=status.HTTP_400_BAD_REQUEST
+            {"detail": "Preference not found"}, status=status.HTTP_404_NOT_FOUND
         )
