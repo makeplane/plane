@@ -3,18 +3,20 @@ import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
-//hooks
-// icons
-// constants
-import { MONTHS_LIST } from "@/constants/calendar";
+// plane imports
+import { MONTHS_LIST } from "@plane/constants";
+// helpers
+import { useTranslation } from "@plane/i18n";
 import { getDate } from "@/helpers/date-time.helper";
+// hooks
 import { useCalendarView } from "@/hooks/store";
+// plane web imports
 import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+// store imports
 import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
-// helpers
 
 interface Props {
   issuesFilterStore:
@@ -26,12 +28,14 @@ interface Props {
 }
 export const CalendarMonthsDropdown: React.FC<Props> = observer((props: Props) => {
   const { issuesFilterStore } = props;
-
-  const issueCalendarView = useCalendarView();
-
+  // states
   const calendarLayout = issuesFilterStore.issueFilters?.displayFilters?.calendar?.layout ?? "month";
-
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  // plane imports
+  const { t } = useTranslation();
+  // store hooks
+  const issueCalendarView = useCalendarView();
+  // derived values
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
@@ -61,16 +65,16 @@ export const CalendarMonthsDropdown: React.FC<Props> = observer((props: Props) =
     if (!firstDay || !lastDay) return "Week view";
 
     if (firstDay.getMonth() === lastDay.getMonth() && firstDay.getFullYear() === lastDay.getFullYear())
-      return `${MONTHS_LIST[firstDay.getMonth() + 1].title} ${firstDay.getFullYear()}`;
+      return `${t(MONTHS_LIST[firstDay.getMonth() + 1].i18n_title)} ${firstDay.getFullYear()}`;
 
     if (firstDay.getFullYear() !== lastDay.getFullYear()) {
-      return `${MONTHS_LIST[firstDay.getMonth() + 1].shortTitle} ${firstDay.getFullYear()} - ${
-        MONTHS_LIST[lastDay.getMonth() + 1].shortTitle
-      } ${lastDay.getFullYear()}`;
+      return `${t(MONTHS_LIST[firstDay.getMonth() + 1].i18n_shortTitle)} ${firstDay.getFullYear()} - ${t(
+        MONTHS_LIST[lastDay.getMonth() + 1].i18n_shortTitle
+      )} ${lastDay.getFullYear()}`;
     } else
-      return `${MONTHS_LIST[firstDay.getMonth() + 1].shortTitle} - ${
-        MONTHS_LIST[lastDay.getMonth() + 1].shortTitle
-      } ${lastDay.getFullYear()}`;
+      return `${t(MONTHS_LIST[firstDay.getMonth() + 1].i18n_shortTitle)} - ${t(
+        MONTHS_LIST[lastDay.getMonth() + 1].i18n_shortTitle
+      )} ${lastDay.getFullYear()}`;
   };
 
   const handleDateChange = (date: Date) => {
@@ -89,7 +93,7 @@ export const CalendarMonthsDropdown: React.FC<Props> = observer((props: Props) =
           disabled={calendarLayout === "week"}
         >
           {calendarLayout === "month"
-            ? `${MONTHS_LIST[activeMonthDate.getMonth() + 1].title} ${activeMonthDate.getFullYear()}`
+            ? `${t(MONTHS_LIST[activeMonthDate.getMonth() + 1].i18n_title)} ${activeMonthDate.getFullYear()}`
             : getWeekLayoutHeader()}
         </button>
       </Popover.Button>
@@ -135,7 +139,7 @@ export const CalendarMonthsDropdown: React.FC<Props> = observer((props: Props) =
             <div className="grid grid-cols-4 items-stretch justify-items-stretch gap-4 pt-3">
               {Object.values(MONTHS_LIST).map((month, index) => (
                 <button
-                  key={month.shortTitle}
+                  key={month.i18n_shortTitle}
                   type="button"
                   className="rounded py-0.5 text-xs hover:bg-custom-background-80"
                   onClick={() => {
@@ -143,7 +147,7 @@ export const CalendarMonthsDropdown: React.FC<Props> = observer((props: Props) =
                     handleDateChange(newDate);
                   }}
                 >
-                  {month.shortTitle}
+                  {t(month.i18n_shortTitle)}
                 </button>
               ))}
             </div>

@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
-// plane constants
-import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
-// types
+// plane imports
+import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType, MONTHS_LIST } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -17,12 +17,9 @@ import type {
   TIssueMap,
   TPaginationData,
 } from "@plane/types";
-// ui
 import { Spinner } from "@plane/ui";
 // components
 import { CalendarHeader, CalendarIssueBlocks, CalendarWeekDays, CalendarWeekHeader } from "@/components/issues";
-// constants
-import { MONTHS_LIST } from "@/constants/calendar";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
@@ -98,6 +95,8 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   //refs
   const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
+  // plane imports
+  const { t } = useTranslation();
   // store hooks
   const {
     issues: { viewFlags },
@@ -209,7 +208,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
             <div className="md:hidden">
               <p className="p-4 text-xl font-semibold">
                 {`${selectedDate.getDate()} ${
-                  MONTHS_LIST[selectedDate.getMonth() + 1].title
+                  t(MONTHS_LIST[selectedDate.getMonth() + 1].i18n_title)
                 }, ${selectedDate.getFullYear()}`}
               </p>
               <CalendarIssueBlocks
@@ -237,7 +236,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
         <div className="md:hidden">
           <p className="p-4 text-xl font-semibold">
             {`${selectedDate.getDate()} ${
-              MONTHS_LIST[selectedDate.getMonth() + 1].title
+              t(MONTHS_LIST[selectedDate.getMonth() + 1].i18n_title)
             }, ${selectedDate.getFullYear()}`}
           </p>
           <CalendarIssueBlocks

@@ -6,10 +6,9 @@ import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, ChevronUp, MoreVerticalIcon } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
-// hooks
-// ui
-// icons
-import { EIssueFilterType } from "@plane/constants";
+// plane imports
+import { EIssueFilterType, CALENDAR_LAYOUTS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -18,12 +17,12 @@ import {
   TIssueKanbanFilters,
 } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
-// types
-// constants
-import { CALENDAR_LAYOUTS } from "@/constants/calendar";
+// hooks
 import { useCalendarView } from "@/hooks/store";
 import useSize from "@/hooks/use-window-size";
+// plane imports
 import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+// store
 import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
@@ -45,14 +44,16 @@ interface ICalendarHeader {
 
 export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((props) => {
   const { issuesFilterStore, updateFilters } = props;
-
+  // router
   const { projectId } = useParams();
-
-  const issueCalendarView = useCalendarView();
-  const [windowWidth] = useSize();
-
+  // states
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  // plane imports
+  const { t } = useTranslation();
+  // store hooks
+  const issueCalendarView = useCalendarView();
+  const [windowWidth] = useSize();
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "auto",
@@ -147,7 +148,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
                       className="flex w-full items-center justify-between gap-2 rounded px-1 py-1.5 text-left text-xs hover:bg-custom-background-80"
                       onClick={() => handleLayoutChange(layoutDetails.key, closePopover)}
                     >
-                      {layoutDetails.title}
+                      {t(layoutDetails.i18n_title)}
                       {calendarLayout === layout && <Check size={12} strokeWidth={2} />}
                     </button>
                   ))}

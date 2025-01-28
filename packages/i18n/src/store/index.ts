@@ -139,14 +139,12 @@ export class TranslationStore {
   }
 
   /**
-   * Translates a key with params using the current locale
-   * Falls back to the default language if the translation is not found
-   * Returns the key itself if the translation is not found
+   * Translates a single key with params using the current locale
    * @param key - The key to translate
    * @param params - The params to format the translation with
    * @returns The translated string
    */
-  t(key: string, params?: Record<string, any>): string {
+  private translateSingle(key: string, params?: Record<string, any>): string {
     try {
       // Try current locale
       let formatter = this.getMessageInstance(key, this.currentLocale);
@@ -165,6 +163,33 @@ export class TranslationStore {
       return key;
     } catch (error) {
       console.error(`Translation error for key "${key}":`, error);
+      return key;
+    }
+  }
+
+  /**
+   * Translates multiple keys or a single key with params using the current locale
+   * Handles space-separated keys while preserving complex translation keys
+   * @param key - The key or space-separated keys to translate
+   * @param params - The params to format the translation with
+   * @param separator - The separator to split multiple keys (defaults to space)
+   * @returns The translated string
+   */
+  t(key: string, params?: Record<string, any>, separator: string = " "): string {
+    try {
+      // If the key doesn't contain the separator, treat it as a single key
+      if (!key.includes(separator)) {
+        return this.translateSingle(key, params);
+      }
+
+      // Split the key by separator and translate each part
+      const parts = key.split(separator);
+      const translatedParts = parts.map((part) => this.translateSingle(part, params));
+
+      // Join the translated parts back together with the same separator
+      return translatedParts.join(separator);
+    } catch (error) {
+      console.error(`Translation error for composite key "${key}":`, error);
       return key;
     }
   }

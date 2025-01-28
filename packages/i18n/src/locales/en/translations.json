@@ -512,6 +512,93 @@
     "clear_all": "Clear all"
   },
 
+  "calendar": {
+    "months": {
+      "january": {
+        "full": "January",
+        "short": "Jan"
+      },
+      "february": {
+        "full": "February",
+        "short": "Feb"
+      },
+      "march": {
+        "full": "March",
+        "short": "Mar"
+      },
+      "april": {
+        "full": "April",
+        "short": "Apr"
+      },
+      "may": {
+        "full": "May",
+        "short": "May"
+      },
+      "june": {
+        "full": "June",
+        "short": "Jun"
+      },
+      "july": {
+        "full": "July",
+        "short": "Jul"
+      },
+      "august": {
+        "full": "August",
+        "short": "Aug"
+      },
+      "september": {
+        "full": "September",
+        "short": "Sep"
+      },
+      "october": {
+        "full": "October",
+        "short": "Oct"
+      },
+      "november": {
+        "full": "November",
+        "short": "Nov"
+      },
+      "december": {
+        "full": "December",
+        "short": "Dec"
+      }
+    },
+    "days": {
+      "sunday": {
+        "full": "Sunday",
+        "short": "Sun"
+      },
+      "monday": {
+        "full": "Monday",
+        "short": "Mon"
+      },
+      "tuesday": {
+        "full": "Tuesday",
+        "short": "Tue"
+      },
+      "wednesday": {
+        "full": "Wednesday",
+        "short": "Wed"
+      },
+      "thursday": {
+        "full": "Thursday",
+        "short": "Thu"
+      },
+      "friday": {
+        "full": "Friday",
+        "short": "Fri"
+      },
+      "saturday": {
+        "full": "Saturday",
+        "short": "Sat"
+      }
+    },
+    "layouts": {
+      "month": "Month layout",
+      "week": "Week layout"
+    }
+  },
+
   "form": {
     "title": {
       "required": "Title is required",

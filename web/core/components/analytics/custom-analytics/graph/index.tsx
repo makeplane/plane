@@ -3,6 +3,7 @@
 // nivo
 import { BarDatum } from "@nivo/bar";
 // components
+import { useTranslation } from "@plane/i18n";
 import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 // ui
@@ -26,6 +27,9 @@ type Props = {
 };
 
 export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, params, yAxisKey, fullScreen }) => {
+  // plane imports
+  const { t } = useTranslation();
+
   const generateYAxisTickValues = () => {
     if (!analytics) return [];
 
@@ -101,7 +105,7 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
                         <text x={0} y={21} textAnchor="middle" fontSize={9} fill="#ffffff">
                           {params.x_axis === "assignees__id"
                             ? datum.value && datum.value !== "None"
-                              ? generateDisplayName(datum.value, analytics, params, "x_axis")[0].toUpperCase()
+                              ? t(generateDisplayName(datum.value, analytics, params, "x_axis"))[0].toUpperCase()
                               : "?"
                             : datum.value && datum.value !== "None"
                               ? `${datum.value}`.toUpperCase()[0]
@@ -112,7 +116,7 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
                   );
               }
             : (datum) => (
-                <Tooltip tooltipContent={generateDisplayName(datum.value, analytics, params, "x_axis")}>
+                <Tooltip tooltipContent={t(generateDisplayName(datum.value, analytics, params, "x_axis"))}>
                   <g transform={`translate(${datum.x},${datum.y + 20})`}>
                     <text
                       x={0}
@@ -122,7 +126,7 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
                       fill="rgb(var(--color-text-200))"
                       className={`${barGraphData.data.length > 7 ? "-rotate-45" : ""}`}
                     >
-                      {renderChartDynamicLabel(generateDisplayName(datum.value, analytics, params, "x_axis"))?.label}
+                      {renderChartDynamicLabel(t(generateDisplayName(datum.value, analytics, params, "x_axis")))?.label}
                     </text>
                   </g>
                 </Tooltip>

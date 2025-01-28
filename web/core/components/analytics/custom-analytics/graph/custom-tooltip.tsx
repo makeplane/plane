@@ -2,6 +2,7 @@
 import { BarTooltipProps } from "@nivo/bar";
 // plane imports
 import { ANALYTICS_DATE_KEYS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
 // helpers
 import { renderMonthAndYear } from "@/helpers/analytics.helper";
@@ -14,6 +15,8 @@ type Props = {
 
 export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => {
   let tooltipValue: string | number = "";
+  // plane imports
+  const { t } = useTranslation();
 
   const renderAssigneeName = (assigneeId: string): string => {
     const assignee = analytics.extras.assignee_details.find((a) => a.assignees__id === assigneeId);
@@ -65,7 +68,12 @@ export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => 
               : ""
         }`}
       >
-        {params.segment === "assignees__id" ? renderAssigneeName(tooltipValue.toString()) : tooltipValue}:
+        {params.segment === "assignees__id"
+          ? renderAssigneeName(tooltipValue.toString())
+          : typeof tooltipValue === "string"
+            ? t(tooltipValue)
+            : tooltipValue}
+        :
       </span>
       <span>{datum.value}</span>
     </div>

@@ -5,17 +5,16 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
-// types
+// plane imports
+import { MONTHS_LIST } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TGroupedIssues, TIssue, TIssueMap, TPaginationData } from "@plane/types";
-// ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { CalendarIssueBlocks, ICalendarDate } from "@/components/issues";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 // helpers
-import { MONTHS_LIST } from "@/constants/calendar";
-// helpers
-import { cn } from "@/helpers/common.helper";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // types
 import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
@@ -77,14 +76,15 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     canEditProperties,
     isEpic = false,
   } = props;
-
-  const [isDraggingOver, setIsDraggingOver] = useState(false);
-
-  const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
-
-  const formattedDatePayload = renderFormattedPayloadDate(date.date);
-
+  // refs
   const dayTileRef = useRef<HTMLDivElement | null>(null);
+  // states
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
+  // plane imports
+  const { t } = useTranslation();
+  // derived values
+  const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
+  const formattedDatePayload = renderFormattedPayloadDate(date.date);
 
   useEffect(() => {
     const element = dayTileRef.current;
@@ -159,7 +159,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               : "font-medium" // if week layout, highlight all days
           } ${isWeekend ? "bg-custom-background-90" : "bg-custom-background-100"} `}
         >
-          {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
+          {date.date.getDate() === 1 && t(MONTHS_LIST[date.date.getMonth() + 1].i18n_shortTitle) + " "}
           {isToday ? (
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-primary-100 text-white">
               {date.date.getDate()}

@@ -1,10 +1,8 @@
 // nivo
 import { BarDatum } from "@nivo/bar";
 // plane imports
-import { ANALYTICS_DATE_KEYS, STATE_GROUPS } from "@plane/constants";
+import { ANALYTICS_DATE_KEYS, STATE_GROUPS, MONTHS_LIST } from "@plane/constants";
 import { IAnalyticsData, IAnalyticsParams, IAnalyticsResponse, TStateGroups } from "@plane/types";
-// constants
-import { MONTHS_LIST } from "@/constants/calendar";
 // helpers
 import { addSpaceIfCamelCase, capitalizeFirstLetter, generateRandomColor } from "@/helpers/string.helper";
 
@@ -136,7 +134,7 @@ export const renderMonthAndYear = (date: string | number | null): string => {
   const monthNumber = parseInt(`${date}`.split("-")[1], 10);
   const year = `${date}`.split("-")[0];
 
-  return (MONTHS_LIST[monthNumber]?.shortTitle || "None") + ` ${year ? year : ""}`;
+  return (MONTHS_LIST[monthNumber]?.i18n_shortTitle || "common.none") + ` ${year ? year : ""}`;
 };
 
 export const MAX_CHART_LABEL_LENGTH = 15;
