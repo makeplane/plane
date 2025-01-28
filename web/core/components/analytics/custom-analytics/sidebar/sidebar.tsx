@@ -154,7 +154,7 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
         <div className="flex items-center gap-1 rounded-md bg-custom-background-80 px-3 py-1 text-xs text-custom-text-200">
           <LayersIcon height={14} width={14} />
           {analytics ? analytics.total : "..."}
-          <div className={cn(isProjectLevel ? "hidden md:block" : "")}>{t("workitems")}</div>
+          <div className={cn(isProjectLevel ? "hidden md:block" : "")}>{t("work_items")}</div>
         </div>
         {isProjectLevel && (
           <div className="flex items-center gap-1 rounded-md bg-custom-background-80 px-3 py-1 text-xs text-custom-text-200">

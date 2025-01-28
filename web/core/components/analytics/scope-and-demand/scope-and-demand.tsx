@@ -68,8 +68,8 @@ export const ScopeAndDemand: React.FC<Props> = (props) => {
                   count: user?.count,
                   id: user?.created_by__id,
                 }))}
-                title={t("workspace_analytics.most_workitems_created.title")}
-                emptyStateMessage={t("workspace_analytics.most_workitems_created.empty_state")}
+                title={t("workspace_analytics.most_work_items_created.title")}
+                emptyStateMessage={t("workspace_analytics.most_work_items_created.empty_state")}
                 workspaceSlug={workspaceSlug?.toString() ?? ""}
               />
               <AnalyticsLeaderBoard
@@ -81,8 +81,8 @@ export const ScopeAndDemand: React.FC<Props> = (props) => {
                   count: user?.count,
                   id: user?.assignees__id,
                 }))}
-                title={t("workspace_analytics.most_workitems_closed.title")}
-                emptyStateMessage={t("workspace_analytics.most_workitems_closed.empty_state")}
+                title={t("workspace_analytics.most_work_items_closed.title")}
+                emptyStateMessage={t("workspace_analytics.most_work_items_closed.empty_state")}
                 workspaceSlug={workspaceSlug?.toString() ?? ""}
               />
               <div className={fullScreen ? "md:col-span-2" : ""}>
