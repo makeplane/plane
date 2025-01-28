@@ -332,10 +332,6 @@
   "no_data_yet": "No Data yet",
 
   "project_view": {
-    "access": {
-      "public": "Public",
-      "private": "Private"
-    },
     "sort_by": {
       "created_at": "Created at",
       "updated_at": "Updated at",
@@ -493,6 +489,10 @@
     "cancel": "Cancel",
     "description": "Description",
     "title": "Title",
+    "access": {
+      "public": "Public",
+      "private": "Private"
+    },
     "order_by": {
       "label": "Order by",
       "manual": "Manual",
