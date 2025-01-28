@@ -323,6 +323,9 @@
   "deleting": "Deleting",
   "make_a_copy": "Make a copy",
   "move_to_project": "Move to project",
+  "deleting": "Deleting",
+  "make_a_copy": "Make a copy",
+  "move_to_project": "Move to project",
   "good": "Good",
   "morning": "morning",
   "afternoon": "afternoon",
@@ -332,10 +335,6 @@
   "no_data_yet": "No Data yet",
 
   "project_view": {
-    "access": {
-      "public": "Public",
-      "private": "Private"
-    },
     "sort_by": {
       "created_at": "Created at",
       "updated_at": "Updated at",
@@ -493,6 +492,10 @@
     "cancel": "Cancel",
     "description": "Description",
     "title": "Title",
+    "access": {
+      "public": "Public",
+      "private": "Private"
+    },
     "order_by": {
       "label": "Order by",
       "manual": "Manual",
@@ -508,7 +511,8 @@
       "desc": "Descending"
     },
     "comments": "Comments",
-    "updates": "Updates"
+    "updates": "Updates",
+    "clear_all": "Clear all"
   },
 
   "form": {
@@ -1066,7 +1070,30 @@
   },
 
   "notification": {
-    "label": "Notifications",
+    "label": "Inbox",
+    "page_label": "{workspace} - Inbox",
+    "options": {
+      "mark_all_as_read": "Mark all as read",
+      "mark_read": "Mark as read",
+      "mark_unread": "Mark as unread",
+      "refresh": "Refresh",
+      "filters": "Inbox Filters",
+      "show_unread": "Show unread",
+      "show_snoozed": "Show snoozed",
+      "show_archived": "Show archived",
+      "mark_archive": "Archive",
+      "mark_unarchive": "Un archive",
+      "mark_snooze": "Snooze",
+      "mark_unsnooze": "Un snooze"
+    },
+    "toasts": {
+      "read": "Inbox marked as read",
+      "unread": "Inbox marked as unread",
+      "archived": "Inbox marked as archived",
+      "unarchived": "Inbox marked as un archived",
+      "snoozed": "Inbox snoozed",
+      "unsnoozed": "Inbox un snoozed"
+    },
     "empty_state": {
       "detail": {
         "title": "Select to view details."
@@ -1181,6 +1208,7 @@
   },
 
   "workspace_draft_issues": {
+    "draft_an_issue": "Draft an issue",
     "draft_an_issue": "Draft an issue",
     "empty_state": {
       "title": "Half-written issues, and soon, comments will show up here.",

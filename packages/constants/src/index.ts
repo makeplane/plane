@@ -25,3 +25,5 @@ export * from "./inbox";
 export * from "./profile";
 export * from "./workspace-drafts";
 export * from "./label";
+export * from "./dashboard";
+export * from "./page";

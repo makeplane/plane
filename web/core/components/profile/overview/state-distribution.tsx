@@ -1,14 +1,12 @@
-// ui
+// plane imports
+import { STATE_GROUPS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IUserProfileData, IUserStateDistribution } from "@plane/types";
+// ui
 import { Card } from "@plane/ui";
 import { ProfileEmptyState, PieGraph } from "@/components/ui";
-
 // image
-import { STATE_GROUPS } from "@/constants/state";
 import stateGraph from "@/public/empty-state/state_graph.svg";
-// types
-// constants
 
 type Props = {
   stateDistribution: IUserStateDistribution[];

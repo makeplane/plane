@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 // plane types
+import { PROJECT_BACKGROUND_COLORS } from "@plane/constants";
 import { TRecentProjectsWidgetResponse } from "@plane/types";
 // plane ui
 import { Avatar, AvatarGroup, Card } from "@plane/ui";
@@ -12,13 +13,12 @@ import { Avatar, AvatarGroup, Card } from "@plane/ui";
 import { Logo } from "@/components/common";
 import { WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
 // constants
-import { PROJECT_BACKGROUND_COLORS } from "@/constants/dashboard";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useEventTracker, useDashboard, useProject, useCommandPalette, useUserPermissions } from "@/hooks/store";
-// plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// plane web constants
 
 const WIDGET_KEY = "recent_projects";
 

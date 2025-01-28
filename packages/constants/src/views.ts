@@ -7,8 +7,8 @@ export const VIEW_ACCESS_SPECIFIERS: {
   key: EViewAccess;
   i18n_label: string;
 }[] = [
-  { key: EViewAccess.PUBLIC, i18n_label: "project_view.access.public" },
-  { key: EViewAccess.PRIVATE, i18n_label: "project_view.access.private" },
+  { key: EViewAccess.PUBLIC, i18n_label: "common.access.public" },
+  { key: EViewAccess.PRIVATE, i18n_label: "common.access.private" },
 ];
 
 export const VIEW_SORTING_KEY_OPTIONS = [

@@ -34,7 +34,9 @@ const WorkspaceDashboardPage = observer(() => {
   const { fetchUserProjectInfo } = useUserPermissions();
   const { setPeekIssue } = useIssueDetail();
   // derived values
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Inbox` : undefined;
+  const pageTitle = currentWorkspace?.name
+    ? t("notification.page_label", { workspace: currentWorkspace?.name })
+    : undefined;
   const { workspace_slug, project_id, issue_id, is_inbox_issue } =
     notificationLiteByNotificationId(currentSelectedNotificationId);
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/intake/issue-detail" });
