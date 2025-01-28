@@ -1192,6 +1192,15 @@
     "delete_modal": {
       "title": "Delete draft",
       "description": "Are you sure you want to delete this draft? This can't be undone."
+    },
+    "toasts": {
+      "created": {
+        "success": "Draft created",
+        "error": "Issue could not be created. Please try again."
+      },
+      "deleted": {
+        "success": "Draft deleted"
+      }
     }
   },
 
