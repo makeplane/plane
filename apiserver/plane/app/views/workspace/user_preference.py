@@ -29,28 +29,20 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
 
         keys = [key for key, _ in WorkspaceUserPreference.UserPreferenceKeys.choices]
 
-        sort_order_counter = 1
-
         for preference in keys:
             if preference not in get_preference.values_list("key", flat=True):
                 create_preference_keys.append(preference)
 
-                sort_order = 1000 - sort_order_counter
-
                 preference = WorkspaceUserPreference.objects.bulk_create(
                     [
                         WorkspaceUserPreference(
-                            key=key,
-                            user=request.user,
-                            workspace=workspace,
-                            sort_order=sort_order,
+                            key=key, user=request.user, workspace=workspace
                         )
                         for key in create_preference_keys
                     ],
                     batch_size=10,
                     ignore_conflicts=True,
                 )
-                sort_order_counter += 1
 
         preference = WorkspaceUserPreference.objects.filter(
             user=request.user, workspace_id=workspace.id
