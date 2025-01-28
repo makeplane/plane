@@ -27,8 +27,6 @@ import { LayersIcon, DoubleCircleIcon, DiceIcon, ContrastIcon, CustomMenu, Row }
 import { ISvgIcons } from "@plane/ui/src/icons/type";
 import useLocalStorage from "@/hooks/use-local-storage";
 
-// const spreadSheetColumns =
-
 interface Props {
   property: keyof IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
