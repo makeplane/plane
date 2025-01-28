@@ -127,14 +127,14 @@ export const StickyDNDWrapper = observer((props: Props) => {
         width: itemWidth,
       }}
     >
-      {!isInFirstRow && <DropIndicator isVisible={instruction === "reorder-above"} />}
+      {/* {!isInFirstRow && <DropIndicator isVisible={instruction === "reorder-above"} />} */}
       <StickyNote
         key={stickyId || "new"}
         workspaceSlug={workspaceSlug}
         stickyId={stickyId}
         handleLayout={handleLayout}
       />
-      {!isInLastRow && <DropIndicator isVisible={instruction === "reorder-below"} />}
+      {/* {!isInLastRow && <DropIndicator isVisible={instruction === "reorder-below"} />} */}
     </div>
   );
 });
