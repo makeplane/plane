@@ -30,7 +30,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   // store values
-  const { name } = page;
+  const { name, isContentEditable } = page;
   // page filters
   const { isFullWidth, handleFullWidth, isStickyToolbarEnabled, handleStickyToolbar } = usePageFilters();
   // update query params
@@ -59,6 +59,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
           </>
         ),
         className: "flex items-center justify-between gap-2",
+        shouldRender: isContentEditable,
       },
       {
         key: "copy-markdown",
@@ -97,7 +98,16 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         shouldRender: true,
       },
     ],
-    [editorRef, handleFullWidth, handleStickyToolbar, isFullWidth, isStickyToolbarEnabled, router, updateQueryParams]
+    [
+      editorRef,
+      handleFullWidth,
+      handleStickyToolbar,
+      isContentEditable,
+      isFullWidth,
+      isStickyToolbarEnabled,
+      router,
+      updateQueryParams,
+    ]
   );
 
   return (

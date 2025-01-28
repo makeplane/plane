@@ -141,13 +141,11 @@ export const PageRenderer = (props: IPageRenderer) => {
         >
           <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
           {editor.isEditable && (
-            <>
+            <div>
               {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
-              <div>
-                <BlockMenu editor={editor} />
-                <AIFeaturesMenu menu={aiHandler?.menu} />
-              </div>
-            </>
+              <BlockMenu editor={editor} />
+              <AIFeaturesMenu menu={aiHandler?.menu} />
+            </div>
           )}
         </EditorContainer>
       </div>
