@@ -3,12 +3,11 @@ import React, { useState } from "react";
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
 import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
-// components
+// plane types
 import { TSticky } from "@plane/types";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
-// hooks
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
@@ -60,7 +59,7 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
 
   return (
     <div
-      className={cn("relative border border-custom-border-200 rounded p-3", parentClassName)}
+      className={cn("relative border border-custom-border-200 rounded", parentClassName)}
       onFocus={() => !showToolbarInitially && setIsFocused(true)}
       onBlur={() => !showToolbarInitially && setIsFocused(false)}
     >
@@ -82,10 +81,10 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
       />
       {showToolbar && (
         <div
-          className={cn(
-            "transition-all duration-300 ease-out origin-top",
-            isFocused ? "max-h-[200px] opacity-100 scale-y-100 mt-3" : "max-h-0 opacity-0 scale-y-0 invisible"
-          )}
+          className={cn("transition-all duration-300 ease-out origin-top px-4 h-[60px]", {
+            "max-h-[60px] opacity-100 scale-y-100": isFocused,
+            "max-h-0 opacity-0 scale-y-0 invisible": !isFocused,
+          })}
         >
           <StickyEditorToolbar
             executeCommand={(item) => {
