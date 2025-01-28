@@ -26,4 +26,5 @@ export * from "./profile";
 export * from "./workspace-drafts";
 export * from "./label";
 export * from "./spreadsheet";
+export * from "./dashboard";
 export * from "./page";
