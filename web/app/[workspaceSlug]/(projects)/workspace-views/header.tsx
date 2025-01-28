@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { Layers } from "lucide-react";
 // plane constants
 import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
@@ -33,6 +34,7 @@ export const GlobalIssuesHeader = observer(() => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
+  const { t } = useTranslation();
 
   const issueFilters = globalViewId ? filters[globalViewId.toString()] : undefined;
 
@@ -103,7 +105,7 @@ export const GlobalIssuesHeader = observer(() => {
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              link={<BreadcrumbLink label={`Views`} icon={<Layers className="h-4 w-4 text-custom-text-300" />} />}
+              link={<BreadcrumbLink label={t("views")} icon={<Layers className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
         </Header.LeftItem>
@@ -141,7 +143,7 @@ export const GlobalIssuesHeader = observer(() => {
           )}
 
           <Button variant="primary" size="sm" onClick={() => setCreateViewModal(true)}>
-            Add view
+            {t("workspace_views.add_view")}
           </Button>
         </Header.RightItem>
       </Header>

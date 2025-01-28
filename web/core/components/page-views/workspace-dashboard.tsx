@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel, PRODUCT_TOUR_COMPLETED } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper } from "@plane/ui";
 // components
@@ -12,7 +12,6 @@ import { IssuePeekOverview } from "@/components/issues";
 import { TourRoot } from "@/components/onboarding";
 import { UserGreetingsView } from "@/components/user";
 // constants
-import { PRODUCT_TOUR_COMPLETED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks

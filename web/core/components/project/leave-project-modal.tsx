@@ -8,11 +8,11 @@ import { Controller, useForm } from "react-hook-form";
 import { AlertTriangleIcon } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // types
+import { PROJECT_MEMBER_LEAVE } from "@plane/constants";
 import { IProject } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { PROJECT_MEMBER_LEAVE } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

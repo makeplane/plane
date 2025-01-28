@@ -4,11 +4,11 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
+import { GLOBAL_VIEW_DELETED } from "@plane/constants";
 import { IWorkspaceView } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { GLOBAL_VIEW_DELETED } from "@/constants/event-tracker";
 // hooks
 import { useGlobalView, useEventTracker } from "@/hooks/store";
 

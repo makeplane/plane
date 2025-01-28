@@ -7,6 +7,7 @@ import { useParams, usePathname } from "next/navigation";
 // icons
 import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
 // types
+import { ISSUE_UPDATED } from "@plane/constants";
 import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
 import { Tooltip } from "@plane/ui";
@@ -21,7 +22,6 @@ import {
   StateDropdown,
 } from "@/components/dropdowns";
 // constants
-import { ISSUE_UPDATED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";

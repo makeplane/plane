@@ -3,7 +3,7 @@
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Info, Lock } from "lucide-react";
-import { NETWORK_CHOICES } from "@plane/constants";
+import { NETWORK_CHOICES, PROJECT_UPDATED } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane types
 import { IProject, IWorkspace } from "@plane/types";
@@ -24,7 +24,6 @@ import { Logo } from "@/components/common";
 import { ImagePickerPopover } from "@/components/core";
 import { TimezoneSelect } from "@/components/global";
 // constants
-import { PROJECT_UPDATED } from "@/constants/event-tracker";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";

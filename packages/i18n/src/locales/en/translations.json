@@ -199,6 +199,7 @@
   "project_id_is_required": "Project ID is required",
   "select_network": "Select network",
   "lead": "Lead",
+  "date_range": "Date range",
   "private": "Private",
   "public": "Public",
   "accessible_only_by_invite": "Accessible only by invite",
@@ -307,6 +308,8 @@
   "create_new_label": "Create new label",
   "start_date": "Start date",
   "due_date": "Due date",
+  "end_date": "End date",
+  "target_date": "Target date",
   "cycle": "Cycle",
   "estimate": "Estimate",
   "change_parent_issue": "Change parent issue",
@@ -318,6 +321,8 @@
   "optional": "Optional",
   "Cancel": "Cancel",
   "edit": "Edit",
+  "archive": "Archive",
+  "restor": "Restore",
   "open_in_new_tab": "Open in new tab",
   "delete": "Delete",
   "deleting": "Deleting",
@@ -332,6 +337,13 @@
   "no_data_yet": "No Data yet",
   "unassigned": "Unassigned",
   "work_items": "Work items",
+  "add_link": "Add link",
+  "points": "Points",
+  "no_assignee": "No assignee",
+  "no_assignees_yet": "No assignees yet",
+  "no_labels_yet": "No labels yet",
+  "ideal": "Ideal",
+  "current": "Current",
 
   "project_view": {
     "sort_by": {
@@ -491,6 +503,7 @@
     "cancel": "Cancel",
     "description": "Description",
     "title": "Title",
+    "attachment": "Attachment",
     "access": {
       "public": "Public",
       "private": "Private"
@@ -503,15 +516,22 @@
       "start_date": "Start date",
       "due_date": "Due date",
       "asc": "Ascending",
-      "desc": "Descending"
+      "desc": "Descending",
+      "updated_on": "Updated on"
     },
     "sort": {
       "asc": "Ascending",
-      "desc": "Descending"
+      "desc": "Descending",
+      "created_on": "Created on",
+      "updated_on": "Updated on"
     },
     "comments": "Comments",
     "updates": "Updates",
-    "clear_all": "Clear all"
+    "clear_all": "Clear all",
+    "no_links_added_yet": "No links added yet",
+    "add_link": "Add link",
+    "links": "Links",
+    "progress": "Progress"
   },
 
   "form": {
@@ -549,7 +569,9 @@
         "id": "ID",
         "issue_type": "Issue Type",
         "sub_issue_count": "Sub issue count",
-        "attachment_count": "Attachment count"
+        "attachment_count": "Attachment count",
+        "created_on": "Created on",
+        "sub_issue": "Sub-issue"
       },
       "extra": {
         "show_sub_issues": "Show sub-issues",
@@ -592,10 +614,6 @@
         "error": "Asset upload failed. Please try again later."
       }
     }
-  },
-
-  "project": {
-    "label": "{count, plural, one {Project} other {Projects}}"
   },
 
   "view": {
@@ -703,6 +721,10 @@
   },
 
   "workspace_projects": {
+    "label": "{count, plural, one {Project} other {Projects}}",
+    "create": {
+      "label": "Add Project"
+    },
     "network": {
       "private": {
         "title": "Private",
@@ -765,11 +787,15 @@
       "filter": {
         "title": "No matching projects",
         "description": "No projects detected with the matching criteria. \n Create a new project instead."
+      },
+      "search": {
+        "description": "No projects detected with the matching criteria.\nCreate a new project instead"
       }
     }
   },
 
-  "workspace_issues": {
+  "workspace_views": {
+    "add_view": "Add view",
     "empty_state": {
       "all-issues": {
         "title": "No issues in the project",
@@ -990,6 +1016,12 @@
   },
 
   "project_module": {
+    "add_module": "Add Module",
+    "update_module": "Update Module",
+    "create_module": "Create Module",
+    "archive_module": "Archive Module",
+    "restore_module": "Restore Module",
+    "delete_module": "Delete module",
     "empty_state": {
       "general": {
         "title": "Map your project milestones to Modules and track aggregated work easily.",
@@ -1015,6 +1047,24 @@
       "archived": {
         "title": "No archived Modules yet",
         "description": "To tidy up your project, archive completed or cancelled modules. Find them here once archived."
+      },
+      "sidebar": {
+        "in_active": "This module isn't active yet.",
+        "invalid_date": "Invalid date. Please enter valid date."
+      }
+    },
+    "quick_actions": {
+      "archive_module": "Archive module",
+      "archive_module_description": "Only completed or canceled\nmodule can be archived.",
+      "delete_module": "Delete module"
+    },
+    "toast": {
+      "copy": {
+        "success": "Module link copied to clipboard"
+      },
+      "delete": {
+        "success": "Module deleted successfully",
+        "error": "Failed to delete module"
       }
     }
   },
@@ -1237,6 +1287,7 @@
 
   "workspace_draft_issues": {
     "draft_an_issue": "Draft an issue",
+    "draft_an_issue": "Draft an issue",
     "empty_state": {
       "title": "Half-written issues, and soon, comments will show up here.",
       "description": "To try this out, start adding an issue and leave it mid-way or create your first draft below. 😉",
@@ -1247,6 +1298,15 @@
     "delete_modal": {
       "title": "Delete draft",
       "description": "Are you sure you want to delete this draft? This can't be undone."
+    },
+    "toasts": {
+      "created": {
+        "success": "Draft created",
+        "error": "Issue could not be created. Please try again."
+      },
+      "deleted": {
+        "success": "Draft deleted"
+      }
     }
   },
 

@@ -4,8 +4,7 @@ import { FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // plane imports
-import { ETabIndices } from "@plane/constants";
-// editor
+import { ETabIndices, ISSUE_CREATED } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 // types
 import { TIssue } from "@plane/types";
@@ -13,7 +12,6 @@ import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { InboxIssueTitle, InboxIssueDescription, InboxIssueProperties } from "@/components/inbox/modals/create-modal";
 // constants
-import { ISSUE_CREATED } from "@/constants/event-tracker";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";

@@ -9,7 +9,7 @@ import { useTheme } from "next-themes";
 import useSWR, { mutate } from "swr";
 import { CheckCircle2 } from "lucide-react";
 // plane imports
-import { ROLE } from "@plane/constants";
+import { ROLE, MEMBER_ACCEPTED } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { IWorkspaceMemberInvitation } from "@plane/types";
@@ -17,8 +17,6 @@ import type { IWorkspaceMemberInvitation } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/common";
-// constants
-import { MEMBER_ACCEPTED } from "@/constants/event-tracker";
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 // helpers
 import { truncateText } from "@/helpers/string.helper";

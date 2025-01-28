@@ -1,14 +1,11 @@
 import { FC, useEffect, useState } from "react";
 // constants
-import { EPageAccess } from "@plane/constants";
-// types
+import { EPageAccess, PAGE_CREATED } from "@plane/constants";
 import { TPage } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { PageForm } from "@/components/pages";
-// constants
-import { PAGE_CREATED } from "@/constants/event-tracker";
 // hooks
 import { useProjectPages, useEventTracker } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

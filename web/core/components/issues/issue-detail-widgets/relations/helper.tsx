@@ -1,11 +1,10 @@
 "use client";
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, ISSUE_DELETED, ISSUE_UPDATED } from "@plane/constants";
 import { TIssue, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { ISSUE_DELETED, ISSUE_UPDATED } from "@/constants/event-tracker";
 // helper
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks

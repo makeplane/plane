@@ -5,11 +5,11 @@ import { observer } from "mobx-react";
 import Image, { StaticImageData } from "next/image";
 import { X } from "lucide-react";
 // ui
+import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "@plane/constants";
 import { Button } from "@plane/ui";
 // components
 import { TourSidebar } from "@/components/onboarding";
 // constants
-import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "@/constants/event-tracker";
 // hooks
 import { useCommandPalette, useEventTracker, useUser } from "@/hooks/store";
 // assets
