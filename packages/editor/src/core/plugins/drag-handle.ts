@@ -20,6 +20,7 @@ const generalSelectors = [
   ".image-component",
   ".image-upload-component",
   ".editor-callout-component",
+  ".prosemirror-flat-list",
 ].join(", ");
 
 const maxScrollSpeed = 20;
@@ -378,6 +379,8 @@ const handleNodeSelection = (
   if (node.matches("blockquote")) {
     draggedNodePos = nodePosAtDOMForBlockQuotes(node, view);
     if (draggedNodePos === null || draggedNodePos === undefined) return;
+  } else if (node.className.includes("prosemirror-flat-list")) {
+    draggedNodePos -= 1;
   } else {
     // Resolve the position to get the parent node
     const $pos = view.state.doc.resolve(draggedNodePos);

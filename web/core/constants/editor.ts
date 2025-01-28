@@ -15,6 +15,7 @@ import {
   Image,
   Italic,
   List,
+  ListCollapse,
   ListOrdered,
   ListTodo,
   LucideIcon,
@@ -128,7 +129,7 @@ const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strik
   },
 ];
 
-const LIST_ITEMS: ToolbarMenuItem<"bulleted-list" | "numbered-list" | "to-do-list">[] = [
+const LIST_ITEMS: ToolbarMenuItem<"bulleted-list" | "numbered-list" | "to-do-list" | "toggle-list">[] = [
   {
     itemKey: "bulleted-list",
     renderKey: "bulleted-list",
@@ -151,6 +152,14 @@ const LIST_ITEMS: ToolbarMenuItem<"bulleted-list" | "numbered-list" | "to-do-lis
     name: "To-do list",
     icon: ListTodo,
     shortcut: ["Cmd", "Shift", "9"],
+    editors: ["lite", "document"],
+  },
+  {
+    itemKey: "toggle-list",
+    renderKey: "toggle-list",
+    name: "Flat Toggle list",
+    icon: ListCollapse,
+    shortcut: ["Cmd", "Shift", "2"],
     editors: ["lite", "document"],
   },
 ];

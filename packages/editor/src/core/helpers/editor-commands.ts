@@ -1,10 +1,10 @@
 import { Editor, Range } from "@tiptap/core";
+// types
+import { InsertImageComponentProps } from "@/extensions";
 // extensions
 import { replaceCodeWithText } from "@/extensions/code/utils/replace-code-block-with-text";
 // helpers
 import { findTableAncestor } from "@/helpers/common";
-// types
-import { InsertImageComponentProps } from "@/extensions";
 
 export const setText = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("paragraph").run();
@@ -61,6 +61,42 @@ export const toggleItalic = (editor: Editor, range?: Range) => {
   else editor.chain().focus().toggleItalic().run();
 };
 
+export const toggleFlatOrderedList = (editor: Editor, range?: Range) => {
+  if (range)
+    editor.chain().focus().deleteRange(range).createList({
+      kind: "ordered",
+      collapsed: false,
+    });
+  else editor.chain().focus().createList({ kind: "ordered", collapsed: false });
+};
+
+export const toggleFlatBulletList = (editor: Editor, range?: Range) => {
+  if (range)
+    editor.chain().focus().deleteRange(range).createList({
+      kind: "bullet",
+      collapsed: false,
+    });
+  else editor.chain().focus().createList({ kind: "bullet", collapsed: false });
+};
+
+export const toggleFlatTaskList = (editor: Editor, range?: Range) => {
+  if (range)
+    editor.chain().focus().deleteRange(range).createList({
+      kind: "task",
+      collapsed: false,
+    });
+  else editor.chain().focus().createList({ kind: "task", collapsed: false });
+};
+
+export const toggleFlatToggleList = (editor: Editor, range?: Range) => {
+  if (range)
+    editor.chain().focus().deleteRange(range).createList({
+      kind: "toggle",
+      collapsed: false,
+    });
+  else editor.chain().focus().createList({ kind: "toggle", collapsed: false });
+};
+
 export const toggleUnderline = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).toggleUnderline().run();
   else editor.chain().focus().toggleUnderline().run();
@@ -96,16 +132,12 @@ export const toggleCodeBlock = (editor: Editor, range?: Range) => {
 };
 
 export const toggleOrderedList = (editor: Editor, range?: Range) => {
-  // @ts-expect-error tiptap types are incorrect
   if (range) editor.chain().focus().deleteRange(range).toggleOrderedList().run();
-  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleOrderedList().run();
 };
 
 export const toggleBulletList = (editor: Editor, range?: Range) => {
-  // @ts-expect-error tiptap types are incorrect
   if (range) editor.chain().focus().deleteRange(range).toggleBulletList().run();
-  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleBulletList().run();
 };
 
@@ -138,8 +170,8 @@ export const insertTableCommand = (editor: Editor, range?: Range) => {
       }
     }
   }
-  if (range) editor.chain().focus().deleteRange(range).clearNodes().insertTable({ rows: 3, cols: 3 }).run();
-  else editor.chain().focus().clearNodes().insertTable({ rows: 3, cols: 3 }).run();
+  if (range) editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3 }).run();
+  else editor.chain().focus().insertTable({ rows: 3, cols: 3 }).run();
 };
 
 export const insertImage = ({

@@ -11,46 +11,35 @@ export const insertEmptyParagraphAtNodeBoundaries: (
   ({ editor }) => {
     try {
       const { selection, doc } = editor.state;
-      const { $from, $to } = selection;
+      const { $from } = selection;
 
-      let targetNode: ProseMirrorNode | null = null;
-      let targetNodePos: number | null = null;
+      const node = doc.nodeAt($from.pos);
+      const pos = $from.pos;
 
-      // Check if the selection itself is the target node
-      doc.nodesBetween($from.pos, $to.pos, (node, pos) => {
-        if (node.type.name === nodeType) {
-          targetNode = node;
-          targetNodePos = pos;
-          return false; // Stop iterating once the target node is found
-        }
-        return true;
-      });
-
-      if (targetNode === null || targetNodePos === null) return false;
+      if (!node || node.type.name !== nodeType) return false;
 
       const docSize = doc.content.size; // Get the size of the document
 
       switch (direction) {
         case "up": {
-          const insertPosUp = targetNodePos;
+          const insertPosUp = pos;
 
           // Ensure the insert position is within the document boundaries
           if (insertPosUp < 0 || insertPosUp > docSize) return false;
 
+          // Check if we're exactly at the start of the document
           if (insertPosUp === 0) {
-            // If at the very start of the document, insert a new paragraph at the start
-            editor.chain().insertContentAt(insertPosUp, { type: "paragraph" }).run();
-            editor.chain().setTextSelection(insertPosUp).run(); // Set the cursor to the new paragraph
+            // We are at the true start of the document, safe to insert
+            editor.chain().insertContentAt(0, { type: "paragraph" }).run();
+            editor.chain().setTextSelection(0).run(); // Set the cursor to the start of the new paragraph
           } else {
-            // Otherwise, check the node immediately before the target node
+            // Check the node immediately before the target node
             const prevNode = doc.nodeAt(insertPosUp - 1);
 
             if (prevNode && prevNode.type.name === "paragraph") {
               // If the previous node is a paragraph, move the cursor there
-              editor
-                .chain()
-                .setTextSelection(insertPosUp - 1)
-                .run();
+              const startOfParagraphPos = insertPosUp - prevNode.nodeSize;
+              editor.chain().setTextSelection(startOfParagraphPos).run();
             } else {
               return false; // If the previous node is not a paragraph, do not proceed
             }
@@ -59,27 +48,30 @@ export const insertEmptyParagraphAtNodeBoundaries: (
         }
 
         case "down": {
-          const insertPosDown = targetNodePos + (targetNode as ProseMirrorNode).nodeSize;
+          const insertPosDown = pos + (node as ProseMirrorNode).nodeSize;
 
           // Ensure the insert position is within the document boundaries
           if (insertPosDown < 0 || insertPosDown > docSize) return false;
 
-          // Check the node immediately after the target node
-          const nextNode = doc.nodeAt(insertPosDown);
-
-          if (nextNode && nextNode.type.name === "paragraph") {
-            // If the next node is a paragraph, move the cursor to the end of it
-            const endOfParagraphPos = insertPosDown + nextNode.nodeSize - 1;
-            editor.chain().setTextSelection(endOfParagraphPos).run();
-          } else if (!nextNode) {
-            // If there is no next node (end of document), insert a new paragraph
+          // Check if we're exactly at the end of the document
+          if (insertPosDown === docSize) {
+            // We are at the true end of the document, safe to insert
             editor.chain().insertContentAt(insertPosDown, { type: "paragraph" }).run();
             editor
               .chain()
               .setTextSelection(insertPosDown + 1)
               .run(); // Set the cursor to the new paragraph
           } else {
-            return false; // If the next node is not a paragraph, do not proceed
+            // Check the node immediately after the target node
+            const nextNode = doc.nodeAt(insertPosDown);
+
+            if (nextNode && nextNode.type.name === "paragraph") {
+              // If the next node is a paragraph, move the cursor to the end of it
+              const endOfParagraphPos = insertPosDown + nextNode.nodeSize - 1;
+              editor.chain().setTextSelection(endOfParagraphPos).run();
+            } else {
+              return false; // If the next node is not a paragraph, do not proceed
+            }
           }
           break;
         }
