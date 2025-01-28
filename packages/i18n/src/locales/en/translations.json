@@ -601,10 +601,6 @@
     }
   },
 
-  "project": {
-    "label": "{count, plural, one {Project} other {Projects}}"
-  },
-
   "view": {
     "label": "{count, plural, one {View} other {Views}}",
     "create": {
@@ -681,6 +677,10 @@
   },
 
   "workspace_projects": {
+    "label": "{count, plural, one {Project} other {Projects}}",
+    "create": {
+      "label": "Add Project"
+    },
     "network": {
       "private": {
         "title": "Private",
@@ -743,6 +743,9 @@
       "filter": {
         "title": "No matching projects",
         "description": "No projects detected with the matching criteria. \n Create a new project instead."
+      },
+      "search": {
+        "description": "No projects detected with the matching criteria.\nCreate a new project instead"
       }
     }
   },
