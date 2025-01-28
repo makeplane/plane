@@ -66,19 +66,19 @@ export const PagesAppSidebarList = observer(() => {
   } = {
     public: {
       key: "public",
-      label: "Public pages",
+      label: "PUBLIC",
       icon: Globe2,
       pageIds: getCurrentWorkspacePageIdsByType("public"),
     },
     private: {
       key: "private",
-      label: "Private pages",
+      label: "PRIVATE",
       icon: Lock,
       pageIds: getCurrentWorkspacePageIdsByType("private"),
     },
     archived: {
       key: "archived",
-      label: "Archived pages",
+      label: "ARCHIVED",
       icon: ArchiveIcon,
       pageIds: getCurrentWorkspacePageIdsByType("archived"),
     },

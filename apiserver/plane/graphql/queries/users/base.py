@@ -68,7 +68,7 @@ class UserRecentVisitQuery:
             UserRecentVisit.objects.filter(
                 Q(workspace__slug=slug),
                 Q(user=info.context.user),
-                ~Q(entity_name="view"),
+                ~Q(entity_name="view") & ~Q(entity_name="workspace_page"),
             ).order_by("-visited_at")
         )
 

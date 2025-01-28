@@ -37,6 +37,7 @@ from plane.bgtasks.page_transaction_task import page_transaction
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.error_codes import ERROR_CODES
+from plane.bgtasks.recent_visited_task import recent_visited_task
 
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
@@ -174,6 +175,12 @@ class WorkspacePageViewSet(BaseViewSet):
                 {"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND
             )
         else:
+            recent_visited_task.delay(
+                slug=slug,
+                entity_name="workspace_page",
+                entity_identifier=pk,
+                user_id=request.user.id,
+            )
             return Response(
                 WorkspacePageDetailSerializer(page).data, status=status.HTTP_200_OK
             )

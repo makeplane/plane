@@ -206,6 +206,18 @@ class ProjectRecentVisitSerializer(serializers.ModelSerializer):
         return members
 
 
+class WorkspacePageRecentVisitSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Page
+        fields = [
+            "id",
+            "name",
+            "logo_props",
+            "owned_by",
+        ]
+
+
 class PageRecentVisitSerializer(serializers.ModelSerializer):
     project_id = serializers.SerializerMethodField()
     project_identifier = serializers.SerializerMethodField()
@@ -239,6 +251,7 @@ def get_entity_model_and_serializer(entity_type):
         "issue": (Issue, IssueRecentVisitSerializer),
         "page": (Page, PageRecentVisitSerializer),
         "project": (Project, ProjectRecentVisitSerializer),
+        "workspace_page": (Page, WorkspacePageRecentVisitSerializer),
     }
     return entity_map.get(entity_type, (None, None))
 
