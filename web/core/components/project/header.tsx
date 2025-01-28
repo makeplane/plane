@@ -3,6 +3,8 @@
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { Briefcase } from "lucide-react";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
@@ -16,6 +18,8 @@ import HeaderFilters from "./filters";
 import { ProjectSearch } from "./search-projects";
 
 export const ProjectsBaseHeader = observer(() => {
+  // i18n
+  const { t } = useTranslation();
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
@@ -35,7 +39,12 @@ export const ProjectsBaseHeader = observer(() => {
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
             type="text"
-            link={<BreadcrumbLink label="Projects" icon={<Briefcase className="h-4 w-4 text-custom-text-300" />} />}
+            link={
+              <BreadcrumbLink
+                label={t("project.label", { count: 2 })}
+                icon={<Briefcase className="h-4 w-4 text-custom-text-300" />}
+              />
+            }
           />
           {isArchived && <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label="Archived" />} />}
         </Breadcrumbs>
@@ -54,7 +63,8 @@ export const ProjectsBaseHeader = observer(() => {
             }}
             className="items-center gap-1"
           >
-            <span className="hidden sm:inline-block">Add</span> Project
+            <span className="hidden sm:inline-block">{t("project.create.label")}</span>
+            <span className="inline-block sm:hidden">{t("project.label", { count: 1 })}</span>
           </Button>
         ) : (
           <></>
