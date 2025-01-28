@@ -69,7 +69,8 @@ from .workspace import (
     WorkspaceTheme,
     WorkspaceUserProperties,
     WorkspaceUserLink,
-    WorkspaceHomePreference
+    WorkspaceHomePreference,
+    WorkspaceUserPreference,
 )
 
 from .favorite import UserFavorite

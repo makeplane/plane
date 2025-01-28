@@ -8,21 +8,22 @@ export function createTable(
   rowsCount: number,
   colsCount: number,
   withHeaderRow: boolean,
-  cellContent?: Fragment | ProsemirrorNode | Array<ProsemirrorNode>
+  cellContent?: Fragment | ProsemirrorNode | Array<ProsemirrorNode>,
+  columnWidth: number = 100
 ): ProsemirrorNode {
   const types = getTableNodeTypes(schema);
   const headerCells: ProsemirrorNode[] = [];
   const cells: ProsemirrorNode[] = [];
 
   for (let index = 0; index < colsCount; index += 1) {
-    const cell = createCell(types.cell, cellContent);
+    const cell = createCell(types.cell, cellContent, { colwidth: [columnWidth] });
 
     if (cell) {
       cells.push(cell);
     }
 
     if (withHeaderRow) {
-      const headerCell = createCell(types.header_cell, cellContent);
+      const headerCell = createCell(types.header_cell, cellContent, { colwidth: [columnWidth] });
 
       if (headerCell) {
         headerCells.push(headerCell);

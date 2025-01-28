@@ -48,6 +48,7 @@ from plane.db.models import (
     User,
     Project,
     ProjectMember,
+    UserRecentVisit,
     Workspace,
 )
 from plane.ee.models import EntityIssueStateActivity, EntityProgress
@@ -551,6 +552,13 @@ class CycleViewSet(BaseViewSet):
             entity_identifier=pk,
             project_id=project_id,
         ).delete()
+        # Delete the cycle from recent visits
+        UserRecentVisit.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            entity_identifier=pk,
+            entity_name="cycle",
+        ).delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

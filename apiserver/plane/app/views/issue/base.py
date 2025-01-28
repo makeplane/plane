@@ -44,6 +44,7 @@ from plane.db.models import (
     Project,
     ProjectMember,
     CycleIssue,
+    UserRecentVisit,
     Cycle,
 )
 from plane.ee.models import EntityIssueStateActivity
@@ -760,6 +761,13 @@ class IssueViewSet(BaseViewSet):
         )
 
         issue.delete()
+        # delete the issue from recent visits
+        UserRecentVisit.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            entity_identifier=pk,
+            entity_name="issue",
+        ).delete(soft=False)
         issue_activity.delay(
             type="issue.activity.deleted",
             requested_data=json.dumps({"issue_id": str(pk)}),

@@ -33,6 +33,7 @@ from plane.db.models import (
     ProjectMember,
     ProjectPage,
     Project,
+    UserRecentVisit,
     DeployBoard,
 )
 from plane.utils.error_codes import ERROR_CODES
@@ -395,6 +396,13 @@ class PageViewSet(BaseViewSet):
             entity_identifier=pk,
             entity_type="page",
         ).delete()
+        # Delete the page from recent visit
+        UserRecentVisit.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            entity_identifier=pk,
+            entity_name="page",
+        ).delete(soft=False)
         # Delete the deploy board
         DeployBoard.objects.filter(
             entity_name="page", entity_identifier=pk, workspace__slug=slug

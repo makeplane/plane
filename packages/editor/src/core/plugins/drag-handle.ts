@@ -88,16 +88,18 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
   const elements = document.elementsFromPoint(coords.x, coords.y);
 
   for (const elem of elements) {
+    // Check for table wrapper first
+    if (elem.matches(".table-wrapper")) {
+      return elem;
+    }
+
     if (elem.matches("p:first-child") && elem.parentElement?.matches(".ProseMirror")) {
       return elem;
     }
 
-    // if the element is a <p> tag that is the first child of a td or th
-    if (
-      (elem.matches("td > p:first-child") || elem.matches("th > p:first-child")) &&
-      elem?.textContent?.trim() !== ""
-    ) {
-      return elem; // Return only if p tag is not empty in td or th
+    // Skip table cells
+    if (elem.closest(".table-wrapper")) {
+      continue;
     }
 
     // apply general selector
