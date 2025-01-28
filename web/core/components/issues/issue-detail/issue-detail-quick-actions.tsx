@@ -4,12 +4,10 @@ import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { ArchiveIcon, ArchiveRestoreIcon, LinkIcon, Trash2 } from "lucide-react";
-import { EIssuesStoreType, ISSUE_ARCHIVED, ISSUE_DELETED } from "@plane/constants";
+import { ISSUE_ARCHIVED, ISSUE_DELETED, ARCHIVABLE_STATE_GROUPS, EIssuesStoreType } from "@plane/constants";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { ArchiveIssueModal, DeleteIssueModal, IssueSubscription } from "@/components/issues";
-// constants
-import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";

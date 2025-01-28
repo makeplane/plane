@@ -92,8 +92,13 @@ export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
       handleSubmit={handleIssueDelete}
       isSubmitting={isDeleting}
       isOpen={isOpen}
-      title="Delete draft"
-      content={<>Are you sure you want to delete this draft? This can&apos;t be undone.</>}
+      title={t("delete_modal.title")}
+      content={<>{t("delete_modal.description")}</>}
+      primaryButtonText={{
+        loading: t("deleting"),
+        default: t("delete"),
+      }}
+      secondaryButtonText={t("cancel")}
     />
   );
 };

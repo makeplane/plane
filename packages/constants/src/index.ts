@@ -25,3 +25,5 @@ export * from "./profile";
 export * from "./workspace-drafts";
 export * from "./label";
 export * from "./event-tracker";
+export * from "./dashboard";
+export * from "./page";

@@ -1,9 +1,9 @@
 import { computed, makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
+// constants
+import { EPageAccess } from "@plane/constants";
 // types
 import { TPage } from "@plane/types";
-// constants
-import { EPageAccess } from "@/constants/page";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
