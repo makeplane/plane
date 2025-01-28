@@ -8,7 +8,7 @@ import { IWorkspaceView } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { GLOBAL_VIEW_DELETED } from "@/constants/event-tracker";
+import { GLOBAL_VIEW_DELETED } from "@plane/constants";
 // hooks
 import { useGlobalView, useEventTracker } from "@/hooks/store";
 

@@ -21,7 +21,7 @@ import {
   StateDropdown,
 } from "@/components/dropdowns";
 // constants
-import { ISSUE_UPDATED } from "@/constants/event-tracker";
+import { ISSUE_UPDATED } from "@plane/constants";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";

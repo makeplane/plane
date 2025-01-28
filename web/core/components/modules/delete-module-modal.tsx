@@ -10,7 +10,7 @@ import type { IModule } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { MODULE_DELETED } from "@/constants/event-tracker";
+import { MODULE_DELETED } from "@plane/constants";
 // hooks
 import { useEventTracker, useModule } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

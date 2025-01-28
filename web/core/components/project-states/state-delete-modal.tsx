@@ -8,7 +8,7 @@ import type { IState } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { STATE_DELETED } from "@/constants/event-tracker";
+import { STATE_DELETED } from "@plane/constants";
 // hooks
 import { useEventTracker, useProjectState } from "@/hooks/store";
 

@@ -7,7 +7,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { StateForm } from "@/components/project-states";
 // constants
-import { STATE_CREATED } from "@/constants/event-tracker";
+import { STATE_CREATED } from "@plane/constants";
 import { STATE_GROUPS } from "@/constants/state";
 // hooks
 import { useEventTracker, useProjectState } from "@/hooks/store";

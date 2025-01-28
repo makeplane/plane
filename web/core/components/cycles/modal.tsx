@@ -10,7 +10,7 @@ import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@p
 // components
 import { CycleForm } from "@/components/cycles";
 // constants
-import { CYCLE_CREATED, CYCLE_UPDATED } from "@/constants/event-tracker";
+import { CYCLE_CREATED, CYCLE_UPDATED } from "@plane/constants";
 // hooks
 import { useEventTracker, useCycle, useProject } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";

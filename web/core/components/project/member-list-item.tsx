@@ -6,7 +6,7 @@ import { TOAST_TYPE, Table, setToast } from "@plane/ui";
 // components
 import { ConfirmProjectMemberRemove } from "@/components/project";
 // constants
-import { PROJECT_MEMBER_LEAVE } from "@/constants/event-tracker";
+import { PROJECT_MEMBER_LEAVE } from "@plane/constants";
 
 // hooks
 import { useEventTracker, useMember, useProject, useUser, useUserPermissions } from "@/hooks/store";

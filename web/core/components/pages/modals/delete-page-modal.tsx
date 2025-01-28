@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { PAGE_DELETED } from "@/constants/event-tracker";
+import { PAGE_DELETED } from "@plane/constants";
 // hooks
 import { useEventTracker, useProjectPages } from "@/hooks/store";
 import { TPageInstance } from "@/store/pages/base-page";

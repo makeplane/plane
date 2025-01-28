@@ -10,7 +10,7 @@ import { TOAST_TYPE, Table, setToast } from "@plane/ui";
 import { MembersLayoutLoader } from "@/components/ui/loader/layouts/members-layout-loader";
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // constants
-import { WORKSPACE_MEMBER_LEAVE } from "@/constants/event-tracker";
+import { WORKSPACE_MEMBER_LEAVE } from "@plane/constants";
 // hooks
 import { useEventTracker, useMember, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

@@ -24,7 +24,7 @@ import { Logo } from "@/components/common";
 import { ImagePickerPopover } from "@/components/core";
 import { TimezoneSelect } from "@/components/global";
 // constants
-import { PROJECT_UPDATED } from "@/constants/event-tracker";
+import { PROJECT_UPDATED } from "@plane/constants";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";

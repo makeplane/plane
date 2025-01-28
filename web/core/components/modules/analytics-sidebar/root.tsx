@@ -42,12 +42,7 @@ import {
   ModuleAnalyticsProgress,
   ModuleLinksList,
 } from "@/components/modules";
-import {
-  MODULE_LINK_CREATED,
-  MODULE_LINK_DELETED,
-  MODULE_LINK_UPDATED,
-  MODULE_UPDATED,
-} from "@/constants/event-tracker";
+import { MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED } from "@plane/constants";
 
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";

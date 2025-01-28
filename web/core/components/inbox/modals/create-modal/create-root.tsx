@@ -13,7 +13,7 @@ import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { InboxIssueTitle, InboxIssueDescription, InboxIssueProperties } from "@/components/inbox/modals/create-modal";
 // constants
-import { ISSUE_CREATED } from "@/constants/event-tracker";
+import { ISSUE_CREATED } from "@plane/constants";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";

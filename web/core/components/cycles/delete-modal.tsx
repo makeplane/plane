@@ -10,7 +10,7 @@ import { ICycle } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { CYCLE_DELETED } from "@/constants/event-tracker";
+import { CYCLE_DELETED } from "@plane/constants";
 // hooks
 import { useEventTracker, useCycle } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

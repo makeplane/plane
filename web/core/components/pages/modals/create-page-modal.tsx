@@ -7,7 +7,7 @@ import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { PageForm } from "@/components/pages";
 // constants
-import { PAGE_CREATED } from "@/constants/event-tracker";
+import { PAGE_CREATED } from "@plane/constants";
 import { EPageAccess } from "@/constants/page";
 // hooks
 import { useProjectPages, useEventTracker } from "@/hooks/store";

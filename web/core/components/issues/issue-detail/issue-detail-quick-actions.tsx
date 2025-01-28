@@ -9,7 +9,7 @@ import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { ArchiveIssueModal, DeleteIssueModal, IssueSubscription } from "@/components/issues";
 // constants
-import { ISSUE_ARCHIVED, ISSUE_DELETED } from "@/constants/event-tracker";
+import { ISSUE_ARCHIVED, ISSUE_DELETED } from "@plane/constants";
 import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";

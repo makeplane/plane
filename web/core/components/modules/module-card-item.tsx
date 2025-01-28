@@ -24,7 +24,7 @@ import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // constants
-import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
+import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@plane/constants";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { generateQueryParams } from "@/helpers/router.helper";

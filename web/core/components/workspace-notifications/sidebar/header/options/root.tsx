@@ -7,7 +7,7 @@ import { Spinner, Tooltip } from "@plane/ui";
 // components
 import { NotificationFilter, NotificationHeaderMenuOption } from "@/components/workspace-notifications";
 // constants
-import { NOTIFICATIONS_READ } from "@/constants/event-tracker";
+import { NOTIFICATIONS_READ } from "@plane/constants";
 // hooks
 import { useEventTracker, useWorkspaceNotifications } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

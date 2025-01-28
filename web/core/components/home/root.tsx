@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { ContentWrapper } from "@plane/ui";
 import { TourRoot } from "@/components/onboarding";
 // constants
-import { PRODUCT_TOUR_COMPLETED } from "@/constants/event-tracker";
+import { PRODUCT_TOUR_COMPLETED } from "@plane/constants";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks

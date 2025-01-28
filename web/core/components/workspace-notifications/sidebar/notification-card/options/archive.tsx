@@ -7,7 +7,7 @@ import { ArchiveIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { NotificationItemOptionButton } from "@/components/workspace-notifications";
 // constants
-import { NOTIFICATION_ARCHIVED } from "@/constants/event-tracker";
+import { NOTIFICATION_ARCHIVED } from "@plane/constants";
 // hooks
 import { useEventTracker, useWorkspaceNotifications } from "@/hooks/store";
 // store

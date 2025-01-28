@@ -18,7 +18,7 @@ import {
   IssueAttachmentRoot,
 } from "@/components/issues";
 // constants
-import { ISSUE_ARCHIVED, ISSUE_DELETED } from "@/constants/event-tracker";
+import { ISSUE_ARCHIVED, ISSUE_DELETED } from "@plane/constants";
 // helpers
 import { getTextContent } from "@/helpers/editor.helper";
 // hooks

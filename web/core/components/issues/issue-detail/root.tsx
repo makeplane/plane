@@ -12,7 +12,7 @@ import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 import { EmptyState } from "@/components/common";
 import { IssueDetailsSidebar, IssuePeekOverview } from "@/components/issues";
 // constants
-import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "@/constants/event-tracker";
+import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "@plane/constants";
 // hooks
 import { useAppTheme, useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

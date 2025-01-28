@@ -11,7 +11,7 @@ import { ROLE } from "@plane/constants";
 // ui
 import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { PROJECT_MEMBER_ADDED } from "@/constants/event-tracker";
+import { PROJECT_MEMBER_ADDED } from "@plane/constants";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks

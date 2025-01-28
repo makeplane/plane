@@ -12,7 +12,7 @@ import { IssuePeekOverview } from "@/components/issues";
 import { TourRoot } from "@/components/onboarding";
 import { UserGreetingsView } from "@/components/user";
 // constants
-import { PRODUCT_TOUR_COMPLETED } from "@/constants/event-tracker";
+import { PRODUCT_TOUR_COMPLETED } from "@plane/constants";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks

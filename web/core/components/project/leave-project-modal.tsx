@@ -12,7 +12,7 @@ import { IProject } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { PROJECT_MEMBER_LEAVE } from "@/constants/event-tracker";
+import { PROJECT_MEMBER_LEAVE } from "@plane/constants";
 // hooks
 import { useEventTracker, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

@@ -15,7 +15,7 @@ import { DateRangeDropdown } from "@/components/dropdowns";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // constants
-import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
+import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@plane/constants";
 // hooks
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { useEventTracker, useMember, useModule, useUserPermissions } from "@/hooks/store";

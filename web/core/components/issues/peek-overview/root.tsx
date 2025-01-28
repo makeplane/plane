@@ -11,7 +11,7 @@ import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { IssueView, TIssueOperations } from "@/components/issues";
 // constants
-import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "@/constants/event-tracker";
+import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "@plane/constants";
 // hooks
 import { useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";

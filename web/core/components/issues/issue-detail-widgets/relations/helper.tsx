@@ -5,7 +5,7 @@ import { EIssueServiceType } from "@plane/constants";
 import { TIssue, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { ISSUE_DELETED, ISSUE_UPDATED } from "@/constants/event-tracker";
+import { ISSUE_DELETED, ISSUE_UPDATED } from "@plane/constants";
 // helper
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks

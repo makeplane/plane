@@ -15,7 +15,7 @@ import { PasswordStrengthMeter } from "@/components/account";
 import { UserImageUploadModal } from "@/components/core";
 import { OnboardingHeader, SwitchAccountDropdown } from "@/components/onboarding";
 // constants
-import { USER_DETAILS, E_ONBOARDING_STEP_1, E_ONBOARDING_STEP_2 } from "@/constants/event-tracker";
+import { USER_DETAILS, E_ONBOARDING_STEP_1, E_ONBOARDING_STEP_2 } from "@plane/constants";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";

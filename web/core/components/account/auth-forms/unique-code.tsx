@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
+import { CODE_VERIFIED } from "@plane/constants";
 import { Button, Input, Spinner } from "@plane/ui";
 // constants
-import { CODE_VERIFIED } from "@/constants/event-tracker";
 // helpers
 import { EAuthModes } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";

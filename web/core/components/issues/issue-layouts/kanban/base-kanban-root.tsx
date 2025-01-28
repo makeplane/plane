@@ -9,7 +9,7 @@ import { useParams, usePathname } from "next/navigation";
 import { EIssueLayoutTypes, EIssueServiceType, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 import { DeleteIssueModal } from "@/components/issues";
 //constants
-import { ISSUE_DELETED } from "@/constants/event-tracker";
+import { ISSUE_DELETED } from "@plane/constants";
 //hooks
 import { useEventTracker, useIssueDetail, useIssues, useKanbanView, useUserPermissions } from "@/hooks/store";
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";

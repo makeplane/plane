@@ -15,7 +15,7 @@ import {
   WorkspaceViewQuickActions,
 } from "@/components/workspace";
 // constants
-import { GLOBAL_VIEW_OPENED } from "@/constants/event-tracker";
+import { GLOBAL_VIEW_OPENED } from "@plane/constants";
 // store hooks
 import { useEventTracker, useGlobalView, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";

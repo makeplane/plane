@@ -10,7 +10,7 @@ import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@p
 // components
 import { WorkspaceViewForm } from "@/components/workspace";
 // constants
-import { GLOBAL_VIEW_CREATED, GLOBAL_VIEW_UPDATED } from "@/constants/event-tracker";
+import { GLOBAL_VIEW_CREATED, GLOBAL_VIEW_UPDATED } from "@plane/constants";
 // store hooks
 import { useEventTracker, useGlobalView } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

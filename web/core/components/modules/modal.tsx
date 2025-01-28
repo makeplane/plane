@@ -10,7 +10,7 @@ import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@p
 // components
 import { ModuleForm } from "@/components/modules";
 // constants
-import { MODULE_CREATED, MODULE_UPDATED } from "@/constants/event-tracker";
+import { MODULE_CREATED, MODULE_UPDATED } from "@plane/constants";
 // hooks
 import { useEventTracker, useModule, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

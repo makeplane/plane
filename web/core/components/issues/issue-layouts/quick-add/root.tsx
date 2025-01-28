@@ -14,7 +14,7 @@ import { setPromiseToast } from "@plane/ui";
 // components
 import { CreateIssueToastActionItems } from "@/components/issues";
 // constants
-import { ISSUE_CREATED } from "@/constants/event-tracker";
+import { ISSUE_CREATED } from "@plane/constants";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { createIssuePayload } from "@/helpers/issue.helper";

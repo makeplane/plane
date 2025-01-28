@@ -11,7 +11,7 @@ import type { TBaseIssue, TIssue } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";
 // constants
-import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
+import { ISSUE_CREATED, ISSUE_UPDATED } from "@plane/constants";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useEventTracker, useCycle, useIssues, useModule, useIssueDetail, useUser } from "@/hooks/store";

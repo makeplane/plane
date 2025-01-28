@@ -15,7 +15,7 @@ import { AppliedFiltersList } from "@/components/issues";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 // constants
-import { GLOBAL_VIEW_UPDATED } from "@/constants/event-tracker";
+import { GLOBAL_VIEW_UPDATED } from "@plane/constants";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks

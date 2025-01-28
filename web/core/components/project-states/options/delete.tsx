@@ -6,7 +6,7 @@ import { Loader, X } from "lucide-react";
 import { IState } from "@plane/types";
 import { AlertModalCore, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // constants
-import { STATE_DELETED } from "@/constants/event-tracker";
+import { STATE_DELETED } from "@plane/constants";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
