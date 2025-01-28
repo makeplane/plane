@@ -328,9 +328,6 @@
   "deleting": "Deleting",
   "make_a_copy": "Make a copy",
   "move_to_project": "Move to project",
-  "deleting": "Deleting",
-  "make_a_copy": "Make a copy",
-  "move_to_project": "Move to project",
   "good": "Good",
   "morning": "morning",
   "afternoon": "afternoon",
@@ -338,6 +335,8 @@
   "show_all": "Show all",
   "show_less": "Show less",
   "no_data_yet": "No Data yet",
+  "unassigned": "Unassigned",
+  "work_items": "Work items",
   "add_link": "Add link",
   "points": "Points",
   "no_assignee": "No assignee",
@@ -677,6 +676,35 @@
   },
 
   "workspace_analytics": {
+    "label": "Analytics",
+    "page_label": "{workspace} - Analytics",
+    "open_tasks": "Total open tasks",
+    "error": "There was some error in fetching the data.",
+    "work_items_closed_in": "Work items closed in",
+    "selected_projects": "Selected projects",
+    "total_members": "Total members",
+    "total_cycles": "Total cycles",
+    "total_modules": "Total modules",
+    "pending_work_items":{
+      "title": "Pending work items",
+      "empty_state": "Analysis of pending work items by co-workers appears here."
+    },
+    "work_items_closed_in_a_year": {
+      "title": "Work items closed in a year",
+      "empty_state": "Close work items to view analysis of the same in the form of a graph."
+    },
+    "most_work_items_created":{
+      "title": "Most work items created",
+      "empty_state": "Co-workers and the number of work items created by them appears here."
+    },
+    "most_work_items_closed":{
+      "title": "Most work items closed",
+      "empty_state": "Co-workers and the number of work items closed by them appears here."
+    },
+    "tabs": {
+      "scope_and_demand": "Scope and Demand",
+      "custom": "Custom Analytics"
+    },
     "empty_state": {
       "general": {
         "title": "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",
@@ -1382,7 +1410,8 @@
   "exporter": {
     "csv": {
       "title": "CSV",
-      "description": "Export issues to a CSV file."
+      "description": "Export issues to a CSV file.",
+      "short_description": "Export as csv"
     },
     "xlsx": {
       "title": "Excel",
