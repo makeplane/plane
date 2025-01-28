@@ -18,7 +18,13 @@ import {
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane types
-import { MODULE_STATUS ,MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED } from "@plane/constants";
+import {
+  MODULE_STATUS,
+  MODULE_LINK_CREATED,
+  MODULE_LINK_DELETED,
+  MODULE_LINK_UPDATED,
+  MODULE_UPDATED,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
@@ -314,7 +320,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                     {isInArchivableGroup ? (
                       <div className="flex items-center gap-2">
                         <ArchiveIcon className="h-3 w-3" />
-                        Archive module
+                        {t("archive_module")}
                       </div>
                     ) : (
                       <div className="flex items-start gap-2">
@@ -322,7 +328,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                         <div className="-mt-1">
                           <p>Archive module</p>
                           <p className="text-xs text-custom-text-400">
-                            Only completed or cancelled <br /> module can be archived.
+                            {t("project_module.quick_actions.archive_module_description")}
                           </p>
                         </div>
                       </div>
@@ -333,7 +339,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                   <CustomMenu.MenuItem onClick={handleRestoreModule}>
                     <span className="flex items-center justify-start gap-2">
                       <ArchiveRestoreIcon className="h-3 w-3" />
-                      <span>Restore module</span>
+                      <span>{t("restore_module")}</span>
                     </span>
                   </CustomMenu.MenuItem>
                 )}
@@ -345,7 +351,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                 >
                   <span className="flex items-center justify-start gap-2">
                     <Trash2 className="h-3 w-3" />
-                    <span>Delete module</span>
+                    <span>{t("delete_module")}</span>
                   </span>
                 </CustomMenu.MenuItem>
               </CustomMenu>
@@ -405,7 +411,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
         <div className="flex items-center justify-start gap-1">
           <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
             <CalendarClock className="h-4 w-4" />
-            <span className="text-base">Date range</span>
+            <span className="text-base">{t("date_range")}</span>
           </div>
           <div className="h-7 w-3/5">
             <Controller
@@ -432,8 +438,8 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                           handleDateChange(val?.from, val?.to);
                         }}
                         placeholder={{
-                          from: "Start date",
-                          to: "Target date",
+                          from: t("start_date"),
+                          to: t("target_date"),
                         }}
                         disabled={!isEditingAllowed || isArchived}
                       />
@@ -449,7 +455,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
               <SquareUser className="h-4 w-4" />
-              <span className="text-base">Lead</span>
+              <span className="text-base">{t("lead")}</span>
             </div>
             <Controller
               control={control}
@@ -464,7 +470,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                     projectId={projectId?.toString() ?? ""}
                     multiple={false}
                     buttonVariant="background-with-text"
-                    placeholder="Lead"
+                    placeholder={t("lead")}
                     disabled={!isEditingAllowed || isArchived}
                     icon={SquareUser}
                   />
@@ -475,7 +481,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
               <Users className="h-4 w-4" />
-              <span className="text-base">Members</span>
+              <span className="text-base">{t("members")}</span>
             </div>
             <Controller
               control={control}
@@ -500,7 +506,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
               <LayersIcon className="h-4 w-4" />
-              <span className="text-base">Issues</span>
+              <span className="text-base">{t("issues")}</span>
             </div>
             <div className="flex h-7 w-3/5 items-center">
               <span className="px-1.5 text-sm text-custom-text-300">{issueCount}</span>
@@ -514,7 +520,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
             <div className="flex items-center justify-start gap-1">
               <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
                 <LayersIcon className="h-4 w-4" />
-                <span className="text-base">Points</span>
+                <span className="text-base">{t("points")}</span>
               </div>
               <div className="flex h-7 w-3/5 items-center">
                 <span className="px-1.5 text-sm text-custom-text-300">{issueEstimatePointCount}</span>
@@ -539,7 +545,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                 <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
                   <Disclosure.Button className="flex w-full items-center justify-between gap-2 p-1.5">
                     <div className="flex items-center justify-start gap-2 text-sm">
-                      <span className="font-medium text-custom-text-200">Links</span>
+                      <span className="font-medium text-custom-text-200">{t("links")}</span>
                     </div>
 
                     <div className="flex items-center gap-2.5">
@@ -558,7 +564,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                                   onClick={() => setModuleLinkModal(true)}
                                 >
                                   <Plus className="h-3 w-3" />
-                                  Add link
+                                  {t("add_link")}
                                 </button>
                               </div>
                             )}
@@ -576,7 +582,9 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
                               <Info className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
-                              <span className="p-0.5 text-xs text-custom-text-300">No links added yet</span>
+                              <span className="p-0.5 text-xs text-custom-text-300">
+                                {t("common.no_links_added_yet")}
+                              </span>
                             </div>
                             {isEditingAllowed && !isArchived && (
                               <button
@@ -584,7 +592,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                                 onClick={() => setModuleLinkModal(true)}
                               >
                                 <Plus className="h-3 w-3" />
-                                Add link
+                                {t("add_link")}
                               </button>
                             )}
                           </div>
