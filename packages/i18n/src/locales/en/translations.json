@@ -505,7 +505,8 @@
       "desc": "Descending"
     },
     "comments": "Comments",
-    "updates": "Updates"
+    "updates": "Updates",
+    "clear_all": "Clear all"
   },
 
   "form": {
@@ -1063,7 +1064,30 @@
   },
 
   "notification": {
-    "label": "Notifications",
+    "label": "Inbox",
+    "page_label": "{workspace} - Inbox",
+    "options": {
+      "mark_all_as_read": "Mark all as read",
+      "mark_read": "Mark as read",
+      "mark_unread": "Mark as unread",
+      "refresh": "Refresh",
+      "filters": "Inbox Filters",
+      "show_unread": "Show unread",
+      "show_snoozed": "Show snoozed",
+      "show_archived": "Show archived",
+      "mark_archive": "Archive",
+      "mark_unarchive": "Un archive",
+      "mark_snooze": "Snooze",
+      "mark_unsnooze": "Un snooze"
+    },
+    "toasts": {
+      "read": "Notification marked as read",
+      "unread": "Notification marked as unread",
+      "archived": "Notification marked as archived",
+      "unarchived": "Notification marked as un archived",
+      "snoozed": "Notification snoozed",
+      "unsnoozed": "Notification un snoozed"
+    },
     "empty_state": {
       "detail": {
         "title": "Select to view details."

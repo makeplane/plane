@@ -27,7 +27,7 @@ export const NotificationFilter: FC = observer(() => {
     <PopoverMenu
       data={translatedFilterTypeOptions}
       button={
-        <Tooltip tooltipContent="Inbox Filters" isMobile={isMobile} position="bottom">
+        <Tooltip tooltipContent={t("notification.options.filters")} isMobile={isMobile} position="bottom">
           <div className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm outline-none">
             <ListFilter className="h-3 w-3" />
           </div>
