@@ -3,7 +3,7 @@ import { linearGradientDef } from "@nivo/core";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // types
-import { EDurationFilters } from "@plane/constants";
+import { EDurationFilters, STATE_GROUPS } from "@plane/constants";
 import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
 // components
 import { Card } from "@plane/ui";
@@ -14,8 +14,6 @@ import {
   WidgetProps,
 } from "@/components/dashboard/widgets";
 import { PieGraph } from "@/components/ui";
-// constants
-import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { getCustomDates } from "@/helpers/dashboard.helper";
 // hooks
