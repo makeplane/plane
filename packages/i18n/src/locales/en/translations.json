@@ -320,6 +320,9 @@
   "edit": "Edit",
   "open_in_new_tab": "Open in new tab",
   "delete": "Delete",
+  "deleting": "Deleting",
+  "make_a_copy": "Make a copy",
+  "move_to_project": "Move to project",
   "good": "Good",
   "morning": "morning",
   "afternoon": "afternoon",
@@ -1178,12 +1181,17 @@
   },
 
   "workspace_draft_issues": {
+    "draft_an_issue": "Draft an issue",
     "empty_state": {
       "title": "Half-written issues, and soon, comments will show up here.",
       "description": "To try this out, start adding an issue and leave it mid-way or create your first draft below. 😉",
       "primary_button": {
         "text": "Create your first draft"
       }
+    },
+    "delete_modal": {
+      "title": "Delete draft",
+      "description": "Are you sure you want to delete this draft? This can't be undone."
     }
   },
 
