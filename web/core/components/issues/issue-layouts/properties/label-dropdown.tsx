@@ -4,19 +4,17 @@ import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Loader, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// plane helper
+// plane imports
+import { EUserPermissionsLevel, EUserProjectRoles, getRandomLabelColor } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { IIssueLabel } from "@plane/types";
 // components
 import { ComboDropDown } from "@plane/ui";
-// constants
-import { getRandomLabelColor } from "@/constants/label";
 // hooks
 import { useLabel, useUserPermissions } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants";
 
 export interface ILabelDropdownProps {
   projectId: string | null;
@@ -81,7 +79,7 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
   const storeLabels = getProjectLabels(projectId);
   const { allowPermissions } = useUserPermissions();
 
-  const canCreateLabel = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canCreateLabel = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
 
   let projectLabels: IIssueLabel[] = defaultOptions;
   if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;

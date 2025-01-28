@@ -3,14 +3,14 @@ import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Check, Loader, Search, Tag } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// helpers
+// plane imports
+import { EUserPermissionsLevel, EUserProjectRoles, getRandomLabelColor } from "@plane/constants";
 import { IIssueLabel } from "@plane/types";
-import { getRandomLabelColor } from "@/constants/label";
+// helpers
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useLabel, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
 //constants
 export interface IIssueLabelSelect {
   workspaceSlug: string;
@@ -34,7 +34,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
   const [query, setQuery] = useState("");
   const [submitting, setSubmitting] = useState<boolean>(false);
 
-  const canCreateLabel = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canCreateLabel = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
 
   const projectLabels = getProjectLabels(projectId);
 

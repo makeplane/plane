@@ -6,14 +6,12 @@ import { useParams } from "next/navigation";
 import { TwitterPicker } from "react-color";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
+// plane imports
+import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@plane/constants";
 import { IIssueLabel } from "@plane/types";
-// ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
-import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@/constants/label";
 // hooks
 import { useLabel } from "@/hooks/store";
-// types
 
 type Props = {
   labelForm: boolean;
