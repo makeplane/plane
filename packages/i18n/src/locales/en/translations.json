@@ -277,6 +277,7 @@
   "issue_updated_successfully": "Issue updated successfully",
   "issue_could_not_be_updated": "Issue could not be updated",
   "create_a_draft": "Create a draft",
+  "draft_an_issue": "Draft an issue",
   "save_to_drafts": "Save to Drafts",
   "save": "Save",
   "update": "Update",
@@ -320,6 +321,9 @@
   "edit": "Edit",
   "open_in_new_tab": "Open in new tab",
   "delete": "Delete",
+  "deleting": "Deleting",
+  "make_a_copy": "Make a copy",
+  "move_to_project": "Move to project",
   "good": "Good",
   "morning": "morning",
   "afternoon": "afternoon",
@@ -1184,6 +1188,10 @@
       "primary_button": {
         "text": "Create your first draft"
       }
+    },
+    "delete_modal": {
+      "title": "Delete draft",
+      "description": "Are you sure you want to delete this draft? This can't be undone."
     }
   },
 

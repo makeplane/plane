@@ -4,6 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { PenSquare } from "lucide-react";
 import { EIssuesStoreType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
@@ -22,6 +23,8 @@ export const WorkspaceDraftHeader = observer(() => {
   const { allowPermissions } = useUserPermissions();
   const { paginationInfo } = useWorkspaceDraftIssues();
   const { joinedProjectIds } = useProject();
+
+  const { t } = useTranslation();
   // check if user is authorized to create draft issue
   const isAuthorizedUser = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -42,7 +45,9 @@ export const WorkspaceDraftHeader = observer(() => {
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
-                link={<BreadcrumbLink label={`Drafts`} icon={<PenSquare className="h-4 w-4 text-custom-text-300" />} />}
+                link={
+                  <BreadcrumbLink label={t("drafts")} icon={<PenSquare className="h-4 w-4 text-custom-text-300" />} />
+                }
               />
             </Breadcrumbs>
             {paginationInfo?.total_count && paginationInfo?.total_count > 0 ? (
@@ -62,7 +67,7 @@ export const WorkspaceDraftHeader = observer(() => {
               onClick={() => setIsDraftIssueModalOpen(true)}
               disabled={!isAuthorizedUser}
             >
-              Draft<span className="hidden sm:inline-block"> an issue</span>
+              {t("draft_an_issue")}
             </Button>
           )}
         </Header.RightItem>
