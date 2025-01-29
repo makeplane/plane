@@ -4,3 +4,4 @@ from .issue_property import (
     IssuePropertyValueAPISerializer,
     IssuePropertyActivityAPISerializer,
 )
+from .worklog import IssueWorkLogAPISerializer
