@@ -6,6 +6,8 @@ import { useParams } from "next/navigation";
 import { Circle, ExternalLink } from "lucide-react";
 // plane constants
 import { EIssuesStoreType } from "@plane/constants";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Button, LayersIcon, Tooltip, Header } from "@plane/ui";
 // components
@@ -31,6 +33,8 @@ export const IssuesHeader = observer(() => {
   const {
     issues: { getGroupIssueCount },
   } = useIssues(EIssuesStoreType.PROJECT);
+  // i18n
+  const { t } = useTranslation();
 
   const { currentProjectDetails, loader } = useProject();
 
@@ -78,7 +82,7 @@ export const IssuesHeader = observer(() => {
             rel="noopener noreferrer"
           >
             <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
-            Public
+            {t("workspace_projects.network.public.title")}
             <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
           </a>
         ) : (
@@ -102,7 +106,8 @@ export const IssuesHeader = observer(() => {
             }}
             size="sm"
           >
-            <div className="hidden sm:block">Add</div> Issue
+            <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>
+            <div className="hidden sm:block">{t("issue.add.label")}</div>
           </Button>
         ) : (
           <></>

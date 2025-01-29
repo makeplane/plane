@@ -3,6 +3,8 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, X } from "lucide-react";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // ui
 import { ComboDropDown, DiceIcon, Tooltip } from "@plane/ui";
 // helpers
@@ -185,6 +187,8 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
     value,
     renderByDefault = true,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // states
   const [isOpen, setIsOpen] = useState(false);
   // refs
@@ -256,7 +260,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
           <DropdownButton
             className={buttonClassName}
             isActive={isOpen}
-            tooltipHeading="Module"
+            tooltipHeading={t("common.module")}
             tooltipContent={
               Array.isArray(value)
                 ? `${value

@@ -308,9 +308,6 @@
   "create_new_label": "Create new label",
   "start_date": "Start date",
   "due_date": "Due date",
-  "end_date": "End date",
-  "target_date": "Target date",
-  "cycle": "Cycle",
   "estimate": "Estimate",
   "change_parent_issue": "Change parent issue",
   "remove_parent_issue": "Remove parent issue",
@@ -366,6 +363,35 @@
     "error": "Error!"
   },
 
+  "links": {
+    "toasts": {
+      "created": {
+        "title": "Link created",
+        "message": "The link has been successfully created"
+      },
+      "not_created": {
+        "title": "Link not created",
+        "message": "The link could not be created"
+      },
+      "updated": {
+        "title": "Link updated",
+        "message": "The link has been successfully updated"
+      },
+      "not_updated": {
+        "title": "Link not updated",
+        "message": "The link could not be updated"
+      },
+      "removed": {
+        "title": "Link removed",
+        "message": "The link has been successfully removed"
+      },
+      "not_removed": {
+        "title": "Link not removed",
+        "message": "The link could not be removed"
+      }
+    }
+  },
+
   "home": {
     "empty": {
       "create_project": {
@@ -400,33 +426,7 @@
       "empty": "Save links to work things that you'd like handy.",
       "add": "Add quick Link",
       "title": "Quicklink",
-      "title_plural": "Quicklinks",
-      "toasts": {
-        "created": {
-          "title": "Link created",
-          "message": "The link has been successfully created"
-        },
-        "not_created": {
-          "title": "Link not created",
-          "message": "The link could not be created"
-        },
-        "updated": {
-          "title": "Link updated",
-          "message": "The link has been successfully updated"
-        },
-        "not_updated": {
-          "title": "Link not updated",
-          "message": "The link could not be updated"
-        },
-        "removed": {
-          "title": "Link removed",
-          "message": "The link has been successfully removed"
-        },
-        "not_removed": {
-          "title": "Link not removed",
-          "message": "The link could not be removed"
-        }
-      }
+      "title_plural": "Quicklinks"
     },
     "recents": {
       "title": "Recents",
@@ -495,27 +495,41 @@
     "filters": "Filters",
     "display": "Display",
     "load_more": "Load more",
-    "no_matches_found": "No matches found",
     "activity": "Activity",
     "analytics": "Analytics",
-    "success": "Success",
-    "error": "Error",
+    "success": "Success!",
+    "something_went_wrong": "Something went wrong",
+    "error": {
+      "label": "Error!",
+      "message": "Some error occurred. Please try again."
+    },
     "group_by": "Group by",
-    "search": "Search",
     "epic": "Epic",
-    "issue": "Issue",
+    "work_item": "Work item",
+    "add": "Add",
     "warning": "Warning",
     "updating": "Updating",
+    "adding": "Adding",
     "update": "Update",
     "creating": "Creating",
+    "create": "Create",
     "cancel": "Cancel",
     "description": "Description",
     "title": "Title",
     "attachment": "Attachment",
+    "loading": "Loading...",
+    "attachments": "Attachments",
+    "links": "Links",
+    "properties": "Properties",
+    "parent": "Parent",
+    "remove": "Remove",
+    "archiving": "Archiving",
+    "archive": "Archive",
     "access": {
       "public": "Public",
       "private": "Private"
     },
+    "sub_work_items": "Sub-work items",
     "order_by": {
       "label": "Order by",
       "manual": "Manual",
@@ -541,10 +555,32 @@
     "is_copied_to_clipboard": "Work item is copied to clipboard",
     "no_links_added_yet": "No links added yet",
     "add_link": "Add link",
-    "links": "Links",
-    "progress": "Progress"
+    "update_link": "Update link",
+    "progress": "Progress",
+    "attach": "Attach",
+    "create_new": "Create new",
+    "add_existing": "Add existing",
+    "type_or_paste_a_url": "Type or paste a URL",
+    "url_is_invalid": "URL is invalid",
+    "display_title": "Display title",
+    "link_title_placeholder": "What you'd like to see this link as",
+    "optional": "Optional",
+    "search": {
+      "label": "Search",
+      "placeholder": "Type to search...",
+      "no_matches_found": "No matches found",
+      "no_matching_results": "No matching results"
+    },
+    "actions": {
+      "edit": "Edit",
+      "make_a_copy": "Make a copy",
+      "open_in_new_tab": "Open in new tab",
+      "copy_link": "Copy link",
+      "archive": "Archive",
+      "delete": "Delete"
+    }
   },
-  
+
   "form": {
     "title": {
       "required": "Title is required",
@@ -556,18 +592,75 @@
     "grouping_title": "{entity} Grouping",
     "priority": "{entity} ",
     "all": "All {entity}",
-    "drop_here_to_move": "Drop here to move the {entity}"
+    "drop_here_to_move": "Drop here to move the {entity}",
+    "delete": {
+      "label": "Delete {entity}",
+      "success": "{entity} deleted successfully",
+      "failed": "{entity} delete failed"
+    },
+    "update": {
+      "failed": "{entity} update failed"
+    }
   },
 
   "epic": {
     "all": "All Epics",
-    "label": "{count, plural, one {Epic} other {Epics}}"
+    "label": "{count, plural, one {Epic} other {Epics}}",
+    "new": "New Epic",
+    "adding": "Adding epic...",
+    "create": {
+      "success": "Epic created successfully"
+    },
+    "add": {
+      "press_enter": "Press 'Enter' to add another epic"
+    },
+    "title": {
+      "label": "Epic Title",
+      "required": "Epic title is required."
+    }
   },
 
   "issue": {
-    "label": "{count, plural, one {Issue} other {Issues}}",
-    "all": "All Issues",
-    "add": "Add Issue",
+    "label": "{count, plural, one {Work item} other {Work items}}",
+    "all": "All Work items",
+    "title": {
+      "label": "Work item title",
+      "required": "Work item title is required."
+    },
+    "add": {
+      "press_enter": "Press 'Enter' to add another work item",
+      "label": "Add Work item",
+      "cycle": {
+        "failed": "Work item could not be added to the cycle. Please try again."
+      },
+      "assignee": "Add assignees",
+      "start_date": "Add start date",
+      "due_date": "Add due date",
+      "parent": "Add parent work item",
+      "sub_issue": "Add sub-work item",
+      "relation": "Add relation",
+      "link": "Add link"
+    },
+    "remove": {
+      "cycle": {
+        "loading": "Removing work item from the cycle...",
+        "success": "Work item removed from the cycle successfully.",
+        "failed": "Work item could not be removed from the cycle. Please try again."
+      },
+      "module": {
+        "loading": "Removing work item from the module...",
+        "success": "Work item removed from the module successfully.",
+        "failed": "Work item could not be removed from the module. Please try again."
+      },
+      "parent": {
+        "label": "Remove parent work item"
+      }
+    },
+    "new": "New Work item",
+    "adding": "Adding work item...",
+    "create": {
+      "success": "Work item created successfully"
+    },
     "priority": {
       "urgent": "Urgent",
       "high": "High",
@@ -578,14 +671,14 @@
       "properties": {
         "label": "Display Properties",
         "id": "ID",
-        "issue_type": "Issue Type",
-        "sub_issue_count": "Sub issue count",
+        "issue_type": "Work item Type",
+        "sub_issue_count": "Sub-work item count",
         "attachment_count": "Attachment count",
         "created_on": "Created on",
-        "sub_issue": "Sub-issue"
+        "sub_issue": "Sub-work item"
       },
       "extra": {
-        "show_sub_issues": "Show sub-issues",
+        "show_sub_issues": "Show sub-work items",
         "show_empty_groups": "Show empty groups"
       }
     },
@@ -624,6 +717,36 @@
       "upload": {
         "error": "Asset upload failed. Please try again later."
       }
+    },
+    "empty_state": {
+      "issue_detail": {
+        "title": "Work item does not exist",
+        "description": "The work item you are looking for does not exist, has been archived, or has been deleted.",
+        "primary_button": {
+          "text": "View other work items"
+        }
+      }
+    },
+    "sibling": {
+      "label": "Sibling work items"
+    },
+    "archive": {
+      "description": "Only completed or canceled\nwork items can be archived",
+      "label": "Archive Work item",
+      "confirm_message": "Are you sure you want to archive the work item? All your archived work items can be restored later.",
+      "success": {
+        "label": "Archive success",
+        "message": "Your archives can be found in project archives."
+      },
+      "failed": {
+        "message": "Work item could not be archived. Please try again."
+      }
+    },
+    "relation": {
+      "relates_to": "Relates to",
+      "duplicate": "Duplicate of",
+      "blocked_by": "Blocked by",
+      "blocking": "Blocking"
     }
   },
 
@@ -749,7 +872,7 @@
     "total_members": "Total members",
     "total_cycles": "Total cycles",
     "total_modules": "Total modules",
-    "pending_work_items":{
+    "pending_work_items": {
       "title": "Pending work items",
       "empty_state": "Analysis of pending work items by co-workers appears here."
     },
@@ -757,11 +880,11 @@
       "title": "Work items closed in a year",
       "empty_state": "Close work items to view analysis of the same in the form of a graph."
     },
-    "most_work_items_created":{
+    "most_work_items_created": {
       "title": "Most work items created",
       "empty_state": "Co-workers and the number of work items created by them appears here."
     },
-    "most_work_items_closed":{
+    "most_work_items_closed": {
       "title": "Most work items closed",
       "empty_state": "Co-workers and the number of work items closed by them appears here."
     },
@@ -1514,5 +1637,13 @@
       "created_at": "Created date",
       "manual": "Manual"
     }
+  },
+  "cycle": {
+    "label": "{count, plural, one {Cycle} other {Cycles}}",
+    "no_cycle": "No cycle"
+  },
+  "module": {
+    "label": "{count, plural, one {Module} other {Modules}}",
+    "no_module": "No module"
   }
 }
