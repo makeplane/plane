@@ -7,6 +7,7 @@ import { ChevronDown, XCircle } from "lucide-react";
 // plane imports
 import { ROLE } from "@plane/constants";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
@@ -15,7 +16,6 @@ import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 import { useMember, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-import { useTranslation } from "@plane/i18n";
 
 type Props = {
   invitationId: string;
