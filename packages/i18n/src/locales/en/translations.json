@@ -199,6 +199,7 @@
   "project_id_is_required": "Project ID is required",
   "select_network": "Select network",
   "lead": "Lead",
+  "date_range": "Date range",
   "private": "Private",
   "public": "Public",
   "accessible_only_by_invite": "Accessible only by invite",
@@ -307,6 +308,8 @@
   "create_new_label": "Create new label",
   "start_date": "Start date",
   "due_date": "Due date",
+  "end_date": "End date",
+  "target_date": "Target date",
   "cycle": "Cycle",
   "estimate": "Estimate",
   "change_parent_issue": "Change parent issue",
@@ -318,11 +321,10 @@
   "optional": "Optional",
   "Cancel": "Cancel",
   "edit": "Edit",
+  "archive": "Archive",
+  "restor": "Restore",
   "open_in_new_tab": "Open in new tab",
   "delete": "Delete",
-  "deleting": "Deleting",
-  "make_a_copy": "Make a copy",
-  "move_to_project": "Move to project",
   "deleting": "Deleting",
   "make_a_copy": "Make a copy",
   "move_to_project": "Move to project",
@@ -341,6 +343,15 @@
   "declining": "Declining",
   "declined": "Declined",
   "decline": "Decline",
+  "unassigned": "Unassigned",
+  "work_items": "Work items",
+  "add_link": "Add link",
+  "points": "Points",
+  "no_assignee": "No assignee",
+  "no_assignees_yet": "No assignees yet",
+  "no_labels_yet": "No labels yet",
+  "ideal": "Ideal",
+  "current": "Current",
 
   "project_view": {
     "sort_by": {
@@ -527,7 +538,11 @@
     "clear_all": "Clear all",
     "link_copied": "Link copied",
     "copied_to_clipboard": "Work item link copied to clipboard",
-    "is_copied_to_clipboard": "Work item is copied to clipboard"
+    "is_copied_to_clipboard": "Work item is copied to clipboard",
+    "no_links_added_yet": "No links added yet",
+    "add_link": "Add link",
+    "links": "Links",
+    "progress": "Progress"
   },
   
   "form": {
@@ -610,10 +625,6 @@
         "error": "Asset upload failed. Please try again later."
       }
     }
-  },
-
-  "project": {
-    "label": "{count, plural, one {Project} other {Projects}}"
   },
 
   "view": {
@@ -729,6 +740,35 @@
   },
 
   "workspace_analytics": {
+    "label": "Analytics",
+    "page_label": "{workspace} - Analytics",
+    "open_tasks": "Total open tasks",
+    "error": "There was some error in fetching the data.",
+    "work_items_closed_in": "Work items closed in",
+    "selected_projects": "Selected projects",
+    "total_members": "Total members",
+    "total_cycles": "Total cycles",
+    "total_modules": "Total modules",
+    "pending_work_items":{
+      "title": "Pending work items",
+      "empty_state": "Analysis of pending work items by co-workers appears here."
+    },
+    "work_items_closed_in_a_year": {
+      "title": "Work items closed in a year",
+      "empty_state": "Close work items to view analysis of the same in the form of a graph."
+    },
+    "most_work_items_created":{
+      "title": "Most work items created",
+      "empty_state": "Co-workers and the number of work items created by them appears here."
+    },
+    "most_work_items_closed":{
+      "title": "Most work items closed",
+      "empty_state": "Co-workers and the number of work items closed by them appears here."
+    },
+    "tabs": {
+      "scope_and_demand": "Scope and Demand",
+      "custom": "Custom Analytics"
+    },
     "empty_state": {
       "general": {
         "title": "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",
@@ -745,6 +785,10 @@
   },
 
   "workspace_projects": {
+    "label": "{count, plural, one {Project} other {Projects}}",
+    "create": {
+      "label": "Add Project"
+    },
     "network": {
       "private": {
         "title": "Private",
@@ -807,11 +851,15 @@
       "filter": {
         "title": "No matching projects",
         "description": "No projects detected with the matching criteria. \n Create a new project instead."
+      },
+      "search": {
+        "description": "No projects detected with the matching criteria.\nCreate a new project instead"
       }
     }
   },
 
-  "workspace_issues": {
+  "workspace_views": {
+    "add_view": "Add view",
     "empty_state": {
       "all-issues": {
         "title": "No issues in the project",
@@ -1032,6 +1080,12 @@
   },
 
   "project_module": {
+    "add_module": "Add Module",
+    "update_module": "Update Module",
+    "create_module": "Create Module",
+    "archive_module": "Archive Module",
+    "restore_module": "Restore Module",
+    "delete_module": "Delete module",
     "empty_state": {
       "general": {
         "title": "Map your project milestones to Modules and track aggregated work easily.",
@@ -1057,6 +1111,24 @@
       "archived": {
         "title": "No archived Modules yet",
         "description": "To tidy up your project, archive completed or cancelled modules. Find them here once archived."
+      },
+      "sidebar": {
+        "in_active": "This module isn't active yet.",
+        "invalid_date": "Invalid date. Please enter valid date."
+      }
+    },
+    "quick_actions": {
+      "archive_module": "Archive module",
+      "archive_module_description": "Only completed or canceled\nmodule can be archived.",
+      "delete_module": "Delete module"
+    },
+    "toast": {
+      "copy": {
+        "success": "Module link copied to clipboard"
+      },
+      "delete": {
+        "success": "Module deleted successfully",
+        "error": "Failed to delete module"
       }
     }
   },
@@ -1379,7 +1451,8 @@
   "exporter": {
     "csv": {
       "title": "CSV",
-      "description": "Export issues to a CSV file."
+      "description": "Export issues to a CSV file.",
+      "short_description": "Export as csv"
     },
     "xlsx": {
       "title": "Excel",

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IModule } from "@plane/types";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
@@ -55,6 +56,8 @@ export const ModuleForm: React.FC<Props> = (props) => {
 
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_MODULE, isMobile);
 
+  const { t } = useTranslation();
+
   const handleCreateUpdateModule = async (formData: Partial<IModule>) => {
     await handleFormSubmit(formData, dirtyFields);
 
@@ -95,7 +98,9 @@ export const ModuleForm: React.FC<Props> = (props) => {
               )}
             />
           )}
-          <h3 className="text-xl font-medium text-custom-text-200">{status ? "Update" : "Create"} module</h3>
+          <h3 className="text-xl font-medium text-custom-text-200">
+            {status ? t("update") : t("create")} {t("module").toLowerCase()}
+          </h3>
         </div>
         <div className="space-y-3">
           <div className="space-y-1">
@@ -103,10 +108,10 @@ export const ModuleForm: React.FC<Props> = (props) => {
               control={control}
               name="name"
               rules={{
-                required: "Title is required",
+                required: t("title_is_required"),
                 maxLength: {
                   value: 255,
-                  message: "Title should be less than 255 characters",
+                  message: t("title_should_be_less_than_255_characters"),
                 },
               }}
               render={({ field: { value, onChange } }) => (
@@ -117,7 +122,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                   value={value}
                   onChange={onChange}
                   hasError={Boolean(errors?.name)}
-                  placeholder="Title"
+                  placeholder={t("title")}
                   className="w-full text-base"
                   tabIndex={getIndex("name")}
                   autoFocus
@@ -136,7 +141,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                   name="description"
                   value={value}
                   onChange={onChange}
-                  placeholder="Description"
+                  placeholder={t("description")}
                   className="w-full text-base resize-none min-h-24"
                   hasError={Boolean(errors?.description)}
                   tabIndex={getIndex("description")}
@@ -165,8 +170,8 @@ export const ModuleForm: React.FC<Props> = (props) => {
                         onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
                       }}
                       placeholder={{
-                        from: "Start date",
-                        to: "End date",
+                        from: t("start_date"),
+                        to: t("end_date"),
                       }}
                       hideIcon={{
                         to: true,
@@ -191,7 +196,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                     projectId={projectId}
                     multiple={false}
                     buttonVariant="border-with-text"
-                    placeholder="Lead"
+                    placeholder={t("lead")}
                     tabIndex={getIndex("lead")}
                   />
                 </div>
@@ -209,7 +214,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                     multiple
                     buttonVariant={value && value.length > 0 ? "transparent-without-text" : "border-with-text"}
                     buttonClassName={value && value.length > 0 ? "hover:bg-transparent px-0" : ""}
-                    placeholder="Members"
+                    placeholder={t("members")}
                     tabIndex={getIndex("member_ids")}
                   />
                 </div>
@@ -220,10 +225,16 @@ export const ModuleForm: React.FC<Props> = (props) => {
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
         <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
-          Cancel
+          {t("cancel")}
         </Button>
         <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
-          {status ? (isSubmitting ? "Updating" : "Update Module") : isSubmitting ? "Creating" : "Create Module"}
+          {status
+            ? isSubmitting
+              ? t("updating")
+              : t("update_module")
+            : isSubmitting
+              ? t("creating")
+              : t("create_module")}
         </Button>
       </div>
     </form>

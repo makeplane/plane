@@ -58,13 +58,13 @@ export const GlobalViewEmptyState: React.FC = observer(() => {
   return (
     <DetailedEmptyState
       size="sm"
-      title={t(`workspace_issues.empty_state.${resolvedCurrentView}.title`)}
-      description={t(`workspace_issues.empty_state.${resolvedCurrentView}.description`)}
+      title={t(`workspace_views.empty_state.${resolvedCurrentView}.title`)}
+      description={t(`workspace_views.empty_state.${resolvedCurrentView}.description`)}
       assetPath={globalViewsResolvedPath}
       primaryButton={
         ["subscribed", "custom-view"].includes(resolvedCurrentView) === false
           ? {
-              text: t(`workspace_issues.empty_state.${resolvedCurrentView}.primary_button.text`),
+              text: t(`workspace_views.empty_state.${resolvedCurrentView}.primary_button.text`),
               onClick: () => {
                 setTrackElement("All issues empty state");
                 toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
