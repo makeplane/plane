@@ -72,6 +72,7 @@ class BaseSerializer(serializers.ModelSerializer):
                         StateLiteSerializer,
                         UserLiteSerializer,
                         WorkspaceLiteSerializer,
+                        EstimatePointSerializer,
                     )
 
                     # Expansion mapper
@@ -88,6 +89,7 @@ class BaseSerializer(serializers.ModelSerializer):
                         "owned_by": UserLiteSerializer,
                         "members": UserLiteSerializer,
                         "parent": IssueLiteSerializer,
+                        "estimate_point": EstimatePointSerializer,
                     }
                     # Check if field in expansion  then expand the field
                     if expand in expansion:

@@ -388,7 +388,6 @@ class WorkspaceHomePreference(BaseModel):
         return f"{self.workspace.name} {self.user.email} {self.key}"
 
 
-
 class WorkspaceUserPreference(BaseModel):
     """Preference for the workspace for a user"""
 

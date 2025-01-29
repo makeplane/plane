@@ -39,7 +39,12 @@ export interface TableOptions {
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     table: {
-      insertTable: (options?: { rows?: number; cols?: number; withHeaderRow?: boolean }) => ReturnType;
+      insertTable: (options?: {
+        rows?: number;
+        cols?: number;
+        withHeaderRow?: boolean;
+        columnWidth?: number;
+      }) => ReturnType;
       addColumnBefore: () => ReturnType;
       addColumnAfter: () => ReturnType;
       deleteColumn: () => ReturnType;
@@ -108,9 +113,9 @@ export const Table = Node.create({
   addCommands() {
     return {
       insertTable:
-        ({ rows = 3, cols = 3, withHeaderRow = false } = {}) =>
+        ({ rows = 3, cols = 3, withHeaderRow = false, columnWidth = 150 } = {}) =>
         ({ tr, dispatch, editor }) => {
-          const node = createTable(editor.schema, rows, cols, withHeaderRow);
+          const node = createTable(editor.schema, rows, cols, withHeaderRow, undefined, columnWidth);
           if (dispatch) {
             const offset = tr.selection.anchor + 1;
 

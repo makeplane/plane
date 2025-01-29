@@ -10,6 +10,7 @@ import { getFileURL } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
 // helpers
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 
@@ -55,7 +56,9 @@ export const RecentPage = (props: BlockProps) => {
               </div>
             )}
           </div>
-          <div className="text-custom-text-200 font-medium text-sm whitespace-nowrap">{pageDetails?.name}</div>
+          <div className="text-custom-text-200 font-medium text-sm whitespace-nowrap">
+            {getPageName(pageDetails?.name)}
+          </div>
           <div className="font-medium text-xs text-custom-text-400">{calculateTimeAgo(activity.visited_at)}</div>
         </div>
       }
