@@ -116,8 +116,8 @@ export const ProfileLayoutSidebar = observer(() => {
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: t("error"),
-          message: t("failed_to_sign_out_please_try_again"),
+          title: t("sign_out.toast.error.title"),
+          message: t("sign_out.toast.error.message"),
         })
       )
       .finally(() => setIsSigningOut(false));
