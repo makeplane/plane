@@ -75,7 +75,7 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
         IssueAttachmentEndpoint.as_view(),
-        name="attachment",
+        name="issue-attachment",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/server/",
