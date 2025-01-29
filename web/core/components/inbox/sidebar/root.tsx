@@ -26,14 +26,14 @@ type IInboxSidebarProps = {
   setIsMobileSidebar: (value: boolean) => void;
 };
 
-const tabNavigationOptions: { key: TInboxIssueCurrentTab; label: string }[] = [
+const tabNavigationOptions: { key: TInboxIssueCurrentTab; i18n_label: string }[] = [
   {
     key: EInboxIssueCurrentTab.OPEN,
-    label: "Open",
+    i18n_label: "inbox_issue.tabs.open",
   },
   {
     key: EInboxIssueCurrentTab.CLOSED,
-    label: "Closed",
+    i18n_label: "inbox_issue.tabs.closed",
   },
 ];
 
@@ -99,7 +99,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                 }
               }}
             >
-              <div>{option?.label}</div>
+              <div>{t(option?.i18n_label)}</div>
               {option?.key === "open" && currentTab === option?.key && (
                 <div className="rounded-full p-1.5 py-0.5 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold">
                   {inboxIssuePaginationInfo?.total_results || 0}
@@ -138,20 +138,20 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
               <div className="flex items-center justify-center h-full w-full">
                 {getAppliedFiltersCount > 0 ? (
                   <SimpleEmptyState
-                    title={t("inbox.empty_state.sidebar_filter.title")}
-                    description={t("inbox.empty_state.sidebar_filter.description")}
+                    title={t("inbox_issue.empty_state.sidebar_filter.title")}
+                    description={t("inbox_issue.empty_state.sidebar_filter.description")}
                     assetPath={sidebarFilterAssetPath}
                   />
                 ) : currentTab === EInboxIssueCurrentTab.OPEN ? (
                   <SimpleEmptyState
-                    title={t("inbox.empty_state.sidebar_open_tab.title")}
-                    description={t("inbox.empty_state.sidebar_open_tab.description")}
+                    title={t("inbox_issue.empty_state.sidebar_open_tab.title")}
+                    description={t("inbox_issue.empty_state.sidebar_open_tab.description")}
                     assetPath={sidebarAssetPath}
                   />
                 ) : (
                   <SimpleEmptyState
-                    title={t("inbox.empty_state.sidebar_closed_tab.title")}
-                    description={t("inbox.empty_state.sidebar_closed_tab.description")}
+                    title={t("inbox_issue.empty_state.sidebar_closed_tab.title")}
+                    description={t("inbox_issue.empty_state.sidebar_closed_tab.description")}
                     assetPath={sidebarAssetPath}
                   />
                 )}
