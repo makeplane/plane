@@ -3,11 +3,11 @@
 import { FC } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // public images
 import EstimateEmptyDarkImage from "@/public/empty-state/estimates/dark.svg";
 import EstimateEmptyLightImage from "@/public/empty-state/estimates/light.svg";
-import { useTranslation } from "@plane/i18n";
 
 type TEstimateEmptyScreen = {
   onButtonClick: () => void;
