@@ -121,7 +121,7 @@ export const WORKSPACE_SETTINGS = {
   },
   "api-tokens": {
     key: "api-tokens",
-    i18n_label: "workspace_settings.settings.webhooks.title",
+    i18n_label: "workspace_settings.settings.api_tokens.title",
     href: `/settings/api-tokens`,
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) =>

@@ -15,6 +15,7 @@ import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 import { useMember, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   invitationId: string;
@@ -28,6 +29,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { allowPermissions, workspaceInfoBySlug } = useUserPermissions();
+  const { t } = useTranslation();
 
   const {
     workspace: { updateMemberInvitation, deleteMemberInvitation, getWorkspaceInvitationDetails },
@@ -96,7 +98,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
         </div>
         <div className="flex items-center gap-2 text-xs">
           <div className="flex items-center justify-center rounded bg-yellow-500/20 px-2.5 py-1 text-center text-xs font-medium text-yellow-500">
-            <p>Pending</p>
+            <p>{t("pending")}</p>
           </div>
           <CustomSelect
             customButton={

@@ -43,7 +43,9 @@ const ApiTokensPage = observer(() => {
       workspaceSlug && canPerformWorkspaceAdminActions ? apiTokenService.getApiTokens(workspaceSlug.toString()) : null
   );
 
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - API Tokens` : undefined;
+  const pageTitle = currentWorkspace?.name
+    ? `${currentWorkspace.name} - ${t("workspace_settings.settings.api_tokens.title")}`
+    : undefined;
 
   if (workspaceUserInfo && !canPerformWorkspaceAdminActions) {
     return <NotAuthorizedView section="settings" />;
@@ -61,9 +63,9 @@ const ApiTokensPage = observer(() => {
         {tokens.length > 0 ? (
           <>
             <div className="flex items-center justify-between border-b border-custom-border-200 pb-3.5">
-              <h3 className="text-xl font-medium">API tokens</h3>
+              <h3 className="text-xl font-medium">{t("workspace_settings.settings.api_tokens.title")}</h3>
               <Button variant="primary" onClick={() => setIsCreateTokenModalOpen(true)}>
-                Add API token
+                {t("workspace_settings.settings.api_tokens.add_token")}
               </Button>
             </div>
             <div>
@@ -75,9 +77,9 @@ const ApiTokensPage = observer(() => {
         ) : (
           <div className="flex h-full w-full flex-col">
             <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 pb-3.5">
-              <h3 className="text-xl font-medium">API tokens</h3>
+              <h3 className="text-xl font-medium">{t("workspace_settings.settings.api_tokens.title")}</h3>
               <Button variant="primary" onClick={() => setIsCreateTokenModalOpen(true)}>
-                Add API token
+                {t("workspace_settings.settings.api_tokens.add_token")}
               </Button>
             </div>
             <div className="h-full w-full flex items-center justify-center">
