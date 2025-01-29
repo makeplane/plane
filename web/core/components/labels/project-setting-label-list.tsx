@@ -73,7 +73,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         <h3 className="text-xl font-medium">Labels</h3>
         {isEditable && (
           <Button variant="primary" onClick={newLabel} size="sm">
-            Add label
+            {t("common.add_label")}
           </Button>
         )}
       </div>

@@ -81,9 +81,9 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
               <ArchiveX className="h-4 w-4 flex-shrink-0 text-red-500" />
             </div>
             <div className="">
-              <h4 className="text-sm font-medium">Auto-close issues</h4>
+              <h4 className="text-sm font-medium">{t("project_settings.automations.auto-close.title")}</h4>
               <p className="text-sm tracking-tight text-custom-text-200">
-                Plane will automatically close issues that haven{"'"}t been completed or canceled.
+                {t("project_settings.automations.auto-close.description")}
               </p>
             </div>
           </div>
@@ -104,7 +104,9 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
             <div className="mx-6">
               <div className="flex flex-col rounded border border-custom-border-200 bg-custom-background-90">
                 <div className="flex w-full items-center justify-between gap-2 px-5 py-4">
-                  <div className="w-1/2 text-sm font-medium">Auto-close issues that are inactive for</div>
+                  <div className="w-1/2 text-sm font-medium">
+                    {t("project_settings.automations.auto-close.duration")}
+                  </div>
                   <div className="w-1/2">
                     <CustomSelect
                       value={currentProjectDetails?.close_in}
@@ -128,7 +130,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                           className="flex w-full select-none items-center rounded px-1 py-1.5 text-custom-text-200 hover:bg-custom-background-80"
                           onClick={() => setmonthModal(true)}
                         >
-                          Customize time range
+                          {t("customize_time_range")}
                         </button>
                       </>
                     </CustomSelect>
@@ -136,7 +138,9 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                 </div>
 
                 <div className="flex w-full items-center justify-between gap-2 px-5 py-4">
-                  <div className="w-1/2 text-sm font-medium">Auto-close status</div>
+                  <div className="w-1/2 text-sm font-medium">
+                    {t("project_settings.automations.auto-close.auto_close_status")}
+                  </div>
                   <div className="w-1/2 ">
                     <CustomSearchSelect
                       value={currentProjectDetails?.default_state ?? defaultState}
@@ -161,7 +165,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                           )}
                           {selectedOption?.name
                             ? selectedOption.name
-                            : (currentDefaultState?.name ?? <span className="text-custom-text-200">State</span>)}
+                            : (currentDefaultState?.name ?? <span className="text-custom-text-200">{t("state")}</span>)}
                         </div>
                       }
                       onChange={(val: string) => {

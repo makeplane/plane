@@ -8,6 +8,7 @@ import { ChevronDown, Plus, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { ROLE, PROJECT_MEMBER_ADDED } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
@@ -67,6 +68,8 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     control,
     name: "members",
   });
+
+  const { t } = useTranslation();
 
   const currentProjectRole = projectUserInfo?.[workspaceSlug?.toString()]?.[projectId?.toString()]?.role;
 
@@ -212,10 +215,12 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-5">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                      Invite members
+                      {t("project_settings.members.invite_members.title")}
                     </Dialog.Title>
                     <div className="mt-2">
-                      <p className="text-sm text-custom-text-200">Invite members to work on your project.</p>
+                      <p className="text-sm text-custom-text-200">
+                        {t("project_settings.members.invite_members.sub_heading")}
+                      </p>
                     </div>
 
                     <div className="mb-3 space-y-4">
@@ -339,16 +344,16 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                       onClick={appendField}
                     >
                       <Plus className="h-4 w-4" />
-                      Add more
+                      {t("common.add_more")}
                     </button>
                     <div className="flex items-center gap-2">
                       <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-                        Cancel
+                        {t("cancel")}
                       </Button>
                       <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
                         {isSubmitting
-                          ? `${fields && fields.length > 1 ? "Adding members..." : "Adding member..."}`
-                          : `${fields && fields.length > 1 ? "Add members" : "Add member"}`}
+                          ? `${fields && fields.length > 1 ? `${t("add_members")}...` : `${t("add_member")}...`}`
+                          : `${fields && fields.length > 1 ? t("add_members") : t("add_member")}`}
                       </Button>
                     </div>
                   </div>
