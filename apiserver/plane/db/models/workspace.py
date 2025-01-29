@@ -392,10 +392,10 @@ class WorkspaceUserPreference(BaseModel):
     """Preference for the workspace for a user"""
 
     class UserPreferenceKeys(models.TextChoices):
+        PROJECTS = "projects", "Projects"
+        ANALYTICS = "analytics", "Analytics"
         CYCLES = "cycles", "Cycles"
         VIEWS = "views", "Views"
-        ANALYTICS = "analytics", "Analytics"
-        PROJECTS = "projects", "Projects"
 
     workspace = models.ForeignKey(
         "db.Workspace",

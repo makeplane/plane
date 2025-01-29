@@ -27,7 +27,11 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
 
         create_preference_keys = []
 
-        keys = [key for key, _ in WorkspaceUserPreference.UserPreferenceKeys.choices]
+        keys = [
+            key
+            for key, _ in WorkspaceUserPreference.UserPreferenceKeys.choices
+            if key not in ["projects"]
+        ]
 
         for preference in keys:
             if preference not in get_preference.values_list("key", flat=True):
