@@ -211,7 +211,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                   onChange(cycleId);
                   handleFormChange();
                 }}
-                placeholder={t("cycle")}
+                placeholder={t("cycle.label", { count: 1 })}
                 value={value}
                 buttonVariant="border-with-text"
                 tabIndex={getIndex("cycle_id")}
