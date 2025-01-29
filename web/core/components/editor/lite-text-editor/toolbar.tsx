@@ -57,7 +57,6 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
     showSubmitButton,
     editorRef,
   } = props;
-
   // State to manage active states of toolbar items
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
 
@@ -85,6 +84,9 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
     updateActiveStates();
     return () => unsubscribe();
   }, [editorRef, updateActiveStates]);
+
+  const isEditorReadyToDiscard = editorRef?.isEditorReadyToDiscard();
+  const isSubmitButtonDisabled = isCommentEmpty || !isEditorReadyToDiscard;
 
   return (
     <div className="flex h-9 w-full items-stretch gap-1.5 bg-custom-background-90 overflow-x-scroll">
@@ -166,7 +168,7 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
               variant="primary"
               className="px-2.5 py-1.5 text-xs"
               onClick={handleSubmit}
-              disabled={isCommentEmpty}
+              disabled={isSubmitButtonDisabled}
               loading={isSubmitting}
             >
               Comment

@@ -47,6 +47,7 @@ from plane.db.models import (
     User,
     Project,
     ProjectMember,
+    UserRecentVisit,
 )
 from plane.utils.analytics_plot import burndown_plot
 from plane.bgtasks.recent_visited_task import recent_visited_task
@@ -543,6 +544,13 @@ class CycleViewSet(BaseViewSet):
             entity_identifier=pk,
             project_id=project_id,
         ).delete()
+        # Delete the cycle from recent visits
+        UserRecentVisit.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            entity_identifier=pk,
+            entity_name="cycle",
+        ).delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

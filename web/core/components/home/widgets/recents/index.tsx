@@ -2,14 +2,18 @@
 
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-// types
+import { usePathname } from "next/navigation";
 import useSWR from "swr";
 import { Briefcase, FileText } from "lucide-react";
+// plane types
 import { TActivityEntityData, THomeWidgetProps, TRecentActivityFilterKeys } from "@plane/types";
-// components
+// plane ui
 import { LayersIcon } from "@plane/ui";
+// components
 import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";
+// hooks
 import { useProject } from "@/hooks/store";
+// plane web services
 import { WorkspaceService } from "@/plane-web/services";
 import { NoProjectsEmptyState, RecentsEmptyState } from "../empty-states";
 import { EWidgetKeys, WidgetLoader } from "../loaders";
@@ -34,12 +38,16 @@ type TRecentWidgetProps = THomeWidgetProps & {
 
 export const RecentActivityWidget: React.FC<TRecentWidgetProps> = observer((props) => {
   const { presetFilter, showFilterSelect = true, workspaceSlug } = props;
-  // state
+  // states
   const [filter, setFilter] = useState<TRecentActivityFilterKeys>(presetFilter ?? filters[0].name);
+  // navigation
+  const pathname = usePathname();
   // ref
   const ref = useRef<HTMLDivElement>(null);
   // store hooks
   const { joinedProjectIds, loader } = useProject();
+  // derived values
+  const isWikiApp = pathname.includes(`/${workspaceSlug.toString()}/pages`);
 
   const { data: recents, isLoading } = useSWR(
     workspaceSlug ? `WORKSPACE_RECENT_ACTIVITY_${workspaceSlug}_${filter}` : null,
@@ -71,7 +79,7 @@ export const RecentActivityWidget: React.FC<TRecentWidgetProps> = observer((prop
     }
   };
 
-  if (!loader && joinedProjectIds?.length === 0) return <NoProjectsEmptyState />;
+  if (!loader && !isWikiApp && joinedProjectIds?.length === 0) return <NoProjectsEmptyState />;
 
   if (!isLoading && recents?.length === 0)
     return (

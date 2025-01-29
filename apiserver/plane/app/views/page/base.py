@@ -33,6 +33,7 @@ from plane.db.models import (
     ProjectMember,
     ProjectPage,
     Project,
+    UserRecentVisit,
 )
 from plane.utils.error_codes import ERROR_CODES
 from ..base import BaseAPIView, BaseViewSet
@@ -387,6 +388,13 @@ class PageViewSet(BaseViewSet):
             entity_identifier=pk,
             entity_type="page",
         ).delete()
+        # Delete the page from recent visit
+        UserRecentVisit.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            entity_identifier=pk,
+            entity_name="page",
+        ).delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
