@@ -154,6 +154,7 @@ class EpicPropertyValueEndpoint(BaseAPIView):
                 project_id=project_id,
                 issue_type_id=epic_type_id,
                 issue_type__is_epic=True,
+                is_active=True
             )
 
             # Validate the data
