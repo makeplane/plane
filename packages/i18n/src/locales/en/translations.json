@@ -511,6 +511,7 @@
     "updating": "Updating",
     "adding": "Adding",
     "update": "Update",
+    "creating": "Creating",
     "create": "Create",
     "cancel": "Cancel",
     "description": "Description",
@@ -695,6 +696,10 @@
         "spreadsheet": "Table Layout",
         "gantt": "Timeline Layout"
       }
+    },
+    "states": {
+      "active": "Active",
+      "backlog": "Backlog"
     },
     "comments": {
       "create": {
