@@ -96,32 +96,6 @@
   "comments_description": "Notify me when someone leaves a comment on the issue",
   "mentions": "Mentions",
   "mentions_description": "Notify me only when someone mentions me in the comments or description",
-  "create_your_workspace": "Create your workspace",
-  "only_your_instance_admin_can_create_workspaces": "Only your instance admin can create workspaces",
-  "only_your_instance_admin_can_create_workspaces_description": "If you know your instance admin's email address, click the button below to get in touch with them.",
-  "go_back": "Go back",
-  "request_instance_admin": "Request instance admin",
-  "plane_logo": "Plane logo",
-  "workspace_creation_disabled": "Workspace creation disabled",
-  "workspace_request_subject": "Requesting a new workspace",
-  "workspace_request_body": "Hi instance admin(s),\n\nPlease create a new workspace with the URL [/workspace-name] for [purpose of creating the workspace].\n\nThanks,\n{{firstName}} {{lastName}}\n{{email}}",
-  "creating_workspace": "Creating workspace",
-  "workspace_created_successfully": "Workspace created successfully",
-  "create_workspace_page": "Create workspace page",
-  "workspace_could_not_be_created_please_try_again": "Workspace could not be created. Please try again.",
-  "workspace_could_not_be_created_please_try_again_description": "Some error occurred while creating workspace. Please try again.",
-  "this_is_a_required_field": "This is a required field.",
-  "name_your_workspace": "Name your workspace",
-  "workspaces_names_can_contain_only_space_dash_and_alphanumeric_characters": "Workspaces names can contain only (' '), ('-'), ('_') and alphanumeric characters.",
-  "limit_your_name_to_80_characters": "Limit your name to 80 characters.",
-  "set_your_workspace_url": "Set your workspace's URL",
-  "limit_your_url_to_48_characters": "Limit your URL to 48 characters.",
-  "how_many_people_will_use_this_workspace": "How many people will use this workspace?",
-  "how_many_people_will_use_this_workspace_description": "This will help us to determine the number of seats you need to purchase.",
-  "select_a_range": "Select a range",
-  "urls_can_contain_only_dash_and_alphanumeric_characters": "URLs can contain only ('-') and alphanumeric characters.",
-  "something_familiar_and_recognizable_is_always_best": "Something familiar and recognizable is always best.",
-  "workspace_url_is_already_taken": "Workspace URL is already taken!",
   "old_password": "Old password",
   "general_settings": "General settings",
   "sign_out": "Sign out",
@@ -578,6 +552,7 @@
     "progress": "Progress",
     "optional": "Optional",
     "join": "Join",
+    "go_back": "Go back",
     "continue": "Continue",
     "resend": "Resend",
     "errors": {
@@ -872,6 +847,58 @@
       },
       "detail": {
         "title": "Select an issue to view its details."
+      }
+    }
+  },
+
+  "workspace_creation": {
+    "heading": "Create your workspace",
+    "subheading": "To start using Plane, you need to create or join a workspace.",
+    "form": {
+      "name": {
+        "label": "Name your workspace",
+        "placeholder": "Something familiar and recognizable is always best."
+      },
+      "url": {
+        "label": "Set your workspace's URL",
+        "placeholder": "Type or paste a URL",
+        "edit_slug": "You can only edit the slug of the URL"
+      },
+      "organization_size": {
+        "label": "How many people will use this workspace?",
+        "placeholder": "Select a range"
+      }
+    },
+    "errors": {
+      "creation_disabled": {
+        "title": "Only your instance admin can create workspaces",
+        "description": "If you know your instance admin's email address, click the button below to get in touch with them.",
+        "request_button": "Request instance admin"
+      },
+      "validation": {
+        "name_alphanumeric": "Workspaces names can contain only (' '), ('-'), ('_') and alphanumeric characters.",
+        "name_length": "Limit your name to 80 characters.",
+        "url_alphanumeric": "URLs can contain only ('-') and alphanumeric characters.",
+        "url_length": "Limit your URL to 48 characters.",
+        "url_already_taken": "Workspace URL is already taken!"
+      }
+    },
+    "request_email": {
+      "subject": "Requesting a new workspace",
+      "body": "Hi instance admin(s),\n\nPlease create a new workspace with the URL [/workspace-name] for [purpose of creating the workspace].\n\nThanks,\n{firstName} {lastName}\n{email}"
+    },
+    "button": {
+      "default": "Create workspace",
+      "loading": "Creating workspace"
+    },
+    "toast": {
+      "success": {
+        "title": "Success",
+        "message": "Workspace created successfully"
+      },
+      "error": {
+        "title": "Error",
+        "message": "Workspace could not be created. Please try again."
       }
     }
   },
