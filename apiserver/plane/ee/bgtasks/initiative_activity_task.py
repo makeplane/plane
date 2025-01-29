@@ -9,18 +9,15 @@ from celery import shared_task
 from django.utils import timezone
 
 # Module imports
-from plane.db.models import (
-    CommentReaction,
-    Label,
-    Project,
-    Workspace,
-)
+from plane.db.models import CommentReaction, Label, Project, Workspace
 from plane.ee.models import (
     Initiative,
     InitiativeActivity,
     InitiativeReaction,
     InitiativeComment,
 )
+from plane.db.models import Issue
+
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
 
@@ -130,9 +127,7 @@ def track_end_date(
     initiative_activities,
     epoch,
 ):
-    if current_instance.get("end_date") != requested_data.get(
-        "end_date"
-    ):
+    if current_instance.get("end_date") != requested_data.get("end_date"):
         initiative_activities.append(
             InitiativeActivity(
                 initiative_id=initiative_id,
@@ -200,12 +195,8 @@ def track_labels(
     initiative_activities,
     epoch,
 ):
-    requested_labels = set(
-        [str(lab) for lab in requested_data.get("label_ids", [])]
-    )
-    current_labels = set(
-        [str(lab) for lab in current_instance.get("label_ids", [])]
-    )
+    requested_labels = set([str(lab) for lab in requested_data.get("label_ids", [])])
+    current_labels = set([str(lab) for lab in current_instance.get("label_ids", [])])
 
     added_labels = requested_labels - current_labels
     dropped_labels = current_labels - requested_labels
@@ -259,7 +250,6 @@ def track_projects(
     initiative_activities,
     epoch,
 ):
-
     requested_projects = (
         set([str(asg) for asg in requested_data.get("project_ids", [])])
         if requested_data is not None
@@ -304,6 +294,65 @@ def track_projects(
                 field="projects",
                 comment="removed project ",
                 old_identifier=project.id,
+                epoch=epoch,
+            )
+        )
+
+
+def track_epics(
+    requested_data,
+    current_instance,
+    initiative_id,
+    workspace_id,
+    actor_id,
+    initiative_activities,
+    epoch,
+):
+    requested_epics = (
+        set([str(asg) for asg in requested_data.get("epic_ids", [])])
+        if requested_data is not None
+        else set()
+    )
+    current_epics = (
+        set([str(asg) for asg in current_instance.get("epic_ids", [])])
+        if current_instance is not None
+        else set()
+    )
+
+    added_epics = requested_epics - current_epics
+    dropped_epics = current_epics - requested_epics
+
+    for added_epic in added_epics:
+        epic = Issue.objects.get(pk=added_epic)
+
+        initiative_activities.append(
+            InitiativeActivity(
+                initiative_id=initiative_id,
+                actor_id=actor_id,
+                workspace_id=workspace_id,
+                verb="updated",
+                old_value="",
+                new_value=epic.name,
+                field="epics",
+                comment="added epic ",
+                new_identifier=epic.id,
+                epoch=epoch,
+            )
+        )
+
+    for dropped_epic in dropped_epics:
+        epic = Issue.objects.get(pk=dropped_epic)
+        initiative_activities.append(
+            InitiativeActivity(
+                initiative_id=initiative_id,
+                actor_id=actor_id,
+                workspace_id=workspace_id,
+                verb="updated",
+                old_value=epic.name,
+                new_value="",
+                field="epics",
+                comment="removed epic ",
+                old_identifier=epic.id,
                 epoch=epoch,
             )
         )
@@ -378,11 +427,11 @@ def update_initiative_activity(
         "lead": track_lead,
         "label_ids": track_labels,
         "project_ids": track_projects,
+        "epic_ids": track_epics,
     }
 
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -432,9 +481,7 @@ def create_comment_activity(
     initiative_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -464,16 +511,12 @@ def update_comment_activity(
     initiative_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
 
-    if current_instance.get("comment_html") != requested_data.get(
-        "comment_html"
-    ):
+    if current_instance.get("comment_html") != requested_data.get("comment_html"):
         initiative_activities.append(
             InitiativeActivity(
                 initiative_id=initiative_id,
@@ -523,9 +566,7 @@ def create_link_activity(
     initiative_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -554,9 +595,7 @@ def update_link_activity(
     initiative_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -616,9 +655,7 @@ def create_attachment_activity(
     initiative_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -669,9 +706,7 @@ def create_initiative_reaction_activity(
     initiative_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     if requested_data and requested_data.get("reaction") is not None:
         initiative_reaction = (
             InitiativeReaction.objects.filter(
@@ -739,9 +774,7 @@ def create_comment_reaction_activity(
     initiative_activities,
     epoch,
 ):
-    requested_data = (
-        json.loads(requested_data) if requested_data is not None else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     if requested_data and requested_data.get("reaction") is not None:
         comment_reaction_id, comment_id = (
             CommentReaction.objects.filter(
@@ -792,8 +825,7 @@ def delete_comment_reaction_activity(
     if current_instance and current_instance.get("reaction") is not None:
         initiative_id = (
             InitiativeComment.objects.filter(
-                pk=current_instance.get("comment_id"),
-                initiative_id=initiative_id,
+                pk=current_instance.get("comment_id"), initiative_id=initiative_id
             )
             .values_list("initiative_id", flat=True)
             .first()

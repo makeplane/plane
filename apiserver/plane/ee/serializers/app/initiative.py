@@ -37,6 +37,7 @@ class InitiativeCommentReactionSerializer(BaseSerializer):
 
 class InitiativeSerializer(BaseSerializer):
     project_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    epic_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     reactions = InitiativeCommentReactionSerializer(
         read_only=True, many=True, source="initiative_reactions"
@@ -49,6 +50,7 @@ class InitiativeSerializer(BaseSerializer):
 
     def create(self, validated_data):
         projects = validated_data.pop("project_ids", None)
+        epics = validated_data.pop("epic_ids", None)
         labels = validated_data.pop("label_ids", None)
         workspace_id = self.context["workspace_id"]
         lead = self.context["lead"]
@@ -91,11 +93,27 @@ class InitiativeSerializer(BaseSerializer):
                 batch_size=10,
             )
 
+        if epics is not None and len(epics):
+            InitiativeEpic.objects.bulk_create(
+                [
+                    InitiativeEpic(
+                        epic_id=epic_id,
+                        initiative=initiative,
+                        workspace_id=workspace_id,
+                        created_by_id=created_by_id,
+                        updated_by_id=updated_by_id,
+                    )
+                    for epic_id in epics
+                ],
+                batch_size=10,
+            )
+
         return initiative
 
     def update(self, instance, validated_data):
         projects = validated_data.pop("project_ids", None)
         labels = validated_data.pop("label_ids", None)
+        epics = validated_data.pop("epic_ids", None)
 
         # Related models
         workspace_id = instance.workspace_id
@@ -130,6 +148,22 @@ class InitiativeSerializer(BaseSerializer):
                         updated_by_id=updated_by_id,
                     )
                     for label in labels
+                ],
+                batch_size=10,
+            )
+
+        if epics is not None:
+            InitiativeEpic.objects.filter(initiative=instance).delete()
+            InitiativeEpic.objects.bulk_create(
+                [
+                    InitiativeEpic(
+                        epic_id=epic,
+                        initiative=instance,
+                        workspace_id=workspace_id,
+                        created_by_id=created_by_id,
+                        updated_by_id=updated_by_id,
+                    )
+                    for epic in epics
                 ],
                 batch_size=10,
             )

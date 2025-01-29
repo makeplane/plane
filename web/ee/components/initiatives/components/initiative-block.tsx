@@ -8,6 +8,7 @@ import { cn } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
 // hooks
+import { getProgress } from "@/helpers/common.helper";
 import { useAppTheme, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
@@ -16,7 +17,6 @@ import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local components
 import { BlockProperties } from "./block-properties";
 import { InitiativeQuickActions } from "./quick-actions";
-import { getProgress } from "@/helpers/common.helper";
 
 type Props = {
   initiativeId: string;
@@ -46,7 +46,7 @@ export const InitiativeBlock = observer((props: Props) => {
     EUserPermissionsLevel.WORKSPACE
   );
 
-  const progress = getProgress(initiativeStats?.completed_issues, initiativeStats?.total_issues);
+  const progress = getProgress(initiativeStats?.completed_issues ?? 0, initiativeStats?.total_issues);
 
   return (
     <ListItem
@@ -57,14 +57,18 @@ export const InitiativeBlock = observer((props: Props) => {
           <InitiativeIcon className="size-4 text-custom-text-300" />
         </div>
       }
-      quickActionElement={
-        <div className="flex shrink-0 items-center gap-2">
+      appendTitleElement={
+        <>
           {initiativeStats && initiativeStats.total_issues > 0 && (
             <div className="flex items-center gap-1">
               <CircularProgressIndicator size={20} percentage={progress} strokeWidth={3} />
               <span className="text-sm font-medium text-custom-text-300 px-1">{`${progress}%`}</span>
             </div>
           )}
+        </>
+      }
+      quickActionElement={
+        <div className="flex shrink-0 items-center gap-2">
           <BlockProperties initiative={initiative} isSidebarCollapsed={isSidebarCollapsed} disabled={!isEditable} />
           <div
             className={cn("hidden", {

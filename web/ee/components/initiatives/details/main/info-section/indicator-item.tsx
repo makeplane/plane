@@ -35,11 +35,7 @@ export const InitiativeInfoIndicatorItem: FC<Props> = observer((props) => {
     ? Object.values(omit(initiativeAnalytics, "overdue_issues")).reduce((acc, val) => acc + val, 0)
     : 0;
 
-  const completedIssue = initiativeAnalytics
-    ? initiativeAnalytics.completed_issues + initiativeAnalytics.cancelled_issues
-    : 0;
-
-  const completePercentage = getProgress(completedIssue, totalIssues);
+  const completePercentage = getProgress(initiativeAnalytics?.completed_issues ?? 0, totalIssues);
 
   if (!hasProject || totalIssues === 0) return <></>;
   return (

@@ -1,8 +1,8 @@
 import React, { FC, useState } from "react";
 import { useParams } from "next/navigation";
 import { EFileAssetType } from "@plane/types/src/enums";
-import { cn } from "@plane/utils";
 import { Button, Input, setToast, TOAST_TYPE } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { DateRangeDropdown, MemberDropdown, ProjectDropdown } from "@/components/dropdowns";
 import { RichTextEditor } from "@/components/editor";
@@ -17,6 +17,7 @@ import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-sea
 import { TInitiative } from "@/plane-web/types/initiative";
 // services
 import { FileService } from "@/services/file.service";
+import { EpicsDropdown } from "../../dropdowns";
 
 const fileService = new FileService();
 
@@ -49,9 +50,6 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
     const newErrors: { name?: string; project_ids?: string } = {};
     if (!data.name || data.name.trim() === "") {
       newErrors.name = "Name is required";
-    }
-    if (!data.project_ids || data.project_ids.length === 0) {
-      newErrors.project_ids = "Project is required";
     }
 
     setErrors(newErrors);
@@ -145,6 +143,21 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
               multiple
               showTooltip
               tabIndex={2}
+            />
+          </div>
+          <div className="h-7">
+            <EpicsDropdown
+              buttonVariant={"border-with-text"}
+              onChange={(val) => {
+                handleFormDataChange("epic_ids", val);
+              }}
+              value={formData.epic_ids || []}
+              multiple
+              showTooltip
+              tabIndex={2}
+              searchParams={{
+                initiative_id: initiativeDetail?.id,
+              }}
             />
           </div>
 

@@ -22,6 +22,7 @@ const defaultValues: Partial<TInitiative> = {
   end_date: null,
   lead: null,
   project_ids: [],
+  epic_ids: [],
 };
 
 export const CreateUpdateInitiativeModal = observer((props: Props) => {

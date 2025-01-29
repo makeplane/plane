@@ -19,14 +19,12 @@ export const QuickActions: React.FC<Props> = observer((props: Props) => {
   const { workspaceSlug, initiativeId, project } = props;
   // store hooks
   const {
-    initiative: { getInitiativeById, updateInitiative },
+    initiative: { updateInitiative, getInitiativeById },
   } = useInitiatives();
 
   // derived states
   const projectLink = `${workspaceSlug}/projects/${project.id}/issues`;
-  const initiative = initiativeId ? getInitiativeById(initiativeId) : undefined;
-
-  const shouldRenderRemove = (initiative?.project_ids || [])?.length > 1;
+  const initiative = getInitiativeById(initiativeId);
 
   // handler
   const handleCopyText = () =>
@@ -44,14 +42,15 @@ export const QuickActions: React.FC<Props> = observer((props: Props) => {
       action: handleCopyText,
       title: "Copy link",
       icon: LinkIcon,
-      shouldRender: true,
     },
     {
       key: "remove",
-      action: () => updateInitiative(workspaceSlug, initiativeId, { project_ids: [project.id] }),
+      action: () =>
+        updateInitiative(workspaceSlug, initiativeId, {
+          project_ids: initiative?.project_ids ? initiative?.project_ids.filter((id) => id !== project.id) : [],
+        }),
       title: "Remove",
       icon: Trash2,
-      shouldRender: shouldRenderRemove,
     },
   ];
 
@@ -67,7 +66,7 @@ export const QuickActions: React.FC<Props> = observer((props: Props) => {
         customButtonClassName="grid place-items-center"
         placement="bottom-start"
       >
-        {MENU_ITEMS.filter((item) => item.shouldRender).map((item) => (
+        {MENU_ITEMS.map((item) => (
           <CustomMenu.MenuItem
             key={item.key}
             onClick={(e) => {
