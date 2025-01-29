@@ -138,8 +138,9 @@ export interface IRichTextEditor extends IEditorProps {
 
 export interface ICollaborativeDocumentEditor
   extends Omit<IEditorProps, "initialValue" | "onChange" | "onEnterKeyPress" | "value"> {
-  editable: boolean;
   aiHandler?: TAIHandler;
+  bubbleMenuEnabled?: boolean;
+  editable: boolean;
   embedHandler: TEmbedConfig;
   handleEditorReady?: (value: boolean) => void;
   id: string;

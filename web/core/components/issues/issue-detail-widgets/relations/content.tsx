@@ -21,7 +21,6 @@ import { useRelationOperations } from "./helper";
 
 type Props = {
   workspaceSlug: string;
-  projectId: string;
   issueId: string;
   disabled: boolean;
   issueServiceType?: TIssueServiceType;
@@ -38,7 +37,8 @@ export type TRelationObject = {
 };
 
 export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, disabled = false, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const { workspaceSlug, issueId, disabled = false, issueServiceType = EIssueServiceType.ISSUES } = props;
+  // plane hooks
   const { t } = useTranslation();
   // state
   const [issueCrudState, setIssueCrudState] = useState<{
@@ -129,7 +129,6 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
             >
               <RelationIssueList
                 workspaceSlug={workspaceSlug}
-                projectId={projectId}
                 issueId={issueId}
                 relationKey={relation.relationKey}
                 issueIds={relation.issueIds}
@@ -151,10 +150,20 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
           }}
           data={issueCrudState?.delete?.issue as TIssue}
           onSubmit={async () => {
-            const deleteOperation = !!issueCrudState.delete.issue?.is_epic
-              ? epicOperations.remove
-              : issueOperations.remove;
-            await deleteOperation(workspaceSlug, projectId, issueCrudState?.delete?.issue?.id as string);
+            if (
+              issueCrudState.delete.issue &&
+              issueCrudState.delete.issue.id &&
+              issueCrudState.delete.issue.project_id
+            ) {
+              const deleteOperation = !!issueCrudState.delete.issue?.is_epic
+                ? epicOperations.remove
+                : issueOperations.remove;
+              await deleteOperation(
+                workspaceSlug,
+                issueCrudState.delete.issue?.project_id,
+                issueCrudState?.delete?.issue?.id as string
+              );
+            }
           }}
           isEpic={!!issueCrudState.delete.issue?.is_epic}
         />
@@ -171,7 +180,8 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
               }}
               data={issueCrudState?.update?.issue ?? undefined}
               onSubmit={async (_issue: TIssue) => {
-                await epicOperations.update(workspaceSlug, projectId, _issue.id, _issue);
+                if (!_issue.id || !_issue.project_id) return;
+                await epicOperations.update(workspaceSlug, _issue.project_id, _issue.id, _issue);
               }}
             />
           ) : (
@@ -183,7 +193,8 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
               }}
               data={issueCrudState?.update?.issue ?? undefined}
               onSubmit={async (_issue: TIssue) => {
-                await issueOperations.update(workspaceSlug, projectId, _issue.id, _issue);
+                if (!_issue.id || !_issue.project_id) return;
+                await issueOperations.update(workspaceSlug, _issue.project_id, _issue.id, _issue);
               }}
             />
           )}

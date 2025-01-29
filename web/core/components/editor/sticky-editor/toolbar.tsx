@@ -58,7 +58,7 @@ export const StickyEditorToolbar: React.FC<Props> = (props) => {
   useOutsideClickDetector(colorPaletteRef, () => setShowColorPalette(false));
 
   return (
-    <div className="flex w-full justify-between mt-2 h-full">
+    <div className="flex w-full justify-between h-full">
       <div className="flex my-auto gap-4" ref={colorPaletteRef}>
         {/* color palette */}
         {showColorPalette && <ColorPalette handleUpdate={handleColorChange} />}
