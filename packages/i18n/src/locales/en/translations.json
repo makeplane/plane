@@ -82,18 +82,18 @@
   "theme_updated_successfully": "Theme updated successfully",
   "failed_to_update_the_theme": "Failed to update the theme",
   "email_notifications": "Email notifications",
-  "stay_in_the_loop_on_issues_you_are_subscribed_to_enable_this_to_get_notified": "Stay in the loop on Issues you are subscribed to. Enable this to get notified.",
+  "stay_in_the_loop_on_issues_you_are_subscribed_to_enable_this_to_get_notified": "Stay in the loop on Work items you are subscribed to. Enable this to get notified.",
   "email_notification_setting_updated_successfully": "Email notification setting updated successfully",
   "failed_to_update_email_notification_setting": "Failed to update email notification setting",
   "notify_me_when": "Notify me when",
   "property_changes": "Property changes",
-  "property_changes_description": "Notify me when issue's properties like assignees, priority, estimates or anything else changes.",
+  "property_changes_description": "Notify me when work items' properties like assignees, priority, estimates or anything else changes.",
   "state_change": "State change",
-  "state_change_description": "Notify me when the issues moves to a different state",
-  "issue_completed": "Issue completed",
-  "issue_completed_description": "Notify me only when an issue is completed",
+  "state_change_description": "Notify me when the work items moves to a different state",
+  "issue_completed": "Work item completed",
+  "issue_completed_description": "Notify me only when a work item is completed",
   "comments": "Comments",
-  "comments_description": "Notify me when someone leaves a comment on the issue",
+  "comments_description": "Notify me when someone leaves a comment on the work item",
   "mentions": "Mentions",
   "mentions_description": "Notify me only when someone mentions me in the comments or description",
   "old_password": "Old password",
@@ -101,7 +101,7 @@
   "sign_out": "Sign out",
   "signing_out": "Signing out",
   "active_cycles": "Active cycles",
-  "active_cycles_description": "Monitor cycles across projects, track high-priority issues, and zoom in cycles that need attention.",
+  "active_cycles_description": "Monitor cycles across projects, track high-priority work items, and zoom in cycles that need attention.",
   "on_demand_snapshots_of_all_your_cycles": "On-demand snapshots of all your cycles",
   "upgrade": "Upgrade",
   "10000_feet_view": "10,000-feet view of all active cycles.",
@@ -110,8 +110,8 @@
   "get_snapshot_of_each_active_cycle_description": "Track high-level metrics for all active cycles, see their state of progress, and get a sense of scope against deadlines.",
   "compare_burndowns": "Compare burndowns.",
   "compare_burndowns_description": "Monitor how each of your teams are performing with a peek into each cycle's burndown report.",
-  "quickly_see_make_or_break_issues": "Quickly see make-or-break issues.",
-  "quickly_see_make_or_break_issues_description": "Preview high-priority issues for each cycle against due dates. See all of them per cycle in one click.",
+  "quickly_see_make_or_break_issues": "Quickly see make-or-break work items.",
+  "quickly_see_make_or_break_issues_description": "Preview high-priority work items for each cycle against due dates. See all of them per cycle in one click.",
   "zoom_into_cycles_that_need_attention": "Zoom into cycles that need attention.",
   "zoom_into_cycles_that_need_attention_description": "Investigate the state of any cycle that doesn't conform to expectations in one click.",
   "stay_ahead_of_blockers": "Stay ahead of blockers.",
@@ -120,7 +120,7 @@
   "workspace_invites": "Workspace invites",
   "enter_god_mode": "Enter god mode",
   "workspace_logo": "Workspace logo",
-  "new_issue": "New issue",
+  "new_issue": "New work item",
   "your_work": "Your work",
   "drafts": "Drafts",
   "projects": "Projects",
@@ -149,7 +149,7 @@
   "create_project": "Create project",
   "failed_to_remove_project_from_favorites": "Couldn't remove the project from favorites. Please try again.",
   "project_created_successfully": "Project created successfully",
-  "project_created_successfully_description": "Project created successfully. You can now start adding issues to it.",
+  "project_created_successfully_description": "Project created successfully. You can now start adding work items to it.",
   "project_cover_image_alt": "Project cover image",
   "name_is_required": "Name is required",
   "title_should_be_less_than_255_characters": "Title should be less than 255 characters",
@@ -157,7 +157,7 @@
   "project_id_must_be_at_least_1_character": "Project ID must at least be of 1 character",
   "project_id_must_be_at_most_5_characters": "Project ID must at most be of 5 characters",
   "project_id": "Project ID",
-  "project_id_tooltip_content": "Helps you identify issues in the project uniquely. Max 5 characters.",
+  "project_id_tooltip_content": "Helps you identify work items in the project uniquely. Max 5 characters.",
   "description_placeholder": "Description...",
   "only_alphanumeric_non_latin_characters_allowed": "Only Alphanumeric & Non-latin characters are allowed.",
   "project_id_is_required": "Project ID is required",
@@ -190,21 +190,21 @@
   "drag_to_rearrange": "Drag to rearrange",
   "congrats": "Congrats!",
   "open_project": "Open project",
-  "issues": "Issues",
+  "issues": "Work items",
   "cycles": "Cycles",
   "modules": "Modules",
   "pages": "Pages",
   "intake": "Intake",
   "time_tracking": "Time Tracking",
   "work_management": "Work management",
-  "projects_and_issues": "Projects and issues",
+  "projects_and_issues": "Projects and work items",
   "projects_and_issues_description": "Toggle these on or off this project.",
   "cycles_description": "Timebox work as you see fit per project and change frequency from one period to the next.",
   "modules_description": "Group work into sub-project-like set-ups with their own leads and assignees.",
   "views_description": "Save sorts, filters, and display options for later or share them.",
   "pages_description": "Write anything like you write anything.",
-  "intake_description": "Stay in the loop on Issues you are subscribed to. Enable this to get notified.",
-  "time_tracking_description": "Track time spent on issues and projects.",
+  "intake_description": "Stay in the loop on Work items you are subscribed to. Enable this to get notified.",
+  "time_tracking_description": "Track time spent on work items and projects.",
   "work_management_description": "Manage your work and projects with ease.",
   "documentation": "Documentation",
   "message_support": "Message support",
@@ -235,29 +235,29 @@
   "back_to_home": "Back to home",
   "workspace_name": "workspace-name",
   "deactivate_your_account": "Deactivate your account",
-  "deactivate_your_account_description": "Once deactivated, you can't be assigned issues and be billed for your workspace. To reactivate your account, you will need an invite to a workspace at this email address.",
+  "deactivate_your_account_description": "Once deactivated, you can't be assigned work items and be billed for your workspace. To reactivate your account, you will need an invite to a workspace at this email address.",
   "deactivating": "Deactivating",
   "confirm": "Confirm",
   "draft_created": "Draft created",
-  "issue_created_successfully": "Issue created successfully",
+  "issue_created_successfully": "Work item created successfully",
   "draft_creation_failed": "Draft creation failed",
-  "issue_creation_failed": "Issue creation failed",
-  "draft_issue": "Draft issue",
-  "issue_updated_successfully": "Issue updated successfully",
-  "issue_could_not_be_updated": "Issue could not be updated",
+  "issue_creation_failed": "Work item creation failed",
+  "draft_issue": "Draft work item",
+  "issue_updated_successfully": "Work item updated successfully",
+  "issue_could_not_be_updated": "Work item could not be updated",
   "create_a_draft": "Create a draft",
   "save_to_drafts": "Save to Drafts",
   "save": "Save",
   "update": "Update",
   "updating": "Updating",
-  "create_new_issue": "Create new issue",
+  "create_new_issue": "Create new work item",
   "editor_is_not_ready_to_discard_changes": "Editor is not ready to discard changes",
-  "failed_to_move_issue_to_project": "Failed to move issue to project",
+  "failed_to_move_issue_to_project": "Failed to move work item to project",
   "create_more": "Create more",
   "add_to_project": "Add to project",
   "discard": "Discard",
-  "duplicate_issue_found": "Duplicate issue found",
-  "duplicate_issues_found": "Duplicate issues found",
+  "duplicate_issue_found": "Duplicate work item found",
+  "duplicate_issues_found": "Duplicate work items found",
   "no_matching_results": "No matching results",
   "title_is_required": "Title is required",
   "title": "Title",
@@ -277,8 +277,8 @@
   "start_date": "Start date",
   "due_date": "Due date",
   "estimate": "Estimate",
-  "change_parent_issue": "Change parent issue",
-  "remove_parent_issue": "Remove parent issue",
+  "change_parent_issue": "Change parent work item",
+  "remove_parent_issue": "Remove parent work item",
   "add_parent": "Add parent",
   "loading_members": "Loading members...",
   "view_link_copied_to_clipboard": "View link copied to clipboard.",
@@ -412,14 +412,14 @@
       "empty": {
         "project": "Your recent projects will appear here once you visit one.",
         "page": "Your recent pages will appear here once you visit one.",
-        "issue": "Your recent issues will appear here once you visit one.",
+        "issue": "Your recent work items will appear here once you visit one.",
         "default": "You don't have any recent items yet."
       },
       "filters": {
         "all": "All items",
         "projects": "Projects",
         "pages": "Pages",
-        "issues": "Issues"
+        "issues": "Work items"
       }
     },
     "new_at_plane": {
@@ -834,19 +834,19 @@
     },
     "empty_state": {
       "sidebar_open_tab": {
-        "title": "No open issues",
-        "description": "Find open issues here. Create new issue."
+        "title": "No open work items",
+        "description": "Find open work items here. Create new work item."
       },
       "sidebar_closed_tab": {
-        "title": "No closed issues",
-        "description": "All the issues whether accepted or declined can be found here."
+        "title": "No closed work items",
+        "description": "All the work items whether accepted or declined can be found here."
       },
       "sidebar_filter": {
-        "title": "No matching issues",
-        "description": "No issue matches filter applied in intake. Create a new issue."
+        "title": "No matching work items",
+        "description": "No work item matches filter applied in intake. Create a new work item."
       },
       "detail": {
-        "title": "Select an issue to view its details."
+        "title": "Select a work item to view its details."
       }
     }
   },
@@ -907,7 +907,7 @@
     "empty_state": {
       "general": {
         "title": "Overview of your projects, activity, and metrics",
-        "description": "Welcome to Plane, we are excited to have you here. Create your first project and track your issues, and this page will transform into a space that helps you progress. Admins will also see items which help their team progress.",
+        "description": "Welcome to Plane, we are excited to have you here. Create your first project and track your work items, and this page will transform into a space that helps you progress. Admins will also see items which help their team progress.",
         "primary_button": {
           "text": "Build your first project",
           "comic": {
@@ -957,7 +957,7 @@
           "text": "Start your first project",
           "comic": {
             "title": "Analytics works best with Cycles + Modules",
-            "description": "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav."
+            "description": "First, timebox your work items into Cycles and, if you can, group work items that span more than a cycle into Modules. Check out both on the left nav."
           }
         }
       }
@@ -983,7 +983,7 @@
       "permission": "You don't have permission to perform this action.",
       "cycle_delete": "Failed to delete cycle",
       "module_delete": "Failed to delete module",
-      "issue_delete": "Failed to delete issue"
+      "issue_delete": "Failed to delete work item"
     },
     "state": {
       "backlog": "Backlog",
@@ -1019,7 +1019,7 @@
       },
       "no_projects": {
         "title": "No project",
-        "description": "To create issues or manage your work, you need to create a project or be a part of one.",
+        "description": "To create work items or manage your work, you need to create a project or be a part of one.",
         "primary_button": {
           "text": "Start your first project",
           "comic": {
@@ -1041,34 +1041,34 @@
   "workspace_views": {
     "add_view": "Add view",
     "empty_state": {
-      "all-issues": {
-        "title": "No issues in the project",
-        "description": "First project done! Now, slice your work into trackable pieces with issues. Let's go!",
+      "all-work items": {
+        "title": "No work items in the project",
+        "description": "First project done! Now, slice your work into trackable pieces with work items. Let's go!",
         "primary_button": {
-          "text": "Create new issue"
+          "text": "Create new work item"
         }
       },
       "assigned": {
-        "title": "No issues yet",
-        "description": "Issues assigned to you can be tracked from here.",
+        "title": "No work items yet",
+        "description": "Work items assigned to you can be tracked from here.",
         "primary_button": {
-          "text": "Create new issue"
+          "text": "Create new work item"
         }
       },
       "created": {
-        "title": "No issues yet",
-        "description": "All issues created by you come here, track them here directly.",
+        "title": "No work items yet",
+        "description": "All work items created by you come here, track them here directly.",
         "primary_button": {
-          "text": "Create new issue"
+          "text": "Create new work item"
         }
       },
       "subscribed": {
-        "title": "No issues yet",
-        "description": "Subscribe to issues you are interested in, track all of them here."
+        "title": "No work items yet",
+        "description": "Subscribe to work items you are interested in, track all of them here."
       },
       "custom-view": {
-        "title": "No issues yet",
-        "description": "Issues that applies to the filters, track all of them here."
+        "title": "No work items yet",
+        "description": "Work items that applies to the filters, track all of them here."
       }
     }
   },
@@ -1086,9 +1086,9 @@
         "name": "Workspace name",
         "company_size": "Company size",
         "url": "Workspace URL",
-        "update_workspace"  : "Update workspace",
-        "delete_workspace"  : "Delete workspace",
-        "delete_workspace_description"  : "When deleting a workspace, all of the data and resources within that workspace will be permanently removed and cannot be recovered.",
+        "update_workspace": "Update workspace",
+        "delete_workspace": "Delete workspace",
+        "delete_workspace_description": "When deleting a workspace, all of the data and resources within that workspace will be permanently removed and cannot be recovered.",
         "delete_btn": "Delete my workspace",
         "errors": {
           "name": {
@@ -1105,26 +1105,26 @@
         "add_member": "Add member",
         "invitations_sent_successfully": "Invitations sent successfully",
         "leave_confirmation": "Are you sure you want to leave the workspace? You will no longer have access to this workspace. This action cannot be undone.",
-        "details":{
-          "full_name":"Full name",
-          "display_name":"Display name",
-          "email_address":"Email address",
-          "account_type":"Account type",
-          "authentication":"Authentication",
-          "joining_date":"Joining date"
+        "details": {
+          "full_name": "Full name",
+          "display_name": "Display name",
+          "email_address": "Email address",
+          "account_type": "Account type",
+          "authentication": "Authentication",
+          "joining_date": "Joining date"
         }
       },
       "billing_and_plans": {
         "title": "Billing & Plans",
-        "current_plan":"Current plan",
-        "free_plan":"You are currently using the free plan",
-        "view_plans":"View plans"
+        "current_plan": "Current plan",
+        "free_plan": "You are currently using the free plan",
+        "view_plans": "View plans"
       },
       "exports": {
         "title": "Exports",
         "exporting": "Exporting",
         "previous_exports": "Previous exports",
-        "export_separate_files" : "Export the data into separate files",
+        "export_separate_files": "Export the data into separate files",
         "modal": {
           "title": "Export to",
           "toasts": {
@@ -1146,7 +1146,7 @@
           "title": "Create webhook",
           "details": "Webhook details",
           "payload": "Payload URL",
-          "question": "Which events would you like to trigger this webhook?" ,
+          "question": "Which events would you like to trigger this webhook?",
           "error": "URL is required"
         },
         "secret_key": {
@@ -1226,16 +1226,16 @@
     "stats": {
       "workload": "Workload",
       "overview": "Overview",
-      "created": "Issues created",
-      "assigned": "Issues assigned",
-      "subscribed": "Issues subscribed",
+      "created": "Work items created",
+      "assigned": "Work items assigned",
+      "subscribed": "Work items subscribed",
       "state_distribution": {
-        "title": "Issues by state",
-        "empty": "Create issues to view the them by states in the graph for better analysis."
+        "title": "Work items by state",
+        "empty": "Create work items to view the them by states in the graph for better analysis."
       },
       "priority_distribution": {
-        "title": "Issues by Priority",
-        "empty": "Create issues to view the them by priority in the graph for better analysis."
+        "title": "Work items by Priority",
+        "empty": "Create work items to view the them by priority in the graph for better analysis."
       },
       "recent_activity": {
         "title": "Recent activity",
@@ -1259,19 +1259,19 @@
     "empty_state": {
       "activity": {
         "title": "No activities yet",
-        "description": "Get started by creating a new issue! Add details and properties to it. Explore more in Plane to see your activity."
+        "description": "Get started by creating a new work item! Add details and properties to it. Explore more in Plane to see your activity."
       },
       "assigned": {
-        "title": "No issues are assigned to you",
-        "description": "Issues assigned to you can be tracked from here."
+        "title": "No work items are assigned to you",
+        "description": "Work items assigned to you can be tracked from here."
       },
       "created": {
-        "title": "No issues yet",
-        "description": "All issues created by you come here, track them here directly."
+        "title": "No work items yet",
+        "description": "All work items created by you come here, track them here directly."
       },
       "subscribed": {
-        "title": "No issues yet",
-        "description": "Subscribe to issues you are interested in, track all of them here."
+        "title": "No work items yet",
+        "description": "Subscribe to work items you are interested in, track all of them here."
       }
     }
   },
@@ -1300,8 +1300,8 @@
       "project_lead": "Project lead",
       "default_assignee": "Default assignee",
       "guest_super_permissions": {
-        "title": "Grant view access to all issues for guest users:",
-        "sub_heading": "This will allow guests to have view access to all the project issues."
+        "title": "Grant view access to all work items for guest users:",
+        "sub_heading": "This will allow guests to have view access to all the project work items."
       },
       "invite_members": {
         "title": "Invite members",
@@ -1327,14 +1327,14 @@
     "automations": {
       "label": "Automations",
       "auto-archive": {
-        "title": "Auto-archive closed issues",
-        "description": "Plane will auto archive issues that have been completed or canceled.",
-        "duration": "Auto-archive issues that are closed for"
+        "title": "Auto-archive closed work items",
+        "description": "Plane will auto archive work items that have been completed or canceled.",
+        "duration": "Auto-archive work items that are closed for"
       },
       "auto-close": {
-        "title": "Auto-close issues",
-        "description": "Plane will automatically close issues that haven't been completed or canceled.",
-        "duration": "Auto-close issues that are inactive for",
+        "title": "Auto-close work items",
+        "description": "Plane will automatically close work items that haven't been completed or canceled.",
+        "duration": "Auto-close work items that are inactive for",
         "auto_close_status": "Auto-close status"
       }
     },
@@ -1342,11 +1342,11 @@
     "empty_state": {
       "labels": {
         "title": "No labels yet",
-        "description": "Create labels to help organize and filter issues in you project."
+        "description": "Create labels to help organize and filter work items in you project."
       },
       "estimates": {
         "title": "No estimate systems yet",
-        "description": "Create a set of estimates to communicate the amount of work per issue.",
+        "description": "Create a set of estimates to communicate the amount of work per work item.",
         "primary_button": "Add estimate system"
       }
     }
@@ -1373,18 +1373,18 @@
         }
       },
       "no_issues": {
-        "title": "No issues added to the cycle",
-        "description": "Add or create issues you wish to timebox and deliver within this cycle",
+        "title": "No work items added to the cycle",
+        "description": "Add or create work items you wish to timebox and deliver within this cycle",
         "primary_button": {
-          "text": "Create new issue"
+          "text": "Create new work item"
         },
         "secondary_button": {
-          "text": "Add existing issue"
+          "text": "Add existing work item"
         }
       },
       "completed_no_issues": {
-        "title": "No issues in the cycle",
-        "description": "No issues in the cycle. Issues are either transferred or hidden. To see hidden issues if any, update your display properties accordingly."
+        "title": "No work items in the cycle",
+        "description": "No work items in the cycle. Work items are either transferred or hidden. To see hidden work items if any, update your display properties accordingly."
       },
       "active": {
         "title": "No active cycle",
@@ -1400,25 +1400,25 @@
   "project_issues": {
     "empty_state": {
       "no_issues": {
-        "title": "Create an issue and assign it to someone, even yourself",
-        "description": "Think of issues as jobs, tasks, work, or JTBD. Which we like. An issue and its sub-issues are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes issues to move your project towards its goal.",
+        "title": "Create a work item and assign it to someone, even yourself",
+        "description": "Think of work items as jobs, tasks, work, or JTBD. Which we like. A work item and its sub-work items are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes work items to move your project towards its goal.",
         "primary_button": {
-          "text": "Create your first issue",
+          "text": "Create your first work item",
           "comic": {
-            "title": "Issues are building blocks in Plane.",
-            "description": "Redesign the Plane UI, Rebrand the company, or Launch the new fuel injection system are examples of issues that likely have sub-issues."
+            "title": "Work items are building blocks in Plane.",
+            "description": "Redesign the Plane UI, Rebrand the company, or Launch the new fuel injection system are examples of work items that likely have sub-work items."
           }
         }
       },
       "no_archived_issues": {
-        "title": "No archived issues yet",
-        "description": "Manually or through automation, you can archive issues that are completed or cancelled. Find them here once archived.",
+        "title": "No archived work items yet",
+        "description": "Manually or through automation, you can archive work items that are completed or cancelled. Find them here once archived.",
         "primary_button": {
           "text": "Set automation"
         }
       },
       "issues_empty_filter": {
-        "title": "No issues found matching the filters applied",
+        "title": "No work items found matching the filters applied",
         "secondary_button": {
           "text": "Clear all filters"
         }
@@ -1436,7 +1436,7 @@
     "empty_state": {
       "general": {
         "title": "Map your project milestones to Modules and track aggregated work easily.",
-        "description": "A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone.",
+        "description": "A group of work items that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone.",
         "primary_button": {
           "text": "Build your first module",
           "comic": {
@@ -1446,13 +1446,13 @@
         }
       },
       "no_issues": {
-        "title": "No issues in the module",
-        "description": "Create or add issues which you want to accomplish as part of this module",
+        "title": "No work items in the module",
+        "description": "Create or add work items which you want to accomplish as part of this module",
         "primary_button": {
-          "text": "Create new issue"
+          "text": "Create new work items"
         },
         "secondary_button": {
-          "text": "Add an existing issue"
+          "text": "Add an existing work item="
         }
       },
       "archived": {
@@ -1488,7 +1488,7 @@
         "primary_button": {
           "text": "Create your first view",
           "comic": {
-            "title": "Views work atop Issue properties.",
+            "title": "Views work atop Work item properties.",
             "description": "You can create a view from here with as many properties as filters as you see fit."
           }
         }
@@ -1504,7 +1504,7 @@
     "empty_state": {
       "general": {
         "title": "Write a note, a doc, or a full knowledge base. Get Galileo, Plane's AI assistant, to help you get started",
-        "description": "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project's context. To make short work of any doc, invoke Galileo, Plane's AI, with a shortcut or the click of a button.",
+        "description": "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed work items, lay them out using a library of components, and keep them all in your project's context. To make short work of any doc, invoke Galileo, Plane's AI, with a shortcut or the click of a button.",
         "primary_button": {
           "text": "Create your first page"
         }
@@ -1541,10 +1541,10 @@
   "issue_relation": {
     "empty_state": {
       "search": {
-        "title": "No matching issues found"
+        "title": "No matching work items found"
       },
       "no_issues": {
-        "title": "No issues found"
+        "title": "No work items found"
       }
     }
   },
@@ -1553,7 +1553,7 @@
     "empty_state": {
       "general": {
         "title": "No comments yet",
-        "description": "Comments can be used as a discussion and follow-up space for the issues"
+        "description": "Comments can be used as a discussion and follow-up space for the work items"
       }
     }
   },
@@ -1588,12 +1588,12 @@
         "title": "Select to view details."
       },
       "all": {
-        "title": "No issues assigned",
-        "description": "Updates for issues assigned to you can be \n seen here"
+        "title": "No work items assigned",
+        "description": "Updates for work items assigned to you can be \n seen here"
       },
       "mentions": {
-        "title": "No issues assigned",
-        "description": "Updates for issues assigned to you can be \n seen here"
+        "title": "No work items assigned",
+        "description": "Updates for work items assigned to you can be \n seen here"
       }
     },
     "tabs": {
@@ -1618,19 +1618,19 @@
   "active_cycle": {
     "empty_state": {
       "progress": {
-        "title": "Add issues to the cycle to view it's progress"
+        "title": "Add work items to the cycle to view it's progress"
       },
       "chart": {
-        "title": "Add issues to the cycle to view the burndown chart."
+        "title": "Add work items to the cycle to view the burndown chart."
       },
       "priority_issue": {
-        "title": "Observe high priority issues tackled in the cycle at a glance."
+        "title": "Observe high priority work items tackled in the cycle at a glance."
       },
       "assignee": {
-        "title": "Add assignees to issues to see a breakdown of work by assignees."
+        "title": "Add assignees to work items to see a breakdown of work by assignees."
       },
       "label": {
-        "title": "Add labels to issues to see the breakdown of work by labels."
+        "title": "Add labels to work items to see the breakdown of work by labels."
       }
     }
   },
@@ -1639,7 +1639,7 @@
     "empty_state": {
       "inbox": {
         "title": "Intake is not enabled for the project.",
-        "description": "Intake helps you manage incoming requests to your project and add them as issues in your workflow. Enable intake from project settings to manage requests.",
+        "description": "Intake helps you manage incoming requests to your project and add them as work items in your workflow. Enable intake from project settings to manage requests.",
         "primary_button": {
           "text": "Manage features"
         }
@@ -1675,10 +1675,10 @@
     }
   },
   "workspace_draft_issues": {
-    "draft_an_issue": "Draft an issue",
+    "draft_an_issue": "Draft a work item",
     "empty_state": {
-      "title": "Half-written issues, and soon, comments will show up here.",
-      "description": "To try this out, start adding an issue and leave it mid-way or create your first draft below. 😉",
+      "title": "Half-written work items, and soon, comments will show up here.",
+      "description": "To try this out, start adding a work item and leave it mid-way or create your first draft below. 😉",
       "primary_button": {
         "text": "Create your first draft"
       }
@@ -1690,7 +1690,7 @@
     "toasts": {
       "created": {
         "success": "Draft created",
-        "error": "Issue could not be created. Please try again."
+        "error": "Work item could not be created. Please try again."
       },
       "deleted": {
         "success": "Draft deleted"
@@ -1787,31 +1787,31 @@
   "importer": {
     "github": {
       "title": "Github",
-      "description": "Import issues from GitHub repositories and sync them."
+      "description": "Import work items from GitHub repositories and sync them."
     },
     "jira": {
       "title": "Jira",
-      "description": "Import issues and epics from Jira projects and epics."
+      "description": "Import work items and epics from Jira projects and epics."
     }
   },
 
   "exporter": {
     "csv": {
       "title": "CSV",
-      "description": "Export issues to a CSV file.",
+      "description": "Export work items to a CSV file.",
       "short_description": "Export as csv"
     },
     "xlsx": {
       "title": "Excel",
-      "description": "Export issues to a Excel file."
+      "description": "Export work items to a Excel file."
     },
     "json": {
       "title": "JSON",
-      "description": "Export issues to a JSON file."
+      "description": "Export work items to a JSON file."
     }
   },
   "default_global_view": {
-    "all_issues": "All issues",
+    "all_issues": "All work items",
     "assigned": "Assigned",
     "created": "Created",
     "subscribed": "Subscribed"
@@ -1856,7 +1856,7 @@
     "order_by": {
       "name": "Name",
       "progress": "Progress",
-      "issues": "Number of issues",
+      "issues": "Number of work items",
       "due_date": "Due date",
       "created_at": "Created date",
       "manual": "Manual"
