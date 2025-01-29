@@ -14,8 +14,10 @@
   "description": "説明",
   "search": "検索",
   "add_member": "メンバーを追加",
+  "adding_members": "メンバーを追加中",
   "remove_member": "メンバーを削除",
   "add_members": "メンバーを追加",
+  "adding_member": "メンバーを追加中",
   "remove_members": "メンバーを削除",
   "add": "追加",
   "adding": "追加中",
@@ -36,12 +38,12 @@
   "saving": "保存中...",
   "save_changes": "変更を保存",
   "deactivate_account": "アカウントを無効化",
-  "deactivate_account_description": "アカウントを無効化すると、そのアカウント内のすべてのデータとリソースが完全に削除され、復元することはできません。",
-  "profile_settings": "プロフィール設定",
-  "your_account": "アカウント",
+  "deactivate_account_description": "アカウントを無効化すると、そのアカウント内のすべてのデータとリソースが完全に削除され、復元できなくなります。",
+  "profile_settings": "プロフィール設定",
+  "your_account": "あなたのアカウント",
   "security": "セキュリティ",
-  "activity": "アクティビティ",
-  "appearance": "アピアンス",
+  "activity": "アクティビティ",
+  "appearance": "外観",
   "notifications": "通知",
   "workspaces": "ワークスペース",
   "create_workspace": "ワークスペースを作成",
@@ -49,114 +51,75 @@
   "summary": "概要",
   "assigned": "割り当て済み",
   "created": "作成済み",
-  "subscribed": "購読済み",
+  "subscribed": "購読中",
   "you_do_not_have_the_permission_to_access_this_page": "このページにアクセスする権限がありません。",
-  "failed_to_sign_out_please_try_again": "サインアウトに失敗しました。もう一度お試しください。",
-  "password_changed_successfully": "パスワードが正常に変更されました。",
-  "something_went_wrong_please_try_again": "何かがうまくいきませんでした。もう一度お試しください。",
-  "change_password": "パスワードを変更",
-  "passwords_dont_match": "パスワードが一致しません",
-  "current_password": "現在のパスワード",
-  "new_password": "新しいパスワード",
-  "confirm_password": "パスワードを確認",
-  "this_field_is_required": "このフィールドは必須です",
-  "changing_password": "パスワードを変更中",
-  "please_enter_your_password": "パスワードを入力してください。",
-  "password_length_should_me_more_than_8_characters": "パスワードの長さは8文字以上である必要があります。",
-  "password_is_weak": "パスワードが弱いです。",
-  "password_is_strong": "パスワードが強いです。",
+  "something_went_wrong_please_try_again": "エラーが発生しました。もう一度お試しください。",
   "load_more": "もっと読み込む",
-  "select_or_customize_your_interface_color_scheme": "インターフェースのカラースキームを選択またはカスタマイズしてください。",
+  "select_or_customize_your_interface_color_scheme": "インターフェースの配色を選択またはカスタマイズしてください。",
   "theme": "テーマ",
-  "system_preference": "システム設定",
+  "system_preference": "システム設定に従う",
   "light": "ライト",
   "dark": "ダーク",
-  "light_contrast": "ライト高コントラスト",
-  "dark_contrast": "ダーク高コントラスト",
+  "light_contrast": "ライトハイコントラスト",
+  "dark_contrast": "ダークハイコントラスト",
   "custom": "カスタムテーマ",
   "select_your_theme": "テーマを選択",
   "customize_your_theme": "テーマをカスタマイズ",
   "background_color": "背景色",
-  "text_color": "テキスト色",
-  "primary_color": "プライマリ（テーマ）色",
-  "sidebar_background_color": "サイドバー背景色",
-  "sidebar_text_color": "サイドバーテキスト色",
+  "text_color": "文字色",
+  "primary_color": "プライマリ（テーマ）カラー",
+  "sidebar_background_color": "サイドバーの背景色",
+  "sidebar_text_color": "サイドバーの文字色",
   "set_theme": "テーマを設定",
   "enter_a_valid_hex_code_of_6_characters": "6文字の有効な16進コードを入力してください",
   "background_color_is_required": "背景色は必須です",
-  "text_color_is_required": "テキスト色は必須です",
-  "primary_color_is_required": "プライマリ色は必須です",
-  "sidebar_background_color_is_required": "サイドバー背景色は必須です",
-  "sidebar_text_color_is_required": "サイドバーテキスト色は必須です",
+  "text_color_is_required": "文字色は必須です",
+  "primary_color_is_required": "プライマリカラーは必須です",
+  "sidebar_background_color_is_required": "サイドバーの背景色は必須です",
+  "sidebar_text_color_is_required": "サイドバーの文字色は必須です",
   "updating_theme": "テーマを更新中",
   "theme_updated_successfully": "テーマが正常に更新されました",
   "failed_to_update_the_theme": "テーマの更新に失敗しました",
   "email_notifications": "メール通知",
-  "stay_in_the_loop_on_issues_you_are_subscribed_to_enable_this_to_get_notified": "購読している問題についての通知を受け取るには、これを有効にしてください。",
+  "stay_in_the_loop_on_issues_you_are_subscribed_to_enable_this_to_get_notified": "購読している課題の最新情報を受け取ります。通知を受け取るには有効にしてください。",
   "email_notification_setting_updated_successfully": "メール通知設定が正常に更新されました",
   "failed_to_update_email_notification_setting": "メール通知設定の更新に失敗しました",
-  "notify_me_when": "通知する条件",
+  "notify_me_when": "通知を受け取るタイミング",
   "property_changes": "プロパティの変更",
-  "property_changes_description": "担当者、優先度、見積もりなどのプロパティが変更されたときに通知します。",
+  "property_changes_description": "課題の担当者、優先度、見積もりなどのプロパティが変更された時に通知します。",
   "state_change": "状態の変更",
-  "state_change_description": "問題が別の状態に移動したときに通知します",
-  "issue_completed": "問題が完了",
-  "issue_completed_description": "問題が完了したときのみ通知します",
+  "state_change_description": "課題が異なる状態に移動した時に通知します",
+  "issue_completed": "課題の完了",
+  "issue_completed_description": "課題が完了した時のみ通知します",
   "comments": "コメント",
-  "comments_description": "誰かが問題にコメントを残したときに通知します",
+  "comments_description": "誰かが課題にコメントを残した時に通知します",
   "mentions": "メンション",
-  "mentions_description": "コメントや説明で誰かが自分をメンションしたときのみ通知します",
-  "create_your_workspace": "ワークスペースを作成",
-  "only_your_instance_admin_can_create_workspaces": "ワークスペースを作成できるのはインスタンス管理者のみです",
-  "only_your_instance_admin_can_create_workspaces_description": "インスタンス管理者のメールアドレスを知っている場合は、以下のボタンをクリックして連絡を取ってください。",
-  "go_back": "戻る",
-  "request_instance_admin": "インスタンス管理者にリクエスト",
-  "plane_logo": "プレーンロゴ",
-  "workspace_creation_disabled": "ワークスペースの作成が無効化されています",
-  "workspace_request_subject": "新しいワークスペースのリクエスト",
-  "workspace_request_body": "インスタンス管理者様\n\nURL [/workspace-name] で新しいワークスペースを作成してください。[ワークスペース作成の目的]\n\nありがとうございます。\n{{firstName}} {{lastName}}\n{{email}}",
-  "creating_workspace": "ワークスペースを作成中",
-  "workspace_created_successfully": "ワークスペースが正常に作成されました",
-  "create_workspace_page": "ワークスペース作成ページ",
-  "workspace_could_not_be_created_please_try_again": "ワークスペースを作成できませんでした。もう一度お試しください。",
-  "workspace_could_not_be_created_please_try_again_description": "ワークスペースの作成中にエラーが発生しました。もう一度お試しください。",
-  "this_is_a_required_field": "これは必須フィールドです。",
-  "name_your_workspace": "ワークスペースに名前を付ける",
-  "workspaces_names_can_contain_only_space_dash_and_alphanumeric_characters": "ワークスペース名にはスペース、ダッシュ、アンダースコア、英数字のみを含めることができます。",
-  "limit_your_name_to_80_characters": "名前は80文字以内にしてください。",
-  "set_your_workspace_url": "ワークスペースのURLを設定",
-  "limit_your_url_to_48_characters": "URLは48文字以内にしてください。",
-  "how_many_people_will_use_this_workspace": "このワークスペースを使用する人数は？",
-  "how_many_people_will_use_this_workspace_description": "購入するシート数を決定するのに役立ちます。",
-  "select_a_range": "範囲を選択",
-  "urls_can_contain_only_dash_and_alphanumeric_characters": "URLにはダッシュと英数字のみを含めることができます。",
-  "something_familiar_and_recognizable_is_always_best": "親しみやすく認識しやすいものが常に最適です。",
-  "workspace_url_is_already_taken": "ワークスペースのURLは既に使用されています！",
-  "old_password": "古いパスワード",
+  "mentions_description": "誰かがコメントや説明で自分をメンションした時のみ通知します",
+  "old_password": "現在のパスワード",
   "general_settings": "一般設定",
   "sign_out": "サインアウト",
   "signing_out": "サインアウト中",
-  "active_cycles": "アクティブサイクル",
-  "active_cycles_description": "プロジェクト全体のサイクルを監視し、高優先度の問題を追跡し、注意が必要なサイクルにズームインします。",
+  "active_cycles": "アクティブなサイクル",
+  "active_cycles_description": "プロジェクト全体のサイクルを監視し、優先度の高い課題を追跡し、注意が必要なサイクルを詳しく確認します。",
   "on_demand_snapshots_of_all_your_cycles": "すべてのサイクルのオンデマンドスナップショット",
   "upgrade": "アップグレード",
-  "10000_feet_view": "すべてのアクティブサイクルの10,000フィートビュー。",
-  "10000_feet_view_description": "各プロジェクトのサイクルを個別に見るのではなく、すべてのプロジェクトのサイクルを一度に見るためにズームアウトします。",
-  "get_snapshot_of_each_active_cycle": "各アクティブサイクルのスナップショットを取得します。",
-  "get_snapshot_of_each_active_cycle_description": "すべてのアクティブサイクルの高レベルのメトリクスを追跡し、進捗状況を確認し、期限に対するスコープの感覚を得ます。",
-  "compare_burndowns": "バーンダウンを比較します。",
-  "compare_burndowns_description": "各チームのパフォーマンスを監視し、各サイクルのバーンダウンレポートを覗き見します。",
-  "quickly_see_make_or_break_issues": "重要な問題をすばやく確認します。",
-  "quickly_see_make_or_break_issues_description": "各サイクルの期限に対する高優先度の問題をプレビューします。1クリックでサイクルごとにすべてを確認できます。",
-  "zoom_into_cycles_that_need_attention": "注意が必要なサイクルにズームインします。",
-  "zoom_into_cycles_that_need_attention_description": "期待に沿わないサイクルの状態を1クリックで調査します。",
-  "stay_ahead_of_blockers": "ブロッカーを先取りします。",
-  "stay_ahead_of_blockers_description": "プロジェクト間の課題を見つけ、他のビューからは明らかでないサイクル間の依存関係を確認します。",
+  "10000_feet_view": "サイクル全体の俯瞰ビュー",
+  "10000_feet_view_description": "各プロジェクトのサイクルを個別に確認する代わりに、すべてのプロジェクトの実行中のサイクルを一度に確認できます。",
+  "get_snapshot_of_each_active_cycle": "各アクティブサイクルのスナップショットを取得",
+  "get_snapshot_of_each_active_cycle_description": "すべてのアクティブサイクルの主要な指標を追跡し、進捗状況を確認し、期限に対するスコープを把握します。",
+  "compare_burndowns": "バーンダウンを比較",
+  "compare_burndowns_description": "各サイクルのバーンダウンレポートを確認して、各チームのパフォーマンスを監視します。",
+  "quickly_see_make_or_break_issues": "重要な課題をすぐに確認",
+  "quickly_see_make_or_break_issues_description": "期限に対する各サイクルの優先度の高い課題をプレビューします。ワンクリックで各サイクルのすべての項目を確認できます。",
+  "zoom_into_cycles_that_need_attention": "注意が必要なサイクルを詳しく確認",
+  "zoom_into_cycles_that_need_attention_description": "期待通りに進んでいないサイクルの状態をワンクリックで調査できます。",
+  "stay_ahead_of_blockers": "ブロッカーに先手を打つ",
+  "stay_ahead_of_blockers_description": "プロジェクト間の課題を特定し、他のビューでは明確でないサイクル間の依存関係を確認できます。",
   "analytics": "分析",
   "workspace_invites": "ワークスペースの招待",
-  "enter_god_mode": "ゴッドモードに入る",
-  "workspace_logo": "ワークスペースロゴ",
-  "new_issue": "新しい問題",
+  "enter_god_mode": "管理者モードを開始",
+  "workspace_logo": "ワークスペースのロゴ",
+  "new_issue": "新規課題",
   "your_work": "あなたの作業",
   "drafts": "下書き",
   "projects": "プロジェクト",
@@ -166,43 +129,48 @@
   "settings": "設定",
   "failed_to_move_favorite": "お気に入りの移動に失敗しました",
   "your_favorites": "あなたのお気に入り",
-  "no_favorites_yet": "まだお気に入りはありません",
-  "create_folder": "フォルダーを作成",
-  "new_folder": "新しいフォルダー",
+  "no_favorites_yet": "まだお気に入りがありません",
+  "create_folder": "フォルダを作成",
+  "new_folder": "新規フォルダ",
   "favorite_updated_successfully": "お気に入りが正常に更新されました",
   "favorite_created_successfully": "お気に入りが正常に作成されました",
-  "folder_already_exists": "フォルダーは既に存在します",
-  "folder_name_cannot_be_empty": "フォルダー名を空にすることはできません",
-  "something_went_wrong": "何かがうまくいきませんでした",
-  "failed_to_reorder_favorite": "お気に入りの並べ替えに失敗しました",
+  "folder_already_exists": "フォルダは既に存在します",
+  "folder_name_cannot_be_empty": "フォルダ名を入力してください",
+  "something_went_wrong": "問題が発生しました",
+  "failed_to_reorder_favorite": "お気に入りの並び替えに失敗しました",
   "favorite_removed_successfully": "お気に入りが正常に削除されました",
   "failed_to_create_favorite": "お気に入りの作成に失敗しました",
   "failed_to_rename_favorite": "お気に入りの名前変更に失敗しました",
-  "project_link_copied_to_clipboard": "プロジェクトリンクがクリップボードにコピーされました",
+  "project_link_copied_to_clipboard": "プロジェクトのリンクがクリップボードにコピーされました",
   "link_copied": "リンクがコピーされました",
   "your_projects": "あなたのプロジェクト",
   "add_project": "プロジェクトを追加",
   "create_project": "プロジェクトを作成",
   "failed_to_remove_project_from_favorites": "お気に入りからプロジェクトを削除できませんでした。もう一度お試しください。",
   "project_created_successfully": "プロジェクトが正常に作成されました",
-  "project_created_successfully_description": "プロジェクトが正常に作成されました。今すぐ問題を追加し始めることができます。",
-  "project_cover_image_alt": "プロジェクトカバー画像",
+  "project_created_successfully_description": "プロジェクトが正常に作成されました。作業項目を追加できるようになりました。",
+  "project_cover_image_alt": "プロジェクトのカバー画像",
   "name_is_required": "名前は必須です",
-  "title_should_be_less_than_255_characters": "タイトルは255文字未満である必要があります",
+  "title_should_be_less_than_255_characters": "タイトルは255文字未満にしてください",
   "project_name": "プロジェクト名",
-  "project_id_must_be_at_least_1_character": "プロジェクトIDは少なくとも1文字である必要があります",
-  "project_id_must_be_at_most_5_characters": "プロジェクトIDは最大5文字である必要があります",
+  "project_id_must_be_at_least_1_character": "プロジェクトIDは最低1文字必要です",
+  "project_id_must_be_at_most_5_characters": "プロジェクトIDは最大5文字までです",
   "project_id": "プロジェクトID",
-  "project_id_tooltip_content": "プロジェクト内の問題を一意に識別するのに役立ちます。最大5文字。",
+  "project_id_tooltip_content": "プロジェクト内の作業項目を一意に識別するのに役立ちます。最大5文字。",
   "description_placeholder": "説明...",
-  "only_alphanumeric_non_latin_characters_allowed": "英数字と非ラテン文字のみが許可されます。",
+  "only_alphanumeric_non_latin_characters_allowed": "英数字と非ラテン文字のみ使用できます。",
   "project_id_is_required": "プロジェクトIDは必須です",
+  "project_id_allowed_char": "英数字と非ラテン文字のみ使用できます。",
+  "project_id_min_char": "プロジェクトIDは最低1文字必要です",
+  "project_id_max_char": "プロジェクトIDは最大5文字までです",
+  "project_description_placeholder": "プロジェクトの説明を入力",
   "select_network": "ネットワークを選択",
-  "lead": "リード",
-  "private": "プライベート",
-  "public": "パブリック",
-  "accessible_only_by_invite": "招待によってのみアクセス可能",
-  "anyone_in_the_workspace_except_guests_can_join": "ゲストを除くワークスペース内の誰でも参加できます",
+  "lead": "リーダー",
+  "date_range": "期間",
+  "private": "非公開",
+  "public": "公開",
+  "accessible_only_by_invite": "招待のみアクセス可能",
+  "anyone_in_the_workspace_except_guests_can_join": "ゲスト以外のワークスペースのメンバーが参加可能",
   "creating": "作成中",
   "creating_project": "プロジェクトを作成中",
   "adding_project_to_favorites": "プロジェクトをお気に入りに追加中",
@@ -210,89 +178,89 @@
   "couldnt_add_the_project_to_favorites": "プロジェクトをお気に入りに追加できませんでした。もう一度お試しください。",
   "removing_project_from_favorites": "お気に入りからプロジェクトを削除中",
   "project_removed_from_favorites": "プロジェクトがお気に入りから削除されました",
-  "couldnt_remove_the_project_from_favorites": "お気に入りからプロジェクトを削除できませんでした。もう一度お試しください。",
+  "couldnt_remove_the_project_from_favorites": "プロジェクトをお気に入りから削除できませんでした。もう一度お試しください。",
   "add_to_favorites": "お気に入りに追加",
   "remove_from_favorites": "お気に入りから削除",
   "publish_settings": "公開設定",
   "publish": "公開",
   "copy_link": "リンクをコピー",
-  "leave_project": "プロジェクトを離れる",
-  "join_the_project_to_rearrange": "プロジェクトに参加して並べ替え",
-  "drag_to_rearrange": "ドラッグして並べ替え",
+  "leave_project": "プロジェクトを退出",
+  "join_the_project_to_rearrange": "並び替えるにはプロジェクトに参加してください",
+  "drag_to_rearrange": "ドラッグして並び替え",
   "congrats": "おめでとうございます！",
   "open_project": "プロジェクトを開く",
-  "issues": "問題",
+  "issues": "課題",
   "cycles": "サイクル",
   "modules": "モジュール",
   "pages": "ページ",
-  "intake": "インテーク",
+  "intake": "受付",
   "time_tracking": "時間追跡",
   "work_management": "作業管理",
-  "projects_and_issues": "プロジェクトと問題",
-  "projects_and_issues_description": "このプロジェクトでオンまたはオフに切り替えます。",
-  "cycles_description": "プロジェクトごとに作業をタイムボックス化し、期間ごとに頻度を変更します。",
-  "modules_description": "独自のリードと担当者を持つサブプロジェクトのようなセットアップに作業をグループ化します。",
-  "views_description": "後で使用するために、または共有するためにソート、フィルター、表示オプションを保存します。",
-  "pages_description": "何かを書くように何かを書く。",
-  "intake_description": "購読している問題についての通知を受け取るには、これを有効にしてください。",
-  "time_tracking_description": "問題とプロジェクトに費やした時間を追跡します。",
-  "work_management_description": "作業とプロジェクトを簡単に管理します。",
+  "projects_and_issues": "プロジェクトと課題",
+  "projects_and_issues_description": "このプロジェクトでの有効/無効を切り替えます。",
+  "cycles_description": "プロジェクトごとに作業を時間枠で区切り、期間を変更できます。",
+  "modules_description": "サブプロジェクトのような設定で、独自のリーダーと担当者を持つグループ作業を作成します。",
+  "views_description": "並び替え、フィルター、表示オプションを保存して後で使用したり、共有したりできます。",
+  "pages_description": "自由に文章を書くことができます。",
+  "intake_description": "購読している課題の最新情報を受け取ります。通知を受け取るには有効にしてください。",
+  "time_tracking_description": "作業項目とプロジェクトの作業時間を追跡します。",
+  "work_management_description": "作業とプロジェクトを簡単に管理できます。",
   "documentation": "ドキュメント",
-  "message_support": "サポートにメッセージを送る",
-  "contact_sales": "営業に連絡",
+  "message_support": "サポートにメッセージ",
+  "contact_sales": "営業に問い合わせ",
   "hyper_mode": "ハイパーモード",
   "keyboard_shortcuts": "キーボードショートカット",
-  "whats_new": "新着情報",
+  "whats_new": "新機能",
   "version": "バージョン",
-  "we_are_having_trouble_fetching_the_updates": "更新の取得に問題が発生しています。",
-  "our_changelogs": "私たちの変更履歴",
+  "we_are_having_trouble_fetching_the_updates": "更新情報の取得に問題が発生しています。",
+  "our_changelogs": "変更履歴",
   "for_the_latest_updates": "最新の更新情報については",
-  "please_visit": "訪問してください",
+  "please_visit": "こちらをご覧ください",
   "docs": "ドキュメント",
   "full_changelog": "完全な変更履歴",
   "support": "サポート",
-  "discord": "ディスコード",
-  "powered_by_plane_pages": "Plane Pagesによって提供されています",
+  "discord": "Discord",
+  "powered_by_plane_pages": "Plane Pagesを使用",
   "please_select_at_least_one_invitation": "少なくとも1つの招待を選択してください。",
-  "please_select_at_least_one_invitation_description": "ワークスペースに参加するために少なくとも1つの招待を選択してください。",
-  "we_see_that_someone_has_invited_you_to_join_a_workspace": "誰かがワークスペースに参加するようにあなたを招待したことがわかります",
+  "please_select_at_least_one_invitation_description": "ワークスペースに参加するには少なくとも1つの招待を選択してください。",
+  "we_see_that_someone_has_invited_you_to_join_a_workspace": "ワークスペースへの招待が届いています",
   "join_a_workspace": "ワークスペースに参加",
-  "we_see_that_someone_has_invited_you_to_join_a_workspace_description": "誰かがワークスペースに参加するようにあなたを招待したことがわかります",
+  "we_see_that_someone_has_invited_you_to_join_a_workspace_description": "ワークスペースへの招待が届いています",
   "join_a_workspace_description": "ワークスペースに参加",
-  "accept_and_join": "受け入れて参加",
-  "go_home": "ホームに戻る",
+  "accept_and_join": "承認して参加",
+  "go_home": "ホームへ",
   "no_pending_invites": "保留中の招待はありません",
-  "you_can_see_here_if_someone_invites_you_to_a_workspace": "誰かがワークスペースに招待した場合、ここで確認できます",
+  "you_can_see_here_if_someone_invites_you_to_a_workspace": "ワークスペースへの招待があればここに表示されます",
   "back_to_home": "ホームに戻る",
   "workspace_name": "ワークスペース名",
   "deactivate_your_account": "アカウントを無効化",
-  "deactivate_your_account_description": "無効化すると、問題を割り当てられなくなり、ワークスペースの請求もされなくなります。アカウントを再有効化するには、このメールアドレスに招待されたワークスペースが必要です。",
+  "deactivate_your_account_description": "無効化すると、作業項目の割り当てを受けられなくなり、ワークスペースの課金対象から外れます。アカウントを再有効化するには、このメールアドレスへのワークスペースからの招待が必要です。",
   "deactivating": "無効化中",
   "confirm": "確認",
   "draft_created": "下書きが作成されました",
-  "issue_created_successfully": "問題が正常に作成されました",
-  "draft_creation_failed": "下書き作成に失敗しました",
-  "issue_creation_failed": "問題作成に失敗しました",
-  "draft_issue": "下書き問題",
-  "issue_updated_successfully": "問題が正常に更新されました",
-  "issue_could_not_be_updated": "問題を更新できませんでした",
+  "issue_created_successfully": "課題が正常に作成されました",
+  "draft_creation_failed": "下書きの作成に失敗しました",
+  "issue_creation_failed": "課題の作成に失敗しました",
+  "draft_issue": "下書き課題",
+  "issue_updated_successfully": "課題が正常に更新されました",
+  "issue_could_not_be_updated": "課題を更新できませんでした",
   "create_a_draft": "下書きを作成",
   "save_to_drafts": "下書きに保存",
   "save": "保存",
   "update": "更新",
   "updating": "更新中",
-  "create_new_issue": "新しい問題を作成",
+  "create_new_issue": "新規課題を作成",
   "editor_is_not_ready_to_discard_changes": "エディターは変更を破棄する準備ができていません",
-  "failed_to_move_issue_to_project": "問題をプロジェクトに移動できませんでした",
-  "create_more": "作成する",
+  "failed_to_move_issue_to_project": "課題をプロジェクトに移動できませんでした",
+  "create_more": "さらに作成",
   "add_to_project": "プロジェクトに追加",
   "discard": "破棄",
-  "duplicate_issue_found": "重複問題が見つかりました",
-  "duplicate_issues_found": "重複問題が見つかりました",
-  "no_matching_results": "一致する結果はありません",
+  "duplicate_issue_found": "重複する課題が見つかりました",
+  "duplicate_issues_found": "重複する課題が見つかりました",
+  "no_matching_results": "一致する結果がありません",
   "title_is_required": "タイトルは必須です",
   "title": "タイトル",
-  "state": "ステータス",
+  "state": "状態",
   "priority": "優先度",
   "none": "なし",
   "urgent": "緊急",
@@ -300,33 +268,65 @@
   "medium": "中",
   "low": "低",
   "members": "メンバー",
-  "assignee": "アサイン者",
-  "assignees": "アサイン者",
+  "assignee": "担当者",
+  "assignees": "担当者",
   "you": "あなた",
   "labels": "ラベル",
-  "create_new_label": "新しいラベルを作成",
+  "create_new_label": "新規ラベルを作成",
   "start_date": "開始日",
   "due_date": "期限日",
-  "cycle": "サイクル",
   "estimate": "見積もり",
-  "change_parent_issue": "親問題を変更",
-  "remove_parent_issue": "親問題を削除",
-  "add_parent": "親問題を追加",
-  "loading_members": "メンバーを読み込んでいます...",
-  "view_link_copied_to_clipboard": "表示リンクがクリップボードにコピーされました。",
+  "change_parent_issue": "親課題を変更",
+  "remove_parent_issue": "親課題を削除",
+  "add_parent": "親を追加",
+  "loading_members": "メンバーを読み込み中...",
+  "view_link_copied_to_clipboard": "ビューのリンクがクリップボードにコピーされました。",
   "required": "必須",
   "optional": "任意",
   "Cancel": "キャンセル",
   "edit": "編集",
+  "archive": "アーカイブ",
+  "restor": "復元",
   "open_in_new_tab": "新しいタブで開く",
   "delete": "削除",
-  "good": "お",
-  "morning": "はよう",
-  "afternoon": "昼",
-  "evening": "晩は",
+  "deleting": "削除中",
+  "make_a_copy": "コピーを作成",
+  "move_to_project": "プロジェクトに移動",
+  "good": "おはよう",
+  "morning": "ございます",
+  "afternoon": "こんにちは",
+  "evening": "こんばんは",
   "show_all": "すべて表示",
   "show_less": "表示を減らす",
   "no_data_yet": "まだデータがありません",
+  "syncing": "同期中",
+  "add_work_item": "作業項目を追加",
+  "advanced_description_placeholder": "コマンドには「/」を押してください",
+  "create_work_item": "作業項目を作成",
+  "attachments": "添付ファイル",
+  "declining": "辞退中",
+  "declined": "辞退済み",
+  "decline": "辞退",
+  "unassigned": "未割り当て",
+  "work_items": "作業項目",
+  "add_link": "リンクを追加",
+  "points": "ポイント",
+  "no_assignee": "担当者なし",
+  "no_assignees_yet": "まだ担当者がいません",
+  "no_labels_yet": "まだラベルがありません",
+  "ideal": "理想",
+  "current": "現在",
+  "no_matching_members": "一致するメンバーがいません",
+  "leaving": "退出中",
+  "removing": "削除中",
+  "leave": "退出",
+  "refreshing": "更新中",
+  "refresh_status": "状態を更新",
+  "prev": "前へ",
+  "next": "次へ",
+  "re_generating": "再生成中",
+  "re_generate": "再生成",
+  "re_generate_key": "キーを再生成",
 
   "project_view": {
     "sort_by": {
@@ -337,16 +337,45 @@
   },
 
   "toast": {
-    "success": "成功！",
-    "error": "エラー！"
+    "success": "成功しました！",
+    "error": "エラーが発生しました！"
+  },
+
+  "links": {
+    "toasts": {
+      "created": {
+        "title": "リンクが作成されました",
+        "message": "リンクの作成が完了しました"
+      },
+      "not_created": {
+        "title": "リンクを作成できませんでした",
+        "message": "リンクを作成できませんでした"
+      },
+      "updated": {
+        "title": "リンクが更新されました",
+        "message": "リンクの更新が完了しました"
+      },
+      "not_updated": {
+        "title": "リンクを更新できませんでした",
+        "message": "リンクを更新できませんでした"
+      },
+      "removed": {
+        "title": "リンクが削除されました",
+        "message": "リンクの削除が完了しました"
+      },
+      "not_removed": {
+        "title": "リンクを削除できませんでした",
+        "message": "リンクを削除できませんでした"
+      }
+    }
   },
 
   "home": {
     "empty": {
       "create_project": {
         "title": "プロジェクトを作成",
-        "description": "Planeでは、ほとんどのことがプロジェクトから始まります。",
-        "cta": "始める"
+        "description": "プレーンでは、ほとんどのことがプロジェクトから始まります。",
+        "cta": "始めましょう"
       },
       "invite_team": {
         "title": "チームを招待",
@@ -354,87 +383,59 @@
         "cta": "招待する"
       },
       "configure_workspace": {
-        "title": "ワークスペースを設定",
-        "description": "機能のオン/オフを切り替えたり、さらに詳細な設定が可能です。",
-        "cta": "このワークスペースを設定"
+        "title": "ワークスペースを設定する",
+        "description": "機能のオン/オフを切り替えたり、さらに詳細な設定を行えます。",
+        "cta": "ワークスペースを設定する"
       },
       "personalize_account": {
-        "title": "Planeをあなた専用に",
-        "description": "写真、カラー、その他の設定を選択できます。",
+        "title": "プレーンをカスタマイズ",
+        "description": "プロフィール画像、カラーなどを選択できます。",
         "cta": "今すぐカスタマイズ"
       },
       "widgets": {
-        "title": "ウィジェットがないと静かですね、オンにしましょう",
-        "description": "すべてのウィジェットがオフになっているようです。 今すぐ有効にして、体験を向上させましょう！",
+        "title": "ウィジェットがないと寂しいですね。有効にしましょう",
+        "description": "すべてのウィジェットが無効になっているようです。\n体験を向上させるために有効にしましょう！",
         "primary_button": {
           "text": "ウィジェットを管理"
         }
       }
     },
     "quick_links": {
-      "empty": "すぐに使いたい作業用リンクを保存します。",
+      "empty": "便利な作業用リンクを保存しましょう。",
       "add": "クイックリンクを追加",
       "title": "クイックリンク",
-      "title_plural": "クイックリンク",
-      "toasts": {
-        "created": {
-          "title": "リンクが作成されました",
-          "message": "リンクの作成に成功しました"
-        },
-        "not_created": {
-          "title": "リンクが作成されませんでした",
-          "message": "リンクを作成できませんでした"
-        },
-        "updated": {
-          "title": "リンクが更新されました",
-          "message": "リンクの更新に成功しました"
-        },
-        "not_updated": {
-          "title": "リンクが更新されませんでした",
-          "message": "リンクを更新できませんでした"
-        },
-        "removed": {
-          "title": "リンクが削除されました",
-          "message": "リンクの削除に成功しました"
-        },
-        "not_removed": {
-          "title": "リンクが削除されませんでした",
-          "message": "リンクを削除できませんでした"
-        }
-      }
+      "title_plural": "クイックリンク"
     },
     "recents": {
-      "title": "最近",
+      "title": "最近の項目",
       "empty": {
         "project": "プロジェクトを訪問すると、最近のプロジェクトがここに表示されます。",
         "page": "ページを訪問すると、最近のページがここに表示されます。",
-        "issue": "課題を訪問すると、最近の課題がここに表示されます。",
-        "default": "最近のアイテムはまだありません。"
+        "issue": "作業項目を訪問すると、最近の作業項目がここに表示されます。",
+        "default": "最近の項目はまだありません。"
       },
       "filters": {
-        "all": "すべてのアイテム",
+        "all": "すべての項目",
         "projects": "プロジェクト",
         "pages": "ページ",
-        "issues": "課題"
+        "issues": "作業項目"
       }
     },
-    "my_stickies": {
-      "title": "付箋"
-    },
     "new_at_plane": {
-      "title": "Planeの新機能"
+      "title": "プレーンの新機能"
     },
     "quick_tutorial": {
       "title": "クイックチュートリアル"
     },
     "widget": {
-      "reordered_successfully": "ウィジェットの並び替えに成功しました。",
+      "reordered_successfully": "ウィジェットの並び替えが完了しました。",
       "reordering_failed": "ウィジェットの並び替え中にエラーが発生しました。"
     },
-    "manage_widgets": "ウィジェットの管理",
+    "manage_widgets": "ウィジェットを管理",
     "title": "ホーム",
     "star_us_on_github": "GitHubでスターをつける"
   },
+
   "link": {
     "modal": {
       "url": {
@@ -444,16 +445,16 @@
       },
       "title": {
         "text": "表示タイトル",
-        "placeholder": "このリンクをどのように表示したいか"
+        "placeholder": "このリンクの表示名"
       }
     }
   },
 
   "common": {
     "all": "すべて",
-    "states": "ステータス",
-    "state": "ステータス",
-    "state_groups": "ステータスグループ",
+    "states": "状態",
+    "state": "状態",
+    "state_groups": "状態グループ",
     "priority": "優先度",
     "team_project": "チームプロジェクト",
     "project": "プロジェクト",
@@ -462,8 +463,8 @@
     "module": "モジュール",
     "modules": "モジュール",
     "labels": "ラベル",
-    "assignees": "アサイン者",
-    "assignee": "アサイン者",
+    "assignees": "担当者",
+    "assignee": "担当者",
     "created_by": "作成者",
     "none": "なし",
     "link": "リンク",
@@ -471,68 +472,199 @@
     "layout": "レイアウト",
     "filters": "フィルター",
     "display": "表示",
-    "load_more": "もっと見る",
-    "no_matches_found": "一致する結果はありません",
+    "load_more": "もっと読み込む",
     "activity": "アクティビティ",
     "analytics": "分析",
-    "success": "成功",
-    "error": "エラー",
+    "success": "成功しました！",
+    "something_went_wrong": "問題が発生しました",
+    "error": {
+      "label": "エラー！",
+      "message": "エラーが発生しました。もう一度お試しください。"
+    },
     "group_by": "グループ化",
-    "search": "検索",
     "epic": "エピック",
-    "issue": "問題",
+    "work_item": "作業項目",
+    "add": "追加",
     "warning": "警告",
     "updating": "更新中",
+    "adding": "追加中",
     "update": "更新",
     "creating": "作成中",
+    "create": "作成",
     "cancel": "キャンセル",
     "description": "説明",
     "title": "タイトル",
+    "attachment": "添付ファイル",
+    "general": "一般",
+    "features": "機能",
+    "automation": "自動化",
+    "project_name": "プロジェクト名",
+    "project_id": "プロジェクトID",
+    "project_timezone": "プロジェクトのタイムゾーン",
+    "created_on": "作成日",
+    "update_project": "プロジェクトを更新",
+    "identifier_already_exists": "識別子が既に存在します",
+    "add_more": "さらに追加",
+    "defaults": "デフォルト",
+    "add_label": "ラベルを追加",
+    "estimates": "見積もり",
+    "customize_time_range": "期間をカスタマイズ",
+    "loading": "読み込み中...",
+    "attachments": "添付ファイル",
+    "properties": "プロパティ",
+    "parent": "親",
+    "remove": "削除",
+    "archiving": "アーカイブ中",
+    "archive": "アーカイブ",
     "access": {
       "public": "公開",
       "private": "非公開"
     },
+    "sub_work_items": "サブ作業項目",
     "order_by": {
-      "label": "オーダー",
+      "label": "並び順",
       "manual": "手動",
-      "last_created": "最後に作成",
-      "last_updated": "最後に更新",
+      "last_created": "最終作成日",
+      "last_updated": "最終更新日",
       "start_date": "開始日",
       "due_date": "期限日",
       "asc": "昇順",
-      "desc": "降順"
+      "desc": "降順",
+      "updated_on": "更新日"
     },
     "sort": {
       "asc": "昇順",
-      "desc": "降順"
+      "desc": "降順",
+      "created_on": "作成日",
+      "updated_on": "更新日"
     },
     "comments": "コメント",
-    "updates": "更新"
+    "updates": "更新",
+    "clear_all": "すべてクリア",
+    "link_copied": "リンクをコピーしました",
+    "copied_to_clipboard": "作業項目のリンクをクリップボードにコピーしました",
+    "is_copied_to_clipboard": "作業項目をクリップボードにコピーしました",
+    "no_links_added_yet": "まだリンクが追加されていません",
+    "add_link": "リンクを追加",
+    "links": "リンク",
+    "go_to_workspace": "ワークスペースへ移動",
+    "progress": "進捗",
+    "optional": "任意",
+    "join": "参加",
+    "go_back": "戻る",
+    "continue": "続ける",
+    "resend": "再送信",
+    "errors": {
+      "default": {
+        "title": "エラー！",
+        "message": "問題が発生しました。もう一度お試しください。"
+      },
+      "required": "この項目は必須です"
+    },
+    "update_link": "リンクを更新",
+    "attach": "添付",
+    "create_new": "新規作成",
+    "add_existing": "既存を追加",
+    "type_or_paste_a_url": "URLを入力または貼り付け",
+    "url_is_invalid": "URLが無効です",
+    "display_title": "表示タイトル",
+    "link_title_placeholder": "このリンクの表示名",
+    "search": {
+      "label": "検索",
+      "placeholder": "検索するキーワードを入力...",
+      "no_matches_found": "一致する結果が見つかりません",
+      "no_matching_results": "一致する結果がありません"
+    },
+    "actions": {
+      "edit": "編集",
+      "make_a_copy": "コピーを作成",
+      "open_in_new_tab": "新しいタブで開く",
+      "copy_link": "リンクをコピー",
+      "archive": "アーカイブ",
+      "delete": "削除"
+    }
   },
 
   "form": {
     "title": {
       "required": "タイトルは必須です",
-      "max_length": "タイトルは{length}文字未満である必要があります"
+      "max_length": "タイトルは{length}文字以下にしてください"
     }
   },
 
   "entity": {
-    "grouping_title": "{entity}グループ化",
-    "priority": "",
+    "grouping_title": "{entity}のグループ化",
+    "priority": "{entity} ",
     "all": "すべての{entity}",
-    "drop_here_to_move": "ここにドロップして{entity}を移動"
+    "drop_here_to_move": "ここにドロップして{entity}を移動",
+    "delete": {
+      "label": "{entity}を削除",
+      "success": "{entity}を削除しました",
+      "failed": "{entity}の削除に失敗しました"
+    },
+    "update": {
+      "failed": "{entity}の更新に失敗しました"
+    }
   },
 
   "epic": {
     "all": "すべてのエピック",
-    "label": "{count, plural, one {エピック} other {エピック}}"
+    "label": "{count, plural, one {エピック} other {エピック}}",
+    "new": "新規エピック",
+    "adding": "エピックを追加中...",
+    "create": {
+      "success": "エピックを作成しました"
+    },
+    "add": {
+      "press_enter": "'Enter'キーを押して別のエピックを追加"
+    },
+    "title": {
+      "label": "エピックのタイトル",
+      "required": "エピックのタイトルは必須です"
+    }
   },
 
   "issue": {
-    "label": "{count, plural, one {問題} other {問題}}",
-    "all": "すべての問題",
-    "add": "問題を追加",
+    "label": "{count, plural, one {作業項目} other {作業項目}}",
+    "all": "すべての作業項目",
+    "title": {
+      "label": "作業項目のタイトル",
+      "required": "作業項目のタイトルは必須です"
+    },
+    "add": {
+      "press_enter": "'Enter'キーを押して別の作業項目を追加",
+      "label": "作業項目を追加",
+      "cycle": {
+        "failed": "作業項目をサイクルに追加できませんでした。もう一度お試しください。"
+      },
+      "assignee": "担当者を追加",
+      "start_date": "開始日を追加",
+      "due_date": "期限日を追加",
+      "parent": "親作業項目を追加",
+      "sub_issue": "サブ作業項目を追加",
+      "relation": "関連を追加",
+      "link": "リンクを追加"
+    },
+    "remove": {
+      "cycle": {
+        "loading": "サイクルから作業項目を削除中...",
+        "success": "作業項目をサイクルから削除しました",
+        "failed": "作業項目をサイクルから削除できませんでした。もう一度お試しください。"
+      },
+      "module": {
+        "loading": "モジュールから作業項目を削除中...",
+        "success": "作業項目をモジュールから削除しました",
+        "failed": "作業項目をモジュールから削除できませんでした。もう一度お試しください。"
+      },
+      "parent": {
+        "label": "親作業項目を削除"
+      }
+    },
+    "new": "新規作業項目",
+    "adding": "作業項目を追加中...",
+    "create": {
+      "success": "作業項目を作成しました"
+    },
     "priority": {
       "urgent": "緊急",
       "high": "高",
@@ -543,22 +675,24 @@
       "properties": {
         "label": "表示プロパティ",
         "id": "ID",
-        "issue_type": "課題タイプ",
-        "sub_issue_count": "サブ課題数",
-        "attachment_count": "添付ファイル数"
+        "issue_type": "作業項目タイプ",
+        "sub_issue_count": "サブ作業項目数",
+        "attachment_count": "添付ファイル数",
+        "created_on": "作成日",
+        "sub_issue": "サブ作業項目"
       },
       "extra": {
-        "show_sub_issues": "サブ課題を表示",
+        "show_sub_issues": "サブ作業項目を表示",
         "show_empty_groups": "空のグループを表示"
       }
     },
     "layouts": {
-      "ordered_by_label": "このレイアウトは",
+      "ordered_by_label": "このレイアウトの並び順",
       "list": "リスト",
       "kanban": "ボード",
       "calendar": "カレンダー",
-      "spreadsheet": "表",
-      "gantt": "ガントチャート",
+      "spreadsheet": "テーブル",
+      "gantt": "タイムライン",
       "title": {
         "list": "リストレイアウト",
         "kanban": "ボードレイアウト",
@@ -573,25 +707,51 @@
     },
     "comments": {
       "create": {
-        "success": "コメントが正常に作成されました。",
-        "error": "コメントの作成に失敗しました。後で再試行してください。"
+        "success": "コメントを作成しました",
+        "error": "コメントの作成に失敗しました。後でもう一度お試しください。"
       },
       "update": {
-        "success": "コメントが正常に更新されました。",
-        "error": "コメントの更新に失敗しました。後で再試行してください。"
+        "success": "コメントを更新しました",
+        "error": "コメントの更新に失敗しました。後でもう一度お試しください。"
       },
       "remove": {
-        "success": "コメントが正常に削除されました。",
-        "error": "コメントの削除に失敗しました。後で再試行してください。"
+        "success": "コメントを削除しました",
+        "error": "コメントの削除に失敗しました。後でもう一度お試しください。"
       },
       "upload": {
-        "error": "コメントのアセットのアップロードに失敗しました。後で再試行してください。"
+        "error": "アセットのアップロードに失敗しました。後でもう一度お試しください。"
       }
+    },
+    "empty_state": {
+      "issue_detail": {
+        "title": "作業項目が存在しません",
+        "description": "お探しの作業項目は存在しないか、アーカイブされているか、削除されています。",
+        "primary_button": {
+          "text": "他の作業項目を表示"
+        }
+      }
+    },
+    "sibling": {
+      "label": "兄弟作業項目"
+    },
+    "archive": {
+      "description": "完了またはキャンセルされた\n作業項目のみアーカイブ可能です",
+      "label": "作業項目をアーカイブ",
+      "confirm_message": "作業項目をアーカイブしてもよろしいですか？アーカイブされた作業項目は後で復元できます。",
+      "success": {
+        "label": "アーカイブ成功",
+        "message": "アーカイブはプロジェクトアーカイブで確認できます。"
+      },
+      "failed": {
+        "message": "作業項目をアーカイブできませんでした。もう一度お試しください。"
+      }
+    },
+    "relation": {
+      "relates_to": "関連",
+      "duplicate": "重複",
+      "blocked_by": "ブロック元",
+      "blocking": "ブロック中"
     }
-  },
-
-  "project": {
-    "label": "{count, plural, one {プロジェクト} other {プロジェクト}}"
   },
 
   "view": {
@@ -615,8 +775,8 @@
         "description": "却下"
       },
       "snoozed": {
-        "title": "スヌーズ中",
-        "description": "残り{days}日"
+        "title": "スヌーズ",
+        "description": "残り{days, plural, one{# 日} other{# 日}}"
       },
       "accepted": {
         "title": "承認済み",
@@ -627,26 +787,131 @@
         "description": "重複"
       }
     },
+    "modals": {
+      "decline": {
+        "title": "作業項目を却下",
+        "content": "作業項目 {value} を却下してもよろしいですか？"
+      },
+      "delete": {
+        "title": "作業項目を削除",
+        "content": "作業項目 {value} を削除してもよろしいですか？",
+        "success": "作業項目を削除しました"
+      }
+    },
+    "errors": {
+      "snooze_permission": "プロジェクト管理者のみが作業項目のスヌーズ/スヌーズ解除が可能です",
+      "accept_permission": "プロジェクト管理者のみが作業項目を承認できます",
+      "decline_permission": "プロジェクト管理者のみが作業項目を却下できます"
+    },
+    "actions": {
+      "accept": "承認",
+      "decline": "却下",
+      "snooze": "スヌーズ",
+      "unsnooze": "スヌーズ解除",
+      "copy": "作業項目のリンクをコピー",
+      "delete": "削除",
+      "open": "作業項目を開く",
+      "mark_as_duplicate": "重複としてマーク",
+      "move": "{value}をプロジェクトの作業項目に移動"
+    },
     "source": {
       "in-app": "アプリ内"
     },
     "order_by": {
       "created_at": "作成日時",
       "updated_at": "更新日時",
-      "id": "識別番号"
+      "id": "ID"
+    },
+    "label": "受付",
+    "page_label": "{workspace} - 受付",
+    "modal": {
+      "title": "受付作業項目を作成"
+    },
+    "tabs": {
+      "open": "未完了",
+      "closed": "完了"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "未完了の作業項目はありません",
+        "description": "ここで未完了の作業項目を確認できます。新しい作業項目を作成してください。"
+      },
+      "sidebar_closed_tab": {
+        "title": "完了した作業項目はありません",
+        "description": "承認または却下されたすべての作業項目がここに表示されます。"
+      },
+      "sidebar_filter": {
+        "title": "一致する作業項目はありません",
+        "description": "受付に適用されたフィルターに一致する作業項目はありません。新しい作業項目を作成してください。"
+      },
+      "detail": {
+        "title": "詳細を表示する作業項目を選択してください。"
+      }
+    }
+  },
+
+  "workspace_creation": {
+    "heading": "ワークスペースを作成",
+    "subheading": "プレーンを使用するには、ワークスペースを作成するか参加する必要があります。",
+    "form": {
+      "name": {
+        "label": "ワークスペース名",
+        "placeholder": "分かりやすく認識しやすい名前が最適です。"
+      },
+      "url": {
+        "label": "ワークスペースのURLを設定",
+        "placeholder": "URLを入力または貼り付け",
+        "edit_slug": "URLのスラッグのみ編集可能です"
+      },
+      "organization_size": {
+        "label": "このワークスペースを何人で使用しますか？",
+        "placeholder": "範囲を選択"
+      }
+    },
+    "errors": {
+      "creation_disabled": {
+        "title": "インスタンス管理者のみがワークスペースを作成できます",
+        "description": "インスタンス管理者のメールアドレスをご存知の場合は、下のボタンをクリックして連絡を取ってください。",
+        "request_button": "インスタンス管理者に依頼"
+      },
+      "validation": {
+        "name_alphanumeric": "ワークスペース名には (' '), ('-'), ('_') と英数字のみ使用できます。",
+        "name_length": "名前は80文字以内にしてください。",
+        "url_alphanumeric": "URLには ('-') と英数字のみ使用できます。",
+        "url_length": "URLは48文字以内にしてください。",
+        "url_already_taken": "このワークスペースURLは既に使用されています！"
+      }
+    },
+    "request_email": {
+      "subject": "新規ワークスペースの申請",
+      "body": "インスタンス管理者様、\n\nURL [/workspace-name] で [ワークスペース作成の目的] のための新規ワークスペースの作成をお願いいたします。\n\nよろしくお願いいたします。\n{firstName} {lastName}\n{email}"
+    },
+    "button": {
+      "default": "ワークスペースを作成",
+      "loading": "ワークスペースを作成中"
+    },
+    "toast": {
+      "success": {
+        "title": "成功",
+        "message": "ワークスペースが正常に作成されました"
+      },
+      "error": {
+        "title": "エラー",
+        "message": "ワークスペースを作成できませんでした。もう一度お試しください。"
+      }
     }
   },
 
   "workspace_dashboard": {
     "empty_state": {
       "general": {
-        "title": "プロジェクト、アクティビティ、指標の概要",
-        "description": "Planeへようこそ！私たちはあなたを迎えることができて嬉しいです。最初のプロジェクトを作成してタスクを追跡し、このページが進捗を助けるスペースに変わります。管理者は、チームを前進させるための要素も見ることができます。",
+        "title": "プロジェクト、活動、メトリクスの概要",
+        "description": "プレーンへようこそ。ご利用いただき嬉しく思います。最初のプロジェクトを作成して作業項目を追跡すると、このページは進捗を支援するスペースに変わります。管理者はチームの進捗を支援する項目も表示されます。",
         "primary_button": {
           "text": "最初のプロジェクトを作成",
           "comic": {
-            "title": "すべてはPlaneでのプロジェクトから始まります",
-            "description": "プロジェクトは製品ロードマップ、マーケティングキャンペーン、新車の発売など、さまざまなものになります。"
+            "title": "プレーンではすべてがプロジェクトから始まります",
+            "description": "プロジェクトは製品のロードマップ、マーケティングキャンペーン、新車の発売などになります。"
           }
         }
       }
@@ -654,15 +919,44 @@
   },
 
   "workspace_analytics": {
+    "label": "分析",
+    "page_label": "{workspace} - 分析",
+    "open_tasks": "未完了の作業項目の合計",
+    "error": "データの取得中にエラーが発生しました。",
+    "work_items_closed_in": "完了した作業項目",
+    "selected_projects": "選択されたプロジェクト",
+    "total_members": "メンバー総数",
+    "total_cycles": "サイクル総数",
+    "total_modules": "モジュール総数",
+    "pending_work_items": {
+      "title": "未完了の作業項目",
+      "empty_state": "同僚による未完了の作業項目の分析がここに表示されます。"
+    },
+    "work_items_closed_in_a_year": {
+      "title": "年間の完了作業項目",
+      "empty_state": "作業項目を完了すると、グラフ形式で分析が表示されます。"
+    },
+    "most_work_items_created": {
+      "title": "作成された作業項目が最も多い",
+      "empty_state": "同僚と作成した作業項目の数がここに表示されます。"
+    },
+    "most_work_items_closed": {
+      "title": "完了した作業項目が最も多い",
+      "empty_state": "同僚と完了した作業項目の数がここに表示されます。"
+    },
+    "tabs": {
+      "scope_and_demand": "スコープと需要",
+      "custom": "カスタム分析"
+    },
     "empty_state": {
       "general": {
-        "title": "進捗、作業負荷、割り当てを追跡します。傾向を見つけ、障害を取り除き、作業を加速させます",
-        "description": "需要に対するスコープ、見積もり、目標の進展を視覚化します。メンバーやチームごとのパフォーマンスを確認し、プロジェクトが期限内に進むことを確認します。",
+        "title": "進捗、ワークロード、割り当てを追跡。傾向を把握し、ブロッカーを解消して、作業をより速く進める",
+        "description": "スコープと需要、見積もり、スコープクリープを確認。チームメンバーとチームのパフォーマンスを把握し、プロジェクトが予定通りに進むようにします。",
         "primary_button": {
           "text": "最初のプロジェクトを開始",
           "comic": {
-            "title": "分析はサイクル＋モジュールでより効果的に機能します",
-            "description": "まず、タスクをサイクルにフレーム化し、可能であれば複数のサイクルにまたがるタスクをモジュールにグループ化します。左側のナビゲーションで確認してください。"
+            "title": "分析はサイクル + モジュールで最も効果的",
+            "description": "まず、作業項目をサイクルでタイムボックス化し、可能であれば複数のサイクルにまたがる作業項目をモジュールにグループ化します。左のナビゲーションで両方を確認してください。"
           }
         }
       }
@@ -670,25 +964,29 @@
   },
 
   "workspace_projects": {
+    "label": "{count, plural, one {プロジェクト} other {プロジェクト}}",
+    "create": {
+      "label": "プロジェクトを追加"
+    },
     "network": {
       "private": {
-        "title": "プライベート",
-        "description": "招待のみでアクセス可能"
+        "title": "非公開",
+        "description": "招待された人のみアクセス可能"
       },
       "public": {
-        "title": "パブリック",
-        "description": "ゲスト以外のワークスペースのメンバーが参加可能"
+        "title": "公開",
+        "description": "ゲスト以外のワークスペースの全員が参加可能"
       }
     },
     "error": {
       "permission": "この操作を実行する権限がありません。",
       "cycle_delete": "サイクルの削除に失敗しました",
       "module_delete": "モジュールの削除に失敗しました",
-      "issue_delete": "課題の削除に失敗しました"
+      "issue_delete": "作業項目の削除に失敗しました"
     },
     "state": {
       "backlog": "バックログ",
-      "unstarted": "未着手",
+      "unstarted": "未開始",
       "started": "開始済み",
       "completed": "完了",
       "cancelled": "キャンセル"
@@ -704,110 +1002,214 @@
       "archived_projects": "アーカイブ済み"
     },
     "common": {
-      "months_count": "{months, plural, other{#ヶ月}}"
+      "months_count": "{months, plural, one{# ヶ月} other{# ヶ月}}"
     },
     "empty_state": {
       "general": {
         "title": "アクティブなプロジェクトがありません",
-        "description": "各プロジェクトは目標志向の作業の親と見なされます。プロジェクトはタスク、サイクル、モジュールが存在する場所であり、同僚とともに目標を達成するのに役立ちます。新しいプロジェクトを作成するか、アーカイブされたプロジェクトをフィルタリングしてください。",
+        "description": "各プロジェクトは目標指向の作業の親として考えてください。プロジェクトには作業、サイクル、モジュールが存在し、同僚とともに目標達成を支援します。新しいプロジェクトを作成するか、アーカイブされたプロジェクトをフィルタリングしてください。",
         "primary_button": {
           "text": "最初のプロジェクトを開始",
           "comic": {
-            "title": "すべてはPlaneでのプロジェクトから始まります",
-            "description": "プロジェクトは製品ロードマップ、マーケティングキャンペーン、新車の発売など、さまざまなものになります。"
+            "title": "プレーンではすべてがプロジェクトから始まります",
+            "description": "プロジェクトは製品のロードマップ、マーケティングキャンペーン、新車の発売などになります。"
           }
         }
       },
       "no_projects": {
         "title": "プロジェクトがありません",
-        "description": "タスクを作成したり作業を管理するには、プロジェクトを作成するか、その一部である必要があります。",
+        "description": "作業項目を作成したり作業を管理したりするには、プロジェクトを作成するか、既存のプロジェクトに参加する必要があります。",
         "primary_button": {
           "text": "最初のプロジェクトを開始",
           "comic": {
-            "title": "すべてはPlaneでのプロジェクトから始まります",
-            "description": "プロジェクトは製品ロードマップ、マーケティングキャンペーン、新車の発売など、さまざまなものになります。"
+            "title": "プレーンではすべてがプロジェクトから始まります",
+            "description": "プロジェクトは製品のロードマップ、マーケティングキャンペーン、新車の発売などになります。"
           }
         }
       },
       "filter": {
         "title": "一致するプロジェクトがありません",
-        "description": "一致する条件のプロジェクトが見つかりませんでした。\n 代わりに新しいプロジェクトを作成してください。"
+        "description": "条件に一致するプロジェクトが見つかりません。\n代わりに新しいプロジェクトを作成してください。"
+      },
+      "search": {
+        "description": "条件に一致するプロジェクトが見つかりません。\n代わりに新しいプロジェクトを作成してください。"
       }
     }
   },
 
-  "workspace_issues": {
+  "workspace_views": {
+    "add_view": "ビューを追加",
     "empty_state": {
-      "all-issues": {
-        "title": "プロジェクトにタスクがありません",
-        "description": "最初のプロジェクトが完了しました！次に、追跡可能なチャンクに分割してタスクを作成します。始めましょう！",
+      "all-work items": {
+        "title": "プロジェクトに作業項目がありません",
+        "description": "最初のプロジェクトが完了しました！次は、作業を追跡可能な作業項目に分割しましょう。始めましょう！",
         "primary_button": {
-          "text": "新しいタスクを作成"
+          "text": "新しい作業項目を作成"
         }
       },
       "assigned": {
-        "title": "割り当てられたタスクがありません",
-        "description": "割り当てられたタスクをここで追跡できます。",
+        "title": "作業項目がまだありません",
+        "description": "あなたに割り当てられた作業項目をここで追跡できます。",
         "primary_button": {
-          "text": "新しいタスクを作成"
+          "text": "新しい作業項目を作成"
         }
       },
       "created": {
-        "title": "作成されたタスクがありません",
-        "description": "作成したすべてのタスクはここにあります。直接ここで追跡してください。",
+        "title": "作業項目がまだありません",
+        "description": "あなたが作成したすべての作業項目がここに表示され、直接追跡できます。",
         "primary_button": {
-          "text": "新しいタスクを作成"
+          "text": "新しい作業項目を作成"
         }
       },
       "subscribed": {
-        "title": "フォローしているタスクがありません",
-        "description": "興味のあるタスクをフォローして、すべてここで追跡してください。"
+        "title": "作業項目がまだありません",
+        "description": "興味のある作業項目をサブスクライブして、ここですべてを追跡できます。"
       },
       "custom-view": {
-        "title": "タスクが見つかりません",
-        "description": "フィルタに一致するタスクがここに表示されます。すべてここで追跡してください。"
+        "title": "作業項目がまだありません",
+        "description": "フィルターに該当する作業項目をここですべて追跡できます。"
       }
     }
   },
 
   "workspace_settings": {
     "label": "ワークスペース設定",
+    "key_created": "キーが作成されました",
+    "copy_key": "このシークレットキーをコピーしてプレーンページに保存してください。閉じるをクリックすると、このキーは表示されなくなります。キーを含むCSVファイルがダウンロードされました。",
+    "token_copied": "トークンがクリップボードにコピーされました。",
     "settings": {
       "general": {
-        "title": "一般"
+        "title": "一般",
+        "upload_logo": "ロゴをアップロード",
+        "edit_logo": "ロゴを編集",
+        "name": "ワークスペース名",
+        "company_size": "会社の規模",
+        "url": "ワークスペースURL",
+        "update_workspace": "ワークスペースを更新",
+        "delete_workspace": "ワークスペースを削除",
+        "delete_workspace_description": "ワークスペースを削除すると、そのワークスペース内のすべてのデータとリソースが完全に削除され、復元できなくなります。",
+        "delete_btn": "ワークスペースを削除",
+        "errors": {
+          "name": {
+            "required": "名前は必須です",
+            "max_length": "ワークスペース名は80文字を超えることはできません"
+          },
+          "company_size": {
+            "required": "会社の規模は必須です"
+          }
+        }
       },
       "members": {
-        "title": "メンバー"
+        "title": "メンバー",
+        "add_member": "メンバーを追加",
+        "invitations_sent_successfully": "招待が正常に送信されました",
+        "leave_confirmation": "ワークスペースから退出してもよろしいですか？このワークスペースへのアクセスができなくなります。この操作は取り消せません。",
+        "details": {
+          "full_name": "氏名",
+          "display_name": "表示名",
+          "email_address": "メールアドレス",
+          "account_type": "アカウントタイプ",
+          "authentication": "認証",
+          "joining_date": "参加日"
+        }
       },
-      "billing-and-plans": {
-        "title": "請求とプラン"
+      "billing_and_plans": {
+        "title": "請求とプラン",
+        "current_plan": "現在のプラン",
+        "free_plan": "現在、無料プランを使用中です",
+        "view_plans": "プランを表示"
       },
       "exports": {
-        "title": "エクスポート"
+        "title": "エクスポート",
+        "exporting": "エクスポート中",
+        "previous_exports": "過去のエクスポート",
+        "export_separate_files": "データを個別のファイルにエクスポート",
+        "modal": {
+          "title": "エクスポート先",
+          "toasts": {
+            "success": {
+              "title": "エクスポート成功",
+              "message": "エクスポートした{entity}は過去のエクスポートからダウンロードできます。"
+            },
+            "error": {
+              "title": "エクスポート失敗",
+              "message": "エクスポートに失敗しました。もう一度お試しください。"
+            }
+          }
+        }
       },
       "webhooks": {
-        "title": "Webhooks"
+        "title": "ウェブフック",
+        "add_webhook": "ウェブフックを追加",
+        "modal": {
+          "title": "ウェブフックを作成",
+          "details": "ウェブフックの詳細",
+          "payload": "ペイロードURL",
+          "question": "このウェブフックをトリガーするイベントを選択してください",
+          "error": "URLは必須です"
+        },
+        "secret_key": {
+          "title": "シークレットキー",
+          "message": "ウェブフックペイロードに署名するトークンを生成"
+        },
+        "toasts": {
+          "created": {
+            "title": "ウェブフック作成完了",
+            "message": "ウェブフックが正常に作成されました"
+          },
+          "not_created": {
+            "title": "ウェブフック作成失敗",
+            "message": "ウェブフックを作成できませんでした"
+          },
+          "updated": {
+            "title": "ウェブフック更新完了",
+            "message": "ウェブフックが正常に更新されました"
+          },
+          "not_updated": {
+            "title": "ウェブフック更新失敗",
+            "message": "ウェブフックを更新できませんでした"
+          },
+          "removed": {
+            "title": "ウェブフック削除完了",
+            "message": "ウェブフックが正常に削除されました"
+          },
+          "not_removed": {
+            "title": "ウェブフック削除失敗",
+            "message": "ウェブフックを削除できませんでした"
+          },
+          "secret_key_copied": {
+            "message": "シークレットキーがクリップボードにコピーされました。"
+          },
+          "secret_key_not_copied": {
+            "message": "シークレットキーのコピー中にエラーが発生しました。"
+          }
+        }
       },
-      "api-tokens": {
-        "title": "APIトークン"
+      "api_tokens": {
+        "title": "APIトークン",
+        "add_token": "APIトークンを追加",
+        "create_token": "トークンを作成",
+        "never_expires": "無期限",
+        "generate_token": "トークンを生成",
+        "generating": "生成中"
       }
     },
     "empty_state": {
       "api_tokens": {
         "title": "APIトークンが作成されていません",
-        "description": "Plane APIは、外部システムでPlaneデータを統合するために使用できます。トークンを作成して始めましょう。"
+        "description": "プレーンAPIを使用して、プレーン内のデータを外部システムと連携できます。トークンを作成して始めましょう。"
       },
       "webhooks": {
-        "title": "Webhookが追加されていません",
-        "description": "リアルタイム更新を受け取り、アクションを自動化するためにWebhookを作成します。"
+        "title": "ウェブフックが追加されていません",
+        "description": "ウェブフックを作成してリアルタイムの更新を受信し、アクションを自動化します。"
       },
       "exports": {
-        "title": "エクスポートはまだありません",
-        "description": "エクスポートするたびに、コピーがここにも参照用として利用可能になります。"
+        "title": "まだエクスポートがありません",
+        "description": "エクスポートを実行すると、参照用のコピーがここに保存されます。"
       },
       "imports": {
-        "title": "インポートはまだありません",
-        "description": "過去のインポート履歴をすべてここで確認し、ダウンロードできます。"
+        "title": "まだインポートがありません",
+        "description": "過去のインポートをここで確認し、ダウンロードできます。"
       }
     }
   },
@@ -823,19 +1225,19 @@
     "stats": {
       "workload": "作業負荷",
       "overview": "概要",
-      "created": "作成した課題",
-      "assigned": "割り当てられた課題",
-      "subscribed": "購読中の課題",
+      "created": "作成した作業項目",
+      "assigned": "割り当てられた作業項目",
+      "subscribed": "サブスクライブした作業項目",
       "state_distribution": {
-        "title": "状態別の課題",
-        "empty": "より良い分析のために、グラフで状態別に表示する課題を作成してください。"
+        "title": "状態別作業項目",
+        "empty": "より良い分析のために、作業項目を作成してグラフで状態別に表示します。"
       },
       "priority_distribution": {
-        "title": "優先度別の課題",
-        "empty": "より良い分析のために、グラフで優先度別に表示する課題を作成してください。"
+        "title": "優先度別作業項目",
+        "empty": "より良い分析のために、作業項目を作成してグラフで優先度別に表示します。"
       },
       "recent_activity": {
-        "title": "最近の活動",
+        "title": "最近のアクティビティ",
         "empty": "データが見つかりませんでした。入力内容を確認してください"
       }
     },
@@ -850,34 +1252,101 @@
       "summary": "サマリー",
       "assigned": "割り当て済み",
       "created": "作成済み",
-      "subscribed": "購読中",
+      "subscribed": "サブスクライブ済み",
       "activity": "アクティビティ"
     },
     "empty_state": {
       "activity": {
         "title": "まだアクティビティがありません",
-        "description": "新しいタスクを作成することから始めましょう！詳細やプロパティを追加してください。Planeをさらに探索して、アクティビティを確認してください。"
+        "description": "新しい作業項目を作成して始めましょう！詳細とプロパティを追加してください。プレーンでさらに探索してアクティビティを確認しましょう。"
       },
       "assigned": {
-        "title": "割り当てられたタスクがありません",
-        "description": "割り当てられたタスクをここで追跡できます。"
+        "title": "割り当てられた作業項目がありません",
+        "description": "あなたに割り当てられた作業項目をここで追跡できます。"
       },
       "created": {
-        "title": "作成されたタスクがありません",
-        "description": "作成したすべてのタスクはここにあります。直接ここで追跡してください。"
+        "title": "まだ作業項目がありません",
+        "description": "あなたが作成したすべての作業項目がここに表示され、直接追跡できます。"
       },
       "subscribed": {
-        "title": "フォローしているタスクがありません",
-        "description": "興味のあるタスクをフォローして、すべてここで追跡してください。"
+        "title": "まだ作業項目がありません",
+        "description": "興味のある作業項目をサブスクライブして、ここですべてを追跡できます。"
       }
     }
   },
 
   "project_settings": {
+    "general": {
+      "enter_project_id": "プロジェクトIDを入力",
+      "please_select_a_timezone": "タイムゾーンを選択してください",
+      "archive_project": {
+        "title": "プロジェクトをアーカイブ",
+        "description": "プロジェクトをアーカイブすると、サイドナビゲーションから非表示になりますが、プロジェクトページからアクセスすることはできます。プロジェクトを復元または削除することもできます。",
+        "button": "プロジェクトをアーカイブ"
+      },
+      "delete_project": {
+        "title": "プロジェクトを削除",
+        "description": "プロジェクトを削除すると、そのプロジェクト内のすべてのデータとリソースが完全に削除され、復元できなくなります。",
+        "button": "プロジェクトを削除"
+      },
+      "toast": {
+        "success": "プロジェクトが正常に更新されました",
+        "error": "プロジェクトを更新できませんでした。もう一度お試しください。"
+      }
+    },
+    "members": {
+      "label": "メンバー",
+      "project_lead": "プロジェクトリーダー",
+      "default_assignee": "デフォルト担当者",
+      "guest_super_permissions": {
+        "title": "ゲストユーザーにすべての作業項目の閲覧権限を付与：",
+        "sub_heading": "これにより、ゲストはすべてのプロジェクト作業項目を閲覧できるようになります。"
+      },
+      "invite_members": {
+        "title": "メンバーを招待",
+        "sub_heading": "プロジェクトに参加するメンバーを招待します。",
+        "select_co_worker": "同僚を選択"
+      }
+    },
+    "states": {
+      "describe_this_state_for_your_members": "このステータスについてメンバーに説明してください。"
+    },
+    "labels": {
+      "label_title": "ラベルタイトル",
+      "label_title_is_required": "ラベルタイトルは必須です",
+      "label_max_char": "ラベル名は255文字を超えることはできません",
+      "toast": {
+        "error": "ラベルの更新中にエラーが発生しました"
+      }
+    },
+    "estimates": {
+      "title": "プロジェクトの見積もりを有効にする",
+      "description": "チームの複雑さと作業負荷を伝えるのに役立ちます。"
+    },
+    "automations": {
+      "label": "自動化",
+      "auto-archive": {
+        "title": "完了した作業項目を自動アーカイブ",
+        "description": "プレーンは完了またはキャンセルされた作業項目を自動的にアーカイブします。",
+        "duration": "次の期間クローズされている作業項目を自動アーカイブ"
+      },
+      "auto-close": {
+        "title": "作業項目を自動クローズ",
+        "description": "プレーンは完了またはキャンセルされていない作業項目を自動的にクローズします。",
+        "duration": "次の期間非アクティブな作業項目を自動クローズ",
+        "auto_close_status": "自動クローズステータス"
+      }
+    },
+
     "empty_state": {
       "labels": {
-        "title": "ラベルがありません",
-        "description": "ラベルを作成して、プロジェクトのタスクを整理し、フィルタリングします。"
+        "title": "まだラベルがありません",
+        "description": "プロジェクトの作業項目を整理してフィルタリングするためのラベルを作成します。"
+      },
+      "estimates": {
+        "title": "まだ見積もりシステムがありません",
+        "description": "作業項目ごとの作業量を伝えるための見積もりセットを作成します。",
+        "primary_button": "見積もりシステムを追加"
       }
     }
   },
@@ -886,43 +1355,43 @@
     "status": {
       "days_left": "残り日数",
       "completed": "完了",
-      "yet_to_start": "未着手",
+      "yet_to_start": "開始前",
       "in_progress": "進行中",
       "draft": "下書き"
     },
     "empty_state": {
       "general": {
-        "title": "作業をサイクルにまとめ、フレーム化します。",
-        "description": "作業を定義された期間に分割し、期限から逆算して締め切りを設定し、チームで具体的な進捗を達成します。",
+        "title": "サイクルで作業をグループ化し、時間枠を設定します。",
+        "description": "作業を時間枠で区切り、プロジェクトの期限から逆算して日付を設定し、チームとして具体的な進捗を作ります。",
         "primary_button": {
           "text": "最初のサイクルを設定",
           "comic": {
-            "title": "サイクルは繰り返し期間です。",
+            "title": "サイクルは繰り返される時間枠です。",
             "description": "スプリント、イテレーション、または週次・隔週の作業追跡に使用するその他の用語がサイクルです。"
           }
         }
       },
       "no_issues": {
-        "title": "サイクルに追加されたタスクがありません",
-        "description": "このサイクル内でタイムフレーム化し、配信したいタスクを追加または作成してください。",
+        "title": "サイクルに作業項目が追加されていません",
+        "description": "このサイクル内で時間枠を設定して提供したい作業項目を追加または作成します",
         "primary_button": {
-          "text": "新しいタスクを作成"
+          "text": "新しい作業項目を作成"
         },
         "secondary_button": {
-          "text": "既存のタスクを追加"
+          "text": "既存の作業項目を追加"
         }
       },
       "completed_no_issues": {
-        "title": "サイクルに課題がありません",
-        "description": "サイクルに課題がありません。課題は転送されるか非表示になっています。非表示の課題がある場合は、表示プロパティを更新して確認してください。"
+        "title": "サイクルに作業項目がありません",
+        "description": "サイクルに作業項目がありません。作業項目は転送されたか非表示になっています。非表示の作業項目がある場合は、表示プロパティを適切に更新してください。"
       },
       "active": {
         "title": "アクティブなサイクルがありません",
-        "description": "アクティブなサイクルは、今日の日付を含む範囲がある期間を指します。ここでアクティブなサイクルの進捗と詳細を確認してください。"
+        "description": "アクティブなサイクルには、その期間内に今日の日付が含まれるものが含まれます。アクティブなサイクルの進捗と詳細をここで確認できます。"
       },
       "archived": {
-        "title": "まだアーカイブされたサイクルはありません",
-        "description": "プロジェクトを整理するには、完了したサイクルをアーカイブしてください。アーカイブされたサイクルはここで見つけることができます。"
+        "title": "まだアーカイブされたサイクルがありません",
+        "description": "プロジェクトを整理するために、完了したサイクルをアーカイブします。アーカイブ後はここで見つけることができます。"
       }
     }
   },
@@ -930,25 +1399,25 @@
   "project_issues": {
     "empty_state": {
       "no_issues": {
-        "title": "課題を作成し、誰かに、または自分に割り当てましょう",
-        "description": "課題を仕事、タスク、行動、またはJTBD（やるべき仕事）と考えてください。それが私たちの好む方法です。課題とそのサブ課題は通常、チームメンバーに割り当てられる時間ベースのアクションです。チームは課題を作成し、割り当て、完了させることで、プロジェクトの目標に向かって進みます。",
+        "title": "作業項目を作成し、誰か（自分自身でも）に割り当てます",
+        "description": "作業項目は、仕事、タスク、作業、またはJTBDと考えてください。作業項目とそのサブ作業項目は通常、チームメンバーに割り当てられる時間ベースのアクションアイテムです。チームは作業項目を作成、割り当て、完了することで、プロジェクトの目標に向かって進みます。",
         "primary_button": {
-          "text": "最初の課題を作成",
+          "text": "最初の作業項目を作成",
           "comic": {
-            "title": "課題はPlaneの構成要素です。",
-            "description": "Plane UIの再設計、会社のリブランド、新しい燃料噴射システムの開始は、サブ課題がある可能性のある課題の例です。"
+            "title": "作業項目はプレーンの構成要素です。",
+            "description": "プレーンUIの再設計、会社のリブランド、新しい燃料噴射システムの立ち上げなどは、サブ作業項目を持つ可能性が高い作業項目の例です。"
           }
         }
       },
       "no_archived_issues": {
-        "title": "まだアーカイブされた課題はありません",
-        "description": "手動または自動化を使用して、完了またはキャンセルされた課題をアーカイブできます。アーカイブされた課題はここで見つけることができます。",
+        "title": "まだアーカイブされた作業項目がありません",
+        "description": "手動または自動化を通じて、完了またはキャンセルされた作業項目をアーカイブできます。アーカイブ後はここで見つけることができます。",
         "primary_button": {
           "text": "自動化を設定"
         }
       },
       "issues_empty_filter": {
-        "title": "適用されたフィルターに一致する課題は見つかりませんでした",
+        "title": "適用されたフィルターに一致する作業項目が見つかりません",
         "secondary_button": {
           "text": "すべてのフィルターをクリア"
         }
@@ -957,31 +1426,55 @@
   },
 
   "project_module": {
+    "add_module": "モジュールを追加",
+    "update_module": "モジュールを更新",
+    "create_module": "モジュールを作成",
+    "archive_module": "モジュールをアーカイブ",
+    "restore_module": "モジュールを復元",
+    "delete_module": "モジュールを削除",
     "empty_state": {
-      "no_issues": {
-        "title": "モジュールに課題がありません",
-        "description": "このモジュールの一部として達成したい課題を作成または追加してください",
-        "primary_button": {
-          "text": "新しい課題を作成"
-        },
-        "secondary_button": {
-          "text": "既存の課題を追加"
-        }
-      },
       "general": {
-        "title": "プロジェクトのマイルストーンをモジュールにマッピングし、集計された作業を簡単に追跡します。",
-        "description": "論理的で階層的な親に属する課題のグループがモジュールを形成します。それをプロジェクトのマイルストーンで作業を追跡する方法と考えてください。モジュールには独自の期間と締切があり、分析を通じてマイルストーンへの進捗状況を確認できます。",
+        "title": "プロジェクトのマイルストーンをモジュールにマッピングし、集約された作業を簡単に追跡します。",
+        "description": "論理的、階層的な親に属する作業項目のグループがモジュールを形成します。プロジェクトのマイルストーンによって作業を追跡する方法として考えてください。モジュールには独自の期間と期限があり、マイルストーンにどれだけ近づいているか、または遠ざかっているかを確認するための分析機能もあります。",
         "primary_button": {
           "text": "最初のモジュールを構築",
           "comic": {
             "title": "モジュールは階層によって作業をグループ化します。",
-            "description": "カートモジュール、シャーシモジュール、倉庫モジュールは、このグループ化の良い例です。"
+            "description": "カートモジュール、シャーシモジュール、倉庫モジュールはすべて、このグループ化の良い例です。"
           }
         }
       },
+      "no_issues": {
+        "title": "モジュールに作業項目がありません",
+        "description": "このモジュールの一部として達成したい作業項目を作成または追加します",
+        "primary_button": {
+          "text": "新しい作業項目を作成"
+        },
+        "secondary_button": {
+          "text": "既存の作業項目を追加"
+        }
+      },
       "archived": {
-        "title": "まだアーカイブされたモジュールはありません",
-        "description": "プロジェクトを整理するために、完了またはキャンセルされたモジュールをアーカイブします。アーカイブされたモジュールはここで見つけることができます。"
+        "title": "まだアーカイブされたモジュールがありません",
+        "description": "プロジェクトを整理するために、完了またはキャンセルされたモジュールをアーカイブします。アーカイブ後はここで見つけることができます。"
+      },
+      "sidebar": {
+        "in_active": "このモジュールはまだアクティブではありません。",
+        "invalid_date": "無効な日付です。有効な日付を入力してください。"
+      }
+    },
+    "quick_actions": {
+      "archive_module": "モジュールをアーカイブ",
+      "archive_module_description": "完了またはキャンセルされた\nモジュールのみアーカイブできます。",
+      "delete_module": "モジュールを削除"
+    },
+    "toast": {
+      "copy": {
+        "success": "モジュールリンクがクリップボードにコピーされました"
+      },
+      "delete": {
+        "success": "モジュールが正常に削除されました",
+        "error": "モジュールの削除に失敗しました"
       }
     }
   },
@@ -989,19 +1482,19 @@
   "project_views": {
     "empty_state": {
       "general": {
-        "title": "プロジェクト用にフィルタされたビューを保存します。必要なだけ作成してください",
-        "description": "ビューは、頻繁に使用するか、簡単にアクセスしたい保存されたフィルターのセットです。プロジェクト内のすべての同僚が他の人のビューを確認し、自分のニーズに最適なものを選ぶことができます。",
+        "title": "プロジェクトのフィルター付きビューを保存します。必要な数だけ作成できます",
+        "description": "ビューは、頻繁に使用するフィルターや簡単にアクセスしたいフィルターの保存されたセットです。プロジェクト内のすべての同僚が全員のビューを見ることができ、自分のニーズに最も適したものを選択できます。",
         "primary_button": {
           "text": "最初のビューを作成",
           "comic": {
-            "title": "ビューは課題プロパティの上に機能します。",
-            "description": "ここから必要に応じてプロパティをフィルターとして使用してビューを作成できます。"
+            "title": "ビューは作業項目のプロパティの上に構築されます。",
+            "description": "ここから、必要な数のプロパティとフィルターを使用してビューを作成できます。"
           }
         }
       },
       "filter": {
         "title": "一致するビューがありません",
-        "description": "検索条件に一致するビューはありません。 \n 代わりに新しいビューを作成してください。"
+        "description": "検索条件に一致するビューがありません。\n代わりに新しいビューを作成してください。"
       }
     }
   },
@@ -1009,29 +1502,29 @@
   "project_page": {
     "empty_state": {
       "general": {
-        "title": "メモ、ドキュメント、または完全なナレッジベースを書きましょう。PlaneのAIアシスタントGalileoがスタートをサポートします",
-        "description": "ページはPlaneでアイデアをまとめるスペースです。会議のメモを取る、簡単にフォーマットする、課題を埋め込む、コンポーネントライブラリを使用してレイアウトするなど、すべてをプロジェクトのコンテキスト内に保ちます。どんなドキュメントでも簡単にするために、ショートカットやボタンのクリックでPlaneのAIであるGalileoを呼び出してください。",
+        "title": "メモ、ドキュメント、または完全なナレッジベースを作成します。プレーンのAIアシスタント、ガリレオが開始をサポートします",
+        "description": "ページはプレーンの思考整理スペースです。会議のメモを取り、簡単に整形し、作業項目を埋め込み、コンポーネントライブラリを使用してレイアウトし、すべてをプロジェクトのコンテキストに保持します。どんなドキュメントでも短時間で作成するために、ショートカットまたはボタンのクリックでプレーンのAI、ガリレオを呼び出すことができます。",
         "primary_button": {
           "text": "最初のページを作成"
         }
       },
       "private": {
-        "title": "まだプライベートページはありません",
-        "description": "プライベートな考えをここに保存します。共有する準備ができたら、チームはすぐそばにいます。",
+        "title": "まだプライベートページがありません",
+        "description": "プライベートな考えをここに保管します。共有する準備ができたら、チームは1クリックで利用できます。",
         "primary_button": {
           "text": "最初のページを作成"
         }
       },
       "public": {
-        "title": "まだ公開ページはありません",
-        "description": "プロジェクト内のすべての人と共有されているページをここで確認してください。",
+        "title": "まだ公開ページがありません",
+        "description": "プロジェクト内の全員と共有されているページをここで確認できます。",
         "primary_button": {
           "text": "最初のページを作成"
         }
       },
       "archived": {
-        "title": "まだアーカイブされたページはありません",
-        "description": "レーダーに載っていないページをアーカイブします。必要なときにここからアクセスしてください。"
+        "title": "まだアーカイブされたページがありません",
+        "description": "レーダーから外れたページをアーカイブします。必要なときにここでアクセスできます。"
       }
     }
   },
@@ -1047,10 +1540,10 @@
   "issue_relation": {
     "empty_state": {
       "search": {
-        "title": "一致する課題が見つかりませんでした"
+        "title": "一致する作業項目が見つかりません"
       },
-      "general": {
-        "title": "課題が見つかりません"
+      "no_issues": {
+        "title": "作業項目が見つかりません"
       }
     }
   },
@@ -1058,25 +1551,48 @@
   "issue_comment": {
     "empty_state": {
       "general": {
-        "title": "まだコメントはありません",
-        "description": "コメントは課題の議論やフォローアップスペースとして使用できます"
+        "title": "まだコメントがありません",
+        "description": "コメントは作業項目の議論とフォローアップのスペースとして使用できます"
       }
     }
   },
 
   "notification": {
-    "label": "通知",
+    "label": "受信トレイ",
+    "page_label": "{workspace} - 受信トレイ",
+    "options": {
+      "mark_all_as_read": "すべて既読にする",
+      "mark_read": "既読にする",
+      "mark_unread": "未読にする", 
+      "refresh": "更新",
+      "filters": "受信トレイフィルター",
+      "show_unread": "未読を表示",
+      "show_snoozed": "スヌーズを表示",
+      "show_archived": "アーカイブを表示",
+      "mark_archive": "アーカイブ",
+      "mark_unarchive": "アーカイブ解除",
+      "mark_snooze": "スヌーズ",
+      "mark_unsnooze": "スヌーズ解除"
+    },
+    "toasts": {
+      "read": "受信トレイを既読にしました",
+      "unread": "受信トレイを未読にしました",
+      "archived": "受信トレイをアーカイブしました",
+      "unarchived": "受信トレイのアーカイブを解除しました",
+      "snoozed": "受信トレイをスヌーズしました",
+      "unsnoozed": "受信トレイのスヌーズを解除しました"
+    },
     "empty_state": {
       "detail": {
         "title": "詳細を表示するには選択してください。"
       },
       "all": {
-        "title": "割り当てられた問題はありません",
-        "description": "あなたに割り当てられた問題の更新情報はここで確認できます。"
+        "title": "割り当てられた作業項目がありません",
+        "description": "あなたに割り当てられた作業項目の更新がここに\n表示されます"
       },
       "mentions": {
-        "title": "割り当てられた問題はありません",
-        "description": "あなたに割り当てられた問題の更新情報はここで確認できます。"
+        "title": "割り当てられた作業項目がありません",
+        "description": "あなたに割り当てられた作業項目の更新がここに\n表示されます"
       }
     },
     "tabs": {
@@ -1086,7 +1602,7 @@
     "filter": {
       "assigned": "自分に割り当て",
       "created": "自分が作成",
-      "subscribed": "自分が購読"
+      "subscribed": "自分がサブスクライブ"
     },
     "snooze": {
       "1_day": "1日",
@@ -1101,19 +1617,19 @@
   "active_cycle": {
     "empty_state": {
       "progress": {
-        "title": "サイクルに課題を追加して進捗を確認してください。"
+        "title": "サイクルの進捗を表示するには作業項目を追加してください"
       },
       "chart": {
-        "title": "サイクルに課題を追加してバーンダウンチャートを確認してください。"
+        "title": "バーンダウンチャートを表示するには作業項目を追加してください。"
       },
       "priority_issue": {
-        "title": "サイクル内で処理された高優先度の課題を一目で把握できます。"
+        "title": "サイクルで取り組む優先度の高い作業項目を一目で確認できます。"
       },
       "assignee": {
-        "title": "課題に担当者を追加して、担当者ごとの作業の内訳を確認してください。"
+        "title": "担当者別の作業内訳を確認するには、作業項目に担当者を割り当ててください。"
       },
       "label": {
-        "title": "課題にラベルを追加して、ラベルごとの作業の内訳を確認してください。"
+        "title": "ラベル別の作業内訳を確認するには、作業項目にラベルを追加してください。"
       }
     }
   },
@@ -1121,129 +1637,121 @@
   "disabled_project": {
     "empty_state": {
       "inbox": {
-        "title": "プロジェクトにインテークが有効化されていません。",
-        "description": "インテークは、プロジェクトへのリクエストを管理し、それらをワークフローの課題として追加するのに役立ちます。プロジェクト設定からインテークを有効化してリクエストを管理してください。",
+        "title": "プロジェクトで受付が有効になっていません。",
+        "description": "受付は、プロジェクトへの要求を管理し、ワークフローに作業項目として追加するのに役立ちます。要求を管理するにはプロジェクト設定から受付を有効にしてください。",
         "primary_button": {
           "text": "機能を管理"
         }
       },
       "cycle": {
-        "title": "このプロジェクトでサイクルが有効化されていません。",
-        "description": "作業をタイムボックス化されたチャンクに分割し、プロジェクトの期限から逆算して日程を設定し、チームとして具体的な進捗を実現します。プロジェクトでサイクル機能を有効化して利用を開始してください。",
+        "title": "このプロジェクトでサイクルが有効になっていません。",
+        "description": "時間枠で作業を分割し、プロジェクトの期限から逆算して日程を設定し、チームとして具体的な進捗を作ります。サイクルを使用するには、プロジェクトでサイクル機能を有効にしてください。",
         "primary_button": {
           "text": "機能を管理"
         }
       },
       "module": {
-        "title": "プロジェクトにモジュールが有効化されていません。",
-        "description": "モジュールはプロジェクトの構成要素です。プロジェクト設定からモジュールを有効化して利用を開始してください。",
+        "title": "プロジェクトでモジュールが有効になっていません。",
+        "description": "モジュールはプロジェクトの構成要素です。モジュールを使用するにはプロジェクト設定から有効にしてください。",
         "primary_button": {
           "text": "機能を管理"
         }
       },
       "page": {
-        "title": "プロジェクトにページが有効化されていません。",
-        "description": "ページはプロジェクトの構成要素です。プロジェクト設定からページを有効化して利用を開始してください。",
+        "title": "プロジェクトでページが有効になっていません。",
+        "description": "ページはプロジェクトの構成要素です。ページを使用するにはプロジェクト設定から有効にしてください。",
         "primary_button": {
           "text": "機能を管理"
         }
       },
       "view": {
-        "title": "プロジェクトにビューが有効化されていません。",
-        "description": "ビューはプロジェクトの構成要素です。プロジェクト設定からビューを有効化して利用を開始してください。",
+        "title": "プロジェクトでビューが有効になっていません。",
+        "description": "ビューはプロジェクトの構成要素です。ビューを使用するにはプロジェクト設定から有効にしてください。",
         "primary_button": {
           "text": "機能を管理"
         }
       }
     }
   },
-
-  "inbox": {
-    "label": "受信トレイ",
-    "empty_state": {
-      "sidebar_open_tab": {
-        "title": "未解決の課題はありません",
-        "description": "ここに未解決の課題が表示されます。新しい課題を作成してください。"
-      },
-      "sidebar_closed_tab": {
-        "title": "完了した課題はありません",
-        "description": "受け入れ済みまたは却下済みのすべての課題がここに表示されます。"
-      },
-      "sidebar_filter": {
-        "title": "一致する課題はありません",
-        "description": "入力で適用されたフィルターに一致する課題はありません。新しい課題を作成してください。"
-      },
-      "detail": {
-        "title": "詳細を表示するには課題を選択してください。"
-      }
-    }
-  },
-
   "workspace_draft_issues": {
+    "draft_an_issue": "作業項目を下書き",
     "empty_state": {
-      "title": "書きかけの課題や、もうすぐコメントもここに表示されます。",
-      "description": "これを試すには、課題の作成を始めて途中で中断するか、下に最初の下書きを作成してください。😉",
+      "title": "書きかけの作業項目や、まもなくコメントがここに表示されます。",
+      "description": "試してみるには、作業項目の追加を途中で中断するか、以下で最初の下書きを作成してください。😉",
       "primary_button": {
         "text": "最初の下書きを作成"
+      }
+    },
+    "delete_modal": {
+      "title": "下書きを削除",
+      "description": "この下書きを削除してもよろしいですか？この操作は取り消せません。"
+    },
+    "toasts": {
+      "created": {
+        "success": "下書きを作成しました",
+        "error": "作業項目を作成できませんでした。もう一度お試しください。"
+      },
+      "deleted": {
+        "success": "下書きを削除しました"
       }
     }
   },
 
   "stickies": {
-    "title": "付箋メモ",
+    "title": "あなたの付箋",
     "placeholder": "ここをクリックして入力",
     "all": "すべての付箋",
-    "no-data": "アイデアをメモしたり、ひらめきやアイデアを記録しましょう。付箋を追加して始めましょう。",
+    "no-data": "アイデアをメモしたり、ひらめきをキャプチャしたり、閃きを記録したりしましょう。付箋を追加して始めましょう。",
     "add": "付箋を追加",
     "search_placeholder": "タイトルで検索",
     "delete": "付箋を削除",
     "delete_confirmation": "この付箋を削除してもよろしいですか？",
     "empty_state": {
-      "simple": "アイデアをメモしたり、ひらめきやアイデアを記録しましょう。付箋を追加して始めましょう。",
+      "simple": "アイデアをメモしたり、ひらめきをキャプチャしたり、閃きを記録したりしましょう。付箋を追加して始めましょう。",
       "general": {
-        "title": "付箋は、その場で書き留める簡単なメモやToDoリストです。",
-        "description": "いつでもどこからでもアクセスできる付箋を作成して、思いやアイデアを簡単に記録できます。",
+        "title": "付箋は、その場で書き留める簡単なメモやToDoです。",
+        "description": "いつでもどこからでもアクセスできる付箋を作成して、思考やアイデアを簡単にキャプチャできます。",
         "primary_button": {
           "text": "付箋を追加"
         }
       },
       "search": {
-        "title": "該当する付箋が見つかりません。",
-        "description": "別の検索語を試すか、\n検索が正しい場合はお知らせください。",
+        "title": "付箋に一致するものがありません。",
+        "description": "別の用語を試すか、検索が正しいと確信される場合は\nお知らせください。",
         "primary_button": {
           "text": "付箋を追加"
         }
       }
-    }
-  },
-  "toasts": {
-    "errors": {
-      "wrong_name": "付箋の名前は100文字を超えることはできません。",
-      "already_exists": "説明のない付箋がすでに存在します"
     },
-    "created": {
-      "title": "付箋が作成されました",
-      "message": "付箋が正常に作成されました"
-    },
-    "not_created": {
-      "title": "付箋を作成できません",
-      "message": "付箋を作成できませんでした"
-    },
-    "updated": {
-      "title": "付箋が更新されました",
-      "message": "付箋が正常に更新されました"
-    },
-    "not_updated": {
-      "title": "付箋を更新できません",
-      "message": "付箋を更新できませんでした"
-    },
-    "removed": {
-      "title": "付箋が削除されました",
-      "message": "付箋が正常に削除されました"
-    },
-    "not_removed": {
-      "title": "付箋を削除できません",
-      "message": "付箋を削除できませんでした"
+    "toasts": {
+      "errors": {
+        "wrong_name": "付箋の名前は100文字を超えることはできません。",
+        "already_exists": "説明のない付箋がすでに存在します"
+      },
+      "created": {
+        "title": "付箋を作成しました",
+        "message": "付箋が正常に作成されました"
+      },
+      "not_created": {
+        "title": "付箋を作成できませんでした",
+        "message": "付箋を作成できませんでした"
+      },
+      "updated": {
+        "title": "付箋を更新しました",
+        "message": "付箋が正常に更新されました"
+      },
+      "not_updated": {
+        "title": "付箋を更新できませんでした",
+        "message": "付箋を更新できませんでした"
+      },
+      "removed": {
+        "title": "付箋を削除しました",
+        "message": "付箋が正常に削除されました"
+      },
+      "not_removed": {
+        "title": "付箋を削除できませんでした",
+        "message": "付箋を削除できませんでした"
+      }
     }
   },
 
@@ -1266,46 +1774,46 @@
     "product_or_project_manager": "プロダクト/プロジェクトマネージャー",
     "development_or_engineering": "開発/エンジニアリング",
     "founder_or_executive": "創業者/エグゼクティブ",
-    "freelancer_or_consultant": "フリーランス/コンサルタント",
+    "freelancer_or_consultant": "フリーランス/コンサルタント", 
     "marketing_or_growth": "マーケティング/グロース",
-    "sales_or_business_development": "営業/事業開発",
+    "sales_or_business_development": "営業/ビジネス開発",
     "support_or_operations": "サポート/オペレーション",
     "student_or_professor": "学生/教授",
-    "human_or_resources": "人事",
+    "human_or_resources": "人事/リソース",
     "other": "その他"
   },
 
   "importer": {
     "github": {
-      "title": "Github",
-      "description": "GitHubリポジトリから課題をインポートして同期します。"
+      "title": "GitHub",
+      "description": "GitHubリポジトリから作業項目をインポートして同期します。"
     },
     "jira": {
       "title": "Jira",
-      "description": "Jiraプロジェクトから課題とエピックをインポートします。"
+      "description": "Jiraプロジェクトとエピックから作業項目とエピックをインポートします。"
     }
   },
 
   "exporter": {
     "csv": {
       "title": "CSV",
-      "description": "課題をCSVファイルにエクスポートします。"
+      "description": "作業項目をCSVファイルにエクスポートします。",
+      "short_description": "CSVとしてエクスポート"
     },
     "xlsx": {
       "title": "Excel",
-      "description": "課題をExcelファイルにエクスポートします。"
+      "description": "作業項目をExcelファイルにエクスポートします。"
     },
     "json": {
-      "title": "JSON",
-      "description": "課題をJSONファイルにエクスポートします。"
+      "title": "JSON", 
+      "description": "作業項目をJSONファイルにエクスポートします。"
     }
   },
-
   "default_global_view": {
-    "all_issues": "すべての課題",
+    "all_issues": "すべての作業項目",
     "assigned": "割り当て済み",
     "created": "作成済み",
-    "subscribed": "購読済み"
+    "subscribed": "購読中"
   },
 
   "themes": {
@@ -1320,10 +1828,10 @@
         "label": "ダーク"
       },
       "light_contrast": {
-        "label": "ライト高コントラスト"
+        "label": "ライトハイコントラスト"
       },
       "dark_contrast": {
-        "label": "ダーク高コントラスト"
+        "label": "ダークハイコントラスト"
       },
       "custom": {
         "label": "カスタムテーマ"
@@ -1340,17 +1848,177 @@
       "cancelled": "キャンセル"
     },
     "layout": {
-      "list": "リスト表示",
-      "board": "ギャラリー表示",
-      "timeline": "タイムライン表示"
+      "list": "リストレイアウト",
+      "board": "ギャラリーレイアウト",
+      "timeline": "タイムラインレイアウト"
     },
     "order_by": {
       "name": "名前",
       "progress": "進捗",
-      "issues": "課題数",
+      "issues": "作業項目数",
       "due_date": "期限",
       "created_at": "作成日",
       "manual": "手動"
     }
+  },
+
+  "auth": {
+    "common": {
+      "email": {
+        "label": "メールアドレス",
+        "placeholder": "name@company.com",
+        "errors": {
+          "required": "メールアドレスは必須です",
+          "invalid": "メールアドレスが無効です"
+        }
+      },
+      "password": {
+        "label": "パスワード",
+        "set_password": "パスワードを設定",
+        "placeholder": "パスワードを入力",
+        "confirm_password": {
+          "label": "パスワードの確認",
+          "placeholder": "パスワードを確認"
+        },
+        "current_password": {
+          "label": "現在のパスワード"
+        },
+        "new_password": {
+          "label": "新しいパスワード",
+          "placeholder": "新しいパスワードを入力"
+        },
+        "change_password": {
+          "label": {
+            "default": "パスワードを変更",
+            "submitting": "パスワードを変更中"
+          }
+        },
+        "errors": {
+          "match": "パスワードが一致しません",
+          "empty": "パスワードを入力してください",
+          "length": "パスワードは8文字以上である必要があります",
+          "strength": {
+            "weak": "パスワードが弱すぎます",
+            "strong": "パスワードは十分な強度です"
+          }
+        },
+        "submit": "パスワードを設定",
+        "toast": {
+          "change_password": {
+            "success": {
+              "title": "成功！",
+              "message": "パスワードが正常に変更されました。"
+            },
+            "error": {
+              "title": "エラー！",
+              "message": "問題が発生しました。もう一度お試しください。"
+            }
+          }
+        }
+      },
+      "unique_code": {
+        "label": "ユニークコード",
+        "placeholder": "gets-sets-flys",
+        "paste_code": "メールで送信されたコードを貼り付けてください",
+        "requesting_new_code": "新しいコードをリクエスト中",
+        "sending_code": "コードを送信中"
+      },
+      "already_have_an_account": "すでにアカウントをお持ちですか？",
+      "login": "ログイン",
+      "create_account": "アカウントを作成",
+      "new_to_plane": "プレーンは初めてですか？",
+      "back_to_sign_in": "サインインに戻る",
+      "resend_in": "{seconds}秒後に再送信",
+      "sign_in_with_unique_code": "ユニークコードでサインイン",
+      "forgot_password": "パスワードをお忘れですか？"
+    },
+    "sign_up": {
+      "header": {
+        "label": "チームと作業を管理するためのアカウントを作成してください。",
+        "step": {
+          "email": {
+            "header": "サインアップ",
+            "sub_header": ""
+          },
+          "password": {
+            "header": "サインアップ",
+            "sub_header": "メールアドレスとパスワードの組み合わせでサインアップします。"
+          },
+          "unique_code": {
+            "header": "サインアップ",
+            "sub_header": "上記のメールアドレスに送信されたユニークコードを使用してサインアップします。"
+          }
+        }
+      },
+      "errors": {
+        "password": {
+          "strength": "続行するには強力なパスワードを設定してください"
+        }
+      }
+    },
+    "sign_in": {
+      "header": {
+        "label": "チームと作業を管理するためにログインしてください。",
+        "step": {
+          "email": {
+            "header": "ログインまたはサインアップ",
+            "sub_header": ""
+          },
+          "password": {
+            "header": "ログインまたはサインアップ",
+            "sub_header": "メールアドレスとパスワードの組み合わせでログインします。"
+          },
+          "unique_code": {
+            "header": "ログインまたはサインアップ",
+            "sub_header": "上記のメールアドレスに送信されたユニークコードを使用してログインします。"
+          }
+        }
+      }
+    },
+    "forgot_password": {
+      "title": "パスワードをリセット",
+      "description": "確認済みのユーザーアカウントのメールアドレスを入力してください。パスワードリセットリンクを送信します。",
+      "email_sent": "リセットリンクをメールアドレスに送信しました",
+      "send_reset_link": "リセットリンクを送信",
+      "errors": {
+        "smtp_not_enabled": "管理者がSMTPを有効にしていないため、パスワードリセットリンクを送信できません"
+      },
+      "toast": {
+        "success": {
+          "title": "メール送信完了",
+          "message": "パスワードをリセットするためのリンクを受信トレイで確認してください。数分以内に表示されない場合は、迷惑メールフォルダを確認してください。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "問題が発生しました。もう一度お試しください。"
+        }
+      }
+    },
+    "reset_password": {
+      "title": "新しいパスワードを設定",
+      "description": "強力なパスワードでアカウントを保護します"
+    },
+    "set_password": {
+      "title": "アカウントを保護",
+      "description": "パスワードを設定することで安全にログインできます"
+    },
+    "sign_out": {
+      "toast": {
+        "error": {
+          "title": "エラー！",
+          "message": "サインアウトに失敗しました。もう一度お試しください。"
+        }
+      }
+    }
+  },
+
+  "cycle": {
+    "label": "{count, plural, one {サイクル} other {サイクル}}",
+    "no_cycle": "サイクルなし"
+  },
+
+  "module": {
+    "label": "{count, plural, one {モジュール} other {モジュール}}",
+    "no_module": "モジュールなし"
   }
 }
