@@ -38,6 +38,7 @@ export interface IInitiativeStore {
   initiativeEpicLoader: Record<string, TLoader>;
   initiativeEpicsMap: Record<string, string[]>;
   initiativeEpicStatsMap: Record<string, TEpicStats> | undefined; // epicId -> stats
+  initiativesLoader: boolean;
 
   openCollapsibleSection: InitiativeCollapsible[];
   lastCollapsibleAction: InitiativeCollapsible | null;
@@ -91,6 +92,8 @@ export class InitiativeStore implements IInitiativeStore {
   initiativeEpicsMap: Record<string, string[]> = {};
   initiativeEpicStatsMap: Record<string, TEpicStats> | undefined = undefined;
 
+  initiativesLoader: boolean = false;
+
   openCollapsibleSection: InitiativeCollapsible[] = ["projects", "epics"];
   lastCollapsibleAction: InitiativeCollapsible | null = null;
 
@@ -116,6 +119,7 @@ export class InitiativeStore implements IInitiativeStore {
 
       openCollapsibleSection: observable.ref,
       lastCollapsibleAction: observable.ref,
+      initiativesLoader: observable,
       // actions
       fetchInitiatives: action,
       fetchInitiativesStats: action,
@@ -201,6 +205,7 @@ export class InitiativeStore implements IInitiativeStore {
   fetchInitiatives = async (workspaceSlug: string): Promise<TInitiative[] | undefined> => {
     try {
       runInAction(() => {
+        this.initiativesLoader = true;
         this.initiativesMap = undefined;
       });
 
@@ -210,15 +215,19 @@ export class InitiativeStore implements IInitiativeStore {
         this.initiativesMap = {};
         response.forEach((initiative) => {
           if (!initiative) return;
-
           this.initiativesMap![initiative.id] = initiative;
         });
+        this.initiativesLoader = false;
       });
 
       this.fetchInitiativesStats(workspaceSlug);
       return response;
     } catch (error) {
       console.error("error while fetching initiatives", error);
+    } finally {
+      runInAction(() => {
+        this.initiativesLoader = false;
+      });
     }
     return;
   };

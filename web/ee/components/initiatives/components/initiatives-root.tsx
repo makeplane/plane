@@ -1,6 +1,7 @@
 import { isEmpty, size } from "lodash";
 import { observer } from "mobx-react";
 import { EmptyState } from "@/components/empty-state";
+import { ListLayoutLoader } from "@/components/ui";
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useCommandPalette, useMember } from "@/hooks/store";
@@ -19,6 +20,8 @@ export const InitiativesRoot = observer(() => {
 
   const groupBy = displayFilters?.group_by;
   const groupedInitiativeIds = initiative.currentGroupedInitiativeIds;
+
+  if (initiative.initiativesLoader) return <ListLayoutLoader />;
 
   if (!groupedInitiativeIds) return <></>;
 
