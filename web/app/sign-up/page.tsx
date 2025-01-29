@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 // components
 import { NAVIGATE_TO_SIGNIN } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { AuthRoot } from "@/components/account";
 // constants
 // helpers
@@ -23,6 +24,8 @@ import WhiteHorizontalLogo from "@/public/plane-logos/white-horizontal-with-blue
 export type AuthType = "sign-in" | "sign-up";
 
 const SignInPage = observer(() => {
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { captureEvent } = useEventTracker();
   // hooks
@@ -48,13 +51,13 @@ const SignInPage = observer(() => {
               </Link>
             </div>
             <div className="flex flex-col items-end sm:items-center sm:gap-2 sm:flex-row  text-center text-sm font-medium text-onboarding-text-300">
-              Already have an account?{" "}
+              {t("auth.common.already_have_an_account")}
               <Link
                 href="/"
                 onClick={() => captureEvent(NAVIGATE_TO_SIGNIN, {})}
                 className="font-semibold text-custom-primary-100 hover:underline"
               >
-                Log in
+                {t("auth.common.login")}
               </Link>
             </div>
           </div>

@@ -6,6 +6,8 @@ import { observer } from "mobx-react";
 import { Tags } from "lucide-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueLabel } from "@plane/types";
 // ui
@@ -54,6 +56,8 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     fullWidth = false,
     fullHeight = false,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // states
   const [isOpen, setIsOpen] = useState(false);
   // refs
@@ -85,7 +89,13 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
 
   const NoLabel = useMemo(
     () => (
-      <Tooltip position="top" tooltipHeading="Labels" tooltipContent="None" isMobile={isMobile} renderByDefault={false}>
+      <Tooltip
+        position="top"
+        tooltipHeading={t("common.labels")}
+        tooltipContent="None"
+        isMobile={isMobile}
+        renderByDefault={false}
+      >
         <div
           className={cn(
             "flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
@@ -114,7 +124,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
         <Tooltip
           isMobile={isMobile}
           position="top"
-          tooltipHeading="Labels"
+          tooltipHeading={t("common.labels")}
           tooltipContent={projectLabels
             ?.filter((l) => value.includes(l?.id))
             .map((l) => l?.name)
@@ -136,7 +146,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
       <Tooltip
         key={label.id}
         position="top"
-        tooltipHeading="Labels"
+        tooltipHeading={t("common.labels")}
         tooltipContent={label?.name ?? ""}
         isMobile={isMobile}
         renderByDefault={renderByDefault}

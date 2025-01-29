@@ -37,8 +37,8 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: `Issue deleted successfully`,
+          title: `${t("success")!}`,
+          message: `${t("inbox_issue.modal.delete.success")!}`,
         });
       })
       .catch((errors) => {
@@ -61,7 +61,8 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
       handleSubmit={handleDelete}
       isSubmitting={isDeleting}
       isOpen={isOpen}
-      title="Delete issue"
+      title={t("inbox_issue.modals.delete.title")}
+      // TODO: Need to translate the confirmation message
       content={
         <>
           Are you sure you want to delete issue{" "}

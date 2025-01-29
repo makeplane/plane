@@ -26,7 +26,7 @@ export const WorkspaceSettingsSidebar = observer(() => {
   return (
     <div className="flex w-[280px] flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <span className="text-xs font-semibold text-custom-sidebar-text-400">SETTINGS</span>
+        <span className="text-xs font-semibold text-custom-sidebar-text-400 uppercase">{t("settings")}</span>
         <div className="flex w-full flex-col gap-1">
           {WORKSPACE_SETTINGS_LINKS.map(
             (link) =>

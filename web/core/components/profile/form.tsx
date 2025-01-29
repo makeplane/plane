@@ -309,7 +309,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
               </div>
               <div className="flex flex-col gap-1">
                 <h4 className="text-sm font-medium text-custom-text-200">
-                  {t("email")}&nbsp;
+                  {t("auth.common.email.label")}&nbsp;
                   <span className="text-red-500">*</span>
                 </h4>
                 <Controller

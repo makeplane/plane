@@ -54,6 +54,7 @@ from plane.db.models import (
     ModuleLink,
     ModuleUserProperties,
     Project,
+    UserRecentVisit,
 )
 from plane.utils.analytics_plot import burndown_plot
 from plane.utils.timezone_converter import user_timezone_converter
@@ -808,6 +809,13 @@ class ModuleViewSet(BaseViewSet):
             entity_identifier=pk,
             project_id=project_id,
         ).delete()
+        # delete the module from recent visits
+        UserRecentVisit.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            entity_identifier=pk,
+            entity_name="module",
+        ).delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

@@ -54,20 +54,7 @@
   "created": "Created",
   "subscribed": "Subscribed",
   "you_do_not_have_the_permission_to_access_this_page": "You do not have the permission to access this page.",
-  "failed_to_sign_out_please_try_again": "Failed to sign out. Please try again.",
-  "password_changed_successfully": "Password changed successfully.",
   "something_went_wrong_please_try_again": "Something went wrong. Please try again.",
-  "change_password": "Change password",
-  "passwords_dont_match": "Passwords don't match",
-  "current_password": "Current password",
-  "new_password": "New password",
-  "confirm_password": "Confirm password",
-  "this_field_is_required": "This field is required",
-  "changing_password": "Changing password",
-  "please_enter_your_password": "Please enter your password.",
-  "password_length_should_me_more_than_8_characters": "Password length should me more than 8 characters.",
-  "password_is_weak": "Password is weak.",
-  "password_is_strong": "Password is strong.",
   "load_more": "Load more",
   "select_or_customize_your_interface_color_scheme": "Select or customize your interface color scheme.",
   "theme": "Theme",
@@ -315,9 +302,6 @@
   "create_new_label": "Create new label",
   "start_date": "Start date",
   "due_date": "Due date",
-  "end_date": "End date",
-  "target_date": "Target date",
-  "cycle": "Cycle",
   "estimate": "Estimate",
   "change_parent_issue": "Change parent issue",
   "remove_parent_issue": "Remove parent issue",
@@ -342,6 +326,14 @@
   "show_all": "Show all",
   "show_less": "Show less",
   "no_data_yet": "No Data yet",
+  "syncing": "Syncing",
+  "add_work_item": "Add work item",
+  "advanced_description_placeholder": "Press '/' for commands...",
+  "create_work_item": "Create work item",
+  "attachments": "Attachments",
+  "declining": "Declining",
+  "declined": "Declined",
+  "decline": "Decline",
   "unassigned": "Unassigned",
   "work_items": "Work items",
   "add_link": "Add link",
@@ -351,6 +343,17 @@
   "no_labels_yet": "No labels yet",
   "ideal": "Ideal",
   "current": "Current",
+  "no_matching_members": "No matching members",
+  "leaving": "Leaving",
+  "removing": "Removing",
+  "leave": "Leave",
+  "refreshing": "Refreshing",
+  "refresh_status": "Refresh status",
+  "prev": "Prev",
+  "next": "Next",
+  "re_generating": "Re-generating",
+  "re_generate": "Re-generate",
+  "re_generate_key": "Re-generate key",
 
   "project_view": {
     "sort_by": {
@@ -363,6 +366,35 @@
   "toast": {
     "success": "Success!",
     "error": "Error!"
+  },
+
+  "links": {
+    "toasts": {
+      "created": {
+        "title": "Link created",
+        "message": "The link has been successfully created"
+      },
+      "not_created": {
+        "title": "Link not created",
+        "message": "The link could not be created"
+      },
+      "updated": {
+        "title": "Link updated",
+        "message": "The link has been successfully updated"
+      },
+      "not_updated": {
+        "title": "Link not updated",
+        "message": "The link could not be updated"
+      },
+      "removed": {
+        "title": "Link removed",
+        "message": "The link has been successfully removed"
+      },
+      "not_removed": {
+        "title": "Link not removed",
+        "message": "The link could not be removed"
+      }
+    }
   },
 
   "home": {
@@ -399,33 +431,7 @@
       "empty": "Save links to work things that you'd like handy.",
       "add": "Add quick Link",
       "title": "Quicklink",
-      "title_plural": "Quicklinks",
-      "toasts": {
-        "created": {
-          "title": "Link created",
-          "message": "The link has been successfully created"
-        },
-        "not_created": {
-          "title": "Link not created",
-          "message": "The link could not be created"
-        },
-        "updated": {
-          "title": "Link updated",
-          "message": "The link has been successfully updated"
-        },
-        "not_updated": {
-          "title": "Link not updated",
-          "message": "The link could not be updated"
-        },
-        "removed": {
-          "title": "Link removed",
-          "message": "The link has been successfully removed"
-        },
-        "not_removed": {
-          "title": "Link not removed",
-          "message": "The link could not be removed"
-        }
-      }
+      "title_plural": "Quicklinks"
     },
     "recents": {
       "title": "Recents",
@@ -494,19 +500,24 @@
     "filters": "Filters",
     "display": "Display",
     "load_more": "Load more",
-    "no_matches_found": "No matches found",
     "activity": "Activity",
     "analytics": "Analytics",
-    "success": "Success",
-    "error": "Error",
+    "success": "Success!",
+    "something_went_wrong": "Something went wrong",
+    "error": {
+      "label": "Error!",
+      "message": "Some error occurred. Please try again."
+    },
     "group_by": "Group by",
-    "search": "Search",
     "epic": "Epic",
-    "issue": "Issue",
+    "work_item": "Work item",
+    "add": "Add",
     "warning": "Warning",
     "updating": "Updating",
+    "adding": "Adding",
     "update": "Update",
     "creating": "Creating",
+    "create": "Create",
     "cancel": "Cancel",
     "description": "Description",
     "title": "Title",
@@ -523,13 +534,20 @@
     "add_more": "Add more",
     "defaults": "Defaults",
     "add_label": "Add label",
-    "something_went_wrong": "Something went wrong. Please try again later.",
     "estimates": "estimates",
     "customize_time_range": "Customize time range",
+    "loading": "Loading...",
+    "attachments": "Attachments",
+    "properties": "Properties",
+    "parent": "Parent",
+    "remove": "Remove",
+    "archiving": "Archiving",
+    "archive": "Archive",
     "access": {
       "public": "Public",
       "private": "Private"
     },
+    "sub_work_items": "Sub-work items",
     "order_by": {
       "label": "Order by",
       "manual": "Manual",
@@ -550,10 +568,47 @@
     "comments": "Comments",
     "updates": "Updates",
     "clear_all": "Clear all",
+    "link_copied": "Link copied",
+    "copied_to_clipboard": "Work item link copied to clipboard",
+    "is_copied_to_clipboard": "Work item is copied to clipboard",
     "no_links_added_yet": "No links added yet",
     "add_link": "Add link",
     "links": "Links",
-    "progress": "Progress"
+    "go_to_workspace": "Go to workspace",
+    "progress": "Progress",
+    "optional": "Optional",
+    "join": "Join",
+    "continue": "Continue",
+    "resend": "Resend",
+    "errors": {
+      "default": {
+        "title": "Error!",
+        "message": "Something went wrong. Please try again."
+      },
+      "required": "This field is required"
+    },
+    "update_link": "Update link",
+    "attach": "Attach",
+    "create_new": "Create new",
+    "add_existing": "Add existing",
+    "type_or_paste_a_url": "Type or paste a URL",
+    "url_is_invalid": "URL is invalid",
+    "display_title": "Display title",
+    "link_title_placeholder": "What you'd like to see this link as",
+    "search": {
+      "label": "Search",
+      "placeholder": "Type to search...",
+      "no_matches_found": "No matches found",
+      "no_matching_results": "No matching results"
+    },
+    "actions": {
+      "edit": "Edit",
+      "make_a_copy": "Make a copy",
+      "open_in_new_tab": "Open in new tab",
+      "copy_link": "Copy link",
+      "archive": "Archive",
+      "delete": "Delete"
+    }
   },
 
   "form": {
@@ -567,18 +622,75 @@
     "grouping_title": "{entity} Grouping",
     "priority": "{entity} ",
     "all": "All {entity}",
-    "drop_here_to_move": "Drop here to move the {entity}"
+    "drop_here_to_move": "Drop here to move the {entity}",
+    "delete": {
+      "label": "Delete {entity}",
+      "success": "{entity} deleted successfully",
+      "failed": "{entity} delete failed"
+    },
+    "update": {
+      "failed": "{entity} update failed"
+    }
   },
 
   "epic": {
     "all": "All Epics",
-    "label": "{count, plural, one {Epic} other {Epics}}"
+    "label": "{count, plural, one {Epic} other {Epics}}",
+    "new": "New Epic",
+    "adding": "Adding epic...",
+    "create": {
+      "success": "Epic created successfully"
+    },
+    "add": {
+      "press_enter": "Press 'Enter' to add another epic"
+    },
+    "title": {
+      "label": "Epic Title",
+      "required": "Epic title is required."
+    }
   },
 
   "issue": {
-    "label": "{count, plural, one {Issue} other {Issues}}",
-    "all": "All Issues",
-    "add": "Add Issue",
+    "label": "{count, plural, one {Work item} other {Work items}}",
+    "all": "All Work items",
+    "title": {
+      "label": "Work item title",
+      "required": "Work item title is required."
+    },
+    "add": {
+      "press_enter": "Press 'Enter' to add another work item",
+      "label": "Add Work item",
+      "cycle": {
+        "failed": "Work item could not be added to the cycle. Please try again."
+      },
+      "assignee": "Add assignees",
+      "start_date": "Add start date",
+      "due_date": "Add due date",
+      "parent": "Add parent work item",
+      "sub_issue": "Add sub-work item",
+      "relation": "Add relation",
+      "link": "Add link"
+    },
+    "remove": {
+      "cycle": {
+        "loading": "Removing work item from the cycle...",
+        "success": "Work item removed from the cycle successfully.",
+        "failed": "Work item could not be removed from the cycle. Please try again."
+      },
+      "module": {
+        "loading": "Removing work item from the module...",
+        "success": "Work item removed from the module successfully.",
+        "failed": "Work item could not be removed from the module. Please try again."
+      },
+      "parent": {
+        "label": "Remove parent work item"
+      }
+    },
+    "new": "New Work item",
+    "adding": "Adding work item...",
+    "create": {
+      "success": "Work item created successfully"
+    },
     "priority": {
       "urgent": "Urgent",
       "high": "High",
@@ -589,14 +701,14 @@
       "properties": {
         "label": "Display Properties",
         "id": "ID",
-        "issue_type": "Issue Type",
-        "sub_issue_count": "Sub issue count",
+        "issue_type": "Work item Type",
+        "sub_issue_count": "Sub-work item count",
         "attachment_count": "Attachment count",
         "created_on": "Created on",
-        "sub_issue": "Sub-issue"
+        "sub_issue": "Sub-work item"
       },
       "extra": {
-        "show_sub_issues": "Show sub-issues",
+        "show_sub_issues": "Show sub-work items",
         "show_empty_groups": "Show empty groups"
       }
     },
@@ -635,6 +747,36 @@
       "upload": {
         "error": "Asset upload failed. Please try again later."
       }
+    },
+    "empty_state": {
+      "issue_detail": {
+        "title": "Work item does not exist",
+        "description": "The work item you are looking for does not exist, has been archived, or has been deleted.",
+        "primary_button": {
+          "text": "View other work items"
+        }
+      }
+    },
+    "sibling": {
+      "label": "Sibling work items"
+    },
+    "archive": {
+      "description": "Only completed or canceled\nwork items can be archived",
+      "label": "Archive Work item",
+      "confirm_message": "Are you sure you want to archive the work item? All your archived work items can be restored later.",
+      "success": {
+        "label": "Archive success",
+        "message": "Your archives can be found in project archives."
+      },
+      "failed": {
+        "message": "Work item could not be archived. Please try again."
+      }
+    },
+    "relation": {
+      "relates_to": "Relates to",
+      "duplicate": "Duplicate of",
+      "blocked_by": "Blocked by",
+      "blocking": "Blocking"
     }
   },
 
@@ -671,6 +813,33 @@
         "description": "Duplicate"
       }
     },
+    "modals": {
+      "decline": {
+        "title": "Decline work item",
+        "content": "Are you sure you want to decline work item {value}?"
+      },
+      "delete": {
+        "title": "Delete work item",
+        "content": "Are you sure you want to delete work item {value}?",
+        "success": "Work item deleted successfully"
+      }
+    },
+    "errors": {
+      "snooze_permission": "Only project admins can snooze/Un-snooze work items",
+      "accept_permission": "Only project admins can accept work items",
+      "decline_permission": "Only project admins can deny work items"
+    },
+    "actions": {
+      "accept": "Accept",
+      "decline": "Decline",
+      "snooze": "Snooze",
+      "unsnooze": "Un snooze",
+      "copy": "Copy work item link",
+      "delete": "Delete",
+      "open": "Open work item",
+      "mark_as_duplicate": "Mark as duplicate",
+      "move": "Move {value} to project work items"
+    },
     "source": {
       "in-app": "in-app"
     },
@@ -678,6 +847,32 @@
       "created_at": "Created at",
       "updated_at": "Updated at",
       "id": "ID"
+    },
+    "label": "Intake",
+    "page_label": "{workspace} - Intake",
+    "modal": {
+      "title": "Create intake work item"
+    },
+    "tabs": {
+      "open": "Open",
+      "closed": "Closed"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "No open issues",
+        "description": "Find open issues here. Create new issue."
+      },
+      "sidebar_closed_tab": {
+        "title": "No closed issues",
+        "description": "All the issues whether accepted or declined can be found here."
+      },
+      "sidebar_filter": {
+        "title": "No matching issues",
+        "description": "No issue matches filter applied in intake. Create a new issue."
+      },
+      "detail": {
+        "title": "Select an issue to view its details."
+      }
     }
   },
 
@@ -853,24 +1048,124 @@
 
   "workspace_settings": {
     "label": "Workspace settings",
+    "key_created": "Key created",
+    "copy_key": "Copy and save this secret key in Plane Pages. You can't see this key after you hit Close. A CSV file containing the key has been downloaded.",
+    "token_copied": "Token copied to clipboard.",
     "settings": {
       "general": {
-        "title": "General"
+        "title": "General",
+        "upload_logo": "Upload logo",
+        "edit_logo": "Edit logo",
+        "name": "Workspace name",
+        "company_size": "Company size",
+        "url": "Workspace URL",
+        "update_workspace"  : "Update workspace",
+        "delete_workspace"  : "Delete workspace",
+        "delete_workspace_description"  : "When deleting a workspace, all of the data and resources within that workspace will be permanently removed and cannot be recovered.",
+        "delete_btn": "Delete my workspace",
+        "errors": {
+          "name": {
+            "required": "Name is required",
+            "max_length": "Workspace name should not exceed 80 characters"
+          },
+          "company_size": {
+            "required": "Company size is required"
+          }
+        }
       },
       "members": {
-        "title": "Members"
+        "title": "Members",
+        "add_member": "Add member",
+        "invitations_sent_successfully": "Invitations sent successfully",
+        "leave_confirmation": "Are you sure you want to leave the workspace? You will no longer have access to this workspace. This action cannot be undone.",
+        "details":{
+          "full_name":"Full name",
+          "display_name":"Display name",
+          "email_address":"Email address",
+          "account_type":"Account type",
+          "authentication":"Authentication",
+          "joining_date":"Joining date"
+        }
       },
-      "billing-and-plans": {
-        "title": "Billing & Plans"
+      "billing_and_plans": {
+        "title": "Billing & Plans",
+        "current_plan":"Current plan",
+        "free_plan":"You are currently using the free plan",
+        "view_plans":"View plans"
       },
       "exports": {
-        "title": "Exports"
+        "title": "Exports",
+        "exporting": "Exporting",
+        "previous_exports": "Previous exports",
+        "export_separate_files" : "Export the data into separate files",
+        "modal": {
+          "title": "Export to",
+          "toasts": {
+            "success": {
+              "title": "Export successful",
+              "message": "You will be able to download the exported {entity} from the previous export."
+            },
+            "error": {
+              "title": "Export failed",
+              "message": "Export was unsuccessful. Please try again."
+            }
+          }
+        }
       },
       "webhooks": {
-        "title": "Webhooks"
+        "title": "Webhooks",
+        "add_webhook": "Add webhook",
+        "modal": {
+          "title": "Create webhook",
+          "details": "Webhook details",
+          "payload": "Payload URL",
+          "question": "Which events would you like to trigger this webhook?" ,
+          "error": "URL is required"
+        },
+        "secret_key": {
+          "title": "Secret key",
+          "message": "Generate a token to sign-in to the webhook payload"
+        },
+        "toasts": {
+          "created": {
+            "title": "Webhook created",
+            "message": "The webhook has been successfully created"
+          },
+          "not_created": {
+            "title": "Webhook not created",
+            "message": "The webhook could not be created"
+          },
+          "updated": {
+            "title": "Webhook updated",
+            "message": "The webhook has been successfully updated"
+          },
+          "not_updated": {
+            "title": "Webhook not updated",
+            "message": "The webhook could not be updated"
+          },
+          "removed": {
+            "title": "Webhook removed",
+            "message": "The webhook has been successfully removed"
+          },
+          "not_removed": {
+            "title": "Webhook not removed",
+            "message": "The webhook could not be removed"
+          },
+          "secret_key_copied": {
+            "message": "Secret key copied to clipboard."
+          },
+          "secret_key_not_copied": {
+            "message": "Error occurred while copying secret key."
+          }
+        }
       },
-      "api-tokens": {
-        "title": "API Tokens"
+      "api_tokens": {
+        "title": "API Tokens",
+        "add_token": "Add API token",
+        "create_token": "Create token",
+        "never_expires": "Never expires",
+        "generate_token": "Generate token",
+        "generating": "Generating"
       }
     },
     "empty_state": {
@@ -1352,30 +1647,7 @@
       }
     }
   },
-
-  "inbox": {
-    "label": "Inbox",
-    "empty_state": {
-      "sidebar_open_tab": {
-        "title": "No open issues",
-        "description": "Find open issues here. Create new issue."
-      },
-      "sidebar_closed_tab": {
-        "title": "No closed issues",
-        "description": "All the issues whether accepted or declined can be found here."
-      },
-      "sidebar_filter": {
-        "title": "No matching issues",
-        "description": "No issue matches filter applied in intake. Create a new issue."
-      },
-      "detail": {
-        "title": "Select an issue to view its details."
-      }
-    }
-  },
-
   "workspace_draft_issues": {
-    "draft_an_issue": "Draft an issue",
     "draft_an_issue": "Draft an issue",
     "empty_state": {
       "title": "Half-written issues, and soon, comments will show up here.",
@@ -1562,5 +1834,165 @@
       "created_at": "Created date",
       "manual": "Manual"
     }
+  },
+
+  "auth": {
+    "common": {
+      "email": {
+        "label": "Email",
+        "placeholder": "name@company.com",
+        "errors": {
+          "required": "Email is required",
+          "invalid": "Email is invalid"
+        }
+      },
+      "password": {
+        "label": "Password",
+        "set_password": "Set a password",
+        "placeholder": "Enter password",
+        "confirm_password": {
+          "label": "Confirm password",
+          "placeholder": "Confirm password"
+        },
+        "current_password": {
+          "label": "Current password"
+        },
+        "new_password": {
+          "label": "New password",
+          "placeholder": "Enter new password"
+        },
+        "change_password": {
+          "label": {
+            "default": "Change password",
+            "submitting": "Changing password"
+          }
+        },
+        "errors": {
+          "match": "Passwords don't match",
+          "empty": "Please enter your password",
+          "length": "Password length should me more than 8 characters",
+          "strength": {
+            "weak": "Password is weak",
+            "strong": "Password is strong"
+          }
+        },
+        "submit": "Set password",
+        "toast": {
+          "change_password": {
+            "success": {
+              "title": "Success!",
+              "message": "Password changed successfully."
+            },
+            "error": {
+              "title": "Error!",
+              "message": "Something went wrong. Please try again."
+            }
+          }
+        }
+      },
+      "unique_code": {
+        "label": "Unique code",
+        "placeholder": "gets-sets-flys",
+        "paste_code": "Paste the code sent to your email",
+        "requesting_new_code": "Requesting new code",
+        "sending_code": "Sending code"
+      },
+      "already_have_an_account": "Already have an account?",
+      "login": "Log in",
+      "create_account": "Create an account",
+      "new_to_plane": "New to Plane?",
+      "back_to_sign_in": "Back to sign in",
+      "resend_in": "Resend in {seconds} seconds",
+      "sign_in_with_unique_code": "Sign in with unique code",
+      "forgot_password": "Forgot your password?"
+    },
+    "sign_up": {
+      "header": {
+        "label": "Create an account to start managing work with your team.",
+        "step": {
+          "email": {
+            "header": "Sign up",
+            "sub_header": ""
+          },
+          "password": {
+            "header": "Sign up",
+            "sub_header": "Sign up using an email-password combination."
+          },
+          "unique_code": {
+            "header": "Sign up",
+            "sub_header": "Sign up using a unique code sent to the email address above."
+          }
+        }
+      },
+      "errors": {
+        "password": {
+          "strength": "Try setting-up a strong password to proceed"
+        }
+      }
+    },
+    "sign_in": {
+      "header": {
+        "label": "Log in to start managing work with your team.",
+        "step": {
+          "email": {
+            "header": "Log in or sign up",
+            "sub_header": ""
+          },
+          "password": {
+            "header": "Log in or sign up",
+            "sub_header": "Use your email-password combination to log in."
+          },
+          "unique_code": {
+            "header": "Log in or sign up",
+            "sub_header": "Log in using a unique code sent to the email address above."
+          }
+        }
+      }
+    },
+    "forgot_password": {
+      "title": "Reset your password",
+      "description": "Enter your user account's verified email address and we will send you a password reset link.",
+      "email_sent": "We sent the reset link to your email address",
+      "send_reset_link": "Send reset link",
+      "errors": {
+        "smtp_not_enabled": "We see that your god hasn't enabled SMTP, we will not be able to send a password reset link"
+      },
+      "toast": {
+        "success": {
+          "title": "Email sent",
+          "message": "Check your inbox for a link to reset your password. If it doesn't appear within a few minutes, check your spam folder."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Something went wrong. Please try again."
+        }
+      }
+    },
+    "reset_password": {
+      "title": "Set new password",
+      "description": "Secure your account with a strong password"
+    },
+    "set_password": {
+      "title": "Secure your account",
+      "description": "Setting password helps you login securely"
+    },
+    "sign_out": {
+      "toast": {
+        "error": {
+          "title": "Error!",
+          "message": "Failed to sign out. Please try again."
+        }
+      }
+    }
+  },
+
+  "cycle": {
+    "label": "{count, plural, one {Cycle} other {Cycles}}",
+    "no_cycle": "No cycle"
+  },
+
+  "module": {
+    "label": "{count, plural, one {Module} other {Modules}}",
+    "no_module": "No module"
   }
 }

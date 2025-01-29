@@ -55,12 +55,7 @@ export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
         />
       )}
       {shouldRenderRelations && (
-        <RelationsCollapsible
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-          disabled={disabled}
-        />
+        <RelationsCollapsible workspaceSlug={workspaceSlug} issueId={issueId} disabled={disabled} />
       )}
       {shouldRenderLinks && (
         <LinksCollapsible workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />

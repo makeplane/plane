@@ -6,6 +6,8 @@ import { useParams } from "next/navigation";
 import { Rocket, Search } from "lucide-react";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { ISearchIssueResponse } from "@plane/types";
 // ui
@@ -44,6 +46,9 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   issueId,
   searchEpic = false,
 }) => {
+  // i18n
+  const { t } = useTranslation();
+
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
@@ -122,7 +127,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                     />
                     <Combobox.Input
                       className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0 sm:text-sm"
-                      placeholder="Type to search..."
+                      placeholder={t("common.search.placeholder")}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       displayValue={() => ""}

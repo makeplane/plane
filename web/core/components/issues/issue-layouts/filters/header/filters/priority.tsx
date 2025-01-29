@@ -28,7 +28,7 @@ export const FilterPriority: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title={`${t("common.priority")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`Priority ${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
