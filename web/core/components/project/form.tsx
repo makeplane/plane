@@ -101,7 +101,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           payload: {
             ...res,
             changed_properties: changed_properties,
-            state: t("toast.success"),
+            state: "SUCCESS",
             element: "Project general settings",
           },
         });
