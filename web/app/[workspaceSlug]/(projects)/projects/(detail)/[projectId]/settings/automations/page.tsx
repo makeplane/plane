@@ -3,9 +3,9 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { IProject } from "@plane/types";
-// ui
+// plane imports
 import { useTranslation } from "@plane/i18n";
+import { IProject } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
