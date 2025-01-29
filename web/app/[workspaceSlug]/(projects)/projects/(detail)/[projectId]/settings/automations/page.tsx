@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { IProject } from "@plane/types";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
@@ -20,6 +21,8 @@ const AutomationSettingsPage = observer(() => {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentProjectDetails: projectDetails, updateProject } = useProject();
+
+  const { t } = useTranslation();
 
   // derived values
   const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
@@ -48,7 +51,7 @@ const AutomationSettingsPage = observer(() => {
       <PageHead title={pageTitle} />
       <section className={`w-full overflow-y-auto ${canPerformProjectAdminActions ? "" : "opacity-60"}`}>
         <div className="flex flex-col items-start border-b border-custom-border-100 pb-3.5">
-          <h3 className="text-xl font-medium leading-normal">Automations</h3>
+          <h3 className="text-xl font-medium leading-normal">{t("project_settings.automations.label")}</h3>
         </div>
         <AutoArchiveAutomation handleChange={handleChange} />
         <AutoCloseAutomation handleChange={handleChange} />

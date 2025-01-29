@@ -8,6 +8,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IIssueLabel } from "@plane/types";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
@@ -46,6 +47,8 @@ export const CreateUpdateLabelInline = observer(
       defaultValues,
     });
 
+    const { t } = useTranslation();
+
     const handleClose = () => {
       setLabelForm(false);
       reset(defaultValues);
@@ -64,7 +67,7 @@ export const CreateUpdateLabelInline = observer(
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
-            message: error?.detail ?? error.error ?? "Something went wrong. Please try again later.",
+            message: error?.detail ?? error.error ?? t("common.something_went_wrong"),
           });
           reset(formData);
         });
@@ -83,7 +86,7 @@ export const CreateUpdateLabelInline = observer(
           setToast({
             title: "Oops!",
             type: TOAST_TYPE.ERROR,
-            message: error?.error ?? "Error while updating the label",
+            message: error?.error ?? t("project_settings.labels.toast.error"),
           });
           reset(formData);
         });
@@ -171,10 +174,10 @@ export const CreateUpdateLabelInline = observer(
               control={control}
               name="name"
               rules={{
-                required: "Label title is required",
+                required: t("project_settings.labels.label_title_is_required"),
                 maxLength: {
                   value: 255,
-                  message: "Label name should not exceed 255 characters",
+                  message: t("project_settings.labels.label_max_char"),
                 },
               }}
               render={({ field: { value, onChange, ref } }) => (
@@ -187,17 +190,17 @@ export const CreateUpdateLabelInline = observer(
                   onChange={onChange}
                   ref={ref}
                   hasError={Boolean(errors.name)}
-                  placeholder="Label title"
+                  placeholder={t("project_settings.labels.label_title")}
                   className="w-full"
                 />
               )}
             />
           </div>
           <Button variant="neutral-primary" onClick={() => handleClose()} size="sm">
-            Cancel
+            {t("cancel")}
           </Button>
           <Button variant="primary" type="submit" size="sm" loading={isSubmitting}>
-            {isUpdating ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Adding" : "Add"}
+            {isUpdating ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")}
           </Button>
         </form>
         {errors.name?.message && <p className="p-0.5 pl-8 text-sm text-red-500">{errors.name?.message}</p>}

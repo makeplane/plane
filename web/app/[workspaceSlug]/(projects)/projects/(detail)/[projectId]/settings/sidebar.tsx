@@ -5,6 +5,7 @@ import range from "lodash/range";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Loader } from "@plane/ui";
 // components
@@ -20,6 +21,8 @@ export const ProjectSettingsSidebar = observer(() => {
   const pathname = usePathname();
   // mobx store
   const { allowPermissions, projectUserInfo } = useUserPermissions();
+
+  const { t } = useTranslation();
 
   // derived values
   const currentProjectRole = projectUserInfo?.[workspaceSlug?.toString()]?.[projectId?.toString()]?.role;
@@ -58,7 +61,7 @@ export const ProjectSettingsSidebar = observer(() => {
                     isActive={link.highlight(pathname, `/${workspaceSlug}/projects/${projectId}`)}
                     className="text-sm font-medium px-4 py-2"
                   >
-                    {link.label}
+                    {t(link.i18n_label)}
                   </SidebarNavItem>
                 </Link>
               )

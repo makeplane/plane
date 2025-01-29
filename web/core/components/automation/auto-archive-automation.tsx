@@ -55,9 +55,9 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
               <ArchiveRestore className="h-4 w-4 flex-shrink-0 text-custom-text-100" />
             </div>
             <div className="">
-              <h4 className="text-sm font-medium">Auto-archive closed issues</h4>
+              <h4 className="text-sm font-medium">{t("project_settings.automations.auto-archive.title")}</h4>
               <p className="text-sm tracking-tight text-custom-text-200">
-                Plane will auto archive issues that have been completed or canceled.
+                {t("project_settings.automations.auto-archive.description")}
               </p>
             </div>
           </div>
@@ -77,7 +77,9 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
           currentProjectDetails.archive_in !== 0 && (
             <div className="mx-6">
               <div className="flex w-full items-center justify-between gap-2 rounded border border-custom-border-200 bg-custom-background-90 px-5 py-4">
-                <div className="w-1/2 text-sm font-medium">Auto-archive issues that are closed for</div>
+                <div className="w-1/2 text-sm font-medium">
+                  {t("project_settings.automations.auto-archive.duration")}
+                </div>
                 <div className="w-1/2">
                   <CustomSelect
                     value={currentProjectDetails?.archive_in}
@@ -102,7 +104,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
                         className="flex w-full select-none items-center rounded px-1 py-1.5 text-sm text-custom-text-200 hover:bg-custom-background-80"
                         onClick={() => setmonthModal(true)}
                       >
-                        Customize time range
+                        {t("customize_time_range")}
                       </button>
                     </>
                   </CustomSelect>

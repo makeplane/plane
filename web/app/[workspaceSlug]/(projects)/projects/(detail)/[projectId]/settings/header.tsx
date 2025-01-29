@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { Settings } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, CustomMenu, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
@@ -23,6 +24,8 @@ export const ProjectSettingHeader: FC = observer(() => {
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { loader } = useProject();
+
+  const { t } = useTranslation();
 
   return (
     <Header>
@@ -65,7 +68,7 @@ export const ProjectSettingHeader: FC = observer(() => {
                   key={item.key}
                   onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}${item.href}`)}
                 >
-                  {item.label}
+                  {t(item.i18n_label)}
                 </CustomMenu.MenuItem>
               )
           )}

@@ -14,8 +14,11 @@
   "description": "Description",
   "search": "Search",
   "add_member": "Add member",
+  "adding_members": "Adding members",
+  "no_matching_members": "No matching members",
   "remove_member": "Remove member",
   "add_members": "Add members",
+  "adding_member": "Adding members",
   "remove_members": "Remove members",
   "add": "Add",
   "adding": "Adding",
@@ -197,6 +200,10 @@
   "description_placeholder": "Description...",
   "only_alphanumeric_non_latin_characters_allowed": "Only Alphanumeric & Non-latin characters are allowed.",
   "project_id_is_required": "Project ID is required",
+  "project_id_allowed_char": "Only Alphanumeric & Non-latin characters are allowed.",
+  "project_id_min_char": "Project ID must at least be of 1 character",
+  "project_id_max_char": "Project ID must at most be of 5 characters",
+  "project_description_placeholder": "Enter project description",
   "select_network": "Select network",
   "lead": "Lead",
   "date_range": "Date range",
@@ -504,6 +511,21 @@
     "description": "Description",
     "title": "Title",
     "attachment": "Attachment",
+    "general": "General",
+    "features": "Features",
+    "automation": "Automation",
+    "project_name": "Project name",
+    "project_id": "Project ID",
+    "project_timezone": "Project Timezone",
+    "created_on": "Created on",
+    "update_project": "Update project",
+    "identifier_already_exists": "Identifier already exists",
+    "add_more": "Add more",
+    "defaults": "Defaults",
+    "add_label": "Add label",
+    "something_went_wrong": "Something went wrong. Please try again later.",
+    "estimates": "estimates",
+    "customize_time_range": "Customize time range",
     "access": {
       "public": "Public",
       "private": "Private"
@@ -685,7 +707,7 @@
     "total_members": "Total members",
     "total_cycles": "Total cycles",
     "total_modules": "Total modules",
-    "pending_work_items":{
+    "pending_work_items": {
       "title": "Pending work items",
       "empty_state": "Analysis of pending work items by co-workers appears here."
     },
@@ -693,11 +715,11 @@
       "title": "Work items closed in a year",
       "empty_state": "Close work items to view analysis of the same in the form of a graph."
     },
-    "most_work_items_created":{
+    "most_work_items_created": {
       "title": "Most work items created",
       "empty_state": "Co-workers and the number of work items created by them appears here."
     },
-    "most_work_items_closed":{
+    "most_work_items_closed": {
       "title": "Most work items closed",
       "empty_state": "Co-workers and the number of work items closed by them appears here."
     },
@@ -933,10 +955,77 @@
   },
 
   "project_settings": {
+    "general": {
+      "enter_project_id": "Enter project ID",
+      "please_select_a_timezone": "Please select a timezone",
+      "archive_project": {
+        "title": "Archive project",
+        "description": "Archiving a project will unlist your project from your side navigation although you will still be able to access it from your projects page. You can restore the project or delete it whenever you want.",
+        "button": "Archive project"
+      },
+      "delete_project": {
+        "title": "Delete project",
+        "description": "When deleting a project, all of the data and resources within that project will be permanently removed and cannot be recovered.",
+        "button": "Delete my project"
+      },
+      "toast": {
+        "success": "Project updated successfully",
+        "error": "Project could not be updated. Please try again."
+      }
+    },
+    "members": {
+      "label": "Members",
+      "project_lead": "Project lead",
+      "default_assignee": "Default assignee",
+      "guest_super_permissions": {
+        "title": "Grant view access to all issues for guest users:",
+        "sub_heading": "This will allow guests to have view access to all the project issues."
+      },
+      "invite_members": {
+        "title": "Invite members",
+        "sub_heading": "Invite members to work on your project.",
+        "select_co_worker": "Select co-worker"
+      }
+    },
+    "states": {
+      "describe_this_state_for_your_members": "Describe this state for your members."
+    },
+    "labels": {
+      "label_title": "Label title",
+      "label_title_is_required": "Label title is required",
+      "label_max_char": "Label name should not exceed 255 characters",
+      "toast": {
+        "error": "Error while updating the label"
+      }
+    },
+    "estimates": {
+      "title": "Enable estimates for my project",
+      "description": "They help you in communicating complexity and workload of the team."
+    },
+    "automations": {
+      "label": "Automations",
+      "auto-archive": {
+        "title": "Auto-archive closed issues",
+        "description": "Plane will auto archive issues that have been completed or canceled.",
+        "duration": "Auto-archive issues that are closed for"
+      },
+      "auto-close": {
+        "title": "Auto-close issues",
+        "description": "Plane will automatically close issues that haven't been completed or canceled.",
+        "duration": "Auto-close issues that are inactive for",
+        "auto_close_status": "Auto-close status"
+      }
+    },
+
     "empty_state": {
       "labels": {
         "title": "No labels yet",
         "description": "Create labels to help organize and filter issues in you project."
+      },
+      "estimates": {
+        "title": "No estimate systems yet",
+        "description": "Create a set of estimates to communicate the amount of work per issue.",
+        "primary_button": "Add estimate system"
       }
     }
   },
