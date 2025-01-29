@@ -96,7 +96,7 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
         relationKey: relationKey,
         issueIds: issueIds,
         icon: issueRelationOption?.icon,
-        label: t(issueRelationOption?.i18n_label),
+        label: issueRelationOption?.i18n_label ? t(issueRelationOption?.i18n_label) : "",
         className: issueRelationOption?.className,
       };
     });
