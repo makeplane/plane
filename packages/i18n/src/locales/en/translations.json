@@ -653,7 +653,7 @@
         "failed": "Work item could not be removed from the module. Please try again."
       },
       "parent": {
-        "label": "Remove Parent Work item"
+        "label": "Remove parent work item"
       }
     },
     "new": "New Work item",
@@ -672,10 +672,10 @@
         "label": "Display Properties",
         "id": "ID",
         "issue_type": "Work item Type",
-        "sub_issue_count": "Sub work item count",
+        "sub_issue_count": "Sub-work item count",
         "attachment_count": "Attachment count",
         "created_on": "Created on",
-        "sub_issue": "Sub-issue"
+        "sub_issue": "Sub-work item"
       },
       "extra": {
         "show_sub_issues": "Show sub-work items",
@@ -720,7 +720,7 @@
     },
     "empty_state": {
       "issue_detail": {
-        "title": "work item does not exist",
+        "title": "Work item does not exist",
         "description": "The work item you are looking for does not exist, has been archived, or has been deleted.",
         "primary_button": {
           "text": "View other work items"
