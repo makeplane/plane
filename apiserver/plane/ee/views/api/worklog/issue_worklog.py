@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from plane.ee.permissions import ProjectEntityPermission
 from plane.db.models import Issue, Project
 from plane.ee.models import IssueWorkLog
-from plane.ee.views.base import BaseAPIView
+from plane.api.views.base import BaseAPIView
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.serializers import IssueWorkLogAPISerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
