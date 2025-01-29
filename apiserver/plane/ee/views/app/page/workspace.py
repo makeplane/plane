@@ -29,6 +29,7 @@ from plane.db.models import (
     Workspace,
     DeployBoard,
     PageVersion,
+    UserRecentVisit,
 )
 
 from plane.ee.views.base import BaseViewSet, BaseAPIView
@@ -304,6 +305,12 @@ class WorkspacePageViewSet(BaseViewSet):
         DeployBoard.objects.filter(
             entity_name="page", entity_identifier=pk, workspace__slug=slug
         ).delete()
+        # Delete the page from user recent's visit
+        UserRecentVisit.objects.filter(
+            workspace__slug=slug,
+            entity_identifier=pk,
+            entity_name="workspace_page",
+        ).delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
