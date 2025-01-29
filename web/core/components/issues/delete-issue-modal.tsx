@@ -73,8 +73,10 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
         .then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: `${isSubIssue ? "Sub-issue" : isEpic ? "Epic" : "Issue"} deleted successfully`,
+            title: t("common.success"),
+            message: t("entity.delete.success", {
+              entity: isSubIssue ? t("common.sub_issue") : isEpic ? t("common.epic") : t("common.issue"),
+            }),
           });
           onClose();
         })
@@ -100,7 +102,7 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
       handleSubmit={handleIssueDelete}
       isSubmitting={isDeleting}
       isOpen={isOpen}
-      title={`Delete ${isEpic ? "epic" : "issue"}`}
+      title={t("entity.delete.label", { entity: isEpic ? t("common.epic") : t("common.issue") })}
       content={
         <>
           {`Are you sure you want to delete ${isEpic ? "epic" : "issue"} `}

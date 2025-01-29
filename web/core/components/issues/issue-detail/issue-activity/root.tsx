@@ -97,7 +97,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
           return comment;
         } catch (error) {
           setToast({
-            title: t("common.error"),
+            title: t("common.error.label"),
             type: TOAST_TYPE.ERROR,
             message: t("issue.comments.create.error"),
           });
@@ -114,7 +114,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
           });
         } catch (error) {
           setToast({
-            title: t("common.error"),
+            title: t("common.error.label"),
             type: TOAST_TYPE.ERROR,
             message: t("issue.comments.update.error"),
           });
@@ -131,7 +131,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
           });
         } catch (error) {
           setToast({
-            title: t("common.error"),
+            title: t("common.error.label"),
             type: TOAST_TYPE.ERROR,
             message: t("issue.comments.remove.error"),
           });

@@ -7,6 +7,8 @@ import { useForm, UseFormRegister } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 // plane constants
 import { EIssueLayoutTypes, EIssueServiceType, ISSUE_CREATED } from "@plane/constants";
+// i18n
+import { useTranslation } from "@plane/i18n";
 import { IProject, TIssue } from "@plane/types";
 // ui
 import { setPromiseToast } from "@plane/ui";
@@ -64,6 +66,8 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
     quickAddCallback,
     isEpic = false,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
@@ -111,10 +115,10 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
     if (quickAddCallback) {
       const quickAddPromise = quickAddCallback(projectId.toString(), { ...payload });
       setPromiseToast<any>(quickAddPromise, {
-        loading: `Adding ${isEpic ? "epic" : "issue"}...`,
+        loading: isEpic ? t("epic.adding") : t("issue.adding"),
         success: {
-          title: "Success!",
-          message: () => `${isEpic ? "Epic" : "Issue"} created successfully.`,
+          title: t("common.success"),
+          message: () => `${isEpic ? t("epic.create.success") : t("issue.create.success")}`,
           actionItems: (data) => (
             <CreateIssueToastActionItems
               workspaceSlug={workspaceSlug.toString()}
@@ -125,8 +129,8 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
           ),
         },
         error: {
-          title: "Error!",
-          message: (err) => err?.message || "Some error occurred. Please try again.",
+          title: t("common.error.label"),
+          message: (err) => err?.message || t("common.error.message"),
         },
       });
 
@@ -180,7 +184,7 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
               onClick={() => handleIsOpen(true)}
             >
               <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-              <span className="text-sm font-medium">{`New ${isEpic ? "Epic" : "Issue"}`}</span>
+              <span className="text-sm font-medium">{t(`${isEpic ? "epic.new" : "issue.new"}`)}</span>
             </div>
           )}
         </>
