@@ -41,7 +41,7 @@ const ExportsPage = observer(() => {
         })}
       >
         <div className="flex items-center border-b border-custom-border-100 pb-3.5">
-          <h3 className="text-xl font-medium">{}</h3>
+          <h3 className="text-xl font-medium">{t("workspace_settings.settings.exports.title")}</h3>
         </div>
         <ExportGuide />
       </div>
