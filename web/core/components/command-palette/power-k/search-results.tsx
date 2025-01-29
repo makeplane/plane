@@ -2,20 +2,22 @@
 
 import { Command } from "cmdk";
 import { useParams } from "next/navigation";
-// types
+// plane types
 import { IWorkspaceSearchResults } from "@plane/types";
 // helpers
 import { commandGroups } from "@/components/command-palette";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
+// local components
+import { PowerKCommandItem } from "./command-item";
 
 type Props = {
-  closePalette: () => void;
+  handleClose: () => void;
   results: IWorkspaceSearchResults;
 };
 
-export const CommandPaletteSearchResults: React.FC<Props> = (props) => {
-  const { closePalette, results } = props;
+export const PowerKSearchResults: React.FC<Props> = (props) => {
+  const { handleClose, results } = props;
   // router
   const router = useAppRouter();
   const { projectId: routerProjectId } = useParams();
@@ -25,27 +27,23 @@ export const CommandPaletteSearchResults: React.FC<Props> = (props) => {
   return (
     <>
       {Object.keys(results.results).map((key) => {
-        const section = (results.results as any)[key];
+        const section = results.results[key as keyof typeof results.results];
         const currentSection = commandGroups[key];
 
         if (section.length > 0) {
           return (
-            <Command.Group key={key} heading={`${currentSection.title} search`}>
+            <Command.Group key={key} heading={currentSection.title}>
               {section.map((item: any) => (
-                <Command.Item
+                <PowerKCommandItem
                   key={item.id}
+                  icon={currentSection.icon ?? undefined}
+                  value={`${key}-${item?.id}-${item.name}-${item.project__identifier ?? ""}-${item.sequence_id ?? ""}`}
+                  label={currentSection.itemName(item)}
                   onSelect={() => {
-                    closePalette();
+                    handleClose();
                     router.push(currentSection.path(item, projectId));
                   }}
-                  value={`${key}-${item?.id}-${item.name}-${item.project__identifier ?? ""}-${item.sequence_id ?? ""}`}
-                  className="focus:outline-none"
-                >
-                  <div className="flex items-center gap-2 overflow-hidden text-custom-text-200">
-                    {currentSection.icon}
-                    <p className="block flex-1 truncate">{currentSection.itemName(item)}</p>
-                  </div>
-                </Command.Item>
+                />
               ))}
             </Command.Group>
           );

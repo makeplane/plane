@@ -2,7 +2,6 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { BarChart2, Briefcase, Layers } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
@@ -16,9 +15,38 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 
+export const SIDEBAR_WORKSPACE_MENU_ITEMS = [
+  {
+    key: "projects",
+    labelTranslationKey: "projects",
+    href: "/projects/",
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
+    Icon: Briefcase,
+  },
+  {
+    key: "views",
+    labelTranslationKey: "views",
+    href: "/workspace-views/all-issues/",
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
+    Icon: Layers,
+  },
+  {
+    key: "active-cycles",
+    labelTranslationKey: "cycles",
+    href: "/active-cycles/",
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    Icon: ContrastIcon,
+  },
+  {
+    key: "analytics",
+    labelTranslationKey: "analytics",
+    href: "/analytics/",
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    Icon: BarChart2,
+  },
+];
+
 export const SidebarWorkspaceMenu = observer(() => {
-  // router params
-  const { workspaceSlug } = useParams();
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
   // local storage
@@ -29,37 +57,6 @@ export const SidebarWorkspaceMenu = observer(() => {
   useEffect(() => {
     if (sidebarCollapsed) toggleWorkspaceMenu(true);
   }, [sidebarCollapsed, toggleWorkspaceMenu]);
-
-  const SIDEBAR_WORKSPACE_MENU_ITEMS = [
-    {
-      key: "projects",
-      labelTranslationKey: "projects",
-      href: `/${workspaceSlug}/projects/`,
-      access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-      Icon: Briefcase,
-    },
-    {
-      key: "views",
-      labelTranslationKey: "views",
-      href: `/${workspaceSlug}/workspace-views/all-issues/`,
-      access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-      Icon: Layers,
-    },
-    {
-      key: "active-cycles",
-      labelTranslationKey: "cycles",
-      href: `/${workspaceSlug}/active-cycles/`,
-      access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      Icon: ContrastIcon,
-    },
-    {
-      key: "analytics",
-      labelTranslationKey: "analytics",
-      href: `/${workspaceSlug}/analytics/`,
-      access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      Icon: BarChart2,
-    },
-  ];
 
   return (
     <Disclosure as="div" defaultOpen>

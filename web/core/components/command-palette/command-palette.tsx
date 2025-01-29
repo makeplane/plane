@@ -5,8 +5,6 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { CommandModal, ShortcutsModal } from "@/components/command-palette";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
@@ -27,6 +25,8 @@ import {
   getWorkspaceShortcutsList,
   handleAdditionalKeyDownEvents,
 } from "@/plane-web/helpers/command-palette";
+// local components
+import { PowerKModal, ShortcutsModal } from "./";
 
 export const CommandPalette: FC = observer(() => {
   // router params
@@ -237,7 +237,7 @@ export const CommandPalette: FC = observer(() => {
         <ProjectLevelModals workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
       )}
       <IssueLevelModals />
-      <CommandModal />
+      <PowerKModal />
     </>
   );
 });

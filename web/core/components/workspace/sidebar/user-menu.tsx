@@ -14,43 +14,46 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useUserPermissions, useUser } from "@/hooks/store";
 
+export const sidebarUserMenuItems = (currentUserId: string) => [
+  {
+    key: "home",
+    labelTranslationKey: "home",
+    href: "/",
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
+    Icon: Home,
+  },
+  {
+    key: "your-work",
+    labelTranslationKey: "your_work",
+    href: `/profile/${currentUserId}/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    Icon: UserActivityIcon,
+  },
+  {
+    key: "notifications",
+    labelTranslationKey: "inbox",
+    href: "/notifications/",
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
+    Icon: Inbox,
+  },
+  {
+    key: "drafts",
+    labelTranslationKey: "drafts",
+    href: "/drafts/",
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    Icon: PenSquare,
+  },
+];
+
 export const SidebarUserMenu = observer(() => {
+  // navigation
   const { workspaceSlug } = useParams();
+  // store hooks
   const { sidebarCollapsed } = useAppTheme();
   const { workspaceUserInfo } = useUserPermissions();
   const { data: currentUser } = useUser();
-
-  const SIDEBAR_USER_MENU_ITEMS = [
-    {
-      key: "home",
-      labelTranslationKey: "home",
-      href: `/${workspaceSlug.toString()}/`,
-      access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-      Icon: Home,
-    },
-    {
-      key: "your-work",
-      labelTranslationKey: "your_work",
-      href: `/${workspaceSlug.toString()}/profile/${currentUser?.id}/`,
-      access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      Icon: UserActivityIcon,
-    },
-    {
-      key: "notifications",
-      labelTranslationKey: "inbox",
-      href: `/${workspaceSlug.toString()}/notifications/`,
-      access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-      Icon: Inbox,
-    },
-    {
-      key: "drafts",
-      labelTranslationKey: "drafts",
-      href: `/${workspaceSlug.toString()}/drafts/`,
-      access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      Icon: PenSquare,
-    },
-  ];
-
+  // derived values
+  const SIDEBAR_USER_MENU_ITEMS = sidebarUserMenuItems(currentUser?.id ?? "");
   const draftIssueCount = workspaceUserInfo[workspaceSlug.toString()]?.draft_issue_count;
 
   return (

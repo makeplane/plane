@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { NavigateOptions } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { NavigateOptions, PrefetchOptions } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { usePathname, useSearchParams, useRouter as useNextRouter } from "next/navigation";
 import NProgress from "nprogress";
 import { getAnchorProperty, hasPreventProgressAttribute } from "./utils/getAnchorProperty";
@@ -242,6 +242,15 @@ export const AppProgressBar = React.memo(
 
 AppProgressBar.displayName = "AppProgressBar";
 
+export type TAppRouterInstance = {
+  push: (href: string, options?: NavigateOptions, NProgressOptions?: RouterNProgressOptions) => void;
+  replace: (href: string, options?: NavigateOptions, NProgressOptions?: RouterNProgressOptions) => void;
+  back: (NProgressOptions?: RouterNProgressOptions) => void;
+  forward(): void;
+  refresh(): void;
+  prefetch(href: string, options?: PrefetchOptions): void;
+};
+
 export function useRouter() {
   const router = useNextRouter();
 
@@ -270,24 +279,24 @@ export function useRouter() {
     [router]
   );
 
-  const push = useCallback(
-    (href: string, options?: NavigateOptions, NProgressOptions?: RouterNProgressOptions) => {
+  const push: TAppRouterInstance["push"] = useCallback(
+    (href, options, NProgressOptions) => {
       progress(href, options, NProgressOptions);
       return router.push(href, options);
     },
     [router, startProgress]
   );
 
-  const replace = useCallback(
-    (href: string, options?: NavigateOptions, NProgressOptions?: RouterNProgressOptions) => {
+  const replace: TAppRouterInstance["replace"] = useCallback(
+    (href, options, NProgressOptions) => {
       progress(href, options, NProgressOptions);
       return router.replace(href, options);
     },
     [router, startProgress]
   );
 
-  const back = useCallback(
-    (NProgressOptions?: RouterNProgressOptions) => {
+  const back: TAppRouterInstance["back"] = useCallback(
+    (NProgressOptions) => {
       if (NProgressOptions?.showProgressBar === false) return router.back();
 
       startProgress(NProgressOptions?.startPosition);

@@ -57,7 +57,7 @@ export const SidebarWorkspaceMenuItem: FC<SidebarWorkspaceMenuItemProps> = obser
       disabled={!sidebarCollapsed}
       isMobile={isMobile}
     >
-      <Link href={item.href} onClick={() => handleLinkClick()}>
+      <Link href={`/${workspaceSlug.toString()}${item.href}`} onClick={() => handleLinkClick()}>
         <SidebarNavItem
           className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
           isActive={isActive}

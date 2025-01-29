@@ -1,5 +1,4 @@
-export * from "./actions";
-export * from "./shortcuts-modal";
-export * from "./command-modal";
+export * from "./power-k";
 export * from "./command-palette";
 export * from "./helpers";
+export * from "./shortcuts-modal";

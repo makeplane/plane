@@ -4,7 +4,7 @@ import React, { FC, useEffect, useState } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
-import { Settings } from "lucide-react";
+// plane ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { THEME_OPTIONS } from "@/constants/themes";
@@ -12,11 +12,11 @@ import { THEME_OPTIONS } from "@/constants/themes";
 import { useUserProfile } from "@/hooks/store";
 
 type Props = {
-  closePalette: () => void;
+  handleClose: () => void;
 };
 
-export const CommandPaletteThemeActions: FC<Props> = observer((props) => {
-  const { closePalette } = props;
+export const PowerKChangeThemeMenu: FC<Props> = observer((props) => {
+  const { handleClose } = props;
   const { setTheme } = useTheme();
   // hooks
   const { updateUserTheme } = useUserProfile();
@@ -47,12 +47,31 @@ export const CommandPaletteThemeActions: FC<Props> = observer((props) => {
           key={theme.value}
           onSelect={() => {
             updateTheme(theme.value);
-            closePalette();
+            handleClose();
           }}
           className="focus:outline-none"
         >
           <div className="flex items-center gap-2 text-custom-text-200">
-            <Settings className="h-4 w-4 text-custom-text-200" />
+            <div
+              className="border border-1 relative size-4 flex items-center justify-center rotate-45 transform rounded-full"
+              style={{
+                borderColor: theme.icon.border,
+              }}
+            >
+              <div
+                className="h-full w-1/2 rounded-l-full"
+                style={{
+                  background: theme.icon.color1,
+                }}
+              />
+              <div
+                className="h-full w-1/2 rounded-r-full border-l"
+                style={{
+                  borderLeftColor: theme.icon.border,
+                  background: theme.icon.color2,
+                }}
+              />
+            </div>
             {theme.label}
           </div>
         </Command.Item>

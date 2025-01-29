@@ -1,4 +1,4 @@
-// router from n-progress-bar
 import { useRouter } from "@/lib/n-progress";
+import { TAppRouterInstance } from "@/lib/n-progress/AppProgressBar";
 
-export const useAppRouter = () => useRouter();
+export const useAppRouter = (): TAppRouterInstance => useRouter();

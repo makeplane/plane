@@ -26,6 +26,7 @@ export * from "./waitlist";
 export * from "./webhook";
 export * from "./workspace-views";
 export * from "./common";
+export * from "./power-k";
 export * from "./pragmatic";
 export * from "./publish";
 export * from "./search";
