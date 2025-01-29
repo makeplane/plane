@@ -336,6 +336,17 @@
   "no_labels_yet": "No labels yet",
   "ideal": "Ideal",
   "current": "Current",
+  "no_matching_members": "No matching members",
+  "leaving": "Leaving",
+  "removing": "Removing",
+  "leave": "Leave",
+  "refreshing": "Refreshing",
+  "refresh_status": "Refresh status",
+  "prev": "Prev",
+  "next": "Next",
+  "re_generating": "Re-generating",
+  "re_generate": "Re-generate",
+  "re_generate_key": "Re-generate key",
 
   "project_view": {
     "sort_by": {
@@ -1016,24 +1027,124 @@
 
   "workspace_settings": {
     "label": "Workspace settings",
+    "key_created": "Key created",
+    "copy_key": "Copy and save this secret key in Plane Pages. You can't see this key after you hit Close. A CSV file containing the key has been downloaded.",
+    "token_copied": "Token copied to clipboard.",
     "settings": {
       "general": {
-        "title": "General"
+        "title": "General",
+        "upload_logo": "Upload logo",
+        "edit_logo": "Edit logo",
+        "name": "Workspace name",
+        "company_size": "Company size",
+        "url": "Workspace URL",
+        "update_workspace"  : "Update workspace",
+        "delete_workspace"  : "Delete workspace",
+        "delete_workspace_description"  : "When deleting a workspace, all of the data and resources within that workspace will be permanently removed and cannot be recovered.",
+        "delete_btn": "Delete my workspace",
+        "errors": {
+          "name": {
+            "required": "Name is required",
+            "max_length": "Workspace name should not exceed 80 characters"
+          },
+          "company_size": {
+            "required": "Company size is required"
+          }
+        }
       },
       "members": {
-        "title": "Members"
+        "title": "Members",
+        "add_member": "Add member",
+        "invitations_sent_successfully": "Invitations sent successfully",
+        "leave_confirmation": "Are you sure you want to leave the workspace? You will no longer have access to this workspace. This action cannot be undone.",
+        "details":{
+          "full_name":"Full name",
+          "display_name":"Display name",
+          "email_address":"Email address",
+          "account_type":"Account type",
+          "authentication":"Authentication",
+          "joining_date":"Joining date"
+        }
       },
-      "billing-and-plans": {
-        "title": "Billing & Plans"
+      "billing_and_plans": {
+        "title": "Billing & Plans",
+        "current_plan":"Current plan",
+        "free_plan":"You are currently using the free plan",
+        "view_plans":"View plans"
       },
       "exports": {
-        "title": "Exports"
+        "title": "Exports",
+        "exporting": "Exporting",
+        "previous_exports": "Previous exports",
+        "export_separate_files" : "Export the data into separate files",
+        "modal": {
+          "title": "Export to",
+          "toasts": {
+            "success": {
+              "title": "Export successful",
+              "message": "You will be able to download the exported {entity} from the previous export."
+            },
+            "error": {
+              "title": "Export failed",
+              "message": "Export was unsuccessful. Please try again."
+            }
+          }
+        }
       },
       "webhooks": {
-        "title": "Webhooks"
+        "title": "Webhooks",
+        "add_webhook": "Add webhook",
+        "modal": {
+          "title": "Create webhook",
+          "details": "Webhook details",
+          "payload": "Payload URL",
+          "question": "Which events would you like to trigger this webhook?" ,
+          "error": "URL is required"
+        },
+        "secret_key": {
+          "title": "Secret key",
+          "message": "Generate a token to sign-in to the webhook payload"
+        },
+        "toasts": {
+          "created": {
+            "title": "Webhook created",
+            "message": "The webhook has been successfully created"
+          },
+          "not_created": {
+            "title": "Webhook not created",
+            "message": "The webhook could not be created"
+          },
+          "updated": {
+            "title": "Webhook updated",
+            "message": "The webhook has been successfully updated"
+          },
+          "not_updated": {
+            "title": "Webhook not updated",
+            "message": "The webhook could not be updated"
+          },
+          "removed": {
+            "title": "Webhook removed",
+            "message": "The webhook has been successfully removed"
+          },
+          "not_removed": {
+            "title": "Webhook not removed",
+            "message": "The webhook could not be removed"
+          },
+          "secret_key_copied": {
+            "message": "Secret key copied to clipboard."
+          },
+          "secret_key_not_copied": {
+            "message": "Error occurred while copying secret key."
+          }
+        }
       },
-      "api-tokens": {
-        "title": "API Tokens"
+      "api_tokens": {
+        "title": "API Tokens",
+        "add_token": "Add API token",
+        "create_token": "Create token",
+        "never_expires": "Never expires",
+        "generate_token": "Generate token",
+        "generating": "Generating"
       }
     },
     "empty_state": {

@@ -38,7 +38,9 @@ const WebhooksListPage = observer(() => {
     workspaceSlug && canPerformWorkspaceAdminActions ? () => fetchWebhooks(workspaceSlug.toString()) : null
   );
 
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Webhooks` : undefined;
+  const pageTitle = currentWorkspace?.name
+    ? `${currentWorkspace.name} - ${t("workspace_settings.settings.webhooks.title")}`
+    : undefined;
 
   // clear secret key when modal is closed.
   useEffect(() => {
@@ -67,9 +69,9 @@ const WebhooksListPage = observer(() => {
         {Object.keys(webhooks).length > 0 ? (
           <div className="flex h-full w-full flex-col">
             <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 pb-3.5">
-              <div className="text-xl font-medium">Webhooks</div>
+              <div className="text-xl font-medium">{t("workspace_settings.settings.webhooks.title")}</div>
               <Button variant="primary" size="sm" onClick={() => setShowCreateWebhookModal(true)}>
-                Add webhook
+                {t("workspace_settings.settings.webhooks.add_webhook")}
               </Button>
             </div>
             <WebhooksList />
@@ -77,9 +79,9 @@ const WebhooksListPage = observer(() => {
         ) : (
           <div className="flex h-full w-full flex-col">
             <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 pb-3.5">
-              <div className="text-xl font-medium">Webhooks</div>
+              <div className="text-xl font-medium">{t("workspace_settings.settings.webhooks.title")}</div>
               <Button variant="primary" size="sm" onClick={() => setShowCreateWebhookModal(true)}>
-                Add webhook
+                {t("workspace_settings.settings.webhooks.add_webhook")}
               </Button>
             </div>
             <div className="h-full w-full flex items-center justify-center">

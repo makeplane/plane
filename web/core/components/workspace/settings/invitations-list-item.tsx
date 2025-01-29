@@ -7,6 +7,7 @@ import { ChevronDown, XCircle } from "lucide-react";
 // plane imports
 import { ROLE } from "@plane/constants";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
@@ -28,6 +29,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { allowPermissions, workspaceInfoBySlug } = useUserPermissions();
+  const { t } = useTranslation();
 
   const {
     workspace: { updateMemberInvitation, deleteMemberInvitation, getWorkspaceInvitationDetails },
@@ -96,7 +98,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
         </div>
         <div className="flex items-center gap-2 text-xs">
           <div className="flex items-center justify-center rounded bg-yellow-500/20 px-2.5 py-1 text-center text-xs font-medium text-yellow-500">
-            <p>Pending</p>
+            <p>{t("pending")}</p>
           </div>
           <CustomSelect
             customButton={

@@ -7,6 +7,7 @@ import { Pencil } from "lucide-react";
 // constants
 import { ORGANIZATION_SIZE, WORKSPACE_UPDATED } from "@plane/constants";
 // types
+import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
@@ -37,6 +38,7 @@ export const WorkspaceDetails: FC = observer(() => {
   const { captureWorkspaceEvent } = useEventTracker();
   const { currentWorkspace, updateWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
+  const { t } = useTranslation();
 
   // form info
   const {
@@ -188,10 +190,10 @@ export const WorkspaceDetails: FC = observer(() => {
                 {workspaceLogo && workspaceLogo !== "" ? (
                   <>
                     <Pencil className="h-3 w-3" />
-                    Edit logo
+                    {t("workspace_settings.settings.general.edit_logo")}
                   </>
                 ) : (
-                  "Upload logo"
+                  t("workspace_settings.settings.general.upload_logo")
                 )}
               </button>
             )}
@@ -201,15 +203,15 @@ export const WorkspaceDetails: FC = observer(() => {
         <div className="my-8 flex flex-col gap-8">
           <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-10 xl:grid-cols-2 2xl:grid-cols-3">
             <div className="flex flex-col gap-1">
-              <h4 className="text-sm">Workspace name</h4>
+              <h4 className="text-sm">{t("workspace_settings.settings.general.name")}</h4>
               <Controller
                 control={control}
                 name="name"
                 rules={{
-                  required: "Name is required",
+                  required: t("workspace_settings.settings.general.errors.name.required"),
                   maxLength: {
                     value: 80,
-                    message: "Workspace name should not exceed 80 characters",
+                    message: t("workspace_settings.settings.general.errors.name.max_length"),
                   },
                 }}
                 render={({ field: { value, onChange, ref } }) => (
@@ -221,7 +223,7 @@ export const WorkspaceDetails: FC = observer(() => {
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.name)}
-                    placeholder="Name"
+                    placeholder={t("workspace_settings.settings.general.name")}
                     className="w-full rounded-md font-medium"
                     disabled={!isAdmin}
                   />
@@ -230,7 +232,7 @@ export const WorkspaceDetails: FC = observer(() => {
             </div>
 
             <div className="flex flex-col gap-1 ">
-              <h4 className="text-sm">Company size</h4>
+              <h4 className="text-sm">{t("workspace_settings.settings.general.company_size")}</h4>
               <Controller
                 name="organization_size"
                 control={control}
@@ -238,7 +240,10 @@ export const WorkspaceDetails: FC = observer(() => {
                   <CustomSelect
                     value={value}
                     onChange={onChange}
-                    label={ORGANIZATION_SIZE.find((c) => c === value) ?? "Select organization size"}
+                    label={
+                      ORGANIZATION_SIZE.find((c) => c === value) ??
+                      t("workspace_settings.settings.general.errors.company_size.select_a_range")
+                    }
                     optionsClassName="w-full"
                     buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
                     input
@@ -255,7 +260,7 @@ export const WorkspaceDetails: FC = observer(() => {
             </div>
 
             <div className="flex flex-col gap-1 ">
-              <h4 className="text-sm">Workspace URL</h4>
+              <h4 className="text-sm">{t("workspace_settings.settings.general.url")}</h4>
               <Controller
                 control={control}
                 name="url"
@@ -282,7 +287,7 @@ export const WorkspaceDetails: FC = observer(() => {
           {isAdmin && (
             <div className="flex items-center justify-between py-2">
               <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isLoading}>
-                {isLoading ? "Updating" : "Update workspace"}
+                {isLoading ? t("updating") : t("workspace_settings.settings.general.update_workspace")}
               </Button>
             </div>
           )}
