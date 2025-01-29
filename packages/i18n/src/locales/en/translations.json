@@ -363,6 +363,35 @@
     "error": "Error!"
   },
 
+  "links": {
+    "toasts": {
+      "created": {
+        "title": "Link created",
+        "message": "The link has been successfully created"
+      },
+      "not_created": {
+        "title": "Link not created",
+        "message": "The link could not be created"
+      },
+      "updated": {
+        "title": "Link updated",
+        "message": "The link has been successfully updated"
+      },
+      "not_updated": {
+        "title": "Link not updated",
+        "message": "The link could not be updated"
+      },
+      "removed": {
+        "title": "Link removed",
+        "message": "The link has been successfully removed"
+      },
+      "not_removed": {
+        "title": "Link not removed",
+        "message": "The link could not be removed"
+      }
+    }
+  },
+
   "home": {
     "empty": {
       "create_project": {
@@ -397,33 +426,7 @@
       "empty": "Save links to work things that you'd like handy.",
       "add": "Add quick Link",
       "title": "Quicklink",
-      "title_plural": "Quicklinks",
-      "toasts": {
-        "created": {
-          "title": "Link created",
-          "message": "The link has been successfully created"
-        },
-        "not_created": {
-          "title": "Link not created",
-          "message": "The link could not be created"
-        },
-        "updated": {
-          "title": "Link updated",
-          "message": "The link has been successfully updated"
-        },
-        "not_updated": {
-          "title": "Link not updated",
-          "message": "The link could not be updated"
-        },
-        "removed": {
-          "title": "Link removed",
-          "message": "The link has been successfully removed"
-        },
-        "not_removed": {
-          "title": "Link not removed",
-          "message": "The link could not be removed"
-        }
-      }
+      "title_plural": "Quicklinks"
     },
     "recents": {
       "title": "Recents",
@@ -503,10 +506,12 @@
     "group_by": "Group by",
     "epic": "Epic",
     "issue": "Issue",
+    "add": "Add",
     "warning": "Warning",
     "updating": "Updating",
+    "adding": "Adding",
     "update": "Update",
-    "creating": "Creating",
+    "create": "Create",
     "cancel": "Cancel",
     "description": "Description",
     "title": "Title",
@@ -549,7 +554,16 @@
     "is_copied_to_clipboard": "Work item is copied to clipboard",
     "no_links_added_yet": "No links added yet",
     "add_link": "Add link",
+    "update_link": "Update link",
     "progress": "Progress",
+    "attach": "Attach",
+    "create_new": "Create new",
+    "add_existing": "Add existing",
+    "type_or_paste_a_url": "Type or paste a URL",
+    "url_is_invalid": "URL is invalid",
+    "display_title": "Display title",
+    "link_title_placeholder": "What you'd like to see this link as",
+    "optional": "Optional",
     "search": {
       "label": "Search",
       "placeholder": "Type to search...",
@@ -580,7 +594,11 @@
     "drop_here_to_move": "Drop here to move the {entity}",
     "delete": {
       "label": "Delete {entity}",
-      "success": "{entity} deleted successfully"
+      "success": "{entity} deleted successfully",
+      "failed": "{entity} delete failed"
+    },
+    "update": {
+      "failed": "{entity} update failed"
     }
   },
 
@@ -617,7 +635,10 @@
       "assignee": "Add assignees",
       "start_date": "Add start date",
       "due_date": "Add due date",
-      "parent": "Add parent issue"
+      "parent": "Add parent issue",
+      "sub_issue": "Add sub-issue",
+      "relation": "Add relation",
+      "link": "Add link"
     },
     "remove": {
       "cycle": {
@@ -692,18 +713,6 @@
         "error": "Asset upload failed. Please try again later."
       }
     },
-    "update": {
-      "failed": "Issue update failed"
-    },
-    "delete": {
-      "failed": "Issue delete failed",
-      "success": "Issue deleted successfully"
-    },
-    "actions": {
-      "archive": {
-        "description": "Only completed or canceled\nissues can be archived"
-      }
-    },
     "empty_state": {
       "issue_detail": {
         "title": "Issue does not exist",
@@ -717,6 +726,7 @@
       "label": "Sibling issues"
     },
     "archive": {
+      "description": "Only completed or canceled\nissues can be archived",
       "label": "Archive Issue",
       "confirm_message": "Are you sure you want to archive the issue? All your archived issues can be restored later.",
       "success": {
@@ -726,6 +736,12 @@
       "failed": {
         "message": "Issue could not be archived. Please try again."
       }
+    },
+    "relation": {
+      "relates_to": "Relates to",
+      "duplicate": "Duplicate of",
+      "blocked_by": "Blocked by",
+      "blocking": "Blocking"
     }
   },
 

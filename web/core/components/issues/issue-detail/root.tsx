@@ -114,7 +114,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           setToast({
             title: t("common.error.label"),
             type: TOAST_TYPE.ERROR,
-            message: t("issue.update.failed"),
+            message: t("entity.update.failed", { entity: t("issue.label") }),
           });
         }
       },
@@ -125,7 +125,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           setToast({
             title: t("common.success"),
             type: TOAST_TYPE.SUCCESS,
-            message: t("issue.delete.success"),
+            message: t("entity.delete.success", { entity: t("issue.label") }),
           });
           captureIssueEvent({
             eventName: ISSUE_DELETED,
@@ -137,7 +137,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           setToast({
             title: t("common.error.label"),
             type: TOAST_TYPE.ERROR,
-            message: t("issue.delete.failed"),
+            message: t("entity.delete.failed", { entity: t("issue.label") }),
           });
           captureIssueEvent({
             eventName: ISSUE_DELETED,

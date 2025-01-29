@@ -126,7 +126,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
       {
         key: "archive",
         title: t("common.actions.archive"),
-        description: isInArchivableGroup ? undefined : t("issue.actions.archive.description"),
+        description: isInArchivableGroup ? undefined : t("issue.archive.description"),
         icon: ArchiveIcon,
         className: "items-start",
         iconClassName: "mt-1",

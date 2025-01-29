@@ -100,7 +100,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
           <input
             type="text"
             className="w-full bg-custom-background-90 outline-none placeholder:text-custom-text-400"
-            placeholder={t("common.label")}
+            placeholder={t("common.search.label")}
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
             autoFocus={!isMobile}
