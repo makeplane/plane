@@ -589,6 +589,8 @@
     "week": "週",
     "month": "月",
     "quarter": "四半期",
+    "press_for_commands": "コマンドを入力",
+    "click_to_add_description": "説明を追加",
     "search": {
       "label": "検索",
       "placeholder": "検索するキーワードを入力...",

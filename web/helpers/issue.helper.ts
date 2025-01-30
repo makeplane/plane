@@ -211,11 +211,10 @@ export const formatTextList = (TextArray: string[]): string => {
   }
 };
 
-export const getDescriptionPlaceholder = (isFocused: boolean, description: string | undefined): string => {
+export const getDescriptionPlaceholderI18n = (isFocused: boolean, description: string | undefined): string => {
   const isDescriptionEmpty = !description || description === "<p></p>" || description.trim() === "";
-  // TODO: Translate here
-  if (!isDescriptionEmpty || isFocused) return "Press '/' for commands...";
-  else return "Click to add description";
+  if (!isDescriptionEmpty || isFocused) return "common.press_for_commands";
+  else return "common.click_to_add_description";
 };
 
 export const issueCountBasedOnFilters = (

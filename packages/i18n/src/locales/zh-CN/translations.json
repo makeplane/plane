@@ -589,6 +589,8 @@
     "week": "周",
     "month": "月",
     "quarter": "季度",
+    "press_for_commands": "输入 '/' 以输入命令",
+    "click_to_add_description": "点击以添加描述",
     "search": {
       "label": "搜索",
       "placeholder": "输入以搜索...",
