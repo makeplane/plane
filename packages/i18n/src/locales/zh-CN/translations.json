@@ -320,6 +320,7 @@
   "leaving": "离开",
   "removing": "正在移除",
   "leave": "离开",
+  "refresh": "刷新",
   "refreshing": "正在刷新",
   "refresh_status": "刷新状态",
   "prev": "上一个",
@@ -327,6 +328,7 @@
   "re_generating": "重新生成",
   "re_generate": "重新生成",
   "re_generate_key": "重新生成密钥",
+  "export": "导出",
 
   "project_view": {
     "sort_by": {
@@ -1074,6 +1076,7 @@
 
   "workspace_settings": {
     "label": "工作区设置",
+    "page_label": "{workspace} - 常规设置",
     "key_created": "密钥已创建",
     "copy_key": "复制并保存此密钥在Plane Pages中。关闭后您将无法看到此密钥。已下载包含密钥的CSV文件。",
     "token_copied": "令牌已复制到剪贴板。",
@@ -1111,6 +1114,17 @@
           "account_type": "账户类型",
           "authentication": "身份验证",
           "joining_date": "加入日期"
+        },
+        "modal": {
+          "title": "邀请协作者",
+          "description": "邀请他人协作您的工作空间",
+          "button": "发送邀请",
+          "button_loading": "正在发送邀请",
+          "placeholder": "输入电子邮箱地址",
+          "errors": {
+            "required": "邮箱地址为必填项",
+            "invalid": "邮箱地址无效"
+          }
         }
       },
       "billing_and_plans": {
@@ -1152,6 +1166,10 @@
           "title": "密钥",
           "message": "生成一个令牌以登录Webhook有效负载"
         },
+        "options": {
+          "all": "发送所有内容",
+          "individual": "选择单个事件"
+        },
         "toasts": {
           "created": {
             "title": "Webhook已创建",
@@ -1191,7 +1209,19 @@
         "create_token": "创建令牌",
         "never_expires": "永不失效",
         "generate_token": "生成令牌",
-        "generating": "生成中"
+        "generating": "生成中",
+        "delete": {
+          "title": "删除API令牌",
+          "description": "使用此令牌的任何应用程序将无法再访问Plane数据。此操作无法撤消。",
+          "success": {
+            "title": "成功！",
+            "message": "API令牌已成功删除"
+          },
+          "error": {
+            "title": "错误！",
+            "message": "无法删除API令牌"
+          }
+        }
       }
     },
     "empty_state": {
@@ -1238,7 +1268,9 @@
       },
       "recent_activity": {
         "title": "最近活动",
-        "empty": "我们找不到数据。请查看您的输入"
+        "empty": "我们找不到数据。请查看您的输入",
+        "button": "下载今日活动",
+        "button_loading": "下载中"
       }
     },
     "actions": {
@@ -1800,13 +1832,20 @@
       "description": "将工作项导出为CSV文件。",
       "short_description": "导出为csv"
     },
+    "excel": {
+      "title": "Excel",
+      "description": "将工作项导出为Excel文件。",
+      "short_description": "导出为excel"
+    },
     "xlsx": {
       "title": "Excel",
-      "description": "将工作项导出为Excel文件。"
+      "description": "将工作项导出为Excel文件。",
+      "short_description": "导出为excel"
     },
     "json": {
       "title": "JSON",
-      "description": "将工作项导出为JSON文件。"
+      "description": "将工作项导出为JSON文件。",
+      "short_description": "导出为json"
     }
   },
   "default_global_view": {
