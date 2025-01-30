@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 // icons
 import { ArchiveX } from "lucide-react";
 // types
-import { PROJECT_AUTOMATION_MONTHS } from "@plane/constants";
+import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 // ui
@@ -15,7 +15,6 @@ import { SelectMonthModal } from "@/components/automation";
 // constants
 // hooks
 import { useProject, useProjectState, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;

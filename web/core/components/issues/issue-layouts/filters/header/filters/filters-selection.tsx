@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Search, X } from "lucide-react";
 // i18n
+import { EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import {
@@ -33,7 +34,6 @@ import { useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { FilterIssueTypes, FilterTeamProjects } from "@/plane-web/components/issues";
-import { EUserPermissions } from "@/plane-web/constants";
 
 type Props = {
   filters: IIssueFilterOptions;

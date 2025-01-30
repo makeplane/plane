@@ -12,6 +12,8 @@ import {
   EIssuesStoreType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
   EViewAccess,
+  EUserPermissions,
+  EUserPermissionsLevel,
 } from "@plane/constants";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
@@ -39,7 +41,6 @@ import {
 } from "@/hooks/store";
 // plane web
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   // refs

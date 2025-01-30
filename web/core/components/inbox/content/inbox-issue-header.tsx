@@ -15,6 +15,7 @@ import {
   MoveRight,
   Copy,
 } from "lucide-react";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TNameDescriptionLoader } from "@plane/types";
 import { Button, ControlLink, CustomMenu, Row, TOAST_TYPE, setToast } from "@plane/ui";
@@ -35,7 +36,6 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useUser, useProjectInbox, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // store types
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 

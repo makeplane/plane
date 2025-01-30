@@ -20,7 +20,7 @@ import { usePopper } from "react-popper";
 import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
 import { Listbox } from "@headlessui/react";
 // plane imports
-import { ROLE, ROLE_DETAILS, MEMBER_INVITED } from "@plane/constants";
+import { ROLE, ROLE_DETAILS, MEMBER_INVITED, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { IUser, IWorkspace } from "@plane/types";
@@ -31,8 +31,6 @@ import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
-// plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // assets

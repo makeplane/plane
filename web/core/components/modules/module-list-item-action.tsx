@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 // icons
 import { SquareUser } from "lucide-react";
 // types
-import { MODULE_STATUS, MODULE_FAVORITED, MODULE_UNFAVORITED } from "@plane/constants";
+import { MODULE_STATUS, MODULE_FAVORITED, MODULE_UNFAVORITED , EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IModule } from "@plane/types";
 // ui
@@ -19,7 +19,6 @@ import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdow
 // hooks
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { useEventTracker, useMember, useModule, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { ButtonAvatars } from "../dropdowns/member/avatar";
 
 type Props = {

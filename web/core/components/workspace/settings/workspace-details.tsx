@@ -5,8 +5,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
 // constants
-import { ORGANIZATION_SIZE, WORKSPACE_UPDATED } from "@plane/constants";
-// types
+import { ORGANIZATION_SIZE, WORKSPACE_UPDATED ,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 // ui
@@ -21,7 +20,6 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 import { useEventTracker, useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components
 import { DeleteWorkspaceSection } from "@/plane-web/components/workspace";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",

@@ -9,7 +9,7 @@ import { useTheme } from "next-themes";
 import useSWR, { mutate } from "swr";
 import { CheckCircle2 } from "lucide-react";
 // plane imports
-import { ROLE, MEMBER_ACCEPTED } from "@plane/constants";
+import { ROLE, MEMBER_ACCEPTED, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { IWorkspaceMemberInvitation } from "@plane/types";
@@ -26,8 +26,6 @@ import { useEventTracker, useUser, useUserProfile, useWorkspace } from "@/hooks/
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { AuthenticationWrapper } from "@/lib/wrappers";
-// plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 // images

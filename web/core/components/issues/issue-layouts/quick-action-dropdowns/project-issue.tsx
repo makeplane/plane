@@ -5,8 +5,7 @@ import omit from "lodash/omit";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
-import { ARCHIVABLE_STATE_GROUPS, EIssuesStoreType } from "@plane/constants";
-// i18n
+import { ARCHIVABLE_STATE_GROUPS, EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { TIssue } from "@plane/types";
@@ -19,7 +18,6 @@ import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useIssues, useProjectState, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 

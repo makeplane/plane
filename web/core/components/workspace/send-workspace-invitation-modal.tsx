@@ -7,7 +7,7 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { Plus, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
-import { ROLE } from "@plane/constants";
+import { ROLE, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
@@ -15,7 +15,6 @@ import { Button, CustomSelect, Input } from "@plane/ui";
 // constants
 // hooks
 import { useUserPermissions } from "@/hooks/store";
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // types
 
 type Props = {

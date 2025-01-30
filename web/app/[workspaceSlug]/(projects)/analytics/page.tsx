@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { Tab } from "@headlessui/react";
 // plane package imports
-import { ANALYTICS_TABS, EUserPermissionsLevel } from "@plane/constants";
+import { ANALYTICS_TABS, EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Header, EHeaderVariant } from "@plane/ui";
 // components
@@ -15,8 +15,6 @@ import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-// plane web
-import { EUserPermissions } from "@/plane-web/constants";
 
 const AnalyticsPage = observer(() => {
   const searchParams = useSearchParams();

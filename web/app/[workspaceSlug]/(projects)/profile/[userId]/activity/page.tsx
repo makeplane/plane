@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // components
@@ -11,7 +12,6 @@ import { DownloadActivityButton, WorkspaceActivityListPage } from "@/components/
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 // plane-web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const PER_PAGE = 100;
 

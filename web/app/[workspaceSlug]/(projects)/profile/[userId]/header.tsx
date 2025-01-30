@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChevronDown, PanelRight } from "lucide-react";
-import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB } from "@plane/constants";
+import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IUserProfileProjectSegregation } from "@plane/types";
 import { Breadcrumbs, Header, CustomMenu, UserActivityIcon } from "@plane/ui";
@@ -15,7 +15,6 @@ import { BreadcrumbLink } from "@/components/common";
 import { ProfileIssuesFilter } from "@/components/profile";
 import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useUser, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type TUserProfileHeader = {
   userProjectsData: IUserProfileProjectSegregation | undefined;

@@ -4,7 +4,7 @@ import { FC, useEffect, useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // plane types
-import { EIssuesStoreType, ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "@plane/constants";
+import { EIssuesStoreType, ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED , EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // plane ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
@@ -14,8 +14,6 @@ import { IssueView, TIssueOperations } from "@/components/issues";
 // hooks
 import { useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 interface IIssuePeekOverview {
   embedIssue?: boolean;

@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TNameDescriptionLoader } from "@plane/types";
 // components
 import { ContentWrapper } from "@plane/ui";
@@ -8,7 +9,6 @@ import { InboxIssueActionsHeader, InboxIssueMainContent } from "@/components/inb
 // hooks
 import { useProjectInbox, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type TInboxContentRoot = {
   workspaceSlug: string;

@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { RefreshCcw } from "lucide-react";
 // ui
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Button, Intake, Header } from "@plane/ui";
 // components
@@ -14,7 +15,6 @@ import { InboxIssueCreateModalRoot } from "@/components/inbox";
 import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
 // plane web
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectInboxHeader: FC = observer(() => {
   // states

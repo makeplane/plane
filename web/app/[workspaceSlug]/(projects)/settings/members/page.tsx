@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Search } from "lucide-react";
 // types
-import { MEMBER_INVITED } from "@plane/constants";
+import { MEMBER_INVITED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
@@ -20,7 +20,6 @@ import { cn } from "@/helpers/common.helper";
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker, useMember, useUserPermissions, useWorkspace } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const WorkspaceMembersSettingsPage = observer(() => {
   // states
