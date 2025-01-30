@@ -399,6 +399,7 @@ class WorkspaceUserPreference(BaseModel):
         TEAM_SPACES = "team_spaces", "Team Spaces"
         INITIATIVES = "initiatives", "Initiatives"
 
+
     workspace = models.ForeignKey(
         "db.Workspace",
         on_delete=models.CASCADE,
