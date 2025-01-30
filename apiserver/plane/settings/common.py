@@ -280,6 +280,7 @@ CELERY_IMPORTS = (
     # issue version tasks
     "plane.bgtasks.issue_version_sync",
     "plane.bgtasks.issue_description_version_sync",
+    "plane.bgtasks.silo_data_migration_task"
 )
 
 # Sentry Settings
