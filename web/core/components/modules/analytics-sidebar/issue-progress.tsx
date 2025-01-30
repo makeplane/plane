@@ -237,7 +237,7 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
                           startDate={moduleStartDate}
                           endDate={moduleEndDate}
                           totalIssues={totalIssues}
-                          plotTitle={"issues"}
+                          plotTitle={"work items"}
                         />
                       )}
                     </Fragment>

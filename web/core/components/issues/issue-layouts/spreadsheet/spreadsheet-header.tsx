@@ -64,7 +64,7 @@ export const SpreadsheetHeader = observer((props: Props) => {
                 />
               </div>
             )}
-            <span className="flex h-full w-full flex-grow items-center py-2.5">{`${isEpic ? "Epics" : "Issues"}`}</span>
+            <span className="flex h-full w-full flex-grow items-center py-2.5">{`${isEpic ? "Epics" : "Work items"}`}</span>
           </Row>
         </th>
 

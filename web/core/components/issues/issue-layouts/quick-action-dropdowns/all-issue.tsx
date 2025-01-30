@@ -57,7 +57,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
-        message: "Issue link copied to clipboard",
+        message: "Work item link copied to clipboard",
       })
     );
 

@@ -121,7 +121,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
     aiService
       .createGptTask(workspaceSlug.toString(), {
         prompt: issueName,
-        task: "Generate a proper description for this issue.",
+        task: "Generate a proper description for this work item.",
       })
       .then((res) => {
         if (res.response === "")

@@ -82,7 +82,7 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
         .catch((errors) => {
           const isPermissionError =
             errors?.error ===
-            `Only admin or creator can delete the ${isSubIssue ? "sub-issue" : isEpic ? "epic" : "issue"}`;
+            `Only admin or creator can delete the ${isSubIssue ? "sub-work item" : isEpic ? "epic" : "work item"}`;
           const currentError = isPermissionError
             ? PROJECT_ERROR_MESSAGES.permissionError
             : PROJECT_ERROR_MESSAGES.issueDeleteError;
@@ -105,11 +105,11 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
       content={
         <>
           {/* TODO: Translate here */}
-          {`Are you sure you want to delete ${isEpic ? "epic" : "issue"} `}
+          {`Are you sure you want to delete ${isEpic ? "epic" : "work item"} `}
           <span className="break-words font-medium text-custom-text-100">
             {projectDetails?.identifier}-{issue?.sequence_id}
           </span>
-          {` ? All of the data related to the ${isEpic ? "epic" : "issue"} will be permanently removed. This action cannot be undone.`}
+          {` ? All of the data related to the ${isEpic ? "epic" : "work item"} will be permanently removed. This action cannot be undone.`}
         </>
       }
     />

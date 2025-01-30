@@ -130,7 +130,7 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
         <div className="col-span-1 flex items-center justify-between">
           <div>
             <h4 className="mb-2 text-lg font-semibold">{projectInfo?.issues}</h4>
-            <p className="text-sm text-custom-text-200">Issues</p>
+            <p className="text-sm text-custom-text-200">Work items</p>
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">{projectInfo?.states}</h4>

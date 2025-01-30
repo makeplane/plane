@@ -65,7 +65,7 @@ export const GithubRepoDetails: FC<Props> = ({ selectedRepo, handleStepChange, s
             <div className="mt-4 flex gap-16">
               <div className="flex-shrink-0 text-center">
                 <p className="text-3xl font-bold">{repoInfo.issue_count}</p>
-                <h6 className="text-sm text-custom-text-200">Issues</h6>
+                <h6 className="text-sm text-custom-text-200">Work items</h6>
               </div>
               <div className="flex-shrink-0 text-center">
                 <p className="text-3xl font-bold">{repoInfo.labels}</p>

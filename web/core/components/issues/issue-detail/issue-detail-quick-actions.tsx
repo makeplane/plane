@@ -96,7 +96,7 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
         router.push(redirectionPath);
         captureIssueEvent({
           eventName: ISSUE_DELETED,
-          payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
+          payload: { id: issueId, state: "SUCCESS", element: "Work item detail page" },
           path: pathname,
         });
       });
@@ -108,7 +108,7 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
       });
       captureIssueEvent({
         eventName: ISSUE_DELETED,
-        payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
+        payload: { id: issueId, state: "FAILED", element: "Work item detail page" },
         path: pathname,
       });
     }

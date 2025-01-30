@@ -709,7 +709,7 @@ const activityDetails: {
             <IssueLink activity={activity} />
           </>
         )}
-        {activity.verb === "2" && ` from intake by marking a duplicate issue.`}
+        {activity.verb === "2" && ` from intake by marking a duplicate work item.`}
       </>
     ),
     icon: <Intake className="size-3 text-custom-text-200" aria-hidden="true" />,

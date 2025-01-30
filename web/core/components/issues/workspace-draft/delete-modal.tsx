@@ -72,7 +72,7 @@ export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
           onClose();
         })
         .catch((errors) => {
-          const isPermissionError = errors?.error === "Only admin or creator can delete the issue";
+          const isPermissionError = errors?.error === "Only admin or creator can delete the work item";
           const currentError = isPermissionError
             ? PROJECT_ERROR_MESSAGES.permissionError
             : PROJECT_ERROR_MESSAGES.issueDeleteError;
