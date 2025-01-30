@@ -35,7 +35,7 @@ export const HOME_WIDGETS_LIST: {
   my_stickies: {
     component: StickiesWidget,
     fullWidth: false,
-    title: "home.my_stickies.title",
+    title: "stickies.title",
   },
   new_at_plane: {
     component: null,

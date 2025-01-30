@@ -194,7 +194,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                 onEnterKeyPress={() => submitBtnRef?.current?.click()}
                 ref={editorRef}
                 tabIndex={getIndex("description_html")}
-                placeholder={(isFocused, description) => t(`${getDescriptionPlaceholderI18n(isFocused, description)}`)}
+                placeholder={(isFocused, description) => t(getDescriptionPlaceholderI18n(isFocused, description))}
                 searchMentionCallback={async (payload) =>
                   await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
                     ...payload,
