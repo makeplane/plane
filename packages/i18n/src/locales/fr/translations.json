@@ -521,6 +521,7 @@
       "private": "Privé"
     },
     "sub_work_items": "Sous-worké items",
+    "done": "Terminé",
     "order_by": {
       "label": "Trier par",
       "manual": "Manuel",
@@ -542,6 +543,7 @@
     "updates": "Mises à jour",
     "clear_all": "Tout effacer",
     "link_copied": "Lien copié",
+    "link_copied_to_clipboard": "Lien copié dans le clipboard",
     "copied_to_clipboard": "Lien du worké item copié",
     "is_copied_to_clipboard": "Worké item copié",
     "no_links_added_yet": "Aucun lien ajouté",
@@ -554,6 +556,7 @@
     "go_back": "Retour",
     "continue": "Continuer",
     "resend": "Renvoyer",
+    "relations": "Relations",
     "errors": {
       "default": {
         "title": "Erreur!",
@@ -581,7 +584,10 @@
       "open_in_new_tab": "Ouvrir dans un nouvel onglet",
       "copy_link": "Copier le lien",
       "archive": "Archiver",
-      "delete": "Supprimer"
+      "delete": "Supprimer",
+      "remove_relation": "Supprimer la relation",
+      "subscribe": "S'abonner",
+      "unsubscribe": "Se désabonner"
     }
   },
 
@@ -603,7 +609,16 @@
       "failed": "Échec de la suppression de {entity}"
     },
     "update": {
-      "failed": "Échec de la mise à jour de {entity}"
+      "failed": "Échec de la mise à jour de {entity}",
+      "success": "{entity} updated successfully"
+    },
+    "link_copied_to_clipboard": "Lien {entity} copié dans le presse-papiers",
+    "fetch": {
+      "failed": "Erreur lors de la récupération de {entity}"
+    },
+    "add": {
+      "success": "{entity} ajouté avec succès",
+      "failed": "Erreur lors de l'ajout de {entity}"
     }
   },
 
@@ -627,6 +642,7 @@
   "issue": {
     "label": "{count, plural, one {Worké Item} other {Workés Items}}",
     "all": "Tous les Workés Items",
+    "edit": "Modifier worké item",
     "title": {
       "label": "Titre du worké item",
       "required": "Le titre du worké item est requis."
@@ -646,6 +662,7 @@
       "link": "Ajouter lien"
     },
     "remove": {
+      "label": "Supprimer worké item",
       "cycle": {
         "loading": "Suppression du worké item du cyclé...",
         "success": "Worké item supprimé du cyclé avec succès.",
@@ -746,11 +763,50 @@
         "message": "Le worké item n'a pas pu être archivé. Veuillez réessayer."
       }
     },
+    "restore": {
+      "success": {
+        "title": "Restauration réussie",
+        "message": "Votre worké item peut être trouvé dans les workés items du projét."
+      },
+      "failed": {
+        "message": "Le worké item n'a pas pu être restauré. Veuillez réessayer."
+      }
+    },
     "relation": {
       "relates_to": "Lié à",
       "duplicate": "Dupliqué de",
       "blocked_by": "Bloqué par",
       "blocking": "Bloque"
+    },
+    "copy_link": "Copier le lien du worké item",
+    "delete": {
+      "label": "Supprimer worké item",
+      "error": "Erreur lors de la suppression du worké item"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "Worké item abonné avec succès",
+        "unsubscribed": "Worké item désabonné avec succès"
+      }
+    }
+  },
+
+  "attachment": {
+    "error": "Le fichier n'a pas pu être joint. Essayez de le télécharger à nouveau.",
+    "only_one_file_allowed": "Un seul fichier peut être téléchargé à la fois.",
+    "file_size_limit": "Le fichier doit faire {size} Mo ou moins.",
+    "drag_and_drop": "Glissez et déposez n'importe où pour télécharger",
+    "delete": "Supprimer la pièce jointe"
+  },
+
+  "sub_worké_item": {
+    "update": {
+      "success": "Sous-worké item mis à jour avec succès",
+      "error": "Erreur lors de la mise à jour du sous-worké item"
+    },
+    "remove": {
+      "success": "Sous-worké item supprimé avec succès",
+      "error": "Erreur lors de la suppression du sous-worké item"
     }
   },
 

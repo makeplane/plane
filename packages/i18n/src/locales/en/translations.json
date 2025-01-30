@@ -520,7 +520,8 @@
       "public": "Public",
       "private": "Private"
     },
-    "sub_work_items": "Sub-work items",
+    "done": "Done",
+    "sub_work_item": "Sub-work items",
     "order_by": {
       "label": "Order by",
       "manual": "Manual",
@@ -541,7 +542,8 @@
     "comments": "Comments",
     "updates": "Updates",
     "clear_all": "Clear all",
-    "link_copied": "Link copied",
+    "link_copied": "Link copied!",
+    "link_copied_to_clipboard": "Link copied to clipboard",
     "copied_to_clipboard": "Work item link copied to clipboard",
     "is_copied_to_clipboard": "Work item is copied to clipboard",
     "no_links_added_yet": "No links added yet",
@@ -554,6 +556,7 @@
     "go_back": "Go back",
     "continue": "Continue",
     "resend": "Resend",
+    "relations": "Relations",
     "errors": {
       "default": {
         "title": "Error!",
@@ -581,7 +584,10 @@
       "open_in_new_tab": "Open in new tab",
       "copy_link": "Copy link",
       "archive": "Archive",
-      "delete": "Delete"
+      "delete": "Delete",
+      "remove_relation": "Remove relation",
+      "subscribe": "Subscribe",
+      "unsubscribe": "Unsubscribe"
     }
   },
 
@@ -603,7 +609,16 @@
       "failed": "{entity} delete failed"
     },
     "update": {
-      "failed": "{entity} update failed"
+      "failed": "{entity} update failed",
+      "success": "{entity} updated successfully"
+    },
+    "link_copied_to_clipboard": "{entity} link copied to clipboard",
+    "fetch": {
+      "failed": "Error fetching {entity}"
+    },
+    "add": {
+      "success": "{entity} added successfully",
+      "failed": "Error adding {entity}"
     }
   },
 
@@ -627,6 +642,7 @@
   "issue": {
     "label": "{count, plural, one {Work item} other {Work items}}",
     "all": "All Work items",
+    "edit": "Edit work item",
     "title": {
       "label": "Work item title",
       "required": "Work item title is required."
@@ -646,6 +662,7 @@
       "link": "Add link"
     },
     "remove": {
+      "label": "Remove work item",
       "cycle": {
         "loading": "Removing work item from the cycle...",
         "success": "Work item removed from the cycle successfully.",
@@ -746,11 +763,50 @@
         "message": "Work item could not be archived. Please try again."
       }
     },
+    "restore": {
+      "success": {
+        "title": "Restore success",
+        "message": "Your work item can be found in project work items."
+      },
+      "failed": {
+        "message": "Work item could not be restored. Please try again."
+      }
+    },
     "relation": {
       "relates_to": "Relates to",
       "duplicate": "Duplicate of",
       "blocked_by": "Blocked by",
       "blocking": "Blocking"
+    },
+    "copy_link": "Copy work item link",
+    "delete": {
+      "label": "Delete work item",
+      "error": "Error deleting work item"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "Work item subscribed successfully",
+        "unsubscribed": "Work item unsubscribed successfully"
+      }
+    }
+  },
+
+  "attachment": {
+    "error": "File could not be attached. Try uploading again.",
+    "only_one_file_allowed": "Only one file can be uploaded at a time.",
+    "file_size_limit": "File must be of {size}MB or less in size.",
+    "drag_and_drop": "Drag and drop anywhere to upload",
+    "delete": "Delete attachment"
+  },
+
+  "sub_work_item": {
+    "update": {
+      "success": "Sub-work item updated successfully",
+      "error": "Error updating sub-work item"
+    },
+    "remove": {
+      "success": "Sub-work item removed successfully",
+      "error": "Error removing sub-work item"
     }
   },
 

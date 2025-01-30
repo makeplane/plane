@@ -520,6 +520,7 @@
       "public": "Public",
       "private": "Private"
     },
+    "done": "Hecho",
     "sub_work_items": "Sub-work items",
     "order_by": {
       "label": "Ordenar por",
@@ -542,6 +543,7 @@
     "updates": "Actualizaciones",
     "clear_all": "Limpiar todo",
     "link_copied": "Enlace copiado",
+    "link_copied_to_clipboard": "Enlace copiado al portapapeles",
     "copied_to_clipboard": "Enlace del work item copiado al portapapeles",
     "is_copied_to_clipboard": "Work item copiado al portapapeles",
     "no_links_added_yet": "No hay enlaces agregados aún",
@@ -554,6 +556,7 @@
     "go_back": "Volver",
     "continue": "Continuar",
     "resend": "Reenviar",
+    "relations": "Relaciones",
     "errors": {
       "default": {
         "title": "¡Error!",
@@ -581,7 +584,10 @@
       "open_in_new_tab": "Abrir en nueva pestaña",
       "copy_link": "Copiar enlace",
       "archive": "Archivar",
-      "delete": "Eliminar"
+      "delete": "Eliminar",
+      "remove_relation": "Eliminar relación",
+      "subscribe": "Suscríbete",
+      "unsubscribe": "Desuscribir"
     }
   },
 
@@ -603,7 +609,16 @@
       "failed": "Error al eliminar {entity}"
     },
     "update": {
-      "failed": "Error al actualizar {entity}"
+      "failed": "Error al actualizar {entity}",
+      "success": "{entity} actualizado correctamente"
+    },
+    "link_copied_to_clipboard": "Enlace de {entity} copiado al portapapeles",
+    "fetch": {
+      "failed": "Error al obtener {entity}"
+    },
+    "add": {
+      "success": "{entity} agregado correctamente",
+      "failed": "Error al agregar {entity}"
     }
   },
 
@@ -627,6 +642,7 @@
   "issue": {
     "label": "{count, plural, one {Work item} other {Work items}}",
     "all": "Todos los Work items",
+    "edit": "Editar work item",
     "title": {
       "label": "Título del work item",
       "required": "El título del work item es obligatorio."
@@ -646,6 +662,7 @@
       "link": "Agregar enlace"
     },
     "remove": {
+      "label": "Eliminar work item",
       "cycle": {
         "loading": "Eliminando work item del cycle...",
         "success": "Work item eliminado del cycle correctamente.",
@@ -746,11 +763,49 @@
         "message": "No se pudo archivar el work item. Por favor, inténtalo de nuevo."
       }
     },
+    "restaurar": {
+      "exito": {
+        "titulo": "Restauración exitosa",
+        "mensaje": "Tu work item se puede encontrar en los problemas del proyecto."
+      },
+      "fallido": {
+        "mensaje": "No se pudo restaurar el work item. Por favor, inténtalo de nuevo."
+      }
+    },
     "relation": {
       "relates_to": "Se relaciona con",
       "duplicate": "Duplicado de",
       "blocked_by": "Bloqueado por",
       "blocking": "Bloqueando"
+    },
+    "copy_link": "Copiar enlace del work item",
+    "delete": {
+      "label": "Eliminar work item",
+      "error": "Error al eliminar el work item"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "Work item suscrito exitosamente",
+        "unsubscribed": "Work item desuscrito exitosamente"
+      }
+    },
+    "attachment": {
+      "error": "No se pudo adjuntar el archivo. Intenta subirlo de nuevo.",
+      "only_one_file_allowed": "Solo se puede subir un archivo a la vez.",
+      "file_size_limit": "El archivo debe tener un tamaño de {size}MB o menos.",
+      "drag_and_drop": "Arrastra y suelta en cualquier lugar para subir",
+      "delete": "Eliminar adjunto"
+    },
+
+    "sub_work_item": {
+      "update": {
+        "success": "Sub-work item actualizado exitosamente",
+        "error": "Error al actualizar el sub-work item"
+      },
+      "remove": {
+        "success": "Sub-work item eliminado exitosamente",
+        "error": "Error al eliminar el sub-work item"
+      }
     }
   },
 

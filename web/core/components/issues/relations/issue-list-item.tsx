@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { X, Pencil, Trash, Link as LinkIcon } from "lucide-react";
 // Plane
 import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssue, TIssueServiceType } from "@plane/types";
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 // components
@@ -39,6 +40,8 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
     handleIssueCrudState,
     issueServiceType = EIssueServiceType.ISSUES,
   } = props;
+
+  const { t } = useTranslation();
 
   // store hooks
   const {
@@ -153,7 +156,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                   <CustomMenu.MenuItem onClick={handleEditIssue}>
                     <div className="flex items-center gap-2">
                       <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
-                      <span>Edit</span>
+                      <span>{t("common.actions.edit")}</span>
                     </div>
                   </CustomMenu.MenuItem>
                 )}
@@ -161,7 +164,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                 <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
                   <div className="flex items-center gap-2">
                     <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
-                    <span>Copy link</span>
+                    <span>{t("common.actions.copy_link")}</span>
                   </div>
                 </CustomMenu.MenuItem>
 
@@ -169,7 +172,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                   <CustomMenu.MenuItem onClick={handleRemoveRelation}>
                     <div className="flex items-center gap-2">
                       <X className="h-3.5 w-3.5" strokeWidth={2} />
-                      <span>Remove relation</span>
+                      <span>{t("common.actions.remove_relation")}</span>
                     </div>
                   </CustomMenu.MenuItem>
                 )}
@@ -178,7 +181,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                   <CustomMenu.MenuItem onClick={handleDeleteIssue}>
                     <div className="flex items-center gap-2">
                       <Trash className="h-3.5 w-3.5" strokeWidth={2} />
-                      <span>Delete</span>
+                      <span>{t("common.actions.delete")}</span>
                     </div>
                   </CustomMenu.MenuItem>
                 )}

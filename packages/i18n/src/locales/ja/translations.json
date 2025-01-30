@@ -520,6 +520,7 @@
       "public": "公開",
       "private": "非公開"
     },
+    "done": "完了",
     "sub_work_items": "サブ作業項目",
     "order_by": {
       "label": "並び順",
@@ -542,6 +543,7 @@
     "updates": "更新",
     "clear_all": "すべてクリア",
     "link_copied": "リンクをコピーしました",
+    "link_copied_to_clipboard": "リンクをクリップボードにコピーしました",
     "copied_to_clipboard": "作業項目のリンクをクリップボードにコピーしました",
     "is_copied_to_clipboard": "作業項目をクリップボードにコピーしました",
     "no_links_added_yet": "まだリンクが追加されていません",
@@ -554,6 +556,7 @@
     "go_back": "戻る",
     "continue": "続ける",
     "resend": "再送信",
+    "relations": "関係",
     "errors": {
       "default": {
         "title": "エラー！",
@@ -581,7 +584,10 @@
       "open_in_new_tab": "新しいタブで開く",
       "copy_link": "リンクをコピー",
       "archive": "アーカイブ",
-      "delete": "削除"
+      "delete": "削除",
+      "remove_relation": "関係を削除",
+      "subscribe": "購読",
+      "unsubscribe": "購読解除"
     }
   },
 
@@ -603,7 +609,16 @@
       "failed": "{entity}の削除に失敗しました"
     },
     "update": {
-      "failed": "{entity}の更新に失敗しました"
+      "failed": "{entity}の更新に失敗しました",
+      "success": "{entity}を更新しました"
+    },
+    "link_copied_to_clipboard": "{entity}のリンクをクリップボードにコピーしました",
+    "fetch": {
+      "failed": "{entity}の取得に失敗しました"
+    },
+    "add": {
+      "success": "{entity}を追加しました",
+      "failed": "{entity}の追加に失敗しました"
     }
   },
 
@@ -627,6 +642,7 @@
   "issue": {
     "label": "{count, plural, one {作業項目} other {作業項目}}",
     "all": "すべての作業項目",
+    "edit": "作業項目を編集",
     "title": {
       "label": "作業項目のタイトル",
       "required": "作業項目のタイトルは必須です"
@@ -646,6 +662,7 @@
       "link": "リンクを追加"
     },
     "remove": {
+      "label": "作業項目を削除",
       "cycle": {
         "loading": "サイクルから作業項目を削除中...",
         "success": "作業項目をサイクルから削除しました",
@@ -746,11 +763,50 @@
         "message": "作業項目をアーカイブできませんでした。もう一度お試しください。"
       }
     },
+    "restore": {
+      "success": {
+        "title": "復元成功",
+        "message": "あなたの作業項目はプロジェクトの作業項目に見つかります。"
+      },
+      "failed": {
+        "message": "作業項目を復元できませんでした。もう一度お試しください。"
+      }
+    },
     "relation": {
       "relates_to": "関連",
       "duplicate": "重複",
       "blocked_by": "ブロック元",
       "blocking": "ブロック中"
+    },
+    "copy_link": "作業項目のリンクをコピー",
+    "delete": {
+      "label": "作業項目を削除",
+      "error": "作業項目の削除中にエラーが発生しました"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "作業項目に成功裏に登録されました",
+        "unsubscribed": "作業項目の登録を解除しました"
+      }
+    }
+  },
+
+  "attachment": {
+    "error": "ファイルを添付できませんでした。再度アップロードを試みてください。",
+    "only_one_file_allowed": "一度にアップロードできるファイルは1つだけです。",
+    "file_size_limit": "ファイルのサイズは{size}MB以下でなければなりません。",
+    "drag_and_drop": "アップロードするにはどこでもドラッグ＆ドロップしてください。",
+    "delete": "添付ファイルを削除"
+  },
+
+  "sub_work_item": {
+    "update": {
+      "success": "サブ作業項目が正常に更新されました",
+      "error": "サブ作業項目の更新中にエラーが発生しました"
+    },
+    "remove": {
+      "success": "サブ作業項目が正常に削除されました",
+      "error": "サブ作業項目の削除中にエラーが発生しました"
     }
   },
 
@@ -1563,7 +1619,7 @@
     "options": {
       "mark_all_as_read": "すべて既読にする",
       "mark_read": "既読にする",
-      "mark_unread": "未読にする", 
+      "mark_unread": "未読にする",
       "refresh": "更新",
       "filters": "受信トレイフィルター",
       "show_unread": "未読を表示",
@@ -1774,7 +1830,7 @@
     "product_or_project_manager": "プロダクト/プロジェクトマネージャー",
     "development_or_engineering": "開発/エンジニアリング",
     "founder_or_executive": "創業者/エグゼクティブ",
-    "freelancer_or_consultant": "フリーランス/コンサルタント", 
+    "freelancer_or_consultant": "フリーランス/コンサルタント",
     "marketing_or_growth": "マーケティング/グロース",
     "sales_or_business_development": "営業/ビジネス開発",
     "support_or_operations": "サポート/オペレーション",
@@ -1805,7 +1861,7 @@
       "description": "作業項目をExcelファイルにエクスポートします。"
     },
     "json": {
-      "title": "JSON", 
+      "title": "JSON",
       "description": "作業項目をJSONファイルにエクスポートします。"
     }
   },

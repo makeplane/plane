@@ -4,6 +4,8 @@ import { FC, useState } from "react";
 import isNil from "lodash/isNil";
 import { observer } from "mobx-react";
 import { Bell, BellOff } from "lucide-react";
+// plane-i18n
+import { useTranslation } from "@plane/i18n";
 // UI
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
@@ -18,6 +20,7 @@ export type TIssueSubscription = {
 
 export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
   const { workspaceSlug, projectId, issueId } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     subscription: { getSubscriptionByIssueId },
@@ -44,16 +47,18 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
       else await createSubscription(workspaceSlug, projectId, issueId);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: `Issue ${isSubscribed ? `unsubscribed` : `subscribed`} successfully.!`,
+        title: t("toast.success"),
+        message: isSubscribed
+          ? t("issue.subscription.actions.unsubscribed")
+          : t("issue.subscription.actions.subscribed"),
       });
       setLoading(false);
     } catch (error) {
       setLoading(false);
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Something went wrong. Please try again later.",
+        title: t("toast.error"),
+        message: t("commons.error.message"),
       });
     }
   };
@@ -77,12 +82,12 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
       >
         {loading ? (
           <span>
-            <span className="hidden sm:block">Loading...</span>
+            <span className="hidden sm:block">{t("common.loading")}</span>
           </span>
         ) : isSubscribed ? (
-          <div className="hidden sm:block">Unsubscribe</div>
+          <div className="hidden sm:block">{t("common.actions.unsubscribe")}</div>
         ) : (
-          <div className="hidden sm:block">Subscribe</div>
+          <div className="hidden sm:block">{t("common.actions.subscribe")}</div>
         )}
       </Button>
     </div>
