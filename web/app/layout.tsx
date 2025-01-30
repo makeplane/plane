@@ -1,9 +1,9 @@
 import { Metadata, Viewport } from "next";
 import Script from "next/script";
 // styles
-import "@/styles/globals.css";
-import "@/styles/command-palette.css";
 import "@/styles/emoji.css";
+import "@/styles/globals.css";
+import "@/styles/power-k.css";
 import "@/styles/react-day-picker.css";
 // meta data info
 import { SITE_NAME, SITE_DESCRIPTION } from "@/constants/meta";
