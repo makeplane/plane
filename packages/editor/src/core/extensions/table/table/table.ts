@@ -117,9 +117,6 @@ export const Table = Node.create({
         ({ tr, dispatch, editor }) => {
           const node = createTable(editor.schema, rows, cols, withHeaderRow, undefined, columnWidth);
           if (dispatch) {
-            const offset = tr.selection.anchor + 1;
-
-          if (dispatch) {
             const { selection } = tr;
             const position = selection.$from.before(selection.$from.depth);
 
@@ -139,9 +136,9 @@ export const Table = Node.create({
               const cellPos = position + 1;
               tr.setSelection(TextSelection.create(tr.doc, cellPos + 1)).scrollIntoView();
             }
-          }
 
-          return true;
+            return true;
+          }
         },
       addColumnBefore:
         () =>
@@ -237,7 +234,7 @@ export const Table = Node.create({
     return {
       Tab: () => {
         if (this.editor.isActive("table")) {
-          if (this.editor.isActive("listItem") || this.editor.isActive("taskItem")) {
+          if (this.editor.isActive("listItem") || this.editor.isActive("taskItem") || this.editor.isActive("list")) {
             return false;
           }
           if (this.editor.commands.goToNextCell()) {
@@ -252,7 +249,17 @@ export const Table = Node.create({
         }
         return false;
       },
-      "Shift-Tab": () => this.editor.commands.goToPreviousCell(),
+      "Shift-Tab": () => {
+        if (this.editor.isActive("table")) {
+          if (this.editor.isActive("listItem") || this.editor.isActive("taskItem") || this.editor.isActive("list")) {
+            return false;
+          }
+        }
+        if (this.editor.commands.goToPreviousCell()) {
+          return true;
+        }
+        return false;
+      },
       Backspace: deleteTableWhenAllCellsSelected,
       "Mod-Backspace": deleteTableWhenAllCellsSelected,
       Delete: deleteTableWhenAllCellsSelected,

@@ -1,4 +1,4 @@
-import { Extensions } from "@tiptap/core";
+import { AnyExtension, Extensions } from "@tiptap/core";
 import BulletList from "@tiptap/extension-bullet-list";
 import CharacterCount from "@tiptap/extension-character-count";
 import ListItem from "@tiptap/extension-list-item";
@@ -42,6 +42,7 @@ import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
 import { DropCursorExtension } from "./drop-cursor";
 import { MarkdownClipboard } from "@/plugins/clipboard";
+import { createCopyToClipboardExtension } from "./clipboard-new";
 
 type TArguments = {
   disabledExtensions: TExtensions[];
@@ -218,15 +219,16 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomTextAlignExtension,
     CustomCalloutExtension,
     CustomColorExtension,
-    ...CoreEditorAdditionalExtensions({
-      disabledExtensions,
-    }),
     Markdown.configure({
       html: true,
-      transformCopiedText: true,
+      transformCopiedText: false,
       transformPastedText: true,
       breaks: true,
     }),
-    MarkdownClipboard,
+    // MarkdownClipboard,
+    createCopyToClipboardExtension(),
+    ...(CoreEditorAdditionalExtensions({
+      disabledExtensions,
+    }) as AnyExtension[]),
   ];
 };
