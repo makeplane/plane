@@ -79,7 +79,7 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
       }}
     >
       <div className="space-y-3 p-5 pb-4">
-        <h3 className="text-xl font-medium text-custom-text-200">{formData.id ? "Update" : "Create"} Initiative</h3>
+        <h3 className="text-xl font-medium text-custom-text-200">{formData.id ? "Update" : "Create"} initiative</h3>
 
         <div className={cn("flex items-center gap-2 w-full", errors.name && "items-start")}>
           <div className="space-y-1 flew-grow w-full">
@@ -102,7 +102,6 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
           initialValue={
             !formData?.description_html || formData?.description_html === "" ? "<p></p>" : formData?.description_html
           }
-          value={formData?.description_html}
           workspaceSlug={workspaceSlug.toString()}
           workspaceId={currentWorkspace.id}
           dragDropEnabled={false}
@@ -126,7 +125,7 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
               );
               return asset_id;
             } catch (error) {
-              console.log("Error in uploading issue asset:", error);
+              console.log("Error in uploading initiative asset:", error);
               throw new Error("Asset upload failed. Please try again later.");
             }
           }}
