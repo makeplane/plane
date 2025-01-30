@@ -74,7 +74,9 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
   const issueList =
     filteredIssues.length > 0 ? (
       <li className="p-2">
-        {query === "" && <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Select issue</h2>}
+        {query === "" && (
+          <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Select work item</h2>
+        )}
         <ul className="text-sm text-custom-text-100">
           {filteredIssues.map((issue) => {
             const stateColor = issue.state__color || "";

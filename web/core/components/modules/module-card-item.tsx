@@ -216,7 +216,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-custom-text-200">
                 <LayersIcon className="h-4 w-4 text-custom-text-300" />
-                <span className="text-xs text-custom-text-300">{issueCount ?? "0 Issue"}</span>
+                <span className="text-xs text-custom-text-300">{issueCount ?? "0 Work item"}</span>
               </div>
               {moduleLeadDetails ? (
                 <span className="cursor-default">

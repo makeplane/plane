@@ -32,10 +32,10 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
   const issueCount =
     isCompleted && !isEmpty(cycleDetails?.progress_snapshot)
       ? cycleDetails?.progress_snapshot?.total_issues === 0
-        ? "0 Issue"
+        ? "0 Work item"
         : `${cycleDetails?.progress_snapshot?.completed_issues}/${cycleDetails?.progress_snapshot?.total_issues}`
       : cycleDetails?.total_issues === 0
-        ? "0 Issue"
+        ? "0 Work item"
         : `${cycleDetails?.completed_issues}/${cycleDetails?.total_issues}`;
   const estimateType = areEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
   const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by_id) : undefined;
@@ -51,10 +51,10 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
   const issueEstimatePointCount =
     isCompleted && !isEmpty(cycleDetails?.progress_snapshot)
       ? cycleDetails?.progress_snapshot.total_issues === 0
-        ? "0 Issue"
+        ? "0 Work item"
         : `${cycleDetails?.progress_snapshot.completed_estimate_points}/${cycleDetails?.progress_snapshot.total_estimate_points}`
       : cycleDetails?.total_issues === 0
-        ? "0 Issue"
+        ? "0 Work item"
         : `${cycleDetails?.completed_estimate_points}/${cycleDetails?.total_estimate_points}`;
   return (
     <div className="flex flex-col gap-5 w-full">

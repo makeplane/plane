@@ -24,16 +24,16 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
   return (
     <div className="grid h-full w-full place-items-center">
       <EmptyState
-        title="View issues will appear here"
-        description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
+        title="View work items will appear here"
+        description="Work items help you track individual pieces of work. With work items, keep track of what's going on, who is working on it, and what's done."
         image={emptyIssue}
         primaryButton={
           isCreatingIssueAllowed
             ? {
-                text: "New issue",
+                text: "New work item",
                 icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
                 onClick: () => {
-                  setTrackElement("View issue empty state");
+                  setTrackElement("View work item empty state");
                   toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
                 },
               }

@@ -41,7 +41,7 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Issues have been transferred successfully",
+          message: "Work items have been transferred successfully",
         });
         await getCycleDetails(payload.new_cycle_id);
       })
@@ -114,7 +114,7 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
                   <div className="flex items-center justify-between px-5">
                     <div className="flex items-center gap-1">
                       <TransferIcon className="w-5 fill-custom-text-100" />
-                      <h4 className="text-xl font-medium text-custom-text-100">Transfer Issues</h4>
+                      <h4 className="text-xl font-medium text-custom-text-100">Transfer work items</h4>
                     </div>
                     <button onClick={handleClose}>
                       <X className="h-4 w-4" />

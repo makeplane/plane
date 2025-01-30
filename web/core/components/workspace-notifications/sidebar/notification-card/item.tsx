@@ -100,8 +100,8 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
                     ? "commented"
                     : notificationField === "archived_at"
                       ? notification?.data?.issue_activity.new_value === "restore"
-                        ? "restored the issue"
-                        : "archived the issue"
+                        ? "restored the work item"
+                        : "archived the work item"
                       : notificationField === "None"
                         ? null
                         : replaceUnderscoreIfSnakeCase(notificationField)}{" "}
@@ -115,7 +115,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
                             notificationField === "target_date" ? (
                               renderFormattedDate(notification?.data?.issue_activity.new_value)
                             ) : notificationField === "attachment" ? (
-                              "the issue"
+                              "the work item"
                             ) : notificationField === "description" ? (
                               stripAndTruncateHTML(notification?.data?.issue_activity.new_value || "", 55)
                             ) : notificationField === "archived_at" ? null : (
@@ -129,7 +129,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
                             </span>
                           )
                         ) : (
-                          "the issue and assigned it to you."
+                          "the work item and assigned it to you."
                         )}
                       </span>
                     </>

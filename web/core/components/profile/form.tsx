@@ -349,14 +349,14 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                     <CustomSelect
                       value={value}
                       onChange={onChange}
-                      label={value ? value.toString() : "Select your role"}
+                      label={value ? t(value) : "Select your role"}
                       buttonClassName={errors.role ? "border-red-500" : "border-none"}
                       className="rounded-md border-[0.5px] !border-custom-border-200"
                       optionsClassName="w-full"
                       input
                     >
                       {USER_ROLES.map((item) => (
-                        <CustomSelect.Option key={item.value} value={item.value}>
+                        <CustomSelect.Option key={item.value} value={item.i18n_label}>
                           {t(item.i18n_label)}
                         </CustomSelect.Option>
                       ))}

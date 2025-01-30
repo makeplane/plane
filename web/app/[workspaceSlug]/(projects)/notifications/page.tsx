@@ -41,7 +41,7 @@ const WorkspaceDashboardPage = observer(() => {
     notificationLiteByNotificationId(currentSelectedNotificationId);
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/intake/issue-detail" });
 
-  // fetching workspace issue properties
+  // fetching workspace work item properties
   useWorkspaceIssueProperties(workspaceSlug);
 
   // fetch workspace notifications

@@ -29,7 +29,7 @@ export const STATE_GROUP_GRAPH_COLORS: Record<TStateGroups, string> = {
   completed: "#3E9B4F",
   cancelled: "#E5484D",
 };
-// colors for issues by state group widget graph arcs
+// colors for work items by state group widget graph arcs
 export const STATE_GROUP_GRAPH_GRADIENTS = [
   linearGradientDef("gradientBacklog", [
     { offset: 0, color: "#DEDEDE" },

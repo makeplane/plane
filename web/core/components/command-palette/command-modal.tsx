@@ -301,7 +301,7 @@ export const CommandModal: React.FC = observer(() => {
                             workspaceProjectIds &&
                             workspaceProjectIds.length > 0 &&
                             canPerformAnyCreateAction && (
-                              <Command.Group heading="Issue">
+                              <Command.Group heading="Work item">
                                 <Command.Item
                                   onSelect={() => {
                                     closePalette();
@@ -312,7 +312,7 @@ export const CommandModal: React.FC = observer(() => {
                                 >
                                   <div className="flex items-center gap-2 text-custom-text-200">
                                     <LayersIcon className="h-3.5 w-3.5" />
-                                    Create new issue
+                                    Create new work item
                                   </div>
                                   <kbd>C</kbd>
                                 </Command.Item>

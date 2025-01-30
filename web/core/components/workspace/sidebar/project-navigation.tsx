@@ -57,7 +57,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
     (workspaceSlug: string, projectId: string): TNavigationItem[] => [
       {
         key: "issues",
-        name: "Issues",
+        name: "Work items",
         href: `/${workspaceSlug}/projects/${projectId}/issues`,
         icon: LayersIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],

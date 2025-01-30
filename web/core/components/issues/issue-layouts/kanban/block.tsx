@@ -205,9 +205,9 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
           else {
             setToast({
               type: TOAST_TYPE.WARNING,
-              title: "Cannot move issue",
+              title: "Cannot move work item",
               message: !canEditIssueProperties
-                ? "You are not allowed to move this issue"
+                ? "You are not allowed to move this work item"
                 : "Drag and drop is disabled for the current grouping",
             });
           }
@@ -215,7 +215,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
       >
         <ControlLink
           id={getIssueBlockId(issueId, groupId, subGroupId)}
-          href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}${isEpic ? "epics" : "issues"}/${
+          href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}${isEpic ? "epics" : "work items"}/${
             issue.id
           }`}
           ref={cardRef}

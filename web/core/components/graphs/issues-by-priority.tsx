@@ -7,7 +7,7 @@ import { BarGraph } from "@/components/ui";
 // helpers
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
 
-// gradients for issues by priority widget graph bars
+// gradients for work items by priority widget graph bars
 export const PRIORITY_GRAPH_GRADIENTS = [
   linearGradientDef(
     "gradient_urgent",
