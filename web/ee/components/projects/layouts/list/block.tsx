@@ -40,7 +40,8 @@ export const ProjectBlock = observer((props: ProjectBlockProps) => {
   const { isMobile } = usePlatformOS();
 
   const projectDetails = getProjectById(projectId);
-  if (!projectDetails || !currentWorkspace) return <Spinner />;
+
+  if (!projectDetails || !currentWorkspace) return <></>;
   return (
     <Row
       ref={projectRef}
