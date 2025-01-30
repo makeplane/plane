@@ -48,7 +48,7 @@
 /* table dropdown */
 .table-wrapper table .column-resize-handle {
   position: absolute;
-  right: -2px;
+  right: 0;
   top: 0;
   width: 2px;
   height: 100%;
