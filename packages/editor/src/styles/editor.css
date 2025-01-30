@@ -412,7 +412,7 @@ p.editor-paragraph-block {
     padding-bottom: 4px;
   }
 
-  &:not(:last-child) {
+  &:not(td p.editor-paragraph-block):not(:last-child) {
     padding-bottom: 8px;
   }
 

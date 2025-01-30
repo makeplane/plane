@@ -1,9 +1,15 @@
+// plane types
 import { TActivityEntityData, TIssueEntityData } from "@plane/types";
+// plane ui
 import { LayersIcon, PriorityIcon, StateGroupIcon, Tooltip } from "@plane/ui";
+// components
 import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns";
+// helpers
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
+// hooks
 import { useIssueDetail, useProjectState } from "@/hooks/store";
+// plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 
 type BlockProps = {
@@ -24,9 +30,9 @@ export const RecentIssue = (props: BlockProps) => {
     <ListItem
       key={activity.id}
       itemLink=""
-      title={""}
+      title={issueDetails?.name}
       prependTitleElement={
-        <div className="flex flex-shrink-0 items-center justify-center rounded-md gap-4 ">
+        <div className="flex-shrink-0 flex items-center gap-2">
           {issueDetails.type ? (
             <IssueIdentifier
               size="lg"
@@ -38,16 +44,19 @@ export const RecentIssue = (props: BlockProps) => {
             />
           ) : (
             <div className="flex gap-2 items-center justify-center">
-              <div className="flex flex-shrink-0 items-center justify-center rounded gap-4 bg-custom-background-80 w-[25.5px] h-[25.5px]">
-                <LayersIcon className="w-4 h-4 text-custom-text-350" />
+              <div className="flex-shrink-0 grid place-items-center rounded bg-custom-background-80 size-8">
+                <LayersIcon className="size-4 text-custom-text-350" />
               </div>
-              <div className="font-medium text-custom-sidebar-text-400 text-sm whitespace-nowrap">
+              <div className="font-medium text-custom-text-400 text-sm whitespace-nowrap">
                 {issueDetails?.project_identifier}-{issueDetails?.sequence_id}
               </div>
             </div>
           )}
-          <div className="text-custom-text-200 font-medium text-sm whitespace-nowrap">{issueDetails?.name}</div>
-          <div className="font-medium text-xs text-custom-text-400">{calculateTimeAgo(activity.visited_at)}</div>
+        </div>
+      }
+      appendTitleElement={
+        <div className="flex-shrink-0 font-medium text-xs text-custom-text-400">
+          {calculateTimeAgo(activity.visited_at)}
         </div>
       }
       quickActionElement={

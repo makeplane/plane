@@ -261,12 +261,12 @@ urlpatterns = [
     ),
     # User Preference
     path(
-        "workspaces/<str:slug>/user-preferences/",
+        "workspaces/<str:slug>/sidebar-preferences/",
         WorkspaceUserPreferenceViewSet.as_view(),
         name="workspace-user-preference",
     ),
     path(
-        "workspaces/<str:slug>/user-preferences/<str:key>/",
+        "workspaces/<str:slug>/sidebar-preferences/<str:key>/",
         WorkspaceUserPreferenceViewSet.as_view(),
         name="workspace-user-preference",
     ),
