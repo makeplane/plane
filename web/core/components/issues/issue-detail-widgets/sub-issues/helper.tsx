@@ -73,7 +73,7 @@ export const useSubIssueOperations = (
             message: t("entity.fetch.failed", {
               entity:
                 issueServiceType === EIssueServiceType.ISSUES
-                  ? t("common.sub_work_item", { count: 2 })
+                  ? t("common.sub_work_items", { count: 2 })
                   : t("issue.label", { count: 2 }),
             }),
           });
@@ -88,7 +88,7 @@ export const useSubIssueOperations = (
             message: t("entity.add.success", {
               entity:
                 issueServiceType === EIssueServiceType.ISSUES
-                  ? t("common.sub_work_item", { count: 2 })
+                  ? t("common.sub_work_items")
                   : t("issue.label", { count: 2 }),
             }),
           });
@@ -100,7 +100,7 @@ export const useSubIssueOperations = (
             message: t("entity.add.failed", {
               entity:
                 issueServiceType === EIssueServiceType.ISSUES
-                  ? t("common.sub_work_item", { count: 2 })
+                  ? t("common.sub_work_items")
                   : t("issue.label", { count: 2 }),
             }),
           });
@@ -154,7 +154,7 @@ export const useSubIssueOperations = (
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("toast.success"),
-            message: t("common.sub_work_item.update.success"),
+            message: t("common.sub_work_items.update.success"),
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
         } catch (error) {
@@ -170,7 +170,7 @@ export const useSubIssueOperations = (
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
-            message: t("common.sub_work_item.update.error"),
+            message: t("common.sub_work_items.update.error"),
           });
         }
       },
@@ -191,7 +191,7 @@ export const useSubIssueOperations = (
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("toast.success"),
-            message: t("common.sub_work_item.remove.success"),
+            message: t("common.sub_work_items.remove.success"),
           });
           captureIssueEvent({
             eventName: "Sub-issue removed",
@@ -216,7 +216,7 @@ export const useSubIssueOperations = (
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
-            message: t("common.sub_work_item.remove.error"),
+            message: t("common.sub_work_items.remove.error"),
           });
         }
       },

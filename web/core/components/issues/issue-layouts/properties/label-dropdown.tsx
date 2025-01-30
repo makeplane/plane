@@ -7,6 +7,7 @@ import { Combobox } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, EUserProjectRoles, getRandomLabelColor } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueLabel } from "@plane/types";
 // components
@@ -54,6 +55,7 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
     fullHeight = false,
     label,
   } = props;
+  const { t } = useTranslation();
 
   //router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
@@ -235,14 +237,14 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
                   className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search"
+                  placeholder={t("common.search.label")}
                   displayValue={(assigned: any) => assigned?.name || ""}
                   onKeyDown={searchInputKeyDown}
                 />
               </div>
               <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
                 {isLoading ? (
-                  <p className="text-center text-custom-text-200">Loading...</p>
+                  <p className="text-center text-custom-text-200">{t("common.loading")}</p>
                 ) : filteredOptions.length > 0 ? (
                   filteredOptions.map((option) => (
                     <Combobox.Option
@@ -282,16 +284,17 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
                     }}
                     className={`text-left text-custom-text-200 ${query.length ? "cursor-pointer" : "cursor-default"}`}
                   >
+                    {/* TODO: translate here */}
                     {query.length ? (
                       <>
                         + Add <span className="text-custom-text-100">&quot;{query}&quot;</span> to labels
                       </>
                     ) : (
-                      "Type to add a new label"
+                      t("label.create.type")
                     )}
                   </p>
                 ) : (
-                  <p className="text-left text-custom-text-200 ">No matching results.</p>
+                  <p className="text-left text-custom-text-200 ">{t("common.search.no_matching_results")}</p>
                 )}
               </div>
             </div>

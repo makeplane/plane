@@ -523,6 +523,7 @@
     "done": "完了",
     "sub_work_items": "サブ作業項目",
     "comment": "コメント",
+    "workspace_level": "ワークスペースレベル",
     "order_by": {
       "label": "並び順",
       "manual": "手動",
@@ -543,6 +544,7 @@
     "comments": "コメント",
     "updates": "更新",
     "clear_all": "すべてクリア",
+    "copied": "コピーしました！",
     "link_copied": "リンクをコピーしました",
     "link_copied_to_clipboard": "リンクをクリップボードにコピーしました",
     "copied_to_clipboard": "作業項目のリンクをクリップボードにコピーしました",
@@ -573,6 +575,18 @@
     "url_is_invalid": "URLが無効です",
     "display_title": "表示タイトル",
     "link_title_placeholder": "このリンクの表示名",
+    "url": "ユーアールエル",
+    "side_peek": "サイドピーク",
+    "modal": "モーダル",
+    "full_screen": "フルスクリーン",
+    "close_peek_view": "ピークを閉じる",
+    "toggle_peek_view_layout": "ピークのレイアウトを切り替え",
+    "options": "オプション",
+    "duration": "期間",
+    "today": "今日",
+    "week": "週",
+    "month": "月",
+    "quarter": "四半期",
     "search": {
       "label": "検索",
       "placeholder": "検索するキーワードを入力...",
@@ -588,7 +602,9 @@
       "delete": "削除",
       "remove_relation": "関係を削除",
       "subscribe": "購読",
-      "unsubscribe": "購読解除"
+      "unsubscribe": "購読解除",
+      "clear_sorting": "並び順をクリア",
+      "show_weekends": "週末を表示"
     }
   },
 
@@ -632,7 +648,8 @@
       "success": "エピックを作成しました"
     },
     "add": {
-      "press_enter": "'Enter'キーを押して別のエピックを追加"
+      "press_enter": "'Enter'キーを押して別のエピックを追加",
+      "label": "エピックを追加"
     },
     "title": {
       "label": "エピックのタイトル",
@@ -652,7 +669,9 @@
       "press_enter": "'Enter'キーを押して別の作業項目を追加",
       "label": "作業項目を追加",
       "cycle": {
-        "failed": "作業項目をサイクルに追加できませんでした。もう一度お試しください。"
+        "failed": "作業項目をサイクルに追加できませんでした。もう一度お試しください。",
+        "success": "{count, plural, one {作業項目} other {作業項目}}をサイクルに追加しました",
+        "loading": "{count, plural, one {作業項目} other {作業項目}}をサイクルに追加中..."
       },
       "assignee": "担当者を追加",
       "start_date": "開始日を追加",
@@ -660,7 +679,8 @@
       "parent": "親作業項目を追加",
       "sub_issue": "サブ作業項目を追加",
       "relation": "関連を追加",
-      "link": "リンクを追加"
+      "link": "リンクを追加",
+      "existing": "既存の作業項目を追加"
     },
     "remove": {
       "label": "作業項目を削除",
@@ -790,7 +810,13 @@
         "subscribed": "作業項目に成功裏に登録されました",
         "unsubscribed": "作業項目の登録を解除しました"
       }
-    }
+    },
+    "select": {
+      "error": "少なくとも1つの作業項目を選択してください",
+      "empty": "選択された作業項目はありません",
+      "add_selected": "選択された作業項目を追加"
+    },
+    "open_in_full_screen": "作業項目をフルスクリーンで開く"
   },
 
   "attachment": {

@@ -523,6 +523,7 @@
     "done": "Done",
     "sub_work_items": "Sub-work items",
     "comment": "Comment",
+    "workspace_level": "Workspace level",
     "order_by": {
       "label": "Order by",
       "manual": "Manual",
@@ -543,6 +544,7 @@
     "comments": "Comments",
     "updates": "Updates",
     "clear_all": "Clear all",
+    "copied": "Copied!",
     "link_copied": "Link copied!",
     "link_copied_to_clipboard": "Link copied to clipboard",
     "copied_to_clipboard": "Work item link copied to clipboard",
@@ -573,6 +575,18 @@
     "url_is_invalid": "URL is invalid",
     "display_title": "Display title",
     "link_title_placeholder": "What you'd like to see this link as",
+    "url": "URL",
+    "side_peek": "Side Peek",
+    "modal": "Modal",
+    "full_screen": "Full Screen",
+    "close_peek_view": "Close the peek view",
+    "toggle_peek_view_layout": "Toggle peek view layout",
+    "options": "Options",
+    "duration": "Duration",
+    "today": "Today",
+    "week": "Week",
+    "month": "Month",
+    "quarter": "Quarter",
     "search": {
       "label": "Search",
       "placeholder": "Type to search...",
@@ -588,7 +602,9 @@
       "delete": "Delete",
       "remove_relation": "Remove relation",
       "subscribe": "Subscribe",
-      "unsubscribe": "Unsubscribe"
+      "unsubscribe": "Unsubscribe",
+      "clear_sorting": "Clear sorting",
+      "show_weekends": "Show weekends"
     }
   },
 
@@ -601,7 +617,7 @@
 
   "entity": {
     "grouping_title": "{entity} Grouping",
-    "priority": "{entity} ",
+    "priority": "{entity} Priority",
     "all": "All {entity}",
     "drop_here_to_move": "Drop here to move the {entity}",
     "delete": {
@@ -632,7 +648,8 @@
       "success": "Epic created successfully"
     },
     "add": {
-      "press_enter": "Press 'Enter' to add another epic"
+      "press_enter": "Press 'Enter' to add another epic",
+      "label": "Add Epic"
     },
     "title": {
       "label": "Epic Title",
@@ -652,7 +669,9 @@
       "press_enter": "Press 'Enter' to add another work item",
       "label": "Add Work item",
       "cycle": {
-        "failed": "Work item could not be added to the cycle. Please try again."
+        "failed": "Work item could not be added to the cycle. Please try again.",
+        "success": "{count, plural, one {Work item} other {Work items}} added to the cycle successfully.",
+        "loading": "Adding {count, plural, one {work item} other {work items}} to the cycle..."
       },
       "assignee": "Add assignees",
       "start_date": "Add start date",
@@ -660,7 +679,8 @@
       "parent": "Add parent work item",
       "sub_issue": "Add sub-work item",
       "relation": "Add relation",
-      "link": "Add link"
+      "link": "Add link",
+      "existing": "Add existing work item"
     },
     "remove": {
       "label": "Remove work item",
@@ -790,7 +810,13 @@
         "subscribed": "Work item subscribed successfully",
         "unsubscribed": "Work item unsubscribed successfully"
       }
-    }
+    },
+    "select": {
+      "error": "Please select at least one work item",
+      "empty": "No work items selected",
+      "add_selected": "Add selected issues"
+    },
+    "open_in_full_screen": "Open work item in full screen"
   },
 
   "attachment": {

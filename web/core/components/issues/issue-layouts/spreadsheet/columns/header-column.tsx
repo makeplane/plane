@@ -260,7 +260,7 @@ export const HeaderColumn = (props: Props) => {
           >
             <div className="flex items-center gap-2 px-1">
               <Eraser className="h-3 w-3" />
-              <span>Clear sorting</span>
+              <span>{t("common.actions.clear_sorting")}</span>
             </div>
           </CustomMenu.MenuItem>
         )}

@@ -523,6 +523,7 @@
     "sub_work_items": "子工作项",
     "done": "完成",
     "comment": "评论",
+    "workspace_level": "沃克思配思级别",
     "order_by": {
       "label": "排序依据",
       "manual": "手动",
@@ -543,6 +544,7 @@
     "comments": "评论",
     "updates": "更新",
     "clear_all": "清除所有",
+    "copied": "已复制",
     "link_copied": "链接已复制",
     "link_copied_to_clipboard": "链接已复制到剪贴板",
     "copied_to_clipboard": "工作项链接已复制到剪贴板",
@@ -573,6 +575,18 @@
     "url_is_invalid": "URL无效",
     "display_title": "显示标题",
     "link_title_placeholder": "你希望这个链接显示为",
+    "url": "URL",
+    "side_peek": "侧边预览",
+    "modal": "模态",
+    "full_screen": "全屏",
+    "close_peek_view": "关闭预览",
+    "toggle_peek_view_layout": "切换预览布局",
+    "options": "选项",
+    "duration": "持续时间",
+    "today": "今天",
+    "week": "周",
+    "month": "月",
+    "quarter": "季度",
     "search": {
       "label": "搜索",
       "placeholder": "输入以搜索...",
@@ -589,7 +603,9 @@
     },
     "remove_relation": "移除关系",
     "subscribe": "订阅",
-    "unsubscribe": "取消订阅"
+    "unsubscribe": "取消订阅",
+    "clear_sorting": "清除排序",
+    "show_weekends": "显示周末"
   },
 
   "form": {
@@ -632,7 +648,8 @@
       "success": "史诗创建成功"
     },
     "add": {
-      "press_enter": "按'回车'添加另一个史诗"
+      "press_enter": "按'回车'添加另一个史诗",
+      "label": "添加史诗"
     },
     "title": {
       "label": "史诗标题",
@@ -652,7 +669,9 @@
       "press_enter": "按'回车'添加另一个工作项",
       "label": "添加工作项",
       "cycle": {
-        "failed": "无法将工作项添加到周期。请重试。"
+        "failed": "无法将工作项添加到周期。请重试。",
+        "success": "{count, plural, one {工作项} other {工作项}} 添加到周期成功。",
+        "loading": "正在将 {count, plural, one {工作项} other {工作项}} 添加到周期..."
       },
       "assignee": "添加负责人",
       "start_date": "添加开始日期",
@@ -660,7 +679,8 @@
       "parent": "添加父工作项",
       "sub_issue": "添加子工作项",
       "relation": "添加关系",
-      "link": "添加链接"
+      "link": "添加链接",
+      "existing": "添加现有工作项"
     },
     "remove": {
       "label": "移除工作项",
@@ -790,7 +810,13 @@
         "subscribed": "工作项订阅成功",
         "unsubscribed": "工作项取消订阅成功"
       }
-    }
+    },
+    "select": {
+      "error": "请选择至少一个工作项",
+      "empty": "没有选择工作项",
+      "add_selected": "添加选中的工作项"
+    },
+    "open_in_full_screen": "在工作项中打开全屏"
   },
 
   "attachment": {

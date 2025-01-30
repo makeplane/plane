@@ -61,7 +61,12 @@ export const IssuesHeader = observer(() => {
 
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              link={<BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />}
+              link={
+                <BreadcrumbLink
+                  label={t("issue.label", { count: 2 })} // count is for pluralization
+                  icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}
+                />
+              }
             />
           </Breadcrumbs>
           {issuesCount && issuesCount > 0 ? (

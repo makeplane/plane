@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
 import { ALL_ISSUES, EIssueLayoutTypes, EIssuesStoreType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
@@ -38,6 +39,7 @@ export type GanttStoreType =
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
   const { viewId, isCompletedCycle = false, isEpic = false } = props;
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId } = useParams();
 
@@ -93,7 +95,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
       issues.updateIssueDates(workspaceSlug.toString(), projectId.toString(), updates).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
+          title: t("toast.error"),
           message: "Error while updating Issue Dates, Please try again Later",
         });
       }),
@@ -121,8 +123,8 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
         <div className="h-full w-full">
           <GanttChartRoot
             border={false}
-            title={isEpic ? "Epics" : "Issues"}
-            loaderTitle={isEpic ? "Epics" : "Issues"}
+            title={isEpic ? t("epic.label", { count: 2 }) : t("issue.label", { count: 2 })}
+            loaderTitle={isEpic ? t("epic.label", { count: 2 }) : t("issue.label", { count: 2 })}
             blockIds={issuesIds}
             blockUpdateHandler={updateIssueBlockStructure}
             blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} isEpic={isEpic} />}
