@@ -186,6 +186,8 @@ class Profile(TimeAuditModel):
     billing_address = models.JSONField(null=True)
     has_billing_address = models.BooleanField(default=False)
     company_name = models.CharField(max_length=255, blank=True)
+
+    is_smooth_cursor_enabled = models.BooleanField(default=False)
     # mobile
     is_mobile_onboarded = models.BooleanField(default=False)
     mobile_onboarding_step = models.JSONField(default=get_mobile_default_onboarding)
@@ -224,7 +226,7 @@ class Account(TimeAuditModel):
     metadata = models.JSONField(default=dict)
 
     class Meta:
-        unique_together = ["provider", "provider_account_id"]
+        unique_together = ["user", "provider", "provider_account_id"]
         verbose_name = "Account"
         verbose_name_plural = "Accounts"
         db_table = "accounts"
