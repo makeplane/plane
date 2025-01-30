@@ -8,6 +8,8 @@ import { Sparkle } from "lucide-react";
 import { ETabIndices } from "@plane/constants";
 // editor
 import { EditorRefApi } from "@plane/editor";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { TIssue } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
@@ -17,7 +19,7 @@ import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 import { GptAssistantPopover } from "@/components/core";
 import { RichTextEditor } from "@/components/editor";
 // helpers
-import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
+import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useInstance, useWorkspace } from "@/hooks/store";
@@ -72,6 +74,8 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
     onAssetUpload,
     onClose,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // states
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
   // store hooks
@@ -190,7 +194,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                 onEnterKeyPress={() => submitBtnRef?.current?.click()}
                 ref={editorRef}
                 tabIndex={getIndex("description_html")}
-                placeholder={getDescriptionPlaceholder}
+                placeholder={(isFocused, description) => t(getDescriptionPlaceholderI18n(isFocused, description))}
                 searchMentionCallback={async (payload) =>
                   await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
                     ...payload,

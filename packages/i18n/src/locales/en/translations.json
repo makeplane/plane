@@ -593,6 +593,8 @@
     "week": "Week",
     "month": "Month",
     "quarter": "Quarter",
+    "press_for_commands": "Press '/' for commands",
+    "click_to_add_description": "Click to add description",
     "search": {
       "label": "Search",
       "placeholder": "Type to search...",
