@@ -72,9 +72,7 @@ export const ListItem: FC<IListItemProps> = (props) => {
             disabled={disableLink}
           >
             <div className="flex items-center gap-4 truncate">
-              {prependTitleElement && (
-                <span className="flex items-center flex-shrink-0 truncate">{prependTitleElement}</span>
-              )}
+              {prependTitleElement && <span className="flex items-center flex-shrink-0">{prependTitleElement}</span>}
               <Tooltip tooltipContent={title} position="top" isMobile={isMobile}>
                 <span className="truncate text-sm">{title}</span>
               </Tooltip>
