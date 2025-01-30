@@ -27,7 +27,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
   // hooks
   const { getEstimateTypeByCycleId, setEstimateType } = useCycle();
   // derived values
-  const estimateType: TCycleEstimateType = (cycle && getEstimateTypeByCycleId(cycle.id)) || "work items";
+  const estimateType: TCycleEstimateType = (cycle && getEstimateTypeByCycleId(cycle.id)) || "issues";
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/chart" });
 
   const onChange = async (value: TCycleEstimateType) => {
