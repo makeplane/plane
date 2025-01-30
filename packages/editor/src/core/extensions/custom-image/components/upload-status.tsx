@@ -9,7 +9,7 @@ type Props = {
 export const ImageUploadStatus: React.FC<Props> = (props) => {
   const { editor, nodeId } = props;
   // subscribe to image upload status
-  const uploadStatus = useEditorState({
+  const uploadStatus: number | undefined = useEditorState({
     editor,
     selector: ({ editor }) => editor.storage.imageComponent.assetsUploadStatus[nodeId],
   });
