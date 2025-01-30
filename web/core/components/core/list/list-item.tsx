@@ -8,7 +8,7 @@ import { cn } from "@/helpers/common.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 interface IListItemProps {
-  title: string;
+  title?: string;
   itemLink: string;
   onItemClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
   prependTitleElement?: JSX.Element;
@@ -72,10 +72,14 @@ export const ListItem: FC<IListItemProps> = (props) => {
             disabled={disableLink}
           >
             <div className="flex items-center gap-4 truncate">
-              {prependTitleElement && <span className="flex items-center flex-shrink-0">{prependTitleElement}</span>}
-              <Tooltip tooltipContent={title} position="top" isMobile={isMobile}>
-                <span className="truncate text-sm">{title}</span>
-              </Tooltip>
+              {prependTitleElement && (
+                <span className="flex items-center flex-shrink-0 truncate">{prependTitleElement}</span>
+              )}
+              {title && (
+                <Tooltip tooltipContent={title} position="top" isMobile={isMobile}>
+                  <span className="truncate text-sm">{title}</span>
+                </Tooltip>
+              )}
             </div>
             {appendTitleElement && <span className="flex items-center flex-shrink-0">{appendTitleElement}</span>}
           </ControlLink>
