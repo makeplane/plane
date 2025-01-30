@@ -316,5 +316,21 @@
   "remove_parent_issue": "Eliminar problema padre",
   "add_parent": "Agregar padre",
   "loading_members": "Cargando miembros...",
-  "inbox": "bandeja de entrada"
+  "inbox": "bandeja de entrada",
+  "pi_chat": "Chat Pi",
+  "teams": "Equipos",
+  "initiatives": "Iniciativas",
+  "in_app": "En la aplicación",
+  "forms": "Formularios",
+  "epics": "Épicas",
+  "team-progress-empty-state-title": "Ninguno de tus proyectos vinculados tiene problemas publicados.",
+  "team-progress-empty-state-description": "Crea algunos problemas en uno o más de esos proyectos para ver el progreso por fechas, estados y prioridades.",
+  "team-blocking-relation-empty-state-title": "No tienes ningún problema que esté bloqueando a un compañero de equipo.",
+  "team-blocking-relation-empty-state-description": "¡Buen trabajo! Has despejado el camino para tu equipo. Eres un buen jugador de equipo.",
+  "team-blocked-relation-empty-state-title": "No tienes problemas de tus compañeros de equipo que te estén bloqueando.",
+  "team-blocked-relation-empty-state-description": "¡Buenas noticias! Puedes avanzar en todos tus problemas asignados.",
+  "team-stats-empty-state-title": "Ninguno de tus proyectos vinculados tiene problemas publicados.",
+  "team-stats-empty-state-description": "Crea algunos problemas en uno o más de esos proyectos para ver la distribución de trabajo por proyecto y miembros del equipo.",
+  "team-stats-filter-empty-state-title": "No hay estadísticas de equipo para los filtros aplicados.",
+  "team-stats-filter-empty-state-description": "Crea algunos problemas en uno o más de esos proyectos para ver la distribución de trabajo por proyecto y miembros del equipo."
 }

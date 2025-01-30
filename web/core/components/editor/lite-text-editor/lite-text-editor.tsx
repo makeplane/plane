@@ -22,15 +22,17 @@ interface LiteTextEditorWrapperProps
   extends Omit<ILiteTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
   workspaceId: string;
-  projectId: string;
+  projectId?: string;
   accessSpecifier?: EIssueCommentAccessSpecifier;
   handleAccessChange?: (accessKey: EIssueCommentAccessSpecifier) => void;
   showAccessSpecifier?: boolean;
   showSubmitButton?: boolean;
   isSubmitting?: boolean;
   showToolbarInitially?: boolean;
+  showToolbar?: boolean;
   uploadFile: (file: File) => Promise<string>;
   issue_id?: string;
+  parentClassName?: string;
 }
 
 export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
@@ -46,6 +48,8 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     showSubmitButton = true,
     isSubmitting = false,
     showToolbarInitially = true,
+    showToolbar = true,
+    parentClassName = "",
     placeholder = "Add comment...",
     uploadFile,
     ...rest
@@ -74,7 +78,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
 
   return (
     <div
-      className={cn("relative border border-custom-border-200 rounded p-3")}
+      className={cn("relative border border-custom-border-200 rounded p-3", parentClassName)}
       onFocus={() => !showToolbarInitially && setIsFocused(true)}
       onBlur={() => !showToolbarInitially && setIsFocused(false)}
     >
@@ -100,31 +104,33 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         containerClassName={cn(containerClassName, "relative")}
         {...rest}
       />
-      <div
-        className={cn(
-          "transition-all duration-300 ease-out origin-top overflow-hidden",
-          isFocused ? "max-h-[200px] opacity-100 scale-y-100 mt-3" : "max-h-0 opacity-0 scale-y-0 invisible"
-        )}
-      >
-        <IssueCommentToolbar
-          accessSpecifier={accessSpecifier}
-          executeCommand={(item) => {
-            // TODO: update this while toolbar homogenization
-            // @ts-expect-error type mismatch here
-            editorRef?.executeMenuItemCommand({
-              itemKey: item.itemKey,
-              ...item.extraProps,
-            });
-          }}
-          handleAccessChange={handleAccessChange}
-          handleSubmit={(e) => rest.onEnterKeyPress?.(e)}
-          isCommentEmpty={isEmpty}
-          isSubmitting={isSubmitting}
-          showAccessSpecifier={showAccessSpecifier}
-          editorRef={editorRef}
-          showSubmitButton={showSubmitButton}
-        />
-      </div>
+      {showToolbar && (
+        <div
+          className={cn(
+            "transition-all duration-300 ease-out origin-top overflow-hidden",
+            isFocused ? "max-h-[200px] opacity-100 scale-y-100 mt-3" : "max-h-0 opacity-0 scale-y-0 invisible"
+          )}
+        >
+          <IssueCommentToolbar
+            accessSpecifier={accessSpecifier}
+            executeCommand={(item) => {
+              // TODO: update this while toolbar homogenization
+              // @ts-expect-error type mismatch here
+              editorRef?.executeMenuItemCommand({
+                itemKey: item.itemKey,
+                ...item.extraProps,
+              });
+            }}
+            handleAccessChange={handleAccessChange}
+            handleSubmit={(e) => rest.onEnterKeyPress?.(e)}
+            isCommentEmpty={isEmpty}
+            isSubmitting={isSubmitting}
+            showAccessSpecifier={showAccessSpecifier}
+            editorRef={editorRef}
+            showSubmitButton={showSubmitButton}
+          />
+        </div>
+      )}
     </div>
   );
 });

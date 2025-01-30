@@ -1,1 +1,1 @@
-export * from "ce/components/cycles/analytics-sidebar";
+export * from "./root";
