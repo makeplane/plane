@@ -137,7 +137,11 @@ class WorkspaceConnection(BaseModel):
         "db.Workspace", on_delete=models.CASCADE, related_name="connections"
     )
     credential = models.ForeignKey(
-        "ee.WorkspaceCredential", on_delete=models.CASCADE, related_name="connections", null=True, blank=True
+        "ee.WorkspaceCredential",
+        on_delete=models.CASCADE,
+        related_name="connections",
+        null=True,
+        blank=True,
     )
     target_hostname = models.TextField(null=True, blank=True)
     source_hostname = models.TextField(null=True, blank=True)
@@ -175,10 +179,18 @@ class WorkspaceEntityConnection(BaseModel):
         "db.Workspace", on_delete=models.CASCADE, related_name="entity_connections"
     )
     project = models.ForeignKey(
-        "db.Project", on_delete=models.CASCADE, related_name="entity_connections"
+        "db.Project",
+        on_delete=models.CASCADE,
+        related_name="entity_connections",
+        null=True,
+        blank=True,
     )
     issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="entity_connections"
+        "db.Issue",
+        on_delete=models.CASCADE,
+        related_name="entity_connections",
+        null=True,
+        blank=True,
     )
     entity_type = models.CharField(max_length=30, blank=True, null=True)
     entity_id = models.CharField(max_length=255, blank=True, null=True)
