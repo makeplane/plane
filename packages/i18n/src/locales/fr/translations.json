@@ -522,6 +522,7 @@
     },
     "sub_work_items": "Sous-worké items",
     "done": "Terminé",
+    "comment": "Commentaire",
     "order_by": {
       "label": "Trier par",
       "manual": "Manuel",
@@ -723,6 +724,7 @@
       "backlog": "Backlogué"
     },
     "comments": {
+      "placeholder": "Ajouter un commentaire...",
       "create": {
         "success": "Commentaire créé avec succès",
         "error": "Échec de la création du commentaire. Veuillez réessayer plus tard."
@@ -799,7 +801,17 @@
     "delete": "Supprimer la pièce jointe"
   },
 
-  "sub_worké_item": {
+  "label": {
+    "select": "Sélectionner étiquette",
+    "create": {
+      "success": "Étiquette créée avec succès",
+      "failed": "Échec de la création de l'étiquette",
+      "already_exists": "L'étiquette existe déjà",
+      "type": "Tapez pour ajouter une nouvelle étiquette"
+    }
+  },
+
+  "sub_work_item": {
     "update": {
       "success": "Sous-worké item mis à jour avec succès",
       "error": "Erreur lors de la mise à jour du sous-worké item"

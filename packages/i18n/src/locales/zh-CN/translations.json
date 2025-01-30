@@ -522,6 +522,7 @@
     },
     "sub_work_items": "子工作项",
     "done": "完成",
+    "comment": "评论",
     "order_by": {
       "label": "排序依据",
       "manual": "手动",
@@ -723,6 +724,7 @@
       "backlog": "待办"
     },
     "comments": {
+      "placeholder": "添加评论...",
       "create": {
         "success": "评论创建成功",
         "error": "评论创建失败。请稍后重试。"
@@ -797,6 +799,16 @@
     "file_size_limit": "文件大小必须小于或等于 {size}MB。",
     "drag_and_drop": "拖放到任何位置以上传",
     "delete": "删除附件"
+  },
+
+  "label": {
+    "select": "选择标签",
+    "create": {
+      "success": "标签创建成功",
+      "failed": "标签创建失败",
+      "already_exists": "标签已存在",
+      "type": "输入以添加新标签"
+    }
   },
 
   "sub_work_item": {

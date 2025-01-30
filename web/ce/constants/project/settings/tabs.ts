@@ -56,7 +56,7 @@ export const PROJECT_SETTINGS = {
   },
   automations: {
     key: "automations",
-    i18n_label: "common.automations",
+    i18n_label: "project_settings.automations.label",
     href: `/settings/automations`,
     access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/automations/`,

@@ -521,7 +521,8 @@
       "private": "Private"
     },
     "done": "Done",
-    "sub_work_item": "Sub-work items",
+    "sub_work_items": "Sub-work items",
+    "comment": "Comment",
     "order_by": {
       "label": "Order by",
       "manual": "Manual",
@@ -723,6 +724,7 @@
       "backlog": "Backlog"
     },
     "comments": {
+      "placeholder": "Add comment...",
       "create": {
         "success": "Comment created successfully",
         "error": "Comment creation failed. Please try again later."
@@ -797,6 +799,16 @@
     "file_size_limit": "File must be of {size}MB or less in size.",
     "drag_and_drop": "Drag and drop anywhere to upload",
     "delete": "Delete attachment"
+  },
+
+  "label": {
+    "select": "Select label",
+    "create": {
+      "success": "Label created successfully",
+      "failed": "Label creation failed",
+      "already_exists": "Label already exists",
+      "type": "Type to add a new label"
+    }
   },
 
   "sub_work_item": {

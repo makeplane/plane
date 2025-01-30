@@ -522,6 +522,7 @@
     },
     "done": "完了",
     "sub_work_items": "サブ作業項目",
+    "comment": "コメント",
     "order_by": {
       "label": "並び順",
       "manual": "手動",
@@ -723,6 +724,7 @@
       "backlog": "バックログ"
     },
     "comments": {
+      "placeholder": "コメントを追加...",
       "create": {
         "success": "コメントを作成しました",
         "error": "コメントの作成に失敗しました。後でもう一度お試しください。"
@@ -797,6 +799,16 @@
     "file_size_limit": "ファイルのサイズは{size}MB以下でなければなりません。",
     "drag_and_drop": "アップロードするにはどこでもドラッグ＆ドロップしてください。",
     "delete": "添付ファイルを削除"
+  },
+
+  "label": {
+    "select": "ラベルを選択",
+    "create": {
+      "success": "ラベルが正常に作成されました",
+      "failed": "ラベルの作成に失敗しました",
+      "already_exists": "ラベルは既に存在します",
+      "type": "新しいラベルを追加するには入力してください"
+    }
   },
 
   "sub_work_item": {
