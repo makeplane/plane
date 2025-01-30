@@ -44,6 +44,7 @@ from plane.db.models import (
     Project,
     ProjectMember,
     CycleIssue,
+    UserRecentVisit,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -671,6 +672,13 @@ class IssueViewSet(BaseViewSet):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
 
         issue.delete()
+        # delete the issue from recent visits
+        UserRecentVisit.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            entity_identifier=pk,
+            entity_name="issue",
+        ).delete(soft=False)
         issue_activity.delay(
             type="issue.activity.deleted",
             requested_data=json.dumps({"issue_id": str(pk)}),

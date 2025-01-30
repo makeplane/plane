@@ -16,17 +16,15 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 import { TIssueRelationTypes } from "@/plane-web/types";
-//
-import { TRelationIssueOperations } from "../issue-detail-widgets/relations/helper";
+// local imports
+import { useRelationOperations } from "../issue-detail-widgets/relations/helper";
 
 type Props = {
   workspaceSlug: string;
-  projectId: string;
   issueId: string;
   relationKey: TIssueRelationTypes;
   relationIssueId: string;
   disabled: boolean;
-  issueOperations: TRelationIssueOperations;
   handleIssueCrudState: (key: "update" | "delete", issueId: string, issue?: TIssue | null) => void;
   issueServiceType?: TIssueServiceType;
 };
@@ -34,12 +32,10 @@ type Props = {
 export const RelationIssueListItem: FC<Props> = observer((props) => {
   const {
     workspaceSlug,
-    projectId,
     issueId,
     relationKey,
     relationIssueId,
     disabled = false,
-    issueOperations,
     handleIssueCrudState,
     issueServiceType = EIssueServiceType.ISSUES,
   } = props;
@@ -57,16 +53,18 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
   // derived values
   const issue = getIssueById(relationIssueId);
   const { handleRedirection } = useIssuePeekOverviewRedirection(!!issue?.is_epic);
+  const issueOperations = useRelationOperations(!!issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const projectDetail = (issue && issue.project_id && project.getProjectById(issue.project_id)) || undefined;
+  const projectId = issue?.project_id;
   const currentIssueStateDetail =
     (issue?.project_id && getProjectStates(issue?.project_id)?.find((state) => issue?.state_id == state.id)) ||
     undefined;
-  if (!issue) return <></>;
+  if (!issue || !projectId) return <></>;
   const issueLink = `/${workspaceSlug}/projects/${projectId}/${issue.is_epic ? "epics" : "issues"}/${issue.id}`;
 
   // handlers
   const handleIssuePeekOverview = (issue: TIssue) => {
-    if (issueServiceType === EIssueServiceType.ISSUES && issue.is_epic) {
+    if (issue.is_epic) {
       // open epics in new tab
       window.open(issueLink, "_blank");
       return;
@@ -155,7 +153,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                   <CustomMenu.MenuItem onClick={handleEditIssue}>
                     <div className="flex items-center gap-2">
                       <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
-                      <span>Edit issue</span>
+                      <span>Edit</span>
                     </div>
                   </CustomMenu.MenuItem>
                 )}
@@ -163,7 +161,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                 <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
                   <div className="flex items-center gap-2">
                     <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
-                    <span>Copy issue link</span>
+                    <span>Copy link</span>
                   </div>
                 </CustomMenu.MenuItem>
 
@@ -180,7 +178,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                   <CustomMenu.MenuItem onClick={handleDeleteIssue}>
                     <div className="flex items-center gap-2">
                       <Trash className="h-3.5 w-3.5" strokeWidth={2} />
-                      <span>Delete issue</span>
+                      <span>Delete</span>
                     </div>
                   </CustomMenu.MenuItem>
                 )}
