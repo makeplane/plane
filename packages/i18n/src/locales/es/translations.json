@@ -237,6 +237,7 @@
   "deactivate_your_account_description": "Una vez desactivada, no podrás ser asignado a work items ni se te facturará por tu workspace. Para reactivar tu cuenta, necesitarás una invitación a un workspace con esta dirección de correo electrónico.",
   "deactivating": "Desactivando",
   "confirm": "Confirmar",
+  "confirming": "Confirmando",
   "draft_created": "Borrador creado",
   "issue_created_successfully": "Work item creado exitosamente",
   "draft_creation_failed": "Error al crear borrador",
@@ -274,6 +275,7 @@
   "labels": "Etiquetas",
   "create_new_label": "Crear nueva etiqueta",
   "start_date": "Fecha de inicio",
+  "end_date": "Fecha de finalización",
   "due_date": "Fecha de vencimiento",
   "estimate": "Estimates",
   "change_parent_issue": "Cambiar work item padre",
@@ -477,6 +479,7 @@
     "load_more": "Cargar más",
     "activity": "Actividad",
     "analytics": "Analytics",
+    "dates": "Fechas",
     "success": "¡Éxito!",
     "something_went_wrong": "Algo salió mal",
     "error": {
@@ -484,7 +487,8 @@
       "message": "Ocurrió un error. Por favor, inténtalo de nuevo."
     },
     "group_by": "Agrupar por",
-    "epic": "Epic",
+    "epic": "Épicas",
+    "epics": "Épicas",
     "work_item": "Work item",
     "add": "Agregar",
     "warning": "Advertencia",
@@ -1364,7 +1368,7 @@
         "title": "Actividad reciente",
         "empty": "No pudimos encontrar datos. Por favor, revise sus entradas",
         "button": "Descargar la actividad de hoy",
-        "button_loading": "Descargando"     
+        "button_loading": "Descargando"
       }
     },
     "actions": {
