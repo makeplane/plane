@@ -523,6 +523,9 @@
       "private": "Privé"
     },
     "sub_work_items": "Sous-worké items",
+    "done": "Terminé",
+    "comment": "Commentaire",
+    "workspace_level": "Niveau du workspace",
     "order_by": {
       "label": "Trier par",
       "manual": "Manuel",
@@ -543,7 +546,9 @@
     "comments": "Commentaires",
     "updates": "Mises à jour",
     "clear_all": "Tout effacer",
+    "copied": "Copié !",
     "link_copied": "Lien copié",
+    "link_copied_to_clipboard": "Lien copié dans le clipboard",
     "copied_to_clipboard": "Lien du worké item copié",
     "is_copied_to_clipboard": "Worké item copié",
     "no_links_added_yet": "Aucun lien ajouté",
@@ -556,6 +561,7 @@
     "go_back": "Retour",
     "continue": "Continuer",
     "resend": "Renvoyer",
+    "relations": "Relations",
     "errors": {
       "default": {
         "title": "Erreur!",
@@ -571,6 +577,18 @@
     "url_is_invalid": "URL invalide",
     "display_title": "Titre d'affichage",
     "link_title_placeholder": "Comment voulez-vous voir ce lien",
+    "url": "URL",
+    "side_peek": "Peek latéral",
+    "modal": "Modal",
+    "full_screen": "Plein écran",
+    "close_peek_view": "Fermer le peek",
+    "toggle_peek_view_layout": "Changer le design du peek",
+    "options": "Options",
+    "duration": "Durée",
+    "today": "Aujourd'hui",
+    "week": "Semaine",
+    "month": "Mois",
+    "quarter": "Trimestre",
     "search": {
       "label": "Recherche",
       "placeholder": "Tapez pour rechercher...",
@@ -583,7 +601,12 @@
       "open_in_new_tab": "Ouvrir dans un nouvel onglet",
       "copy_link": "Copier le lien",
       "archive": "Archiver",
-      "delete": "Supprimer"
+      "delete": "Supprimer",
+      "remove_relation": "Supprimer la relation",
+      "subscribe": "S'abonner",
+      "unsubscribe": "Se désabonner",
+      "clear_sorting": "Effacer le tri",
+      "show_weekends": "Afficher les week-ends"
     }
   },
 
@@ -596,7 +619,7 @@
 
   "entity": {
     "grouping_title": "Groupement {entity}",
-    "priority": "{entity} ",
+    "priority": "{entity} Priorité",
     "all": "Tous les {entity}",
     "drop_here_to_move": "Déposez ici pour déplacer le {entity}",
     "delete": {
@@ -605,7 +628,16 @@
       "failed": "Échec de la suppression de {entity}"
     },
     "update": {
-      "failed": "Échec de la mise à jour de {entity}"
+      "failed": "Échec de la mise à jour de {entity}",
+      "success": "{entity} updated successfully"
+    },
+    "link_copied_to_clipboard": "Lien {entity} copié dans le presse-papiers",
+    "fetch": {
+      "failed": "Erreur lors de la récupération de {entity}"
+    },
+    "add": {
+      "success": "{entity} ajouté avec succès",
+      "failed": "Erreur lors de l'ajout de {entity}"
     }
   },
 
@@ -618,7 +650,8 @@
       "success": "Epiqué créé avec succès"
     },
     "add": {
-      "press_enter": "Appuyez sur 'Entrée' pour ajouter un autre epiqué"
+      "press_enter": "Appuyez sur 'Entrée' pour ajouter un autre epiqué",
+      "label": "Ajouter Epiqué"
     },
     "title": {
       "label": "Titre de l'Epiqué",
@@ -629,6 +662,7 @@
   "issue": {
     "label": "{count, plural, one {Worké Item} other {Workés Items}}",
     "all": "Tous les Workés Items",
+    "edit": "Modifier worké item",
     "title": {
       "label": "Titre du worké item",
       "required": "Le titre du worké item est requis."
@@ -637,7 +671,9 @@
       "press_enter": "Appuyez sur 'Entrée' pour ajouter un autre worké item",
       "label": "Ajouter Worké Item",
       "cycle": {
-        "failed": "Le worké item n'a pas pu être ajouté au cyclé. Veuillez réessayer."
+        "failed": "Le worké item n'a pas pu être ajouté au cyclé. Veuillez réessayer.",
+        "success": "{count, plural, one {Work item} other {Work items}} added to the cycle successfully.",
+        "loading": "Adding {count, plural, one {work item} other {work items}} to the cycle..."
       },
       "assignee": "Ajouter assignés",
       "start_date": "Ajouter date de début",
@@ -645,9 +681,11 @@
       "parent": "Ajouter worké item parent",
       "sub_issue": "Ajouter sous-worké item",
       "relation": "Ajouter relation",
-      "link": "Ajouter lien"
+      "link": "Ajouter lien",
+      "existing": "Ajouter worké item existant"
     },
     "remove": {
+      "label": "Supprimer worké item",
       "cycle": {
         "loading": "Suppression du worké item du cyclé...",
         "success": "Worké item supprimé du cyclé avec succès.",
@@ -708,6 +746,7 @@
       "backlog": "Backlogué"
     },
     "comments": {
+      "placeholder": "Ajouter un commentaire...",
       "create": {
         "success": "Commentaire créé avec succès",
         "error": "Échec de la création du commentaire. Veuillez réessayer plus tard."
@@ -748,11 +787,66 @@
         "message": "Le worké item n'a pas pu être archivé. Veuillez réessayer."
       }
     },
+    "restore": {
+      "success": {
+        "title": "Restauration réussie",
+        "message": "Votre worké item peut être trouvé dans les workés items du projét."
+      },
+      "failed": {
+        "message": "Le worké item n'a pas pu être restauré. Veuillez réessayer."
+      }
+    },
     "relation": {
       "relates_to": "Lié à",
       "duplicate": "Dupliqué de",
       "blocked_by": "Bloqué par",
       "blocking": "Bloque"
+    },
+    "copy_link": "Copier le lien du worké item",
+    "delete": {
+      "label": "Supprimer worké item",
+      "error": "Erreur lors de la suppression du worké item"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "Worké item abonné avec succès",
+        "unsubscribed": "Worké item désabonné avec succès"
+      }
+    },
+    "select": {
+      "error": "Veuillez sélectionner au moins un work item",
+      "empty": "Aucun work item sélectionné",
+      "add_selected": "Ajouter les work items sélectionnés"
+    },
+    "open_in_full_screen": "Ouvrir work item en plein écran"
+  },
+
+  "attachment": {
+    "error": "Le fichier n'a pas pu être joint. Essayez de le télécharger à nouveau.",
+    "only_one_file_allowed": "Un seul fichier peut être téléchargé à la fois.",
+    "file_size_limit": "Le fichier doit faire {size} Mo ou moins.",
+    "drag_and_drop": "Glissez et déposez n'importe où pour télécharger",
+    "delete": "Supprimer la pièce jointe"
+  },
+
+  "label": {
+    "select": "Sélectionner étiquette",
+    "create": {
+      "success": "Étiquette créée avec succès",
+      "failed": "Échec de la création de l'étiquette",
+      "already_exists": "L'étiquette existe déjà",
+      "type": "Tapez pour ajouter une nouvelle étiquette"
+    }
+  },
+
+  "sub_work_item": {
+    "update": {
+      "success": "Sous-worké item mis à jour avec succès",
+      "error": "Erreur lors de la mise à jour du sous-worké item"
+    },
+    "remove": {
+      "success": "Sous-worké item supprimé avec succès",
+      "error": "Erreur lors de la suppression du sous-worké item"
     }
   },
 

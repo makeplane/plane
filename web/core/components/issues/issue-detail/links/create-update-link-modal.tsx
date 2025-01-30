@@ -79,7 +79,7 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observe
           <div className="mt-2 space-y-3">
             <div>
               <label htmlFor="url" className="mb-2 text-custom-text-200">
-                URL
+                {t("common.url")}
               </label>
               <Controller
                 control={control}

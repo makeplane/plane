@@ -2,6 +2,8 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, LayersIcon, Header } from "@plane/ui";
 // components
@@ -14,6 +16,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 
 export const ProjectIssueDetailsHeader = observer(() => {
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId, issueId } = useParams();
@@ -37,7 +40,7 @@ export const ProjectIssueDetailsHeader = observer(() => {
               link={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/projects/${projectId}/issues`}
-                  label="Issues"
+                  label={t("issue.label", { count: 2 })} // count is for pluralization
                   icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}
                 />
               }

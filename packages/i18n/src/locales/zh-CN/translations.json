@@ -523,6 +523,9 @@
       "private": "私有"
     },
     "sub_work_items": "子工作项",
+    "done": "完成",
+    "comment": "评论",
+    "workspace_level": "沃克思配思级别",
     "order_by": {
       "label": "排序依据",
       "manual": "手动",
@@ -543,7 +546,9 @@
     "comments": "评论",
     "updates": "更新",
     "clear_all": "清除所有",
+    "copied": "已复制",
     "link_copied": "链接已复制",
+    "link_copied_to_clipboard": "链接已复制到剪贴板",
     "copied_to_clipboard": "工作项链接已复制到剪贴板",
     "is_copied_to_clipboard": "工作项已复制到剪贴板",
     "no_links_added_yet": "尚未添加链接",
@@ -556,6 +561,7 @@
     "go_back": "返回",
     "continue": "继续",
     "resend": "重新发送",
+    "relations": "关系",
     "errors": {
       "default": {
         "title": "错误！",
@@ -571,6 +577,18 @@
     "url_is_invalid": "URL无效",
     "display_title": "显示标题",
     "link_title_placeholder": "你希望这个链接显示为",
+    "url": "URL",
+    "side_peek": "侧边预览",
+    "modal": "模态",
+    "full_screen": "全屏",
+    "close_peek_view": "关闭预览",
+    "toggle_peek_view_layout": "切换预览布局",
+    "options": "选项",
+    "duration": "持续时间",
+    "today": "今天",
+    "week": "周",
+    "month": "月",
+    "quarter": "季度",
     "search": {
       "label": "搜索",
       "placeholder": "输入以搜索...",
@@ -584,7 +602,12 @@
       "copy_link": "复制链接",
       "archive": "归档",
       "delete": "删除"
-    }
+    },
+    "remove_relation": "移除关系",
+    "subscribe": "订阅",
+    "unsubscribe": "取消订阅",
+    "clear_sorting": "清除排序",
+    "show_weekends": "显示周末"
   },
 
   "form": {
@@ -605,301 +628,372 @@
       "failed": "{entity} 删除失败"
     },
     "update": {
-      "failed": "{entity} 更新失败"
+      "failed": "{entity} 更新失败",
+      "success": "{entity} 更新成功"
+    },
+    "link_copied_to_clipboard": "{entity} 链接已复制到剪贴板",
+    "fetch": {
+      "failed": "{entity} 获取失败"
+    },
+    "add": {
+      "success": "{entity} 添加成功",
+      "failed": "{entity} 添加失败"
     }
   },
 
   "epic": {
-    "all": "All Epics",
-    "label": "{count, plural, one {Epic} other {Epics}}",
-    "new": "New Epic",
-    "adding": "Adding epic...",
+    "all": "所有史诗",
+    "label": "{count, plural, one {史诗} other {史诗}}",
+    "new": "新史诗",
+    "adding": "添加史诗中...",
     "create": {
-      "success": "Epic created successfully"
+      "success": "史诗创建成功"
     },
     "add": {
-      "press_enter": "Press 'Enter' to add another epic"
+      "press_enter": "按'回车'添加另一个史诗",
+      "label": "添加史诗"
     },
     "title": {
-      "label": "Epic Title",
-      "required": "Epic title is required."
+      "label": "史诗标题",
+      "required": "史诗标题是必需的。"
     }
   },
 
   "issue": {
-    "label": "{count, plural, one {Work item} other {Work items}}",
-    "all": "All Work items",
+    "label": "{count, plural, one {工作项} other {工作项}}",
+    "all": "所有工作项",
+    "edit": "编辑工作项",
     "title": {
-      "label": "Work item title",
-      "required": "Work item title is required."
+      "label": "工作项标题",
+      "required": "工作项标题是必需的。"
     },
     "add": {
-      "press_enter": "Press 'Enter' to add another work item",
-      "label": "Add Work item",
+      "press_enter": "按'回车'添加另一个工作项",
+      "label": "添加工作项",
       "cycle": {
-        "failed": "Work item could not be added to the cycle. Please try again."
+        "failed": "无法将工作项添加到周期。请重试。",
+        "success": "{count, plural, one {工作项} other {工作项}} 添加到周期成功。",
+        "loading": "正在将 {count, plural, one {工作项} other {工作项}} 添加到周期..."
       },
-      "assignee": "Add assignees",
-      "start_date": "Add start date",
-      "due_date": "Add due date",
-      "parent": "Add parent work item",
-      "sub_issue": "Add sub-work item",
-      "relation": "Add relation",
-      "link": "Add link"
+      "assignee": "添加负责人",
+      "start_date": "添加开始日期",
+      "due_date": "添加截止日期",
+      "parent": "添加父工作项",
+      "sub_issue": "添加子工作项",
+      "relation": "添加关系",
+      "link": "添加链接",
+      "existing": "添加现有工作项"
     },
     "remove": {
+      "label": "移除工作项",
       "cycle": {
-        "loading": "Removing work item from the cycle...",
-        "success": "Work item removed from the cycle successfully.",
-        "failed": "Work item could not be removed from the cycle. Please try again."
+        "loading": "正在从周期中移除工作项...",
+        "success": "已成功从周期中移除工作项。",
+        "failed": "无法从周期中移除工作项。请重试。"
       },
       "module": {
-        "loading": "Removing work item from the module...",
-        "success": "Work item removed from the module successfully.",
-        "failed": "Work item could not be removed from the module. Please try again."
+        "loading": "正在从模块中移除工作项...",
+        "success": "已成功从模块中移除工作项。",
+        "failed": "无法从模块中移除工作项。请重试。"
       },
       "parent": {
-        "label": "Remove parent work item"
+        "label": "移除父工作项"
       }
     },
-    "new": "New Work item",
-    "adding": "Adding work item...",
+    "new": "新工作项",
+    "adding": "添加工作项中...",
     "create": {
-      "success": "Work item created successfully"
+      "success": "工作项创建成功"
     },
     "priority": {
-      "urgent": "Urgent",
-      "high": "High",
-      "medium": "Medium",
-      "low": "Low"
+      "urgent": "紧急",
+      "high": "高",
+      "medium": "中",
+      "low": "低"
     },
     "display": {
       "properties": {
-        "label": "Display Properties",
+        "label": "显示属性",
         "id": "ID",
-        "issue_type": "Work item Type",
-        "sub_issue_count": "Sub-work item count",
-        "attachment_count": "Attachment count",
-        "created_on": "Created on",
-        "sub_issue": "Sub-work item"
+        "issue_type": "工作项类型",
+        "sub_issue_count": "子工作项数量",
+        "attachment_count": "附件数量",
+        "created_on": "创建于",
+        "sub_issue": "子工作项"
       },
       "extra": {
-        "show_sub_issues": "Show sub-work items",
-        "show_empty_groups": "Show empty groups"
+        "show_sub_issues": "显示子工作项",
+        "show_empty_groups": "显示空组"
       }
     },
     "layouts": {
-      "ordered_by_label": "This layout is ordered by",
-      "list": "List",
-      "kanban": "Board",
-      "calendar": "Calendar",
-      "spreadsheet": "Table",
-      "gantt": "Timeline",
+      "ordered_by_label": "此布局按以下方式排序",
+      "list": "列表",
+      "kanban": "看板",
+      "calendar": "日历",
+      "spreadsheet": "表格",
+      "gantt": "时间线",
       "title": {
-        "list": "List Layout",
-        "kanban": "Board Layout",
-        "calendar": "Calendar Layout",
-        "spreadsheet": "Table Layout",
-        "gantt": "Timeline Layout"
+        "list": "列表布局",
+        "kanban": "看板布局",
+        "calendar": "日历布局",
+        "spreadsheet": "表格布局",
+        "gantt": "时间线布局"
       }
     },
     "states": {
-      "active": "Active",
-      "backlog": "Backlog"
+      "active": "活动",
+      "backlog": "待办"
     },
     "comments": {
+      "placeholder": "添加评论...",
       "create": {
-        "success": "Comment created successfully",
-        "error": "Comment creation failed. Please try again later."
+        "success": "评论创建成功",
+        "error": "评论创建失败。请稍后重试。"
       },
       "update": {
-        "success": "Comment updated successfully",
-        "error": "Comment update failed. Please try again later."
+        "success": "评论更新成功",
+        "error": "评论更新失败。请稍后重试。"
       },
       "remove": {
-        "success": "Comment removed successfully",
-        "error": "Comment remove failed. Please try again later."
+        "success": "评论删除成功",
+        "error": "评论删除失败。请稍后重试。"
       },
       "upload": {
-        "error": "Asset upload failed. Please try again later."
+        "error": "资源上传失败。请稍后重试。"
       }
     },
     "empty_state": {
       "issue_detail": {
-        "title": "Work item does not exist",
-        "description": "The work item you are looking for does not exist, has been archived, or has been deleted.",
+        "title": "工作项不存在",
+        "description": "您要查找的工作项不存在、已归档或已删除。",
         "primary_button": {
-          "text": "View other work items"
+          "text": "查看其他工作项"
         }
       }
     },
     "sibling": {
-      "label": "Sibling work items"
+      "label": "同级工作项"
     },
     "archive": {
-      "description": "Only completed or canceled\nwork items can be archived",
-      "label": "Archive Work item",
-      "confirm_message": "Are you sure you want to archive the work item? All your archived work items can be restored later.",
+      "description": "只有已完成或已取消的\n工作项可以归档",
+      "label": "归档工作项",
+      "confirm_message": "您确定要归档此工作项吗？所有已归档的工作项稍后可以恢复。",
       "success": {
-        "label": "Archive success",
-        "message": "Your archives can be found in project archives."
+        "label": "归档成功",
+        "message": "您的归档可以在项目归档中找到。"
       },
       "failed": {
-        "message": "Work item could not be archived. Please try again."
+        "message": "无法归档工作项。请重试。"
+      }
+    },
+    "restore": {
+      "success": {
+        "title": "恢复成功",
+        "message": "您的工作项可以在项目工作项中找到。"
+      },
+      "failed": {
+        "message": "无法恢复工作项。请重试。"
       }
     },
     "relation": {
-      "relates_to": "Relates to",
-      "duplicate": "Duplicate of",
-      "blocked_by": "Blocked by",
-      "blocking": "Blocking"
+      "relates_to": "关联到",
+      "duplicate": "重复于",
+      "blocked_by": "被阻止于",
+      "blocking": "阻止"
+    },
+    "copy_link": "复制工作项链接",
+    "delete": {
+      "label": "删除工作项",
+      "error": "删除工作项时出错"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "工作项订阅成功",
+        "unsubscribed": "工作项取消订阅成功"
+      }
+    },
+    "select": {
+      "error": "请选择至少一个工作项",
+      "empty": "没有选择工作项",
+      "add_selected": "添加选中的工作项"
+    },
+    "open_in_full_screen": "在工作项中打开全屏"
+  },
+
+  "attachment": {
+    "error": "无法附加文件。请重试上传。",
+    "only_one_file_allowed": "一次只能上传一个文件。",
+    "file_size_limit": "文件大小必须小于或等于 {size}MB。",
+    "drag_and_drop": "拖放到任何位置以上传",
+    "delete": "删除附件"
+  },
+
+  "label": {
+    "select": "选择标签",
+    "create": {
+      "success": "标签创建成功",
+      "failed": "标签创建失败",
+      "already_exists": "标签已存在",
+      "type": "输入以添加新标签"
+    }
+  },
+
+  "sub_work_item": {
+    "update": {
+      "success": "子工作项更新成功",
+      "error": "更新子工作项时出错"
+    },
+    "remove": {
+      "success": "子工作项移除成功",
+      "error": "移除子工作项时出错"
     }
   },
 
   "view": {
-    "label": "{count, plural, one {View} other {Views}}",
+    "label": "{count, plural, one {视图} other {视图}}",
     "create": {
-      "label": "Create View"
+      "label": "创建视图"
     },
     "update": {
-      "label": "Update View"
+      "label": "更新视图"
     }
   },
 
   "inbox_issue": {
     "status": {
       "pending": {
-        "title": "Pending",
-        "description": "Pending"
+        "title": "待处理",
+        "description": "待处理"
       },
       "declined": {
-        "title": "Declined",
-        "description": "Declined"
+        "title": "已拒绝",
+        "description": "已拒绝"
       },
       "snoozed": {
-        "title": "Snoozed",
-        "description": "{days, plural, one{# day} other{# days}} to go"
+        "title": "已暂停",
+        "description": "还剩 {days, plural, one{# 天} other{# 天}}"
       },
       "accepted": {
-        "title": "Accepted",
-        "description": "Accepted"
+        "title": "已接受",
+        "description": "已接受"
       },
       "duplicate": {
-        "title": "Duplicate",
-        "description": "Duplicate"
+        "title": "重复",
+        "description": "重复"
       }
     },
     "modals": {
       "decline": {
-        "title": "Decline work item",
-        "content": "Are you sure you want to decline work item {value}?"
+        "title": "拒绝工作项",
+        "content": "您确定要拒绝工作项 {value} 吗？"
       },
       "delete": {
-        "title": "Delete work item",
-        "content": "Are you sure you want to delete work item {value}?",
-        "success": "Work item deleted successfully"
+        "title": "删除工作项",
+        "content": "您确定要删除工作项 {value} 吗？",
+        "success": "工作项删除成功"
       }
     },
     "errors": {
-      "snooze_permission": "Only project admins can snooze/Un-snooze work items",
-      "accept_permission": "Only project admins can accept work items",
-      "decline_permission": "Only project admins can deny work items"
+      "snooze_permission": "只有项目管理员可以暂停/取消暂停工作项",
+      "accept_permission": "只有项目管理员可以接受工作项",
+      "decline_permission": "只有项目管理员可以拒绝工作项"
     },
     "actions": {
-      "accept": "Accept",
-      "decline": "Decline",
-      "snooze": "Snooze",
-      "unsnooze": "Un snooze",
-      "copy": "Copy work item link",
-      "delete": "Delete",
-      "open": "Open work item",
-      "mark_as_duplicate": "Mark as duplicate",
-      "move": "Move {value} to project work items"
+      "accept": "接受",
+      "decline": "拒绝",
+      "snooze": "暂停",
+      "unsnooze": "取消暂停",
+      "copy": "复制工作项链接",
+      "delete": "删除",
+      "open": "打开工作项",
+      "mark_as_duplicate": "标记为重复",
+      "move": "将 {value} 移至项目工作项"
     },
     "source": {
-      "in-app": "in-app"
+      "in-app": "应用内"
     },
     "order_by": {
-      "created_at": "Created at",
-      "updated_at": "Updated at",
+      "created_at": "创建时间",
+      "updated_at": "更新时间",
       "id": "ID"
     },
-    "label": "Intake",
-    "page_label": "{workspace} - Intake",
+    "label": "收件箱",
+    "page_label": "{workspace} - 收件箱",
     "modal": {
-      "title": "Create intake work item"
+      "title": "创建收件箱工作项"
     },
     "tabs": {
-      "open": "Open",
-      "closed": "Closed"
+      "open": "打开",
+      "closed": "已关闭"
     },
     "empty_state": {
       "sidebar_open_tab": {
-        "title": "No open work items",
-        "description": "Find open work items here. Create new work item."
+        "title": "没有打开的工作项",
+        "description": "在这里查找打开的工作项。创建新工作项。"
       },
       "sidebar_closed_tab": {
-        "title": "No closed work items",
-        "description": "All the work items whether accepted or declined can be found here."
+        "title": "没有关闭的工作项",
+        "description": "所有已接受或已拒绝的工作项都可以在这里找到。"
       },
       "sidebar_filter": {
-        "title": "No matching work items",
-        "description": "No work item matches filter applied in intake. Create a new work item."
+        "title": "没有匹配的工作项",
+        "description": "收件箱中没有符合筛选条件的工作项。创建新工作项。"
       },
       "detail": {
-        "title": "Select a work item to view its details."
+        "title": "选择一个工作项以查看其详细信息。"
       }
     }
   },
 
   "workspace_creation": {
-    "heading": "Create your workspace",
-    "subheading": "To start using Plane, you need to create or join a workspace.",
+    "heading": "创建您的工作区",
+    "subheading": "要开始使用 Plane，您需要创建或加入一个工作区。",
     "form": {
       "name": {
-        "label": "Name your workspace",
-        "placeholder": "Something familiar and recognizable is always best."
+        "label": "为您的工作区命名",
+        "placeholder": "熟悉且易于识别的名称总是最好的。"
       },
       "url": {
-        "label": "Set your workspace's URL",
-        "placeholder": "Type or paste a URL",
-        "edit_slug": "You can only edit the slug of the URL"
+        "label": "设置您的工作区 URL",
+        "placeholder": "输入或粘贴 URL",
+        "edit_slug": "您只能编辑 URL 的别名"
       },
       "organization_size": {
-        "label": "How many people will use this workspace?",
-        "placeholder": "Select a range"
+        "label": "有多少人将使用这个工作区？",
+        "placeholder": "选择一个范围"
       }
     },
     "errors": {
       "creation_disabled": {
-        "title": "Only your instance admin can create workspaces",
-        "description": "If you know your instance admin's email address, click the button below to get in touch with them.",
-        "request_button": "Request instance admin"
+        "title": "只有您的实例管理员可以创建工作区",
+        "description": "如果您知道您的实例管理员的电子邮件地址，请点击下面的按钮与他们联系。",
+        "request_button": "请求实例管理员"
       },
       "validation": {
-        "name_alphanumeric": "Workspaces names can contain only (' '), ('-'), ('_') and alphanumeric characters.",
-        "name_length": "Limit your name to 80 characters.",
-        "url_alphanumeric": "URLs can contain only ('-') and alphanumeric characters.",
-        "url_length": "Limit your URL to 48 characters.",
-        "url_already_taken": "Workspace URL is already taken!"
+        "name_alphanumeric": "工作区名称只能包含 (' '), ('-'), ('_') 和字母数字字符。",
+        "name_length": "名称限制为 80 个字符。",
+        "url_alphanumeric": "URL 只能包含 ('-') 和字母数字字符。",
+        "url_length": "URL 限制为 48 个字符。",
+        "url_already_taken": "工作区 URL 已被占用！"
       }
     },
     "request_email": {
-      "subject": "Requesting a new workspace",
-      "body": "Hi instance admin(s),\n\nPlease create a new workspace with the URL [/workspace-name] for [purpose of creating the workspace].\n\nThanks,\n{firstName} {lastName}\n{email}"
+      "subject": "请求新工作区",
+      "body": "您好，实例管理员：\n\n请为 [创建工作区的目的] 创建一个 URL 为 [/workspace-name] 的新工作区。\n\n谢谢，\n{firstName} {lastName}\n{email}"
     },
     "button": {
-      "default": "Create workspace",
-      "loading": "Creating workspace"
+      "default": "创建工作区",
+      "loading": "创建工作区中"
     },
     "toast": {
       "success": {
-        "title": "Success",
-        "message": "Workspace created successfully"
+        "title": "成功",
+        "message": "工作区创建成功"
       },
       "error": {
-        "title": "Error",
-        "message": "Workspace could not be created. Please try again."
+        "title": "错误",
+        "message": "无法创建工作区。请重试。"
       }
     }
   },

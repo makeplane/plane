@@ -522,7 +522,10 @@
       "public": "公開",
       "private": "非公開"
     },
+    "done": "完了",
     "sub_work_items": "サブ作業項目",
+    "comment": "コメント",
+    "workspace_level": "ワークスペースレベル",
     "order_by": {
       "label": "並び順",
       "manual": "手動",
@@ -543,7 +546,9 @@
     "comments": "コメント",
     "updates": "更新",
     "clear_all": "すべてクリア",
+    "copied": "コピーしました！",
     "link_copied": "リンクをコピーしました",
+    "link_copied_to_clipboard": "リンクをクリップボードにコピーしました",
     "copied_to_clipboard": "作業項目のリンクをクリップボードにコピーしました",
     "is_copied_to_clipboard": "作業項目をクリップボードにコピーしました",
     "no_links_added_yet": "まだリンクが追加されていません",
@@ -556,6 +561,7 @@
     "go_back": "戻る",
     "continue": "続ける",
     "resend": "再送信",
+    "relations": "関係",
     "errors": {
       "default": {
         "title": "エラー！",
@@ -571,6 +577,18 @@
     "url_is_invalid": "URLが無効です",
     "display_title": "表示タイトル",
     "link_title_placeholder": "このリンクの表示名",
+    "url": "ユーアールエル",
+    "side_peek": "サイドピーク",
+    "modal": "モーダル",
+    "full_screen": "フルスクリーン",
+    "close_peek_view": "ピークを閉じる",
+    "toggle_peek_view_layout": "ピークのレイアウトを切り替え",
+    "options": "オプション",
+    "duration": "期間",
+    "today": "今日",
+    "week": "週",
+    "month": "月",
+    "quarter": "四半期",
     "search": {
       "label": "検索",
       "placeholder": "検索するキーワードを入力...",
@@ -583,7 +601,12 @@
       "open_in_new_tab": "新しいタブで開く",
       "copy_link": "リンクをコピー",
       "archive": "アーカイブ",
-      "delete": "削除"
+      "delete": "削除",
+      "remove_relation": "関係を削除",
+      "subscribe": "購読",
+      "unsubscribe": "購読解除",
+      "clear_sorting": "並び順をクリア",
+      "show_weekends": "週末を表示"
     }
   },
 
@@ -605,7 +628,16 @@
       "failed": "{entity}の削除に失敗しました"
     },
     "update": {
-      "failed": "{entity}の更新に失敗しました"
+      "failed": "{entity}の更新に失敗しました",
+      "success": "{entity}を更新しました"
+    },
+    "link_copied_to_clipboard": "{entity}のリンクをクリップボードにコピーしました",
+    "fetch": {
+      "failed": "{entity}の取得に失敗しました"
+    },
+    "add": {
+      "success": "{entity}を追加しました",
+      "failed": "{entity}の追加に失敗しました"
     }
   },
 
@@ -618,7 +650,8 @@
       "success": "エピックを作成しました"
     },
     "add": {
-      "press_enter": "'Enter'キーを押して別のエピックを追加"
+      "press_enter": "'Enter'キーを押して別のエピックを追加",
+      "label": "エピックを追加"
     },
     "title": {
       "label": "エピックのタイトル",
@@ -629,6 +662,7 @@
   "issue": {
     "label": "{count, plural, one {作業項目} other {作業項目}}",
     "all": "すべての作業項目",
+    "edit": "作業項目を編集",
     "title": {
       "label": "作業項目のタイトル",
       "required": "作業項目のタイトルは必須です"
@@ -637,7 +671,9 @@
       "press_enter": "'Enter'キーを押して別の作業項目を追加",
       "label": "作業項目を追加",
       "cycle": {
-        "failed": "作業項目をサイクルに追加できませんでした。もう一度お試しください。"
+        "failed": "作業項目をサイクルに追加できませんでした。もう一度お試しください。",
+        "success": "{count, plural, one {作業項目} other {作業項目}}をサイクルに追加しました",
+        "loading": "{count, plural, one {作業項目} other {作業項目}}をサイクルに追加中..."
       },
       "assignee": "担当者を追加",
       "start_date": "開始日を追加",
@@ -645,9 +681,11 @@
       "parent": "親作業項目を追加",
       "sub_issue": "サブ作業項目を追加",
       "relation": "関連を追加",
-      "link": "リンクを追加"
+      "link": "リンクを追加",
+      "existing": "既存の作業項目を追加"
     },
     "remove": {
+      "label": "作業項目を削除",
       "cycle": {
         "loading": "サイクルから作業項目を削除中...",
         "success": "作業項目をサイクルから削除しました",
@@ -708,6 +746,7 @@
       "backlog": "バックログ"
     },
     "comments": {
+      "placeholder": "コメントを追加...",
       "create": {
         "success": "コメントを作成しました",
         "error": "コメントの作成に失敗しました。後でもう一度お試しください。"
@@ -748,11 +787,66 @@
         "message": "作業項目をアーカイブできませんでした。もう一度お試しください。"
       }
     },
+    "restore": {
+      "success": {
+        "title": "復元成功",
+        "message": "あなたの作業項目はプロジェクトの作業項目に見つかります。"
+      },
+      "failed": {
+        "message": "作業項目を復元できませんでした。もう一度お試しください。"
+      }
+    },
     "relation": {
       "relates_to": "関連",
       "duplicate": "重複",
       "blocked_by": "ブロック元",
       "blocking": "ブロック中"
+    },
+    "copy_link": "作業項目のリンクをコピー",
+    "delete": {
+      "label": "作業項目を削除",
+      "error": "作業項目の削除中にエラーが発生しました"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "作業項目に成功裏に登録されました",
+        "unsubscribed": "作業項目の登録を解除しました"
+      }
+    },
+    "select": {
+      "error": "少なくとも1つの作業項目を選択してください",
+      "empty": "選択された作業項目はありません",
+      "add_selected": "選択された作業項目を追加"
+    },
+    "open_in_full_screen": "作業項目をフルスクリーンで開く"
+  },
+
+  "attachment": {
+    "error": "ファイルを添付できませんでした。再度アップロードを試みてください。",
+    "only_one_file_allowed": "一度にアップロードできるファイルは1つだけです。",
+    "file_size_limit": "ファイルのサイズは{size}MB以下でなければなりません。",
+    "drag_and_drop": "アップロードするにはどこでもドラッグ＆ドロップしてください。",
+    "delete": "添付ファイルを削除"
+  },
+
+  "label": {
+    "select": "ラベルを選択",
+    "create": {
+      "success": "ラベルが正常に作成されました",
+      "failed": "ラベルの作成に失敗しました",
+      "already_exists": "ラベルは既に存在します",
+      "type": "新しいラベルを追加するには入力してください"
+    }
+  },
+
+  "sub_work_item": {
+    "update": {
+      "success": "サブ作業項目が正常に更新されました",
+      "error": "サブ作業項目の更新中にエラーが発生しました"
+    },
+    "remove": {
+      "success": "サブ作業項目が正常に削除されました",
+      "error": "サブ作業項目の削除中にエラーが発生しました"
     }
   },
 
@@ -1595,7 +1689,7 @@
     "options": {
       "mark_all_as_read": "すべて既読にする",
       "mark_read": "既読にする",
-      "mark_unread": "未読にする", 
+      "mark_unread": "未読にする",
       "refresh": "更新",
       "filters": "受信トレイフィルター",
       "show_unread": "未読を表示",
@@ -1806,7 +1900,7 @@
     "product_or_project_manager": "プロダクト/プロジェクトマネージャー",
     "development_or_engineering": "開発/エンジニアリング",
     "founder_or_executive": "創業者/エグゼクティブ",
-    "freelancer_or_consultant": "フリーランス/コンサルタント", 
+    "freelancer_or_consultant": "フリーランス/コンサルタント",
     "marketing_or_growth": "マーケティング/グロース",
     "sales_or_business_development": "営業/ビジネス開発",
     "support_or_operations": "サポート/オペレーション",

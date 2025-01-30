@@ -104,6 +104,7 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
       title={t("entity.delete.label", { entity: isEpic ? t("common.epic") : t("common.work_item") })}
       content={
         <>
+          {/* TODO: Translate here */}
           {`Are you sure you want to delete ${isEpic ? "epic" : "issue"} `}
           <span className="break-words font-medium text-custom-text-100">
             {projectDetails?.identifier}-{issue?.sequence_id}
