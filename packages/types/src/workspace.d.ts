@@ -70,7 +70,7 @@ export type Properties = {
 export interface IWorkspaceMember {
   id: string;
   member: IUserLite;
-  role: TUserPermissions;
+  role: TUserPermissions | EUserWorkspaceRoles;
   created_at?: string;
   avatar_url?: string;
   email?: string;

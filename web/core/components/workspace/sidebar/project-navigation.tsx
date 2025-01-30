@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FileText, Layers } from "lucide-react";
-import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
+import { EUserPermissionsLevel, EUserPermissions, EUserProjectRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane ui
 import { Tooltip, DiceIcon, ContrastIcon, LayersIcon, Intake } from "@plane/ui";
@@ -21,7 +21,7 @@ export type TNavigationItem = {
   name: string;
   href: string;
   icon: React.ElementType;
-  access: EUserPermissions[];
+  access: EUserPermissions[] | EUserProjectRoles[];
   shouldRender: boolean;
   sortOrder: number;
 };

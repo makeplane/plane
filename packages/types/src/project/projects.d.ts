@@ -1,3 +1,4 @@
+import { EUserProjectRoles } from "@plane/constants";
 import type {
   IProjectViewProps,
   IUser,
@@ -44,7 +45,7 @@ export interface IProject {
   is_member: boolean;
   is_time_tracking_enabled: boolean;
   logo_props: TLogoProps;
-  member_role: TUserPermissions | null;
+  member_role: TUserPermissions | EUserProjectRoles | null;
   members: IProjectMemberLite[];
   name: string;
   network: number;
@@ -112,7 +113,7 @@ export interface IProjectMembership {
 }
 
 export interface IProjectBulkAddFormData {
-  members: { role: TUserPermissions; member_id: string }[];
+  members: { role: TUserPermissions | EUserProjectRoles; member_id: string }[];
 }
 
 export interface IGithubRepository {
