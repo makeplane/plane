@@ -101,7 +101,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("toast.error"),
-          message: "Error while updating Issue Dates, Please try again Later",
+          message: "Error while updating work item dates, Please try again Later",
         });
       }),
     [issues]

@@ -126,7 +126,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
               )
             }
           >
-            Priority Issues
+            Priority work items
           </Tab>
           <Tab
             className={({ selected }) =>

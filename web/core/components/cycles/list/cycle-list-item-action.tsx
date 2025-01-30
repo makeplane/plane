@@ -6,7 +6,7 @@ import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, Users } from "lucide-react";
 // types
-import { CYCLE_FAVORITED, CYCLE_UNFAVORITED , EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
 import {
@@ -257,7 +257,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
           }}
         >
           <TransferIcon className="fill-custom-primary-200 w-4" />
-          <span>Transfer {cycleDetails.pending_issues} issues</span>
+          <span>Transfer {cycleDetails.pending_issues} work items</span>
         </div>
       )}
 

@@ -180,7 +180,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: `Success!`,
-          message: "Issue created successfully.",
+          message: "Work item created successfully.",
         });
       })
       .catch((error) => {

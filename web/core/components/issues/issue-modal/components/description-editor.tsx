@@ -129,7 +129,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
             type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
-              "Issue title isn't informative enough to generate the description. Please try with a different title.",
+              "Work item title isn't informative enough to generate the description. Please try with a different title.",
           });
         else handleAiAssistance(res.response_html);
       })

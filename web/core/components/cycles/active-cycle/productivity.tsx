@@ -87,7 +87,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
                         startDate={cycle.start_date ?? ""}
                         endDate={cycle.end_date ?? ""}
                         totalIssues={cycle.total_issues || 0}
-                        plotTitle={"issues"}
+                        plotTitle={"work items"}
                       />
                     )}
                   </Fragment>

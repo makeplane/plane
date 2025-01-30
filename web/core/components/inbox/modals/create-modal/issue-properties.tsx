@@ -194,7 +194,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
             >
               <>
                 <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueModalOpen(true)}>
-                  Change parent issue
+                  Change parent work item
                 </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem
                   className="!p-1"
@@ -203,7 +203,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
                     setSelectedParentIssue(undefined);
                   }}
                 >
-                  Remove parent issue
+                  Remove parent work item
                 </CustomMenu.MenuItem>
               </>
             </CustomMenu>

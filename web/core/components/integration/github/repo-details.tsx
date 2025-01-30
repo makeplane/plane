@@ -79,7 +79,7 @@ export const GithubRepoDetails: FC<Props> = ({ selectedRepo, handleStepChange, s
           </div>
         ) : (
           <div>
-            <h5>We didn{"'"}t find any issue in this repository.</h5>
+            <h5>We didn{"'"}t find any work item in this repository.</h5>
           </div>
         )
       ) : (

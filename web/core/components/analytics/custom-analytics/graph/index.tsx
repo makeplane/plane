@@ -32,7 +32,7 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
     let data: number[] = [];
 
     if (params.segment)
-      // find the total no of issues in each segment
+      // find the total no of work items in each segment
       data = Object.keys(analytics.distribution).map((segment) => {
         let totalSegmentIssues = 0;
 

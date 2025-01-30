@@ -282,7 +282,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             }}
             size="sm"
           >
-            Add issue
+            Add work item
           </Button>
         ) : (
           <></>

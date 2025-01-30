@@ -61,14 +61,14 @@ export const ModuleEmptyState: React.FC = observer(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Issues added to the module successfully.",
+          message: "Work items added to the module successfully.",
         })
       )
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Selected issues could not be added to the module. Please try again.",
+          message: "Selected work items could not be added to the module. Please try again.",
         })
       );
   };

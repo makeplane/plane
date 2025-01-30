@@ -104,7 +104,10 @@ export const getIssueEventPayload = (props: IssueEventProps) => {
     module_id: payload.module_id,
     archived_at: payload.archived_at,
     state: payload.state,
-    view_id: path?.includes("workspace-views") || path?.includes("views") ? path.split("/").pop() : "",
+    view_id:
+      path?.includes("workspace-views") || path?.includes("views")
+        ? path.split("/").pop()
+        : "",
   };
 
   if (eventName === ISSUE_UPDATED) {
@@ -166,12 +169,12 @@ export const MODULE_LINK_CREATED = "Module link created";
 export const MODULE_LINK_UPDATED = "Module link updated";
 export const MODULE_LINK_DELETED = "Module link deleted";
 // Issue Events
-export const ISSUE_CREATED = "Issue created";
-export const ISSUE_UPDATED = "Issue updated";
-export const ISSUE_DELETED = "Issue deleted";
-export const ISSUE_ARCHIVED = "Issue archived";
-export const ISSUE_RESTORED = "Issue restored";
-export const ISSUE_OPENED = "Issue opened";
+export const ISSUE_CREATED = "Work item created";
+export const ISSUE_UPDATED = "Work item updated";
+export const ISSUE_DELETED = "Work item deleted";
+export const ISSUE_ARCHIVED = "Work item archived";
+export const ISSUE_RESTORED = "Work item restored";
+export const ISSUE_OPENED = "Work item opened";
 // Project State Events
 export const STATE_CREATED = "State created";
 export const STATE_UPDATED = "State updated";

@@ -317,7 +317,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               />
               <Tooltip
                 isMobile={isMobile}
-                tooltipContent="Helps you identify issues in the project uniquely. Max 5 characters."
+                tooltipContent="Helps you identify work items in the project uniquely. Max 5 characters."
                 className="text-sm"
                 position="right-top"
               >

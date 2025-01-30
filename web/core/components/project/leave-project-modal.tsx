@@ -144,7 +144,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
                     <p className="text-sm leading-7 text-custom-text-200">
                       Are you sure you want to leave the project -
                       <span className="font-medium text-custom-text-100">{` "${project?.name}" `}</span>? All of the
-                      issues associated with you will become inaccessible.
+                      work items associated with you will become inaccessible.
                     </p>
                   </span>
 

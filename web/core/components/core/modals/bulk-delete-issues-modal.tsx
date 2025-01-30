@@ -102,7 +102,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Issues deleted successfully!",
+          message: "Work items deleted successfully!",
         });
         handleClose();
       })
@@ -119,7 +119,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
     issues.length > 0 ? (
       <li className="p-2">
         {query === "" && (
-          <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Select issues to delete</h2>
+          <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Select work items to delete</h2>
         )}
         <ul className="text-sm text-custom-text-200">
           {issues.map((issue) => (
@@ -204,7 +204,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
                         Cancel
                       </Button>
                       <Button variant="danger" size="sm" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
-                        {isSubmitting ? "Deleting..." : "Delete selected issues"}
+                        {isSubmitting ? "Deleting..." : "Delete selected work items"}
                       </Button>
                     </div>
                   )}

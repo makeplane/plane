@@ -402,7 +402,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                           handleActionWithPermission(
                             isProjectAdmin,
                             () => setSelectDuplicateIssue(true),
-                            "Only project admins can mark issues as duplicate"
+                            "Only project admins can mark work item as duplicate"
                           )
                         }
                       >

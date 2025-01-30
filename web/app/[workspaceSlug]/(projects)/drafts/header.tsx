@@ -23,7 +23,7 @@ export const WorkspaceDraftHeader = observer(() => {
   const { joinedProjectIds } = useProject();
 
   const { t } = useTranslation();
-  // check if user is authorized to create draft issue
+  // check if user is authorized to create draft work item
   const isAuthorizedUser = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
