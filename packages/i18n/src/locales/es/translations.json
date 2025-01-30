@@ -320,6 +320,7 @@
   "leaving": "Saliendo",
   "removing": "Eliminando",
   "leave": "Salir",
+  "refresh": "Actualizar",
   "refreshing": "Actualizando",
   "refresh_status": "Actualizar estado",
   "prev": "Anterior",
@@ -327,6 +328,7 @@
   "re_generating": "Regenerando",
   "re_generate": "Regenerar",
   "re_generate_key": "Regenerar clave",
+  "export": "Exportar",
 
   "project_view": {
     "sort_by": {
@@ -1074,6 +1076,7 @@
 
   "workspace_settings": {
     "label": "Configuración del workspace",
+    "page_label": "{workspace} - Configuración general",
     "key_created": "Clave creada",
     "copy_key": "Copia y guarda esta clave secreta en Plane Pages. No podrás ver esta clave después de hacer clic en Cerrar. Se ha descargado un archivo CSV que contiene la clave.",
     "token_copied": "Token copiado al portapapeles.",
@@ -1111,6 +1114,17 @@
           "account_type": "Tipo de cuenta",
           "authentication": "Autenticación",
           "joining_date": "Fecha de incorporación"
+        },
+        "modal": {
+          "title": "Invitar personas a colaborar",
+          "description": "Invitar personas a colaborar en tu espacio de trabajo",
+          "button": "Enviar invitaciones",
+          "button_loading": "Enviando invitaciones",
+          "placeholder": "Ingresa las direcciones de correo",
+          "errors": {
+            "required": "El correo es obligatorio",
+            "invalid": "El correo no es válido"
+          }
         }
       },
       "billing_and_plans": {
@@ -1152,6 +1166,10 @@
           "title": "Clave secreta",
           "message": "Generar un token para iniciar sesión en el payload del webhook"
         },
+        "options": {
+          "all": "Enviarme todo",
+          "individual": "Seleccionar eventos individuales"
+        },
         "toasts": {
           "created": {
             "title": "Webhook creado",
@@ -1191,7 +1209,19 @@
         "create_token": "Crear token",
         "never_expires": "Nunca expira",
         "generate_token": "Generar token",
-        "generating": "Generando"
+        "generating": "Generando",
+        "delete": {
+          "title": "Eliminar token de API",
+          "description": "Cualquier aplicación que use este token ya no tendrá acceso a los datos de Plane. Esta acción no se puede deshacer.",
+          "success": {
+            "title": "¡Éxito!",
+            "message": "El token de API se ha eliminado correctamente"
+          },
+          "error": {
+            "title": "¡Error!",
+            "message": "No se pudo eliminar el token de API"
+          }
+        }
       }
     },
     "empty_state": {
@@ -1238,7 +1268,9 @@
       },
       "recent_activity": {
         "title": "Actividad reciente",
-        "empty": "No pudimos encontrar datos. Por favor, revise sus entradas"
+        "empty": "No pudimos encontrar datos. Por favor, revise sus entradas",
+        "button": "Descargar la actividad de hoy",
+        "button_loading": "Descargando"     
       }
     },
     "actions": {
@@ -1797,16 +1829,23 @@
   "exporter": {
     "csv": {
       "title": "CSV",
-      "description": "Exporte work items a un archivo CSV.",
+      "description": "Exportar elementos de trabajo a un archivo CSV.",
       "short_description": "Exportar como csv"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "Exportar elementos de trabajo a un archivo Excel.",
+      "short_description": "Exportar como excel"
     },
     "xlsx": {
       "title": "Excel",
-      "description": "Exporte work items a un archivo Excel."
+      "description": "Exportar elementos de trabajo a un archivo Excel.",
+      "short_description": "Exportar como excel"
     },
     "json": {
       "title": "JSON",
-      "description": "Exporte work items a un archivo JSON."
+      "description": "Exportar elementos de trabajo a un archivo JSON.",
+      "short_description": "Exportar como json"
     }
   },
   "default_global_view": {

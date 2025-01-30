@@ -38,6 +38,8 @@ const getExporterLogo = (provider: string) => {
       return CSVLogo;
     case "excel":
       return ExcelLogo;
+    case "xlsx":
+      return ExcelLogo;
     case "json":
       return JSONLogo;
     default:
@@ -128,7 +130,7 @@ const IntegrationGuide = observer(() => {
                           className="capitalize"
                           disabled={!isAdmin && (!hasProjects || !canPerformAnyCreateAction)}
                         >
-                          {service.type}
+                          {t(service.type)}
                         </Button>
                       </span>
                     </Link>
