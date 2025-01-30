@@ -1,8 +1,12 @@
 import { useRouter } from "next/navigation";
+// plane types
 import { TActivityEntityData, TProjectEntityData } from "@plane/types";
+// plane ui
 import { Logo } from "@plane/ui";
+// components
 import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns";
+// helpers
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
 
 type BlockProps = {
@@ -21,19 +25,18 @@ export const RecentProject = (props: BlockProps) => {
     <ListItem
       key={activity.id}
       itemLink=""
-      title={""}
+      title={projectDetails?.name}
       prependTitleElement={
-        <div className="flex flex-shrink-0 items-center justify-center rounded-md gap-4 ">
-          <div className="flex gap-2 items-center justify-center">
-            <div className="flex flex-shrink-0 items-center justify-center rounded gap-4 bg-custom-background-80 w-[25.5px] h-[25.5px]">
-              <Logo logo={projectDetails?.logo_props} size={16} />
-            </div>
-            <div className="font-medium text-custom-sidebar-text-400 text-sm whitespace-nowrap">
-              {projectDetails?.identifier}
-            </div>
+        <div className="flex-shrink-0 flex items-center gap-2">
+          <div className="flex-shrink-0 grid place-items-center rounded bg-custom-background-80 size-8">
+            <Logo logo={projectDetails?.logo_props} size={16} />
           </div>
-          <div className="text-custom-text-200 font-medium text-sm whitespace-nowrap">{projectDetails?.name}</div>
-          <div className="font-medium text-xs text-custom-text-400">{calculateTimeAgo(activity.visited_at)}</div>
+          <div className="font-medium text-custom-text-400 text-sm whitespace-nowrap">{projectDetails?.identifier}</div>
+        </div>
+      }
+      appendTitleElement={
+        <div className="flex-shrink-0 font-medium text-xs text-custom-text-400">
+          {calculateTimeAgo(activity.visited_at)}
         </div>
       }
       quickActionElement={
