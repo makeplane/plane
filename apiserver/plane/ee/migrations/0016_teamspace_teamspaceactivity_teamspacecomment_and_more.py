@@ -3,7 +3,7 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import plane.ee.models.team
+import plane.ee.models.teamspace
 import uuid
 
 
@@ -158,9 +158,9 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
                 ('deleted_at', models.DateTimeField(blank=True, null=True, verbose_name='Deleted At')),
                 ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('filters', models.JSONField(default=plane.ee.models.team.get_default_filters)),
-                ('display_filters', models.JSONField(default=plane.ee.models.team.get_default_display_filters)),
-                ('display_properties', models.JSONField(default=plane.ee.models.team.get_default_display_properties)),
+                ('filters', models.JSONField(default=plane.ee.models.teamspace.get_default_filters)),
+                ('display_filters', models.JSONField(default=plane.ee.models.teamspace.get_default_display_filters)),
+                ('display_properties', models.JSONField(default=plane.ee.models.teamspace.get_default_display_properties)),
             ],
             options={
                 'verbose_name': 'Team Space User Property',

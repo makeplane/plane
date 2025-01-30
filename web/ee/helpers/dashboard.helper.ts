@@ -22,7 +22,7 @@ export const isUserFeatureEnabled = (featureKey: string) => {
 
 const WorkspaceFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefined> = {
   projects: undefined,
-  teams: E_FEATURE_FLAGS.TEAMSPACES,
+  teamspaces: E_FEATURE_FLAGS.TEAMSPACES,
   "all-issues": undefined,
   "active-cycles": E_FEATURE_FLAGS.WORKSPACE_ACTIVE_CYCLES,
   analytics: undefined,
@@ -39,9 +39,10 @@ export const isWorkspaceFeatureEnabled = (featureKey: string, workspaceSlug: str
   switch (featureKey) {
     case "active-cycles":
       return isFeatureFlagEnabled && store.user.permission.workspaceUserInfo[workspaceSlug]?.active_cycles_count > 0;
-    case "teams":
+    case "teamspaces":
       return (
-        isFeatureFlagEnabled && store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_TEAMS_ENABLED)
+        isFeatureFlagEnabled &&
+        store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_TEAMSPACES_ENABLED)
       );
     case "initiatives":
       return (

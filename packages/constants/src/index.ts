@@ -17,4 +17,4 @@ export * from "./workspace";
 export * from "./stickies";
 export * from "./feature-flag";
 export * from "./plans";
-export * from "./teams";
+export * from "./teamspace";

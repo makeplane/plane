@@ -373,7 +373,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Team Cycles",
+        title: "Teamspace Cycles",
         description: "See multiple cycles in multiple projects at once.",
         cloud: {
           free: false,

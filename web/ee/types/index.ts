@@ -8,6 +8,6 @@ export * from "./workspace-worklog.d";
 export * from "./cycles";
 export * from "./pi-chat.d";
 export * from "./gantt-chart";
-export * from "./teams";
+export * from "./teamspace";
 // importers
 export * from "./importers";

@@ -39,9 +39,9 @@ export const SidebarWorkspaceMenu = observer(() => {
       Icon: InitiativeIcon,
     },
     {
-      key: "teams",
-      labelTranslationKey: "teams",
-      href: `/${workspaceSlug}/teams/`,
+      key: "teamspaces",
+      labelTranslationKey: "teamspaces",
+      href: `/${workspaceSlug}/teamspaces/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
       Icon: TeamsIcon,
     },

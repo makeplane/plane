@@ -44,7 +44,7 @@ export * from "./intake";
 // enterprise
 export * from "./active-cycle";
 export * from "./payment";
-export * from "./teams";
+export * from "./teamspace";
 export * from "./initiatives";
 export * from "./stickies";
 export * from "./feature-flag";

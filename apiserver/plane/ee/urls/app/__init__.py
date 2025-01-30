@@ -11,7 +11,7 @@ from .inbox import urlpatterns as inbox_patterns
 from .issue_property import urlpatterns as issue_property_patterns
 from .workspace import urlpatterns as workspace_patterns
 from .initiative import urlpatterns as initiative_patterns
-from .team import urlpatterns as team_patterns
+from .teamspace import urlpatterns as teamspace_patterns
 from .epic_property import urlpatterns as epic_property_patterns
 from .workflow import urlpatterns as workflow_patterns
 from .webhook import urlpatterns as webhook_patterns
@@ -32,10 +32,10 @@ urlpatterns = [
     *issue_property_patterns,
     *workspace_patterns,
     *initiative_patterns,
-    *team_patterns,
+    *teamspace_patterns,
     *epic_property_patterns,
     *epic_patterns,
     *workflow_patterns,
     *webhook_patterns,
-    *import_job_patterns
+    *import_job_patterns,
 ]

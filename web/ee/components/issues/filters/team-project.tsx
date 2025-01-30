@@ -11,7 +11,7 @@ import { FilterHeader, FilterOption } from "@/components/issues";
 // hooks
 import { useProject } from "@/hooks/store";
 // plane web hooks
-import { useTeams } from "@/plane-web/hooks/store";
+import { useTeamspaces } from "@/plane-web/hooks/store";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -27,9 +27,9 @@ export const FilterTeamProjects: React.FC<Props> = observer((props) => {
   // store
   const { getProjectById } = useProject();
   // plane web hooks
-  const { currentTeamProjectIds } = useTeams();
+  const { currentTeamspaceProjectIds } = useTeamspaces();
   // derived values
-  const projects = currentTeamProjectIds?.map((projectId) => getProjectById(projectId)!).filter(Boolean) ?? null;
+  const projects = currentTeamspaceProjectIds?.map((projectId) => getProjectById(projectId)!).filter(Boolean) ?? null;
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
   const sortedOptions = useMemo(() => {
@@ -53,7 +53,7 @@ export const FilterTeamProjects: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title={`Team project${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`Teamspace project${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -64,7 +64,7 @@ export const FilterTeamProjects: React.FC<Props> = observer((props) => {
               <>
                 {sortedOptions.slice(0, itemsToRender).map((project) => (
                   <FilterOption
-                    key={`team-project-${project.id}`}
+                    key={`teamspace-project-${project.id}`}
                     isChecked={appliedFilters?.includes(project.id) ? true : false}
                     onClick={() => handleUpdate(project.id)}
                     icon={

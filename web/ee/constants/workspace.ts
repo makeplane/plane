@@ -40,12 +40,12 @@ export const WORKSPACE_SETTINGS = {
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/project-states/`,
     Icon: SettingIcon,
   },
-  teams: {
-    key: "teams",
-    label: "Teams",
-    href: `/settings/teams`,
+  teamspace: {
+    key: "teamspace",
+    label: "Teamspaces",
+    href: `/settings/teamspaces`,
     access: [EUserPermissions.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/teams/`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/teamspaces/`,
     Icon: SettingIcon,
   },
   initiatives: {
@@ -69,6 +69,6 @@ export const WORKSPACE_SETTINGS_LINKS = [
   WORKSPACE_SETTINGS["webhooks"],
   WORKSPACE_SETTINGS["api-tokens"],
   WORKSPACE_SETTINGS["worklogs"],
-  WORKSPACE_SETTINGS["teams"],
+  WORKSPACE_SETTINGS["teamspace"],
   WORKSPACE_SETTINGS["initiatives"],
 ];

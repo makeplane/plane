@@ -5,7 +5,7 @@ from django.db.models import Q, UUIDField, Value
 from django.db.models.functions import Coalesce
 
 # Module imports
-from plane.ee.models import TeamSpaceProject
+from plane.ee.models import TeamspaceProject
 from plane.db.models import (
     Cycle,
     Issue,
@@ -151,7 +151,7 @@ def issue_group_values(
             return list(queryset) + ["None"]
     if field == "project_id":
         if team_id:
-            queryset = TeamSpaceProject.objects.filter(
+            queryset = TeamspaceProject.objects.filter(
                 workspace__slug=slug, team_space_id=team_id
             ).values_list("project_id", flat=True)
             return list(queryset)

@@ -12,4 +12,4 @@ from plane.app.permissions import (
     allow_permission,
     ROLE,
 )
-from .team import TeamSpacePermission
+from .teamspace import TeamspacePermission

@@ -7,8 +7,8 @@ import {
 // hooks
 import { useCommandPalette } from "@/hooks/store";
 // plane web components
-import { CreateOrUpdateTeamModal } from "@/plane-web/components/teams/create-update";
-import { CreateUpdateTeamViewModal } from "@/plane-web/components/teams/views/modals/create-update";
+import { CreateOrUpdateTeamspaceModal } from "@/plane-web/components/teamspaces/create-update";
+import { CreateUpdateTeamspaceViewModal } from "@/plane-web/components/teamspaces/views/modals/create-update";
 import { CreateUpdateInitiativeModal } from "../../initiatives/components/create-update-initiatives-modal";
 
 export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps) => {
@@ -16,10 +16,10 @@ export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps)
   const { workspaceSlug } = props;
   // store hooks
   const {
-    createUpdateTeamModal,
-    toggleCreateTeamModal,
-    createUpdateTeamViewModal,
-    toggleCreateTeamViewModal,
+    createUpdateTeamspaceModal,
+    toggleCreateTeamspaceModal,
+    createUpdateTeamspaceViewModal,
+    toggleCreateTeamspaceViewModal,
     createUpdateInitiativeModal,
     toggleCreateInitiativeModal,
   } = useCommandPalette();
@@ -27,17 +27,17 @@ export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps)
   return (
     <>
       <BaseWorkspaceLevelModals {...props} />
-      <CreateOrUpdateTeamModal
-        teamId={createUpdateTeamModal.teamId}
-        isModalOpen={createUpdateTeamModal.isOpen}
-        handleModalClose={() => toggleCreateTeamModal({ isOpen: false, teamId: undefined })}
+      <CreateOrUpdateTeamspaceModal
+        teamspaceId={createUpdateTeamspaceModal.teamspaceId}
+        isModalOpen={createUpdateTeamspaceModal.isOpen}
+        handleModalClose={() => toggleCreateTeamspaceModal({ isOpen: false, teamspaceId: undefined })}
       />
-      {createUpdateTeamViewModal.teamId && (
-        <CreateUpdateTeamViewModal
-          isOpen={createUpdateTeamViewModal.isOpen}
-          onClose={() => toggleCreateTeamViewModal({ isOpen: false, teamId: undefined })}
+      {createUpdateTeamspaceViewModal.teamspaceId && (
+        <CreateUpdateTeamspaceViewModal
+          isOpen={createUpdateTeamspaceViewModal.isOpen}
+          onClose={() => toggleCreateTeamspaceViewModal({ isOpen: false, teamspaceId: undefined })}
           workspaceSlug={workspaceSlug.toString()}
-          teamId={createUpdateTeamViewModal.teamId}
+          teamspaceId={createUpdateTeamspaceViewModal.teamspaceId}
         />
       )}
       <CreateUpdateInitiativeModal

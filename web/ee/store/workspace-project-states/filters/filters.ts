@@ -143,10 +143,10 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
     const projects = Object.values(projectMap).filter((p) => p.workspace === workspaceDetails.id && !p.archived_at);
     if (projects.length === 0) return defaultCounts;
 
-    // get team details
-    const teamStore = this.store.teamRoot.team;
-    const currentTeamId = this.store.router.teamId;
-    const teamDetails = currentTeamId ? teamStore.getTeamById(currentTeamId) : undefined;
+    // get teamspace details
+    const teamStore = this.store.teamspaceRoot.teamspaces;
+    const currentTeamSpaceId = this.store.router.teamspaceId;
+    const teamDetails = currentTeamSpaceId ? teamStore.getTeamspaceById(currentTeamSpaceId) : undefined;
 
     return {
       [EProjectScope.ALL_PROJECTS]: this.filterProjectsByScope(projects, EProjectScope.ALL_PROJECTS).length,
@@ -184,10 +184,10 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
     this.loading = projectStore.loader;
     if (isEmpty(projectMap) || !this.filters || !workspaceDetails) return undefined;
 
-    // get team details
-    const teamStore = this.store.teamRoot.team;
-    const currentTeamId = this.store.router.teamId;
-    const teamDetails = currentTeamId ? teamStore.getTeamById(currentTeamId) : undefined;
+    // get teamspace details
+    const teamStore = this.store.teamspaceRoot.teamspaces;
+    const currentTeamSpaceId = this.store.router.teamspaceId;
+    const teamDetails = currentTeamSpaceId ? teamStore.getTeamspaceById(currentTeamSpaceId) : undefined;
 
     let projects = Object.values(projectMap).filter((p) => p.workspace === workspaceDetails.id);
     // filter projects based on scope

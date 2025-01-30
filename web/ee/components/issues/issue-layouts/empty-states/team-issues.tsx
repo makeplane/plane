@@ -14,7 +14,7 @@ import { useCommandPalette, useEventTracker, useIssues } from "@/hooks/store";
 
 export const TeamEmptyState: React.FC = observer(() => {
   // router
-  const { workspaceSlug, teamId } = useParams();
+  const { workspaceSlug, teamspaceId } = useParams();
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
@@ -31,17 +31,17 @@ export const TeamEmptyState: React.FC = observer(() => {
   const additionalPath = issueFilterCount > 0 ? (activeLayout ?? "list") : undefined;
 
   const handleClearAllFilters = () => {
-    if (!workspaceSlug || !teamId) return;
+    if (!workspaceSlug || !teamspaceId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = [];
     });
-    issuesFilter.updateFilters(workspaceSlug.toString(), teamId.toString(), EIssueFilterType.FILTERS, {
+    issuesFilter.updateFilters(workspaceSlug.toString(), teamspaceId.toString(), EIssueFilterType.FILTERS, {
       ...newFilters,
     });
   };
 
-  if (!workspaceSlug || !teamId) return null;
+  if (!workspaceSlug || !teamspaceId) return null;
 
   return (
     <div className="relative h-full w-full overflow-y-auto">
@@ -52,7 +52,7 @@ export const TeamEmptyState: React.FC = observer(() => {
           issueFilterCount > 0
             ? undefined
             : () => {
-                setTrackElement("Team issue empty state");
+                setTrackElement("Teamspace issue empty state");
                 toggleCreateIssueModal(true, EIssuesStoreType.TEAM);
               }
         }

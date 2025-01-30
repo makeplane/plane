@@ -1,7 +1,7 @@
 // types
 import { TDocumentTypes } from "@/core/types/common.js";
 // plane live lib
-import { updateTeamPageDescription } from "./team-page.js";
+import { updateTeamspacePageDescription } from "./team-page.js";
 import { updateWorkspacePageDescription } from "./workspace-page.js";
 
 type TArgs = {
@@ -17,8 +17,8 @@ export const updateDocument = async (args: TArgs): Promise<void> => {
 
   if (documentType === "workspace_page") {
     await updateWorkspacePageDescription(params, pageId, updatedDescription, cookie);
-  } else if (documentType === "team_page") {
-    await updateTeamPageDescription(params, pageId, updatedDescription, cookie);
+  } else if (documentType === "teamspace_page") {
+    await updateTeamspacePageDescription(params, pageId, updatedDescription, cookie);
   } else {
     throw Error(`Update failed: Invalid document type ${documentType} provided.`);
   }

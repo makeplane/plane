@@ -191,12 +191,12 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
   },
   [EmptyStateType.WORKSPACE_TEAMS]: {
     key: EmptyStateType.WORKSPACE_TEAMS,
-    title: "Teams",
+    title: "Teamspaces unlock better organization and tracking in Plane.",
     description:
-      "Teams are groups of people who collaborate closely on projects. Create a team to see work by team members, progress by this team in several projects, and this team’s knowledge right next to progress metrics.",
+      "Create a dedicated surface for every real-world team, separate from all other work surfaces in Plane, and customize them to suit how your team works.",
     path: "/empty-state/teams/teams",
     primaryButton: {
-      text: "Create a new team",
+      text: "Create a new teamspace",
     },
     accessType: "workspace",
     access: [EUserPermissions.ADMIN],
@@ -877,9 +877,9 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
   // Teams
   [EmptyStateType.TEAM_PROJECTS]: {
     key: EmptyStateType.TEAM_PROJECTS,
-    title: "Start by linking projects to this team.",
+    title: "Start by linking projects to this teamspace.",
     description:
-      "Teams link projects that team members are in, so you can see only their work, their contribution to progress in those projects, and team-specific work metrics.",
+      "Teamspaces link projects that team members are in, so you can see only their work, their contribution to progress in those projects, and team-specific work metrics.",
     path: "/empty-state/teams/projects",
   },
   [EmptyStateType.TEAM_ISSUES]: {
@@ -896,8 +896,8 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
   },
   [EmptyStateType.TEAM_EMPTY_FILTER]: {
     key: EmptyStateType.TEAM_EMPTY_FILTER,
-    title: "There are no team issues for the filters applied.",
-    description: "Change some of those filters or clear them all to see this team’s issues.",
+    title: "There are no team-specific issues for the filters applied.",
+    description: "Change some of those filters or clear them all to see issues relevant to this space.",
     path: "/empty-state/empty-filters/",
     secondaryButton: {
       text: "Clear all filters",
@@ -968,7 +968,7 @@ const emptyStateDetails: Record<EmptyStateType, EmptyStateDetails> = {
     key: EmptyStateType.STICKIES,
     title: "Stickies are quick notes and to-dos you take down on the fly.",
     description:
-      "Capture ideas, ahas, brainwaves, light-bulb moments without scrambling for a pen and paper, hunting for the recorder app on your phone, or firing up a notes app only to forget all about it later. Keep them all right next to your work so you can easily come back, build them up, or well, discard them.",
+      "Capture ideas, ahas, brainwaves, and light-bulb moments without scrambling for a pen and paper, hunting for the recorder app on your phone, or firing up a notes app only to forget all about your notes later. Keep your notes all right next to your work so you can easily come back, build them up, or well, discard them.",
     path: "/empty-state/stickies/stickies",
     primaryButton: {
       icon: <Plus className="size-4" />,

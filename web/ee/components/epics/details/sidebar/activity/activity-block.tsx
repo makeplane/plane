@@ -30,10 +30,10 @@ export const EpicActivityItem = observer((props: TEpicActivityItemProps) => {
     activity.field as TEpicActivityFields,
     activity.verb as TBaseActivityVerbs
   );
-  const getTeamActivity = EPIC_UPDATES_HELPER_MAP[initiativeActivityKey];
+  const getEpicActivity = EPIC_UPDATES_HELPER_MAP[initiativeActivityKey];
 
-  if (getTeamActivity) {
-    const { icon, message, customUserName } = getTeamActivity(activity);
+  if (getEpicActivity) {
+    const { icon, message, customUserName } = getEpicActivity(activity);
     return (
       <ActivityBlockComponent icon={icon} activity={activity} ends={ends} customUserName={customUserName}>
         <>{message}</>

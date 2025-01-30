@@ -42,18 +42,18 @@ from .app.initiative import (
 )
 
 
-from .app.team import (
-    TeamSpaceSerializer,
-    TeamSpaceMemberSerializer,
-    TeamSpaceCommentSerializer,
-    TeamSpaceViewSerializer,
-    TeamSpacePageSerializer,
-    TeamSpacePageDetailSerializer,
-    TeamSpacePageVersionSerializer,
-    TeamSpacePageVersionDetailSerializer,
-    TeamSpaceCommentReactionSerializer,
-    TeamSpaceUserPropertySerializer,
-    TeamSpaceActivitySerializer,
+from .app.teamspace import (
+    TeamspaceSerializer,
+    TeamspaceMemberSerializer,
+    TeamspaceCommentSerializer,
+    TeamspaceViewSerializer,
+    TeamspacePageSerializer,
+    TeamspacePageDetailSerializer,
+    TeamspacePageVersionSerializer,
+    TeamspacePageVersionDetailSerializer,
+    TeamspaceCommentReactionSerializer,
+    TeamspaceUserPropertySerializer,
+    TeamspaceActivitySerializer,
 )
 
 from .app.epic import (
