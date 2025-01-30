@@ -3,13 +3,13 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Briefcase, Hotel, Users } from "lucide-react";
 // plane ui
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useCommandPalette, useEventTracker, useUser, useUserPermissions } from "@/hooks/store";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants";
 
 export const NoProjectsEmptyState = () => {
   // navigation

@@ -4,6 +4,7 @@ import React, { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IIssueLabel } from "@plane/types";
 import { Button, Loader } from "@plane/ui";
@@ -18,7 +19,6 @@ import {
 import { useLabel, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectSettingsLabelList: React.FC = observer(() => {
   // router

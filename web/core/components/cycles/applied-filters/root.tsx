@@ -1,12 +1,12 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TCycleFilters } from "@plane/types";
 // hooks
 import { Tag } from "@plane/ui";
 import { AppliedDateFilters, AppliedStatusFilters } from "@/components/cycles";
 import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 import { useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 // components
 // helpers

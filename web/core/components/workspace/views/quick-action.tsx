@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { ExternalLink, LinkIcon, Pencil, Trash2, Lock } from "lucide-react";
 // types
-import { EViewAccess } from "@plane/constants";
+import { EViewAccess, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspaceView } from "@plane/types";
 // ui
@@ -18,7 +18,6 @@ import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;

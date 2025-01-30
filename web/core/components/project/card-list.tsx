@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper } from "@plane/ui";
 // components
@@ -11,8 +11,6 @@ import { ProjectsLoader } from "@/components/ui";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useProjectFilter, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-// plane-web
-import { EUserPermissions } from "@/plane-web/constants";
 // assets
 import AllFiltersImage from "@/public/empty-state/project/all-filters.svg";
 import NameFilterImage from "@/public/empty-state/project/name-filter.svg";

@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FileText, Layers } from "lucide-react";
+import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane ui
 import { Tooltip, DiceIcon, ContrastIcon, LayersIcon, Intake } from "@plane/ui";
@@ -14,8 +15,6 @@ import { SidebarNavItem } from "@/components/sidebar";
 import { useAppTheme, useProject, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane-web constants
-import { EUserPermissions } from "@/plane-web/constants";
-import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export type TNavigationItem = {
   key: string;

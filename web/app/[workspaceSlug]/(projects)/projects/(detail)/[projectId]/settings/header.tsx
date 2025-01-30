@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { Settings } from "lucide-react";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, CustomMenu, Header } from "@plane/ui";
 // components
@@ -15,7 +16,6 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
-import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectSettingHeader: FC = observer(() => {
   // router

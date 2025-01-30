@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // types
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // components
 import { Tag } from "@plane/ui";
@@ -22,7 +23,6 @@ import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 import { useUserPermissions } from "@/hooks/store";
 // plane web components
 import { AppliedIssueTypeFilters } from "@/plane-web/components/issues";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   appliedFilters: IIssueFilterOptions;

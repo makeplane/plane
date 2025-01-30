@@ -2,6 +2,7 @@
 
 import { observer } from "mobx-react";
 // plane imports
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Button, DiceIcon, Header } from "@plane/ui";
@@ -14,7 +15,6 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 // constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ModulesListHeader: React.FC = observer(() => {
   // router

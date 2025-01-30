@@ -2,6 +2,7 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
@@ -9,7 +10,6 @@ import { PageHead } from "@/components/core";
 import { ProjectStateRoot } from "@/components/project-states";
 // hook
 import { useProject, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const StatesSettingsPage = observer(() => {
   const { workspaceSlug, projectId } = useParams();

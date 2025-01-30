@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Copy, ExternalLink, Link, Pencil, Trash2, XCircle } from "lucide-react";
 // types
-import { ARCHIVABLE_STATE_GROUPS, EIssuesStoreType } from "@plane/constants";
+import { ARCHIVABLE_STATE_GROUPS, EIssuesStoreType ,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // ui
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
@@ -17,7 +17,6 @@ import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useIssues, useEventTracker, useProjectState, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 

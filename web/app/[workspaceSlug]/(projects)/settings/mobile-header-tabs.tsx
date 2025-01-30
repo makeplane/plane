@@ -1,12 +1,10 @@
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { WORKSPACE_SETTINGS_LINKS } from "@plane/constants";
+import { WORKSPACE_SETTINGS_LINKS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web constants
-import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web helpers
 import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
 

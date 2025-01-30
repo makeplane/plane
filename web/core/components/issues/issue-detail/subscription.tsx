@@ -5,10 +5,10 @@ import isNil from "lodash/isNil";
 import { observer } from "mobx-react";
 import { Bell, BellOff } from "lucide-react";
 // UI
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useIssueDetail, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export type TIssueSubscription = {
   workspaceSlug: string;

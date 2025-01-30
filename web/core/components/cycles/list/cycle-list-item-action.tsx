@@ -6,7 +6,7 @@ import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, Users } from "lucide-react";
 // types
-import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@plane/constants";
+import { CYCLE_FAVORITED, CYCLE_UNFAVORITED , EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
 import {
@@ -36,7 +36,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { CycleAdditionalActions } from "@/plane-web/components/cycles";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // services
 import { CycleService } from "@/services/cycle.service";
 
