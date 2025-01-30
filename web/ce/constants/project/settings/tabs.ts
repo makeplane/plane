@@ -1,9 +1,9 @@
 // icons
+import { EUserPermissions } from "@plane/constants";
 import { SettingIcon } from "@/components/icons/attachment";
 // types
 import { Props } from "@/components/icons/types";
 // constants
-import { EUserPermissions } from "../../user-permissions";
 
 export const PROJECT_SETTINGS = {
   general: {

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { PenSquare } from "lucide-react";
-import { EIssuesStoreType } from "@plane/constants";
+import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Button, Header } from "@plane/ui";
@@ -13,8 +13,6 @@ import { CreateUpdateIssueModal } from "@/components/issues";
 
 // hooks
 import { useProject, useUserPermissions, useWorkspaceDraftIssues } from "@/hooks/store";
-// plane-web
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const WorkspaceDraftHeader = observer(() => {
   // state

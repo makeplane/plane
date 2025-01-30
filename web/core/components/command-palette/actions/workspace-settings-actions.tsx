@@ -4,7 +4,7 @@ import { Command } from "cmdk";
 // hooks
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { WORKSPACE_SETTINGS_LINKS } from "@plane/constants";
+import { WORKSPACE_SETTINGS_LINKS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { SettingIcon } from "@/components/icons";
@@ -12,7 +12,6 @@ import { SettingIcon } from "@/components/icons";
 import { useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane wev constants
-import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web helpers
 import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
 

@@ -24,6 +24,8 @@ import {
   MODULE_LINK_DELETED,
   MODULE_LINK_UPDATED,
   MODULE_UPDATED,
+  EUserPermissions,
+  EUserPermissionsLevel,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
@@ -57,7 +59,6 @@ import { useModule, useEventTracker, useProjectEstimates, useUserPermissions } f
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web constants
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const defaultValues: Partial<IModule> = {
   lead_id: "",

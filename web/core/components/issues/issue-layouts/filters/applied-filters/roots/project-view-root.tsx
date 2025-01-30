@@ -6,7 +6,13 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { EIssueFilterType, EIssuesStoreType, EViewAccess } from "@plane/constants";
+import {
+  EIssueFilterType,
+  EIssuesStoreType,
+  EViewAccess,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
 import { IIssueFilterOptions } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
@@ -16,7 +22,6 @@ import { UpdateViewComponent } from "@/components/views/update-view-component";
 // constants
 // hooks
 import { useIssues, useLabel, useProjectState, useProjectView, useUser, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { getAreFiltersEqual } from "../../../utils";
 
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {

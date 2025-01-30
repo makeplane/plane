@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { Control, Controller } from "react-hook-form";
 import { LayoutPanelTop } from "lucide-react";
 // plane imports
-import { ETabIndices } from "@plane/constants";
+import { ETabIndices, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { ISearchIssueResponse, TIssue } from "@plane/types";
@@ -31,7 +31,6 @@ import { useProjectEstimates, useProject, useUserPermissions } from "@/hooks/sto
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type TIssueDefaultPropertiesProps = {
   control: Control<TIssue>;

@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { Briefcase } from "lucide-react";
 // i18n
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Button, Header } from "@plane/ui";
@@ -12,7 +13,6 @@ import { BreadcrumbLink } from "@/components/common";
 // hooks
 import { useCommandPalette, useEventTracker, useUserPermissions } from "@/hooks/store";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // components
 import HeaderFilters from "./filters";
 import { ProjectSearch } from "./search-projects";

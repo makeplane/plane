@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { Info, SquareUser } from "lucide-react";
 // plane package imports
-import { MODULE_STATUS, PROGRESS_STATE_GROUPS_DETAILS, MODULE_FAVORITED, MODULE_UNFAVORITED } from "@plane/constants";
+import { MODULE_STATUS, PROGRESS_STATE_GROUPS_DETAILS, MODULE_FAVORITED, MODULE_UNFAVORITED,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IModule } from "@plane/types";
 import {
   Card,
@@ -32,7 +32,6 @@ import { useEventTracker, useMember, useModule, useUserPermissions } from "@/hoo
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   moduleId: string;

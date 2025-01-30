@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Earth, Lock } from "lucide-react";
 // types
-import { EViewAccess } from "@plane/constants";
+import { EViewAccess, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IProjectView } from "@plane/types";
 // ui
 import { Tooltip, FavoriteStar } from "@plane/ui";
@@ -16,7 +16,6 @@ import { getPublishViewLink } from "@/helpers/project-views.helpers";
 // hooks
 import { useMember, useProjectView, useUserPermissions } from "@/hooks/store";
 import { PublishViewModal } from "@/plane-web/components/views/publish";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { ButtonAvatars } from "../dropdowns/member/avatar";
 
 type Props = {

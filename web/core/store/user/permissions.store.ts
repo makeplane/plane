@@ -3,15 +3,16 @@ import unset from "lodash/unset";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/constants";
-import { IProjectMember, IUserProjectsRole, IWorkspaceMemberMe } from "@plane/types";
-// plane web types
 import {
+  EUserProjectRoles,
+  EUserWorkspaceRoles,
   EUserPermissions,
   EUserPermissionsLevel,
   TUserPermissions,
   TUserPermissionsLevel,
-} from "@/plane-web/constants/user-permissions";
+} from "@plane/constants";
+import { IProjectMember, IUserProjectsRole, IWorkspaceMemberMe } from "@plane/types";
+// plane web types
 // plane web services
 import { WorkspaceService } from "@/plane-web/services/workspace.service";
 // services

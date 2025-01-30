@@ -6,14 +6,13 @@ import { useParams } from "next/navigation";
 import { Search } from "lucide-react";
 // hooks
 // components
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 import { ProjectMemberListItem, SendProjectInvitationModal } from "@/components/project";
 // ui
 import { MembersSettingsLoader } from "@/components/ui";
 import { useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
-// plane-web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectMemberList: React.FC = observer(() => {
   // router

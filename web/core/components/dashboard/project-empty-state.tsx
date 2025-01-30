@@ -3,10 +3,10 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 // ui
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/ui";
 // hooks
 import { useCommandPalette, useEventTracker, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // assets
 import ProjectEmptyStateImage from "@/public/empty-state/onboarding/dashboard-light.webp";
 

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel, PRODUCT_TOUR_COMPLETED } from "@plane/constants";
+import { EUserPermissionsLevel, PRODUCT_TOUR_COMPLETED, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper } from "@plane/ui";
 // components
@@ -26,7 +26,6 @@ import {
 } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import useSize from "@/hooks/use-window-size";
-import { EUserPermissions } from "@/plane-web/constants";
 
 export const WorkspaceDashboardView = observer(() => {
   // plane hooks

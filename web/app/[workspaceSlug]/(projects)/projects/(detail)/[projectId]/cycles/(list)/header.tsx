@@ -3,6 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // ui
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { Breadcrumbs, Button, ContrastIcon, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
@@ -13,7 +14,6 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 // constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const CyclesListHeader: FC = observer(() => {
   // router
