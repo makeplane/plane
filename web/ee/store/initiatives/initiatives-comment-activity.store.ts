@@ -194,7 +194,9 @@ export class InitiativeCommentActivityStore implements IInitiativeCommentActivit
         if (!this.initiativeCommentsMap[initiativeId] || !Array.isArray(this.initiativeCommentsMap[initiativeId]))
           return;
 
-        update(this.initiativeCommentsMap, [initiativeId], (comments: TInitiativeComment[]) => comments.filter((comment) => comment.id !== commentId));
+        update(this.initiativeCommentsMap, [initiativeId], (comments: TInitiativeComment[]) =>
+          comments.filter((comment) => comment.id !== commentId)
+        );
       });
     } catch (e) {
       console.log("error while updating initiative Comment", e);
@@ -203,31 +205,45 @@ export class InitiativeCommentActivityStore implements IInitiativeCommentActivit
   };
 
   fetchActivities = async (workspaceSlug: string, initiativeId: string) => {
-    try {
-      let props = {};
-      const currentActivities = this.initiativeActivityMap[initiativeId];
-      if (currentActivities && currentActivities.length > 0) {
-        const currentActivity = currentActivities[currentActivities.length - 1];
-        if (currentActivity) props = { created_at__gt: currentActivity.created_at };
-      }
-
-      const activities = await this.initiativeStore.initiativeService.getInitiativeActivities(
-        workspaceSlug,
-        initiativeId,
-        props
-      );
-
-      runInAction(() => {
-        update(this.initiativeActivityMap, initiativeId, (currentActivities) => {
-          if (!currentActivities) return activities;
-          return uniq(concat(currentActivities, activities));
-        });
-      });
-
-      return activities;
-    } catch (error) {
-      throw error;
+    let props = {};
+    const currentActivities = this.initiativeActivityMap[initiativeId];
+    if (currentActivities && currentActivities.length > 0) {
+      const currentActivity = currentActivities[currentActivities.length - 1];
+      if (currentActivity) props = { created_at__gt: currentActivity.created_at };
     }
+
+    const activities = await this.initiativeStore.initiativeService.getInitiativeActivities(
+      workspaceSlug,
+      initiativeId,
+      props
+    );
+
+    runInAction(() => {
+      update(this.initiativeActivityMap, initiativeId, (currentActivities) => {
+        if (!currentActivities) return activities;
+
+        // Find if the activity already exists
+        const updatedActivities = currentActivities.map((activity: TInitiativeActivity) => {
+          const matchingNewActivity = activities.find((newActivity) => newActivity.id === activity.id);
+          if (matchingNewActivity) {
+            // Update existing activity with new updated_at
+            return {
+              ...activity,
+              created_at: matchingNewActivity.created_at,
+            };
+          }
+          return activity;
+        });
+
+        // Add any new activities that don't exist yet
+        const existingIds = new Set(updatedActivities.map((activity: TInitiativeActivity) => activity.id));
+        const newActivities = activities.filter((activity) => !existingIds.has(activity.id));
+
+        return uniq([...updatedActivities, ...newActivities]);
+      });
+    });
+
+    return activities;
   };
 
   addCommentReaction = async (

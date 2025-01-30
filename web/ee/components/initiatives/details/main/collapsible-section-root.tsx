@@ -47,7 +47,6 @@ export const InitiativeCollapsibleSection: FC<Props> = observer((props) => {
   const projectsIds = initiative?.project_ids;
 
   const shouldRenderLinks = !!initiativesLinks && initiativesLinks?.length > 0;
-  const shouldRenderProjects = !!projectsIds && projectsIds?.length > 0;
   const shouldRenderAttachments =
     (!!initiativesAttachments && initiativesAttachments?.length > 0) ||
     (!!attachmentUploads && attachmentUploads.length > 0);
@@ -63,37 +62,36 @@ export const InitiativeCollapsibleSection: FC<Props> = observer((props) => {
 
   return (
     <>
-      {shouldRenderProjects && (
-        <CollapsibleDetailSection
-          title="Projects"
-          actionItemElement={
-            !disabled && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  toggleProjectModal(true);
-                }}
-                disabled={disabled}
-              >
-                <Plus className="h-4 w-4" />
-              </button>
-            )
-          }
-          count={attachmentCount}
-          collapsibleContent={
-            <InitiativeProjectsCollapsibleContent
-              workspaceSlug={workspaceSlug}
-              projectIds={projectsIds}
-              initiativeId={initiativeId}
+      <CollapsibleDetailSection
+        title="Projects"
+        actionItemElement={
+          !disabled && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                toggleProjectModal(true);
+              }}
               disabled={disabled}
-            />
-          }
-          isOpen={openCollapsibleSection.includes("projects")}
-          onToggle={() => toggleOpenCollapsibleSection("projects")}
-        />
-      )}
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          )
+        }
+        count={attachmentCount}
+        collapsibleContent={
+          <InitiativeProjectsCollapsibleContent
+            workspaceSlug={workspaceSlug}
+            projectIds={projectsIds}
+            initiativeId={initiativeId}
+            disabled={disabled}
+            toggleProjectModal={toggleProjectModal}
+          />
+        }
+        isOpen={openCollapsibleSection.includes("projects")}
+        onToggle={() => toggleOpenCollapsibleSection("projects")}
+      />
       {shouldRenderEpics && (
         <CollapsibleDetailSection
           title="Epics"

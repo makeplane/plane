@@ -43,15 +43,6 @@ export const InitiativeDetailRoot = observer((props: Props) => {
   const handleProjectsUpdate = async (initiativeProjectIds: string[]) => {
     if (!initiativeId) return;
 
-    if (initiativeProjectIds.length === 0) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Please select at least one project.",
-      });
-      return;
-    }
-
     await updateInitiative(workspaceSlug?.toString(), initiativeId, { project_ids: initiativeProjectIds })
       .then(() => {
         setToast({
