@@ -74,7 +74,7 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
         onClick={handleRemoveAllFilters}
         className="flex items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 text-xs text-custom-text-300 hover:text-custom-text-200"
       >
-        {t("common.clearAll")}
+        {t("common.clear_all")}
         <X size={12} strokeWidth={2} />
       </button>
     </div>
