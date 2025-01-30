@@ -5,8 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronDown, XCircle } from "lucide-react";
 // plane imports
-import { ROLE } from "@plane/constants";
-// ui
+import { ROLE , EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -15,7 +14,6 @@ import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // hooks
 import { useMember, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   invitationId: string;

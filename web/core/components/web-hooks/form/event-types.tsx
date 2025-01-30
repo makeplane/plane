@@ -7,14 +7,14 @@ type Props = {
   onChange: (value: TWebhookEventTypes) => void;
 };
 
-const WEBHOOK_EVENT_TYPES: { key: TWebhookEventTypes; label: string }[] = [
+const WEBHOOK_EVENT_TYPES: { key: TWebhookEventTypes; i18n_label: string }[] = [
   {
     key: "all",
-    label: "Send me everything",
+    i18n_label: "workspace_settings.settings.webhooks.options.all",
   },
   {
     key: "individual",
-    label: "Select individual events",
+    i18n_label: "workspace_settings.settings.webhooks.options.individual",
   },
 ];
 
@@ -36,7 +36,7 @@ export const WebhookOptions: React.FC<Props> = (props) => {
               onChange={() => onChange(option.key)}
             />
             <label className="text-sm" htmlFor={option.key}>
-              {option.label}
+              {t(option.i18n_label)}
             </label>
           </div>
         ))}

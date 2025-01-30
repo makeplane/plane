@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { PageHead } from "@/components/core";
 import { SingleIntegrationCard } from "@/components/integration";
 import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "@/components/ui";
@@ -10,7 +11,6 @@ import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "@/
 import { APP_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // services
 import { IntegrationService } from "@/services/integrations";
 

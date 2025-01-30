@@ -5,8 +5,7 @@ import { useParams } from "next/navigation";
 // icons
 import { Circle, ExternalLink } from "lucide-react";
 // plane constants
-import { EIssuesStoreType } from "@plane/constants";
-// i18n
+import { EIssuesStoreType,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Button, LayersIcon, Tooltip, Header } from "@plane/ui";
@@ -23,7 +22,6 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const IssuesHeader = observer(() => {
   // router

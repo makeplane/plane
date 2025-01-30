@@ -114,7 +114,7 @@ export const GlobalIssuesHeader = observer(() => {
           {!isLocked ? (
             <>
               <FiltersDropdown
-                title="Filters"
+                title={t("common.filters")}
                 placement="bottom-end"
                 isFiltersApplied={isIssueFilterActive(issueFilters)}
               >
@@ -128,7 +128,7 @@ export const GlobalIssuesHeader = observer(() => {
                   memberIds={workspaceMemberIds ?? undefined}
                 />
               </FiltersDropdown>
-              <FiltersDropdown title="Display" placement="bottom-end">
+              <FiltersDropdown title={t("common.display")} placement="bottom-end">
                 <DisplayFiltersSelection
                   layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.spreadsheet}
                   displayFilters={issueFilters?.displayFilters ?? {}}

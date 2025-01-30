@@ -2,7 +2,13 @@ import React, { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
-import { ALL_ISSUES, EIssueLayoutTypes, EIssuesStoreType } from "@plane/constants";
+import {
+  ALL_ISSUES,
+  EIssueLayoutTypes,
+  EIssuesStoreType,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
@@ -19,7 +25,6 @@ import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 // plane web hooks
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 
 import { IssueLayoutHOC } from "../issue-layout-HOC";

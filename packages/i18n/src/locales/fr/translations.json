@@ -320,6 +320,7 @@
   "leaving": "Départ",
   "removing": "Suppression",
   "leave": "Quitter",
+  "refresh": "Actualiser",
   "refreshing": "Actualisation",
   "refresh_status": "Actualiser l'état",
   "prev": "Précédent",
@@ -327,6 +328,7 @@
   "re_generating": "Régénération",
   "re_generate": "Régénérer",
   "re_generate_key": "Régénérer la clé",
+  "export": "Exporter",
 
   "project_view": {
     "sort_by": {
@@ -1168,6 +1170,7 @@
 
   "workspace_settings": {
     "label": "Workspase settingues",
+    "page_label": "{workspace} - Paramètres généraux",
     "key_created": "Clé créée",
     "copy_key": "Copiez et sauvegardez cette clé secrète dans Plané Pagés. Vous ne pourrez plus voir cette clé après avoir cliqué sur Fermer. Un fichier CSV contenant la clé a été téléchargé.",
     "token_copied": "Tokén copié dans le presse-papiers.",
@@ -1205,6 +1208,17 @@
           "account_type": "Type de compté",
           "authentication": "Authentificatión",
           "joining_date": "Date d'adhésion"
+        },
+        "modal": {
+          "title": "Inviter des collaborateurs",
+          "description": "Inviter des personnes à collaborer sur votre espace de travail",
+          "button": "Envoyer les invitations",
+          "button_loading": "Envoi des invitations",
+          "placeholder": "Saisissez les adresses e-mail",
+          "errors": {
+            "required": "L'e-mail est requis",
+            "invalid": "L'e-mail est invalide"
+          }
         }
       },
       "billing_and_plans": {
@@ -1246,6 +1260,10 @@
           "title": "Clé secréte",
           "message": "Générer un tokén pour se connecter au payloád du webhouk"
         },
+        "options": {
+          "all": "Tout m'envoyer",
+          "individual": "Sélectionner des événements individuels"
+        },
         "toasts": {
           "created": {
             "title": "Webhouk créé",
@@ -1285,7 +1303,19 @@
         "create_token": "Créer tokén",
         "never_expires": "N'expire jamais",
         "generate_token": "Générer tokén",
-        "generating": "Génératión"
+        "generating": "Génératión",
+        "delete": {
+          "title": "Supprimer le jeton API",
+          "description": "Toute application utilisant ce jeton n'aura plus accès aux données de Plane. Cette action ne peut pas être annulée.",
+          "success": {
+            "title": "Succès !",
+            "message": "Le jeton API a été supprimé avec succès"
+          },
+          "error": {
+            "title": "Erreur !",
+            "message": "Le jeton API n'a pas pu être supprimé"
+          }
+        }
       }
     },
     "empty_state": {
@@ -1332,7 +1362,9 @@
       },
       "recent_activity": {
         "title": "Activité récenté",
-        "empty": "Nous n'avons pas trouvé de données. Veuillez consulter vos entrées"
+        "empty": "Nous n'avons pas trouvé de données. Veuillez consulter vos entrées",
+        "button": "Télécharger l'activité du jour",
+        "button_loading": "Téléchargement"
       }
     },
     "actions": {
@@ -1890,17 +1922,24 @@
 
   "exporter": {
     "csv": {
-      "title": "CSVé",
-      "description": "Exportez des workés items vers un fichier CSV.",
+      "title": "CSV",
+      "description": "Exporter les éléments de travail au format CSV.",
       "short_description": "Exporter en csv"
     },
+    "excel": {
+      "title": "Excel",
+      "description": "Exporter les éléments de travail au format Excel.",
+      "short_description": "Exporter en excel"
+    },
     "xlsx": {
-      "title": "Excelé",
-      "description": "Exportez des workés items vers un fichier Excel."
+      "title": "Excel",
+      "description": "Exporter les éléments de travail au format Excel.",
+      "short_description": "Exporter en excel"
     },
     "json": {
-      "title": "JSONé",
-      "description": "Exportez des workés items vers un fichier JSON."
+      "title": "JSON",
+      "description": "Exporter les éléments de travail au format JSON.",
+      "short_description": "Exporter en json"
     }
   },
   "default_global_view": {

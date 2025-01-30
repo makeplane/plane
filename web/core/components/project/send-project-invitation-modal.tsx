@@ -7,7 +7,7 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { ChevronDown, Plus, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
-import { ROLE, PROJECT_MEMBER_ADDED } from "@plane/constants";
+import { ROLE, PROJECT_MEMBER_ADDED, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
@@ -17,7 +17,6 @@ import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
 // plane-web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   isOpen: boolean;

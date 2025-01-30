@@ -12,6 +12,8 @@ import {
   EIssueFilterType,
   EIssuesStoreType,
   ISSUE_DELETED,
+  EUserPermissions,
+  EUserPermissionsLevel,
 } from "@plane/constants";
 import { DeleteIssueModal } from "@/components/issues";
 //constants
@@ -20,7 +22,6 @@ import { useEventTracker, useIssueDetail, useIssues, useKanbanView, useUserPermi
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // store
 // ui
 // types

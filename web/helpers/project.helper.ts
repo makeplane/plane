@@ -1,11 +1,11 @@
 import sortBy from "lodash/sortBy";
 // types
+import { EUserPermissions } from "@plane/constants";
 import { TProjectDisplayFilters, TProjectFilters, TProjectOrderByOptions } from "@plane/types";
 // helpers
 import { getDate } from "@/helpers/date-time.helper";
 import { satisfiesDateFilter } from "@/helpers/filter.helper";
 // plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // types
 import { TProject } from "@/plane-web/types";
 

@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ArchiveIcon, ArchiveRestoreIcon, ChevronRight, EllipsisIcon, LinkIcon, Trash2 } from "lucide-react";
 // types
-import { CYCLE_STATUS, CYCLE_UPDATED } from "@plane/constants";
+import { CYCLE_STATUS, CYCLE_UPDATED ,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
 // ui
@@ -19,7 +19,6 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 import { useCycle, useEventTracker, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // services
 import { CycleService } from "@/services/cycle.service";
 // local components

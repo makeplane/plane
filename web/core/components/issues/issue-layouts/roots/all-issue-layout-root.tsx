@@ -9,8 +9,8 @@ import {
   EIssueLayoutTypes,
   EIssueFilterType,
   EIssuesStoreType,
-  ISSUE_DISPLAY_FILTERS_BY_PAGE,
-} from "@plane/constants";
+  ISSUE_DISPLAY_FILTERS_BY_PAGE
+,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IIssueDisplayFilterOptions } from "@plane/types";
 // hooks
 // components
@@ -24,7 +24,6 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // store
 import emptyView from "@/public/empty-state/view.svg";
 import { IssuePeekOverview } from "../../peek-overview";

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 // types
-import { PROJECT_ERROR_MESSAGES } from "@plane/constants";
+import { PROJECT_ERROR_MESSAGES ,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TDeDupeIssue, TIssue } from "@plane/types";
 // ui
@@ -11,7 +11,6 @@ import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useIssues, useProject, useUser, useUserPermissions } from "@/hooks/store";
 // plane-web
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   isOpen: boolean;

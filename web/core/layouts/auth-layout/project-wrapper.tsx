@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { JoinProject } from "@/components/auth-screens";
@@ -30,7 +31,6 @@ import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 interface IProjectAuthWrapper {
   children: ReactNode;

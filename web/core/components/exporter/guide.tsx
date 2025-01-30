@@ -9,7 +9,7 @@ import useSWR, { mutate } from "swr";
 // icons
 import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
 // plane imports
-import { EXPORTERS_LIST } from "@plane/constants";
+import { EXPORTERS_LIST, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // components
@@ -22,7 +22,6 @@ import { EXPORT_SERVICES_LIST } from "@/constants/fetch-keys";
 import { useProject, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // services images
 import CSVLogo from "@/public/services/csv.svg";
 import ExcelLogo from "@/public/services/excel.svg";
@@ -37,6 +36,8 @@ const getExporterLogo = (provider: string) => {
     case "csv":
       return CSVLogo;
     case "excel":
+      return ExcelLogo;
+    case "xlsx":
       return ExcelLogo;
     case "json":
       return JSONLogo;
@@ -128,7 +129,7 @@ const IntegrationGuide = observer(() => {
                           className="capitalize"
                           disabled={!isAdmin && (!hasProjects || !canPerformAnyCreateAction)}
                         >
-                          {service.type}
+                          {t(service.type)}
                         </Button>
                       </span>
                     </Link>

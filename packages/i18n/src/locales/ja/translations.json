@@ -320,6 +320,7 @@
   "leaving": "退出中",
   "removing": "削除中",
   "leave": "退出",
+  "refresh": "更新",
   "refreshing": "更新中",
   "refresh_status": "状態を更新",
   "prev": "前へ",
@@ -327,6 +328,7 @@
   "re_generating": "再生成中",
   "re_generate": "再生成",
   "re_generate_key": "キーを再生成",
+  "export": "エクスポート",
 
   "project_view": {
     "sort_by": {
@@ -1168,6 +1170,7 @@
 
   "workspace_settings": {
     "label": "ワークスペース設定",
+    "page_label": "{workspace} - 一般設定",
     "key_created": "キーが作成されました",
     "copy_key": "このシークレットキーをコピーしてプレーンページに保存してください。閉じるをクリックすると、このキーは表示されなくなります。キーを含むCSVファイルがダウンロードされました。",
     "token_copied": "トークンがクリップボードにコピーされました。",
@@ -1205,6 +1208,17 @@
           "account_type": "アカウントタイプ",
           "authentication": "認証",
           "joining_date": "参加日"
+        },
+        "modal": {
+          "title": "共同作業者を招待",
+          "description": "ワークスペースでの共同作業に招待する",
+          "button": "招待を送信",
+          "button_loading": "招待を送信中",
+          "placeholder": "メールアドレスを入力",
+          "errors": {
+            "required": "メールアドレスは必須です",
+            "invalid": "メールアドレスが無効です"
+          }
         }
       },
       "billing_and_plans": {
@@ -1246,6 +1260,10 @@
           "title": "シークレットキー",
           "message": "ウェブフックペイロードに署名するトークンを生成"
         },
+        "options": {
+          "all": "すべて送信",
+          "individual": "個別のイベントを選択"
+        },
         "toasts": {
           "created": {
             "title": "ウェブフック作成完了",
@@ -1285,7 +1303,19 @@
         "create_token": "トークンを作成",
         "never_expires": "無期限",
         "generate_token": "トークンを生成",
-        "generating": "生成中"
+        "generating": "生成中",
+        "delete": {
+          "title": "APIトークンを削除",
+          "description": "このトークンを使用しているアプリケーションは、Planeのデータにアクセスできなくなります。この操作は取り消すことができません。",
+          "success": {
+            "title": "成功！",
+            "message": "APIトークンが正常に削除されました"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "APIトークンを削除できませんでした"
+          }
+        }
       }
     },
     "empty_state": {
@@ -1332,7 +1362,9 @@
       },
       "recent_activity": {
         "title": "最近のアクティビティ",
-        "empty": "データが見つかりませんでした。入力内容を確認してください"
+        "empty": "データが見つかりませんでした。入力内容を確認してください",
+        "button": "今日のアクティビティをダウンロード",
+        "button_loading": "ダウンロード中"
       }
     },
     "actions": {
@@ -1891,23 +1923,24 @@
   "exporter": {
     "csv": {
       "title": "CSV",
-      "description": "作業項目をCSVファイルにエクスポートします。",
+      "description": "作業項目をCSVファイルにエクスポート",
       "short_description": "CSVとしてエクスポート"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "作業項目をExcelファイルにエクスポート",
+      "short_description": "Excelとしてエクスポート"
     },
     "xlsx": {
       "title": "Excel",
-      "description": "作業項目をExcelファイルにエクスポートします。"
+      "description": "作業項目をExcelファイルにエクスポート",
+      "short_description": "Excelとしてエクスポート"
     },
     "json": {
       "title": "JSON",
-      "description": "作業項目をJSONファイルにエクスポートします。"
+      "description": "作業項目をJSONファイルにエクスポート",
+      "short_description": "JSONとしてエクスポート"
     }
-  },
-  "default_global_view": {
-    "all_issues": "すべての作業項目",
-    "assigned": "割り当て済み",
-    "created": "作成済み",
-    "subscribed": "購読中"
   },
 
   "themes": {

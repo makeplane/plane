@@ -4,7 +4,14 @@ import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { ArchiveIcon, ArchiveRestoreIcon, LinkIcon, Trash2 } from "lucide-react";
-import { ISSUE_ARCHIVED, ISSUE_DELETED, ARCHIVABLE_STATE_GROUPS, EIssuesStoreType } from "@plane/constants";
+import {
+  ISSUE_ARCHIVED,
+  ISSUE_DELETED,
+  ARCHIVABLE_STATE_GROUPS,
+  EIssuesStoreType,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
@@ -23,7 +30,6 @@ import {
 } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   workspaceSlug: string;

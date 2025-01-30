@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 // icons
 import { Pencil, Trash2 } from "lucide-react";
 // types
-import { EIssuesStoreType } from "@plane/constants";
+import { EIssuesStoreType,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 // ui
@@ -18,7 +18,6 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 

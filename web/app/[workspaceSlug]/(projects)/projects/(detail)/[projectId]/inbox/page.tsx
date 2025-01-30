@@ -2,6 +2,7 @@
 import { observer } from "mobx-react";
 // components
 import { useParams, useSearchParams } from "next/navigation";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/constants/src/user";
 import { useTranslation } from "@plane/i18n";
 import { PageHead } from "@/components/core";
@@ -13,7 +14,6 @@ import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";
 import { useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const ProjectInboxPage = observer(() => {
   /// router

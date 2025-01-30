@@ -1,12 +1,11 @@
 import { observer } from "mobx-react";
 import { PlusIcon } from "lucide-react";
 // components
-import { EIssuesStoreType } from "@plane/constants";
+import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EmptyState } from "@/components/common";
 // constants
 // hooks
 import { useCommandPalette, useEventTracker, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // assets
 import emptyIssue from "@/public/empty-state/issue.svg";
 

@@ -3,7 +3,7 @@
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane package imports
-import { E_SORT_ORDER, TActivityFilters, defaultActivityFilters } from "@plane/constants";
+import { E_SORT_ORDER, TActivityFilters, defaultActivityFilters,EUserPermissions } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 // i18n
 import { useTranslation } from "@plane/i18n";
@@ -19,7 +19,6 @@ import { ActivitySortRoot, IssueActivityCommentRoot } from "@/components/issues/
 import { useIssueDetail, useProject, useUser, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { ActivityFilterRoot, IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog";
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();

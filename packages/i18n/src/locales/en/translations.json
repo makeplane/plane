@@ -320,6 +320,7 @@
   "leaving": "Leaving",
   "removing": "Removing",
   "leave": "Leave",
+  "refresh": "Refresh",
   "refreshing": "Refreshing",
   "refresh_status": "Refresh status",
   "prev": "Prev",
@@ -327,6 +328,7 @@
   "re_generating": "Re-generating",
   "re_generate": "Re-generate",
   "re_generate_key": "Re-generate key",
+  "export": "Export",
 
   "project_view": {
     "sort_by": {
@@ -1168,6 +1170,7 @@
 
   "workspace_settings": {
     "label": "Workspace settings",
+    "page_label": "{workspace} - General settings",
     "key_created": "Key created",
     "copy_key": "Copy and save this secret key in Plane Pages. You can't see this key after you hit Close. A CSV file containing the key has been downloaded.",
     "token_copied": "Token copied to clipboard.",
@@ -1205,6 +1208,17 @@
           "account_type": "Account type",
           "authentication": "Authentication",
           "joining_date": "Joining date"
+        },
+        "modal": {
+          "title": "Invite people to collaborate",
+          "description": "Invite people to collaborate on your workspace.",
+          "button": "Send invitations",
+          "button_loading": "Sending invitations",
+          "placeholder": "Enter email addresses",
+          "errors": {
+            "required": "Email is required",
+            "invalid": "Email is invalid"
+          }
         }
       },
       "billing_and_plans": {
@@ -1246,6 +1260,10 @@
           "title": "Secret key",
           "message": "Generate a token to sign-in to the webhook payload"
         },
+        "options": {
+          "all": "Send me everything",
+          "individual": "Select individual events"
+        },
         "toasts": {
           "created": {
             "title": "Webhook created",
@@ -1285,7 +1303,19 @@
         "create_token": "Create token",
         "never_expires": "Never expires",
         "generate_token": "Generate token",
-        "generating": "Generating"
+        "generating": "Generating",
+        "delete": {
+          "title": "Delete API token",
+          "description": "Any application using this token will no longer have the access to Plane data. This action cannot be undone.",
+          "success": {
+            "title": "Success!",
+            "message": "The API token has been successfully deleted"
+          },
+          "error": {
+            "title": "Error!",
+            "message": "The API token could not be deleted"
+          }
+        }
       }
     },
     "empty_state": {
@@ -1332,7 +1362,9 @@
       },
       "recent_activity": {
         "title": "Recent activity",
-        "empty": "We couldn't find data. Kindly view your inputs"
+        "empty": "We couldn't find data. Kindly view your inputs",
+        "button": "Download today's activity",
+        "button_loading": "Downloading"
       }
     },
     "actions": {
@@ -1894,13 +1926,20 @@
       "description": "Export work items to a CSV file.",
       "short_description": "Export as csv"
     },
+    "excel": {
+      "title": "Excel",
+      "description": "Export work items to a Excel file.",
+      "short_description": "Export as excel"
+    },
     "xlsx": {
       "title": "Excel",
-      "description": "Export work items to a Excel file."
+      "description": "Export work items to a Excel file.",
+      "short_description": "Export as excel"
     },
     "json": {
       "title": "JSON",
-      "description": "Export work items to a JSON file."
+      "description": "Export work items to a JSON file.",
+      "short_description": "Export as json"
     }
   },
   "default_global_view": {

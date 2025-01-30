@@ -4,8 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Trash2 } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 // plane imports
-import { ROLE } from "@plane/constants";
-// plane types
+import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IUser, IWorkspaceMember } from "@plane/types";
 // plane ui
 import { CustomSelect, PopoverMenu, TOAST_TYPE, setToast } from "@plane/ui";
@@ -15,7 +14,6 @@ import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember, useUser, useUserPermissions } from "@/hooks/store";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export interface RowData {
   member: IWorkspaceMember;

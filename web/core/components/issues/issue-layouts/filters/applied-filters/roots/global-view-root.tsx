@@ -6,7 +6,13 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { DEFAULT_GLOBAL_VIEWS_LIST, EIssueFilterType, EIssuesStoreType, EViewAccess, GLOBAL_VIEW_UPDATED } from "@plane/constants";
+import {
+  DEFAULT_GLOBAL_VIEWS_LIST,
+  EIssueFilterType,
+  EIssuesStoreType,
+  EViewAccess,
+  GLOBAL_VIEW_UPDATED,
+ EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 //ui
 // components
@@ -19,7 +25,6 @@ import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker, useGlobalView, useIssues, useLabel, useUser, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { getAreFiltersEqual } from "../../../utils";
 
 type Props = {

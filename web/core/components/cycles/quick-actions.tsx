@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 // icons
 import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
 // ui
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ArchiveCycleModal, CycleCreateUpdateModal, CycleDeleteModal } from "@/components/cycles";
@@ -16,7 +17,6 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 import { useCycle, useEventTracker, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useEndCycle, EndCycleModal } from "@/plane-web/components/cycles";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;

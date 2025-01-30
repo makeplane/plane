@@ -3,6 +3,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 // ui
@@ -13,7 +14,6 @@ import { AutoArchiveAutomation, AutoCloseAutomation } from "@/components/automat
 import { PageHead } from "@/components/core";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const AutomationSettingsPage = observer(() => {
   // router
