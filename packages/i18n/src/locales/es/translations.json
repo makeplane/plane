@@ -332,6 +332,27 @@
   "re_generate_key": "Regenerar clave",
   "export": "Exportar",
 
+  "sidebar": {
+    "projects": "Proyectos",
+    "pages": "Páginas",
+    "new_work_item": "Nuevo elemento de trabajo",
+    "home": "Inicio",
+    "your_work": "Tu trabajo",
+    "inbox": "Bandeja de entrada",
+    "workspace": "Espacio de trabajo",
+    "views": "Vistas",
+    "analytics": "Análisis",
+    "your_projects": "Tus proyectos",
+    "work_items": "Elementos de trabajo",
+    "cycles": "Ciclos",
+    "modules": "Módulos",
+    "intake": "Entrada",
+    "drafts": "Borradores",
+    "your_favorites": "Tus favoritos",
+    "pro": "Pro",
+    "upgrade": "Actualizar"
+  },
+
   "project_view": {
     "sort_by": {
       "created_at": "Fecha de creación",

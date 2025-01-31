@@ -33,28 +33,28 @@ export const SidebarWorkspaceMenu = observer(() => {
   const SIDEBAR_WORKSPACE_MENU_ITEMS = [
     {
       key: "projects",
-      labelTranslationKey: "projects",
+      labelTranslationKey: "sidebar.projects",
       href: `/${workspaceSlug}/projects/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
       Icon: Briefcase,
     },
     {
       key: "views",
-      labelTranslationKey: "views",
+      labelTranslationKey: "sidebar.views",
       href: `/${workspaceSlug}/workspace-views/all-issues/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
       Icon: Layers,
     },
     {
       key: "active-cycles",
-      labelTranslationKey: "cycles",
+      labelTranslationKey: "sidebar.cycles",
       href: `/${workspaceSlug}/active-cycles/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
       Icon: ContrastIcon,
     },
     {
       key: "analytics",
-      labelTranslationKey: "analytics",
+      labelTranslationKey: "sidebar.analytics",
       href: `/${workspaceSlug}/analytics/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
       Icon: BarChart2,
