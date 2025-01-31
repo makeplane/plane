@@ -467,6 +467,7 @@ class IssueComment(ProjectBaseModel):
     )
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
+    edited_at = models.DateTimeField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.comment_stripped = (

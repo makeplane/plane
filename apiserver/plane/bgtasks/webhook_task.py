@@ -136,7 +136,7 @@ def webhook_task(self, webhook, slug, event, event_data, action, current_site):
         # Log the webhook request
         WebhookLog.objects.create(
             workspace_id=str(webhook.workspace_id),
-            webhook_id=str(webhook.id),
+            webhook=str(webhook.id),
             event_type=str(event),
             request_method=str(action),
             request_headers=str(headers),
@@ -153,7 +153,7 @@ def webhook_task(self, webhook, slug, event, event_data, action, current_site):
         # Log the failed webhook request
         WebhookLog.objects.create(
             workspace_id=str(webhook.workspace_id),
-            webhook_id=str(webhook.id),
+            webhook=str(webhook.id),
             event_type=str(event),
             request_method=str(action),
             request_headers=str(headers),
@@ -304,7 +304,7 @@ def webhook_send_task(
         # Log the webhook request
         WebhookLog.objects.create(
             workspace_id=str(webhook.workspace_id),
-            webhook_id=str(webhook.id),
+            webhook=str(webhook.id),
             event_type=str(event),
             request_method=str(action),
             request_headers=str(headers),
@@ -319,7 +319,7 @@ def webhook_send_task(
         # Log the failed webhook request
         WebhookLog.objects.create(
             workspace_id=str(webhook.workspace_id),
-            webhook_id=str(webhook.id),
+            webhook=str(webhook.id),
             event_type=str(event),
             request_method=str(action),
             request_headers=str(headers),
