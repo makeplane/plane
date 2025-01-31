@@ -75,7 +75,7 @@ export const SidebarWorkspaceMenuItem: FC<SidebarWorkspaceMenuItemProps> = obser
           </div>
           {!sidebarCollapsed && item.key === "active-cycles" && (
             <div className="flex-shrink-0">
-              <UpgradeBadge />
+              <UpgradeBadge flag="WORKSPACE_ACTIVE_CYCLES" />
             </div>
           )}
         </SidebarNavItem>
