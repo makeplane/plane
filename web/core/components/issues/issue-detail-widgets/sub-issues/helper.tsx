@@ -154,7 +154,7 @@ export const useSubIssueOperations = (
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("toast.success"),
-            message: t("common.sub_work_items.update.success"),
+            message: t("sub_work_item.update.success"),
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
         } catch (error) {
@@ -170,7 +170,7 @@ export const useSubIssueOperations = (
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
-            message: t("common.sub_work_items.update.error"),
+            message: t("sub_work_item.update.error"),
           });
         }
       },
@@ -191,7 +191,7 @@ export const useSubIssueOperations = (
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("toast.success"),
-            message: t("common.sub_work_items.remove.success"),
+            message: t("sub_work_item.remove.success"),
           });
           captureIssueEvent({
             eventName: "Sub-issue removed",
@@ -216,7 +216,7 @@ export const useSubIssueOperations = (
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
-            message: t("common.sub_work_items.remove.error"),
+            message: t("sub_work_item.remove.error"),
           });
         }
       },

@@ -39,7 +39,7 @@ export const PROJECT_SETTINGS = {
     Icon: SettingIcon,
   },
   labels: {
-    key: "i18n_labels",
+    key: "labels",
     i18n_label: "common.labels",
     href: `/settings/labels`,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],

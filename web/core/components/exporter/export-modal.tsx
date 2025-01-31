@@ -79,8 +79,8 @@ export const Exporter: React.FC<Props> = observer((props) => {
           setExportLoading(false);
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: t("workspace_settings.settings.exports.modal.success.title"),
-            message: t("workspace_settings.settings.exports.modal.success.message", {
+            title: t("workspace_settings.settings.exports.modal.toasts.success.title"),
+            message: t("workspace_settings.settings.exports.modal.toasts.success.message", {
               entity: provider === "csv" ? "CSV" : provider === "xlsx" ? "Excel" : provider === "json" ? "JSON" : "",
             }),
           });
@@ -90,7 +90,7 @@ export const Exporter: React.FC<Props> = observer((props) => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("error"),
-            message: t("workspace_settings.settings.exports.modal.error.message"),
+            message: t("workspace_settings.settings.exports.modal.toasts.error.message"),
           });
         });
     }
