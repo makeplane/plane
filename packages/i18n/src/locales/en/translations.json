@@ -753,6 +753,10 @@
     },
     "comments": {
       "placeholder": "Add comment...",
+      "switch": {
+        "private": "Switch to private comment",
+        "public": "Switch to public comment"
+      },
       "create": {
         "success": "Comment created successfully",
         "error": "Comment creation failed. Please try again later."
@@ -1494,7 +1498,7 @@
     "remove_search_criteria_to_see_all_cycles": "Remove the search criteria to see all cycles",
     "only_completed_cycles_can_be_archived": "Only completed cycles can be archived",
     "active_cycle": {
-      "label" :"Active cycle",
+      "label": "Active cycle",
       "progress": "Progress",
       "chart": "Burndown chart",
       "priority_issue": "Priority issues",
