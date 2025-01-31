@@ -29,7 +29,7 @@ export const useLinkOperations = (
           });
         } catch (error: any) {
           setToast({
-            message: error?.data?.error ?? "The link could not be created",
+            message: error?.data?.url?.error ?? "The link could not be created",
             type: TOAST_TYPE.ERROR,
             title: "Link not created",
           });
@@ -45,9 +45,9 @@ export const useLinkOperations = (
             type: TOAST_TYPE.SUCCESS,
             title: "Link updated",
           });
-        } catch (error) {
+        } catch (error: any) {
           setToast({
-            message: "The link could not be updated",
+            message: error?.data?.url?.error ?? "The link could not be updated",
             type: TOAST_TYPE.ERROR,
             title: "Link not updated",
           });
