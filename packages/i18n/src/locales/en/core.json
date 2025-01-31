@@ -21,7 +21,11 @@
         "epics": "Epics",
         "upgrade_plan": "Upgrade plan",
         "plane_pro": "Plane Pro",
-        "business": "Business"
+        "business": "Business",
+        "drafts": "Drafts",
+        "your_favorites": "Your favorites",
+        "pro": "Pro",
+        "upgrade": "Upgrade"
     },
 
     "auth": {

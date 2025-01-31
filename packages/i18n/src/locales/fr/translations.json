@@ -354,8 +354,11 @@
     "epics": "Épiques",
     "upgrade_plan": "Mettre à niveau",
     "plane_pro": "Plane Pro",
-    "business": "Entreprise"
-
+    "business": "Entreprise",
+    "drafts": "Brouillons",
+    "your_favorites": "Vos favoris",
+    "pro": "Pro",
+    "upgrade": "Mettre à niveau"
   },
 
   "project_view": {

@@ -354,7 +354,11 @@
     "epics": "史诗",
     "upgrade_plan": "升级计划",
     "plane_pro": "Plane Pro",
-    "business": "商务"
+    "business": "商务",
+    "drafts": "草稿",
+    "your_favorites": "收藏夹",
+    "pro": "Pro",
+    "upgrade": "升级"
   },
 
 

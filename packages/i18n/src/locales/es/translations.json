@@ -354,7 +354,11 @@
     "epics": "Épicas",
     "upgrade_plan": "Actualizar plan",
     "plane_pro": "Plane Pro",
-    "business": "Negocios"
+    "business": "Negocios",
+    "drafts": "Borradores",
+    "your_favorites": "Tus favoritos",
+    "pro": "Pro",
+    "upgrade": "Actualizar"
   },
 
   "project_view": {

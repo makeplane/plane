@@ -354,7 +354,11 @@
     "epics": "エピック",
     "upgrade_plan": "プランをアップグレード",
     "plane_pro": "Plane Pro",
-    "business": "ビジネス"
+    "business": "ビジネス",
+    "drafts": "下書き",
+    "your_favorites": "お気に入り",
+    "pro": "Pro",
+    "upgrade": "アップグレード"
   },
 
 
