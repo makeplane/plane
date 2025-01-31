@@ -43,7 +43,9 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
     <div className="flex flex-col min-h-[17rem] gap-5 px-3.5 py-4 bg-custom-background-100 border border-custom-border-200 rounded-lg">
       <div className="relative flex items-center justify-between gap-4">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}>
-          <h3 className="text-base text-custom-text-300 font-semibold">Issue burndown</h3>
+          <h3 className="text-base text-custom-text-300 font-semibold">
+            {t("project_cycles.active_cycle.issue_burndown")}
+          </h3>
         </Link>
         <EstimateTypeDropdown value={estimateType} onChange={onChange} cycleId={cycle.id} projectId={projectId} />
       </div>
@@ -56,11 +58,11 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
                 <div className="flex items-center gap-3 text-custom-text-300">
                   <div className="flex items-center justify-center gap-1">
                     <span className="h-2 w-2 rounded-full bg-[#A9BBD0]" />
-                    <span>Ideal</span>
+                    <span>{t("project_cycles.active_cycle.ideal")}</span>
                   </div>
                   <div className="flex items-center justify-center gap-1">
                     <span className="h-2 w-2 rounded-full bg-[#4C8FFF]" />
-                    <span>Current</span>
+                    <span>{t("project_cycles.active_cycle.current")}</span>
                   </div>
                 </div>
                 {estimateType === "points" ? (
