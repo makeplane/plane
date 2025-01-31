@@ -131,17 +131,18 @@ function updateEnvFile() {
     fi
 
     if [ -f "$file" ]; then
-        # check if key exists in the file
-        grep -q "^$key=" "$file"
-        if [ $? -ne 0 ]; then
+        # Check if key exists in the file
+        if ! grep -q "^$key=" "$file"; then
             echo "$key=$value" >> "$file"
             return
-        else 
+        else
+            # Escape special characters in value for sed
+            value=$(printf '%s\n' "$value" | sed -e 's/[\/&]/\\&/g')
+
             if [ "$OS_NAME" == "Darwin" ]; then
-                value=$(echo "$value" | sed 's/|/\\|/g')
-                sed -i '' "s|^$key=.*|$key=$value|g" "$file"
+                sed -i '' "s|^$key=.*|$key=$value|" "$file"
             else
-                sed -i "s/^$key=.*/$key=$value/g" "$file"
+                sed -i "s|^$key=.*|$key=$value|" "$file"
             fi
         fi
     else
