@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 // icons
 import { Circle, ExternalLink } from "lucide-react";
 // plane constants
-import { EIssuesStoreType,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Button, LayersIcon, Tooltip, Header } from "@plane/ui";
@@ -70,7 +70,7 @@ export const IssuesHeader = observer(() => {
           {issuesCount && issuesCount > 0 ? (
             <Tooltip
               isMobile={isMobile}
-              tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "issues" : "issue"} in this project`}
+              tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "work items" : "work item"} in this project`}
               position="bottom"
             >
               <CountChip count={issuesCount} />
@@ -104,7 +104,7 @@ export const IssuesHeader = observer(() => {
         {canUserCreateIssue ? (
           <Button
             onClick={() => {
-              setTrackElement("Project issues page");
+              setTrackElement("Project work items page");
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             }}
             size="sm"

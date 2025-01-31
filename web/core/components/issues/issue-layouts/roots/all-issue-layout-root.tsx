@@ -181,7 +181,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
         title="View does not exist"
         description="The view you are looking for does not exist or you don't have permission to view it."
         primaryButton={{
-          text: "Go to All Issues",
+          text: "Go to All work items",
           onClick: () => router.push(`/${workspaceSlug}/workspace-views/all-issues`),
         }}
       />

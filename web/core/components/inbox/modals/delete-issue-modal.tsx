@@ -42,7 +42,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
         });
       })
       .catch((errors) => {
-        const isPermissionError = errors?.error === "Only admin or creator can delete the issue";
+        const isPermissionError = errors?.error === "Only admin or creator can delete the work item";
         const currentError = isPermissionError
           ? PROJECT_ERROR_MESSAGES.permissionError
           : PROJECT_ERROR_MESSAGES.issueDeleteError;
@@ -65,11 +65,11 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
       // TODO: Need to translate the confirmation message
       content={
         <>
-          Are you sure you want to delete issue{" "}
+          Are you sure you want to delete work item{" "}
           <span className="break-words font-medium text-custom-text-100">
             {projectDetails?.identifier}-{data?.sequence_id}
           </span>
-          {""}? The issue will only be deleted from the intake and this action cannot be undone.
+          {""}? The work item will only be deleted from the intake and this action cannot be undone.
         </>
       }
     />

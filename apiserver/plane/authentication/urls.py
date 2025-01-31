@@ -53,7 +53,6 @@ urlpatterns = [
     path("magic-generate/", MagicGenerateEndpoint.as_view(), name="magic-generate"),
     path("magic-sign-in/", MagicSignInEndpoint.as_view(), name="magic-sign-in"),
     path("magic-sign-up/", MagicSignUpEndpoint.as_view(), name="magic-sign-up"),
-    path("get-csrf-token/", CSRFTokenEndpoint.as_view(), name="get_csrf_token"),
     path(
         "spaces/magic-generate/",
         MagicGenerateSpaceEndpoint.as_view(),

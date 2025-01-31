@@ -30,7 +30,7 @@ export const FilterIssueGrouping: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title={`${isEpic ? "Epic" : "Issue"} Grouping`}
+        title={`${isEpic ? "Epic" : "Work item"} Grouping`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -41,7 +41,7 @@ export const FilterIssueGrouping: React.FC<Props> = observer((props) => {
               key={issueType?.key}
               isChecked={activeIssueType === issueType?.key ? true : false}
               onClick={() => handleUpdate(issueType?.key)}
-              title={`${issueType.title} ${isEpic ? "Epics" : "Issues"}`}
+              title={`${issueType.title} ${isEpic ? "Epics" : "Work items"}`}
               multiple={false}
             />
           ))}

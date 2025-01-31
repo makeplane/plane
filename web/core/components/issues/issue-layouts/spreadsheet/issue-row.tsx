@@ -268,7 +268,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                 <Tooltip
                   tooltipContent={
                     <>
-                      Only issues within the current
+                      Only work items within the current
                       <br />
                       project can be selected.
                     </>

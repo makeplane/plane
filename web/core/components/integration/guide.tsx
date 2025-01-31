@@ -82,8 +82,8 @@ const IntegrationGuide = observer(() => {
               <div className="h-full w-full space-y-1">
                 <div className="text-lg font-medium">Relocation Guide</div>
                 <div className="text-sm">
-                  You can now transfer all the issues that you{"'"}ve created in other tracking
-                  services. This tool will guide you to relocate the issue to Plane.
+                  You can now transfer all the work items that you{"'"}ve created in other tracking
+                  services. This tool will guide you to relocate the work item to Plane.
                 </div>
               </div>
               <a

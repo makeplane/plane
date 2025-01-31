@@ -121,7 +121,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
     aiService
       .createGptTask(workspaceSlug.toString(), {
         prompt: issueName,
-        task: "Generate a proper description for this issue.",
+        task: "Generate a proper description for this work item.",
       })
       .then((res) => {
         if (res.response === "")
@@ -129,7 +129,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
             type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
-              "Issue title isn't informative enough to generate the description. Please try with a different title.",
+              "Work item title isn't informative enough to generate the description. Please try with a different title.",
           });
         else handleAiAssistance(res.response_html);
       })

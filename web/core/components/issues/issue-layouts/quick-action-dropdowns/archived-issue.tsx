@@ -54,7 +54,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
-        message: "Issue link copied to clipboard",
+        message: "Work item link copied to clipboard",
       })
     );
   const handleIssueRestore = async () => {
@@ -64,14 +64,14 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Restore success",
-          message: "Your issue can be found in project issues.",
+          message: "Your work item can be found in project work items.",
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Issue could not be restored. Please try again.",
+          message: "Work item could not be restored. Please try again.",
         });
       });
   };

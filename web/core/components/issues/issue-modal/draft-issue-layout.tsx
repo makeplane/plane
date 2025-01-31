@@ -86,7 +86,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
           message: t("workspace_draft_issues.toast.created.success"),
         });
         captureIssueEvent({
-          eventName: "Draft issue created",
+          eventName: "Draft work item created",
           payload: { ...res, state: "SUCCESS" },
           path: pathname,
         });
@@ -102,7 +102,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
           message: t("workspace_draft_issues.toast.created.error"),
         });
         captureIssueEvent({
-          eventName: "Draft issue created",
+          eventName: "Draft work item created",
           payload: { ...payload, state: "FAILED" },
           path: pathname,
         });

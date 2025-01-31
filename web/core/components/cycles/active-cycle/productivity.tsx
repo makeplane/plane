@@ -68,7 +68,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
                 {estimateType === "points" ? (
                   <span>{`Pending points - ${cycle.backlog_estimate_points + cycle.unstarted_estimate_points + cycle.started_estimate_points}`}</span>
                 ) : (
-                  <span>{`Pending issues - ${cycle.backlog_issues + cycle.unstarted_issues + cycle.started_issues}`}</span>
+                  <span>{`Pending work items - ${cycle.backlog_issues + cycle.unstarted_issues + cycle.started_issues}`}</span>
                 )}
               </div>
 
@@ -89,7 +89,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
                         startDate={cycle.start_date ?? ""}
                         endDate={cycle.end_date ?? ""}
                         totalIssues={cycle.total_issues || 0}
-                        plotTitle={"issues"}
+                        plotTitle={"work items"}
                       />
                     )}
                   </Fragment>

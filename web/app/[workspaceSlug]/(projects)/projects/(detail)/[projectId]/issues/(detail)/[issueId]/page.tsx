@@ -35,7 +35,7 @@ const IssueDetailsPage = observer(() => {
   } = useIssueDetail();
   const { getProjectById } = useProject();
   const { toggleIssueDetailSidebar, issueDetailSidebarCollapsed } = useAppTheme();
-  // fetching issue details
+  // fetching work item details
   const { isLoading, error } = useSWR(
     workspaceSlug && projectId && issueId ? `ISSUE_DETAIL_${workspaceSlug}_${projectId}_${issueId}` : null,
     workspaceSlug && projectId && issueId

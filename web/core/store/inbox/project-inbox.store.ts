@@ -409,7 +409,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       console.error("Error fetching the intake issues", error);
       this.loader = undefined;
       this.error = {
-        message: "Error fetching the intake issues please try again later.",
+        message: "Error fetching the intake work items please try again later.",
         status: "init-error",
       };
       throw error;
@@ -449,7 +449,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
     } catch (error) {
       console.error("Error fetching the intake issues", error);
       this.error = {
-        message: "Error fetching the paginated intake issues please try again later.",
+        message: "Error fetching the paginated intake work items please try again later.",
         status: "pagination-error",
       };
       throw error;

@@ -10,22 +10,22 @@ import UpcomingIssuesLight from "@/public/empty-state/dashboard/light/upcoming-i
 
 export const CREATED_ISSUES_EMPTY_STATES = {
   pending: {
-    title: "Issues created by you that are pending\nwill show up here.",
+    title: "Work items created by you that are pending\nwill show up here.",
     darkImage: UpcomingIssuesDark,
     lightImage: UpcomingIssuesLight,
   },
   upcoming: {
-    title: "Upcoming issues you created\nwill show up here.",
+    title: "Upcoming work items you created\nwill show up here.",
     darkImage: UpcomingIssuesDark,
     lightImage: UpcomingIssuesLight,
   },
   overdue: {
-    title: "Issues created by you that are past their\ndue date will show up here.",
+    title: "Work items created by you that are past their\ndue date will show up here.",
     darkImage: OverdueIssuesDark,
     lightImage: OverdueIssuesLight,
   },
   completed: {
-    title: "Issues created by you that you have\nmarked completed will show up here.",
+    title: "Work items created by you that you have\nmarked completed will show up here.",
     darkImage: CompletedIssuesDark,
     lightImage: CompletedIssuesLight,
   },
@@ -47,7 +47,7 @@ export const CreatedIssuesEmptyState: React.FC<Props> = (props) => {
   return (
     <div className="text-center space-y-6 flex flex-col items-center">
       <div className="h-24 w-24">
-        <Image src={image} className="w-full h-full" alt="Assigned issues" />
+        <Image src={image} className="w-full h-full" alt="Assigned work items" />
       </div>
       <p className="text-sm font-medium text-custom-text-300 whitespace-pre-line">{typeDetails.title}</p>
     </div>

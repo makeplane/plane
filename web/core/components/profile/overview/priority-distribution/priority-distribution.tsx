@@ -16,7 +16,7 @@ export const ProfilePriorityDistribution: React.FC<Props> = (props) => {
 
   return (
     <div className="flex flex-col space-y-2">
-      <h3 className="text-lg font-medium">Issues by priority</h3>
+      <h3 className="text-lg font-medium">Work items by priority</h3>
       {priorityDistribution ? (
         <PriorityDistributionContent priorityDistribution={priorityDistribution} />
       ) : (

@@ -104,7 +104,7 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
           onAssetUpload?.(asset_id);
           return asset_id;
         } catch (error) {
-          console.log("Error in uploading issue asset:", error);
+          console.log("Error in uploading work item asset:", error);
           throw new Error("Asset upload failed. Please try again later.");
         }
       }}

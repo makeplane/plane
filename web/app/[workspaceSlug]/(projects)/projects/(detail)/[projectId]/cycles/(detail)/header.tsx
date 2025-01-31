@@ -7,7 +7,14 @@ import { useParams } from "next/navigation";
 // icons
 import { ArrowRight, PanelRight } from "lucide-react";
 // plane constants
-import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_PAGE , EUserPermissions, EUserPermissionsLevel} from "@plane/constants";
+import {
+  EIssueLayoutTypes,
+  EIssueFilterType,
+  EIssuesStoreType,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
@@ -204,7 +211,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                             <Tooltip
                               isMobile={isMobile}
                               tooltipContent={`There are ${issuesCount} ${
-                                issuesCount > 1 ? "issues" : "issue"
+                                issuesCount > 1 ? "work items" : "work item"
                               } in this cycle`}
                               position="bottom"
                             >
@@ -283,7 +290,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                   <Button
                     className="h-full self-start"
                     onClick={() => {
-                      setTrackElement("Cycle issues page");
+                      setTrackElement("Cycle work items page");
                       toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                     }}
                     size="sm"

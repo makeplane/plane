@@ -264,7 +264,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
                 isDragOverDelete ? "bg-red-500 opacity-70 blur-2xl" : ""
               } transition duration-300`}
             >
-              Drop here to delete the issue.
+              Drop here to delete the work item.
             </div>
           </div>
 

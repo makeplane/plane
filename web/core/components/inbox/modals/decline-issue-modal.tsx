@@ -44,7 +44,7 @@ export const DeclineIssueModal: React.FC<Props> = (props) => {
       // TODO: Need to translate the confirmation message
       content={
         <>
-          Are you sure you want to decline issue{" "}
+          Are you sure you want to decline work item{" "}
           <span className="break-words font-medium text-custom-text-100">
             {projectDetails?.identifier}-{data?.sequence_id}
           </span>

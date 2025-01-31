@@ -177,7 +177,10 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role;
     if (!value || !currentMemberWorkspaceRole) return ROLE;
 
-    const isGuestOROwner = [EUserPermissions.ADMIN, EUserPermissions.GUEST].includes(currentMemberWorkspaceRole);
+    const isGuestOROwner = [EUserPermissions.ADMIN, EUserPermissions.GUEST].includes(
+      currentMemberWorkspaceRole as EUserPermissions
+    );
+
 
     return Object.fromEntries(
       Object.entries(ROLE).filter(([key]) => !isGuestOROwner || [currentMemberWorkspaceRole].includes(parseInt(key)))

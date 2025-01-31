@@ -51,7 +51,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props
           {cycle.total_issues > 0 && (
             <span className="flex gap-1 text-sm text-custom-text-400 font-medium whitespace-nowrap rounded-sm px-3 py-1 ">
               {`${cycle.completed_issues + cycle.cancelled_issues}/${cycle.total_issues - cycle.cancelled_issues} ${
-                cycle.completed_issues + cycle.cancelled_issues > 1 ? "Issues" : "Issue"
+                cycle.completed_issues + cycle.cancelled_issues > 1 ? "Work items" : "Work item"
               } closed`}
             </span>
           )}
@@ -84,7 +84,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props
                       <span className="text-custom-text-300 capitalize font-medium w-16">{group}</span>
                     </div>
                     <span className="text-custom-text-300">{`${groupedIssues[group]} ${
-                      groupedIssues[group] > 1 ? "Issues" : "Issue"
+                      groupedIssues[group] > 1 ? "Work items" : "Work item"
                     }`}</span>
                   </div>
                 </div>
@@ -95,7 +95,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props
             <span className="flex items-center gap-2 text-sm text-custom-text-300">
               <span>
                 {`${cycle.cancelled_issues} cancelled ${
-                  cycle.cancelled_issues > 1 ? "issues are" : "issue is"
+                  cycle.cancelled_issues > 1 ? "work items are" : "work item is"
                 } excluded from this report.`}{" "}
               </span>
             </span>

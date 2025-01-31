@@ -258,7 +258,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
           }}
         >
           <TransferIcon className="fill-custom-primary-200 w-4" />
-          <span>Transfer {cycleDetails.pending_issues} issues</span>
+          <span>Transfer {cycleDetails.pending_issues} work items</span>
         </div>
       )}
 

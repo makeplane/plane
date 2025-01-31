@@ -116,7 +116,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: "Error!",
-                message: "Due date cannot be before the start date of the issue.",
+                message: "Due date cannot be before the start date of the work item.",
               });
               return;
             }

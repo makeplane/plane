@@ -675,7 +675,7 @@
     },
     "add": {
       "press_enter": "Press 'Enter' to add another work item",
-      "label": "Add Work item",
+      "label": "Add work item",
       "cycle": {
         "failed": "Work item could not be added to the cycle. Please try again.",
         "success": "{count, plural, one {Work item} other {Work items}} added to the cycle successfully.",
@@ -1986,7 +1986,7 @@
     "sales_or_business_development": "Sales / Business Development",
     "support_or_operations": "Support / Operations",
     "student_or_professor": "Student / Professor",
-    "human_or_resources": "Human / Resources",
+    "human_resources": "Human / Resources",
     "other": "Other"
   },
 

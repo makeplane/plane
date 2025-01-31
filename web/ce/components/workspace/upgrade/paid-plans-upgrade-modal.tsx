@@ -22,7 +22,7 @@ const ONE_PLAN_FEATURES = [
   "OIDC + SAML for SSO",
   "Active Cycles",
   "Real-time collab + public views and page",
-  "Link pages in issues and vice-versa",
+  "Link pages in work items and vice-versa",
   "Time-tracking + limited bulk ops",
   "Docker, Kubernetes and more",
 ];

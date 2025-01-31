@@ -11,7 +11,7 @@ export const ISSUE_RELATION_OPTIONS: Record<TIssueRelationTypes, TRelationObject
     i18n_label: "issue.relation.relates_to",
     className: "bg-custom-background-80 text-custom-text-200",
     icon: (size) => <RelatedIcon height={size} width={size} className="text-custom-text-200" />,
-    placeholder: "Add related issues",
+    placeholder: "Add related work items",
   },
   duplicate: {
     key: "duplicate",
