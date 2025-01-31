@@ -1,4 +1,5 @@
 import { FC, ReactNode } from "react";
+import { observer } from "mobx-react";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspaceMemberInvitation } from "@plane/types";
@@ -52,7 +53,7 @@ const Titles = {
 
 const workSpaceService = new WorkspaceService();
 
-export const AuthHeader: FC<TAuthHeader> = (props) => {
+export const AuthHeader: FC<TAuthHeader> = observer((props) => {
   const { workspaceSlug, invitationId, invitationEmail, authMode, currentAuthStep, children } = props;
   // plane imports
   const { t } = useTranslation();
@@ -109,4 +110,4 @@ export const AuthHeader: FC<TAuthHeader> = (props) => {
       {children}
     </>
   );
-};
+});

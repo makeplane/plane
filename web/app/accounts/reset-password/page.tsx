@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -46,7 +47,7 @@ const defaultValues: TResetPasswordFormValues = {
 // services
 const authService = new AuthService();
 
-export default function ResetPasswordPage() {
+const ResetPasswordPage = observer(() => {
   // search params
   const searchParams = useSearchParams();
   const uidb64 = searchParams.get("uidb64");
@@ -236,4 +237,6 @@ export default function ResetPasswordPage() {
       </div>
     </AuthenticationWrapper>
   );
-}
+});
+
+export default ResetPasswordPage;
