@@ -1,9 +1,11 @@
 "use client";
 
-import { Component, FC, ReactElement, useState } from "react";
+import { FC, ReactElement, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 // plane web components
+import { EConnectionType } from "@plane/etl/gitlab";
+import { useTranslation } from "@plane/i18n";
 import { Button, ModalCore } from "@plane/ui";
 import { Logo } from "@/components/common";
 import { FormEdit } from "@/plane-web/components/integrations/gitlab";
@@ -13,7 +15,6 @@ import { useGitlabIntegration } from "@/plane-web/hooks/store";
 import { TGitlabEntityConnection } from "@/plane-web/types/integrations/gitlab";
 // public images
 import GitlabLogo from "@/public/services/gitlab.svg";
-import { EConnectionType } from "@plane/etl/gitlab";
 
 type TEntityConnectionItem = {
   entityConnection: TGitlabEntityConnection;
@@ -22,6 +23,7 @@ type TEntityConnectionItem = {
 export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) => {
   // props
   const { entityConnection } = props;
+  const { t } = useTranslation();
 
   // hooks
   const {
@@ -54,38 +56,37 @@ export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) 
   };
 
   const getEntityName = (entityconnection: TGitlabEntityConnection): string => {
-    if (entityconnection.connectionType === EConnectionType.PLANE_PROJECT) {
-      return getProjectById(entityconnection.projectId)?.name || "";
-    } else if (entityconnection.connectionType === EConnectionType.ENTITY) {
-      return entityconnection.entitySlug;
+    if (entityconnection.type === EConnectionType.PLANE_PROJECT) {
+      return getProjectById(entityconnection.project_id!)?.name || "";
+    } else if (entityconnection.type === EConnectionType.ENTITY) {
+      return entityconnection.entity_slug!;
     }
     return "";
-  }
+  };
 
   const getEntityLogo = (entityconnection: TGitlabEntityConnection): ReactElement => {
-    if (entityconnection.connectionType === EConnectionType.PLANE_PROJECT) {
-      const project = getProjectById(entityconnection.projectId);
+    if (entityconnection.type === EConnectionType.PLANE_PROJECT) {
+      const project = getProjectById(entityconnection.project_id!);
       if (!project) return <></>;
       return <Logo logo={project.logo_props} size={14} />;
-    } else if (entityconnection.connectionType === EConnectionType.ENTITY) {
+    } else if (entityconnection.type === EConnectionType.ENTITY) {
       return <Image src={GitlabLogo} layout="fill" objectFit="contain" alt="Gitlab Logo" />;
     }
     return <></>;
   };
 
   return (
-    
     <>
       {/* entity delete */}
       <ModalCore isOpen={deleteModal} handleClose={handleDeleteClose}>
         <div className="space-y-5 p-5">
           <div className="space-y-2">
-            <div className="text-xl font-medium text-custom-text-200">Remove Connection</div>
-            <div className="text-sm text-custom-text-300">Are you sure you want to remove this connection?</div>
+            <div className="text-xl font-medium text-custom-text-200">{t("gitlab_integration.remove_connection")}</div>
+            <div className="text-sm text-custom-text-300">{t("gitlab_integration.remove_connection_confirmation")}</div>
           </div>
           <div className="relative flex justify-end items-center gap-2">
             <Button variant="neutral-primary" size="sm" onClick={handleDeleteClose} disabled={deleteLoader}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               variant="primary"
@@ -94,7 +95,7 @@ export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) 
               loading={deleteLoader}
               disabled={deleteLoader}
             >
-              {deleteLoader ? "Processing" : "Continue"}
+              {deleteLoader ? t("common.processing") : t("common.continue")}
             </Button>
           </div>
         </div>
@@ -108,18 +109,16 @@ export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) 
           {getEntityLogo(entityConnection)}
         </div>
         <div className="w-full">
-          <div className="text-sm font-medium">
-            {getEntityName(entityConnection)}
-          </div>
+          <div className="text-sm font-medium">{getEntityName(entityConnection)}</div>
         </div>
         <div className="relative flex items-center gap-2">
-          {entityConnection.connectionType === EConnectionType.PLANE_PROJECT && (
+          {entityConnection.type === EConnectionType.PLANE_PROJECT && (
             <Button variant="neutral-primary" size="sm" onClick={handleEditOpen}>
-              Edit
+              {t("common.edit")}
             </Button>
           )}
           <Button variant="link-danger" size="sm" onClick={handleDeleteOpen}>
-            Remove
+            {t("remove")}
           </Button>
         </div>
       </div>

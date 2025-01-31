@@ -1,6 +1,3 @@
-import { Issue, IssueLabel } from "@linear/sdk";
-import { ExCycle, ExIssueComment, ExIssueLabel, ExModule, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
-import { TJobWithConfig } from "@plane/etl/core";
 import {
   transformComment,
   transformCycle,
@@ -9,7 +6,10 @@ import {
   LinearConfig,
   LinearEntity,
 } from "@plane/etl/linear";
-import { getRandomColor } from "../../helpers/generic-helpers";
+import { ExCycle, ExIssueComment, ExIssueLabel, ExModule, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
+import { TImportJob } from "@plane/types";
+import { getRandomColor } from "@/helpers/generic-helpers";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 
 /* ------------------ Transformers ----------------------
 This file contains transformers for Linear entities, responsible
@@ -20,11 +20,11 @@ transformation results.
 --------------------- Transformers ---------------------- */
 
 export const getTransformedIssues = async (
-  job: TJobWithConfig<LinearConfig>,
+  job: TImportJob<LinearConfig>,
   entities: LinearEntity
 ): Promise<Partial<PlaneIssue>[]> => {
-  const teamUrl = job.config?.meta.teamUrl || "";
-  const stateMap = job.config?.meta.state || [];
+  const teamUrl = job.config?.teamUrl || "";
+  const stateMap = job.config?.state || [];
   // TODO: fix types
   const issuePromises = entities.issues.map(async (issue: any) => {
     const transformedIssue = await transformIssue(issue, teamUrl, entities.users, entities.labels, stateMap);
@@ -42,7 +42,7 @@ export const getTransformedIssues = async (
 };
 
 export const getTransformedLabels = (
-  _job: TJobWithConfig<LinearConfig>,
+  _job: TImportJob<LinearConfig>,
   entities: LinearEntity
 ): Partial<ExIssueLabel>[] =>
   // TODO: fix types
@@ -54,18 +54,18 @@ export const getTransformedLabels = (
   );
 
 export const getTransformedComments = (
-  _job: TJobWithConfig<LinearConfig>,
+  _job: TImportJob<LinearConfig>,
   entities: LinearEntity
 ): Partial<ExIssueComment>[] => {
   const commentPromises = entities.issue_comments.map((comment) => transformComment(comment, entities.users));
   return commentPromises;
 };
 
-export const getTransformedUsers = (_job: TJobWithConfig<LinearConfig>, entities: LinearEntity): Partial<PlaneUser>[] =>
+export const getTransformedUsers = (_job: TImportJob<LinearConfig>, entities: LinearEntity): Partial<PlaneUser>[] =>
   entities.users.map(transformUser);
 
 export const getTransformedCycles = (
-  _job: TJobWithConfig<LinearConfig>,
+  _job: TImportJob<LinearConfig>,
   entities: LinearEntity
 ): Partial<ExCycle>[] => {
   const cyclePromises = entities.cycles.map(transformCycle);
@@ -80,7 +80,7 @@ export const getTransformedCycles = (
 //     const issues = await team.issues()
 //     return {
 //       external_id: team.id,
-//       external_source: "LINEAR",
+//       external_source: E_IMPORTER_KEYS.LINEAR,
 //       name: team.name,
 //       description: team.description ?? "",
 //       issues: issues.nodes.map((issue) => issue.id)
@@ -92,7 +92,7 @@ export const getTransformedCycles = (
 
 // Transform Projects to Modules
 export const getTransformedProjects = (
-  job: TJobWithConfig<LinearConfig>,
+  job: TImportJob<LinearConfig>,
   entities: LinearEntity
 ): Partial<ExModule>[] => {
   const modules = entities.projects.map((project): Partial<ExModule> => {
@@ -101,7 +101,7 @@ export const getTransformedProjects = (
 
     return {
       external_id: project.project.id,
-      external_source: "LINEAR",
+      external_source: E_IMPORTER_KEYS.LINEAR,
       name: project.project.name,
       description: project.project.description ?? "",
       issues: transformedIssues,

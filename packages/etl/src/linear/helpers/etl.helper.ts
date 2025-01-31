@@ -1,10 +1,11 @@
+import { E_IMPORTER_KEYS } from "@/core";
 import { IPriorityConfig, IStateConfig } from "@/linear/types";
 import { ExIssueAttachment, ExState } from "@plane/sdk";
 
 export const getTargetState = (stateMap: IStateConfig[], sourceState: string): ExState | undefined => {
   const targetState = stateMap.find((state: IStateConfig) => {
     if (state.source_state.id === sourceState) {
-      state.target_state.external_source = "LINEAR";
+      state.target_state.external_source = E_IMPORTER_KEYS.LINEAR;
       state.target_state.external_id = sourceState;
       return state;
     }
@@ -21,7 +22,7 @@ export const getTargetAttachments = (attachments: string[]): Partial<ExIssueAtta
     .map(
       (attachment: string): Partial<ExIssueAttachment> => ({
         external_id: attachment,
-        external_source: "LINEAR",
+        external_source: E_IMPORTER_KEYS.LINEAR,
         attributes: {
           name: "Attachment", // Linear SDK doesn't provide attachment details, so we use a placeholder
           size: 0,

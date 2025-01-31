@@ -7,6 +7,7 @@ import { ImportersListItem } from "@/plane-web/components/importers";
 import { TFeatureFlags } from "@/plane-web/types/feature-flag";
 // logos
 import AsanaLogo from "@/public/services/asana.svg";
+import CSVLogo from "@/public/services/csv.svg";
 import JiraLogo from "@/public/services/jira.svg";
 import LinearLogo from "@/public/services/linear.svg";
 
@@ -14,7 +15,7 @@ export type ImporterProps = {
   flag: TFeatureFlags;
   key: string;
   title: string;
-  description: string;
+  i18n_description: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   logo: any;
   beta: boolean;
@@ -25,7 +26,7 @@ export const IMPORTERS_LIST: ImporterProps[] = [
     flag: E_FEATURE_FLAGS.JIRA_IMPORTER,
     key: "jira",
     title: "Jira",
-    description: "Import your Jira data into Plane projects.",
+    i18n_description: "jira_importer.jira_importer_description",
     logo: JiraLogo,
     beta: true,
   },
@@ -33,7 +34,7 @@ export const IMPORTERS_LIST: ImporterProps[] = [
     flag: E_FEATURE_FLAGS.JIRA_SERVER_IMPORTER,
     key: "jira-server",
     title: "Jira Server",
-    description: "Import your Jira server data into Plane projects.",
+    i18n_description: "jira_server_importer.jira_server_importer_description",
     logo: JiraLogo,
     beta: true,
   },
@@ -41,15 +42,23 @@ export const IMPORTERS_LIST: ImporterProps[] = [
     flag: E_FEATURE_FLAGS.LINEAR_IMPORTER,
     key: "linear",
     title: "Linear",
-    description: "Import your Linear data into Plane projects.",
+    i18n_description: "linear_importer.linear_importer_description",
     logo: LinearLogo,
+    beta: true,
+  },
+  {
+    flag: E_FEATURE_FLAGS.FLATFILE_IMPORTER,
+    key: "csv",
+    title: "CSV Importers",
+    i18n_description: "flatfile_importer.flatfile_importer_description",
+    logo: CSVLogo,
     beta: true,
   },
   {
     flag: E_FEATURE_FLAGS.ASANA_IMPORTER,
     key: "asana",
     title: "Asana",
-    description: "Import your Asana data into Plane projects.",
+    i18n_description: "asana_importer.asana_importer_description",
     logo: AsanaLogo,
     beta: true,
   },

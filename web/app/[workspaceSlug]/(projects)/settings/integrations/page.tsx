@@ -3,6 +3,9 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
+import useSWR from "swr";
+import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { PageHead } from "@/components/core";
 import { IntegrationsEmptyState } from "@/components/integration";
 // hooks
@@ -13,6 +16,9 @@ import { IntegrationsList } from "@/plane-web/components/integrations";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useFlag } from "@/plane-web/hooks/store";
+import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
+
+const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
 
 const WorkspaceIntegrationsPage = observer(() => {
   // router
@@ -21,17 +27,38 @@ const WorkspaceIntegrationsPage = observer(() => {
   const { data: currentUserProfile } = useUserProfile();
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
+  const { t } = useTranslation();
   // derived values
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Integrations` : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - ${t("integrations.integrations")}` : undefined;
   const integrationsEnabled = useFlag(workspaceSlug?.toString(), "SILO_INTEGRATIONS");
+
+  // Fetch Supported Integrations
+  const { data: supportedIntegrations, isLoading: supportedIntegrationsLoading } = useSWR(
+    `SILO_SUPPORTED_INTEGRATIONS`,
+    () => siloAppService.getSupportedIntegrations(),
+    {
+      revalidateOnFocus: false,
+    }
+  );
+
+  if (supportedIntegrationsLoading) {
+    return (
+      <>
+        <PageHead title={pageTitle} />
+        <div className="mt-10 flex h-full w-full justify-center">
+          <p className="text-sm text-custom-text-300">{t("integrations.loading")}</p>
+        </div>
+      </>
+    );
+  }
 
   if (!isAdmin)
     return (
       <>
         <PageHead title={pageTitle} />
         <div className="mt-10 flex h-full w-full justify-center">
-          <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
+          <p className="text-sm text-custom-text-300">{t("integrations.unauthorized")}</p>
         </div>
       </>
     );
@@ -49,9 +76,14 @@ const WorkspaceIntegrationsPage = observer(() => {
       <PageHead title={pageTitle} />
       <section className="w-full overflow-y-auto">
         <div className="flex items-center border-b border-custom-border-100 pb-3.5">
-          <h3 className="text-xl font-medium">Integrations</h3>
+          <h3 className="text-xl font-medium">{t("integrations.integrations")}</h3>
         </div>
-        {workspaceSlug && <IntegrationsList workspaceSlug={workspaceSlug.toString()} />}
+        {workspaceSlug && (
+          <IntegrationsList
+            workspaceSlug={workspaceSlug.toString()}
+            supportedIntegrations={supportedIntegrations ?? []}
+          />
+        )}
       </section>
     </>
   );

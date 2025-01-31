@@ -14,6 +14,8 @@ import { useGitlabIntegration } from "@/plane-web/hooks/store";
 import { TProjectMap } from "@/plane-web/types/integrations";
 // public images
 import GitlabLogo from "@/public/services/gitlab.svg";
+import { useTranslation } from "@plane/i18n";
+import { EConnectionType } from "@plane/etl/gitlab";
 
 type TEntityForm = {
   value: TProjectMap;
@@ -24,7 +26,19 @@ export const EntityForm: FC<TEntityForm> = observer((props) => {
   // props
   const { value, handleChange } = props;
   // hooks
-  const { data: { gitlabEntityIds, gitlabEntityById } } = useGitlabIntegration();
+  const { data: { gitlabEntityIds, gitlabEntityById }, entityConnection: { entityConnectionIds, entityConnectionById } } = useGitlabIntegration();
+  const { t } = useTranslation();
+
+  // existing connections
+  const entityConnections = entityConnectionIds.map((id) => {
+    const entityConnection = entityConnectionById(id);
+    if (!entityConnection || entityConnection.type !== EConnectionType.ENTITY) {
+      return;
+    }
+    return entityConnection;
+  });
+
+  const connectedEntities = entityConnections.map((entityConnection) => entityConnection?.entity_id);
 
   // derived values
   const entities = (gitlabEntityIds || [])
@@ -32,12 +46,12 @@ export const EntityForm: FC<TEntityForm> = observer((props) => {
       const entity = gitlabEntityById(id);
       return entity || undefined;
     })
-    .filter((entity) => entity !== undefined && entity !== null);
+    .filter((entity) => entity !== undefined && entity !== null && !connectedEntities.includes(entity.id?.toString()));
 
   return (
     <div className="relative space-y-4 text-sm">
       <div className="space-y-1">
-        <div className="text-custom-text-200">Gitlab Project</div>
+        <div className="text-custom-text-200">Gitlab {t("common.project")}</div>
         <Dropdown
           dropdownOptions={(entities || [])?.map((entity) => ({
             key: entity?.id.toString() || "",
@@ -46,7 +60,7 @@ export const EntityForm: FC<TEntityForm> = observer((props) => {
             data: entity,
           }))}
           value={value?.entityId || undefined}
-          placeHolder="Choose Entity..."
+          placeHolder={t("gitlab_integration.choose_entity")}
           onChange={(value: string | undefined) => handleChange("entityId", value || undefined)}
           iconExtractor={() => (
             <div className="w-4 h-4 flex-shrink-0 overflow-hidden relative flex justify-center items-center">

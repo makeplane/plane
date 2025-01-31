@@ -6,14 +6,20 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane web components components
-import { E_FEATURE_FLAGS } from "@plane/constants";
+import { Cloud } from "lucide-react";
+import { E_FEATURE_FLAGS, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { useTranslation } from "@plane/i18n";
 import { UserAuthentication, IntegrationRoot } from "@/plane-web/components/integrations/github";
 // plane web hooks
-import { useFlag, useGithubIntegration } from "@/plane-web/hooks/store";
+import { useFlag, useGithubIntegration, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // public images
+import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
 import GithubDarkLogo from "@/public/services/github-dark.svg";
 import GithubLightLogo from "@/public/services/github-light.svg";
+
+const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
 
 const GitHubIntegration: FC = observer(() => {
   // hooks
@@ -25,12 +31,27 @@ const GitHubIntegration: FC = observer(() => {
     auth: { workspaceConnectionIds, workspaceConnectionById },
   } = useGithubIntegration();
 
+  const { t } = useTranslation();
+
   // derived values
   const workspaceSlug = workspace?.slug || undefined;
   const isFeatureEnabled = useFlag(workspaceSlug?.toString() || "", E_FEATURE_FLAGS.GITHUB_INTEGRATION) || true;
   const workspaceConnectionId = workspaceConnectionIds[0] || undefined;
   const organization = workspaceConnectionId ? workspaceConnectionById(workspaceConnectionId) : undefined;
   const githubLogo = resolvedTheme === "dark" ? GithubLightLogo : GithubDarkLogo;
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+
+  // derived values
+  const isSelfManaged = subscriptionDetail?.is_self_managed;
+
+  // Fetch Supported Integrations
+  const {
+    data: supportedIntegrations,
+    isLoading: supportedIntegrationsLoading,
+    error: supportedIntegrationsError,
+  } = useSWR(`SILO_SUPPORTED_INTEGRATIONS`, () => siloAppService.getSupportedIntegrations(), {
+    revalidateOnFocus: false,
+  });
 
   // fetching external api token
   const { isLoading: externalApiTokenIsLoading } = useSWR(
@@ -41,13 +62,34 @@ const GitHubIntegration: FC = observer(() => {
 
   if (!isFeatureEnabled) return null;
 
-  if (!externalApiToken && externalApiTokenIsLoading)
-    return <div className="text-custom-text-200 relative flex justify-center items-center">Loading...</div>;
+  if ((!externalApiToken && externalApiTokenIsLoading) || (!supportedIntegrations && supportedIntegrationsLoading))
+    return (
+      <div className="text-custom-text-200 relative flex justify-center items-center">{t("integrations.loading")}</div>
+    );
 
   if (!externalApiToken)
     return (
       <div className="text-custom-text-200 relative flex justify-center items-center">
-        Not able to access the external api token. Please try again later.
+        {t("integrations.external_api_unreachable")}
+      </div>
+    );
+
+  if (supportedIntegrationsError)
+    return (
+      <div className="text-custom-text-200 relative flex justify-center items-center">
+        {t("integrations.error_fetching_supported_integrations")}
+      </div>
+    );
+
+  if (supportedIntegrations && !supportedIntegrations.includes(E_INTEGRATION_KEYS.GITHUB))
+    return (
+      <div className={"flex h-full flex-col items-center justify-center"}>
+        <Cloud size={96} />
+        <div className="text-custom-text-200 text-center text-md relative flex justify-center items-center">
+          {isSelfManaged
+            ? t("integrations.not_configured_message_admin", { name: "GitHub" })
+            : t("integrations.not_configured_message_support", { name: "GitHub" })}
+        </div>
       </div>
     );
 
@@ -60,9 +102,7 @@ const GitHubIntegration: FC = observer(() => {
         </div>
         <div>
           <div className="text-lg font-medium">GitHub</div>
-          <div className="text-sm text-custom-text-200">
-            Automate your pull request and commit workflows and keep issues synced both ways
-          </div>
+          <div className="text-sm text-custom-text-200">{t("github_integration.description")}</div>
         </div>
       </div>
 

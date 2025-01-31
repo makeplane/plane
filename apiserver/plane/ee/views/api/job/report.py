@@ -3,18 +3,14 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.ee.views.base import BaseAPIView
+from plane.ee.views.api import BaseServiceAPIView
 from plane.ee.models import ImportReport
 from plane.ee.serializers import ImportReportAPISerializer
-from plane.payment.flags.flag import FeatureFlag
-from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.app.permissions.project import ProjectBasePermission
 
-class ImportReportAPIView(BaseAPIView):
-    permission_classes = [ProjectBasePermission]
-    def get(self, request, slug, project_id, pk = None):     
+class ImportReportAPIView(BaseServiceAPIView):
+    def get(self, request, pk = None):
         if not pk:
-            import_reports = ImportReport.objects.filter(**request.query_params).order_by("-created_at")
+            import_reports = ImportReport.objects.filter(**request.query_params.dict()).order_by("-created_at")
             serializer = ImportReportAPISerializer(import_reports, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         import_report = ImportReport.objects.filter(pk=pk).first()
@@ -22,7 +18,7 @@ class ImportReportAPIView(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-    def patch(self, request, slug, project_id, pk):
+    def patch(self, request, pk):
         import_report = ImportReport.objects.filter(pk=pk).first()
 
         serializer = ImportReportAPISerializer(
@@ -30,7 +26,7 @@ class ImportReportAPIView(BaseAPIView):
             data=request.data,
             partial=True
         )
-        
+
         if serializer.is_valid():
             updated_report = serializer.save()
             return Response(

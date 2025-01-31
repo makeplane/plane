@@ -59,8 +59,8 @@ export const FormEdit: FC<TFormEdit> = observer((props) => {
       setIsSubmitting(true);
 
       const payload: Partial<TGithubEntityConnection> = {
-        entityId: projectMap.entityId,
-        projectId: projectMap.projectId,
+        entity_id: projectMap.entityId,
+        project_id: projectMap.projectId,
         config: {
           states: { mergeRequestEventMapping: stateMap },
         },
@@ -79,7 +79,7 @@ export const FormEdit: FC<TFormEdit> = observer((props) => {
     const updateEntityConnection = async (workspaceSlug: string, projectId: string) => {
       await fetchStates(workspaceSlug, projectId);
       setProjectMap({
-        entityId: data.entityId,
+        entityId: data.entity_id!,
         projectId: projectId,
       });
 
@@ -95,8 +95,8 @@ export const FormEdit: FC<TFormEdit> = observer((props) => {
         [E_STATE_MAP_KEYS.MR_CLOSED]: data.config?.states?.mergeRequestEventMapping?.[E_STATE_MAP_KEYS.MR_CLOSED],
       });
     };
-    if (workspaceSlug && data.projectId) {
-      updateEntityConnection(workspaceSlug, data.projectId);
+    if (workspaceSlug && data.project_id) {
+      updateEntityConnection(workspaceSlug, data.project_id);
     }
   }, [workspaceSlug, data, fetchStates]);
 

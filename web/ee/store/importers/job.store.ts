@@ -3,7 +3,8 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { JobService, TImporterKeys, TJob, TJobConfigResponse, TJobWithConfig } from "@plane/etl/core";
+import { JobService, TImporterKeys, TJobConfigResponse } from "@plane/etl/core";
+import { TImportJob } from "@plane/types";
 
 export type TJobLoader = "fetch" | "re-fetch" | "fetch_by_id" | "create" | "start" | "create_config" | undefined;
 
@@ -13,17 +14,17 @@ export interface IImporterJobStore<T> {
   error: object;
   workspaceId: string | undefined; // required for service configuration
   externalApiToken: string | undefined; // required for service configuration
-  jobs: Record<string, Record<string, TJobWithConfig<T>>>; // workspaceId -> jobId -> TJobWithConfig<T>
+  jobs: Record<string, Record<string, TImportJob<T>>>; // workspaceId -> jobId -> TImportJob<T>
   // computed
   jobIds: string[] | undefined;
   // computed functions
-  jobById: (id: string) => TJobWithConfig<T> | undefined;
+  jobById: (id: string) => TImportJob<T> | undefined;
   // helper actions
   setDefaultServiceConfig: (workspaceId: string | undefined, externalApiToken: string | undefined) => void;
   // actions
-  fetchJobs: (loader?: TJobLoader) => Promise<TJobWithConfig<T>[] | undefined>;
-  getJobById: (id: string) => Promise<TJobWithConfig<T> | undefined>;
-  createJob: (projectId: string, jobPayload: Partial<TJob>) => Promise<TJobConfigResponse | undefined>;
+  fetchJobs: (loader?: TJobLoader) => Promise<TImportJob<T>[] | undefined>;
+  getJobById: (id: string) => Promise<TImportJob<T> | undefined>;
+  createJob: (projectId: string, jobPayload: Partial<TImportJob<T>>) => Promise<TImportJob<T> | undefined>;
   startJob: (jobId: string) => Promise<void>;
   cancelJob: (jobId: string) => Promise<void>;
   createJobConfig: (configPayload: object) => Promise<TJobConfigResponse | undefined>;
@@ -35,7 +36,7 @@ export class ImporterJobStore<T extends object> implements IImporterJobStore<T> 
   error: object = {};
   workspaceId: string | undefined = undefined;
   externalApiToken: string | undefined = undefined;
-  jobs: Record<string, Record<string, TJobWithConfig<T>>> = {};
+  jobs: Record<string, Record<string, TImportJob<T>>> = {};
   // service
   service: JobService<T> | undefined = undefined;
 
@@ -72,10 +73,10 @@ export class ImporterJobStore<T extends object> implements IImporterJobStore<T> 
   /**
    * @description get a job by its ID
    * @param { string } id
-   * @returns { TJobWithConfig<T> | undefined }
+   * @returns { TImportJob<T> | undefined }
    */
   jobById = computedFn(
-    (id: string): TJobWithConfig<T> | undefined => (this.workspaceId && this.jobs[this.workspaceId][id]) || undefined
+    (id: string): TImportJob<T> | undefined => (this.workspaceId && this.jobs[this.workspaceId][id]) || undefined
   );
 
   // helper actions
@@ -96,9 +97,9 @@ export class ImporterJobStore<T extends object> implements IImporterJobStore<T> 
   // actions
   /**
    * @description Fetches all jobs
-   * @returns { Promise<TJobWithConfig<T>[]> | undefined }
+   * @returns { Promise<TImportJob<T>[]> | undefined }
    */
-  fetchJobs = async (loader: TJobLoader = "fetch"): Promise<TJobWithConfig<T>[] | undefined> => {
+  fetchJobs = async (loader: TJobLoader = "fetch"): Promise<TImportJob<T>[] | undefined> => {
     if (!this.workspaceId || !this.externalApiToken || !this.service) return undefined;
     try {
       if (loader === "fetch" && this.jobIds === undefined) {
@@ -107,7 +108,7 @@ export class ImporterJobStore<T extends object> implements IImporterJobStore<T> 
       if (loader === "re-fetch") {
         this.loader = loader;
       }
-      const jobs = await this.service.list(this.source);
+      const jobs = await this.service.list(this.workspaceId, this.source);
       if (jobs) {
         runInAction(() => {
           jobs.forEach((job) => {
@@ -131,9 +132,9 @@ export class ImporterJobStore<T extends object> implements IImporterJobStore<T> 
   /**
    * @description Fetches a job by its ID
    * @param { string } id
-   * @returns { Promise<TJobWithConfig<T>> | undefined }
+   * @returns { Promise<TImportJob<T>> | undefined }
    */
-  getJobById = async (id: string): Promise<TJobWithConfig<T> | undefined> => {
+  getJobById = async (id: string): Promise<TImportJob<T> | undefined> => {
     if (!this.workspaceId || !this.externalApiToken || !this.service) return undefined;
 
     try {
@@ -158,10 +159,10 @@ export class ImporterJobStore<T extends object> implements IImporterJobStore<T> 
   /**
    * @description Creates a new job
    * @param { string } projectId
-   * @param { Partial<TJob> } jobPayload
-   * @returns { Promise<TJobConfigResponse> | undefined }
+   * @param { Partial<TImportJob> } jobPayload
+   * @returns { Promise<TImportJob<T> | undefined }
    */
-  createJob = async (projectId: string, jobPayload: Partial<TJob>): Promise<TJobConfigResponse | undefined> => {
+  createJob = async (projectId: string, jobPayload: Partial<TImportJob<T>>): Promise<TImportJob<T> | undefined> => {
     if (!this.workspaceId || !this.externalApiToken || !this.service) return undefined;
 
     try {
@@ -169,8 +170,8 @@ export class ImporterJobStore<T extends object> implements IImporterJobStore<T> 
       const job = await this.service.create(this.workspaceId, projectId, jobPayload);
       if (job) {
         runInAction(() => {
-          if (job.id) {
-            set(this.jobs, [this, this.workspaceId, job.id], job);
+          if (job.id && this.workspaceId) {
+            set(this.jobs, [this.workspaceId, job.id], job);
           }
         });
       }

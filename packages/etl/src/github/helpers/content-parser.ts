@@ -27,12 +27,11 @@ interface ContentParserOptions {
 export class ContentParser {
   private static readonly MENTION_PATTERN = /@([a-zA-Z0-9-]+)/g;
   private static readonly ISSUE_NUMBER_PATTERN = /#(\d+)/g;
-  private static readonly IMAGE_COMPONENT_REGEX = /<image-component[^>]*assetId=["']([^"']+)["'][^>]*>/g;
   private static readonly MARKDOWN_IMAGE_PATTERN = /\!\[(.*?)\]\((.*?)\)/gim;
 
   private static readonly turndownService = new TurndownService({
     headingStyle: "atx",
-    codeBlockStyle: "fenced"
+    codeBlockStyle: "fenced",
   });
 
   /**
@@ -45,7 +44,6 @@ export class ContentParser {
     return this.turndownService.turndown(standardHtml);
   }
 
-
   /**
    * Extracts image information from HTML content
    * @returns Map of alt text to image URL
@@ -54,10 +52,10 @@ export class ContentParser {
     const imageMap = new Map<string, string>();
     const root = parse(html);
 
-    const images = root.querySelectorAll('img');
+    const images = root.querySelectorAll("img");
     for (const img of images) {
-      const alt = img.getAttribute('alt') || '';
-      const src = img.getAttribute('src');
+      const alt = img.getAttribute("alt") || "";
+      const src = img.getAttribute("src");
       if (src) {
         imageMap.set(alt, src);
       }
@@ -78,7 +76,7 @@ export class ContentParser {
     try {
       // First try to parse as HTML to check if it's valid HTML
       const root = parse(content);
-      const isHTML = root.childNodes.some(node => node.nodeType === 1); // Has HTML elements
+      const isHTML = root.childNodes.some((node) => node.nodeType === 1); // Has HTML elements
 
       // If the content is not HTML or has markdown-style images, treat it as markdown
       const hasMarkdownImages = this.MARKDOWN_IMAGE_PATTERN.test(content);
@@ -98,6 +96,7 @@ export class ContentParser {
 
       return html;
     } catch (error) {
+      console.error("Error parsing content", error);
       // If HTML parsing fails, treat as markdown
       const html = await marked(content, {
         async: true,
@@ -127,12 +126,7 @@ export class ContentParser {
 
     // Handle mentions if user mapping is provided
     if (options?.workspaceSlug && options?.userMap && options?.planeUsers) {
-      html = this.replaceMentions(
-        html,
-        options.workspaceSlug,
-        options.userMap,
-        options.planeUsers
-      );
+      html = this.replaceMentions(html, options.workspaceSlug, options.userMap, options.planeUsers);
     }
 
     return html;
@@ -169,7 +163,7 @@ export class ContentParser {
     if (!options.planeClient || !options.workspaceSlug || !options.githubService) return null;
 
     // Extract filename from URL or use default text
-    const fileName = url.split('/').pop()?.split('?')[0] || 'View attached image';
+    const fileName = url.split("/").pop()?.split("?")[0] || "View attached image";
     const imageText = fileName;
 
     try {
@@ -181,23 +175,27 @@ export class ContentParser {
         options.workspaceSlug,
         // @ts-ignore
         blob,
-        'image',
+        "image",
         blob.size,
         {
           external_source: "github",
-          project_id: options.projectId
+          project_id: options.projectId,
         }
       );
 
       return assetId;
     } catch (error) {
       // If any error occurs during download or upload, return markdown link
-      return `![${imageText}](${url})`;
+      return `${url}`;
     }
   }
 
-  private static async processMarkdownImages(text: string, imagePrefix: string, imageMap: Map<string, string>, options: ContentParserOptions): Promise<string> {
-
+  private static async processMarkdownImages(
+    text: string,
+    imagePrefix: string,
+    imageMap: Map<string, string>,
+    options: ContentParserOptions
+  ): Promise<string> {
     // Parse the html recieved and get the markdown images with regex
     const _ = this.MARKDOWN_IMAGE_PATTERN.exec(text);
     const matches = Array.from(text.matchAll(this.MARKDOWN_IMAGE_PATTERN));
@@ -210,8 +208,8 @@ export class ContentParser {
         const presignedUrl = imageMap.get(name);
         if (!presignedUrl) {
           console.log("No presigned url found for", name);
-          continue
-        };
+          continue;
+        }
         const assetId = await this.downloadAndUploadImage(presignedUrl, options);
         if (assetId) {
           result = result.replace(fullMatch, `<image-component src="${assetId}" />`);
@@ -220,7 +218,6 @@ export class ContentParser {
           result = result.replace(fullMatch, `<img src="${presignedUrl}" />`);
         }
       } else {
-        console.log("src", src)
         const assetId = src.split("/").pop() || "";
         result = result.replace(fullMatch, `<image-component src="${assetId}" />`);
       }
@@ -229,7 +226,12 @@ export class ContentParser {
     return result;
   }
 
-  private static async processImgTags(root: HTMLElement, imagePrefix: string, imageMap: Map<string, string>, options: ContentParserOptions): Promise<void> {
+  private static async processImgTags(
+    root: HTMLElement,
+    imagePrefix: string,
+    imageMap: Map<string, string>,
+    options: ContentParserOptions
+  ): Promise<void> {
     const images = root.querySelectorAll("img");
 
     for (const img of images) {
@@ -347,7 +349,7 @@ export class ContentParser {
       width: component.getAttribute("width") || undefined,
       height: component.getAttribute("height") || undefined,
       id: component.getAttribute("id") || undefined,
-      aspectRatio: component.getAttribute("aspectratio") || undefined
+      aspectRatio: component.getAttribute("aspectratio") || undefined,
     }));
   }
 }

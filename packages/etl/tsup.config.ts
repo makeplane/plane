@@ -10,6 +10,7 @@ export default defineConfig((options: Options) => ({
     "src/jira-server/index.ts",
     "src/linear/index.ts",
     "src/slack/index.ts",
+    "src/flatfile/index.ts",
   ],
   format: ["cjs", "esm"],
   dts: true,

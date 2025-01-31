@@ -1,9 +1,5 @@
-import { TBatch } from "@/apps/engine/worker/types";
-import { PlaneEntities, TJobWithConfig } from "@plane/etl/core";
-import { updateJob } from "@/db/query";
-import { env } from "@/env";
-import { BaseDataMigrator } from "@/etl/base-import-worker";
-import { logger } from "@/logger";
+import { Issue as IJiraIssue } from "jira.js/out/version2/models";
+import { PlaneEntities } from "@plane/etl/core";
 import {
   JiraConfig,
   JiraEntity,
@@ -17,15 +13,13 @@ import {
   pullSprints,
   pullUsers,
 } from "@plane/etl/jira-server";
-import { Issue as IJiraIssue } from "jira.js/out/version2/models";
-import {
-  createJiraClient,
-  filterComponentsForIssues,
-  filterSprintsForIssues,
-  getJobCredentials,
-  getJobData,
-  resetJobIfStarted,
-} from "../helpers/migration-helpers";
+import { TImportJob } from "@plane/types";
+import { env } from "@/env";
+import { BaseDataMigrator } from "@/etl/base-import-worker";
+import { getJobCredentials, getJobData, resetJobIfStarted, updateJobWithReport } from "@/helpers/job";
+import { logger } from "@/logger";
+import { TBatch } from "@/worker/types";
+import { createJiraClient, filterComponentsForIssues, filterSprintsForIssues } from "../helpers/migration-helpers";
 import {
   getTransformedComments,
   getTransformedComponents,
@@ -44,13 +38,13 @@ export class JiraDataCenterMigrator extends BaseDataMigrator<JiraConfig, JiraEnt
     super(mq, store);
   }
 
-  async getJobData(jobId: string): Promise<TJobWithConfig<JiraConfig>> {
+  async getJobData(jobId: string): Promise<TImportJob<JiraConfig>> {
     return getJobData(jobId);
   }
 
-  async pull(job: TJobWithConfig<JiraConfig>): Promise<JiraEntity[]> {
+  async pull(job: TImportJob<JiraConfig>): Promise<JiraEntity[]> {
     // Retrieve and validate the job data
-    await resetJobIfStarted(job.id, job);
+    await resetJobIfStarted(job);
 
     // Obtain the Jira client and the job credentials
     const credentials = await getJobCredentials(job);
@@ -61,8 +55,8 @@ export class JiraDataCenterMigrator extends BaseDataMigrator<JiraConfig, JiraEnt
       return [];
     }
 
-    const projectId = job.config.meta.project.id;
-    const projectKey = job.config.meta.project.key;
+    const projectId = job.config.project.id;
+    const projectKey = job.config.project.key;
 
     if (!projectId || !projectKey) {
       logger.info(`No Project ID or Project Key found for the Job, ${job.id} ${job.workspace_slug}`);
@@ -70,7 +64,7 @@ export class JiraDataCenterMigrator extends BaseDataMigrator<JiraConfig, JiraEnt
     }
 
     /* -------------- Pull Jira Data --------------- */
-    const users = job.config.meta.skipUserImport ? [] : await pullUsers(client);
+    const users = job.config.skipUserImport ? [] : await pullUsers(client);
     const labels = await pullLabels(client, projectId);
     const issues = await pullIssues(client, projectKey);
     const sprints = await pullSprints(client, projectId);
@@ -81,7 +75,14 @@ export class JiraDataCenterMigrator extends BaseDataMigrator<JiraConfig, JiraEnt
     /* -------------- Pull Jira Data --------------- */
 
     // Update Job for the actual start time of the migration
-    await updateJob(job.id, { start_time: new Date() });
+    await updateJobWithReport(
+      job.id,
+      job.report_id,
+      {},
+      {
+        start_time: new Date().toISOString(),
+      }
+    );
 
     return [
       {
@@ -99,7 +100,7 @@ export class JiraDataCenterMigrator extends BaseDataMigrator<JiraConfig, JiraEnt
 
   // NOOP, as transform will be done as the integration level
   // Transforms all the details from Jira to Plane
-  transform = async (job: TJobWithConfig<JiraConfig>, data: JiraEntity[]): Promise<PlaneEntities[]> => {
+  transform = async (job: TImportJob<JiraConfig>, data: JiraEntity[]): Promise<PlaneEntities[]> => {
     // Get the job by the job configuration
     if (data.length < 1) {
       return [];
@@ -108,12 +109,12 @@ export class JiraDataCenterMigrator extends BaseDataMigrator<JiraConfig, JiraEnt
 
     const credentials = await getJobCredentials(job);
 
-    const resourceUrl = job.config?.meta.resource?.url || credentials.source_hostname;
-    const transformedIssue = getTransformedIssues(job, entities, resourceUrl);
+    const resourceUrl = job.config.resource?.url || credentials.source_hostname;
+    const transformedIssue = getTransformedIssues(job, entities, resourceUrl || "");
 
     /* Todo: Remove this antipattern logic when issue types come to plane */
-    if (job.config?.meta.issueType) {
-      if (job.config.meta.issueType === "create_as_label") {
+    if (job.config.issueType) {
+      if (job.config.issueType === "create_as_label") {
         for (const issue of transformedIssue) {
           // For each label of an issue, if the transformed labels doesn't
           // contain the label, we need to add it to the transformed labels
@@ -159,7 +160,7 @@ export class JiraDataCenterMigrator extends BaseDataMigrator<JiraConfig, JiraEnt
     ];
   };
 
-  async batches(job: TJobWithConfig<JiraConfig>): Promise<TBatch<JiraEntity>[]> {
+  async batches(job: TImportJob<JiraConfig>): Promise<TBatch<JiraEntity>[]> {
     const sourceData = await this.pull(job);
     const batchSize = env.BATCH_SIZE ? parseInt(env.BATCH_SIZE) : 40;
 

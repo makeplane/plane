@@ -17,6 +17,8 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 import { useAsanaImporter } from "@/plane-web/hooks/store";
 // plane web types
 import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers/asana";
+import Fuse from "fuse.js";
+import { useTranslation } from "@plane/i18n";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.MAP_STATES];
 
@@ -37,8 +39,10 @@ export const MapStatesRoot: FC = observer(() => {
     handleStepper,
     data: { getAsanaSectionByProjectGid, getAsanaSectionById, fetchAsanaSections },
   } = useAsanaImporter();
+  const { t } = useTranslation();
   // states
   const [formData, setFormData] = useState<TFormData>({});
+  const [fuzzySearchDone, setFuzzySearchDone] = useState(false);
   // plane data
   const workspaceSlug = workspace?.slug || undefined;
   const workspaceId = workspace?.id || undefined;
@@ -99,6 +103,37 @@ export const MapStatesRoot: FC = observer(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [importerData]);
 
+  // fuzzy search and default values
+  useEffect(() => {
+    if (!asanaProjectSections.length || !planeProjectStates.length || fuzzySearchDone) {
+      return;
+    }
+  
+    const options = {
+      includeScore: true,
+      keys: ["name"],
+    };
+  
+    // Create Fuse instance once
+    const fuse = new Fuse(planeProjectStates, options);
+  
+    asanaProjectSections.forEach((asanaState) => {
+      if (asanaState.name) {
+        const result = fuse.search(asanaState.name);
+  
+        if (result.length > 0) {
+          const planeState = result[0].item as IState;
+          if (asanaState.gid && planeState.id) {
+            handleFormData(asanaState.gid, planeState.id);
+          }
+        }
+      }
+    });
+    // mark the fuzzy search as done
+    setFuzzySearchDone(true);
+  }, [asanaProjectSections, planeProjectStates, fuzzySearchDone, handleFormData]);
+
+
   // fetching the asana project sections
   const { isLoading: isAsanaProjectSectionsLoading } = useSWR(
     workspaceId && userId && asanaProjectGid
@@ -158,7 +193,7 @@ export const MapStatesRoot: FC = observer(() => {
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
           <Button variant="primary" size="sm" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
-            Next
+            {t("common.next")}
           </Button>
         </StepperNavigation>
       </div>

@@ -1,8 +1,9 @@
-import { TGithubWorkspaceConnectionData, TWorkspaceConnection } from "@plane/etl/core";
+import { TGithubWorkspaceConnectionData } from "@plane/etl/core";
 import { IState } from "@plane/sdk";
+import { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
 
 // auth types
-export type TGithubWorkspaceConnection = TWorkspaceConnection<TGithubWorkspaceConnectionData>;
+export type TGithubWorkspaceConnection = TWorkspaceConnection<object, TGithubWorkspaceConnectionData>;
 
 export type TGithubWorkspaceUserConnection = {
   isConnected: boolean;
@@ -37,18 +38,8 @@ export type TStateMap = {
 
 export type TGithubEntityConnectionConfig = object & { states: { mergeRequestEventMapping: TStateMap } };
 
-export type TGithubEntityConnection = {
-  id: string;
-
-  workspaceId: string;
-  workspaceSlug: string;
-  projectId: string;
-
-  workspaceConnectionId: string;
-
-  entityId: string;
-  entitySlug: string;
-  entityData: object & {
+export type TGithubEntityConnection = TWorkspaceEntityConnection & {
+  entity_data: object & {
     id: number;
     name: string;
     full_name: string;
@@ -56,6 +47,6 @@ export type TGithubEntityConnection = {
 
   config: TGithubEntityConnectionConfig;
 
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
 };

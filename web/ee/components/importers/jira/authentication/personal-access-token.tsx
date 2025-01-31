@@ -11,6 +11,7 @@ import { useJiraImporter } from "@/plane-web/hooks/store";
 import { AuthFormInput, TAuthFormInputFormField } from "@/plane-web/silo/ui/auth-form-input";
 // plane web types
 import { TJiraPATFormFields } from "@/plane-web/types";
+import { useTranslation } from "@plane/i18n";
 
 export const PersonalAccessTokenAuth: FC = observer(() => {
   // hooks
@@ -18,6 +19,7 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
     auth: { authWithPAT },
   } = useJiraImporter();
 
+  const {t} = useTranslation();
   // states
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<TJiraPATFormFields>({
@@ -60,12 +62,12 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
     {
       key: "JIRA_PAT",
       type: "password",
-      label: "Personal Access Token",
+      label: t("importers.personal_access_token"),
       value: formData.personalAccessToken,
       onChange: (e) => handleFormData("personalAccessToken", e.target.value),
       description: (
         <>
-          You will get this from your{" "}
+          {t("importers.token_helper")} 
           <a
             tabIndex={-1}
             href="https://id.atlassian.com/manage-profile/security/api-tokens"
@@ -73,7 +75,7 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
             className="text-custom-primary-100 hover:underline"
             rel="noreferrer"
           >
-            Atlassian security settings.
+          {" "} {t("jira_importer.atlassian_security_settings")}
           </a>
         </>
       ),
@@ -83,7 +85,7 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
     {
       key: "JIRA_USER_EMAIL",
       type: "text",
-      label: "User email",
+      label: t("importers.user_email"),
       value: formData.userEmail,
       onChange: (e) => handleFormData("userEmail", e.target.value),
       description: "This is the email linked to your personal access token",
@@ -93,10 +95,10 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
     {
       key: "JIRA_DOMAIN",
       type: "text",
-      label: "Jira domain",
+      label: t("jira_importer.jira_domain"),
       value: formData.hostname,
       onChange: (e) => handleFormData("hostname", e.target.value),
-      description: "This is the domain of your Jira instance",
+      description: t("jira_importer.jira_domain_description"),
       placeholder: "https://jira.example.com",
       error: false,
     },
@@ -105,9 +107,9 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
   return (
     <div className="space-y-6">
       <div className="relative flex flex-col border-b border-custom-border-100 pb-3.5">
-        <h3 className="text-xl font-medium">Jira to Plane Migration Assistant</h3>
+        <h3 className="text-xl font-medium">Jira to Plane {t("importers.migration_assistant")}</h3>
         <p className="text-custom-text-300 text-sm">
-          Seamlessly migrate your Jira projects to Plane with our powerful assistant.
+            {t("importers.migration_assistant_description", { "serviceName": "Jira" })}
         </p>
       </div>
       <div className="space-y-6">
@@ -128,10 +130,10 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
         </div>
         <div className="relative flex gap-4">
           <Button variant="primary" onClick={handlePATAuthentication} disabled={isLoading}>
-            {isLoading ? "Authorizing" : "Connect Jira"}
+            {isLoading ? t("common.authorizing") : t("importers.connect_importer", { "serviceName": "Jira" })}
           </Button>
           <Button variant="link-neutral" className="font-medium" onClick={clearFromData} disabled={isLoading}>
-            Clear
+            {t("common.clear")}
           </Button>
         </div>
       </div>

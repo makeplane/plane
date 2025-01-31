@@ -1,4 +1,4 @@
-import { MQ, Store } from "@/apps/engine/worker/base";
+import { MQ, Store } from "@/worker/base";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { PlaneWebhookData, WebhookIssueCommentPayload } from "@plane/sdk";
 import { handleIssueCommentWebhook } from "./plane-webhook-handlers/handle-comment-webhook";

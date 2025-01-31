@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import {
   isUserMessage,
   SlackAuthState,
@@ -7,31 +7,23 @@ import {
   TSlackPayload,
 } from "@plane/etl/slack";
 import { PlaneWebhookData } from "@plane/sdk";
-import { integrationTaskManager } from "@/apps/engine/worker";
-import {
-  createOrUpdateCredentials,
-  deactivateCredentials,
-  deleteCredentialsForWorkspace,
-  getCredentialsByWorkspaceId,
-} from "@/db/query";
-import {
-  createWorkspaceConnection,
-  deleteEntityConnectionByWorkspaceConnectionId,
-  deleteWorkspaceConnection,
-  getWorkspaceConnections,
-} from "@/db/query/connection";
 import { env } from "@/env";
-import { Controller, Get, Post } from "@/lib";
-import { logger } from "@/logger";
+import { responseHandler } from "@/helpers/response-handler";
+import { Controller, EnsureEnabled, Get, Post, useValidateUserAuthentication } from "@/lib";
+import { getAPIClient } from "@/services/client";
+import { integrationTaskManager } from "@/worker";
 import { slackAuth } from "../auth/auth";
 import { getConnectionDetails } from "../helpers/connection-details";
 import { ACTIONS } from "../helpers/constants";
 import { parseIssueFormData } from "../helpers/parse-issue-form";
 import { convertToSlackOptions } from "../helpers/slack-options";
-import { responseHandler } from "@/helpers/response-handler";
+import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS } from "@plane/etl/core";
 
+const apiClient = getAPIClient();
+
+@EnsureEnabled(E_INTEGRATION_KEYS.SLACK)
 @Controller("/api/slack")
-export class SlackController {
+export default class SlackController {
   @Get("/ping")
   async ping(_req: Request, res: Response) {
     res.send("pong");
@@ -49,7 +41,7 @@ export class SlackController {
       const response = slackAuth.getWorkspaceAuthUrl(body);
       res.send(response);
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
@@ -87,39 +79,42 @@ export class SlackController {
       }
 
       // Create credentials for slack for the workspace
-      const credentials = await createOrUpdateCredentials(state.workspaceId, state.userId, {
-        source: "SLACK",
+      const credentials = await apiClient.workspaceCredential.createWorkspaceCredential({
+        source: E_INTEGRATION_KEYS.SLACK,
         target_access_token: state.apiToken,
         source_access_token: response.access_token,
         source_refresh_token: response.refresh_token,
         workspace_id: state.workspaceId,
+        user_id: authState.userId,
       });
 
-      const workspaceConnection = await getWorkspaceConnections(state.workspaceId, "SLACK", response.team.id);
+      const workspaceConnection = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.SLACK,
+        connection_id: response.team.id,
+        workspace_id: state.workspaceId,
+      });
 
       if (!workspaceConnection || workspaceConnection.length === 0) {
         // Create a workspace connection for the authenticated team
-        await createWorkspaceConnection({
-          workspaceId: state.workspaceId,
-          workspaceSlug: state.workspaceSlug,
-          connectionId: response.team.id,
-          connectionSlug: response.team.name,
-          connectionType: "SLACK",
-          connectionData: response.team,
-          credentialsId: credentials.id,
-          targetHostname: env.API_BASE_URL,
+        await apiClient.workspaceConnection.createWorkspaceConnection({
+          workspace_id: state.workspaceId,
+          connection_type: E_INTEGRATION_KEYS.SLACK,
+          connection_id: response.team.id,
+          connection_slug: response.team.name,
+          connection_data: response.team,
+          credential_id: credentials.id,
+          target_hostname: env.API_BASE_URL,
         });
       }
 
       return res.redirect(`${env.APP_BASE_URL}/${state.workspaceSlug}/settings/integrations/slack/`);
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Get("/user/auth/callback")
   async getUserAuthCallback(req: Request, res: Response) {
-
     try {
       const { code, state: slackState } = req.query;
       const authState = JSON.parse(Buffer.from(slackState as string, "base64").toString("utf-8")) as SlackUserAuthState;
@@ -129,12 +124,13 @@ export class SlackController {
       });
 
       // Create credentials for slack for the workspace
-      await createOrUpdateCredentials(state.workspaceId, state.userId, {
-        source: "SLACK-USER",
+      await apiClient.workspaceCredential.createWorkspaceCredential({
+        source: E_ENTITY_CONNECTION_KEYS.SLACK_USER,
         target_access_token: state.apiToken,
         source_access_token: response.authed_user.access_token,
         source_refresh_token: response.authed_user.refresh_token,
         workspace_id: state.workspaceId,
+        user_id: authState.userId,
       });
       if (authState.profileRedirect) {
         res.redirect(`${env.APP_BASE_URL}/profile/connections/?workspaceId=${authState.workspaceId}`);
@@ -142,14 +138,14 @@ export class SlackController {
         res.redirect(`${env.APP_BASE_URL}/${authState.workspaceSlug}/settings/integrations/slack/`);
       }
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Get("/app/status/:workspaceId")
+  @useValidateUserAuthentication()
   async getAppConnectionStatus(req: Request, res: Response) {
     try {
-
       const { workspaceId } = req.params;
       if (!workspaceId) {
         return res.status(400).send({
@@ -158,14 +154,18 @@ export class SlackController {
       }
 
       // Get the slack workspace connections associated with the workspaceId
-      const connections = await getWorkspaceConnections(workspaceId, "SLACK");
+      const connections = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.SLACK,
+        workspace_id: workspaceId,
+      });
       return res.json(connections);
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Get("/user/status/:workspaceId/:userId")
+  @useValidateUserAuthentication()
   async getUserConnectionStatus(req: Request, res: Response) {
     try {
       const { workspaceId, userId } = req.params;
@@ -176,71 +176,82 @@ export class SlackController {
       }
 
       // Get credentials for slack user for the workspace
-      const credentials = await getCredentialsByWorkspaceId(workspaceId, userId, "SLACK-USER");
-
+      const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
+        source: E_ENTITY_CONNECTION_KEYS.SLACK_USER,
+        workspace_id: workspaceId,
+        user_id: userId,
+      });
       return res.json({
         isConnected: credentials.length > 0,
       });
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Post("/app/disconnect")
+  @useValidateUserAuthentication()
   async disconnectApp(req: Request, res: Response) {
     try {
       const { workspaceId, connectionId } = req.body;
       if (!workspaceId || !connectionId) {
         return res.status(400).send({
-          message: "Bad Request, expected workspaceId and connectionId to be present.",
+          message: "Bad Request, expected workspaceId, connectionId to be present.",
         });
       }
 
       // Get the slack workspace connections associated with the workspaceId
-      const connections = await getWorkspaceConnections(workspaceId, "SLACK", connectionId);
+
+      const connections = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.SLACK,
+        connection_id: connectionId,
+        workspace_id: workspaceId,
+      });
       if (connections.length === 0) {
         return res.sendStatus(200);
       } else {
         const connection = connections[0];
-        // Delete entity connections referencing the workspace connection
-        await deleteEntityConnectionByWorkspaceConnectionId(connection.id);
 
         // Delete the workspace connection associated with the team
-        await deleteWorkspaceConnection(connection.id);
-
-        // Delete the team and user credentials for the workspace
-        await deleteCredentialsForWorkspace(workspaceId, "SLACK");
-        await deleteCredentialsForWorkspace(workspaceId, "SLACK-USER");
-
+        await apiClient.workspaceConnection.deleteWorkspaceConnection(connection.id);
         return res.sendStatus(200);
       }
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Post("/user/disconnect")
+  @useValidateUserAuthentication()
   async disconnectUser(req: Request, res: Response) {
-
     try {
       const { workspaceId, userId } = req.body;
       if (!workspaceId || !userId) {
         return res.status(400).send({
-          message: "Bad Request, expected workspaceId and userId to be present.",
+          message: "Bad Request, expected workspaceId, userId to be present.",
         });
       }
+
       // Delete the user credentials for the workspace
-      await deactivateCredentials(workspaceId, userId, "SLACK-USER");
+      const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
+        source: E_ENTITY_CONNECTION_KEYS.SLACK_USER,
+        workspace_id: workspaceId,
+        user_id: userId,
+      });
+
+      if (!credentials.length) {
+        return res.status(200);
+      }
+      await apiClient.workspaceCredential.deleteWorkspaceCredential(credentials[0].id);
       return res.sendStatus(200);
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Post("/action")
   async ackSlackAction(req: Request, res: Response) {
     try {
-
       const payloadStr = req.body.payload;
 
       if (!payloadStr) {
@@ -262,7 +273,7 @@ export class SlackController {
 
       res.status(200).json({});
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
@@ -283,14 +294,13 @@ export class SlackController {
 
       return res.json().status(200);
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Post("/events")
   async slackEvents(req: Request, res: Response) {
     try {
-
       const payload = req.body;
 
       if (payload.challenge) {
@@ -311,7 +321,7 @@ export class SlackController {
 
       return res.sendStatus(200);
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
@@ -327,7 +337,7 @@ export class SlackController {
         // IssueModalViewFull and pass it to the slack worker
         const { workspaceConnection, planeClient } = await getConnectionDetails(payload.team.id);
         const values = parseIssueFormData(payload.view.state.values);
-        const labels = await planeClient.label.list(workspaceConnection.workspaceSlug, values.project);
+        const labels = await planeClient.label.list(workspaceConnection.workspace_id, values.project);
         const filteredLabels = labels.results
           .filter((label) => label.name.toLowerCase().includes(text.toLowerCase()))
           .sort((a, b) => a.name.localeCompare(b.name));
@@ -339,14 +349,13 @@ export class SlackController {
 
       return res.status(200).json({});
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Post("/plane/events")
   async planeEvents(req: Request, res: Response) {
     try {
-
       const payload = req.body as PlaneWebhookData;
 
       if (payload.event === "issue_comment") {
@@ -362,7 +371,7 @@ export class SlackController {
 
       return res.sendStatus(200);
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 }

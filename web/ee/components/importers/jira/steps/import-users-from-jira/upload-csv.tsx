@@ -6,34 +6,13 @@ import Dropzone, { Accept } from "react-dropzone";
 import { TriangleAlert, CircleCheck, X, Loader } from "lucide-react";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { useTranslation } from "@plane/i18n";
 
 type TImportUsersFromJiraUploader = {
   handleValue: (value: string) => void;
 };
 
 const acceptFileTypes: Accept = { "text/csv": [".csv"] };
-const fileErrors = {
-  processing: {
-    className: "text-custom-text-200",
-    icon: <Loader className="flex-shrink-0 w-3.5 h-3.5 spin-in-90" />,
-    message: "Processing...",
-  },
-  error: {
-    className: "text-red-500",
-    icon: <TriangleAlert className="flex-shrink-0 w-3.5 h-3.5" />,
-    message: "Invalid file type",
-  },
-  "missing-fields": {
-    className: "text-yellow-500",
-    icon: <TriangleAlert className="flex-shrink-0 w-3.5 h-3.5" />,
-    message: "Missing fields!",
-  },
-  success: {
-    className: "text-green-500",
-    icon: <CircleCheck className="flex-shrink-0 w-3.5 h-3.5" />,
-    message: "Users CSV added!",
-  },
-};
 
 export const ImportUsersFromJiraUploader: FC<TImportUsersFromJiraUploader> = (props) => {
   // props
@@ -43,6 +22,32 @@ export const ImportUsersFromJiraUploader: FC<TImportUsersFromJiraUploader> = (pr
   const [fileErrorType, setFileErrorType] = useState<"processing" | "error" | "missing-fields" | "success" | undefined>(
     undefined
   );
+
+  // hooks
+  const { t } = useTranslation();
+
+  const fileErrors = {
+    processing: {
+      className: "text-custom-text-200",
+      icon: <Loader className="flex-shrink-0 w-3.5 h-3.5 spin-in-90" />,
+      message: t("file_upload_status.processing"),
+    },
+    error: {
+      className: "text-red-500",
+      icon: <TriangleAlert className="flex-shrink-0 w-3.5 h-3.5" />,
+      message: t("file_upload_status.invalid"),
+    },
+    "missing-fields": {
+      className: "text-yellow-500",
+      icon: <TriangleAlert className="flex-shrink-0 w-3.5 h-3.5" />,
+      message: t("file_upload_status.missing_fields"),
+    },
+    success: {
+      className: "text-green-500",
+      icon: <CircleCheck className="flex-shrink-0 w-3.5 h-3.5" />,
+      message: t("file_upload_status.success", { fileName: "CSV" }),
+    },
+  };
 
   const handleFileChange = (file: File) => {
     if (file) {
@@ -116,17 +121,16 @@ export const ImportUsersFromJiraUploader: FC<TImportUsersFromJiraUploader> = (pr
           {({ getRootProps, getInputProps }) => (
             <div
               {...getRootProps()}
-              className={`relative flex flex-col justify-center items-center w-full min-h-28 h-full rounded-sm text-sm outline-none focus:outline-none shadow-none ${
-                file ? "bg-custom-background-90 cursor-not-allowed" : "cursor-pointer"
-              }`}
+              className={`relative flex flex-col justify-center items-center w-full min-h-28 h-full rounded-sm text-sm outline-none focus:outline-none shadow-none ${file ? "bg-custom-background-90 cursor-not-allowed" : "cursor-pointer"
+                }`}
             >
               <input
                 multiple={false}
                 {...getInputProps()}
                 className="outline-none focus:outline-none shadow-none border-none"
               />
-              <div className="text-custom-text-200">Click here to Upload file{"'"}s</div>
-              <div className="pt-1 font-medium">or Drag and Drop</div>
+              <div className="text-custom-text-200">{t("file_upload.upload_text")}</div>
+              <div className="pt-1 font-medium">{t("common.or")} {t("file_upload.drag_drop_text")}</div>
             </div>
           )}
         </Dropzone>

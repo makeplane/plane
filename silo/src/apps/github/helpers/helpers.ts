@@ -1,27 +1,36 @@
-import { getEntityConnectionByEntityId, getWorkspaceConnections } from "@/db/query/connection";
 import { verifyEntityConnection, verifyWorkspaceConnection } from "@/types";
-import { TServiceCredentials } from "@plane/etl/core";
+import { E_INTEGRATION_KEYS, TServiceCredentials } from "@plane/etl/core";
 import { GithubConnectionDetails, githubEntityConnectionSchema, githubWorkspaceConnectionSchema } from "../types";
+
+import { GithubWebhookPayload } from "@plane/etl/github";
+import { getAPIClient } from "@/services/client";
+import { TWorkspaceCredential } from "@plane/types";
+
+const apiClient = getAPIClient();
 
 export const getConnectionDetails = async (props: {
   accountId: string;
-  credentials: TServiceCredentials;
+  credentials: TWorkspaceCredential;
   installationId: string;
   repositoryId: string;
 }): Promise<GithubConnectionDetails> => {
   // Get the workspace connection for the installation
-  const workspaceConnection = await getWorkspaceConnections(
-    props.credentials.workspace_id!,
-    "GITHUB",
-    props.accountId.toString()
-  );
+  const workspaceConnection = await apiClient.workspaceConnection.listWorkspaceConnections({
+    workspace_id: props.credentials.workspace_id!,
+    connection_type: E_INTEGRATION_KEYS.GITHUB,
+    connection_id: props.accountId.toString(),
+  });
 
   if (workspaceConnection.length === 0) {
     throw new Error("No workspace connection found for the given installation");
   }
 
   // Get the entity connection for the given repository
-  const entityConnection = await getEntityConnectionByEntityId(props.repositoryId.toString());
+  const entityConnection = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+    workspace_id: props.credentials.workspace_id!,
+    entity_type: E_INTEGRATION_KEYS.GITHUB,
+    entity_id: props.repositoryId.toString(),
+  });
 
   if (entityConnection.length === 0) {
     throw new Error("No entity connection found for the given installation");
@@ -41,7 +50,6 @@ export const getConnectionDetails = async (props: {
   };
 };
 
-import { GithubWebhookPayload } from "@plane/etl/github";
 
 export type MergeRequestEvent =
   | "DRAFT_MR_OPENED"

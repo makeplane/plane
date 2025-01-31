@@ -1,9 +1,9 @@
+import { AxiosError } from "axios";
 import { Client as PlaneClient, PlaneUser, UserResponsePayload } from "@plane/sdk";
+import { TWorkspaceCredential } from "@plane/types";
+import { downloadFile, uploadFile } from "@/helpers/utils";
 import { protect } from "@/lib";
 import { logger } from "@/logger";
-import { AxiosError } from "axios";
-import { TServiceCredentials } from "@plane/etl/core";
-import { downloadFile, uploadFile } from "@/helpers/utils";
 import { generateFileUploadPayload } from "./issues.migrator";
 
 /* ----------------------------- User Creation Utilities ----------------------------- */
@@ -11,7 +11,7 @@ export const createUsers = async (
   jobId: string,
   users: PlaneUser[],
   planeClient: PlaneClient,
-  credentials: TServiceCredentials,
+  credentials: TWorkspaceCredential,
   workspaceSlug: string,
   projectId: string
 ): Promise<PlaneUser[]> => {

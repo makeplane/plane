@@ -168,6 +168,7 @@ class WorkspaceConnection(BaseModel):
             credential.is_active = False
             credential.save()
 
+
 class WorkspaceEntityConnection(BaseModel):
     type = models.CharField(max_length=30, blank=True, null=True)
     workspace_connection = models.ForeignKey(

@@ -1,19 +1,25 @@
-import { getCredentialsById } from "@/db/query";
-import { getWorkspaceConnectionByConnectionId } from "@/db/query/connection";
 import { getRefreshCredentialHandler } from "./update-credentials";
 import { createSlackService } from "@plane/etl/slack";
 import { slackAuth } from "../auth/auth";
 import { Client as PlaneClient } from "@plane/sdk";
+import { getAPIClient } from "@/services/client";
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+
 
 export const getConnectionDetails = async (teamId: string) => {
-  const [workspaceConnection] = await getWorkspaceConnectionByConnectionId(teamId, "SLACK");
+  const apiClient = getAPIClient();
+  const [workspaceConnection] = await apiClient.workspaceConnection.listWorkspaceConnections({
+    connection_id: teamId,
+    connection_type: E_INTEGRATION_KEYS.SLACK,
+  })
+
 
   if (!workspaceConnection) {
     throw new Error("Workspace connection not found");
   }
 
   // Get the credentials for the workspace connection
-  const [credentials] = await getCredentialsById(workspaceConnection.credentialsId);
+  const credentials = await apiClient.workspaceCredential.getWorkspaceCredential(workspaceConnection.credential_id);
 
   if (!credentials) {
     throw new Error("Credentials not found");
@@ -30,7 +36,7 @@ export const getConnectionDetails = async (teamId: string) => {
 
   // Create a new SlackService instance
   const refreshHandler = getRefreshCredentialHandler(
-    workspaceConnection.workspaceId,
+    workspaceConnection.workspace_id,
     credentials.user_id,
     credentials.target_access_token
   );
@@ -42,9 +48,13 @@ export const getConnectionDetails = async (teamId: string) => {
     refreshHandler
   );
 
+  if (!workspaceConnection.target_hostname) {
+    throw new Error("Target hostname not found");
+  }
+
   const planeClient = new PlaneClient({
     apiToken: credentials.target_access_token,
-    baseURL: workspaceConnection.targetHostname,
+    baseURL: workspaceConnection.target_hostname,
   });
 
   return {

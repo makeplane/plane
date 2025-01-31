@@ -1,1 +1,0 @@
-ALTER TABLE "silo"."jobs" ADD COLUMN "is_cancelled" boolean DEFAULT false;

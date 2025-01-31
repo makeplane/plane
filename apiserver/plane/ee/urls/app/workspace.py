@@ -70,6 +70,12 @@ urlpatterns = [
         name="workspace-credential-token-verify",
     ),
 
+    path(
+        "workspaces/<str:slug>/credentials/token-verify/",
+        VerifyWorkspaceCredentialView.as_view(),
+        name="workspace-credential-token-verify",
+    ),
+
     # workspace connections url patterns
     path(
         "workspaces/<str:slug>/connections/<uuid:pk>/",

@@ -1,4 +1,4 @@
-import { MQ, Store } from "@/apps/engine/worker/base";
+import { MQ, Store } from "@/worker/base";
 import { logger } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { GitlabMergeRequestEvent, GitlabWebhookEvent } from "@plane/etl/gitlab";

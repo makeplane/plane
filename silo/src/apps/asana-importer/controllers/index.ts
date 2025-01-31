@@ -1,25 +1,20 @@
-import { env } from "@/env";
-import { NextFunction, Request, Response } from "express";
-import { APIError, Controller, Get, Post } from "@/lib";
+import { Request, Response } from "express";
 // silo asana
 import {
-  AsanaTokenResponse,
-  createAsanaService,
-  AsanaAuthPayload,
-  AsanaAuthState,
-  AsanaCustomField,
+  createAsanaService, AsanaCustomField,
   PaginationPayload,
   AsanaCustomFieldSettings,
   PaginatedResponse,
-  pullUsers,
+  pullUsers
 } from "@plane/etl/asana";
-// silo db
-import { createOrUpdateCredentials, deactivateCredentials, getCredentialsByWorkspaceId } from "@/db/query";
 // silo asana auth
-import { asanaAuth } from "../auth/auth";
-import { createPlaneClient } from "@/helpers/utils";
 import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
+import { createOrUpdateCredentials, deactivateCredentials, getCredentialsByWorkspaceId } from "@/helpers/credential";
 import { responseHandler } from "@/helpers/response-handler";
+import { createPlaneClient } from "@/helpers/utils";
+import { Controller, Get, Post, useValidateUserAuthentication } from "@/lib";
+import { asanaAuth } from "../auth/auth";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 
 @Controller("/api/asana")
 class AsanaController {
@@ -28,94 +23,8 @@ class AsanaController {
     res.send("pong");
   }
 
-  @Post("/auth/url")
-  async getAuthURL(req: Request, res: Response) {
-    try {
-      const body: AsanaAuthState = req.body;
-      if (!body.workspaceId || !body.apiToken) {
-        throw new APIError("Bad Request, expected both apiToken and workspaceId to be present.", 400);
-      }
-      const response = asanaAuth.getAuthorizationURL(body);
-      res.send(response);
-    } catch (error) {
-      responseHandler(res, 500, error)
-    }
-  }
-
-  @Get("/auth/callback")
-  async authCallback(req: Request, res: Response) {
-    try {
-      const query: AsanaAuthPayload | any = req.query;
-      if (!query.code || !query.state) {
-        return res.status(400).send("code not found in the query params");
-      }
-      const stringifiedJsonState = query.state as string;
-      // Decode the base64 encoded state string and parse it to JSON
-      const state: AsanaAuthState = JSON.parse(Buffer.from(stringifiedJsonState, "base64").toString());
-      let tokenResponse: AsanaTokenResponse;
-      try {
-        const tokenInfo = await asanaAuth.getAccessToken(query.code as string, state);
-        tokenResponse = tokenInfo.tokenResponse;
-      } catch (error: any) {
-        console.log("Error occurred while fetching token details", error);
-        res.status(400).send(error);
-        return;
-      }
-
-      if (!tokenResponse) {
-        res.status(400).send("failed to fetch token details");
-        return;
-      }
-
-      try {
-        // Create a new credentials record in the database for the received token
-        await createOrUpdateCredentials(state.workspaceId, state.userId, {
-          source_access_token: tokenResponse.access_token,
-          source_refresh_token: tokenResponse.refresh_token,
-          target_access_token: state.apiToken,
-          source: "ASANA",
-          workspace_id: state.workspaceId,
-        });
-        // As we are using base path as /asana, we can redirect to /asana
-        res.redirect(`${env.APP_BASE_URL}/${state.workspaceSlug}/settings/imports/asana/`);
-      } catch (error: any) {
-        res.status(500).send(error);
-      }
-    } catch (error) {
-      responseHandler(res, 500, error)
-    }
-  }
-
-  @Post("/auth/refresh")
-  async refreshAccessToken(req: Request, res: Response) {
-    try {
-      const { refreshToken, workspaceId, userId } = req.body;
-      if (!refreshToken || !workspaceId) {
-        return res.status(400).send({ message: "Bad Request" });
-      }
-      try {
-        const { access_token, refresh_token, expires_in } = await asanaAuth.getRefreshToken(refreshToken);
-        // Update the credentials record in the database with the new token
-        await createOrUpdateCredentials(workspaceId, userId, {
-          source_access_token: access_token,
-          source_refresh_token: refresh_token,
-          source: "ASANA",
-          workspace_id: workspaceId,
-        });
-        // send the new tokens in the response
-        res
-          .cookie("accessToken", access_token)
-          .cookie("refreshToken", refresh_token)
-          .send({ access_token, refresh_token, expires_in });
-      } catch (error: any) {
-        res.status(error.response.status).send(error);
-      }
-    } catch (error) {
-      responseHandler(res, 500, error)
-    }
-  }
-
   @Post("/auth/pat")
+  @useValidateUserAuthentication()
   async upsertCredentials(req: Request, res: Response) {
     try {
       const { workspaceId, userId, apiToken, personalAccessToken } = req.body;
@@ -132,12 +41,12 @@ class AsanaController {
         return res.status(401).send({ message: "Invalid personal access token" });
       }
       // Create or update the credentials
-      await createOrUpdateCredentials(workspaceId, userId, {
+      await createOrUpdateCredentials(workspaceId, userId, E_IMPORTER_KEYS.ASANA, {
         source_access_token: personalAccessToken,
         target_access_token: apiToken,
-        source: "ASANA",
+        source: E_IMPORTER_KEYS.ASANA,
         workspace_id: workspaceId,
-        isPAT: true,
+        is_pat: true,
       });
       res.status(200).json({ message: "Authentication successful" });
     } catch (error: any) {
@@ -146,6 +55,7 @@ class AsanaController {
   }
 
   @Get("/workspaces")
+  @useValidateUserAuthentication()
   async getWorkspaces(req: Request, res: Response) {
     try {
       const { workspaceId, userId } = req.query;
@@ -161,6 +71,7 @@ class AsanaController {
   }
 
   @Get("/projects")
+  @useValidateUserAuthentication()
   async getProjects(req: Request, res: Response) {
     try {
       const { workspaceId, userId, workspaceGid } = req.query;
@@ -176,6 +87,7 @@ class AsanaController {
   }
 
   @Get("/sections")
+  @useValidateUserAuthentication()
   async getProjectSections(req: Request, res: Response) {
     try {
       const { workspaceId, userId, projectGid } = req.query;
@@ -192,6 +104,7 @@ class AsanaController {
 
   // Get all enum custom fields that can be used as priorities
   @Get("/priorities")
+  @useValidateUserAuthentication()
   async getProjectPriorities(req: Request, res: Response) {
     try {
       const { workspaceId, userId, projectGid } = req.query;
@@ -224,6 +137,7 @@ class AsanaController {
   }
 
   @Get("/project-task-count")
+  @useValidateUserAuthentication()
   async getProjectTaskCount(req: Request, res: Response) {
     try {
       const { workspaceId, userId, projectGid } = req.query;
@@ -239,11 +153,12 @@ class AsanaController {
   }
 
   @Get("/additional-users/:workspaceId/:workspaceSlug/:userId/:workspaceGid")
+  @useValidateUserAuthentication()
   async getUserDifferential(req: Request, res: Response) {
     try {
       const { workspaceId, workspaceSlug, userId, workspaceGid } = req.params;
       const [planeClient, asanaClient] = await Promise.all([
-        createPlaneClient(workspaceId, userId, "ASANA"),
+        createPlaneClient(workspaceId, userId, E_IMPORTER_KEYS.ASANA),
         asanaService(workspaceId, userId),
       ]);
 
@@ -271,15 +186,16 @@ class AsanaController {
 }
 
 const asanaService = async (workspaceId: string, userId: string) => {
+  // eslint-disable-next-line no-useless-catch
   try {
-    const credentials = await getCredentialsByWorkspaceId(workspaceId, userId, "ASANA");
+    const credentials = await getCredentialsByWorkspaceId(workspaceId, userId, E_IMPORTER_KEYS.ASANA);
     if (!credentials || credentials.length <= 0) {
       throw new Error("No asana credentials available for the given workspaceId and userId");
     }
     // Get the credentials data
     const credentialsData = credentials[0];
     // Check if refresh token is required
-    const isRefreshAllowed = !credentialsData.isPAT && credentialsData.source_refresh_token;
+    const isRefreshAllowed = !credentialsData.is_pat && credentialsData.source_refresh_token;
     // Check if the credentials are valid
     if (
       !credentialsData.source_access_token ||
@@ -296,20 +212,20 @@ const asanaService = async (workspaceId: string, userId: string) => {
       access_token: string;
       refresh_token: string;
     }) => {
-      await createOrUpdateCredentials(workspaceId, userId, {
+      await createOrUpdateCredentials(workspaceId, userId, E_IMPORTER_KEYS.ASANA, {
         source_access_token: access_token,
         source_refresh_token: refresh_token,
-        source: "ASANA",
+        source: E_IMPORTER_KEYS.ASANA,
       });
     };
 
     const refreshTokenRejectCallback = async () => {
-      await deactivateCredentials(workspaceId, userId, "ASANA");
+      await deactivateCredentials(workspaceId, userId, E_IMPORTER_KEYS.ASANA);
     };
 
     return createAsanaService({
       accessToken: credentialsData.source_access_token,
-      refreshToken: credentialsData.source_refresh_token,
+      refreshToken: credentialsData.source_refresh_token ?? "",
       refreshTokenFunc: isRefreshAllowed ? asanaAuth.getRefreshToken.bind(asanaAuth) : undefined,
       refreshTokenCallback: isRefreshAllowed ? refreshTokenCallback : undefined,
       refreshTokenRejectCallback: refreshTokenRejectCallback,

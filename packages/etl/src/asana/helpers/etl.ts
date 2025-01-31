@@ -10,12 +10,13 @@ import {
   StateConfig,
 } from "@/asana/types";
 import { getFormattedDate } from "./date";
+import { E_IMPORTER_KEYS } from "@/core";
 
 export const getTargetAttachments = (attachments: AsanaAttachment[]): Partial<ExIssueAttachment>[] => {
   if (!attachments) return [];
   return attachments.map((attachment) => ({
     external_id: attachment.gid ?? "",
-    external_source: "ASANA",
+    external_source: E_IMPORTER_KEYS.ASANA,
     attributes: {
       name: attachment.name ?? "Untitled",
       size: attachment.size ?? 0,
@@ -27,7 +28,7 @@ export const getTargetAttachments = (attachments: AsanaAttachment[]): Partial<Ex
 export const getTargetState = (stateMap: StateConfig[], sourceState: string): ExState | undefined => {
   const targetState = stateMap.find((s) => s.source_state.id === sourceState);
   if (targetState) {
-    targetState.target_state.external_source = "ASANA";
+    targetState.target_state.external_source = E_IMPORTER_KEYS.ASANA;
     targetState.target_state.external_id = sourceState;
     return targetState.target_state;
   }
@@ -75,7 +76,7 @@ export const getPropertyValues = (
 ): ExIssuePropertyValue => {
   const propertyValues: ExIssuePropertyValue = [];
   const commonPropertyProp: Partial<TPropertyValue> = {
-    external_source: "ASANA",
+    external_source: E_IMPORTER_KEYS.ASANA,
     external_id: undefined,
   };
 

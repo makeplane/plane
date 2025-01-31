@@ -7,12 +7,15 @@ import { Button } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 // silo types
 import { TStepper, TStepperNavigation } from "@/plane-web/silo/types/ui";
+import { useTranslation } from "@plane/i18n";
 
 export const Stepper = <T,>(props: TStepper<T>) => {
   // props
   const { logo, steps, currentStepIndex } = props;
   // derived value
   const currentStepDetails = steps[currentStepIndex];
+
+  const { t } = useTranslation();
 
   return (
     <div className="relative w-full h-full flex flex-col space-y-6 overflow-hidden">
@@ -64,8 +67,8 @@ export const Stepper = <T,>(props: TStepper<T>) => {
 
         {/* title and description */}
         <div className="flex-shrink-0 space-y-1">
-          <div className="text-xl font-bold">{currentStepDetails?.title}</div>
-          <div className="text-custom-text-200 text-sm">{currentStepDetails?.description}</div>
+          <div className="text-xl font-bold">{t(currentStepDetails?.i18n_title)}</div>
+          <div className="text-custom-text-200 text-sm">{t(currentStepDetails?.i18n_description)}</div>
         </div>
       </div>
 
@@ -77,7 +80,7 @@ export const Stepper = <T,>(props: TStepper<T>) => {
 
 export const StepperNavigation = <T,>(props: TStepperNavigation<T>) => {
   const { currentStep, handleStep, children } = props;
-
+  const { t } = useTranslation();
   return (
     <div className="flex-shrink-0 relative flex items-center gap-2">
       <Button
@@ -86,7 +89,7 @@ export const StepperNavigation = <T,>(props: TStepperNavigation<T>) => {
         onClick={() => handleStep("previous")}
         disabled={currentStep?.prevStep === undefined}
       >
-        Back
+        {t("common.back")}
       </Button>
       {children ? (
         children
@@ -97,7 +100,7 @@ export const StepperNavigation = <T,>(props: TStepperNavigation<T>) => {
           onClick={() => handleStep("next")}
           disabled={currentStep?.nextStep === undefined}
         >
-          Next
+          {t("common.next")}
         </Button>
       )}
     </div>

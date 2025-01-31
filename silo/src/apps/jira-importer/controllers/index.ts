@@ -1,23 +1,15 @@
-import { env } from "@/env";
-import { Controller, Get, Post } from "@/lib";
-import { NextFunction, Request, Response } from "express";
-import { jiraAuth } from "../auth/auth";
-import {
-  createJiraService,
-  fetchPaginatedData,
-  JiraAuthPayload,
-  JiraAuthState,
-  JiraProject,
-  JiraResource,
-  JiraService,
-  JiraTokenResponse,
-} from "@plane/etl/jira";
-import { createOrUpdateCredentials, getCredentialsByWorkspaceId } from "@/db/query";
 import axios, { AxiosInstance } from "axios";
-import { Credentials } from "@/types";
-import { createPlaneClient } from "@/helpers/utils";
+import { Request, Response } from "express";
+import { createJiraService, fetchPaginatedData, JiraProject, JiraResource, JiraService } from "@plane/etl/jira";
+import { TWorkspaceCredential } from "@plane/types";
+import { env } from "@/env";
 import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
 import { responseHandler } from "@/helpers/response-handler";
+import { createPlaneClient } from "@/helpers/utils";
+import { Controller, Get, Post, useValidateUserAuthentication } from "@/lib";
+import { getAPIClient } from "@/services/client";
+import { jiraAuth } from "../auth/auth";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 
 class JiraApiError extends Error {
   constructor(
@@ -36,114 +28,15 @@ class JiraController {
     res.send("pong");
   }
 
-  @Post("/auth/url")
-  async getAuthURL(req: Request, res: Response) {
-    try {
-      if (env.JIRA_OAUTH_ENABLED === "0") {
-        return res.status(400).send({
-          message: "Bad Request, OAuth is not enabled for Jira.",
-        });
-      }
-
-      const body: JiraAuthState = req.body;
-      if (!body.workspaceId || !body.apiToken) {
-        return res.status(400).send({
-          message: "Bad Request, expected both apiToken and workspaceId to be present.",
-        });
-      }
-      const response = jiraAuth.getAuthorizationURL(body);
-      res.send(response);
-    } catch (error) {
-      responseHandler(res, 500, error);
-    }
-  }
-
-  @Get("/auth/callback")
-  async authCallback(req: Request, res: Response) {
-    try {
-      if (env.JIRA_OAUTH_ENABLED === "0") {
-        return res.status(400).send({
-          message: "Invalid Callback, OAuth is not enabled for Jira.",
-        });
-      }
-      const query: JiraAuthPayload | any = req.query;
-      if (!query.code) {
-        return res.status(400).send("code not found in the query params");
-      }
-      const stringifiedJsonState = query.state as string;
-      // Decode the base64 encoded state string and parse it to JSON
-      const state: JiraAuthState = JSON.parse(Buffer.from(stringifiedJsonState, "base64").toString());
-      let tokenResponse: JiraTokenResponse;
-      try {
-        const baseUrl = env.SILO_API_BASE_URL;
-        const tokenInfo = await jiraAuth.getAccessToken(query.code as string, state);
-        tokenResponse = tokenInfo.tokenResponse;
-      } catch (error: any) {
-        console.log("Error occured while fetching token details", error.response.data);
-        res.status(400).send(error.response.data);
-        return;
-      }
-
-      if (!tokenResponse) {
-        res.status(400).send("failed to fetch token details");
-        return;
-      }
-
-      // Create a new credentials record in the database for the recieved token
-      await createOrUpdateCredentials(state.workspaceId, state.userId, {
-        source_access_token: tokenResponse.access_token,
-        source_refresh_token: tokenResponse.refresh_token,
-        target_access_token: state.apiToken,
-        source: "JIRA",
-        workspace_id: state.workspaceId,
-      });
-
-
-      // As we are using base path as /jira, we can redirect to /jira
-      res.redirect(`${env.APP_BASE_URL}/${state.workspaceSlug}/settings/imports/jira/`);
-    } catch (error: any) {
-      responseHandler(res, 500, error);
-    }
-  }
-
-  @Post("/auth/refresh")
-  async refreshAccessToken(req: Request, res: Response) {
-    try {
-      if (env.JIRA_OAUTH_ENABLED === "0") {
-        return res.status(400).send({
-          message: "Invalid Callback, OAuth is not enabled for Jira.",
-        });
-      }
-      const { refreshToken, workspaceId, userId } = req.body;
-      if (!refreshToken || !workspaceId) {
-        return res.status(400).send({ message: "Bad Request" });
-      }
-
-      const { access_token, refresh_token, expires_in } = await jiraAuth.getRefreshToken(refreshToken);
-
-      // Update the credentials record in the database with the new token
-      await createOrUpdateCredentials(workspaceId, userId, {
-        source_access_token: access_token,
-        source_refresh_token: refresh_token,
-        source: "JIRA",
-        workspace_id: workspaceId,
-      });
-
-      res
-        .cookie("accessToken", access_token)
-        .cookie("refreshToken", refresh_token)
-        .send({ access_token, refresh_token, expires_in });
-    } catch (error: any) {
-      res.status(error.response.status).send(error.response.data);
-    }
-  }
-
   @Post("/auth/pat")
+  @useValidateUserAuthentication()
   async upsertCredentials(req: Request, res: Response) {
     try {
       const { workspaceId, userId, apiToken, personalAccessToken, userEmail, hostname } = req.body;
       if (!workspaceId || !userId || !apiToken || !personalAccessToken) {
-        res.status(400).json({ message: "Workspace ID, User ID, API Token and Personal Access Token are required" });
+        return responseHandler(res, 400, {
+          message: "Workspace ID, User ID, API Token and Personal Access Token are required",
+        });
       }
 
       try {
@@ -154,30 +47,31 @@ class JiraController {
           hostname: hostname,
         });
 
-        // await jiraService.getResourceProjects();
+        await jiraService.getResourceProjects();
       } catch (error: any) {
-        console.log("error in jira upsertCredentials", error);
-        return res.status(401).send({ message: "Invalid personal access token" });
+        return responseHandler(res, 401, { message: "Invalid personal access token" });
       }
 
       // Create or update the credentials
-      const credential = await createOrUpdateCredentials(workspaceId, userId, {
-        source_access_token: personalAccessToken,
+      const apiClient = getAPIClient();
+      await apiClient.workspaceCredential.createWorkspaceCredential({
+        source: E_IMPORTER_KEYS.JIRA,
         target_access_token: apiToken,
-        user_email: userEmail,
+        source_access_token: personalAccessToken,
         source_hostname: hostname,
-        source: "JIRA",
         workspace_id: workspaceId,
-        isPAT: true,
+        user_id: userId,
+        is_pat: true,
       });
 
-      res.status(200).json(credential);
+      return res.status(200).json({ message: "Authentication successfull" });
     } catch (error: any) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Post("/resources")
+  @useValidateUserAuthentication()
   async getResources(req: Request, res: Response) {
     try {
       if (env.JIRA_OAUTH_ENABLED === "0") {
@@ -223,6 +117,7 @@ class JiraController {
   }
 
   @Post("/projects")
+  @useValidateUserAuthentication()
   async getProjects(req: Request, res: Response) {
     const { workspaceId, userId, cloudId } = req.body;
 
@@ -238,25 +133,26 @@ class JiraController {
       );
       return res.json(projects);
     } catch (error: any) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Post("/states")
+  @useValidateUserAuthentication()
   async getStates(req: Request, res: Response) {
     const { workspaceId, userId, cloudId, projectId } = req.body;
 
     try {
       const jiraClient = await createJiraClient(workspaceId, userId, cloudId);
       const statuses = await jiraClient.getProjectStatuses(projectId);
-      // const statuses = await jiraClient.getResourceStatuses();
       return res.json(statuses);
     } catch (error: any) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Post("/priorities")
+  @useValidateUserAuthentication()
   async getPriority(req: Request, res: Response) {
     const { workspaceId, userId, cloudId } = req.body;
 
@@ -265,11 +161,12 @@ class JiraController {
       const statuses = await jiraClient.getIssuePriorities();
       return res.json(statuses);
     } catch (error: any) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Post("/labels")
+  @useValidateUserAuthentication()
   async getLabels(req: Request, res: Response) {
     const { workspaceId, userId, cloudId } = req.body;
 
@@ -278,11 +175,12 @@ class JiraController {
       const labels = await jiraClient.getResourceLabels();
       return res.json(labels?.values);
     } catch (error: any) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Post("/issue-count")
+  @useValidateUserAuthentication()
   async getIssueCount(req: Request, res: Response) {
     const { workspaceId, userId, cloudId, projectId } = req.body;
 
@@ -291,11 +189,12 @@ class JiraController {
       const issueCount = await jiraClient.getNumberOfIssues(projectId);
       return res.json(issueCount);
     } catch (error: any) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Post("/issue-types")
+  @useValidateUserAuthentication()
   async getIssueTypes(req: Request, res: Response) {
     const { workspaceId, userId, cloudId, projectId } = req.body;
 
@@ -304,11 +203,12 @@ class JiraController {
       const statuses = await jiraClient.getProjectIssueTypes(projectId);
       return res.json(statuses);
     } catch (error: any) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Post("/additional-users/:workspaceId/:workspaceSlug/:userId")
+  @useValidateUserAuthentication()
   async getUserDifferential(req: Request, res: Response) {
     try {
       const { workspaceId, workspaceSlug, userId } = req.params;
@@ -324,7 +224,7 @@ class JiraController {
 
       const jiraEmails = userData?.map((x) => x.email);
 
-      const planeClient = await createPlaneClient(workspaceId, userId, "JIRA");
+      const planeClient = await createPlaneClient(workspaceId, userId, E_IMPORTER_KEYS.JIRA);
       const workspaceMembers = await planeClient.users.listAllUsers(workspaceSlug);
       const billableMembers = workspaceMembers.filter((member) => member.role > 10);
       const additionalUsers = compareAndGetAdditionalUsers(billableMembers, jiraEmails);
@@ -334,13 +234,18 @@ class JiraController {
         occupiedUserCount: billableMembers.length,
       });
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 }
 
 const createJiraClient = async (workspaceId: string, userId: string, cloudId?: string): Promise<JiraService> => {
-  const credentials = await getCredentialsByWorkspaceId(workspaceId, userId, "JIRA");
+  const apiClient = getAPIClient();
+  const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
+    workspace_id: workspaceId,
+    source: E_IMPORTER_KEYS.JIRA,
+    user_id: userId,
+  });
 
   if (!credentials || credentials.length === 0) {
     throw new Error("No jira credentials available for the given workspaceId and userId");
@@ -355,11 +260,13 @@ const createJiraClient = async (workspaceId: string, userId: string, cloudId?: s
     access_token: string;
     refresh_token: string;
   }) => {
-    await createOrUpdateCredentials(workspaceId, userId, {
+    await apiClient.workspaceCredential.createWorkspaceCredential({
+      source: E_IMPORTER_KEYS.JIRA,
+      target_access_token: jiraCredentials.target_access_token,
       source_access_token: access_token,
       source_refresh_token: refresh_token,
-      target_access_token: jiraCredentials.target_access_token,
-      source: "JIRA",
+      workspace_id: workspaceId,
+      user_id: userId,
     });
   };
 
@@ -398,7 +305,12 @@ const createJiraClient = async (workspaceId: string, userId: string, cloudId?: s
 };
 
 async function validateAndGetCredentials(workspaceId: string, userId: string) {
-  const credentials = await getCredentialsByWorkspaceId(workspaceId, userId, "JIRA");
+  const apiClient = getAPIClient();
+  const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
+    workspace_id: workspaceId,
+    source: E_IMPORTER_KEYS.JIRA,
+    user_id: userId,
+  });
   if (!credentials || credentials.length === 0) {
     throw new JiraApiError("No Jira credentials available for the given workspaceId and userId", 401);
   }
@@ -423,7 +335,7 @@ function createAxiosInstance(): AxiosInstance {
   });
 }
 
-async function fetchJiraResources(axiosInstance: AxiosInstance, credentials: Credentials, isRetry = false) {
+async function fetchJiraResources(axiosInstance: AxiosInstance, credentials: TWorkspaceCredential, isRetry = false) {
   try {
     const response = await axiosInstance.get("/oauth/token/accessible-resources", {
       headers: {
@@ -447,7 +359,7 @@ async function fetchJiraResources(axiosInstance: AxiosInstance, credentials: Cre
 async function refreshAndRetry(
   workspaceId: string,
   userId: string,
-  credentials: Credentials,
+  credentials: TWorkspaceCredential,
   axiosInstance: AxiosInstance
 ): Promise<JiraResource[]> {
   if (!credentials.source_refresh_token) {
@@ -455,11 +367,15 @@ async function refreshAndRetry(
   }
 
   const newJiraCredentials = await jiraAuth.getRefreshToken(credentials.source_refresh_token);
-  const updatedCredentials = await createOrUpdateCredentials(workspaceId, userId, {
+  const apiClient = getAPIClient();
+
+  const updatedCredentials = await apiClient.workspaceCredential.createWorkspaceCredential({
+    source: E_IMPORTER_KEYS.JIRA,
+    target_access_token: credentials.target_access_token,
     source_access_token: newJiraCredentials.access_token,
     source_refresh_token: newJiraCredentials.refresh_token,
-    target_access_token: credentials.target_access_token,
-    source: "JIRA",
+    workspace_id: workspaceId,
+    user_id: userId,
   });
 
   if (!updatedCredentials.source_access_token) {
@@ -472,9 +388,9 @@ async function refreshAndRetry(
 function handleError(error: any, res: Response) {
   console.error("Error occurred:", error);
   if (error instanceof JiraApiError) {
-    return res.status(error.statusCode).send({ message: error.message });
+    return responseHandler(res, error.statusCode, error);
   }
-  return res.status(500).send({ message: "An unexpected error occurred" });
+  return responseHandler(res, 500, new JiraApiError("An unexpected error occurred", 500));
 }
 
 export default JiraController;

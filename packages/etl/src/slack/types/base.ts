@@ -302,7 +302,7 @@ interface Block {
   [key: string]: any;
 }
 
-interface Message {
+export interface Message {
   user: string;
   type: string;
   ts: string;
@@ -315,10 +315,32 @@ interface Message {
   parent_user_id: string;
   metadata: Metadata;
   blocks: Block[];
+  files?: MessageFile[];
 }
 
-interface ResponseMetadata {
+export interface MessageFile {
+  // Define file structure based on your needs
+  id: string;
+  name: string;
+  url_private: string;
+  // Add other file properties as needed
+  [key: string]: any;
+}
+
+export interface ResponseMetadata {
   warnings: string[];
+}
+
+export interface SlackConversationHistoryResponse {
+  ok: boolean;
+  latest: string;
+  messages: Message[];
+  has_more: boolean;
+  is_limited: boolean;
+  pin_count: number;
+  channel_actions_ts: string | null;
+  channel_actions_count: number;
+  response_metadata: ResponseMetadata;
 }
 
 export interface SlackMessageResponse {

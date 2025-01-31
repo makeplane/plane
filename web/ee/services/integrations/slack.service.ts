@@ -1,6 +1,14 @@
 import axios, { AxiosInstance } from "axios";
 // types
-import { SlackAuthState, SlackUserAuthState, TAppConnection, TUserConnectionStatus } from "@plane/etl/slack";
+import {
+  SlackAuthState,
+  SlackUserAuthState,
+  TAppConnection,
+  TSlackConfig,
+  TSlackConnectionData,
+  TUserConnectionStatus,
+} from "@plane/etl/slack";
+import { TWorkspaceConnection } from "@plane/types";
 
 export class SlackIntegrationService {
   protected baseURL: string;
@@ -8,7 +16,7 @@ export class SlackIntegrationService {
 
   constructor(baseURL: string) {
     this.baseURL = baseURL;
-    this.axiosInstance = axios.create({ baseURL });
+    this.axiosInstance = axios.create({ baseURL, withCredentials: true });
   }
 
   /**
@@ -42,9 +50,9 @@ export class SlackIntegrationService {
   /**
    * @description get the app connection status
    * @param { string } workspaceId
-   * @returns { Promise<SlackAuthState[]> }
+   * @returns { Promise<TAppConnection[]> }
    */
-  async getAppConnection(workspaceId: string): Promise<TAppConnection[]> {
+  async getAppConnection(workspaceId: string): Promise<TWorkspaceConnection<TSlackConfig, TSlackConnectionData>[]> {
     return this.axiosInstance
       .get(`/api/slack/app/status/${workspaceId}`)
       .then((res) => res.data)

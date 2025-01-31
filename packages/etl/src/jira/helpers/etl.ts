@@ -7,12 +7,13 @@ import {
 } from "jira.js/out/version3/models";
 import { SUPPORTED_CUSTOM_FIELD_ATTRIBUTES } from "./custom-field-etl";
 import { getFormattedDate } from "./date";
+import { E_IMPORTER_KEYS } from "@/core";
 
 export const getTargetState = (stateMap: IStateConfig[], sourceState: JiraState): ExState | undefined => {
   // Assign the external source and external id from jira and return the target state
   const targetState = stateMap.find((state: IStateConfig) => {
     if (state.source_state.id === sourceState.id) {
-      state.target_state.external_source = "JIRA";
+      state.target_state.external_source = E_IMPORTER_KEYS.JIRA;
       state.target_state.external_id = sourceState.id as string;
       return state;
     }
@@ -29,7 +30,7 @@ export const getTargetAttachments = (attachments?: JiraAttachment[]): Partial<Ex
     .map(
       (attachment: JiraAttachment): Partial<ExIssueAttachment> => ({
         external_id: attachment.id ?? "",
-        external_source: "JIRA",
+        external_source: E_IMPORTER_KEYS.JIRA,
         attributes: {
           name: attachment.filename ?? "Untitled",
           size: attachment.size ?? 0,
@@ -92,7 +93,7 @@ export const getPropertyValues = (
 ): ExIssuePropertyValue => {
   const propertyValues: ExIssuePropertyValue = [];
   const commonPropertyProp: Partial<TPropertyValue> = {
-    external_source: "JIRA",
+    external_source: E_IMPORTER_KEYS.JIRA,
     external_id: undefined,
   };
 

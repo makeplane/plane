@@ -1,6 +1,7 @@
 import { ExCycle, ExIssueComment, ExIssueLabel, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
 import { GitlabIssue, GitlabLabel, GitlabMilestone, GitlabNote } from "../types";
 import { replaceIssueNumber, replaceMentionedGlUsers } from "../helpers";
+import { E_INTEGRATION_KEYS } from "@/core";
 
 export const transformGitlabIssue = (
   issue: GitlabIssue,
@@ -53,11 +54,11 @@ export const transformGitlabIssue = (
 
   let labels = issue.labels || [];
   labels = labels.filter((label) => label.toLowerCase() !== "plane");
-  labels.push("gitlab");
+  labels.push(E_INTEGRATION_KEYS.GITLAB.toLowerCase());
 
   return {
     external_id: issue.iid.toString(),
-    external_source: "GITLAB",
+    external_source: E_INTEGRATION_KEYS.GITLAB,
     created_by: creator,
     name: issue.title,
     description_html: issue_html,
@@ -74,7 +75,7 @@ export const transformGitlabLabel = (label: GitlabLabel): Partial<ExIssueLabel> 
   name: label.name,
   color: label.color,
   external_id: label.id.toString(),
-  external_source: "GITLAB",
+  external_source: E_INTEGRATION_KEYS.GITLAB,
 });
 
 export const transformGitlabComment = (
@@ -125,7 +126,7 @@ export const transformGitlabComment = (
 
   return {
     external_id: comment.id.toString(),
-    external_source: "GITLAB",
+    external_source: E_INTEGRATION_KEYS.GITLAB,
     created_at: comment.created_at,
     created_by: creator || undefined,
     comment_html: comment_html,
@@ -136,7 +137,7 @@ export const transformGitlabComment = (
 
 export const transformGitlabMilestone = (milestone: GitlabMilestone): Partial<ExCycle> => ({
   external_id: milestone.id.toString(),
-  external_source: "GITLAB",
+  external_source: E_INTEGRATION_KEYS.GITLAB,
   name: milestone.title,
   description: milestone.description || undefined,
   start_date: milestone.start_date || milestone.created_at,

@@ -6,6 +6,7 @@ import { AsanaCustomField } from "@plane/etl/asana";
 import { Loader } from "@plane/ui";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
+import { useTranslation } from "@plane/i18n";
 
 type TConfigureAsanaSelectPriority = {
   value: string | undefined;
@@ -17,10 +18,11 @@ type TConfigureAsanaSelectPriority = {
 export const ConfigureAsanaSelectPriority: FC<TConfigureAsanaSelectPriority> = observer((props) => {
   // props
   const { value, isLoading, asanaPriorities, handleFormData } = props;
+  const { t } = useTranslation()
 
   return (
     <div className="space-y-2">
-      <div className="text-sm text-custom-text-200">Select Asana priority field</div>
+      <div className="text-sm text-custom-text-200">{t("asana_importer.select_asana_priority_field")}</div>
       {isLoading ? (
         <Loader>
           <Loader.Item height="28px" width="100%" />
@@ -34,7 +36,7 @@ export const ConfigureAsanaSelectPriority: FC<TConfigureAsanaSelectPriority> = o
             data: priority,
           }))}
           value={value}
-          placeHolder="Select Asana priority"
+          placeHolder={t("importers.select_priority")}
           onChange={(value: string | undefined) => handleFormData(value)}
           queryExtractor={(option) => option.name}
           disabled={false}

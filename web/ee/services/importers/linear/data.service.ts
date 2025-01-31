@@ -9,7 +9,7 @@ export class LinearService {
 
   constructor(baseURL: string) {
     this.baseURL = baseURL;
-    this.axiosInstance = axios.create({ baseURL });
+    this.axiosInstance = axios.create({ baseURL, withCredentials: true });
   }
 
   async getOrganizations(workspaceId: string, userId: string): Promise<LinearOrganization | undefined> {

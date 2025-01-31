@@ -7,48 +7,56 @@ from plane.ee.views import (
     WorkspaceConnectionAPIView,
     WorkspaceEntityConnectionAPIView,
     VerifyWorkspaceCredentialAPIView,
-    WorkspaceUserConnectionAPIView
+    WorkspaceUserConnectionAPIView,
 )
 
 urlpatterns = [
     # workspace credential url patterns
     path(
-        "workspaces/<str:slug>/credentials/<uuid:pk>/",
+        "workspace-credentials/<uuid:pk>/",
         WorkspaceCredentialAPIView.as_view(),
         name="workspace-credential",
     ),
     path(
-        "workspaces/<str:slug>/credentials/",
+        "workspace-credentials/",
         WorkspaceCredentialAPIView.as_view(),
         name="workspace-credential",
     ),
     path(
-        "workspaces/<str:slug>/credentials/<uuid:pk>/token-verify/",
+        "workspace-credentials/<uuid:pk>/token-verify/",
+        VerifyWorkspaceCredentialAPIView.as_view(),
+        name="workspace-credential-token-verify",
+    ),
+    path(
+        "workspace-credentials/token-verify/",
         VerifyWorkspaceCredentialAPIView.as_view(),
         name="workspace-credential-token-verify",
     ),
     # workspace connections url patterns
     path(
-        "workspaces/<str:slug>/connections/<uuid:pk>/",
+        "workspace-connections/<uuid:pk>/",
         WorkspaceConnectionAPIView.as_view(),
         name="workspace-connection-detail",
     ),
     path(
-        "workspaces/<str:slug>/connections/",
+        "workspace-connections/",
         WorkspaceConnectionAPIView.as_view(),
         name="workspace-connection-detail",
     ),
-
     # List all user-specific connections for a workspace
     path(
-        "workspaces/<str:slug>/user-connections/<uuid:user_id>/",
+        "workspace-user-connections/",
         WorkspaceUserConnectionAPIView.as_view(),
         name="workspace-user-connections",
     ),
-
     # workspace entity connection url patterns
     path(
-        "workspaces/<str:slug>/entity-connections/<uuid:pk>/",
+        "workspace-entity-connections/<uuid:pk>/",
+        WorkspaceEntityConnectionAPIView.as_view(),
+        name="workspace-entity-connection-detail",
+    ),
+    path(
+        "workspace-entity-connections/",
         WorkspaceEntityConnectionAPIView.as_view(),
         name="workspace-entity-connection-detail",
     ),

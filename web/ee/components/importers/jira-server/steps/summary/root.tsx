@@ -3,14 +3,16 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { E_IMPORTER_KEYS, E_JOB_STATUS, TJob, TJobStatus } from "@plane/etl/core";
+import { E_IMPORTER_KEYS, E_JOB_STATUS, TJobStatus } from "@plane/etl/core";
 import { JiraConfig } from "@plane/etl/jira";
+import { TImportJob } from "@plane/types";
 import { Button, Loader } from "@plane/ui";
 // plane web components
 import { StepperNavigation, AddSeatsAlertBanner, SkipUserImport } from "@/plane-web/components/importers/ui";
 import { useJiraServerImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web types
 import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/jira-server";
+import { useTranslation } from "@plane/i18n";
 
 export const SummaryRoot: FC = observer(() => {
   // hooks
@@ -22,7 +24,7 @@ export const SummaryRoot: FC = observer(() => {
     configData,
     handleSyncJobConfig,
     auth: { apiTokenVerification },
-    job: { createJobConfig, createJob, startJob },
+    job: { createJob, startJob },
     handleDashboardView,
     handleStepper,
     resetImporterData,
@@ -38,6 +40,7 @@ export const SummaryRoot: FC = observer(() => {
     },
     // setDashboardView,
   } = useJiraServerImporter();
+  const { t } = useTranslation();
   const { currentWorkspaceSubscriptionAvailableSeats } = useWorkspaceSubscription();
 
   // states
@@ -47,7 +50,6 @@ export const SummaryRoot: FC = observer(() => {
   const workspaceSlug = workspace?.slug || undefined;
   const workspaceId = workspace?.id || undefined;
   const userId = user?.id || undefined;
-  const userEmail = user?.email || undefined;
   const planeProjectId = importerData[E_IMPORTER_STEPS.SELECT_PLANE_PROJECT]?.projectId;
   const jiraResourceId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.resourceId;
   const jiraProjectId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.projectId;
@@ -68,27 +70,23 @@ export const SummaryRoot: FC = observer(() => {
       try {
         const tokenVerification = await apiTokenVerification();
         if (tokenVerification?.message) {
-          const importerConfig = await createJobConfig(configData as JiraConfig);
-          if (importerConfig && importerConfig?.insertedId) {
-            const syncJobPayload: Partial<TJob> = {
-              workspace_slug: workspaceSlug,
-              workspace_id: workspaceId,
-              project_id: planeProjectId,
-              initiator_id: userId,
-              initiator_email: userEmail,
-              config: importerConfig?.insertedId,
-              migration_type: E_IMPORTER_KEYS.JIRA_SERVER,
-              status: E_JOB_STATUS.CREATED as TJobStatus,
-            };
-            const importerCreateJob = await createJob(planeProjectId, syncJobPayload);
-            if (importerCreateJob && importerCreateJob?.insertedId) {
-              await startJob(importerCreateJob?.insertedId);
-              handleDashboardView();
-              // clearing the existing data in the context
-              resetImporterData();
-              // moving to the next state
-              handleStepper("next");
-            }
+          const syncJobPayload: Partial<TImportJob<JiraConfig>> = {
+            workspace_slug: workspaceSlug,
+            workspace_id: workspaceId,
+            project_id: planeProjectId,
+            initiator_id: userId,
+            config: configData as JiraConfig,
+            source: E_IMPORTER_KEYS.JIRA_SERVER,
+            status: E_JOB_STATUS.CREATED as TJobStatus,
+          };
+          const importerCreateJob = await createJob(planeProjectId, syncJobPayload);
+          if (importerCreateJob && importerCreateJob?.id) {
+            await startJob(importerCreateJob?.id);
+            handleDashboardView();
+            // clearing the existing data in the context
+            resetImporterData();
+            // moving to the next state
+            handleStepper("next");
           }
         }
       } catch (error) {
@@ -148,8 +146,8 @@ export const SummaryRoot: FC = observer(() => {
       {/* content */}
       <div className="w-full min-h-44 max-h-full overflow-y-auto">
         <div className="relative grid grid-cols-2 items-center bg-custom-background-90 p-3 text-sm font-medium">
-          <div>Jira Entities</div>
-          <div>Migrating</div>
+          <div>Jira {t("common.entities")}</div>
+          <div>{t("importers.migrating")}</div>
         </div>
         {isJiraLabelsLoading || isJiraIssueCountLoading ? (
           <Loader className="relative w-full grid grid-cols-2 items-center py-4 gap-4">
@@ -163,20 +161,20 @@ export const SummaryRoot: FC = observer(() => {
         ) : (
           <div className="divide-y divide-custom-border-200">
             <div className="relative grid grid-cols-2 items-center p-3 text-sm">
-              <div className="text-custom-text-200">Issues</div>
-              <div>{jiraIssueCount} issues</div>
+              <div className="text-custom-text-200">{t("common.issues")}</div>
+              <div>{jiraIssueCount} {t("common.issues")}</div>
             </div>
             <div className="relative grid grid-cols-2 items-center p-3 text-sm">
-              <div className="text-custom-text-200">Labels</div>
-              <div>{jiraProjectLabels?.length || 0} labels</div>
+              <div className="text-custom-text-200">{t("common.labels")}</div>
+              <div>{jiraProjectLabels?.length || 0} {t("common.labels")}</div>
             </div>
             <div className="relative grid grid-cols-2 items-center p-3 text-sm">
-              <div className="text-custom-text-200">States</div>
-              <div>{jiraStates?.length || 0} states</div>
+              <div className="text-custom-text-200">{t("common.states")}</div>
+              <div>{jiraStates?.length || 0} {t("common.states")}</div>
             </div>
             <div className="relative grid grid-cols-2 items-center p-3 text-sm">
-              <div className="text-custom-text-200">Priorities</div>
-              <div>{jiraPriorities?.length || 0} priorities</div>
+              <div className="text-custom-text-200">{t("common.priorities")}</div>
+              <div>{jiraPriorities?.length || 0} {t("common.priorities")}</div>
             </div>
           </div>
         )}
@@ -207,7 +205,7 @@ export const SummaryRoot: FC = observer(() => {
             onClick={handleOnClickNext}
             disabled={createConfigLoader || isNextBtnDisabled}
           >
-            {createConfigLoader ? "Configuring..." : "Confirm"}
+            {createConfigLoader ? t("common.configuring") : t("common.confirm")}
           </Button>
         </StepperNavigation>
       </div>

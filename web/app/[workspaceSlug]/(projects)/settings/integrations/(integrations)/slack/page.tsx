@@ -5,14 +5,20 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Cloud } from "lucide-react";
 // plane web components
+import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 import { SlackIntegrationRoot } from "@/plane-web/components/integrations/slack";
 //  plane web hooks
-import { useFlag } from "@/plane-web/hooks/store";
+import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web constants
 import { useSlackIntegration } from "@/plane-web/hooks/store/integrations/use-slack";
+import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
+
+const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
 
 const SlackIntegration: FC = observer(() => {
   // router
@@ -21,6 +27,20 @@ const SlackIntegration: FC = observer(() => {
   const { fetchExternalApiToken, externalApiToken } = useSlackIntegration();
   // derived values
   const isFeatureEnabled = useFlag(workspaceSlug?.toString(), "SLACK_INTEGRATION");
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+
+  // derived values
+  const isSelfManaged = subscriptionDetail?.is_self_managed;
+
+  // Fetch Supported Integrations
+  const {
+    data: supportedIntegrations,
+    isLoading: supportedIntegrationsLoading,
+    error: supportedIntegrationsError,
+  } = useSWR(`SILO_SUPPORTED_INTEGRATIONS`, () => siloAppService.getSupportedIntegrations(), {
+    revalidateOnFocus: false,
+  });
+  const { t } = useTranslation();
 
   // fetching external api token
   const { isLoading: externalApiTokenIsLoading } = useSWR(
@@ -29,10 +49,34 @@ const SlackIntegration: FC = observer(() => {
     { errorRetryCount: 0 }
   );
 
+  if ((!externalApiToken && externalApiTokenIsLoading) || (!supportedIntegrations && supportedIntegrationsLoading))
+    return (
+      <div className="text-custom-text-200 relative flex justify-center items-center">{t("integrations.loading")}</div>
+    );
+
   if (!isFeatureEnabled)
     return (
       <div className="text-custom-text-200 relative flex justify-center items-center">
-        Slack integration is not enabled for this workspace.
+        {t("integrations.not_enabled", { name: "Slack" })}
+      </div>
+    );
+
+  if (supportedIntegrationsError)
+    return (
+      <div className="text-custom-text-200 relative flex justify-center items-center">
+        {t("integrations.error_fetching_supported_integrations")}
+      </div>
+    );
+
+  if (supportedIntegrations && !supportedIntegrations.includes(E_INTEGRATION_KEYS.SLACK))
+    return (
+      <div className={"flex h-full flex-col items-center justify-center"}>
+        <Cloud size={96} />
+        <div className="text-custom-text-200 text-center text-sm relative flex justify-center items-center">
+          {isSelfManaged
+            ? t("integrations.not_configured_message_admin", { name: "Slack" })
+            : t("integrations.not_configured_message_support", { name: "Slack" })}
+        </div>
       </div>
     );
 
@@ -41,7 +85,7 @@ const SlackIntegration: FC = observer(() => {
       <div className="flex-shrink-0 text-sm text-custom-text-300 hover:text-custom-text-200 hover:underline font-medium">
         <Link className="flex items-center gap-2" href={`/${workspaceSlug?.toString()}/settings/integrations`}>
           <ArrowLeft size={16} />
-          Back to integrations
+          {t("integrations.back_to_integrations")}
         </Link>
       </div>
       {externalApiTokenIsLoading ? (

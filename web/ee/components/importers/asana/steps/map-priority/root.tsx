@@ -4,6 +4,7 @@ import { FC, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import Fuse from 'fuse.js'
 // ui
 import { PriorityConfig, AsanaCustomField, AsanaEnumOption } from "@plane/etl/asana";
 import { Button } from "@plane/ui";
@@ -16,6 +17,8 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 import { useAsanaImporter } from "@/plane-web/hooks/store";
 // plane web types
 import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers/asana";
+import { TPlanePriorityData } from "@/plane-web/types";
+import { useTranslation } from "@plane/i18n";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.MAP_PRIORITY];
 
@@ -34,11 +37,13 @@ export const MapPriorityRoot: FC = observer(() => {
     handleStepper,
     data: { getAsanaPrioritiesByProjectGid, getAsanaPriorityOptionById, fetchAsanaPriorities },
   } = useAsanaImporter();
+  const { t } = useTranslation();
   // states
   const [formData, setFormData] = useState<TFormData>({
     customFieldGid: undefined,
     priorityMap: {},
   });
+  const [fuzzySearchDone, setFuzzySearchDone] = useState(false);
   // derived values
   const workspaceId = workspace?.id || undefined;
   const userId = user?.id || undefined;
@@ -106,6 +111,47 @@ export const MapPriorityRoot: FC = observer(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [importerData]);
 
+  // fuzzy search and default values
+  useEffect(() => {
+    if (!asanaPriorityOptions?.length || !priorities.length || fuzzySearchDone || !formData.customFieldGid) {
+      return;
+    }
+  
+    // in list search on which keys to perform the search
+    const options = {
+      includeScore: true,
+      keys: ["label"],
+    };
+  
+    // Create Fuse instance once
+    const fuse = new Fuse(priorities, options);
+  
+    // Create a new priorityMap to store all mappings
+    const newPriorityMap: Record<string, string> = {};
+  
+    asanaPriorityOptions?.forEach((asanaState) => {
+      if (asanaState.name) {
+        const result = fuse.search(asanaState.name);
+  
+        if (result.length > 0) {
+          const planeState = result[0].item as TPlanePriorityData;
+          if (asanaState.gid && planeState.key) {
+            newPriorityMap[asanaState.gid] = planeState.key;
+          }
+        }
+      }
+    });
+
+  
+    // Update the entire priorityMap at once
+    if (Object.keys(newPriorityMap).length > 0) {
+      handleFormData("priorityMap", { ...formData.priorityMap, ...newPriorityMap });
+    }
+  
+    // mark the fuzzy search as done
+    setFuzzySearchDone(true);
+  }, [asanaPriorityOptions, priorities, fuzzySearchDone, handleFormData, formData.customFieldGid]);
+
   // fetching the asana project priorities
   const { isLoading } = useSWR(
     workspaceId && userId && asanaProjectGid
@@ -159,7 +205,7 @@ export const MapPriorityRoot: FC = observer(() => {
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
           <Button variant="primary" size="sm" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
-            Next
+            {t("common.next")}
           </Button>
         </StepperNavigation>
       </div>

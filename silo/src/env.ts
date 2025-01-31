@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+import * as dotenv from "dotenv";
 import { z } from "zod";
 
 dotenv.config();
@@ -17,12 +17,23 @@ const envSchema = z.object({
   SENTRY_PROJECT: z.string().default("plane-silo"),
   SENTRY_RELEASE_VERSION: z.string().default("1.0.0"),
   PG_SCHEMA: z.string().optional(),
-  APP_BASE_URL: z.string().default(""),
-  API_BASE_URL: z.string().default(""),
-  SILO_API_BASE_URL: z.string().default(""),
+  APP_BASE_URL: z
+    .string()
+    .default("")
+    .transform((str) => str.replace(/\/$/, "")),
+  API_BASE_URL: z
+    .string()
+    .default("")
+    // Remove the slash at the end of the URL
+    .transform((str) => str.replace(/\/$/, "")),
+  SILO_API_BASE_URL: z
+    .string()
+    .default("")
+    .transform((str) => str.replace(/\/$/, "")),
   SILO_BASE_PATH: z.string().default(""),
   WEBHOOK_SECRET: z.string().default("plane-silo"),
   MQ_PREFETCH_COUNT: z.string().default("5"),
+  SILO_HMAC_SECRET_KEY: z.string().default(""),
   // Feature Flags Env Variables
   FEATURE_FLAG_SERVER_BASE_URL: z.string().optional(),
   FEATURE_FLAG_SERVER_AUTH_TOKEN: z.string().optional(),
@@ -51,8 +62,11 @@ const envSchema = z.object({
   // Slack Env Variables
   SLACK_CLIENT_ID: z.string().optional(),
   SLACK_CLIENT_SECRET: z.string().optional(),
+  // Flatfile Env Variables
+  FLATFILE_API_KEY: z.string().optional(),
 });
 
+// Validate the environment variables
 function validateEnv() {
   const result = envSchema.safeParse(process.env);
 

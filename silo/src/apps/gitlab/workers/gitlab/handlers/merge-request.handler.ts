@@ -1,24 +1,29 @@
+import { createGitLabService, GitlabMergeRequestEvent, GitlabNote, GitLabService } from "@plane/etl/gitlab";
+import { Client } from "@plane/sdk";
+import { TWorkspaceCredential } from "@plane/types";
 import { classifyMergeRequestEvent } from "@/apps/gitlab/helpers";
 import { getGitlabConnectionDetails } from "@/apps/gitlab/helpers/connection-details";
-import { getReferredIssues, IssueReference, IssueWithReference } from "@/helpers/parser";
-import { GitlabConnectionDetails } from "@/apps/gitlab/types";
-import { createOrUpdateCredentials, getCredentialsById } from "@/db/query";
-import { logger } from "@/logger";
-import { Credentials } from "@/types";
-import { Client } from "@plane/sdk";
-import { createGitLabService, GitlabMergeRequestEvent, GitlabNote, GitLabService } from "@plane/etl/gitlab";
+import { GitlabConnectionDetails, GitlabEntityConnection } from "@/apps/gitlab/types";
 import { env } from "@/env";
+import { getReferredIssues, IssueReference, IssueWithReference } from "@/helpers/parser";
+import { logger } from "@/logger";
+import { getAPIClient } from "@/services/client";
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+
+const apiClient = getAPIClient();
 
 const getConnectionAndCredentials = async (
   data: GitlabMergeRequestEvent
-): Promise<[GitlabConnectionDetails, Credentials] | null> => {
+): Promise<[GitlabConnectionDetails, TWorkspaceCredential] | null> => {
   const connectionDetails = await getGitlabConnectionDetails(data);
   if (!connectionDetails) {
     logger.error(`[GITLAB] Connection details not found for project ${data.project.id}, skipping...`);
     return null;
   }
 
-  const [credentials] = await getCredentialsById(connectionDetails.workspaceConnection.credentialsId);
+  const credentials = await apiClient.workspaceCredential.getWorkspaceCredential(
+    connectionDetails.workspaceConnection.credential_id
+  );
   if (!credentials) {
     logger.error(`[GITLAB] Credentials not found for project ${data.project.id}, skipping...`);
     return null;
@@ -39,21 +44,32 @@ const getTargetState = (data: GitlabMergeRequestEvent, entityConnection: any) =>
 
 const updateIssue = async (
   planeClient: Client,
-  entityConnection: any,
+  entityConnection: GitlabEntityConnection,
   reference: IssueReference,
   targetState: any,
-  projectId: number
+  projectId: number,
+  prTitle: string,
+  prNumber: number,
+  prUrl: string
 ): Promise<IssueWithReference | null> => {
   try {
     const issue = await planeClient.issue.getIssueByIdentifier(
-      entityConnection.workspaceSlug,
+      entityConnection.workspace_slug,
       reference.identifier,
       reference.sequence
     );
 
-    await planeClient.issue.update(entityConnection.workspaceSlug, issue.project, issue.id, {
+    await planeClient.issue.update(entityConnection.workspace_slug, issue.project, issue.id, {
       state: targetState.id,
     });
+
+    // create link to the pull request to the issue
+    const linkTitle = `[${prNumber}] ${prTitle}`;
+    try {
+      await planeClient.issue.createLink(entityConnection.workspace_slug, issue.project, issue.id, linkTitle, prUrl);
+    } catch (error) {
+      console.log(error);
+    }
 
     logger.info(`[GITLAB] Issue ${reference.identifier} updated to state ${targetState.name} for project ${projectId}`);
     return { reference, issue };
@@ -138,19 +154,24 @@ export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
       ? closingReferences
       : [...closingReferences, ...nonClosingReferences];
 
+    if (!workspaceConnection.target_hostname) {
+      logger.error("Target hostname not found");
+      return;
+    }
 
     const planeClient = new Client({
       apiToken: credentials.target_access_token!,
-      baseURL: workspaceConnection.targetHostname,
+      baseURL: workspaceConnection.target_hostname,
     });
 
     const refreshTokenCallback = async (access_token: string, refresh_token: string) => {
-      await createOrUpdateCredentials(workspaceConnection.workspaceId, credentials.user_id!, {
-        id: credentials.id,
+      await apiClient.workspaceCredential.createWorkspaceCredential({
+        source: E_INTEGRATION_KEYS.GITLAB,
         target_access_token: credentials.target_access_token,
         source_access_token: access_token,
         source_refresh_token: refresh_token,
-        source: "GITLAB",
+        workspace_id: workspaceConnection.workspace_id,
+        user_id: credentials.user_id!,
       });
     };
 
@@ -158,7 +179,7 @@ export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
       credentials.source_access_token!,
       credentials.source_refresh_token!,
       refreshTokenCallback,
-      workspaceConnection.sourceHostname!
+      workspaceConnection.source_hostname!
     );
 
     // we need to get the plane project attached to referred issues and then get target state for each and then do the updates
@@ -168,7 +189,7 @@ export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
     const allReferredIssues = await Promise.all(
       referredIssues.map(async (reference) => {
         const issue = await planeClient.issue.getIssueByIdentifier(
-          entityConnection.workspaceSlug,
+          entityConnection.workspace_slug,
           reference.identifier,
           reference.sequence
         );
@@ -176,16 +197,22 @@ export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
       })
     );
 
-    logger.info(`target_access_token ${JSON.stringify(allReferredIssues)}`);
-
     const updatedIssues = await Promise.all(
       allReferredIssues.map(async (referredIssue) => {
-        const targetProject = projectConnections.find((project) => project.projectId === referredIssue.issue.project);
+        const targetProject = projectConnections.find((project) => project.project_id === referredIssue.issue.project);
         if (targetProject) {
           const targetState = getTargetState(data, targetProject);
           if (!targetState) return null;
-          logger.info("updating item");
-          return updateIssue(planeClient, entityConnection, referredIssue.reference, targetState, data.project.id);
+          return updateIssue(
+            planeClient,
+            entityConnection,
+            referredIssue.reference,
+            targetState,
+            data.project.id,
+            data.object_attributes.title,
+            data.object_attributes.iid,
+            data.object_attributes.url
+          );
         }
         return null;
       })
@@ -193,9 +220,10 @@ export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
 
     const validIssues = updatedIssues.filter((issue): issue is IssueWithReference => issue !== null);
 
-    const body = createCommentBody(validIssues, nonClosingReferences, workspaceConnection);
-
-    await handleComment(gitlabService, data.project.id, data.object_attributes.iid, body);
+    if (validIssues.length > 0) {
+      const body = createCommentBody(validIssues, nonClosingReferences, workspaceConnection);
+      await handleComment(gitlabService, data.project.id, data.object_attributes.iid, body);
+    }
   } catch (error: unknown) {
     logger.error(`[GITLAB] Error handling merge request: ${(error as Error)?.stack}`);
     throw error;

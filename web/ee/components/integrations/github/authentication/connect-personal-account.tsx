@@ -3,6 +3,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store/integrations";
@@ -27,6 +28,7 @@ export const ConnectPersonalAccount: FC = observer(() => {
   const workspaceId = workspace?.id || undefined;
   const githubUserCredentialId = githubUserCredentialIds[0] || undefined;
   const githubUserCredential = githubUserCredentialId ? githubUserCredentialById(githubUserCredentialId) : undefined;
+  const { t } = useTranslation();
 
   // handlers
   const handleConnectUser = async () => {
@@ -68,7 +70,7 @@ export const ConnectPersonalAccount: FC = observer(() => {
   if (error)
     return (
       <div className="text-custom-text-200 relative flex justify-center items-center">
-        github-user-auth Something went wrong
+        {t("github_integration.connection_fetch_error")}
       </div>
     );
 
@@ -76,13 +78,17 @@ export const ConnectPersonalAccount: FC = observer(() => {
     <div className="relative flex justify-between items-center gap-4 p-4 border border-custom-border-100 rounded">
       {githubUserCredential?.isConnected ? (
         <div className="space-y-1">
-          <div className="text-base font-medium">Personal account connected</div>
-          <div className="text-sm text-custom-text-200">You have connected your GitHub account to Plane</div>
+          <div className="text-base font-medium">{t("github_integration.personal_account_connected")}</div>
+          <div className="text-sm text-custom-text-200">
+            {t("github_integration.personal_account_connected_description")}
+          </div>
         </div>
       ) : (
         <div className="space-y-1">
-          <div className="text-base font-medium">Connect personal account</div>
-          <div className="text-sm text-custom-text-200">Connect your GitHub account to use the integration</div>
+          <div className="text-base font-medium">{t("github_integration.connect_personal_account")}</div>
+          <div className="text-sm text-custom-text-200">
+            {t("github_integration.connect_personal_account_description")}
+          </div>
         </div>
       )}
       <Button
@@ -95,10 +101,10 @@ export const ConnectPersonalAccount: FC = observer(() => {
         {(isLoading && githubUserCredential) || error
           ? "..."
           : isConnectionSetup
-            ? "Processing"
+            ? t("common.processing")
             : !githubUserCredential?.isConnected
-              ? "Connect"
-              : "Disconnect"}
+              ? t("common.connect")
+              : t("common.disconnect")}
       </Button>
     </div>
   );

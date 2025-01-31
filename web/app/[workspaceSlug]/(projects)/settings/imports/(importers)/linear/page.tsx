@@ -4,8 +4,10 @@ import { FC, Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane web components
-import { AuthenticationRoot, Dashboard, StepsRoot, DashboardLoaderRoot } from "@/plane-web/components/importers/linear";
+import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
+import { AuthenticationRoot, StepsRoot } from "@/plane-web/components/importers/linear";
 //  plane web hooks
+import { LinearDashboardRoot } from "@/plane-web/components/importers/linear/dashboard/root";
 import { useFlag, useLinearImporter } from "@/plane-web/hooks/store";
 
 const LinearImporter: FC = observer(() => {
@@ -46,13 +48,21 @@ const LinearImporter: FC = observer(() => {
 
   // initiating job service config
   useEffect(() => {
-    if (workspaceId && userId && externalApiToken && workspaceId != serviceWorkspaceId) {
+    if (workspaceId && workspaceSlug && userId && externalApiToken && workspaceId != serviceWorkspaceId) {
       setDefaultServiceConfig(workspaceId, externalApiToken);
     }
     return () => {
       resetImporterData();
     };
-  }, [workspaceId, userId, externalApiToken, serviceWorkspaceId, setDefaultServiceConfig, resetImporterData]);
+  }, [
+    workspaceId,
+    userId,
+    externalApiToken,
+    serviceWorkspaceId,
+    setDefaultServiceConfig,
+    resetImporterData,
+    workspaceSlug,
+  ]);
 
   if (!isFeatureEnabled) return null;
 
@@ -71,7 +81,7 @@ const LinearImporter: FC = observer(() => {
       {!currentAuth?.isAuthenticated ? (
         <AuthenticationRoot />
       ) : (
-        <Fragment>{dashboardView ? <Dashboard /> : <StepsRoot />}</Fragment>
+        <Fragment>{dashboardView ? <LinearDashboardRoot /> : <StepsRoot />}</Fragment>
       )}
     </Fragment>
   );

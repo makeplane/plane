@@ -1,9 +1,10 @@
 import { ACTIONS, ENTITIES, EntityTypeValue } from "../helpers/constants";
 import { PlainTextOption } from "../helpers/slack-options";
+import { ShortcutActionPayload } from "../types/types";
 
 export const createProjectSelectionModal = (
   projects: Array<PlainTextOption>,
-  privateMetadata: any,
+  privateMetadata: ShortcutActionPayload,
   type: EntityTypeValue = ENTITIES.SHORTCUT_PROJECT_SELECTION
 ) => ({
   type: "modal",

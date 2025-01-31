@@ -9,12 +9,14 @@ import { useLinearImporter } from "@/plane-web/hooks/store";
 import { AuthFormInput, TAuthFormInputFormField } from "@/plane-web/silo/ui/auth-form-input";
 // plane web types
 import { TLinearPATFormFields } from "@/plane-web/types/importers/linear";
+import { useTranslation } from "@plane/i18n";
 
 export const PersonalAccessTokenAuth: FC = observer(() => {
   // hooks
   const {
     auth: { authWithPAT },
   } = useLinearImporter();
+  const { t } = useTranslation();
 
   // states
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -78,9 +80,9 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
   return (
     <div className="space-y-6">
       <div className="relative flex flex-col border-b border-custom-border-100 pb-3.5">
-        <h3 className="text-xl font-medium">Linear to Plane Migration Assistant</h3>
+        <h3 className="text-xl font-medium">Linear to Plane {t("importers.migration_assistant")}</h3>
         <p className="text-custom-text-300 text-sm">
-          Seamlessly migrate your Linear projects to Plane with our powerful assistant.
+          {t("importers.migration_assistant_description", { "serviceName": "Linear" })}
         </p>
       </div>
       <div className="space-y-6">
@@ -99,10 +101,10 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
         ))}
         <div className="relative flex justify-end gap-4">
           <Button variant="link-neutral" className="font-medium" onClick={clearFromData} disabled={isLoading}>
-            Clear
+            {t("common.clear")}
           </Button>
           <Button variant="primary" onClick={handlePATAuthentication} disabled={isLoading}>
-            {isLoading ? "Authorizing" : "Connect Linear"}
+            {isLoading ? t("common.authorizing") : t("importers.connect_importer", { "serviceName": "Linear" })}
           </Button>
         </div>
       </div>

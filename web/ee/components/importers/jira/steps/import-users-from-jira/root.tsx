@@ -13,6 +13,7 @@ import { AddSeatsAlertBanner, SkipUserImport, StepperNavigation } from "@/plane-
 import { useJiraImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web types
 import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers/jira";
+import { useTranslation } from "@plane/i18n";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.IMPORT_USERS_FROM_JIRA];
 
@@ -32,6 +33,8 @@ export const ImportUsersFromJira: FC = () => {
     data: { additionalUsersData, fetchAdditionalUsers },
   } = useJiraImporter();
   const { currentWorkspaceSubscriptionAvailableSeats } = useWorkspaceSubscription();
+
+  const { t } = useTranslation();
 
   // states
   const [formData, setFormData] = useState<TFormData>({
@@ -114,13 +117,13 @@ export const ImportUsersFromJira: FC = () => {
         {!formData.userSkipToggle && isResourceFiledRequired && (
           <div className="space-y-4">
             <div className="text-sm">
-              Upload a CSV file to import user data&nbsp;
+              {t("importers.upload_csv_file")}
               <a
                 target="_blank"
                 href="https://support.atlassian.com/organization-administration/docs/export-users-from-a-site/"
                 className="text-custom-primary-100 underline font-medium"
               >
-                from Jira
+                {t("common.from", { "name": "Jira" })}
               </a>
             </div>
             <ImportUsersFromJiraUploader
@@ -134,7 +137,7 @@ export const ImportUsersFromJira: FC = () => {
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
           <Button variant="primary" size="sm" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
-            Next
+            {t("common.next")}
           </Button>
         </StepperNavigation>
       </div>

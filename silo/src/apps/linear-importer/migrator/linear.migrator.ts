@@ -1,10 +1,5 @@
-import { MQ, Store } from "@/apps/engine/worker/base";
-import { TBatch } from "@/apps/engine/worker/types";
 import { Issue, Issue as LinearIssue } from "@linear/sdk";
-import { updateJob } from "@/db/query";
-import { env } from "@/env";
-import { BaseDataMigrator } from "@/etl/base-import-worker";
-import { TJobWithConfig, PlaneEntities } from "@plane/etl/core";
+import { PlaneEntities } from "@plane/etl/core";
 import {
   pullComments,
   pullCycles,
@@ -16,14 +11,14 @@ import {
   LinearConfig,
   LinearEntity,
 } from "@plane/etl/linear";
-import { getRandomColor } from "../helpers/generic-helpers";
-import {
-  createLinearClient,
-  filterCyclesForIssues,
-  getJobCredentials,
-  getJobData,
-  resetJobIfStarted,
-} from "../helpers/migration-helpers";
+import { TImportJob } from "@plane/types";
+import { env } from "@/env";
+import { BaseDataMigrator } from "@/etl/base-import-worker";
+import { getRandomColor } from "@/helpers/generic-helpers";
+import { getJobCredentials, getJobData, resetJobIfStarted, updateJobWithReport } from "@/helpers/job";
+import { MQ, Store } from "@/worker/base";
+import { TBatch } from "@/worker/types";
+import { createLinearClient, filterCyclesForIssues } from "../helpers/migration-helpers";
 import {
   getTransformedComments,
   getTransformedCycles,
@@ -38,12 +33,13 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
     super(mq, store);
   }
 
-  async getJobData(jobId: string): Promise<TJobWithConfig<LinearConfig>> {
-    return getJobData(jobId);
+  async getJobData(jobId: string): Promise<TImportJob<LinearConfig>> {
+    return getJobData<LinearConfig>(jobId);
   }
 
-  async pull(job: TJobWithConfig<LinearConfig>): Promise<LinearEntity[]> {
-    await resetJobIfStarted(job.id, job);
+  async pull(job: TImportJob<LinearConfig>): Promise<LinearEntity[]> {
+    await resetJobIfStarted(job);
+
     const credentials = await getJobCredentials(job);
     const client = createLinearClient(credentials);
 
@@ -51,16 +47,21 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
       return [];
     }
 
-    const users = job.config.meta.skipUserImport ? [] : await pullUsers(client, job.config.meta.teamId);
+    const users = job.config.skipUserImport ? [] : await pullUsers(client, job.config.teamId);
     const labels = await pullLabels(client);
-    const issues = await pullIssues(client, job.config.meta.teamId);
-    const cycles = await pullCycles(client, job.config.meta.teamId);
-    const projects = await pullProjects(client, job.config.meta.teamId);
+    const issues = await pullIssues(client, job.config.teamId);
+    const cycles = await pullCycles(client, job.config.teamId);
+    const projects = await pullProjects(client, job.config.teamId);
     const comments = await pullComments(issues, client);
 
-    await updateJob(job.id, {
-      start_time: new Date(),
-    });
+    await updateJobWithReport(
+      job.id,
+      job.report_id,
+      {},
+      {
+        start_time: new Date().toISOString(),
+      }
+    );
 
     return [
       {
@@ -74,7 +75,7 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
     ];
   }
 
-  async transform(job: TJobWithConfig<LinearConfig>, data: LinearEntity[]): Promise<PlaneEntities[]> {
+  async transform(job: TImportJob<LinearConfig>, data: LinearEntity[]): Promise<PlaneEntities[]> {
     if (data.length < 1) {
       return [];
     }
@@ -102,7 +103,7 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
     ];
   }
 
-  async batches(job: TJobWithConfig<LinearConfig>): Promise<TBatch<LinearEntity>[]> {
+  async batches(job: TImportJob<LinearConfig>): Promise<TBatch<LinearEntity>[]> {
     const sourceData = await this.pull(job);
     const batchSize = env.BATCH_SIZE ? parseInt(env.BATCH_SIZE) : 40;
 
@@ -236,7 +237,7 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
 }
 
 const breakAndGetParent = (issue: Issue): string | undefined => {
-  // @ts-ignore
+  // @ts-expect-error
   const parent = issue._parent;
   if (parent) {
     return parent.id;

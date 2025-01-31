@@ -9,12 +9,14 @@ import { useAsanaImporter } from "@/plane-web/hooks/store";
 import { AuthFormInput, TAuthFormInputFormField } from "@/plane-web/silo/ui/auth-form-input";
 // plane web types
 import { TAsanaPATFormFields } from "@/plane-web/types/importers/asana";
+import { useTranslation } from "@plane/i18n";
 
 export const PersonalAccessTokenAuth: FC = observer(() => {
   // hooks
   const {
     auth: { authWithPAT },
   } = useAsanaImporter();
+  const { t } = useTranslation();
   // states
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<TAsanaPATFormFields>({
@@ -51,12 +53,12 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
     {
       key: "ASANA_PAT",
       type: "password",
-      label: "Personal Access Token",
+      label: t("importers.personal_access_token"),
       value: formData.personalAccessToken,
       onChange: (e) => handleFormData("personalAccessToken", e.target.value),
       description: (
         <>
-          You will get this from your{" "}
+          {t("importers.token_helper")}{" "}
           <a
             tabIndex={-1}
             href="https://app.asana.com/0/my-apps"
@@ -76,9 +78,9 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
   return (
     <div className="space-y-6">
       <div className="relative flex flex-col border-b border-custom-border-100 pb-3.5">
-        <h3 className="text-xl font-medium">Asana to Plane Migration Assistant</h3>
+        <h3 className="text-xl font-medium">Asana to Plane {t("importers.migration_assistant")}</h3>
         <p className="text-custom-text-300 text-sm">
-          Seamlessly migrate your Asana projects to Plane with our powerful assistant.
+          {t("importers.migration_assistant_description", { "serviceName": "Asana" })}
         </p>
       </div>
       <div className="space-y-6">
@@ -99,10 +101,10 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
         </div>
         <div className="relative flex justify-end gap-4">
           <Button variant="link-neutral" className="font-medium" onClick={clearFromData}>
-            Clear
+            {t("common.clear")}
           </Button>
           <Button variant="primary" onClick={handlePATAuthentication} loading={isLoading} disabled={isLoading}>
-            {isLoading ? "Authorizing" : "Connect Asana"}
+            {isLoading ? t("common.authorizing") : t("importers.connect_importer", { "serviceName": "Asana" })}
           </Button>
         </div>
       </div>

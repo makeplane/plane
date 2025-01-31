@@ -2,6 +2,7 @@ import { IStateConfig, LinearComment, LinearCycle } from "@/linear/types";
 import { Issue, IssueLabel, User } from "@linear/sdk";
 import { ExCycle, ExIssueAttachment, ExIssueComment, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
 import { getFormattedDate, getTargetState } from "../helpers";
+import { E_IMPORTER_KEYS } from "@/core";
 
 export const transformIssue = async (
   issue: Issue,
@@ -40,7 +41,7 @@ export const transformIssue = async (
     links,
     attachments,
     external_id: issue.id,
-    external_source: "LINEAR",
+    external_source: E_IMPORTER_KEYS.LINEAR,
     created_by: creator,
     name: issue.title,
     description_html: !issue.description || issue.description == "" ? "<p></p>" : issue.description,
@@ -71,7 +72,7 @@ export const extractAttachmentsFromDescription = (description: string): Partial<
       const title = imageTitle || linkText || ""; // Use imageTitle for images, linkText for links
       const attachment: Partial<ExIssueAttachment> = {
         external_id: id,
-        external_source: "LINEAR",
+        external_source: E_IMPORTER_KEYS.LINEAR,
         attributes: {
           name: title,
           size: 0,
@@ -91,7 +92,7 @@ export const transformComment = (comment: LinearComment, users: User[]): Partial
 
   return {
     external_id: comment.id,
-    external_source: "LINEAR",
+    external_source: E_IMPORTER_KEYS.LINEAR,
     created_at: getFormattedDate(comment.createdAt.toString()),
     created_by: creator?.displayName,
     comment_html: comment.body ?? "<p></p>",
@@ -115,7 +116,7 @@ export const transformUser = (user: User): Partial<PlaneUser> => {
 
 export const transformCycle = (cycle: LinearCycle): Partial<ExCycle> => ({
   external_id: cycle.cycle.id,
-  external_source: "LINEAR",
+  external_source: E_IMPORTER_KEYS.LINEAR,
   name: cycle.cycle.name ?? `Cycle ${cycle.cycle.number}`,
   start_date: getFormattedDate(cycle.cycle.startsAt.toString()),
   end_date: getFormattedDate(cycle.cycle.endsAt.toString()),

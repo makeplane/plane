@@ -37,10 +37,12 @@ export type TServiceAuthConfiguration = {
 // importer types
 export enum E_IMPORTER_KEYS {
   JIRA = "JIRA",
+  CSV = "CSV",
   JIRA_SERVER = "JIRA_SERVER",
   ASANA = "ASANA",
   LINEAR = "LINEAR",
   TRELLO = "TRELLO",
+  FLATFILE = "FLATFILE"
 }
 export type TImporterKeys = keyof typeof E_IMPORTER_KEYS;
 
@@ -51,6 +53,14 @@ export enum E_INTEGRATION_KEYS {
   SLACK = "SLACK",
 }
 export type TIntegrationKeys = keyof typeof E_INTEGRATION_KEYS;
+
+export enum E_ENTITY_CONNECTION_KEYS {
+  SLACK_USER = "SLACK-USER",
+  GITHUB_USER = "GITHUB-USER",
+  GITLAB_USER = "GITLAB-USER",
+}
+
+export type TEntityConnectionKeys = keyof typeof E_ENTITY_CONNECTION_KEYS;
 
 // job types
 export enum E_JOB_STATUS {
@@ -66,38 +76,6 @@ export enum E_JOB_STATUS {
   ERROR = "ERROR",
 }
 export type TJobStatus = keyof typeof E_JOB_STATUS;
-
-export type TJob = {
-  id: string;
-  config: string;
-  migration_type: TImporterKeys | TIntegrationKeys;
-  project_id: string;
-  workspace_id: string;
-  workspace_slug: string;
-  credentials_id: string;
-  initiator_id: string;
-  initiator_email: string;
-  source_user_email: string;
-  source_hostname: string;
-  source_task_count: number;
-  is_cancelled: boolean;
-  start_time?: Date;
-  end_time?: Date;
-  status: TJobStatus;
-  created_at: Date;
-  updated_at: Date;
-  error: string;
-  total_batch_count: number;
-  completed_batch_count: number;
-  transformed_batch_count: number;
-};
-
-export type TJobWithConfig<TJobConfig = unknown> = TJob & {
-  config: {
-    id: string;
-    meta: TJobConfig;
-  };
-};
 
 export const propertiesToOmit = [
   "id",

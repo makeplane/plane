@@ -1,17 +1,16 @@
-import { getCredentialsByWorkspaceId, getJobById } from "@/db/query";
-import { TServiceCredentials, TJobWithConfig } from "@plane/etl/core";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
+import { TImportJob, TWorkspaceCredential } from "@plane/types";
+import { getJobCredentials } from "@/helpers/job";
+import { getAPIClient } from "@/services/client";
 
-export const getJobForMigration = async (jobId: string): Promise<TJobWithConfig> => {
-  const jobs = await getJobById(jobId);
-  if (!jobs || jobs.length === 0) {
-    throw new Error(`[${jobId.slice(0, 7)}] No job found for the given job id. Exiting...`);
-  }
-
-  return jobs[0] as TJobWithConfig;
+export const getJobForMigration = async (jobId: string): Promise<TImportJob> => {
+  const client = getAPIClient();
+  const job = await client.importJob.getImportJob(jobId);
+  return job as TImportJob;
 };
 
-export const validateJobForMigration = (job: TJobWithConfig) => {
-  if (!job.workspace_id || !job.migration_type) {
+export const validateJobForMigration = (job: TImportJob) => {
+  if (!job.workspace_id || !job.source) {
     throw new Error(`[${job.id}] No workspace id found in the job data. Exiting...`);
   }
 
@@ -28,17 +27,17 @@ export const validateJobForMigration = (job: TJobWithConfig) => {
   }
 };
 
-export const getCredentialsForMigration = async (job: TJobWithConfig): Promise<TServiceCredentials> => {
+export const getCredentialsForMigration = async (job: TImportJob) => {
   // Fetch credentials from the database
-  const credentials = await getCredentialsByWorkspaceId(job.workspace_id, job.initiator_id, job.migration_type);
-  if (!credentials || credentials.length === 0) {
-    throw new Error(`[${job.id}] No credentials found for the workspace id in the job data. Exiting...`);
-  }
+  const credentials = await getJobCredentials(job);
 
-  const targetCredentials = credentials[0];
-  if (!targetCredentials.source_access_token) {
+  if (!credentials.source_access_token && job.source !== E_IMPORTER_KEYS.FLATFILE) {
     throw new Error(`[${job.id}] No source access token or refresh token found in the credentials. Exiting...`);
   }
 
-  return credentials[0] as TServiceCredentials;
+  if (!credentials.target_access_token && job.source !== E_IMPORTER_KEYS.FLATFILE) {
+    throw new Error(`[${job.id}] No target access token found in the credentials. Exiting...`);
+  }
+
+  return credentials as TWorkspaceCredential & { target_access_token: string; source_access_token: string };
 };

@@ -1,5 +1,6 @@
 import React from "react";
 import cn from "classnames";
+import { useTranslation } from "@plane/i18n";
 
 interface SkipUserImportProps {
   importSourceName?: string;
@@ -17,6 +18,8 @@ export const SkipUserImport: React.FC<SkipUserImportProps> = ({
   const handleClick = (value: boolean) => {
     handleUserSkipToggle(value);
   };
+
+  const { t } = useTranslation();
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
@@ -36,13 +39,12 @@ export const SkipUserImport: React.FC<SkipUserImportProps> = ({
             })}
           />
         </div>
-        <div className="text-sm text-custom-text-100">Skip importing User data</div>
+        <div className="text-sm text-custom-text-100">{t("importers.skip_user_import_title")}</div>
       </div>
 
       {userSkipToggle && (
         <div className="text-sm text-red-500">
-          Skipping user import will result in issues, comments, and other data from {importSourceName} being created by the user
-          performing the migration in Plane. You can still manually add users later.
+          {t("importers.skip_user_import_description", { "serviceName": importSourceName })}
         </div>
       )}
     </div>

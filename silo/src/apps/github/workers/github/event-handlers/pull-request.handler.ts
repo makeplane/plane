@@ -1,14 +1,16 @@
-import { TServiceCredentials } from "@plane/etl/core";
+import { E_INTEGRATION_KEYS, TServiceCredentials } from "@plane/etl/core";
 import { createGithubService, GithubService, GithubWebhookPayload } from "@plane/etl/github";
 import { MergeRequestEvent } from "@plane/etl/gitlab";
 import { Client, Client as PlaneClient } from "@plane/sdk";
 import { classifyPullRequestEvent, getConnectionDetails } from "@/apps/github/helpers/helpers";
 import { GithubEntityConnection, GithubWorkspaceConnection, PullRequestWebhookActions } from "@/apps/github/types";
-import { getCredentialsBySourceToken } from "@/db/query";
 import { env } from "@/env";
 import { getReferredIssues, IssueReference, IssueWithReference } from "@/helpers/parser";
 import { logger } from "@/logger";
 import { SentryInstance } from "@/sentry-config";
+import { getAPIClient } from "@/services/client";
+
+const apiClient = getAPIClient();
 
 export const handlePullRequestEvents = async (action: PullRequestWebhookActions, data: unknown) => {
   await handlePullRequestOpened(data as unknown as GithubWebhookPayload["webhook-pull-request-opened"]);
@@ -17,7 +19,10 @@ export const handlePullRequestEvents = async (action: PullRequestWebhookActions,
 
 const handlePullRequestOpened = async (data: GithubWebhookPayload["webhook-pull-request-opened"]) => {
   if (data.installation) {
-    const credentials = await getCredentialsBySourceToken(data.installation.id.toString());
+    const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
+      source: E_INTEGRATION_KEYS.GITHUB,
+      source_access_token: data.installation.id.toString(),
+    });
 
     if (!credentials || credentials.length === 0) {
       logger.info("No credentials found for installation id", data.installation.id);
@@ -43,8 +48,12 @@ const handlePullRequestOpened = async (data: GithubWebhookPayload["webhook-pull-
 
     const ghService = createGithubService(env.GITHUB_APP_ID, env.GITHUB_PRIVATE_KEY, data.installation.id.toString());
 
+    if (!workspaceConnection.target_hostname) {
+      throw new Error("Target hostname not found");
+    }
+
     const planeClient = new PlaneClient({
-      baseURL: workspaceConnection.targetHostname,
+      baseURL: workspaceConnection.target_hostname,
       apiToken: planeCredentials.target_access_token,
     });
 
@@ -59,17 +68,17 @@ const handlePullRequestOpened = async (data: GithubWebhookPayload["webhook-pull-
     for (const reference of attachedClosingReferences.repository.pullRequest.closingIssuesReferences.edges) {
       try {
         const issue = await planeClient.issue.getIssueWithExternalId(
-          entityConnection.workspaceSlug,
-          entityConnection.projectId ?? "",
+          entityConnection.workspace_slug,
+          entityConnection.project_id ?? "",
           reference.node.databaseId.toString(),
-          "GITHUB"
+          E_INTEGRATION_KEYS.GITHUB
         );
 
         if (issue) {
           // Create a link in the issue for the pull request
           await planeClient.issue.createLink(
-            entityConnection.workspaceSlug,
-            entityConnection.projectId ?? "",
+            entityConnection.workspace_slug,
+            entityConnection.project_id ?? "",
             issue.id,
             `GitHub PR: ${data.pull_request.title}`,
             data.pull_request.html_url
@@ -113,7 +122,13 @@ const handlePullRequestOpened = async (data: GithubWebhookPayload["webhook-pull-
 
       if (validIssues.length > 0) {
         const body = createCommentBody(validIssues, nonClosingReferences, workspaceConnection);
-        await handleComment(ghService, data.repository.owner.login, data.repository.name, data.pull_request.number, body);
+        await handleComment(
+          ghService,
+          data.repository.owner.login,
+          data.repository.name,
+          data.pull_request.number,
+          body
+        );
       }
     }
   }
@@ -159,13 +174,13 @@ const createCommentBody = (
   );
 
   for (const { reference, issue } of closingIssues) {
-    body += `- [${reference.identifier}-${reference.sequence}] [${issue.name}](${env.APP_BASE_URL}/${workspaceConnection.workspaceSlug}/projects/${issue.project}/issues/${issue.id})\n`;
+    body += `- [${reference.identifier}-${reference.sequence}] [${issue.name}](${env.APP_BASE_URL}/${workspaceConnection.workspace_slug}/projects/${issue.project}/issues/${issue.id})\n`;
   }
 
   if (nonClosingIssues.length > 0) {
     body += `\n\nReferences\n\n`;
     for (const { reference, issue } of nonClosingIssues) {
-      body += `- [${reference.identifier}-${reference.sequence}] [${issue.name}](${env.APP_BASE_URL}/${workspaceConnection.workspaceSlug}/projects/${issue.project}/issues/${issue.id})\n`;
+      body += `- [${reference.identifier}-${reference.sequence}] [${issue.name}](${env.APP_BASE_URL}/${workspaceConnection.workspace_slug}/projects/${issue.project}/issues/${issue.id})\n`;
     }
   }
 
@@ -184,7 +199,7 @@ const getTargetState = (event: MergeRequestEvent, entityConnection: GithubEntity
 
 const updateIssue = async (
   planeClient: Client,
-  entityConnection: any,
+  entityConnection: GithubEntityConnection,
   reference: IssueReference,
   targetState: any,
   prTitle: string,
@@ -193,19 +208,19 @@ const updateIssue = async (
 ): Promise<IssueWithReference | null> => {
   try {
     const issue = await planeClient.issue.getIssueByIdentifier(
-      entityConnection.workspaceSlug,
+      entityConnection.workspace_slug,
       reference.identifier,
       reference.sequence
     );
 
-    await planeClient.issue.update(entityConnection.workspaceSlug, issue.project, issue.id, {
+    await planeClient.issue.update(entityConnection.workspace_slug, issue.project, issue.id, {
       state: targetState.id,
     });
 
     // create link to the pull request to the issue
     const linkTitle = `[${prNumber}] ${prTitle}`;
     try {
-      await planeClient.issue.createLink(entityConnection.workspaceSlug, issue.project, issue.id, linkTitle, prUrl);
+      await planeClient.issue.createLink(entityConnection.workspace_slug, issue.project, issue.id, linkTitle, prUrl);
     } catch (error) {
       console.log(error);
     }
@@ -213,6 +228,7 @@ const updateIssue = async (
     logger.info(`[GITHUB] Issue ${reference.identifier} updated to state ${targetState.name}`);
     return { reference, issue };
   } catch (error) {
+    console.log(error);
     logger.error(`[GITHUB] Error updating issue ${reference.identifier}-${reference.sequence}: ${error}`);
     SentryInstance?.captureException(error);
     return null;

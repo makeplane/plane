@@ -2,6 +2,7 @@
 
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { Button, ModalCore } from "@plane/ui";
 // plane web components
 import { ProjectForm, StateForm } from "@/plane-web/components/integrations/github";
@@ -27,6 +28,7 @@ export const FormCreate: FC<TFormCreate> = observer((props) => {
     fetchStates,
     entity: { createEntity },
   } = useGithubIntegration();
+  const { t } = useTranslation();
 
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -58,13 +60,16 @@ export const FormCreate: FC<TFormCreate> = observer((props) => {
       setIsSubmitting(true);
 
       const payload: Partial<TGithubEntityConnection> = {
-        entityId: projectMap.entityId,
-        projectId: projectMap.projectId,
+        entity_id: projectMap.entityId,
+        project_id: projectMap.projectId,
         config: {
           states: { mergeRequestEventMapping: stateMap },
         },
       };
       await createEntity(payload);
+
+      setProjectMap(projectMapInit);
+      setStateMap(stateMapInit);
 
       handleModal(false);
     } catch (error) {
@@ -77,16 +82,16 @@ export const FormCreate: FC<TFormCreate> = observer((props) => {
   return (
     <ModalCore isOpen={modal} handleClose={() => handleModal(false)}>
       <div className="space-y-5 p-5">
-        <div className="text-xl font-medium text-custom-text-200">Link Github repository and Plane project</div>
+        <div className="text-xl font-medium text-custom-text-200">{t("github_integration.link")}</div>
 
         <div className="space-y-4">
           <ProjectForm value={projectMap} handleChange={handleProjectMapChange} />
 
           <div className="border border-custom-border-200 divide-y divide-custom-border-200 rounded">
             <div className="relative space-y-1 p-3">
-              <div className="text-base">Pull request automation</div>
+              <div className="text-base">{t("github_integration.pull_request_automation")}</div>
               <div className="text-xs text-custom-text-200">
-                With Github integration Enabled, you can automate issue workflows
+                {t("github_integration.pull_request_automation_description")}
               </div>
             </div>
             <div className="p-3">
@@ -103,7 +108,7 @@ export const FormCreate: FC<TFormCreate> = observer((props) => {
               Cancel
             </Button>
             <Button variant="primary" size="sm" onClick={handleSubmit} loading={isSubmitting} disabled={isSubmitting}>
-              {isSubmitting ? "Processing" : "Continue"}
+              {isSubmitting ? t("common.processing") : t("common.continue")}
             </Button>
           </div>
         </div>

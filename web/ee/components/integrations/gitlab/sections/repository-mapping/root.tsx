@@ -3,21 +3,19 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Briefcase, BriefcaseBusiness } from "lucide-react";
+import { EConnectionType } from "@plane/etl/gitlab";
+import { useTranslation } from "@plane/i18n";
 import { Button, Loader } from "@plane/ui";
 // plane web components
-import { Logo } from "@/components/common";
-import { EntityConnectionItem, EntityFormCreate, ProjectEntityFormCreate } from "@/plane-web/components/integrations/gitlab";
+import {
+  EntityConnectionItem,
+  EntityFormCreate,
+  ProjectEntityFormCreate,
+} from "@/plane-web/components/integrations/gitlab";
 //  plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import {
-  E_STATE_MAP_KEYS,
-  TGitlabEntityConnection,
-  TProjectMap,
-  TStateMap,
-} from "@/plane-web/types/integrations/gitlab";
-import { EConnectionType, GitlabEntityType } from "@plane/etl/gitlab";
+import { E_STATE_MAP_KEYS, TProjectMap, TStateMap } from "@/plane-web/types/integrations/gitlab";
 
 export const projectMapInit: TProjectMap = {
   entityId: undefined,
@@ -42,11 +40,11 @@ export const RepositoryMappingRoot: FC = observer(() => {
     data: { fetchGitlabEntities },
     entityConnection: { entityConnectionIds, entityConnectionById, fetchEntityConnections },
   } = useGitlabIntegration();
+  const { t } = useTranslation();
 
   // states
   const [modalCreateOpen, setModalCreateOpen] = useState<boolean>(false);
   const [modalProjectCreateOpen, setModalProjectCreateOpen] = useState<boolean>(false);
-
 
   // derived values
   const workspaceId = workspace?.id || undefined;
@@ -54,7 +52,7 @@ export const RepositoryMappingRoot: FC = observer(() => {
   const workspaceConnectionId = workspaceConnectionIds[0] || undefined;
   const entityConnections = entityConnectionIds.map((id) => {
     const entityConnection = entityConnectionById(id);
-    if (!entityConnection || (entityConnection.connectionType !== EConnectionType.ENTITY)) {
+    if (!entityConnection || entityConnection.type !== EConnectionType.ENTITY) {
       return;
     }
     return entityConnection;
@@ -62,7 +60,7 @@ export const RepositoryMappingRoot: FC = observer(() => {
 
   const projectEntityConnections = entityConnectionIds.map((id) => {
     const entityConnection = entityConnectionById(id);
-    if (!entityConnection || (entityConnection.connectionType !== EConnectionType.PLANE_PROJECT)) {
+    if (!entityConnection || entityConnection.type !== EConnectionType.PLANE_PROJECT) {
       return;
     }
     return entityConnection;
@@ -89,24 +87,25 @@ export const RepositoryMappingRoot: FC = observer(() => {
     { errorRetryCount: 0 }
   );
 
-
   return (
     <div className="space-y-4">
       <div className="relative border border-custom-border-200 rounded p-4 space-y-4">
         {/* heading */}
         <div className="relative flex justify-between items-start gap-4">
           <div className="space-y-1">
-            <div className="text-base font-medium">Gitlab Project Connections</div>
-            <div className="text-sm text-custom-text-200">Sync merge requests from Gitlab projects to Plane projects</div>
+            <div className="text-base font-medium">{t("gitlab_integration.project_connections")}</div>
+            <div className="text-sm text-custom-text-200">
+              {t("gitlab_integration.project_connections_description")}
+            </div>
           </div>
           <Button variant="neutral-primary" size="sm" onClick={() => setModalCreateOpen(true)}>
-            Add
+            {t("common.add")}
           </Button>
         </div>
 
         {/* entity connection list */}
-        {
-          isEntitiesLoading && <Loader className="space-y-8">
+        {isEntitiesLoading && (
+          <Loader className="space-y-8">
             <Loader.Item height="50px" width="40%" />
             <div className="w-2/3 grid grid-cols-2 gap-x-8 gap-y-4">
               <Loader.Item height="50px" />
@@ -114,7 +113,7 @@ export const RepositoryMappingRoot: FC = observer(() => {
             </div>
             <Loader.Item height="50px" width="20%" />
           </Loader>
-        }
+        )}
 
         {entityConnectionIds && entityConnectionIds.length > 0 && (
           <div className="relative space-y-2">
@@ -131,17 +130,18 @@ export const RepositoryMappingRoot: FC = observer(() => {
         <EntityFormCreate modal={modalCreateOpen} handleModal={setModalCreateOpen} />
       </div>
 
-
       {/* Add project state mapping blocks */}
       <div className="relative border border-custom-border-200 rounded p-4 space-y-4">
         {/* heading */}
         <div className="relative flex justify-between items-center gap-4">
           <div className="space-y-1">
-            <div className="text-base font-medium">Plane Project Connections</div>
-            <div className="text-sm text-custom-text-200">Configure pull requests state mapping from Gitlab to Plane projects</div>
+            <div className="text-base font-medium">{t("gitlab_integration.plane_project_connection")}</div>
+            <div className="text-sm text-custom-text-200">
+              {t("gitlab_integration.plane_project_connection_description")}
+            </div>
           </div>
           <Button variant="neutral-primary" size="sm" onClick={() => setModalProjectCreateOpen(true)}>
-            Add
+            {t("common.add")}
           </Button>
         </div>
 
@@ -161,7 +161,6 @@ export const RepositoryMappingRoot: FC = observer(() => {
 
         {/* project entity form */}
         <ProjectEntityFormCreate modal={modalProjectCreateOpen} handleModal={setModalProjectCreateOpen} />
-
       </div>
     </div>
   );

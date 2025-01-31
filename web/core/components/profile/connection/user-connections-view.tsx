@@ -5,8 +5,8 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Grid2x2X } from "lucide-react";
 // plane internal packages
-import { TUserWorkspaceConnection } from "@plane/etl/core";
-import { IWorkspace } from "@plane/types";
+import { E_INTEGRATION_KEYS, TUserWorkspaceConnection } from "@plane/etl/core";
+import { IWorkspace, TWorkspaceUserConnection } from "@plane/types";
 // services
 import { TUserConnection, USER_CONNECTION_PROVIDERS } from "@/constants/profile";
 import { useUser, useWorkspace } from "@/hooks/store";
@@ -24,7 +24,7 @@ export const UserConnectionsView = observer(({ workspaceId }: { workspaceId: str
     setSelectedWorkspace(workspace);
   };
 
-  const [connections, setConnections] = useState<TUserWorkspaceConnection<any>[]>();
+  const [connections, setConnections] = useState<TWorkspaceUserConnection[]>();
 
   const { fetchUserConnections, getConnectionsByWorkspaceSlug } = useConnections();
 
@@ -38,7 +38,7 @@ export const UserConnectionsView = observer(({ workspaceId }: { workspaceId: str
     if (selectedWorkspace && !isLoading) {
       let response = getConnectionsByWorkspaceSlug(selectedWorkspace.slug);
       response = (response || []).reduce((allConnections: any, connection: any) => {
-        if (connection.connectionType !== "GITLAB") {
+        if (connection.connectionType !== E_INTEGRATION_KEYS.GITLAB) {
           allConnections.push(connection);
         }
         return allConnections;
@@ -52,7 +52,7 @@ export const UserConnectionsView = observer(({ workspaceId }: { workspaceId: str
         setSelectedWorkspace(workspace);
       }
     }
-  }, [selectedWorkspace, isLoading, workspaceId, loader]);
+  }, [selectedWorkspace, isLoading, workspaceId, loader, workspaces]);
 
   return !isLoading ? (
     <>
@@ -104,7 +104,7 @@ export const UserConnectionsView = observer(({ workspaceId }: { workspaceId: str
 });
 
 export const ConnectionMapper = observer(
-  (props: { selectedWorkspace: IWorkspace; connections: TUserWorkspaceConnection<any>[] }) => {
+  (props: { selectedWorkspace: IWorkspace; connections: TWorkspaceUserConnection[] }) => {
     const { selectedWorkspace } = props;
 
     const { connectUser, disconnectUser, fetchExternalApiToken: slackFetchExternalApiToken } = useSlackIntegration();
@@ -114,7 +114,7 @@ export const ConnectionMapper = observer(
     } = useGithubIntegration();
     const user = useUser();
 
-    const [connections, setConnections] = useState<TUserWorkspaceConnection<any>[]>(props.connections);
+    const [connections, setConnections] = useState<TWorkspaceUserConnection[]>(props.connections);
 
     useSWR(
       selectedWorkspace ? `SLACK_EXTERNAL_API_TOKEN_${selectedWorkspace.slug.toString()}` : null,
@@ -129,7 +129,7 @@ export const ConnectionMapper = observer(
     );
 
     const handleConnection = async (source: TUserConnection) => {
-      if (source === "GITHUB") {
+      if (source === E_INTEGRATION_KEYS.GITHUB) {
         const response = await connectGithubUserCredential(
           selectedWorkspace.id,
           selectedWorkspace.slug,
@@ -137,22 +137,22 @@ export const ConnectionMapper = observer(
           true
         );
         if (response) window.open(response, "_self");
-      } else if (source === "SLACK") {
+      } else if (source === E_INTEGRATION_KEYS.SLACK) {
         const response = await connectUser(selectedWorkspace.id, selectedWorkspace.slug, true);
         if (response) window.open(response, "_self");
       }
     };
 
     const handleDisconnection = async (source: TUserConnection) => {
-      if (source === "GITHUB") {
+      if (source === E_INTEGRATION_KEYS.GITHUB) {
         await disconnectGithubUserCredential(selectedWorkspace.id, user.data?.id);
-      } else if (source === "SLACK") {
+      } else if (source === E_INTEGRATION_KEYS.SLACK) {
         await disconnectUser(selectedWorkspace.id);
       }
 
       setConnections(
         connections.map((connection) => {
-          if (connection.connectionType === source) {
+          if (connection.connection_type === source) {
             connection.isUserConnected = false;
           }
           return connection;
@@ -160,17 +160,16 @@ export const ConnectionMapper = observer(
       );
     };
 
-    return connections.map((connection) => {
-      return (
-        <PersonalAccountConnectView
-          provider={USER_CONNECTION_PROVIDERS[connection.connectionType as TUserConnection]}
-          isConnectionLoading={false}
-          isUserConnected={connection.isUserConnected}
-          connectionSlug={connection.connectionSlug}
-          handleConnection={handleConnection}
-          handleDisconnection={handleDisconnection}
-        />
-      );
-    });
+    return connections.map((connection) => (
+      <PersonalAccountConnectView
+        key={connection.id}
+        provider={USER_CONNECTION_PROVIDERS[connection.connection_type as TUserConnection]}
+        isConnectionLoading={false}
+        isUserConnected={connection.isUserConnected}
+        connectionSlug={connection.connection_slug || ""}
+        handleConnection={handleConnection}
+        handleDisconnection={handleDisconnection}
+      />
+    ));
   }
 );

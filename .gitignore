@@ -80,6 +80,7 @@ pnpm-workspace.yaml
 tmp/
 ## packages
 dist
+.flatfile
 .temp/
 deploy/selfhost/plane-app/
 

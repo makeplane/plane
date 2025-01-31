@@ -1,4 +1,5 @@
 import { TUserConnection } from "@/constants/profile";
+import { TWorkspaceUserConnection } from "@plane/types";
 import { Button, Loader } from "@plane/ui";
 
 export type TPersonalAccountProvider = {
@@ -56,10 +57,12 @@ export function PersonalAccountConnectView(props: TPersonalAccountConnectProps) 
     );
   }
 
+  if (!provider) return null;
+
   return (
     <div className="flex flex-col border border-custom-border-200 rounded-s p-4 mb-2 justify-center">
       <div className="flex items-center gap-2">
-        {provider.icon && <provider.icon className="w-8 h-8" />} 
+        {provider.icon && <provider.icon className="w-8 h-8" />}
         <div className="text-lg font-medium">{provider.name}</div>
       </div>
       <div className="text-sm text-gray-500 pt-2 pb-4">{provider.description}</div>

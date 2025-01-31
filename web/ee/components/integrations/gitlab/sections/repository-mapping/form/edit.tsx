@@ -12,6 +12,7 @@ import { E_STATE_MAP_KEYS, TProjectMap, TStateMap } from "@/plane-web/types/inte
 // local imports
 import { projectMapInit, stateMapInit } from "../root";
 import { TGitlabEntityConnection } from "@/plane-web/types/integrations/gitlab";
+import { useTranslation } from "@plane/i18n";
 
 type TFormEdit = {
   modal: boolean;
@@ -29,6 +30,7 @@ export const FormEdit: FC<TFormEdit> = observer((props) => {
     fetchStates,
     entityConnection: { updateEntityConnection },
   } = useGitlabIntegration();
+  const { t } = useTranslation();
 
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -60,7 +62,7 @@ export const FormEdit: FC<TFormEdit> = observer((props) => {
       setIsSubmitting(true);
 
       const payload: Partial<TGitlabEntityConnection> = {
-        projectId: projectMap.projectId,
+        project_id: projectMap.projectId,
         config: {
           states: { mergeRequestEventMapping: stateMap },
         },
@@ -79,7 +81,7 @@ export const FormEdit: FC<TFormEdit> = observer((props) => {
     const updateEntityConnection = async (workspaceSlug: string, projectId: string) => {
       await fetchStates(workspaceSlug, projectId);
       setProjectMap({
-        entityId: data.entityId,
+        entityId: data.entity_id!,
         projectId: projectId,
       });
 
@@ -95,24 +97,24 @@ export const FormEdit: FC<TFormEdit> = observer((props) => {
         [E_STATE_MAP_KEYS.MR_CLOSED]: data.config?.states?.mergeRequestEventMapping?.[E_STATE_MAP_KEYS.MR_CLOSED],
       });
     };
-    if (workspaceSlug && data.projectId) {
-      updateEntityConnection(workspaceSlug, data.projectId);
+    if (workspaceSlug && data.project_id) {
+      updateEntityConnection(workspaceSlug, data.project_id);
     }
   }, [workspaceSlug, data, fetchStates]);
 
   return (
     <ModalCore isOpen={modal} handleClose={() => handleModal(false)}>
       <div className="space-y-5 p-5">
-        <div className="text-xl font-medium text-custom-text-200">Link Github repository and Plane project</div>
+        <div className="text-xl font-medium text-custom-text-200">{t("gitlab_integration.link_plane_project")}</div>
 
         <div className="space-y-4">
           <ProjectForm value={projectMap} handleChange={handleProjectMapChange} />
 
           <div className="border border-custom-border-200 divide-y divide-custom-border-200 rounded">
             <div className="relative space-y-1 p-3">
-              <div className="text-base">Pull request automation</div>
+              <div className="text-base">{t("gitlab_integration.pull_request_automation")}</div>
               <div className="text-xs text-custom-text-200">
-                With Gitlab integration Enabled, you can automate issue workflows
+                {t("gitlab_integration.integration_enabled_text")}
               </div>
             </div>
             <div className="p-3">
@@ -126,10 +128,10 @@ export const FormEdit: FC<TFormEdit> = observer((props) => {
 
           <div className="relative flex justify-end items-center gap-2">
             <Button variant="neutral-primary" size="sm" onClick={() => handleModal(false)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button variant="primary" size="sm" onClick={handleSubmit} loading={isSubmitting} disabled={isSubmitting}>
-              {isSubmitting ? "Processing" : "Continue"}
+              {isSubmitting ? t("common.processing") : t("common.continue")}
             </Button>
           </div>
         </div>

@@ -3,17 +3,18 @@
 
 import { createContext, ReactNode } from "react";
 import useSWR, { KeyedMutator, SWRResponse } from "swr";
-import { JobService, TJob, TJobConfigResponse, TJobWithConfig, TImporterKeys } from "@plane/etl/core";
+import { JobService, TJobConfigResponse, TImporterKeys } from "@plane/etl/core";
+import { TImportJob } from "@plane/types";
 // silo hooks
 import { useApiServiceToken, useBaseImporter } from "@/plane-web/silo/hooks";
 
 export type TImporterCreateContext<T> = {
-  allSyncJobs: TJobWithConfig<T>[] | undefined;
+  allSyncJobs: TImportJob<T>[] | undefined;
   syncJobLoader: boolean;
   syncJobError: SWRResponse;
-  jobMutate: KeyedMutator<TJobWithConfig<T>[]>;
-  getJobById: (syncJobId: string) => Promise<TJobWithConfig<T> | undefined>;
-  createJob: (projectId: string, syncJobPayload: Partial<TJob>) => Promise<TJobConfigResponse | undefined>;
+  jobMutate: KeyedMutator<TImportJob<T>[]>;
+  getJobById: (syncJobId: string) => Promise<TImportJob<T> | undefined>;
+  createJob: (projectId: string, syncJobPayload: Partial<TImportJob>) => Promise<TImportJob<T> | undefined>;
   startJob: (syncJobId: string) => Promise<void>;
   createJobConfiguration: (configuration: T) => Promise<TJobConfigResponse | undefined>;
 };
@@ -40,9 +41,9 @@ export const ImporterSyncJobContextProvider = <T extends object>(props: TImporte
     isLoading: syncJobLoader,
     error: syncJobError,
     mutate: jobMutate,
-  } = useSWR<TJobWithConfig<T>[]>(
+  } = useSWR<TImportJob<T>[]>(
     siloBaseUrl && jobService ? `IMPORTER_JOBS_${importerType}` : null,
-    siloBaseUrl && jobService ? async () => await jobService?.list(importerType) : null
+    siloBaseUrl && jobService ? async () => await jobService?.list(workspaceId, importerType) : null
   );
 
   /**
@@ -50,7 +51,7 @@ export const ImporterSyncJobContextProvider = <T extends object>(props: TImporte
    * @param syncJobId - Unique identifier of the job to fetch
    * @returns Promise resolving to an array of Job objects
    */
-  const getJobById = async (syncJobId: string): Promise<TJobWithConfig<T> | undefined> => {
+  const getJobById = async (syncJobId: string): Promise<TImportJob<T> | undefined> => {
     try {
       const response = await jobService?.retrieve(syncJobId);
       if (response) {
@@ -66,7 +67,7 @@ export const ImporterSyncJobContextProvider = <T extends object>(props: TImporte
    * @param syncJob - Job data, excluding certain properties
    * @returns Promise resolving to the created Job object
    */
-  const createJob = async (projectId: string, syncJobPayload: Partial<TJob>) => {
+  const createJob = async (projectId: string, syncJobPayload: Partial<TImportJob>) => {
     try {
       const response = await jobService?.create(workspaceId, projectId, syncJobPayload);
       if (response) {

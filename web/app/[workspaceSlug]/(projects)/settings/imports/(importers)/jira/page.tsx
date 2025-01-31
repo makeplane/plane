@@ -4,7 +4,8 @@ import { FC, Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane web components
-import { AuthenticationRoot, Dashboard, StepsRoot, DashboardLoaderRoot } from "@/plane-web/components/importers/jira";
+import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
+import { AuthenticationRoot, StepsRoot, JiraDashboardRoot } from "@/plane-web/components/importers/jira";
 //  plane web hooks
 import { useFlag, useJiraImporter } from "@/plane-web/hooks/store";
 
@@ -46,13 +47,21 @@ const JiraImporter: FC = observer(() => {
 
   // initiating job service config
   useEffect(() => {
-    if (workspaceId && userId && externalApiToken && workspaceId != serviceWorkspaceId) {
+    if (workspaceId && workspaceSlug && userId && externalApiToken && workspaceId != serviceWorkspaceId) {
       setDefaultServiceConfig(workspaceId, externalApiToken);
     }
     return () => {
       resetImporterData();
     };
-  }, [workspaceId, userId, externalApiToken, serviceWorkspaceId, setDefaultServiceConfig, resetImporterData]);
+  }, [
+    workspaceId,
+    workspaceSlug,
+    userId,
+    externalApiToken,
+    serviceWorkspaceId,
+    setDefaultServiceConfig,
+    resetImporterData,
+  ]);
 
   if (!isFeatureEnabled) return null;
 
@@ -71,7 +80,7 @@ const JiraImporter: FC = observer(() => {
       {!currentAuth?.isAuthenticated ? (
         <AuthenticationRoot />
       ) : (
-        <Fragment>{dashboardView ? <Dashboard /> : <StepsRoot />}</Fragment>
+        <Fragment>{dashboardView ? <JiraDashboardRoot /> : <StepsRoot />}</Fragment>
       )}
     </Fragment>
   );

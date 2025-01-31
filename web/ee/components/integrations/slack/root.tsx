@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 // ui
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // plane web components
 import { ConnectedAppCard } from "@/plane-web/components/integrations/slack";
@@ -29,6 +30,7 @@ export const SlackIntegrationRoot = observer(() => {
     connectUser,
     disconnectUser,
   } = useSlackIntegration();
+  const { t } = useTranslation();
   // swr
   useSWR(
     workspaceSlug ? `SLACK_APP_CONNECTIONS_${workspaceSlug?.toString()}` : null,
@@ -88,8 +90,8 @@ export const SlackIntegrationRoot = observer(() => {
     <>
       {/* header */}
       <InstallationCard
-        providerName="Slack"
-        providerDescription="Connect your Slack workspace to Plane."
+        providerName={t("slack_integration.name")}
+        providerDescription={t("slack_integration.description")}
         providerLogo={SlackLogo}
         isConnectionLoading={isAppConnectionLoading}
         isAppConnected={isAppConnected}
@@ -106,7 +108,7 @@ export const SlackIntegrationRoot = observer(() => {
       {/* List of connected workspaces */}
       {appConnectionIds && appConnectionIds.length > 0 && (
         <div className="flex-shrink-0 relative flex flex-col border-t border-custom-border-100 py-4 px-2">
-          <div className="font-medium">Connected Slack workspaces</div>
+          <div className="font-medium">{t("slack_integration.connected_slack_workspaces")}</div>
           <div className="w-full h-full flex flex-col gap-4 py-4">
             {appConnectionIds?.map((appId) => {
               const app = getAppByConnectionId(appId);

@@ -1,20 +1,15 @@
 import { NextFunction, Request, Response } from "express";
-import { Controller, Get, Post, Put, Delete } from "@/lib";
-import {
-  createEntityConnectionByWorkspaceConnectionId,
-  deleteEntityConnection,
-  deleteEntityConnectionByWorkspaceConnectionIdAndEntityId,
-  getEntityConnection,
-  getEntityConnectionByWorkspaceIdAndConnectionId,
-  getEntityConnectionByWorkspaceIdAndConnectionIdAndEntityId,
-  updateEntityConnection,
-  updateEntityConnectionByWorkspaceConnectionIdAndEntityId,
-} from "@/db/query/connection";
+import { Controller, Get, Post, Put, Delete, useValidateUserAuthentication } from "@/lib";
 import { responseHandler } from "@/helpers/response-handler";
+import { getAPIClient } from "@/services/client";
+import { TWorkspaceEntityConnection } from "@plane/types";
+
+const apiClient = getAPIClient();
 
 @Controller("/api/entity-connections")
 export class EntityConnectionController {
   @Get("/:workspaceId/:workspaceConnectionId")
+  @useValidateUserAuthentication()
   async getEntityConnections(req: Request, res: Response) {
     try {
       const { workspaceId, workspaceConnectionId } = req.params;
@@ -25,19 +20,20 @@ export class EntityConnectionController {
         });
       }
 
-      const entityConnections = await getEntityConnectionByWorkspaceIdAndConnectionId(
-        workspaceId,
-        workspaceConnectionId
-      );
+      const entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+        workspace_connection_id: workspaceConnectionId,
+        workspace_id: workspaceId,
+      });
 
       return res.status(200).send(entityConnections);
     } catch (error) {
       console.error(error);
-      responseHandler(res, 500, error)
+      return responseHandler(res, 500, error);
     }
   }
 
   @Get("/:workspaceId/:workspaceConnectionId/:entityId")
+  @useValidateUserAuthentication()
   async getEntityConnectionById(req: Request, res: Response) {
     try {
       const { workspaceId, workspaceConnectionId, entityId } = req.params;
@@ -48,20 +44,21 @@ export class EntityConnectionController {
         });
       }
 
-      const entityConnections = await getEntityConnectionByWorkspaceIdAndConnectionIdAndEntityId(
-        workspaceId,
-        workspaceConnectionId,
-        entityId
-      );
+      const entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+        workspace_connection_id: workspaceConnectionId,
+        workspace_id: workspaceId,
+        entity_id: entityId,
+      });
 
       return res.status(200).send(entityConnections);
     } catch (error) {
       console.error(error);
-      responseHandler(res, 500, error)
+      return responseHandler(res, 500, error);
     }
   }
 
   @Post("/:workspaceId/:workspaceConnectionId")
+  @useValidateUserAuthentication()
   async createEntityConnection(req: Request, res: Response) {
     try {
       const { workspaceId, workspaceConnectionId } = req.params;
@@ -72,68 +69,77 @@ export class EntityConnectionController {
         });
       }
 
+      const reqBody = req.body as TWorkspaceEntityConnection;
+
       const payload = {
-        workspaceId,
-        workspaceConnectionId,
-        workspaceSlug: req.body.workspaceSlug,
-        projectId: req.body.projectId,
-        entityId: req.body.entityId,
-        entitySlug: req.body.entitySlug,
-        entityData: req.body.entityData,
-        config: req.body.config,
+        workspace_id: workspaceId,
+        workspace_connection_id: workspaceConnectionId,
+        workspace_slug: reqBody.workspace_slug,
+        project_id: reqBody.project_id,
+        entity_id: reqBody.entity_id,
+        entity_slug: reqBody.entity_slug,
+        entity_data: reqBody.entity_data,
+        entity_type: reqBody.entity_type,
+        config: reqBody.config,
       };
 
-      const entityConnections = await createEntityConnectionByWorkspaceConnectionId(
-        workspaceId,
-        workspaceConnectionId,
-        payload
-      );
-
+      const entityConnections = await apiClient.workspaceEntityConnection.createWorkspaceEntityConnection(payload);
       return res.status(200).send(entityConnections);
     } catch (error) {
       console.error(error);
-      responseHandler(res, 500, error)
+      return responseHandler(res, 500, error);
     }
   }
 
-  @Put("/:workspaceId/:workspaceConnectionId/:entityId")
+  @Put("/:workspaceId/:workspaceConnectionId/:id")
+  @useValidateUserAuthentication()
   async updateEntityConnection(req: Request, res: Response) {
     try {
-      const { workspaceId, workspaceConnectionId, entityId } = req.params;
+      const { workspaceId, workspaceConnectionId, id } = req.params;
 
-      if (!workspaceId || !workspaceConnectionId || !entityId) {
+      if (!workspaceId || !workspaceConnectionId || !id) {
         return res.status(400).send({
           message: "Bad Request, expected workspaceId, workspaceConnectionId, and entityId to be present.",
         });
       }
 
+
+      const reqBody = req.body as TWorkspaceEntityConnection;
+
       const payload = {
-        workspaceId,
-        workspaceConnectionId,
-        workspaceSlug: req.body.workspaceSlug,
-        projectId: req.body.projectId,
-        entityId: req.body.entityId,
-        entitySlug: req.body.entitySlug,
-        entityData: req.body.entityData,
-        config: req.body.config,
+        workspace_id: workspaceId,
+        workspace_connection_id: workspaceConnectionId,
+        workspace_slug: reqBody.workspace_slug,
+        project_id: reqBody.project_id,
+        entity_id: reqBody.entity_id,
+        entity_slug: reqBody.entity_slug,
+        entity_data: reqBody.entity_data,
+        config: reqBody.config,
       };
 
-      const entityConnections = await updateEntityConnectionByWorkspaceConnectionIdAndEntityId(
-        workspaceId,
-        workspaceConnectionId,
-        entityId,
+      const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+        workspace_connection_id: workspaceConnectionId,
+        workspace_id: workspaceId,
+        id: id,
+      });
+
+      if (!entityConnection) {
+        return responseHandler(res, 400, new Error("Entity connection not found"));
+      }
+
+      const entityConnections = await apiClient.workspaceEntityConnection.updateWorkspaceEntityConnection(
+        entityConnection.id,
         payload
       );
 
       return res.status(200).send(entityConnections);
     } catch (error) {
-      console.error(error);
-      responseHandler(res, 500, error)
+      return responseHandler(res, 500, error);
     }
   }
 
-
   @Get("/:id")
+  @useValidateUserAuthentication()
   async getEntityConnectionByConnectionId(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -144,16 +150,16 @@ export class EntityConnectionController {
         });
       }
 
-      const entityConnections = await getEntityConnection(id);
+      const entityConnections = await apiClient.workspaceEntityConnection.getWorkspaceEntityConnection(id);
 
       return res.status(200).send(entityConnections);
     } catch (error) {
-      console.error(error);
-      responseHandler(res, 500, error)
+      responseHandler(res, 500, error);
     }
   }
 
   @Put("/:id")
+  @useValidateUserAuthentication()
   async updateEntityConnectionById(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -165,28 +171,25 @@ export class EntityConnectionController {
       }
 
       const payload = {
-        workspaceSlug: req.body.workspaceSlug,
-        projectId: req.body.projectId,
-        entityId: req.body.entityId,
-        entitySlug: req.body.entitySlug,
-        entityData: req.body.entityData,
+        workspace_slug: req.body.workspaceSlug,
+        project_id: req.body.projectId,
+        entity_id: req.body.entityId,
+        entity_slug: req.body.entitySlug,
+        entity_data: req.body.entityData,
         config: req.body.config,
       };
 
-      const entityConnections = await updateEntityConnection(
-        id,
-        payload
-      );
+      const entityConnections = await apiClient.workspaceEntityConnection.updateWorkspaceEntityConnection(id, payload);
 
       return res.status(200).send(entityConnections);
     } catch (error) {
       console.error(error);
-      responseHandler(res, 500, error)
+      return responseHandler(res, 500, error);
     }
   }
 
-
   @Delete("/:id")
+  @useValidateUserAuthentication()
   async deleteEntityConnectionById(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -197,36 +200,43 @@ export class EntityConnectionController {
         });
       }
 
-      const entityConnections = await deleteEntityConnection(id);
+      const entityConnections = await apiClient.workspaceEntityConnection.deleteWorkspaceEntityConnection(id);
 
       return res.status(200).send(entityConnections);
     } catch (error) {
-      console.error(error);
-      responseHandler(res, 500, error)
+      return responseHandler(res, 500, error);
     }
   }
 
-  @Delete("/:workspaceId/:workspaceConnectionId/:entityId")
+  @Delete("/:workspaceId/:workspaceConnectionId/:id")
+  @useValidateUserAuthentication()
   async deleteEntityConnection(req: Request, res: Response) {
     try {
-      const { workspaceId, workspaceConnectionId, entityId } = req.params;
+      const { workspaceId, workspaceConnectionId, id: id } = req.params;
 
-      if (!workspaceId || !workspaceConnectionId || !entityId) {
+      if (!workspaceId || !workspaceConnectionId || !id) {
         return res.status(400).send({
           message: "Bad Request, expected workspaceId, workspaceConnectionId, and entityId to be present.",
         });
       }
 
-      const entityConnections = await deleteEntityConnectionByWorkspaceConnectionIdAndEntityId(
-        workspaceId,
-        workspaceConnectionId,
-        entityId
+      const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+        workspace_connection_id: workspaceConnectionId,
+        workspace_id: workspaceId,
+        id: id,
+      });
+
+      if (!entityConnection) {
+        return responseHandler(res, 400, new Error("Entity connection not found"));
+      }
+
+      const entityConnections = await apiClient.workspaceEntityConnection.deleteWorkspaceEntityConnection(
+        entityConnection.id
       );
 
       return res.status(200).send(entityConnections);
     } catch (error) {
-      console.error(error);
-      responseHandler(res, 500, error)
+      return responseHandler(res, 500, error);
     }
   }
 }

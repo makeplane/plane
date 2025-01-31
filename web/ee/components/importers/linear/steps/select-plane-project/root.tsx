@@ -16,6 +16,7 @@ import { StepperNavigation, Dropdown } from "@/plane-web/components/importers/ui
 import { useLinearImporter } from "@/plane-web/hooks/store";
 // plane web types
 import { E_LINEAR_IMPORTER_STEPS, TImporterLinearDataPayload } from "@/plane-web/types/importers/linear";
+import { useTranslation } from "@plane/i18n";
 
 type TFormData = TImporterLinearDataPayload[E_LINEAR_IMPORTER_STEPS.SELECT_PLANE_PROJECT];
 
@@ -34,6 +35,7 @@ export const SelectPlaneProjectRoot: FC = observer(() => {
     handleImporterData,
     handleSyncJobConfig,
   } = useLinearImporter();
+  const { t } = useTranslation();
 
   // states
   const [formData, setFormData] = useState<TFormData>({ projectId: undefined });
@@ -84,7 +86,7 @@ export const SelectPlaneProjectRoot: FC = observer(() => {
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
       {/* content */}
       <div className="w-full min-h-44 max-h-full overflow-y-auto space-y-2">
-        <div className="text-sm text-custom-text-200">Select Plane project</div>
+        <div className="text-sm text-custom-text-200">{t("importers.select_service_project", { "serviceName": "Plane" })}</div>
         {isLoading && (!projects || projects.length === 0) ? (
           <Loader>
             <Loader.Item height="28px" width="100%" />
@@ -98,7 +100,7 @@ export const SelectPlaneProjectRoot: FC = observer(() => {
               data: project,
             }))}
             value={formData.projectId}
-            placeHolder="Select plane project"
+            placeHolder={t("importers.select_service_project", { "serviceName": "Plane" })}
             onChange={(value: string | undefined) => handleFormData(value)}
             iconExtractor={(option) => (
               <div className="w-4.5 h-4.5 flex-shrink-0 overflow-hidden relative flex justify-center items-center">
@@ -118,7 +120,7 @@ export const SelectPlaneProjectRoot: FC = observer(() => {
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
           <Button variant="primary" size="sm" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
-            Next
+            {t("common.next")}
           </Button>
         </StepperNavigation>
       </div>

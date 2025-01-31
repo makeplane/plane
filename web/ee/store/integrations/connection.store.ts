@@ -3,27 +3,28 @@ import { set } from "lodash";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // plane web root store
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { ConnectionService, TUserWorkspaceConnection } from "@plane/etl/core";
+import { ConnectionService } from "@plane/etl/core";
+import { TWorkspaceUserConnection } from "@plane/types";
 import { RootStore } from "@/plane-web/store/root.store";
 import { IIntegrationBaseStore, IntegrationBaseStore } from ".";
 
 export interface IConnectionStore extends IIntegrationBaseStore {
   // observables
-  userConnections: Record<string, TUserWorkspaceConnection<any>[]>; // workspaceSlug -> user connections
+  userConnections: Record<string, TWorkspaceUserConnection[]>; // workspaceSlug -> user connections
 
   // helper actions
-  getConnectionsByWorkspaceSlug: (workspaceSlug: string) => TUserWorkspaceConnection<any>[] | undefined;
+  getConnectionsByWorkspaceSlug: (workspaceSlug: string) => TWorkspaceUserConnection[] | undefined;
 
   // actions
   fetchUserConnections: (
     workspaceId?: string,
     workspaceSlug?: string
-  ) => Promise<TUserWorkspaceConnection<any>[] | undefined>;
+  ) => Promise<TWorkspaceUserConnection[] | undefined>;
 }
 
 export class ConnectionStore extends IntegrationBaseStore implements IConnectionStore {
   // observables
-  userConnections: Record<string, TUserWorkspaceConnection<any>[]> = {};
+  userConnections: Record<string, TWorkspaceUserConnection[]> = {};
   connectionService: ConnectionService;
 
   constructor(protected store: RootStore) {
@@ -43,7 +44,7 @@ export class ConnectionStore extends IntegrationBaseStore implements IConnection
    * @param { string } workspaceSlug
    * @returns { TUserWorkspaceConnection<any>[] | undefined }
    */
-  getConnectionsByWorkspaceSlug = (workspaceSlug: string): TUserWorkspaceConnection<any>[] | undefined =>
+  getConnectionsByWorkspaceSlug = (workspaceSlug: string): TWorkspaceUserConnection[] | undefined =>
     this.userConnections[workspaceSlug];
 
   /**
@@ -54,7 +55,7 @@ export class ConnectionStore extends IntegrationBaseStore implements IConnection
   fetchUserConnections = async (
     workspaceId?: string,
     workspaceSlug?: string
-  ): Promise<TUserWorkspaceConnection<any>[] | undefined> => {
+  ): Promise<TWorkspaceUserConnection[] | undefined> => {
     const workspace_id = workspaceId ?? this.store.workspaceRoot.currentWorkspace?.id;
     const workspace_slug = workspaceSlug ?? this.store.workspaceRoot.currentWorkspace?.slug;
     const user_id = this.store.user.data?.id;

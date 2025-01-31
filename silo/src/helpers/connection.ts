@@ -3,16 +3,22 @@ import {
   githubWorkspaceConnectionSchema,
   PlaneConnectionDetails,
 } from "@/apps/github/types";
-import { getCredentialsById } from "@/db/query";
-import { getEntityConnectionByWorkspaceAndProjectId, getWorkspaceConnectionById } from "@/db/query/connection";
+import { getAPIClient } from "@/services/client";
 import { verifyEntityConnection, verifyWorkspaceConnection } from "@/types";
-import { TServiceCredentials } from "@plane/etl/core";
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { TWorkspaceCredential } from "@plane/types";
+
+const apiClient = getAPIClient();
 
 export const getConnectionDetailsForPlane = async (
   workspace: string,
   project: string
 ): Promise<PlaneConnectionDetails> => {
-  const entityConnectionArray = await getEntityConnectionByWorkspaceAndProjectId(workspace, project);
+  const entityConnectionArray = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+    workspace_id: workspace,
+    entity_type: E_INTEGRATION_KEYS.GITHUB,
+    project_id: project,
+  });
 
   if (!entityConnectionArray || entityConnectionArray.length === 0) {
     throw new Error("Entity connection not found");
@@ -20,23 +26,24 @@ export const getConnectionDetailsForPlane = async (
 
   const entityConnection = verifyEntityConnection(githubEntityConnectionSchema, entityConnectionArray[0] as any);
 
-  const workspaceConnectionArray = await getWorkspaceConnectionById(entityConnection.workspaceConnectionId);
+  const workspaceConnnectionData = await apiClient.workspaceConnection.getWorkspaceConnection(
+    entityConnection.workspace_connection_id
+  );
 
-  if (!workspaceConnectionArray || workspaceConnectionArray.length === 0) {
+  if (!workspaceConnnectionData) {
     throw new Error("Workspace connection not found");
   }
 
   const workspaceConnection = verifyWorkspaceConnection(
     githubWorkspaceConnectionSchema,
-    workspaceConnectionArray[0] as any
+    workspaceConnnectionData as any
   );
 
   // Get the credentials from the workspace connection
-  const credentialsArray = await getCredentialsById(workspaceConnection.credentialsId);
-  const credentials = credentialsArray[0];
+  const credentials = await apiClient.workspaceCredential.getWorkspaceCredential(workspaceConnection.credential_id);
 
   return {
-    credentials: credentials as TServiceCredentials,
+    credentials: credentials as TWorkspaceCredential,
     entityConnection,
     workspaceConnection,
   };

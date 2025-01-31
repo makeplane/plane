@@ -4,7 +4,7 @@ from .issue_property import (
     IssuePropertyValueAPIEndpoint,
 )
 
-
+from plane.ee.views.api.base import BaseServiceAPIView
 from plane.ee.views.api.workspace.credential import WorkspaceCredentialAPIView
 from plane.ee.views.api.workspace.connection import WorkspaceConnectionAPIView
 from plane.ee.views.api.workspace.entity_connection import WorkspaceEntityConnectionAPIView  

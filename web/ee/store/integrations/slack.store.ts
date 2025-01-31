@@ -2,8 +2,8 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // types
-import { TAppConnection } from "@plane/etl/slack";
-import { IWebhook } from "@plane/types";
+import { TAppConnection, TSlackConfig, TSlackConnectionData } from "@plane/etl/slack";
+import { IWebhook, TWorkspaceConnection } from "@plane/types";
 // plane web services
 import { SlackIntegrationService } from "@/plane-web/services/integrations/slack.service";
 import internalWebhookService from "@/plane-web/services/internal-webhook.service";
@@ -16,7 +16,7 @@ export interface ISlackStore extends IntegrationBaseStore {
   // observables
   isAppConnectionLoading: boolean;
   isUserConnectionLoading: boolean;
-  appConnections: Record<string, TAppConnection>;
+  appConnections: Record<string, TWorkspaceConnection<TSlackConfig, TSlackConnectionData>>;
   isUserConnected: boolean;
   webhookConnection: Record<string, boolean>; // workspaceId -> boolean
   // computed
@@ -24,7 +24,7 @@ export interface ISlackStore extends IntegrationBaseStore {
   isWebhookConnected: boolean;
   appConnectionIds: string[] | undefined;
   // helper actions
-  getAppByConnectionId: (connectionId: string) => TAppConnection | undefined;
+  getAppByConnectionId: (connectionId: string) => TWorkspaceConnection<TSlackConfig, TSlackConnectionData> | undefined;
   // actions
   fetchAppConnections: (workspaceId?: string) => Promise<void>;
   fetchUserConnectionStatus: (workspaceId?: string) => Promise<void>;
@@ -38,7 +38,7 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
   // observables
   isAppConnectionLoading: boolean = true;
   isUserConnectionLoading: boolean = true;
-  appConnections: Record<string, TAppConnection> = {}; // connection id -> app connection
+  appConnections: Record<string, TWorkspaceConnection<TSlackConfig, TSlackConnectionData>> = {}; // connection id -> app connection
   isUserConnected: boolean = false;
   webhookConnection: Record<string, boolean> = {};
   // service
@@ -78,7 +78,7 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
   }
 
   get appConnectionIds() {
-    return Object.values(this.appConnections).map((appConnection) => appConnection.connectionId);
+    return Object.values(this.appConnections).map((appConnection) => appConnection.connection_id);
   }
 
   /**
@@ -108,7 +108,7 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
       const response = await this.service.getAppConnection(workspace);
       if (response) {
         response.forEach((appConnection) => {
-          set(this.appConnections, appConnection.connectionId, appConnection);
+          set(this.appConnections, appConnection.connection_id, appConnection);
         });
       }
     } finally {

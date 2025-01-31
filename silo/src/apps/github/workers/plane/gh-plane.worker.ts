@@ -1,9 +1,9 @@
-import { MQ, Store } from "@/apps/engine/worker/base";
-import { TaskHandler, TaskHeaders } from "@/types";
 import { PlaneWebhookPayload } from "@plane/sdk";
-import { handleIssueWebhook } from "./event-handlers/issue.handler";
-import { handleIssueCommentWebhook } from "./event-handlers/issue-comment.handler";
 import { SentryInstance } from "@/sentry-config";
+import { TaskHandler, TaskHeaders } from "@/types";
+import { MQ, Store } from "@/worker/base";
+import { handleIssueCommentWebhook } from "./event-handlers/issue-comment.handler";
+import { handleIssueWebhook } from "./event-handlers/issue.handler";
 
 export class PlaneGithubWebhookWorker extends TaskHandler {
   mq: MQ;
@@ -19,10 +19,10 @@ export class PlaneGithubWebhookWorker extends TaskHandler {
     try {
       switch (data.event) {
         case "issue":
-          handleIssueWebhook(headers, this.mq, this.store, data);
+          await handleIssueWebhook(headers, this.mq, this.store, data);
           break;
         case "issue_comment":
-          handleIssueCommentWebhook(headers, this.mq, this.store, data);
+          await handleIssueCommentWebhook(headers, this.mq, this.store, data);
           break;
         default:
           break;

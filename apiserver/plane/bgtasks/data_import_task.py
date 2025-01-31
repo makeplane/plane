@@ -16,21 +16,43 @@ from plane.ee.models import IssueProperty, IssuePropertyValue
 from django.conf import settings
 
 
-def update_job_batch_completion(job_id):
-    """Update the job batch completion status via API call to silo service"""
+def update_job_batch_completion(job_id, total_issues=0, imported_issues=0):
+    """Update the job report with batch and issue counts"""
     try:
-        silo_url = settings.SILO_URL.rstrip("/")
-        endpoint = f"{silo_url}/api/jobs/{job_id}/batch-complete/"
+        from plane.ee.models import ImportJob, ImportReport
+        from django.utils import timezone
 
-        response = requests.post(
-            endpoint,
-            json={"jobId": job_id},
-            headers={"Content-Type": "application/json"},
-        )
+        # Get the job and its report
+        job = ImportJob.objects.select_related('report').get(pk=job_id)
+        if job and job.report:
+            # Update batch count
+            job.report.imported_batch_count = (job.report.imported_batch_count or 0) + 1
 
-        if response.status_code != 200:
-            print(f"Error updating job batch completion: {response.text}")
+            # Update issue counts
+            job.report.total_issue_count = (job.report.total_issue_count or 0) + total_issues
+            job.report.imported_issue_count = (job.report.imported_issue_count or 0) + imported_issues
+            job.report.errored_issue_count = (job.report.errored_issue_count or 0) + (total_issues - imported_issues)
 
+            job.report.updated_at = timezone.now()
+
+            # Save all changes
+            job.report.save(update_fields=[
+                'imported_batch_count',
+                'total_issue_count',
+                'imported_issue_count',
+                'errored_issue_count',
+                'updated_at'
+            ])
+
+            # Check if all batches are processed and update job status
+            if job.report.imported_batch_count >= job.report.total_batch_count:
+                job.status = ImportJob.JobStatus.FINISHED
+                job.report.end_time = timezone.now()
+                job.save(update_fields=['status'])
+                job.report.save(update_fields=['end_time'])
+
+    except ImportJob.DoesNotExist:
+        print(f"Job not found with id: {job_id}")
     except Exception as e:
         print(f"Failed to update job batch completion: {str(e)}")
 
@@ -49,6 +71,7 @@ def process_single_issue(slug, project, user_id, issue_data):
             )
 
             if not serializer.is_valid():
+                print(f"Error processing issue: {serializer.errors}")
                 return None
 
             external_id = issue_data.get("external_id")
@@ -352,14 +375,18 @@ def import_data(slug, project_id, user_id, job_id, payload):
     try:
         project = Project.objects.get(pk=project_id)
         external_id_map = {}
+        total_issues = len(payload)
+        imported_issues = 0
 
         # First pass: Create/Update all parent issues (where parent is None)
         with transaction.atomic():
             for issue_data in payload:
                 if issue_data.get("parent") is None:
                     issue = process_single_issue(slug, project, user_id, issue_data)
-                    if issue and issue_data.get("external_id"):
-                        external_id_map[issue_data["external_id"]] = str(issue.id)
+                    if issue:
+                        imported_issues += 1
+                        if issue_data.get("external_id"):
+                            external_id_map[issue_data["external_id"]] = str(issue.id)
 
         # Second pass: Create/Update all child issues
         with transaction.atomic():
@@ -383,12 +410,15 @@ def import_data(slug, project_id, user_id, job_id, payload):
                             issue_data["parent"] = None
 
                     issue = process_single_issue(slug, project, user_id, issue_data)
-                    if issue and issue_data.get("external_id"):
-                        external_id_map[issue_data["external_id"]] = str(issue.id)
+                    if issue:
+                        imported_issues += 1
+                        if issue_data.get("external_id"):
+                            external_id_map[issue_data["external_id"]] = str(issue.id)
 
-        update_job_batch_completion(job_id)
+        update_job_batch_completion(job_id, total_issues, imported_issues)
         return True
     except Exception as e:
         print(traceback.print_exc())
         print(f"Error importing data: {str(e)}")
+        update_job_batch_completion(job_id, total_issues, 0)  # All issues failed
         return False
