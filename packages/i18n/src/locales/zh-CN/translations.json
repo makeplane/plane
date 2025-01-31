@@ -332,6 +332,32 @@
   "re_generate_key": "重新生成密钥",
   "export": "导出",
 
+  "sidebar": {
+    "projects": "项目",
+    "pages": "页面",
+    "new_work_item": "新建工作项",
+    "home": "首页",
+    "your_work": "你的工作",
+    "inbox": "收件箱",
+    "pi_chat": "PI聊天",
+    "workspace": "工作空间",
+    "initiatives": "计划",
+    "teamspaces": "团队空间",
+    "views": "视图",
+    "analytics": "分析",
+    "your_projects": "你的项目",
+    "work_items": "工作项",
+    "cycles": "周期",
+    "modules": "模块",
+    "intake": "采集",
+    "pro_trial": "Pro试用期剩余13天",
+    "epics": "史诗",
+    "upgrade_plan": "升级计划",
+    "plane_pro": "Plane Pro",
+    "business": "商务"
+  },
+
+
   "project_view": {
     "sort_by": {
       "created_at": "创建于",

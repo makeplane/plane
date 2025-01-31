@@ -332,6 +332,32 @@
   "re_generate_key": "Régénérer la clé",
   "export": "Exporter",
 
+  "sidebar": {
+    "projects": "Projets",
+    "pages": "Pages",
+    "new_work_item": "Nouvel élément de travail",
+    "home": "Accueil",
+    "your_work": "Votre travail",
+    "inbox": "Boîte de réception",
+    "pi_chat": "Chat PI",
+    "workspace": "Espace de travail",
+    "initiatives": "Initiatives",
+    "teamspaces": "Espaces d'équipe",
+    "views": "Vues",
+    "analytics": "Analytique",
+    "your_projects": "Vos projets",
+    "work_items": "Éléments de travail",
+    "cycles": "Cycles",
+    "modules": "Modules",
+    "intake": "Réception",
+    "pro_trial": "L'essai Pro se termine dans 13j",
+    "epics": "Épiques",
+    "upgrade_plan": "Mettre à niveau",
+    "plane_pro": "Plane Pro",
+    "business": "Entreprise"
+
+  },
+
   "project_view": {
     "sort_by": {
       "created_at": "Créé le",

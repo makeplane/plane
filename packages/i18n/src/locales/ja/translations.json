@@ -332,6 +332,32 @@
   "re_generate_key": "キーを再生成",
   "export": "エクスポート",
 
+  "sidebar": {
+    "projects": "プロジェクト",
+    "pages": "ページ",
+    "new_work_item": "新規作業項目",
+    "home": "ホーム",
+    "your_work": "あなたの作業",
+    "inbox": "受信トレイ",
+    "pi_chat": "PIチャット",
+    "workspace": "ワークスペース",
+    "initiatives": "イニシアチブ",
+    "teamspaces": "チームスペース",
+    "views": "ビュー",
+    "analytics": "分析",
+    "your_projects": "あなたのプロジェクト",
+    "work_items": "作業項目",
+    "cycles": "サイクル",
+    "modules": "モジュール",
+    "intake": "取り込み",
+    "pro_trial": "Proトライアル残り13日",
+    "epics": "エピック",
+    "upgrade_plan": "プランをアップグレード",
+    "plane_pro": "Plane Pro",
+    "business": "ビジネス"
+  },
+
+
   "project_view": {
     "sort_by": {
       "created_at": "作成日時",
