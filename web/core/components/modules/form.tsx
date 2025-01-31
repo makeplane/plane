@@ -234,7 +234,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
               : t("update_module")
             : isSubmitting
               ? t("creating")
-              : t("create_module")}
+              : t("project_module.create_module")}
         </Button>
       </div>
     </form>
