@@ -104,6 +104,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 project__project_projectmember__member=request.user,
                 project__project_projectmember__is_active=True,
             )
+            .filter(project__deleted_at__isnull=True)
             .filter(**filters)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
