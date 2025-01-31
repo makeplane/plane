@@ -425,6 +425,8 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 project__project_projectmember__member=request.user,
                 project__project_projectmember__is_active=True,
                 created_by_id=user_id,
+                project__deleted_at__isnull=True,
+                deleted_at__isnull=True,
             )
             .filter(**filters)
             .count()
@@ -481,6 +483,8 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 project__project_projectmember__member=request.user,
                 project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
+                issue__deleted_at__isnull=True,
+                project__deleted_at__isnull=True,
             )
             .filter(**filters)
             .count()
