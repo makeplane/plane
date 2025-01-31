@@ -1484,12 +1484,87 @@
   },
 
   "project_cycles": {
+    "add_cycle": "Add cycle",
+    "more_details": "More details",
+    "cycle": "Cycle",
+    "update_cycle": "Update cycle",
+    "create_cycle": "Create cycle",
+    "no_matching_cycles": "No matching cycles",
+    "remove_filters_to_see_all_cycles": "Remove the filters to see all cycles",
+    "remove_search_criteria_to_see_all_cycles": "Remove the search criteria to see all cycles",
+    "only_completed_cycles_can_be_archived": "Only completed cycles can be archived",
+    "active_cycle": {
+      "label" :"Active cycle",
+      "progress": "Progress",
+      "chart": "Burndown chart",
+      "priority_issue": "Priority issues",
+      "assignees": "Assignees",
+      "issue_burndown": "Issue burndown",
+      "ideal": "Ideal",
+      "current": "Current",
+      "labels": "Labels"
+    },
+    "upcoming_cycle": {
+      "label": "Upcoming cycle"
+    },
+    "completed_cycle": {
+      "label": "Completed cycle"
+    },
     "status": {
       "days_left": "Days left",
       "completed": "Completed",
       "yet_to_start": "Yet to start",
       "in_progress": "In progress",
       "draft": "Draft"
+    },
+    "action": {
+      "restore": {
+        "title": "Restore cycle",
+        "success": {
+          "title": "Cycle restored",
+          "description": "The cycle has been restored."
+        },
+        "failed": {
+          "title": "Cycle restore failed",
+          "description": "The cycle could not be restored. Please try again."
+        }
+      },
+      "favorite": {
+        "loading": "Adding cycle to favorites...",
+        "success": {
+          "description": "Cycle added to favorites.",
+          "title": "Success!"
+        },
+        "failed": {
+          "description": "Couldn't add the cycle to favorites. Please try again.",
+          "title": "Error!"
+        }
+      },
+      "unfavorite": {
+        "loading": "Removing cycle from favorites...",
+        "success": {
+          "description": "Cycle removed from favorites.",
+          "title": "Success!"
+        },
+        "failed": {
+          "description": "Couldn't remove the cycle from favorites. Please try again.",
+          "title": "Error!"
+        }
+      },
+      "update": {
+        "loading": "Updating cycle...",
+        "success": {
+          "description": "Cycle updated successfully.",
+          "title": "Success!"
+        },
+        "failed": {
+          "description": "Error updating the cycle. Please try again.",
+          "title": "Error!"
+        },
+        "error": {
+          "already_exists": "You already have a cycle on the given dates, if you want to create a draft cycle, you can do that by removing both the dates."
+        }
+      }
     },
     "empty_state": {
       "general": {

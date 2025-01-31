@@ -7,6 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Eye, Users } from "lucide-react";
 // types
 import { CYCLE_FAVORITED, CYCLE_UNFAVORITED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
 import {
@@ -63,6 +64,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
   // hooks
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   const searchParams = useSearchParams();
@@ -110,14 +112,14 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     );
 
     setPromiseToast(addToFavoritePromise, {
-      loading: "Adding cycle to favorites...",
+      loading: t("project_cycles.action.favorite.loading"),
       success: {
-        title: "Success!",
-        message: () => "Cycle added to favorites.",
+        title: t("project_cycles.action.favorite.success.title"),
+        message: () => t("project_cycles.action.favorite.success.description"),
       },
       error: {
-        title: "Error!",
-        message: () => "Couldn't add the cycle to favorites. Please try again.",
+        title: t("project_cycles.action.favorite.failed.title"),
+        message: () => t("project_cycles.action.favorite.failed.description"),
       },
     });
   };
@@ -139,14 +141,14 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     });
 
     setPromiseToast(removeFromFavoritePromise, {
-      loading: "Removing cycle from favorites...",
+      loading: t("project_cycles.action.unfavorite.loading"),
       success: {
-        title: "Success!",
-        message: () => "Cycle removed from favorites.",
+        title: t("project_cycles.action.unfavorite.success.title"),
+        message: () => t("project_cycles.action.unfavorite.success.description"),
       },
       error: {
-        title: "Error!",
-        message: () => "Couldn't remove the cycle from favorites. Please try again.",
+        title: t("project_cycles.action.unfavorite.failed.title"),
+        message: () => t("project_cycles.action.unfavorite.failed.description"),
       },
     });
   };
@@ -186,15 +188,14 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
       submitChanges(payload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "Cycle updated successfully.",
+        title: t("project_cycles.action.update.success.title"),
+        message: t("project_cycles.action.update.success.description"),
       });
     } else {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message:
-          "You already have a cycle on the given dates, if you want to create a draft cycle, you can do that by removing both the dates.",
+        title: t("project_cycles.action.update.failed.title"),
+        message: t("project_cycles.action.update.error.already_exists"),
       });
       reset({ ...cycleDetails });
     }
@@ -238,7 +239,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
         className={`z-[1] flex text-custom-primary-200 text-xs gap-1 flex-shrink-0 ${isMobile || (isActive && !searchParams.has("peekCycle")) ? "flex" : "hidden group-hover:flex"}`}
       >
         <Eye className="h-4 w-4 my-auto  text-custom-primary-200" />
-        <span>More details</span>
+        <span>{t("project_cycles.more_details")}</span>
       </button>
 
       {showIssueCount && (
