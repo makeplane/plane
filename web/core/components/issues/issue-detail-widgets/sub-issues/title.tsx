@@ -40,7 +40,7 @@ export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
   return (
     <CollapsibleButton
       isOpen={isOpen}
-      title={`${issueServiceType === EIssueServiceType.EPICS ? t("issue.label", { count: 1 }) : t("common.sub_work_itemss")}`}
+      title={`${issueServiceType === EIssueServiceType.EPICS ? t("issue.label", { count: 1 }) : t("common.sub_work_items")}`}
       indicatorElement={
         <div className="flex items-center gap-1.5 text-custom-text-300 text-sm">
           <CircularProgressIndicator size={18} percentage={percentage} strokeWidth={3} />
