@@ -29,9 +29,5 @@ class Migration(migrations.Migration):
             model_name='webhooklog',
             name='webhook',
             field=models.UUIDField(),
-        ),
-        migrations.AlterUniqueTogether(
-            name='account',
-            unique_together={('user', 'provider', 'provider_account_id')},
-        ),
+        )
     ]

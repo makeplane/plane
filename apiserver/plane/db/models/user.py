@@ -226,7 +226,7 @@ class Account(TimeAuditModel):
     metadata = models.JSONField(default=dict)
 
     class Meta:
-        unique_together = ["user", "provider", "provider_account_id"]
+        unique_together = ["provider", "provider_account_id"]
         verbose_name = "Account"
         verbose_name_plural = "Accounts"
         db_table = "accounts"
