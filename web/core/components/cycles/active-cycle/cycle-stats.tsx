@@ -126,7 +126,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
               )
             }
           >
-            Priority Issues
+            {t("project_cycles.active_cycle.priority_issue")}
           </Tab>
           <Tab
             className={({ selected }) =>
@@ -139,7 +139,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
               )
             }
           >
-            Assignees
+            {t("project_cycles.active_cycle.assignees")}
           </Tab>
           <Tab
             className={({ selected }) =>
@@ -152,7 +152,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
               )
             }
           >
-            Labels
+            {t("project_cycles.active_cycle.labels")}
           </Tab>
         </Tab.List>
 
@@ -289,7 +289,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                             <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
                               <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
                             </div>
-                            <span>No assignee</span>
+                            <span>{t("no_assignee")}</span>
                           </div>
                         }
                         completed={assignee.completed_issues}

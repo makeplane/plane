@@ -97,7 +97,7 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
           {({ open }) => (
             <>
               <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
-                <CycleListGroupHeader title="Active cycle" type="current" isExpanded={open} />
+                <CycleListGroupHeader title={t("project_cycles.active_cycle.label")} type="current" isExpanded={open} />
               </Disclosure.Button>
               <Disclosure.Panel>{ActiveCyclesComponent}</Disclosure.Panel>
             </>

@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ArchiveIcon, ArchiveRestoreIcon, ChevronRight, EllipsisIcon, LinkIcon, Trash2 } from "lucide-react";
 // types
-import { CYCLE_STATUS, CYCLE_UPDATED ,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { CYCLE_STATUS, CYCLE_UPDATED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
 // ui
@@ -70,16 +70,16 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Restore success",
-          message: "Your cycle can be found in project cycles.",
+          title: t("project_cycles.action.restore.success.title"),
+          message: t("project_cycles.action.restore.success.description"),
         });
         router.push(`/${workspaceSlug.toString()}/projects/${projectId.toString()}/archives/cycles`);
       })
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Cycle could not be restored. Please try again.",
+          title: t("project_cycles.action.restore.failed.title"),
+          message: t("project_cycles.action.restore.failed.description"),
         })
       );
   };
@@ -89,14 +89,14 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Link Copied!",
-          message: "Cycle link copied to clipboard.",
+          title: t("common.link_copied"),
+          message: t("common.link_copied_to_clipboard"),
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Some error occurred",
+          title: t("common.errors.default.message"),
         });
       });
   };
@@ -166,15 +166,14 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
       submitChanges(payload, "date_range");
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "Cycle updated successfully.",
+        title: t("project_cycles.action.update.success.title"),
+        message: t("project_cycles.action.update.success.description"),
       });
     } else {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message:
-          "You already have a cycle on the given dates, if you want to create a draft cycle, you can do that by removing both the dates.",
+        title: t("project_cycles.action.update.failed.title"),
+        message: t("project_cycles.action.update.error.already_exists"),
       });
       reset({ ...cycleDetails });
     }
@@ -231,15 +230,15 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
                   {isCompleted ? (
                     <div className="flex items-center gap-2">
                       <ArchiveIcon className="h-3 w-3" />
-                      Archive cycle
+                      {t("common.archive")}
                     </div>
                   ) : (
                     <div className="flex items-start gap-2">
                       <ArchiveIcon className="h-3 w-3" />
                       <div className="-mt-1">
-                        <p>Archive cycle</p>
+                        <p>{t("common.archive")}</p>
                         <p className="text-xs text-custom-text-400">
-                          Only completed cycles <br /> can be archived.
+                          {t("project_cycles.only_completed_cycles_can_be_archived")}
                         </p>
                       </div>
                     </div>
@@ -250,7 +249,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
                 <CustomMenu.MenuItem onClick={handleRestoreCycle}>
                   <span className="flex items-center justify-start gap-2">
                     <ArchiveRestoreIcon className="h-3 w-3" />
-                    <span>Restore cycle</span>
+                    <span>{t("project_cycles.action.restore.title")}</span>
                   </span>
                 </CustomMenu.MenuItem>
               )}
@@ -263,7 +262,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
                 >
                   <span className="flex items-center justify-start gap-2">
                     <Trash2 className="h-3 w-3" />
-                    <span>Delete cycle</span>
+                    <span>{t("delete")}</span>
                   </span>
                 </CustomMenu.MenuItem>
               )}
