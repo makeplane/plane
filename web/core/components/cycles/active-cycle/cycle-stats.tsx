@@ -315,14 +315,14 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                   <SingleProgressStats
                     key={label.label_id ?? `no-label-${index}`}
                     title={
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 truncate">
                         <span
-                          className="block h-3 w-3 rounded-full"
+                          className="block h-3 w-3 rounded-full flex-shrink-0"
                           style={{
                             backgroundColor: label.color ?? "#000000",
                           }}
                         />
-                        <span className="text-xs">{label.label_name ?? "No labels"}</span>
+                        <span className="text-xs text-ellipsis truncate">{label.label_name ?? "No labels"}</span>
                       </div>
                     }
                     completed={label.completed_issues}
