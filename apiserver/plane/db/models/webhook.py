@@ -89,4 +89,4 @@ class WebhookLog(BaseModel):
         ordering = ("-created_at",)
 
     def __str__(self):
-        return f"{self.event_type} {str(self.webhook.url)}"
+        return f"{self.event_type} {str(self.webhook)}"
