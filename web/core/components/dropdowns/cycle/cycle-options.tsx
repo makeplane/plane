@@ -163,7 +163,7 @@ export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
                 </Combobox.Option>
               ))
             ) : (
-              <p className="px-1.5 py-1 italic text-custom-text-400">{t("common.no_matches_found")}</p>
+              <p className="px-1.5 py-1 italic text-custom-text-400">{t("common.search.no_matches_found")}</p>
             )
           ) : (
             <p className="px-1.5 py-1 italic text-custom-text-400">{t("common.loading")}</p>

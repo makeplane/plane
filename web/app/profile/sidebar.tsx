@@ -171,7 +171,7 @@ export const ProfileLayoutSidebar = observer(() => {
                       <div className="flex items-center gap-1.5 py-[1px]">
                         <ProjectActionIcons type={link.key} size={16} />
 
-                        {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{t(link.key)}</p>}
+                        {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{t(link.i18n_label)}</p>}
                       </div>
                     </SidebarNavItem>
                   </Tooltip>
