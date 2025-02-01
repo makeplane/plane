@@ -387,7 +387,11 @@ def webhook_activity(
                 webhook=webhook.id,
                 slug=slug,
                 event=event,
-                event_data=get_model_data(event=event, event_id=event_id),
+                event_data=(
+                    {"id": event_id}
+                    if verb == "deleted"
+                    else get_model_data(event=event, event_id=event_id)
+                ),
                 action=verb,
                 current_site=current_site,
                 activity={
