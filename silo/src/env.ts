@@ -11,6 +11,7 @@ const envSchema = z.object({
   DEDUP_INTERVAL: z.string().optional().default("3"),
   DB_URL: z.string().default("postgres://postgres:password@localhost:5432/silo"),
   AMQP_URL: z.string().default("amqp://guest:guest@localhost:5672"),
+  CORS_ALLOWED_ORIGINS: z.string().default("https://app.plane.so"),
   REDIS_URL: z.string().default("redis://localhost:6379"),
   SENTRY_DSN: z.string().optional(),
   SENTRY_ORG: z.string().default("plane-hq"),

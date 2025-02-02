@@ -77,14 +77,21 @@ export default class Server {
   }
 
   private setupMiddleware(): void {
-    this.app.use(
-      cors({
-        origin: "http://localhost:3000",
-        credentials: true,
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],
-      })
-    );
+    // take the cors allowed origins from env, split by comma
+    const origins = env.CORS_ALLOWED_ORIGINS?.split(",").map((origin) => origin.trim()) || [];
+
+    for (const origin of origins) {
+      logger.info(`Adding CORS allowed origin: ${origin}`);
+      this.app.use(
+        cors({
+          origin,
+          credentials: true,
+          methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+          allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],
+        })
+      );
+    }
+
     this.app.use(express.json());
     this.app.use(cookieParser());
     this.app.use(express.urlencoded({ extended: true }));
