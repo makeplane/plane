@@ -43,6 +43,7 @@ export * from "./stickies";
 export * from "./intake";
 // enterprise
 export * from "./active-cycle";
+export * from "./dashboards";
 export * from "./payment";
 export * from "./teamspace";
 export * from "./initiatives";

@@ -36,6 +36,7 @@
     "@plane/etl": "*",
     "@plane/hooks": "*",
     "@plane/i18n": "*",
+    "@plane/services": "*",
     "@plane/sdk": "*",
     "@plane/types": "*",
     "@plane/ui": "*",

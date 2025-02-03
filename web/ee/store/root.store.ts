@@ -38,6 +38,8 @@ import {
 } from "@/plane-web/store/workspace-worklog";
 // store
 import { CoreRootStore } from "@/store/root.store";
+// dashboards
+import { IWorkspaceDashboardsStore, WorkspaceDashboardsStore } from "./dashboards/workspace-dashboards.store";
 // importers
 import {
   IJiraStore,
@@ -49,7 +51,7 @@ import {
   LinearStore,
   IAsanaStore,
   AsanaStore,
-  FlatfileStore
+  FlatfileStore,
 } from "./importers";
 // initiative
 import { IInitiativeFilterStore, InitiativeFilterStore } from "./initiatives/initiatives-filter.store";
@@ -103,6 +105,8 @@ export class RootStore extends CoreRootStore {
   gitlabIntegration: IGitlabStore;
   initiativeFilterStore: IInitiativeFilterStore;
   initiativeStore: IInitiativeStore;
+  // dashboards
+  workspaceDashboards: IWorkspaceDashboardsStore;
 
   constructor() {
     super();
@@ -137,6 +141,8 @@ export class RootStore extends CoreRootStore {
     this.gitlabIntegration = new GitlabStore(this);
     this.initiativeFilterStore = new InitiativeFilterStore(this);
     this.initiativeStore = new InitiativeStore(this, this.initiativeFilterStore);
+    // dashboards
+    this.workspaceDashboards = new WorkspaceDashboardsStore(this);
   }
 
   resetOnSignOut() {
@@ -171,5 +177,7 @@ export class RootStore extends CoreRootStore {
     this.gitlabIntegration = new GitlabStore(this);
     this.initiativeFilterStore = new InitiativeFilterStore(this);
     this.initiativeStore = new InitiativeStore(this, this.initiativeFilterStore);
+    // dashboards
+    this.workspaceDashboards = new WorkspaceDashboardsStore(this);
   }
 }
