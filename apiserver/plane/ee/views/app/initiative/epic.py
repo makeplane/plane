@@ -42,9 +42,13 @@ class InitiativeEpicViewSet(BaseViewSet):
 
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
-        largest_sort_order = InitiativeEpic.objects.filter(
-            workspace=workspace, initiative_id=initiative_id
-        ).aggregate(largest=models.Max("sort_order"))["largest"]
+        largest_sort_order = (
+            InitiativeEpic.objects.filter(
+                workspace=workspace, initiative_id=initiative_id
+            )
+            .filter(epic__project__deleted_at__isnull=True)
+            .aggregate(largest=models.Max("sort_order"))["largest"]
+        )
 
         # If largest_sort_order is None, set it to 10000
         if largest_sort_order is None:
@@ -184,6 +188,7 @@ class InitiativeEpicViewSet(BaseViewSet):
     def destroy(self, request, slug, initiative_id, epic_id):
         initiative_epics = InitiativeEpic.objects.filter(
             workspace__slug=slug, epic_id=epic_id, initiative_id=initiative_id
-        )
+        ).filter(epic__project__deleted_at__isnull=True)
+
         initiative_epics.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -577,9 +577,12 @@ class WorkspaceEpicEndpoint(BaseAPIView):
 
         if initiative_id:
             # Exclude epics that are already in the initiative
-            initiative_epics = InitiativeEpic.objects.filter(
-                initiative_id=initiative_id
-            ).values_list("epic_id", flat=True)
+            initiative_epics = (
+                InitiativeEpic.objects.filter(initiative_id=initiative_id)
+                .filter(epic__project__deleted_at__isnull=True)
+                .values_list("epic_id", flat=True)
+            )
+
             epics_query = epics_query.exclude(id__in=initiative_epics)
 
         epics = (

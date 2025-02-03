@@ -60,6 +60,7 @@ class InitiativeEndpoint(BaseAPIView):
                             initiative_id=OuterRef("pk"),
                             workspace__slug=self.kwargs.get("slug"),
                         )
+                        .filter(epic__project__deleted_at__isnull=True)
                         .values("initiative_id")
                         .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
                         .values("epic_ids")
@@ -96,6 +97,7 @@ class InitiativeEndpoint(BaseAPIView):
                                 initiative_id=OuterRef("pk"),
                                 workspace__slug=self.kwargs.get("slug"),
                             )
+                            .filter(epic__project__deleted_at__isnull=True)
                             .values("initiative_id")
                             .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
                             .values("epic_ids")
@@ -130,6 +132,7 @@ class InitiativeEndpoint(BaseAPIView):
                 )
                 .first()
             )
+
             serializer = InitiativeSerializer(initiative)
 
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -193,6 +196,7 @@ class InitiativeEndpoint(BaseAPIView):
                         InitiativeEpic.objects.filter(
                             initiative_id=OuterRef("pk"), workspace__slug=slug
                         )
+                        .filter(epic__project__deleted_at__isnull=True)
                         .values("initiative_id")
                         .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
                         .values("epic_ids")
@@ -503,9 +507,13 @@ class InitiativeEpicAnalytics(BaseAPIView):
     @check_feature_flag(FeatureFlag.INITIATIVES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, initiative_id):
-        initiative_epic = InitiativeEpic.objects.filter(
-            workspace__slug=slug, initiative_id=initiative_id
-        ).values_list("epic_id", flat=True)
+        initiative_epic = (
+            InitiativeEpic.objects.filter(
+                workspace__slug=slug, initiative_id=initiative_id
+            )
+            .filter(epic__project__deleted_at__isnull=True)
+            .values_list("epic_id", flat=True)
+        )
 
         # fetch all the issues in which user is part of
         issues = Issue.objects.filter(
