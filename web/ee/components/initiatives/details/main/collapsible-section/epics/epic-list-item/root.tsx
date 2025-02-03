@@ -65,14 +65,16 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
           />
         </div>
       }
+      appendTitleElement={
+        <>
+          <div className="flex items-center gap-1">
+            <CircularProgressIndicator size={20} percentage={progress} strokeWidth={3} />
+            <span className="text-sm font-medium text-custom-text-300 px-1">{`${progress}%`}</span>
+          </div>
+        </>
+      }
       quickActionElement={
         <div className="flex shrink-0 items-center gap-2">
-          {initiativeEpicStats && initiativeEpicStats?.total_issues > 0 && (
-            <div className="flex items-center gap-1">
-              <CircularProgressIndicator size={20} percentage={progress} strokeWidth={3} />
-              <span className="text-sm font-medium text-custom-text-300 px-1">{`${progress}%`}</span>
-            </div>
-          )}
           <EpicProperties epicId={epicId} disabled={disabled} />
           <div className={cn("hidden md:flex")}>
             <EpicQuickActions

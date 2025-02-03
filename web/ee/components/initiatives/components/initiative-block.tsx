@@ -69,7 +69,7 @@ export const InitiativeBlock = observer((props: Props) => {
       }
       quickActionElement={
         <div className="flex shrink-0 items-center gap-2">
-          <BlockProperties initiative={initiative} isSidebarCollapsed={isSidebarCollapsed} disabled={!isEditable} />
+          <BlockProperties initiative={initiative} isSidebarCollapsed={isSidebarCollapsed} disabled />
           <div
             className={cn("hidden", {
               "md:flex": isSidebarCollapsed,

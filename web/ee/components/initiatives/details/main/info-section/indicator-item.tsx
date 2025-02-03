@@ -25,19 +25,15 @@ export const InitiativeInfoIndicatorItem: FC<Props> = observer((props) => {
   const initiative = getInitiativeById(initiativeId);
   const initiativeAnalytics = getInitiativeAnalyticsById(initiativeId);
 
-  const projectsIds = initiative?.project_ids ?? [];
-
   if (!initiative) return <></>;
 
   // derived values
-  const hasProject = (projectsIds.length ?? 0) > 0;
   const totalIssues = initiativeAnalytics
     ? Object.values(omit(initiativeAnalytics, "overdue_issues")).reduce((acc, val) => acc + val, 0)
     : 0;
 
   const completePercentage = getProgress(initiativeAnalytics?.completed_issues ?? 0, totalIssues);
 
-  if (!hasProject || totalIssues === 0) return <></>;
   return (
     <div className="flex-shrink-0">
       <CircularProgressIndicator

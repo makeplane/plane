@@ -9,6 +9,8 @@ import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from 
 import { cn } from "@plane/utils";
 // helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";
+// hooks
+import { useUser } from "@/hooks/store";
 // Plane-web
 import { TInitiative } from "@/plane-web/types/initiative";
 // local components
@@ -27,6 +29,11 @@ export const InitiativeQuickActions: React.FC<Props> = observer((props) => {
   // states
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+  // store hooks
+  const { data } = useUser();
+
+  // derived values
+  const isOwner = data?.id === initiative?.created_by;
 
   const initiativeLink = `${workspaceSlug}/initiatives/${initiative?.id}`;
   const handleCopyText = () =>
@@ -72,7 +79,7 @@ export const InitiativeQuickActions: React.FC<Props> = observer((props) => {
       action: handleDeleteCycle,
       title: "Delete",
       icon: Trash2,
-      shouldRender: !disabled,
+      shouldRender: !disabled && isOwner,
     },
   ];
 
