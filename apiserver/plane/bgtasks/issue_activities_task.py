@@ -796,8 +796,10 @@ def delete_comment_activity(
     issue_activities,
     epoch,
 ):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     issue_activities.append(
         IssueActivity(
+            issue_comment_id=requested_data.get("comment_id", None),
             issue_id=issue_id,
             project_id=project_id,
             workspace_id=workspace_id,

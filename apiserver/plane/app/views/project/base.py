@@ -38,7 +38,7 @@ from plane.db.models import (
     APIToken,
 )
 from plane.utils.cache import cache_response
-from plane.bgtasks.webhook_task import model_activity
+from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.bgtasks.recent_visited_task import recent_visited_task
 
 # EE imports
@@ -626,7 +626,19 @@ class ProjectViewSet(BaseViewSet):
         ):
             project = Project.objects.get(pk=pk)
             project.delete()
-
+            webhook_activity.delay(
+                event="project",
+                verb="deleted",
+                field=None,
+                old_value=None,
+                new_value=None,
+                actor_id=request.user.id,
+                slug=slug,
+                current_site=request.META.get("HTTP_ORIGIN"),
+                event_id=project.id,
+                old_identifier=None,
+                new_identifier=None,
+            )
             # Delete the project members
             DeployBoard.objects.filter(project_id=pk, workspace__slug=slug).delete()
 
