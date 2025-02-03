@@ -17,7 +17,9 @@ export const IssueStats: FC<Props> = observer((props) => {
 
   const epicStats = getEpicStatsById(issueId);
 
-  const progress = getProgress(epicStats?.completed_issues, epicStats?.total_issues);
+  const completedIssues = epicStats ? epicStats.completed_issues + epicStats.cancelled_issues : 0;
+
+  const progress = getProgress(completedIssues, epicStats?.total_issues);
 
   return (
     <>

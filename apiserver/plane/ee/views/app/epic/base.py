@@ -629,6 +629,14 @@ class EpicListAnalyticsEndpoint(BaseAPIView):
                 .count()
             )
 
+            cancelled_issues = (
+                issues.filter(
+                    id__in=issue_ids, project_id=project_id, workspace__slug=slug
+                )
+                .filter(state__group="cancelled")
+                .count()
+            )
+
             total_issues = issues.filter(
                 id__in=issue_ids, project_id=project_id, workspace__slug=slug
             ).count()
@@ -638,6 +646,7 @@ class EpicListAnalyticsEndpoint(BaseAPIView):
                     "epic_id": epic_id,
                     "total_issues": total_issues,
                     "completed_issues": completed_issues,
+                    "cancelled_issues": cancelled_issues,
                 }
             )
 

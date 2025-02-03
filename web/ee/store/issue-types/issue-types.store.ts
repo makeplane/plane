@@ -375,6 +375,10 @@ export class IssueTypes implements IIssueTypesStore {
         ...this.epicAnalyticsMap[epicId],
         ...payload,
       };
+      this.epicStatsMap[epicId] = {
+        ...this.epicStatsMap[epicId],
+        ...payload,
+      };
     });
   };
 
