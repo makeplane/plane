@@ -15,6 +15,7 @@ from plane.ee.models import (
     InitiativeActivity,
     InitiativeReaction,
     InitiativeComment,
+    InitiativeCommentReaction,
 )
 from plane.db.models import Issue
 
@@ -775,19 +776,21 @@ def create_comment_reaction_activity(
     workspace_id,
     actor_id,
     initiative_activities,
+    comment_id,
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     if requested_data and requested_data.get("reaction") is not None:
         comment_reaction_id, comment_id = (
-            CommentReaction.objects.filter(
+            InitiativeCommentReaction.objects.filter(
                 reaction=requested_data.get("reaction"),
-                initiative_id=initiative_id,
+                comment_id=comment_id,
                 actor_id=actor_id,
             )
             .values_list("id", "comment__id")
             .first()
         )
+
         comment = InitiativeComment.objects.get(
             pk=comment_id, initiative_id=initiative_id
         )
@@ -820,6 +823,7 @@ def delete_comment_reaction_activity(
     workspace_id,
     actor_id,
     initiative_activities,
+    comment_id,
     epoch,
 ):
     current_instance = (
@@ -861,6 +865,7 @@ def initiative_activity(
     actor_id,
     slug,
     epoch,
+    comment_id=None,
     subscriber=True,
     notification=False,
     origin=None,
@@ -913,6 +918,7 @@ def initiative_activity(
                 actor_id=actor_id,
                 initiative_activities=initiative_activities,
                 epoch=epoch,
+                comment_id=comment_id,
             )
 
         # Save all the values to database

@@ -16,9 +16,7 @@ from plane.ee.serializers import (
     InitiativeCommentReactionSerializer,
 )
 from plane.app.permissions import allow_permission, ROLE
-from plane.db.models import (
-    Workspace,
-)
+from plane.db.models import Workspace
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.models import InitiativeComment, InitiativeCommentReaction
@@ -40,13 +38,7 @@ class InitiativeCommentViewSet(BaseViewSet):
         )
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-        ],
-        level="WORKSPACE",
-    )
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def create(self, request, slug, initiative_id):
         workspace = Workspace.objects.get(slug=slug)
         serializer = InitiativeCommentSerializer(data=request.data)
@@ -59,9 +51,7 @@ class InitiativeCommentViewSet(BaseViewSet):
             initiative_activity.delay(
                 type="comment.activity.created",
                 slug=slug,
-                requested_data=json.dumps(
-                    serializer.data, cls=DjangoJSONEncoder
-                ),
+                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 actor_id=str(self.request.user.id),
                 initiative_id=str(self.kwargs.get("initiative_id")),
                 current_instance=None,
@@ -81,14 +71,11 @@ class InitiativeCommentViewSet(BaseViewSet):
     )
     def partial_update(self, request, slug, initiative_id, pk):
         initiative_comment = InitiativeComment.objects.get(
-            workspace__slug=slug,
-            initiative_id=initiative_id,
-            pk=pk,
+            workspace__slug=slug, initiative_id=initiative_id, pk=pk
         )
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(
-            InitiativeCommentSerializer(initiative_comment).data,
-            cls=DjangoJSONEncoder,
+            InitiativeCommentSerializer(initiative_comment).data, cls=DjangoJSONEncoder
         )
         serializer = InitiativeCommentSerializer(
             initiative_comment, data=request.data, partial=True
@@ -118,13 +105,10 @@ class InitiativeCommentViewSet(BaseViewSet):
     )
     def destroy(self, request, slug, initiative_id, pk):
         initiative_comment = InitiativeComment.objects.get(
-            workspace__slug=slug,
-            initiative_id=initiative_id,
-            pk=pk,
+            workspace__slug=slug, initiative_id=initiative_id, pk=pk
         )
         current_instance = json.dumps(
-            InitiativeCommentSerializer(initiative_comment).data,
-            cls=DjangoJSONEncoder,
+            InitiativeCommentSerializer(initiative_comment).data, cls=DjangoJSONEncoder
         )
         initiative_comment.delete()
         initiative_activity.delay(
@@ -157,16 +141,10 @@ class InitiativeCommentReactionViewSet(BaseViewSet):
         )
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-            ROLE.GUEST,
-        ],
-        level="WORKSPACE",
-    )
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def create(self, request, slug, initiative_id, comment_id):
         workspace = Workspace.objects.get(slug=slug)
+
         serializer = InitiativeCommentReactionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(
@@ -180,6 +158,7 @@ class InitiativeCommentReactionViewSet(BaseViewSet):
                 requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 initiative_id=initiative_id,
+                comment_id=comment_id,
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
@@ -189,14 +168,7 @@ class InitiativeCommentReactionViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-            ROLE.GUEST,
-        ],
-        level="WORKSPACE",
-    )
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def destroy(self, request, slug, initiative_id, comment_id, reaction_code):
         initiative_comment_reaction = InitiativeCommentReaction.objects.get(
             workspace__slug=slug,
@@ -210,6 +182,7 @@ class InitiativeCommentReactionViewSet(BaseViewSet):
             actor_id=str(self.request.user.id),
             slug=slug,
             initiative_id=initiative_id,
+            comment_id=comment_id,
             current_instance=json.dumps(
                 {
                     "reaction": str(reaction_code),
