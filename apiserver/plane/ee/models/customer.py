@@ -28,7 +28,7 @@ class RelationTypeEnum(models.TextChoices):
 
 class Customer(BaseModel):
     name = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
+    description = models.JSONField(blank=True, null=True)
     description_html = models.TextField(blank=True, null=True)
     description_stripped = models.TextField(blank=True, null=True)
     description_binary = models.BinaryField(null=True)
@@ -210,7 +210,7 @@ class CustomerPropertyValue(BaseModel):
 
 class CustomerRequest(BaseModel):
     name = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
+    description = models.JSONField(blank=True, null=True)
     description_html = models.TextField(blank=True, null=True)
     description_stripped = models.TextField(blank=True, null=True)
     description_binary = models.BinaryField(null=True)
