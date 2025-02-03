@@ -96,7 +96,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
       setQuery("");
     }
 
-    if (query !== "" && e.key === "Enter") {
+    if (query !== "" && e.key === "Enter" && canCreateLabel) {
       e.stopPropagation();
       e.preventDefault();
       await handleAddLabel(query);
