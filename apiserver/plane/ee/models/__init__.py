@@ -66,3 +66,12 @@ from .teamspace import (
 from .workflow import Workflow, WorkflowTransition
 
 from .job import ImportReport, ImportJob
+
+from .customer import (
+    Customer,
+    CustomerRequest,
+    CustomerProperty,
+    CustomerPropertyValue,
+    CustomerPropertyOption,
+    CustomerRequestIssue,
+)

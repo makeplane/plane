@@ -15,6 +15,7 @@ class WorkspaceFeature(BaseModel):
     is_project_grouping_enabled = models.BooleanField(default=False)
     is_initiative_enabled = models.BooleanField(default=False)
     is_teams_enabled = models.BooleanField(default=False)
+    is_customer_enabled = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Workspace Feature"
@@ -111,6 +112,7 @@ class WorkspaceCredential(BaseModel):
         "db.User", on_delete=models.CASCADE, related_name="credentials"
     )
     # Source being the type of importer where issues are imported example: jira
+    source_auth_email = models.EmailField(null=True, blank=True)
     source_access_token = models.TextField(null=True, blank=True)
     source_refresh_token = models.TextField(null=True, blank=True)
     source_hostname = models.TextField(null=True, blank=True)
