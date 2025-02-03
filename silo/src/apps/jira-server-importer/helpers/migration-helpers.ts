@@ -98,7 +98,7 @@ export const createJiraClient = (
   job: TImportJob<JiraConfig>,
   credentials: Partial<TWorkspaceCredential>
 ): JiraV2Service => {
-  if (!credentials.source_access_token || !credentials.source_hostname || !credentials.user_email) {
+  if (!credentials.source_access_token || !credentials.source_hostname || !credentials.source_auth_email) {
     throw new Error(`Missing credentials in job config for job ${job.id}`);
   }
   return new JiraV2Service({

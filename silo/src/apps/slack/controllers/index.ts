@@ -17,7 +17,7 @@ import { getConnectionDetails } from "../helpers/connection-details";
 import { ACTIONS } from "../helpers/constants";
 import { parseIssueFormData } from "../helpers/parse-issue-form";
 import { convertToSlackOptions } from "../helpers/slack-options";
-import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
 
 const apiClient = getAPIClient();
 
@@ -63,19 +63,25 @@ export default class SlackController {
 
   @Get("/team/auth/callback")
   async getAppAuthCallback(req: Request, res: Response) {
-    try {
-      const { code, state: slackState } = req.query;
-      const authState = JSON.parse(Buffer.from(slackState as string, "base64").toString("utf-8")) as SlackAuthState;
+    const { code, state: slackState } = req.query;
 
+    if (!code || !slackState) {
+      return res.status(400).send({
+        message: "Bad Request, expected code and state to be present.",
+      });
+    }
+
+    const authState = JSON.parse(Buffer.from(slackState as string, "base64").toString("utf-8")) as SlackAuthState;
+    const redirectUri = `${env.API_BASE_URL}/${authState.workspaceSlug}/settings/integrations/slack/`;
+
+    try {
       const { state, response } = await slackAuth.getWorkspaceAuthToken({
         code: code as string,
         state: authState,
       });
 
       if (!response.ok) {
-        return res.status(500).send({
-          error: response,
-        });
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.ERROR_FETCHING_TOKEN}`);
       }
 
       // Create credentials for slack for the workspace
@@ -109,19 +115,35 @@ export default class SlackController {
 
       return res.redirect(`${env.APP_BASE_URL}/${state.workspaceSlug}/settings/integrations/slack/`);
     } catch (error) {
-      return responseHandler(res, 500, error);
+      return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
     }
   }
 
   @Get("/user/auth/callback")
   async getUserAuthCallback(req: Request, res: Response) {
+    const { code, state: slackState } = req.query;
+    const authState = JSON.parse(Buffer.from(slackState as string, "base64").toString("utf-8")) as SlackUserAuthState;
+
+    if (!code || !slackState) {
+      return res.status(400).send({
+        message: "Bad Request, expected code and state to be present.",
+      });
+    }
+
+    let redirectUri = `${env.APP_BASE_URL}/${authState.workspaceSlug}/settings/integrations/slack/`;
+    if (authState.profileRedirect) {
+      redirectUri = `${env.APP_BASE_URL}/profile/connections/?workspaceId=${authState.workspaceId}`;
+    }
+
     try {
-      const { code, state: slackState } = req.query;
-      const authState = JSON.parse(Buffer.from(slackState as string, "base64").toString("utf-8")) as SlackUserAuthState;
       const { state, response } = await slackAuth.getUserAuthToken({
         code: code as string,
         state: authState,
       });
+
+      if (!response.ok) {
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.ERROR_FETCHING_TOKEN}`);
+      }
 
       // Create credentials for slack for the workspace
       await apiClient.workspaceCredential.createWorkspaceCredential({
@@ -132,11 +154,8 @@ export default class SlackController {
         workspace_id: state.workspaceId,
         user_id: authState.userId,
       });
-      if (authState.profileRedirect) {
-        res.redirect(`${env.APP_BASE_URL}/profile/connections/?workspaceId=${authState.workspaceId}`);
-      } else {
-        res.redirect(`${env.APP_BASE_URL}/${authState.workspaceSlug}/settings/integrations/slack/`);
-      }
+
+      return res.redirect(redirectUri);
     } catch (error) {
       return responseHandler(res, 500, error);
     }

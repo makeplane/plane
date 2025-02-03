@@ -48,6 +48,7 @@ export interface IFlatfileStore extends IImporterBaseStore {
   auth: {
     currentAuth?: {
       isAuthenticated: boolean;
+      sourceTokenInvalid: boolean;
     };
     deactivateAuth: () => Promise<void>;
     apiTokenVerification: () => Promise<{ message: string } | undefined>;
@@ -80,7 +81,7 @@ export class FlatfileStore extends ImporterBaseStore implements IFlatfileStore {
 
   // Noop object for auth, required to use the base dashboard component
   auth = {
-    currentAuth: { isAuthenticated: true },
+    currentAuth: { isAuthenticated: true, sourceTokenInvalid: false },
     deactivateAuth: async () => {},
     apiTokenVerification: async () => ({
       message: "Token is valid",

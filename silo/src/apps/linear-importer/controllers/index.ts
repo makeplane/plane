@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { createLinearService } from "@plane/etl/linear";
 import { env } from "@/env";
 import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
@@ -6,7 +7,6 @@ import { createOrUpdateCredentials, getCredentialsByWorkspaceId } from "@/helper
 import { responseHandler } from "@/helpers/response-handler";
 import { createPlaneClient } from "@/helpers/utils";
 import { Controller, Get, Post, useValidateUserAuthentication } from "@/lib";
-import { E_IMPORTER_KEYS } from "@plane/etl/core";
 
 @Controller("/api/linear")
 class LinearController {
@@ -54,7 +54,7 @@ class LinearController {
           message: "Bad Request, expected both workspaceId and userId to be present.",
         });
       }
-      const linearServiceInstance = await linearService(workspaceId as string, userId as string);
+      const linearServiceInstance = await createLinearClient(workspaceId as string, userId as string);
       const org = await linearServiceInstance.organization();
       res.send(org);
     } catch (error: any) {
@@ -75,7 +75,7 @@ class LinearController {
           message: "Bad Request, expected both workspaceId and userId to be present.",
         });
       }
-      const linearServiceInstance = await linearService(workspaceId, userId);
+      const linearServiceInstance = await createLinearClient(workspaceId, userId);
       const teams = await linearServiceInstance.getTeamsWithoutPagination();
       res.send(teams);
     } catch (error: any) {
@@ -96,7 +96,7 @@ class LinearController {
           message: "Bad Request, expected workspaceId, userId, and teamId to be present.",
         });
       }
-      const linearServiceInstance = await linearService(workspaceId, userId);
+      const linearServiceInstance = await createLinearClient(workspaceId, userId);
       const teams = await linearServiceInstance.getTeamStatusesWithoutPagination(teamId);
       res.send(teams);
     } catch (error: any) {
@@ -117,7 +117,7 @@ class LinearController {
           message: "Bad Request, expected workspaceId, userId, and teamId to be present.",
         });
       }
-      const linearServiceInstance = await linearService(workspaceId, userId);
+      const linearServiceInstance = await createLinearClient(workspaceId, userId);
       const teams = await linearServiceInstance.getNumberOfIssues(teamId);
       res.json(teams);
     } catch (error: any) {
@@ -134,7 +134,7 @@ class LinearController {
     try {
       const [planeClient, linearClient] = await Promise.all([
         createPlaneClient(workspaceId, userId, E_IMPORTER_KEYS.LINEAR),
-        linearService(workspaceId, userId),
+        createLinearClient(workspaceId, userId),
       ]);
 
       const [workspaceMembers, linearUsers] = await Promise.all([
@@ -161,7 +161,7 @@ class LinearController {
   }
 }
 
-const linearService = async (workspaceId: string, userId: string) => {
+export const createLinearClient = async (workspaceId: string, userId: string) => {
   if (!workspaceId || !userId) {
     throw new Error("workspaceId and userId are required");
   }

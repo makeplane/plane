@@ -4,12 +4,12 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import useSWR from "swr";
-import { Briefcase, CircleX, Loader, RefreshCcw } from "lucide-react";
+import { Briefcase, CircleX, Info, Loader, RefreshCcw } from "lucide-react";
 import { E_JOB_STATUS, TJobStatus } from "@plane/etl/core";
 
 import { useTranslation } from "@plane/i18n";
 import { TImportJob, TLogoProps } from "@plane/types";
-import { Button, ModalCore } from "@plane/ui";
+import { Button, ModalCore, Tooltip } from "@plane/ui";
 import { Logo } from "@/components/common";
 import { renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
 import { RerunModal, CancelModal } from "./modals";
@@ -40,6 +40,7 @@ export type TImporterHook<T> = {
   auth: {
     currentAuth?: {
       isAuthenticated: boolean;
+      sourceTokenInvalid: boolean;
     };
     deactivateAuth: () => Promise<void>;
     apiTokenVerification: () => Promise<{ message: string } | undefined>;
@@ -86,7 +87,7 @@ export const BaseDashboard = observer(<T,>(props: IBaseDashboardProps<T>) => {
   useSWR(
     currentAuth?.isAuthenticated ? swrKey : null,
     currentAuth?.isAuthenticated ? async () => await fetchJobs() : null,
-    { errorRetryCount: 0 }
+    { errorRetryCount: 0, refreshInterval: 5000 }
   );
 
   // derived values
@@ -195,7 +196,9 @@ export const BaseDashboard = observer(<T,>(props: IBaseDashboardProps<T>) => {
           </div>
           <div className="w-full h-full overflow-hidden">
             <div className="text-lg font-medium">{serviceName}</div>
-            <div className="text-sm text-custom-text-200">{t("importers.import_message", {"serviceName": serviceName})}</div>
+            <div className="text-sm text-custom-text-200">
+              {t("importers.import_message", { serviceName: serviceName })}
+            </div>
           </div>
           <div className="flex-shrink-0 relative flex items-center gap-4">
             <Button
@@ -207,9 +210,18 @@ export const BaseDashboard = observer(<T,>(props: IBaseDashboardProps<T>) => {
             >
               {deactivateLoader ? "Deactivating..." : "Deactivate"}
             </Button>
-            <Button size="sm" onClick={handleDashboardView}>
-              {t("importers.import")}
-            </Button>
+            {!currentAuth?.sourceTokenInvalid ? (
+              <Button size="sm" onClick={handleDashboardView}>
+                {t("importers.import")}
+              </Button>
+            ) : (
+              <Tooltip tooltipContent={t("importers.source_token_expired_description")}>
+                <div className="flex gap-1.5 cursor-help flex-shrink-0 items-center text-custom-text-200">
+                  <Info size={12} />
+                  <div className="text-xs">{t("importers.source_token_expired")}</div>
+                </div>
+              </Tooltip>
+            )}
           </div>
         </div>
         {/* migrations */}
@@ -219,102 +231,121 @@ export const BaseDashboard = observer(<T,>(props: IBaseDashboardProps<T>) => {
               <Loader className="h-5 w-5 animate-spin" />
             </div>
           ) : jobIds && jobIds.length > 0 ? (
-            <div className="w-full h-full overflow-auto">
-              <table className="w-full table-auto">
-                <thead>
-                  <tr className="border-0 bg-custom-background-90 text-sm !font-medium text-left rounded-t">
-                    <td className="p-3 whitespace-nowrap">{t("importers.serial_number")}</td>
-                    <td className="p-3 whitespace-nowrap">Plane {t("importers.project")}</td>
-                    {!config.hideWorkspace && (
-                      <td className="p-3 whitespace-nowrap">
-                        {serviceName} {t("importers.workspace")}
-                      </td>
-                    )}
-                    {!config.hideProject && (
-                      <td className="p-3 whitespace-nowrap">
-                        {serviceName} {t("importers.project")}
-                      </td>
-                    )}
-                    <td className="p-3 whitespace-nowrap text-center">{t("importers.status")}</td>
-                    <td className="p-3 whitespace-nowrap text-center">{t("importers.total_batches")}</td>
-                    <td className="p-3 whitespace-nowrap text-center">{t("importers.imported_batches")}</td>
-                    <td className="p-3 whitespace-nowrap text-center">{t("importers.re_run")}</td>
-                    <td className="p-3 whitespace-nowrap text-center">{t("importers.cancel")}</td>
-                    <td className="p-3 whitespace-nowrap text-center">{t("importers.start_time")}</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  {jobIds &&
-                    jobIds.length > 0 &&
-                    jobIds.map((jobId, index) => {
-                      const job = jobById(jobId);
-                      if (!job) return null;
+            <div className="w-full h-full space-y-3 relative flex flex-col">
+              <div className="relative flex items-center gap-2">
+                <div className="flex-shrink-0 text-base font-medium py-2">{t("importers.migrations")}</div>
+                <Button
+                  size="sm"
+                  variant="neutral-primary"
+                  className="whitespace-nowrap border-none !px-1"
+                  onClick={handleJobsRefresh}
+                  disabled={loader === "re-fetch"}
+                >
+                  <div className="relative flex items-center gap-1.5 text-xs">
+                    {loader === "re-fetch" ? <Loader size={12} className="animate-spin" /> : <RefreshCcw size={12} />}
+                    {loader === "re-fetch" && <div>{t("importers.refreshing")}</div>}
+                  </div>
+                </Button>
+              </div>
+              <div className="w-full h-full overflow-auto">
+                <table className="w-full table-auto">
+                  <thead>
+                    <tr className="border-0 bg-custom-background-90 text-sm !font-medium text-left rounded-t">
+                      <td className="p-3 whitespace-nowrap">{t("importers.serial_number")}</td>
+                      <td className="p-3 whitespace-nowrap">Plane {t("importers.project")}</td>
+                      {!config.hideWorkspace && (
+                        <td className="p-3 whitespace-nowrap">
+                          {serviceName} {t("importers.workspace")}
+                        </td>
+                      )}
+                      {!config.hideProject && (
+                        <td className="p-3 whitespace-nowrap">
+                          {serviceName} {t("importers.project")}
+                        </td>
+                      )}
+                      <td className="p-3 whitespace-nowrap text-center">{t("importers.status")}</td>
+                      <td className="p-3 whitespace-nowrap text-center">{t("importers.total_batches")}</td>
+                      <td className="p-3 whitespace-nowrap text-center">{t("importers.imported_batches")}</td>
+                      <td className="p-3 whitespace-nowrap text-center">{t("importers.re_run")}</td>
+                      <td className="p-3 whitespace-nowrap text-center">{t("importers.cancel")}</td>
+                      <td className="p-3 whitespace-nowrap text-center">{t("importers.start_time")}</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {jobIds &&
+                      jobIds.length > 0 &&
+                      jobIds.map((jobId, index) => {
+                        const job = jobById(jobId);
+                        if (!job) return null;
 
-                      return (
-                        <tr key={job.id} className="text-sm text-custom-text-200 even:bg-custom-background-90">
-                          <td className="p-3 whitespace-nowrap">{index + 1}</td>
-                          <td className="p-3 whitespace-nowrap">
-                            <IconFieldRender
-                              icon={(() => {
-                                const planeProject = getPlaneProject(job);
-                                return planeProject?.logo_props ? (
-                                  <Logo logo={planeProject.logo_props} size={16} />
-                                ) : (
-                                  <Briefcase className="w-4 h-4" />
-                                );
-                              })()}
-                              title={getPlaneProject(job)?.name || "--"}
-                            />
-                          </td>
-                          {!config.hideWorkspace && (
+                        return (
+                          <tr key={job.id} className="text-sm text-custom-text-200 even:bg-custom-background-90">
+                            <td className="p-3 whitespace-nowrap">{index + 1}</td>
                             <td className="p-3 whitespace-nowrap">
-                              <IconFieldRender title={getWorkspaceName(job) || "--"} />
+                              <IconFieldRender
+                                icon={(() => {
+                                  const planeProject = getPlaneProject(job);
+                                  return planeProject?.logo_props ? (
+                                    <Logo logo={planeProject.logo_props} size={16} />
+                                  ) : (
+                                    <Briefcase className="w-4 h-4" />
+                                  );
+                                })()}
+                                title={getPlaneProject(job)?.name || "--"}
+                              />
                             </td>
-                          )}
-                          {!config.hideProject && (
-                            <td className="p-3 whitespace-nowrap">
-                              <IconFieldRender title={getProjectName(job) || "--"} />
+                            {!config.hideWorkspace && (
+                              <td className="p-3 whitespace-nowrap">
+                                <IconFieldRender title={getWorkspaceName(job) || "--"} />
+                              </td>
+                            )}
+                            {!config.hideProject && (
+                              <td className="p-3 whitespace-nowrap">
+                                <IconFieldRender title={getProjectName(job) || "--"} />
+                              </td>
+                            )}
+                            <td className="p-3 whitespace-nowrap text-center">
+                              <SyncJobStatus status={job?.status as TJobStatus} />
                             </td>
-                          )}
-                          <td className="p-3 whitespace-nowrap text-center">
-                            <SyncJobStatus status={job?.status as TJobStatus} />
-                          </td>
-                          <td className="p-3 whitespace-nowrap text-center">{job?.report.total_batch_count || "-"}</td>
-                          <td className="p-3 whitespace-nowrap text-center">
-                            {job?.report.imported_batch_count || "-"}
-                          </td>
-                          <td className="p-3 whitespace-nowrap text-center flex justify-center">
-                            <Button
-                              variant="link-primary"
-                              size="sm"
-                              prependIcon={<RefreshCcw className="w-3 h-3" />}
-                              onClick={() => handleRerunOpen(job.id)}
-                              disabled={isReRunDisabled(job)}
-                            >
-                              {t("importers.re_run")}
-                            </Button>
-                          </td>
-                          <td className="p-3 whitespace-nowrap text-center">
-                            <Button
-                              variant="link-danger"
-                              size="sm"
-                              prependIcon={<CircleX className="w-3 h-3" />}
-                              onClick={() => handleCancelOpen(job.id)}
-                              disabled={isCancelDisabled(job)}
-                            >
-                              {t("importers.cancel")}
-                            </Button>
-                          </td>
-                          <td className="p-3 whitespace-nowrap text-center">
-                            {job?.report.start_time
-                              ? `${renderFormattedDate(job?.report.start_time)} ${renderFormattedTime(job?.report.start_time, "12-hour")}`
-                              : "-"}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                </tbody>
-              </table>
+                            <td className="p-3 whitespace-nowrap text-center">
+                              {job?.report.total_batch_count || "-"}
+                            </td>
+                            <td className="p-3 whitespace-nowrap text-center">
+                              {job?.report.imported_batch_count || "-"}
+                            </td>
+                            <td className="p-3 whitespace-nowrap text-center flex justify-center">
+                              <Button
+                                variant="link-primary"
+                                size="sm"
+                                prependIcon={<RefreshCcw className="w-3 h-3" />}
+                                onClick={() => handleRerunOpen(job.id)}
+                                disabled={isReRunDisabled(job)}
+                              >
+                                {t("importers.re_run")}
+                              </Button>
+                            </td>
+                            <td className="p-3 whitespace-nowrap text-center">
+                              <Button
+                                variant="link-danger"
+                                size="sm"
+                                prependIcon={<CircleX className="w-3 h-3" />}
+                                onClick={() => handleCancelOpen(job.id)}
+                                disabled={isCancelDisabled(job)}
+                              >
+                                {t("importers.cancel")}
+                              </Button>
+                            </td>
+                            <td className="p-3 whitespace-nowrap text-center">
+                              {job?.report.start_time
+                                ? `${renderFormattedDate(job?.report.start_time)} ${renderFormattedTime(job?.report.start_time, "12-hour")}`
+                                : "-"}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           ) : (
             <div className="grid h-full place-items-center p-5">
@@ -324,9 +355,7 @@ export const BaseDashboard = observer(<T,>(props: IBaseDashboardProps<T>) => {
                 </div>
                 <div className="flex flex-col items-center gap-1.5 text-center">
                   <h4 className="text-xl font-medium">{t("importers.no_jobs_found")}</h4>
-                  <p className="text-sm text-custom-text-200">
-                    {t("importers.no_project_imports", { serviceName })}
-                  </p>
+                  <p className="text-sm text-custom-text-200">{t("importers.no_project_imports", { serviceName })}</p>
                 </div>
               </div>
             </div>

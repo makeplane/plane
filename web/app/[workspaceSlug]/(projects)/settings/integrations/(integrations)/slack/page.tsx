@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -8,9 +8,9 @@ import useSWR from "swr";
 import { ArrowLeft, Cloud } from "lucide-react";
 // plane web components
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { E_INTEGRATION_KEYS, SILO_ERROR_CODES } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
-import { Loader } from "@plane/ui";
+import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 import { SlackIntegrationRoot } from "@/plane-web/components/integrations/slack";
 //  plane web hooks
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
@@ -20,7 +20,7 @@ import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
 
 const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
 
-const SlackIntegration: FC = observer(() => {
+const SlackIntegration: FC<{ searchParams?: { error: string } }> = observer(({ searchParams }) => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -48,6 +48,23 @@ const SlackIntegration: FC = observer(() => {
     workspaceSlug && !externalApiToken ? async () => fetchExternalApiToken(workspaceSlug?.toString()) : null,
     { errorRetryCount: 0 }
   );
+
+  // error message
+  const errorCode = searchParams?.error;
+  useEffect(() => {
+    if (!errorCode) {
+      return;
+    }
+
+    const message = SILO_ERROR_CODES.find((code) => String(code.code) === errorCode)?.description;
+    if (message) {
+      setToast({
+        title: "Error",
+        message: t(`silo_errors.${message}`),
+        type: TOAST_TYPE.ERROR,
+      });
+    }
+  }, [errorCode]);
 
   if ((!externalApiToken && externalApiTokenIsLoading) || (!supportedIntegrations && supportedIntegrationsLoading))
     return (

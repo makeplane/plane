@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS, E_SILO_ERROR_CODES, SILO_ERROR_CODES } from "@plane/etl/core";
 import {
   createGithubAuth,
   createGithubService,
@@ -12,13 +13,12 @@ import {
 import { Client, ExIssue, ExIssueComment, ExIssueLabel, PlaneUser, PlaneWebhookPayloadBase } from "@plane/sdk";
 import { TWorkspaceConnection } from "@plane/types";
 import { env } from "@/env";
+import { createOrUpdateCredentials } from "@/helpers/credential";
 import { responseHandler } from "@/helpers/response-handler";
 import { Controller, EnsureEnabled, Get, Post, useValidateUserAuthentication } from "@/lib";
 import { getAPIClient } from "@/services/client";
 import { integrationTaskManager } from "@/worker";
 import { GithubUserMap } from "../types";
-import { createOrUpdateCredentials } from "@/helpers/credential";
-import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS } from "@plane/etl/core";
 
 export const githubAuthService = createGithubAuth(
   env.GITHUB_APP_NAME,
@@ -149,18 +149,17 @@ export default class GithubController {
 
   @Get("/auth/callback")
   async authCallback(req: Request, res: Response) {
+    const { installation_id, state } = req.query;
+
+    // Check if the request is valid, with the data received
+    if (!installation_id || !state) {
+      return res.status(400).send("Invalid request callback");
+    }
+    // Decode the base64 encoded state string and parse it to JSON
+    const authState: GithubAuthorizeState = JSON.parse(Buffer.from(state as string, "base64").toString());
+    const redirectUri = `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github/`;
+
     try {
-      const { installation_id, state } = req.query;
-
-      // Check if the request is valid, with the data received
-      if (!installation_id || !state) {
-        return res.status(400).send("Invalid request callback");
-      }
-      // Decode the base64 encoded state string and parse it to JSON
-      const authState: GithubAuthorizeState = JSON.parse(Buffer.from(state as string, "base64").toString());
-
-      // Create a credentials entry for the installation
-
       // Get the credentials for the workspaceId
       const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
         source: E_INTEGRATION_KEYS.GITHUB,
@@ -193,7 +192,7 @@ export default class GithubController {
         const installation = await service.getInstallation(Number(installation_id));
 
         if (!installation.data.account) {
-          return res.status(400).send("No account found for the installation");
+          return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.INVALID_INSTALLATION_ACCOUNT}`);
         }
 
         // Create workspace connection for github
@@ -212,9 +211,9 @@ export default class GithubController {
         });
       }
 
-      res.redirect(`${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github/`);
+      res.redirect(redirectUri);
     } catch (error) {
-      return responseHandler(res, 500, error);
+      return res.redirect(`${env.APP_BASE_URL}/error?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
     }
   }
 
@@ -320,17 +319,21 @@ export default class GithubController {
 
   @Get("/auth/user/callback")
   async authUserCallback(req: Request, res: Response) {
+    const { code, state: queryState } = req.query;
+
+    // Check if the request is valid, with the data received
+    if (!code || !queryState) {
+      return res.status(400).send("Invalid request callback");
+    }
+
+    const authState: GithubUserAuthState = JSON.parse(Buffer.from(queryState as string, "base64").toString());
+    let redirectUri = `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github/`;
+
+    if (authState.profile_redirect) {
+      redirectUri = `${env.APP_BASE_URL}/profile/connections/?workspaceId=${authState.workspace_id}`;
+    }
+
     try {
-      // Generate the access token for the user and save the credentials to the db
-      const { code, state: queryState } = req.query;
-
-      // Check if the request is valid, with the data received
-      if (!code || !queryState) {
-        return res.status(400).send("Invalid request callback");
-      }
-
-      const authState: GithubUserAuthState = JSON.parse(Buffer.from(queryState as string, "base64").toString());
-
       const { response, state } = await githubAuthService.getUserAccessToken({
         code: code as string,
         state: authState,
@@ -342,17 +345,17 @@ export default class GithubController {
       });
 
       if (connections.length === 0) {
-        return res.status(400).send("Connection not found");
+        return res.status(400).send(`${redirectUri}?error=${E_SILO_ERROR_CODES.CONNECTION_NOT_FOUND}`);
       }
 
       if (connections.length > 1) {
-        return res.status(400).send("Multiple connections found, not supported");
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.MULTIPLE_CONNECTIONS_FOUND}`);
       }
 
       const connection = connections[0] as TWorkspaceConnection<{ userMap: GithubUserMap }>;
 
       if (!connection.id) {
-        return res.status(400).send("Connection not found");
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.CONNECTION_NOT_FOUND}`);
       }
 
       const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
@@ -360,12 +363,12 @@ export default class GithubController {
         workspace_id: authState.workspace_id,
       });
       if (credentials.length === 0) {
-        return res.status(400).send("No installation found for the workspace");
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.CONNECTION_NOT_FOUND}`);
       }
 
       const credential = credentials[0];
       if (!credential.source_access_token || !credential.target_access_token) {
-        return res.status(400).send("No installation found for the workspace");
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.INSTALLATION_NOT_FOUND}`);
       }
 
       // Extract the parameters from the response
@@ -374,7 +377,7 @@ export default class GithubController {
       const user = await githubService.getUser();
 
       if (!user) {
-        return res.status(400).send("No user found for the access token");
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.USER_NOT_FOUND}`);
       }
 
       const planeClient = new Client({
@@ -394,7 +397,12 @@ export default class GithubController {
       };
 
       if (credential) {
-        await createOrUpdateCredentials(state.workspace_id, state.user_id, E_ENTITY_CONNECTION_KEYS.GITHUB_USER, credentialData);
+        await createOrUpdateCredentials(
+          state.workspace_id,
+          state.user_id,
+          E_ENTITY_CONNECTION_KEYS.GITHUB_USER,
+          credentialData
+        );
       }
 
       // update the workspace connection for the user
@@ -406,13 +414,9 @@ export default class GithubController {
         });
       }
 
-      if (authState.profile_redirect) {
-        return res.redirect(`${env.APP_BASE_URL}/profile/connections/?workspaceId=${authState.workspace_id}`);
-      }
-
-      return res.redirect(`${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github/`);
+      return res.redirect(redirectUri);
     } catch (error) {
-      return responseHandler(res, 500, error);
+      return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
     }
   }
   /* -------------------- Auth Endpoints -------------------- */

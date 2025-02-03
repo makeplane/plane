@@ -392,6 +392,8 @@
 		"deactivate": "Deactivate",
 		"deactivating": "Deactivating",
 		"migrating": "Migrating",
+		"migrations": "Migrations",
+		"refreshing": "Refreshing",
 		"import": "Import",
 		"serial_number": "Sr No.",
 		"project": "Project",
@@ -414,6 +416,8 @@
 		"migration_assistant_description": "Seamlessly migrate your {serviceName} projects to Plane with our powerful assistant.",
 		"token_helper": "You will get this from your",
 		"personal_access_token": "Personal Access Token",
+		"source_token_expired": "Token Expired",
+		"source_token_expired_description": "The provided token has expired. Please deactivate and reconnect with new set of credentials.",
 		"user_email": "User Email",
 		"select_state": "Select State",
 		"select_service_project": "Select {serviceName} Project",
@@ -513,8 +517,18 @@
 		"missing_fields": "Missing fields",
 		"success": "{fileName} Uploaded!"
 	},
+	"silo_errors": {
+		"invalid_query_params": "The provided query parameters are invalid or missing required fields",
+		"invalid_installation_account": "The installation account provided is not valid",
+		"generic_error": "An unexpected error occurred while processing your request",
+		"connection_not_found": "The requested connection could not be found",
+		"multiple_connections_found": "Multiple connections were found when only one was expected",
+		"installation_not_found": "The requested installation could not be found",
+		"user_not_found": "The requested user could not be found",
+		"error_fetching_token": "Failed to fetch authentication token"
+	},
 	"import_status": {
-		"created   ": "Created",
+		"created": "Created",
 		"initiated": "Initiated",
 		"pulling": "Pulling",
 		"pulled": "Pulled",

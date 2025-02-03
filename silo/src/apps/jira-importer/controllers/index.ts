@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { Request, Response } from "express";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { createJiraService, fetchPaginatedData, JiraProject, JiraResource, JiraService } from "@plane/etl/jira";
 import { TWorkspaceCredential } from "@plane/types";
 import { env } from "@/env";
@@ -9,7 +10,6 @@ import { createPlaneClient } from "@/helpers/utils";
 import { Controller, Get, Post, useValidateUserAuthentication } from "@/lib";
 import { getAPIClient } from "@/services/client";
 import { jiraAuth } from "../auth/auth";
-import { E_IMPORTER_KEYS } from "@plane/etl/core";
 
 class JiraApiError extends Error {
   constructor(
@@ -47,7 +47,7 @@ class JiraController {
           hostname: hostname,
         });
 
-        await jiraService.getResourceProjects();
+        await jiraService.getCurrentUser();
       } catch (error: any) {
         return responseHandler(res, 401, { message: "Invalid personal access token" });
       }
@@ -56,6 +56,7 @@ class JiraController {
       const apiClient = getAPIClient();
       await apiClient.workspaceCredential.createWorkspaceCredential({
         source: E_IMPORTER_KEYS.JIRA,
+        source_auth_email: userEmail,
         target_access_token: apiToken,
         source_access_token: personalAccessToken,
         source_hostname: hostname,
@@ -239,7 +240,7 @@ class JiraController {
   }
 }
 
-const createJiraClient = async (workspaceId: string, userId: string, cloudId?: string): Promise<JiraService> => {
+export const createJiraClient = async (workspaceId: string, userId: string, cloudId?: string): Promise<JiraService> => {
   const apiClient = getAPIClient();
   const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
     workspace_id: workspaceId,
@@ -291,14 +292,14 @@ const createJiraClient = async (workspaceId: string, userId: string, cloudId?: s
       refreshTokenCallback: refreshTokenCallback,
     });
   } else {
-    if (!jiraCredentials.source_hostname || !jiraCredentials.source_access_token || !jiraCredentials.user_email) {
+    if (!jiraCredentials.source_hostname || !jiraCredentials.source_access_token || !jiraCredentials.source_auth_email) {
       throw new Error("Invalid Jira credentials");
     }
 
     return createJiraService({
       isPAT: true,
       hostname: jiraCredentials.source_hostname,
-      userEmail: jiraCredentials.user_email,
+      userEmail: jiraCredentials.source_auth_email,
       patToken: jiraCredentials.source_access_token,
     });
   }

@@ -1,6 +1,7 @@
 export * from "./feature-flag";
 export * from "./workspace-connections";
 export * from "./entity-connections";
+export * from "./error";
 
 import {
   ExIssueProperty,
@@ -32,6 +33,7 @@ export type TServiceCredentials = {
 export type TServiceAuthConfiguration = {
   isAuthenticated: boolean;
   isOAuthEnabled: boolean;
+  sourceTokenInvalid: boolean;
 };
 
 // importer types
@@ -42,7 +44,7 @@ export enum E_IMPORTER_KEYS {
   ASANA = "ASANA",
   LINEAR = "LINEAR",
   TRELLO = "TRELLO",
-  FLATFILE = "FLATFILE"
+  FLATFILE = "FLATFILE",
 }
 export type TImporterKeys = keyof typeof E_IMPORTER_KEYS;
 

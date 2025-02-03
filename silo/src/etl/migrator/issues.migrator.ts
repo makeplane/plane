@@ -228,7 +228,7 @@ const processAttachments = async (
       let authPrefix = "Bearer";
 
       if (credentials.source === E_IMPORTER_KEYS.JIRA && env.JIRA_OAUTH_ENABLED == "0") {
-        const token = `${credentials.user_email}:${credentials.source_access_token}`;
+        const token = `${credentials.source_auth_email}:${credentials.source_access_token}`;
         sourceAccessToken = Buffer.from(token).toString("base64");
         authPrefix = "Basic";
       }
@@ -515,7 +515,7 @@ const createIssueAttachments = async (
           let authPrefix = "Bearer";
 
           if (credentials.source === E_IMPORTER_KEYS.JIRA && env.JIRA_OAUTH_ENABLED == "0") {
-            const token = `${credentials.user_email}:${credentials.source_access_token}`;
+            const token = `${credentials.source_auth_email}:${credentials.source_access_token}`;
             sourceAccessToken = Buffer.from(token).toString("base64");
             authPrefix = "Basic";
           }
@@ -1018,7 +1018,7 @@ const processCommentAttachments = async (
       let authPrefix = "Bearer";
 
       if (credentials.source === E_IMPORTER_KEYS.JIRA && env.JIRA_OAUTH_ENABLED == "0") {
-        const token = `${credentials.user_email}:${credentials.source_access_token}`;
+        const token = `${credentials.source_auth_email}:${credentials.source_access_token}`;
         sourceAccessToken = Buffer.from(token).toString("base64");
         authPrefix = "Basic";
       }

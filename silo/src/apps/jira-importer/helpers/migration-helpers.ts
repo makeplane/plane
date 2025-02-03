@@ -126,14 +126,14 @@ export const createJiraClient = (
       refreshTokenCallback: refreshTokenCallback,
     });
   } else {
-    if (!credentials.source_access_token || !credentials.source_hostname || !credentials.user_email) {
+    if (!credentials.source_access_token || !credentials.source_hostname || !credentials.source_auth_email) {
       throw new Error(`Missing credentials in job config for job ${job.id}`);
     }
     return new JiraService({
       isPAT: true,
       patToken: credentials.source_access_token!,
       hostname: credentials.source_hostname,
-      userEmail: credentials.user_email!,
+      userEmail: credentials.source_auth_email!,
     });
   }
 };

@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
 import {
   createGitLabAuth,
   createGitLabService,
@@ -8,6 +9,7 @@ import {
   IGitlabEntity,
   GitlabEntityData,
   EConnectionType,
+  GitLabAuthorizeState,
 } from "@plane/etl/gitlab";
 import { ExIssueLabel } from "@plane/sdk";
 import { TWorkspaceEntityConnection } from "@plane/types";
@@ -18,7 +20,6 @@ import { getAPIClient } from "@/services/client";
 import { integrationTaskManager } from "@/worker";
 import { verifyGitlabToken } from "../helpers";
 import { gitlabAuthService, getGitlabClientService } from "../services";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 
 const apiClient = getAPIClient();
 
@@ -126,9 +127,16 @@ export default class GitlabController {
 
   @Get("/auth/callback")
   async authCallback(req: Request, res: Response) {
-    try {
-      const { code, state } = req.query;
+    const { code, state } = req.query;
 
+    if (!code || !state) {
+      return responseHandler(res, 400, "Missing required fields");
+    }
+
+    const decodedState = JSON.parse(Buffer.from(state as string, "base64").toString()) as GitLabAuthorizeState;
+    const redirectUri = `${env.APP_BASE_URL}/${decodedState.workspace_slug}/settings/integrations/gitlab/`;
+
+    try {
       const gitlabAuthService = createGitLabAuth({
         clientId: env.GITLAB_CLIENT_ID,
         clientSecret: env.GITLAB_CLIENT_SECRET,
@@ -139,6 +147,12 @@ export default class GitlabController {
         code: code as string,
         state: state as string,
       });
+
+      if (!token || !token.access_token) {
+        return res.redirect(
+          `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/gitlab/?error=${E_SILO_ERROR_CODES.ERROR_FETCHING_TOKEN}`
+        );
+      }
 
       // Create or update credentials
       const credentials = await apiClient.workspaceCredential.createWorkspaceCredential({
@@ -166,6 +180,12 @@ export default class GitlabController {
       );
 
       const user = await gitlabService.getUser();
+
+      if (!user) {
+        return res.redirect(
+          `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/gitlab/?error=${E_SILO_ERROR_CODES.USER_NOT_FOUND}`
+        );
+      }
 
       // Check if the workspace connection already exist
       const workspaceConnections = await apiClient.workspaceConnection.listWorkspaceConnections({
@@ -196,9 +216,9 @@ export default class GitlabController {
         });
       }
 
-      res.redirect(`${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/gitlab/`);
+      return res.redirect(redirectUri);
     } catch (error) {
-      return responseHandler(res, 500, error);
+      return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
     }
   }
 

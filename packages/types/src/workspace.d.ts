@@ -224,7 +224,6 @@ export type TWorkspacePaginationInfo = TPaginationInfo & {
   results: IWorkspace[];
 };
 
-
 export type TWorkspaceConnection<TConnectionConfig = object, TConnectionData = object> = {
   id: string;
   workspace_id: string;
@@ -240,12 +239,11 @@ export type TWorkspaceConnection<TConnectionConfig = object, TConnectionData = o
   config: TConnectionConfig;
   created_at?: string;
   updated_at?: string;
-}
+};
 
 export type TWorkspaceUserConnection = TWorkspaceConnection & {
   isUserConnected: boolean;
-}
-
+};
 
 export type TWorkspaceEntityConnection<TConnectionConfig = object> = {
   id: string;
@@ -262,15 +260,14 @@ export type TWorkspaceEntityConnection<TConnectionConfig = object> = {
   config: TConnectionConfig;
   created_at?: string;
   updated_at?: string;
-}
-
+};
 
 export type TWorkspaceCredential = {
   id: string;
   source: string;
   workspace_id: string;
   user_id: string;
-  user_email?: string | null;
+  source_auth_email?: string | null;
   source_access_token?: string | null;
   source_refresh_token?: string | null;
   source_hostname?: string | null;
@@ -281,12 +278,19 @@ export type TWorkspaceCredential = {
   is_active?: boolean | false;
   created_at?: string;
   updated_at?: string;
-}
+};
 
+// Type for verification of both target credentials
 export type TWorkspaceCredentialVerification = {
   isAuthenticated: boolean;
   isOAuthEnabled: boolean;
-}
+};
+
+// Type for verification of both source and target credentials
+export type TImporterCredentialValidation = TWorkspaceCredentialVerification & {
+  sourceTokenInvalid?: boolean;
+};
+
 export type TWorkspaceEpicsSearchParams = {
   initiative_id?: string;
 };

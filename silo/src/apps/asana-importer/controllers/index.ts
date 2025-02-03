@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
 // silo asana
 import {
-  createAsanaService, AsanaCustomField,
+  createAsanaService,
+  AsanaCustomField,
   PaginationPayload,
   AsanaCustomFieldSettings,
   PaginatedResponse,
-  pullUsers
+  pullUsers,
 } from "@plane/etl/asana";
 // silo asana auth
 import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
@@ -50,7 +51,7 @@ class AsanaController {
       });
       res.status(200).json({ message: "Authentication successful" });
     } catch (error: any) {
-      responseHandler(res, 500, error)
+      responseHandler(res, 500, error);
     }
   }
 
@@ -62,11 +63,11 @@ class AsanaController {
       if (!workspaceId || !userId) {
         return res.status(400).send({ message: "Bad Request" });
       }
-      const asanaServiceInstance = await asanaService(workspaceId?.toString(), userId?.toString());
+      const asanaServiceInstance = await createAsanaClient(workspaceId?.toString(), userId?.toString());
       const workspaces = await asanaServiceInstance.getWorkspaces();
       res.send(workspaces.data);
     } catch (error: any) {
-      responseHandler(res, 500, error)
+      responseHandler(res, 500, error);
     }
   }
 
@@ -78,11 +79,11 @@ class AsanaController {
       if (!workspaceId || !userId || !workspaceGid) {
         return res.status(400).send({ message: "Bad Request" });
       }
-      const asanaServiceInstance = await asanaService(workspaceId?.toString(), userId?.toString());
+      const asanaServiceInstance = await createAsanaClient(workspaceId?.toString(), userId?.toString());
       const projects = await asanaServiceInstance.getWorkspaceProjects(workspaceGid?.toString());
       res.send(projects.data);
     } catch (error: any) {
-      responseHandler(res, 500, error)
+      responseHandler(res, 500, error);
     }
   }
 
@@ -94,11 +95,11 @@ class AsanaController {
       if (!workspaceId || !userId || !projectGid) {
         return res.status(400).send({ message: "Bad Request" });
       }
-      const asanaServiceInstance = await asanaService(workspaceId?.toString(), userId?.toString());
+      const asanaServiceInstance = await createAsanaClient(workspaceId?.toString(), userId?.toString());
       const sections = await asanaServiceInstance.getProjectSections(projectGid?.toString());
       res.send(sections.data);
     } catch (error: any) {
-      responseHandler(res, 500, error)
+      responseHandler(res, 500, error);
     }
   }
 
@@ -111,7 +112,7 @@ class AsanaController {
       if (!workspaceId || !userId || !projectGid) {
         return res.status(400).send({ message: "Bad Request" });
       }
-      const asanaServiceInstance = await asanaService(workspaceId?.toString(), userId?.toString());
+      const asanaServiceInstance = await createAsanaClient(workspaceId?.toString(), userId?.toString());
       const enumCustomFields: AsanaCustomField[] = [];
       const pagination: PaginationPayload = {
         limit: 100,
@@ -132,7 +133,7 @@ class AsanaController {
       } while (pagination.offset);
       res.send(enumCustomFields);
     } catch (error: any) {
-      responseHandler(res, 500, error)
+      responseHandler(res, 500, error);
     }
   }
 
@@ -144,11 +145,11 @@ class AsanaController {
       if (!workspaceId || !userId || !projectGid) {
         return res.status(400).send({ message: "Bad Request" });
       }
-      const asanaServiceInstance = await asanaService(workspaceId?.toString(), userId?.toString());
+      const asanaServiceInstance = await createAsanaClient(workspaceId?.toString(), userId?.toString());
       const taskCount = await asanaServiceInstance.getProjectTaskCount(projectGid?.toString());
       res.send(taskCount.data);
     } catch (error: any) {
-      responseHandler(res, 500, error)
+      responseHandler(res, 500, error);
     }
   }
 
@@ -159,7 +160,7 @@ class AsanaController {
       const { workspaceId, workspaceSlug, userId, workspaceGid } = req.params;
       const [planeClient, asanaClient] = await Promise.all([
         createPlaneClient(workspaceId, userId, E_IMPORTER_KEYS.ASANA),
-        asanaService(workspaceId, userId),
+        createAsanaClient(workspaceId, userId),
       ]);
 
       const [workspaceMembers, asanaUsers] = await Promise.all([
@@ -180,12 +181,12 @@ class AsanaController {
         occupiedUserCount: billableMembers.length,
       });
     } catch (error) {
-      responseHandler(res, 500, error)
+      responseHandler(res, 500, error);
     }
   }
 }
 
-const asanaService = async (workspaceId: string, userId: string) => {
+export const createAsanaClient = async (workspaceId: string, userId: string) => {
   // eslint-disable-next-line no-useless-catch
   try {
     const credentials = await getCredentialsByWorkspaceId(workspaceId, userId, E_IMPORTER_KEYS.ASANA);

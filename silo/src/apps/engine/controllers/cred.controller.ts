@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
+import { validateImporterCredentials } from "@/apps/jira-importer/helpers/controller-helpers";
 import { responseHandler } from "@/helpers/response-handler";
 import { Controller, Get, Post, useValidateUserAuthentication } from "@/lib";
 import { getAPIClient } from "@/services/client";
@@ -21,7 +23,7 @@ export class CredentialController {
       });
       res.status(200).json(credential);
     } catch (error: any) {
-      return responseHandler(res, 500, error)
+      return responseHandler(res, 500, error);
     }
   }
 
@@ -34,14 +36,15 @@ export class CredentialController {
       const userId = req.params.userId;
       const source = req.query.source as string;
 
-      const credential = await apiClient.workspaceCredential.verifyWorkspaceCredentials(
-        source,
+      const validationResult = await validateImporterCredentials(
+        apiClient,
+        workspaceId,
         userId,
-        workspaceId
+        source as E_IMPORTER_KEYS
       );
-      return res.status(200).json(credential);
+      return res.status(200).json(validationResult);
     } catch (error: any) {
-      return responseHandler(res, 500, error)
+      return responseHandler(res, 500, error);
     }
   }
 
@@ -60,7 +63,7 @@ export class CredentialController {
 
       res.status(200).json({ message: "Successfully verified." });
     } catch (error: any) {
-      return responseHandler(res, 500, error)
+      return responseHandler(res, 500, error);
     }
   }
 
@@ -86,7 +89,7 @@ export class CredentialController {
 
       res.status(200).json({ message: "Credentials deactivated successfully" });
     } catch (error: any) {
-      return responseHandler(res, 500, error)
+      return responseHandler(res, 500, error);
     }
   }
 }

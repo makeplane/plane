@@ -107,26 +107,11 @@ export const ConnectionMapper = observer(
   (props: { selectedWorkspace: IWorkspace; connections: TWorkspaceUserConnection[] }) => {
     const { selectedWorkspace } = props;
 
-    const { connectUser, disconnectUser, fetchExternalApiToken: slackFetchExternalApiToken } = useSlackIntegration();
-    const {
-      auth: { connectGithubUserCredential, disconnectGithubUserCredential },
-      fetchExternalApiToken: githubFetchExternalApiToken,
-    } = useGithubIntegration();
+    const { connectUser, disconnectUser } = useSlackIntegration();
+    const { auth: { connectGithubUserCredential, disconnectGithubUserCredential } } = useGithubIntegration();
     const user = useUser();
 
     const [connections, setConnections] = useState<TWorkspaceUserConnection[]>(props.connections);
-
-    useSWR(
-      selectedWorkspace ? `SLACK_EXTERNAL_API_TOKEN_${selectedWorkspace.slug.toString()}` : null,
-      selectedWorkspace ? async () => slackFetchExternalApiToken(selectedWorkspace.slug.toString()) : null,
-      { errorRetryCount: 0, revalidateOnFocus: false, revalidateIfStale: false }
-    );
-
-    useSWR(
-      selectedWorkspace ? `GITHUB_EXTERNAL_API_TOKEN_${selectedWorkspace.slug.toString()}` : null,
-      selectedWorkspace ? async () => githubFetchExternalApiToken(selectedWorkspace.slug.toString()) : null,
-      { errorRetryCount: 0, revalidateOnFocus: false, revalidateIfStale: false }
-    );
 
     const handleConnection = async (source: TUserConnection) => {
       if (source === E_INTEGRATION_KEYS.GITHUB) {

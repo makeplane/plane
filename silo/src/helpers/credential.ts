@@ -27,7 +27,7 @@ export const getValidCredentials = async (workspaceId: string, userId: string, s
     isInvalidCredentials =
       credential.target_access_token === null ||
       credential.source_access_token === null ||
-      credential.user_email === null;
+      credential.source_auth_email === null;
   }
 
   if (isInvalidCredentials) {

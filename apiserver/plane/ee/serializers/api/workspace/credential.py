@@ -5,7 +5,6 @@ from rest_framework import serializers
 
 
 class WorkspaceCredentialAPISerializer(BaseSerializer):
-    user_email = serializers.CharField(source="user.email", read_only=True)
 
     user_id = serializers.PrimaryKeyRelatedField(
         source="user", queryset=User.objects.all()

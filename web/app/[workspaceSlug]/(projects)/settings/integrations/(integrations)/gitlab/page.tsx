@@ -1,14 +1,15 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import useSWR from "swr";
 // plane web components components
 import { Cloud } from "lucide-react";
 import { E_FEATURE_FLAGS, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { E_INTEGRATION_KEYS, SILO_ERROR_CODES } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 import { UserAuthentication, IntegrationRoot } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks
 import { useFlag, useGitlabIntegration, useWorkspaceSubscription } from "@/plane-web/hooks/store";
@@ -18,7 +19,7 @@ import GitlabLogo from "@/public/services/gitlab.svg";
 
 const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
 
-const GitlabIntegration: FC = observer(() => {
+const GitlabIntegration: FC<{ searchParams?: { error: string } }> = observer(({ searchParams }) => {
   // hooks
   const {
     workspace,
@@ -54,6 +55,23 @@ const GitlabIntegration: FC = observer(() => {
     isFeatureEnabled && workspaceSlug && !externalApiToken ? async () => fetchExternalApiToken(workspaceSlug) : null,
     { errorRetryCount: 0 }
   );
+
+  // error message
+  const errorCode = searchParams?.error;
+  useEffect(() => {
+    if (!errorCode) {
+      return;
+    }
+
+    const message = SILO_ERROR_CODES.find((code) => String(code.code) === errorCode)?.description;
+    if (message) {
+      setToast({
+        title: "Error",
+        message: t(`silo_errors.${message}`),
+        type: TOAST_TYPE.ERROR,
+      });
+    }
+  }, [errorCode]);
 
   if (!isFeatureEnabled) return null;
 
