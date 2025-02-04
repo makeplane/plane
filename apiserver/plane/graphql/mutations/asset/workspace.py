@@ -1,5 +1,4 @@
 # Python imports
-import requests
 import uuid
 from typing import Optional
 
@@ -18,6 +17,7 @@ from strawberry.exceptions import GraphQLError
 from asgiref.sync import sync_to_async
 
 # Module imports
+from plane.graphql.utils.feature_flag import validate_feature_flag
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
 from plane.db.models import Workspace, Project, FileAsset
 from plane.settings.storage import S3Storage
@@ -27,20 +27,8 @@ from plane.graphql.types.asset import (
     FileAssetAssetType,
     WorkspaceAssetEnumType,
 )
+from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
-
-
-@sync_to_async
-def validate_feature_flag(slug: str, user_id: str, feature_key: str) -> bool:
-    url = f"{settings.FEATURE_FLAG_SERVER_BASE_URL}/api/feature-flags/"
-    json = {"workspace_slug": slug, "user_id": user_id, "flag_key": feature_key}
-    headers = {
-        "content-type": "application/json",
-        "x-api-key": settings.FEATURE_FLAG_SERVER_AUTH_TOKEN,
-    }
-    response = requests.post(url, json=json, headers=headers)
-    response.raise_for_status()
-    return response.json().get("value", False)
 
 
 def get_entity_id_field(entity_type, entity_identifier):
@@ -204,9 +192,12 @@ class WorkspaceAssetMutation:
         ]:
             size_limit = min(size, settings.FILE_SIZE_LIMIT)
         else:
-            if settings.IS_MULTI_TENANT and validate_feature_flag(
-                slug=slug, user_id=str(user.id), feature_key="FILE_SIZE_LIMIT_PRO"
-            ):
+            is_feature_flagged = await validate_feature_flag(
+                slug=slug,
+                user_id=str(user.id),
+                feature_key=FeatureFlagsTypesEnum.FILE_SIZE_LIMIT_PRO.value,
+            )
+            if settings.IS_MULTI_TENANT and is_feature_flagged:
                 size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
 
         # Get the workspace
