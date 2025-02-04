@@ -31,8 +31,9 @@ const SidebarDropdownItem = (props: TProps) => {
     >
       <Menu.Item
         as="div"
-        className={cn("px-4 py-2 hover:bg-custom-sidebar-background-80", {
+        className={cn("px-4 py-2", {
           "bg-custom-primary-100/10": workspace.id === activeWorkspace?.id,
+          "hover:bg-custom-sidebar-background-80": workspace.id !== activeWorkspace?.id,
         })}
       >
         <div className="flex items-center justify-between gap-1 rounded p-1 text-sm text-custom-sidebar-text-100 ">
