@@ -8,6 +8,7 @@ import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local components
 import { LayoutRoot } from "../../common";
+import { EpicPeekOverview } from "../../epics";
 import { InitiativeEmptyState } from "../details/empty-state";
 import { WorkspaceEpicsListModal } from "./main/collapsible-section/epics/workspace-epic-modal";
 import { InitiativeMainContentRoot } from "./main/root";
@@ -118,6 +119,7 @@ export const InitiativeDetailRoot = observer((props: Props) => {
           handleAddEpicToInitiative(data.map((epic) => epic.id));
         }}
       />
+      <EpicPeekOverview />
     </LayoutRoot>
   );
 });
