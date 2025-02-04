@@ -16,14 +16,17 @@ import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 export const ProjectIssueDetailsHeader = observer(() => {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, issueId } = useParams();
+  const { workspaceSlug, workItem } = useParams();
   // store hooks
-  const { currentProjectDetails, loader } = useProject();
+  const { getProjectById, loader } = useProject();
   const {
-    issue: { getIssueById },
+    issue: { getIssueById, getIssueIdByIdentifier },
   } = useIssueDetail();
   // derived values
+  const issueId = getIssueIdByIdentifier(workItem?.toString());
   const issueDetails = issueId ? getIssueById(issueId.toString()) : undefined;
+  const projectId = issueDetails ? issueDetails?.project_id : undefined;
+  const projectDetails = projectId ? getProjectById(projectId?.toString()) : undefined;
 
   return (
     <Header>
@@ -48,9 +51,7 @@ export const ProjectIssueDetailsHeader = observer(() => {
               link={
                 <BreadcrumbLink
                   label={
-                    currentProjectDetails && issueDetails
-                      ? `${currentProjectDetails.identifier}-${issueDetails.sequence_id}`
-                      : ""
+                    projectDetails && issueDetails ? `${projectDetails.identifier}-${issueDetails.sequence_id}` : ""
                   }
                 />
               }
@@ -59,11 +60,13 @@ export const ProjectIssueDetailsHeader = observer(() => {
         </div>
       </Header.LeftItem>
       <Header.RightItem>
-        <IssueDetailQuickActions
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={projectId.toString()}
-          issueId={issueId.toString()}
-        />
+        {projectId && issueId && (
+          <IssueDetailQuickActions
+            workspaceSlug={workspaceSlug?.toString()}
+            projectId={projectId?.toString()}
+            issueId={issueId?.toString()}
+          />
+        )}
       </Header.RightItem>
     </Header>
   );
