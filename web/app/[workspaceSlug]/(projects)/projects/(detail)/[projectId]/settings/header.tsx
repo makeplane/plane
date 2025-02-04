@@ -29,7 +29,7 @@ export const ProjectSettingHeader: FC = observer(() => {
       <Header.LeftItem>
         <div>
           <div className="z-50">
-            <Breadcrumbs onBack={router.back} isLoading={loader}>
+            <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
               <ProjectBreadcrumb />
               <div className="hidden sm:hidden md:block lg:block">
                 <Breadcrumbs.BreadcrumbItem

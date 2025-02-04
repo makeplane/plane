@@ -59,7 +59,7 @@ export const WorkspaceDashboardView = observer(() => {
       )}
       {homeDashboardId && joinedProjectIds && (
         <>
-          {joinedProjectIds.length > 0 || loader ? (
+          {joinedProjectIds.length > 0 || loader === "init-loader" ? (
             <>
               <IssuePeekOverview />
               <ContentWrapper

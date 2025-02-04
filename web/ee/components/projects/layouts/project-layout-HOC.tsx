@@ -4,7 +4,7 @@ import Image from "next/image";
 import { EmptyState } from "@/components/empty-state";
 import { GanttLayoutLoader, KanbanLayoutLoader, ListLayoutLoader, ProjectsLoader } from "@/components/ui";
 import { EmptyStateType } from "@/constants/empty-state";
-import { useCommandPalette, useEventTracker } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject } from "@/hooks/store";
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
 import AllFiltersImage from "@/public/empty-state/project/all-filters.svg";
@@ -32,15 +32,17 @@ interface Props {
 
 export const ProjectLayoutHOC = observer((props: Props) => {
   const { layout } = props;
+  // store hooks
+  const { fetchStatus } = useProject();
   const { loading } = useProjectFilter();
   const { getFilteredProjectsByLayout } = useProjectFilter();
   const { projectStates } = useWorkspaceProjectStates();
-
   const { setTrackElement } = useEventTracker();
   const { toggleCreateProjectModal } = useCommandPalette();
+  // derived values
   const filteredProjectIds = getFilteredProjectsByLayout(EProjectLayouts.GALLERY);
 
-  if (loading || isEmpty(projectStates)) {
+  if (loading || isEmpty(projectStates) || fetchStatus !== "complete") {
     return <ActiveLoader layout={layout} />;
   }
   if (!filteredProjectIds) {

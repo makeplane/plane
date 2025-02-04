@@ -35,7 +35,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(() => {
   return (
     <Header>
       <Header.LeftItem>
-        <Breadcrumbs isLoading={loader}>
+        <Breadcrumbs isLoading={loader === "init-loader"}>
           <ProjectBreadcrumb />
           <Breadcrumbs.BreadcrumbItem
             type="text"

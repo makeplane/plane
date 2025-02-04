@@ -21,9 +21,9 @@ type TProjectItemsRootProps = {
 export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = observer((props) => {
   const { workspaceSlug, projectId } = props;
   // store hooks
-  const { getProjectById } = useProject();
+  const { getPartialProjectById } = useProject();
   // derived values
-  const project = getProjectById(projectId);
+  const project = getPartialProjectById(projectId);
   const isEpicsEnabled = project?.is_epic_enabled;
 
   if (!project) return null;

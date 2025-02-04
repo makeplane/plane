@@ -95,7 +95,7 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
           member__display_name: memberMap[id]?.display_name,
         }));
     formData.identifier = formData.identifier?.toUpperCase();
-    if (members) formData.members = members;
+    if (members) formData.members = members.map((member) => member.member_id);
     const coverImage = formData.cover_image_url;
 
     return createProject(workspaceSlug.toString(), formData)

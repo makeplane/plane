@@ -6,12 +6,12 @@ from plane.ee.views import ProjectFeatureEndpoint
 from plane.ee.views import (
     ProjectLinkViewSet,
     ProjectAnalyticsEndpoint,
+    ProjectAttributesEndpoint,
     ProjectUpdatesViewSet,
     ProjectAttachmentV2Endpoint,
     ProjectReactionViewSet,
-    ProjectActivityEndpoint
+    ProjectActivityEndpoint,
 )
-from plane.ee.views.app import ProjectFeatureEndpoint
 
 
 urlpatterns = [
@@ -23,42 +23,26 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/links/<uuid:pk>/",
         ProjectLinkViewSet.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
         ),
         name="project-links",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/updates/",
-        ProjectUpdatesViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
+        ProjectUpdatesViewSet.as_view({"get": "list", "post": "create"}),
         name="project-updates",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/updates/<uuid:pk>/",
         ProjectUpdatesViewSet.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
         ),
         name="project-updates",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/updates/<uuid:pk>/comments/",
         ProjectUpdatesViewSet.as_view(
-            {
-                "get": "comments_list",
-                "post": "comments_create",
-            }
+            {"get": "comments_list", "post": "comments_create"}
         ),
         name="project-updates-comments",
     ),
@@ -98,7 +82,13 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/history/",
         ProjectActivityEndpoint.as_view(),
         name="project-activity",
-    )
+    ),
+    # project attributes
+    path(
+        "workspaces/<str:slug>/project-attributes/",
+        ProjectAttributesEndpoint.as_view(),
+        name="project-attributes",
+    ),
 ]
 
 

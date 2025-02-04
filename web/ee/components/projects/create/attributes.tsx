@@ -145,7 +145,7 @@ const ProjectAttributes: React.FC<Props> = (props) => {
             return (
               <div className="flex-shrink-0 h-7" tabIndex={5}>
                 <MemberDropdown
-                  value={value}
+                  value={value ?? null}
                   onChange={(lead) => onChange(lead === value ? null : lead)}
                   placeholder="Lead"
                   multiple={false}

@@ -13,14 +13,17 @@ import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper"
 import { useIssueDetail } from "@/hooks/store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
 type Props = {
+  workspaceSlug: string;
+  initiativeId: string;
   epicId: string;
   disabled?: boolean;
 };
 
 export const EpicProperties: FC<Props> = observer((props) => {
-  const { epicId, disabled = false } = props;
+  const { workspaceSlug, initiativeId, epicId, disabled = false } = props;
   // store hooks
   const {
     issue: { getIssueById },
@@ -29,6 +32,9 @@ export const EpicProperties: FC<Props> = observer((props) => {
 
   // hooks
   const { updateIssue } = useIssuesActions(EIssuesStoreType.EPIC);
+  const {
+    initiative: { fetchInitiativeAnalytics },
+  } = useInitiatives();
 
   // derived values
   const epic = getIssueById(epicId);
@@ -42,7 +48,11 @@ export const EpicProperties: FC<Props> = observer((props) => {
   };
 
   const handleState = (stateId: string) => {
-    if (updateIssue) updateIssue(epic.project_id, epic.id, { state_id: stateId });
+    if (updateIssue) {
+      updateIssue(epic.project_id, epic.id, { state_id: stateId }).then(() => {
+        fetchInitiativeAnalytics(workspaceSlug, initiativeId);
+      });
+    }
   };
 
   const handlePriority = (value: TIssuePriorities) => {

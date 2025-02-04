@@ -181,7 +181,7 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
     const workspaceDetails = this.store.workspaceRoot.currentWorkspace;
     const projectStore = this.store.projectRoot.project;
     const projectMap = projectStore.projectMap;
-    this.loading = projectStore.loader;
+    this.loading = projectStore.loader === "init-loader";
     if (isEmpty(projectMap) || !this.filters || !workspaceDetails) return undefined;
 
     // get teamspace details

@@ -163,7 +163,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
       <Header>
         <Header.LeftItem>
           <div className="flex items-center gap-2">
-            <Breadcrumbs onBack={router.back} isLoading={loader}>
+            <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
                 link={

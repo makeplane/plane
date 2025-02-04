@@ -38,7 +38,7 @@ const Attributes: React.FC<Props> = observer((props) => {
     containerClass = "",
     displayProperties,
   } = props;
-  const projectMembersIds = project.members?.map((member) => member.member_id);
+  const projectMembersIds = project.members;
 
   const { getUserDetails } = useMember();
   const lead = getUserDetails(project.project_lead as string);
@@ -152,7 +152,7 @@ const Attributes: React.FC<Props> = observer((props) => {
         <Tooltip tooltipContent="Members" position={"top"} className="ml-4">
           <div className="h-5 my-auto" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
             <MembersDropdown
-              value={projectMembersIds}
+              value={projectMembersIds ?? []}
               disabled
               onChange={() => {}}
               className="h-5 my-auto"

@@ -53,7 +53,7 @@ export const AdvancedIssuesHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <div className="flex items-center gap-2.5">
-          <Breadcrumbs onBack={() => router.back()} isLoading={loader}>
+          <Breadcrumbs onBack={() => router.back()} isLoading={loader === "init-loader"}>
             <ProjectBreadcrumb />
 
             <Breadcrumbs.BreadcrumbItem

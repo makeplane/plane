@@ -50,7 +50,7 @@ export const IntakeHeader: FC = observer(() => {
     <Header>
       <Header.LeftItem>
         <div className="flex items-center gap-1">
-          <Breadcrumbs isLoading={currentProjectDetailsLoader}>
+          <Breadcrumbs isLoading={currentProjectDetailsLoader === "init-loader"}>
             <ProjectBreadcrumb />
             <Breadcrumbs.BreadcrumbItem
               type="text"

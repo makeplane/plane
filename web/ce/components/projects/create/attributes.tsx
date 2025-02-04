@@ -77,7 +77,7 @@ const ProjectAttributes: FC<Props> = (props) => {
             return (
               <div className="flex-shrink-0 h-7" tabIndex={getIndex("lead")}>
                 <MemberDropdown
-                  value={value}
+                  value={value ?? null}
                   onChange={(lead) => onChange(lead === value ? null : lead)}
                   placeholder={t("lead")}
                   multiple={false}

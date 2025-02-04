@@ -13,7 +13,7 @@ export const SpreadsheetMembersColumn: React.FC<Props> = observer((props: Props)
   const { project } = props;
 
   // derived values
-  const membersCount = project.members.length ?? 0;
+  const membersCount = project.members?.length ?? 0;
 
   return (
     <div

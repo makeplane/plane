@@ -191,6 +191,7 @@ from .analytic.base import (
     SavedAnalyticEndpoint,
     ExportAnalyticsEndpoint,
     DefaultAnalyticsEndpoint,
+    ProjectStatsEndpoint,
 )
 
 from .notification.base import (

@@ -79,7 +79,7 @@ export const RecentActivityWidget: React.FC<TRecentWidgetProps> = observer((prop
     }
   };
 
-  if (!loader && !isWikiApp && joinedProjectIds?.length === 0) return <NoProjectsEmptyState />;
+  if (loader === "loaded" && !isWikiApp && joinedProjectIds?.length === 0) return <NoProjectsEmptyState />;
 
   if (!isLoading && recents?.length === 0)
     return (

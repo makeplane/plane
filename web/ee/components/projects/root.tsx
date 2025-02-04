@@ -50,7 +50,7 @@ export const WorkspaceProjectsRoot: FC<TWorkspaceProjectsRoot> = observer((props
   useEffect(() => {
     if (workspaceSlug) {
       let filtersToInit = [EProjectFilters.LAYOUT, EProjectFilters.ATTRIBUTES, EProjectFilters.DISPLAY_FILTERS];
-      filtersToInit = loader ? filtersToInit : [EProjectFilters.SCOPE, ...filtersToInit];
+      filtersToInit = loader === "init-loader" ? filtersToInit : [EProjectFilters.SCOPE, ...filtersToInit];
       if (filtersToInitFromProps.length > 0) {
         filtersToInit = filtersToInitFromProps;
       }

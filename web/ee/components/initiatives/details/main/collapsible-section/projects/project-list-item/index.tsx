@@ -24,22 +24,20 @@ type Props = {
 export const ProjectItem = observer((props: Props) => {
   const { workspaceSlug, initiativeId, projectId } = props;
   // store hooks
-  const { getProjectById, updateProject } = useProject();
+  const { getProjectById, getProjectAnalyticsCountById, updateProject } = useProject();
   const { currentWorkspace } = useWorkspace();
   const { isMobile } = usePlatformOS();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
-
   // ref
   const parentRef = useRef(null);
-
   // derived values
   const isProjectGroupingEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED);
-
   const projectDetails = getProjectById(projectId);
+  const projectAnalyticsCount = getProjectAnalyticsCountById(projectId);
 
   if (!projectDetails || !currentWorkspace) return <Spinner />;
 
-  const progress = getProgress(projectDetails?.completed_issues, projectDetails?.total_issues);
+  const progress = getProgress(projectAnalyticsCount?.completed_issues, projectAnalyticsCount?.total_issues);
 
   return (
     <ListItem

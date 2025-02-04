@@ -10,57 +10,64 @@ import type {
 } from "..";
 import { TUserPermissions } from "../enums";
 
-export interface IProject {
-  archive_in: number;
+export interface IPartialProject {
+  id: string;
+  name: string;
+  identifier: string;
+  sort_order: number | null;
+  logo_props: TLogoProps;
+  is_member: boolean;
   archived_at: string | null;
-  archived_issues: number;
-  archived_sub_issues: number;
-  completed_issues: number;
-  close_in: number;
-  created_at: Date;
-  created_by: string;
-  // only for uploading the cover image
-  cover_image_asset?: null;
-  cover_image?: string;
-  // only for rendering the cover image
-  cover_image_url: readonly string;
+  workspace: IWorkspace | string;
   cycle_view: boolean;
   issue_views_view: boolean;
   module_view: boolean;
   page_view: boolean;
   inbox_view: boolean;
-  default_assignee: IUser | string | null;
-  default_state: string | null;
-  description: string;
-  draft_issues: number;
-  draft_sub_issues: number;
-  estimate: string | null;
-  guest_view_all_features: boolean;
-  id: string;
-  identifier: string;
-  anchor: string | null;
-  is_favorite: boolean;
-  is_issue_type_enabled: boolean;
-  is_member: boolean;
-  is_time_tracking_enabled: boolean;
-  logo_props: TLogoProps;
-  member_role: TUserPermissions | null;
-  members: IProjectMemberLite[];
-  name: string;
-  network: number;
-  project_lead: IUserLite | string | null;
-  sort_order: number | null;
-  sub_issues: number;
-  total_cycles: number;
-  total_issues: number;
-  total_members: number;
-  total_modules: number;
-  updated_at: Date;
-  updated_by: string;
-  workspace: IWorkspace | string;
-  workspace_detail: IWorkspaceLite;
-  timezone: string;
+  project_lead?: IUserLite | string | null;
+  // Timestamps
+  created_at?: Date;
+  updated_at?: Date;
+  // actor
+  created_by?: string;
+  updated_by?: string;
 }
+
+export interface IProject extends IPartialProject {
+  archive_in?: number;
+  close_in?: number;
+  // only for uploading the cover image
+  cover_image_asset?: null;
+  cover_image?: string;
+  // only for rendering the cover image
+  readonly cover_image_url?: string;
+  default_assignee?: IUser | string | null;
+  default_state?: string | null;
+  description?: string;
+  estimate?: string | null;
+  guest_view_all_features?: boolean;
+  anchor?: string | null;
+  is_favorite?: boolean;
+  is_issue_type_enabled?: boolean;
+  is_time_tracking_enabled?: boolean;
+  member_role?: TUserPermissions | null;
+  members?: string[];
+  network?: number;
+  timezone?: string;
+}
+
+export type TProjectAnalyticsCountParams = {
+  project_ids?: string;
+  fields?: string;
+};
+
+export type TProjectAnalyticsCount = Pick<IProject, "id"> & {
+  total_issues?: number;
+  completed_issues?: number;
+  total_cycles?: number;
+  total_members?: number;
+  total_modules?: number;
+};
 
 export interface IProjectLite {
   id: string;
