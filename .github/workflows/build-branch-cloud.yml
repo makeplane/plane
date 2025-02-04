@@ -169,6 +169,8 @@ jobs:
 
           add_build_arg "NEXT_PUBLIC_WEB_BASE_URL" "${{ env.NEXT_PUBLIC_WEB_BASE_URL }}"
 
+          add_build_arg "SENTRY_AUTH_TOKEN" "${{ secrets.SENTRY_AUTH_TOKEN }}"
+
           echo "BUILD_ARGS=$BUILD_ARGS" >> $GITHUB_OUTPUT
 
       - id: checkout_files
