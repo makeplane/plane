@@ -38,7 +38,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
     EUserPermissionsLevel.PROJECT,
     workspaceSlug?.toString(),
     currentProjectDetails?.id
-  );
+);
 
   return (
     <>
