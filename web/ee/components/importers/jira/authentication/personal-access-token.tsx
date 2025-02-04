@@ -67,7 +67,7 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
       onChange: (e) => handleFormData("personalAccessToken", e.target.value),
       description: (
         <>
-          {t("importers.token_helper")} 
+          {t("importers.token_helper")}{" "}
           <a
             tabIndex={-1}
             href="https://id.atlassian.com/manage-profile/security/api-tokens"

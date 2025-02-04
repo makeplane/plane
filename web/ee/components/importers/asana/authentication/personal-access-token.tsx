@@ -66,7 +66,7 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
             className="text-custom-primary-100 hover:underline"
             rel="noreferrer"
           >
-            Asana Developer Settings.
+            Asana Security Settings.
           </a>
         </>
       ),

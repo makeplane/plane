@@ -60,15 +60,15 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
       onChange: (e) => handleFormData("personalAccessToken", e.target.value),
       description: (
         <>
-          You will get this from your{" "}
+          {t("importers.token_helper")}{" "}
           <a
             tabIndex={-1}
-            href="https://developers.linear.app/docs/graphql/working-with-the-graphql-api#personal-api-keys"
+            href="https://linear.app/docs/security-and-access#personal-api-keys"
             target="_blank"
             className="text-custom-primary-100 hover:underline"
             rel="noreferrer"
           >
-            Linear Security settings.
+            Linear Security Settings.
           </a>
         </>
       ),

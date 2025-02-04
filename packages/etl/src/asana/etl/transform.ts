@@ -82,7 +82,7 @@ export const transformTask = (
     attachments: targetAttachments as ExIssueAttachment[], // TODO: Fix this type
     state: targetState ? targetState.id : "",
     priority: targetPriority,
-    description_html: !task.html_notes || task.html_notes == "" ? "<p></p>" : task.html_notes,
+    description_html: !task.html_notes || task.html_notes == "<body></body>" ? "<p></p>" : task.html_notes,
     start_date: getFormattedDate(task.start_on),
     target_date: getFormattedDate(task.due_on),
     created_at: task.created_at,

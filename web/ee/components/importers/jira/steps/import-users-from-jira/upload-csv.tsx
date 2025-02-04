@@ -5,8 +5,8 @@ import Papa from "papaparse";
 import Dropzone, { Accept } from "react-dropzone";
 import { TriangleAlert, CircleCheck, X, Loader } from "lucide-react";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { useTranslation } from "@plane/i18n";
+import { cn } from "@/helpers/common.helper";
 
 type TImportUsersFromJiraUploader = {
   handleValue: (value: string) => void;
@@ -30,22 +30,22 @@ export const ImportUsersFromJiraUploader: FC<TImportUsersFromJiraUploader> = (pr
     processing: {
       className: "text-custom-text-200",
       icon: <Loader className="flex-shrink-0 w-3.5 h-3.5 spin-in-90" />,
-      message: t("file_upload_status.processing"),
+      message: t("file_upload.processing"),
     },
     error: {
       className: "text-red-500",
       icon: <TriangleAlert className="flex-shrink-0 w-3.5 h-3.5" />,
-      message: t("file_upload_status.invalid"),
+      message: t("file_upload.invalid"),
     },
     "missing-fields": {
       className: "text-yellow-500",
       icon: <TriangleAlert className="flex-shrink-0 w-3.5 h-3.5" />,
-      message: t("file_upload_status.missing_fields"),
+      message: t("file_upload.missing_fields"),
     },
     success: {
       className: "text-green-500",
       icon: <CircleCheck className="flex-shrink-0 w-3.5 h-3.5" />,
-      message: t("file_upload_status.success", { fileName: "CSV" }),
+      message: t("file_upload.success", { fileName: "CSV" }),
     },
   };
 

@@ -2,9 +2,11 @@
 
 import { FC, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
+import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane packages imports
 import { pullUsers } from "@plane/etl/jira";
+import { useTranslation } from "@plane/i18n";
 import { Button, Loader } from "@plane/ui";
 // plane web components
 import { ImportUsersFromJiraUploader } from "@/plane-web/components/importers/jira";
@@ -13,13 +15,12 @@ import { AddSeatsAlertBanner, SkipUserImport, StepperNavigation } from "@/plane-
 import { useJiraImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web types
 import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers/jira";
-import { useTranslation } from "@plane/i18n";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.IMPORT_USERS_FROM_JIRA];
 
 const currentStepKey = E_IMPORTER_STEPS.IMPORT_USERS_FROM_JIRA;
 
-export const ImportUsersFromJira: FC = () => {
+export const ImportUsersFromJira: FC = observer(() => {
   // hooks
   const {
     user,
@@ -90,7 +91,7 @@ export const ImportUsersFromJira: FC = () => {
   );
 
   const extraSeatRequired = additionalUsersData?.additionalUserCount - currentWorkspaceSubscriptionAvailableSeats;
-  const isNextButtonDisabled = Boolean(extraSeatRequired > 0 && !formData.userSkipToggle);
+  const isNextButtonDisabled = Boolean(extraSeatRequired > 0 && !formData.userSkipToggle) || Boolean(!formData.userSkipToggle && !formData.userData);
 
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
@@ -143,4 +144,4 @@ export const ImportUsersFromJira: FC = () => {
       </div>
     </div>
   );
-};
+});

@@ -1,11 +1,13 @@
 "use client";
 
 import { FC, useState } from "react";
+import { observer } from "mobx-react";
 import useSWR from "swr";
 // ui
 // silo
 import { AsanaConfig, AsanaSection } from "@plane/etl/asana";
 import { E_JOB_STATUS, E_IMPORTER_KEYS } from "@plane/etl/core";
+import { useTranslation } from "@plane/i18n";
 import { TImportJob } from "@plane/types";
 import { Button, Loader } from "@plane/ui";
 // plane web components
@@ -14,9 +16,8 @@ import { AddSeatsAlertBanner, SkipUserImport, StepperNavigation } from "@/plane-
 import { useAsanaImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web types
 import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/asana";
-import { useTranslation } from "@plane/i18n";
 
-export const SummaryRoot: FC = () => {
+export const SummaryRoot: FC = observer(() => {
   // hooks
   const {
     workspace,
@@ -181,4 +182,4 @@ export const SummaryRoot: FC = () => {
       </div>
     </div>
   );
-};
+});
