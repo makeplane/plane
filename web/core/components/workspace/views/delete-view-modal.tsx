@@ -42,7 +42,8 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
           state: "SUCCESS",
         });
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log({error})
         captureEvent(GLOBAL_VIEW_DELETED, {
           view_id: data.id,
           state: "FAILED",

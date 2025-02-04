@@ -94,7 +94,9 @@ export const SidebarQuickActions = observer(() => {
           disabled={disabled}
         >
           <PenSquare className="size-4" />
-          {!isSidebarCollapsed && <span className="text-sm font-medium">{t("new_issue")}</span>}
+          {!isSidebarCollapsed && (
+            <span className="text-sm font-medium truncate max-w-[145px]">{t("sidebar.new_work_item")}</span>
+          )}
         </button>
         <button
           className={cn(

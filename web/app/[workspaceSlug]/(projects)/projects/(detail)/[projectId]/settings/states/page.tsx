@@ -35,7 +35,7 @@ const StatesSettingsPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <div className="flex items-center border-b border-custom-border-100">
-        <h3 className="text-xl font-medium">{t("states")}</h3>
+        <h3 className="text-xl font-medium">{t("common.states")}</h3>
       </div>
       {workspaceSlug && projectId && (
         <ProjectStateRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
