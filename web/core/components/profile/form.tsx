@@ -423,7 +423,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
             </div>
             <div className="flex items-center justify-between pt-6 pb-8">
               <Button variant="primary" type="submit" loading={isLoading}>
-                {isLoading ? t("saving...") : t("save_changes")}
+                {isLoading ? t("saving") : t("save_changes")}
               </Button>
             </div>
           </div>
