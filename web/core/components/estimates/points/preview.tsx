@@ -107,6 +107,7 @@ export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer(
           projectId={projectId}
           estimateId={estimateId}
           estimatePointId={estimatePointId}
+          estimatePoints={estimatePoints}
           callback={() => estimateId && setEstimatePointDeleteToggle(false)}
           estimatePointError={estimatePointError}
           handleEstimatePointError={handleEstimatePointError}

@@ -25,7 +25,7 @@ const ProjectCreateButtons: React.FC<Props> = (props) => {
   return (
     <div className="flex justify-end gap-2 py-4 border-t border-custom-border-100">
       <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
-        {t("cancel")}
+        {t("common.cancel")}
       </Button>
       <Button variant="primary" type="submit" size="sm" loading={isSubmitting} tabIndex={getIndex("submit")}>
         {isSubmitting ? t("creating") : t("create_project")}
