@@ -1096,3 +1096,19 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
         return Response(
             {"message": "Issues updated successfully"}, status=status.HTTP_200_OK
         )
+
+
+class IssueMetaEndpoint(BaseAPIView):
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    def get(self, request, slug, project_id, issue_id):
+        issue = Issue.objects.only("sequence_id", "project__identifier").get(
+            id=issue_id, project_id=project_id, workspace__slug=slug
+        )
+        return Response(
+            {
+                "sequence_id": issue.sequence_id,
+                "project_identifier": issue.project.identifier,
+            },
+            status=status.HTTP_200_OK,
+        )

@@ -116,6 +116,7 @@ from .issue.base import (
     IssuePaginatedViewSet,
     IssueDetailEndpoint,
     IssueBulkUpdateDateEndpoint,
+    IssueMetaEndpoint,
 )
 
 from .issue.activity import IssueActivityEndpoint
