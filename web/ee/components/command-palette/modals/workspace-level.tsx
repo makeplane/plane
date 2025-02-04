@@ -7,9 +7,12 @@ import {
 // hooks
 import { useCommandPalette } from "@/hooks/store";
 // plane web components
+import { CreateUpdateWorkspaceDashboardModal } from "@/plane-web/components/dashboards/modals";
+import { CreateUpdateInitiativeModal } from "@/plane-web/components/initiatives/components/create-update-initiatives-modal";
 import { CreateOrUpdateTeamspaceModal } from "@/plane-web/components/teamspaces/create-update";
 import { CreateUpdateTeamspaceViewModal } from "@/plane-web/components/teamspaces/views/modals/create-update";
-import { CreateUpdateInitiativeModal } from "../../initiatives/components/create-update-initiatives-modal";
+// plane web hooks
+import { useWorkspaceDashboards } from "@/plane-web/hooks/store";
 
 export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps) => {
   // router
@@ -23,6 +26,11 @@ export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps)
     createUpdateInitiativeModal,
     toggleCreateInitiativeModal,
   } = useCommandPalette();
+  const {
+    isCreateUpdateModalOpen: isWorkspaceDashboardModalOpen,
+    createUpdateModalPayload: workspaceDashboardModalPayload,
+    toggleCreateUpdateModal: toggleWorkspaceDashboardModal,
+  } = useWorkspaceDashboards();
 
   return (
     <>
@@ -43,6 +51,11 @@ export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps)
       <CreateUpdateInitiativeModal
         isOpen={createUpdateInitiativeModal.isOpen}
         handleClose={() => toggleCreateInitiativeModal({ isOpen: false, initiativeId: undefined })}
+      />
+      <CreateUpdateWorkspaceDashboardModal
+        data={workspaceDashboardModalPayload ?? undefined}
+        isOpen={isWorkspaceDashboardModalOpen}
+        onClose={() => toggleWorkspaceDashboardModal(false)}
       />
     </>
   );

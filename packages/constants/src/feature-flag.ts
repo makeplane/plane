@@ -66,4 +66,6 @@ export enum E_FEATURE_FLAGS {
   PI_DEDUPE = "PI_DEDUPE",
   // initiatives
   INITIATIVES = "INITIATIVES",
+  // dashboards
+  DASHBOARDS = "DASHBOARDS"
 }

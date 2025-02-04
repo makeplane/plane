@@ -1,13 +1,17 @@
-// "use client"
-//
-// // components
-// import { ContentWrapper } from "@/components/core";
+"use client";
+
+// components
+import { AppHeader, ContentWrapper, PageHead } from "@/components/core";
+import { WorkspaceDashboardsListHeader } from "./header";
 
 export default function DashboardsListLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
-  // return (
-  //   <>
-  //     <ContentWrapper>{children}</ContentWrapper>
-  //   </>
-  // );
+  return (
+    <>
+      <AppHeader header={<WorkspaceDashboardsListHeader />} />
+      <ContentWrapper>
+        <PageHead title="Dashboards" />
+        {children}
+      </ContentWrapper>
+    </>
+  );
 }

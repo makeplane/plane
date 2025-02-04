@@ -17,7 +17,14 @@ export const isUserFeatureEnabled = (featureKey: string) => {
   const featureFlag = UserFeatureKeyToFeatureFlagMap[featureKey];
   if (!featureFlag) return true;
   // Check for the feature flag in the current workspace
-  return store.featureFlags.getFeatureFlagForCurrentWorkspace(featureFlag, false);
+  const isFeatureFlagEnabled = store.featureFlags.getFeatureFlagForCurrentWorkspace(featureFlag, false);
+
+  switch (featureKey) {
+    case "workspace-dashboards":
+      return isFeatureFlagEnabled;
+    default:
+      return isFeatureFlagEnabled;
+  }
 };
 
 const WorkspaceFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefined> = {

@@ -1,15 +1,8 @@
-import { notFound } from "next/navigation";
+"use client";
 
-// "use client"
-//
-// // components
-// import { PageHead } from "@/components/core";
+// components
+import { WorkspaceDashboardsListRoot } from "@/plane-web/components/dashboards/list";
 
 export default function DashboardsListPage() {
-  notFound();
-  // return (
-  //   <>
-  //     <PageHead title="Dashboards" />
-  //   </>
-  // );
+  return <WorkspaceDashboardsListRoot />;
 }
