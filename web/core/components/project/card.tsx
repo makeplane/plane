@@ -29,7 +29,7 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useMember, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane-web constants
@@ -51,12 +51,13 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
   // store hooks
+  const { getUserDetails } = useMember();
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
   const { allowPermissions } = useUserPermissions();
   // hooks
   const { isMobile } = usePlatformOS();
   // derived values
-  const projectMembersIds = project.members?.map((member) => member.member_id);
+  const projectMembersIds = project.members;
   const shouldRenderFavorite = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
@@ -249,7 +250,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                       if (project.is_favorite) handleRemoveFromFavorites();
                       else handleAddToFavorites();
                     }}
-                    selected={project.is_favorite}
+                    selected={!!project.is_favorite}
                   />
                 )}
               </div>
@@ -281,14 +282,10 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                   <div className="flex cursor-pointer items-center gap-2 text-custom-text-200">
                     <AvatarGroup showTooltip={false}>
                       {projectMembersIds.map((memberId) => {
-                        const member = project.members?.find((m) => m.member_id === memberId);
+                        const member = getUserDetails(memberId);
                         if (!member) return null;
                         return (
-                          <Avatar
-                            key={member.id}
-                            name={member.member__display_name}
-                            src={getFileURL(member.member__avatar_url)}
-                          />
+                          <Avatar key={member.id} name={member.display_name} src={getFileURL(member.avatar_url)} />
                         );
                       })}
                     </AvatarGroup>

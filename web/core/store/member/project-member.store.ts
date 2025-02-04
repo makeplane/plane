@@ -1,15 +1,11 @@
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
+import uniq from "lodash/uniq";
+import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import {
-  IProjectBulkAddFormData,
-  IProjectMember,
-  IProjectMemberLite,
-  IProjectMembership,
-  IUserLite,
-} from "@plane/types";
+import { IProjectBulkAddFormData, IProjectMember, IProjectMembership, IUserLite } from "@plane/types";
 // plane-web constants
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
@@ -166,8 +162,11 @@ export class ProjectMemberStore implements IProjectMemberStore {
           set(this.projectMemberMap, [projectId, member.member], member);
         });
       });
-      this.projectRoot.projectMap[projectId].members = this.projectRoot.projectMap?.[projectId]?.members.concat(
-        data.members as unknown as IProjectMemberLite[]
+      update(this.projectRoot.projectMap, [projectId, "members"], (memberIds) =>
+        uniq([...memberIds, ...data.members.map((m) => m.member_id)])
+      );
+      this.projectRoot.projectMap[projectId].members = this.projectRoot.projectMap?.[projectId]?.members?.concat(
+        data.members.map((m) => m.member_id)
       );
 
       return response;
@@ -218,8 +217,8 @@ export class ProjectMemberStore implements IProjectMemberStore {
       runInAction(() => {
         delete this.projectMemberMap?.[projectId]?.[userId];
       });
-      this.projectRoot.projectMap[projectId].members = this.projectRoot.projectMap?.[projectId]?.members.filter(
-        (member) => member.id !== userId
+      this.projectRoot.projectMap[projectId].members = this.projectRoot.projectMap?.[projectId]?.members?.filter(
+        (memberId) => memberId !== userId
       );
     });
   };

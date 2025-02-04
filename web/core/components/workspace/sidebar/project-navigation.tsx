@@ -38,13 +38,13 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
   // store hooks
   const { t } = useTranslation();
   const { sidebarCollapsed: isSidebarCollapsed, toggleSidebar } = useAppTheme();
-  const { getProjectById } = useProject();
+  const { getPartialProjectById } = useProject();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
   // pathname
   const pathname = usePathname();
   // derived values
-  const project = getProjectById(projectId);
+  const project = getPartialProjectById(projectId);
   // handlers
   const handleProjectClick = () => {
     if (window.innerWidth < 768) {

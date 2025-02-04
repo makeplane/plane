@@ -53,7 +53,7 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
               label={t("change_cover")}
               onChange={onChange}
               control={control}
-              value={value}
+              value={value ?? null}
               tabIndex={getIndex("cover_image")}
             />
           )}

@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 // icons
 import { CalendarDays, Download, RefreshCw } from "lucide-react";
 // types
@@ -30,19 +30,27 @@ type Props = {
 
 const analyticsService = new AnalyticsService();
 
+const PROJECT_ANALYTICS_COUNT_PARAMS = {
+  fields: "total_members,total_cycles,total_modules",
+};
+
 export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const { analytics, params, isProjectLevel = false } = props;
   // router
   const { workspaceSlug, projectId, cycleId, moduleId } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
-  const { workspaceProjectIds, getProjectById } = useProject();
+  const { workspaceProjectIds, getProjectById, fetchProjectAnalyticsCount } = useProject();
   const { getWorkspaceById } = useWorkspace();
-
   const { fetchCycleDetails, getCycleById } = useCycle();
   const { fetchModuleDetails, getModuleById } = useModule();
+  // fetch project analytics count
+  const { isLoading: isProjectAnalyticsLoading, isValidating: isProjectAnalyticsUpdating } = useSWR(
+    workspaceSlug ? ["projectAnalyticsCount", workspaceSlug] : null,
+    workspaceSlug ? () => fetchProjectAnalyticsCount(workspaceSlug.toString(), PROJECT_ANALYTICS_COUNT_PARAMS) : null
+  );
 
-  const projectDetails = projectId ? getProjectById(projectId.toString()) ?? undefined : undefined;
+  const projectDetails = projectId ? (getProjectById(projectId.toString()) ?? undefined) : undefined;
 
   const trackExportAnalytics = () => {
     if (!currentUser) return;
@@ -171,7 +179,11 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer((props) => {
       <div className={cn("h-full w-full overflow-hidden", isProjectLevel ? "hidden" : "block")}>
         <>
           {!isProjectLevel && selectedProjects && selectedProjects.length > 0 && (
-            <CustomAnalyticsSidebarProjectsList projectIds={selectedProjects} />
+            <CustomAnalyticsSidebarProjectsList
+              projectIds={selectedProjects}
+              isLoading={isProjectAnalyticsLoading}
+              isUpdating={isProjectAnalyticsUpdating}
+            />
           )}
           <CustomAnalyticsSidebarHeader />
         </>
