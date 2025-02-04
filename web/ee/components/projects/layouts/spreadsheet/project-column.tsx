@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // types
 import { EUserPermissions } from "@plane/types/src/enums";
 import { useUserPermissions } from "@/hooks/store";
@@ -16,13 +17,15 @@ type Props = {
 export const ProjectColumn = observer((props: Props) => {
   const { projectDetails, property, updateProject } = props;
   // router
+  const { workspaceSlug } = useParams();
+  // refs
   const tableCellRef = useRef<HTMLTableCellElement | null>(null);
   const { workspaceProjectsPermissions } = useUserPermissions();
   const { Column } = SPREADSHEET_PROPERTY_DETAILS[property];
   const isEditingAllowed =
     workspaceProjectsPermissions &&
-    workspaceProjectsPermissions[projectDetails.workspace_detail.slug][projectDetails.id] &&
-    workspaceProjectsPermissions[projectDetails.workspace_detail.slug][projectDetails.id] >= EUserPermissions.ADMIN;
+    workspaceProjectsPermissions[workspaceSlug?.toString()][projectDetails.id] &&
+    workspaceProjectsPermissions[workspaceSlug?.toString()][projectDetails.id] >= EUserPermissions.ADMIN;
   return (
     <td
       tabIndex={0}

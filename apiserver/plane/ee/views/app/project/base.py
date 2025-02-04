@@ -12,14 +12,11 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.ee.views.base import BaseAPIView
-from plane.ee.serializers import (
-    ProjectFeatureSerializer
-)
+from plane.ee.serializers import ProjectFeatureSerializer
+from plane.ee.serializers.app.project import ProjectAttributeSerializer
 from plane.app.permissions import allow_permission, ROLE
-from plane.ee.models import (
-    ProjectFeature,
-)
-from plane.db.models import Issue
+from plane.ee.models import ProjectFeature, ProjectAttribute
+from plane.db.models import Issue, Project
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.project_activites_task import project_activity
@@ -93,3 +90,21 @@ class ProjectFeatureEndpoint(BaseAPIView):
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProjectAttributesEndpoint(BaseAPIView):
+    model = ProjectAttribute
+
+    @check_feature_flag(FeatureFlag.PROJECT_GROUPING)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug):
+        project_ids = request.GET.get("project_ids", "").split(",")
+
+        projects = Project.objects.filter(workspace__slug=slug)
+
+        if project_ids:
+            projects = projects.filter(id__in=project_ids)
+
+        project_attributes = ProjectAttribute.objects.filter(project__in=projects)
+        serializer = ProjectAttributeSerializer(project_attributes, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

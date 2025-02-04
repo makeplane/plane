@@ -29,7 +29,7 @@ export const ProjectIssueDetailsHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <div>
-          <Breadcrumbs onBack={router.back} isLoading={loader}>
+          <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
             <ProjectBreadcrumb />
 
             <Breadcrumbs.BreadcrumbItem

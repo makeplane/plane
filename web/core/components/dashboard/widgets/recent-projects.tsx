@@ -16,7 +16,14 @@ import { PROJECT_BACKGROUND_COLORS } from "@/constants/dashboard";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useEventTracker, useDashboard, useProject, useCommandPalette, useUserPermissions } from "@/hooks/store";
+import {
+  useEventTracker,
+  useDashboard,
+  useProject,
+  useCommandPalette,
+  useUserPermissions,
+  useMember,
+} from "@/hooks/store";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
@@ -31,6 +38,8 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
   const { projectId, workspaceSlug } = props;
   // store hooks
   const { getProjectById } = useProject();
+  const { getUserDetails } = useMember();
+  // derived values
   const projectDetails = getProjectById(projectId);
 
   const randomBgColor = PROJECT_BACKGROUND_COLORS[Math.floor(Math.random() * PROJECT_BACKGROUND_COLORS.length)];
@@ -52,13 +61,13 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
         </h6>
         <div className="mt-2">
           <AvatarGroup>
-            {projectDetails.members?.map((member) => (
-              <Avatar
-                key={member.member_id}
-                src={getFileURL(member.member__avatar_url)}
-                name={member.member__display_name}
-              />
-            ))}
+            {projectDetails.members?.map((memberId) => {
+              const userDetails = getUserDetails(memberId);
+              if (!userDetails) return null;
+              return (
+                <Avatar key={userDetails.id} src={getFileURL(userDetails.avatar_url)} name={userDetails.display_name} />
+              );
+            })}
           </AvatarGroup>
         </div>
       </div>

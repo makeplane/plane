@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // icons
 import { ArchiveX } from "lucide-react";
 // types
@@ -22,6 +23,8 @@ type Props = {
 
 export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
   const { handleChange } = props;
+  // router
+  const { workspaceSlug } = useParams();
   // states
   const [monthModal, setmonthModal] = useState(false);
   // store hooks
@@ -59,7 +62,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
   const isAdmin = allowPermissions(
     [EUserPermissions.ADMIN],
     EUserPermissionsLevel.PROJECT,
-    currentProjectDetails?.workspace_detail?.slug,
+    workspaceSlug?.toString(),
     currentProjectDetails?.id
   );
 

@@ -33,3 +33,5 @@ export type TStateAnalytics = {
   completed_issues: number;
   cancelled_issues: number;
 };
+
+export type TFetchStatus = "partial" | "complete" | undefined;

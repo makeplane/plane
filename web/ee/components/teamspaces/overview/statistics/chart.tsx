@@ -133,7 +133,17 @@ export const TeamspaceStatisticsMap: React.FC<TTeamspaceStatisticsMapProps> = ob
         fillClassName: "fill-custom-background-90",
       };
     },
-    [isSettingsEnabled, currentDataKey, currentLegend, getProjectById, getProjectStateById]
+    [
+      isSettingsEnabled,
+      currentDataKey,
+      currentLegend,
+      getProjectById,
+      getProjectStateById,
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      (id: string) => getProjectById(id)?.state_id,
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      (id: string) => getProjectById(id)?.priority,
+    ]
   );
   // data
   const data: TreeMapItem[] = useMemo(() => {

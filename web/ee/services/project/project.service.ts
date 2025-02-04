@@ -1,13 +1,29 @@
 /* eslint-disable no-useless-catch */
 
-// ce services
+// plane imports
 import { TProjectLink, TStateAnalytics } from "@plane/types";
-import { TProject, TProjectFeatures } from "@/plane-web/types";
+// plane web imports
+import { TProject, TProjectAttributesParams, TProjectAttributesResponse, TProjectFeatures } from "@/plane-web/types";
+// services
 import { ProjectService as CeProjectService } from "@/services/project";
 
 export class ProjectService extends CeProjectService {
   constructor() {
     super();
+  }
+
+  // attributes
+  async getProjectAttributes(
+    workspaceSlug: string,
+    params?: TProjectAttributesParams
+  ): Promise<TProjectAttributesResponse[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/project-attributes/`, {
+      params,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
   }
 
   // analytics

@@ -33,7 +33,7 @@ const AnalyticsPage = observer(() => {
       <PageHead title={pageTitle} />
       {workspaceProjectIds && (
         <>
-          {workspaceProjectIds.length > 0 || loader ? (
+          {workspaceProjectIds.length > 0 || loader === "init-loader" ? (
             <div className="flex h-full flex-col overflow-hidden bg-custom-background-100">
               <Tab.Group as={Fragment} defaultIndex={analytics_tab === "custom" ? 1 : 0}>
                 <Header variant={EHeaderVariant.SECONDARY}>

@@ -57,7 +57,7 @@ export const PagesListHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <div>
-          <Breadcrumbs isLoading={loader}>
+          <Breadcrumbs isLoading={loader === "init-loader"}>
             <ProjectBreadcrumb />
             <Breadcrumbs.BreadcrumbItem
               type="text"

@@ -14,7 +14,7 @@ class ProjectAttributeSerializer(BaseSerializer):
 
     class Meta:
         model = ProjectAttribute
-        fields = ["state_id", "priority", "start_date", "target_date"]
+        fields = ["project_id", "state_id", "priority", "start_date", "target_date"]
 
 
 class ProjectFeatureSerializer(BaseSerializer):

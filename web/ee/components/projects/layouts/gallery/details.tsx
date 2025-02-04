@@ -215,7 +215,7 @@ const Details: React.FC<Props> = observer((props) => {
                   if (project.is_favorite) handleRemoveFromFavorites();
                   else handleAddToFavorites();
                 }}
-                selected={project.is_favorite}
+                selected={!!project.is_favorite}
               />
             </div>
           )}

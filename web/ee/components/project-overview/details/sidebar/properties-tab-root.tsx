@@ -49,7 +49,7 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
   // derived values
   const isArchived = project.archived_at !== null;
   const lead = getUserDetails(project.project_lead as string);
-  const projectMembersIds = project.members?.map((member) => member.member_id);
+  const projectMembersIds = project.members;
 
   const isProjectGroupingEnabled =
     isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
@@ -145,14 +145,14 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
                 <span>Members</span>
               </div>
               <MembersDropdown
-                value={projectMembersIds}
+                value={projectMembersIds ?? []}
                 onChange={() => {}}
                 className="h-7 my-auto w-full"
                 buttonClassName="cursor-not-allowed"
                 disabled
                 button={
                   <div className="p-2 rounded text-sm text-custom-text-200 hover:bg-custom-background-80 justify-start flex items-start">
-                    {projectMembersIds.length} member(s)
+                    {projectMembersIds?.length} member(s)
                   </div>
                 }
               />

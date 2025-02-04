@@ -10,6 +10,7 @@ from plane.ee.views.api import (
 from plane.ee.views.app.project import (
     ProjectLinkViewSet,
     ProjectAnalyticsEndpoint,
+    ProjectAttributesEndpoint,
     ProjectUpdatesViewSet,
     ProjectAttachmentV2Endpoint,
     ProjectReactionViewSet,
