@@ -27,6 +27,7 @@ from plane.app.views import (
     IssueVersionEndpoint,
     IssueDescriptionVersionEndpoint,
     IssueMetaEndpoint,
+    IssueDetailIdentifierEndpoint,
 )
 
 urlpatterns = [
@@ -283,5 +284,10 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/meta/",
         IssueMetaEndpoint.as_view(),
         name="issue-meta",
+    ),
+    path(
+        "workspaces/<str:slug>/work-items/<str:project_identifier>-<str:issue_identifier>/",
+        IssueDetailIdentifierEndpoint.as_view(),
+        name="issue-detail-identifier",
     ),
 ]
