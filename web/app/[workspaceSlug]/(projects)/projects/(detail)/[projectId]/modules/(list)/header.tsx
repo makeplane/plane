@@ -22,7 +22,7 @@ export const ModulesListHeader: React.FC = observer(() => {
   const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
-  const {  loader } = useProject();
+  const { loader } = useProject();
 
   // auth
   const canUserCreateModule = allowPermissions(
@@ -34,8 +34,8 @@ export const ModulesListHeader: React.FC = observer(() => {
     <Header>
       <Header.LeftItem>
         <div>
-          <Breadcrumbs onBack={router.back} isLoading={loader}>
-          <ProjectBreadcrumb />
+          <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
+            <ProjectBreadcrumb />
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={<BreadcrumbLink label="Modules" icon={<DiceIcon className="h-4 w-4 text-custom-text-300" />} />}

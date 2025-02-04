@@ -27,7 +27,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
   // store hooks
   const { leaveProject } = useUserPermissions();
   const { data: currentUser } = useUser();
-  const { fetchProjects } = useProject();
+  const { fetchProjectDetails } = useProject();
   const {
     project: { removeMemberFromProject },
   } = useMember();
@@ -45,7 +45,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
             state: "SUCCESS",
             element: "Project settings members page",
           });
-          await fetchProjects(workspaceSlug.toString());
+          await fetchProjectDetails(workspaceSlug.toString(), projectId.toString());
         })
         .catch((err) =>
           setToast({

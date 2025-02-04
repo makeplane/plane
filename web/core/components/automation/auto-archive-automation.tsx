@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { ArchiveRestore } from "lucide-react";
 // types
 import { IProject } from "@plane/types";
@@ -23,6 +24,8 @@ const initialValues: Partial<IProject> = { archive_in: 1 };
 
 export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
   const { handleChange } = props;
+  // router
+  const { workspaceSlug } = useParams();
   // states
   const [monthModal, setmonthModal] = useState(false);
   // store hooks
@@ -33,9 +36,9 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
   const isAdmin = allowPermissions(
     [EUserPermissions.ADMIN],
     EUserPermissionsLevel.PROJECT,
-    currentProjectDetails?.workspace_detail?.slug,
+    workspaceSlug?.toString(),
     currentProjectDetails?.id
-  );
+);
 
   return (
     <>

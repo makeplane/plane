@@ -20,8 +20,8 @@ type BlockData = {
   id: string;
   name: string;
   sort_order: number | null;
-  start_date: string | undefined | null;
-  target_date: string | undefined | null;
+  start_date?: string | undefined | null;
+  target_date?: string | undefined | null;
 };
 
 export interface IBaseTimelineStore {

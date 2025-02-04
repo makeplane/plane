@@ -141,7 +141,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   return (
     <Header>
       <Header.LeftItem>
-        <Breadcrumbs isLoading={loader}>
+        <Breadcrumbs isLoading={loader === "init-loader"}>
           <ProjectBreadcrumb />
           <Breadcrumbs.BreadcrumbItem
             type="text"

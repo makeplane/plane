@@ -162,7 +162,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
       />
       <Header>
         <Header.LeftItem>
-          <Breadcrumbs onBack={router.back} isLoading={loader}>
+          <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
