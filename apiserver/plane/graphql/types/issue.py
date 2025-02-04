@@ -82,7 +82,18 @@ class IssuesType:
         )()
         issue_project_id = await sync_to_async(lambda: self.project_id)()
         if parent_issue_project_id == issue_project_id:
+            # check if the parent issue issue_type is not epic
+            parent_issue_is_epic = await sync_to_async(
+                lambda: self.parent.type.is_epic
+                if self.parent and self.parent.type
+                else None
+            )()
+
+            if parent_issue_is_epic:
+                return None
+
             return str(self.parent_id)
+
         return None
 
     @strawberry.field
