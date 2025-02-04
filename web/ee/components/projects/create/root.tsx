@@ -4,6 +4,7 @@ import { useState, FC } from "react";
 import { observer } from "mobx-react";
 import { useForm, FormProvider } from "react-hook-form";
 // ui
+import { IProjectBulkAddFormData } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // types
 import { TCreateProjectFormProps } from "@/ce/components/projects/create/root";
@@ -17,7 +18,6 @@ import { getRandomEmoji } from "@/helpers/emoji.helper";
 // hooks
 import { useEventTracker, useMember, useProject, useUser, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { TProject } from "@/plane-web/types/projects";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
@@ -47,8 +47,8 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
   const { currentWorkspace } = useWorkspace();
   const {
-    memberMap,
     project: { bulkAddMembersToProject },
+    workspace: { getWorkspaceMemberDetails },
   } = useMember();
   const { data: currentUser } = useUser();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
@@ -82,20 +82,21 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
   };
 
   const onSubmit = async (formData: Partial<TProject>) => {
+    // Get the members payload for bulk add
+    const membersPayload: IProjectBulkAddFormData["members"] = [];
+    if (formData.members) {
+      formData.members.forEach((memberId) => {
+        const memberDetails = getWorkspaceMemberDetails(memberId);
+        if (currentUser && currentUser.id !== memberId && memberDetails && memberDetails.role) {
+          membersPayload.push({
+            member_id: memberId,
+            role: memberDetails.role,
+          });
+        }
+      });
+    }
     // Upper case identifier
-    const members =
-      formData.members &&
-      formData.members
-        .filter((id: any) => currentUser && currentUser.id !== id)
-        .map((id: any) => ({
-          id,
-          member_id: id,
-          role: EUserPermissions.MEMBER,
-          member__avatar_url: memberMap[id]?.avatar_url,
-          member__display_name: memberMap[id]?.display_name,
-        }));
     formData.identifier = formData.identifier?.toUpperCase();
-    if (members) formData.members = members.map((member) => member.member_id);
     const coverImage = formData.cover_image_url;
 
     return createProject(workspaceSlug.toString(), formData)
@@ -107,9 +108,9 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
           ...res,
           state: "SUCCESS",
         };
-        if (isProjectGroupingEnabled && members) {
+        if (isProjectGroupingEnabled && membersPayload.length > 0) {
           bulkAddMembersToProject(workspaceSlug.toString(), res.id, {
-            members,
+            members: membersPayload,
           });
         }
         captureProjectEvent({
