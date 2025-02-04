@@ -86,8 +86,10 @@ export const ModuleForm: React.FC<Props> = (props) => {
                   <ProjectDropdown
                     value={value}
                     onChange={(val) => {
-                      onChange(val);
-                      setActiveProject(val);
+                      if (!Array.isArray(val)) {
+                        onChange(val);
+                        setActiveProject(val);
+                      }
                     }}
                     multiple={false}
                     buttonVariant="border-with-text"
@@ -99,7 +101,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
             />
           )}
           <h3 className="text-xl font-medium text-custom-text-200">
-            {status ? t("update") : t("create")} {t("module").toLowerCase()}
+            {status ? t("common.update") : t("common.create")} {t("common.module").toLowerCase()}
           </h3>
         </div>
         <div className="space-y-3">

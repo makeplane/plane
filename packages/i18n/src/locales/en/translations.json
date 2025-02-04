@@ -571,7 +571,8 @@
         "title": "Error!",
         "message": "Something went wrong. Please try again."
       },
-      "required": "This field is required"
+      "required": "This field is required",
+      "entity_required": "{entity} is required"
     },
     "update_link": "Update link",
     "attach": "Attach",
@@ -612,8 +613,63 @@
       "subscribe": "Subscribe",
       "unsubscribe": "Unsubscribe",
       "clear_sorting": "Clear sorting",
-      "show_weekends": "Show weekends"
-    }
+      "show_weekends": "Show weekends",
+      "enable": "Enable",
+      "disable": "Disable"
+    },
+    "name": "Name",
+    "discard": "Discard",
+    "confirm": "Confirm",
+    "confirming": "Confirming",
+    "read_the_docs": "Read the docs",
+    "default": "Default",
+    "active": "Active",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "mandate": "Mandate",
+    "mandatory": "Mandatory",
+    "yes": "Yes",
+    "no": "No",
+    "please_wait": "Please wait",
+    "enabling": "Enabling",
+    "disabling": "Disabling",
+    "beta": "Beta",
+    "or": "or",
+    "next": "Next",
+    "back": "Back",
+    "cancelling": "Cancelling",
+    "configuring": "Configuring",
+    "clear": "Clear",
+    "import": "Import",
+    "connect": "Connect",
+    "authorizing": "Authorizing",
+    "processing": "Processing",
+    "no_data_available": "No data available",
+    "from": "from {name}",
+    "authenticated": "Authenticated",
+    "select": "Select",
+    "upgrade": "Upgrade",
+    "add_seats": "Add Seats",
+    "label": "Label",
+    "priorities": "Priorities",
+    "projects": "Projects",
+    "workspace": "Workspace",
+    "workspaces": "Workspaces",
+    "team": "Team",
+    "teams": "Teams",
+    "entity": "Entity",
+    "entities": "Entities",
+    "task": "Task",
+    "tasks": "Tasks",
+    "section": "Section",
+    "sections": "Sections",
+    "edit": "Edit",
+    "connecting": "Connecting",
+    "connected": "Connected",
+    "disconnect": "Disconnect",
+    "disconnecting": "Disconnecting",
+    "installing": "Installing",
+    "install": "Install"
   },
 
   "form": {
@@ -826,7 +882,7 @@
     "select": {
       "error": "Please select at least one work item",
       "empty": "No work items selected",
-      "add_selected": "Add selected issues"
+      "add_selected": "Add selected work items"
     },
     "open_in_full_screen": "Open work item in full screen"
   },
@@ -1224,9 +1280,9 @@
           "description": "Invite people to collaborate on your workspace.",
           "button": "Send invitations",
           "button_loading": "Sending invitations",
-          "placeholder": "Enter email addresses",
+          "placeholder": "name@company.com",
           "errors": {
-            "required": "Email is required",
+            "required": "We need an email address to invite them.",
             "invalid": "Email is invalid"
           }
         }
@@ -1501,9 +1557,9 @@
       "label": "Active cycle",
       "progress": "Progress",
       "chart": "Burndown chart",
-      "priority_issue": "Priority issues",
+      "priority_issue": "Priority work items",
       "assignees": "Assignees",
-      "issue_burndown": "Issue burndown",
+      "issue_burndown": "Work item burndown",
       "ideal": "Ideal",
       "current": "Current",
       "labels": "Labels"
@@ -1662,7 +1718,7 @@
           "text": "Create new work items"
         },
         "secondary_button": {
-          "text": "Add an existing work item="
+          "text": "Add an existing work item"
         }
       },
       "archived": {
@@ -2079,9 +2135,6 @@
       "manual": "Manual"
     }
   },
-
-
-
 
   "cycle": {
     "label": "{count, plural, one {Cycle} other {Cycles}}",
