@@ -202,7 +202,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    subIssueOperations.copyText(`${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`);
+                    subIssueOperations.copyText(workItemLink);
                   }}
                 >
                   <div className="flex items-center gap-2">
