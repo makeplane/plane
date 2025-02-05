@@ -35,7 +35,7 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
     total_members = serializers.IntegerField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
     logo_url = serializers.CharField(read_only=True)
-    role = serializers.CharField(read_only=True)
+    role = serializers.IntegerField(read_only=True)
 
     def validate_slug(self, value):
         # Check if the slug is restricted
