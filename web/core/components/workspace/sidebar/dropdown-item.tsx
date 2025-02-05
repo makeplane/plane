@@ -5,6 +5,7 @@ import { Menu } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 import { cn, getFileURL } from "@plane/utils";
+import { getUserRole } from "@/helpers/user.helper";
 
 type TProps = {
   workspace: IWorkspace;
@@ -60,7 +61,7 @@ const SidebarDropdownItem = (props: TProps) => {
                 {workspace.name}
               </h5>
               <div className="text-sm text-custom-text-300 flex gap-2">
-                <span>Admin </span>
+                <span>{getUserRole(workspace.role)}</span>
                 <div className="w-1 h-1 bg-custom-text-300/50 rounded-full m-auto" />
                 <span>
                   {workspace.total_members} {t("members", { count: workspace.total_members })}
