@@ -396,6 +396,7 @@ class WorkspaceUserPreference(BaseModel):
         ANALYTICS = "analytics", "Analytics"
         CYCLES = "cycles", "Cycles"
         VIEWS = "views", "Views"
+        YOUR_WORK = "your_work", "Your Work"
         TEAM_SPACES = "team_spaces", "Team Spaces"
         INITIATIVES = "initiatives", "Initiatives"
 

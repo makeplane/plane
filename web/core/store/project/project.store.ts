@@ -215,7 +215,7 @@ export class ProjectStore implements IProjectStore {
     projects = sortBy(projects, "sort_order");
 
     const projectIds = projects
-      .filter((project) => project.workspace === currentWorkspace.id && project.is_member && !project.archived_at)
+      .filter((project) => project.workspace === currentWorkspace.id && !!project.member_role && !project.archived_at)
       .map((project) => project.id);
     return projectIds;
   }
@@ -233,7 +233,7 @@ export class ProjectStore implements IProjectStore {
     const projectIds = projects
       .filter(
         (project) =>
-          project.workspace === currentWorkspace.id && project.is_member && project.is_favorite && !project.archived_at
+          project.workspace === currentWorkspace.id && !!project.member_role && project.is_favorite && !project.archived_at
       )
       .map((project) => project.id);
     return projectIds;
