@@ -251,56 +251,56 @@ def track_projects(
     initiative_activities,
     epoch,
 ):
-    try:
-        requested_projects = (
-            set([str(asg) for asg in requested_data.get("project_ids", [])])
-            if requested_data is not None
-            else set()
-        )
-        current_projects = (
-            set([str(asg) for asg in current_instance.get("project_ids", [])])
-            if current_instance is not None
-            else set()
-        )
+    requested_projects = (
+        set([str(asg) for asg in requested_data.get("project_ids", [])])
+        if requested_data is not None
+        else set()
+    )
+    current_projects = (
+        set([str(asg) for asg in current_instance.get("project_ids", [])])
+        if current_instance is not None
+        else set()
+    )
 
-        added_projects = requested_projects - current_projects
-        dropped_projects = current_projects - requested_projects
+    added_projects = requested_projects - current_projects
+    dropped_projects = current_projects - requested_projects
 
-        for added_project in added_projects:
-            project = Project.objects.get(pk=added_project)
-            initiative_activities.append(
-                InitiativeActivity(
-                    initiative_id=initiative_id,
-                    actor_id=actor_id,
-                    workspace_id=workspace_id,
-                    verb="updated",
-                    old_value="",
-                    new_value=project.name,
-                    field="projects",
-                    comment="added project ",
-                    new_identifier=project.id,
-                    epoch=epoch,
-                )
+    added_projects = Project.objects.filter(pk__in=added_projects).values("id", "name")
+    dropped_projects = Project.objects.filter(pk__in=dropped_projects).values(
+        "id", "name"
+    )
+
+    for added_project in added_projects:
+        initiative_activities.append(
+            InitiativeActivity(
+                initiative_id=initiative_id,
+                actor_id=actor_id,
+                workspace_id=workspace_id,
+                verb="updated",
+                old_value="",
+                new_value=added_project["name"],
+                field="projects",
+                comment="added project ",
+                new_identifier=added_project["id"],
+                epoch=epoch,
             )
+        )
 
-        for dropped_project in dropped_projects:
-            project = Project.objects.get(pk=dropped_project)
-            initiative_activities.append(
-                InitiativeActivity(
-                    initiative_id=initiative_id,
-                    actor_id=actor_id,
-                    workspace_id=workspace_id,
-                    verb="updated",
-                    old_value=project.name,
-                    new_value="",
-                    field="projects",
-                    comment="removed project ",
-                    old_identifier=project.id,
-                    epoch=epoch,
-                )
+    for dropped_project in dropped_projects:
+        initiative_activities.append(
+            InitiativeActivity(
+                initiative_id=initiative_id,
+                actor_id=actor_id,
+                workspace_id=workspace_id,
+                verb="updated",
+                old_value=dropped_project["name"],
+                new_value="",
+                field="projects",
+                comment="removed project ",
+                old_identifier=dropped_project["id"],
+                epoch=epoch,
             )
-    except Project.DoesNotExist:
-        return
+        )
 
 
 def track_epics(
@@ -312,58 +312,54 @@ def track_epics(
     initiative_activities,
     epoch,
 ):
-    try:
-        requested_epics = (
-            set([str(asg) for asg in requested_data.get("epic_ids", [])])
-            if requested_data is not None
-            else set()
-        )
-        current_epics = (
-            set([str(asg) for asg in current_instance.get("epic_ids", [])])
-            if current_instance is not None
-            else set()
-        )
+    requested_epics = (
+        set([str(asg) for asg in requested_data.get("epic_ids", [])])
+        if requested_data is not None
+        else set()
+    )
+    current_epics = (
+        set([str(asg) for asg in current_instance.get("epic_ids", [])])
+        if current_instance is not None
+        else set()
+    )
 
-        added_epics = requested_epics - current_epics
-        dropped_epics = current_epics - requested_epics
+    added_epics = requested_epics - current_epics
+    dropped_epics = current_epics - requested_epics
 
-        for added_epic in added_epics:
-            epic = Issue.objects.get(pk=added_epic)
+    added_epics = Issue.objects.filter(pk__in=added_epics).values("id", "name")
+    dropped_epics = Issue.objects.filter(pk__in=dropped_epics).values("id", "name")
 
-            initiative_activities.append(
-                InitiativeActivity(
-                    initiative_id=initiative_id,
-                    actor_id=actor_id,
-                    workspace_id=workspace_id,
-                    verb="updated",
-                    old_value="",
-                    new_value=epic.name,
-                    field="epics",
-                    comment="added epic ",
-                    new_identifier=epic.id,
-                    epoch=epoch,
-                )
+    for added_epic in added_epics:
+        initiative_activities.append(
+            InitiativeActivity(
+                initiative_id=initiative_id,
+                actor_id=actor_id,
+                workspace_id=workspace_id,
+                verb="updated",
+                old_value="",
+                new_value=added_epic["name"],
+                field="epics",
+                comment="added epic ",
+                new_identifier=added_epic["id"],
+                epoch=epoch,
             )
+        )
 
-        for dropped_epic in dropped_epics:
-            epic = Issue.objects.get(pk=dropped_epic)
-            initiative_activities.append(
-                InitiativeActivity(
-                    initiative_id=initiative_id,
-                    actor_id=actor_id,
-                    workspace_id=workspace_id,
-                    verb="updated",
-                    old_value=epic.name,
-                    new_value="",
-                    field="epics",
-                    comment="removed epic ",
-                    old_identifier=epic.id,
-                    epoch=epoch,
-                )
+    for dropped_epic in dropped_epics:
+        initiative_activities.append(
+            InitiativeActivity(
+                initiative_id=initiative_id,
+                actor_id=actor_id,
+                workspace_id=workspace_id,
+                verb="updated",
+                old_value=dropped_epic["name"],
+                new_value="",
+                field="epics",
+                comment="removed epic ",
+                old_identifier=dropped_epic["id"],
+                epoch=epoch,
             )
-
-    except Issue.DoesNotExist:
-        return
+        )
 
 
 def track_lead(
