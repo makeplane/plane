@@ -1,4 +1,10 @@
+# Python imports
+import json
 from typing import Any, Dict, Optional
+
+# Django imports
+from django.http import JsonResponse
+from django.http.request import HttpRequest
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
@@ -6,11 +12,11 @@ from django.views.decorators.csrf import csrf_exempt
 from asgiref.sync import sync_to_async
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from graphql import parse
 
 # Strawberry imports
 from strawberry.django.views import AsyncGraphQLView
-from strawberry.types import ExecutionResult
-from strawberry.types.execution import ExecutionContext
+from strawberry.types import ExecutionResult, ExecutionContext
 
 
 # Sync to async function to get the validated token
@@ -30,35 +36,43 @@ class CustomGraphQLView(AsyncGraphQLView):
     async def get_context(self, request, response):
         # Get the context from the parent class
         context = await super().get_context(request, response)
-        try:
-            # ========= JWT token validation =========
-            # Get the token from the request headers
-            auth_header = request.headers.get("Authorization")
 
-            # If the token is present, validate it and get the user
+        context.user = request.user
+        return context
+
+    async def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any):
+        """Check if the request contains a public query/mutation before enforcing authentication."""
+        try:
+            body = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"message": "Invalid request"}, status=400)
+
+        query_name = self.get_query_name(body)
+        if self.is_public_operation(query_name):
+            return await super().dispatch(request, *args, **kwargs)
+
+        # Authentication handling
+        auth_header = request.headers.get("Authorization")
+        request.user = None
+
+        try:
             if auth_header:
                 bearer_token = auth_header.split()[1]
-                if not bearer_token:
-                    context.user = None
-                    request.user = None
-
                 validated_token = await get_validated_token(bearer_token)
-                if validated_token is None:
-                    context.user = None
-                    request.user = None
-
-                # Get the user from the validated token
                 user = await get_jwt_user(validated_token)
-
-                # Set the user in the context
-                context.user = user
-                request.user = user
+                if user:
+                    request.user = user
+                    return await super().dispatch(request, *args, **kwargs)
+                else:
+                    return JsonResponse(
+                        {"message": "Authentication required"}, status=401
+                    )
             else:
-                context.user = None
+                return JsonResponse({"message": "Authentication required"}, status=401)
         except (InvalidToken, TokenError):
-            context.user = None
-            request.user = None
-        return context
+            return JsonResponse(
+                {"message": "Invalid token. Please log in again."}, status=401
+            )
 
     async def process_result(
         self,
@@ -75,3 +89,17 @@ class CustomGraphQLView(AsyncGraphQLView):
             ]
 
         return processed_result
+
+    def get_query_name(self, body: dict) -> Optional[str]:
+        query_str = body.get("query", "")
+        first_line = query_str.strip().split("\n")[0]
+        if first_line.startswith("query") or first_line.startswith("mutation"):
+            return first_line.split("{")[0].split("(")[0].split()[-1]
+        return None
+
+    def is_public_operation(self, query_name: str) -> bool:
+        auth_neglect_list = ["VersionCheckQuery"]
+
+        if query_name in auth_neglect_list:
+            return True
+        return False

@@ -13,6 +13,7 @@ from django.conf import settings
 from strawberry.types import Info
 
 # Module Imports
+from plane.graphql.permissions.public import public_query
 from plane.graphql.types.version_check import VersionCheckType
 
 
@@ -33,6 +34,7 @@ def get_version_check(platform: str, is_internal: Optional[bool] = False):
 @strawberry.type
 class VersionCheckQuery:
     @strawberry.field
+    @public_query()
     async def version_check(
         self, info: Info, platform: str, is_internal: Optional[bool] = False
     ) -> VersionCheckType:

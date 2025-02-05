@@ -1,11 +1,9 @@
 # Python imports
 from datetime import datetime
 import json
-import requests
 
 # Django imports
 from django.utils import timezone
-from django.conf import settings
 from django.core import serializers
 
 # Strawberry imports
@@ -19,7 +17,9 @@ from typing import Optional
 from asgiref.sync import sync_to_async
 
 # Module imports
+from plane.graphql.utils.feature_flag import validate_feature_flag
 from plane.graphql.types.issue import IssuesType, IssueUserPropertyType
+from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
 from plane.graphql.permissions.project import (
     ProjectBasePermission,
     ProjectMemberPermission,
@@ -31,7 +31,6 @@ from plane.db.models import (
     IssueAssignee,
     IssueLabel,
     Workspace,
-    FileAsset,
     IssueSubscriber,
     IssueType,
     CycleIssue,
@@ -39,19 +38,6 @@ from plane.db.models import (
 )
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.graphql.utils.issue_activity import convert_issue_properties_to_activity_dict
-
-
-@sync_to_async
-def get_feature_flag(workspace_slug: str, user_id: str, flag_key: str):
-    url = f"{settings.FEATURE_FLAG_SERVER_BASE_URL}/api/feature-flags/"
-    json = {"workspace_slug": workspace_slug, "user_id": user_id, "flag_key": flag_key}
-    headers = {
-        "content-type": "application/json",
-        "x-api-key": settings.FEATURE_FLAG_SERVER_AUTH_TOKEN,
-    }
-    response = requests.post(url, json=json, headers=headers)
-    response.raise_for_status()
-    return response.json().get("value", False)
 
 
 @strawberry.type
@@ -83,8 +69,10 @@ class IssueMutation:
 
         issue_type_id = None
         # validating issue type and assigning thr default issue type
-        is_feature_flagged = await get_feature_flag(
-            workspace.slug, str(user.id), "ISSUE_TYPES"
+        is_feature_flagged = await validate_feature_flag(
+            slug=workspace.slug,
+            user_id=str(user.id),
+            feature_key=FeatureFlagsTypesEnum.ISSUE_TYPES.value,
         )
 
         if is_feature_flagged:
