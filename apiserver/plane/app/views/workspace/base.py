@@ -6,11 +6,11 @@ from datetime import date
 
 from dateutil.relativedelta import relativedelta
 from django.db import IntegrityError
-from django.db.models import Count, F, Func, OuterRef, Prefetch, Q, Value, TextField
+from django.db.models import Count, F, Func, OuterRef, Prefetch, Q
 
 from django.db.models.fields import DateField
 from django.db.models.functions import Cast, ExtractDay, ExtractWeek
-from django.db.models.functions import Coalesce
+
 
 # Django imports
 from django.http import HttpResponse
