@@ -28,10 +28,11 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const {
+    loader,
+    fetchStatus,
     workspaceProjectIds: storeWorkspaceProjectIds,
     filteredProjectIds: storeFilteredProjectIds,
     getProjectById,
-    loader,
   } = useProject();
   const { searchQuery, currentWorkspaceDisplayFilters } = useProjectFilter();
   const { allowPermissions } = useUserPermissions();
@@ -49,7 +50,8 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
     EUserPermissionsLevel.WORKSPACE
   );
 
-  if (!filteredProjectIds || !workspaceProjectIds || loader) return <ProjectsLoader />;
+  if (!filteredProjectIds || !workspaceProjectIds || loader === "init-loader" || fetchStatus !== "complete")
+    return <ProjectsLoader />;
 
   if (workspaceProjectIds?.length === 0 && !currentWorkspaceDisplayFilters?.archived_projects)
     return (

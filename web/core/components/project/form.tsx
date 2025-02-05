@@ -222,7 +222,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                     label={t("change_cover")}
                     control={control}
                     onChange={onChange}
-                    value={value}
+                    value={value ?? null}
                     disabled={!isAdmin}
                     projectId={project.id}
                   />

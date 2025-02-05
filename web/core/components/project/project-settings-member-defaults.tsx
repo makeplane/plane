@@ -37,7 +37,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   const isAdmin = allowPermissions(
     [EUserPermissions.ADMIN],
     EUserPermissionsLevel.PROJECT,
-    currentProjectDetails?.workspace_detail?.slug,
+    workspaceSlug?.toString(),
     currentProjectDetails?.id
   );
   // form info
@@ -179,7 +179,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
             </p>
           </div>
           <ToggleSwitch
-            value={currentProjectDetails?.guest_view_all_features}
+            value={!!currentProjectDetails?.guest_view_all_features}
             onChange={() => toggleGuestViewAllIssues(!currentProjectDetails?.guest_view_all_features)}
             disabled={!isAdmin}
             size="md"

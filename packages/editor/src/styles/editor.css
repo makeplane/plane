@@ -408,12 +408,14 @@ p.editor-paragraph-block {
     padding-top: 4px;
   }
 
-  &:last-child {
-    padding-bottom: 4px;
-  }
+  &:not(td p.editor-paragraph-block, th p.editor-paragraph-block) {
+    &:last-child {
+      padding-bottom: 4px;
+    }
 
-  &:not(td p.editor-paragraph-block):not(:last-child) {
-    padding-bottom: 8px;
+    &:not(:last-child) {
+      padding-bottom: 8px;
+    }
   }
 
   font-size: var(--font-size-regular);

@@ -31,15 +31,11 @@ export const WorkspaceDashboardView = observer(() => {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const {
-    //  captureEvent,
-    setTrackElement,
-  } = useEventTracker();
+  const { captureEvent, setTrackElement } = useEventTracker();
   const { toggleCreateProjectModal } = useCommandPalette();
   const { workspaceSlug } = useParams();
   const { data: currentUser } = useUser();
   const { data: currentUserProfile, updateTourCompleted } = useUserProfile();
-  const { captureEvent } = useEventTracker();
   const { homeDashboardId, fetchHomeDashboardWidgets } = useDashboard();
   const { joinedProjectIds, loader } = useProject();
   const { allowPermissions } = useUserPermissions();
@@ -83,7 +79,7 @@ export const WorkspaceDashboardView = observer(() => {
       )}
       {homeDashboardId && joinedProjectIds && (
         <>
-          {joinedProjectIds.length > 0 || loader ? (
+          {joinedProjectIds.length > 0 || loader === "init-loader" ? (
             <>
               <IssuePeekOverview />
               <ContentWrapper

@@ -32,7 +32,7 @@ export const useLinkOperations = (
           });
         } catch (error: any) {
           setToast({
-            message: error?.data?.error ?? t("links.toasts.not_created.message"),
+            message: error?.data?.url?.error ?? t("links.toasts.not_created.message"),
             type: TOAST_TYPE.ERROR,
             title: t("links.toasts.not_created.title"),
           });
@@ -48,9 +48,9 @@ export const useLinkOperations = (
             type: TOAST_TYPE.SUCCESS,
             title: t("links.toasts.updated.title"),
           });
-        } catch (error) {
+        } catch (error: any) {
           setToast({
-            message: t("links.toasts.not_updated.message"),
+            message: error?.data?.url?.error ?? t("links.toasts.not_updated.message"),
             type: TOAST_TYPE.ERROR,
             title: t("links.toasts.not_updated.title"),
           });
