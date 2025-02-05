@@ -206,7 +206,7 @@
   "password": "Contraseña",
   "change_cover": "Cambiar portada",
   "language": "Idioma",
-  "saving": "Guardando...",
+  "saving": "Guardando",
   "save_changes": "Guardar cambios",
   "deactivate_account": "Desactivar cuenta",
   "deactivate_account_description": "Al desactivar una cuenta, todos los datos y recursos dentro de esa cuenta se eliminarán permanentemente y no se podrán recuperar.",
@@ -328,7 +328,7 @@
   "project_id_must_be_at_most_5_characters": "El ID del proyecto debe tener como máximo 5 caracteres",
   "project_id": "ID del proyecto",
   "project_id_tooltip_content": "Te ayuda a identificar elementos de trabajo en el proyecto de manera única. Máximo 5 caracteres.",
-  "description_placeholder": "Descripción...",
+  "description_placeholder": "Descripción",
   "only_alphanumeric_non_latin_characters_allowed": "Solo se permiten caracteres alfanuméricos y no latinos.",
   "project_id_is_required": "El ID del proyecto es requerido",
   "project_id_allowed_char": "Solo se permiten caracteres alfanuméricos y no latinos.",
@@ -452,7 +452,7 @@
   "change_parent_issue": "Cambiar elemento de trabajo padre",
   "remove_parent_issue": "Eliminar elemento de trabajo padre",
   "add_parent": "Agregar padre",
-  "loading_members": "Cargando miembros...",
+  "loading_members": "Cargando miembros",
   "view_link_copied_to_clipboard": "Enlace de vista copiado al portapapeles.",
   "required": "Requerido",
   "optional": "Opcional",
@@ -687,7 +687,7 @@
     "add_label": "Agregar etiqueta",
     "estimates": "Estimaciones",
     "customize_time_range": "Personalizar rango de tiempo",
-    "loading": "Cargando...",
+    "loading": "Cargando",
     "attachments": "Archivos adjuntos",
     "properties": "Propiedades",
     "parent": "Padre",
@@ -770,7 +770,7 @@
     "click_to_add_description": "Haz clic para agregar descripción",
     "search": {
       "label": "Buscar",
-      "placeholder": "Escribe para buscar...",
+      "placeholder": "Escribe para buscar",
       "no_matches_found": "No se encontraron coincidencias",
       "no_matching_results": "No hay resultados coincidentes"
     },
@@ -879,7 +879,7 @@
     "all": "Todos los Epics",
     "label": "{count, plural, one {Epic} other {Epics}}",
     "new": "Nuevo Epic",
-    "adding": "Agregando epic...",
+    "adding": "Agregando epic",
     "create": {
       "success": "Epic creado correctamente"
     },
@@ -907,7 +907,7 @@
       "cycle": {
         "failed": "No se pudo agregar el elemento de trabajo al ciclo. Por favor, inténtalo de nuevo.",
         "success": "{count, plural, one {Elemento de trabajo agregado} other {Elementos de trabajo agregados}} al ciclo correctamente.",
-        "loading": "Agregando {count, plural, one {elemento de trabajo} other {elementos de trabajo}} al ciclo..."
+        "loading": "Agregando {count, plural, one {elemento de trabajo} other {elementos de trabajo}} al ciclo"
       },
       "assignee": "Agregar asignados",
       "start_date": "Agregar fecha de inicio",
@@ -921,12 +921,12 @@
     "remove": {
       "label": "Eliminar elemento de trabajo",
       "cycle": {
-        "loading": "Eliminando elemento de trabajo del ciclo...",
+        "loading": "Eliminando elemento de trabajo del ciclo",
         "success": "Elemento de trabajo eliminado del ciclo correctamente.",
         "failed": "No se pudo eliminar el elemento de trabajo del ciclo. Por favor, inténtalo de nuevo."
       },
       "module": {
-        "loading": "Eliminando elemento de trabajo del módulo...",
+        "loading": "Eliminando elemento de trabajo del módulo",
         "success": "Elemento de trabajo eliminado del módulo correctamente.",
         "failed": "No se pudo eliminar el elemento de trabajo del módulo. Por favor, inténtalo de nuevo."
       },
@@ -935,7 +935,7 @@
       }
     },
     "new": "Nuevo elemento de trabajo",
-    "adding": "Agregando elemento de trabajo...",
+    "adding": "Agregando elemento de trabajo",
     "create": {
       "success": "Elemento de trabajo creado correctamente"
     },
@@ -980,7 +980,7 @@
       "backlog": "Pendientes"
     },
     "comments": {
-      "placeholder": "Agregar comentario...",
+      "placeholder": "Agregar comentario",
       "switch": {
         "private": "Cambiar a comentario privado",
         "public": "Cambiar a comentario público"
@@ -1762,7 +1762,7 @@
         }
       },
       "favorite": {
-        "loading": "Agregando ciclo a favoritos...",
+        "loading": "Agregando ciclo a favoritos",
         "success": {
           "description": "Ciclo agregado a favoritos.",
           "title": "¡Éxito!"
@@ -1773,7 +1773,7 @@
         }
       },
       "unfavorite": {
-        "loading": "Eliminando ciclo de favoritos...",
+        "loading": "Eliminando ciclo de favoritos",
         "success": {
           "description": "Ciclo eliminado de favoritos.",
           "title": "¡Éxito!"
@@ -1784,7 +1784,7 @@
         }
       },
       "update": {
-        "loading": "Actualizando ciclo...",
+        "loading": "Actualizando ciclo",
         "success": {
           "description": "Ciclo actualizado exitosamente.",
           "title": "¡Éxito!"

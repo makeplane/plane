@@ -206,7 +206,7 @@
   "password": "Mot de passe",
   "change_cover": "Changer la couverture",
   "language": "Langue",
-  "saving": "Enregistrement...",
+  "saving": "Enregistrement",
   "save_changes": "Enregistrer les modifications",
   "deactivate_account": "Désactiver le compte",
   "deactivate_account_description": "Lors de la désactivation d'un compte, toutes les données et ressources de ce compte seront définitivement supprimées et ne pourront pas être récupérées.",
@@ -328,7 +328,7 @@
   "project_id_must_be_at_most_5_characters": "L'ID du projet doit comporter au plus 5 caractères",
   "project_id": "ID du projet",
   "project_id_tooltip_content": "Vous aide à identifier uniquement les éléments de travail dans le projet. Maximum 5 caractères.",
-  "description_placeholder": "Description...",
+  "description_placeholder": "Description",
   "only_alphanumeric_non_latin_characters_allowed": "Seuls les caractères alphanumériques et non latins sont autorisés.",
   "project_id_is_required": "L'ID du projet est requis",
   "project_id_allowed_char": "Seuls les caractères alphanumériques et non latins sont autorisés.",
@@ -452,7 +452,7 @@
   "change_parent_issue": "Changer l'élément de travail parent",
   "remove_parent_issue": "Supprimer l'élément de travail parent",
   "add_parent": "Ajouter un parent",
-  "loading_members": "Chargement des membres...",
+  "loading_members": "Chargement des membres",
   "view_link_copied_to_clipboard": "Lien de la vue copié dans le presse-papiers.",
   "required": "Requis",
   "optional": "Optionnel",
@@ -687,7 +687,7 @@
     "add_label": "Ajouter une étiquette",
     "estimates": "Estimations",
     "customize_time_range": "Personnaliser la plage de temps",
-    "loading": "Chargement...",
+    "loading": "Chargement",
     "attachments": "Pièces jointes",
     "properties": "Propriétés",
     "parent": "Parent",
@@ -770,7 +770,7 @@
     "click_to_add_description": "Cliquez pour ajouter une description",
     "search": {
       "label": "Rechercher",
-      "placeholder": "Tapez pour rechercher...",
+      "placeholder": "Tapez pour rechercher",
       "no_matches_found": "Aucune correspondance trouvée",
       "no_matching_results": "Aucun résultat correspondant"
     },
@@ -879,7 +879,7 @@
     "all": "Tous les Epics",
     "label": "{count, plural, one {Epic} other {Epics}}",
     "new": "Nouvel Epic",
-    "adding": "Ajout d'un epic...",
+    "adding": "Ajout d'un epic",
     "create": {
       "success": "Epic créé avec succès"
     },
@@ -907,7 +907,7 @@
       "cycle": {
         "failed": "L'élément de travail n'a pas pu être ajouté au cycle. Veuillez réessayer.",
         "success": "{count, plural, one {Élément de travail} other {Éléments de travail}} ajouté(s) au cycle avec succès.",
-        "loading": "Ajout de {count, plural, one {l'élément de travail} other {éléments de travail}} au cycle..."
+        "loading": "Ajout de {count, plural, one {l'élément de travail} other {éléments de travail}} au cycle"
       },
       "assignee": "Ajouter des assignés",
       "start_date": "Ajouter une date de début",
@@ -921,12 +921,12 @@
     "remove": {
       "label": "Supprimer l'élément de travail",
       "cycle": {
-        "loading": "Suppression de l'élément de travail du cycle...",
+        "loading": "Suppression de l'élément de travail du cycle",
         "success": "Élément de travail supprimé du cycle avec succès.",
         "failed": "L'élément de travail n'a pas pu être supprimé du cycle. Veuillez réessayer."
       },
       "module": {
-        "loading": "Suppression de l'élément de travail du module...",
+        "loading": "Suppression de l'élément de travail du module",
         "success": "Élément de travail supprimé du module avec succès.",
         "failed": "L'élément de travail n'a pas pu être supprimé du module. Veuillez réessayer."
       },
@@ -935,7 +935,7 @@
       }
     },
     "new": "Nouvel élément de travail",
-    "adding": "Ajout d'un élément de travail...",
+    "adding": "Ajout d'un élément de travail",
     "create": {
       "success": "Élément de travail créé avec succès"
     },
@@ -980,7 +980,7 @@
       "backlog": "Backlog"
     },
     "comments": {
-      "placeholder": "Ajouter un commentaire...",
+      "placeholder": "Ajouter un commentaire",
       "switch": {
         "private": "Passer en commentaire privé",
         "public": "Passer en commentaire public"
@@ -1762,7 +1762,7 @@
         }
       },
       "favorite": {
-        "loading": "Ajout du cycle aux favoris...",
+        "loading": "Ajout du cycle aux favoris",
         "success": {
           "description": "Cycle ajouté aux favoris.",
           "title": "Succès !"
@@ -1773,7 +1773,7 @@
         }
       },
       "unfavorite": {
-        "loading": "Suppression du cycle des favoris...",
+        "loading": "Suppression du cycle des favoris",
         "success": {
           "description": "Cycle retiré des favoris.",
           "title": "Succès !"
@@ -1784,7 +1784,7 @@
         }
       },
       "update": {
-        "loading": "Mise à jour du cycle...",
+        "loading": "Mise à jour du cycle",
         "success": {
           "description": "Cycle mis à jour avec succès.",
           "title": "Succès !"

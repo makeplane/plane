@@ -206,7 +206,7 @@
   "password": "密码",
   "change_cover": "更改封面",
   "language": "语言",
-  "saving": "保存中...",
+  "saving": "保存中",
   "save_changes": "保存更改",
   "deactivate_account": "停用账号",
   "deactivate_account_description": "停用账号后，该账号内的所有数据和资源将被永久删除且无法恢复。",
@@ -328,7 +328,7 @@
   "project_id_must_be_at_most_5_characters": "项目ID最多只能有5个字符",
   "project_id": "项目ID",
   "project_id_tooltip_content": "帮助您唯一标识项目中的工作项。最多5个字符。",
-  "description_placeholder": "描述...",
+  "description_placeholder": "描述",
   "only_alphanumeric_non_latin_characters_allowed": "仅允许字母数字和非拉丁字符。",
   "project_id_is_required": "项目ID为必填项",
   "project_id_allowed_char": "仅允许字母数字和非拉丁字符。",
@@ -452,7 +452,7 @@
   "change_parent_issue": "更改父工作项",
   "remove_parent_issue": "移除父工作项",
   "add_parent": "添加父项",
-  "loading_members": "正在加载成员...",
+  "loading_members": "正在加载成员",
   "view_link_copied_to_clipboard": "视图链接已复制到剪贴板",
   "required": "必填",
   "optional": "可选",
@@ -687,7 +687,7 @@
     "add_label": "添加标签",
     "estimates": "估算",
     "customize_time_range": "自定义时间范围",
-    "loading": "加载中...",
+    "loading": "加载中",
     "attachments": "附件",
     "properties": "属性",
     "parent": "父项",
@@ -770,7 +770,7 @@
     "click_to_add_description": "点击添加描述",
     "search": {
       "label": "搜索",
-      "placeholder": "输入搜索内容...",
+      "placeholder": "输入搜索内容",
       "no_matches_found": "未找到匹配项",
       "no_matching_results": "没有匹配的结果"
     },
@@ -879,7 +879,7 @@
     "all": "所有史诗",
     "label": "{count, plural, one {史诗} other {史诗}}",
     "new": "新建史诗",
-    "adding": "正在添加史诗...",
+    "adding": "正在添加史诗",
     "create": {
       "success": "史诗创建成功"
     },
@@ -907,7 +907,7 @@
       "cycle": {
         "failed": "无法将工作项添加到周期。请重试。",
         "success": "{count, plural, one {工作项} other {工作项}}已成功添加到周期。",
-        "loading": "正在将{count, plural, one {工作项} other {工作项}}添加到周期..."
+        "loading": "正在将{count, plural, one {工作项} other {工作项}}添加到周期"
       },
       "assignee": "添加负责人",
       "start_date": "添加开始日期",
@@ -921,12 +921,12 @@
     "remove": {
       "label": "移除工作项",
       "cycle": {
-        "loading": "正在从周期中移除工作项...",
+        "loading": "正在从周期中移除工作项",
         "success": "已成功从周期中移除工作项。",
         "failed": "无法从周期中移除工作项。请重试。"
       },
       "module": {
-        "loading": "正在从模块中移除工作项...",
+        "loading": "正在从模块中移除工作项",
         "success": "已成功从模块中移除工作项。",
         "failed": "无法从模块中移除工作项。请重试。"
       },
@@ -935,7 +935,7 @@
       }
     },
     "new": "新建工作项",
-    "adding": "正在添加工作项...",
+    "adding": "正在添加工作项",
     "create": {
       "success": "工作项创建成功"
     },
@@ -980,7 +980,7 @@
       "backlog": "待办"
     },
     "comments": {
-      "placeholder": "添加评论...",
+      "placeholder": "添加评论",
       "switch": {
         "private": "切换为私密评论",
         "public": "切换为公开评论"
@@ -1762,7 +1762,7 @@
         }
       },
       "favorite": {
-        "loading": "正在将周期添加到收藏...",
+        "loading": "正在将周期添加到收藏",
         "success": {
           "description": "周期已添加到收藏。",
           "title": "成功！"
@@ -1773,7 +1773,7 @@
         }
       },
       "unfavorite": {
-        "loading": "正在从收藏中移除周期...",
+        "loading": "正在从收藏中移除周期",
         "success": {
           "description": "周期已从收藏中移除。",
           "title": "成功！"
@@ -1784,7 +1784,7 @@
         }
       },
       "update": {
-        "loading": "正在更新周期...",
+        "loading": "正在更新周期",
         "success": {
           "description": "周期更新成功。",
           "title": "成功！"

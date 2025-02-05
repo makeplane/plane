@@ -35,7 +35,7 @@
   "password": "Password",
   "change_cover": "Change cover",
   "language": "Language",
-  "saving": "Saving...",
+  "saving": "Saving",
   "save_changes": "Save changes",
   "deactivate_account": "Deactivate account",
   "deactivate_account_description": "When deactivating an account, all of the data and resources within that account will be permanently removed and cannot be recovered.",
@@ -157,7 +157,7 @@
   "project_id_must_be_at_most_5_characters": "Project ID must at most be of 5 characters",
   "project_id": "Project ID",
   "project_id_tooltip_content": "Helps you identify work items in the project uniquely. Max 5 characters.",
-  "description_placeholder": "Description...",
+  "description_placeholder": "Description",
   "only_alphanumeric_non_latin_characters_allowed": "Only Alphanumeric & Non-latin characters are allowed.",
   "project_id_is_required": "Project ID is required",
   "project_id_allowed_char": "Only Alphanumeric & Non-latin characters are allowed.",
@@ -281,7 +281,7 @@
   "change_parent_issue": "Change parent work item",
   "remove_parent_issue": "Remove parent work item",
   "add_parent": "Add parent",
-  "loading_members": "Loading members...",
+  "loading_members": "Loading members",
   "view_link_copied_to_clipboard": "View link copied to clipboard.",
   "required": "Required",
   "optional": "Optional",
@@ -516,7 +516,7 @@
     "add_label": "Add label",
     "estimates": "Estimates",
     "customize_time_range": "Customize time range",
-    "loading": "Loading...",
+    "loading": "Loading",
     "attachments": "Attachments",
     "properties": "Properties",
     "parent": "Parent",
@@ -599,7 +599,7 @@
     "click_to_add_description": "Click to add description",
     "search": {
       "label": "Search",
-      "placeholder": "Type to search...",
+      "placeholder": "Type to search",
       "no_matches_found": "No matches found",
       "no_matching_results": "No matching results"
     },
@@ -708,7 +708,7 @@
     "all": "All Epics",
     "label": "{count, plural, one {Epic} other {Epics}}",
     "new": "New Epic",
-    "adding": "Adding epic...",
+    "adding": "Adding epic",
     "create": {
       "success": "Epic created successfully"
     },
@@ -736,7 +736,7 @@
       "cycle": {
         "failed": "Work item could not be added to the cycle. Please try again.",
         "success": "{count, plural, one {Work item} other {Work items}} added to the cycle successfully.",
-        "loading": "Adding {count, plural, one {work item} other {work items}} to the cycle..."
+        "loading": "Adding {count, plural, one {work item} other {work items}} to the cycle"
       },
       "assignee": "Add assignees",
       "start_date": "Add start date",
@@ -750,12 +750,12 @@
     "remove": {
       "label": "Remove work item",
       "cycle": {
-        "loading": "Removing work item from the cycle...",
+        "loading": "Removing work item from the cycle",
         "success": "Work item removed from the cycle successfully.",
         "failed": "Work item could not be removed from the cycle. Please try again."
       },
       "module": {
-        "loading": "Removing work item from the module...",
+        "loading": "Removing work item from the module",
         "success": "Work item removed from the module successfully.",
         "failed": "Work item could not be removed from the module. Please try again."
       },
@@ -764,7 +764,7 @@
       }
     },
     "new": "New Work item",
-    "adding": "Adding work item...",
+    "adding": "Adding work item",
     "create": {
       "success": "Work item created successfully"
     },
@@ -809,7 +809,7 @@
       "backlog": "Backlog"
     },
     "comments": {
-      "placeholder": "Add comment...",
+      "placeholder": "Add comment",
       "switch": {
         "private": "Switch to private comment",
         "public": "Switch to public comment"
@@ -1591,7 +1591,7 @@
         }
       },
       "favorite": {
-        "loading": "Adding cycle to favorites...",
+        "loading": "Adding cycle to favorites",
         "success": {
           "description": "Cycle added to favorites.",
           "title": "Success!"
@@ -1602,7 +1602,7 @@
         }
       },
       "unfavorite": {
-        "loading": "Removing cycle from favorites...",
+        "loading": "Removing cycle from favorites",
         "success": {
           "description": "Cycle removed from favorites.",
           "title": "Success!"
@@ -1613,7 +1613,7 @@
         }
       },
       "update": {
-        "loading": "Updating cycle...",
+        "loading": "Updating cycle",
         "success": {
           "description": "Cycle updated successfully.",
           "title": "Success!"
