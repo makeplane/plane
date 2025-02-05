@@ -1,5 +1,5 @@
-import { CSSProperties, useEffect, useState } from "react";
 import { Editor } from "@tiptap/react";
+import { CSSProperties, useEffect, useState } from "react";
 // components
 import { LinkEditView, LinkInputView, LinkPreview } from "@/components/links";
 

@@ -44,7 +44,39 @@ export const getTrimmedHTML = (html: string) => {
   return html;
 };
 
-export const isValidHttpUrl = (string: string): boolean => {
+export const isValidHttpUrl = (string: string): { isValid: boolean; url: string } => {
+  // First try with the original string
+  try {
+    const url = new URL(string);
+    // If URL is valid and has a protocol, return as is
+    if (url.protocol === "http:" || url.protocol === "https:") {
+      return {
+        isValid: true,
+        url: string,
+      };
+    }
+  } catch (_) {
+    // Original string wasn't a valid URL - that's okay, we'll try with https
+  }
+
+  // Try again with https:// prefix
+  try {
+    const urlWithHttps = `https://${string}`;
+    console.log("urlWithHttps", urlWithHttps);
+    new URL(urlWithHttps);
+    return {
+      isValid: true,
+      url: urlWithHttps,
+    };
+  } catch (_) {
+    return {
+      isValid: false,
+      url: string,
+    };
+  }
+};
+
+export const isValidHttpUrl2 = (string: string): boolean => {
   let url: URL;
 
   try {

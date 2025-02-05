@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
 import { Node } from "@tiptap/pm/model";
 import { Link2Off } from "lucide-react";
+import { useState } from "react";
 // components
 import { LinkViewProps } from "@/components/links";
 // helpers
@@ -39,75 +39,76 @@ export const LinkEditView = ({
 }) => {
   const { editor, from, to } = viewProps;
 
-  const [positionRef, setPositionRef] = useState({ from: from, to: to });
-  const [localUrl, setLocalUrl] = useState(viewProps.url);
-
-  const linkRemoved = useRef<boolean>();
-
   const getText = (from: number, to: number) => {
     if (to >= editor.state.doc.content.size) return "";
-
     const text = editor.state.doc.textBetween(from, to, "\n");
     return text;
   };
+
+  const [positionRef] = useState({ from, to });
+  const [localUrl, setLocalUrl] = useState(viewProps.url);
+  const [localText, setLocalText] = useState(getText(from, to));
+  const [linkRemoved, setLinkRemoved] = useState(false);
 
   const handleUpdateLink = (url: string) => {
     setLocalUrl(url);
   };
 
-  useEffect(
-    () => () => {
-      if (linkRemoved.current) return;
-
-      const url = isValidHttpUrl(localUrl) ? localUrl : viewProps.url;
-
-      if (to >= editor.state.doc.content.size) return;
-
-      editor.view.dispatch(editor.state.tr.removeMark(from, to, editor.schema.marks.link));
-      editor.view.dispatch(editor.state.tr.addMark(from, to, editor.schema.marks.link.create({ href: url })));
-    },
-    [localUrl, editor, from, to, viewProps.url]
-  );
-
   const handleUpdateText = (text: string) => {
-    if (text === "") {
-      return;
+    if (text === "") return;
+    setLocalText(text);
+  };
+
+  const applyChanges = () => {
+    if (linkRemoved) return;
+
+    console.log("localUrl", localUrl);
+    const { url, isValid } = isValidHttpUrl(localUrl);
+    console.log("url", url);
+    if (to >= editor.state.doc.content.size || !isValid) return;
+
+    // Apply URL change
+    editor.view.dispatch(editor.state.tr.removeMark(from, to, editor.schema.marks.link));
+    editor.view.dispatch(editor.state.tr.addMark(from, to, editor.schema.marks.link.create({ href: url })));
+
+    // Apply text change if different
+    if (localText !== getText(from, to)) {
+      const node = editor.view.state.doc.nodeAt(from) as Node;
+      if (!node) return;
+      const marks = node.marks;
+      if (!marks) return;
+
+      editor
+        .chain()
+        .setTextSelection(from)
+        .deleteRange({ from: positionRef.from, to: positionRef.to })
+        .insertContent(localText)
+        .setTextSelection({ from, to: from + localText.length })
+        .run();
+
+      marks.forEach((mark) => {
+        editor.chain().setMark(mark.type.name, mark.attrs).run();
+      });
     }
-
-    const node = editor.view.state.doc.nodeAt(from) as Node;
-    if (!node) return;
-    const marks = node.marks;
-    if (!marks) return;
-
-    editor.chain().setTextSelection(from).run();
-
-    editor.chain().deleteRange({ from: positionRef.from, to: positionRef.to }).run();
-    editor.chain().insertContent(text).run();
-
-    editor
-      .chain()
-      .setTextSelection({
-        from: from,
-        to: from + text.length,
-      })
-      .run();
-
-    setPositionRef({ from: from, to: from + text.length });
-
-    marks.forEach((mark) => {
-      editor.chain().setMark(mark.type.name, mark.attrs).run();
-    });
   };
 
   const removeLink = () => {
     editor.view.dispatch(editor.state.tr.removeMark(from, to, editor.schema.marks.link));
-    linkRemoved.current = true;
+    setLinkRemoved(true);
     viewProps.closeLinkView();
   };
 
   return (
     <div
-      onKeyDown={(e) => e.key === "Enter" && viewProps.closeLinkView()}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          applyChanges();
+          viewProps.closeLinkView();
+          e.stopPropagation();
+          setLocalUrl("");
+          setLocalText("");
+        }
+      }}
       className="shadow-md rounded p-2 flex flex-col gap-3 bg-custom-background-90 border-custom-border-100 border-2"
     >
       <InputView
@@ -119,7 +120,7 @@ export const LinkEditView = ({
       <InputView
         label={"Text"}
         placeholder={"Enter Text to display"}
-        defaultValue={getText(from, to)}
+        defaultValue={localText}
         onChange={(e) => handleUpdateText(e.target.value)}
       />
       <div className="mb-1 bg-custom-border-300 h-[1px] w-full gap-2" />

@@ -56,6 +56,8 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
         deletedImageSet: new Map<string, boolean>(),
         uploadInProgress: false,
         maxFileSize,
+        openLink: false,
+        linkPosition: 0,
       };
     },
 
