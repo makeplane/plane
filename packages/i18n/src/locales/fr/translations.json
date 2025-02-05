@@ -1,4 +1,175 @@
 {
+  "sidebar": {
+    "projects": "Projets",
+    "pages": "Pages",
+    "new_work_item": "Nouvel élément de travail",
+    "home": "Accueil",
+    "your_work": "Votre travail",
+    "inbox": "Boîte de réception",
+    "workspace": "Espace de travail",
+    "views": "Vues",
+    "analytics": "Analyses",
+    "your_projects": "Vos projets",
+    "work_items": "Éléments de travail",
+    "cycles": "Cycles",
+    "modules": "Modules",
+    "intake": "Intake",
+    "drafts": "Brouillons",
+    "your_favorites": "Vos favoris",
+    "pro": "Pro",
+    "upgrade": "Mettre à niveau"
+  },
+
+  "auth": {
+    "common": {
+      "email": {
+        "label": "E-mail",
+        "placeholder": "nom@entreprise.com",
+        "errors": {
+          "required": "L'e-mail est requis",
+          "invalid": "L'e-mail est invalide"
+        }
+      },
+      "password": {
+        "label": "Mot de passe",
+        "set_password": "Définir un mot de passe",
+        "placeholder": "Entrer le mot de passe",
+        "confirm_password": {
+          "label": "Confirmer le mot de passe",
+          "placeholder": "Confirmer le mot de passe"
+        },
+        "current_password": {
+          "label": "Mot de passe actuel"
+        },
+        "new_password": {
+          "label": "Nouveau mot de passe",
+          "placeholder": "Entrer le nouveau mot de passe"
+        },
+        "change_password": {
+          "label": {
+            "default": "Changer le mot de passe",
+            "submitting": "Changement du mot de passe"
+          }
+        },
+        "errors": {
+          "match": "Les mots de passe ne correspondent pas",
+          "empty": "Veuillez entrer votre mot de passe",
+          "length": "Le mot de passe doit contenir plus de 8 caractères",
+          "strength": {
+            "weak": "Le mot de passe est faible",
+            "strong": "Le mot de passe est fort"
+          }
+        },
+        "submit": "Définir le mot de passe",
+        "toast": {
+          "change_password": {
+            "success": {
+              "title": "Succès !",
+              "message": "Mot de passe changé avec succès."
+            },
+            "error": {
+              "title": "Erreur !",
+              "message": "Une erreur s'est produite. Veuillez réessayer."
+            }
+          }
+        }
+      },
+      "unique_code": {
+        "label": "Code unique",
+        "placeholder": "obtient-définit-vole",
+        "paste_code": "Collez le code envoyé à votre e-mail",
+        "requesting_new_code": "Demande d'un nouveau code",
+        "sending_code": "Envoi du code"
+      },
+      "already_have_an_account": "Vous avez déjà un compte ?",
+      "login": "Se connecter",
+      "create_account": "Créer un compte",
+      "new_to_plane": "Nouveau sur Plane ?",
+      "back_to_sign_in": "Retour à la connexion",
+      "resend_in": "Renvoyer dans {seconds} secondes",
+      "sign_in_with_unique_code": "Se connecter avec un code unique",
+      "forgot_password": "Mot de passe oublié ?"
+    },
+    "sign_up": {
+      "header": {
+        "label": "Créez un compte pour commencer à gérer le travail avec votre équipe.",
+        "step": {
+          "email": {
+            "header": "S'inscrire",
+            "sub_header": ""
+          },
+          "password": {
+            "header": "S'inscrire",
+            "sub_header": "Inscrivez-vous en utilisant une combinaison e-mail-mot de passe."
+          },
+          "unique_code": {
+            "header": "S'inscrire",
+            "sub_header": "Inscrivez-vous en utilisant un code unique envoyé à l'adresse e-mail ci-dessus."
+          }
+        }
+      },
+      "errors": {
+        "password": {
+          "strength": "Essayez de définir un mot de passe fort pour continuer"
+        }
+      }
+    },
+    "sign_in": {
+      "header": {
+        "label": "Connectez-vous pour commencer à gérer le travail avec votre équipe.",
+        "step": {
+          "email": {
+            "header": "Se connecter ou s'inscrire",
+            "sub_header": ""
+          },
+          "password": {
+            "header": "Se connecter ou s'inscrire",
+            "sub_header": "Utilisez votre combinaison e-mail-mot de passe pour vous connecter."
+          },
+          "unique_code": {
+            "header": "Se connecter ou s'inscrire",
+            "sub_header": "Connectez-vous en utilisant un code unique envoyé à l'adresse e-mail ci-dessus."
+          }
+        }
+      }
+    },
+    "forgot_password": {
+      "title": "Réinitialiser votre mot de passe",
+      "description": "Entrez l'adresse e-mail vérifiée de votre compte utilisateur et nous vous enverrons un lien de réinitialisation du mot de passe.",
+      "email_sent": "Nous avons envoyé le lien de réinitialisation à votre adresse e-mail",
+      "send_reset_link": "Envoyer le lien de réinitialisation",
+      "errors": {
+        "smtp_not_enabled": "Nous constatons que votre administrateur n'a pas activé SMTP, nous ne pourrons pas envoyer de lien de réinitialisation du mot de passe"
+      },
+      "toast": {
+        "success": {
+          "title": "E-mail envoyé",
+          "message": "Vérifiez votre boîte de réception pour un lien de réinitialisation de votre mot de passe. S'il n'apparaît pas dans quelques minutes, vérifiez votre dossier spam."
+        },
+        "error": {
+          "title": "Erreur !",
+          "message": "Une erreur s'est produite. Veuillez réessayer."
+        }
+      }
+    },
+    "reset_password": {
+      "title": "Définir un nouveau mot de passe",
+      "description": "Sécurisez votre compte avec un mot de passe fort"
+    },
+    "set_password": {
+      "title": "Sécurisez votre compte",
+      "description": "La définition d'un mot de passe vous permet de vous connecter en toute sécurité"
+    },
+    "sign_out": {
+      "toast": {
+        "error": {
+          "title": "Erreur !",
+          "message": "Échec de la déconnexion. Veuillez réessayer."
+        }
+      }
+    }
+  },
+
   "submit": "Soumettre",
   "cancel": "Annuler",
   "loading": "Chargement",
@@ -13,40 +184,40 @@
   "name": "Nom",
   "description": "Description",
   "search": "Rechercher",
-  "add_member": "Ajouter membre",
+  "add_member": "Ajouter un membre",
   "adding_members": "Ajout de membres",
-  "remove_member": "Supprimer membre",
-  "add_members": "Ajouter membres",
+  "remove_member": "Supprimer le membre",
+  "add_members": "Ajouter des membres",
   "adding_member": "Ajout de membres",
-  "remove_members": "Supprimer membres",
+  "remove_members": "Supprimer des membres",
   "add": "Ajouter",
   "adding": "Ajout",
   "remove": "Supprimer",
   "add_new": "Ajouter nouveau",
-  "remove_selected": "Supprimer sélectionné",
+  "remove_selected": "Supprimer la sélection",
   "first_name": "Prénom",
   "last_name": "Nom",
-  "email": "Email",
+  "email": "E-mail",
   "display_name": "Nom d'affichage",
   "role": "Rôle",
   "timezone": "Fuseau horaire",
   "avatar": "Avatar",
   "cover_image": "Image de couverture",
   "password": "Mot de passe",
-  "change_cover": "Changer couverture",
+  "change_cover": "Changer la couverture",
   "language": "Langue",
-  "saving": "Sauvegarde...",
-  "save_changes": "Sauvegarder changements",
-  "deactivate_account": "Désactiver compte",
+  "saving": "Enregistrement...",
+  "save_changes": "Enregistrer les modifications",
+  "deactivate_account": "Désactiver le compte",
   "deactivate_account_description": "Lors de la désactivation d'un compte, toutes les données et ressources de ce compte seront définitivement supprimées et ne pourront pas être récupérées.",
-  "profile_settings": "Paramètres profil",
+  "profile_settings": "Paramètres du profil",
   "your_account": "Votre compte",
   "security": "Sécurité",
   "activity": "Activité",
   "appearance": "Apparence",
   "notifications": "Notifications",
-  "workspaces": "Workspaces",
-  "create_workspace": "Créer workspace",
+  "workspaces": "Espaces de travail",
+  "create_workspace": "Créer un espace de travail",
   "invitations": "Invitations",
   "summary": "Résumé",
   "assigned": "Assigné",
@@ -60,77 +231,77 @@
   "system_preference": "Préférence système",
   "light": "Clair",
   "dark": "Sombre",
-  "light_contrast": "Contraste clair élevé",
-  "dark_contrast": "Contraste sombre élevé",
+  "light_contrast": "Contraste élevé clair",
+  "dark_contrast": "Contraste élevé sombre",
   "custom": "Thème personnalisé",
   "select_your_theme": "Sélectionnez votre thème",
   "customize_your_theme": "Personnalisez votre thème",
   "background_color": "Couleur de fond",
   "text_color": "Couleur du texte",
-  "primary_color": "Couleur primaire (Thème)",
+  "primary_color": "Couleur principale (Thème)",
   "sidebar_background_color": "Couleur de fond de la barre latérale",
   "sidebar_text_color": "Couleur du texte de la barre latérale",
-  "set_theme": "Définir thème",
+  "set_theme": "Définir le thème",
   "enter_a_valid_hex_code_of_6_characters": "Entrez un code hexadécimal valide de 6 caractères",
   "background_color_is_required": "La couleur de fond est requise",
   "text_color_is_required": "La couleur du texte est requise",
-  "primary_color_is_required": "La couleur primaire est requise",
+  "primary_color_is_required": "La couleur principale est requise",
   "sidebar_background_color_is_required": "La couleur de fond de la barre latérale est requise",
   "sidebar_text_color_is_required": "La couleur du texte de la barre latérale est requise",
   "updating_theme": "Mise à jour du thème",
   "theme_updated_successfully": "Thème mis à jour avec succès",
   "failed_to_update_the_theme": "Échec de la mise à jour du thème",
-  "email_notifications": "Notifications par email",
+  "email_notifications": "Notifications par e-mail",
   "stay_in_the_loop_on_issues_you_are_subscribed_to_enable_this_to_get_notified": "Restez informé des éléments de travail auxquels vous êtes abonné. Activez ceci pour être notifié.",
-  "email_notification_setting_updated_successfully": "Paramètre de notification par email mis à jour avec succès",
-  "failed_to_update_email_notification_setting": "Échec de la mise à jour du paramètre de notification par email",
+  "email_notification_setting_updated_successfully": "Paramètre de notification par e-mail mis à jour avec succès",
+  "failed_to_update_email_notification_setting": "Échec de la mise à jour du paramètre de notification par e-mail",
   "notify_me_when": "Me notifier quand",
-  "property_changes": "Changements de propriétés",
-  "property_changes_description": "Me notifier quand les propriétés des éléments de travail comme les assignés, la priorité, les estimations ou autre chose changent.",
+  "property_changes": "Modifications des propriétés",
+  "property_changes_description": "Me notifier lorsque les propriétés des éléments de travail comme les assignés, la priorité, les estimations ou autre changent.",
   "state_change": "Changement d'état",
-  "state_change_description": "Me notifier quand les éléments de travail passent à un état différent",
+  "state_change_description": "Me notifier lorsque les éléments de travail passent à un état différent",
   "issue_completed": "Élément de travail terminé",
-  "issue_completed_description": "Me notifier uniquement quand un élément de travail est terminé",
+  "issue_completed_description": "Me notifier uniquement lorsqu'un élément de travail est terminé",
   "comments": "Commentaires",
-  "comments_description": "Me notifier quand quelqu'un laisse un commentaire sur l'élément de travail",
+  "comments_description": "Me notifier lorsque quelqu'un laisse un commentaire sur l'élément de travail",
   "mentions": "Mentions",
-  "mentions_description": "Me notifier uniquement quand quelqu'un me mentionne dans les commentaires ou la description",
+  "mentions_description": "Me notifier uniquement lorsque quelqu'un me mentionne dans les commentaires ou la description",
   "old_password": "Ancien mot de passe",
   "general_settings": "Paramètres généraux",
-  "sign_out": "Déconnexion",
-  "signing_out": "Déconnexion en cours",
+  "sign_out": "Se déconnecter",
+  "signing_out": "Déconnexion",
   "active_cycles": "Cycles actifs",
   "active_cycles_description": "Surveillez les cycles à travers les projets, suivez les éléments de travail prioritaires et zoomez sur les cycles qui nécessitent de l'attention.",
   "on_demand_snapshots_of_all_your_cycles": "Instantanés à la demande de tous vos cycles",
   "upgrade": "Mettre à niveau",
-  "10000_feet_view": "Vue à 10 000 pieds",
-  "10000_feet_view_description": "Dézoomez pour voir les cycles en cours dans tous vos projets à la fois au lieu d'aller de Cycle en Cycle dans chaque projet.",
-  "get_snapshot_of_each_active_cycle": "Obtenez un instantané de chaque cycle actif.",
-  "get_snapshot_of_each_active_cycle_description": "Suivez les métriques de haut niveau pour tous les cycles actifs, voyez leur état d'avancement et obtenez une idée de la portée par rapport aux délais.",
+  "10000_feet_view": "Vue à 10 000 pieds de tous les cycles actifs.",
+  "10000_feet_view_description": "Dézoomez pour voir les cycles en cours dans tous vos projets en même temps au lieu de passer d'un cycle à l'autre dans chaque projet.",
+  "get_snapshot_of_each_active_cycle": "Obtenez un aperçu de chaque cycle actif.",
+  "get_snapshot_of_each_active_cycle_description": "Suivez les métriques de haut niveau pour tous les cycles actifs, voyez leur état d'avancement et obtenez une idée de la portée par rapport aux échéances.",
   "compare_burndowns": "Comparez les burndowns.",
-  "compare_burndowns_description": "Surveillez comment chacune de vos équipes performe avec un aperçu du rapport burndown de chaque cycle.",
+  "compare_burndowns_description": "Surveillez les performances de chacune de vos équipes en jetant un coup d'œil au rapport burndown de chaque cycle.",
   "quickly_see_make_or_break_issues": "Voyez rapidement les éléments de travail critiques.",
   "quickly_see_make_or_break_issues_description": "Prévisualisez les éléments de travail hautement prioritaires pour chaque cycle par rapport aux dates d'échéance. Voyez-les tous par cycle en un clic.",
   "zoom_into_cycles_that_need_attention": "Zoomez sur les cycles qui nécessitent de l'attention.",
   "zoom_into_cycles_that_need_attention_description": "Examinez l'état de tout cycle qui ne correspond pas aux attentes en un clic.",
   "stay_ahead_of_blockers": "Anticipez les blocages.",
   "stay_ahead_of_blockers_description": "Repérez les défis d'un projet à l'autre et voyez les dépendances inter-cycles qui ne sont pas évidentes depuis une autre vue.",
-  "analytics": "Analytics",
-  "workspace_invites": "Invitations workspace",
-  "enter_god_mode": "Entrer en god mode",
-  "workspace_logo": "Logo workspace",
+  "analytics": "Analyses",
+  "workspace_invites": "Invitations à l'espace de travail",
+  "enter_god_mode": "Entrer en mode dieu",
+  "workspace_logo": "Logo de l'espace de travail",
   "new_issue": "Nouvel élément de travail",
   "your_work": "Votre travail",
   "drafts": "Brouillons",
   "projects": "Projets",
   "views": "Vues",
-  "workspace": "Workspace",
+  "workspace": "Espace de travail",
   "archives": "Archives",
   "settings": "Paramètres",
   "failed_to_move_favorite": "Échec du déplacement du favori",
   "your_favorites": "Vos favoris",
   "no_favorites_yet": "Pas encore de favoris",
-  "create_folder": "Créer dossier",
+  "create_folder": "Créer un dossier",
   "new_folder": "Nouveau dossier",
   "favorite_updated_successfully": "Favori mis à jour avec succès",
   "favorite_created_successfully": "Favori créé avec succès",
@@ -144,33 +315,33 @@
   "project_link_copied_to_clipboard": "Lien du projet copié dans le presse-papiers",
   "link_copied": "Lien copié",
   "your_projects": "Vos projets",
-  "add_project": "Ajouter projet",
-  "create_project": "Créer projet",
+  "add_project": "Ajouter un projet",
+  "create_project": "Créer un projet",
   "failed_to_remove_project_from_favorites": "Impossible de supprimer le projet des favoris. Veuillez réessayer.",
   "project_created_successfully": "Projet créé avec succès",
-  "project_created_successfully_description": "Projet créé avec succès. Vous pouvez maintenant commencer à y ajouter des éléments de travail.",
+  "project_created_successfully_description": "Projet créé avec succès. Vous pouvez maintenant commencer à ajouter des éléments de travail.",
   "project_cover_image_alt": "Image de couverture du projet",
   "name_is_required": "Le nom est requis",
   "title_should_be_less_than_255_characters": "Le titre doit faire moins de 255 caractères",
   "project_name": "Nom du projet",
-  "project_id_must_be_at_least_1_character": "L'ID du projet doit faire au moins 1 caractère",
-  "project_id_must_be_at_most_5_characters": "L'ID du projet doit faire au plus 5 caractères",
+  "project_id_must_be_at_least_1_character": "L'ID du projet doit comporter au moins 1 caractère",
+  "project_id_must_be_at_most_5_characters": "L'ID du projet doit comporter au plus 5 caractères",
   "project_id": "ID du projet",
-  "project_id_tooltip_content": "Vous aide à identifier les éléments de travail dans le projet de manière unique. Maximum 5 caractères.",
+  "project_id_tooltip_content": "Vous aide à identifier uniquement les éléments de travail dans le projet. Maximum 5 caractères.",
   "description_placeholder": "Description...",
   "only_alphanumeric_non_latin_characters_allowed": "Seuls les caractères alphanumériques et non latins sont autorisés.",
   "project_id_is_required": "L'ID du projet est requis",
   "project_id_allowed_char": "Seuls les caractères alphanumériques et non latins sont autorisés.",
-  "project_id_min_char": "L'ID du projet doit faire au moins 1 caractère",
-  "project_id_max_char": "L'ID du projet doit faire au plus 5 caractères",
+  "project_id_min_char": "L'ID du projet doit comporter au moins 1 caractère",
+  "project_id_max_char": "L'ID du projet doit comporter au plus 5 caractères",
   "project_description_placeholder": "Entrez la description du projet",
-  "select_network": "Sélectionnez le réseau",
-  "lead": "Lead",
+  "select_network": "Sélectionner le réseau",
+  "lead": "Responsable",
   "date_range": "Plage de dates",
   "private": "Privé",
   "public": "Public",
   "accessible_only_by_invite": "Accessible uniquement sur invitation",
-  "anyone_in_the_workspace_except_guests_can_join": "N'importe qui dans le workspace sauf les invités peut rejoindre",
+  "anyone_in_the_workspace_except_guests_can_join": "Tout le monde dans l'espace de travail sauf les invités peut rejoindre",
   "creating": "Création",
   "creating_project": "Création du projet",
   "adding_project_to_favorites": "Ajout du projet aux favoris",
@@ -183,12 +354,12 @@
   "remove_from_favorites": "Supprimer des favoris",
   "publish_settings": "Paramètres de publication",
   "publish": "Publier",
-  "copy_link": "Copier lien",
-  "leave_project": "Quitter projet",
+  "copy_link": "Copier le lien",
+  "leave_project": "Quitter le projet",
   "join_the_project_to_rearrange": "Rejoignez le projet pour réorganiser",
-  "drag_to_rearrange": "Glissez pour réorganiser",
-  "congrats": "Félicitations!",
-  "open_project": "Ouvrir projet",
+  "drag_to_rearrange": "Glisser pour réorganiser",
+  "congrats": "Félicitations !",
+  "open_project": "Ouvrir le projet",
   "issues": "Éléments de travail",
   "cycles": "Cycles",
   "modules": "Modules",
@@ -197,9 +368,9 @@
   "time_tracking": "Suivi du temps",
   "work_management": "Gestion du travail",
   "projects_and_issues": "Projets et éléments de travail",
-  "projects_and_issues_description": "Activez ou désactivez ces fonctionnalités pour ce projet.",
-  "cycles_description": "Définissez des périodes de travail comme vous le souhaitez par projet et changez la fréquence d'une période à l'autre.",
-  "modules_description": "Groupez le travail en configurations de type sous-projet avec leurs propres leads et assignés.",
+  "projects_and_issues_description": "Activez ou désactivez ces éléments pour ce projet.",
+  "cycles_description": "Planifiez le travail comme vous le souhaitez par projet et changez la fréquence d'une période à l'autre.",
+  "modules_description": "Regroupez le travail en configurations de type sous-projet avec leurs propres responsables et assignés.",
   "views_description": "Enregistrez les tris, filtres et options d'affichage pour plus tard ou partagez-les.",
   "pages_description": "Écrivez n'importe quoi comme vous écrivez n'importe quoi.",
   "intake_description": "Restez informé des éléments de travail auxquels vous êtes abonné. Activez ceci pour être notifié.",
@@ -208,33 +379,33 @@
   "documentation": "Documentation",
   "message_support": "Contacter le support",
   "contact_sales": "Contacter les ventes",
-  "hyper_mode": "Mode hyper",
+  "hyper_mode": "Mode Hyper",
   "keyboard_shortcuts": "Raccourcis clavier",
   "whats_new": "Quoi de neuf ?",
   "version": "Version",
   "we_are_having_trouble_fetching_the_updates": "Nous avons des difficultés à récupérer les mises à jour.",
-  "our_changelogs": "nos changelogs",
+  "our_changelogs": "nos journaux des modifications",
   "for_the_latest_updates": "pour les dernières mises à jour.",
   "please_visit": "Veuillez visiter",
-  "docs": "Docs",
-  "full_changelog": "Changelog complet",
+  "docs": "Documentation",
+  "full_changelog": "Journal des modifications complet",
   "support": "Support",
   "discord": "Discord",
   "powered_by_plane_pages": "Propulsé par Plane Pages",
   "please_select_at_least_one_invitation": "Veuillez sélectionner au moins une invitation.",
-  "please_select_at_least_one_invitation_description": "Veuillez sélectionner au moins une invitation pour rejoindre le workspace.",
-  "we_see_that_someone_has_invited_you_to_join_a_workspace": "Nous voyons que quelqu'un vous a invité à rejoindre un workspace",
-  "join_a_workspace": "Rejoindre un workspace",
-  "we_see_that_someone_has_invited_you_to_join_a_workspace_description": "Nous voyons que quelqu'un vous a invité à rejoindre un workspace",
-  "join_a_workspace_description": "Rejoindre un workspace",
-  "accept_and_join": "Accepter & Rejoindre",
+  "please_select_at_least_one_invitation_description": "Veuillez sélectionner au moins une invitation pour rejoindre l'espace de travail.",
+  "we_see_that_someone_has_invited_you_to_join_a_workspace": "Nous voyons que quelqu'un vous a invité à rejoindre un espace de travail",
+  "join_a_workspace": "Rejoindre un espace de travail",
+  "we_see_that_someone_has_invited_you_to_join_a_workspace_description": "Nous voyons que quelqu'un vous a invité à rejoindre un espace de travail",
+  "join_a_workspace_description": "Rejoindre un espace de travail",
+  "accept_and_join": "Accepter et rejoindre",
   "go_home": "Aller à l'accueil",
   "no_pending_invites": "Aucune invitation en attente",
-  "you_can_see_here_if_someone_invites_you_to_a_workspace": "Vous pouvez voir ici si quelqu'un vous invite à un workspace",
+  "you_can_see_here_if_someone_invites_you_to_a_workspace": "Vous pouvez voir ici si quelqu'un vous invite à un espace de travail",
   "back_to_home": "Retour à l'accueil",
-  "workspace_name": "nom-workspace",
+  "workspace_name": "nom-espace-de-travail",
   "deactivate_your_account": "Désactiver votre compte",
-  "deactivate_your_account_description": "Une fois désactivé, vous ne pouvez plus être assigné à des éléments de travail ni être facturé pour votre workspace. Pour réactiver votre compte, vous aurez besoin d'une invitation à un workspace à cette adresse email.",
+  "deactivate_your_account_description": "Une fois désactivé, vous ne pourrez plus être assigné à des éléments de travail ni être facturé pour votre espace de travail. Pour réactiver votre compte, vous aurez besoin d'une invitation à un espace de travail avec cette adresse e-mail.",
   "deactivating": "Désactivation",
   "confirm": "Confirmer",
   "confirming": "Confirmation",
@@ -242,20 +413,20 @@
   "issue_created_successfully": "Élément de travail créé avec succès",
   "draft_creation_failed": "Échec de la création du brouillon",
   "issue_creation_failed": "Échec de la création de l'élément de travail",
-  "draft_issue": "Brouillon d'élément de travail",
+  "draft_issue": "Élément de travail en brouillon",
   "issue_updated_successfully": "Élément de travail mis à jour avec succès",
   "issue_could_not_be_updated": "L'élément de travail n'a pas pu être mis à jour",
   "create_a_draft": "Créer un brouillon",
-  "save_to_drafts": "Sauvegarder dans les brouillons",
-  "save": "Sauvegarder",
+  "save_to_drafts": "Enregistrer dans les brouillons",
+  "save": "Enregistrer",
   "update": "Mettre à jour",
   "updating": "Mise à jour",
-  "create_new_issue": "Créer nouvel élément de travail",
-  "editor_is_not_ready_to_discard_changes": "L'éditeur n'est pas prêt à abandonner les modifications",
+  "create_new_issue": "Créer un nouvel élément de travail",
+  "editor_is_not_ready_to_discard_changes": "L'éditeur n'est pas prêt à annuler les modifications",
   "failed_to_move_issue_to_project": "Échec du déplacement de l'élément de travail vers le projet",
   "create_more": "Créer plus",
   "add_to_project": "Ajouter au projet",
-  "discard": "Abandonner",
+  "discard": "Annuler",
   "duplicate_issue_found": "Élément de travail en double trouvé",
   "duplicate_issues_found": "Éléments de travail en double trouvés",
   "no_matching_results": "Aucun résultat correspondant",
@@ -273,14 +444,14 @@
   "assignees": "Assignés",
   "you": "Vous",
   "labels": "Étiquettes",
-  "create_new_label": "Créer nouvelle étiquette",
+  "create_new_label": "Créer une nouvelle étiquette",
   "start_date": "Date de début",
   "end_date": "Date de fin",
   "due_date": "Date d'échéance",
   "estimate": "Estimation",
   "change_parent_issue": "Changer l'élément de travail parent",
   "remove_parent_issue": "Supprimer l'élément de travail parent",
-  "add_parent": "Ajouter parent",
+  "add_parent": "Ajouter un parent",
   "loading_members": "Chargement des membres...",
   "view_link_copied_to_clipboard": "Lien de la vue copié dans le presse-papiers.",
   "required": "Requis",
@@ -294,7 +465,7 @@
   "deleting": "Suppression",
   "make_a_copy": "Faire une copie",
   "move_to_project": "Déplacer vers le projet",
-  "good": "Bon",
+  "good": "Bonjour",
   "morning": "matin",
   "afternoon": "après-midi",
   "evening": "soir",
@@ -302,16 +473,16 @@
   "show_less": "Afficher moins",
   "no_data_yet": "Pas encore de données",
   "syncing": "Synchronisation",
-  "add_work_item": "Ajouter élément de travail",
+  "add_work_item": "Ajouter un élément de travail",
   "advanced_description_placeholder": "Appuyez sur '/' pour les commandes",
-  "create_work_item": "Créer élément de travail",
+  "create_work_item": "Créer un élément de travail",
   "attachments": "Pièces jointes",
   "declining": "Refus",
   "declined": "Refusé",
   "decline": "Refuser",
   "unassigned": "Non assigné",
   "work_items": "Éléments de travail",
-  "add_link": "Ajouter lien",
+  "add_link": "Ajouter un lien",
   "points": "Points",
   "no_assignee": "Pas d'assigné",
   "no_assignees_yet": "Pas encore d'assignés",
@@ -332,31 +503,10 @@
   "re_generate_key": "Régénérer la clé",
   "export": "Exporter",
 
-  "sidebar": {
-    "projects": "Projets",
-    "pages": "Pages",
-    "new_work_item": "Nouvel élément de travail",
-    "home": "Accueil",
-    "your_work": "Votre travail",
-    "inbox": "Boîte de réception",
-    "workspace": "Espace de travail",
-    "views": "Vues",
-    "analytics": "Analytique",
-    "your_projects": "Vos projets",
-    "work_items": "Éléments de travail",
-    "cycles": "Cycles",
-    "modules": "Modules",
-    "intake": "Réception",
-    "drafts": "Brouillons",
-    "your_favorites": "Vos favoris",
-    "pro": "Pro",
-    "upgrade": "Mettre à niveau"
-  },
-
   "project_view": {
     "sort_by": {
       "created_at": "Créé le",
-      "updated_at": "Mis à jour le",
+      "updated_at": "Mis à jour le", 
       "name": "Nom"
     }
   },
@@ -404,17 +554,17 @@
       },
       "invite_team": {
         "title": "Inviter votre équipe",
-        "description": "Construisez, livrez et gérez avec vos collègues.",
+        "description": "Construisez, déployez et gérez avec vos collègues.",
         "cta": "Les faire entrer"
       },
       "configure_workspace": {
-        "title": "Configurez votre workspace.",
-        "description": "Activez ou désactivez des fonctionnalités ou allez au-delà.",
-        "cta": "Configurer ce workspace"
+        "title": "Configurez votre espace de travail.",
+        "description": "Activez ou désactivez des fonctionnalités ou allez plus loin.",
+        "cta": "Configurer cet espace de travail"
       },
       "personalize_account": {
         "title": "Faites de Plane le vôtre.",
-        "description": "Choisissez votre image, vos couleurs et plus encore.",
+        "description": "Choisissez votre photo, vos couleurs et plus encore.",
         "cta": "Personnaliser maintenant"
       },
       "widgets": {
@@ -426,10 +576,10 @@
       }
     },
     "quick_links": {
-      "empty": "Enregistrez des liens vers des choses de travail que vous aimeriez avoir à portée de main.",
-      "add": "Ajouter quicklink",
-      "title": "Quicklink",
-      "title_plural": "Quicklinks"
+      "empty": "Enregistrez des liens vers des éléments de travail que vous souhaitez avoir à portée de main.",
+      "add": "Ajouter un lien rapide",
+      "title": "Lien rapide",
+      "title_plural": "Liens rapides"
     },
     "recents": {
       "title": "Récents",
@@ -447,7 +597,7 @@
       }
     },
     "new_at_plane": {
-      "title": "Nouveau chez Plane"
+      "title": "Nouveau sur Plane"
     },
     "quick_tutorial": {
       "title": "Tutoriel rapide"
@@ -457,20 +607,20 @@
       "reordering_failed": "Une erreur s'est produite lors de la réorganisation du widget."
     },
     "manage_widgets": "Gérer les widgets",
-    "title": "Home",
-    "star_us_on_github": "Étoilez-nous sur GitHub"
+    "title": "Accueil",
+    "star_us_on_github": "Donnez-nous une étoile sur GitHub"
   },
 
   "link": {
     "modal": {
       "url": {
         "text": "URL",
-        "required": "L'URL est invalide",
+        "required": "L'URL n'est pas valide",
         "placeholder": "Tapez ou collez une URL"
       },
       "title": {
         "text": "Titre d'affichage",
-        "placeholder": "Comment voulez-vous voir ce lien"
+        "placeholder": "Comment souhaitez-vous voir ce lien"
       }
     }
   },
@@ -482,35 +632,36 @@
     "state_groups": "Groupes d'états",
     "priority": "Priorité",
     "team_project": "Projet d'équipe",
-    "project": "Projét",
-    "cycle": "Cyclé",
-    "cycles": "Cyclés",
-    "module": "Modulé",
-    "modules": "Modulés",
+    "project": "Projet",
+    "cycle": "Cycle",
+    "cycles": "Cycles",
+    "module": "Module",
+    "modules": "Modules",
     "labels": "Étiquettes",
     "assignees": "Assignés",
     "assignee": "Assigné",
     "created_by": "Créé par",
     "none": "Aucun",
     "link": "Lien",
-    "estimate": "Estimaté",
+    "estimate": "Estimation",
     "layout": "Disposition",
     "filters": "Filtres",
     "display": "Affichage",
     "load_more": "Charger plus",
     "activity": "Activité",
-    "analytics": "Analytiqués",
+    "analytics": "Analyses",
     "dates": "Dates",
     "success": "Succès !",
-    "something_went_wrong": "Une erreur s'est produite",
+    "something_went_wrong": "Quelque chose s'est mal passé",
     "error": {
       "label": "Erreur !",
       "message": "Une erreur s'est produite. Veuillez réessayer."
     },
     "group_by": "Grouper par",
-    "epic": "Epiqué",
-    "epics": "Épiques",
-    "work_item": "Worké Item",
+    "epic": "Epic",
+    "epics": "Epics",
+    "work_item": "Élément de travail",
+    "sub_work_item": "Sous-élément de travail",
     "add": "Ajouter",
     "warning": "Avertissement",
     "updating": "Mise à jour",
@@ -524,33 +675,33 @@
     "attachment": "Pièce jointe",
     "general": "Général",
     "features": "Fonctionnalités",
-    "automation": "Automatión",
-    "project_name": "Nom du projét",
-    "project_id": "ID du projét",
-    "project_timezone": "Fuseau horaire du projét",
+    "automation": "Automatisation",
+    "project_name": "Nom du projet",
+    "project_id": "ID du projet",
+    "project_timezone": "Fuseau horaire du projet",
     "created_on": "Créé le",
-    "update_project": "Mettre à jour le projét",
+    "update_project": "Mettre à jour le projet",
     "identifier_already_exists": "L'identifiant existe déjà",
     "add_more": "Ajouter plus",
     "defaults": "Par défaut",
-    "add_label": "Ajouter étiquette",
-    "estimates": "Estimatés",
+    "add_label": "Ajouter une étiquette",
+    "estimates": "Estimations",
     "customize_time_range": "Personnaliser la plage de temps",
     "loading": "Chargement...",
-    "attachments": "Attachements",
+    "attachments": "Pièces jointes",
     "properties": "Propriétés",
     "parent": "Parent",
     "remove": "Supprimer",
     "archiving": "Archivage",
-    "archive": "Archivé",
+    "archive": "Archiver",
     "access": {
-      "public": "Publiqué",
+      "public": "Public",
       "private": "Privé"
     },
-    "sub_work_items": "Sous-worké items",
     "done": "Terminé",
+    "sub_work_items": "Sous-éléments de travail",
     "comment": "Commentaire",
-    "workspace_level": "Niveau du workspace",
+    "workspace_level": "Niveau espace de travail",
     "order_by": {
       "label": "Trier par",
       "manual": "Manuel",
@@ -558,13 +709,13 @@
       "last_updated": "Dernière mise à jour",
       "start_date": "Date de début",
       "due_date": "Date d'échéance",
-      "asc": "Ascendant",
-      "desc": "Descendant",
+      "asc": "Croissant",
+      "desc": "Décroissant",
       "updated_on": "Mis à jour le"
     },
     "sort": {
-      "asc": "Ascendant",
-      "desc": "Descendant",
+      "asc": "Croissant",
+      "desc": "Décroissant",
       "created_on": "Créé le",
       "updated_on": "Mis à jour le"
     },
@@ -572,15 +723,15 @@
     "updates": "Mises à jour",
     "clear_all": "Tout effacer",
     "copied": "Copié !",
-    "link_copied": "Lien copié",
-    "link_copied_to_clipboard": "Lien copié dans le clipboard",
-    "copied_to_clipboard": "Lien du worké item copié",
-    "is_copied_to_clipboard": "Worké item copié",
-    "no_links_added_yet": "Aucun lien ajouté",
-    "add_link": "Ajouter lien",
+    "link_copied": "Lien copié !",
+    "link_copied_to_clipboard": "Lien copié dans le presse-papiers",
+    "copied_to_clipboard": "Lien de l'élément de travail copié dans le presse-papiers",
+    "is_copied_to_clipboard": "L'élément de travail est copié dans le presse-papiers",
+    "no_links_added_yet": "Aucun lien ajouté pour l'instant",
+    "add_link": "Ajouter un lien",
     "links": "Liens",
-    "go_to_workspace": "Aller au workspacé",
-    "progress": "Progrés",
+    "go_to_workspace": "Aller à l'espace de travail",
+    "progress": "Progression",
     "optional": "Optionnel",
     "join": "Rejoindre",
     "go_back": "Retour",
@@ -589,35 +740,36 @@
     "relations": "Relations",
     "errors": {
       "default": {
-        "title": "Erreur!",
-        "message": "Une erreur s'est produite. Veuillez réessayer."
+        "title": "Erreur !",
+        "message": "Quelque chose s'est mal passé. Veuillez réessayer."
       },
-      "required": "Ce champ est requis"
+      "required": "Ce champ est obligatoire",
+      "entity_required": "{entity} est requis"
     },
     "update_link": "Mettre à jour le lien",
     "attach": "Joindre",
     "create_new": "Créer nouveau",
     "add_existing": "Ajouter existant",
     "type_or_paste_a_url": "Tapez ou collez une URL",
-    "url_is_invalid": "URL invalide",
+    "url_is_invalid": "L'URL n'est pas valide",
     "display_title": "Titre d'affichage",
-    "link_title_placeholder": "Comment voulez-vous voir ce lien",
+    "link_title_placeholder": "Comment souhaitez-vous voir ce lien",
     "url": "URL",
-    "side_peek": "Peek latéral",
+    "side_peek": "Aperçu latéral",
     "modal": "Modal",
     "full_screen": "Plein écran",
-    "close_peek_view": "Fermer le peek",
-    "toggle_peek_view_layout": "Changer le design du peek",
+    "close_peek_view": "Fermer l'aperçu",
+    "toggle_peek_view_layout": "Basculer la disposition de l'aperçu",
     "options": "Options",
     "duration": "Durée",
     "today": "Aujourd'hui",
     "week": "Semaine",
     "month": "Mois",
     "quarter": "Trimestre",
-    "press_for_commands": "Presse '/' pour les commandes",
+    "press_for_commands": "Appuyez sur '/' pour les commandes",
     "click_to_add_description": "Cliquez pour ajouter une description",
     "search": {
-      "label": "Recherche",
+      "label": "Rechercher",
       "placeholder": "Tapez pour rechercher...",
       "no_matches_found": "Aucune correspondance trouvée",
       "no_matching_results": "Aucun résultat correspondant"
@@ -633,14 +785,31 @@
       "subscribe": "S'abonner",
       "unsubscribe": "Se désabonner",
       "clear_sorting": "Effacer le tri",
-      "show_weekends": "Afficher les week-ends"
+      "show_weekends": "Afficher les week-ends",
+      "enable": "Activer",
+      "disable": "Désactiver"
     },
+    "name": "Nom",
+    "discard": "Abandonner",
+    "confirm": "Confirmer",
+    "confirming": "Confirmation",
+    "read_the_docs": "Lire la documentation",
+    "default": "Par défaut",
+    "active": "Actif",
+    "enabled": "Activé",
+    "disabled": "Désactivé",
+    "mandate": "Mandat",
+    "mandatory": "Obligatoire",
+    "yes": "Oui",
+    "no": "Non",
+    "please_wait": "Veuillez patienter",
+    "enabling": "Activation",
+    "disabling": "Désactivation",
     "beta": "Bêta",
     "or": "ou",
     "next": "Suivant",
     "back": "Retour",
     "cancelling": "Annulation",
-    "confirm": "Confirmer",
     "configuring": "Configuration",
     "clear": "Effacer",
     "import": "Importer",
@@ -652,9 +821,7 @@
     "authenticated": "Authentifié",
     "select": "Sélectionner",
     "upgrade": "Mettre à niveau",
-    "add_seats": "Ajouter des Places",
-    "issue": "Problème",
-    "issues": "Problèmes",
+    "add_seats": "Ajouter des sièges",
     "label": "Étiquette",
     "priorities": "Priorités",
     "projects": "Projets",
@@ -668,13 +835,13 @@
     "tasks": "Tâches",
     "section": "Section",
     "sections": "Sections",
-    "edit": "Editar",
-    "connecting": "Conectando",
-    "connected": "Conectado",
-    "disconnect": "Desconectar",
-    "disconnecting": "Desconectando",
-    "installing": "Instalando",
-    "install": "Instalar"
+    "edit": "Modifier",
+    "connecting": "Connexion",
+    "connected": "Connecté",
+    "disconnect": "Déconnecter",
+    "disconnecting": "Déconnexion",
+    "installing": "Installation",
+    "install": "Installer"
   },
 
   "form": {
@@ -685,8 +852,8 @@
   },
 
   "entity": {
-    "grouping_title": "Groupement {entity}",
-    "priority": "{entity} Priorité",
+    "grouping_title": "Regroupement {entity}",
+    "priority": "Priorité {entity}",
     "all": "Tous les {entity}",
     "drop_here_to_move": "Déposez ici pour déplacer le {entity}",
     "delete": {
@@ -696,7 +863,7 @@
     },
     "update": {
       "failed": "Échec de la mise à jour de {entity}",
-      "success": "{entity} updated successfully"
+      "success": "{entity} mis à jour avec succès"
     },
     "link_copied_to_clipboard": "Lien {entity} copié dans le presse-papiers",
     "fetch": {
@@ -709,111 +876,115 @@
   },
 
   "epic": {
-    "all": "Tous les Epiqués",
-    "label": "{count, plural, one {Epiqué} other {Epiqués}}",
-    "new": "Nouvel Epiqué",
-    "adding": "Ajout d'epiqué...",
+    "all": "Tous les Epics",
+    "label": "{count, plural, one {Epic} other {Epics}}",
+    "new": "Nouvel Epic",
+    "adding": "Ajout d'un epic...",
     "create": {
-      "success": "Epiqué créé avec succès"
+      "success": "Epic créé avec succès"
     },
     "add": {
-      "press_enter": "Appuyez sur 'Entrée' pour ajouter un autre epiqué",
-      "label": "Ajouter Epiqué"
+      "press_enter": "Appuyez sur 'Entrée' pour ajouter un autre epic",
+      "label": "Ajouter un Epic"
     },
     "title": {
-      "label": "Titre de l'Epiqué",
-      "required": "Le titre de l'epiqué est requis."
+      "label": "Titre de l'Epic",
+      "required": "Le titre de l'Epic est requis."
     }
   },
 
   "issue": {
-    "label": "{count, plural, one {Worké Item} other {Workés Items}}",
-    "all": "Tous les Workés Items",
-    "edit": "Modifier worké item",
+    "label": "{count, plural, one {Élément de travail} other {Éléments de travail}}",
+    "all": "Tous les éléments de travail",
+    "edit": "Modifier l'élément de travail",
     "title": {
-      "label": "Titre du worké item",
-      "required": "Le titre du worké item est requis."
+      "label": "Titre de l'élément de travail",
+      "required": "Le titre de l'élément de travail est requis."
     },
     "add": {
-      "press_enter": "Appuyez sur 'Entrée' pour ajouter un autre worké item",
-      "label": "Ajouter Worké Item",
+      "press_enter": "Appuyez sur 'Entrée' pour ajouter un autre élément de travail",
+      "label": "Ajouter un élément de travail",
       "cycle": {
-        "failed": "Le worké item n'a pas pu être ajouté au cyclé. Veuillez réessayer.",
-        "success": "{count, plural, one {Work item} other {Work items}} added to the cycle successfully.",
-        "loading": "Adding {count, plural, one {work item} other {work items}} to the cycle..."
+        "failed": "L'élément de travail n'a pas pu être ajouté au cycle. Veuillez réessayer.",
+        "success": "{count, plural, one {Élément de travail} other {Éléments de travail}} ajouté(s) au cycle avec succès.",
+        "loading": "Ajout de {count, plural, one {l'élément de travail} other {éléments de travail}} au cycle..."
       },
-      "assignee": "Ajouter assignés",
-      "start_date": "Ajouter date de début",
-      "due_date": "Ajouter date d'échéance",
-      "parent": "Ajouter worké item parent",
-      "sub_issue": "Ajouter sous-worké item",
-      "relation": "Ajouter relation",
-      "link": "Ajouter lien",
-      "existing": "Ajouter worké item existant"
+      "assignee": "Ajouter des assignés",
+      "start_date": "Ajouter une date de début",
+      "due_date": "Ajouter une date d'échéance",
+      "parent": "Ajouter un élément de travail parent",
+      "sub_issue": "Ajouter un sous-élément de travail",
+      "relation": "Ajouter une relation",
+      "link": "Ajouter un lien",
+      "existing": "Ajouter un élément de travail existant"
     },
     "remove": {
-      "label": "Supprimer worké item",
+      "label": "Supprimer l'élément de travail",
       "cycle": {
-        "loading": "Suppression du worké item du cyclé...",
-        "success": "Worké item supprimé du cyclé avec succès.",
-        "failed": "Le worké item n'a pas pu être supprimé du cyclé. Veuillez réessayer."
+        "loading": "Suppression de l'élément de travail du cycle...",
+        "success": "Élément de travail supprimé du cycle avec succès.",
+        "failed": "L'élément de travail n'a pas pu être supprimé du cycle. Veuillez réessayer."
       },
       "module": {
-        "loading": "Suppression du worké item du modulé...",
-        "success": "Worké item supprimé du modulé avec succès.",
-        "failed": "Le worké item n'a pas pu être supprimé du modulé. Veuillez réessayer."
+        "loading": "Suppression de l'élément de travail du module...",
+        "success": "Élément de travail supprimé du module avec succès.",
+        "failed": "L'élément de travail n'a pas pu être supprimé du module. Veuillez réessayer."
       },
       "parent": {
-        "label": "Supprimer worké item parent"
+        "label": "Supprimer l'élément de travail parent"
       }
     },
-    "new": "Nouveau Worké Item",
-    "adding": "Ajout de worké item...",
+    "new": "Nouvel élément de travail",
+    "adding": "Ajout d'un élément de travail...",
     "create": {
-      "success": "Worké item créé avec succès"
+      "success": "Élément de travail créé avec succès"
     },
     "priority": {
       "urgent": "Urgent",
-      "high": "Haut",
-      "medium": "Moyen",
-      "low": "Bas"
+      "high": "Haute",
+      "medium": "Moyenne",
+      "low": "Basse"
     },
     "display": {
       "properties": {
         "label": "Propriétés d'affichage",
         "id": "ID",
-        "issue_type": "Type de Worké Item",
-        "sub_issue_count": "Nombre de sous-workés items",
+        "issue_type": "Type d'élément de travail",
+        "sub_issue_count": "Nombre de sous-éléments",
         "attachment_count": "Nombre de pièces jointes",
         "created_on": "Créé le",
-        "sub_issue": "Sous-worké item"
+        "sub_issue": "Sous-élément de travail"
       },
       "extra": {
-        "show_sub_issues": "Afficher les sous-workés items",
+        "show_sub_issues": "Afficher les sous-éléments",
         "show_empty_groups": "Afficher les groupes vides"
       }
     },
     "layouts": {
       "ordered_by_label": "Cette disposition est triée par",
-      "list": "Listé",
-      "kanban": "Boardé",
-      "calendar": "Calendrié",
-      "spreadsheet": "Tablé",
-      "gantt": "Timeliné",
+      "list": "Liste",
+      "kanban": "Tableau",
+      "calendar": "Calendrier",
+      "spreadsheet": "Tableau",
+      "gantt": "Chronologie",
       "title": {
-        "list": "Disposition Listé",
-        "kanban": "Disposition Boardé",
-        "calendar": "Disposition Calendrié",
-        "spreadsheet": "Disposition Tablé",
-        "gantt": "Disposition Timeliné"
+        "list": "Disposition en liste",
+        "kanban": "Disposition en tableau",
+        "calendar": "Disposition en calendrier",
+        "spreadsheet": "Disposition en tableau",
+        "gantt": "Disposition en chronologie"
       }
     },
     "states": {
       "active": "Actif",
-      "backlog": "Backlogué"
+      "backlog": "Backlog"
     },
     "comments": {
       "placeholder": "Ajouter un commentaire...",
+      "switch": {
+        "private": "Passer en commentaire privé",
+        "public": "Passer en commentaire public"
+      },
       "create": {
         "success": "Commentaire créé avec succès",
         "error": "Échec de la création du commentaire. Veuillez réessayer plus tard."
@@ -832,72 +1003,72 @@
     },
     "empty_state": {
       "issue_detail": {
-        "title": "Le worké item n'existe pas",
-        "description": "Le worké item que vous recherchez n'existe pas, a été archivé ou a été supprimé.",
+        "title": "L'élément de travail n'existe pas",
+        "description": "L'élément de travail que vous recherchez n'existe pas, a été archivé ou a été supprimé.",
         "primary_button": {
-          "text": "Voir autres workés items"
+          "text": "Voir les autres éléments de travail"
         }
       }
     },
     "sibling": {
-      "label": "Workés items frères"
+      "label": "Éléments de travail frères"
     },
     "archive": {
-      "description": "Seuls les workés items terminés ou annulés\npeuvent être archivés",
-      "label": "Archiver Worké Item",
-      "confirm_message": "Êtes-vous sûr de vouloir archiver le worké item ? Tous vos workés items archivés peuvent être restaurés plus tard.",
+      "description": "Seuls les éléments de travail\nterminés ou annulés peuvent être archivés",
+      "label": "Archiver l'élément de travail",
+      "confirm_message": "Êtes-vous sûr de vouloir archiver l'élément de travail ? Tous vos éléments archivés peuvent être restaurés ultérieurement.",
       "success": {
         "label": "Archivage réussi",
-        "message": "Vos archives peuvent être trouvées dans les archives du projét."
+        "message": "Vos archives se trouvent dans les archives du projet."
       },
       "failed": {
-        "message": "Le worké item n'a pas pu être archivé. Veuillez réessayer."
+        "message": "L'élément de travail n'a pas pu être archivé. Veuillez réessayer."
       }
     },
     "restore": {
       "success": {
         "title": "Restauration réussie",
-        "message": "Votre worké item peut être trouvé dans les workés items du projét."
+        "message": "Votre élément de travail se trouve dans les éléments de travail du projet."
       },
       "failed": {
-        "message": "Le worké item n'a pas pu être restauré. Veuillez réessayer."
+        "message": "L'élément de travail n'a pas pu être restauré. Veuillez réessayer."
       }
     },
     "relation": {
-      "relates_to": "Lié à",
-      "duplicate": "Dupliqué de",
+      "relates_to": "En relation avec",
+      "duplicate": "Doublon de",
       "blocked_by": "Bloqué par",
       "blocking": "Bloque"
     },
-    "copy_link": "Copier le lien du worké item",
+    "copy_link": "Copier le lien de l'élément de travail",
     "delete": {
-      "label": "Supprimer worké item",
-      "error": "Erreur lors de la suppression du worké item"
+      "label": "Supprimer l'élément de travail",
+      "error": "Erreur lors de la suppression de l'élément de travail"
     },
     "subscription": {
       "actions": {
-        "subscribed": "Worké item abonné avec succès",
-        "unsubscribed": "Worké item désabonné avec succès"
+        "subscribed": "Abonnement à l'élément de travail réussi",
+        "unsubscribed": "Désabonnement de l'élément de travail réussi"
       }
     },
     "select": {
-      "error": "Veuillez sélectionner au moins un work item",
-      "empty": "Aucun work item sélectionné",
-      "add_selected": "Ajouter les work items sélectionnés"
+      "error": "Veuillez sélectionner au moins un élément de travail",
+      "empty": "Aucun élément de travail sélectionné",
+      "add_selected": "Ajouter les éléments de travail sélectionnés"
     },
-    "open_in_full_screen": "Ouvrir work item en plein écran"
+    "open_in_full_screen": "Ouvrir l'élément de travail en plein écran"
   },
 
   "attachment": {
     "error": "Le fichier n'a pas pu être joint. Essayez de le télécharger à nouveau.",
     "only_one_file_allowed": "Un seul fichier peut être téléchargé à la fois.",
-    "file_size_limit": "Le fichier doit faire {size} Mo ou moins.",
-    "drag_and_drop": "Glissez et déposez n'importe où pour télécharger",
+    "file_size_limit": "Le fichier doit faire {size}MB ou moins.",
+    "drag_and_drop": "Glissez-déposez n'importe où pour télécharger",
     "delete": "Supprimer la pièce jointe"
   },
 
   "label": {
-    "select": "Sélectionner étiquette",
+    "select": "Sélectionner une étiquette",
     "create": {
       "success": "Étiquette créée avec succès",
       "failed": "Échec de la création de l'étiquette",
@@ -908,74 +1079,74 @@
 
   "sub_work_item": {
     "update": {
-      "success": "Sous-worké item mis à jour avec succès",
-      "error": "Erreur lors de la mise à jour du sous-worké item"
+      "success": "Sous-élément de travail mis à jour avec succès",
+      "error": "Erreur lors de la mise à jour du sous-élément de travail"
     },
     "remove": {
-      "success": "Sous-worké item supprimé avec succès",
-      "error": "Erreur lors de la suppression du sous-worké item"
+      "success": "Sous-élément de travail supprimé avec succès",
+      "error": "Erreur lors de la suppression du sous-élément de travail"
     }
   },
 
   "view": {
-    "label": "{count, plural, one {Vué} other {Vués}}",
+    "label": "{count, plural, one {Vue} other {Vues}}",
     "create": {
-      "label": "Créer Vué"
+      "label": "Créer une vue"
     },
     "update": {
-      "label": "Mettre à jour Vué"
+      "label": "Mettre à jour la vue"
     }
   },
 
   "inbox_issue": {
     "status": {
       "pending": {
-        "title": "En attenté",
-        "description": "En attenté"
+        "title": "En attente",
+        "description": "En attente"
       },
       "declined": {
-        "title": "Décliné",
-        "description": "Décliné"
+        "title": "Refusé",
+        "description": "Refusé"
       },
       "snoozed": {
         "title": "Reporté",
-        "description": "{days, plural, one{# jour} other{# jours}} restants"
+        "description": "{days, plural, one{# jour} other{# jours}} restant(s)"
       },
       "accepted": {
         "title": "Accepté",
         "description": "Accepté"
       },
       "duplicate": {
-        "title": "Dupliqué",
-        "description": "Dupliqué"
+        "title": "Doublon",
+        "description": "Doublon"
       }
     },
     "modals": {
       "decline": {
-        "title": "Décliner worké item",
-        "content": "Êtes-vous sûr de vouloir décliner le worké item {value}?"
+        "title": "Refuser l'élément de travail",
+        "content": "Êtes-vous sûr de vouloir refuser l'élément de travail {value} ?"
       },
       "delete": {
-        "title": "Supprimer worké item",
-        "content": "Êtes-vous sûr de vouloir supprimer le worké item {value}?",
-        "success": "Worké item supprimé avec succès"
+        "title": "Supprimer l'élément de travail",
+        "content": "Êtes-vous sûr de vouloir supprimer l'élément de travail {value} ?",
+        "success": "Élément de travail supprimé avec succès"
       }
     },
     "errors": {
-      "snooze_permission": "Seuls les administrateurs de projét peuvent reporter/annuler le report des workés items",
-      "accept_permission": "Seuls les administrateurs de projét peuvent accepter les workés items",
-      "decline_permission": "Seuls les administrateurs de projét peuvent refuser les workés items"
+      "snooze_permission": "Seuls les administrateurs du projet peuvent reporter/annuler le report des éléments de travail",
+      "accept_permission": "Seuls les administrateurs du projet peuvent accepter les éléments de travail",
+      "decline_permission": "Seuls les administrateurs du projet peuvent refuser les éléments de travail"
     },
     "actions": {
       "accept": "Accepter",
-      "decline": "Décliner",
+      "decline": "Refuser",
       "snooze": "Reporter",
       "unsnooze": "Annuler le report",
-      "copy": "Copier le lien du worké item",
+      "copy": "Copier le lien de l'élément de travail",
       "delete": "Supprimer",
-      "open": "Ouvrir worké item",
-      "mark_as_duplicate": "Marquer comme dupliqué",
-      "move": "Déplacer {value} vers les workés items du projét"
+      "open": "Ouvrir l'élément de travail",
+      "mark_as_duplicate": "Marquer comme doublon",
+      "move": "Déplacer {value} vers les éléments de travail du projet"
     },
     "source": {
       "in-app": "in-app"
@@ -985,10 +1156,10 @@
       "updated_at": "Mis à jour le",
       "id": "ID"
     },
-    "label": "Intaké",
-    "page_label": "{workspace} - Intaké",
+    "label": "Intake",
+    "page_label": "{workspace} - Intake",
     "modal": {
-      "title": "Créer un worké item d'intaké"
+      "title": "Créer un élément de travail Intake"
     },
     "tabs": {
       "open": "Ouvert",
@@ -996,71 +1167,71 @@
     },
     "empty_state": {
       "sidebar_open_tab": {
-        "title": "Aucun worké item ouvert",
-        "description": "Trouvez les workés items ouverts ici. Créez un nouveau worké item."
+        "title": "Aucun élément de travail ouvert",
+        "description": "Trouvez les éléments de travail ouverts ici. Créez un nouvel élément de travail."
       },
       "sidebar_closed_tab": {
-        "title": "Aucun worké item fermé",
-        "description": "Tous les workés items acceptés ou refusés peuvent être trouvés ici."
+        "title": "Aucun élément de travail fermé",
+        "description": "Tous les éléments de travail, qu'ils soient acceptés ou refusés, peuvent être trouvés ici."
       },
       "sidebar_filter": {
-        "title": "Aucun worké item correspondant",
-        "description": "Aucun worké item ne correspond au filtre appliqué dans l'intaké. Créez un nouveau worké item."
+        "title": "Aucun élément de travail correspondant",
+        "description": "Aucun élément de travail ne correspond au filtre appliqué dans Intake. Créez un nouvel élément de travail."
       },
       "detail": {
-        "title": "Sélectionnez un worké item pour voir ses détails."
+        "title": "Sélectionnez un élément de travail pour voir ses détails."
       }
     }
   },
 
   "workspace_creation": {
-    "heading": "Créer votre workspacé",
-    "subheading": "Pour commencer à utiliser Plané, vous devez créer ou rejoindre un workspacé.",
+    "heading": "Créez votre espace de travail",
+    "subheading": "Pour commencer à utiliser Plane, vous devez créer ou rejoindre un espace de travail.",
     "form": {
       "name": {
-        "label": "Nommez votre workspacé",
+        "label": "Nommez votre espace de travail",
         "placeholder": "Quelque chose de familier et reconnaissable est toujours préférable."
       },
       "url": {
-        "label": "Définissez l'URL de votre workspacé",
+        "label": "Définissez l'URL de votre espace de travail",
         "placeholder": "Tapez ou collez une URL",
-        "edit_slug": "Vous pouvez uniquement modifier le slug de l'URL"
+        "edit_slug": "Vous ne pouvez modifier que le slug de l'URL"
       },
       "organization_size": {
-        "label": "Combien de personnes utiliseront ce workspacé?",
+        "label": "Combien de personnes utiliseront cet espace de travail ?",
         "placeholder": "Sélectionnez une plage"
       }
     },
     "errors": {
       "creation_disabled": {
-        "title": "Seul votre administrateur d'instancé peut créer des workspacés",
-        "description": "Si vous connaissez l'adresse email de votre administrateur d'instancé, cliquez sur le bouton ci-dessous pour le contacter.",
-        "request_button": "Contacter l'administrateur d'instancé"
+        "title": "Seul l'administrateur de votre instance peut créer des espaces de travail",
+        "description": "Si vous connaissez l'adresse e-mail de votre administrateur d'instance, cliquez sur le bouton ci-dessous pour le contacter.",
+        "request_button": "Contacter l'administrateur d'instance"
       },
       "validation": {
-        "name_alphanumeric": "Les noms de workspacés ne peuvent contenir que (' '), ('-'), ('_') et des caractères alphanumériques.",
+        "name_alphanumeric": "Les noms d'espaces de travail ne peuvent contenir que (' '), ('-'), ('_') et des caractères alphanumériques.",
         "name_length": "Limitez votre nom à 80 caractères.",
-        "url_alphanumeric": "Les URLs ne peuvent contenir que ('-') et des caractères alphanumériques.",
+        "url_alphanumeric": "Les URL ne peuvent contenir que ('-') et des caractères alphanumériques.",
         "url_length": "Limitez votre URL à 48 caractères.",
-        "url_already_taken": "L'URL du workspacé est déjà prise!"
+        "url_already_taken": "L'URL de l'espace de travail est déjà prise !"
       }
     },
     "request_email": {
-      "subject": "Demande d'un nouveau workspacé",
-      "body": "Bonjour administrateur(s) d'instancé,\n\nVeuillez créer un nouveau workspacé avec l'URL [/workspace-name] pour [objectif de création du workspacé].\n\nMerci,\n{firstName} {lastName}\n{email}"
+      "subject": "Demande d'un nouvel espace de travail",
+      "body": "Bonjour administrateur(s) d'instance,\n\nVeuillez créer un nouvel espace de travail avec l'URL [/workspace-name] pour [objectif de création de l'espace de travail].\n\nMerci,\n{firstName} {lastName}\n{email}"
     },
     "button": {
-      "default": "Créer workspacé",
-      "loading": "Création du workspacé"
+      "default": "Créer l'espace de travail",
+      "loading": "Création de l'espace de travail"
     },
     "toast": {
       "success": {
         "title": "Succès",
-        "message": "Workspacé créé avec succès"
+        "message": "Espace de travail créé avec succès"
       },
       "error": {
         "title": "Erreur",
-        "message": "Le workspacé n'a pas pu être créé. Veuillez réessayer."
+        "message": "L'espace de travail n'a pas pu être créé. Veuillez réessayer."
       }
     }
   },
@@ -1068,13 +1239,13 @@
   "workspace_dashboard": {
     "empty_state": {
       "general": {
-        "title": "Aperçu de vos projéts, activité et métriques",
-        "description": "Bienvenue sur Plané, nous sommes ravis de vous avoir ici. Créez votre premier projét et suivez vos workés items, et cette page se transformera en un espace qui vous aide à progresser. Les admins verront également des éléments qui aident leur équipe à progresser.",
+        "title": "Aperçu de vos projets, activités et métriques",
+        "description": "Bienvenue sur Plane, nous sommes ravis de vous avoir parmi nous. Créez votre premier projet et suivez vos éléments de travail, et cette page se transformera en un espace qui vous aide à progresser. Les administrateurs verront également les éléments qui aident leur équipe à progresser.",
         "primary_button": {
-          "text": "Construisez votre premier projét",
+          "text": "Construisez votre premier projet",
           "comic": {
-            "title": "Tout commence par un projét dans Plané",
-            "description": "Un projét pourrait être la feuille de route d'un produit, une campagne marketing ou le lancement d'une nouvelle voiture."
+            "title": "Tout commence par un projet dans Plane",
+            "description": "Un projet peut être la feuille de route d'un produit, une campagne marketing ou le lancement d'une nouvelle voiture."
           }
         }
       }
@@ -1082,44 +1253,44 @@
   },
 
   "workspace_analytics": {
-    "label": "Analytiqués",
-    "page_label": "{workspace} - Analytiqués",
+    "label": "Analytique",
+    "page_label": "{workspace} - Analytique",
     "open_tasks": "Total des tâches ouvertes",
     "error": "Une erreur s'est produite lors de la récupération des données.",
-    "work_items_closed_in": "Workés items fermés en",
-    "selected_projects": "Projéts sélectionnés",
+    "work_items_closed_in": "Éléments de travail fermés dans",
+    "selected_projects": "Projets sélectionnés",
     "total_members": "Total des membres",
-    "total_cycles": "Total des cyclés",
-    "total_modules": "Total des modulés",
+    "total_cycles": "Total des Cycles",
+    "total_modules": "Total des Modules",
     "pending_work_items": {
-      "title": "Workés items en attente",
-      "empty_state": "L'analyse des workés items en attente par collègues apparaît ici."
+      "title": "Éléments de travail en attente",
+      "empty_state": "L'analyse des éléments de travail en attente par collègues apparaît ici."
     },
     "work_items_closed_in_a_year": {
-      "title": "Workés items fermés dans l'année",
-      "empty_state": "Fermez des workés items pour voir leur analyse sous forme de graphique."
+      "title": "Éléments de travail fermés dans l'année",
+      "empty_state": "Fermez des éléments de travail pour voir leur analyse sous forme de graphique."
     },
     "most_work_items_created": {
-      "title": "Plus de workés items créés",
-      "empty_state": "Les collègues et le nombre de workés items créés par eux apparaissent ici."
+      "title": "Plus d'éléments de travail créés",
+      "empty_state": "Les collègues et le nombre d'éléments de travail créés par eux apparaissent ici."
     },
     "most_work_items_closed": {
-      "title": "Plus de workés items fermés",
-      "empty_state": "Les collègues et le nombre de workés items fermés par eux apparaissent ici."
+      "title": "Plus d'éléments de travail fermés",
+      "empty_state": "Les collègues et le nombre d'éléments de travail fermés par eux apparaissent ici."
     },
     "tabs": {
       "scope_and_demand": "Portée et Demande",
-      "custom": "Analytiqués personnalisés"
+      "custom": "Analytique Personnalisée"
     },
     "empty_state": {
       "general": {
         "title": "Suivez les progrès, les charges de travail et les allocations. Repérez les tendances, supprimez les blocages et accélérez le travail",
-        "description": "Voyez la portée par rapport à la demande, les estimations et l'augmentation de la portée. Obtenez les performances par membres d'équipe et équipes, et assurez-vous que votre projét se déroule dans les temps.",
+        "description": "Visualisez la portée par rapport à la demande, les estimations et l'augmentation de la portée. Obtenez les performances par membres de l'équipe et équipes, et assurez-vous que votre projet se déroule dans les délais.",
         "primary_button": {
-          "text": "Commencez votre premier projét",
+          "text": "Commencez votre premier projet",
           "comic": {
-            "title": "Les analytiqués fonctionnent mieux avec les Cyclés + Modulés",
-            "description": "D'abord, planifiez vos workés items dans des Cyclés et, si possible, groupez les workés items qui s'étendent sur plus d'un cyclé dans des Modulés. Consultez les deux dans la navigation de gauche."
+            "title": "L'analytique fonctionne mieux avec les Cycles + Modules",
+            "description": "D'abord, planifiez vos éléments de travail dans des Cycles et, si possible, regroupez les éléments de travail qui s'étendent sur plus d'un cycle dans des Modules. Consultez les deux dans la navigation de gauche."
           }
         }
       }
@@ -1127,9 +1298,9 @@
   },
 
   "workspace_projects": {
-    "label": "{count, plural, one {Projét} other {Projéts}}",
+    "label": "{count, plural, one {Projet} other {Projets}}",
     "create": {
-      "label": "Ajouter Projét"
+      "label": "Ajouter un Projet"
     },
     "network": {
       "private": {
@@ -1137,18 +1308,18 @@
         "description": "Accessible uniquement sur invitation"
       },
       "public": {
-        "title": "Publiqué",
-        "description": "Tout le monde dans le workspacé sauf les Guestés peut rejoindre"
+        "title": "Public",
+        "description": "Accessible à tous dans l'espace de travail sauf les invités"
       }
     },
     "error": {
       "permission": "Vous n'avez pas la permission d'effectuer cette action.",
-      "cycle_delete": "Échec de la suppression du cyclé",
-      "module_delete": "Échec de la suppression du modulé",
-      "issue_delete": "Échec de la suppression du worké item"
+      "cycle_delete": "Échec de la suppression du cycle",
+      "module_delete": "Échec de la suppression du module",
+      "issue_delete": "Échec de la suppression de l'élément de travail"
     },
     "state": {
-      "backlog": "Backlogué",
+      "backlog": "Backlog",
       "unstarted": "Non commencé",
       "started": "Commencé",
       "completed": "Terminé",
@@ -1161,7 +1332,7 @@
       "members_length": "Nombre de membres"
     },
     "scope": {
-      "my_projects": "Mes projéts",
+      "my_projects": "Mes projets",
       "archived_projects": "Archivés"
     },
     "common": {
@@ -1169,192 +1340,192 @@
     },
     "empty_state": {
       "general": {
-        "title": "Aucun projét actif",
-        "description": "Pensez à chaque projét comme le parent d'un travail orienté objectif. Les Projéts sont là où vivent les Jobs, les Cyclés et les Modulés et, avec vos collègues, vous aident à atteindre cet objectif. Créez un nouveau projét ou filtrez les projéts archivés.",
+        "title": "Aucun projet actif",
+        "description": "Considérez chaque projet comme le parent d'un travail orienté objectif. Les projets sont l'endroit où vivent les Tâches, les Cycles et les Modules et, avec vos collègues, vous aident à atteindre cet objectif. Créez un nouveau projet ou filtrez les projets archivés.",
         "primary_button": {
-          "text": "Commencez votre premier projét",
+          "text": "Commencez votre premier projet",
           "comic": {
-            "title": "Tout commence par un projét dans Plané",
-            "description": "Un projét pourrait être la feuille de route d'un produit, une campagne marketing ou le lancement d'une nouvelle voiture."
+            "title": "Tout commence par un projet dans Plane",
+            "description": "Un projet peut être la feuille de route d'un produit, une campagne marketing ou le lancement d'une nouvelle voiture."
           }
         }
       },
       "no_projects": {
-        "title": "Aucun projét",
-        "description": "Pour créer des workés items ou gérer votre travail, vous devez créer un projét ou faire partie d'un projét.",
+        "title": "Aucun projet",
+        "description": "Pour créer des éléments de travail ou gérer votre travail, vous devez créer un projet ou faire partie d'un projet.",
         "primary_button": {
-          "text": "Commencez votre premier projét",
+          "text": "Commencez votre premier projet",
           "comic": {
-            "title": "Tout commence par un projét dans Plané",
-            "description": "Un projét pourrait être la feuille de route d'un produit, une campagne marketing ou le lancement d'une nouvelle voiture."
+            "title": "Tout commence par un projet dans Plane",
+            "description": "Un projet peut être la feuille de route d'un produit, une campagne marketing ou le lancement d'une nouvelle voiture."
           }
         }
       },
       "filter": {
-        "title": "Aucun projét correspondant",
-        "description": "Aucun projét détecté avec les critères correspondants. \n Créez un nouveau projét à la place."
+        "title": "Aucun projet correspondant",
+        "description": "Aucun projet détecté avec les critères correspondants. \n Créez plutôt un nouveau projet."
       },
       "search": {
-        "description": "Aucun projét détecté avec les critères correspondants.\nCréez un nouveau projét à la place"
+        "description": "Aucun projet détecté avec les critères correspondants.\nCréez plutôt un nouveau projet"
       }
     }
   },
 
   "workspace_views": {
-    "add_view": "Ajouter vué",
+    "add_view": "Ajouter une vue",
     "empty_state": {
-      "all-work items": {
-        "title": "Aucun worké item dans le projét",
-        "description": "Premier projét terminé! Maintenant, découpez votre travail en morceaux traçables avec des workés items. Allons-y!",
+      "all-issues": {
+        "title": "Aucun élément de travail dans le projet",
+        "description": "Premier projet terminé ! Maintenant, découpez votre travail en morceaux traçables avec des éléments de travail. Allons-y !",
         "primary_button": {
-          "text": "Créer nouveau worké item"
+          "text": "Créer un nouvel élément de travail"
         }
       },
       "assigned": {
-        "title": "Aucun worké item pour le moment",
-        "description": "Les workés items qui vous sont assignés peuvent être suivis ici.",
+        "title": "Aucun élément de travail pour le moment",
+        "description": "Les éléments de travail qui vous sont assignés peuvent être suivis ici.",
         "primary_button": {
-          "text": "Créer nouveau worké item"
+          "text": "Créer un nouvel élément de travail"
         }
       },
       "created": {
-        "title": "Aucun worké item pour le moment",
-        "description": "Tous les workés items créés par vous arrivent ici, suivez-les directement ici.",
+        "title": "Aucun élément de travail pour le moment",
+        "description": "Tous les éléments de travail que vous créez arrivent ici, suivez-les directement ici.",
         "primary_button": {
-          "text": "Créer nouveau worké item"
+          "text": "Créer un nouvel élément de travail"
         }
       },
       "subscribed": {
-        "title": "Aucun worké item pour le moment",
-        "description": "Abonnez-vous aux workés items qui vous intéressent, suivez-les tous ici."
+        "title": "Aucun élément de travail pour le moment",
+        "description": "Abonnez-vous aux éléments de travail qui vous intéressent, suivez-les tous ici."
       },
       "custom-view": {
-        "title": "Aucun worké item pour le moment",
-        "description": "Les workés items qui correspondent aux filtres, suivez-les tous ici."
+        "title": "Aucun élément de travail pour le moment",
+        "description": "Les éléments de travail qui correspondent aux filtres, suivez-les tous ici."
       }
     }
   },
 
   "workspace_settings": {
-    "label": "Workspase settingues",
+    "label": "Paramètres de l'espace de travail",
     "page_label": "{workspace} - Paramètres généraux",
     "key_created": "Clé créée",
-    "copy_key": "Copiez et sauvegardez cette clé secrète dans Plané Pagés. Vous ne pourrez plus voir cette clé après avoir cliqué sur Fermer. Un fichier CSV contenant la clé a été téléchargé.",
-    "token_copied": "Tokén copié dans le presse-papiers.",
+    "copy_key": "Copiez et sauvegardez cette clé secrète dans Plane Pages. Vous ne pourrez plus voir cette clé après avoir cliqué sur Fermer. Un fichier CSV contenant la clé a été téléchargé.",
+    "token_copied": "Jeton copié dans le presse-papiers.",
     "settings": {
       "general": {
-        "title": "Générál",
-        "upload_logo": "Télécharger logó",
-        "edit_logo": "Modifier logó",
-        "name": "Nom du workspase",
-        "company_size": "Taille de la compagnié",
-        "url": "URL du workspase",
-        "update_workspace": "Mettre à jour le workspase",
-        "delete_workspace": "Supprimer le workspase",
-        "delete_workspace_description": "Lors de la suppression d'un workspase, toutes les données et ressources de ce workspase seront définitivement supprimées et ne pourront pas être récupérées.",
-        "delete_btn": "Supprimer mon workspase",
+        "title": "Général",
+        "upload_logo": "Télécharger le logo",
+        "edit_logo": "Modifier le logo",
+        "name": "Nom de l'espace de travail",
+        "company_size": "Taille de l'entreprise",
+        "url": "URL de l'espace de travail",
+        "update_workspace": "Mettre à jour l'espace de travail",
+        "delete_workspace": "Supprimer l'espace de travail",
+        "delete_workspace_description": "Lors de la suppression d'un espace de travail, toutes les données et ressources au sein de cet espace de travail seront définitivement supprimées et ne pourront pas être récupérées.",
+        "delete_btn": "Supprimer mon espace de travail",
         "errors": {
           "name": {
             "required": "Le nom est requis",
-            "max_length": "Le nom du workspase ne doit pas dépasser 80 caractères"
+            "max_length": "Le nom de l'espace de travail ne doit pas dépasser 80 caractères"
           },
           "company_size": {
-            "required": "La taille de la compagnié est requise"
+            "required": "La taille de l'entreprise est requise"
           }
         }
       },
       "members": {
-        "title": "Membeurs",
-        "add_member": "Ajouter membeur",
+        "title": "Membres",
+        "add_member": "Ajouter un membre",
         "invitations_sent_successfully": "Invitations envoyées avec succès",
-        "leave_confirmation": "Êtes-vous sûr de vouloir quitter le workspase? Vous n'aurez plus accès à ce workspase. Cette action ne peut pas être annulée.",
+        "leave_confirmation": "Êtes-vous sûr de vouloir quitter l'espace de travail ? Vous n'aurez plus accès à cet espace de travail. Cette action ne peut pas être annulée.",
         "details": {
           "full_name": "Nom complet",
           "display_name": "Nom d'affichage",
           "email_address": "Adresse e-mail",
-          "account_type": "Type de compté",
-          "authentication": "Authentificatión",
+          "account_type": "Type de compte",
+          "authentication": "Authentification",
           "joining_date": "Date d'adhésion"
         },
         "modal": {
-          "title": "Inviter des collaborateurs",
-          "description": "Inviter des personnes à collaborer sur votre espace de travail",
+          "title": "Inviter des personnes à collaborer",
+          "description": "Invitez des personnes à collaborer sur votre espace de travail.",
           "button": "Envoyer les invitations",
           "button_loading": "Envoi des invitations",
-          "placeholder": "Saisissez les adresses e-mail",
+          "placeholder": "nom@entreprise.com",
           "errors": {
-            "required": "L'e-mail est requis",
+            "required": "Nous avons besoin d'une adresse e-mail pour les inviter.",
             "invalid": "L'e-mail est invalide"
           }
         }
       },
       "billing_and_plans": {
-        "title": "Facturatión & Plané",
-        "current_plan": "Plané actuel",
-        "free_plan": "Vous utilisez actuellement le plané Frée",
-        "view_plans": "Voir les planés"
+        "title": "Facturation & Plans",
+        "current_plan": "Plan actuel",
+        "free_plan": "Vous utilisez actuellement le plan gratuit",
+        "view_plans": "Voir les plans"
       },
       "exports": {
-        "title": "Exportés",
-        "exporting": "Exportatión",
+        "title": "Exportations",
+        "exporting": "Exportation",
         "previous_exports": "Exportations précédentes",
         "export_separate_files": "Exporter les données dans des fichiers séparés",
         "modal": {
           "title": "Exporter vers",
           "toasts": {
             "success": {
-              "title": "Exportatión réussie",
-              "message": "Vous pourrez télécharger {entity} exporté depuis l'exportation précédente."
+              "title": "Exportation réussie",
+              "message": "Vous pourrez télécharger les {entity} exportés depuis l'exportation précédente."
             },
             "error": {
-              "title": "Échec de l'exportatión",
-              "message": "L'exportatión a échoué. Veuillez réessayer."
+              "title": "Échec de l'exportation",
+              "message": "L'exportation a échoué. Veuillez réessayer."
             }
           }
         }
       },
       "webhooks": {
-        "title": "Webhouks",
-        "add_webhook": "Ajouter webhouk",
+        "title": "Webhooks",
+        "add_webhook": "Ajouter un webhook",
         "modal": {
-          "title": "Créer webhouk",
-          "details": "Détails du webhouk",
-          "payload": "URL de payloád",
-          "question": "Quels événements souhaitez-vous déclencher ce webhouk?",
+          "title": "Créer un webhook",
+          "details": "Détails du webhook",
+          "payload": "URL de la charge utile",
+          "question": "Quels événements souhaitez-vous déclencher avec ce webhook ?",
           "error": "L'URL est requise"
         },
         "secret_key": {
-          "title": "Clé secréte",
-          "message": "Générer un tokén pour se connecter au payloád du webhouk"
+          "title": "Clé secrète",
+          "message": "Générer un jeton pour signer la charge utile du webhook"
         },
         "options": {
-          "all": "Tout m'envoyer",
+          "all": "Envoyez-moi tout",
           "individual": "Sélectionner des événements individuels"
         },
         "toasts": {
           "created": {
-            "title": "Webhouk créé",
-            "message": "Le webhouk a été créé avec succès"
+            "title": "Webhook créé",
+            "message": "Le webhook a été créé avec succès"
           },
           "not_created": {
-            "title": "Webhouk non créé",
-            "message": "Le webhouk n'a pas pu être créé"
+            "title": "Webhook non créé",
+            "message": "Le webhook n'a pas pu être créé"
           },
           "updated": {
-            "title": "Webhouk mis à jour",
-            "message": "Le webhouk a été mis à jour avec succès"
+            "title": "Webhook mis à jour",
+            "message": "Le webhook a été mis à jour avec succès"
           },
           "not_updated": {
-            "title": "Webhouk non mis à jour",
-            "message": "Le webhouk n'a pas pu être mis à jour"
+            "title": "Webhook non mis à jour",
+            "message": "Le webhook n'a pas pu être mis à jour"
           },
           "removed": {
-            "title": "Webhouk supprimé",
-            "message": "Le webhouk a été supprimé avec succès"
+            "title": "Webhook supprimé",
+            "message": "Le webhook a été supprimé avec succès"
           },
           "not_removed": {
-            "title": "Webhouk non supprimé",
-            "message": "Le webhouk n'a pas pu être supprimé"
+            "title": "Webhook non supprimé",
+            "message": "Le webhook n'a pas pu être supprimé"
           },
           "secret_key_copied": {
             "message": "Clé secrète copiée dans le presse-papiers."
@@ -1365,12 +1536,12 @@
         }
       },
       "api_tokens": {
-        "title": "API Tokéns",
-        "add_token": "Ajouter API tokén",
-        "create_token": "Créer tokén",
+        "title": "Jetons API",
+        "add_token": "Ajouter un jeton API",
+        "create_token": "Créer un jeton",
         "never_expires": "N'expire jamais",
-        "generate_token": "Générer tokén",
-        "generating": "Génératión",
+        "generate_token": "Générer un jeton",
+        "generating": "Génération",
         "delete": {
           "title": "Supprimer le jeton API",
           "description": "Toute application utilisant ce jeton n'aura plus accès aux données de Plane. Cette action ne peut pas être annulée.",
@@ -1387,204 +1558,279 @@
     },
     "empty_state": {
       "api_tokens": {
-        "title": "Aucun API tokén créé",
-        "description": "Les APIs de Plané peuvent être utilisées pour intégrer vos données dans Plané avec n'importe quel système externe. Créez un tokén pour commencer."
+        "title": "Aucun jeton API créé",
+        "description": "Les API Plane peuvent être utilisées pour intégrer vos données dans Plane avec n'importe quel système externe. Créez un jeton pour commencer."
       },
       "webhooks": {
-        "title": "Aucun webhouk ajouté",
-        "description": "Créez des webhouks pour recevoir des mises à jour en temps réel et automatiser les actions."
+        "title": "Aucun webhook ajouté",
+        "description": "Créez des webhooks pour recevoir des mises à jour en temps réel et automatiser des actions."
       },
       "exports": {
-        "title": "Aucune exportatión pour le moment",
+        "title": "Aucune exportation pour le moment",
         "description": "Chaque fois que vous exportez, vous aurez également une copie ici pour référence."
       },
       "imports": {
-        "title": "Aucune importatión pour le moment",
+        "title": "Aucune importation pour le moment",
         "description": "Trouvez toutes vos importations précédentes ici et téléchargez-les."
       }
     }
   },
 
   "profile": {
-    "label": "Profilé",
-    "page_label": "Your worké",
-    "work": "Worké",
+    "label": "Profil",
+    "page_label": "Votre travail",
+    "work": "Travail",
     "details": {
-      "joined_on": "Rejoint le",
-      "time_zone": "Fuseaú horairé"
+      "joined_on": "Inscrit le",
+      "time_zone": "Fuseau horaire"
     },
     "stats": {
-      "workload": "Workloád",
-      "overview": "Apercú",
-      "created": "Worké items créés",
-      "assigned": "Worké items assignés",
-      "subscribed": "Worké items abonnés",
+      "workload": "Charge de travail",
+      "overview": "Vue d'ensemble",
+      "created": "Éléments de travail créés",
+      "assigned": "Éléments de travail assignés", 
+      "subscribed": "Éléments de travail suivis",
       "state_distribution": {
-        "title": "Worké items par staté",
-        "empty": "Créez des worké items pour les voir par statés dans le graphique pour une meilleure analyse."
+        "title": "Éléments de travail par état",
+        "empty": "Créez des éléments de travail pour les visualiser par état dans le graphique pour une meilleure analyse."
       },
       "priority_distribution": {
-        "title": "Worké items par Priorité",
-        "empty": "Créez des worké items pour les voir par priorité dans le graphique pour une meilleure analyse."
+        "title": "Éléments de travail par priorité",
+        "empty": "Créez des éléments de travail pour les visualiser par priorité dans le graphique pour une meilleure analyse."
       },
       "recent_activity": {
-        "title": "Activité récenté",
-        "empty": "Nous n'avons pas trouvé de données. Veuillez consulter vos entrées",
+        "title": "Activité récente",
+        "empty": "Nous n'avons pas trouvé de données. Veuillez consulter vos contributions",
         "button": "Télécharger l'activité du jour",
         "button_loading": "Téléchargement"
       }
     },
     "actions": {
-      "profile": "Profilé",
-      "security": "Securité",
+      "profile": "Profil",
+      "security": "Sécurité",
       "activity": "Activité",
-      "appearance": "Apparencé",
-      "notifications": "Notificatións"
+      "appearance": "Apparence",
+      "notifications": "Notifications"
     },
     "tabs": {
-      "summary": "Sommairé",
+      "summary": "Résumé",
       "assigned": "Assigné",
       "created": "Créé",
-      "subscribed": "Abonné",
+      "subscribed": "Suivi",
       "activity": "Activité"
     },
     "empty_state": {
       "activity": {
         "title": "Aucune activité pour le moment",
-        "description": "Commencez par créer un nouveau worké item! Ajoutez-lui des détails et des propriétés. Explorez davantage dans Plané pour voir votre activité."
+        "description": "Commencez par créer un nouvel élément de travail ! Ajoutez-y des détails et des propriétés. Explorez davantage Plane pour voir votre activité."
       },
       "assigned": {
-        "title": "Aucun worké item ne vous est assigné",
-        "description": "Les worké items qui vous sont assignés peuvent être suivis ici."
+        "title": "Aucun élément de travail ne vous est assigné",
+        "description": "Les éléments de travail qui vous sont assignés peuvent être suivis ici."
       },
       "created": {
-        "title": "Aucun worké item pour le moment",
-        "description": "Tous les worké items créés par vous arrivent ici, suivez-les directement ici."
+        "title": "Aucun élément de travail pour le moment",
+        "description": "Tous les éléments de travail que vous créez apparaissent ici, suivez-les directement ici."
       },
       "subscribed": {
-        "title": "Aucun worké item pour le moment",
-        "description": "Abonnez-vous aux worké items qui vous intéressent, suivez-les tous ici."
+        "title": "Aucun élément de travail pour le moment",
+        "description": "Abonnez-vous aux éléments de travail qui vous intéressent, suivez-les tous ici."
       }
     }
   },
 
   "project_settings": {
     "general": {
-      "enter_project_id": "Entrez l'ID du projét",
-      "please_select_a_timezone": "Veuillez sélectionner un fuseaú horairé",
+      "enter_project_id": "Saisissez l'ID du projet",
+      "please_select_a_timezone": "Veuillez sélectionner un fuseau horaire",
       "archive_project": {
-        "title": "Archiver le projét",
-        "description": "L'archivage d'un projét le retirera de votre navigation latérale, bien que vous pourrez toujours y accéder depuis votre page de projéts. Vous pouvez restaurer le projét ou le supprimer quand vous le souhaitez.",
-        "button": "Archiver le projét"
+        "title": "Archiver le projet",
+        "description": "L'archivage d'un projet le retirera de votre navigation latérale, bien que vous pourrez toujours y accéder depuis votre page de projets. Vous pouvez restaurer le projet ou le supprimer quand vous le souhaitez.",
+        "button": "Archiver le projet"
       },
       "delete_project": {
-        "title": "Supprimer le projét",
-        "description": "Lors de la suppression d'un projét, toutes les données et ressources de ce projét seront définitivement supprimées et ne pourront pas être récupérées.",
-        "button": "Supprimer mon projét"
+        "title": "Supprimer le projet",
+        "description": "Lors de la suppression d'un projet, toutes les données et ressources de ce projet seront définitivement supprimées et ne pourront pas être récupérées.",
+        "button": "Supprimer mon projet"
       },
       "toast": {
-        "success": "Projét mis à jour avec succès",
-        "error": "Le projét n'a pas pu être mis à jour. Veuillez réessayer."
+        "success": "Projet mis à jour avec succès",
+        "error": "Le projet n'a pas pu être mis à jour. Veuillez réessayer."
       }
     },
     "members": {
-      "label": "Membeurs",
-      "project_lead": "Projét leád",
+      "label": "Membres",
+      "project_lead": "Chef de projet",
       "default_assignee": "Assigné par défaut",
       "guest_super_permissions": {
-        "title": "Accorder l'accès en lecture à tous les worké items pour les utilisateurs guesté:",
-        "sub_heading": "Cela permettra aux guestés d'avoir un accès en lecture à tous les worké items du projét."
+        "title": "Accorder l'accès en lecture à tous les éléments de travail pour les utilisateurs invités :",
+        "sub_heading": "Cela permettra aux invités d'avoir un accès en lecture à tous les éléments de travail du projet."
       },
       "invite_members": {
-        "title": "Inviter des membeurs",
-        "sub_heading": "Invitez des membeurs à travailler sur votre projét.",
-        "select_co_worker": "Sélectionner un co-workeur"
+        "title": "Inviter des membres",
+        "sub_heading": "Invitez des membres à travailler sur votre projet.",
+        "select_co_worker": "Sélectionner un collaborateur"
       }
     },
     "states": {
-      "describe_this_state_for_your_members": "Décrivez cet staté pour vos membeurs."
+      "describe_this_state_for_your_members": "Décrivez cet état pour vos membres."
     },
     "labels": {
-      "label_title": "Titre du labél",
-      "label_title_is_required": "Le titre du labél est requis",
-      "label_max_char": "Le nom du labél ne doit pas dépasser 255 caractères",
+      "label_title": "Titre de l'étiquette",
+      "label_title_is_required": "Le titre de l'étiquette est requis",
+      "label_max_char": "Le nom de l'étiquette ne doit pas dépasser 255 caractères",
       "toast": {
-        "error": "Erreur lors de la mise à jour du labél"
+        "error": "Erreur lors de la mise à jour de l'étiquette"
       }
     },
     "estimates": {
-      "title": "Activer les estimatés pour mon projét",
-      "description": "Ils vous aident à communiquer la complexité et la charge de travail de l'équipe."
+      "title": "Activer les estimations pour mon projet",
+      "description": "Elles vous aident à communiquer la complexité et la charge de travail de l'équipe."
     },
     "automations": {
-      "label": "Automatións",
+      "label": "Automatisations",
       "auto-archive": {
-        "title": "Auto-archiver les worké items fermés",
-        "description": "Plané archivera automatiquement les worké items qui ont été terminés ou annulés.",
-        "duration": "Auto-archiver les worké items qui sont fermés depuis"
+        "title": "Archiver automatiquement les éléments de travail fermés",
+        "description": "Plane archivera automatiquement les éléments de travail qui ont été terminés ou annulés.",
+        "duration": "Archiver automatiquement les éléments de travail qui sont fermés depuis"
       },
       "auto-close": {
-        "title": "Auto-fermer les worké items",
-        "description": "Plané fermera automatiquement les worké items qui n'ont pas été terminés ou annulés.",
-        "duration": "Auto-fermer les worké items qui sont inactifs depuis",
-        "auto_close_status": "Staté d'auto-fermeture"
+        "title": "Fermer automatiquement les éléments de travail",
+        "description": "Plane fermera automatiquement les éléments de travail qui n'ont pas été terminés ou annulés.",
+        "duration": "Fermer automatiquement les éléments de travail inactifs depuis",
+        "auto_close_status": "Statut de fermeture automatique"
       }
     },
 
     "empty_state": {
       "labels": {
-        "title": "Aucun labél pour le moment",
-        "description": "Créez des labéls pour aider à organiser et filtrer les worké items dans votre projét."
+        "title": "Aucune étiquette pour le moment",
+        "description": "Créez des étiquettes pour aider à organiser et filtrer les éléments de travail dans votre projet."
       },
       "estimates": {
-        "title": "Aucun système d'estimaté pour le moment",
-        "description": "Créez un ensemble d'estimatés pour communiquer la quantité de travail par worké item.",
-        "primary_button": "Ajouter un système d'estimaté"
+        "title": "Aucun système d'estimation pour le moment",
+        "description": "Créez un ensemble d'estimations pour communiquer la quantité de travail par élément de travail.",
+        "primary_button": "Ajouter un système d'estimation"
       }
     }
   },
 
   "project_cycles": {
+    "add_cycle": "Ajouter un cycle",
+    "more_details": "Plus de détails",
+    "cycle": "Cycle",
+    "update_cycle": "Mettre à jour le cycle",
+    "create_cycle": "Créer un cycle",
+    "no_matching_cycles": "Aucun cycle correspondant",
+    "remove_filters_to_see_all_cycles": "Supprimez les filtres pour voir tous les cycles",
+    "remove_search_criteria_to_see_all_cycles": "Supprimez les critères de recherche pour voir tous les cycles",
+    "only_completed_cycles_can_be_archived": "Seuls les cycles terminés peuvent être archivés",
+    "active_cycle": {
+      "label": "Cycle actif",
+      "progress": "Progression",
+      "chart": "Graphique d'avancement",
+      "priority_issue": "Éléments de travail prioritaires",
+      "assignees": "Assignés",
+      "issue_burndown": "Graphique d'avancement des éléments",
+      "ideal": "Idéal",
+      "current": "Actuel",
+      "labels": "Étiquettes"
+    },
+    "upcoming_cycle": {
+      "label": "Cycle à venir"
+    },
+    "completed_cycle": {
+      "label": "Cycle terminé"
+    },
     "status": {
       "days_left": "Jours restants",
       "completed": "Terminé",
       "yet_to_start": "Pas encore commencé",
       "in_progress": "En cours",
-      "draft": "Drafté"
+      "draft": "Brouillon"
+    },
+    "action": {
+      "restore": {
+        "title": "Restaurer le cycle",
+        "success": {
+          "title": "Cycle restauré",
+          "description": "Le cycle a été restauré."
+        },
+        "failed": {
+          "title": "Échec de la restauration du cycle",
+          "description": "Le cycle n'a pas pu être restauré. Veuillez réessayer."
+        }
+      },
+      "favorite": {
+        "loading": "Ajout du cycle aux favoris...",
+        "success": {
+          "description": "Cycle ajouté aux favoris.",
+          "title": "Succès !"
+        },
+        "failed": {
+          "description": "Impossible d'ajouter le cycle aux favoris. Veuillez réessayer.",
+          "title": "Erreur !"
+        }
+      },
+      "unfavorite": {
+        "loading": "Suppression du cycle des favoris...",
+        "success": {
+          "description": "Cycle retiré des favoris.",
+          "title": "Succès !"
+        },
+        "failed": {
+          "description": "Impossible de retirer le cycle des favoris. Veuillez réessayer.",
+          "title": "Erreur !"
+        }
+      },
+      "update": {
+        "loading": "Mise à jour du cycle...",
+        "success": {
+          "description": "Cycle mis à jour avec succès.",
+          "title": "Succès !"
+        },
+        "failed": {
+          "description": "Erreur lors de la mise à jour du cycle. Veuillez réessayer.",
+          "title": "Erreur !"
+        },
+        "error": {
+          "already_exists": "Vous avez déjà un cycle aux dates indiquées. Si vous souhaitez créer un cycle en brouillon, vous pouvez le faire en supprimant les deux dates."
+        }
+      }
     },
     "empty_state": {
       "general": {
-        "title": "Groupez et chronométrez votre travail dans les Cyclés.",
-        "description": "Décomposez le travail en morceaux chronométrés, travaillez à rebours depuis la date limite de votre projét pour définir les dates, et faites des progrès tangibles en équipe.",
+        "title": "Regroupez et planifiez votre travail en Cycles.",
+        "description": "Découpez le travail en périodes définies, planifiez à rebours depuis la date limite de votre projet pour fixer les dates, et progressez concrètement en équipe.",
         "primary_button": {
-          "text": "Définissez votre premier cyclé",
+          "text": "Définissez votre premier cycle",
           "comic": {
-            "title": "Les Cyclés sont des boîtes de temps répétitives.",
-            "description": "Un sprint, une itération, ou tout autre terme que vous utilisez pour le suivi hebdomadaire ou bimensuel du travail est un cyclé."
+            "title": "Les cycles sont des périodes répétitives.",
+            "description": "Un sprint, une itération, ou tout autre terme que vous utilisez pour le suivi hebdomadaire ou bimensuel du travail est un cycle."
           }
         }
       },
       "no_issues": {
-        "title": "Aucun worké item ajouté au cyclé",
-        "description": "Ajoutez ou créez des worké items que vous souhaitez chronométrer et livrer dans ce cyclé",
+        "title": "Aucun élément de travail ajouté au cycle",
+        "description": "Ajoutez ou créez des éléments de travail que vous souhaitez planifier et livrer dans ce cycle",
         "primary_button": {
-          "text": "Créer nouveau worké item"
+          "text": "Créer un nouvel élément de travail"
         },
         "secondary_button": {
-          "text": "Ajouter un worké item existant"
+          "text": "Ajouter un élément existant"
         }
       },
       "completed_no_issues": {
-        "title": "Aucun worké item dans le cyclé",
-        "description": "Aucun worké item dans le cyclé. Les worké items sont soit transférés soit cachés. Pour voir les worké items cachés s'il y en a, mettez à jour vos propriétés d'affichage en conséquence."
+        "title": "Aucun élément de travail dans le cycle",
+        "description": "Aucun élément de travail dans le cycle. Les éléments sont soit transférés soit masqués. Pour voir les éléments masqués s'il y en a, mettez à jour vos propriétés d'affichage en conséquence."
       },
       "active": {
-        "title": "Aucun cyclé actif",
-        "description": "Un cyclé actif inclut toute période qui englobe la date d'aujourd'hui dans sa plage. Trouvez ici la progression et les détails du cyclé actif."
+        "title": "Aucun cycle actif",
+        "description": "Un cycle actif inclut toute période qui englobe la date d'aujourd'hui dans sa plage. Trouvez ici la progression et les détails du cycle actif."
       },
       "archived": {
-        "title": "Aucun cyclé archivé pour le moment",
-        "description": "Pour ranger votre projét, archivez les cyclés terminés. Trouvez-les ici une fois archivés."
+        "title": "Aucun cycle archivé pour le moment",
+        "description": "Pour organiser votre projet, archivez les cycles terminés. Retrouvez-les ici une fois archivés."
       }
     }
   },
@@ -1592,25 +1838,25 @@
   "project_issues": {
     "empty_state": {
       "no_issues": {
-        "title": "Créez un worké item et assignez-le à quelqu'un, même à vous-même",
-        "description": "Pensez aux worké items comme des jobs, des tâches, du travail, ou JTBD. Que nous aimons. Un worké item et ses sous-worké items sont généralement des actions basées sur le temps assignées aux membres de votre équipe. Votre équipe crée, assigne et complète des worké items pour faire avancer votre projét vers son objectif.",
+        "title": "Créez un élément de travail et assignez-le à quelqu'un, même à vous-même",
+        "description": "Pensez aux éléments de travail comme des tâches, du travail, ou des JTBD (Jobs To Be Done). Un élément de travail et ses sous-éléments sont généralement des actions temporelles assignées aux membres de votre équipe. Votre équipe crée, assigne et complète des éléments de travail pour faire progresser votre projet vers son objectif.",
         "primary_button": {
-          "text": "Créez votre premier worké item",
+          "text": "Créez votre premier élément de travail",
           "comic": {
-            "title": "Les Worké items sont les éléments de base dans Plané.",
-            "description": "Redesigner l'UI de Plané, Rebrander l'entreprise, ou Lancer le nouveau système d'injection de carburant sont des exemples de worké items qui ont probablement des sous-worké items."
+            "title": "Les éléments de travail sont les blocs de construction dans Plane.",
+            "description": "Refondre l'interface de Plane, Renouveler l'image de marque de l'entreprise, ou Lancer le nouveau système d'injection de carburant sont des exemples d'éléments de travail qui ont probablement des sous-éléments."
           }
         }
       },
       "no_archived_issues": {
-        "title": "Aucun worké item archivé pour le moment",
-        "description": "Manuellement ou par automatión, vous pouvez archiver les worké items qui sont terminés ou annulés. Trouvez-les ici une fois archivés.",
+        "title": "Aucun élément de travail archivé pour le moment",
+        "description": "Manuellement ou par automatisation, vous pouvez archiver les éléments de travail terminés ou annulés. Retrouvez-les ici une fois archivés.",
         "primary_button": {
-          "text": "Définir l'automatión"
+          "text": "Configurer l'automatisation"
         }
       },
       "issues_empty_filter": {
-        "title": "Aucun worké item trouvé correspondant aux filtres appliqués",
+        "title": "Aucun élément de travail trouvé correspondant aux filtres appliqués",
         "secondary_button": {
           "text": "Effacer tous les filtres"
         }
@@ -1619,55 +1865,55 @@
   },
 
   "project_module": {
-    "add_module": "Ajouter Modulé",
-    "update_module": "Mettre à jour Modulé",
-    "create_module": "Créer Modulé",
-    "archive_module": "Archiver Modulé",
-    "restore_module": "Restaurer Modulé",
-    "delete_module": "Supprimer modulé",
+    "add_module": "Ajouter un module",
+    "update_module": "Mettre à jour le module",
+    "create_module": "Créer un module",
+    "archive_module": "Archiver le module",
+    "restore_module": "Restaurer le module",
+    "delete_module": "Supprimer le module",
     "empty_state": {
       "general": {
-        "title": "Mappez vos jalons de projét aux Modulés et suivez facilement le travail agrégé.",
-        "description": "Un groupe de worké items qui appartiennent à un parent logique et hiérarchique forme un modulé. Considérez-les comme un moyen de suivre le travail par jalons de projét. Ils ont leurs propres périodes et délais ainsi que des analytiqués pour vous aider à voir à quel point vous êtes proche ou loin d'un jalon.",
+        "title": "Associez vos jalons de projet aux Modules et suivez facilement le travail agrégé.",
+        "description": "Un groupe d'éléments de travail qui appartiennent à un parent logique et hiérarchique forme un module. Considérez-les comme un moyen de suivre le travail par jalons de projet. Ils ont leurs propres périodes et délais ainsi que des analyses pour vous aider à voir à quel point vous êtes proche ou loin d'un jalon.",
         "primary_button": {
-          "text": "Construisez votre premier modulé",
+          "text": "Construisez votre premier module",
           "comic": {
-            "title": "Les Modulés aident à grouper le travail par hiérarchie.",
-            "description": "Un modulé panier, un modulé châssis et un modulé entrepôt sont tous de bons exemples de ce groupement."
+            "title": "Les modules aident à regrouper le travail par hiérarchie.",
+            "description": "Un module panier, un module châssis et un module entrepôt sont tous de bons exemples de ce regroupement."
           }
         }
       },
       "no_issues": {
-        "title": "Aucun worké item dans le modulé",
-        "description": "Créez ou ajoutez des worké items que vous souhaitez accomplir dans le cadre de ce modulé",
+        "title": "Aucun élément de travail dans le module",
+        "description": "Créez ou ajoutez des éléments de travail que vous souhaitez accomplir dans le cadre de ce module",
         "primary_button": {
-          "text": "Créer nouveaux worké items"
+          "text": "Créer de nouveaux éléments de travail"
         },
         "secondary_button": {
-          "text": "Ajouter un worké item existant"
+          "text": "Ajouter un élément existant"
         }
       },
       "archived": {
-        "title": "Aucun Modulé archivé pour le moment",
-        "description": "Pour ranger votre projét, archivez les modulés terminés ou annulés. Trouvez-les ici une fois archivés."
+        "title": "Aucun module archivé pour le moment",
+        "description": "Pour organiser votre projet, archivez les modules terminés ou annulés. Retrouvez-les ici une fois archivés."
       },
       "sidebar": {
-        "in_active": "Ce modulé n'est pas encore actif.",
+        "in_active": "Ce module n'est pas encore actif.",
         "invalid_date": "Date invalide. Veuillez entrer une date valide."
       }
     },
     "quick_actions": {
-      "archive_module": "Archiver modulé",
-      "archive_module_description": "Seul un modulé terminé ou annulé\npeut être archivé.",
-      "delete_module": "Supprimer modulé"
+      "archive_module": "Archiver le module",
+      "archive_module_description": "Seuls les modules terminés ou\nannulés peuvent être archivés.",
+      "delete_module": "Supprimer le module"
     },
     "toast": {
       "copy": {
-        "success": "Lien du modulé copié dans le presse-papiers"
+        "success": "Lien du module copié dans le presse-papiers"
       },
       "delete": {
-        "success": "Modulé supprimé avec succès",
-        "error": "Échec de la suppression du modulé"
+        "success": "Module supprimé avec succès",
+        "error": "Échec de la suppression du module"
       }
     }
   },
@@ -1675,19 +1921,19 @@
   "project_views": {
     "empty_state": {
       "general": {
-        "title": "Sauvegardez des vués filtrées pour votre projét. Créez-en autant que nécessaire",
-        "description": "Les vués sont un ensemble de filtrés sauvegardés que vous utilisez fréquemment ou auxquels vous souhaitez accéder facilement. Tous vos collègues dans un projét peuvent voir les vués de tout le monde et choisir celle qui convient le mieux à leurs besoins.",
+        "title": "Enregistrez des vues filtrées pour votre projet. Créez-en autant que nécessaire",
+        "description": "Les vues sont un ensemble de filtres enregistrés que vous utilisez fréquemment ou auxquels vous souhaitez avoir un accès facile. Tous vos collègues dans un projet peuvent voir les vues de chacun et choisir celle qui convient le mieux à leurs besoins.",
         "primary_button": {
-          "text": "Créez votre première vué",
+          "text": "Créez votre première vue",
           "comic": {
-            "title": "Les vués fonctionnent avec les propriétés des workés items.",
-            "description": "Vous pouvez créer une vué d'ici avec autant de propriétés comme filtrés que vous le souhaitez."
+            "title": "Les vues fonctionnent sur les propriétés des éléments de travail.",
+            "description": "Vous pouvez créer une vue ici avec autant de propriétés comme filtres que vous le jugez approprié."
           }
         }
       },
       "filter": {
-        "title": "Aucune vué correspondante",
-        "description": "Aucune vué ne correspond aux critères de recherche. \n Créez une nouvelle vué à la place."
+        "title": "Aucune vue correspondante",
+        "description": "Aucune vue ne correspond aux critères de recherche. \n Créez plutôt une nouvelle vue."
       }
     }
   },
@@ -1695,29 +1941,29 @@
   "project_page": {
     "empty_state": {
       "general": {
-        "title": "Écrivez une noté, un doké, ou une basé de connaissances complète. Obtenez l'aide de Galiléo, l'assistant IA de Plané",
-        "description": "Les pagés sont un espace de réflexion dans Plané. Prenez des notés de réunion, formatez-les facilement, intégrez des workés items, disposez-les à l'aide d'une bibliothèque de composants, et gardez-les tous dans le contexte de votre projét. Pour faciliter la rédaction de tout doké, invoquez Galiléo, l'IA de Plané, avec un raccourci ou un clic sur un bouton.",
+        "title": "Rédigez une note, un document ou une base de connaissances complète. Obtenez l'aide de Galileo, l'assistant IA de Plane, pour commencer",
+        "description": "Les Pages sont un espace de réflexion dans Plane. Prenez des notes de réunion, formatez-les facilement, intégrez des éléments de travail, disposez-les à l'aide d'une bibliothèque de composants, et gardez-les tous dans le contexte de votre projet. Pour faciliter la rédaction de tout document, faites appel à Galileo, l'IA de Plane, avec un raccourci ou un clic sur un bouton.",
         "primary_button": {
-          "text": "Créez votre première pagé"
+          "text": "Créez votre première page"
         }
       },
       "private": {
-        "title": "Pas encore de pagés privées",
-        "description": "Gardez vos pensées privées ici. Quand vous êtes prêt à partager, l'équipe n'est qu'à un clic.",
+        "title": "Pas encore de pages privées",
+        "description": "Gardez vos pensées privées ici. Quand vous serez prêt à partager, l'équipe n'est qu'à un clic.",
         "primary_button": {
-          "text": "Créez votre première pagé"
+          "text": "Créez votre première page"
         }
       },
       "public": {
-        "title": "Pas encore de pagés publiqués",
-        "description": "Voyez les pagés partagées avec tout le monde dans votre projét ici.",
+        "title": "Pas encore de pages publiques",
+        "description": "Consultez ici les pages partagées avec tout le monde dans votre projet.",
         "primary_button": {
-          "text": "Créez votre première pagé"
+          "text": "Créez votre première page"
         }
       },
       "archived": {
-        "title": "Pas encore de pagés archivées",
-        "description": "Archivez les pagés qui ne sont pas sur votre radar. Accédez-y ici quand nécessaire."
+        "title": "Pas encore de pages archivées",
+        "description": "Archivez les pages qui ne sont pas dans votre radar. Accédez-y ici quand nécessaire."
       }
     }
   },
@@ -1733,10 +1979,10 @@
   "issue_relation": {
     "empty_state": {
       "search": {
-        "title": "Aucun worké item correspondant trouvé"
+        "title": "Aucun élément de travail correspondant trouvé"
       },
       "no_issues": {
-        "title": "Aucun worké item trouvé"
+        "title": "Aucun élément de travail trouvé"
       }
     }
   },
@@ -1745,47 +1991,47 @@
     "empty_state": {
       "general": {
         "title": "Pas encore de commentaires",
-        "description": "Les commentaires peuvent être utilisés comme espace de discussion et de suivi pour les workés items"
+        "description": "Les commentaires peuvent être utilisés comme espace de discussion et de suivi pour les éléments de travail"
       }
     }
   },
 
   "notification": {
-    "label": "Inboxé",
-    "page_label": "{workspace} - Inboxé",
+    "label": "Boîte de réception",
+    "page_label": "{workspace} - Boîte de réception",
     "options": {
-      "mark_all_as_read": "Marquer tout comme lu",
+      "mark_all_as_read": "Tout marquer comme lu",
       "mark_read": "Marquer comme lu",
       "mark_unread": "Marquer comme non lu",
-      "refresh": "Rafraîchir",
-      "filters": "Filtrés d'Inboxé",
-      "show_unread": "Afficher non lus",
-      "show_snoozed": "Afficher reportés",
-      "show_archived": "Afficher archivés",
+      "refresh": "Actualiser",
+      "filters": "Filtres de la boîte de réception",
+      "show_unread": "Afficher les non lus",
+      "show_snoozed": "Afficher les reportés",
+      "show_archived": "Afficher les archivés",
       "mark_archive": "Archiver",
       "mark_unarchive": "Désarchiver",
       "mark_snooze": "Reporter",
-      "mark_unsnooze": "Annuler report"
+      "mark_unsnooze": "Annuler le report"
     },
     "toasts": {
-      "read": "Inboxé marqué comme lu",
-      "unread": "Inboxé marqué comme non lu",
-      "archived": "Inboxé marqué comme archivé",
-      "unarchived": "Inboxé marqué comme désarchivé",
-      "snoozed": "Inboxé reporté",
-      "unsnoozed": "Report d'Inboxé annulé"
+      "read": "Boîte de réception marquée comme lue",
+      "unread": "Boîte de réception marquée comme non lue",
+      "archived": "Boîte de réception archivée",
+      "unarchived": "Boîte de réception désarchivée",
+      "snoozed": "Boîte de réception reportée",
+      "unsnoozed": "Report de la boîte de réception annulé"
     },
     "empty_state": {
       "detail": {
         "title": "Sélectionnez pour voir les détails."
       },
       "all": {
-        "title": "Aucun worké item assigné",
-        "description": "Les mises à jour des workés items qui vous sont assignés peuvent être \n vues ici"
+        "title": "Aucun élément de travail assigné",
+        "description": "Les mises à jour des éléments de travail qui vous sont assignés peuvent être \n vues ici"
       },
       "mentions": {
-        "title": "Aucun worké item assigné",
-        "description": "Les mises à jour des workés items qui vous sont assignés peuvent être \n vues ici"
+        "title": "Aucun élément de travail assigné",
+        "description": "Les mises à jour des éléments de travail qui vous sont assignés peuvent être \n vues ici"
       }
     },
     "tabs": {
@@ -1795,11 +2041,11 @@
     "filter": {
       "assigned": "Assigné à moi",
       "created": "Créé par moi",
-      "subscribed": "Abonné par moi"
+      "subscribed": "Suivi par moi"
     },
     "snooze": {
       "1_day": "1 jour",
-      "3_days": "3 jours",
+      "3_days": "3 jours", 
       "5_days": "5 jours",
       "1_week": "1 semaine",
       "2_weeks": "2 semaines",
@@ -1810,19 +2056,19 @@
   "active_cycle": {
     "empty_state": {
       "progress": {
-        "title": "Ajoutez des workés items au cyclé pour voir sa progression"
+        "title": "Ajoutez des éléments de travail au cycle pour voir sa progression"
       },
       "chart": {
-        "title": "Ajoutez des workés items au cyclé pour voir le graphique d'avancement."
+        "title": "Ajoutez des éléments de travail au cycle pour voir le graphique d'avancement."
       },
       "priority_issue": {
-        "title": "Observez les workés items de haute priorité traités dans le cyclé en un coup d'œil."
+        "title": "Observez en un coup d'œil les éléments de travail prioritaires traités dans le cycle."
       },
       "assignee": {
-        "title": "Ajoutez des assignés aux workés items pour voir une répartition du travail par assignés."
+        "title": "Ajoutez des assignés aux éléments de travail pour voir une répartition du travail par assigné."
       },
       "label": {
-        "title": "Ajoutez des labels aux workés items pour voir la répartition du travail par labels."
+        "title": "Ajoutez des étiquettes aux éléments de travail pour voir la répartition du travail par étiquette."
       }
     }
   },
@@ -1830,36 +2076,36 @@
   "disabled_project": {
     "empty_state": {
       "inbox": {
-        "title": "L'intaké n'est pas activé pour le projét.",
-        "description": "L'intaké vous aide à gérer les demandes entrantes dans votre projét et à les ajouter comme workés items dans votre workflow. Activez l'intaké depuis les paramètres du projét pour gérer les demandes.",
+        "title": "L'Intake n'est pas activé pour le projet.",
+        "description": "L'Intake vous aide à gérer les demandes entrantes dans votre projet et à les ajouter comme éléments de travail dans votre flux. Activez l'Intake depuis les paramètres du projet pour gérer les demandes.",
         "primary_button": {
           "text": "Gérer les fonctionnalités"
         }
       },
       "cycle": {
-        "title": "Les cyclés ne sont pas activés pour ce projét.",
-        "description": "Découpez le travail en morceaux chronométrés, travaillez à rebours depuis votre deadline de projét pour définir les dates, et progressez de manière tangible en équipe. Activez la fonctionnalité cyclés pour votre projét pour commencer à les utiliser.",
+        "title": "Les Cycles ne sont pas activés pour ce projet.",
+        "description": "Découpez le travail en segments temporels, planifiez à rebours depuis la date limite de votre projet pour définir les dates, et progressez concrètement en équipe. Activez la fonctionnalité Cycles pour votre projet pour commencer à les utiliser.",
         "primary_button": {
           "text": "Gérer les fonctionnalités"
         }
       },
       "module": {
-        "title": "Les modulés ne sont pas activés pour le projét.",
-        "description": "Les modulés sont les éléments constitutifs de votre projét. Activez les modulés depuis les paramètres du projét pour commencer à les utiliser.",
+        "title": "Les Modules ne sont pas activés pour le projet.",
+        "description": "Les Modules sont les éléments constitutifs de votre projet. Activez les modules depuis les paramètres du projet pour commencer à les utiliser.",
         "primary_button": {
           "text": "Gérer les fonctionnalités"
         }
       },
       "page": {
-        "title": "Les pagés ne sont pas activées pour le projét.",
-        "description": "Les pagés sont les éléments constitutifs de votre projét. Activez les pagés depuis les paramètres du projét pour commencer à les utiliser.",
+        "title": "Les Pages ne sont pas activées pour le projet.",
+        "description": "Les Pages sont les éléments constitutifs de votre projet. Activez les pages depuis les paramètres du projet pour commencer à les utiliser.",
         "primary_button": {
           "text": "Gérer les fonctionnalités"
         }
       },
       "view": {
-        "title": "Les vués ne sont pas activées pour le projét.",
-        "description": "Les vués sont les éléments constitutifs de votre projét. Activez les vués depuis les paramètres du projét pour commencer à les utiliser.",
+        "title": "Les Vues ne sont pas activées pour le projet.",
+        "description": "Les Vues sont les éléments constitutifs de votre projet. Activez les vues depuis les paramètres du projet pour commencer à les utiliser.",
         "primary_button": {
           "text": "Gérer les fonctionnalités"
         }
@@ -1867,22 +2113,22 @@
     }
   },
   "workspace_draft_issues": {
-    "draft_an_issue": "Brouillon d'un worké item",
+    "draft_an_issue": "Créer un brouillon d'élément de travail",
     "empty_state": {
-      "title": "Les workés items à moitié écrits, et bientôt les commentaires, apparaîtront ici.",
-      "description": "Pour essayer cela, commencez à ajouter un worké item et laissez-le à mi-chemin ou créez votre premier brouillon ci-dessous. 😉",
+      "title": "Les éléments de travail partiellement rédigés, et bientôt les commentaires, apparaîtront ici.",
+      "description": "Pour essayer cela, commencez à ajouter un élément de travail et laissez-le à mi-chemin ou créez votre premier brouillon ci-dessous. 😉",
       "primary_button": {
         "text": "Créez votre premier brouillon"
       }
     },
     "delete_modal": {
-      "title": "Supprimer brouillon",
+      "title": "Supprimer le brouillon",
       "description": "Êtes-vous sûr de vouloir supprimer ce brouillon ? Cette action ne peut pas être annulée."
     },
     "toasts": {
       "created": {
         "success": "Brouillon créé",
-        "error": "Le worké item n'a pas pu être créé. Veuillez réessayer."
+        "error": "L'élément de travail n'a pas pu être créé. Veuillez réessayer."
       },
       "deleted": {
         "success": "Brouillon supprimé"
@@ -1891,334 +2137,184 @@
   },
 
   "stickies": {
-    "title": "Vos stickiés",
-    "placeholder": "cliquez pour taper ici",
-    "all": "Tous les stickiés",
-    "no-data": "Notez une idée, capturez un eurêka, ou enregistrez une inspiration. Ajoutez un stickié pour commencer.",
-    "add": "Ajouter stickié",
+    "title": "Vos notes adhésives",
+    "placeholder": "cliquez pour écrire ici",
+    "all": "Toutes les notes adhésives",
+    "no-data": "Notez une idée, capturez une révélation ou enregistrez une inspiration. Ajoutez une note adhésive pour commencer.",
+    "add": "Ajouter une note adhésive",
     "search_placeholder": "Rechercher par titre",
-    "delete": "Supprimer stickié",
-    "delete_confirmation": "Êtes-vous sûr de vouloir supprimer ce stickié ?",
+    "delete": "Supprimer la note adhésive",
+    "delete_confirmation": "Êtes-vous sûr de vouloir supprimer cette note adhésive ?",
     "empty_state": {
-      "simple": "Notez une idée, capturez un eurêka, ou enregistrez une inspiration. Ajoutez un stickié pour commencer.",
+      "simple": "Notez une idée, capturez une révélation ou enregistrez une inspiration. Ajoutez une note adhésive pour commencer.",
       "general": {
-        "title": "Les stickiés sont des notes rapides et des tâches que vous prenez à la volée.",
-        "description": "Capturez vos pensées et idées sans effort en créant des stickiés que vous pouvez accéder n'importe quand et de n'importe où.",
+        "title": "Les notes adhésives sont des notes rapides et des tâches que vous prenez à la volée.",
+        "description": "Capturez vos pensées et idées facilement en créant des notes adhésives que vous pouvez consulter à tout moment et de n'importe où.",
         "primary_button": {
-          "text": "Ajouter stickié"
+          "text": "Ajouter une note adhésive"
         }
       },
       "search": {
-        "title": "Cela ne correspond à aucun de vos stickiés.",
+        "title": "Cela ne correspond à aucune de vos notes adhésives.",
         "description": "Essayez un terme différent ou faites-nous savoir\nsi vous êtes sûr que votre recherche est correcte.",
         "primary_button": {
-          "text": "Ajouter stickié"
+          "text": "Ajouter une note adhésive"
         }
       }
     },
     "toasts": {
       "errors": {
-        "wrong_name": "Le nom du stickié ne peut pas dépasser 100 caractères.",
-        "already_exists": "Il existe déjà un stickié sans description"
+        "wrong_name": "Le nom de la note adhésive ne peut pas dépasser 100 caractères.",
+        "already_exists": "Il existe déjà une note adhésive sans description"
       },
       "created": {
-        "title": "Stickié créé",
-        "message": "Le stickié a été créé avec succès"
+        "title": "Note adhésive créée",
+        "message": "La note adhésive a été créée avec succès"
       },
       "not_created": {
-        "title": "Stickié non créé",
-        "message": "Le stickié n'a pas pu être créé"
+        "title": "Note adhésive non créée",
+        "message": "La note adhésive n'a pas pu être créée"
       },
       "updated": {
-        "title": "Stickié mis à jour",
-        "message": "Le stickié a été mis à jour avec succès"
+        "title": "Note adhésive mise à jour",
+        "message": "La note adhésive a été mise à jour avec succès"
       },
       "not_updated": {
-        "title": "Stickié non mis à jour",
-        "message": "Le stickié n'a pas pu être mis à jour"
+        "title": "Note adhésive non mise à jour",
+        "message": "La note adhésive n'a pas pu être mise à jour"
       },
       "removed": {
-        "title": "Stickié supprimé",
-        "message": "Le stickié a été supprimé avec succès"
+        "title": "Note adhésive supprimée",
+        "message": "La note adhésive a été supprimée avec succès"
       },
       "not_removed": {
-        "title": "Stickié non supprimé",
-        "message": "Le stickié n'a pas pu être supprimé"
+        "title": "Note adhésive non supprimée",
+        "message": "La note adhésive n'a pas pu être supprimée"
       }
     }
   },
 
   "role_details": {
     "guest": {
-      "title": "Guesté",
-      "description": "Les membres externes des organisations peuvent être invités en tant que guestés."
+      "title": "Invité",
+      "description": "Les membres externes des organisations peuvent être invités en tant qu'invités."
     },
     "member": {
-      "title": "Membeur",
-      "description": "Capacité à lire, écrire, éditer et supprimer des entités dans les projéts, cyclés et modulés"
+      "title": "Membre",
+      "description": "Capacité à lire, écrire, modifier et supprimer des entités dans les projets, cycles et modules"
     },
     "admin": {
-      "title": "Adminé",
-      "description": "Toutes les permissions sont définies sur vrai dans le workspase."
+      "title": "Administrateur",
+      "description": "Toutes les permissions sont activées dans l'espace de travail."
     }
   },
 
   "user_roles": {
-    "product_or_project_manager": "Manageur de Produit / Projét",
-    "development_or_engineering": "Développement / Ingénierié",
-    "founder_or_executive": "Fondateur / Exécutivé",
-    "freelancer_or_consultant": "Freelanceur / Consultanté",
-    "marketing_or_growth": "Marketingue / Croissancé",
-    "sales_or_business_development": "Venté / Développement Commercialé",
-    "support_or_operations": "Supporté / Opérationé",
-    "student_or_professor": "Étudianté / Professeué",
-    "human_resources": "Ressourcés Humainé",
-    "other": "Autré"
+    "product_or_project_manager": "Chef de produit / Chef de projet",
+    "development_or_engineering": "Développement / Ingénierie",
+    "founder_or_executive": "Fondateur / Dirigeant",
+    "freelancer_or_consultant": "Freelance / Consultant",
+    "marketing_or_growth": "Marketing / Croissance",
+    "sales_or_business_development": "Ventes / Développement commercial",
+    "support_or_operations": "Support / Opérations",
+    "student_or_professor": "Étudiant / Professeur",
+    "human_resources": "Ressources Humaines",
+    "other": "Autre"
   },
 
   "importer": {
     "github": {
-      "title": "Githubé",
-      "description": "Importez des workés items depuis les dépôts GitHub et synchronisez-les."
+      "title": "GitHub",
+      "description": "Importez des éléments de travail depuis les dépôts GitHub et synchronisez-les."
     },
     "jira": {
-      "title": "Jiré",
-      "description": "Importez des workés items et epiqués depuis les projéts et epiqués Jira."
+      "title": "Jira",
+      "description": "Importez des éléments de travail et des epics depuis les projets et epics Jira."
     }
   },
 
   "exporter": {
     "csv": {
       "title": "CSV",
-      "description": "Exporter les éléments de travail au format CSV.",
+      "description": "Exportez les éléments de travail vers un fichier CSV.",
       "short_description": "Exporter en csv"
     },
     "excel": {
       "title": "Excel",
-      "description": "Exporter les éléments de travail au format Excel.",
+      "description": "Exportez les éléments de travail vers un fichier Excel.",
       "short_description": "Exporter en excel"
     },
     "xlsx": {
       "title": "Excel",
-      "description": "Exporter les éléments de travail au format Excel.",
+      "description": "Exportez les éléments de travail vers un fichier Excel.",
       "short_description": "Exporter en excel"
     },
     "json": {
       "title": "JSON",
-      "description": "Exporter les éléments de travail au format JSON.",
+      "description": "Exportez les éléments de travail vers un fichier JSON.",
       "short_description": "Exporter en json"
     }
   },
   "default_global_view": {
-    "all_issues": "Tous les workés items",
-    "assigned": "Assigné",
-    "created": "Créé",
-    "subscribed": "Abonné"
+    "all_issues": "Tous les éléments de travail",
+    "assigned": "Assignés",
+    "created": "Créés",
+    "subscribed": "Suivis"
   },
 
   "themes": {
     "theme_options": {
       "system_preference": {
-        "label": "Préférence systèmé"
+        "label": "Préférence système"
       },
       "light": {
-        "label": "Claré"
+        "label": "Clair"
       },
       "dark": {
-        "label": "Sombré"
+        "label": "Sombre"
       },
       "light_contrast": {
-        "label": "Claré contraste élevé"
+        "label": "Contraste clair élevé"
       },
       "dark_contrast": {
-        "label": "Sombré contraste élevé"
+        "label": "Contraste sombre élevé"
       },
       "custom": {
-        "label": "Thèmé personnalisé"
+        "label": "Thème personnalisé"
       }
     }
   },
   "project_modules": {
     "status": {
-      "backlog": "Backlogué",
+      "backlog": "Backlog",
       "planned": "Planifié",
-      "in_progress": "En Progrès",
-      "paused": "Pausé",
-      "completed": "Complété",
+      "in_progress": "En cours",
+      "paused": "En pause",
+      "completed": "Terminé",
       "cancelled": "Annulé"
     },
     "layout": {
-      "list": "Dispositioné listé",
-      "board": "Dispositioné galerié",
-      "timeline": "Dispositioné chronologié"
+      "list": "Vue liste",
+      "board": "Vue galerie",
+      "timeline": "Vue chronologique"
     },
     "order_by": {
-      "name": "Nomé",
-      "progress": "Progrès",
-      "issues": "Nombre de workés items",
-      "due_date": "Date d'échéancé",
-      "created_at": "Date de créationé",
-      "manual": "Manuelé"
-    }
-  },
-
-  "auth": {
-    "common": {
-      "email": {
-        "label": "Emailé",
-        "placeholder": "nomé@companié.com",
-        "errors": {
-          "required": "Emailé est requis",
-          "invalid": "Emailé est invalide"
-        }
-      },
-      "password": {
-        "label": "Passeworde",
-        "set_password": "Définir un passeworde",
-        "placeholder": "Entrer passeworde",
-        "confirm_password": {
-          "label": "Confirmer passeworde",
-          "placeholder": "Confirmer passeworde"
-        },
-        "current_password": {
-          "label": "Passeworde actuel"
-        },
-        "new_password": {
-          "label": "Nouveau passeworde",
-          "placeholder": "Entrer nouveau passeworde"
-        },
-        "change_password": {
-          "label": {
-            "default": "Changer passeworde",
-            "submitting": "Changement du passeworde"
-          }
-        },
-        "errors": {
-          "match": "Les passewordes ne correspondent pas",
-          "empty": "Veuillez entrer votre passeworde",
-          "length": "La longueur du passeworde doit être supérieure à 8 caractères",
-          "strength": {
-            "weak": "Le passeworde est faible",
-            "strong": "Le passeworde est fort"
-          }
-        },
-        "submit": "Définir passeworde",
-        "toast": {
-          "change_password": {
-            "success": {
-              "title": "Succès!",
-              "message": "Passeworde changé avec succès."
-            },
-            "error": {
-              "title": "Erreur!",
-              "message": "Quelque chose s'est mal passé. Veuillez réessayer."
-            }
-          }
-        }
-      },
-      "unique_code": {
-        "label": "Codé uniqué",
-        "placeholder": "gets-sets-flys",
-        "paste_code": "Collez le codé envoyé à votre emailé",
-        "requesting_new_code": "Demande d'un nouveau codé",
-        "sending_code": "Envoi du codé"
-      },
-      "already_have_an_account": "Vous avez déjà un accounté?",
-      "login": "Loginé",
-      "create_account": "Créer un accounté",
-      "new_to_plane": "Nouveau sur Plané?",
-      "back_to_sign_in": "Retour au loginé",
-      "resend_in": "Renvoyer dans {seconds} secondes",
-      "sign_in_with_unique_code": "Loginé avec un codé uniqué",
-      "forgot_password": "Oublié votre passeworde?"
-    },
-    "sign_up": {
-      "header": {
-        "label": "Créez un accounté pour commencer à gérer le travail avec votre teamé.",
-        "step": {
-          "email": {
-            "header": "Signé upé",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Signé upé",
-            "sub_header": "Signé upé en utilisant une combinaison emailé-passeworde."
-          },
-          "unique_code": {
-            "header": "Signé upé",
-            "sub_header": "Signé upé en utilisant un codé uniqué envoyé à l'adresse emailé ci-dessus."
-          }
-        }
-      },
-      "errors": {
-        "password": {
-          "strength": "Essayez de définir un passeworde fort pour continuer"
-        }
-      }
-    },
-    "sign_in": {
-      "header": {
-        "label": "Loginé pour commencer à gérer le travail avec votre teamé.",
-        "step": {
-          "email": {
-            "header": "Loginé ou signé upé",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Loginé ou signé upé",
-            "sub_header": "Utilisez votre combinaison emailé-passeworde pour vous loginé."
-          },
-          "unique_code": {
-            "header": "Loginé ou signé upé",
-            "sub_header": "Loginé en utilisant un codé uniqué envoyé à l'adresse emailé ci-dessus."
-          }
-        }
-      }
-    },
-    "forgot_password": {
-      "title": "Réinitialiser votre passeworde",
-      "description": "Entrez l'adresse emailé vérifiée de votre accounté utilisateur et nous vous enverrons un lien de réinitialisation du passeworde.",
-      "email_sent": "Nous avons envoyé le lien de réinitialisation à votre adresse emailé",
-      "send_reset_link": "Envoyer le lien de réinitialisation",
-      "errors": {
-        "smtp_not_enabled": "Nous voyons que votre godé n'a pas activé SMTP, nous ne pourrons pas envoyer de lien de réinitialisation du passeworde"
-      },
-      "toast": {
-        "success": {
-          "title": "Emailé envoyé",
-          "message": "Vérifiez votre boîte de réception pour un lien de réinitialisation de votre passeworde. S'il n'apparaît pas dans quelques minutes, vérifiez votre dossier spam."
-        },
-        "error": {
-          "title": "Erreur!",
-          "message": "Quelque chose s'est mal passé. Veuillez réessayer."
-        }
-      }
-    },
-    "reset_password": {
-      "title": "Définir nouveau passeworde",
-      "description": "Sécurisez votre accounté avec un passeworde fort"
-    },
-    "set_password": {
-      "title": "Sécurisez votre accounté",
-      "description": "La définition du passeworde vous aide à vous loginé en toute sécurité"
-    },
-    "sign_out": {
-      "toast": {
-        "error": {
-          "title": "Erreur!",
-          "message": "Échec de la déconnexion. Veuillez réessayer."
-        }
-      }
+      "name": "Nom",
+      "progress": "Progression",
+      "issues": "Nombre d'éléments de travail",
+      "due_date": "Date d'échéance",
+      "created_at": "Date de création",
+      "manual": "Manuel"
     }
   },
 
   "cycle": {
-    "label": "{count, plural, one {Cyclé} other {Cyclés}}",
-    "no_cycle": "Pas de cyclé"
+    "label": "{count, plural, one {Cycle} other {Cycles}}",
+    "no_cycle": "Pas de cycle"
   },
 
   "module": {
-    "label": "{count, plural, one {Modulé} other {Modulés}}",
-    "no_module": "Pas de modulé"
+    "label": "{count, plural, one {Module} other {Modules}}",
+    "no_module": "Pas de module"
   }
 }
