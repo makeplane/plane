@@ -17,7 +17,7 @@ export interface IPartialProject {
   identifier: string;
   sort_order: number | null;
   logo_props: TLogoProps;
-  member_role: TUserPermissions | null;
+  member_role?: TUserPermissions | EUserProjectRoles | null;
   archived_at: string | null;
   workspace: IWorkspace | string;
   cycle_view: boolean;
