@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { AlignLeft, Briefcase, Calendar, Link, Paperclip, Type, Users } from "lucide-react";
 import { TBaseActivityVerbs } from "@plane/types";
-import { InitiativeIcon } from "@plane/ui";
+import { EpicIcon, InitiativeIcon } from "@plane/ui";
 import { store } from "@/lib/store-context";
 import { TInitiativeActivity } from "@/plane-web/types/initiative";
 
@@ -19,6 +19,7 @@ export type TInitiativeActivityFields =
   | "link"
   | "attachment"
   | "projects"
+  | "epics"
   | "start_date"
   | "end_date";
 
@@ -110,6 +111,24 @@ export const INITIATIVE_UPDATES_HELPER_MAP: Partial<TInitiativeActivityDetailsHe
         ) : activity.new_value ? (
           <>
             added project <span className={commonTextClassName}>{activity.new_value}</span> to the initiative.
+          </>
+        ) : (
+          <></>
+        )}
+      </>
+    ),
+  }),
+  epics_updated: (activity: TInitiativeActivity) => ({
+    icon: <EpicIcon className={commonIconClassName} />,
+    message: (
+      <>
+        {activity.old_value ? (
+          <>
+            removed epic <span className={commonTextClassName}>{activity.old_value}</span> from the initiative.
+          </>
+        ) : activity.new_value ? (
+          <>
+            added epic <span className={commonTextClassName}>{activity.new_value}</span> to the initiative.
           </>
         ) : (
           <></>

@@ -210,6 +210,7 @@ class InitiativeEndpoint(BaseAPIView):
         current_instance = json.dumps(
             InitiativeSerializer(initiative).data, cls=DjangoJSONEncoder
         )
+
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
 
         serializer = InitiativeSerializer(initiative, data=request.data, partial=True)

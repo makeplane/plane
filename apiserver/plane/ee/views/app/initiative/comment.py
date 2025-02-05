@@ -158,7 +158,6 @@ class InitiativeCommentReactionViewSet(BaseViewSet):
                 requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 initiative_id=initiative_id,
-                comment_id=comment_id,
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
@@ -182,7 +181,6 @@ class InitiativeCommentReactionViewSet(BaseViewSet):
             actor_id=str(self.request.user.id),
             slug=slug,
             initiative_id=initiative_id,
-            comment_id=comment_id,
             current_instance=json.dumps(
                 {
                     "reaction": str(reaction_code),

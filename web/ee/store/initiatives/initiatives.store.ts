@@ -410,6 +410,7 @@ export class InitiativeStore implements IInitiativeStore {
         }
       });
       this.fetchInitiativeAnalytics(workspaceSlug, initiativeId);
+      this.initiativeCommentActivities.fetchActivities(workspaceSlug, initiativeId);
     } catch (error) {
       console.error("error while removing epic from initiative", error);
     }
@@ -436,6 +437,7 @@ export class InitiativeStore implements IInitiativeStore {
         await Promise.all([
           this.fetchInitiativeEpicStats(workspaceSlug, initiativeId),
           this.fetchInitiativeAnalytics(workspaceSlug, initiativeId),
+          this.initiativeCommentActivities.fetchActivities(workspaceSlug, initiativeId),
         ]);
       } catch (error) {
         console.error("Error fetching initiative stats or analytics:", error);

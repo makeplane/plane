@@ -312,54 +312,58 @@ def track_epics(
     initiative_activities,
     epoch,
 ):
-    requested_epics = (
-        set([str(asg) for asg in requested_data.get("epic_ids", [])])
-        if requested_data is not None
-        else set()
-    )
-    current_epics = (
-        set([str(asg) for asg in current_instance.get("epic_ids", [])])
-        if current_instance is not None
-        else set()
-    )
-
-    added_epics = requested_epics - current_epics
-    dropped_epics = current_epics - requested_epics
-
-    for added_epic in added_epics:
-        epic = Issue.objects.get(pk=added_epic)
-
-        initiative_activities.append(
-            InitiativeActivity(
-                initiative_id=initiative_id,
-                actor_id=actor_id,
-                workspace_id=workspace_id,
-                verb="updated",
-                old_value="",
-                new_value=epic.name,
-                field="epics",
-                comment="added epic ",
-                new_identifier=epic.id,
-                epoch=epoch,
-            )
+    try:
+        requested_epics = (
+            set([str(asg) for asg in requested_data.get("epic_ids", [])])
+            if requested_data is not None
+            else set()
+        )
+        current_epics = (
+            set([str(asg) for asg in current_instance.get("epic_ids", [])])
+            if current_instance is not None
+            else set()
         )
 
-    for dropped_epic in dropped_epics:
-        epic = Issue.objects.get(pk=dropped_epic)
-        initiative_activities.append(
-            InitiativeActivity(
-                initiative_id=initiative_id,
-                actor_id=actor_id,
-                workspace_id=workspace_id,
-                verb="updated",
-                old_value=epic.name,
-                new_value="",
-                field="epics",
-                comment="removed epic ",
-                old_identifier=epic.id,
-                epoch=epoch,
+        added_epics = requested_epics - current_epics
+        dropped_epics = current_epics - requested_epics
+
+        for added_epic in added_epics:
+            epic = Issue.objects.get(pk=added_epic)
+
+            initiative_activities.append(
+                InitiativeActivity(
+                    initiative_id=initiative_id,
+                    actor_id=actor_id,
+                    workspace_id=workspace_id,
+                    verb="updated",
+                    old_value="",
+                    new_value=epic.name,
+                    field="epics",
+                    comment="added epic ",
+                    new_identifier=epic.id,
+                    epoch=epoch,
+                )
             )
-        )
+
+        for dropped_epic in dropped_epics:
+            epic = Issue.objects.get(pk=dropped_epic)
+            initiative_activities.append(
+                InitiativeActivity(
+                    initiative_id=initiative_id,
+                    actor_id=actor_id,
+                    workspace_id=workspace_id,
+                    verb="updated",
+                    old_value=epic.name,
+                    new_value="",
+                    field="epics",
+                    comment="removed epic ",
+                    old_identifier=epic.id,
+                    epoch=epoch,
+                )
+            )
+
+    except Issue.DoesNotExist:
+        return
 
 
 def track_lead(
@@ -776,7 +780,6 @@ def create_comment_reaction_activity(
     workspace_id,
     actor_id,
     initiative_activities,
-    comment_id,
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
@@ -784,7 +787,7 @@ def create_comment_reaction_activity(
         comment_reaction_id, comment_id = (
             InitiativeCommentReaction.objects.filter(
                 reaction=requested_data.get("reaction"),
-                comment_id=comment_id,
+                workspace_id=workspace_id,
                 actor_id=actor_id,
             )
             .values_list("id", "comment__id")
@@ -823,12 +826,12 @@ def delete_comment_reaction_activity(
     workspace_id,
     actor_id,
     initiative_activities,
-    comment_id,
     epoch,
 ):
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
+
     if current_instance and current_instance.get("reaction") is not None:
         initiative_id = (
             InitiativeComment.objects.filter(
@@ -865,7 +868,6 @@ def initiative_activity(
     actor_id,
     slug,
     epoch,
-    comment_id=None,
     subscriber=True,
     notification=False,
     origin=None,
@@ -918,7 +920,6 @@ def initiative_activity(
                 actor_id=actor_id,
                 initiative_activities=initiative_activities,
                 epoch=epoch,
-                comment_id=comment_id,
             )
 
         # Save all the values to database
