@@ -1,5 +1,3 @@
-import { List, Kanban } from "lucide-react";
-
 export const ALL_ISSUES = "All Issues";
 
 export type TIssuePriorities = "urgent" | "high" | "medium" | "low" | "none";
@@ -172,14 +170,14 @@ export const ISSUE_PRIORITY_FILTERS: TIssueFilterPriorityObject[] = [
   },
 ];
 
-export const SITES_ISSUE_LAYOUTS: {
-  key: TIssueLayout;
-  title: string;
-  icon: any;
-}[] = [
-  { key: "list", title: "List", icon: List },
-  { key: "kanban", title: "Kanban", icon: Kanban },
-  // { key: "calendar", title: "Calendar", icon: Calendar },
-  // { key: "spreadsheet", title: "Spreadsheet", icon: Sheet },
-  // { key: "gantt", title: "Gantt chart", icon: GanttChartSquare },
-];
+// export const SITES_ISSUE_LAYOUTS: {
+//   key: TIssueLayout;
+//   title: string;
+//   icon: any;
+// }[] = [
+//   { key: "list", title: "List", icon: List },
+//   { key: "kanban", title: "Kanban", icon: Kanban },
+//   // { key: "calendar", title: "Calendar", icon: Calendar },
+//   // { key: "spreadsheet", title: "Spreadsheet", icon: Sheet },
+//   // { key: "gantt", title: "Gantt chart", icon: GanttChartSquare },
+// ];
