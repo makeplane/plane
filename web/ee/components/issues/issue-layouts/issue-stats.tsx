@@ -23,12 +23,10 @@ export const IssueStats: FC<Props> = observer((props) => {
 
   return (
     <>
-      {epicStats && epicStats?.total_issues > 0 && (
-        <div className="flex items-center gap-1">
-          <CircularProgressIndicator size={20} percentage={progress} strokeWidth={3} />
-          <span className="text-sm font-medium text-custom-text-300 px-1">{`${progress}%`}</span>
-        </div>
-      )}
+      <div className="flex items-center gap-1 ml-3 flex-shrink-0">
+        <CircularProgressIndicator size={20} percentage={progress} strokeWidth={3} />
+        <span className="text-sm font-medium text-custom-text-300 px-1">{`${progress}%`}</span>
+      </div>
     </>
   );
 });

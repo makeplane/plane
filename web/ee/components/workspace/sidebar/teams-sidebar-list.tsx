@@ -8,6 +8,7 @@ import { ChevronRight, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane hooks
 import { useLocalStorage } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Logo, TeamsIcon, Tooltip } from "@plane/ui";
 // components
@@ -31,6 +32,7 @@ export const SidebarTeamsList = observer(() => {
   const { allowPermissions } = useUserPermissions();
   const { toggleCreateTeamspaceModal } = useCommandPalette();
   const { joinedTeamSpaceIds, isTeamspacesFeatureEnabled, getTeamspaceById } = useTeamspaces();
+  const { t } = useTranslation();
   // local storage
   const { setValue: toggleTeamMenu, storedValue } = useLocalStorage<boolean>("is_teams_list_open", true);
   // derived values
@@ -73,7 +75,7 @@ export const SidebarTeamsList = observer(() => {
               {sidebarCollapsed ? (
                 <TeamsIcon className="flex-shrink-0 size-3.5" />
               ) : (
-                <span className="text-xs font-semibold">TEAMSPACES</span>
+                <span className="text-xs font-semibold">{t("teamspaces")}</span>
               )}
             </Disclosure.Button>
           </Tooltip>
