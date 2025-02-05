@@ -71,7 +71,7 @@ export const ProjectBlock = observer((props: ProjectBlockProps) => {
             </div>
           </div>
 
-          {projectDetails.is_member ? (
+          {!!projectDetails.member_role ? (
             <Link
               id={`project-${projectDetails.id}`}
               href={`/${workspaceSlug}/projects/${projectId}/issues`}

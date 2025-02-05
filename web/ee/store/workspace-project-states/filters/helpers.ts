@@ -48,7 +48,7 @@ export abstract class ProjectFilterHelper implements IProjectFilterHelper {
         case EProjectScope.ALL_PROJECTS:
           return true;
         case EProjectScope.MY_PROJECTS:
-          return project.is_member;
+          return !!project.member_role;
         // We are looping through the project ids over here instead returning it directly to keep code consistent with other scopes.
         // This won't affect the performance as the project ids array is not large.
         case EProjectScope.TEAM_PROJECTS:

@@ -197,7 +197,7 @@ const Details: React.FC<Props> = observer((props) => {
             </CustomMenu>
           )}
 
-          {project.is_member && !isArchived && shouldRenderFavorite && (
+          {!!project.member_role && !isArchived && shouldRenderFavorite && (
             <div data-prevent-nprogress>
               {" "}
               <FavoriteStar

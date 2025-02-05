@@ -5,6 +5,8 @@ import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Briefcase } from "lucide-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { ExProject } from "@plane/sdk";
 import { IProject } from "@plane/types";
 import { Button, Loader } from "@plane/ui";
@@ -16,7 +18,6 @@ import { StepperNavigation, Dropdown } from "@/plane-web/components/importers/ui
 import { useLinearImporter } from "@/plane-web/hooks/store";
 // plane web types
 import { E_LINEAR_IMPORTER_STEPS, TImporterLinearDataPayload } from "@/plane-web/types/importers/linear";
-import { useTranslation } from "@plane/i18n";
 
 type TFormData = TImporterLinearDataPayload[E_LINEAR_IMPORTER_STEPS.SELECT_PLANE_PROJECT];
 
@@ -46,7 +47,7 @@ export const SelectPlaneProjectRoot: FC = observer(() => {
     workspaceSlug &&
     ((projectIdsByWorkspaceSlug(workspaceSlug) || [])
       .map((id) => getProjectById(id))
-      .filter((project) => project != undefined && project.is_member) as IProject[]);
+      .filter((project) => project != undefined && !!project.member_role) as IProject[]);
   const isNextButtonDisabled = !formData.projectId;
 
   // handlers
