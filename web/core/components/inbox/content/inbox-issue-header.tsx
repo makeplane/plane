@@ -30,6 +30,7 @@ import { CreateUpdateIssueModal, NameDescriptionUpdateStatus } from "@/component
 // helpers
 import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
 import { EInboxIssueStatus } from "@/helpers/inbox.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useUser, useProjectInbox, useProject, useUserPermissions } from "@/hooks/store";
@@ -102,7 +103,6 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   const currentInboxIssueId = inboxIssue?.issue?.id;
 
-  const issueLink = `${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`;
   const intakeIssueLink = `${workspaceSlug}/projects/${issue?.project_id}/inbox/?currentTab=${currentTab}&inboxIssueId=${currentInboxIssueId}`;
 
   const redirectIssue = (): string | undefined => {
@@ -226,6 +226,14 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   }, [onKeyDown, isNotificationEmbed, isSubmitting]);
 
   if (!inboxIssue) return null;
+
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug?.toString(),
+    projectId: issue?.project_id,
+    issueId: currentInboxIssueId,
+    projectIdentifier: currentProjectDetails?.identifier,
+    sequenceId: issue?.sequence_id,
+  });
 
   return (
     <>
@@ -354,17 +362,11 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                   variant="neutral-primary"
                   prependIcon={<Link className="h-2.5 w-2.5" />}
                   size="sm"
-                  onClick={() => handleCopyIssueLink(issueLink)}
+                  onClick={() => handleCopyIssueLink(workItemLink)}
                 >
                   Copy issue link
                 </Button>
-                <ControlLink
-                  href={`/${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`}
-                  onClick={() =>
-                    router.push(`/${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`)
-                  }
-                  target="_self"
-                >
+                <ControlLink href={workItemLink} onClick={() => router.push(workItemLink)} target="_self">
                   <Button variant="neutral-primary" prependIcon={<ExternalLink className="h-2.5 w-2.5" />} size="sm">
                     Open issue
                   </Button>
@@ -434,7 +436,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
         <InboxIssueActionsMobileHeader
           inboxIssue={inboxIssue}
           isSubmitting={isSubmitting}
-          handleCopyIssueLink={() => handleCopyIssueLink(issueLink)}
+          handleCopyIssueLink={() => handleCopyIssueLink(workItemLink)}
           setAcceptIssueModal={setAcceptIssueModal}
           setDeclineIssueModal={setDeclineIssueModal}
           handleIssueSnoozeAction={handleIssueSnoozeAction}

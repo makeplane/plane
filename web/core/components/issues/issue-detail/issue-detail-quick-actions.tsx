@@ -13,12 +13,14 @@ import { ISSUE_ARCHIVED, ISSUE_DELETED } from "@/constants/event-tracker";
 import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import {
   useEventTracker,
   useIssueDetail,
   useIssues,
+  useProject,
   useProjectState,
   useUser,
   useUserPermissions,
@@ -49,6 +51,7 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
   const { allowPermissions } = useUserPermissions();
   const { isMobile } = usePlatformOS();
   const { getStateById } = useProjectState();
+  const { getProjectIdentifierById } = useProject();
   const {
     issue: { getIssueById },
     removeIssue,
@@ -68,11 +71,20 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
   if (!issue) return <></>;
 
   const stateDetails = getStateById(issue.state_id);
+  const projectIdentifier = getProjectIdentifierById(projectId);
+
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug,
+    projectId,
+    issueId,
+    projectIdentifier,
+    sequenceId: issue?.sequence_id,
+  });
 
   // handlers
   const handleCopyText = () => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`).then(() => {
+    copyTextToClipboard(`${originURL}${workItemLink}`).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
@@ -141,7 +153,7 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
           title: "Restore success",
           message: "Your issue can be found in project issues.",
         });
-        router.push(`/${workspaceSlug}/projects/${projectId}/issues/${issueId}`);
+        router.push(workItemLink);
       })
       .catch(() => {
         setToast({

@@ -68,6 +68,7 @@ export const copyTextToClipboard = async (text: string) => {
 /**
  * @description: This function copies the url to clipboard after prepending the origin URL to it
  * @param {string} path
+ * @param {boolean} addSlash
  * @example:
  * const text = copyUrlToClipboard("path");
  * copied URL: origin_url/path

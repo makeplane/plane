@@ -9,6 +9,7 @@ import { Avatar, AvatarGroup, ControlLink, PriorityIcon } from "@plane/ui";
 // helpers
 import { findTotalDaysInRange, getDate, renderFormattedDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useMember, useProject } from "@/hooks/store";
 // plane web components
@@ -193,9 +194,17 @@ export const CreatedUpcomingIssueListItem: React.FC<IssueListItemProps> = observ
   const projectDetails = getProjectById(issue.project_id);
   const targetDate = getDate(issue.target_date);
 
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier: projectDetails?.identifier,
+    sequenceId: issue?.sequence_id,
+  });
+
   return (
     <ControlLink
-      href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
+      href={workItemLink}
       onClick={() => onClick(issue)}
       className="grid grid-cols-12 gap-1 rounded px-3 py-2 hover:bg-custom-background-80"
     >
@@ -253,9 +262,17 @@ export const CreatedOverdueIssueListItem: React.FC<IssueListItemProps> = observe
 
   const dueBy: number = findTotalDaysInRange(getDate(issue.target_date), new Date(), false) ?? 0;
 
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier: projectDetails?.identifier,
+    sequenceId: issue?.sequence_id,
+  });
+
   return (
     <ControlLink
-      href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
+      href={workItemLink}
       onClick={() => onClick(issue)}
       className="grid grid-cols-12 gap-1 rounded px-3 py-2 hover:bg-custom-background-80"
     >
@@ -311,9 +328,17 @@ export const CreatedCompletedIssueListItem: React.FC<IssueListItemProps> = obser
 
   const projectDetails = getProjectById(issue.project_id);
 
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier: projectDetails?.identifier,
+    sequenceId: issue?.sequence_id,
+  });
+
   return (
     <ControlLink
-      href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
+      href={workItemLink}
       onClick={() => onClick(issue)}
       className="grid grid-cols-12 gap-1 rounded px-3 py-2 hover:bg-custom-background-80"
     >
