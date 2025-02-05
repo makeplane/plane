@@ -41,6 +41,7 @@ export function listToDOM({
   getMarkers = defaultMarkerGetter,
   getAttributes = defaultAttributesGetter,
 }: ListToDOMOptions): DOMOutputSpec {
+  // console.log("this fucking ran");
   const attrs = node.attrs as ListAttributes;
   const markerHidden = node.firstChild?.type === node.type;
   const markers = markerHidden ? null : getMarkers(node);
@@ -57,7 +58,10 @@ export function listToDOM({
     ...markers,
   ];
 
+  console.log("nativeList", nativeList);
+  // nativeList = true;
   if (nativeList) {
+    console.log("aaya", attrs);
     const listTag = attrs.kind === "ordered" ? "ol" : "ul";
     if (markerContainer) {
       return [listTag, ["li", domAttrs, markerContainer, contentContainer]];
