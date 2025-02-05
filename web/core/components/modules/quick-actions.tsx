@@ -122,7 +122,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
       key: "archive",
       action: handleArchiveModule,
       title: t("archive"),
-      description: isInArchivableGroup ? undefined : "project_module.quick_actions.archive_module_description",
+      description: isInArchivableGroup ? undefined : t("project_module.quick_actions.archive_module_description"),
       icon: ArchiveIcon,
       className: "items-start",
       iconClassName: "mt-1",

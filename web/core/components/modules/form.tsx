@@ -233,7 +233,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
           {status
             ? isSubmitting
               ? t("updating")
-              : t("update_module")
+              : t("project_module.update_module")
             : isSubmitting
               ? t("creating")
               : t("project_module.create_module")}
