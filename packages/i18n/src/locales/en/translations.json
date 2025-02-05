@@ -1202,7 +1202,7 @@
   "workspace_views": {
     "add_view": "Add view",
     "empty_state": {
-      "all-work items": {
+      "all-issues": {
         "title": "No work items in the project",
         "description": "First project done! Now, slice your work into trackable pieces with work items. Let's go!",
         "primary_button": {

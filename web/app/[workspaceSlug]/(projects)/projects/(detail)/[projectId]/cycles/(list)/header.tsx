@@ -58,8 +58,8 @@ export const CyclesListHeader: FC = observer(() => {
               toggleCreateCycleModal(true);
             }}
           >
-            <div className="hidden sm:block">{t("add")}</div>
-            <div className="sm:hidden block">{t("add_cycle")}</div>
+            <div className="sm:hidden block">{t("add")}</div>
+            <div className="hidden sm:block">{t("project_cycles.add_cycle")}</div>
           </Button>
         </Header.RightItem>
       ) : (
