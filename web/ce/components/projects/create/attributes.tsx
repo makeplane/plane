@@ -8,6 +8,7 @@ import { IProject } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 // components
 import { MemberDropdown } from "@/components/dropdowns";
+import { ProjectNetworkIcon } from "@/components/project";
 // helpers
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 
@@ -37,7 +38,7 @@ const ProjectAttributes: FC<Props> = (props) => {
                   <div className="flex items-center gap-1 h-full">
                     {currentNetwork ? (
                       <>
-                        <currentNetwork.icon className="h-3 w-3" />
+                        <ProjectNetworkIcon iconKey={currentNetwork.iconKey} />
                         {t(currentNetwork.i18n_label)}
                       </>
                     ) : (
@@ -54,7 +55,7 @@ const ProjectAttributes: FC<Props> = (props) => {
                 {NETWORK_CHOICES.map((network) => (
                   <CustomSelect.Option key={network.key} value={network.key}>
                     <div className="flex items-start gap-2">
-                      <network.icon className="h-3.5 w-3.5" />
+                      <ProjectNetworkIcon iconKey={network.iconKey} className="h-3.5 w-3.5" />
                       <div className="-mt-1">
                         <p>{t(network.i18n_label)}</p>
                         <p className="text-xs text-custom-text-400">{t(network.description)}</p>

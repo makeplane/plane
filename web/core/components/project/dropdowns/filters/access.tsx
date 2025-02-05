@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-// constants
+// plane imports
 import { NETWORK_CHOICES } from "@plane/constants";
-// components
 import { useTranslation } from "@plane/i18n";
+// components
 import { FilterHeader, FilterOption } from "@/components/issues";
+import { ProjectNetworkIcon } from "@/components/project";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -36,7 +37,7 @@ export const FilterAccess: React.FC<Props> = observer((props) => {
                 key={access.key}
                 isChecked={appliedFilters?.includes(`${access.key}`) ? true : false}
                 onClick={() => handleUpdate(`${access.key}`)}
-                icon={<access.icon className="h-3 w-3" />}
+                icon={<ProjectNetworkIcon iconKey={access.iconKey} />}
                 title={t(access.i18n_label)}
               />
             ))

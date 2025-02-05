@@ -23,7 +23,7 @@ import {
 import { Logo } from "@/components/common";
 import { ImagePickerPopover } from "@/components/core";
 import { TimezoneSelect } from "@/components/global";
-// constants
+import { ProjectNetworkIcon } from "@/components/project";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
@@ -343,7 +343,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                       <div className="flex items-center gap-1">
                         {selectedNetwork ? (
                           <>
-                            <selectedNetwork.icon className="h-3.5 w-3.5" />
+                            <ProjectNetworkIcon iconKey={selectedNetwork.iconKey} className="h-3.5 w-3.5" />
                             {t(selectedNetwork.i18n_label)}
                           </>
                         ) : (
@@ -359,7 +359,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                     {NETWORK_CHOICES.map((network) => (
                       <CustomSelect.Option key={network.key} value={network.key}>
                         <div className="flex items-start gap-2">
-                          <network.icon className="h-3.5 w-3.5" />
+                          <ProjectNetworkIcon iconKey={network.iconKey} className="h-3.5 w-3.5" />
                           <div className="-mt-1">
                             <p>{t(network.i18n_label)}</p>
                             <p className="text-xs text-custom-text-400">{t(network.description)}</p>

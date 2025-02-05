@@ -1,30 +1,33 @@
 // icons
-import { Globe2, Lock, LucideIcon } from "lucide-react";
 import {
   TProjectAppliedDisplayFilterKeys,
   TProjectOrderByOptions,
 } from "@plane/types";
 
-export const NETWORK_CHOICES: {
+export type TNetworkChoiceIconKey = "Lock" | "Globe2";
+
+export type TNetworkChoice = {
   key: 0 | 2;
   labelKey: string;
   i18n_label: string;
   description: string;
-  icon: LucideIcon;
-}[] = [
+  iconKey: TNetworkChoiceIconKey;
+};
+
+export const NETWORK_CHOICES: TNetworkChoice[] = [
   {
     key: 0,
     labelKey: "Private",
     i18n_label: "workspace_projects.network.private.title",
     description: "workspace_projects.network.private.description", //"Accessible only by invite",
-    icon: Lock,
+    iconKey: "Lock",
   },
   {
     key: 2,
     labelKey: "Public",
     i18n_label: "workspace_projects.network.public.title",
     description: "workspace_projects.network.public.description", //"Anyone in the workspace except Guests can join",
-    icon: Globe2,
+    iconKey: "Globe2",
   },
 ];
 
