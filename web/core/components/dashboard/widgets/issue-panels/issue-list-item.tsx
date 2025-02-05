@@ -42,9 +42,17 @@ export const AssignedUpcomingIssueListItem: React.FC<IssueListItemProps> = obser
 
   const targetDate = getDate(issueDetails.target_date);
 
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: issueDetails?.project_id,
+    issueId: issueDetails?.id,
+    projectIdentifier: projectDetails?.identifier,
+    sequenceId: issueDetails?.sequence_id,
+  });
+
   return (
     <ControlLink
-      href={`/${workspaceSlug}/projects/${issueDetails.project_id}/issues/${issueDetails.id}`}
+      href={workItemLink}
       onClick={() => onClick(issueDetails)}
       className="grid grid-cols-12 gap-1 rounded px-3 py-2 hover:bg-custom-background-80"
     >
@@ -102,9 +110,17 @@ export const AssignedOverdueIssueListItem: React.FC<IssueListItemProps> = observ
 
   const dueBy = findTotalDaysInRange(getDate(issueDetails.target_date), new Date(), false) ?? 0;
 
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: issueDetails?.project_id,
+    issueId: issueDetails?.id,
+    projectIdentifier: projectDetails?.identifier,
+    sequenceId: issueDetails?.sequence_id,
+  });
+
   return (
     <ControlLink
-      href={`/${workspaceSlug}/projects/${issueDetails.project_id}/issues/${issueDetails.id}`}
+      href={workItemLink}
       onClick={() => onClick(issueDetails)}
       className="grid grid-cols-12 gap-1 rounded px-3 py-2 hover:bg-custom-background-80"
     >
@@ -155,9 +171,17 @@ export const AssignedCompletedIssueListItem: React.FC<IssueListItemProps> = obse
 
   const projectDetails = getProjectById(issueDetails.project_id);
 
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: issueDetails?.project_id,
+    issueId: issueDetails?.id,
+    projectIdentifier: projectDetails?.identifier,
+    sequenceId: issueDetails?.sequence_id,
+  });
+
   return (
     <ControlLink
-      href={`/${workspaceSlug}/projects/${issueDetails.project_id}/issues/${issueDetails.id}`}
+      href={workItemLink}
       onClick={() => onClick(issueDetails)}
       className="grid grid-cols-12 gap-1 rounded px-3 py-2 hover:bg-custom-background-80"
     >
