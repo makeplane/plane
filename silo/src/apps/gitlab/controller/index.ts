@@ -528,7 +528,7 @@ export default class GitlabController {
         throw new Error("workspaceId is not defined");
       }
       const workspaceWebhookSecret = gitlabAuthService.getWorkspaceWebhookSecret(workspaceId);
-      const webhookURL = `${env.SILO_API_BASE_URL}/silo/api/gitlab/webhook/${workspaceId}`;
+      const webhookURL = `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/gitlab/webhook/${workspaceId}`;
       const gitlabWebhook: GitlabWebhook = {
         url: webhookURL,
         token: workspaceWebhookSecret,

@@ -1,13 +1,13 @@
-import { IPriorityConfig, IStateConfig, JiraCustomFieldKeys, JiraIssueField, PaginatedResponse } from "@/jira/types";
-import { ExIssueAttachment, ExState, ExIssueProperty, ExIssuePropertyValue, TPropertyValue } from "@plane/sdk";
 import {
   Attachment as JiraAttachment,
   Priority as JiraPriority,
   StatusDetails as JiraState,
 } from "jira.js/out/version3/models";
+import { ExIssueAttachment, ExState, ExIssueProperty, ExIssuePropertyValue, TPropertyValue } from "@plane/sdk";
+import { E_IMPORTER_KEYS } from "@/core";
+import { IPriorityConfig, IStateConfig, JiraCustomFieldKeys, JiraIssueField, PaginatedResponse } from "@/jira/types";
 import { SUPPORTED_CUSTOM_FIELD_ATTRIBUTES } from "./custom-field-etl";
 import { getFormattedDate } from "./date";
-import { E_IMPORTER_KEYS } from "@/core";
 
 export const getTargetState = (stateMap: IStateConfig[], sourceState: JiraState): ExState | undefined => {
   // Assign the external source and external id from jira and return the target state
@@ -22,22 +22,30 @@ export const getTargetState = (stateMap: IStateConfig[], sourceState: JiraState)
   return targetState?.target_state;
 };
 
-export const getTargetAttachments = (attachments?: JiraAttachment[]): Partial<ExIssueAttachment[]> => {
+export const getTargetAttachments = (
+  resourceId: string,
+  projectId: string,
+  attachments?: JiraAttachment[]
+): Partial<ExIssueAttachment[]> => {
   if (!attachments) {
     return [];
   }
   const attachmentArray = attachments
-    .map(
-      (attachment: JiraAttachment): Partial<ExIssueAttachment> => ({
-        external_id: attachment.id ?? "",
+    .map((attachment: JiraAttachment): Partial<ExIssueAttachment | undefined> => {
+      if (!attachment.id) {
+        return;
+      }
+
+      return {
+        external_id: `${projectId}_${resourceId}_${attachment.id}`,
         external_source: E_IMPORTER_KEYS.JIRA,
         attributes: {
           name: attachment.filename ?? "Untitled",
           size: attachment.size ?? 0,
         },
         asset: attachment.content ?? "",
-      })
-    )
+      };
+    })
     .filter((attachment) => attachment !== undefined) as ExIssueAttachment[];
 
   return attachmentArray;

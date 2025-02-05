@@ -213,6 +213,7 @@ export default class GithubController {
 
       res.redirect(redirectUri);
     } catch (error) {
+      console.log(error);
       return res.redirect(`${env.APP_BASE_URL}/error?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
     }
   }
@@ -416,6 +417,7 @@ export default class GithubController {
 
       return res.redirect(redirectUri);
     } catch (error) {
+      console.log(error);
       return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
     }
   }

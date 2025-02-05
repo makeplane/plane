@@ -1,3 +1,4 @@
+import { v4 as uuid } from "uuid";
 import { TIssuePropertyValuesPayload } from "@plane/etl/core";
 import {
   JiraCustomFieldKeys,
@@ -48,7 +49,9 @@ export const getTransformedIssues = (
   const priorityMap: IPriorityConfig[] = job.config?.priority || [];
 
   return entities.issues.map((issue: IJiraIssue): Partial<PlaneIssue> => {
-    const transformedIssue = transformIssue(issue, resourceUrl, stateMap, priorityMap);
+    const resourceId = job.config.resource ? job.config.resource.id : uuid();
+
+    const transformedIssue = transformIssue(resourceId, job.project_id, issue, resourceUrl, stateMap, priorityMap);
 
     // Handle issue type configuration
     if (job.config?.issueType && issue.fields.issuetype?.name) {
@@ -68,32 +71,50 @@ export const getTransformedLabels = (_job: TImportJob<JiraConfig>, labels: strin
   labels.map(transformLabel);
 
 export const getTransformedComments = (
-  _job: TImportJob<JiraConfig>,
+  job: TImportJob<JiraConfig>,
   entities: JiraEntity
-): Partial<ExIssueComment>[] => entities.issue_comments.map(transformComment);
+): Partial<ExIssueComment>[] => entities.issue_comments.map((comment) => {
+  const resourceId = job.config.resource ? job.config.resource.id : uuid();
+
+  return transformComment(resourceId, job.project_id, comment);
+});
 
 export const getTransformedUsers = (_job: TImportJob<JiraConfig>, entities: JiraEntity): Partial<PlaneUser>[] =>
   entities.users.map(transformUser);
 
-export const getTransformedSprints = (_job: TImportJob<JiraConfig>, entities: JiraEntity): Partial<ExCycle>[] =>
-  entities.sprints.map(transformSprint);
+export const getTransformedSprints = (job: TImportJob<JiraConfig>, entities: JiraEntity): Partial<ExCycle>[] =>
+  entities.sprints.map((sprint) => {
+    const resourceId = job.config.resource ? job.config.resource.id : uuid();
+    return transformSprint(resourceId, job.project_id, sprint);
+  });
 
-export const getTransformedComponents = (_job: TImportJob<JiraConfig>, entities: JiraEntity): Partial<ExModule>[] =>
-  entities.components.map(transformComponent);
+export const getTransformedComponents = (job: TImportJob<JiraConfig>, entities: JiraEntity): Partial<ExModule>[] =>
+  entities.components.map((component) => {
+    const resourceId = job.config.resource ? job.config.resource.id : uuid();
+    return transformComponent(resourceId, job.project_id, component);
+  });
 
 export const getTransformedIssueTypes = (
-  _job: TImportJob<JiraConfig>,
+  job: TImportJob<JiraConfig>,
   entities: JiraEntity
-): Partial<ExIssueType>[] => entities.issueTypes.map(transformIssueType);
+): Partial<ExIssueType>[] =>
+  entities.issueTypes.map((issueType) => {
+    const resourceId = job.config.resource ? job.config.resource.id : uuid();
+    return transformIssueType(resourceId, job.project_id, issueType);
+  });
 
 export const getTransformedIssueFields = (
-  _job: TImportJob<JiraConfig>,
+  job: TImportJob<JiraConfig>,
   entities: JiraEntity
 ): Partial<ExIssueProperty>[] =>
-  entities.issueFields.map(transformIssueFields).filter(Boolean) as Partial<ExIssueProperty>[];
+  entities.issueFields.map((issueField) => {
+    const resourceId = job.config.resource ? job.config.resource.id : uuid();
+
+    return transformIssueFields(resourceId, job.project_id, issueField);
+  }).filter(Boolean) as Partial<ExIssueProperty>[];
 
 export const getTransformedIssueFieldOptions = (
-  _job: TImportJob<JiraConfig>,
+  job: TImportJob<JiraConfig>,
   entities: JiraEntity
 ): Partial<ExIssuePropertyOption>[] =>
   entities.issueFields
@@ -102,7 +123,10 @@ export const getTransformedIssueFieldOptions = (
         issueField.schema?.custom &&
         OPTION_CUSTOM_FIELD_TYPES.includes(issueField.schema?.custom as JiraCustomFieldKeys)
     )
-    .flatMap((issueField) => issueField?.options && issueField?.options?.map(transformIssueFieldOptions))
+    .flatMap((issueField) => issueField?.options && issueField?.options?.map((fieldOption) => {
+      const resourceId = job.config.resource ? job.config.resource.id : uuid();
+      return transformIssueFieldOptions(resourceId, job.project_id, fieldOption);
+    }))
     .filter(Boolean) as Partial<ExIssuePropertyOption>[];
 
 export const getTransformedIssuePropertyValues = (

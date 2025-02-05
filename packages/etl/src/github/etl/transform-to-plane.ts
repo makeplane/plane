@@ -1,8 +1,8 @@
 import { Client, ExCycle, ExIssueComment, ExIssueLabel, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
-import { WebhookGitHubComment, WebhookGitHubIssue, WebhookGitHubLabel, WebhookGitHubMilestone } from "../types";
+import { E_INTEGRATION_KEYS } from "@/core";
 import { ContentParser, replaceIssueNumber, replaceMentionedGhUsers } from "../helpers";
 import { GithubService } from "../services";
-import { E_INTEGRATION_KEYS } from "@/core";
+import { WebhookGitHubComment, WebhookGitHubIssue, WebhookGitHubLabel, WebhookGitHubMilestone } from "../types";
 
 export const transformGitHubIssue = async (
   issue: WebhookGitHubIssue,
@@ -51,12 +51,6 @@ export const transformGitHubIssue = async (
     }
   }
 
-  // Replace the mentioned github users in the issue body
-  issue_html = replaceMentionedGhUsers(issue_html, workspaceSlug, userMap, planeUsers);
-
-  // Replace the issue number with the actual issue number in github
-  issue_html = replaceIssueNumber(issue_html, repository);
-
   const imageMap = ContentParser.extractImageInfo(issueHTML);
   issue_html = await ContentParser.toPlaneHtml(issue_html, imagePrefix, imageMap, {
     planeClient,
@@ -67,6 +61,11 @@ export const transformGitHubIssue = async (
     repo: repository,
     githubService,
   });
+
+  // Replace the issue number with the actual issue number in github
+  issue_html = replaceIssueNumber(issue_html, repository);
+  // Replace the mentioned github users in the issue body
+  issue_html = replaceMentionedGhUsers(issue_html, workspaceSlug, userMap, planeUsers);
 
   if (issue.assignees) {
     planeAssignees = issue.assignees
@@ -156,9 +155,6 @@ export const transformGitHubComment = async (
     }
   }
 
-  comment_html = replaceMentionedGhUsers(comment_html, workspaceSlug, userMap, planeUsers);
-  comment_html = replaceIssueNumber(comment_html!, repository);
-
   const imageMap = ContentParser.extractImageInfo(commentHtml);
   comment_html = await ContentParser.toPlaneHtml(comment_html, imagePrefix, imageMap, {
     planeClient,
@@ -169,6 +165,9 @@ export const transformGitHubComment = async (
     repo: repository,
     githubService,
   });
+
+  comment_html = replaceIssueNumber(comment_html!, repository);
+  comment_html = replaceMentionedGhUsers(comment_html, workspaceSlug, userMap, planeUsers);
 
   return {
     external_id: comment.id.toString(),
