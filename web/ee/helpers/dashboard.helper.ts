@@ -10,6 +10,7 @@ const UserFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefined
   notifications: undefined,
   drafts: undefined,
   "pi-chat": E_FEATURE_FLAGS.PI_CHAT,
+  "workspace-dashboards": E_FEATURE_FLAGS.DASHBOARDS,
 };
 
 export const isUserFeatureEnabled = (featureKey: string) => {
