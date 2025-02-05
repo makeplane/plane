@@ -490,6 +490,7 @@
     "epic": "Epic",
     "epics": "Epics",
     "work_item": "Work item",
+    "sub_work_item": "Sub-work item",
     "add": "Add",
     "warning": "Warning",
     "updating": "Updating",

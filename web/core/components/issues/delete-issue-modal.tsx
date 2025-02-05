@@ -74,7 +74,7 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
             type: TOAST_TYPE.SUCCESS,
             title: t("common.success"),
             message: t("entity.delete.success", {
-              entity: isSubIssue ? t("common.sub_issue") : isEpic ? t("common.epic") : t("common.work_item"),
+              entity: isSubIssue ? t("common.sub_work_item") : isEpic ? t("common.epic") : t("common.work_item"),
             }),
           });
           onClose();
