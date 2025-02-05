@@ -73,8 +73,8 @@ const SidebarDropdownItem = (props: TProps) => {
               <Check className="h-5 w-5 text-custom-sidebar-text-100" />
             </span>
           ) : (
-            <div className="rounded bg-custom-background-80 px-2 py-[1px] text-xs font-medium text-custom-text-300">
-              <h1>Free</h1>
+            <div className="capitalize rounded bg-custom-background-80 px-2 py-[1px] text-xs font-medium text-custom-text-300">
+              <h1>{workspace.current_plan?.toLowerCase() || "Free"}</h1>
             </div>
           )}
         </div>
@@ -82,14 +82,14 @@ const SidebarDropdownItem = (props: TProps) => {
           <div className="mt-2 mb-1 flex gap-2">
             <Link
               href={`/${workspace.slug}/settings`}
-              className="flex border border-custom-border-80 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100"
+              className="flex border border-custom-border-200 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100"
             >
               <Settings className="h-4 w-4 text-custom-sidebar-text-100 my-auto" />
               <span className="text-sm font-medium my-auto">{t("settings")}</span>
             </Link>
             <Link
               href={`/${workspace.slug}/settings/members`}
-              className="flex border border-custom-border-80 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100"
+              className="flex border border-custom-border-200 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100"
             >
               <UserPlus className="h-4 w-4 text-custom-sidebar-text-100 my-auto" />
               <span className="text-sm font-medium my-auto capitalize">{t("invite")}</span>

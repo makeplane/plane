@@ -1,10 +1,4 @@
-import type {
-  ICycle,
-  IProjectMember,
-  IUser,
-  IUserLite,
-  IWorkspaceViewProps,
-} from "@plane/types";
+import type { ICycle, IProjectMember, IUser, IUserLite, IWorkspaceViewProps } from "@plane/types";
 import { TUserPermissions } from "./enums";
 
 export interface IWorkspace {
@@ -22,6 +16,7 @@ export interface IWorkspace {
   organization_size: string;
   total_issues: number;
   total_projects?: number;
+  current_plan?: string;
 }
 
 export interface IWorkspaceLite {
