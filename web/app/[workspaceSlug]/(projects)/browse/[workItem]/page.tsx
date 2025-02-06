@@ -37,14 +37,11 @@ const IssueDetailsPage = observer(() => {
 
   // fetching issue details
   const { data, isLoading, error } = useSWR(
-    workspaceSlug && projectIdentifier && sequence_id
-      ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}`
-      : null,
-    workspaceSlug && projectIdentifier && sequence_id
+    workspaceSlug && workItem ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}` : null,
+    workspaceSlug && workItem
       ? () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
       : null
   );
-  console.log("data", data);
   const issueId = data?.id;
   const projectId = data?.project_id;
   // derived values
