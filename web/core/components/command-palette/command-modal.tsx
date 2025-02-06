@@ -66,6 +66,7 @@ export const CommandModal: React.FC = observer(() => {
       module: [],
       issue_view: [],
       page: [],
+      epic: [],
     },
   });
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
@@ -144,6 +145,7 @@ export const CommandModal: React.FC = observer(() => {
             module: [],
             issue_view: [],
             page: [],
+            epic: [],
           },
         });
         setIsLoading(false);
