@@ -5,7 +5,7 @@ import range from "lodash/range";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel, PROJECT_SETTINGS_LINKS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Loader } from "@plane/ui";
@@ -13,7 +13,6 @@ import { Loader } from "@plane/ui";
 import { SidebarNavItem } from "@/components/sidebar";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
-import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants";
 // plane web constants
 
 export const ProjectSettingsSidebar = observer(() => {

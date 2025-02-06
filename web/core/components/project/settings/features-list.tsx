@@ -2,14 +2,15 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { PROJECT_FEATURES_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 import { ToggleSwitch, Tooltip, setPromiseToast } from "@plane/ui";
 // hooks
 import { useEventTracker, useProject, useUser } from "@/hooks/store";
 // plane web components
+import { ProjectFeatureIcons } from "@/plane-web/components/projects/settings/project-feature-icons";
 import { UpgradeBadge } from "@/plane-web/components/workspace";
-import { PROJECT_FEATURES_LIST } from "@/plane-web/constants";
 // plane web constants
 
 type Props = {
@@ -77,7 +78,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                   <div key={featureItemKey} className="flex items-center justify-between">
                     <div className="flex items-start gap-3">
                       <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">
-                        {featureItem.icon}
+                        {<ProjectFeatureIcons featureType={featureItem.key} />}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
