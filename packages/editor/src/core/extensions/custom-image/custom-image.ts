@@ -4,12 +4,12 @@ import { ReactNodeViewRenderer } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
 // extensions
 import { CustomImageNode } from "@/extensions/custom-image";
+// helpers
+import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // plugins
 import { TrackImageDeletionPlugin, TrackImageRestorationPlugin, isFileValid } from "@/plugins/image";
 // types
 import { TFileHandler } from "@/types";
-// helpers
-import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 
 export type InsertImageComponentProps = {
   file?: File;
@@ -29,7 +29,8 @@ declare module "@tiptap/core" {
 }
 
 export const getImageComponentImageFileMap = (editor: Editor) =>
-  (editor.storage.imageComponent as UploadImageExtensionStorage | undefined)?.fileMap;
+  (editor.storage.imageComponent as CustomImageExtensionStorage | undefined)?.fileMap;
+
 export interface CustomImageExtensionStorage {
   fileMap: Map<string, UploadEntity>;
   deletedImageSet: Map<string, boolean>;

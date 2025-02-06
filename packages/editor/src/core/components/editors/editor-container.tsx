@@ -1,18 +1,13 @@
-import { autoUpdate, flip, hide, shift, useDismiss, useFloating, useInteractions } from "@floating-ui/react";
-import { Node } from "@tiptap/pm/model";
-import { EditorView } from "@tiptap/pm/view";
-import { Editor, useEditorState } from "@tiptap/react";
-import { FC, ReactNode, useCallback, useEffect, useState } from "react";
+import { Editor } from "@tiptap/react";
+import { FC, ReactNode, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
-// components
-import { LinkView, LinkViewProps } from "@/components/links";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
-// storage
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // types
 import { TDisplayConfig } from "@/types";
+// components
+import { LinkViewContainer } from "./link-view-container";
 
 interface EditorContainerProps {
   children: ReactNode;
@@ -24,107 +19,7 @@ interface EditorContainerProps {
 
 export const EditorContainer: FC<EditorContainerProps> = (props) => {
   const { children, displayConfig, editor, editorContainerClassName, id } = props;
-  // states for link hover functionality
-  const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
-  const [isOpen, setIsOpen] = useState(false);
-  const [virtualElement, setVirtualElement] = useState<any>(null);
-
-  const editorState = useEditorState({
-    editor,
-    selector: ({ editor }: { editor: Editor }) => ({
-      linkExtensionStorage: getExtensionStorage(editor, "link"),
-    }),
-  });
-
-  useEffect(() => {
-    if (editorState.linkExtensionStorage.isPreviewOpen && editor && editorState.linkExtensionStorage.posToInsert) {
-      // Get the coordinates of the selection
-      const coords = editor.view.coordsAtPos(editorState.linkExtensionStorage.posToInsert.from);
-      const rect = new DOMRect(coords.left, coords.top, 0, coords.bottom - coords.top);
-
-      setVirtualElement({
-        getBoundingClientRect() {
-          return rect;
-        },
-      });
-
-      setLinkViewProps({
-        url: "",
-        view: "LinkEditView",
-        editor: editor,
-        from: editorState.linkExtensionStorage.posToInsert.from,
-        to: editorState.linkExtensionStorage.posToInsert.to,
-        closeLinkView: () => {
-          setIsOpen(false);
-          if (editor) editorState.linkExtensionStorage.isPreviewOpen = false;
-        },
-      });
-
-      setIsOpen(true);
-    }
-  }, [editorState.linkExtensionStorage.isPreviewOpen, editorState.linkExtensionStorage.posToInsert, editor]);
-
-  const { refs, floatingStyles, context } = useFloating({
-    open: isOpen,
-    onOpenChange: setIsOpen,
-    elements: {
-      reference: virtualElement,
-    },
-    middleware: [
-      flip({
-        fallbackPlacements: ["top", "bottom"],
-      }),
-      shift({
-        padding: 5,
-      }),
-      hide(),
-    ],
-    whileElementsMounted: autoUpdate,
-    placement: "bottom-start",
-  });
-
-  const dismiss = useDismiss(context);
-  const { getFloatingProps } = useInteractions([dismiss]);
-
-  const handleLinkHover = useCallback(
-    (event: React.MouseEvent) => {
-      if (!editor || editorState.linkExtensionStorage.isPreviewOpen) return; // Don't handle hover if link edit is open
-      const target = event.target as HTMLElement;
-      const view = editor.view as EditorView;
-
-      if (!target || !view) return;
-      const pos = view.posAtDOM(target, 0);
-      if (!pos || pos < 0) return;
-
-      if (target.nodeName !== "A") return;
-
-      const node = view.state.doc.nodeAt(pos) as Node;
-      if (!node || !node.isAtom) return;
-
-      const marks = node.marks;
-      if (!marks) return;
-
-      const linkMark = marks.find((mark) => mark.type.name === "link");
-      if (!linkMark) return;
-
-      setVirtualElement(target);
-
-      setLinkViewProps({
-        view: "LinkPreview",
-        url: linkMark.attrs.href,
-        editor: editor,
-        from: pos,
-        to: pos + node.nodeSize,
-        closeLinkView: () => {
-          setIsOpen(false);
-          editorState.linkExtensionStorage.isPreviewOpen = false;
-        },
-      });
-
-      setIsOpen(true);
-    },
-    [editor, editorState.linkExtensionStorage.isPreviewOpen]
-  );
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleContainerClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (event.target !== event.currentTarget) return;
@@ -176,10 +71,10 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
   return (
     <>
       <div
+        ref={containerRef}
         id={`editor-container-${id}`}
         onClick={handleContainerClick}
         onMouseLeave={handleContainerMouseLeave}
-        onMouseOver={handleLinkHover}
         className={cn(
           "editor-container cursor-text relative",
           {
@@ -192,11 +87,7 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
       >
         {children}
       </div>
-      {isOpen && linkViewProps && virtualElement && (
-        <div ref={refs.setFloating} style={{ ...floatingStyles, zIndex: 100 }} {...getFloatingProps()}>
-          <LinkView {...linkViewProps} style={floatingStyles} />
-        </div>
-      )}
+      <LinkViewContainer editor={editor} containerRef={containerRef} />
     </>
   );
 };

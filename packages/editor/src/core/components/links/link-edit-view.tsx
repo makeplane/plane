@@ -5,17 +5,20 @@ import { useEffect, useRef, useState } from "react";
 import { LinkViewProps } from "@/components/links";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
+import { preventDefault } from "jsx-dom-cjs";
 
 const InputView = ({
   label,
   defaultValue,
   placeholder,
   onChange,
+  autoFocus,
 }: {
   label: string;
   defaultValue: string;
   placeholder: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  autoFocus?: boolean;
 }) => (
   <div className="flex flex-col gap-1">
     <label className="inline-block font-semibold text-xs text-custom-text-400">{label}</label>
@@ -27,6 +30,7 @@ const InputView = ({
       className="w-[280px] outline-none bg-custom-background-90 text-custom-text-900 text-sm"
       defaultValue={defaultValue}
       onChange={onChange}
+      autoFocus={autoFocus}
     />
   </div>
 );
@@ -51,13 +55,14 @@ export const LinkEditView = ({
   const [linkRemoved, setLinkRemoved] = useState(false);
   const hasSubmitted = useRef(false);
 
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       if (!hasSubmitted.current && !linkRemoved && viewProps.url === "") {
         removeLink();
       }
-    };
-  }, []);
+    },
+    [linkRemoved, viewProps.url]
+  );
 
   const handleUpdateLink = (url: string) => {
     setLocalUrl(url);
@@ -118,12 +123,14 @@ export const LinkEditView = ({
         }
       }}
       className="shadow-md rounded p-2 flex flex-col gap-3 bg-custom-background-90 border-custom-border-100 border-2"
+      tabIndex={0}
     >
       <InputView
         label={"URL"}
         placeholder={"Enter or paste URL"}
         defaultValue={localUrl}
         onChange={(e) => handleUpdateLink(e.target.value)}
+        autoFocus
       />
       <InputView
         label={"Text"}
@@ -132,14 +139,14 @@ export const LinkEditView = ({
         onChange={(e) => handleUpdateText(e.target.value)}
       />
       <div className="mb-1 bg-custom-border-300 h-[1px] w-full gap-2" />
-      {viewProps.url !== "" && (
-        <div className="flex text-sm text-custom-text-800 gap-2 items-center">
-          <Link2Off size={14} className="inline-block" />
-          <button onClick={() => removeLink()} className="cursor-pointer">
-            Remove Link
-          </button>
-        </div>
-      )}
+      {/* {viewProps.url !== "" && ( */}
+      <div className="flex text-sm text-custom-text-800 gap-2 items-center">
+        <Link2Off size={14} className="inline-block" />
+        <button onClick={() => removeLink()} className="cursor-pointer">
+          Remove Link
+        </button>
+      </div>
+      {/* )} */}
     </div>
   );
 };

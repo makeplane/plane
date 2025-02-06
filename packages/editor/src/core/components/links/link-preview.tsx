@@ -30,12 +30,16 @@ export const LinkPreview = ({
           <button onClick={copyLinkToClipboard} className="cursor-pointer">
             <Copy size={14} className="inline-block" />
           </button>
-          <button onClick={() => switchView("LinkEditView")} className="cursor-pointer">
-            <PencilIcon size={14} className="inline-block" />
-          </button>
-          <button onClick={removeLink} className="cursor-pointer">
-            <Link2Off size={14} className="inline-block" />
-          </button>
+          {editor.isEditable && (
+            <>
+              <button onClick={() => switchView("LinkEditView")} className="cursor-pointer">
+                <PencilIcon size={14} className="inline-block" />
+              </button>
+              <button onClick={removeLink} className="cursor-pointer">
+                <Link2Off size={14} className="inline-block" />
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
