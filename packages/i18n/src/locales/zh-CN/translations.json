@@ -502,6 +502,7 @@
   "re_generate": "重新生成",
   "re_generate_key": "重新生成密钥",
   "export": "导出",
+  "member": "{count, plural, other{# 成员}}",
 
   "project_view": {
     "sort_by": {

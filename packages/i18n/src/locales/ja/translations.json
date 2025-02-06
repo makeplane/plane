@@ -502,7 +502,8 @@
   "re_generate": "再生成",
   "re_generate_key": "キーを再生成",
   "export": "エクスポート",
-
+  "member": "{count, plural, other{# メンバー}}", 
+  
   "project_view": {
     "sort_by": {
       "created_at": "作成日時",
