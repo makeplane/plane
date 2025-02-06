@@ -182,7 +182,7 @@ export const SidebarProjectsList: FC = observer(() => {
                     {isCollapsed ? (
                       <Briefcase className="flex-shrink-0 size-3" />
                     ) : (
-                      <span className="text-xs font-semibold">{t("projects")}</span>
+                      <span className="text-sm font-semibold">{t("projects")}</span>
                     )}
                   </>
                 </Tooltip>
