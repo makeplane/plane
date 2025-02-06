@@ -1,10 +1,11 @@
 import { Editor, Range } from "@tiptap/core";
+// types
+import { InsertImageComponentProps } from "@/extensions";
 // extensions
 import { replaceCodeWithText } from "@/extensions/code/utils/replace-code-block-with-text";
 // helpers
 import { findTableAncestor } from "@/helpers/common";
-// types
-import { InsertImageComponentProps } from "@/extensions";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
 export const setText = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("paragraph").run();
@@ -183,7 +184,6 @@ export const toggleTextColor = (color: string | undefined, editor: Editor, range
 };
 
 export const setLinkEditor = (editor: Editor, url: string, text?: string) => {
-  editor.storage.image.openLink = true;
   const { selection } = editor.state;
   const previousSelection = { from: selection.from, to: selection.to };
   if (text) {
@@ -199,6 +199,7 @@ export const setLinkEditor = (editor: Editor, url: string, text?: string) => {
     editor.commands.setTextSelection({ from: previousFrom, to: previousFrom + text.length });
   }
   editor.chain().focus().setLink({ href: url }).run();
+  getExtensionStorage(editor, "link").isPreviewOpen = true;
 };
 
 export const toggleBackgroundColor = (color: string | undefined, editor: Editor, range?: Range) => {

@@ -9,6 +9,8 @@ import { cn } from "@plane/utils";
 import { LinkView, LinkViewProps } from "@/components/links";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
+// storage
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // types
 import { TDisplayConfig } from "@/types";
 
@@ -25,38 +27,42 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
   // states for link hover functionality
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
-  const [virtualElement, setVirtualElement] = useState<HTMLElement | null>(null);
+  const [virtualElement, setVirtualElement] = useState<any>(null);
 
   const editorState = useEditorState({
     editor,
     selector: ({ editor }: { editor: Editor }) => ({
-      openLink: editor.storage.image?.openLink,
-      linkPosition: editor.storage.image?.linkPosition,
+      linkExtensionStorage: getExtensionStorage(editor, "link"),
     }),
   });
 
   useEffect(() => {
-    if (editorState.openLink) {
-      setIsOpen(true);
-      if (editorState.linkPosition) {
-        const element = editor?.view.domAtPos(editorState.linkPosition)?.node as HTMLElement;
-        setVirtualElement(element);
-      }
+    if (editorState.linkExtensionStorage.isPreviewOpen && editor && editorState.linkExtensionStorage.posToInsert) {
+      // Get the coordinates of the selection
+      const coords = editor.view.coordsAtPos(editorState.linkExtensionStorage.posToInsert.from);
+      const rect = new DOMRect(coords.left, coords.top, 0, coords.bottom - coords.top);
+
+      setVirtualElement({
+        getBoundingClientRect() {
+          return rect;
+        },
+      });
+
       setLinkViewProps({
         url: "",
         view: "LinkEditView",
         editor: editor,
-        from: editorState.linkPosition.from,
-        to: editorState.linkPosition.to,
+        from: editorState.linkExtensionStorage.posToInsert.from,
+        to: editorState.linkExtensionStorage.posToInsert.to,
         closeLinkView: () => {
           setIsOpen(false);
-          if (editor) editor.storage.image.openLink = false;
+          if (editor) editorState.linkExtensionStorage.isPreviewOpen = false;
         },
       });
-    } else {
-      setIsOpen(false);
+
+      setIsOpen(true);
     }
-  }, [editorState.openLink, editorState.linkPosition, editor]);
+  }, [editorState.linkExtensionStorage.isPreviewOpen, editorState.linkExtensionStorage.posToInsert, editor]);
 
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
@@ -82,7 +88,7 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
 
   const handleLinkHover = useCallback(
     (event: React.MouseEvent) => {
-      if (!editor || editorState.openLink) return; // Don't handle hover if link edit is open
+      if (!editor || editorState.linkExtensionStorage.isPreviewOpen) return; // Don't handle hover if link edit is open
       const target = event.target as HTMLElement;
       const view = editor.view as EditorView;
 
@@ -111,13 +117,13 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
         to: pos + node.nodeSize,
         closeLinkView: () => {
           setIsOpen(false);
-          editor.storage.image.openLink = false;
+          editorState.linkExtensionStorage.isPreviewOpen = false;
         },
       });
 
       setIsOpen(true);
     },
-    [editor, editorState.openLink]
+    [editor, editorState.linkExtensionStorage.isPreviewOpen]
   );
 
   const handleContainerClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -187,7 +193,7 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
         {children}
       </div>
       {isOpen && linkViewProps && virtualElement && (
-        <div ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
+        <div ref={refs.setFloating} style={{ ...floatingStyles, zIndex: 100 }} {...getFloatingProps()}>
           <LinkView {...linkViewProps} style={floatingStyles} />
         </div>
       )}

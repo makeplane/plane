@@ -54,6 +54,8 @@ import {
 import { TCommandWithProps, TEditorCommands } from "@/types";
 import { TextSelection } from "@tiptap/pm/state";
 import { ResolvedPos } from "@tiptap/pm/model";
+import { CustomLinkStorage } from "@/extensions";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
 type isActiveFunction<T extends TEditorCommands> = (params?: TCommandWithProps<T>) => boolean;
 type commandFunction<T extends TEditorCommands> = (params?: TCommandWithProps<T>) => void;
@@ -234,15 +236,19 @@ export const LinkItem = (editor: Editor): EditorMenuItem<"link"> =>
     isActive: () => editor?.isActive("link"),
     command: ({ url, text }) => {
       // create selection on the current word
-      const { from, to } = selectCurrentWord(editor);
+      const { empty } = editor.state.selection;
+      let position: { from: number; to: number };
+      if (empty) {
+        position = selectCurrentWord(editor);
+      } else {
+        position = { from: editor.state.selection.from, to: editor.state.selection.to };
+      }
+      if (!position) return;
+      const { from, to } = position;
 
-      editor.storage.image = {
-        ...editor.storage.image,
-        linkPosition: from,
-        openLink: true,
-      };
-      editor.storage.image.openLink = true;
-      editor.storage.image.linkPosition = { from, to };
+      const editorLinkStorage = getExtensionStorage(editor, "link");
+      editorLinkStorage.isPreviewOpen = true;
+      editorLinkStorage.posToInsert = { from, to };
 
       setLinkEditor(editor, url, text);
     },
@@ -264,7 +270,7 @@ const selectCurrentWord = (editor: Editor) => {
 
   // If we're on a space, return early
   if (text[posInNode] === " ") {
-    return false;
+    return { to: posInNode, from: posInNode };
   }
 
   // Find word boundaries

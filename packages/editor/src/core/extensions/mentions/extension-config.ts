@@ -9,7 +9,11 @@ export type TMentionExtensionOptions = MentionOptions & {
   renderComponent: TMentionHandler["renderComponent"];
 };
 
-export const CustomMentionExtensionConfig = Mention.extend<TMentionExtensionOptions>({
+export type MentionExtensionStorage = {
+  mentionsOpen: boolean;
+};
+
+export const CustomMentionExtensionConfig = Mention.extend<TMentionExtensionOptions, MentionExtensionStorage>({
   addAttributes() {
     return {
       [EMentionComponentAttributeNames.ID]: {

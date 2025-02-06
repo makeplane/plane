@@ -1,6 +1,6 @@
 import { Node } from "@tiptap/pm/model";
 import { Link2Off } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 // components
 import { LinkViewProps } from "@/components/links";
 // helpers
@@ -49,6 +49,15 @@ export const LinkEditView = ({
   const [localUrl, setLocalUrl] = useState(viewProps.url);
   const [localText, setLocalText] = useState(getText(from, to));
   const [linkRemoved, setLinkRemoved] = useState(false);
+  const hasSubmitted = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      if (!hasSubmitted.current && !linkRemoved && viewProps.url === "") {
+        removeLink();
+      }
+    };
+  }, []);
 
   const handleUpdateLink = (url: string) => {
     setLocalUrl(url);
@@ -61,10 +70,9 @@ export const LinkEditView = ({
 
   const applyChanges = () => {
     if (linkRemoved) return;
+    hasSubmitted.current = true;
 
-    console.log("localUrl", localUrl);
     const { url, isValid } = isValidHttpUrl(localUrl);
-    console.log("url", url);
     if (to >= editor.state.doc.content.size || !isValid) return;
 
     // Apply URL change
@@ -124,12 +132,14 @@ export const LinkEditView = ({
         onChange={(e) => handleUpdateText(e.target.value)}
       />
       <div className="mb-1 bg-custom-border-300 h-[1px] w-full gap-2" />
-      <div className="flex text-sm text-custom-text-800 gap-2 items-center">
-        <Link2Off size={14} className="inline-block" />
-        <button onClick={() => removeLink()} className="cursor-pointer">
-          Remove Link
-        </button>
-      </div>
+      {viewProps.url !== "" && (
+        <div className="flex text-sm text-custom-text-800 gap-2 items-center">
+          <Link2Off size={14} className="inline-block" />
+          <button onClick={() => removeLink()} className="cursor-pointer">
+            Remove Link
+          </button>
+        </div>
+      )}
     </div>
   );
 };
