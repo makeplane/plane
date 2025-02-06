@@ -1,5 +1,6 @@
 import { TLogoProps } from "./common";
 import { EPageAccess } from "./enums";
+import { TIssuePriorities } from "./issues";
 
 export type TPage = {
   access: EPageAccess | undefined;
@@ -69,8 +70,13 @@ export type TDocumentPayload = {
 };
 
 export type TWebhookConnectionQueryParams = {
-  documentType: "project_page" | "team_page" | "workspace_page";
+  documentType: "project_page" | "teamspace_page" | "workspace_page";
   projectId?: string;
-  teamId?: string;
+  teamspaceId?: string;
   workspaceSlug: string;
 };
+
+export type TPublicPageResponse = Pick<
+  TPage,
+  "created_at" | "description_html" | "id" | "logo_props" | "name" | "updated_at"
+>;
