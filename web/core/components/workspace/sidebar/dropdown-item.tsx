@@ -60,8 +60,8 @@ const SidebarDropdownItem = (props: TProps) => {
               >
                 {workspace.name}
               </h5>
-              <div className="text-sm text-custom-text-300 flex gap-2">
-                <span>{getUserRole(workspace.role)}</span>
+              <div className="text-sm text-custom-text-300 flex gap-2 capitalize">
+                <span>{getUserRole(workspace.role)?.toLowerCase() || "guest"}</span>
                 <div className="w-1 h-1 bg-custom-text-300/50 rounded-full m-auto" />
                 <span>
                   {workspace.total_members} {t("members", { count: workspace.total_members })}
