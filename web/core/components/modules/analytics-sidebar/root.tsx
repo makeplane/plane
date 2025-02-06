@@ -260,7 +260,9 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
 
   const issueCount =
-    moduleDetails.total_issues === 0 ? "0 Work item" : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
+    moduleDetails.total_issues === 0
+      ? "0 Work item"
+      : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
 
   const issueEstimatePointCount =
     moduleDetails.total_estimate_points === 0
@@ -352,7 +354,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                 >
                   <span className="flex items-center justify-start gap-2">
                     <Trash2 className="h-3 w-3" />
-                    <span>{t("delete_module")}</span>
+                    <span>{t("project_module.delete_module")}</span>
                   </span>
                 </CustomMenu.MenuItem>
               </CustomMenu>
@@ -546,7 +548,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                 <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
                   <Disclosure.Button className="flex w-full items-center justify-between gap-2 p-1.5">
                     <div className="flex items-center justify-start gap-2 text-sm">
-                      <span className="font-medium text-custom-text-200">{t("links")}</span>
+                      <span className="font-medium text-custom-text-200">{t("common.links")}</span>
                     </div>
 
                     <div className="flex items-center gap-2.5">

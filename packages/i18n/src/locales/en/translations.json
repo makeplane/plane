@@ -1132,6 +1132,7 @@
       "label": "Add Project"
     },
     "network": {
+      "label": "Network",
       "private": {
         "title": "Private",
         "description": "Accessible only by invite"

@@ -38,7 +38,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: `${t("success")!}`,
-          message: `${t("inbox_issue.modal.delete.success")!}`,
+          message: `${t("inbox_issue.modals.delete.success")!}`,
         });
       })
       .catch((errors) => {
