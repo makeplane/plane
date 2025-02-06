@@ -200,7 +200,7 @@ export const SidebarFavoritesMenu = observer(() => {
             )}
           >
             <span onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)} className="flex-1 text-start">
-              {t("your_favorites").toUpperCase()}
+              {t("favorites")}
             </span>
             <span className="flex flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded p-0.5 ">
               <Tooltip tooltipHeading={t("create_folder")} tooltipContent="">

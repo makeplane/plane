@@ -177,17 +177,12 @@ export const SidebarProjectsList: FC = observer(() => {
                 )}
                 onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
               >
-                <Tooltip
-                  tooltipHeading={t("your_projects").toUpperCase()}
-                  tooltipContent=""
-                  position="right"
-                  disabled={!isCollapsed}
-                >
+                <Tooltip tooltipHeading={t("projects")} tooltipContent="" position="right" disabled={!isCollapsed}>
                   <>
                     {isCollapsed ? (
                       <Briefcase className="flex-shrink-0 size-3" />
                     ) : (
-                      <span className="text-xs font-semibold">{t("your_projects").toUpperCase()}</span>
+                      <span className="text-xs font-semibold">{t("projects")}</span>
                     )}
                   </>
                 </Tooltip>
