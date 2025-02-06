@@ -7,6 +7,7 @@ import { IWorkspaceLinkStore, WorkspaceLinkStore } from "./link.store";
 
 export interface IHomeStore {
   // observables
+  loading: boolean;
   showWidgetSettings: boolean;
   widgetsMap: Record<string, TWidgetEntityData>;
   widgets: THomeWidgetKeys[];
@@ -25,6 +26,7 @@ export interface IHomeStore {
 export class HomeStore implements IHomeStore {
   // observables
   showWidgetSettings = false;
+  loading = false;
   widgetsMap: Record<string, TWidgetEntityData> = {};
   widgets: THomeWidgetKeys[] = [];
   // stores
@@ -35,6 +37,7 @@ export class HomeStore implements IHomeStore {
   constructor() {
     makeObservable(this, {
       // observables
+      loading: observable,
       showWidgetSettings: observable,
       widgetsMap: observable,
       widgets: observable,
@@ -68,15 +71,18 @@ export class HomeStore implements IHomeStore {
 
   fetchWidgets = async (workspaceSlug: string) => {
     try {
+      this.loading = true;
       const widgets = await this.workspaceService.fetchWorkspaceWidgets(workspaceSlug);
       runInAction(() => {
         this.widgets = orderBy(Object.values(widgets), "sort_order", "desc").map((widget) => widget.key);
         widgets.forEach((widget) => {
           this.widgetsMap[widget.key] = widget;
         });
+        this.loading = false;
       });
     } catch (error) {
       console.error("Failed to fetch widgets");
+      this.loading = false;
       throw error;
     }
   };

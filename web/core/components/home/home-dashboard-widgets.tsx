@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 // plane types
 import { THomeWidgetKeys, THomeWidgetProps } from "@plane/types";
 // components
@@ -7,11 +7,12 @@ import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
+import { useProject } from "@/hooks/store";
 import { useHome } from "@/hooks/store/use-home";
 // plane web components
 import { HomePageHeader } from "@/plane-web/components/home/header";
 import { StickiesWidget } from "../stickies";
-import { RecentActivityWidget } from "./widgets";
+import { HomeLoader, NoProjectsEmptyState, RecentActivityWidget } from "./widgets";
 import { DashboardQuickLinks } from "./widgets/links";
 import { ManageWidgetsModal } from "./widgets/manage";
 
@@ -52,10 +53,17 @@ export const HOME_WIDGETS_LIST: {
 export const DashboardWidgets = observer(() => {
   // router
   const { workspaceSlug } = useParams();
+  // navigation
+  const pathname = usePathname();
   // store hooks
-  const { toggleWidgetSettings, widgetsMap, showWidgetSettings, orderedWidgets, isAnyWidgetEnabled } = useHome();
+  const { toggleWidgetSettings, widgetsMap, showWidgetSettings, orderedWidgets, isAnyWidgetEnabled, loading } =
+    useHome();
+  const { joinedProjectIds, loader } = useProject();
 
+  // derived values
+  const isWikiApp = pathname.includes(`/${workspaceSlug.toString()}/pages`);
   if (!workspaceSlug) return null;
+  if (loading) return <HomeLoader />;
 
   return (
     <div className="h-full w-full relative flex flex-col gap-7">
@@ -65,6 +73,8 @@ export const DashboardWidgets = observer(() => {
         isModalOpen={showWidgetSettings}
         handleOnClose={() => toggleWidgetSettings(false)}
       />
+      {loader === "loaded" && !isWikiApp && joinedProjectIds?.length === 0 && <NoProjectsEmptyState />}
+
       {isAnyWidgetEnabled ? (
         <div className="flex flex-col divide-y-[1px] divide-custom-border-100">
           {orderedWidgets.map((key) => {
