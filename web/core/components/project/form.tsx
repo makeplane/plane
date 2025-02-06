@@ -329,7 +329,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             </span>
           </div>
           <div className="flex flex-col gap-1">
-            <h4 className="text-sm">{t("network")}</h4>
+            <h4 className="text-sm">{t("workspace_projects.network.label")}</h4>
             <Controller
               name="network"
               control={control}

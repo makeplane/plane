@@ -42,13 +42,13 @@ export const DefaultWorkspaceViewQuickActions: React.FC<Props> = observer((props
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
-      title: "open_in_new_tab",
+      title: t("open_in_new_tab"),
       icon: ExternalLink,
     },
     {
       key: "copy-link",
       action: handleCopyText,
-      title: "copy_link",
+      title: t("copy_link"),
       icon: LinkIcon,
     },
   ];

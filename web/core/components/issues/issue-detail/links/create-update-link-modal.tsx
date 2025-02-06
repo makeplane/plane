@@ -131,14 +131,15 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observe
             {t("common.cancel")}
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-            {preloadedData?.id
-              ? isSubmitting
-                ? t("common.updating")
-                : t("common.update")
-              : isSubmitting
-                ? t("common.adding")
-                : t("common.add")}
-            {t("common.link")}
+            {`${
+              preloadedData?.id
+                ? isSubmitting
+                  ? t("common.updating")
+                  : t("common.update")
+                : isSubmitting
+                  ? t("common.adding")
+                  : t("common.add")
+            } ${t("common.link")}`}
           </Button>
         </div>
       </form>

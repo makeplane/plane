@@ -101,7 +101,7 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
           />
         ) : (
           <div className="w-full h-full relative flex justify-center items-center">
-            <SimpleEmptyState title={t("inbox.empty_state.detail.title")} assetPath={resolvedPath} />
+            <SimpleEmptyState title={t("inbox_issue.empty_state.detail.title")} assetPath={resolvedPath} />
           </div>
         )}
       </div>

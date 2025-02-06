@@ -55,10 +55,10 @@ export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = o
     ).then(() => addIssuesToView?.(issueIds));
 
     setPromiseToast(addExistingIssuesPromise, {
-      loading: t("toast.add.cycle.loading", { count: issueIds.length }),
+      loading: t("issue.adding", { count: issueIds.length }),
       success: {
         title: t("toast.success"),
-        message: () => t("toast.add.cycle.success", { count: issueIds.length }),
+        message: () => t("entity.add.success", { entity: t("issue.label", { count: 2 }) }),
       },
       error: {
         title: t("toast.error"),

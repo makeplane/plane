@@ -47,16 +47,16 @@ export const ArchiveIssueModal: React.FC<Props> = (props) => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: t("common.archive.success.label"),
-          message: t("common.archive.success.message"),
+          title: t("issue.archive.success.label"),
+          message: t("issue.archive.success.message"),
         });
         onClose();
       })
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: t("common.error.label"),
-          message: t("common.archive.failed.message"),
+          title: t("issue.error.label"),
+          message: t("issue.archive.failed.message"),
         })
       )
       .finally(() => setIsArchiving(false));

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     url: "https://sites.plane.so/",
   },
   keywords:
-    "software development, customer feedback, software, accelerate, code management, release management, project management, issue tracking, agile, scrum, kanban, collaboration",
+    "software development, customer feedback, software, accelerate, code management, release management, project management, work item tracking, agile, scrum, kanban, collaboration",
   twitter: {
     site: "@planepowers",
   },
