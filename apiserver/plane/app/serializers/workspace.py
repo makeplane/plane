@@ -146,25 +146,38 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
 
         return value
 
+
     def create(self, validated_data):
-        if WorkspaceUserLink.objects.filter(
-            url=validated_data.get("url"), workspace_id=validated_data.get("workspace_id"), owner=validated_data.get("owner")
-        ).exists():
+        # Filtering the WorkspaceUserLink with the given url to check if the link already exists.
+        
+        url = validated_data.get("url")
+
+        workspace_user_link = WorkspaceUserLink.objects.filter(
+            url=url, 
+            workspace_id=validated_data.get("workspace_id"), 
+            owner=validated_data.get("owner")
+        )
+
+        if workspace_user_link.exists():
             raise serializers.ValidationError(
-                {"error": "URL already exists for this Issue"}
+                {"error": "URL already exists for this workspace and owner"}
             )
         return WorkspaceUserLink.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        if (
-            WorkspaceUserLink.objects.filter(
-                url=validated_data.get("url"), workspace_id=instance.workspace_id, owner=instance.owner
+        # Filtering the WorkspaceUserLink with the given url to check if the link already exists.
+
+        url = validated_data.get("url")
+
+        workspace_user_link = WorkspaceUserLink.objects.filter(
+                url=url, 
+                workspace_id=instance.workspace_id, 
+                owner=instance.owner
             )
-            .exclude(pk=instance.id)
-            .exists()
-        ):
+
+        if workspace_user_link.exclude(pk=instance.id).exists():
             raise serializers.ValidationError(
-                {"error": "URL already exists for this Issue"}
+                {"error": "URL already exists for this workspace and owner"}
             )
 
         return super().update(instance, validated_data)
