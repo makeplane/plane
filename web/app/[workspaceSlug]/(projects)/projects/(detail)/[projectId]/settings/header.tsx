@@ -15,7 +15,7 @@ import { useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
-import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
+import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants";
 
 export const ProjectSettingHeader: FC = observer(() => {
   // router

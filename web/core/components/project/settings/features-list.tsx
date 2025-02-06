@@ -9,8 +9,8 @@ import { ToggleSwitch, Tooltip, setPromiseToast } from "@plane/ui";
 import { useEventTracker, useProject, useUser } from "@/hooks/store";
 // plane web components
 import { UpgradeBadge } from "@/plane-web/components/workspace";
+import { PROJECT_FEATURES_LIST } from "@/plane-web/constants";
 // plane web constants
-import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
 
 type Props = {
   workspaceSlug: string;
