@@ -5,10 +5,18 @@ import isEqual from "lodash/isEqual";
 import omitBy from "lodash/omitBy";
 import uniqBy from "lodash/uniqBy";
 import { observer } from "mobx-react";
-// ui
+// plane imports
+import { EIssuePropertyType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import {
+  TIssueProperty,
+  TCreationListModes,
+  TOperationMode,
+  TIssuePropertyOption,
+  TIssuePropertyOptionCreateUpdateData,
+} from "@plane/types";
 import { Button, InfoIcon, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { getIssuePropertyAttributeDisplayNameKey, cn } from "@plane/utils";
 // plane web components
 import {
   AttributePill,
@@ -21,19 +29,8 @@ import {
   PropertyTypeDropdown,
   TIssuePropertyCreateList,
 } from "@/plane-web/components/issue-types";
-// plane web helpers
-import { getIssuePropertyAttributeDisplayName } from "@/plane-web/helpers/issue-properties.helper";
 // plane web hooks
 import { useIssueProperty, useIssueType, usePropertyOptions } from "@/plane-web/hooks/store";
-// plane web types
-import {
-  EIssuePropertyType,
-  TIssueProperty,
-  TCreationListModes,
-  TOperationMode,
-  TIssuePropertyOption,
-  TIssuePropertyOptionCreateUpdateData,
-} from "@/plane-web/types";
 
 type TIssuePropertyListItem = {
   issueTypeId: string;
@@ -57,6 +54,8 @@ const defaultIssuePropertyError: TIssuePropertyFormError = {
 export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) => {
   const { issueTypeId, issuePropertyId, issuePropertyCreateListData, operationMode, handleIssuePropertyCreateList } =
     props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const issueType = useIssueType(issueTypeId);
   const issueProperty = useIssueProperty(issueTypeId, issuePropertyId);
@@ -101,20 +100,20 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     let hasError = false;
     const error = { ...defaultIssuePropertyError };
     if (!issuePropertyData.display_name) {
-      error.display_name = "You must name your property.";
+      error.display_name = t("work_item_types.settings.properties.create_update.errors.name.required");
       hasError = true;
     }
     if (issuePropertyData.display_name && issuePropertyData.display_name?.length > 255) {
-      error.display_name = "Property name should not exceed 255 characters.";
+      error.display_name = t("work_item_types.settings.properties.create_update.errors.name.max_length");
       hasError = true;
     }
     if (!issuePropertyData.property_type) {
-      error.property_type = "You must select a property type.";
+      error.property_type = t("work_item_types.settings.properties.create_update.errors.property_type.required");
       hasError = true;
     }
     const nonEmptyPropertyOptions = propertyOptions.filter((option) => !!option.name);
     if (issuePropertyData.property_type === EIssuePropertyType.OPTION && nonEmptyPropertyOptions.length === 0) {
-      error.options = "You must add at least one option.";
+      error.options = t("work_item_types.settings.properties.create_update.errors.options.required");
       hasError = true;
     }
     setIssuePropertyError(error);
@@ -166,16 +165,18 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
       .then(async (response) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: `Property ${issuePropertyData?.display_name} created successfully.`,
+          title: t("work_item_types.settings.properties.toast.create.success.title"),
+          message: t("work_item_types.settings.properties.toast.create.success.message", {
+            name: issuePropertyData?.display_name,
+          }),
         });
         return response;
       })
       .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: error?.error ?? `Failed to create issue property. Please try again!`,
+          title: t("work_item_types.settings.properties.toast.create.error.title"),
+          message: error?.error ?? t("work_item_types.settings.properties.toast.create.error.message"),
         });
       })
       .finally(() => {
@@ -226,16 +227,18 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
         if (showToast)
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: `Property ${issuePropertyData?.display_name} updated successfully.`,
+            title: t("work_item_types.settings.properties.toast.update.success.title"),
+            message: t("work_item_types.settings.properties.toast.update.success.message", {
+              name: issuePropertyData?.display_name,
+            }),
           });
       })
       .catch((error) => {
         if (showToast)
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: error?.error ?? `Failed to update issue property. Please try again!`,
+            title: t("work_item_types.settings.properties.toast.update.error.title"),
+            message: error?.error ?? t("work_item_types.settings.properties.toast.update.error.message"),
           });
         setIssuePropertyData(issuePropertyDetail);
       })
@@ -265,15 +268,17 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: `Property ${issuePropertyData?.display_name} deleted successfully.`,
+          title: t("work_item_types.settings.properties.toast.delete.success.title"),
+          message: t("work_item_types.settings.properties.toast.delete.success.message", {
+            name: issuePropertyData?.display_name,
+          }),
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: `Failed to delete issue property. Please try again!`,
+          title: t("work_item_types.settings.properties.toast.delete.error.title"),
+          message: t("work_item_types.settings.properties.toast.delete.error.message"),
         });
       })
       .finally(() => {
@@ -344,21 +349,31 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     );
     if (!enableDisablePropertyPromise) return;
     setPromiseToast(enableDisablePropertyPromise, {
-      loading: `${isActive ? "Enabling" : "Disabling"} ${issuePropertyData?.display_name} property`,
+      loading: t("work_item_types.settings.properties.toast.enable_disable.loading", {
+        action: isActive ? "Enabling" : "Disabling",
+        name: issuePropertyData?.display_name,
+      }),
       success: {
-        title: "Success!",
-        message: () => `${issuePropertyData?.display_name} property ${isActive ? "enabled" : "disabled"} successfully.`,
+        title: t("work_item_types.settings.properties.toast.enable_disable.success.title"),
+        message: () =>
+          t("work_item_types.settings.properties.toast.enable_disable.success.message", {
+            name: issuePropertyData?.display_name,
+            action: isActive ? "enabled" : "disabled",
+          }),
       },
       error: {
         title: "Error!",
         message: () =>
-          `${issuePropertyData?.display_name} property could not be ${isActive ? "enabled" : "disabled"}. Please try again.`,
+          t("work_item_types.settings.properties.toast.enable_disable.error.message", {
+            name: issuePropertyData?.display_name,
+            action: isActive ? "enabled" : "disabled",
+          }),
       },
     });
   };
 
   if (!issuePropertyOperationMode) {
-    const attributeDisplayName = getIssuePropertyAttributeDisplayName(issuePropertyData);
+    const i18nAttributeDisplayNameKey = getIssuePropertyAttributeDisplayNameKey(issuePropertyData);
     return (
       <div
         className={cn(
@@ -395,13 +410,13 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
         </div>
         <div className="flex flex-shrink-0 items-center justify-end gap-2.5 transition-all duration-200">
           <div className="flex items-center gap-2.5 select-none">
-            {attributeDisplayName && <AttributePill data={attributeDisplayName} />}
-            {issuePropertyData.is_required && <AttributePill data="Mandatory" />}
+            {i18nAttributeDisplayNameKey && <AttributePill data={t(i18nAttributeDisplayNameKey)} />}
+            {issuePropertyData.is_required && <AttributePill data={t("common.mandatory")} />}
             {issuePropertyData.default_value && issuePropertyData.default_value.length > 0 && (
-              <AttributePill data="Default" />
+              <AttributePill data={t("common.default")} />
             )}
-            {issuePropertyData.is_active && <AttributePill data="Active" className="bg-green-500/15 text-green-600" />}
-            {!issuePropertyData.is_active && <AttributePill data="Disabled" className="bg-red-500/15 text-red-600" />}
+            {issuePropertyData.is_active && <AttributePill data={t("common.active")} className="bg-green-500/15 text-green-600" />}
+            {!issuePropertyData.is_active && <AttributePill data={t("common.disabled")} className="bg-red-500/15 text-red-600" />}
           </div>
           <div
             className="flex-shrink-0 border-l border-custom-border-100 pl-2"
@@ -465,10 +480,10 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
         </div>
         <div className="flex items-center justify-end gap-2">
           <Button variant="neutral-primary" size="sm" onClick={handleDiscard} disabled={isSubmitting} className="py-1">
-            {issuePropertyOperationMode === "create" ? "Cancel" : "Discard"}
+            {issuePropertyOperationMode === "create" ? t("common.cancel") : t("common.discard")}
           </Button>
           <Button variant="primary" size="sm" onClick={handleCreateUpdate} disabled={isSubmitting} className="py-1">
-            {isSubmitting ? "Confirming" : issuePropertyOperationMode === "create" ? "Create" : "Update"}
+            {isSubmitting ? t("common.confirming") : issuePropertyOperationMode === "create" ? t("common.create") : t("common.update")}
           </Button>
         </div>
       </div>

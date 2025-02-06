@@ -1,11 +1,11 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane web components
+import { TIssuePropertyValueErrors, TIssuePropertyValues, TPropertyValueVariant } from "@plane/types";
 import { PropertyValueSelect } from "@/plane-web/components/issue-types/values";
 // plane web hooks
 import { useIssueType } from "@/plane-web/hooks/store";
-// plane web types
-import { TIssuePropertyValueErrors, TIssuePropertyValues, TPropertyValueVariant } from "@/plane-web/types";
+// plane imports
 
 type TIssueAdditionalPropertyValuesProps = {
   issueTypeId: string;

@@ -1,15 +1,18 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+// plane imports
+import { PROJECT_UPDATED, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 import { IProject, IWorkspace } from "@plane/types";
-import { EUserPermissions } from "@plane/types/src/enums";
 import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo, setToast, TOAST_TYPE } from "@plane/ui";
-import { EUserPermissionsLevel } from "@/ce/constants";
+// components
 import { ImagePickerPopover } from "@/components/core";
-import { PROJECT_UPDATED } from "@/constants/event-tracker";
+// helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getFileURL } from "@/helpers/file.helper";
+// hooks
 import { useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
+// plane web imports
 import { TProject } from "@/plane-web/types";
 
 type THeroSection = {
@@ -37,7 +40,7 @@ export const HeroSection = observer((props: THeroSection) => {
 
   // derived values
   const isAdmin = allowPermissions(
-    [EUserPermissions.ADMIN],
+    [EUserProjectRoles.ADMIN],
     EUserPermissionsLevel.PROJECT,
     workspaceSlug.toString(),
     project.id.toString()

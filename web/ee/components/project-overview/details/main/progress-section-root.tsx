@@ -44,12 +44,12 @@ export const ProjectOverviewProgressSectionRoot: FC<Props> = observer((props) =>
     return (
       <SectionWrapper>
         <SectionEmptyState
-          heading="No issues yet"
-          subHeading="Start adding issues manage and track the progress."
+          heading="No work items yet"
+          subHeading="Start adding work items manage and track the progress."
           icon={<LayersIcon className="size-4" />}
         />
       </SectionWrapper>
     );
   }
-  return <ProgressSection data={analytics as TStateAnalytics} title="Progress" />;
+  return <ProgressSection data={analytics as TStateAnalytics} />;
 });

@@ -141,8 +141,8 @@ export const TeamspaceProgressRoot: FC<Props> = observer((props) => {
           </>
         ) : (
           <SectionEmptyState
-            heading={t("team-progress-empty-state-title")}
-            subHeading={t("team-progress-empty-state-description")}
+            heading={t("teamspace_analytics.empty_state.progress.title")}
+            subHeading={t("teamspace_analytics.empty_state.progress.description")}
             icon={<BarIcon className="size-6 text-custom-text-400" />}
             variant="solid"
             iconVariant="round"

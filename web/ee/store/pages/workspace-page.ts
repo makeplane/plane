@@ -1,11 +1,8 @@
 import { computed, makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
-// types
+// plane imports
+import { EUserWorkspaceRoles, EPageAccess } from "@plane/constants";
 import { TPage } from "@plane/types";
-// constants
-import { EPageAccess } from "@/constants/page";
-// plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 // store
@@ -87,7 +84,7 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
       workspaceSlug?.toString() || ""
     )?.role;
     return (
-      this.isCurrentUserOwner || (!!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserPermissions.MEMBER)
+      this.isCurrentUserOwner || (!!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER)
     );
   }
 
@@ -100,7 +97,7 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
       workspaceSlug?.toString() || ""
     )?.role;
     return (
-      this.isCurrentUserOwner || (!!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserPermissions.MEMBER)
+      this.isCurrentUserOwner || (!!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER)
     );
   }
 
@@ -127,7 +124,7 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
       workspaceSlug?.toString() || ""
     )?.role;
 
-    return this.isCurrentUserOwner || currentUserWorkspaceRole === EUserPermissions.ADMIN;
+    return this.isCurrentUserOwner || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   }
 
   /**
@@ -139,7 +136,7 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
       workspaceSlug?.toString() || ""
     )?.role;
 
-    return this.isCurrentUserOwner || currentUserWorkspaceRole === EUserPermissions.ADMIN;
+    return this.isCurrentUserOwner || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   }
 
   /**
@@ -151,7 +148,7 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
       workspaceSlug?.toString() || ""
     )?.role;
 
-    return !!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserPermissions.MEMBER;
+    return !!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
   }
 
   /**
@@ -176,7 +173,7 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
     return (
       !isArchived &&
       !isLocked &&
-      (isOwner || (isPublic && !!currentUserRole && currentUserRole >= EUserPermissions.MEMBER))
+      (isOwner || (isPublic && !!currentUserRole && currentUserRole >= EUserWorkspaceRoles.MEMBER))
     );
   }
 

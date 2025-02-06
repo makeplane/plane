@@ -7,6 +7,11 @@ export type TStateGroups =
   | "completed"
   | "cancelled";
 
+export type TDraggableData = {
+  groupKey: TStateGroups;
+  id: string;
+};
+
 export const STATE_GROUPS: {
   [key in TStateGroups]: {
     key: TStateGroups;
@@ -43,6 +48,13 @@ export const STATE_GROUPS: {
 
 export const ARCHIVABLE_STATE_GROUPS = [
   STATE_GROUPS.completed.key,
+  STATE_GROUPS.cancelled.key,
+];
+export const COMPLETED_STATE_GROUPS = [STATE_GROUPS.completed.key];
+export const PENDING_STATE_GROUPS = [
+  STATE_GROUPS.backlog.key,
+  STATE_GROUPS.unstarted.key,
+  STATE_GROUPS.started.key,
   STATE_GROUPS.cancelled.key,
 ];
 
@@ -100,3 +112,5 @@ export const STATE_ANALYTICS_DETAILS: {
     color: "#FF333350",
   },
 ];
+
+export const DISPLAY_WORKFLOW_PRO_CTA = false;

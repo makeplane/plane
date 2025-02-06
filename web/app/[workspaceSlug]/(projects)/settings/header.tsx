@@ -4,6 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Settings } from "lucide-react";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
@@ -12,6 +13,7 @@ import { useWorkspace } from "@/hooks/store";
 
 export const WorkspaceSettingHeader: FC = observer(() => {
   const { currentWorkspace, loader } = useWorkspace();
+  const { t } = useTranslation();
 
   return (
     <Header>
@@ -27,7 +29,7 @@ export const WorkspaceSettingHeader: FC = observer(() => {
               />
             }
           />
-          <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label="Settings" />} />
+          <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label={t("settings")} />} />
         </Breadcrumbs>
       </Header.LeftItem>
     </Header>

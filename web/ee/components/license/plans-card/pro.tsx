@@ -72,7 +72,7 @@ export const ProPlanCard: React.FC<TProPlanCardProps> = observer((props: TProPla
       planName={isInTrialPeriod ? "Pro trial" : "Pro"}
       planDescription={
         <>
-          <div>Unlimited members, 1:5 Guests, Issue Types, Active Cycles, and more</div>
+          <div>Unlimited members, 1:5 Guests, Work item types, Active Cycles, and more</div>
           {!subscriptionDetail.is_offline_payment ? (
             <>
               {isInTrialPeriod && (

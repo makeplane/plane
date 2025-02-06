@@ -1,9 +1,9 @@
 import { forwardRef } from "react";
 import { observer } from "mobx-react";
 // plane web hooks
+import { TIssuePropertyOptionCreateUpdateData } from "@plane/types";
 import { IssuePropertyOptionItem } from "@/plane-web/components/issue-types/properties/attributes";
-// plane web types
-import { TIssuePropertyOptionCreateUpdateData } from "@/plane-web/types";
+// plane imports
 
 type TIssuePropertyCreateOptionItem = {
   propertyOptionCreateListData: TIssuePropertyOptionCreateUpdateData;

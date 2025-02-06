@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Loader } from "@plane/ui";
 // components
@@ -35,6 +36,9 @@ const IssueDetailsPage = observer(() => {
   const {
     initiative: { getInitiativeById, fetchInitiativeDetails },
   } = useInitiatives();
+
+  const { t } = useTranslation();
+
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   // fetching issue details
   const { isLoading, error } = useSWR(
@@ -88,10 +92,10 @@ const IssueDetailsPage = observer(() => {
       {error ? (
         <EmptyState
           image={resolvedTheme === "dark" ? emptyIssueDark : emptyIssueLight}
-          title="Initiative does not exist"
-          description="The Initiative you are looking for does not exist or has been deleted."
+          title={t("initiatives.empty_state.not_found.title")}
+          description={t("initiatives.empty_state.not_found.description")}
           primaryButton={{
-            text: "View other Initiatives",
+            text: t("initiatives.empty_state.not_found.primary_button.title"),
             onClick: () => router.push(`/${workspaceSlug}/initiatives`),
           }}
         />

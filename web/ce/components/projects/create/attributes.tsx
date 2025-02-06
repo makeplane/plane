@@ -1,15 +1,14 @@
 "use client";
 import { FC } from "react";
 import { Controller, useFormContext } from "react-hook-form";
+import { NETWORK_CHOICES, ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 // ui
 import { CustomSelect } from "@plane/ui";
 // components
 import { MemberDropdown } from "@/components/dropdowns";
-// constants
-import { NETWORK_CHOICES } from "@/constants/project";
-import { ETabIndices } from "@/constants/tab-indices";
+import { ProjectNetworkIcon } from "@/components/project";
 // helpers
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 
@@ -39,8 +38,8 @@ const ProjectAttributes: FC<Props> = (props) => {
                   <div className="flex items-center gap-1 h-full">
                     {currentNetwork ? (
                       <>
-                        <currentNetwork.icon className="h-3 w-3" />
-                        {currentNetwork.label}
+                        <ProjectNetworkIcon iconKey={currentNetwork.iconKey} />
+                        {t(currentNetwork.i18n_label)}
                       </>
                     ) : (
                       <span className="text-custom-text-400">{t("select_network")}</span>
@@ -56,10 +55,10 @@ const ProjectAttributes: FC<Props> = (props) => {
                 {NETWORK_CHOICES.map((network) => (
                   <CustomSelect.Option key={network.key} value={network.key}>
                     <div className="flex items-start gap-2">
-                      <network.icon className="h-3.5 w-3.5" />
+                      <ProjectNetworkIcon iconKey={network.iconKey} className="h-3.5 w-3.5" />
                       <div className="-mt-1">
-                        <p>{network.label}</p>
-                        <p className="text-xs text-custom-text-400">{network.description}</p>
+                        <p>{t(network.i18n_label)}</p>
+                        <p className="text-xs text-custom-text-400">{t(network.description)}</p>
                       </div>
                     </div>
                   </CustomSelect.Option>

@@ -1,10 +1,10 @@
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // components
 import { LogoSpinner } from "@/components/common";
 import { MultipleSelectGroup } from "@/components/core";
-// constants
-import { SPREADSHEET_SELECT_GROUP } from "@/constants/spreadsheet";
 // plane web components
 // plane web hooks
 import { SPREADSHEET_PROPERTY_LIST } from "@/plane-web/constants/project/spreadsheet";

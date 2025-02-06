@@ -2,11 +2,11 @@
 
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
-// components
-// constants
-import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
+// plane imports
+import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store";
+// components
 import { NotificationItem } from "@/plane-web/components/workspace-notifications";
 
 type TNotificationCardListRoot = {

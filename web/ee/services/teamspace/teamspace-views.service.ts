@@ -1,9 +1,7 @@
 // plane constants
-import { API_BASE_URL, ETeamspaceEntityScope } from "@plane/constants";
+import { EViewAccess, API_BASE_URL, ETeamspaceEntityScope } from "@plane/constants";
 // plane types
 import { TTeamspaceView, TPublishViewSettings, TIssuesResponse } from "@plane/types";
-// constants
-import { EViewAccess } from "@/constants/views";
 // helpers
 import { APIService } from "@/services/api.service";
 
@@ -35,7 +33,12 @@ export class TeamspaceViewService extends APIService {
    * @param data
    * @returns
    */
-  async patchView(workspaceSlug: string, teamspaceId: string, viewId: string, data: Partial<TTeamspaceView>): Promise<TTeamspaceView> {
+  async patchView(
+    workspaceSlug: string,
+    teamspaceId: string,
+    viewId: string,
+    data: Partial<TTeamspaceView>
+  ): Promise<TTeamspaceView> {
     return this.patch(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/views/${viewId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -146,7 +149,12 @@ export class TeamspaceViewService extends APIService {
    * @param access
    * @returns
    */
-  async updateViewAccess(workspaceSlug: string, teamspaceId: string, viewId: string, access: EViewAccess): Promise<void> {
+  async updateViewAccess(
+    workspaceSlug: string,
+    teamspaceId: string,
+    viewId: string,
+    access: EViewAccess
+  ): Promise<void> {
     return await this.post(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/views/${viewId}/access/`, {
       access,
     })

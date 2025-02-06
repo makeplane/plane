@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane constants
-import { EIssuesStoreType } from "@plane/constants";
+import { EIssuesStoreType, E_BULK_OPERATION_ERROR_CODES, BULK_OPERATION_ERROR_DETAILS } from "@plane/constants";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast, AlertModalCore, EModalPosition, EModalWidth } from "@plane/ui";
-// constants
-import { EErrorCodes, ERROR_DETAILS } from "@/constants/errors";
 // hooks
 import { useIssues } from "@/hooks/store";
 
@@ -22,12 +21,14 @@ export const BulkSubscribeConfirmationModal: React.FC<Props> = observer((props) 
   const { handleClose, isOpen, issueIds, onSubmit, projectId, workspaceSlug } = props;
   // states
   const [isArchiving, setIsDeleting] = useState(false);
+  // plane imports
+  const { t } = useTranslation();
   // store hooks
   const {
     issues: { subscribeBulkIssues },
   } = useIssues(EIssuesStoreType.PROJECT);
 
-  const issueVariant = issueIds.length > 1 ? "issues" : "issue";
+  const issueVariant = issueIds.length > 1 ? "work items" : "work item";
 
   const handleSubmit = async () => {
     setIsDeleting(true);
@@ -43,11 +44,11 @@ export const BulkSubscribeConfirmationModal: React.FC<Props> = observer((props) 
         handleClose();
       })
       .catch((error) => {
-        const errorInfo = ERROR_DETAILS[error?.error_code as EErrorCodes] ?? undefined;
+        const errorInfo = BULK_OPERATION_ERROR_DETAILS[error?.error_code as E_BULK_OPERATION_ERROR_CODES] ?? undefined;
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: errorInfo?.title ?? "Error!",
-          message: errorInfo?.message ?? "Something went wrong. Please try again.",
+          title: t(errorInfo?.i18n_title) ?? "Error!",
+          message: t(errorInfo?.i18n_message) ?? "Something went wrong. Please try again.",
         });
       })
       .finally(() => setIsDeleting(false));

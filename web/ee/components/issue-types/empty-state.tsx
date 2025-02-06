@@ -1,12 +1,13 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
-import { useTheme } from "next-themes";
-// ui
-import { AlertModalCore, Button, getButtonStyling, setToast, TOAST_TYPE } from "@plane/ui";
+// plane imports
+import { useTranslation } from "@plane/i18n";
+import { AlertModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
-// plane web hooks
+import { DetailedEmptyState } from "@/components/empty-state";
+// hooks
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// plane web imports
 import { useFlag, useIssueTypes, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 type TIssueTypeEmptyState = {
@@ -17,8 +18,8 @@ type TIssueTypeEmptyState = {
 export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
   // props
   const { workspaceSlug, projectId } = props;
-  // theme
-  const { resolvedTheme } = useTheme();
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { enableIssueTypes } = useIssueTypes();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
@@ -28,7 +29,7 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
   const isSelfManagedUpgradeDisabled = subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== "FREE";
   // derived values
   const isIssueTypeSettingsEnabled = useFlag(workspaceSlug, "ISSUE_TYPES");
-  const resolvedEmptyStatePath = `/empty-state/issue-types/issue-type-${resolvedTheme === "light" ? "light" : "dark"}.svg`;
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/issue-types/issue-type", extension: "svg" });
   // handlers
   const handleEnableIssueTypes = async () => {
     setIsLoading(true);
@@ -37,19 +38,61 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Issue types and custom properties are now enabled for this project",
+          message: "Work item types and custom properties are now enabled for this project",
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Failed to enable issue types",
+          message: "Failed to enable work item types",
         });
       })
       .finally(() => {
         setIsLoading(false);
       });
+  };
+
+  const getEmptyStateContent = () => {
+    if (isIssueTypeSettingsEnabled) {
+      return (
+        <DetailedEmptyState
+          title={t("work_item_types.empty_state.enable.title")}
+          description={t("work_item_types.empty_state.enable.description")}
+          assetPath={resolvedPath}
+          primaryButton={{
+            text: t("work_item_types.empty_state.enable.primary_button.text"),
+            onClick: () => setEnableIssueTypeConfirmation(true),
+          }}
+        />
+      );
+    }
+
+    if (isSelfManagedUpgradeDisabled) {
+      return (
+        <DetailedEmptyState
+          title={t("work_item_types.empty_state.get_pro.title")}
+          description={t("work_item_types.empty_state.get_pro.description")}
+          assetPath={resolvedPath}
+          primaryButton={{
+            text: t("work_item_types.empty_state.get_pro.primary_button.text"),
+            onClick: () => window.open("https://prime.plane.so/", "_blank"),
+          }}
+        />
+      );
+    }
+
+    return (
+      <DetailedEmptyState
+        title={t("work_item_types.empty_state.upgrade.title")}
+        description={t("work_item_types.empty_state.upgrade.description")}
+        assetPath={resolvedPath}
+        primaryButton={{
+          text: t("work_item_types.empty_state.upgrade.primary_button.text"),
+          onClick: () => togglePaidPlanModal(true),
+        }}
+      />
+    );
   };
 
   return (
@@ -60,66 +103,27 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
         handleClose={() => setEnableIssueTypeConfirmation(false)}
         handleSubmit={() => handleEnableIssueTypes()}
         isSubmitting={isLoading}
-        title="Once enabled, Issue Types can't be disabled."
+        title={t("work_item_types.empty_state.enable.confirmation.title")}
         content={
           <>
-            Plane&apos;s Issues will become the default issue type for this project and will show up with its icon and
-            background in this project.{" "}
+            {t("work_item_types.empty_state.enable.confirmation.description")}
             <a
               href="https://docs.plane.so/core-concepts/issues/issue-types"
               target="_blank"
               className="font-medium hover:underline"
             >
-              Read the docs
+              {t("common.read_the_docs")}
             </a>
             .
           </>
         }
         primaryButtonText={{
-          loading: "Setting up",
-          default: "Enable",
+          loading: t("work_item_types.empty_state.enable.confirmation.button.loading"),
+          default: t("work_item_types.empty_state.enable.confirmation.button.default"),
         }}
+        secondaryButtonText={t("common.cancel")}
       />
-      <div className="flex justify-center min-h-full overflow-y-auto py-10 px-5">
-        <div className={cn("flex flex-col gap-5 md:min-w-[24rem] max-w-[45rem]")}>
-          <div className="flex flex-col gap-1.5 flex-shrink">
-            <h3 className="text-xl font-semibold">
-              {isIssueTypeSettingsEnabled
-                ? "Enable Issue Types"
-                : isSelfManagedUpgradeDisabled
-                  ? "Get Pro to enable Issue Types."
-                  : "Upgrade to enable Issue Types."}
-            </h3>
-            <p className="text-sm text-custom-text-200">
-              Shape issues to your work with Issue Types. Customize with icons, backgrounds, and properties and
-              configure them for this project.
-            </p>
-          </div>
-          <Image
-            src={resolvedEmptyStatePath}
-            alt="issue type empty state"
-            width={384}
-            height={250}
-            layout="responsive"
-            lazyBoundary="100%"
-          />
-          <div className="relative flex items-center justify-center gap-2 flex-shrink-0 w-full">
-            {isIssueTypeSettingsEnabled ? (
-              <Button disabled={isLoading} onClick={() => setEnableIssueTypeConfirmation(true)}>
-                Enable
-              </Button>
-            ) : isSelfManagedUpgradeDisabled ? (
-              <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
-                Get Pro
-              </a>
-            ) : (
-              <Button disabled={isLoading} onClick={() => togglePaidPlanModal(true)}>
-                Upgrade
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
+      {getEmptyStateContent()}
     </>
   );
 });

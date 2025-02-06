@@ -72,7 +72,7 @@ export const BusinessPlanCard: React.FC<TBusinessPlanCardProps> = observer((prop
       planName="Business"
       planDescription={
         <>
-          <div>Unlimited members, 1:5 Guests, Issue Types, Active Cycles, and more</div>
+          <div>Unlimited members, 1:5 Guests, Work item types, Active Cycles, and more</div>
           {!subscriptionDetail.is_offline_payment ? (
             <>
               {isSubscriptionCancelled ? (

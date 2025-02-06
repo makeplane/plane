@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
+import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // components
-import { EmptyState } from "@/components/empty-state";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state";
+// hooks
+import { useUserPermissions } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// plane web imports
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
@@ -13,10 +18,20 @@ export const ProjectEpicsEmptyState: React.FC = observer(() => {
   const { projectId } = useParams();
   // states
   const [isCreateIssueModalOpen, setIsCreateIssueModalOpen] = useState(false);
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
+  const { allowPermissions } = useUserPermissions();
   const { getProjectEpicId } = useIssueTypes();
   // derived values
   const projectEpicId = getProjectEpicId(projectId?.toString());
+  const epicsResolvedPath = useResolvedAssetPath({
+    basePath: "/empty-state/epics/epics",
+  });
+  const hasProjectMemberLevelPermissions = allowPermissions(
+    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   return (
     <div className="relative h-full w-full overflow-y-auto">
@@ -28,7 +43,16 @@ export const ProjectEpicsEmptyState: React.FC = observer(() => {
           type_id: projectEpicId,
         }}
       />
-      <EmptyState type={EmptyStateType.PROJECT_NO_EPICS} primaryButtonOnClick={() => setIsCreateIssueModalOpen(true)} />
+      <DetailedEmptyState
+        title={t("epics.empty_state.general.title")}
+        description={t("epics.empty_state.general.description")}
+        assetPath={epicsResolvedPath}
+        primaryButton={{
+          text: t("epics.empty_state.general.primary_button.text"),
+          onClick: () => setIsCreateIssueModalOpen(true),
+          disabled: !hasProjectMemberLevelPermissions,
+        }}
+      />
     </div>
   );
 });

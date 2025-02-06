@@ -1,11 +1,9 @@
 import { useMemo } from "react";
 import { useParams } from "next/navigation";
-// constants
-import { MAX_STATIC_FILE_SIZE } from "@/constants/common";
+// plane imports
+import { MAX_FILE_SIZE, MAX_PRO_FILE_SIZE } from "@plane/constants";
 // hooks
 import { useInstance } from "@/hooks/store";
-// local constants
-import { MAX_PRO_FILE_SIZE } from "../constants/common";
 // local hooks
 import { useFlag, useWorkspaceSubscription } from "./store";
 
@@ -30,6 +28,6 @@ export const useFileSize = (): TReturnProps => {
   }, [config?.file_size_limit, isProPlanEnabled, planDetails?.is_self_managed]);
 
   return {
-    maxFileSize: maxFileSize ?? MAX_STATIC_FILE_SIZE,
+    maxFileSize: maxFileSize ?? MAX_FILE_SIZE,
   };
 };

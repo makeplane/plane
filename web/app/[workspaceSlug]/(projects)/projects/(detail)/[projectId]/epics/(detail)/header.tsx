@@ -4,13 +4,12 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Sidebar } from "lucide-react";
-import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 // types
 import { TIssue } from "@plane/types";
 // ui
 import { Breadcrumbs, Header, EpicIcon } from "@plane/ui";
 // components
-import { EUserPermissions, EUserPermissionsLevel } from "@/ce/constants";
 import { BreadcrumbLink } from "@/components/common";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -40,7 +39,7 @@ export const ProjectEpicDetailsHeader = observer(() => {
   const issueDetails = epicId ? getIssueById(epicId.toString()) : undefined;
 
   const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
 

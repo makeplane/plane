@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
-// ui
+// plane imports
+import { TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
+import { getPropertiesDefaultValues } from "@plane/utils";
 // components
 import {
   IssueModalContext,
@@ -10,14 +12,10 @@ import {
   TCreateUpdatePropertyValuesProps,
   TPropertyValuesValidationProps,
 } from "@/components/issues";
-// plane web helpers
-import { getPropertiesDefaultValues } from "@/plane-web/helpers/issue-properties.helper";
 // plane web hooks
 import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services
 import { DraftIssuePropertyValuesService, IssuePropertyValuesService } from "@/plane-web/services/issue-types";
-// plane web types
-import { TIssuePropertyValueErrors, TIssuePropertyValues } from "@/plane-web/types";
 
 type TIssueModalProviderProps = {
   children: React.ReactNode;

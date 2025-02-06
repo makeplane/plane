@@ -4,6 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // icons
 import { ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -35,13 +36,15 @@ export const InitiativeQuickActions: React.FC<Props> = observer((props) => {
   // derived values
   const isOwner = data?.id === initiative?.created_by;
 
+  const { t } = useTranslation();
+
   const initiativeLink = `${workspaceSlug}/initiatives/${initiative?.id}`;
   const handleCopyText = () =>
     copyUrlToClipboard(initiativeLink).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "Initiative link copied to clipboard.",
+        title: t("common.link_copied"),
+        message: t("initiatives.toast.link_copied"),
       });
     });
   const handleOpenInNewTab = () => window.open(`/${initiativeLink}`, "_blank");
@@ -57,7 +60,7 @@ export const InitiativeQuickActions: React.FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "edit",
-      title: "Edit",
+      title: t("edit"),
       icon: Pencil,
       action: handleEditCycle,
       shouldRender: !disabled,
@@ -65,19 +68,19 @@ export const InitiativeQuickActions: React.FC<Props> = observer((props) => {
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
-      title: "Open in new tab",
+      title: t("open_in_new_tab"),
       icon: ExternalLink,
     },
     {
       key: "copy-link",
       action: handleCopyText,
-      title: "Copy link",
+      title: t("copy_link"),
       icon: LinkIcon,
     },
     {
       key: "delete",
       action: handleDeleteCycle,
-      title: "Delete",
+      title: t("delete"),
       icon: Trash2,
       shouldRender: !disabled && isOwner,
     },

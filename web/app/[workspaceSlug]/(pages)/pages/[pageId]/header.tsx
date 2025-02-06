@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FileText } from "lucide-react";
 // types
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 import { TLogoProps } from "@plane/types";
 // ui
 import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, Header, TOAST_TYPE, setToast } from "@plane/ui";
@@ -19,7 +20,6 @@ import { useUserPermissions } from "@/hooks/store";
 // plane web components
 import { PublishPageModal } from "@/plane-web/components/pages";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants";
 // plane web hooks
 import { usePublishPage, useWorkspacePageDetails } from "@/plane-web/hooks/store";
 
@@ -44,7 +44,7 @@ export const PageDetailsHeader = observer(() => {
   const isDeployed = !!anchor;
   const pagePublishSettings = getPagePublishSettings(pageId.toString());
   const isPublishAllowed =
-    isCurrentUserOwner || allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+    isCurrentUserOwner || allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   const handlePageLogoUpdate = async (data: TLogoProps) => {
     if (data) {

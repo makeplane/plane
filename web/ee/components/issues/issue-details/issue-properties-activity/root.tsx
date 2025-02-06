@@ -1,5 +1,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { TIssuePropertyTypeKeys } from "@plane/types";
+import { getIssuePropertyTypeKey } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web components
@@ -12,12 +15,9 @@ import {
   IssueNumberPropertyActivity,
   IssueTextPropertyActivity,
 } from "@/plane-web/components/issues";
-// plane web helpers
-import { getIssuePropertyTypeKey } from "@/plane-web/helpers/issue-properties.helper";
 // plane web hooks
 import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
-// plane web types
-import { TIssuePropertyTypeKeys } from "@/plane-web/types";
+// plane types
 
 type TIssueAdditionalPropertiesActivity = {
   activityId: string;

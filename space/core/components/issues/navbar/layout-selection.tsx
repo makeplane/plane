@@ -17,7 +17,7 @@ type Props = {
   anchor: string;
 };
 
-// TODO: move to constants
+// TODO: use from packages/constants and handle icons
 export const SITES_ISSUE_LAYOUTS: {
   key: TIssueLayout;
   title: string;

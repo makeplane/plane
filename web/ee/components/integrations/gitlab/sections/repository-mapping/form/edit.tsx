@@ -2,6 +2,7 @@
 
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { Button, ModalCore } from "@plane/ui";
 // plane web components
 import { ProjectForm, StateForm } from "@/plane-web/components/integrations/gitlab";
@@ -10,9 +11,8 @@ import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
 import { E_STATE_MAP_KEYS, TProjectMap, TStateMap } from "@/plane-web/types/integrations";
 // local imports
-import { projectMapInit, stateMapInit } from "../root";
 import { TGitlabEntityConnection } from "@/plane-web/types/integrations/gitlab";
-import { useTranslation } from "@plane/i18n";
+import { projectMapInit, stateMapInit } from "../root";
 
 type TFormEdit = {
   modal: boolean;
@@ -113,9 +113,7 @@ export const FormEdit: FC<TFormEdit> = observer((props) => {
           <div className="border border-custom-border-200 divide-y divide-custom-border-200 rounded">
             <div className="relative space-y-1 p-3">
               <div className="text-base">{t("gitlab_integration.pull_request_automation")}</div>
-              <div className="text-xs text-custom-text-200">
-                {t("gitlab_integration.integration_enabled_text")}
-              </div>
+              <div className="text-xs text-custom-text-200">{t("gitlab_integration.integration_enabled_text")}</div>
             </div>
             <div className="p-3">
               <StateForm

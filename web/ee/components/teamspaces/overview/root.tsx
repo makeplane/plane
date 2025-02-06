@@ -2,14 +2,14 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 // ui
 import { ContentWrapper, ERowVariant } from "@plane/ui";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 // plane web components
 import { TeamsOverviewContent } from "@/plane-web/components/teamspaces/overview";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 // components
@@ -29,7 +29,7 @@ export const TeamsOverviewRoot = observer((props: TTeamsOverviewRootProps) => {
   // derived values
   const isTeamspaceMember = isUserMemberOfTeamspace(teamspaceId);
   const hasAdminLevelPermissions = allowPermissions(
-    [EUserPermissions.ADMIN],
+    [EUserWorkspaceRoles.ADMIN],
     EUserPermissionsLevel.WORKSPACE,
     workspaceSlug?.toString()
   );

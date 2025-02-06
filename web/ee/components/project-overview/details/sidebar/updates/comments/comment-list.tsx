@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { SendHorizonal } from "lucide-react";
 import useSWR from "swr";
+import { SendHorizonal } from "lucide-react";
 import { Input, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useProjectUpdates } from "@/plane-web/hooks/store/projects/use-project-updates";

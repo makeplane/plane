@@ -1,4 +1,8 @@
 import { observer } from "mobx-react";
+// plane imports
+import { EIssuePropertyType, ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { TIssueProperty, TOperationMode } from "@plane/types";
 // plane web components
 import {
   DefaultOptionSelect,
@@ -7,12 +11,8 @@ import {
   PropertySettingsConfiguration,
   TIssuePropertyFormError,
 } from "@/plane-web/components/issue-types/properties";
-// plane web constants
-import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@/plane-web/constants/issue-properties";
 // plane web hooks
 import { useIssueType, usePropertyOptions } from "@/plane-web/hooks/store";
-// plane web types
-import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@/plane-web/types";
 
 type TDropdownAttributesProps = {
   issueTypeId: string;
@@ -28,6 +28,8 @@ type TDropdownAttributesProps = {
 
 export const DropdownAttributes = observer((props: TDropdownAttributesProps) => {
   const { issueTypeId, dropdownPropertyDetail, currentOperationMode, onDropdownDetailChange, error } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const issueType = useIssueType(issueTypeId);
   const { propertyOptions, setPropertyOptions } = usePropertyOptions();
@@ -56,7 +58,9 @@ export const DropdownAttributes = observer((props: TDropdownAttributesProps) => 
   return (
     <>
       <div>
-        <span className="text-xs text-custom-text-300 font-medium">Attributes</span>
+        <span className="text-xs text-custom-text-300 font-medium">
+          {t("work_item_types.settings.properties.attributes.label")}
+        </span>
         <PropertyMultiSelect
           value={dropdownPropertyDetail.is_multi}
           variant="OPTION"
@@ -87,7 +91,7 @@ export const DropdownAttributes = observer((props: TDropdownAttributesProps) => 
       <IssuePropertyOptionsRoot issuePropertyId={dropdownPropertyDetail.id} error={error?.options} />
       <div>
         <div className="text-xs font-medium text-custom-text-300">
-          Default <span className="font-normal italic">(optional)</span>
+          {t("common.default")} <span className="font-normal italic">({t("common.optional")})</span>
         </div>
         <DefaultOptionSelect isMultiSelect={dropdownPropertyDetail.is_multi} isDisabled={isOptionDefaultDisabled} />
       </div>

@@ -112,7 +112,7 @@ export const FormEdit: FC<TFormEdit> = observer((props) => {
             <div className="relative space-y-1 p-3">
               <div className="text-base">Pull request automation</div>
               <div className="text-xs text-custom-text-200">
-                With Github integration Enabled, you can automate issue workflows
+                With Github integration Enabled, you can automate work item workflows
               </div>
             </div>
             <div className="p-3">

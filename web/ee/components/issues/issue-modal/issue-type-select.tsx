@@ -46,7 +46,7 @@ export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props:
       if (issueTypeIdsWithMandatoryProperties.length === 0) return {};
       return issueTypeIdsWithMandatoryProperties.reduce((acc, issueTypeId) => {
         acc[issueTypeId] =
-          "This issue type includes mandatory properties that will initially be blank when an issue is converted to this type.";
+          "This work item type includes mandatory properties that will initially be blank when an work item is converted to this type.";
         return acc;
       }, {} as TIssueTypeOptionTooltip);
     }, [issueTypeIdsWithMandatoryProperties]);

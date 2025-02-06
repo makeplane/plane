@@ -3,18 +3,18 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// types
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 // components
 import { PageHead } from "@/components/core";
-import { EmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state";
 import { IntegrationCard } from "@/components/project";
 import { IntegrationsSettingsLoader } from "@/components/ui";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
 // fetch-keys
 import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
 // services
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { IntegrationService } from "@/services/integrations";
 import { ProjectService } from "@/services/project";
 
@@ -23,7 +23,10 @@ const integrationService = new IntegrationService();
 const projectService = new ProjectService();
 
 const ProjectIntegrationsPage = observer(() => {
+  // router
   const { workspaceSlug, projectId } = useParams();
+  // plane hooks
+  const { t } = useTranslation();
   // fetch project details
   const { data: projectDetails } = useSWR<IProject>(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -37,6 +40,7 @@ const ProjectIntegrationsPage = observer(() => {
   // derived values
   const isAdmin = projectDetails?.member_role === 20;
   const pageTitle = projectDetails?.name ? `${projectDetails?.name} - Integrations` : undefined;
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/project-settings/integrations" });
 
   return (
     <>
@@ -54,9 +58,10 @@ const ProjectIntegrationsPage = observer(() => {
             </div>
           ) : (
             <div className="h-full w-full py-8">
-              <EmptyState
-                type={EmptyStateType.PROJECT_SETTINGS_INTEGRATIONS}
-                primaryButtonLink={`/${workspaceSlug}/settings/integrations`}
+              <DetailedEmptyState
+                title={t("project_settings.empty_state.integrations.title")}
+                description={t("project_settings.empty_state.integrations.description")}
+                assetPath={resolvedPath}
               />
             </div>
           )

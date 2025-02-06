@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Pencil, Trash2 } from "lucide-react";
-// ui
+// plane imports
+import { useTranslation } from "@plane/i18n";
+import { TOperationMode } from "@plane/types";
 import { CustomMenu, TContextMenuItem } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // plane web components
 import { DeleteConfirmationModal } from "@/plane-web/components/issue-types";
-// plane web types
-import { TOperationMode } from "@/plane-web/types";
 
 type TIssuePropertyQuickActions = {
   isPropertyDisabled: boolean;
@@ -19,6 +18,8 @@ type TIssuePropertyQuickActions = {
 
 export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickActions) => {
   const { isPropertyDisabled, onDisable, onDelete, onIssuePropertyOperationMode } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -26,13 +27,13 @@ export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickAct
     {
       key: "edit",
       action: () => onIssuePropertyOperationMode("update"),
-      title: "Edit",
+      title: t("common.actions.edit"),
       icon: Pencil,
     },
     {
       key: "delete",
       action: () => setIsDeleteModalOpen(true),
-      title: "Delete",
+      title: t("common.actions.delete"),
       icon: Trash2,
     },
   ];

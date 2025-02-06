@@ -3,14 +3,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ListFilter } from "lucide-react";
 // plane imports
-import { ETeamspaceEntityScope } from "@plane/constants";
+import { ETeamspaceEntityScope, EPageAccess } from "@plane/constants";
 import { TPageFilters } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { FiltersDropdown } from "@/components/issues";
 import { PageFiltersSelection, PageOrderByDropdown, PageSearchInput } from "@/components/pages";
-// constants
-import { EPageAccess } from "@/constants/page";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks

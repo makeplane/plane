@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 // types
 import { BriefcaseIcon, FileText, Layers, Loader as Spinner, Users } from "lucide-react";
 // ui
+import { EUserWorkspaceRoles } from "@plane/constants";
 import { ContrastIcon, LayersIcon } from "@plane/ui";
 // components
 import { MemberDropdown } from "@/components/dropdowns";
@@ -12,7 +13,6 @@ import { Props } from "@/components/icons/types";
 import { cn } from "@/helpers/common.helper";
 // plane web hooks
 import { useMember } from "@/hooks/store";
-import { EUserPermissions } from "@/plane-web/constants";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 // local components
 import { TeamsPropertiesList } from "./list";
@@ -51,7 +51,7 @@ export const TeamsOverviewSidebarProperties = observer((props: TTeamsOverviewSid
     () =>
       workspaceMemberIds?.filter((userId) => {
         const memberDetails = getWorkspaceMemberDetails(userId);
-        return memberDetails?.role === EUserPermissions.GUEST ? false : true;
+        return memberDetails?.role === EUserWorkspaceRoles.GUEST ? false : true;
       }),
     [workspaceMemberIds, getWorkspaceMemberDetails]
   );
@@ -107,7 +107,7 @@ export const TeamsOverviewSidebarProperties = observer((props: TTeamsOverviewSid
       },
       {
         key: "issues",
-        label: "Issues",
+        label: "Work items",
         icon: LayersIcon,
         value: teamspaceEntities?.linked_entities.issues,
         href: `/${workspaceSlug}/teamspaces/${teamspaceId}/issues`,

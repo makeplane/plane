@@ -32,7 +32,7 @@ export const BulkDeleteConfirmationModal: React.FC<Props> = observer((props) => 
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "",
-          message: `${issueIds.length} ${issueIds.length > 1 ? "issues have" : "issue has"} been deleted successfully.`,
+          message: `${issueIds.length} ${issueIds.length > 1 ? "work items have" : "work item has"} been deleted successfully.`,
         });
         onSubmit?.();
         handleClose();
@@ -47,7 +47,7 @@ export const BulkDeleteConfirmationModal: React.FC<Props> = observer((props) => 
       .finally(() => setIsDeleting(false));
   };
 
-  const issueVariant = issueIds.length > 1 ? "issues" : "issue";
+  const issueVariant = issueIds.length > 1 ? "work items" : "work item";
 
   return (
     <AlertModalCore
@@ -61,9 +61,9 @@ export const BulkDeleteConfirmationModal: React.FC<Props> = observer((props) => 
       title={`Delete ${issueVariant}`}
       content={
         <>
-          Are you sure you want to delete {issueIds.length} {issueVariant}? Sub issues of selected {issueVariant} will
-          also be deleted. All of the data related to the {issueVariant} will be permanently removed. This action cannot
-          be undone.
+          Are you sure you want to delete {issueIds.length} {issueVariant}? Sub work items of selected {issueVariant}
+          will also be deleted. All of the data related to the {issueVariant} will be permanently removed. This action
+          cannot be undone.
         </>
       }
       primaryButtonText={{

@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { E_IMPORTER_KEYS, E_JOB_STATUS, TJobStatus } from "@plane/etl/core";
 import { JiraConfig } from "@plane/etl/jira";
+import { useTranslation } from "@plane/i18n";
 import { TImportJob } from "@plane/types";
 import { Button, Loader } from "@plane/ui";
 // plane web components
@@ -13,7 +14,6 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 import { useJiraImporter } from "@/plane-web/hooks/store";
 // plane web types
 import { E_IMPORTER_STEPS } from "@/plane-web/types/importers";
-import { useTranslation } from "@plane/i18n";
 
 export const SummaryRoot: FC = observer(() => {
   // hooks
@@ -141,8 +141,8 @@ export const SummaryRoot: FC = observer(() => {
         ) : (
           <div className="divide-y divide-custom-border-200">
             <div className="relative grid grid-cols-2 items-center p-3 text-sm">
-              <div className="text-custom-text-200">{t("common.issues")}</div>
-              <div>{jiraIssueCount} {t("common.issues")}</div>
+              <div className="text-custom-text-200">{t("work_items")}</div>
+              <div>{jiraIssueCount} {t("work_items")}</div>
             </div>
             <div className="relative grid grid-cols-2 items-center p-3 text-sm">
               <div className="text-custom-text-200">{t("common.labels")}</div>

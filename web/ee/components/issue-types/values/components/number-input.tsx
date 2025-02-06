@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
-// ui
+// plane imports
+import { EIssuePropertyType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
 import { Input } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
-// plane web types
-import { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@/plane-web/types";
+import { cn } from "@plane/utils";
 
 type TNumberValueInputProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType.DECIMAL>>;
@@ -32,6 +32,8 @@ export const NumberValueInput = observer((props: TNumberValueInputProps) => {
   } = props;
   // states
   const [data, setData] = useState<string[]>([]);
+  // plane hooks
+  const { t } = useTranslation();
 
   useEffect(() => {
     setData(value);
@@ -75,14 +77,14 @@ export const NumberValueInput = observer((props: TNumberValueInputProps) => {
           handleNumberValueChange();
           document.body?.removeAttribute("data-delay-outside-click");
         }}
-        placeholder="Add number"
+        placeholder={t("work_item_types.settings.properties.attributes.number.default.placeholder")}
         inputSize={numberInputSize}
         disabled={isDisabled}
         hasError={Boolean(error)}
       />
       {Boolean(error) && (
         <span className="text-xs font-medium text-red-500">
-          {error === "REQUIRED" ? `${propertyDetail.display_name} is required` : error}
+          {error === "REQUIRED" ? t("common.errors.entity_required", { entity: propertyDetail.display_name }) : error}
         </span>
       )}
     </>

@@ -2,7 +2,8 @@
 
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-// Plane
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { EpicIcon, getButtonStyling } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -26,6 +27,8 @@ export const InitiativeEpicsCollapsibleContent: FC<Props> = observer((props) => 
     initiative: { getInitiativeEpicsById },
   } = useInitiatives();
 
+  const { t } = useTranslation();
+
   // derived values
   const initiativeEpicIds = getInitiativeEpicsById(initiativeId) ?? [];
 
@@ -43,8 +46,8 @@ export const InitiativeEpicsCollapsibleContent: FC<Props> = observer((props) => 
         ))
       ) : (
         <SectionEmptyState
-          heading="No epics yet"
-          subHeading="Start adding epics to manage and track the progress."
+          heading={t("epics.empty_state.section.title")}
+          subHeading={t("epics.empty_state.section.description")}
           icon={<EpicIcon className="size-4" />}
           actionElement={
             <button
@@ -56,7 +59,9 @@ export const InitiativeEpicsCollapsibleContent: FC<Props> = observer((props) => 
               }}
               disabled={disabled}
             >
-              <span className={cn(getButtonStyling("accent-primary", "sm"), "font-medium px-2 py-1")}>Add epics</span>
+              <span className={cn(getButtonStyling("accent-primary", "sm"), "font-medium px-2 py-1")}>
+                {t("epics.empty_state.section.primary_button.text")}
+              </span>
             </button>
           }
         />

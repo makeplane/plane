@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 // Plane
+import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // PLane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
@@ -18,6 +19,8 @@ export const useLinkOperations = (workspaceSlug: string, initiativeId: string) =
     },
   } = useInitiatives();
 
+  const { t } = useTranslation();
+
   const handleLinkOperations: TLinkOperations = useMemo(
     () => ({
       create: async (data: Partial<TInitiativeLink>) => {
@@ -25,16 +28,16 @@ export const useLinkOperations = (workspaceSlug: string, initiativeId: string) =
           if (!workspaceSlug || !initiativeId) throw new Error("Missing required fields");
           await createInitiativeLink(workspaceSlug, initiativeId, data);
           setToast({
-            message: "The link has been successfully created",
+            message: t("links.toasts.created.message"),
             type: TOAST_TYPE.SUCCESS,
-            title: "Link created",
+            title: t("links.toasts.created.title"),
           });
           setIsLinkModalOpen(false);
         } catch (error: any) {
           setToast({
-            message: error?.data?.error ?? "The link could not be created",
+            message: error?.data?.error ?? t("links.toasts.not_created.message"),
             type: TOAST_TYPE.ERROR,
-            title: "Link not created",
+            title: t("links.toasts.not_created.title"),
           });
           throw error;
         }
@@ -44,16 +47,16 @@ export const useLinkOperations = (workspaceSlug: string, initiativeId: string) =
           if (!workspaceSlug || !initiativeId) throw new Error("Missing required fields");
           await updateInitiativeLink(workspaceSlug, initiativeId, linkId, data);
           setToast({
-            message: "The link has been successfully updated",
+            message: t("links.toasts.updated.message"),
             type: TOAST_TYPE.SUCCESS,
-            title: "Link updated",
+            title: t("links.toasts.updated.title"),
           });
           setIsLinkModalOpen(false);
         } catch (error) {
           setToast({
-            message: "The link could not be updated",
+            message: t("links.toasts.not_updated.message"),
             type: TOAST_TYPE.ERROR,
-            title: "Link not updated",
+            title: t("links.toasts.not_updated.title"),
           });
           throw error;
         }
@@ -63,16 +66,16 @@ export const useLinkOperations = (workspaceSlug: string, initiativeId: string) =
           if (!workspaceSlug || !initiativeId) throw new Error("Missing required fields");
           await deleteInitiativeLink(workspaceSlug, initiativeId, linkId);
           setToast({
-            message: "The link has been successfully removed",
+            message: t("links.toasts.removed.message"),
             type: TOAST_TYPE.SUCCESS,
-            title: "Link removed",
+            title: t("links.toasts.removed.title"),
           });
           setIsLinkModalOpen(false);
         } catch (error) {
           setToast({
-            message: "The link could not be removed",
+            message: t("links.toasts.not_removed.message"),
             type: TOAST_TYPE.ERROR,
-            title: "Link not removed",
+            title: t("links.toasts.not_removed.title"),
           });
         }
       },

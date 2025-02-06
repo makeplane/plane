@@ -2,12 +2,10 @@ import set from "lodash/set";
 import unset from "lodash/unset";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// plane services
+// plane imports
+import { EUserPermissions } from "@plane/constants";
 import { WorkspaceDashboardsService } from "@plane/services";
-// plane types
 import { TWorkspaceDashboard } from "@plane/types";
-// plane web constants
-import { EUserPermissions } from "@/plane-web/constants";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 import { IWorkspaceDashboardInstance, WorkspaceDashboardInstance } from "./dashboard";

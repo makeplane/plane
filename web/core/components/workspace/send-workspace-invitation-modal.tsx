@@ -7,22 +7,22 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 import useSWR from "swr";
 import { Info, Plus, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
+// plane imports
+import { ROLE, EUserPermissions } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
 import { Button, CustomSelect, getButtonStyling, Input, Loader, Tooltip } from "@plane/ui";
-// constants
-import { ROLE } from "@/constants/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
-// plane web services
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web services
 import { PaymentService } from "@/plane-web/services/payment.service";
 
 const paymentService = new PaymentService();
+// types
 
 type Props = {
   isOpen: boolean;
@@ -51,6 +51,8 @@ const defaultValues: FormValues = {
 
 export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, onSubmit, toggleUpdateWorkspaceSeatsModal } = props;
+  // store hooks
+  const { t } = useTranslation();
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -171,7 +173,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                 >
                   <div className="space-y-4">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                      Add coworkers, clients, and consultants
+                      {t("workspace_settings.settings.members.modal.title")}
                     </Dialog.Title>
                     <div>
                       {isProOrBusinessWorkspace ? (
@@ -190,10 +192,11 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                           )}
                         </>
                       ) : (
-                        <p className="text-sm text-custom-text-200">Invite members to work on your workspace.</p>
+                        <p className="text-sm text-custom-text-200">
+                          {t("workspace_settings.settings.members.modal.description")}
+                        </p>
                       )}
                     </div>
-
                     <div className="mb-3 space-y-4">
                       {fields.map((field, index) => (
                         <div
@@ -208,7 +211,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                                 required: "We need an email address to invite them.",
                                 pattern: {
                                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                  message: "Invalid Email ID",
+                                  message: t("workspace_settings.settings.members.modal.errors.invalid"),
                                 },
                               }}
                               render={({ field: { value, onChange, ref } }) => (
@@ -221,7 +224,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                                     onChange={onChange}
                                     ref={ref}
                                     hasError={Boolean(errors.emails?.[index]?.email)}
-                                    placeholder="name@company.com"
+                                    placeholder={t("workspace_settings.settings.members.modal.placeholder")}
                                     className="w-full text-xs sm:text-sm"
                                   />
                                   {errors.emails?.[index]?.email && (
@@ -328,11 +331,11 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                       disabled={isInviteDisabled}
                     >
                       <Plus className="h-3.5 w-3.5" />
-                      Add another
+                      {t("common.add_more")}
                     </button>
                     <div className="flex items-center gap-2">
                       <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-                        Cancel
+                        {t("cancel")}
                       </Button>
                       <Button
                         variant="primary"
@@ -341,7 +344,9 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                         loading={isSubmitting}
                         disabled={isInviteDisabled}
                       >
-                        {isSubmitting ? "Sending invitation" : "Invite"}
+                        {isSubmitting
+                          ? t("workspace_settings.settings.members.modal.button_loading")
+                          : t("workspace_settings.settings.members.modal.button")}
                       </Button>
                     </div>
                   </div>

@@ -2,17 +2,17 @@ import React, { useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 // ui
-import { Input, TextArea } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
-// plane web types
+import { EIssuePropertyType } from "@plane/constants";
 import {
-  EIssuePropertyType,
   EIssuePropertyValueError,
   TIssueProperty,
   TPropertyValueVariant,
   TTextAttributeDisplayOptions,
-} from "@/plane-web/types";
+} from "@plane/types";
+import { Input, TextArea } from "@plane/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
+// plane imports
 
 type TTextValueInputProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType.TEXT>>;

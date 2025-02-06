@@ -6,7 +6,8 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { ChevronRight, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-// plane hooks
+// plane imports
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 // ui
@@ -17,8 +18,6 @@ import { SidebarNavItem } from "@/components/sidebar";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useUserPermissions } from "@/hooks/store";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
@@ -27,17 +26,18 @@ export const SidebarTeamsList = observer(() => {
   const { workspaceSlug } = useParams();
   // pathname
   const pathname = usePathname();
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const { allowPermissions } = useUserPermissions();
   const { toggleCreateTeamspaceModal } = useCommandPalette();
   const { joinedTeamSpaceIds, isTeamspacesFeatureEnabled, getTeamspaceById } = useTeamspaces();
-  const { t } = useTranslation();
   // local storage
   const { setValue: toggleTeamMenu, storedValue } = useLocalStorage<boolean>("is_teams_list_open", true);
   // derived values
   const isTeamspaceListItemOpen = !!storedValue;
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   const handleLinkClick = () => {
     if (window.innerWidth < 768) {
@@ -63,7 +63,7 @@ export const SidebarTeamsList = observer(() => {
             }
           )}
         >
-          <Tooltip position="right" tooltipContent="Teamspaces" disabled={!sidebarCollapsed}>
+          <Tooltip position="right" tooltipContent={t("teamspaces.label")} disabled={!sidebarCollapsed}>
             <Disclosure.Button
               as="button"
               className={cn(
@@ -75,7 +75,7 @@ export const SidebarTeamsList = observer(() => {
               {sidebarCollapsed ? (
                 <TeamsIcon className="flex-shrink-0 size-3.5" />
               ) : (
-                <span className="text-xs font-semibold">{t("teamspaces")}</span>
+                <span className="text-xs font-semibold uppercase">{t("teamspaces.label")}</span>
               )}
             </Disclosure.Button>
           </Tooltip>

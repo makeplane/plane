@@ -1,10 +1,11 @@
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
+// plane constants
+import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
 // plane imports
 import { MultiSelectDropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
-import { DATE_AFTER_FILTER_OPTIONS } from "@/constants/filters";
 import { TStatisticsFilterProps } from "@/plane-web/types/teamspace";
 
 export const StatisticsDueByFilter: React.FC<TStatisticsFilterProps<"target_date">> = observer((props) => {

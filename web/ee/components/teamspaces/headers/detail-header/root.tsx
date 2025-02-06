@@ -4,8 +4,8 @@ import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Rss, BriefcaseIcon, FileText, Layers, Loader as Spinner } from "lucide-react";
-// constants
-import { ETeamspaceNavigationItem } from "@plane/constants";
+// plane imports
+import { ETeamspaceNavigationItem, EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 // ui
 import {
   Breadcrumbs,
@@ -23,8 +23,6 @@ import { BreadcrumbLink } from "@/components/common";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 // local components
@@ -51,12 +49,12 @@ export const TeamDetailHeader = observer((props: TTeamDetailHeaderProps) => {
   const teamspace = getTeamspaceById(teamspaceId?.toString());
   const isTeamspaceMember = isUserMemberOfTeamspace(teamspaceId?.toString());
   const hasAdminLevelPermissions = allowPermissions(
-    [EUserPermissions.ADMIN],
+    [EUserWorkspaceRoles.ADMIN],
     EUserPermissionsLevel.WORKSPACE,
     workspaceSlug?.toString()
   );
   const hasMemberLevelPermissions = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE,
     workspaceSlug?.toString()
   );
@@ -77,7 +75,7 @@ export const TeamDetailHeader = observer((props: TTeamDetailHeaderProps) => {
       },
       {
         key: ETeamspaceNavigationItem.ISSUES,
-        title: "Issues",
+        title: "Work items",
         icon: LayersIcon,
         action: () => router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/issues`),
       },

@@ -151,7 +151,7 @@ export const TeamspaceStatisticsMap: React.FC<TTeamspaceStatisticsMapProps> = ob
     return teamspaceStatistics.map((item) => ({
       name: getDataName(item.identifier),
       value: item.count,
-      label: "issues",
+      label: "work items",
       icon: getDataIcon(item.identifier) ?? undefined,
       ...getFillDetail(item.identifier),
     }));
@@ -165,8 +165,8 @@ export const TeamspaceStatisticsMap: React.FC<TTeamspaceStatisticsMapProps> = ob
         </Loader>
       ) : showFilterEmptyState ? (
         <SectionEmptyState
-          heading={t("team-stats-filter-empty-state-title")}
-          subHeading={t("team-stats-filter-empty-state-description")}
+          heading={t("teamspace_analytics.empty_state.stats.filter.title")}
+          subHeading={t("teamspace_analytics.empty_state.stats.filter.description")}
           icon={<TreeMapIcon className="size-6 text-custom-text-400" />}
           actionElement={
             <Button

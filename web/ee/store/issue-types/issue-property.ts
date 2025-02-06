@@ -4,44 +4,29 @@ import uniq from "lodash/uniq";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // types
 import { computedFn } from "mobx-utils";
-import { TLogoProps } from "@plane/types";
-// plane web store
-import { IIssuePropertyOption, IssuePropertyOption } from "@/plane-web/store/issue-types";
-import { RootStore } from "@/plane-web/store/root.store";
-// plane web types
+// plane imports
+import { EIssuePropertyType, EIssuePropertyRelationType } from "@plane/constants";
 import {
-  EIssuePropertyRelationType,
-  EIssuePropertyType,
-  TIssuePropertyPayload,
+  TLogoProps,
   TIssueProperty,
-  TIssuePropertyOption,
+  TIssuePropertyPayload,
   TIssuePropertySettingsMap,
-  IIssuePropertyOptionsService,
+  TIssuePropertyOption,
   IIssuePropertiesService,
+  IIssuePropertyOptionsService,
   TIssueTypeStoreServices,
-} from "@/plane-web/types";
+  IIssueProperty,
+  IIssuePropertyOption,
+} from "@plane/types";
+// plane web store
+import { IssuePropertyOption } from "@/plane-web/store/issue-types";
+import { RootStore } from "@/plane-web/store/root.store";
 
 type TIssuePropertyStore<T extends EIssuePropertyType> = {
   root: RootStore;
   services: TIssueTypeStoreServices;
   propertyData: TIssueProperty<T>;
 };
-
-export interface IIssueProperty<T extends EIssuePropertyType> extends TIssueProperty<T> {
-  propertyOptions: IIssuePropertyOption[];
-  // computed
-  asJSON: TIssueProperty<T>;
-  sortedActivePropertyOptions: TIssuePropertyOption[];
-  // computed function
-  getPropertyOptionById: (propertyOptionId: string) => IIssuePropertyOption | undefined;
-  // helper actions
-  updatePropertyData: (propertyData: TIssueProperty<EIssuePropertyType>) => void;
-  addOrUpdatePropertyOptions: (propertyOptionsData: TIssuePropertyOption[]) => void;
-  // actions
-  updateProperty: (issueTypeId: string, propertyData: TIssuePropertyPayload) => Promise<void>;
-  createPropertyOption: (propertyOption: Partial<TIssuePropertyOption>) => Promise<TIssuePropertyOption | undefined>;
-  deletePropertyOption: (propertyOptionId: string) => Promise<void>;
-}
 
 export class IssueProperty<T extends EIssuePropertyType> implements IIssueProperty<T> {
   // properties

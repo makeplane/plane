@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { ArchiveRestoreIcon, LinkIcon, Lock, MoreHorizontal, Settings, Trash2 } from "lucide-react";
-// ui
+// plane imports
+import { EUserWorkspaceRoles, EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import {
   TOAST_TYPE,
@@ -22,7 +23,6 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { TProject } from "@/plane-web/types/projects";
 
 type Props = {
@@ -40,10 +40,10 @@ const Details: React.FC<Props> = observer((props) => {
   // router
   const router = useAppRouter();
   // auth
-  const isOwner = project.member_role === EUserPermissions.ADMIN;
-  const isMember = project.member_role === EUserPermissions.MEMBER;
+  const isOwner = project.member_role === EUserProjectRoles.ADMIN;
+  const isMember = project.member_role === EUserProjectRoles.MEMBER;
   const shouldRenderFavorite = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
   // archive

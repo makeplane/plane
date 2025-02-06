@@ -2,13 +2,13 @@
 import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane package imports
-import { E_SORT_ORDER } from "@plane/constants";
+import { E_SORT_ORDER, EActivityFilterType, filterActivityOnSelectedFilters } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 // components
+import { useTranslation } from "@plane/i18n";
 import { ActivitySortRoot } from "@/components/issues";
 // plane web
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
-import { EActivityFilterType, filterActivityOnSelectedFilters } from "@/plane-web/constants";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TInitiativeActivity, TInitiativeActivityComment } from "@/plane-web/types/initiative";
 // local components
@@ -32,6 +32,8 @@ export const InitiativeSidebarActivityRoot: FC<Props> = observer((props) => {
     },
   } = useInitiatives();
 
+  const { t } = useTranslation();
+
   // derived values
   const activityComments = getActivityCommentByIssueId(initiativeId);
 
@@ -54,7 +56,7 @@ export const InitiativeSidebarActivityRoot: FC<Props> = observer((props) => {
 
   return (
     <SidebarContentWrapper
-      title="Activity"
+      title={t("activity")}
       actionElement={
         <ActivitySortRoot
           sortOrder={sortOrder ?? E_SORT_ORDER.ASC}

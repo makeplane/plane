@@ -8,6 +8,8 @@ import { usePopper } from "react-popper";
 // components
 import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // icon
 import { TCycleGroups } from "@plane/types";
 // ui
@@ -36,6 +38,8 @@ type CycleOptionsProps = {
 
 export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
   const { projectId, isOpen, referenceElement, placement, canRemoveCycle, currentCycleId } = props;
+  // i18n
+  const { t } = useTranslation();
   //state hooks
   const [query, setQuery] = useState("");
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -103,11 +107,11 @@ export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
   if (canRemoveCycle) {
     options?.unshift({
       value: null,
-      query: "No cycle",
+      query: t("cycle.no_cycle"),
       content: (
         <div className="flex items-center gap-2">
           <ContrastIcon className="h-3 w-3 flex-shrink-0" />
-          <span className="flex-grow truncate">No cycle</span>
+          <span className="flex-grow truncate">{t("cycle.no_cycle")}</span>
         </div>
       ),
     });
@@ -132,7 +136,7 @@ export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
             className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search"
+            placeholder={t("common.search.label")}
             displayValue={(assigned: any) => assigned?.name}
             onKeyDown={searchInputKeyDown}
           />
@@ -159,10 +163,10 @@ export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
                 </Combobox.Option>
               ))
             ) : (
-              <p className="px-1.5 py-1 italic text-custom-text-400">No matches found</p>
+              <p className="px-1.5 py-1 italic text-custom-text-400">{t("common.search.no_matches_found")}</p>
             )
           ) : (
-            <p className="px-1.5 py-1 italic text-custom-text-400">Loading...</p>
+            <p className="px-1.5 py-1 italic text-custom-text-400">{t("common.loading")}</p>
           )}
         </div>
       </div>

@@ -60,18 +60,18 @@ export const TeamspaceProgressSummary: React.FC<TTeamspaceProgressSummaryProps> 
   return (
     <div className="w-full h-full">
       <div className="flex items-center gap-1.5">
-        <h4 className="text-sm text-custom-text-300 font-medium">Summary of teamspace&apos;s issues</h4>
+        <h4 className="text-sm text-custom-text-300 font-medium">Summary of teamspace&apos;s work items</h4>
         {isUpdating && <Spinner size={12} className="animate-spin flex-shrink-0" />}
       </div>
       <div className="flex flex-col gap-2.5">
         {teamspaceProgressSummary ? (
           <div className="flex items-center gap-1.5 py-2.5 border-b border-custom-border-100 text-sm font-medium text-[#FF9500]">
             <TriangleAlert size={16} strokeWidth={2} />
-            <span>{teamspaceProgressSummary.no_due_date_issues} issues are not assigned due date</span>
+            <span>{teamspaceProgressSummary.no_due_date_issues} work items are not assigned due date</span>
           </div>
         ) : null}
         <div className="flex flex-col gap-2 border-b border-custom-border-100 px-2 pb-2">
-          <WorkloadDetailItem title="States on chart" value="Issues" containerClassName="text-custom-text-300" />
+          <WorkloadDetailItem title="States on chart" value="Work items" containerClassName="text-custom-text-300" />
           <WorkloadDetailItem
             title="Pending"
             icon={<span className={cn(ICON_CLASSNAME, "bg-custom-background-80/80")} />}

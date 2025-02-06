@@ -35,7 +35,7 @@ export const TeamspaceWorkItemListHeaderActions = observer((props: TeamspaceWork
           }}
           size="sm"
         >
-          <div className="hidden sm:block">Add</div> Issue
+          <div className="hidden sm:block">Add</div> work item
         </Button>
       ) : (
         <></>

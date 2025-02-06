@@ -61,7 +61,7 @@ export const FilterIssueTypes: React.FC<Props> = observer((props) => {
   return (
     <div className="py-2">
       <FilterHeader
-        title={`Issue Type ${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`Work item Type ${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />

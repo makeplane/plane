@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane internal packages
 import { ISSUE_PRIORITIES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/filters";
@@ -17,6 +18,8 @@ type Props = {
 
 export const FilterPriority: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery, allowedValues } = props;
+  // i18n
+  const { t } = useTranslation();
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
@@ -46,7 +49,7 @@ export const FilterPriority: React.FC<Props> = observer((props) => {
               />
             ))
           ) : (
-            <p className="text-xs italic text-custom-text-400">No matches found</p>
+            <p className="text-xs italic text-custom-text-400">{t("no_matches_found")}</p>
           )}
         </div>
       )}

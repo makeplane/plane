@@ -28,7 +28,7 @@ export const TeamsOverviewQuickLinks = observer(() => {
     },
     {
       key: "issues",
-      name: "Issues",
+      name: "Work items",
       icon: <LayersIcon className="size-4 text-custom-text-300" />,
       href: `/${workspaceSlug}/teamspaces/${teamspaceId}/issues`,
     },

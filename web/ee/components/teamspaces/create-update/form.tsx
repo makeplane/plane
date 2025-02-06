@@ -4,6 +4,8 @@ import { FormEvent, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
+import { EUserWorkspaceRoles } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TTeamspace } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // ui
@@ -14,11 +16,10 @@ import { RichTextEditor } from "@/components/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
-import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
+import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 // store hooks
 import { useMember, useWorkspace } from "@/hooks/store";
 // plane web components
-import { EUserPermissions } from "@/plane-web/constants";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
 // services
@@ -42,6 +43,8 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
   // state
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const [errors, setErrors] = useState<{ name?: string }>({});
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const {
@@ -56,7 +59,8 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
     () =>
       workspaceMemberIds?.filter((userId) => {
         const memberDetails = getWorkspaceMemberDetails(userId);
-        return memberDetails?.role === EUserPermissions.GUEST ? false : true;
+        if (!memberDetails?.role) return false;
+        return (memberDetails.role as unknown as EUserWorkspaceRoles) === EUserWorkspaceRoles.GUEST ? false : true; // TODO: remove this after migration to EUserWorkspaceRoles
       }),
     [workspaceMemberIds, getWorkspaceMemberDetails]
   );
@@ -147,7 +151,7 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
               handleFormDataChange("description_json", description_json);
               handleFormDataChange("description_html", description_html);
             }}
-            placeholder={getDescriptionPlaceholder}
+            placeholder={(isFocused, value) => t(getDescriptionPlaceholderI18n(isFocused, value))}
             searchMentionCallback={searchEntity}
             editorClassName="text-xs"
             containerClassName="resize-none min-h-24 text-xs border-[0.5px] border-custom-border-200 rounded-md px-3 py-2"
@@ -164,7 +168,7 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
                 );
                 return asset_id;
               } catch (error) {
-                console.log("Error in uploading issue asset:", error);
+                console.log("Error in uploading work item asset:", error);
                 throw new Error("Asset upload failed. Please try again later.");
               }
             }}

@@ -83,7 +83,7 @@ export const IssueTypeSwitcher: React.FC<TIssueTypeSwitcherProps> = observer((pr
           onClick={handleEditIssue}
         >
           <ArrowRightLeft className="w-3 h-3 flex-shrink-0" />
-          Switch issue type
+          Switch work item type
         </button>
       </div>
     </>

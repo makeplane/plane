@@ -25,7 +25,7 @@ export const SidebarUserMenu = observer(() => {
   const SIDEBAR_USER_MENU_ITEMS = [
     {
       key: "home",
-      labelTranslationKey: "home",
+      labelTranslationKey: "sidebar.home",
       href: `/${workspaceSlug.toString()}/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
       Icon: Home,
@@ -39,28 +39,28 @@ export const SidebarUserMenu = observer(() => {
     },
     {
       key: "your-work",
-      labelTranslationKey: "your_work",
+      labelTranslationKey: "sidebar.your_work",
       href: `/${workspaceSlug.toString()}/profile/${currentUser?.id}/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
       Icon: UserActivityIcon,
     },
     {
       key: "notifications",
-      labelTranslationKey: "inbox",
+      labelTranslationKey: "sidebar.inbox",
       href: `/${workspaceSlug.toString()}/notifications/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
       Icon: Inbox,
     },
     {
       key: "drafts",
-      labelTranslationKey: "drafts",
+      labelTranslationKey: "sidebar.drafts",
       href: `/${workspaceSlug.toString()}/drafts/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
       Icon: PenSquare,
     },
     {
       key: "pi-chat",
-      labelTranslationKey: "pi_chat",
+      labelTranslationKey: "sidebar.pi_chat",
       href: `/${workspaceSlug.toString()}/pi-chat/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
       Icon: PiChatLogo,

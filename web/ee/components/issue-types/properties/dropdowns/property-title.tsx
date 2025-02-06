@@ -1,10 +1,10 @@
 import { observer } from "mobx-react";
-// ui
+// plane imports
+import { EIssuePropertyType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { TIssueProperty } from "@plane/types";
 import { Input, TextArea } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
-// plane web types
-import { EIssuePropertyType, TIssueProperty } from "@/plane-web/types";
+import { cn } from "@plane/utils";
 
 type TPropertyTitleDescriptionInputProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType>>;
@@ -18,6 +18,8 @@ type TPropertyTitleDescriptionInputProps = {
 
 export const PropertyTitleDescriptionInput = observer((props: TPropertyTitleDescriptionInputProps) => {
   const { propertyDetail, error, onPropertyDetailChange } = props;
+  // plane hooks
+  const { t } = useTranslation();
 
   return (
     <div className="w-full flex flex-col">
@@ -25,7 +27,7 @@ export const PropertyTitleDescriptionInput = observer((props: TPropertyTitleDesc
         id="display_name"
         type="text"
         mode={Boolean(error) ? "primary" : "true-transparent"}
-        placeholder="Title"
+        placeholder={t("work_item_types.settings.properties.create_update.form.display_name.placeholder")}
         value={propertyDetail.display_name}
         onChange={(e) => onPropertyDetailChange("display_name", e.target.value)}
         className={cn("w-full resize-none text-lg font-medium bg-custom-background-100 rounded")}
@@ -39,7 +41,7 @@ export const PropertyTitleDescriptionInput = observer((props: TPropertyTitleDesc
       <TextArea
         id="description"
         mode="true-transparent"
-        placeholder="Description..."
+        placeholder={t("work_item_types.settings.properties.create_update.form.description.placeholder")}
         value={propertyDetail.description}
         onChange={(e) => onPropertyDetailChange("description", e.target.value)}
         className={cn(

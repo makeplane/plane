@@ -1,17 +1,17 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
+import { EIssuePropertyType, ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { TIssueProperty, TOperationMode } from "@plane/types";
 // plane web components
 import {
   MemberValueSelect,
   PropertyMultiSelect,
   PropertySettingsConfiguration,
 } from "@/plane-web/components/issue-types";
-// plane web constants
-import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@/plane-web/constants/issue-properties";
 // plane web hooks
 import { useIssueType } from "@/plane-web/hooks/store";
-// plane web types
-import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@/plane-web/types";
 
 type TMemberPickerAttributesProps = {
   issueTypeId: string;
@@ -28,6 +28,8 @@ export const MemberPickerAttributes = observer((props: TMemberPickerAttributesPr
   const { issueTypeId, memberPickerPropertyDetail, currentOperationMode, onMemberPickerDetailChange } = props;
   // router
   const { projectId } = useParams();
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const issueType = useIssueType(issueTypeId);
   // derived values
@@ -38,7 +40,9 @@ export const MemberPickerAttributes = observer((props: TMemberPickerAttributesPr
   return (
     <>
       <div>
-        <span className="text-xs text-custom-text-300 font-medium">Attributes</span>
+        <span className="text-xs text-custom-text-300 font-medium">
+          {t("work_item_types.settings.properties.attributes.label")}
+        </span>
         <PropertyMultiSelect
           value={memberPickerPropertyDetail.is_multi}
           variant="RELATION_USER"
@@ -71,7 +75,7 @@ export const MemberPickerAttributes = observer((props: TMemberPickerAttributesPr
       )}
       <div>
         <div className="text-xs font-medium text-custom-text-300">
-          Default <span className="font-normal italic">(optional)</span>
+          {t("common.default")} <span className="font-normal italic">({t("common.optional")})</span>
         </div>
         <MemberValueSelect
           propertyDetail={memberPickerPropertyDetail}

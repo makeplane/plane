@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 import { LinkIcon, MoreHorizontal, Trash2 } from "lucide-react";
 // Plane
 import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // helpers
@@ -30,6 +31,8 @@ export const EpicQuickActions: React.FC<Props> = observer((props: Props) => {
     issue: { getIssueById },
   } = useIssueDetail(EIssueServiceType.EPICS);
 
+  const { t } = useTranslation();
+
   // derived values
   const epic = getIssueById(epicId);
   const epicLink = `${workspaceSlug}/projects/${epic?.project_id}/issues/${epic?.id}`;
@@ -39,8 +42,8 @@ export const EpicQuickActions: React.FC<Props> = observer((props: Props) => {
     copyUrlToClipboard(epicLink).then(() =>
       setToast({
         type: TOAST_TYPE.INFO,
-        title: "Link Copied!",
-        message: "Epic link copied to clipboard.",
+        title: `${"common.link_copied"}!`,
+        message: t("epics.epic_link_copied_to_clipboard"),
       })
     );
 
@@ -51,14 +54,14 @@ export const EpicQuickActions: React.FC<Props> = observer((props: Props) => {
     {
       key: "copy-link",
       action: handleCopyText,
-      title: "Copy link",
+      title: t("copy_link"),
       icon: LinkIcon,
       shouldRender: true,
     },
     {
       key: "remove",
       action: () => removeEpicFromInitiative(workspaceSlug, initiativeId, epic?.id),
-      title: "Remove",
+      title: t("common.remove"),
       icon: Trash2,
       shouldRender: !disabled,
     },

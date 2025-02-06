@@ -1,10 +1,9 @@
 import { useContext } from "react";
+// plane imports
+import { EIssuePropertyType } from "@plane/constants";
+import { IIssueProperty } from "@plane/types";
 // context
 import { StoreContext } from "@/lib/store-context";
-// plane web stores
-import { IIssueProperty } from "@/plane-web/store/issue-types";
-// plane web types
-import { EIssuePropertyType } from "@/plane-web/types";
 
 export const useIssueProperty = <T extends EIssuePropertyType>(
   typeId: string,

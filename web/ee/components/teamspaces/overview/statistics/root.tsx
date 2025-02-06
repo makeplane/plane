@@ -177,8 +177,8 @@ export const TeamspaceStatisticsRoot: FC<Props> = observer((props) => {
           </>
         ) : (
           <SectionEmptyState
-            heading={t("team-stats-empty-state-title")}
-            subHeading={t("team-stats-empty-state-description")}
+            heading={t("teamspace_analytics.empty_state.stats.general.title")}
+            subHeading={t("teamspace_analytics.empty_state.stats.general.description")}
             icon={<TreeMapIcon className="size-6 text-custom-text-400" />}
             variant="solid"
             iconVariant="round"

@@ -2,14 +2,13 @@
 
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-// plane ui components
+// plane imports
+import { EUserProjectRoles } from "@plane/constants";
 import { EpicIcon } from "@plane/ui";
 // components
 import { ProjectNavigation, TNavigationItem } from "@/components/workspace";
 // hooks
 import { useProject } from "@/hooks/store";
-// plane-web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // local components
 import { WithFeatureFlagHOC } from "../feature-flags";
 
@@ -34,10 +33,10 @@ export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = observer((props
       name: "Epics",
       href: `/${workspaceSlug}/projects/${projectId}/epics`,
       icon: EpicIcon,
-      access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+      access: [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
       shouldRender: !!isEpicsEnabled,
       sortOrder: -1,
-      key: "epics",
+      i18n_key: "sidebar.epics",
     },
   ];
 

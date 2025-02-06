@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // Plane
+import { useTranslation } from "@plane/i18n";
 import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 // Plane-web
@@ -21,6 +22,8 @@ export const InitiativeGroup = observer((props: Props) => {
 
   const [isExpanded, setIsExpanded] = useState(true);
 
+  const { t } = useTranslation();
+
   const toggleListGroup = () => {
     setIsExpanded((prevState) => !prevState);
   };
@@ -33,7 +36,7 @@ export const InitiativeGroup = observer((props: Props) => {
         <GroupHeader
           groupID={group.id}
           icon={group.icon}
-          title={group.name || ""}
+          title={group.name === "All Initiatives" ? t("initiatives.all_initiatives") : group.name || ""}
           count={initiativesIds.length}
           toggleListGroup={toggleListGroup}
         />

@@ -5,7 +5,7 @@ import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // PLane-web
-import { EActivityFilterType } from "@/plane-web/constants";
+import { EActivityFilterType } from "@plane/constants";
 import {
   TInitiativeComment,
   TInitiativeReaction,

@@ -1,16 +1,9 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable } from "mobx";
+// plane imports
+import { IIssuePropertiesActivity, TIssuePropertiesActivity, TIssuePropertyAction } from "@plane/types";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
-// plane web types
-import { TIssuePropertiesActivity, TIssuePropertyAction } from "@/plane-web/types";
-
-export interface IIssuePropertiesActivity extends TIssuePropertiesActivity {
-  // computed
-  asJSON: TIssuePropertiesActivity;
-  // helper action
-  updateActivityData: (issueActivityData: Partial<TIssuePropertiesActivity>) => void;
-}
 
 export class IssuePropertiesActivity implements IIssuePropertiesActivity {
   // properties

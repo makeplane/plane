@@ -2,8 +2,12 @@
 
 import { FC, RefObject } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { ETabIndices } from "@plane/constants";
 // editor
 import { EditorRefApi } from "@plane/editor";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { TIssue } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
@@ -11,10 +15,8 @@ import { EFileAssetType } from "@plane/types/src/enums";
 import { Loader } from "@plane/ui";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
-// constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
-import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
+import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
@@ -51,6 +53,10 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
     onEnterKeyPress,
     onAssetUpload,
   } = props;
+
+  // i18n
+  const { t } = useTranslation();
+
   // hooks
   const { loader } = useProjectInbox();
   const { isMobile } = usePlatformOS();
@@ -74,7 +80,7 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
       projectId={projectId}
       dragDropEnabled={false}
       onChange={(_description: object, description_html: string) => handleData("description_html", description_html)}
-      placeholder={getDescriptionPlaceholder}
+      placeholder={(isFocused, description) => t(`${getDescriptionPlaceholderI18n(isFocused, description)}`)}
       searchMentionCallback={async (payload) =>
         await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
           ...payload,
@@ -98,7 +104,7 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
           onAssetUpload?.(asset_id);
           return asset_id;
         } catch (error) {
-          console.log("Error in uploading issue asset:", error);
+          console.log("Error in uploading work item asset:", error);
           throw new Error("Asset upload failed. Please try again later.");
         }
       }}

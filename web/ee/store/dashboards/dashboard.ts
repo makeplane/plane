@@ -1,11 +1,11 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+// plane imports
+import { EUserPermissions } from "@plane/constants";
 // plane services
 import { WorkspaceDashboardsService } from "@plane/services";
 // plane types
 import { TWorkspaceDashboard } from "@plane/types";
-// plane web constants
-import { EUserPermissions } from "@/plane-web/constants";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 

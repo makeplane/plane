@@ -5,8 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 // plane constants
-import { EIssuesStoreType } from "@plane/constants";
-// types
+import { EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // ui
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
@@ -19,7 +18,6 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 import { useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
 // plane-web
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // types
 import { IQuickActionProps } from "../../../core/components/issues/issue-layouts/list/list-view-types";
 
@@ -54,7 +52,7 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
   // auth
   const isEditingAllowed =
-    allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
+    allowPermissions([EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
   const isDeletingAllowed = isEditingAllowed;
 
   const issueLink = `${workspaceSlug}/projects/${issue.project_id}/epics/${issue.id}`;

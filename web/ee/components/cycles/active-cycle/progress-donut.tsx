@@ -48,12 +48,12 @@ const ProgressDonut = (props: Props) => {
 
         {hoverStep === 1 && (
           <div className="text-custom-primary-200 text-[9px] uppercase whitespace-nowrap tracking-[0.9px] font-semibold leading-[11px]">
-            <span className="font-semibold">{progress?.completed || 0}</span> Issue(s) <br /> done
+            <span className="font-semibold">{progress?.completed || 0}</span> Work item(s) <br /> done
           </div>
         )}
         {hoverStep === 2 && (
           <div className="text-custom-primary-200 text-[9px] uppercase whitespace-nowrap tracking-[0.9px] font-semibold leading-[11px]">
-            <span className="font-semibold">{progress?.pending || 0}</span> Issue(s) <br /> pending
+            <span className="font-semibold">{progress?.pending || 0}</span> Work item(s) <br /> pending
           </div>
         )}
         {hoverStep === 3 && (

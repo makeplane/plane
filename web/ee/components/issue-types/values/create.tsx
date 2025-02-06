@@ -3,12 +3,12 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+// plane imports
 import { EIssueServiceType } from "@plane/constants";
 import { TIssueServiceType } from "@plane/types";
+import { getPropertiesDefaultValues } from "@plane/utils";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-// helpers
-import { getPropertiesDefaultValues } from "@/plane-web/helpers/issue-properties.helper";
 // plane web hooks
 import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services

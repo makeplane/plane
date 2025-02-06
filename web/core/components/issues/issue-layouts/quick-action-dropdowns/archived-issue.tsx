@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 // icons
 import { ArchiveRestoreIcon, ExternalLink, Link, Trash2 } from "lucide-react";
 // ui
-import { EIssuesStoreType } from "@plane/constants";
+import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { DeleteIssueModal } from "@/components/issues";
@@ -16,7 +16,6 @@ import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 
@@ -55,7 +54,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
-        message: "Issue link copied to clipboard",
+        message: "Work item link copied to clipboard",
       })
     );
   const handleIssueRestore = async () => {
@@ -65,14 +64,14 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Restore success",
-          message: "Your issue can be found in project issues.",
+          message: "Your work item can be found in project work items.",
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Issue could not be restored. Please try again.",
+          message: "Work item could not be restored. Please try again.",
         });
       });
   };

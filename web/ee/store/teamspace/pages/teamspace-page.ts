@@ -1,16 +1,12 @@
 import { computed, makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
-// types
+// plane imports
+import { EPageAccess, EUserWorkspaceRoles, EUserPermissions } from "@plane/constants";
 import { TPage } from "@plane/types";
-// constants
-import { EPageAccess } from "@/constants/page";
-// plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web services
 import { TeamspacePageService } from "@/plane-web/services/teamspace/teamspace-pages.service";
-// plane web store
-import { RootStore } from "@/plane-web/store/root.store";
 // store
+import { RootStore } from "@/plane-web/store/root.store";
 import { BasePage, TPageInstance } from "@/store/pages/base-page";
 
 const teamspacePageService = new TeamspacePageService();
@@ -72,10 +68,10 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
     });
   }
 
-  private getUserWorkspaceRole = computedFn((): EUserPermissions | undefined => {
+  private getUserWorkspaceRole = computedFn((): EUserWorkspaceRoles | EUserPermissions | undefined => {
     const { workspaceSlug } = this.rootStore.router;
     if (!workspaceSlug || !this.team) return;
-    const userRole: EUserPermissions | undefined =
+    const userRole =
       this.rootStore.user.permission.workspaceInfoBySlug(workspaceSlug)?.role;
     return userRole;
   });
@@ -95,7 +91,7 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
     const userRole = this.getUserWorkspaceRole();
     const isPagePublic = this.access === EPageAccess.PUBLIC;
     return (
-      (isPagePublic && !!userRole && userRole >= EUserPermissions.MEMBER) || (!isPagePublic && this.isCurrentUserOwner)
+      (isPagePublic && !!userRole && userRole >= EUserWorkspaceRoles.MEMBER) || (!isPagePublic && this.isCurrentUserOwner)
     );
   }
 
@@ -104,7 +100,7 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
    */
   get canCurrentUserDuplicatePage() {
     const userRole = this.getUserWorkspaceRole();
-    return !!userRole && userRole >= EUserPermissions.MEMBER;
+    return !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
   }
 
   /**
@@ -112,7 +108,7 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
    */
   get canCurrentUserLockPage() {
     const userRole = this.getUserWorkspaceRole();
-    return this.isCurrentUserOwner || userRole === EUserPermissions.ADMIN;
+    return this.isCurrentUserOwner || userRole === EUserWorkspaceRoles.ADMIN;
   }
 
   /**
@@ -128,7 +124,7 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
   get canCurrentUserArchivePage() {
     return false;
     // const userRole = this.getUserWorkspaceRole();
-    // return this.isCurrentUserOwner || userRole === EUserPermissions.ADMIN;
+    // return this.isCurrentUserOwner || userRole === EUserWorkspaceRoles.ADMIN;
   }
 
   /**
@@ -136,7 +132,7 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
    */
   get canCurrentUserDeletePage() {
     const userRole = this.getUserWorkspaceRole();
-    return this.isCurrentUserOwner || userRole === EUserPermissions.ADMIN;
+    return this.isCurrentUserOwner || userRole === EUserWorkspaceRoles.ADMIN;
   }
 
   /**
@@ -145,7 +141,7 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
   get canCurrentUserFavoritePage() {
     return false;
     // const userRole = this.getUserWorkspaceRole();
-    // return !!userRole && userRole >= EUserPermissions.MEMBER;
+    // return !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
   }
 
   /**
@@ -165,7 +161,7 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
     const isArchived = this.archived_at;
     const isLocked = this.is_locked;
 
-    return !isArchived && !isLocked && (isOwner || (isPublic && !!userRole && userRole >= EUserPermissions.MEMBER));
+    return !isArchived && !isLocked && (isOwner || (isPublic && !!userRole && userRole >= EUserWorkspaceRoles.MEMBER));
   }
 
   getRedirectionLink = computedFn(() => {

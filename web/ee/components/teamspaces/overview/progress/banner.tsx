@@ -57,7 +57,7 @@ export const TeamspaceProgressBanner: React.FC<TTeamspaceProgressBannerProps> = 
               />
             )}
             {areIssuesOverdue
-              ? `${teamspaceProgressSummary.overdue_issues} issues are overdue`
+              ? `${teamspaceProgressSummary.overdue_issues} work items are overdue`
               : "You are doing great!!"}
             {areIssuesOverdue && (
               <Logo

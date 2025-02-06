@@ -5,10 +5,10 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Grid2x2X } from "lucide-react";
 // plane internal packages
-import { E_INTEGRATION_KEYS, TUserWorkspaceConnection } from "@plane/etl/core";
+import { TUserConnection, USER_CONNECTION_PROVIDERS } from "@plane/constants";
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { IWorkspace, TWorkspaceUserConnection } from "@plane/types";
 // services
-import { TUserConnection, USER_CONNECTION_PROVIDERS } from "@/constants/profile";
 import { useUser, useWorkspace } from "@/hooks/store";
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 import { useConnections } from "@/plane-web/hooks/store/integrations/use-connection";

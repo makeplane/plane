@@ -1,11 +1,12 @@
 import { useParams } from "next/navigation";
 import { Control, Controller } from "react-hook-form";
-// types
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { IProjectView, IWorkspaceView } from "@plane/types";
 // components
 import { AccessField } from "@/components/common/access-field";
 // constants
-import { VIEW_ACCESS_SPECIFIERS } from "@/constants/views";
+import { VIEW_ACCESS_SPECIFIERS } from "@/helpers/views.helper";
 import { useFlag } from "@/plane-web/hooks/store";
 
 type Props = {
@@ -13,6 +14,8 @@ type Props = {
 };
 export const AccessController = (props: Props) => {
   const { control } = props;
+  // plane web hooks
+  const { t } = useTranslation();
   // router
   const { workspaceSlug } = useParams();
   // plane web hooks

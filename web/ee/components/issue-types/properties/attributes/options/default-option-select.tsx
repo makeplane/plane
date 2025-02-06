@@ -1,7 +1,8 @@
 import React from "react";
 import { isEqual } from "lodash";
 import { observer } from "mobx-react";
-// components
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { CustomSearchSelect } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -15,6 +16,8 @@ type TDefaultOptionSelectProps = {
 
 export const DefaultOptionSelect = observer((props: TDefaultOptionSelectProps) => {
   const { isMultiSelect = false, isDisabled = false } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { propertyOptions, handlePropertyOptionsList } = usePropertyOptions();
   // derived values
@@ -40,15 +43,17 @@ export const DefaultOptionSelect = observer((props: TDefaultOptionSelectProps) =
         if (data.length === 1) {
           return getOptionDetails(data[0])?.name;
         } else {
-          return `${data.length} options selected`;
+          return t("work_item_types.settings.properties.attributes.option.select.placeholder.multi.variable", {
+            count: data.length,
+          });
         }
       }
-      return "Select options";
+      return t("work_item_types.settings.properties.attributes.option.select.placeholder.multi.default");
     } else {
       if (data.length) {
         return getOptionDetails(data[0])?.name;
       }
-      return "Select option";
+      return t("work_item_types.settings.properties.attributes.option.select.placeholder.single");
     }
   };
 

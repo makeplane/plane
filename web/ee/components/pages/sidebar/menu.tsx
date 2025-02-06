@@ -2,21 +2,20 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { Home, LucideIcon } from "lucide-react";
-// plane ui
+// plane imports
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 import { Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const SIDEBAR_MENU_ITEMS: {
   key: string;
   label: string;
   href: string;
-  access: EUserPermissions[];
+  access: EUserWorkspaceRoles[];
   highlight: (pathname: string, baseUrl: string) => boolean;
   Icon: LucideIcon;
 }[] = [
@@ -24,7 +23,7 @@ export const SIDEBAR_MENU_ITEMS: {
     key: "home",
     label: "Home",
     href: `/pages`,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}`,
     Icon: Home,
   },

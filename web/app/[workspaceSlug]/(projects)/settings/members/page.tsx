@@ -5,6 +5,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronDown, Search } from "lucide-react";
 // types
+import { MEMBER_INVITED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
 import { Button, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
@@ -14,7 +16,6 @@ import { CountChip } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "@/components/workspace";
 // constants
-import { MEMBER_INVITED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getUserRole } from "@/helpers/user.helper";
@@ -26,8 +27,6 @@ import {
   RemoveUnusedSeatsModal,
   UpdateWorkspaceSeatsModal,
 } from "@/plane-web/components/workspace";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
@@ -47,6 +46,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
     workspace: { workspaceMemberIds, inviteMembersToWorkspace },
   } = useMember();
   const { currentWorkspace } = useWorkspace();
+  const { t } = useTranslation();
 
   // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
@@ -80,7 +80,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Invitations sent successfully.",
+          message: t("workspace_settings.settings.members.invitations_sent_successfully"),
         });
       })
       .catch((err) => {
@@ -98,7 +98,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: `${err.error ?? "Something went wrong. Please try again."}`,
+          message: `${err.error ?? t("something_went_wrong_please_try_again")}`,
         });
         throw err;
       });
@@ -147,7 +147,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
       >
         <div className="flex justify-between gap-4 pb-3.5 items-start">
           <h4 className="flex items-center gap-2.5 text-xl font-medium">
-            Members
+            {t("workspace_settings.settings.members.title")}
             {workspaceMemberIds && workspaceMemberIds.length > 0 && (
               <CountChip count={workspaceMemberIds.length} className="h-5 m-auto" />
             )}
@@ -156,7 +156,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
             <Search className="h-3.5 w-3.5 text-custom-text-400" />
             <input
               className="w-full max-w-[234px] border-none bg-transparent text-sm outline-none placeholder:text-custom-text-400"
-              placeholder="Search..."
+              placeholder={`${t("search")}...`}
               value={searchQuery}
               autoFocus
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -164,7 +164,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           </div>
           {canPerformWorkspaceAdminActions && (
             <Button variant="primary" size="sm" onClick={() => setInviteModal(true)}>
-              Add member
+              {t("workspace_settings.settings.members.add_member")}
             </Button>
           )}
           {isProOrBusinessWorkspace && canPerformWorkspaceAdminActions && (

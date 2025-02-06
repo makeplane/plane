@@ -4,6 +4,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Pencil, X } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
@@ -30,6 +31,7 @@ type TIssueParentSelect = {
 
 export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) => {
   const { className = "", disabled = false, issueId, issueOperations, projectId, workspaceSlug } = props;
+  const { t } = useTranslation();
   // store hooks
   const { getProjectById } = useProject();
   const {
@@ -75,8 +77,8 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Something went wrong",
+        title: t("common.error.label"),
+        message: t("common.something_went_wrong"),
       });
     }
   };
@@ -129,7 +131,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
             </Tooltip>
 
             {!disabled && (
-              <Tooltip tooltipContent="Remove" position="bottom" isMobile={isMobile}>
+              <Tooltip tooltipContent={t("common.remove")} position="bottom" isMobile={isMobile}>
                 <span
                   onClick={(e) => {
                     e.preventDefault();
@@ -143,7 +145,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
             )}
           </div>
         ) : (
-          <span className="text-sm text-custom-text-400">Add parent issue</span>
+          <span className="text-sm text-custom-text-400">{t("issue.add.parent")}</span>
         )}
         {!disabled && (
           <span

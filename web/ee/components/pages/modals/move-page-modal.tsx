@@ -3,19 +3,19 @@ import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// plane ui
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { Button, EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // component types
 import { TMovePageModalProps } from "@/ce/components/pages";
 // components
 import { Logo } from "@/components/common";
-import { EmptyState } from "@/components/empty-state";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProject, useProjectPages } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // store
 import { ROLE_PERMISSIONS_TO_CREATE_PAGE } from "@/store/pages/project-page.store";
 
@@ -30,6 +30,8 @@ export const MovePageModal: React.FC<TMovePageModalProps> = observer((props) => 
   // router
   const { workspaceSlug, projectId } = useParams();
   const router = useRouter();
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { currentProjectDetails, getProjectById, joinedProjectIds } = useProject();
   const { movePage } = useProjectPages();
@@ -46,6 +48,9 @@ export const MovePageModal: React.FC<TMovePageModalProps> = observer((props) => 
     const projectDetails = getProjectById(id);
     const projectQuery = `${projectDetails?.identifier} ${projectDetails?.name}`.toLowerCase();
     return projectQuery.includes(searchTerm.toLowerCase());
+  });
+  const filteredProjectResolvedPath = useResolvedAssetPath({
+    basePath: "/empty-state/search/project",
   });
 
   const handleClose = () => {
@@ -104,7 +109,11 @@ export const MovePageModal: React.FC<TMovePageModalProps> = observer((props) => 
         <Combobox.Options static className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto">
           {filteredProjectIds.length === 0 ? (
             <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-              <EmptyState type={EmptyStateType.PROJECTS_EMPTY_SEARCH} layout="screen-simple" />
+              <SimpleEmptyState
+                title={t("workspace_projects.empty_state.filter.title")}
+                description={t("workspace_projects.empty_state.filter.description")}
+                assetPath={filteredProjectResolvedPath}
+              />
             </div>
           ) : (
             <ul

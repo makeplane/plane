@@ -24,7 +24,7 @@ export const useEpicOperations = (): TEpicOperations => {
         try {
           await fetchIssue(workspaceSlug, projectId, issueId);
         } catch (error) {
-          console.error("Error fetching the parent issue:", error);
+          console.error("Error fetching the parent work item:", error);
         }
       },
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
@@ -33,7 +33,7 @@ export const useEpicOperations = (): TEpicOperations => {
             await updateIssue(projectId, issueId, data);
           }
         } catch (error) {
-          console.log("Error in updating issue:", error);
+          console.log("Error in updating work item:", error);
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
@@ -56,7 +56,7 @@ export const useEpicOperations = (): TEpicOperations => {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
-            message: "Issue delete failed",
+            message: "Work item delete failed",
           });
         }
       },

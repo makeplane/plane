@@ -119,7 +119,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetAttachmentColumn,
   },
   sub_issue_count: {
-    title: "Sub-issue",
+    title: "Sub-work item",
     icon: LayersIcon,
     Column: SpreadsheetSubIssueColumn,
   },

@@ -1,12 +1,12 @@
 import { observer } from "mobx-react";
+// plane imports
+import { EIssuePropertyType, ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
+import { TDateAttributeDisplayOptions, TIssueProperty, TOperationMode } from "@plane/types";
+import { getDateAttributeDisplayName } from "@plane/utils";
 // plane web components
 import { PropertySettingsConfiguration } from "@/plane-web/components/issue-types/properties";
-// plane web constants
-import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@/plane-web/constants/issue-properties";
 // plane web hooks
 import { useIssueType } from "@/plane-web/hooks/store";
-// plane web types
-import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@/plane-web/types";
 
 type TDatePickerAttributesProps = {
   issueTypeId: string;
@@ -36,6 +36,7 @@ export const DatePickerAttributes = observer((props: TDatePickerAttributesProps)
           onChange={(value) =>
             onDatePickerDetailChange("settings", value as TIssueProperty<EIssuePropertyType.DATETIME>["settings"])
           }
+          getLabelDetails={(labelKey) => getDateAttributeDisplayName(labelKey as TDateAttributeDisplayOptions)}
           isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && isAnyIssueAttached}
         />
       ))}

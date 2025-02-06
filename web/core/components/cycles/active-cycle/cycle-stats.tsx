@@ -6,17 +6,16 @@ import { observer } from "mobx-react";
 import { CalendarCheck } from "lucide-react";
 // headless ui
 import { Tab } from "@headlessui/react";
-// types
+// plane imports
 import { EIssuesStoreType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ICycle, IIssueFilterOptions } from "@plane/types";
 // ui
 import { Tooltip, Loader, PriorityIcon, Avatar } from "@plane/ui";
 // components
 import { SingleProgressStats } from "@/components/core";
 import { StateDropdown } from "@/components/dropdowns";
-import { EmptyState } from "@/components/empty-state";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
@@ -26,6 +25,7 @@ import { useIssueDetail, useIssues } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // store
 import { ActiveCycleIssueDetails } from "@/store/issue/cycle";
@@ -41,11 +41,18 @@ export type ActiveCycleStatsProps = {
 
 export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle, cycleId, handleFiltersUpdate, cycleIssueDetails } = props;
-
+  // local storage
   const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");
-
+  // refs
   const issuesContainerRef = useRef<HTMLDivElement | null>(null);
+  // states
   const [issuesLoaderElement, setIssueLoaderElement] = useState<HTMLDivElement | null>(null);
+  // plane hooks
+  const { t } = useTranslation();
+  // derived values
+  const priorityResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/priority" });
+  const assigneesResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/assignee" });
+  const labelsResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/label" });
 
   const currentValue = (tab: string | null) => {
     switch (tab) {
@@ -119,7 +126,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
               )
             }
           >
-            Priority Issues
+            {t("project_cycles.active_cycle.priority_issue")}
           </Tab>
           <Tab
             className={({ selected }) =>
@@ -132,7 +139,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
               )
             }
           >
-            Assignees
+            {t("project_cycles.active_cycle.assignees")}
           </Tab>
           <Tab
             className={({ selected }) =>
@@ -145,7 +152,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
               )
             }
           >
-            Labels
+            {t("project_cycles.active_cycle.labels")}
           </Tab>
         </Tab.List>
 
@@ -231,10 +238,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                   </>
                 ) : (
                   <div className="flex items-center justify-center h-full w-full">
-                    <EmptyState
-                      type={EmptyStateType.ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE}
-                      layout="screen-simple"
-                      size="sm"
+                    <SimpleEmptyState
+                      title={t("active_cycle.empty_state.priority_issue.title")}
+                      assetPath={priorityResolvedPath}
                     />
                   </div>
                 )
@@ -283,7 +289,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                             <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
                               <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
                             </div>
-                            <span>No assignee</span>
+                            <span>{t("no_assignee")}</span>
                           </div>
                         }
                         completed={assignee.completed_issues}
@@ -293,10 +299,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                 })
               ) : (
                 <div className="flex items-center justify-center h-full w-full">
-                  <EmptyState
-                    type={EmptyStateType.ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE}
-                    layout="screen-simple"
-                    size="sm"
+                  <SimpleEmptyState
+                    title={t("active_cycle.empty_state.assignee.title")}
+                    assetPath={assigneesResolvedPath}
                   />
                 </div>
               )
@@ -336,7 +341,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                 ))
               ) : (
                 <div className="flex items-center justify-center h-full w-full">
-                  <EmptyState type={EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE} layout="screen-simple" size="sm" />
+                  <SimpleEmptyState title={t("active_cycle.empty_state.label.title")} assetPath={labelsResolvedPath} />
                 </div>
               )
             ) : (

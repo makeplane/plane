@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 // icons
 import { X } from "lucide-react";
 // constants
-import { DATE_AFTER_FILTER_OPTIONS } from "@/constants/filters";
+import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";

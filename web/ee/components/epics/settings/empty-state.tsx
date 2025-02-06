@@ -68,8 +68,8 @@ export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
                   : "Upgrade to enable Epics."}
             </h3>
             <p className="text-sm text-custom-text-200">
-              For larger bodies of work that span several cycles and can live across modules, create an epic. Link
-              issues and sub-issues in a project to an epic and jump into an issue from the overview.
+              For larger bodies of work that span several cycles and can live across modules, create an epic. Link work
+              items and sub-work items in a project to an epic and jump into a work item from the overview.
             </p>
           </div>
           <Image

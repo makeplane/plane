@@ -7,13 +7,13 @@ import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { CircleAlert } from "lucide-react";
 // hooks
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 import { AlertModalCore, Button } from "@plane/ui";
 import { useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components
 import { PaidPlanUpgradeModal } from "@/plane-web/components/license";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants";
 // assets
 import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
@@ -31,7 +31,11 @@ export const WorkspaceDisabledPage: React.FC = observer(() => {
   const { allowPermissions } = useUserPermissions();
   // derived values
   const workspaceSlug = routerWorkspaceSlug?.toString();
-  const isWorkspaceAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
+  const isWorkspaceAdmin = allowPermissions(
+    [EUserWorkspaceRoles.ADMIN],
+    EUserPermissionsLevel.WORKSPACE,
+    workspaceSlug
+  );
 
   const handleRemoveMembers = () => {
     toggleDowngradeModal(false);

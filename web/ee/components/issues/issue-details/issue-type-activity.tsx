@@ -68,7 +68,7 @@ export const IssueTypeActivity: FC<TIssueTypeActivity> = observer((props) => {
       ends={ends}
     >
       <span className="inline-flex items-center">
-        changed issue type to{" "}
+        changed work item type to{" "}
         {activity.new_identifier && <IssueTypeDetail issueTypeId={activity.new_identifier} className="px-1" />}
         from {activity.old_identifier && <IssueTypeDetail issueTypeId={activity.old_identifier} className="pl-1" />}
         {showIssue ? ` for ` : ``}

@@ -1,5 +1,5 @@
 // plane types
-import { EUserPermissions } from "@plane/types/src/enums";
+import { EUserPermissions, EUserProjectRoles } from "@plane/constants";
 // ui
 import { EpicIcon } from "@plane/ui";
 // ce constants
@@ -11,27 +11,27 @@ import { Props } from "@/components/icons/types";
 
 export const PROJECT_SETTINGS = {
   ...PROJECT_SETTINGS_CE,
-  "issue-types": {
-    key: "issue-types",
-    label: "Issue Types",
-    href: `/settings/issue-types/`,
-    access: [EUserPermissions.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/issue-types/`,
+  "work-item-types": {
+    key: "work-item-types",
+    i18n_label: "work_item_types.label",
+    href: `/settings/work-item-types/`,
+    access: [EUserProjectRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/work-item-types/`,
     Icon: SettingIcon,
   },
   epics: {
     key: "epics",
-    label: "Epics",
+    i18n_label: "common.epics",
     href: `/settings/epics/`,
-    access: [EUserPermissions.ADMIN],
+    access: [EUserProjectRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/epics/`,
     Icon: EpicIcon,
   },
   project_updates: {
     key: "project-updates",
-    label: "Project Updates",
+    i18n_label: "common.project_updates",
     href: `/settings/project-updates/`,
-    access: [EUserPermissions.ADMIN],
+    access: [EUserProjectRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/project-updates/`,
     Icon: SettingIcon,
   },
@@ -39,9 +39,9 @@ export const PROJECT_SETTINGS = {
 
 export const PROJECT_SETTINGS_LINKS: {
   key: string;
-  label: string;
+  i18n_label: string;
   href: string;
-  access: EUserPermissions[];
+  access: EUserPermissions[] | EUserProjectRoles[];
   highlight: (pathname: string, baseUrl: string) => boolean;
   Icon: React.FC<Props>;
 }[] = [
@@ -52,7 +52,7 @@ export const PROJECT_SETTINGS_LINKS: {
   PROJECT_SETTINGS["labels"],
   PROJECT_SETTINGS["estimates"],
   PROJECT_SETTINGS["automations"],
-  PROJECT_SETTINGS["issue-types"],
+    PROJECT_SETTINGS["work-item-types"],
   PROJECT_SETTINGS["epics"],
   PROJECT_SETTINGS["project_updates"],
 ];

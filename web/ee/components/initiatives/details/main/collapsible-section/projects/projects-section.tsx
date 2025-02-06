@@ -2,6 +2,8 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 // plane web
 import { CollapsibleDetailSection } from "@/plane-web/components/common/layout/main/sections/collapsible-root";
 // local components
@@ -20,10 +22,11 @@ type Props = {
 
 export const ProjectsSection: React.FC<Props> = observer((props) => {
   const { workspaceSlug, initiativeId, projectIds, disabled, toggleProjectModal, isOpen, onToggle, count } = props;
+  const { t } = useTranslation();
 
   return (
     <CollapsibleDetailSection
-      title="Projects"
+      title={t("common.projects")}
       actionItemElement={
         !disabled && (
           <button

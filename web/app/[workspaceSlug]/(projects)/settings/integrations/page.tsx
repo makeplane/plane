@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
 import useSWR from "swr";
-import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PageHead } from "@/components/core";
 import { IntegrationsEmptyState } from "@/components/integration";
@@ -12,10 +12,9 @@ import { IntegrationsEmptyState } from "@/components/integration";
 import { useUserPermissions, useUserProfile, useWorkspace } from "@/hooks/store";
 // plane web components
 import { IntegrationsList } from "@/plane-web/components/integrations";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useFlag } from "@/plane-web/hooks/store";
+// services
 import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
 
 const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));

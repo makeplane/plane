@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronDown, Plus, X } from "lucide-react";
 // ui
+import { EUserWorkspaceRoles } from "@plane/constants";
 import {
   Avatar,
   Button,
@@ -19,7 +20,6 @@ import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web imports
-import { EUserPermissions } from "@/plane-web/constants";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
 type Props = {
@@ -47,7 +47,7 @@ export const AddTeamspaceMembersModal: FC<Props> = observer((props) => {
     () =>
       workspaceMemberIds?.filter((userId) => {
         const memberDetails = getWorkspaceMemberDetails(userId);
-        if (memberDetails?.role === EUserPermissions.GUEST) return false;
+        if (memberDetails?.role === EUserWorkspaceRoles.GUEST) return false;
         const isInvited = teamspaceMemberIds?.find((u) => u === userId) || memberIdsToInvite?.find((u) => u === userId);
         return !isInvited;
       }),

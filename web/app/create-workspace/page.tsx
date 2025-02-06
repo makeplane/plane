@@ -42,11 +42,12 @@ const CreateWorkspacePage = observer(() => {
 
   // methods
   const getMailtoHref = () => {
-    const subject = t("workspace_request_subject");
-    const body = t("workspace_request_body")
-      .replace("{{firstName}}", currentUser?.first_name || "")
-      .replace("{{lastName}}", currentUser?.last_name || "")
-      .replace("{{email}}", currentUser?.email || "");
+    const subject = t("workspace_creation.request_email.subject");
+    const body = t("workspace_creation.request_email.body", {
+      firstName: currentUser?.first_name || "",
+      lastName: currentUser?.last_name || "",
+      email: currentUser?.email || "",
+    });
 
     return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
@@ -67,7 +68,7 @@ const CreateWorkspacePage = observer(() => {
             href="/"
           >
             <div className="h-[30px] w-[133px]">
-              <Image src={logo} alt={t("plane_logo")} />
+              <Image src={logo} alt="Plane logo" />
             </div>
           </Link>
           <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm text-custom-text-100 sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
@@ -77,30 +78,25 @@ const CreateWorkspacePage = observer(() => {
         <div className="relative flex h-full justify-center px-8 pb-8 sm:w-10/12 sm:items-center sm:justify-start sm:p-0 sm:pr-[8.33%] md:w-9/12 lg:w-4/5">
           {isWorkspaceCreationDisabled ? (
             <div className="w-4/5 h-full flex flex-col items-center justify-center text-lg font-medium gap-1">
-              <Image
-                src={WorkspaceCreationDisabled}
-                width={200}
-                alt={t("workspace_creation_disabled")}
-                className="mb-4"
-              />
+              <Image src={WorkspaceCreationDisabled} width={200} alt="Workspace creation disabled" className="mb-4" />
               <div className="text-lg font-medium text-center">
-                {t("only_your_instance_admin_can_create_workspaces")}
+                {t("workspace_creation.errors.creation_disabled.title")}
               </div>
               <p className="text-sm text-custom-text-300 break-words text-center">
-                {t("only_your_instance_admin_can_create_workspaces_description")}
+                {t("workspace_creation.errors.creation_disabled.description")}
               </p>
               <div className="flex gap-4 mt-6">
                 <Button variant="primary" onClick={() => router.back()}>
-                  {t("go_back")}
+                  {t("common.go_back")}
                 </Button>
                 <a href={getMailtoHref()} className={getButtonStyling("outline-primary", "md")}>
-                  {t("request_instance_admin")}
+                  {t("workspace_creation.errors.creation_disabled.request_button")}
                 </a>
               </div>
             </div>
           ) : (
             <div className="w-full space-y-7 sm:space-y-10">
-              <h4 className="text-2xl font-semibold">{t("create_your_workspace")}</h4>
+              <h4 className="text-2xl font-semibold">{t("workspace_creation.heading")}</h4>
               <div className="sm:w-3/4 md:w-2/5">
                 <CreateWorkspaceForm
                   onSubmit={onSubmit}

@@ -164,7 +164,7 @@ class IssueTypeEndpoint(BaseAPIView):
         # Default cannot be made in active
         if issue_type.is_default and not request.data.get("is_active"):
             return Response(
-                {"error": "Default issue type cannot be inactive"},
+                {"error": "Default work item type cannot be inactive"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -220,14 +220,14 @@ class IssueTypeEndpoint(BaseAPIView):
         # Check if there are any issues using this issue type
         if Issue.objects.filter(project_id=project_id, type_id=pk).exists():
             return Response(
-                {"error": "Cannot delete issue type with associated issues"},
+                {"error": "Cannot delete work item type with associated issues"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Check if the issue type is the default issue type
         if issue_type.is_default:
             return Response(
-                {"error": "Cannot delete default issue type"},
+                {"error": "Cannot delete default work item type"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -251,7 +251,7 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
             is_default=True,
         ).exists():
             return Response(
-                {"error": "Default issue type already exists"},
+                {"error": "Default work item type already exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -260,16 +260,16 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
             project_id=project_id, is_default=True
         ).exists():
             return Response(
-                {"error": "Default issue type already exists"},
+                {"error": "Default work item type already exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Create a new default issue type
         issue_type = IssueType.objects.create(
             workspace_id=project.workspace_id,
-            name="Issue",
+            name="Work item",
             is_default=True,
-            description="Default issue type with the option to add new properties",
+            description="Default work item type with the option to add new properties",
             logo_props={
                 "in_use": "icon",
                 "icon": {"color": "#ffffff", "background_color": "#6695FF"},

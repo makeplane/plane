@@ -1,6 +1,4 @@
-// helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
-// plane web types
+// plane imports
 import {
   IIssueTypesService,
   TFetchIssueTypesPayload,
@@ -9,7 +7,8 @@ import {
   TUpdateIssueTypePayload,
   TDeleteIssueTypePayload,
   TEnableIssueTypePayload,
-} from "@/plane-web/types";
+} from "@plane/types";
+import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 

@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Layers } from "lucide-react";
-// plane constants
-import { EIssueLayoutTypes } from "@plane/constants";
+// plane imports
+import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE, EViewAccess } from "@plane/constants";
 // types
 import { TTeamspaceView, IIssueFilterOptions, IIssueDisplayProperties, IIssueDisplayFilterOptions } from "@plane/types";
 // ui
@@ -14,9 +14,6 @@ import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, TextArea } from "
 import { Logo } from "@/components/common";
 import { LayoutDropDown } from "@/components/dropdowns/layout";
 import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
-import { EViewAccess } from "@/constants/views";
 // helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
@@ -262,9 +259,7 @@ export const TeamspaceViewForm: React.FC<Props> = observer((props) => {
                               [key]: newValues,
                             });
                           }}
-                          layoutDisplayFiltersOptions={
-                            ISSUE_DISPLAY_FILTERS_BY_LAYOUT.team_issues[displayFilters.layout]
-                          }
+                          layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues[displayFilters.layout]}
                           labels={workspaceLabels ?? undefined}
                           memberIds={workspaceMemberIds ?? undefined}
                         />
@@ -278,9 +273,7 @@ export const TeamspaceViewForm: React.FC<Props> = observer((props) => {
                     render={({ field: { onChange: onDisplayPropertiesChange, value: displayProperties } }) => (
                       <FiltersDropdown title="Display" tabIndex={4}>
                         <DisplayFiltersSelection
-                          layoutDisplayFiltersOptions={
-                            ISSUE_DISPLAY_FILTERS_BY_LAYOUT.team_issues[displayFilters.layout]
-                          }
+                          layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues[displayFilters.layout]}
                           displayFilters={displayFilters ?? {}}
                           handleDisplayFiltersUpdate={(updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
                             onDisplayFiltersChange({

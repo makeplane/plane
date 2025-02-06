@@ -1,10 +1,11 @@
 import { observer } from "mobx-react";
+// plane imports
+import { DROPDOWN_ATTRIBUTES } from "@plane/constants";
 // plane web components
+import { useTranslation } from "@plane/i18n";
+import { TIssuePropertyTypeKeys } from "@plane/types";
 import { RadioInput } from "@/components/estimates";
-// plane web constants
-import { DROPDOWN_ATTRIBUTES } from "@/plane-web/constants/issue-properties";
 // plane web types
-import { TIssuePropertyTypeKeys } from "@/plane-web/types";
 
 type TPropertyMultiSelectProps = {
   value: boolean | undefined;
@@ -15,11 +16,13 @@ type TPropertyMultiSelectProps = {
 
 export const PropertyMultiSelect = observer((props: TPropertyMultiSelectProps) => {
   const { value, variant = "RELATION_ISSUE", isDisabled = false, onChange } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // derived values
   const MULTI_SELECT_ATTRIBUTES = DROPDOWN_ATTRIBUTES[variant] ?? [];
 
   const memberPickerAttributeOptions = MULTI_SELECT_ATTRIBUTES.map((attribute) => ({
-    label: attribute.label,
+    label: t(attribute.i18n_label),
     value: attribute.key,
     disabled: isDisabled,
   }));

@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 // plane web types
-import { TGitlabRepository } from "@/plane-web/types/integrations/gitlab";
 import { IGitlabEntity } from "@plane/etl/gitlab";
+import { TGitlabRepository } from "@/plane-web/types/integrations/gitlab";
 
 export class GitlabDataService {
   protected baseURL: string;

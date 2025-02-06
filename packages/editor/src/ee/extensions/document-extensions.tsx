@@ -33,9 +33,9 @@ export const DocumentEditorAdditionalExtensions = (props: Props) => {
     const issueEmbedOption: TSlashCommandAdditionalOption = {
       commandKey: "issue-embed",
       key: "issue-embed",
-      title: "Issue embed",
-      description: "Embed an issue from the project.",
-      searchTerms: ["issue", "link", "embed"],
+      title: "Work item embed",
+      description: "Embed work item from the project.",
+      searchTerms: ["work item", "link", "embed"],
       icon: <LayersIcon className="size-3.5" />,
       command: ({ editor, range }) => {
         editor.chain().focus().insertContentAt(range, "<p>#issue_</p>").run();

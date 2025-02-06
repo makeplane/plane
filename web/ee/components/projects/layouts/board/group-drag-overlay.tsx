@@ -1,6 +1,7 @@
 import { AlertCircle } from "lucide-react";
+import { ISSUE_ORDER_BY_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssueOrderByOptions } from "@plane/types";
-import { ISSUE_ORDER_BY_OPTIONS } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 
 type Props = {
@@ -21,9 +22,11 @@ export const GroupDragOverlay = (props: Props) => {
     orderBy,
     isDraggingOverColumn,
   } = props;
+  const { t } = useTranslation();
 
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
-  const readableOrderBy = orderBy && ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderByObj.key === orderBy)?.title;
+  const readableOrderBy =
+    orderBy && ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderByObj.key === orderBy)?.titleTranslationKey;
 
   return (
     <div
@@ -55,10 +58,11 @@ export const GroupDragOverlay = (props: Props) => {
           <>
             {readableOrderBy && (
               <span>
-                The layout is ordered by <span className="font-semibold">{readableOrderBy}</span>.
+                {t("issue.layouts.ordered_by_label")} <span className="font-semibold">{t(readableOrderBy)}</span>.
               </span>
             )}
-            <span>Drop here to move the project.</span>
+            <span>{t("entity.drop_here_to_move", { entity: t("project.label", { count: 2 }) })}</span>
+            {/** Count is added for pluralization */}
           </>
         )}
       </div>

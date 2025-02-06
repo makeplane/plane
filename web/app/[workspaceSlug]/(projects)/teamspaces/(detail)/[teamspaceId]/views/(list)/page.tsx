@@ -5,12 +5,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { ETeamspaceEntityScope } from "@plane/constants";
+import { ETeamspaceEntityScope, EViewAccess } from "@plane/constants";
 import { TViewFilterProps } from "@plane/types";
 // constants
 import { Tabs } from "@plane/ui";
 import { ViewAppliedFiltersList } from "@/components/views/applied-filters";
-import { EViewAccess } from "@/constants/views";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // plane web imports

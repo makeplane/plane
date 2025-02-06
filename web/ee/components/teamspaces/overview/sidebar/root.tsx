@@ -5,13 +5,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Activity, UsersRound } from "lucide-react";
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 import { CommentFillIcon, InfoFillIcon, Tabs } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 // plane web hooks
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import { useTeamspaceUpdates } from "@/plane-web/hooks/store/teamspaces/use-teamspace-updates";
 // local components
@@ -35,12 +35,12 @@ export const TeamsOverviewSidebar: FC<TTeamsOverviewSidebarProps> = observer((pr
   // derived values
   const teamspace = getTeamspaceById(teamspaceId);
   const hasAdminLevelPermissions = allowPermissions(
-    [EUserPermissions.ADMIN],
+    [EUserWorkspaceRoles.ADMIN],
     EUserPermissionsLevel.WORKSPACE,
     workspaceSlug?.toString()
   );
   const hasMemberLevelPermissions = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE,
     workspaceSlug?.toString()
   );

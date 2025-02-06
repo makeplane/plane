@@ -3,13 +3,13 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-// ui
 import { Crown } from "lucide-react";
+// plane imports
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // assets
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import PiDark from "@/public/empty-state/pi/chat-dark.webp";
@@ -23,7 +23,7 @@ export const EmptyPiChat = observer(() => {
   const { resolvedTheme } = useTheme();
 
   // derived values
-  const canCreateProject = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const canCreateProject = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   return (
     <div className={cn("h-full bg-pi-50 px-page-x pt-4 ")}>

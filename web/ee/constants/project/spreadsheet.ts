@@ -82,7 +82,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     isSortingAllowed: true,
   },
   issue_count: {
-    title: "No. of Issues",
+    title: "No. of Work items",
     ascendingOrderTitle: "Most",
     descendingOrderTitle: "Least",
     icon: LayersIcon,

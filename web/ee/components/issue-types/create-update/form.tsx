@@ -2,14 +2,14 @@
 
 import { FormEvent, useState } from "react";
 import { observer } from "mobx-react";
-// ui
+// plane imports
+import { useTranslation } from "@plane/i18n";
+import { TIssueType } from "@plane/types";
 import { Button, Input, TextArea } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web components
 import { IssueTypeIconPicker } from "@/plane-web/components/issue-types";
-// plane web types
-import { TIssueType } from "@/plane-web/types";
 
 type Props = {
   formData: Partial<TIssueType>;
@@ -24,11 +24,13 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = observer((props) => 
   // state
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const [errors, setErrors] = useState<{ name?: string }>({});
+  // plane hooks
+  const { t } = useTranslation();
 
   const validateForm = (data: Partial<TIssueType>) => {
     const newErrors: { name?: string } = {};
     if (!data.name || data.name.trim() === "") {
-      newErrors.name = "Name is required";
+      newErrors.name = t("common.errors.entity_required", { entity: t("common.name") });
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -49,7 +51,9 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = observer((props) => 
   return (
     <form onSubmit={handleIssueTypeFormSubmit}>
       <div className="space-y-3 p-5 pb-2">
-        <h3 className="text-xl font-medium text-custom-text-200">{formData.id ? "Update" : "Create"} Issue type</h3>
+        <h3 className="text-xl font-medium text-custom-text-200">
+          {formData.id ? t("work_item_types.update.title") : t("work_item_types.create.title")}
+        </h3>
         <div className={cn("flex items-center gap-2 w-full", errors.name && "items-start")}>
           <IssueTypeIconPicker
             isOpen={isEmojiPickerOpen}
@@ -72,7 +76,7 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = observer((props) => 
               type="text"
               value={formData.name}
               onChange={(e) => handleNameChange(e.target.value)}
-              placeholder="Give this issue type a unique name"
+              placeholder={t("work_item_types.create_update.form.name.placeholder")}
               className="w-full resize-none text-base"
               hasError={Boolean(errors.name)}
               tabIndex={1}
@@ -87,7 +91,7 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = observer((props) => 
             name="description"
             value={formData.description}
             onChange={(e) => handleFormDataChange("description", e.target.value)}
-            placeholder="Describe what this issue type is meant for and when it’s to be used."
+            placeholder={t("work_item_types.create_update.form.description.placeholder")}
             className="resize-none min-h-24 text-sm"
             tabIndex={2}
           />
@@ -96,10 +100,10 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = observer((props) => 
       <div className="mx-5 py-3 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-100">
         <div className="flex items-center justify-end gap-2">
           <Button variant="neutral-primary" size="sm" onClick={handleModalClose} tabIndex={3}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={4}>
-            {formData.id ? "Update" : "Create"} Issue type
+            {formData.id ? t("work_item_types.update.button") : t("work_item_types.create.button")}
           </Button>
         </div>
       </div>

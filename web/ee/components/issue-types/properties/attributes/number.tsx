@@ -1,12 +1,12 @@
 import { observer } from "mobx-react";
+// plane imports
+import { EIssuePropertyType, ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { TIssueProperty, TOperationMode } from "@plane/types";
 // plane web components
 import { PropertySettingsConfiguration, NumberValueInput } from "@/plane-web/components/issue-types/";
-// plane web constants
-import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@/plane-web/constants/issue-properties";
 // plane web hooks
 import { useIssueType } from "@/plane-web/hooks/store";
-// plane web types
-import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@/plane-web/types";
 
 type TNumberAttributesProps = {
   issueTypeId: string;
@@ -21,6 +21,8 @@ type TNumberAttributesProps = {
 
 export const NumberAttributes = observer((props: TNumberAttributesProps) => {
   const { issueTypeId, numberPropertyDetail, currentOperationMode, onNumberDetailChange } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const issueType = useIssueType(issueTypeId);
   // derived values
@@ -44,7 +46,7 @@ export const NumberAttributes = observer((props: TNumberAttributesProps) => {
         </div>
       )}
       <div className="text-xs font-medium text-custom-text-300">
-        Default <span className="font-normal italic">(optional)</span>
+        {t("common.default")} <span className="font-normal italic">({t("common.optional")})</span>
       </div>
       <NumberValueInput
         propertyDetail={numberPropertyDetail}

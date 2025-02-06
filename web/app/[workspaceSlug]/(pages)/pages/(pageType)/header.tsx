@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { FileText, ListFilter } from "lucide-react";
-// types
+// plane imports
+import { EPageAccess } from "@plane/constants";
 import { TPage, TPageNavigationTabs } from "@plane/types";
 // ui
 import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
@@ -12,8 +13,6 @@ import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 import { FiltersDropdown } from "@/components/issues";
 import { PageFiltersSelection, PageOrderByDropdown, PageSearchInput } from "@/components/pages";
-// constants
-import { EPageAccess } from "@/constants/page";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";

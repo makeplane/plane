@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 // plane web components
 import {
@@ -21,6 +22,7 @@ export const WorkspaceEditionBadge = observer(() => {
     currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
     handleSuccessModalToggle,
   } = useWorkspaceSubscription();
+  const { t } = useTranslation();
 
   if (!subscriptionDetail)
     return (
@@ -42,7 +44,7 @@ export const WorkspaceEditionBadge = observer(() => {
             onClick={() => handleSuccessModalToggle(true)}
           >
             <Image src={PlaneBusinessLogo} width={12} alt="Plane business badge" />
-            <div>Business</div>
+            <div>{t("sidebar.business")}</div>
           </div>
         </>
       ) : (

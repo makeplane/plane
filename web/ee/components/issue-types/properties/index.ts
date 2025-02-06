@@ -10,3 +10,4 @@ export * from "./mandatory-field";
 export * from "./active-checkbox";
 export * from "./quick-actions";
 export * from "./delete-confirmation-modal";
+export * from "./property-icon";

@@ -3,6 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Inbox } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
@@ -17,6 +18,7 @@ type TNotificationSidebarHeader = {
 
 export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observer((props) => {
   const { workspaceSlug } = props;
+  const { t } = useTranslation();
 
   if (!workspaceSlug) return <></>;
   return (
@@ -31,7 +33,11 @@ export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observe
           <Breadcrumbs.BreadcrumbItem
             type="text"
             link={
-              <BreadcrumbLink label="Inbox" icon={<Inbox className="h-4 w-4 text-custom-text-300" />} disableTooltip />
+              <BreadcrumbLink
+                label={t("notification.label")}
+                icon={<Inbox className="h-4 w-4 text-custom-text-300" />}
+                disableTooltip
+              />
             }
           />
         </Breadcrumbs>

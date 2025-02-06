@@ -6,9 +6,10 @@ import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // icons
 import { Settings } from "lucide-react";
+// plane imports
+import { THEME_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/ui";
-// constants
-import { THEME_OPTIONS } from "@/constants/themes";
 // hooks
 import { useUserProfile } from "@/hooks/store";
 
@@ -21,6 +22,7 @@ export const CommandPaletteThemeActions: FC<Props> = observer((props) => {
   const { setTheme } = useTheme();
   // hooks
   const { updateUserTheme } = useUserProfile();
+  const { t } = useTranslation();
   // states
   const [mounted, setMounted] = useState(false);
 
@@ -54,7 +56,7 @@ export const CommandPaletteThemeActions: FC<Props> = observer((props) => {
         >
           <div className="flex items-center gap-2 text-custom-text-200">
             <Settings className="h-4 w-4 text-custom-text-200" />
-            {theme.label}
+            {t(theme.i18n_label)}
           </div>
         </Command.Item>
       ))}

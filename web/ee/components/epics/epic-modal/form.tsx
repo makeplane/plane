@@ -4,7 +4,7 @@ import React, { FC, useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, ETabIndices } from "@plane/constants";
 // editor
 import { EditorRefApi } from "@plane/editor";
 // types
@@ -18,7 +18,6 @@ import {
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
 import { CreateLabelModal } from "@/components/labels";
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getChangedIssuefields } from "@/helpers/issue-modal.helper";

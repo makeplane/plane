@@ -5,13 +5,13 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// hooks
+// plane imports
+import { EUserProjectRoles } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/ui";
+// hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { ProjectCard } from "@/plane-web/components/projects/layouts/gallery/card";
-// plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
 type ProjectBoardListItem = {
   groupByKey: string;
@@ -32,7 +32,7 @@ export const ProjectBoardListItem: FC<ProjectBoardListItem> = observer((props) =
   const isDragAllowed =
     workspaceProjectsPermissions &&
     workspaceProjectsPermissions[workspaceSlug.toString()][projectId] &&
-    workspaceProjectsPermissions[workspaceSlug.toString()][projectId] >= EUserPermissions.ADMIN;
+    workspaceProjectsPermissions[workspaceSlug.toString()][projectId] >= EUserProjectRoles.ADMIN;
   if (!project) return <></>;
 
   useEffect(() => {

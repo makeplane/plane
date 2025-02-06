@@ -48,13 +48,13 @@ export const TeamspaceRelationIssueList = observer((props: TTeamspaceRelationIss
       <SectionEmptyState
         heading={
           type === ERelationType.BLOCKING
-            ? t("team-blocking-relation-empty-state-title")
-            : t("team-blocked-relation-empty-state-title")
+            ? t("teamspace_analytics.empty_state.relation.blocking.title")
+            : t("teamspace_analytics.empty_state.relation.blocked.title")
         }
         subHeading={
           type === ERelationType.BLOCKING
-            ? t("team-blocking-relation-empty-state-description")
-            : t("team-blocked-relation-empty-state-description")
+            ? t("teamspace_analytics.empty_state.relation.blocking.description")
+            : t("teamspace_analytics.empty_state.relation.blocked.description")
         }
         icon={
           type === ERelationType.BLOCKING ? (

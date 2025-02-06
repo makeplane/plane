@@ -1,13 +1,13 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// component
+// plane imports
+import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+// components
 import { ProjectIssueQuickActions } from "@/components/issues";
 import { BaseListRoot } from "@/components/issues/issue-layouts/list/base-list-root";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const TeamspaceViewListLayout: React.FC = observer(() => {
   // router
@@ -19,7 +19,7 @@ export const TeamspaceViewListLayout: React.FC = observer(() => {
 
   const canEditPropertiesBasedOnProject = (projectId: string) =>
     allowPermissions(
-      [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+      [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
       EUserPermissionsLevel.PROJECT,
       workspaceSlug.toString(),
       projectId

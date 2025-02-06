@@ -4,11 +4,13 @@ import { Dispatch, FC, Fragment, SetStateAction } from "react";
 import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
+// plane imports
+import { NOTIFICATION_SNOOZE_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Tooltip, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { NotificationSnoozeModal } from "@/components/workspace-notifications";
-// constants
-import { NOTIFICATION_SNOOZE_OPTIONS } from "@/constants/notification";
+// helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store";
@@ -26,6 +28,8 @@ type TNotificationItemSnoozeOption = {
 
 export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = observer((props) => {
   const { workspaceSlug, notificationList, setIsSnoozeStateModalOpen, customSnoozeModal, setCustomSnoozeModal } = props;
+  // plane imports
+  const { t } = useTranslation();
   // hooks
   const { isMobile } = usePlatformOS();
   const { snoozeNotificationList, unSnoozeNotificationList } = useWorkspaceNotifications();
@@ -132,7 +136,7 @@ export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = o
                           handleDropdownSelect(option.value != undefined ? option.value() : option.value);
                         }}
                       >
-                        <div>{option?.label}</div>
+                        <div>{t(option?.i18n_label)}</div>
                       </button>
                     ))}
                   </div>

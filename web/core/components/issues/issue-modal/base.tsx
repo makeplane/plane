@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { EIssuesStoreType } from "@plane/constants";
+import { EIssuesStoreType, ISSUE_CREATED, ISSUE_UPDATED } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { TBaseIssue, TIssue } from "@plane/types";
@@ -11,7 +11,6 @@ import type { TBaseIssue, TIssue } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";
 // constants
-import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useEventTracker, useCycle, useIssues, useModule, useIssueDetail, useUser } from "@/hooks/store";

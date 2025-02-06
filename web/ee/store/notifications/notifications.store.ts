@@ -1,13 +1,14 @@
 import orderBy from "lodash/orderBy";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane imports
+import { ENotificationLoader } from "@plane/constants";
 import { TNotification } from "@plane/types";
-import { ENotificationLoader } from "@/constants/notification";
-//helpers
+// helpers
 import { convertToEpoch } from "@/helpers/date-time.helper";
-//services
+// services
 import inboxService from "@/plane-web/services/inbox.service";
-//store
+// store
 import { RootStore } from "@/plane-web/store/root.store";
 import { INotification } from "@/store/notifications/notification";
 import {

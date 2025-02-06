@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { Link2, MoveDiagonal, MoveRight, Sidebar } from "lucide-react";
 // constants
-import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 // types
 import { TIssue } from "@plane/types";
 // ui
@@ -18,7 +18,6 @@ import {
   Tooltip,
   setToast,
 } from "@plane/ui";
-import { EUserPermissions, EUserPermissionsLevel } from "@/ce/constants";
 // components
 import { NameDescriptionUpdateStatus } from "@/components/issues";
 // constants
@@ -112,7 +111,7 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
+        message: "Work item link copied to clipboard.",
       });
     });
   };
@@ -134,7 +133,7 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
   };
 
   const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
 
@@ -147,7 +146,7 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
           </button>
         </Tooltip>
 
-        <Tooltip tooltipContent="Open issue in full screen" isMobile={isMobile}>
+        <Tooltip tooltipContent="Open work item in full screen" isMobile={isMobile}>
           <Link href={`/${issueLink}`} onClick={() => removeRoutePeekId()}>
             <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
           </Link>

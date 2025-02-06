@@ -93,7 +93,7 @@ export const TeamspaceRelationIssueListItem = observer((props: TTeamspaceRelatio
           <div className="flex flex-shrink-0 items-center justify-center gap-2 text-custom-text-400 font-medium text-sm">
             {relationText}{" "}
             {issue.related_issues.length > 1 ? (
-              <span className="text-custom-text-100">{issue.related_issues.length} issues</span>
+              <span className="text-custom-text-100">{issue.related_issues.length} work items</span>
             ) : (
               issue.related_issues[0] && (
                 <div className="flex flex-shrink-0 items-center justify-center gap-2">

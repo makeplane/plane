@@ -1,12 +1,12 @@
 import { observer } from "mobx-react";
+// plane imports
+import { EIssuePropertyType, ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { TIssueProperty, TOperationMode } from "@plane/types";
 // plane web components
 import { PropertySettingsConfiguration, BooleanInput } from "@/plane-web/components/issue-types";
-// plane web constants
-import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@/plane-web/constants/issue-properties";
 // plane web hooks
 import { useIssueType } from "@/plane-web/hooks/store";
-// plane web types
-import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@/plane-web/types";
 
 type TBooleanAttributesProps = {
   issueTypeId: string;
@@ -21,6 +21,8 @@ type TBooleanAttributesProps = {
 
 export const BooleanAttributes = observer((props: TBooleanAttributesProps) => {
   const { issueTypeId, booleanPropertyDetail, currentOperationMode, onBooleanDetailChange } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const issueType = useIssueType(issueTypeId);
   // derived values
@@ -45,7 +47,7 @@ export const BooleanAttributes = observer((props: TBooleanAttributesProps) => {
       )}
       <div className="flex flex-col gap-3">
         <div className="text-xs font-medium text-custom-text-300">
-          Default <span className="font-normal italic">(optional)</span>
+          {t("common.default")} <span className="font-normal italic">({t("common.optional")})</span>
         </div>
         <div className="flex items-center gap-2">
           <BooleanInput
@@ -55,8 +57,8 @@ export const BooleanAttributes = observer((props: TBooleanAttributesProps) => {
           />
           <div className="text-xs font-medium text-custom-text-200">
             {booleanPropertyDetail.default_value?.[0] !== undefined
-              ? `${booleanPropertyDetail.default_value?.[0] === "true" ? "True" : "False"}`
-              : "No default value"}
+              ? `${booleanPropertyDetail.default_value?.[0] === "true" ? t("common.true") : t("common.false")}`
+              : t("work_item_types.settings.properties.attributes.boolean.no_default")}
           </div>
         </div>
       </div>

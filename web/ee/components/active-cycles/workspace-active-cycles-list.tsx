@@ -4,19 +4,19 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import uniqBy from "lodash/uniqBy";
 import { observer } from "mobx-react-lite";
 import { useParams } from "next/navigation";
-// ui
 import useSWR from "swr";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
 import { Button, ContentWrapper, Loader } from "@plane/ui";
 // components
-import { EmptyState } from "@/components/empty-state";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state";
 // plane web components
 import { WORKSPACE_ACTIVE_CYCLES_LIST } from "@/constants/fetch-keys";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 
 // services
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { CycleService } from "@/services/cycle.service";
 import { WorkspaceActiveCycleRoot } from "./workspace-active-cycle-root";
 
@@ -25,17 +25,21 @@ const cycleService = new CycleService();
 const DEFAULT_LIMIT = 3;
 
 export const WorkspaceActiveCyclesList = observer(() => {
+  // router
+  const { workspaceSlug } = useParams();
+  // ref
+  const containerRef = useRef<HTMLDivElement>(null);
   // state
   const [pageCount, setPageCount] = useState(0);
   const [cycles, setCycles] = useState<ICycle[] | null>();
   const [totalPages, setTotalPages] = useState(0);
   const [cyclesInView, setCyclesInView] = useState<number>(DEFAULT_LIMIT);
   const [elementRef, setElementRef] = useState<HTMLDivElement | null>(null);
+  // plane hooks
+  const { t } = useTranslation();
+  // derived values
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/workspace-active-cycles" });
 
-  // router
-  const { workspaceSlug } = useParams();
-  // ref
-  const containerRef = useRef<HTMLDivElement>(null);
   // fetching active cycles in workspace
   const { data: workspaceActiveCycles, isLoading } = useSWR(
     workspaceSlug && `${perPage}:${pageCount}:0`
@@ -105,7 +109,13 @@ export const WorkspaceActiveCyclesList = observer(() => {
         </div>
       )}
 
-      {!isLoading && cycles.length === 0 && <EmptyState type={EmptyStateType.WORKSPACE_ACTIVE_CYCLES} />}
+      {!isLoading && cycles.length === 0 && (
+        <DetailedEmptyState
+          title={t("workspace_cycles.empty_state.active.title")}
+          description={t("workspace_cycles.empty_state.active.description")}
+          assetPath={resolvedPath}
+        />
+      )}
     </ContentWrapper>
   );
 });

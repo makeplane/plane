@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// ui
+// plane imports
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // hooks
@@ -9,8 +10,6 @@ import { useUser, useAppTheme, useCommandPalette, useUserPermissions } from "@/h
 // plane web components
 import { PagesAppCommandModal, PagesAppShortcutsModal } from "@/plane-web/components/command-palette";
 import { PagesAppCreatePageModal } from "@/plane-web/components/pages";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const PagesAppCommandPalette: React.FC = observer(() => {
   // params
@@ -31,7 +30,7 @@ export const PagesAppCommandPalette: React.FC = observer(() => {
   // auth
   const canPerformWorkspaceCreateActions = useCallback((showToast: boolean = true) => {
     const isAllowed = allowPermissions(
-      [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+      [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
       EUserPermissionsLevel.WORKSPACE
     );
     if (!isAllowed && showToast)

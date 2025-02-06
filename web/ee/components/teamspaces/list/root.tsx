@@ -2,12 +2,12 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 // plane web components
 import { TeamspacesList } from "@/plane-web/components/teamspaces/list/teamspaces-list";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const TeamspaceListItemRoot = observer(() => {
   // router
@@ -16,7 +16,7 @@ const TeamspaceListItemRoot = observer(() => {
   const { allowPermissions } = useUserPermissions();
   // derived values
   const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN],
+    [EUserWorkspaceRoles.ADMIN],
     EUserPermissionsLevel.WORKSPACE,
     workspaceSlug?.toString()
   );

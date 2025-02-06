@@ -3,7 +3,8 @@
 import { useState, FC } from "react";
 import { observer } from "mobx-react";
 import { useForm, FormProvider } from "react-hook-form";
-// ui
+// plane imports
+import { EUserProjectRoles, PROJECT_CREATED, PROJECT_UNSPLASH_COVERS } from "@plane/constants";
 import { IProjectBulkAddFormData } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // types
@@ -11,8 +12,6 @@ import { TCreateProjectFormProps } from "@/ce/components/projects/create/root";
 // constants
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
-import { PROJECT_CREATED } from "@/constants/event-tracker";
-import { PROJECT_UNSPLASH_COVERS } from "@/constants/project";
 // helpers
 import { getRandomEmoji } from "@/helpers/emoji.helper";
 // hooks
@@ -90,7 +89,7 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
         if (currentUser && currentUser.id !== memberId && memberDetails && memberDetails.role) {
           membersPayload.push({
             member_id: memberId,
-            role: memberDetails.role,
+            role: memberDetails.role as unknown as EUserProjectRoles,
           });
         }
       });

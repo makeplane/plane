@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IWorkspaceMember } from "@plane/types";
 import { AccountTypeColumn, NameColumn } from "@/components/project/settings/member-columns";
 import { useUser, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export interface RowData {
   member: IWorkspaceMember;

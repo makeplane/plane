@@ -6,6 +6,7 @@ import useSWR from "swr";
 // plane imports
 import { E_IMPORTER_KEYS, E_JOB_STATUS, TJobStatus } from "@plane/etl/core";
 import { LinearConfig } from "@plane/etl/linear";
+import { useTranslation } from "@plane/i18n";
 import { TImportJob } from "@plane/types";
 import { Button, Loader } from "@plane/ui";
 // plane web components
@@ -14,7 +15,6 @@ import { StepperNavigation, AddSeatsAlertBanner, SkipUserImport } from "@/plane-
 import { useLinearImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web types
 import { E_LINEAR_IMPORTER_STEPS } from "@/plane-web/types/importers/linear";
-import { useTranslation } from "@plane/i18n";
 
 export const SummaryRoot: FC = observer(() => {
   // hooks
@@ -111,8 +111,8 @@ export const SummaryRoot: FC = observer(() => {
         </div>
         <div className="divide-y divide-custom-border-200">
           <div className="relative grid grid-cols-2 items-center p-3 text-sm">
-            <div className="text-custom-text-200">{t("common.issues")}</div>
-            <div>{configData?.teamDetail?.issueCount || 0} {t("common.issues")}</div>
+            <div className="text-custom-text-200">{t("work_items")}</div>
+            <div>{configData?.teamDetail?.issueCount || 0} {t("work_items")}</div>
           </div>
           <div className="relative grid grid-cols-2 items-center p-3 text-sm">
             <div className="text-custom-text-200">{t("common.states")}</div>

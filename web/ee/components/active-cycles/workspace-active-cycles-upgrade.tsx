@@ -35,9 +35,9 @@ const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
   },
   {
     key: "quickly_see_make_or_break_issues",
-    title: "Quickly see make-or-break issues. ",
+    title: "Quickly see make-or-break work items. ",
     description:
-      "Preview high-priority issues for each cycle against due dates. See all of them per cycle in one click.",
+      "Preview high-priority work items for each cycle against due dates. See all of them per cycle in one click.",
     icon: AlertOctagon,
   },
   {
@@ -76,7 +76,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
           <div className="flex max-w-64 flex-col gap-2">
             <h2 className="text-2xl font-semibold">On-demand snapshots of all your cycles</h2>
             <p className="text-base font-medium text-custom-text-300">
-              Monitor cycles across projects, track high-priority issues, and zoom in cycles that need attention.
+              Monitor cycles across projects, track high-priority work items, and zoom in cycles that need attention.
             </p>
           </div>
           <div className="flex items-center gap-3">

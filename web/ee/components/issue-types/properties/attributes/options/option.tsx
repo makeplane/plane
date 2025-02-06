@@ -2,14 +2,13 @@ import { FC, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import { Info } from "lucide-react";
-// ui
+// plane imports
+import { useTranslation } from "@plane/i18n";
+import { TIssuePropertyOption, TIssuePropertyOptionCreateUpdateData } from "@plane/types";
 import { Input, Tooltip } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // plane web hooks
 import { usePropertyOptions } from "@/plane-web/hooks/store";
-// plane web types
-import { TIssuePropertyOption, TIssuePropertyOptionCreateUpdateData } from "@/plane-web/types";
 
 type TIssuePropertyOptionItem = {
   optionId?: string;
@@ -21,6 +20,8 @@ type TIssuePropertyOptionItem = {
 
 export const IssuePropertyOptionItem: FC<TIssuePropertyOptionItem> = observer((props) => {
   const { optionId, propertyOptionData, updateOptionData, scrollIntoNewOptionView, error: optionsError } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { propertyOptions } = usePropertyOptions();
   // derived values
@@ -30,7 +31,8 @@ export const IssuePropertyOptionItem: FC<TIssuePropertyOptionItem> = observer((p
   const [optionData, setOptionData] = useState<Partial<TIssuePropertyOption>>(propertyOptionCreateData);
 
   useEffect(() => {
-    if (optionId && !optionData.name) setError("Option name is required.");
+    if (optionId && !optionData.name)
+      setError("work_item_types.settings.properties.attributes.option.form.errors.name.required");
     else setError(optionsError ?? undefined);
   }, [optionId, optionData, optionsError]);
 
@@ -40,7 +42,7 @@ export const IssuePropertyOptionItem: FC<TIssuePropertyOptionItem> = observer((p
     const isDuplicate = propertyOptions.find(
       (option) => option.id !== identifier && option.key !== identifier && option.name === value
     );
-    if (isDuplicate) setError("Option with same name already exists.");
+    if (isDuplicate) setError("work_item_types.settings.properties.attributes.option.form.errors.name.integrity");
     else setError(undefined);
     return isDuplicate;
   };
@@ -79,15 +81,15 @@ export const IssuePropertyOptionItem: FC<TIssuePropertyOptionItem> = observer((p
           }
         }}
         onBlur={() => handleCreateUpdate()}
-        placeholder={"Add option"}
+        placeholder={t("work_item_types.settings.properties.attributes.option.create_update.form.placeholder")}
         className={cn("w-full text-sm bg-custom-background-100 border-[0.5px] rounded", {
           "border-custom-border-300": !Boolean(error),
         })}
         inputSize="xs"
         hasError={Boolean(error)}
       />
-      {Boolean(error) && (
-        <Tooltip tooltipContent={error} className="text-xs" position="left">
+      {Boolean(error) && typeof error === "string" && (
+        <Tooltip tooltipContent={t(error)} className="text-xs" position="left">
           <Info className="absolute right-1.5 h-3 w-3 stroke-red-600 hover:cursor-pointer" />
         </Tooltip>
       )}

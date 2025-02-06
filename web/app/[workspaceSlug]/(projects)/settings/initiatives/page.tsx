@@ -3,6 +3,9 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
+import { EUserWorkspaceRoles } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // component
 import { InitiativeIcon, setPromiseToast, ToggleSwitch } from "@plane/ui";
 import { PageHead } from "@/components/core";
@@ -12,7 +15,6 @@ import { useUserPermissions, useWorkspace } from "@/hooks/store";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { InitiativesUpgrade } from "@/plane-web/components/initiatives/upgrade";
 // plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 // plane web types
@@ -26,10 +28,12 @@ const InitiativesSettingsPage = observer(() => {
   const { currentWorkspace } = useWorkspace();
   const { isWorkspaceFeatureEnabled, updateWorkspaceFeature } = useWorkspaceFeatures();
 
+  const { t } = useTranslation();
+
   // derived values
   const currentWorkspaceDetail = workspaceInfoBySlug(workspaceSlug.toString());
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Initiatives` : undefined;
-  const isAdmin = currentWorkspaceDetail?.role === EUserPermissions.ADMIN;
+  const isAdmin = currentWorkspaceDetail?.role === EUserWorkspaceRoles.ADMIN;
   const isInitiativesFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_INITIATIVES_ENABLED);
 
   if (!workspaceSlug || !currentWorkspace?.id) return <></>;
@@ -51,14 +55,15 @@ const InitiativesSettingsPage = observer(() => {
       };
       const toggleInitiativesFeaturePromise = updateWorkspaceFeature(workspaceSlug.toString(), payload);
       setPromiseToast(toggleInitiativesFeaturePromise, {
-        loading: "Updating initiatives feature...",
+        loading: t("project_settings.initiatives.toast.updating"),
         success: {
-          title: "Success",
-          message: () => `Initiatives feature ${isInitiativesFeatureEnabled ? "disabled" : "enabled"} successfully!`,
+          title: t("toast.success"),
+          message: () =>
+            `${isInitiativesFeatureEnabled ? t("project_settings.initiatives.toast.disable_success") : t("project_settings.initiatives.toast.enable_success")}`,
         },
         error: {
-          title: "Error",
-          message: () => "Failed to update initiatives feature!",
+          title: t("toast.error"),
+          message: () => t("project_settings.initiatives.toast.error"),
         },
       });
       await toggleInitiativesFeaturePromise;
@@ -71,9 +76,9 @@ const InitiativesSettingsPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <div className="border-b border-custom-border-200 pb-3 tracking-tight">
-        <h3 className="text-xl font-medium">Initiatives</h3>
+        <h3 className="text-xl font-medium">{t("project_settings.initiatives.heading")}</h3>
         <span className="text-custom-sidebar-text-400 text-sm font-medium">
-          Unlock the highest level of organization for all your work in Plane.
+          {t("project_settings.initiatives.sub_heading")}
         </span>
       </div>
       <WithFeatureFlagHOC
@@ -87,8 +92,10 @@ const InitiativesSettingsPage = observer(() => {
               <InitiativeIcon className="size-5 text-custom-text-300" />
             </div>
             <div className="leading-tight">
-              <h5 className="font-medium">Enable Initiatives</h5>
-              <span className="text-custom-sidebar-text-400 text-sm">Set bigger goals to monitor the progress</span>
+              <h5 className="font-medium">{t("project_settings.initiatives.title")}</h5>
+              <span className="text-custom-sidebar-text-400 text-sm">
+                {t("project_settings.initiatives.description")}
+              </span>
             </div>
           </div>
           <ToggleSwitch value={isInitiativesFeatureEnabled} onChange={toggleInitiativesFeature} size="sm" />

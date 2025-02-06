@@ -3,15 +3,13 @@ import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-// types
 import { computedFn } from "mobx-utils";
-import { TLogoProps } from "@plane/types";
-// plane web store
-import { IIssueProperty, IssueProperty } from "@/plane-web/store/issue-types";
-import { RootStore } from "@/plane-web/store/root.store";
-// plane web types
+// plane imports
+import { EIssuePropertyType } from "@plane/constants";
 import {
-  EIssuePropertyType,
+  TLogoProps,
+  IIssueProperty,
+  IIssueType,
   TIssuePropertyPayload,
   TIssueProperty,
   TIssuePropertyOption,
@@ -19,30 +17,16 @@ import {
   IIssuePropertiesService,
   IIssueTypesService,
   TIssueTypeStoreServices,
-} from "@/plane-web/types";
+} from "@plane/types";
+// plane web store
+import { IssueProperty } from "@/plane-web/store/issue-types";
+import { RootStore } from "@/plane-web/store/root.store";
 
 type TIssueTypeStore = {
   root: RootStore;
   services: TIssueTypeStoreServices;
   issueTypeData: TIssueType;
 };
-
-export interface IIssueType extends TIssueType {
-  properties: IIssueProperty<EIssuePropertyType>[];
-  // computed
-  asJSON: TIssueType | undefined;
-  activeProperties: IIssueProperty<EIssuePropertyType>[];
-  // computed function
-  getPropertyById: <T extends EIssuePropertyType>(propertyId: string) => IIssueProperty<T> | undefined;
-  // actions
-  updateType: (issueTypeData: Partial<TIssueType>, shouldSync?: boolean) => Promise<TIssueType | undefined>;
-  addOrUpdateProperty: (
-    propertyData: TIssueProperty<EIssuePropertyType>,
-    propertyOptions: TIssuePropertyOption[]
-  ) => void;
-  createProperty: (propertyData: TIssuePropertyPayload) => Promise<TIssueProperty<EIssuePropertyType> | undefined>;
-  deleteProperty: (propertyId: string) => Promise<void>;
-}
 
 export class IssueType implements IIssueType {
   // properties
@@ -124,7 +108,7 @@ export class IssueType implements IIssueType {
 
   // computed
   /**
-   * @description Returns the issue type as JSON
+   * @description Returns the work item type as JSON
    */
   get asJSON() {
     return {
@@ -166,9 +150,9 @@ export class IssueType implements IIssueType {
 
   // actions
   /**
-   * @description Update issue type
-   * @param issueTypeData Issue type data
-   * @param shouldSync If False then only issue type is to be updated in the store not call API to update
+   * @description Update work item type
+   * @param issueTypeData Work item type data
+   * @param shouldSync If False then only work item type is to be updated in the store not call API to update
    */
   updateType = async (issueTypeData: Partial<TIssueType>, shouldSync: boolean = true) => {
     const { workspaceSlug, projectId } = this.rootStore.router;
@@ -176,7 +160,7 @@ export class IssueType implements IIssueType {
     try {
       let issueType: Partial<TIssueType> = issueTypeData;
       if (shouldSync) {
-        if (!this.service.update) throw new Error("Issue type update service not available.");
+        if (!this.service.update) throw new Error("Work item type update service not available.");
         issueType = await this.service.update({
           workspaceSlug,
           projectId,

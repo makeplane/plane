@@ -4,6 +4,7 @@ import React, { FC } from "react";
 import omit from "lodash/omit";
 // constants
 import { STATE_ANALYTICS_DETAILS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // types
 import { TStateAnalytics } from "@plane/types";
 // ui
@@ -27,7 +28,9 @@ interface IProgressIndicatorData {
 }
 
 export const ProgressSection: FC<TProgressSectionProps> = (props) => {
-  const { title = "Progress", data } = props;
+  const { data } = props;
+
+  const { t } = useTranslation();
 
   const totalIssues = data ? Object.values(omit(data, "overdue_issues")).reduce((acc, val) => acc + val, 0) : 0;
 
@@ -42,7 +45,7 @@ export const ProgressSection: FC<TProgressSectionProps> = (props) => {
   return (
     <SectionWrapper>
       <div className="flex items-center">
-        <h3 className="text-base text-custom-text-300 font-medium">{title}</h3>
+        <h3 className="text-base text-custom-text-300 font-medium">{t("common.progress")}</h3>
       </div>
 
       <div className="flex flex-col gap-4">

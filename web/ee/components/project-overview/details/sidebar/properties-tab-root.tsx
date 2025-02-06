@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { CalendarCheck2, CalendarClock, Signal, UserCircle2, Users } from "lucide-react";
-// ui
+// plane imports
+import { EUserProjectRoles } from "@plane/constants";
 import { Button, DoubleCircleIcon } from "@plane/ui";
 // components
 import { DateDropdown, MemberDropdown } from "@/components/dropdowns";
@@ -19,7 +20,6 @@ import { useMember, useProject, useUserPermissions, useWorkspace } from "@/hooks
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { PriorityDropdown, StateDropdown } from "@/plane-web/components/projects";
 import MembersDropdown from "@/plane-web/components/projects/dropdowns/members-dropdown";
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { TProject } from "@/plane-web/types";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
@@ -58,7 +58,7 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
   const isEditingAllowed =
     workspaceProjectsPermissions &&
     workspaceProjectsPermissions[workspaceSlug][project.id] &&
-    workspaceProjectsPermissions[workspaceSlug][project.id] >= EUserPermissions.ADMIN;
+    workspaceProjectsPermissions[workspaceSlug][project.id] >= EUserProjectRoles.ADMIN;
 
   // handlers
   const handleUpdateProject = async (data: Partial<TProject>) => {

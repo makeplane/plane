@@ -1,13 +1,13 @@
 import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
-// ui
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { ContentWrapper, ERowVariant } from "@plane/ui";
 // components
 import { CycleListProjectGroupHeader } from "@/components/cycles";
-import { EmptyState } from "@/components/empty-state";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state";
 // plane web components
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { ActiveCycleRoot } from "@/plane-web/components/cycles/active-cycle";
 // hooks
 import { useTeamspaceCycles } from "@/plane-web/hooks/store";
@@ -19,14 +19,23 @@ type TTeamCurrentCyclesRoot = {
 
 export const TeamCurrentCyclesRoot = observer((props: TTeamCurrentCyclesRoot) => {
   const { teamspaceId, workspaceSlug } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { getTeamspaceFilteredActiveCycleIds, getTeamspaceGroupedActiveCycleIds } = useTeamspaceCycles();
   // derived values
   const filteredActiveCycleIds = getTeamspaceFilteredActiveCycleIds(teamspaceId);
   const groupedActiveCycleIds = getTeamspaceGroupedActiveCycleIds(teamspaceId);
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/teams/current-cycles" });
 
   if (filteredActiveCycleIds.length === 0) {
-    return <EmptyState type={EmptyStateType.TEAM_CURRENT_CYCLES} />;
+    return (
+      <DetailedEmptyState
+        title={t("teamspace_cycles.empty_state.current.title")}
+        description={t("teamspace_cycles.empty_state.current.description")}
+        assetPath={resolvedPath}
+      />
+    );
   }
 
   return (

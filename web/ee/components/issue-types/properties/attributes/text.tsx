@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-// ui
+// plane imports
+import { EIssuePropertyType, ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { TIssueProperty, TOperationMode, TTextAttributeDisplayOptions } from "@plane/types";
 import { TextArea } from "@plane/ui";
+import { getTextAttributeDisplayNameKey } from "@plane/utils";
 // plane web components
 import { PropertySettingsConfiguration } from "@/plane-web/components/issue-types/properties";
-// plane web constants
-import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@/plane-web/constants/issue-properties";
 // plane web hooks
 import { useIssueType } from "@/plane-web/hooks/store";
-// plane web types
-import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@/plane-web/types";
 
 type TTextAttributesProps = {
   issueTypeId: string;
@@ -25,6 +25,8 @@ type TTextAttributesProps = {
 export const TextAttributes = observer((props: TTextAttributesProps) => {
   const { issueTypeId, textPropertyDetail, currentOperationMode, onTextDetailChange } = props;
   const [data, setData] = useState<string[]>([]);
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const issueType = useIssueType(issueTypeId);
   // derived values
@@ -43,7 +45,9 @@ export const TextAttributes = observer((props: TTextAttributesProps) => {
 
   return (
     <div>
-      <span className="text-xs text-custom-text-300 font-medium">Attributes</span>
+      <span className="text-xs text-custom-text-300 font-medium">
+        {t("work_item_types.settings.properties.attributes.label")}
+      </span>
       {ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS?.TEXT?.map((configurations, index) => (
         <PropertySettingsConfiguration
           key={index}
@@ -56,12 +60,15 @@ export const TextAttributes = observer((props: TTextAttributesProps) => {
               onTextDetailChange("is_required", false);
             }
           }}
+          getLabelDetails={(labelKey) => t(getTextAttributeDisplayNameKey(labelKey as TTextAttributeDisplayOptions))}
           isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && isAnyIssueAttached}
         />
       ))}
       {textPropertyDetail.settings?.display_format === "readonly" && (
         <div className="pt-2">
-          <div className="text-xs font-medium text-custom-text-300">Read only data</div>
+          <div className="text-xs font-medium text-custom-text-300">
+            {t("work_item_types.settings.properties.attributes.text.readonly.label")}
+          </div>
           <TextArea
             id="default_value"
             value={data?.[0] ?? ""}

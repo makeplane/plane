@@ -3,16 +3,16 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// component
+// plane imports
+import { EUserWorkspaceRoles } from "@plane/constants";
 import { setPromiseToast, TeamsIcon, ToggleSwitch, Tooltip } from "@plane/ui";
+// component
 import { PageHead } from "@/components/core";
 // store hooks
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { TeamspaceUpgrade } from "@/plane-web/components/teamspaces/upgrade";
-// plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 // plane web types
@@ -29,7 +29,7 @@ const TeamspaceSettingsPage = observer(() => {
   // derived values
   const currentWorkspaceDetail = workspaceInfoBySlug(workspaceSlug.toString());
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Teamspaces` : undefined;
-  const isAdmin = currentWorkspaceDetail?.role === EUserPermissions.ADMIN;
+  const isAdmin = currentWorkspaceDetail?.role === EUserWorkspaceRoles.ADMIN;
   const isTeamspacesFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_TEAMSPACES_ENABLED);
 
   if (!workspaceSlug || !currentWorkspace?.id) return <></>;

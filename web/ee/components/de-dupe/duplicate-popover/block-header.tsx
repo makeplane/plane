@@ -2,14 +2,13 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Trash2 } from "lucide-react";
-// types
+// plane imports
+import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
 import { TDeDupeIssue } from "@plane/types";
 // ui
 import { ArchiveIcon, Checkbox, Tooltip } from "@plane/ui";
 // components
 import { ArchiveIssueModal, DeleteIssueModal, TIssueOperations } from "@/components/issues";
-// constants
-import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -120,7 +119,7 @@ export const DeDupeIssueBlockHeader: FC<TDeDupeIssueBlockHeaderProps> = observer
           {isArchivingAllowed && (
             <Tooltip
               isMobile={isMobile}
-              tooltipContent={isInArchivableGroup ? "Archive" : "Only completed or canceled issues can be archived"}
+              tooltipContent={isInArchivableGroup ? "Archive" : "Only completed or canceled work items can be archived"}
             >
               <button
                 type="button"

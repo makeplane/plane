@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { MessageCircle, Rocket } from "lucide-react";
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { useMember, useUser, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions } from "@/plane-web/constants";
 import { useProjectUpdates } from "@/plane-web/hooks/store/projects/use-project-updates";
 import { EProjectUpdateStatus, TProjectUpdate } from "@/plane-web/types";
 import { CommentList } from "./comments/comment-list";
@@ -60,7 +59,7 @@ export const UpdateBlock = observer((props: TProps) => {
   const icon = conf[updateData?.status].icon;
 
   const isProjectAdmin = allowPermissions(
-    [EUserPermissions.ADMIN],
+    [EUserProjectRoles.ADMIN],
     EUserPermissionsLevel.PROJECT,
     workspaceSlug.toString(),
     projectId.toString()

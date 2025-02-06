@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
 // hooks
+import { useTranslation } from "@plane/i18n";
 import { useSticky } from "@/hooks/use-stickies";
 import { StickiesTruncated } from "./layout";
 import { StickySearch } from "./modal/search";
@@ -12,6 +13,7 @@ export const StickiesWidget: React.FC = observer(() => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { creatingSticky, toggleShowNewSticky } = useSticky();
+  const { t } = useTranslation();
   // sticky operations
   const { stickyOperations } = useStickyOperations({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -20,7 +22,7 @@ export const StickiesWidget: React.FC = observer(() => {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <div className="text-base font-semibold text-custom-text-350">Your stickies</div>
+        <div className="text-base font-semibold text-custom-text-350">{t("stickies.title")}</div>
         {/* actions */}
         <div className="flex gap-2">
           <StickySearch />
@@ -33,7 +35,7 @@ export const StickiesWidget: React.FC = observer(() => {
             disabled={creatingSticky}
           >
             <Plus className="size-4 my-auto" />
-            <span>Add sticky</span>
+            <span>{t("stickies.add")}</span>
             {creatingSticky && (
               <div
                 className="size-4 border-2 border-t-transparent border-custom-primary-100 rounded-full animate-spin"

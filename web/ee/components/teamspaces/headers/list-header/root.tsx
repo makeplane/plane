@@ -3,6 +3,8 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
+// plane imports
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 import { Breadcrumbs, Button, TeamsIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
@@ -10,8 +12,6 @@ import { BreadcrumbLink } from "@/components/common";
 import { useWorkspace, useCommandPalette, useEventTracker, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { TeamspacesListSearch } from "@/plane-web/components/teamspaces/headers/list-header";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const TeamspaceListItemHeader = observer(() => {
   const { workspaceSlug } = useParams();
@@ -22,7 +22,7 @@ export const TeamspaceListItemHeader = observer(() => {
   const { allowPermissions } = useUserPermissions();
   // derived values
   const workspaceId = currentWorkspace?.id || undefined;
-  const hasAdminLevelPermissions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const hasAdminLevelPermissions = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   if (!workspaceSlug || !workspaceId) return <></>;
 

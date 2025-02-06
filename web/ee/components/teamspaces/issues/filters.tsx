@@ -2,14 +2,13 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-// plane constants
-import { EIssueFilterType, EIssuesStoreType, EIssueLayoutTypes, ETeamspaceEntityScope } from "@plane/constants";
+// plane imports
+import { EIssueFilterType, EIssuesStoreType, EIssueLayoutTypes, ETeamspaceEntityScope, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
@@ -24,6 +23,7 @@ type Props = {
 
 export const TeamHeaderFilters = observer((props: Props) => {
   const { teamspaceId, workspaceSlug } = props;
+  const { t } = useTranslation();
   // store hooks
   const {
     workspace: { workspaceMemberIds },
@@ -95,23 +95,27 @@ export const TeamHeaderFilters = observer((props: Props) => {
         onChange={(layout) => handleLayoutChange(layout)}
         selectedLayout={activeLayout}
       />
-      <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
+      <FiltersDropdown
+        title={t("common.filters")}
+        placement="bottom-end"
+        isFiltersApplied={isIssueFilterActive(issueFilters)}
+      >
         <FilterSelection
           filters={issueFilters?.filters ?? {}}
           handleFiltersUpdate={handleFiltersUpdate}
           displayFilters={issueFilters?.displayFilters ?? {}}
           handleDisplayFiltersUpdate={handleDisplayFilters}
           layoutDisplayFiltersOptions={
-            activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.team_issues[activeLayout] : undefined
+            activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues[activeLayout] : undefined
           }
           labels={workspaceLabels}
           memberIds={memberIds ?? undefined}
         />
       </FiltersDropdown>
-      <FiltersDropdown title="Display" placement="bottom-end">
+      <FiltersDropdown title={t("common.display")} placement="bottom-end">
         <DisplayFiltersSelection
           layoutDisplayFiltersOptions={
-            activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.team_issues[activeLayout] : undefined
+            activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues[activeLayout] : undefined
           }
           displayFilters={issueFilters?.displayFilters ?? {}}
           handleDisplayFiltersUpdate={handleDisplayFilters}

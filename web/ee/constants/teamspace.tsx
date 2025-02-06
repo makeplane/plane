@@ -174,7 +174,7 @@ export const TEAM_WORKLOAD_X_AXIS_LABEL_MAP: Record<EProgressXAxisKeys, string> 
 };
 
 export const TEAM_WORKLOAD_Y_AXIS_LABEL_MAP: Record<ETeamspaceAnalyticsValueKeys, string> = {
-  issues: "Issues",
+  issues: "Work items",
   // points: "Points",
 };
 
@@ -184,7 +184,7 @@ export const TEAM_STATISTICS_DATA_KEY_MAP: Record<ETeamspaceAnalyticsDataKeys, s
 };
 
 export const TEAM_STATISTICS_VALUE_KEY_MAP: Record<ETeamspaceAnalyticsValueKeys, string> = {
-  issues: "Total issues",
+  issues: "No. of work items",
   // points: "Total points",`
 };
 

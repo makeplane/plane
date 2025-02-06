@@ -1,9 +1,27 @@
 import { set } from "lodash";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { E_FEATURE_FLAGS } from "@plane/constants";
-// types
-import { TEpicStats, TLoader } from "@plane/types";
+// plane imports
+import { E_FEATURE_FLAGS, EIssuePropertyType } from "@plane/constants";
+import {
+  TEpicStats,
+  TLoader,
+  TIssueType,
+  TIssueProperty,
+  TIssuePropertyOptionsPayload,
+  IIssueTypesService,
+  IIssuePropertiesService,
+  IIssuePropertyOptionsService,
+  IEpicService,
+  TEpicAnalytics,
+  TEpicAnalyticsGroup,
+  IIssueType,
+  IIssueTypesStore,
+  TIssueTypesPromise,
+  TIssueTypesPropertiesOptions,
+  IssueTypeFlagKeys,
+  EpicIssueTypeFlagKeys,
+} from "@plane/types";
 // plane web services
 import {
   epicIssueTypeService,
@@ -15,101 +33,8 @@ import {
   issueTypeService,
 } from "@/plane-web/services/issue-types";
 // plane web stores
-import { IIssueProperty, IIssueType, IssueType } from "@/plane-web/store/issue-types";
+import { IssueType } from "@/plane-web/store/issue-types";
 import { RootStore } from "@/plane-web/store/root.store";
-// plane web types
-import {
-  EIssuePropertyType,
-  IEpicService,
-  IIssuePropertiesService,
-  IIssuePropertyOptionsService,
-  IIssueTypesService,
-  TEpicAnalytics,
-  TEpicAnalyticsGroup,
-  TIssueProperty,
-  TIssuePropertyOptionsPayload,
-  TIssueType,
-} from "@/plane-web/types";
-
-type TIssueTypesPromise = Promise<[TIssueType[], TIssueType[]]>;
-
-type TIssueTypesPropertiesOptions = {
-  issueProperties: TIssueProperty<EIssuePropertyType>[];
-  issuePropertyOptions: TIssuePropertyOptionsPayload;
-};
-
-type IssueTypeFlagKeys = keyof {
-  [K in keyof typeof E_FEATURE_FLAGS as K extends "ISSUE_TYPES" ? K : never]: unknown;
-};
-
-type EpicIssueTypeFlagKeys = keyof {
-  [K in keyof typeof E_FEATURE_FLAGS as K extends "EPICS" ? K : never]: unknown;
-};
-
-export interface IIssueTypesStore {
-  // observables
-  loader: TLoader; // issue type loader
-  issueTypePromise: TIssueTypesPromise | undefined; // promise to fetch issue types and epics
-  issuePropertiesLoader: Record<string, TLoader>; // project id -> TLoader
-  propertiesFetchedMap: Record<string, boolean>; // project id -> boolean
-  issueTypes: Record<string, IIssueType>; // issue type id -> issue type
-  projectEpics: Record<string, IIssueType>; // epic issue type id -> epic issue type
-  epicAnalyticsLoader: Record<string, TLoader>; // epic id -> TLoader
-  epicAnalyticsMap: Record<string, TEpicAnalytics>; // epic id -> TEpicAnalytics
-  epicStatsLoader: Record<string, TLoader>; // epic id -> TLoader
-  epicStatsMap: Record<string, TEpicStats>; // epic id -> TEpicStats
-  // computed
-  data: Record<string, IIssueType>; // all issue type id -> issue type
-  // computed functions
-  getEpicAnalyticsById: (epicId: string) => TEpicAnalytics | undefined;
-  getIssueTypeById: (issueTypeId: string) => IIssueType | undefined;
-  getIssuePropertyById: (issuePropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
-  getProjectIssuePropertiesLoader: (projectId: string) => TLoader;
-  getProjectIssueTypeIds: (projectId: string) => string[];
-  getProjectIssueTypes: (projectId: string, activeOnly: boolean) => Record<string, IIssueType>; // issue type id -> issue type
-  getProjectEpicId: (projectId: string) => string | undefined;
-  getProjectEpicDetails: (projectId: string) => IIssueType | undefined;
-  getEpicStatsById: (epicId: string) => TEpicStats | undefined;
-  getProjectDefaultIssueType: (projectId: string) => IIssueType | undefined;
-  getIssueTypeProperties: (issueTypeId: string) => IIssueProperty<EIssuePropertyType>[];
-  getIssueTypeIdsWithMandatoryProperties: (projectId: string) => string[];
-  isIssueTypeEnabledForProject: (
-    workspaceSlug: string,
-    projectId: string,
-    issueTypeFlagKey: IssueTypeFlagKeys
-  ) => boolean;
-  isEpicEnabledForProject: (workspaceSlug: string, projectId: string, epicFlagKey: EpicIssueTypeFlagKeys) => boolean;
-  isIssueTypeOrEpicEnabledForProject: (
-    workspaceSlug: string,
-    projectId: string,
-    issueTypeFlagKey: IssueTypeFlagKeys,
-    epicFlagKey: EpicIssueTypeFlagKeys
-  ) => boolean;
-  // helper actions
-  addOrUpdateIssueTypes: (issueTypes: TIssueType[], projectId?: string) => void;
-  fetchAllPropertyData: (workspaceSlug: string, projectId: string) => Promise<TIssueTypesPropertiesOptions>;
-  fetchAllIssueTypes: (workspaceSlug: string) => Promise<TIssueType[]>;
-  fetchAllEpics: (workspaceSlug: string) => Promise<TIssueType[]>;
-  // actions
-  enableIssueTypes: (workspaceSlug: string, projectId: string) => Promise<void>;
-  enableEpics: (workspaceSlug: string, projectId: string) => Promise<void>;
-  disableEpics: (workspaceSlug: string, projectId: string) => Promise<void>;
-  fetchAll: (workspaceSlug: string) => Promise<void>;
-  fetchAllPropertiesAndOptions: (workspaceSlug: string, projectId: string) => Promise<void | undefined>;
-  fetchEpicAnalytics: (workspaceSlug: string, projectId: string, epicId: string) => Promise<TEpicAnalytics | undefined>;
-  updateEpicAnalytics: (
-    workspaceSlug: string,
-    projectId: string,
-    epicId: string,
-    data: {
-      incrementStateGroupCount?: TEpicAnalyticsGroup;
-      decrementStateGroupCount?: TEpicAnalyticsGroup;
-    }
-  ) => void;
-  fetchEpicStats: (workspaceSlug: string, projectId: string) => Promise<TEpicStats[] | undefined>;
-  createType: (typeData: Partial<TIssueType>) => Promise<TIssueType | undefined>;
-  deleteType: (typeId: string) => Promise<void>;
-}
 
 export class IssueTypes implements IIssueTypesStore {
   // observables
@@ -183,14 +108,14 @@ export class IssueTypes implements IIssueTypesStore {
 
   // computed functions
   /**
-   * @description Get issue type by issue type id
+   * @description Get work item type by work item type id
    * @param issueTypeId
    * @returns {IIssueType | undefined}
    */
   getIssueTypeById = computedFn((issueTypeId: string) => this.data[issueTypeId]);
 
   /**
-   * @description Get issue property by issue property id (from all issue types)
+   * @description Get work item property by work item property id (from all work item types)
    * @param issuePropertyId
    * @returns {IIssueProperty<EIssuePropertyType> | undefined}
    */
@@ -202,7 +127,7 @@ export class IssueTypes implements IIssueTypesStore {
   );
 
   /**
-   * @description Get project issue type loader
+   * @description Get project work item type loader
    * @param projectId
    * @returns {TLoader}
    */
@@ -211,7 +136,7 @@ export class IssueTypes implements IIssueTypesStore {
   );
 
   /**
-   * @description Get project issue type ids
+   * @description Get project work item type ids
    * @param projectId
    * @returns {string[]}
    */
@@ -223,7 +148,7 @@ export class IssueTypes implements IIssueTypesStore {
   });
 
   /**
-   * @description Get current project issue types
+   * @description Get current project work item types
    * @returns {Record<string, IIssueType>}
    */
   getProjectIssueTypes = computedFn((projectId: string, activeOnly: boolean) => {
@@ -263,7 +188,7 @@ export class IssueTypes implements IIssueTypesStore {
   });
 
   /**
-   * @description Get project default issue type id of the project
+   * @description Get project default work item type id of the project
    * @param projectId
    * @returns {string | undefined}
    */
@@ -275,7 +200,7 @@ export class IssueTypes implements IIssueTypesStore {
   });
 
   /**
-   * @description Get issue type properties by issue type id
+   * @description Get work item type properties by work item type id
    * @param issueTypeId
    * @returns {TIssueProperty<EIssuePropertyType>[]}
    */
@@ -286,7 +211,7 @@ export class IssueTypes implements IIssueTypesStore {
   });
 
   /**
-   * @description Get issue type ids with mandatory properties
+   * @description Get work item type ids with mandatory properties
    * @param projectId
    * @returns {string[]}
    */
@@ -310,7 +235,7 @@ export class IssueTypes implements IIssueTypesStore {
   getEpicStatsById = computedFn((epicId: string) => this.epicStatsMap[epicId]);
 
   /**
-   * @description Check if issue type is enabled for the project
+   * @description Check if work item type is enabled for the project
    * @param workspaceSlug
    * @param projectId
    * @param issueTypeFlagKey - feature flag
@@ -383,7 +308,7 @@ export class IssueTypes implements IIssueTypesStore {
   };
 
   /**
-   * @description Check if issue type or epic is enabled for the project
+   * @description Check if work item type or epic is enabled for the project
    * @param workspaceSlug
    * @param projectId
    * @param issueTypeFlagKey
@@ -403,7 +328,7 @@ export class IssueTypes implements IIssueTypesStore {
 
   // helper actions
   /**
-   * @description Add issue types to the store
+   * @description Add work item types to the store
    * @param issueTypes
    * @returns void
    */
@@ -487,7 +412,7 @@ export class IssueTypes implements IIssueTypesStore {
         issueProperties = properties || [];
         issuePropertyOptions = options || {};
       } catch (error) {
-        console.error("Error fetching issue type data:", error);
+        console.error("Error fetching work item type data:", error);
       }
     }
 
@@ -570,13 +495,13 @@ export class IssueTypes implements IIssueTypesStore {
 
   // actions
   /**
-   * @description Enable issue type feature
+   * @description Enable work item type feature
    * @param workspaceSlug
    * @param projectId
    */
   enableIssueTypes = async (workspaceSlug: string, projectId: string) => {
     if (!workspaceSlug || !projectId) return;
-    if (!this.issueTypesService.enable) throw new Error("Enable issue type service not available.");
+    if (!this.issueTypesService.enable) throw new Error("Enable work item type service not available.");
     try {
       this.loader = "init-loader";
       const issueType = await this.issueTypesService.enable({ workspaceSlug, projectId });
@@ -608,7 +533,7 @@ export class IssueTypes implements IIssueTypesStore {
    */
   enableEpics = async (workspaceSlug: string, projectId: string) => {
     if (!workspaceSlug || !projectId) return;
-    if (!this.epicIssueTypesService.enable) throw new Error("Enable epic issue type service not available.");
+    if (!this.epicIssueTypesService.enable) throw new Error("Enable epic work item type service not available.");
     try {
       this.loader = "init-loader";
       const epic = await this.epicIssueTypesService.enable({ workspaceSlug, projectId });
@@ -636,7 +561,7 @@ export class IssueTypes implements IIssueTypesStore {
     const epic = this.getProjectEpicDetails(projectId);
     const epicId = epic?.id;
     if (!epic || !epicId) return;
-    if (!this.epicIssueTypesService.disable) throw new Error("Disable epic issue type service not available.");
+    if (!this.epicIssueTypesService.disable) throw new Error("Disable epic work item type service not available.");
     try {
       runInAction(() => {
         // disable `is_epic_enabled` in project details
@@ -660,10 +585,7 @@ export class IssueTypes implements IIssueTypesStore {
    */
   fetchAllIssueTypes = async (workspaceSlug: string) => {
     if (!workspaceSlug) return Promise.resolve([]);
-    const isIssueTypesEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace(
-      "ISSUE_TYPES",
-      false
-    );
+    const isIssueTypesEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("ISSUE_TYPES", false);
     if (!isIssueTypesEnabled) return Promise.resolve([]);
     return this.issueTypesService.fetchAll({ workspaceSlug });
   };
@@ -703,7 +625,7 @@ export class IssueTypes implements IIssueTypesStore {
     } catch (error) {
       this.loader = "loaded";
       this.issueTypePromise = undefined;
-      console.error("Error in fetching issue types", error);
+      console.error("Error in fetching work item types", error);
       throw error;
     }
   };
@@ -745,13 +667,13 @@ export class IssueTypes implements IIssueTypesStore {
   };
 
   /**
-   * @description Create a new issue type
+   * @description Create a new work item type
    * @param typeData
    */
   createType = async (typeData: Partial<TIssueType>) => {
     const { workspaceSlug, projectId } = this.rootStore.router;
     if (!workspaceSlug || !projectId) return;
-    if (!this.issueTypesService.create) throw new Error("Create issue type service not available.");
+    if (!this.issueTypesService.create) throw new Error("Create work item type service not available.");
     try {
       this.loader = "mutation";
       const issueType = await this.issueTypesService.create({ workspaceSlug, projectId, data: typeData });
@@ -779,13 +701,13 @@ export class IssueTypes implements IIssueTypesStore {
   };
 
   /**
-   * @description Delete an issue type
+   * @description Delete a work item type
    * @param typeId
    */
   deleteType = async (typeId: string) => {
     const { workspaceSlug, projectId } = this.rootStore.router;
     if (!workspaceSlug || !projectId) return;
-    if (!this.issueTypesService.deleteType) throw new Error("Delete issue type service not available.");
+    if (!this.issueTypesService.deleteType) throw new Error("Delete work item type service not available.");
     try {
       this.loader = "mutation";
       await this.issueTypesService.deleteType({ workspaceSlug, projectId, issueTypeId: typeId });

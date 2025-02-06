@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
-// types
+// plane imports
+import { EUserPermissionsLevel, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/constants";
 import { TTeamspaceView } from "@plane/types";
-// ui
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -17,8 +17,6 @@ import { CreateUpdateTeamspaceViewModal } from "@/plane-web/components/teamspace
 import { DeleteTeamspaceViewModal } from "@/plane-web/components/teamspaces/views/modals/delete";
 import { PublishTeamspaceViewModal } from "@/plane-web/components/teamspaces/views/modals/publish";
 import { useViewPublish } from "@/plane-web/components/views/publish";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;
@@ -38,8 +36,8 @@ export const TeamspaceViewQuickActions: React.FC<Props> = observer((props) => {
   // derived values
   const isOwner = view?.owned_by === data?.id;
   const isAdmin = view.is_team_view
-    ? allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug)
-    : allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, view.project);
+    ? allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug)
+    : allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, view.project);
   const canPublishView = isAdmin;
   const viewDetailLink = view.is_team_view
     ? `/${workspaceSlug}/teamspaces/${view.team}/views/${view.id}`

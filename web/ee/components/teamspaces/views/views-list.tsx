@@ -1,14 +1,14 @@
 import { observer } from "mobx-react";
 // plane imports
-import { ETeamspaceEntityScope } from "@plane/constants";
+import { ETeamspaceEntityScope, EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // components
 import { ListLayout } from "@/components/core/list";
-import { EmptyState } from "@/components/empty-state";
+import { DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
 import { ViewListLoader } from "@/components/ui";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
 // hooks
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web components
 import { TeamspaceViewListItem } from "@/plane-web/components/teamspaces/views";
 // plane web hooks
@@ -20,8 +20,11 @@ type Props = {
 
 export const TeamspaceViewsList = observer((props: Props) => {
   const { teamspaceId } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { toggleCreateTeamspaceViewModal } = useCommandPalette();
+  const { allowPermissions } = useUserPermissions();
   const { getTeamspaceViewsLoader, getTeamspaceViewsScope, getTeamspaceViews, getFilteredTeamspaceViews } =
     useTeamspaceViews();
   // derived values
@@ -29,13 +32,27 @@ export const TeamspaceViewsList = observer((props: Props) => {
   const teamspaceViewsScope = getTeamspaceViewsScope(teamspaceId);
   const teamspaceViews = getTeamspaceViews(teamspaceId);
   const filteredTeamspaceViews = getFilteredTeamspaceViews(teamspaceId);
+  const hasWorkspaceMemberLevelPermissions = allowPermissions(
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
+  const generalViewResolvedPath = useResolvedAssetPath({
+    basePath: "/empty-state/teams/views",
+  });
+  const filteredViewResolvedPath = useResolvedAssetPath({
+    basePath: "/empty-state/search/views",
+  });
 
   if (teamspaceViewsLoader === "init-loader" || !teamspaceViews || !filteredTeamspaceViews) return <ViewListLoader />;
 
   if (filteredTeamspaceViews.length === 0 && teamspaceViews.length > 0) {
     return (
       <div className="flex items-center justify-center h-full w-full">
-        <EmptyState type={EmptyStateType.VIEWS_EMPTY_SEARCH} layout="screen-simple" />
+        <SimpleEmptyState
+          title={t("teamspace_views.empty_state.filter.title")}
+          description={t("teamspace_views.empty_state.filter.description")}
+          assetPath={filteredViewResolvedPath}
+        />
       </div>
     );
   }
@@ -55,14 +72,26 @@ export const TeamspaceViewsList = observer((props: Props) => {
           </ListLayout>
         </div>
       ) : (
-        <EmptyState
-          type={
-            teamspaceViewsScope === ETeamspaceEntityScope.TEAM
-              ? EmptyStateType.TEAM_VIEW
-              : EmptyStateType.TEAM_PROJECT_VIEW
-          }
-          primaryButtonOnClick={() => toggleCreateTeamspaceViewModal({ isOpen: true, teamspaceId })}
-        />
+        <>
+          {teamspaceViewsScope === ETeamspaceEntityScope.PROJECT ? (
+            <DetailedEmptyState
+              title={t("teamspace_views.empty_state.project_view.title")}
+              description={t("teamspace_views.empty_state.project_view.description")}
+              assetPath={generalViewResolvedPath}
+            />
+          ) : (
+            <DetailedEmptyState
+              title={t("teamspace_views.empty_state.team_view.title")}
+              description={t("teamspace_views.empty_state.team_view.description")}
+              assetPath={generalViewResolvedPath}
+              primaryButton={{
+                text: t("teamspace_views.empty_state.team_view.primary_button.text"),
+                onClick: () => toggleCreateTeamspaceViewModal({ isOpen: true, teamspaceId }),
+                disabled: !hasWorkspaceMemberLevelPermissions,
+              }}
+            />
+          )}
+        </>
       )}
     </>
   );

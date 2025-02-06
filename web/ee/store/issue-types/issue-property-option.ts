@@ -1,18 +1,9 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable } from "mobx";
-// types
-import { TLogoProps } from "@plane/types";
+// plane imports
+import { TLogoProps, TIssuePropertyOption, IIssuePropertyOption } from "@plane/types";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
-// plane web types
-import { TIssuePropertyOption } from "@/plane-web/types";
-
-export interface IIssuePropertyOption extends TIssuePropertyOption {
-  // computed
-  asJSON: TIssuePropertyOption;
-  // helper action
-  updateOptionData: (propertyOptionData: Partial<TIssuePropertyOption>) => void;
-}
 
 export class IssuePropertyOption implements IIssuePropertyOption {
   // properties

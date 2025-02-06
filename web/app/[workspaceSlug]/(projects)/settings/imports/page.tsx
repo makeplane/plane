@@ -3,6 +3,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { PageHead } from "@/components/core";
 import { ImportersEmptyState } from "@/components/importers";
 // hooks
@@ -10,8 +11,6 @@ import { useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useUserProfile } from "@/hooks/store/use-user-profile";
 // plane web components
 import { ImportersList } from "@/plane-web/components/importers";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useFlag } from "@/plane-web/hooks/store";
 

@@ -98,7 +98,7 @@ export const InitiativesUpgrade: FC<Props> = observer((props) => {
           <div className="w-full xl:max-w-[300px]">
             <div className="text-2xl font-semibold">Track all your projects from one screen.</div>
             <div className="text-sm">
-              Group projects like you group issues—by state, priority, or any other—and track their progress in one
+              Group projects like you group work items by state, priority, or any other—and track their progress in one
               click.
             </div>
             <div className="flex mt-6 gap-4 flex-wrap">{getUpgradeButton()}</div>

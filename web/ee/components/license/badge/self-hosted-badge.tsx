@@ -3,6 +3,7 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // plane web components
 import { PaidPlanUpgradeModal, PlaneOneEditionBadge } from "@/plane-web/components/license";
@@ -21,6 +22,7 @@ export const SelfHostedEditionBadge = observer(() => {
     handleSuccessModalToggle,
   } = useWorkspaceSubscription();
   const { isActivationModalOpen, toggleLicenseActivationModal } = useSelfHostedSubscription();
+  const { t } = useTranslation();
 
   if (!subscriptionDetail || subscriptionDetail.product === "FREE")
     return (
@@ -36,7 +38,7 @@ export const SelfHostedEditionBadge = observer(() => {
           className="w-fit min-w-24 cursor-pointer rounded-2xl px-4 py-1 text-center text-sm font-medium outline-none"
           onClick={() => togglePaidPlanModal(true)}
         >
-          Upgrade plan
+          {t("upgrade_plan")}
         </Button>
       </>
     );
@@ -55,7 +57,7 @@ export const SelfHostedEditionBadge = observer(() => {
           onClick={() => handleSuccessModalToggle(true)}
         >
           <Image src={PlaneLogo} alt="Plane Pro" width={12} height={12} />
-          Plane Pro
+          {t("sidebar.plane_pro")}
         </Button>
       </>
     );

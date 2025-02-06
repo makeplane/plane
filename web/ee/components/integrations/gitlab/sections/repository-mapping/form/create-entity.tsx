@@ -2,6 +2,7 @@
 
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { Button, ModalCore } from "@plane/ui";
 // plane web components
 import { EntityForm } from "@/plane-web/components/integrations/gitlab";
@@ -11,7 +12,6 @@ import { useGitlabIntegration } from "@/plane-web/hooks/store";
 import { TGitlabEntityConnection, TProjectMap } from "@/plane-web/types/integrations/gitlab";
 // local imports
 import { projectMapInit } from "../root";
-import { useTranslation } from "@plane/i18n";
 
 type TEntityFormCreate = {
   modal: boolean;

@@ -1,16 +1,16 @@
 import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-// ui
 import { GripVertical } from "lucide-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
+import { TIssuePropertyOptionCreateUpdateData } from "@plane/types";
 import { Sortable, Tooltip } from "@plane/ui";
+// plane web imports
 import {
   IssuePropertyCreateOptionItem,
   IssuePropertyOptionItem,
 } from "@/plane-web/components/issue-types/properties/attributes";
-// plane web hooks
 import { usePropertyOptions } from "@/plane-web/hooks/store";
-// plane web types
-import { TIssuePropertyOptionCreateUpdateData } from "@/plane-web/types";
 
 type TIssuePropertyOptionsRoot = {
   issuePropertyId: string | undefined;
@@ -19,6 +19,8 @@ type TIssuePropertyOptionsRoot = {
 
 export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer((props) => {
   const { issuePropertyId, error } = props;
+  // plane imports
+  const { t } = useTranslation();
   // store hooks
   const { propertyOptions, handlePropertyOptionsList } = usePropertyOptions();
   // derived values
@@ -71,7 +73,9 @@ export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer(
 
   return (
     <>
-      <div className="text-xs font-medium text-custom-text-300">Options</div>
+      <div className="text-xs font-medium text-custom-text-300">
+        {t("work_item_types.settings.properties.attributes.option.create_update.label")}
+      </div>
       <div ref={containerRef} className="flex flex-col items-center -ml-2 -mr-1.5 space-y-1.5">
         {sortedActivePropertyOptions && sortedActivePropertyOptions?.length > 0 && (
           <Sortable

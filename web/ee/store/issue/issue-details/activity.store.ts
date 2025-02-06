@@ -2,7 +2,7 @@ import orderBy from "lodash/orderBy";
 import { makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane package imports
-import { EIssueServiceType, E_SORT_ORDER } from "@plane/constants";
+import { EIssueServiceType, E_SORT_ORDER, EActivityFilterType, EActivityFilterTypeEE } from "@plane/constants";
 import { TIssueActivityComment, TIssueServiceType } from "@plane/types";
 // ce store
 import {
@@ -10,7 +10,6 @@ import {
   IIssueActivityStore as IIssueActivityStoreCe,
   IssueActivityStore as IssueActivityStoreCe,
 } from "@/ce/store/issue/issue-details/activity.store";
-import { EActivityFilterType, EActivityFilterTypeEE } from "@/plane-web/constants/issues";
 // plane web store types
 import { RootStore } from "@/plane-web/store/root.store";
 // services

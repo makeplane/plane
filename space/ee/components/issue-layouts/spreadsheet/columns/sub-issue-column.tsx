@@ -23,7 +23,7 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
         }
       )}
     >
-      {subIssueCount} {subIssueCount === 1 ? "sub-issue" : "sub-issues"}
+      {subIssueCount} {subIssueCount === 1 ? "sub-work item" : "sub-work items"}
     </div>
   );
 });

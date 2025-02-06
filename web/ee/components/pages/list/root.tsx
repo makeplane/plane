@@ -1,17 +1,17 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-// types
+// plane imports
+import { EUserPermissionsLevel, EUserWorkspaceRoles, EPageAccess } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TPageNavigationTabs } from "@plane/types";
 // components
-import { EmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state";
 import { PageLoader } from "@/components/pages";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
-import { EPageAccess } from "@/constants/page";
 // hooks
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette, useUserPermissions } from "@/hooks/store";
 // plane web components
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { PageListBlock } from "@/plane-web/components/pages";
 // plane web hooks
 import { useWorkspacePages } from "@/plane-web/hooks/store";
@@ -27,8 +27,11 @@ export const PagesListLayoutRoot: React.FC<Props> = observer((props) => {
   const { pageType } = props;
   // params
   const { workspaceSlug } = useParams();
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { toggleCreatePageModal } = useCommandPalette();
+  const { allowPermissions } = useUserPermissions();
   const {
     filters,
     getCurrentWorkspacePageIdsByType,
@@ -39,39 +42,80 @@ export const PagesListLayoutRoot: React.FC<Props> = observer((props) => {
   // derived values
   const pageIds = getCurrentWorkspacePageIdsByType(pageType);
   const filteredPageIds = getCurrentWorkspaceFilteredPageIdsByType(pageType);
+  const hasWorkspaceMemberLevelPermissions = allowPermissions(
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
+  const generalPageResolvedPath = useResolvedAssetPath({
+    basePath: "/empty-state/onboarding/pages",
+  });
+  const privatePageResolvedPath = useResolvedAssetPath({
+    basePath: "/empty-state/pages/private",
+  });
+  const publicPageResolvedPath = useResolvedAssetPath({
+    basePath: "/empty-state/pages/public",
+  });
+  const archivedPageResolvedPath = useResolvedAssetPath({
+    basePath: "/empty-state/pages/archived",
+  });
 
   if (loader === "init-loader") return <PageLoader />;
   // if no pages exist in the active page type
   if (!isAnyPageAvailable || pageIds?.length === 0) {
     if (!isAnyPageAvailable) {
       return (
-        <EmptyState
-          type={EmptyStateType.WORKSPACE_PAGE}
-          primaryButtonOnClick={() => {
-            toggleCreatePageModal({ isOpen: true });
+        <DetailedEmptyState
+          title={t("workspace_pages.empty_state.general.title")}
+          description={t("workspace_pages.empty_state.general.description")}
+          assetPath={generalPageResolvedPath}
+          primaryButton={{
+            text: t("workspace_pages.empty_state.general.primary_button.text"),
+            onClick: () => {
+              toggleCreatePageModal({ isOpen: true });
+            },
+            disabled: !hasWorkspaceMemberLevelPermissions,
           }}
         />
       );
     }
     if (pageType === "public")
       return (
-        <EmptyState
-          type={EmptyStateType.WORKSPACE_PAGE_PUBLIC}
-          primaryButtonOnClick={() => {
-            toggleCreatePageModal({ isOpen: true, pageAccess: EPageAccess.PUBLIC });
+        <DetailedEmptyState
+          title={t("workspace_pages.empty_state.public.title")}
+          description={t("workspace_pages.empty_state.public.description")}
+          assetPath={publicPageResolvedPath}
+          primaryButton={{
+            text: t("workspace_pages.empty_state.public.primary_button.text"),
+            onClick: () => {
+              toggleCreatePageModal({ isOpen: true, pageAccess: EPageAccess.PUBLIC });
+            },
+            disabled: !hasWorkspaceMemberLevelPermissions,
           }}
         />
       );
     if (pageType === "private")
       return (
-        <EmptyState
-          type={EmptyStateType.WORKSPACE_PAGE_PRIVATE}
-          primaryButtonOnClick={() => {
-            toggleCreatePageModal({ isOpen: true, pageAccess: EPageAccess.PRIVATE });
+        <DetailedEmptyState
+          title={t("workspace_pages.empty_state.private.title")}
+          description={t("workspace_pages.empty_state.private.description")}
+          assetPath={privatePageResolvedPath}
+          primaryButton={{
+            text: t("workspace_pages.empty_state.private.primary_button.text"),
+            onClick: () => {
+              toggleCreatePageModal({ isOpen: true, pageAccess: EPageAccess.PRIVATE });
+            },
+            disabled: !hasWorkspaceMemberLevelPermissions,
           }}
         />
       );
-    if (pageType === "archived") return <EmptyState type={EmptyStateType.WORKSPACE_PAGE_ARCHIVED} />;
+    if (pageType === "archived")
+      return (
+        <DetailedEmptyState
+          title={t("workspace_pages.empty_state.archived.title")}
+          description={t("workspace_pages.empty_state.archived.description")}
+          assetPath={archivedPageResolvedPath}
+        />
+      );
   }
 
   // if no pages match the filter criteria

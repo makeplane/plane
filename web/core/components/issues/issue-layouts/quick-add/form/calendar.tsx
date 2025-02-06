@@ -20,9 +20,9 @@ export const CalendarQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props
         <input
           type="text"
           autoComplete="off"
-          placeholder={isEpic ? "Epic Title" : "Issue Title"}
+          placeholder={isEpic ? "Epic Title" : "Work item Title"}
           {...register("name", {
-            required: `${isEpic ? "Epic" : "Issue"} title is required.`,
+            required: `${isEpic ? "Epic" : "Work item"} title is required.`,
           })}
           className="w-full rounded-md bg-transparent py-1.5 pr-2 text-sm md:text-xs font-medium leading-5 text-custom-text-200 outline-none"
         />

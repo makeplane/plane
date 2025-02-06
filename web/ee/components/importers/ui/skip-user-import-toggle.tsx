@@ -23,10 +23,7 @@ export const SkipUserImport: React.FC<SkipUserImportProps> = ({
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
-      <div
-        className="inline-flex items-center gap-2 cursor-pointer"
-        onClick={() => handleClick(!userSkipToggle)}
-      >
+      <div className="inline-flex items-center gap-2 cursor-pointer" onClick={() => handleClick(!userSkipToggle)}>
         <div
           className={cn(
             "flex-shrink-0 w-4 h-4 p-1 relative flex justify-center items-center border border-custom-border-300 overflow-hidden rounded-sm transition-all",

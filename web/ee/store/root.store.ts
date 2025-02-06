@@ -1,12 +1,8 @@
 // plane web store
+import { IIssuePropertiesActivityStore, IIssueTypesStore } from "@plane/types";
 import { ICycleStore, CycleStore } from "@/plane-web/store/cycle";
 import { FeatureFlagsStore, IFeatureFlagsStore } from "@/plane-web/store/feature-flags/feature-flags.store";
-import {
-  IIssuePropertiesActivityStore,
-  IIssueTypesStore,
-  IssuePropertiesActivityStore,
-  IssueTypes,
-} from "@/plane-web/store/issue-types";
+import { IssuePropertiesActivityStore, IssueTypes } from "@/plane-web/store/issue-types";
 import {
   IWorkspaceNotificationStore,
   WorkspaceNotificationStore,

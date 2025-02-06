@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import { LinkIcon, MoreHorizontal, Trash2 } from "lucide-react";
 // Plane
+import { useTranslation } from "@plane/i18n";
 import { CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // helpers
@@ -22,6 +23,8 @@ export const QuickActions: React.FC<Props> = observer((props: Props) => {
     initiative: { updateInitiative, getInitiativeById },
   } = useInitiatives();
 
+  const { t } = useTranslation();
+
   // derived states
   const projectLink = `${workspaceSlug}/projects/${project.id}/issues`;
   const initiative = getInitiativeById(initiativeId);
@@ -31,8 +34,8 @@ export const QuickActions: React.FC<Props> = observer((props: Props) => {
     copyUrlToClipboard(projectLink).then(() =>
       setToast({
         type: TOAST_TYPE.INFO,
-        title: "Link Copied!",
-        message: "Project link copied to clipboard.",
+        title: `${"common.link_copied"}!`,
+        message: t("epics.project_link_copied_to_clipboard"),
       })
     );
 
@@ -40,7 +43,7 @@ export const QuickActions: React.FC<Props> = observer((props: Props) => {
     {
       key: "copy-link",
       action: handleCopyText,
-      title: "Copy link",
+      title: t("copy_link"),
       icon: LinkIcon,
     },
     {
@@ -49,7 +52,7 @@ export const QuickActions: React.FC<Props> = observer((props: Props) => {
         updateInitiative(workspaceSlug, initiativeId, {
           project_ids: initiative?.project_ids ? initiative?.project_ids.filter((id) => id !== project.id) : [],
         }),
-      title: "Remove",
+      title: t("common.remove"),
       icon: Trash2,
     },
   ];

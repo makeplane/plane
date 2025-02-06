@@ -2,15 +2,13 @@ import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Earth, Lock } from "lucide-react";
-// types
+// plane imports
+import { EViewAccess, EUserPermissionsLevel, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/constants";
 import { TTeamspaceView } from "@plane/types";
-// ui
 import { Tooltip, FavoriteStar } from "@plane/ui";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { DeleteProjectViewModal } from "@/components/views";
-// constants
-import { EViewAccess } from "@/constants/views";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
@@ -19,7 +17,6 @@ import { useMember, useUserPermissions } from "@/hooks/store";
 import { CreateUpdateTeamspaceViewModal } from "@/plane-web/components/teamspaces/views/modals/create-update";
 import { TeamspaceViewQuickActions } from "@/plane-web/components/teamspaces/views/quick-actions";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useTeamspaceViews } from "@/plane-web/hooks/store";
 
@@ -43,12 +40,12 @@ export const TeamspaceViewListItemAction: FC<Props> = observer((props) => {
   // derived values
   const isEditingAllowed = view.is_team_view
     ? allowPermissions(
-        [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+        [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
         EUserPermissionsLevel.WORKSPACE,
         workspaceSlug?.toString()
       )
     : allowPermissions(
-        [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+        [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
         EUserPermissionsLevel.PROJECT,
         workspaceSlug?.toString(),
         view.project

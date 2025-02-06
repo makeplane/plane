@@ -1,7 +1,8 @@
-import { TEpicStats } from "@plane/types";
-// services
+// plane imports
+import { TEpicAnalytics, TEpicStats } from "@plane/types";
+// helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
-import { TEpicAnalytics } from "@/plane-web/types";
+// services
 import { APIService } from "@/services/api.service";
 
 export class EpicService extends APIService {

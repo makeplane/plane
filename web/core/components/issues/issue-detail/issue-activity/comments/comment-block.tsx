@@ -1,10 +1,10 @@
 import { FC, ReactNode, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { MessageCircle } from "lucide-react";
-// ui
+// plane imports
+import { ACTIVITY_HIGHLIGHT_TIMEOUT } from "@plane/constants";
 import { GithubDarkIcon, SlackIcon } from "@plane/ui";
 // helpers
-import { ACTIVITY_HIGHLIGHT_TIMEOUT } from "@/constants/notification";
 import { cn } from "@/helpers/common.helper";
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";

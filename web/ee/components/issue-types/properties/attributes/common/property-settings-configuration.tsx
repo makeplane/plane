@@ -1,25 +1,27 @@
 import { get, set } from "lodash";
 import { observer } from "mobx-react";
 // components
+import { EIssuePropertyType } from "@plane/constants";
+import { TIssuePropertySettingsMap, TSettingsConfigurations } from "@plane/types";
 import { RadioInput } from "@/components/estimates";
 // helpers
 import { cn } from "@/helpers/common.helper";
-// plane web constants
-import { EIssuePropertyType, TIssuePropertySettingsMap, TSettingsConfigurations } from "@/plane-web/types";
+// plane imports
 
 type TPropertySettingsConfigurationProps<T extends EIssuePropertyType> = {
   settings: TIssuePropertySettingsMap[T] | undefined;
   settingsConfigurations: TSettingsConfigurations;
   isDisabled?: boolean;
   onChange: (value: TIssuePropertySettingsMap[T]) => void;
+  getLabelDetails?: (labelKey: string) => string;
 };
 
 export const PropertyRadioInputSelect = observer(
   <T extends EIssuePropertyType>(props: TPropertySettingsConfigurationProps<T>) => {
-    const { settings, settingsConfigurations, isDisabled, onChange } = props;
+    const { settings, settingsConfigurations, isDisabled, onChange, getLabelDetails } = props;
 
     const radioInputOptions = settingsConfigurations.configurations.options.map((option) => ({
-      label: option.label,
+      label: getLabelDetails ? getLabelDetails(option.labelKey) : option.labelKey,
       value: option.value,
       disabled: isDisabled,
     }));
@@ -54,7 +56,7 @@ export const PropertyRadioInputSelect = observer(
 
 export const PropertySettingsConfiguration = observer(
   <T extends EIssuePropertyType>(props: TPropertySettingsConfigurationProps<T>) => {
-    const { settings, settingsConfigurations, isDisabled, onChange } = props;
+    const { settings, settingsConfigurations, isDisabled, onChange, getLabelDetails } = props;
 
     switch (settingsConfigurations.configurations.componentToRender) {
       case "radio-input":
@@ -64,6 +66,7 @@ export const PropertySettingsConfiguration = observer(
             settingsConfigurations={settingsConfigurations}
             onChange={onChange}
             isDisabled={isDisabled}
+            getLabelDetails={getLabelDetails}
           />
         );
       default:

@@ -31,7 +31,7 @@ export const IdentifierText: React.FC<TIdentifierTextProps> = (props) => {
       navigator.clipboard.writeText(identifier).then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Issue ID copied to clipboard",
+          title: "Work item ID copied to clipboard",
         });
       });
     }

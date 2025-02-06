@@ -6,12 +6,12 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // plane web services
+import { EConnectionType, GitlabEntityType } from "@plane/etl/gitlab";
 import { GitlabEntityService } from "@/plane-web/services/integrations/gitlab";
 // plane web store
 import { IGitlabStore } from "@/plane-web/store/integrations";
 // plane web types
 import { TGitlabEntityConnection } from "@/plane-web/types/integrations/gitlab";
-import { EConnectionType, GitlabEntityType } from "@plane/etl/gitlab";
 
 export interface IGitlabEntityConnectionStore {
   // store instances

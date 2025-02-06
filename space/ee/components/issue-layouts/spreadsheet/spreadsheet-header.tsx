@@ -20,7 +20,7 @@ export const SpreadsheetHeader = observer((props: Props) => {
           className="group/list-header sticky left-0 z-[15] h-11 w-[28rem] flex items-center gap-1 bg-custom-background-90 text-sm font-medium before:absolute before:h-full before:right-0 before:border-[0.5px] before:border-custom-border-100 pl-2"
           tabIndex={-1}
         >
-          <span className="flex h-full w-full flex-grow items-center pl-6 py-2.5">Issues</span>
+          <span className="flex h-full w-full flex-grow items-center pl-6 py-2.5">Work items</span>
         </th>
 
         {spreadsheetColumnsList.map((property) => (

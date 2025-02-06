@@ -4,8 +4,12 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Control, Controller } from "react-hook-form";
 import { Sparkle } from "lucide-react";
+// plane imports
+import { ETabIndices } from "@plane/constants";
 // editor
 import { EditorRefApi } from "@plane/editor";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { TIssue } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
@@ -14,10 +18,8 @@ import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { GptAssistantPopover } from "@/components/core";
 import { RichTextEditor } from "@/components/editor";
-// constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
-import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
+import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useInstance, useWorkspace } from "@/hooks/store";
@@ -72,6 +74,8 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
     onAssetUpload,
     onClose,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // states
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
   // store hooks
@@ -117,7 +121,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
     aiService
       .createGptTask(workspaceSlug.toString(), {
         prompt: issueName,
-        task: "Generate a proper description for this issue.",
+        task: "Generate a proper description for this work item.",
       })
       .then((res) => {
         if (res.response === "")
@@ -125,7 +129,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
             type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
-              "Issue title isn't informative enough to generate the description. Please try with a different title.",
+              "Work item title isn't informative enough to generate the description. Please try with a different title.",
           });
         else handleAiAssistance(res.response_html);
       })
@@ -190,7 +194,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                 onEnterKeyPress={() => submitBtnRef?.current?.click()}
                 ref={editorRef}
                 tabIndex={getIndex("description_html")}
-                placeholder={getDescriptionPlaceholder}
+                placeholder={(isFocused, description) => t(getDescriptionPlaceholderI18n(isFocused, description))}
                 searchMentionCallback={async (payload) =>
                   await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
                     ...payload,

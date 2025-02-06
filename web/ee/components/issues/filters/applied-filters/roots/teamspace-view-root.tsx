@@ -5,20 +5,24 @@ import cloneDeep from "lodash/cloneDeep";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
-// types
+// plane imports
+import {
+  EIssueFilterType,
+  EIssuesStoreType,
+  EViewAccess,
+  EUserWorkspaceRoles,
+  EUserPermissionsLevel,
+} from "@plane/constants";
 import { IIssueFilterOptions, IProjectView } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
 import { AppliedFiltersList } from "@/components/issues";
 import { getAreFiltersEqual } from "@/components/issues/issue-layouts/utils";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
-// constants
-import { EViewAccess } from "@/constants/views";
 // hooks
 import { useIssues, useLabel, useUser, useUserPermissions } from "@/hooks/store";
+// plane web imports
 import { CreateUpdateTeamspaceViewModal } from "@/plane-web/components/teamspaces/views/modals/create-update";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { useTeamspaceViews } from "@/plane-web/hooks/store";
 
 export const TeamspaceViewAppliedFiltersRoot: React.FC = observer(() => {
@@ -109,7 +113,7 @@ export const TeamspaceViewAppliedFiltersRoot: React.FC = observer(() => {
   };
 
   const isAuthorizedUser = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
 

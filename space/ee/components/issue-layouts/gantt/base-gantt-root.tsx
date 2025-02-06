@@ -87,7 +87,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
       <div className="h-full w-full">
         <GanttChartRoot
           border={false}
-          title="Issues"
+          title="Work items"
           blockIds={issueIds}
           getBlockById={getBlockById}
           blockToRender={(data: IIssue) => <IssueGanttBlock issueId={data.id} />}

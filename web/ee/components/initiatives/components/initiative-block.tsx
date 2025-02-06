@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 import { CircularProgressIndicator, ControlLink, InitiativeIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
@@ -13,7 +13,6 @@ import { useAppTheme, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local components
 import { InitiativeQuickActions } from "./quick-actions";
@@ -44,7 +43,7 @@ export const InitiativeBlock = observer((props: Props) => {
   if (!initiative) return <></>;
 
   const isEditable = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
 

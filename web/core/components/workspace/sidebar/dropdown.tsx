@@ -10,6 +10,7 @@ import { Check, ChevronDown, LogOut, Mails, PlusSquare, Settings } from "lucide-
 // ui
 import { Menu, Transition } from "@headlessui/react";
 // types
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 // plane ui
@@ -20,13 +21,10 @@ import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useAppTheme, useUser, useUserPermissions, useUserProfile, useWorkspace } from "@/hooks/store";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web helpers
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 // components
 import { WorkspaceLogo } from "../logo";
-
-
 
 export const SidebarDropdown = observer(() => {
   const { t } = useTranslation();
@@ -41,7 +39,7 @@ export const SidebarDropdown = observer(() => {
       },
       {
         key: "settings",
-        name: t("workspace_settings"),
+        name: t("workspace_settings.label"),
         href: `/${workspaceSlug}/settings`,
         icon: Settings,
         access: [EUserPermissions.ADMIN],
@@ -91,8 +89,8 @@ export const SidebarDropdown = observer(() => {
     await signOut().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: t("error"),
-        message: t("failed_to_sign_out_please_try_again"),
+        title: t("sign_out.toast.error.title"),
+        message: t("sign_out.toast.error.message"),
       })
     );
   };

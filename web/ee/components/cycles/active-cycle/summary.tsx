@@ -89,7 +89,7 @@ const Summary = observer((props: Props) => {
         "md:w-[300px] md:border-r border-custom-border-200": parentWidth && parentWidth > 890,
       })}
     >
-      <div className="text-xs text-custom-text-350 font-medium">Breakdown of this cycle&rsquo;s issues</div>
+      <div className="text-xs text-custom-text-350 font-medium">Breakdown of this cycle&rsquo;s work items</div>
       <div
         className={cn("border-b border-custom-border-200 w-full flex text-red-500 py-2", {
           "text-green-500": !isBehind,

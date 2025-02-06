@@ -3,7 +3,8 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { Control, Controller } from "react-hook-form";
-// types
+// plane imports
+import { ETabIndices, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 import { ISearchIssueResponse, TIssue } from "@plane/types";
 // components
 import {
@@ -14,16 +15,12 @@ import {
   StateDropdown,
 } from "@/components/dropdowns";
 import { IssueLabelSelect } from "@/components/issues/select";
-// constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useProjectEstimates, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type TIssueDefaultPropertiesProps = {
   control: Control<TIssue>;
@@ -49,7 +46,7 @@ export const EpicDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = obs
   // derived values
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
 
-  const canCreateLabel = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canCreateLabel = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
 
   const minDate = getDate(startDate);
   minDate?.setDate(minDate.getDate());

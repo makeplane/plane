@@ -5,7 +5,17 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Layers, Lock } from "lucide-react";
 // plane constants
-import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import {
+  EIssueLayoutTypes,
+  EIssueFilterType,
+  EIssuesStoreType,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
+  EViewAccess,
+  EUserWorkspaceRoles,
+  EUserPermissionsLevel,
+} from "@plane/constants";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
@@ -13,22 +23,20 @@ import { Breadcrumbs, Button, Tooltip, Header, TeamsIcon, Loader } from "@plane/
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
-import { EViewAccess } from "@/constants/views";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 import { getPublishViewLink } from "@/helpers/project-views.helpers";
 // hooks
 import { useCommandPalette, useIssues, useLabel, useMember, useUserPermissions } from "@/hooks/store";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useTeamspaces, useTeamspaceViews } from "@/plane-web/hooks/store";
 
 export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
   // router
   const { workspaceSlug, teamspaceId, viewId } = useParams();
+    // plane hooks
+    const { t } = useTranslation();
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -49,7 +57,7 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
   const publishLink = getPublishViewLink(view?.anchor);
   // permissions
   const canUserCreateIssue = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
 
@@ -134,7 +142,7 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
               link={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces`}
-                  label="Teamspaces"
+                  label={t("teamspaces.label")}
                   icon={<TeamsIcon className="h-4 w-4 text-custom-text-300" />}
                 />
               }
@@ -160,7 +168,7 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
               link={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces/${teamspaceId}/views`}
-                  label="Views"
+                  label={t("views")}
                   icon={<Layers className="h-4 w-4 text-custom-text-300" />}
                 />
               }
@@ -207,7 +215,7 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
             rel="noopener noreferrer"
           >
             <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />
-            Live
+            {t("common.live")}
           </a>
         ) : (
           <></>
@@ -227,7 +235,7 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
               selectedLayout={activeLayout}
             />
             <FiltersDropdown
-              title="Filters"
+              title={t("common.filters")}
               placement="bottom-end"
               disabled={!canUserCreateIssue}
               isFiltersApplied={isIssueFilterActive(issueFilters)}
@@ -238,16 +246,16 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
                 displayFilters={issueFilters?.displayFilters ?? {}}
                 handleDisplayFiltersUpdate={handleDisplayFilters}
                 layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.team_issues[activeLayout] : undefined
+                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues[activeLayout] : undefined
                 }
                 labels={workspaceLabels}
                 memberIds={workspaceMemberIds ?? undefined}
               />
             </FiltersDropdown>
-            <FiltersDropdown title="Display" placement="bottom-end">
+            <FiltersDropdown title={t("common.display")} placement="bottom-end">
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.team_issues[activeLayout] : undefined
+                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues[activeLayout] : undefined
                 }
                 displayFilters={issueFilters?.displayFilters ?? {}}
                 handleDisplayFiltersUpdate={handleDisplayFilters}
@@ -261,7 +269,7 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
         )}
         {canUserCreateIssue ? (
           <Button onClick={() => toggleCreateIssueModal(true, EIssuesStoreType.TEAM_VIEW)} size="sm">
-            Add issue
+            {t("issue.add")}
           </Button>
         ) : (
           <></>

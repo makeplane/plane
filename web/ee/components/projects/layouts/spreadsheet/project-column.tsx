@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { EUserPermissions } from "@plane/types/src/enums";
+import { EUserProjectRoles } from "@plane/constants";
 import { useUserPermissions } from "@/hooks/store";
 import { IProjectDisplayProperties, SPREADSHEET_PROPERTY_DETAILS } from "@/plane-web/constants/project/spreadsheet";
 import { TProject } from "@/plane-web/types/projects";
@@ -25,7 +25,8 @@ export const ProjectColumn = observer((props: Props) => {
   const isEditingAllowed =
     workspaceProjectsPermissions &&
     workspaceProjectsPermissions[workspaceSlug?.toString()][projectDetails.id] &&
-    workspaceProjectsPermissions[workspaceSlug?.toString()][projectDetails.id] >= EUserPermissions.ADMIN;
+    workspaceProjectsPermissions[workspaceSlug?.toString()][projectDetails.id] >= EUserProjectRoles.ADMIN;
+
   return (
     <td
       tabIndex={0}
@@ -35,8 +36,9 @@ export const ProjectColumn = observer((props: Props) => {
       <Column
         project={projectDetails}
         onChange={(project: TProject, data: Partial<TProject>) => {
-          console.log(JSON.parse(JSON.stringify(project)), data);
-          updateProject && updateProject(project.id, data);
+          if (updateProject) {
+            updateProject(project.id, data);
+          }
         }}
         disabled={!isEditingAllowed}
       />
