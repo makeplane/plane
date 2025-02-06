@@ -40,9 +40,9 @@ export const useLinks = (workspaceSlug: string) => {
           });
           toggleLinkModal(false);
         } catch (error: any) {
-          console.error("error", error);
+          console.error("error", error?.data?.url?.error);
           setToast({
-            message: error?.data?.error ?? "The link could not be created",
+            message: error?.data?.url?.error ?? "The link could not be created",
             type: TOAST_TYPE.ERROR,
             title: "Link not created",
           });
