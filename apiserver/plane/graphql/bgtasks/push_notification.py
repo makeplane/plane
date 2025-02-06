@@ -322,7 +322,7 @@ def issue_push_notifications(notification):
         body = (
             f"{actor_name} "
             f"{'added a new' if new_value else 'removed the'} "
-            f"{'assignee' if property_key == 'assignees' else "label"} "
+            f"{'assignee' if property_key == 'assignees' else 'label'} "
             f"{new_value if new_value else old_value}"
         )
     # start_date and target_date
@@ -385,7 +385,7 @@ def issue_push_notifications(notification):
         comment_data = comment_content(content) if content else None
         body = (
             f"{actor_name} "
-            f"{'removed the comment' if new_value == "None" and old_value == "None" else 'updated the comment' if old_value != "None" else 'commented'} "
+            f"{'removed the comment' if new_value == 'None' and old_value == 'None' else 'updated the comment' if old_value != 'None' else 'commented'} "
             f"{comment_data['content'] if comment_data else ''}"
         )
 
