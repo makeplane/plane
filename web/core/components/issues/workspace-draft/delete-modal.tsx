@@ -67,7 +67,7 @@ export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: `${t("success")}!`,
-            message: t("workspace_draft_issues.toast.deleted.success"),
+            message: t("workspace_draft_issues.toasts.deleted.success"),
           });
           onClose();
         })

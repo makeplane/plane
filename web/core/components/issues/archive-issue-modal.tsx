@@ -55,7 +55,7 @@ export const ArchiveIssueModal: React.FC<Props> = (props) => {
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: t("issue.error.label"),
+          title: t("common.error.label"),
           message: t("issue.archive.failed.message"),
         })
       )

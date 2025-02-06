@@ -99,7 +99,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: `${t("error")}!`,
-          message: t("workspace_draft_issues.toast.created.error"),
+          message: t("workspace_draft_issues.toasts.created.error"),
         });
         captureIssueEvent({
           eventName: "Draft work item created",
