@@ -34,8 +34,8 @@ const SidebarDropdownItem = (props: TProps) => {
       <Menu.Item
         as="div"
         className={cn("px-4 py-2", {
-          "bg-custom-primary-100/10": workspace.id === activeWorkspace?.id,
-          "hover:bg-custom-sidebar-background-80": workspace.id !== activeWorkspace?.id,
+          "bg-custom-sidebar-background-90": workspace.id === activeWorkspace?.id,
+          "hover:bg-custom-sidebar-background-90": workspace.id !== activeWorkspace?.id,
         })}
       >
         <div className="flex items-center justify-between gap-1 rounded p-1 text-sm text-custom-sidebar-text-100 ">
@@ -75,7 +75,7 @@ const SidebarDropdownItem = (props: TProps) => {
               <Check className="h-5 w-5 text-custom-sidebar-text-100" />
             </span>
           ) : (
-            <SubscriptionPill />
+            <SubscriptionPill workspace={workspace} />
           )}
         </div>
         {workspace.id === activeWorkspace?.id && (
