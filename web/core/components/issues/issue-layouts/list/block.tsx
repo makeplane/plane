@@ -16,6 +16,7 @@ import { MultipleSelectEntityAction } from "@/components/core";
 import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
@@ -149,10 +150,19 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   //TODO: add better logic. This is to have a min width for ID/Key based on the length of project identifier
   const keyMinWidth = displayProperties?.key ? (projectIdentifier?.length ?? 0) * 7 : 0;
 
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: issue?.project_id,
+    issueId,
+    projectIdentifier,
+    sequenceId: issue?.sequence_id,
+    isEpic,
+    isArchived: !!issue?.archived_at,
+  });
   return (
     <ControlLink
       id={`issue-${issue.id}`}
-      href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}${isEpic ? "epics" : "issues"}/${issue.id}`}
+      href={workItemLink}
       onClick={() => handleIssuePeekOverview(issue)}
       className="w-full cursor-pointer"
       disabled={!!issue?.tempId || issue?.is_draft}

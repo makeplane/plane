@@ -16,9 +16,10 @@ import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/c
 import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker, useProjectState } from "@/hooks/store";
+import { useEventTracker, useProject, useProjectState } from "@/hooks/store";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 
@@ -44,18 +45,26 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
   // store hooks
   const { setTrackElement } = useEventTracker();
   const { getStateById } = useProjectState();
+  const { getProjectIdentifierById } = useProject();
   // derived values
   const stateDetails = getStateById(issue.state_id);
   const isEditingAllowed = !readOnly;
+  const projectIdentifier = getProjectIdentifierById(issue?.project_id);
   // auth
   const isArchivingAllowed = handleArchive && isEditingAllowed;
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
 
-  const issueLink = `${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`;
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug.toString(),
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier,
+    sequenceId: issue?.sequence_id,
+  });
 
-  const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
+  const handleOpenInNewTab = () => window.open(workItemLink, "_blank");
   const handleCopyIssueLink = () =>
-    copyUrlToClipboard(issueLink).then(() =>
+    copyUrlToClipboard(workItemLink, false).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
