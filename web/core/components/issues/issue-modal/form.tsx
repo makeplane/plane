@@ -235,7 +235,12 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         setGptAssistantModal(false);
         reset({
           ...defaultValues,
-          ...(isCreateMoreToggleEnabled ? { ...data } : {}),
+          ...(isCreateMoreToggleEnabled
+            ? {
+                ...data,
+                parent_id: watch("parent_id"),
+              }
+            : {}),
           project_id: getValues<"project_id">("project_id"),
           type_id: getValues<"type_id">("type_id"),
           description_html: data?.description_html ?? "<p></p>",
