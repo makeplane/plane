@@ -2014,12 +2014,12 @@
       "mark_unsnooze": "取消暂停"
     },
     "toasts": {
-      "read": "收件箱已标记为已读",
-      "unread": "收件箱已标记为未读",
-      "archived": "收件箱已标记为已归档",
-      "unarchived": "收件箱已标记为未归档",
-      "snoozed": "收件箱已暂停",
-      "unsnoozed": "收件箱已取消暂停"
+      "read": "通知已标记为已读",
+      "unread": "通知已标记为未读",
+      "archived": "通知已标记为已归档",
+      "unarchived": "通知已标记为未归档",
+      "snoozed": "通知已暂停",
+      "unsnoozed": "通知已取消暂停"
     },
     "empty_state": {
       "detail": {

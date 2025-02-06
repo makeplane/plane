@@ -171,7 +171,7 @@
   },
 
   "submit": "Enviar",
-  "cancel": "Cancelar", 
+  "cancel": "Cancelar",
   "loading": "Cargando",
   "error": "Error",
   "success": "Éxito",
@@ -1588,7 +1588,7 @@
       "workload": "Carga de trabajo",
       "overview": "Resumen",
       "created": "Elementos de trabajo creados",
-      "assigned": "Elementos de trabajo asignados", 
+      "assigned": "Elementos de trabajo asignados",
       "subscribed": "Elementos de trabajo suscritos",
       "state_distribution": {
         "title": "Elementos de trabajo por estado",
@@ -2014,12 +2014,12 @@
       "mark_unsnooze": "Quitar posposición"
     },
     "toasts": {
-      "read": "Bandeja de entrada marcada como leída",
-      "unread": "Bandeja de entrada marcada como no leída",
-      "archived": "Bandeja de entrada marcada como archivada",
-      "unarchived": "Bandeja de entrada desarchivada",
-      "snoozed": "Bandeja de entrada pospuesta",
-      "unsnoozed": "Posposición de bandeja de entrada cancelada"
+      "read": "Notificación marcada como leída",
+      "unread": "Notificación marcada como no leída",
+      "archived": "Notificación marcada como archivada",
+      "unarchived": "Notificación marcada como no archivada",
+      "snoozed": "Notificación pospuesta",
+      "unsnoozed": "Notificación posposición cancelada"
     },
     "empty_state": {
       "detail": {

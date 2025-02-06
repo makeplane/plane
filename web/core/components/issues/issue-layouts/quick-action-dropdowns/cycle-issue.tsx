@@ -125,7 +125,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
     {
       key: "archive",
       title: "Archive",
-      description: isInArchivableGroup ? undefined : "Only completed or canceled\nissues can be archived",
+      description: isInArchivableGroup ? undefined : "Only completed or canceled\nwork items can be archived",
       icon: ArchiveIcon,
       className: "items-start",
       iconClassName: "mt-1",

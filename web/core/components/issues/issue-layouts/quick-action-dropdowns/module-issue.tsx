@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Copy, ExternalLink, Link, Pencil, Trash2, XCircle } from "lucide-react";
 // types
-import { ARCHIVABLE_STATE_GROUPS, EIssuesStoreType ,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { ARCHIVABLE_STATE_GROUPS, EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // ui
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
@@ -122,7 +122,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
     {
       key: "archive",
       title: "Archive",
-      description: isInArchivableGroup ? undefined : "Only completed or canceled\nissues can be archived",
+      description: isInArchivableGroup ? undefined : "Only completed or canceled\nwork items can be archived",
       icon: ArchiveIcon,
       className: "items-start",
       iconClassName: "mt-1",

@@ -506,7 +506,7 @@
   "project_view": {
     "sort_by": {
       "created_at": "Créé le",
-      "updated_at": "Mis à jour le", 
+      "updated_at": "Mis à jour le",
       "name": "Nom"
     }
   },
@@ -1588,7 +1588,7 @@
       "workload": "Charge de travail",
       "overview": "Vue d'ensemble",
       "created": "Éléments de travail créés",
-      "assigned": "Éléments de travail assignés", 
+      "assigned": "Éléments de travail assignés",
       "subscribed": "Éléments de travail suivis",
       "state_distribution": {
         "title": "Éléments de travail par état",
@@ -2014,12 +2014,12 @@
       "mark_unsnooze": "Annuler le report"
     },
     "toasts": {
-      "read": "Boîte de réception marquée comme lue",
-      "unread": "Boîte de réception marquée comme non lue",
-      "archived": "Boîte de réception archivée",
-      "unarchived": "Boîte de réception désarchivée",
-      "snoozed": "Boîte de réception reportée",
-      "unsnoozed": "Report de la boîte de réception annulé"
+      "read": "Notification marquée comme lue",
+      "unread": "Notification marquée comme non lue",
+      "archived": "Notification marquée comme archivée",
+      "unarchived": "Notification marquée comme non archivée",
+      "snoozed": "Notification reportée",
+      "unsnoozed": "Report de la notification annulé"
     },
     "empty_state": {
       "detail": {
@@ -2045,7 +2045,7 @@
     },
     "snooze": {
       "1_day": "1 jour",
-      "3_days": "3 jours", 
+      "3_days": "3 jours",
       "5_days": "5 jours",
       "1_week": "1 semaine",
       "2_weeks": "2 semaines",

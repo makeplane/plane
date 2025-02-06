@@ -501,8 +501,8 @@
   "re_generate": "再生成",
   "re_generate_key": "キーを再生成",
   "export": "エクスポート",
-  "member": "{count, plural, other{# メンバー}}", 
-  
+  "member": "{count, plural, other{# メンバー}}",
+
   "project_view": {
     "sort_by": {
       "created_at": "作成日時",
@@ -2014,12 +2014,12 @@
       "mark_unsnooze": "スヌーズ解除"
     },
     "toasts": {
-      "read": "受信トレイを既読にしました",
-      "unread": "受信トレイを未読にしました",
-      "archived": "受信トレイをアーカイブしました",
-      "unarchived": "受信トレイのアーカイブを解除しました",
-      "snoozed": "受信トレイをスヌーズしました",
-      "unsnoozed": "受信トレイのスヌーズを解除しました"
+      "read": "通知を既読にしました",
+      "unread": "通知を未読にしました",
+      "archived": "通知をアーカイブしました",
+      "unarchived": "通知をアーカイブ解除しました",
+      "snoozed": "通知をスヌーズしました",
+      "unsnoozed": "通知のスヌーズを解除しました"
     },
     "empty_state": {
       "detail": {
