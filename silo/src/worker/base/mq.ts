@@ -1,7 +1,7 @@
 import amqp from "amqplib";
-import { TMQEntityOptions } from "./types";
 import { env } from "@/env";
-import { logger } from "@/logger";
+import { SentryInstance } from "@/sentry-config";
+import { TMQEntityOptions } from "./types";
 
 export class MQActorBase {
   private connection!: amqp.Connection;
@@ -10,14 +10,10 @@ export class MQActorBase {
   routingKey: string;
   channel!: amqp.Channel;
   amqpUrl = env.AMQP_URL || "amqp://localhost";
-
-  private dlxQueueSettings = {
-    durable: true,
-    arguments: {
-      "x-dead-letter-exchange": "dlx_exchange",
-      "x-dead-letter-routing-key": "dlx_routing_key",
-    },
-  };
+  private reconnecting = false;
+  private reconnectAttempts = 0;
+  private readonly MAX_RECONNECT_ATTEMPTS = 5;
+  private readonly RECONNECT_INTERVAL = 5000;
 
   constructor(options: TMQEntityOptions, amqpUrl?: string) {
     this.exchange = "migration_exchange";
@@ -41,48 +37,126 @@ export class MQActorBase {
     }
   }
 
+  private async setupConnectionListeners() {
+    this.connection.on("error", (err) => {
+      this.handleReconnection();
+    });
+
+    this.connection.on("close", () => {
+      this.handleReconnection();
+    });
+
+    this.channel.on("error", (err) => {
+      this.handleReconnection();
+    });
+
+    this.channel.on("close", () => {
+      this.handleReconnection();
+    });
+  }
+
+  private async handleReconnection() {
+    if (this.reconnecting) return;
+
+    this.reconnecting = true;
+    while (this.reconnectAttempts < this.MAX_RECONNECT_ATTEMPTS) {
+      try {
+        console.log(`Reconnection attempt ${this.reconnectAttempts + 1}/${this.MAX_RECONNECT_ATTEMPTS}`);
+        await this.connect();
+        this.reconnecting = false;
+        this.reconnectAttempts = 0;
+        console.log("Successfully reconnected to RabbitMQ");
+        return true;
+      } catch (error) {
+        this.reconnectAttempts++;
+        console.error(`Reconnection attempt failed:`, error);
+        await new Promise((resolve) => setTimeout(resolve, this.RECONNECT_INTERVAL));
+      }
+    }
+
+    SentryInstance.captureException(new Error("Not able to reconnect to rabbit mq. Aborting..."));
+  }
+
   async connect() {
     try {
-      // create connection
-      const amqpUrl = this.amqpUrl;
+      // Create connection
+      this.connection = await amqp.connect(this.amqpUrl, {
+        heartbeat: 60,
+      });
 
-      this.connection = await amqp.connect(amqpUrl, {});
+      // Create confirm channel
       this.channel = await this.connection.createConfirmChannel();
 
+      // Setup connection and channel event listeners
+      await this.setupConnectionListeners();
+
+      // Setup queues and exchanges
+      await this.setupQueuesAndExchanges();
+    } catch (error) {
+      throw new Error(`Failed to connect to RabbitMQ: ${error}`);
+    }
+  }
+
+  private async setupQueuesAndExchanges() {
+    try {
       // Declare the Dead Letter Exchange and Queue
       if (this.queueName !== "celery") {
-        const dlxExchange = "dlx_exchange";
-        const dlxQueue = "dlx_queue";
+        const dlxExchange = `dlx_exchange`;
+        const dlxQueue = `${this.queueName}.dlx`;
+        const dlxRoutingKey = `dlx_routing_key`;
 
+        // Setup DLX
         await this.channel.assertExchange(dlxExchange, "direct", {
           durable: true,
         });
-        await this.channel.assertQueue(dlxQueue, { durable: true });
-        await this.channel.bindQueue(dlxQueue, dlxExchange, "dlx_routing_key");
 
+        await this.channel.assertQueue(dlxQueue, {
+          durable: true,
+          arguments: {},
+        });
+
+        await this.channel.bindQueue(dlxQueue, dlxExchange, dlxRoutingKey);
+
+        // Setup main queue with DLX configuration
         await this.channel.assertQueue(this.queueName, {
           durable: true,
           arguments: {
             "x-dead-letter-exchange": dlxExchange,
-            "x-dead-letter-routing-key": "dlx_routing_key",
+            "x-dead-letter-routing-key": dlxRoutingKey,
           },
         });
+      } else {
+        // Setup celery queue without DLX
+        await this.channel.assertQueue(this.queueName, {
+          durable: true,
+        });
       }
+
+      // Setup main exchange
       await this.channel.assertExchange(this.exchange, "direct", {
         durable: true,
       });
+
+      // Bind queue to exchange
       await this.channel.bindQueue(this.queueName, this.exchange, this.routingKey);
     } catch (error) {
-      throw new Error("Error while connecting to RabbitMq: " + error);
+      console.error("Error setting up queues and exchanges:", error);
+      throw error;
     }
   }
 
   async close() {
     try {
-      await this.channel.close();
-      await this.connection.close();
+      if (this.channel) {
+        await this.channel.close();
+      }
+      if (this.connection) {
+        await this.connection.close();
+      }
+      console.log("RabbitMQ connection closed successfully");
     } catch (error) {
-      console.log("Error while closing RabbitMq connection", error);
+      console.error("Error while closing RabbitMQ connection:", error);
+      throw error;
     }
   }
 }
