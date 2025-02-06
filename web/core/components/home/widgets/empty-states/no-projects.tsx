@@ -1,4 +1,6 @@
 import React from "react";
+// mobx
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Briefcase, Check, Hotel, Users, X } from "lucide-react";
@@ -6,13 +8,14 @@ import { Briefcase, Check, Hotel, Users, X } from "lucide-react";
 import { useLocalStorage } from "@plane/hooks";
 import { Avatar } from "@plane/ui";
 // helpers
+import { cn } from "@plane/utils";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useUser, useUserPermissions } from "@/hooks/store";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants";
 
-export const NoProjectsEmptyState = () => {
+export const NoProjectsEmptyState = observer(() => {
   // navigation
   const { workspaceSlug } = useParams();
   // store hooks
@@ -39,7 +42,7 @@ export const NoProjectsEmptyState = () => {
       id: "create-project",
       title: "Create a project.",
       description: "Most things start with a project in Plane.",
-      icon: <Briefcase className="size-10 text-custom-primary-100" />,
+      icon: <Briefcase className="size-10" />,
       flag: "projects",
       cta: {
         text: "Get started",
@@ -56,7 +59,7 @@ export const NoProjectsEmptyState = () => {
       id: "invite-team",
       title: "Invite your team.",
       description: "Build, ship, and manage with coworkers.",
-      icon: <Users className="size-10 text-custom-primary-100" />,
+      icon: <Users className="size-10" />,
       flag: "visited_members",
       cta: {
         text: "Get them in",
@@ -67,7 +70,7 @@ export const NoProjectsEmptyState = () => {
       id: "configure-workspace",
       title: "Set up your workspace.",
       description: "Turn features on or off or go beyond that.",
-      icon: <Hotel className="size-10 text-custom-primary-100" />,
+      icon: <Hotel className="size-10" />,
       flag: "visited_workspace",
       cta: {
         text: "Configure this workspace",
@@ -125,46 +128,56 @@ export const NoProjectsEmptyState = () => {
         </button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        {EMPTY_STATE_DATA.map((item) => (
-          <div
-            key={item.id}
-            className="flex flex-col items-center justify-center p-6 bg-custom-background-100 rounded-lg text-center border border-custom-border-200/40"
-          >
-            <div className="grid place-items-center bg-custom-primary-100/10 rounded-full size-20 mb-3">
-              <span className="text-3xl my-auto">{item.icon}</span>
-            </div>
-            <h3 className="text-base font-medium text-custom-text-100 mb-2">{item.title}</h3>
-            <p className="text-sm text-custom-text-300 mb-2">{item.description}</p>
-            {isComplete(item.flag) ? (
-              <div className="flex items-center gap-2 bg-[#17a34a] rounded-full p-1">
-                <Check className="size-3 text-custom-primary-100 text-white" />
+        {EMPTY_STATE_DATA.map((item) => {
+          const isStateComplete = isComplete(item.flag);
+          return (
+            <div
+              key={item.id}
+              className="flex flex-col items-center justify-center p-6 bg-custom-background-100 rounded-lg text-center border border-custom-border-200/40"
+            >
+              <div
+                className={cn(
+                  "grid place-items-center bg-custom-background-90 rounded-full size-20 mb-3 text-custom-text-400",
+                  {
+                    "text-custom-primary-100 bg-custom-primary-100/10": !isStateComplete,
+                  }
+                )}
+              >
+                <span className="text-3xl my-auto">{item.icon}</span>
               </div>
-            ) : item.cta.link ? (
-              <Link
-                href={item.cta.link}
-                onClick={() => {
-                  if (!storedValue) return;
-                  setValue({
-                    ...storedValue,
-                    [item.flag]: true,
-                  });
-                }}
-                className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium"
-              >
-                {item.cta.text}
-              </Link>
-            ) : (
-              <button
-                type="button"
-                className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium"
-                onClick={item.cta.onClick}
-              >
-                {item.cta.text}
-              </button>
-            )}
-          </div>
-        ))}
+              <h3 className="text-base font-medium text-custom-text-100 mb-2">{item.title}</h3>
+              <p className="text-sm text-custom-text-300 mb-2">{item.description}</p>
+              {isStateComplete ? (
+                <div className="flex items-center gap-2 bg-[#17a34a] rounded-full p-1">
+                  <Check className="size-3 text-custom-primary-100 text-white" />
+                </div>
+              ) : item.cta.link ? (
+                <Link
+                  href={item.cta.link}
+                  onClick={() => {
+                    if (!storedValue) return;
+                    setValue({
+                      ...storedValue,
+                      [item.flag]: true,
+                    });
+                  }}
+                  className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium"
+                >
+                  {item.cta.text}
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium"
+                  onClick={item.cta.onClick}
+                >
+                  {item.cta.text}
+                </button>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
-};
+});
