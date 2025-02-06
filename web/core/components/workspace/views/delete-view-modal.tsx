@@ -4,11 +4,11 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
+import { GLOBAL_VIEW_DELETED } from "@plane/constants";
 import { IWorkspaceView } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { GLOBAL_VIEW_DELETED } from "@/constants/event-tracker";
 // hooks
 import { useGlobalView, useEventTracker } from "@/hooks/store";
 
@@ -42,7 +42,7 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
           state: "SUCCESS",
         });
       })
-      .catch(() => {
+      .catch((error: any) => {
         captureEvent(GLOBAL_VIEW_DELETED, {
           view_id: data.id,
           state: "FAILED",
@@ -50,7 +50,7 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Something went wrong while deleting the view. Please try again.",
+          message: error?.error ?? "Something went wrong while deleting the view. Please try again.",
         });
       })
       .finally(() => {

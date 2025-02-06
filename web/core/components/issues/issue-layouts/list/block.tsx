@@ -175,9 +175,9 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
           if (!isDraggingAllowed) {
             setToast({
               type: TOAST_TYPE.WARNING,
-              title: "Cannot move issue",
+              title: "Cannot move work item",
               message: !canEditIssueProperties
-                ? "You are not allowed to move this issue"
+                ? "You are not allowed to move this work item"
                 : "Drag and drop is disabled for the current grouping",
             });
           }
@@ -191,7 +191,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 <Tooltip
                   tooltipContent={
                     <>
-                      Only issues within the current
+                      Only work items within the current
                       <br />
                       project can be selected.
                     </>
@@ -259,6 +259,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
             >
               <p className="w-full truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
             </Tooltip>
+            {isEpic && <IssueStats issueId={issue.id} />}
           </div>
           {!issue?.tempId && (
             <div
@@ -277,7 +278,6 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
         <div className="flex flex-shrink-0 items-center gap-2">
           {!issue?.tempId ? (
             <>
-              {isEpic && <IssueStats issueId={issue.id} />}
               <IssueProperties
                 className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-grow md:flex-shrink-0" : "lg:flex-grow lg:flex-shrink-0"} items-center gap-2 whitespace-nowrap`}
                 issue={issue}

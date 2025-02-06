@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 // hooks
 // components
 import { CycleDropdown } from "@/components/dropdowns";
@@ -21,6 +22,7 @@ type TIssueCycleSelect = {
 
 export const IssueCycleSelect: React.FC<TIssueCycleSelect> = observer((props) => {
   const { className = "", workspaceSlug, projectId, issueId, issueOperations, disabled = false } = props;
+  const { t } = useTranslation();
   // states
   const [isUpdating, setIsUpdating] = useState(false);
   // store hooks
@@ -50,7 +52,7 @@ export const IssueCycleSelect: React.FC<TIssueCycleSelect> = observer((props) =>
         className="group w-full"
         buttonContainerClassName="w-full text-left rounded"
         buttonClassName={`text-sm justify-between  ${issue?.cycle_id ? "" : "text-custom-text-400"}`}
-        placeholder="No cycle"
+        placeholder={t("cycle.no_cycle")}
         hideIcon
         dropdownArrow
         dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"

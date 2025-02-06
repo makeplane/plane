@@ -5,6 +5,8 @@ import unset from "lodash/unset";
 import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane imports
+import { EDraftIssuePaginationType } from "@plane/constants";
 import {
   TWorkspaceDraftIssue,
   TWorkspaceDraftPaginationInfo,
@@ -19,7 +21,6 @@ import {
   TBulkOperationsPayload,
 } from "@plane/types";
 // constants
-import { EDraftIssuePaginationType } from "@/constants/workspace-drafts";
 // helpers
 import { getCurrentDateTimeInISO, convertToISODateString } from "@/helpers/date-time.helper";
 // local-db

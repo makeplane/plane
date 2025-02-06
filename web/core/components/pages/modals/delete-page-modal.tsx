@@ -3,9 +3,9 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // ui
+import { PAGE_DELETED } from "@plane/constants";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { PAGE_DELETED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useProjectPages } from "@/hooks/store";
 import { TPageInstance } from "@/store/pages/base-page";

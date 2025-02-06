@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 // types
 import { useParams } from "next/navigation";
-import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import { EIssueFilterType, EIssuesStoreType, EDraftIssuePaginationType } from "@plane/constants";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -13,7 +13,6 @@ import {
   TLoader,
   TProfileViews,
 } from "@plane/types";
-import { EDraftIssuePaginationType } from "@/constants/workspace-drafts";
 import { useTeamIssueActions, useTeamViewIssueActions } from "@/plane-web/helpers/issue-action-helper";
 import { useIssues } from "./store";
 

@@ -1,9 +1,10 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
+import { NETWORK_CHOICES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Logo } from "@/components/common";
 // constants
-import { NETWORK_CHOICES } from "@/constants/project";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
@@ -16,6 +17,7 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
   const { getCycleById } = useCycle();
   const { getModuleById } = useModule();
   const { getUserDetails } = useMember();
+  const { t } = useTranslation();
 
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
   const moduleDetails = moduleId ? getModuleById(moduleId.toString()) : undefined;
@@ -91,7 +93,7 @@ export const CustomAnalyticsSidebarHeader = observer(() => {
             <div className="mt-4 space-y-4">
               <div className="flex items-center gap-2 text-xs">
                 <h6 className="text-custom-text-200">Network</h6>
-                <span>{NETWORK_CHOICES.find((n) => n.key === projectDetails?.network)?.label ?? ""}</span>
+                <span>{t(NETWORK_CHOICES.find((n) => n.key === projectDetails?.network)?.i18n_label ?? "")}</span>
               </div>
             </div>
           </div>

@@ -5,6 +5,8 @@ import { Globe2, Lock, LucideIcon } from "lucide-react";
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // editor
 import { EditorRefApi } from "@plane/editor";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Button, Tooltip } from "@plane/ui";
 // constants
@@ -46,6 +48,7 @@ const COMMENT_ACCESS_SPECIFIERS: TCommentAccessType[] = [
 const toolbarItems = TOOLBAR_ITEMS.lite;
 
 export const IssueCommentToolbar: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
   const {
     accessSpecifier,
     executeCommand,
@@ -171,7 +174,7 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
               disabled={isSubmitButtonDisabled}
               loading={isSubmitting}
             >
-              Comment
+              {t("common.comment")}
             </Button>
           </div>
         )}

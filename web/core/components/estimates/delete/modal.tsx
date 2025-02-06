@@ -63,8 +63,8 @@ export const DeleteEstimateModal: FC<TDeleteEstimateModal> = observer((props) =>
         <div className="px-5">
           <div className="text-base text-custom-text-200">
             Deleting the estimate <span className="font-bold text-custom-text-100">{estimate?.name}</span>
-            &nbsp;system will remove it from all issues permanently. This action cannot be undone. If you add estimates
-            again, you will need to update all the issues.
+            &nbsp;system will remove it from all work items permanently. This action cannot be undone. If you add
+            estimates again, you will need to update all the work items.
           </div>
         </div>
 

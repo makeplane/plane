@@ -1,41 +1,65 @@
 // icons
-import { Globe2, Lock, LucideIcon } from "lucide-react";
-import { TProjectAppliedDisplayFilterKeys, TProjectOrderByOptions } from "@plane/types";
+import {
+  TProjectAppliedDisplayFilterKeys,
+  TProjectOrderByOptions,
+} from "@plane/types";
 
-export const NETWORK_CHOICES: {
+export type TNetworkChoiceIconKey = "Lock" | "Globe2";
+
+export type TNetworkChoice = {
   key: 0 | 2;
-  label: string;
+  labelKey: string;
+  i18n_label: string;
   description: string;
-  icon: LucideIcon;
-}[] = [
+  iconKey: TNetworkChoiceIconKey;
+};
+
+export const NETWORK_CHOICES: TNetworkChoice[] = [
   {
     key: 0,
-    label: "Private",
-    description: "Accessible only by invite",
-    icon: Lock,
+    labelKey: "Private",
+    i18n_label: "workspace_projects.network.private.title",
+    description: "workspace_projects.network.private.description", //"Accessible only by invite",
+    iconKey: "Lock",
   },
   {
     key: 2,
-    label: "Public",
-    description: "Anyone in the workspace except Guests can join",
-    icon: Globe2,
+    labelKey: "Public",
+    i18n_label: "workspace_projects.network.public.title",
+    description: "workspace_projects.network.public.description", //"Anyone in the workspace except Guests can join",
+    iconKey: "Globe2",
   },
 ];
 
 export const GROUP_CHOICES = {
-  backlog: "Backlog",
-  unstarted: "Unstarted",
-  started: "Started",
-  completed: "Completed",
-  cancelled: "Cancelled",
+  backlog: {
+    key: "backlog",
+    i18n_label: "workspace_projects.state.backlog",
+  },
+  unstarted: {
+    key: "unstarted",
+    i18n_label: "workspace_projects.state.unstarted",
+  },
+  started: {
+    key: "started",
+    i18n_label: "workspace_projects.state.started",
+  },
+  completed: {
+    key: "completed",
+    i18n_label: "workspace_projects.state.completed",
+  },
+  cancelled: {
+    key: "cancelled",
+    i18n_label: "workspace_projects.state.cancelled",
+  },
 };
 
 export const PROJECT_AUTOMATION_MONTHS = [
-  { label: "1 month", value: 1 },
-  { label: "3 months", value: 3 },
-  { label: "6 months", value: 6 },
-  { label: "9 months", value: 9 },
-  { label: "12 months", value: 12 },
+  { i18n_label: "common.months_count", value: 1 },
+  { i18n_label: "common.months_count", value: 3 },
+  { i18n_label: "common.months_count", value: 6 },
+  { i18n_label: "common.months_count", value: 9 },
+  { i18n_label: "common.months_count", value: 12 },
 ];
 
 export const PROJECT_UNSPLASH_COVERS = [
@@ -59,55 +83,55 @@ export const PROJECT_UNSPLASH_COVERS = [
 
 export const PROJECT_ORDER_BY_OPTIONS: {
   key: TProjectOrderByOptions;
-  label: string;
+  i18n_label: string;
 }[] = [
   {
     key: "sort_order",
-    label: "Manual",
+    i18n_label: "workspace_projects.sort.manual",
   },
   {
     key: "name",
-    label: "Name",
+    i18n_label: "workspace_projects.sort.name",
   },
   {
     key: "created_at",
-    label: "Created date",
+    i18n_label: "workspace_projects.sort.created_at",
   },
   {
     key: "members_length",
-    label: "Number of members",
+    i18n_label: "workspace_projects.sort.members_length",
   },
 ];
 
 export const PROJECT_DISPLAY_FILTER_OPTIONS: {
   key: TProjectAppliedDisplayFilterKeys;
-  label: string;
+  i18n_label: string;
 }[] = [
   {
     key: "my_projects",
-    label: "My projects",
+    i18n_label: "workspace_projects.scope.my_projects",
   },
   {
     key: "archived_projects",
-    label: "Archived",
+    i18n_label: "workspace_projects.scope.archived_projects",
   },
 ];
 
 export const PROJECT_ERROR_MESSAGES = {
   permissionError: {
-    title: "You don't have permission to perform this action.",
-    message: undefined,
+    i18n_title: "workspace_projects.error.permission",
+    i18n_message: undefined,
   },
   cycleDeleteError: {
-    title: "Error",
-    message: "Failed to delete cycle",
+    i18n_title: "error",
+    i18n_message: "workspace_projects.error.cycle_delete",
   },
   moduleDeleteError: {
-    title: "Error",
-    message: "Failed to delete module",
+    i18n_title: "error",
+    i18n_message: "workspace_projects.error.module_delete",
   },
   issueDeleteError: {
-    title: "Error",
-    message: "Failed to delete issue",
+    i18n_title: "error",
+    i18n_message: "workspace_projects.error.issue_delete",
   },
 };

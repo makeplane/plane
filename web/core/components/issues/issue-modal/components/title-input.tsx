@@ -3,13 +3,13 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { Control, Controller, FieldErrors } from "react-hook-form";
+// plane imports
+import { ETabIndices } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 // ui
 import { Input } from "@plane/ui";
-// constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks

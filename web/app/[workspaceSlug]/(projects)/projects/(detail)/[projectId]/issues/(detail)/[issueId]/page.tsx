@@ -5,6 +5,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Loader } from "@plane/ui";
 // components
@@ -19,6 +21,8 @@ import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
 import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
 
 const IssueDetailsPage = observer(() => {
+  // i18n
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId, issueId } = useParams();
@@ -31,7 +35,7 @@ const IssueDetailsPage = observer(() => {
   } = useIssueDetail();
   const { getProjectById } = useProject();
   const { toggleIssueDetailSidebar, issueDetailSidebarCollapsed } = useAppTheme();
-  // fetching issue details
+  // fetching work item details
   const { isLoading, error } = useSWR(
     workspaceSlug && projectId && issueId ? `ISSUE_DETAIL_${workspaceSlug}_${projectId}_${issueId}` : null,
     workspaceSlug && projectId && issueId
@@ -64,10 +68,10 @@ const IssueDetailsPage = observer(() => {
       {error ? (
         <EmptyState
           image={resolvedTheme === "dark" ? emptyIssueDark : emptyIssueLight}
-          title="Issue does not exist"
-          description="The issue you are looking for does not exist, has been archived, or has been deleted."
+          title={t("issue.empty_state.issue_detail.title")}
+          description={t("issue.empty_state.issue_detail.description")}
           primaryButton={{
-            text: "View other issues",
+            text: t("issue.empty_state.issue_detail.primary_button.text"),
             onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/issues`),
           }}
         />

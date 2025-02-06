@@ -3,9 +3,10 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // ui
+import { MODULE_STATUS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ModuleStatusIcon } from "@plane/ui";
 // constants
-import { MODULE_STATUS } from "@/constants/module";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -15,6 +16,7 @@ type Props = {
 
 export const AppliedStatusFilters: React.FC<Props> = observer((props) => {
   const { handleRemove, values, editable } = props;
+  const { t } = useTranslation();
 
   return (
     <>
@@ -25,7 +27,7 @@ export const AppliedStatusFilters: React.FC<Props> = observer((props) => {
         return (
           <div key={status} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
             <ModuleStatusIcon status={statusDetails.value} height="12px" width="12px" />
-            {statusDetails.label}
+            {t(statusDetails.i18n_label)}
             {editable && (
               <button
                 type="button"

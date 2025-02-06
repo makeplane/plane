@@ -6,20 +6,17 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Copy, ExternalLink, Link, Pencil, Trash2, XCircle } from "lucide-react";
 // types
-import { EIssuesStoreType } from "@plane/constants";
+import { ARCHIVABLE_STATE_GROUPS, EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // ui
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
-// constants
-import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useIssues, useEventTracker, useProjectState, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 
@@ -68,7 +65,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
-        message: "Issue link copied to clipboard",
+        message: "Work item link copied to clipboard",
       })
     );
 
@@ -125,7 +122,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
     {
       key: "archive",
       title: "Archive",
-      description: isInArchivableGroup ? undefined : "Only completed or canceled\nissues can be archived",
+      description: isInArchivableGroup ? undefined : "Only completed or canceled\nwork items can be archived",
       icon: ArchiveIcon,
       className: "items-start",
       iconClassName: "mt-1",

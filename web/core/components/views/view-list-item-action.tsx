@@ -3,20 +3,19 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Earth, Lock } from "lucide-react";
 // types
+import { EViewAccess, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IProjectView } from "@plane/types";
 // ui
 import { Tooltip, FavoriteStar } from "@plane/ui";
 // components
 import { DeleteProjectViewModal, CreateUpdateProjectViewModal, ViewQuickActions } from "@/components/views";
 // constants
-import { EViewAccess } from "@/constants/views";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { getPublishViewLink } from "@/helpers/project-views.helpers";
 // hooks
 import { useMember, useProjectView, useUserPermissions } from "@/hooks/store";
 import { PublishViewModal } from "@/plane-web/components/views/publish";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { ButtonAvatars } from "../dropdowns/member/avatar";
 
 type Props = {

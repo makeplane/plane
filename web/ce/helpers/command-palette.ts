@@ -8,8 +8,8 @@ export const getGlobalShortcutsList: () => TCommandPaletteActionList = () => {
 
   return {
     c: {
-      title: "Create a new issue",
-      description: "Create a new issue in the current project",
+      title: "Create a new work item",
+      description: "Create a new work item in the current project",
       action: () => toggleCreateIssueModal(true),
     },
   };
@@ -58,13 +58,13 @@ export const getProjectShortcutsList: () => TCommandPaletteActionList = () => {
       action: () => toggleCreateViewModal(true),
     },
     backspace: {
-      title: "Bulk delete issues",
-      description: "Bulk delete issues in the current project",
+      title: "Bulk delete work items",
+      description: "Bulk delete work items in the current project",
       action: () => toggleBulkDeleteIssueModal(true),
     },
     delete: {
-      title: "Bulk delete issues",
-      description: "Bulk delete issues in the current project",
+      title: "Bulk delete work items",
+      description: "Bulk delete work items in the current project",
       action: () => toggleBulkDeleteIssueModal(true),
     },
   };
@@ -79,16 +79,16 @@ export const getNavigationShortcutsList = (): TCommandPaletteShortcut[] => [
 
 export const getCommonShortcutsList = (platform: string): TCommandPaletteShortcut[] => [
   { keys: "P", description: "Create project" },
-  { keys: "C", description: "Create issue" },
+  { keys: "C", description: "Create work item" },
   { keys: "Q", description: "Create cycle" },
   { keys: "M", description: "Create module" },
   { keys: "V", description: "Create view" },
   { keys: "D", description: "Create page" },
-  { keys: "Delete", description: "Bulk delete issues" },
+  { keys: "Delete", description: "Bulk delete work items" },
   { keys: "Shift,/", description: "Open shortcuts guide" },
   {
     keys: platform === "MacOS" ? "Ctrl,control,C" : "Ctrl,Alt,C",
-    description: "Copy issue URL from the issue details page",
+    description: "Copy work item URL from the work item details page",
   },
 ];
 

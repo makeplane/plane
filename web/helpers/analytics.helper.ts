@@ -1,11 +1,10 @@
 // nivo
 import { BarDatum } from "@nivo/bar";
 // plane imports
-import { ANALYTICS_DATE_KEYS } from "@plane/constants";
+import { ANALYTICS_DATE_KEYS, STATE_GROUPS } from "@plane/constants";
 import { IAnalyticsData, IAnalyticsParams, IAnalyticsResponse, TStateGroups } from "@plane/types";
 // constants
 import { MONTHS_LIST } from "@/constants/calendar";
-import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { addSpaceIfCamelCase, capitalizeFirstLetter, generateRandomColor } from "@/helpers/string.helper";
 

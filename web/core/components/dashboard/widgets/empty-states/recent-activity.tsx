@@ -13,10 +13,10 @@ export const RecentActivityEmptyState = () => {
   return (
     <div className="text-center space-y-6 flex flex-col items-center">
       <div className="h-24 w-24">
-        <Image src={image} className="w-full h-full" alt="Issues by state group" />
+        <Image src={image} className="w-full h-full" alt="Work items by state group" />
       </div>
       <p className="text-sm font-medium text-custom-text-300">
-        All your issue activities across
+        All your work items activities across
         <br />
         projects will show up here.
       </p>

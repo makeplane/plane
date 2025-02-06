@@ -4,7 +4,13 @@ import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane constants
-import { ALL_ISSUES, EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import {
+  ALL_ISSUES,
+  EIssueLayoutTypes,
+  EIssueFilterType,
+  EIssuesStoreType,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE
+,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IIssueDisplayFilterOptions } from "@plane/types";
 // hooks
 // components
@@ -12,15 +18,12 @@ import { EmptyState } from "@/components/common";
 import { SpreadsheetView } from "@/components/issues/issue-layouts";
 import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
 import { SpreadsheetLayoutLoader } from "@/components/ui";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // hooks
 import { useGlobalView, useIssues, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // store
 import emptyView from "@/public/empty-state/view.svg";
 import { IssuePeekOverview } from "../../peek-overview";
@@ -71,11 +74,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
       Object.keys(routeFilters).forEach((key) => {
         const filterKey: any = key;
         const filterValue = routeFilters[key]?.toString() || undefined;
-        if (
-          ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet.filters.includes(filterKey) &&
-          filterKey &&
-          filterValue
-        )
+        if (ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.spreadsheet.filters.includes(filterKey) && filterKey && filterValue)
           issueFilters = { ...issueFilters, [filterKey]: filterValue.split(",") };
       });
 
@@ -182,7 +181,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
         title="View does not exist"
         description="The view you are looking for does not exist or you don't have permission to view it."
         primaryButton={{
-          text: "Go to All Issues",
+          text: "Go to All work items",
           onClick: () => router.push(`/${workspaceSlug}/workspace-views/all-issues`),
         }}
       />

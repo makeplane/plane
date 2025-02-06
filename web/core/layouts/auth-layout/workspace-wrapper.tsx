@@ -10,6 +10,7 @@ import useSWR from "swr";
 import useSWRImmutable from "swr/immutable";
 // ui
 import { LogOut } from "lucide-react";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { Button, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
@@ -20,7 +21,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // images
 import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
 import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
@@ -39,7 +39,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { resolvedTheme } = useTheme();
   // store hooks
   const { signOut, data: currentUser } = useUser();
-  const { fetchProjects } = useProject();
+  const { fetchPartialProjects } = useProject();
   const { fetchFavorite } = useFavorite();
   const {
     workspace: { fetchWorkspaceMembers },
@@ -74,8 +74,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
 
   // fetching workspace projects
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,
-    workspaceSlug && currentWorkspace ? () => fetchProjects(workspaceSlug.toString()) : null,
+    workspaceSlug && currentWorkspace ? `WORKSPACE_PARTIAL_PROJECTS_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? () => fetchPartialProjects(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch workspace members

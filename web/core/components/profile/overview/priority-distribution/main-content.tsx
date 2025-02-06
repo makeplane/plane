@@ -21,7 +21,7 @@ export const PriorityDistributionContent: React.FC<Props> = (props) => {
         <div className="flex-grow p-7">
           <ProfileEmptyState
             title="No Data yet"
-            description="Create issues to view the them by priority in the graph for better analysis."
+            description="Create work items to view the them by priority in the graph for better analysis."
             image={emptyBarGraph}
           />
         </div>
