@@ -6,6 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 import { cn, getFileURL } from "@plane/utils";
 import { getUserRole } from "@/helpers/user.helper";
+import { SubscriptionPill } from "@/plane-web/components/common/subscription-pill";
 
 type TProps = {
   workspace: IWorkspace;
@@ -74,9 +75,7 @@ const SidebarDropdownItem = (props: TProps) => {
               <Check className="h-5 w-5 text-custom-sidebar-text-100" />
             </span>
           ) : (
-            <div className="capitalize rounded bg-custom-background-80 px-2 py-[1px] text-xs font-medium text-custom-text-300">
-              <h1>{workspace.current_plan?.toLowerCase() || "Free"}</h1>
-            </div>
+            <SubscriptionPill />
           )}
         </div>
         {workspace.id === activeWorkspace?.id && (
