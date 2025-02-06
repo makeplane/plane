@@ -40,9 +40,9 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           dataKey={bar.key}
           stackId={bar.stackId}
           fill={bar.fillClassName}
-          shape={(props: any) => (
+          shape={(shapeProps: any) => (
             <CustomBar
-              {...props}
+              {...shapeProps}
               stackKeys={stackKeys}
               textClassName={bar.textClassName}
               showPercentage={bar.showPercentage}

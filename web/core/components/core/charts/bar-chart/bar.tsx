@@ -17,7 +17,7 @@ const calculatePercentage = <K extends string, T extends string>(
 const MIN_BAR_HEIGHT_FOR_INTERNAL_TEXT = 14; // Minimum height needed to show text inside
 const BAR_BORDER_RADIUS = 2; // Border radius for each bar
 
-export const CustomBar = React.memo<any>((props: any) => {
+export const CustomBar = React.memo((props: any) => {
   const { fill, x, y, width, height, dataKey, stackKeys, payload, textClassName, showPercentage } = props;
   // Calculate text position
   const TEXT_PADDING_Y = Math.min(6, Math.abs(MIN_BAR_HEIGHT_FOR_INTERNAL_TEXT - height / 2));
