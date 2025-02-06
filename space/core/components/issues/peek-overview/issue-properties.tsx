@@ -43,7 +43,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = observer(({ issueDet
       setToast({
         type: TOAST_TYPE.INFO,
         title: "Link copied!",
-        message: "Issue link copied to clipboard",
+        message: "Work item link copied to clipboard",
       });
     });
   };

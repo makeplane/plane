@@ -6,7 +6,14 @@ import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { Info, SquareUser } from "lucide-react";
 // plane package imports
-import { MODULE_STATUS, PROGRESS_STATE_GROUPS_DETAILS, MODULE_FAVORITED, MODULE_UNFAVORITED,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import {
+  MODULE_STATUS,
+  PROGRESS_STATE_GROUPS_DETAILS,
+  MODULE_FAVORITED,
+  MODULE_UNFAVORITED,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
 import { IModule } from "@plane/types";
 import {
   Card,
@@ -174,11 +181,11 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const issueCount = module
     ? !moduleTotalIssues || moduleTotalIssues === 0
-      ? `0 Work item`
+      ? `0 work items`
       : moduleTotalIssues === moduleCompletedIssues
         ? `${moduleTotalIssues} Work item${moduleTotalIssues > 1 ? `s` : ``}`
         : `${moduleCompletedIssues}/${moduleTotalIssues} Work items`
-    : `0 Work item`;
+    : `0 work items`;
 
   const moduleLeadDetails = moduleDetails.lead_id ? getUserDetails(moduleDetails.lead_id) : undefined;
 
