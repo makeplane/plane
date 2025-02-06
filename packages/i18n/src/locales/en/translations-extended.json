@@ -1,0 +1,907 @@
+{
+  "workspace_dashboards": "Dashboards",
+  "pi_chat": "Pi chat",
+  "in_app": "In-app",
+  "forms": "Forms",
+
+  "common": {
+    "worklogs": "Worklogs",
+    "live": "Live",
+    "epics": "Epics",
+    "project_updates": "Project Updates",
+    "overview": "Overview"
+  },
+
+  "issue": {
+    "relation": {
+      "start_before": "Starts Before",
+      "start_after": "Starts After",
+      "finish_before": "Finishes Before",
+      "finish_after": "Finishes After"
+    }
+  },
+
+  "profile": {
+    "actions": {
+      "connections": "Connections"
+    }
+  },
+
+  "project_settings": {
+    "initiatives": {
+      "heading": "Initiatives",
+      "sub_heading": "Unlock the highest level of organization for all your work in Plane.",
+      "title": "Enable Initiatives",
+      "description": "Set bigger goals to monitor the progress",
+      "toast": {
+        "updating": "Updating initiatives feature",
+        "enable_success": "Initiatives feature enabled successfully.",
+        "disable_success": "Initiatives feature disabled successfully.",
+        "error": "Failed to update initiatives feature!"
+      }
+    },
+    "empty_state": {
+      "integrations": {
+        "title": "No integrations configured",
+        "description": "Configure GitHub and other integrations to sync your project work items."
+      }
+    }
+  },
+
+  "teamspaces": {
+    "label": "Teamspaces",
+    "empty_state": {
+      "general": {
+        "title": "Teamspaces unlock better organization and tracking in Plane.",
+        "description": "Create a dedicated surface for every real-world team, separate from all other work surfaces in Plane, and customize them to suit how your team works.",
+        "primary_button": {
+          "text": "Create a new teamspace"
+        }
+      }
+    }
+  },
+
+  "teamspace_projects": {
+    "empty_state": {
+      "general": {
+        "title": "Start by linking projects to this teamspace.",
+        "description": "Teamspaces link projects that team members are in, so you can see only their work, their contribution to progress in those projects, and team-specific work metrics."
+      }
+    }
+  },
+
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "Create team-specific work items.",
+        "description": "Work items that are assigned to members of this team in any linked project will automatically show up here. If you expect to see some work items here, make sure your linked projects have work items assigned to members of this team or create work items.",
+        "primary_button": {
+          "text": "Add work items to a linked project"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "There are no team-specific work items for the filters applied",
+        "description": "Change some of those filters or clear them all to see work items relevant to this space.",
+        "secondary_button": {
+          "text": "Clear all filters"
+        }
+      }
+    }
+  },
+
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "None of your linked projects have an active cycle.",
+        "description": "Active cycles in linked projects will automatically show up here. If you expect to see an active cycle, make sure it is running in a linked project right now."
+      },
+      "completed": {
+        "title": "None of your linked projects have a completed cycle.",
+        "description": "Completed cycles in linked projects will automatically show up here. If you expect to see a completed cycle, make sure it is also completed in a linked project."
+      },
+      "upcoming": {
+        "title": "None of your linked projects have an upcoming cycle.",
+        "description": "Upcoming cycles in linked projects will automatically show up here. If you expect to see an upcoming cycle, make sure it is there in a linked project, too."
+      }
+    }
+  },
+
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "Your team's views of your work without disrupting any other views in your workspace",
+        "description": "See your team's work in views that are saved just for your team and separately from a project's views.",
+        "primary_button": {
+          "text": "Create a view"
+        }
+      },
+      "project_view": {
+        "title": "None of your linked projects have any public views.",
+        "description": "Public views in linked projects will automatically show up here. To see public views from linked projects here, make sure those projects have public views accessible to all project members."
+      },
+      "filter": {
+        "title": "No matching views",
+        "description": "No views match the search criteria. \n Create a new view instead."
+      }
+    }
+  },
+
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "House your team's knowledge in Team Pages.",
+        "description": "Unlike pages in a project, you can save knowledge specific to a team in a separate set of pages here. Get all the features of Pages, create best practices docs, and team wikis easily.",
+        "primary_button": {
+          "text": "Create your first team page"
+        }
+      },
+      "project_page": {
+        "title": "None of your linked projects have public pages.",
+        "description": "Public pages in linked projects will automatically show up here. If you expect to see public pages here, make sure your linked projects have public pages available to all project members."
+      },
+      "filter": {
+        "title": "No matching pages",
+        "description": "Remove the filters to see all pages"
+      },
+      "search": {
+        "title": "No matching pages",
+        "description": "Remove the search criteria to see all pages"
+      }
+    }
+  },
+
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "None of your linked projects have published work items.",
+        "description": "Create some work items in one or more of those projects to see progress by dates, states, and priority."
+      },
+      "relation": {
+        "blocking": {
+          "title": "You don't have any work items blocking a teammate.",
+          "description": "Good job! You have cleared the path for your team. You are a good team player."
+        },
+        "blocked": {
+          "title": "You don't have any teammate's work items blocking you.",
+          "description": "Good news! You can make progress on all your assigned work items."
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "None of your linked projects have published work items.",
+          "description": "Create some work items in one or more of those projects to see distribution of work by project and team members."
+        },
+        "filter": {
+          "title": "There are no team stats for the filters applied.",
+          "description": "Create some work items in one or more of those projects to see distribution of work by project and team members."
+        }
+      }
+    }
+  },
+
+  "initiatives": {
+    "label": "Initiatives",
+    "add_initiative": "Add Initiative",
+    "create_initiative": "Create Initiative",
+    "update_initiative": "Update Initiative",
+    "initiative_name": "Initiative name",
+    "all_initiatives": "All Initiatives",
+    "delete_initiative": "Delete Initiative",
+    "fill_all_required_fields": "Please fill in all required fields.",
+    "toast": {
+      "create_success": "Initiative {name} created successfully.",
+      "create_error": "Failed to create initiative. Please try again!",
+      "update_success": "Initiative {name} updated successfully.",
+      "update_error": "Failed to update initiative. Please try again!",
+      "delete": {
+        "success": "Initiative deleted successfully.",
+        "error": "Failed to delete Initiative"
+      },
+      "link_copied": "Initiative link copied to clipboard.",
+      "project_update_success": "Initiative projects updated successfully.",
+      "project_update_error": "Failed to update initiative projects. Please try again!",
+      "epic_update_success": "Epic{count, plural, one { added to Initiative successfully.} other {s added to Initiative successfully.}}",
+      "epic_update_error": "Epic addition to Initiative failed. Please try again later."
+    },
+    "empty_state": {
+      "general": {
+        "title": "Organize work at the highest level with Initiatives",
+        "description": "When you need to organize work spanning several projects and teams, Initiatives come in handy. Connect projects and epics to initiatives, see automatically rolled up updates, and see the forests before you get to the trees.",
+        "primary_button": {
+          "text": "Create an initiative"
+        }
+      },
+      "search": {
+        "title": "No matching initiatives",
+        "description": "No initiatives detected with the matching criteria. \n Create a new initiative instead."
+      },
+      "not_found": {
+        "title": "Initiative does not exist",
+        "description": "The Initiative you are looking for does not exist or has been deleted.",
+        "primary_button": {
+          "text": "View other Initiatives"
+        }
+      }
+    }
+  },
+
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "Write a note, a doc, or a full knowledge base. Get Galileo, Plane's AI assistant, to help you get started",
+        "description": "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed work items, lay them out using a library of components, and keep them all in your project's context. To make short work of any doc, invoke Galileo, Plane's AI, with a shortcut or the click of a button.",
+        "primary_button": {
+          "text": "Create your first page"
+        }
+      },
+      "private": {
+        "title": "No private pages yet",
+        "description": "Keep your private thoughts here. When you're ready to share, the team's just a click away.",
+        "primary_button": {
+          "text": "Create your first page"
+        }
+      },
+      "public": {
+        "title": "No public pages yet",
+        "description": "See pages shared with everyone in your workspace right here.",
+        "primary_button": {
+          "text": "Create your first page"
+        }
+      },
+      "archived": {
+        "title": "No archived pages yet",
+        "description": "Archive pages not on your radar. Access them here when needed."
+      }
+    }
+  },
+
+  "epics": {
+    "label": "Epics",
+    "no_epics_selected": "No epics selected",
+    "add_selected_epics": "Add selected epics",
+    "epic_link_copied_to_clipboard": "Epic link copied to clipboard.",
+    "project_link_copied_to_clipboard": "Project link copied to clipboard",
+    "empty_state": {
+      "general": {
+        "title": "Create an epic and assign it to someone, even yourself",
+        "description": "For larger bodies of work that span several cycles and can live across modules, create an epic. Link work items and sub-work items in a project to an epic and jump into an work item from the overview.",
+        "primary_button": {
+          "text": "Create an Epic"
+        }
+      },
+      "section": {
+        "title": "No epics yet",
+        "description": "Start adding epics to manage and track the progress.",
+        "primary_button": {
+          "text": "Add epics"
+        }
+      }
+    }
+  },
+
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "No matching epics found"
+      },
+      "no_epics": {
+        "title": "No epics found"
+      }
+    }
+  },
+
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "No active cycles",
+        "description": "Cycles of your projects that includes any period that encompasses today's date within its range. Find the progress and details of all your active cycle here."
+      }
+    }
+  },
+
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Add work items to the cycle to view it's \n progress"
+      },
+      "priority": {
+        "title": "Observe high priority work items tackled in \n the cycle at a glance."
+      },
+      "assignee": {
+        "title": "Add assignees to work items to see a \n breakdown of work by assignees."
+      },
+      "label": {
+        "title": "Add labels to work items to see the \n breakdown of work by labels."
+      }
+    }
+  },
+
+  "workspace_settings": {
+    "settings": {
+      "integrations": {
+        "title": "Integrations"
+      },
+      "imports": {
+        "title": "Imports"
+      },
+      "worklogs": {
+        "title": "Worklogs"
+      },
+      "project_states": {
+        "title": "Project states"
+      },
+      "teamspaces": {
+        "title": "Teamspaces"
+      },
+      "initiatives": {
+        "title": "Initiatives"
+      }
+    }
+  },
+
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "Unable to archive work items",
+        "message": "Only work items belonging to Completed or Canceled state groups can be archived."
+      },
+      "invalid_issue_start_date": {
+        "title": "Unable to update work items",
+        "message": "Start date selected succeeds the due date for some work items. Ensure start date to be before the due date."
+      },
+      "invalid_issue_target_date": {
+        "title": "Unable to update work items",
+        "message": "Due date selected precedes the start date for some work items. Ensure due date to be after the start date."
+      }
+    }
+  },
+
+  "work_item_types": {
+    "label": "Work item types",
+    "label_lowercase": "work item types",
+    "settings": {
+      "title": "Work item types",
+      "properties": {
+        "title": "Custom properties",
+        "tooltip": "Each work item type comes with a default set of properties like Title, Description, Assignee, State, Priority, Start date, Due date, Module, Cycle etc. You can also customize and add your own properties to tailor it to your team's needs.",
+        "add_button": "Add new property",
+        "dropdown": {
+          "label": "Property type",
+          "placeholder": "Select type"
+        },
+        "property_type": {
+          "text": {
+            "label": "Text"
+          },
+          "number": {
+            "label": "Number"
+          },
+          "dropdown": {
+            "label": "Dropdown"
+          },
+          "boolean": {
+            "label": "Boolean"
+          },
+          "date": {
+            "label": "Date"
+          },
+          "member_picker": {
+            "label": "Member picker"
+          }
+        },
+        "attributes": {
+          "label": "Attributes",
+          "text": {
+            "single_line": {
+              "label": "Single line"
+            },
+            "multi_line": {
+              "label": "Paragraph"
+            },
+            "readonly": {
+              "label": "Read only",
+              "header": "Read only data"
+            },
+            "invalid_text_format": {
+              "label": "Invalid text format"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "Add number"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "Single select"
+            },
+            "multi_select": {
+              "label": "Multi select"
+            },
+            "no_default_value": {
+              "label": "No default value"
+            }
+          },
+          "boolean": {
+            "label": "True | False",
+            "no_default": "No default value"
+          },
+          "option": {
+            "create_update": {
+              "label": "Options",
+              "form": {
+                "placeholder": "Add option",
+                "errors": {
+                  "name": {
+                    "required": "Option name is required.",
+                    "integrity": "Option with same name already exists."
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "Select option",
+                "multi": {
+                  "default": "Select options",
+                  "variable": "{count} options selected"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "Success!",
+              "message": "Property {name} created successfully."
+            },
+            "error": {
+              "title": "Error!",
+              "message": "Failed to create property. Please try again!"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "Success!",
+              "message": "Property {name} updated successfully."
+            },
+            "error": {
+              "title": "Error!",
+              "message": "Failed to update property. Please try again!"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "Success!",
+              "message": "Property {name} deleted successfully."
+            },
+            "error": {
+              "title": "Error!",
+              "message": "Failed to delete property. Please try again!"
+            }
+          },
+          "enable_disable": {
+            "loading": "{action} {name} property",
+            "success": {
+              "title": "Success!",
+              "message": "Property {name} {action} successfully."
+            },
+            "error": {
+              "title": "Error!",
+              "message": "Failed to {action} property. Please try again!"
+            }
+          }
+        },
+        "create_update": {
+          "form": {
+            "display_name": {
+              "placeholder": "Title"
+            },
+            "description": {
+              "placeholder": "Description"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "You must name your property.",
+              "max_length": "Property name should not exceed 255 characters."
+            },
+            "property_type": {
+              "required": "You must select a property type."
+            },
+            "options": {
+              "required": "You must add at least one option."
+            }
+          }
+        },
+        "enable_disable": {
+          "label": "Active",
+          "tooltip": {
+            "disabled": "Click to disable",
+            "enabled": "Click to enable"
+          }
+        },
+        "delete_confirmation": {
+          "title": "Delete this property",
+          "description": "Deletion of properties may lead to loss of existing data.",
+          "secondary_description": "Do you want to disable the property instead?",
+          "primary_button": "{action}, delete it",
+          "secondary_button": "Yes, disable it"
+        },
+        "mandate_confirmation": {
+          "label": "Mandatory property",
+          "content": "There seems to be a default option for this property. Making the property mandatory will remove the default value and the users will have to add a value of their choice.",
+          "tooltip": {
+            "disabled": "This property type cannot be made mandatory",
+            "enabled": "Uncheck to mark the field as optional",
+            "checked": "Check to mark the field as mandatory"
+          }
+        },
+        "empty_state": {
+          "title": "Add custom properties",
+          "description": "New properties you add for this work item type will show here."
+        }
+      }
+    },
+    "create": {
+      "title": "Create work item type",
+      "button": "Add work item type",
+      "toast": {
+        "success": {
+          "title": "Success!",
+          "message": "Work item type created successfully."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Failed to create work item type. Please try again!"
+        }
+      }
+    },
+    "update": {
+      "title": "Update work item type",
+      "button": "Update work item type",
+      "toast": {
+        "success": {
+          "title": "Success!",
+          "message": "Work item type {name} updated successfully."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Failed to update work item type. Please try again!"
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "Give this work item type a unique name"
+        },
+        "description": {
+          "placeholder": "Describe what this work item type is meant for and when it's to be used."
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{action} {name} work item type",
+        "success": {
+          "title": "Success!",
+          "message": "Work item type {name} {action} successfully."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Failed to {action} work item type. Please try again!"
+        }
+      },
+      "tooltip": "Click to {action}"
+    },
+    "empty_state": {
+      "enable": {
+        "title": "Enable Work item types",
+        "description": "Shape work items to your work with Work item types. Customize with icons, backgrounds, and properties and configure them for this project.",
+        "primary_button": {
+          "text": "Enable"
+        },
+        "confirmation": {
+          "title": "Once enabled, Work item types can't be disabled.",
+          "description": "Plane's Work item will become the default work item type for this project and will show up with its icon and background in this project.",
+          "button": {
+            "default": "Enable",
+            "loading": "Setting up"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "Get Pro to enable Work item types.",
+        "description": "Shape work items to your work with Work item types. Customize with icons, backgrounds, and properties and configure them for this project.",
+        "primary_button": {
+          "text": "Get Pro"
+        }
+      },
+      "upgrade": {
+        "title": "Upgrade to enable Work item types.",
+        "description": "Shape work items to your work with Work item types. Customize with icons, backgrounds, and properties and configure them for this project.",
+        "primary_button": {
+          "text": "Upgrade"
+        }
+      }
+    }
+  },
+
+  "importers": {
+    "imports": "Imports",
+    "logo": "Logo",
+    "import_message": "Import your {serviceName} data into plane projects.",
+    "deactivate": "Deactivate",
+    "deactivating": "Deactivating",
+    "migrating": "Migrating",
+    "migrations": "Migrations",
+    "refreshing": "Refreshing",
+    "import": "Import",
+    "serial_number": "Sr No.",
+    "project": "Project",
+    "workspace": "Workspace",
+    "status": "Status",
+    "total_batches": "Total Batches",
+    "imported_batches": "Imported Batches",
+    "re_run": "Re Run",
+    "cancel": "Cancel",
+    "start_time": "Start Time",
+    "no_jobs_found": "No jobs found",
+    "no_project_imports": "You haven't imported any {serviceName} projects yet.",
+    "cancel_import_job": "Cancel import job",
+    "cancel_import_job_confirmation": "Are you sure you want to cancel this import job? This will stop the import process for this project.",
+    "re_run_import_job": "Re-run import job",
+    "re_run_import_job_confirmation": "Are you sure you want to re-run this import job? This will restart the import process for this project.",
+    "upload_csv_file": "Upload a CSV file to import user data.",
+    "connect_importer": "Connect {serviceName}",
+    "migration_assistant": "Migration Assistant",
+    "migration_assistant_description": "Seamlessly migrate your {serviceName} projects to Plane with our powerful assistant.",
+    "token_helper": "You will get this from your",
+    "personal_access_token": "Personal Access Token",
+    "source_token_expired": "Token Expired",
+    "source_token_expired_description": "The provided token has expired. Please deactivate and reconnect with new set of credentials.",
+    "user_email": "User Email",
+    "select_state": "Select State",
+    "select_service_project": "Select {serviceName} Project",
+    "loading_service_projects": "Loading {serviceName} projects",
+    "select_service_workspace": "Select {serviceName} Workspace",
+    "loading_service_workspaces": "Loading {serviceName} Workspaces",
+    "select_priority": "Select Priority",
+    "select_service_team": "Select {serviceName} Team",
+    "add_seat_msg_free_trial": "You're trying to import {additionalUserCount} non-registered users and you've only {currentWorkspaceSubscriptionAvailableSeats} seats available in current plan. To continue importing upgrade now.",
+    "add_seat_msg_paid": "You're trying to import {additionalUserCount} non-registered users and you've only {currentWorkspaceSubscriptionAvailableSeats} seats available in current plan. To continue importing buy atleast {extraSeatRequired} extra seats.",
+    "skip_user_import_title": "Skip importing User data",
+    "skip_user_import_description": "Skipping user import will result in work items, comments, and other data from {serviceName} being created by the user performing the migration in Plane. You can still manually add users later."
+  },
+
+  "integrations": {
+    "integrations": "Integrations",
+    "loading": "Loading",
+    "unauthorized": "You are not authorized to view this page.",
+    "configure": "Configure",
+    "not_enabled": "{name} is not enabled for this workspace.",
+    "not_configured": "Not configured",
+    "disconnect_personal_account": "Disconnect personal {providerName} account",
+    "not_configured_message_admin": "{name} integration is not configured. Please contact your instance admin to configure it.",
+    "not_configured_message_support": "{name} integration is not configured. Please contact support to configure it.",
+    "external_api_unreachable": "Not able to access the external API. Please try again later.",
+    "error_fetching_supported_integrations": "Not able to fetch supported integrations. Please try again later.",
+    "back_to_integrations": "Back to integrations",
+    "select_state": "Select State"
+  },
+
+  "github_integration": {
+    "name": "GitHub",
+    "description": "Connect and sync your GitHub Work item with Plane.",
+    "connect_org": "Connect Organization",
+    "connect_org_description": "Connect your GitHub organization with Plane.",
+    "processing": "Processing",
+    "org_added_desc": "GitHub org added by and time",
+    "connection_fetch_error": "Error fetching connection details from server",
+    "personal_account_connected": "Personal account connected",
+    "personal_account_connected_description": "Your personal GitHub account is connected to Plane.",
+    "connect_personal_account": "Connect Personal Account",
+    "connect_personal_account_description": "Connect your personal GitHub account with Plane.",
+    "repo_mapping": "Repository Mapping",
+    "repo_mapping_description": "Map your GitHub repositories with Plane projects.",
+    "remove_entity": "Remove entity",
+    "remove_entity_confirmation": "Are you sure you want to remove this entity?",
+    "issue_sync_message": "Work items are synced to {project}",
+    "link": "Link GitHub repository to Plane project",
+    "pull_request_automation": "Pull Request Automation",
+    "pull_request_automation_description": "Configure pull request state mapping from GitHub to Plane",
+    "DRAFT_MR_OPENED": "On draft PR open, set the state to",
+    "MR_OPENED": "On PR open, set the state to",
+    "MR_READY_FOR_MERGE": "On PR ready for merge, set the state to",
+    "MR_REVIEW_REQUESTED": "On PR review requested, set the state to",
+    "MR_MERGED": "On PR merged, set the state to",
+    "MR_CLOSED": "On PR closed, set the state to"
+  },
+
+  "gitlab_integration": {
+    "name": "Gitlab",
+    "description": "Connect and sync your Gitlab Merge Requests with Plane.",
+    "connection_fetch_error": "Error fetching connection details from server",
+    "connect_org": "Connect Organization",
+    "connect_org_description": "Connect your Gitlab organization with Plane.",
+    "project_connections": "Gitlab Project Connections",
+    "project_connections_description": "Sync merge requests from Gitlab to Plane projects.",
+    "plane_project_connection": "Plane Project Connection",
+    "plane_project_connection_description": "Configure pull requests state mapping from Gitlab to Plane projects",
+    "remove_connection": "Remove Connection",
+    "remove_connection_confirmation": "Are you sure you want to remove this connection?",
+    "link": "Link Gitlab repository to Plane project",
+    "pull_request_automation": "Pull Request Automation",
+    "pull_request_automation_description": "Configure pull request state mapping from Gitlab to Plane",
+    "DRAFT_MR_OPENED": "On draft MR open, set the state to",
+    "MR_OPENED": "On MR open, set the state to",
+    "MR_REVIEW_REQUESTED": "On MR review requested, set the state to",
+    "MR_READY_FOR_MERGE": "On MR ready for merge, set the state to",
+    "MR_MERGED": "On MR merged, set the state to",
+    "MR_CLOSED": "On MR closed, set the state to",
+    "integration_enabled_text": "With Gitlab integration Enabled, you can automate work item workflows",
+    "choose_entity": "Choose Entity",
+    "choose_project": "Choose Project",
+    "link_plane_project": "Link Plane project"
+  },
+
+  "slack_integration": {
+    "name": "Slack",
+    "description": "Connect your Slack workspace with Plane.",
+    "connect_personal_account": "Connect your personal Slack account with Plane.",
+    "personal_account_connected": "Your personal {providerName} account is now connected to Plane.",
+    "link_personal_account": "Link your personal {providerName} account to Plane.",
+    "connected_slack_workspaces": "Connected Slack workspaces",
+    "connected_on": "Connected on {date}",
+    "disconnect_workspace": "Disconnect {name} workspace"
+  },
+
+  "file_upload": {
+    "upload_text": "Click here to upload file",
+    "drag_drop_text": "Drag and Drop",
+    "processing": "Processing",
+    "invalid": "Invalid file type",
+    "missing_fields": "Missing fields",
+    "success": "{fileName} Uploaded!"
+  },
+
+  "silo_errors": {
+    "invalid_query_params": "The provided query parameters are invalid or missing required fields",
+    "invalid_installation_account": "The installation account provided is not valid",
+    "generic_error": "An unexpected error occurred while processing your request",
+    "connection_not_found": "The requested connection could not be found",
+    "multiple_connections_found": "Multiple connections were found when only one was expected",
+    "installation_not_found": "The requested installation could not be found",
+    "user_not_found": "The requested user could not be found",
+    "error_fetching_token": "Failed to fetch authentication token"
+  },
+
+  "import_status": {
+    "created": "Created",
+    "initiated": "Initiated",
+    "pulling": "Pulling",
+    "pulled": "Pulled",
+    "transforming": "Transforming",
+    "transformed": "Transformed",
+    "pushing": "Pushing",
+    "finished": "Finished",
+    "error": "Error",
+    "cancelled": "Cancelled"
+  },
+
+  "jira_importer": {
+    "jira_importer_description": "Import your Jira data into Plane projects.",
+    "personal_access_token": "Personal Access Token",
+    "user_email": "User Email",
+    "atlassian_security_settings": "Atlassian Security Settings",
+    "email_description": "This is the email linked to your personal access token",
+    "jira_domain": "Jira Domain",
+    "jira_domain_description": "This is the domain of your Jira instance",
+    "steps": {
+      "title_configure_plane": "Configure Plane",
+      "description_configure_plane": "Please first create the project in Plane where you intend to migrate your Jira data. Once the project is created, select it here.",
+      "title_configure_jira": "Configure Jira",
+      "description_configure_jira": "Please select the Jira workspace from which you want to migrate your data.",
+      "title_import_users": "Import Users",
+      "description_import_users": "Please add the users you wish to migrate from Jira to Plane. Alternatively, you can skip this step and manually add users later.",
+      "title_map_states": "Map States",
+      "description_map_states": "We have automatically matched the Jira statuses to Plane states to the best of our ability. Please map any remaining states before proceeding, you can also create states and map them manually.",
+      "title_map_priorities": "Map Priorities",
+      "description_map_priorities": "We have automatically matched the priorities to the best of our ability. Please map any remaining priorities before proceeding.",
+      "title_summary": "Summary",
+      "description_summary": "Here is a summary of the data that will be migrated from Jira to Plane."
+    }
+  },
+
+  "asana_importer": {
+    "asana_importer_description": "Import your Asana data into Plane projects.",
+    "select_asana_priority_field": "Select Asana Priority Field",
+    "steps": {
+      "title_configure_plane": "Configure Plane",
+      "description_configure_plane": "Please first create the project in Plane where you intend to migrate your Asana data. Once the project is created, select it here.",
+      "title_configure_asana": "Configure Asana",
+      "description_configure_asana": "Please select the Asana workspace and project from which you want to migrate your data.",
+      "title_map_states": "Map States",
+      "description_map_states": "Please select the Asana states which you want to map to Plane project statuses.",
+      "title_map_priorities": "Map Priorities",
+      "description_map_priorities": "Please select the Asana priorities which you want to map to Plane project priorities.",
+      "title_summary": "Summary",
+      "description_summary": "Here is a summary of the data that will be migrated from Asana to Plane."
+    }
+  },
+
+  "linear_importer": {
+    "linear_importer_description": "Import your Linear data into Plane projects.",
+    "steps": {
+      "title_configure_plane": "Configure Plane",
+      "description_configure_plane": "Please first create the project in Plane where you intend to migrate your Linear data. Once the project is created, select it here.",
+      "title_configure_linear": "Configure Linear",
+      "description_configure_linear": "Please select the Linear team from which you want to migrate your data.",
+      "title_map_states": "Map States",
+      "description_map_states": "We have automatically matched the Linear statuses to Plane states to the best of our ability. Please map any remaining states before proceeding, you can also create states and map them manually.",
+      "title_map_priorities": "Map Priorities",
+      "description_map_priorities": "Please select the Linear priorities which you want to map to Plane project priorities.",
+      "title_summary": "Summary",
+      "description_summary": "Here is a summary of the data that will be migrated from Linear to Plane."
+    }
+  },
+
+  "jira_server_importer": {
+    "jira_server_importer_description": "Import your Jira Server data into Plane projects.",
+    "steps": {
+      "title_configure_plane": "Configure Plane",
+      "description_configure_plane": "Please first create the project in Plane where you intend to migrate your Jira data. Once the project is created, select it here.",
+      "title_configure_jira": "Configure Jira",
+      "description_configure_jira": "Please select the Jira workspace from which you want to migrate your data.",
+      "title_map_states": "Map States",
+      "description_map_states": "Please select the Jira states which you want to map to Plane project statuses.",
+      "title_map_priorities": "Map Priorities",
+      "description_map_priorities": "Please select the Jira priorities which you want to map to Plane project priorities.",
+      "title_summary": "Summary",
+      "description_summary": "Here is a summary of the data that will be migrated from Jira to Plane."
+    }
+  },
+
+  "flatfile_importer": {
+    "flatfile_importer_description": "Import your CSV data into Plane projects.",
+    "steps": {
+      "title_configure_plane": "Configure Plane",
+      "description_configure_plane": "Please first create the project in Plane where you intend to migrate your CSV data. Once the project is created, select it here.",
+      "title_configure_csv": "Configure CSV",
+      "description_configure_csv": "Please upload your CSV file and configure the fields to be mapped to Plane fields."
+    }
+  },
+
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "Bar",
+          "long_label": "Bar chart"
+        },
+        "line_chart": {
+          "short_label": "Line",
+          "long_label": "Line chart"
+        },
+        "area_chart": {
+          "short_label": "Area",
+          "long_label": "Area chart"
+        },
+        "donut_chart": {
+          "short_label": "Donut",
+          "long_label": "Donut chart"
+        },
+        "pie_chart": {
+          "short_label": "Pie",
+          "long_label": "Pie chart"
+        },
+        "text": {
+          "short_label": "Text",
+          "long_label": "Text"
+        }
+      }
+    }
+  }
+}
