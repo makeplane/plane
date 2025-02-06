@@ -18,8 +18,6 @@ import { GOD_MODE_URL, cn } from "@/helpers/common.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useAppTheme, useUser, useUserPermissions, useUserProfile, useWorkspace } from "@/hooks/store";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web helpers
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 // components
@@ -173,20 +171,16 @@ export const SidebarDropdown = observer(() => {
                       </Link>
                     )}
 
-                    {allowPermissions(
-                      [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-                      EUserPermissionsLevel.WORKSPACE
-                    ) && (
-                      <Link href="/invitations" className="w-full" onClick={handleItemClick}>
-                        <Menu.Item
-                          as="div"
-                          className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-                        >
-                          <Mails className="h-4 w-4 flex-shrink-0" />
-                          {t("workspace_invites")}
-                        </Menu.Item>
-                      </Link>
-                    )}
+                    <Link href="/invitations" className="w-full" onClick={handleItemClick}>
+                      <Menu.Item
+                        as="div"
+                        className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                      >
+                        <Mails className="h-4 w-4 flex-shrink-0" />
+                        {t("workspace_invites")}
+                      </Menu.Item>
+                    </Link>
+
                     <div className="w-full">
                       <Menu.Item
                         as="button"
