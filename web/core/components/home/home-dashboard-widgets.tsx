@@ -58,12 +58,12 @@ export const DashboardWidgets = observer(() => {
   // store hooks
   const { toggleWidgetSettings, widgetsMap, showWidgetSettings, orderedWidgets, isAnyWidgetEnabled, loading } =
     useHome();
-  const { joinedProjectIds, loader } = useProject();
+  const { loader } = useProject();
 
   // derived values
   const isWikiApp = pathname.includes(`/${workspaceSlug.toString()}/pages`);
   if (!workspaceSlug) return null;
-  if (loading) return <HomeLoader />;
+  if (loading || loader !== "loaded") return <HomeLoader />;
 
   return (
     <div className="h-full w-full relative flex flex-col gap-7">
@@ -73,7 +73,7 @@ export const DashboardWidgets = observer(() => {
         isModalOpen={showWidgetSettings}
         handleOnClose={() => toggleWidgetSettings(false)}
       />
-      {loader === "loaded" && !isWikiApp && joinedProjectIds?.length === 0 && <NoProjectsEmptyState />}
+      {!isWikiApp && <NoProjectsEmptyState />}
 
       {isAnyWidgetEnabled ? (
         <div className="flex flex-col divide-y-[1px] divide-custom-border-100">
