@@ -7,12 +7,15 @@ import {
   ISSUE_DISPLAY_PROPERTIES_KEYS,
   EIssuesStoreType,
 } from "./common";
+
 // EE : Extended filters
+
 import {
   ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE,
   EActivityFilterTypeEE,
   shouldRenderActivity,
 } from "./filter-extended";
+
 import { TIssueLayout } from "./layout";
 
 export type TIssueFilterKeys = "priority" | "state" | "labels";

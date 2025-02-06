@@ -8,6 +8,7 @@ import { NOTIFICATION_TABS, TNotificationTab } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { Header, Row, ERowVariant, EHeaderVariant, ContentWrapper } from "@plane/ui";
+import { NotificationCardListRoot as NotificationCardListRootCe } from "@/ce/components/workspace-notifications";
 import { CountChip } from "@/components/common";
 import {
   NotificationsLoader,
@@ -20,10 +21,9 @@ import { cn } from "@/helpers/common.helper";
 import { getNumberCount } from "@/helpers/string.helper";
 // hooks
 import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
-import { useFlag } from "@/plane-web/hooks/store";
-import { NotificationCardListRoot as NotificationCardListRootCe } from "ce/components/workspace-notifications";
-import { NotificationCardListRoot as NotificationCardListRootEe } from "ee/components/workspace-notifications";
 
+import { NotificationCardListRoot as NotificationCardListRootEe } from "@/plane-web/components/workspace-notifications";
+import { useFlag } from "@/plane-web/hooks/store";
 
 export const NotificationsSidebarRoot: FC = observer(() => {
   const { workspaceSlug } = useParams();

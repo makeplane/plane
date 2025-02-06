@@ -7,8 +7,8 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { FolderPlus, Search, Settings } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // plane imports
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspaceSearchResults } from "@plane/types";
 import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";

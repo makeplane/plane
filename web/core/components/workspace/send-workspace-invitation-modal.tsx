@@ -208,7 +208,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                               control={control}
                               name={`emails.${index}.email`}
                               rules={{
-                                required: "We need an email address to invite them.",
+                                required: t("workspace_settings.settings.members.modal.errors.required"),
                                 pattern: {
                                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                                   message: t("workspace_settings.settings.members.modal.errors.invalid"),

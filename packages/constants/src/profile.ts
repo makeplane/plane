@@ -5,7 +5,7 @@ type TProfileActionLink = {
   i18n_label: string;
   href: string;
   highlight: (pathname: string) => boolean;
-}
+};
 
 export const PROFILE_ACTION_LINKS: TProfileActionLink[] = [
   {

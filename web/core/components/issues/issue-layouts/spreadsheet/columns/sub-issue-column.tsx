@@ -32,7 +32,7 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
     );
   };
 
-  const issueLabel = isEpic ? "work item" : "sub-work item";;
+  const issueLabel = isEpic ? "work item" : "sub-work item";
   const label = `${subIssueCount} ${issueLabel}${subIssueCount !== 1 ? "s" : ""}`;
 
   return (
