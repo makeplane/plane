@@ -193,7 +193,7 @@ export const SidebarFavoritesMenu = observer(() => {
             ref={elementRef}
             as="button"
             className={cn(
-              "sticky top-0 bg-custom-sidebar-background-100 z-10 group/workspace-button w-full px-2 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-xs font-semibold",
+              "sticky top-0 bg-custom-sidebar-background-100 z-10 group/workspace-button w-full px-2 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-sm font-semibold",
               {
                 "bg-custom-sidebar-background-80 opacity-60": isDragging,
               }
