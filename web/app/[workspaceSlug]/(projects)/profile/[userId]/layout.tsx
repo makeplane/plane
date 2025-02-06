@@ -4,16 +4,15 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 // components
+import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { AppHeader, ContentWrapper } from "@/components/core";
 import { ProfileSidebar } from "@/components/profile";
 // constants
 import { USER_PROFILE_PROJECT_SEGREGATION } from "@/constants/fetch-keys";
-import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "@/constants/profile";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 import useSize from "@/hooks/use-window-size";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // local components
 import { UserService } from "@/services/user.service";
 import { UserProfileHeader } from "./header";
@@ -66,7 +65,7 @@ const UseProfileLayout: React.FC<Props> = observer((props) => {
           <AppHeader
             header={
               <UserProfileHeader
-                type={currentTab?.label}
+                type={currentTab?.i18n_label}
                 userProjectsData={userProjectsData}
                 showProfileIssuesFilter={isIssuesTab}
               />

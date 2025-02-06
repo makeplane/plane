@@ -4,6 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { Tab } from "@headlessui/react";
+import { useTranslation } from "@plane/i18n";
 import {
   IIssueFilterOptions,
   IIssueFilters,
@@ -73,6 +74,7 @@ type TStateStatComponent = {
 
 export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) => {
   const { distribution, isEditable, filters, handleFiltersUpdate } = props;
+  const { t } = useTranslation();
   return (
     <div>
       {distribution && distribution.length > 0 ? (
@@ -104,7 +106,7 @@ export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) =>
                     <div className="h-4 w-4 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
                       <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
                     </div>
-                    <span>No assignee</span>
+                    <span>{t("no_assignee")}</span>
                   </div>
                 }
                 completed={assignee?.completed ?? 0}
@@ -117,7 +119,7 @@ export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) =>
           <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-80">
             <Image src={emptyMembers} className="h-12 w-12" alt="empty members" />
           </div>
-          <h6 className="text-base text-custom-text-300">No assignees yet</h6>
+          <h6 className="text-base text-custom-text-300">{t("no_assignees_yet")}</h6>
         </div>
       )}
     </div>

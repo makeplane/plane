@@ -1,10 +1,11 @@
 "use client";
 
 import { FC } from "react";
+// plane imports
+import { I_THEME_OPTION, THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // constants
 import { CustomSelect } from "@plane/ui";
-import { THEME_OPTIONS, I_THEME_OPTION } from "@/constants/themes";
 // ui
 
 type Props = {

@@ -43,7 +43,7 @@ export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => 
     } else tooltipValue = datum.id;
   } else {
     if (ANALYTICS_DATE_KEYS.includes(params.x_axis)) tooltipValue = datum.indexValue;
-    else tooltipValue = datum.id === "count" ? "Issue count" : "Estimate";
+    else tooltipValue = datum.id === "count" ? "Work item count" : "Estimate";
   }
 
   return (

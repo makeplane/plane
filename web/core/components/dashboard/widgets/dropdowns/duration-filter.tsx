@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 // components
+import { DURATION_FILTER_OPTIONS, EDurationFilters } from "@plane/constants";
 import { CustomMenu } from "@plane/ui";
 import { DateFilterModal } from "@/components/core";
 // ui
 // helpers
-import { DURATION_FILTER_OPTIONS, EDurationFilters } from "@/constants/dashboard";
 import { getDurationFilterDropdownLabel } from "@/helpers/dashboard.helper";
 // constants
 

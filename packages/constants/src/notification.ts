@@ -29,12 +29,13 @@ export type TNotificationTab = ENotificationTab.ALL | ENotificationTab.MENTIONS;
 
 export const NOTIFICATION_TABS = [
   {
-    label: "All",
+    i18n_label: "notification.tabs.all",
     value: ENotificationTab.ALL,
-    count: (unReadNotification: TUnreadNotificationsCount) => unReadNotification?.total_unread_notifications_count || 0,
+    count: (unReadNotification: TUnreadNotificationsCount) =>
+      unReadNotification?.total_unread_notifications_count || 0,
   },
   {
-    label: "Mentions",
+    i18n_label: "notification.tabs.mentions",
     value: ENotificationTab.MENTIONS,
     count: (unReadNotification: TUnreadNotificationsCount) =>
       unReadNotification?.mention_unread_notifications_count || 0,
@@ -43,15 +44,15 @@ export const NOTIFICATION_TABS = [
 
 export const FILTER_TYPE_OPTIONS = [
   {
-    label: "Assigned to me",
+    i18n_label: "notification.filter.assigned",
     value: ENotificationFilterType.ASSIGNED,
   },
   {
-    label: "Created by me",
+    i18n_label: "notification.filter.created",
     value: ENotificationFilterType.CREATED,
   },
   {
-    label: "Subscribed by me",
+    i18n_label: "notification.filter.subscribed",
     value: ENotificationFilterType.SUBSCRIBED,
   },
 ];
@@ -59,7 +60,7 @@ export const FILTER_TYPE_OPTIONS = [
 export const NOTIFICATION_SNOOZE_OPTIONS = [
   {
     key: "1_day",
-    label: "1 day",
+    i18n_label: "notification.snooze.1_day",
     value: () => {
       const date = new Date();
       return new Date(date.getTime() + 24 * 60 * 60 * 1000);
@@ -67,7 +68,7 @@ export const NOTIFICATION_SNOOZE_OPTIONS = [
   },
   {
     key: "3_days",
-    label: "3 days",
+    i18n_label: "notification.snooze.3_days",
     value: () => {
       const date = new Date();
       return new Date(date.getTime() + 3 * 24 * 60 * 60 * 1000);
@@ -75,7 +76,7 @@ export const NOTIFICATION_SNOOZE_OPTIONS = [
   },
   {
     key: "5_days",
-    label: "5 days",
+    i18n_label: "notification.snooze.5_days",
     value: () => {
       const date = new Date();
       return new Date(date.getTime() + 5 * 24 * 60 * 60 * 1000);
@@ -83,7 +84,7 @@ export const NOTIFICATION_SNOOZE_OPTIONS = [
   },
   {
     key: "1_week",
-    label: "1 week",
+    i18n_label: "notification.snooze.1_week",
     value: () => {
       const date = new Date();
       return new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000);
@@ -91,7 +92,7 @@ export const NOTIFICATION_SNOOZE_OPTIONS = [
   },
   {
     key: "2_weeks",
-    label: "2 weeks",
+    i18n_label: "notification.snooze.2_weeks",
     value: () => {
       const date = new Date();
       return new Date(date.getTime() + 14 * 24 * 60 * 60 * 1000);
@@ -99,7 +100,7 @@ export const NOTIFICATION_SNOOZE_OPTIONS = [
   },
   {
     key: "custom",
-    label: "Custom",
+    i18n_label: "notification.snooze.custom",
     value: undefined,
   },
 ];

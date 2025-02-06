@@ -82,7 +82,7 @@ const WorkspaceInvitationPage = observer(() => {
           ) : (
             <EmptySpace
               title={`You have been invited to ${invitationDetail.workspace.name}`}
-              description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
+              description="Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Plane account."
             >
               <EmptySpaceItem Icon={Check} title="Accept" action={handleAccept} />
               <EmptySpaceItem Icon={X} title="Ignore" action={handleReject} />
@@ -92,14 +92,14 @@ const WorkspaceInvitationPage = observer(() => {
           invitationDetail?.accepted ? (
             <EmptySpace
               title={`You are already a member of ${invitationDetail.workspace.name}`}
-              description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
+              description="Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Plane account."
             >
               <EmptySpaceItem Icon={Boxes} title="Continue to home" href="/" />
             </EmptySpace>
           ) : (
             <EmptySpace
               title="This invitation link is not active anymore."
-              description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
+              description="Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Plane account."
               link={{ text: "Or start from an empty project", href: "/" }}
             >
               {!currentUser ? (

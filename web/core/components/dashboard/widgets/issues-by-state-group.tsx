@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { linearGradientDef } from "@nivo/core";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // types
+import { EDurationFilters, STATE_GROUPS } from "@plane/constants";
 import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
 // components
 import { Card } from "@plane/ui";
@@ -12,9 +14,6 @@ import {
   WidgetProps,
 } from "@/components/dashboard/widgets";
 import { PieGraph } from "@/components/ui";
-// constants
-import { EDurationFilters, STATE_GROUP_GRAPH_COLORS, STATE_GROUP_GRAPH_GRADIENTS } from "@/constants/dashboard";
-import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { getCustomDates } from "@/helpers/dashboard.helper";
 // hooks
@@ -22,6 +21,37 @@ import { useDashboard } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 const WIDGET_KEY = "issues_by_state_groups";
+
+export const STATE_GROUP_GRAPH_COLORS: Record<TStateGroups, string> = {
+  backlog: "#CDCED6",
+  unstarted: "#80838D",
+  started: "#FFC53D",
+  completed: "#3E9B4F",
+  cancelled: "#E5484D",
+};
+// colors for work items by state group widget graph arcs
+export const STATE_GROUP_GRAPH_GRADIENTS = [
+  linearGradientDef("gradientBacklog", [
+    { offset: 0, color: "#DEDEDE" },
+    { offset: 100, color: "#BABABE" },
+  ]),
+  linearGradientDef("gradientUnstarted", [
+    { offset: 0, color: "#D4D4D4" },
+    { offset: 100, color: "#878796" },
+  ]),
+  linearGradientDef("gradientStarted", [
+    { offset: 0, color: "#FFD300" },
+    { offset: 100, color: "#FAE270" },
+  ]),
+  linearGradientDef("gradientCompleted", [
+    { offset: 0, color: "#0E8B1B" },
+    { offset: 100, color: "#37CB46" },
+  ]),
+  linearGradientDef("gradientCanceled", [
+    { offset: 0, color: "#C90004" },
+    { offset: 100, color: "#FF7679" },
+  ]),
+];
 
 export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;

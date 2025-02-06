@@ -1,13 +1,12 @@
-// ui
+// plane imports
+import { STATE_GROUPS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IUserProfileData, IUserStateDistribution } from "@plane/types";
+// ui
 import { Card } from "@plane/ui";
 import { ProfileEmptyState, PieGraph } from "@/components/ui";
-
 // image
-import { STATE_GROUPS } from "@/constants/state";
 import stateGraph from "@/public/empty-state/state_graph.svg";
-// types
-// constants
 
 type Props = {
   stateDistribution: IUserStateDistribution[];
@@ -15,11 +14,12 @@ type Props = {
 };
 
 export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, userProfile }) => {
+  const { t } = useTranslation();
   if (!userProfile) return null;
 
   return (
     <div className="flex flex-col space-y-2">
-      <h3 className="text-lg font-medium">Issues by state</h3>
+      <h3 className="text-lg font-medium">{t("profile.stats.state_distribution.title")}</h3>
       <Card className="h-full">
         {userProfile.state_distribution.length > 0 ? (
           <div className="grid grid-cols-1 gap-x-6 md:grid-cols-2">
@@ -44,7 +44,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
                 colors={(datum) => datum?.data?.color}
                 tooltip={(datum) => (
                   <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 p-2 text-xs">
-                    <span className="capitalize text-custom-text-200">{datum.datum.label} issues:</span>{" "}
+                    <span className="capitalize text-custom-text-200">{datum.datum.label} work items:</span>{" "}
                     {datum.datum.value}
                   </div>
                 )}
@@ -77,8 +77,8 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
           </div>
         ) : (
           <ProfileEmptyState
-            title="No Data yet"
-            description="Create issues to view the them by states in the graph for better analysis."
+            title={t("no_data_yet")}
+            description={t("profile.stats.state_distribution.empty")}
             image={stateGraph}
           />
         )}

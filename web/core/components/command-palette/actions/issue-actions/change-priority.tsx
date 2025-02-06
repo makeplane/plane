@@ -5,12 +5,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Check } from "lucide-react";
 // plane constants
-import { EIssuesStoreType } from "@plane/constants";
+import { EIssuesStoreType, ISSUE_PRIORITIES } from "@plane/constants";
 // plane types
 import { TIssue, TIssuePriorities } from "@plane/types";
 // mobx store
 import { PriorityIcon } from "@plane/ui";
-import { ISSUE_PRIORITIES } from "@/constants/issue";
 import { useIssues } from "@/hooks/store";
 // ui
 // types

@@ -48,7 +48,7 @@ const ProgressChart: React.FC<Props> = ({
   endDate,
   totalIssues,
   className = "",
-  plotTitle = "issues",
+  plotTitle = "work items",
 }) => {
   const chartData = Object.keys(distribution ?? []).map((key) => ({
     currentDate: renderFormattedDateWithoutYear(key),

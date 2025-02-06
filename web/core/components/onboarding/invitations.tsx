@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
+// plane imports
+import { ROLE, MEMBER_ACCEPTED } from "@plane/constants";
 // types
 import { IWorkspaceMemberInvitation } from "@plane/types";
 // ui
 import { Button, Checkbox, Spinner } from "@plane/ui";
 // constants
-import { MEMBER_ACCEPTED } from "@/constants/event-tracker";
-import { ROLE } from "@/constants/workspace";
 // helpers
 import { truncateText } from "@/helpers/string.helper";
 import { getUserRole } from "@/helpers/user.helper";

@@ -2,6 +2,7 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssueServiceType } from "@plane/types";
 import { CircularProgressIndicator, CollapsibleButton } from "@plane/ui";
 // components
@@ -18,6 +19,7 @@ type Props = {
 
 export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
   const { isOpen, parentIssueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const { t } = useTranslation();
   // store hooks
   const {
     subIssues: { subIssuesByIssueId, stateDistributionByIssueId },
@@ -38,12 +40,12 @@ export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
   return (
     <CollapsibleButton
       isOpen={isOpen}
-      title={`${issueServiceType === EIssueServiceType.EPICS ? "Issues" : "Sub-issues"}`}
+      title={`${issueServiceType === EIssueServiceType.EPICS ? t("issue.label", { count: 1 }) : t("common.sub_work_items")}`}
       indicatorElement={
         <div className="flex items-center gap-1.5 text-custom-text-300 text-sm">
           <CircularProgressIndicator size={18} percentage={percentage} strokeWidth={3} />
           <span>
-            {completedCount}/{totalCount} Done
+            {completedCount}/{totalCount} {t("common.done")}
           </span>
         </div>
       }

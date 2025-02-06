@@ -5,12 +5,16 @@ import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 // plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProjectFilter } from "@/hooks/store";
 
 export const ProjectSearch: FC = observer(() => {
+  // i18n
+  const { t } = useTranslation();
   // hooks
   const { searchQuery, updateSearchQuery } = useProjectFilter();
   // refs
@@ -55,7 +59,7 @@ export const ProjectSearch: FC = observer(() => {
         <input
           ref={inputRef}
           className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
-          placeholder="Search"
+          placeholder={t("common.search.label")}
           value={searchQuery}
           onChange={(e) => updateSearchQuery(e.target.value)}
           onKeyDown={handleInputKeyDown}

@@ -7,9 +7,10 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { FolderPlus, Search, Settings } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-// types
+// plane imports
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IWorkspaceSearchResults } from "@plane/types";
-// ui
 import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // components
 import {
@@ -23,9 +24,7 @@ import {
   CommandPaletteThemeActions,
   CommandPaletteWorkspaceSettingsActions,
 } from "@/components/command-palette";
-import { EmptyState } from "@/components/empty-state";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state";
 // fetch-keys
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 // helpers
@@ -36,21 +35,20 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 // services
 import { IssueService } from "@/services/issue";
-import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
 
 const workspaceService = new WorkspaceService();
 const issueService = new IssueService();
 
 export const CommandModal: React.FC = observer(() => {
-  // hooks
-  const { workspaceProjectIds } = useProject();
-  const { isMobile } = usePlatformOS();
-  const { canPerformAnyCreateAction } = useUser();
+  // router
+  const router = useAppRouter();
+  const { workspaceSlug, projectId, issueId } = useParams();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
   const [resultsCount, setResultsCount] = useState(0);
@@ -70,26 +68,25 @@ export const CommandModal: React.FC = observer(() => {
   });
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   const [pages, setPages] = useState<string[]>([]);
+  // plane hooks
+  const { t } = useTranslation();
+  // hooks
+  const { workspaceProjectIds } = useProject();
+  const { isMobile } = usePlatformOS();
+  const { canPerformAnyCreateAction } = useUser();
   const { isCommandPaletteOpen, toggleCommandPaletteModal, toggleCreateIssueModal, toggleCreateProjectModal } =
     useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   const { setTrackElement } = useEventTracker();
-
-  // router
-  const router = useAppRouter();
-  // router params
-  const { workspaceSlug, projectId, issueId } = useParams();
-
+  // derived values
   const page = pages[pages.length - 1];
-
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
-
   const canPerformWorkspaceActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
 
   // TODO: update this to mobx store
   const { data: issueDetails } = useSWR(
@@ -268,7 +265,7 @@ export const CommandModal: React.FC = observer(() => {
 
                       {!isLoading && resultsCount === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
                         <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-                          <EmptyState type={EmptyStateType.COMMAND_K_SEARCH_EMPTY_STATE} layout="screen-simple" />
+                          <SimpleEmptyState title={t("command_k.empty_state.search.title")} assetPath={resolvedPath} />
                         </div>
                       )}
 
@@ -304,7 +301,7 @@ export const CommandModal: React.FC = observer(() => {
                             workspaceProjectIds &&
                             workspaceProjectIds.length > 0 &&
                             canPerformAnyCreateAction && (
-                              <Command.Group heading="Issue">
+                              <Command.Group heading="Work item">
                                 <Command.Item
                                   onSelect={() => {
                                     closePalette();
@@ -315,7 +312,7 @@ export const CommandModal: React.FC = observer(() => {
                                 >
                                   <div className="flex items-center gap-2 text-custom-text-200">
                                     <LayersIcon className="h-3.5 w-3.5" />
-                                    Create new issue
+                                    Create new work item
                                   </div>
                                   <kbd>C</kbd>
                                 </Command.Item>
