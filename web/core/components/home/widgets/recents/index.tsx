@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
 import useSWR from "swr";
 import { Briefcase, FileText } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -12,11 +11,9 @@ import { TActivityEntityData, THomeWidgetProps, TRecentActivityFilterKeys } from
 import { LayersIcon } from "@plane/ui";
 // components
 import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";
-// hooks
-import { useProject } from "@/hooks/store";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
-import { NoProjectsEmptyState, RecentsEmptyState } from "../empty-states";
+import { RecentsEmptyState } from "../empty-states";
 import { EWidgetKeys, WidgetLoader } from "../loaders";
 import { FiltersDropdown } from "./filters";
 import { RecentIssue } from "./issue";
@@ -41,15 +38,9 @@ export const RecentActivityWidget: React.FC<TRecentWidgetProps> = observer((prop
   const { presetFilter, showFilterSelect = true, workspaceSlug } = props;
   // states
   const [filter, setFilter] = useState<TRecentActivityFilterKeys>(presetFilter ?? filters[0].name);
-  // navigation
-  const pathname = usePathname();
+  const { t } = useTranslation();
   // ref
   const ref = useRef<HTMLDivElement>(null);
-  // store hooks
-  const { joinedProjectIds, loader } = useProject();
-  const { t } = useTranslation();
-  // derived values
-  const isWikiApp = pathname.includes(`/${workspaceSlug.toString()}/pages`);
 
   const { data: recents, isLoading } = useSWR(
     workspaceSlug ? `WORKSPACE_RECENT_ACTIVITY_${workspaceSlug}_${filter}` : null,
@@ -80,8 +71,6 @@ export const RecentActivityWidget: React.FC<TRecentWidgetProps> = observer((prop
         return <></>;
     }
   };
-
-  if (loader === "loaded" && !isWikiApp && joinedProjectIds?.length === 0) return <NoProjectsEmptyState />;
 
   if (!isLoading && recents?.length === 0)
     return (

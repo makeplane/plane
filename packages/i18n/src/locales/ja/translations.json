@@ -546,6 +546,8 @@
 
   "home": {
     "empty": {
+      "quickstart_guide": "クイックスタートガイド",
+      "not_right_now": "今はしない",
       "create_project": {
         "title": "プロジェクトを作成",
         "description": "Planeのほとんどはプロジェクトから始まります。",

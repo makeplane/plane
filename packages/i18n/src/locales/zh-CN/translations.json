@@ -546,6 +546,8 @@
 
   "home": {
     "empty": {
+      "quickstart_guide": "快速入门指南",
+      "not_right_now": "暂时不要",
       "create_project": {
         "title": "创建项目",
         "description": "在Plane中，大多数事情都从项目开始。",
