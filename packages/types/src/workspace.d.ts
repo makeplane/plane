@@ -23,6 +23,8 @@ export interface IWorkspace {
   organization_size: string;
   total_issues: number;
   total_projects?: number;
+  current_plan?: string;
+  role: number;
 }
 
 export interface IWorkspaceLite {
