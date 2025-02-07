@@ -376,6 +376,8 @@
 
   "home": {
     "empty": {
+      "quickstart_guide": "Your quickstart guide",
+      "not_right_now": "Not right now",
       "create_project": {
         "title": "Create a project",
         "description": "Most things start with a project in Plane.",

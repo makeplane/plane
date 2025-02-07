@@ -192,7 +192,7 @@ export const StickiesLayout = (props: TStickiesLayout) => {
   const columnCount = getColumnCount(containerWidth);
 
   return (
-    <div ref={ref} className="size-full min-h-[500px]">
+    <div ref={ref} className="size-full">
       <StickiesList {...props} columnCount={columnCount} />
     </div>
   );
