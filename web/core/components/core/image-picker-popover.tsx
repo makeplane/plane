@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -129,12 +129,6 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
         .then((res) => uploadCallback(res.asset_url));
     }
   };
-
-  useEffect(() => {
-    if (!unsplashImages || value !== null) return;
-
-    onChange(unsplashImages[0]?.urls.regular);
-  }, [value, onChange, unsplashImages]);
 
   const handleClose = () => {
     if (isOpen) setIsOpen(false);
