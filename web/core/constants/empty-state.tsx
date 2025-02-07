@@ -1,5 +1,5 @@
-import { EUserPermissions } from "ee/constants/user-permissions";
 import { Plus, Shapes } from "lucide-react";
+import { EUserPermissions } from "ee/constants/user-permissions";
 
 export interface EmptyStateDetails {
   key: EmptyStateType;

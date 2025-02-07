@@ -1,5 +1,4 @@
 import { enableStaticRendering } from "mobx-react";
-import { EIssueServiceType } from "@plane/constants";
 // plane web store
 import { CommandPaletteStore, ICommandPaletteStore } from "@/plane-web/store/command-palette.store";
 import { RootStore } from "@/plane-web/store/root.store";
@@ -7,7 +6,6 @@ import { IStateStore, StateStore } from "@/plane-web/store/state.store";
 // stores
 import { CycleStore, ICycleStore } from "./cycle.store";
 import { CycleFilterStore, ICycleFilterStore } from "./cycle_filter.store";
-import { DashboardStore, IDashboardStore } from "./dashboard.store";
 import { IProjectEstimateStore, ProjectEstimateStore } from "./estimates/project-estimate.store";
 import { EventTrackerStore, IEventTrackerStore } from "./event-tracker.store";
 import { FavoriteStore, IFavoriteStore } from "./favorite.store";
@@ -46,7 +44,6 @@ export class CoreRootStore {
   issue: IIssueRootStore;
   state: IStateStore;
   label: ILabelStore;
-  dashboard: IDashboardStore;
   projectPages: IProjectPageStore;
   router: IRouterStore;
   commandPalette: ICommandPaletteStore;
@@ -80,7 +77,6 @@ export class CoreRootStore {
     this.issue = new IssueRootStore(this as unknown as RootStore);
     this.state = new StateStore(this as unknown as RootStore);
     this.label = new LabelStore(this);
-    this.dashboard = new DashboardStore(this);
     this.eventTracker = new EventTrackerStore(this);
     this.multipleSelect = new MultipleSelectStore();
     this.projectInbox = new ProjectInboxStore(this);
@@ -112,7 +108,6 @@ export class CoreRootStore {
     this.issue = new IssueRootStore(this as unknown as RootStore);
     this.state = new StateStore(this as unknown as RootStore);
     this.label = new LabelStore(this);
-    this.dashboard = new DashboardStore(this);
     this.eventTracker = new EventTrackerStore(this);
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this as unknown as RootStore);
