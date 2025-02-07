@@ -63,7 +63,6 @@ export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props)
             hasError={Boolean(errors.name)}
             placeholder={t("title")}
             className="w-full text-base"
-            // tabIndex={getIndex("name")}
             autoFocus
           />
         )}
