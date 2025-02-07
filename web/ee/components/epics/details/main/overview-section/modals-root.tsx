@@ -129,7 +129,7 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
   };
 
   // helpers
-  const createUpdateModalData = { parent_id: issueCrudOperationState?.create?.parentIssueId };
+  const createUpdateModalData = { parent_id: issueCrudOperationState?.create?.parentIssueId, project_id: projectId };
 
   const existingIssuesModalSearchParams = {
     sub_issue: true,
