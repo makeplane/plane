@@ -262,7 +262,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                     type="button"
                     className="flex items-center gap-1 rounded px-1.5 py-1 text-xs bg-custom-background-90 hover:bg-custom-background-80"
                     onClick={() => setGptAssistantModal((prevData) => !prevData)}
-                    tabIndex={getIndex("ai_assistant")}
+                    tabIndex={-1}
                   >
                     <Sparkle className="h-4 w-4" />
                     AI
