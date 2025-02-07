@@ -5,9 +5,9 @@ import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
+import { EUserPermissions } from "@plane/constants";
 import { IProjectBulkAddFormData, IProjectMember, IProjectMembership, IUserLite } from "@plane/types";
 // plane-web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
 import { ProjectMemberService } from "@/services/project";
 // store

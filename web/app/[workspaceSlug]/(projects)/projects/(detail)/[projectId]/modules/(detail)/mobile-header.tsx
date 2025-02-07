@@ -6,16 +6,27 @@ import { useParams } from "next/navigation";
 // icons
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
 // plane constants
-import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import {
+  EIssueLayoutTypes,
+  EIssueFilterType,
+  EIssuesStoreType,
+  ISSUE_LAYOUTS,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
+} from "@plane/constants";
+// plane i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues/issue-layouts";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "@/constants/issue";
+import {
+  DisplayFiltersSelection,
+  FilterSelection,
+  FiltersDropdown,
+  IssueLayoutIcon,
+} from "@/components/issues/issue-layouts";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
@@ -25,10 +36,11 @@ export const ModuleIssuesMobileHeader = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
   const { currentProjectDetails } = useProject();
   const { getModuleById } = useModule();
+  const { t } = useTranslation();
   const layouts = [
-    { key: "list", title: "List", icon: List },
-    { key: "kanban", title: "Board", icon: Kanban },
-    { key: "calendar", title: "Calendar", icon: Calendar },
+    { key: "list", i18n_title: "issue.layouts.list", icon: List },
+    { key: "kanban", i18n_title: "issue.layouts.kanban", icon: Kanban },
+    { key: "calendar", i18n_title: "issue.layouts.calendar", icon: Calendar },
   ];
   const { workspaceSlug, projectId, moduleId } = useParams() as {
     workspaceSlug: string;
@@ -116,8 +128,8 @@ export const ModuleIssuesMobileHeader = observer(() => {
               }}
               className="flex items-center gap-2"
             >
-              <layout.icon className="h-3 w-3" />
-              <div className="text-custom-text-300">{layout.title}</div>
+              <IssueLayoutIcon layout={ISSUE_LAYOUTS[index].key} className="h-3 w-3" />
+              <div className="text-custom-text-300">{t(layout.i18n_title)}</div>
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
@@ -139,7 +151,7 @@ export const ModuleIssuesMobileHeader = observer(() => {
               displayFilters={issueFilters?.displayFilters ?? {}}
               handleDisplayFiltersUpdate={handleDisplayFilters}
               layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
               }
               labels={projectLabels}
               memberIds={projectMemberIds ?? undefined}
@@ -162,7 +174,7 @@ export const ModuleIssuesMobileHeader = observer(() => {
           >
             <DisplayFiltersSelection
               layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
               }
               displayFilters={issueFilters?.displayFilters ?? {}}
               handleDisplayFiltersUpdate={handleDisplayFilters}

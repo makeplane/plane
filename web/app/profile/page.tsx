@@ -23,7 +23,7 @@ const ProfileSettingsPage = observer(() => {
 
   return (
     <>
-      <PageHead title={`${t("profile")} - ${t("general_settings")}`} />
+      <PageHead title={`${t("profile.label")} - ${t("general_settings")}`} />
       <ProfileSettingContentWrapper>
         <ProfileForm user={currentUser} profile={userProfile.data} />
       </ProfileSettingContentWrapper>

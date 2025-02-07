@@ -3,7 +3,8 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
-// ui
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { Row } from "@plane/ui";
 // components
 import {
@@ -14,10 +15,10 @@ import {
   CyclesListItem,
 } from "@/components/cycles";
 import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-details";
-import { EmptyState } from "@/components/empty-state";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state";
+// hooks
 import { useCycle } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { ActiveCycleIssueDetails } from "@/store/issue/cycle";
 
 interface IActiveCycleDetails {
@@ -29,9 +30,13 @@ interface IActiveCycleDetails {
 
 export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) => {
   const { workspaceSlug, projectId, cycleId: propsCycleId, showHeader = true } = props;
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
   const { currentProjectActiveCycleId } = useCycle();
   // derived values
   const cycleId = propsCycleId ?? currentProjectActiveCycleId;
+  const activeCycleResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/cycle/active" });
   // fetch cycle details
   const {
     handleFiltersUpdate,
@@ -43,7 +48,11 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
     () => (
       <>
         {!cycleId || !activeCycle ? (
-          <EmptyState type={EmptyStateType.PROJECT_CYCLE_ACTIVE} size="sm" />
+          <DetailedEmptyState
+            title={t("project_cycles.empty_state.active.title")}
+            description={t("project_cycles.empty_state.active.description")}
+            assetPath={activeCycleResolvedPath}
+          />
         ) : (
           <div className="flex flex-col border-b border-custom-border-200">
             {cycleId && (
@@ -88,7 +97,7 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
           {({ open }) => (
             <>
               <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
-                <CycleListGroupHeader title="Active cycle" type="current" isExpanded={open} />
+                <CycleListGroupHeader title={t("project_cycles.active_cycle.label")} type="current" isExpanded={open} />
               </Disclosure.Button>
               <Disclosure.Panel>{ActiveCyclesComponent}</Disclosure.Panel>
             </>

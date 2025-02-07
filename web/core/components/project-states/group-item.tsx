@@ -3,6 +3,7 @@
 import { FC, useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Plus } from "lucide-react";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IState, TStateGroups } from "@plane/types";
 // components
 import { StateGroupIcon } from "@plane/ui";
@@ -10,7 +11,6 @@ import { cn } from "@plane/utils";
 import { StateList, StateCreate } from "@/components/project-states";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type TGroupItem = {
   workspaceSlug: string;

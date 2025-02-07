@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 // components
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { EIssueFilterType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -36,6 +37,8 @@ interface ICalendarHeader {
 
 export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
   const { issuesFilterStore, updateFilters, setSelectedDate } = props;
+
+  const { t } = useTranslation();
 
   const issueCalendarView = useCalendarView();
 
@@ -119,7 +122,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
           className="rounded bg-custom-background-80 px-2.5 py-1 text-xs font-medium text-custom-text-200 hover:text-custom-text-100"
           onClick={handleToday}
         >
-          Today
+          {t("common.today")}
         </button>
         <CalendarOptionsDropdown issuesFilterStore={issuesFilterStore} updateFilters={updateFilters} />
       </div>

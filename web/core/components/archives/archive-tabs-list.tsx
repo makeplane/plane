@@ -14,7 +14,7 @@ const ARCHIVES_TAB_LIST: {
 }[] = [
   {
     key: "issues",
-    label: "Issues",
+    label: "Work items",
     shouldRender: () => true,
   },
   {

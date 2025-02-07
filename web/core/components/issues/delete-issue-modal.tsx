@@ -2,15 +2,16 @@
 
 import { useEffect, useState } from "react";
 // types
+import { PROJECT_ERROR_MESSAGES ,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TDeDupeIssue, TIssue } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { PROJECT_ERROR_MESSAGES } from "@/constants/project";
 // hooks
 import { useIssues, useProject, useUser, useUserPermissions } from "@/hooks/store";
 // plane-web
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
@@ -29,6 +30,7 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
   const { issueMap } = useIssues();
   const { getProjectById } = useProject();
   const { allowPermissions } = useUserPermissions();
+  const { t } = useTranslation();
 
   const { data: currentUser } = useUser();
 
@@ -57,9 +59,10 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
 
     if (!authorized) {
       setToast({
-        title: PROJECT_ERROR_MESSAGES.permissionError.title,
+        title: t(PROJECT_ERROR_MESSAGES.permissionError.i18n_title),
         type: TOAST_TYPE.ERROR,
-        message: PROJECT_ERROR_MESSAGES.permissionError.message,
+        message:
+          PROJECT_ERROR_MESSAGES.permissionError.i18n_message && t(PROJECT_ERROR_MESSAGES.permissionError.i18n_message),
       });
       onClose();
       return;
@@ -69,22 +72,24 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
         .then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: `${isSubIssue ? "Sub-issue" : isEpic ? "Epic" : "Issue"} deleted successfully`,
+            title: t("common.success"),
+            message: t("entity.delete.success", {
+              entity: isSubIssue ? t("common.sub_work_item") : isEpic ? t("common.epic") : t("common.work_item"),
+            }),
           });
           onClose();
         })
         .catch((errors) => {
           const isPermissionError =
             errors?.error ===
-            `Only admin or creator can delete the ${isSubIssue ? "sub-issue" : isEpic ? "epic" : "issue"}`;
+            `Only admin or creator can delete the ${isSubIssue ? "sub-work item" : isEpic ? "epic" : "work item"}`;
           const currentError = isPermissionError
             ? PROJECT_ERROR_MESSAGES.permissionError
             : PROJECT_ERROR_MESSAGES.issueDeleteError;
           setToast({
-            title: currentError.title,
+            title: t(currentError.i18n_title),
             type: TOAST_TYPE.ERROR,
-            message: currentError.message,
+            message: currentError.i18n_message && t(currentError.i18n_message),
           });
         })
         .finally(() => onClose());
@@ -96,14 +101,15 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
       handleSubmit={handleIssueDelete}
       isSubmitting={isDeleting}
       isOpen={isOpen}
-      title={`Delete ${isEpic ? "epic" : "issue"}`}
+      title={t("entity.delete.label", { entity: isEpic ? t("common.epic") : t("common.work_item") })}
       content={
         <>
-          {`Are you sure you want to delete ${isEpic ? "epic" : "issue"} `}
+          {/* TODO: Translate here */}
+          {`Are you sure you want to delete ${isEpic ? "epic" : "work item"} `}
           <span className="break-words font-medium text-custom-text-100">
             {projectDetails?.identifier}-{issue?.sequence_id}
           </span>
-          {` ? All of the data related to the ${isEpic ? "epic" : "issue"} will be permanently removed. This action cannot be undone.`}
+          {` ? All of the data related to the ${isEpic ? "epic" : "work item"} will be permanently removed. This action cannot be undone.`}
         </>
       }
     />

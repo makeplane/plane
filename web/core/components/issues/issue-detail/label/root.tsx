@@ -3,6 +3,7 @@
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IIssueLabel, TIssue, TIssueServiceType } from "@plane/types";
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";
@@ -39,6 +40,7 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
     onLabelUpdate,
     issueServiceType = EIssueServiceType.ISSUES,
   } = props;
+  const { t } = useTranslation();
   // hooks
   const { updateIssue } = useIssueDetail(issueServiceType);
   const { createLabel } = useLabel();
@@ -57,9 +59,9 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
           else await updateIssue(workspaceSlug, projectId, issueId, data);
         } catch (error) {
           setToast({
-            title: "Error!",
+            title: t("toast.error"),
             type: TOAST_TYPE.ERROR,
-            message: "Issue update failed",
+            message: t("entity.update.failed", { entity: t("issue.label", { count: 1 }) }),
           });
         }
       },
@@ -68,18 +70,18 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
           const labelResponse = await createLabel(workspaceSlug, projectId, data);
           if (!isInboxIssue)
             setToast({
-              title: "Success!",
+              title: t("toast.success"),
               type: TOAST_TYPE.SUCCESS,
-              message: "Label created successfully",
+              message: t("label.create.success"),
             });
           return labelResponse;
         } catch (error) {
-          let errMessage = "Label creation failed";
+          let errMessage = t("label.create.failed");
           if (error && (error as any).error === "Label with the same name already exists in the project")
-            errMessage = "Label already exists";
+            errMessage = t("label.create.already_exists");
 
           setToast({
-            title: "Error!",
+            title: t("toast.error"),
             type: TOAST_TYPE.ERROR,
             message: errMessage,
           });

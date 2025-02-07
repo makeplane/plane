@@ -3,10 +3,11 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
+// plane imports
+import { ROLE } from "@plane/constants";
 // plane ui
 import { Avatar } from "@plane/ui";
 // constants
-import { ROLE } from "@/constants/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getFileURL } from "@/helpers/file.helper";

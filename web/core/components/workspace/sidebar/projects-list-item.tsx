@@ -13,6 +13,7 @@ import { createRoot } from "react-dom/client";
 import { LinkIcon, Star, Settings, Share2, LogOut, MoreHorizontal, ChevronRight } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 // ui
@@ -28,7 +29,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane-web components
 import { ProjectNavigationRoot } from "@/plane-web/components/sidebar";
 // constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../../issues/issue-layouts/utils";
 
 type Props = {

@@ -235,7 +235,7 @@ export class Storage {
     if (syncedAt) {
       await syncDeletesToLocal(this.workspaceSlug, projectId, { updated_at__gt: syncedAt });
     }
-    log("### Time taken to add issues", performance.now() - start);
+    log("### Time taken to add work items", performance.now() - start);
 
     if (status === "loading") {
       await createIndexes();
@@ -323,7 +323,7 @@ export class Storage {
     const parsingStart = performance.now();
     let issueResults = issuesRaw.map((issue: any) => formatLocalIssue(issue));
 
-    log("#### Issue Results", issueResults.length);
+    log("#### Work item Results", issueResults.length);
 
     const parsingEnd = performance.now();
 

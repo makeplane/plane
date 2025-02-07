@@ -222,7 +222,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                 className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search"
+                placeholder={t("common.search.label")}
                 displayValue={(assigned: any) => assigned?.name}
                 onKeyDown={searchInputKeyDown}
               />
