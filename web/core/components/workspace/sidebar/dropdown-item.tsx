@@ -1,12 +1,17 @@
+"use client";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Check, Settings, UserPlus } from "lucide-react";
+// plane imports
 import { Menu } from "@headlessui/react";
 import { EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 import { cn, getFileURL } from "@plane/utils";
+// helpers
 import { getUserRole } from "@/helpers/user.helper";
+// plane web imports
 import { SubscriptionPill } from "@/plane-web/components/common/subscription-pill";
 
 type TProps = {
@@ -15,11 +20,11 @@ type TProps = {
   handleItemClick: () => void;
   handleWorkspaceNavigation: (workspace: IWorkspace) => void;
 };
-const SidebarDropdownItem = (props: TProps) => {
+const SidebarDropdownItem = observer((props: TProps) => {
   const { workspace, activeWorkspace, handleItemClick, handleWorkspaceNavigation } = props;
-
-  // router params
+  // router
   const { workspaceSlug } = useParams();
+  // hooks
   const { t } = useTranslation();
 
   return (
@@ -43,14 +48,14 @@ const SidebarDropdownItem = (props: TProps) => {
         <div className="flex items-center justify-between gap-1 rounded p-1 text-sm text-custom-sidebar-text-100 ">
           <div className="flex items-center justify-start gap-2.5 w-[80%] relative">
             <span
-              className={`relative flex h-8 w-8 flex-shrink-0 items-center  justify-center p-2 text-sm uppercase font-semibold ${
-                !workspace?.logo_url && "rounded-lg bg-custom-primary-500 text-white"
+              className={`relative flex h-8 w-8 flex-shrink-0 items-center  justify-center p-2 text-base uppercase font-medium border-custom-border-200 ${
+                !workspace?.logo_url && "rounded-md bg-custom-primary-500 text-white"
               }`}
             >
               {workspace?.logo_url && workspace.logo_url !== "" ? (
                 <img
                   src={getFileURL(workspace.logo_url)}
-                  className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
+                  className="absolute left-0 top-0 h-full w-full rounded object-cover"
                   alt={t("workspace_logo")}
                 />
               ) : (
@@ -79,28 +84,32 @@ const SidebarDropdownItem = (props: TProps) => {
           )}
         </div>
         {workspace.id === activeWorkspace?.id && (
-          <div className="mt-2 mb-1 flex gap-2">
+          <>
             {workspace?.role > EUserPermissions.GUEST && (
-              <Link
-                href={`/${workspace.slug}/settings`}
-                className="flex border border-custom-border-200 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100"
-              >
-                <Settings className="h-4 w-4 text-custom-sidebar-text-100 my-auto" />
-                <span className="text-sm font-medium my-auto">{t("settings")}</span>
-              </Link>
+              <div className="mt-2 mb-1 flex gap-2">
+                <Link
+                  href={`/${workspace.slug}/settings`}
+                  className="flex border border-custom-border-200 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100 hover:shadow-sm hover:text-custom-text-200 text-custom-text-300 hover:border-custom-border-300 "
+                >
+                  <Settings className="h-4 w-4 my-auto" />
+                  <span className="text-sm font-medium my-auto">{t("settings")}</span>
+                </Link>
+                <Link
+                  href={`/${workspace.slug}/settings/members`}
+                  className="flex border border-custom-border-200 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100 hover:shadow-sm hover:text-custom-text-200 text-custom-text-300 hover:border-custom-border-300 "
+                >
+                  <UserPlus className="h-4 w-4 my-auto" />
+                  <span className="text-sm font-medium my-auto">
+                    {t("project_settings.members.invite_members.title")}
+                  </span>
+                </Link>
+              </div>
             )}
-            <Link
-              href={`/${workspace.slug}/settings/members`}
-              className="flex border border-custom-border-200 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100"
-            >
-              <UserPlus className="h-4 w-4 text-custom-sidebar-text-100 my-auto" />
-              <span className="text-sm font-medium my-auto capitalize">{t("invite")}</span>
-            </Link>
-          </div>
+          </>
         )}
       </Menu.Item>
     </Link>
   );
-};
+});
 
 export default SidebarDropdownItem;
