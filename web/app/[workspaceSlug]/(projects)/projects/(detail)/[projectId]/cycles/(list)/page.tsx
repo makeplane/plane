@@ -3,20 +3,22 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// types
+// plane imports
+import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TCycleFilters } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
 import { PageHead } from "@/components/core";
 import { CyclesView, CycleCreateUpdateModal, CycleAppliedFiltersList } from "@/components/cycles";
-import { EmptyState } from "@/components/empty-state";
+import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { CycleModuleListLayout } from "@/components/ui";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useEventTracker, useCycle, useProject, useCycleFilter } from "@/hooks/store";
+import { useEventTracker, useCycle, useProject, useCycleFilter, useUserPermissions } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 const ProjectCyclesPage = observer(() => {
   // states
@@ -26,13 +28,23 @@ const ProjectCyclesPage = observer(() => {
   const { currentProjectCycleIds, loader } = useCycle();
   const { getProjectById, currentProjectDetails } = useProject();
   // router
+  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
+  // plane hooks
+  const { t } = useTranslation();
   // cycle filters hook
   const { clearAllFilters, currentProjectFilters, updateFilters } = useCycleFilter();
+  const { allowPermissions } = useUserPermissions();
   // derived values
   const totalCycles = currentProjectCycleIds?.length ?? 0;
   const project = projectId ? getProjectById(projectId?.toString()) : undefined;
-  const pageTitle = project?.name ? `${project?.name} - Cycles` : undefined;
+  const pageTitle = project?.name ? `${project?.name} - ${t("cycles.label", { count: 2 })}` : undefined;
+  const hasAdminLevelPermission = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
+  const hasMemberLevelPermission = allowPermissions(
+    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/disabled-feature/cycles" });
 
   const handleRemoveFilter = (key: keyof TCycleFilters, value: string | null) => {
     if (!projectId) return;
@@ -50,9 +62,17 @@ const ProjectCyclesPage = observer(() => {
   if (currentProjectDetails?.cycle_view === false)
     return (
       <div className="flex items-center justify-center h-full w-full">
-        <EmptyState
-          type={EmptyStateType.DISABLED_PROJECT_CYCLE}
-          primaryButtonLink={`/${workspaceSlug}/projects/${projectId}/settings/features`}
+        <DetailedEmptyState
+          title={t("disabled_project.empty_state.cycle.title")}
+          description={t("disabled_project.empty_state.cycle.description")}
+          assetPath={resolvedPath}
+          primaryButton={{
+            text: t("disabled_project.empty_state.cycle.primary_button.text"),
+            onClick: () => {
+              router.push(`/${workspaceSlug}/projects/${projectId}/settings/features`);
+            },
+            disabled: !hasAdminLevelPermission,
+          }}
         />
       </div>
     );
@@ -71,12 +91,22 @@ const ProjectCyclesPage = observer(() => {
         />
         {totalCycles === 0 ? (
           <div className="h-full place-items-center">
-            <EmptyState
-              type={EmptyStateType.PROJECT_CYCLES}
-              primaryButtonOnClick={() => {
-                setTrackElement("Cycle empty state");
-                setCreateModal(true);
-              }}
+            <DetailedEmptyState
+              title={t("project_cycles.empty_state.general.title")}
+              description={t("project_cycles.empty_state.general.description")}
+              assetPath={resolvedPath}
+              customPrimaryButton={
+                <ComicBoxButton
+                  label={t("project_cycles.empty_state.general.primary_button.text")}
+                  title={t("project_cycles.empty_state.general.primary_button.comic.title")}
+                  description={t("project_cycles.empty_state.general.primary_button.comic.description")}
+                  onClick={() => {
+                    setTrackElement("Cycle empty state");
+                    setCreateModal(true);
+                  }}
+                  disabled={!hasMemberLevelPermission}
+                />
+              }
             />
           </div>
         ) : (

@@ -4,6 +4,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
 import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssue, TIssueServiceType } from "@plane/types";
 // ui
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
@@ -53,7 +54,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
     subIssueOperations,
     issueServiceType = EIssueServiceType.ISSUES,
   } = props;
-
+  const { t } = useTranslation();
   const {
     issue: { getIssueById },
   } = useIssueDetail(issueServiceType);
@@ -184,7 +185,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                   >
                     <div className="flex items-center gap-2">
                       <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
-                      <span>Edit issue</span>
+                      <span>{t("issue.edit")}</span>
                     </div>
                   </CustomMenu.MenuItem>
                 )}
@@ -198,7 +199,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                 >
                   <div className="flex items-center gap-2">
                     <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
-                    <span>Copy issue link</span>
+                    <span>{t("issue.copy_link")}</span>
                   </div>
                 </CustomMenu.MenuItem>
 
@@ -213,7 +214,9 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                   >
                     <div className="flex items-center gap-2">
                       <X className="h-3.5 w-3.5" strokeWidth={2} />
-                      <span>{`Remove ${issueServiceType === EIssueServiceType.ISSUES ? "parent" : ""} issue`}</span>
+                      {issueServiceType === EIssueServiceType.ISSUES
+                        ? t("issue.remove.parent.label")
+                        : t("issue.remove.label")}
                     </div>
                   </CustomMenu.MenuItem>
                 )}
@@ -229,7 +232,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                   >
                     <div className="flex items-center gap-2">
                       <Trash className="h-3.5 w-3.5" strokeWidth={2} />
-                      <span>Delete issue</span>
+                      <span>{t("issue.delete.label")}</span>
                     </div>
                   </CustomMenu.MenuItem>
                 )}

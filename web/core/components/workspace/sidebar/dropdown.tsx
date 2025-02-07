@@ -17,7 +17,7 @@ import { GOD_MODE_URL, cn } from "@/helpers/common.helper";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useAppTheme, useUser, useUserPermissions, useUserProfile, useWorkspace } from "@/hooks/store";
+import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 // plane web helpers
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 // components
@@ -36,8 +36,6 @@ export const SidebarDropdown = observer(() => {
     signOut,
   } = useUser();
   const { updateUserProfile } = useUserProfile();
-  const { allowPermissions } = useUserPermissions();
-  // derived values
   const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
 
   const isUserInstanceAdmin = false;
@@ -67,8 +65,8 @@ export const SidebarDropdown = observer(() => {
     await signOut().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: t("error"),
-        message: t("failed_to_sign_out_please_try_again"),
+        title: t("sign_out.toast.error.title"),
+        message: t("sign_out.toast.error.message"),
       })
     );
   };

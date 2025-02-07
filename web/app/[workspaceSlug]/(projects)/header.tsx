@@ -7,11 +7,12 @@ import { Home } from "lucide-react";
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
 // ui
+import { GITHUB_REDIRECTED } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // constants
-import { GITHUB_REDIRECTED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 
@@ -19,6 +20,7 @@ export const WorkspaceDashboardHeader = () => {
   // hooks
   const { captureEvent } = useEventTracker();
   const { resolvedTheme } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <>
@@ -28,7 +30,9 @@ export const WorkspaceDashboardHeader = () => {
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
-                link={<BreadcrumbLink label="Home" icon={<Home className="h-4 w-4 text-custom-text-300" />} />}
+                link={
+                  <BreadcrumbLink label={t("home.title")} icon={<Home className="h-4 w-4 text-custom-text-300" />} />
+                }
               />
             </Breadcrumbs>
           </div>
@@ -51,7 +55,7 @@ export const WorkspaceDashboardHeader = () => {
               width={16}
               alt="GitHub Logo"
             />
-            <span className="hidden text-xs font-medium sm:hidden md:block">Star us on GitHub</span>
+            <span className="hidden text-xs font-medium sm:hidden md:block">{t("home.star_us_on_github")}</span>
           </a>
         </Header.RightItem>
       </Header>

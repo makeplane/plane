@@ -1,14 +1,12 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // constants
-import { E_SORT_ORDER } from "@plane/constants";
+import { E_SORT_ORDER, TActivityFilters, filterActivityOnSelectedFilters } from "@plane/constants";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web components
 import { IssueAdditionalPropertiesActivity } from "@/plane-web/components/issues";
 import { IssueActivityWorklog } from "@/plane-web/components/issues/worklog/activity/root";
-// plane web constants
-import { TActivityFilters, filterActivityOnSelectedFilters } from "@/plane-web/constants/issues";
 // components
 import { IssueActivityItem } from "./activity/activity-list";
 import { IssueCommentCard } from "./comments/comment-card";

@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import { Expand, Shrink } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // plane
 import { Row } from "@plane/ui";
 // components
@@ -23,6 +24,7 @@ type Props = {
 };
 
 export const GanttChartHeader: React.FC<Props> = observer((props) => {
+  const { t } = useTranslation();
   const { blockIds, fullScreenMode, handleChartView, handleToday, loaderTitle, toggleFullScreenMode, showToday } =
     props;
   // chart hook
@@ -35,7 +37,7 @@ export const GanttChartHeader: React.FC<Props> = observer((props) => {
     >
       <div className="ml-auto">
         <div className="ml-auto text-sm font-medium">
-          {blockIds ? `${blockIds.length} ${loaderTitle}` : "Loading..."}
+          {blockIds ? `${blockIds.length} ${loaderTitle}` : t("common.loading")}
         </div>
       </div>
 
@@ -49,7 +51,7 @@ export const GanttChartHeader: React.FC<Props> = observer((props) => {
             })}
             onClick={() => handleChartView(chartView?.key)}
           >
-            {chartView?.title}
+            {t(chartView?.i18n_title)}
           </div>
         ))}
       </div>
@@ -60,7 +62,7 @@ export const GanttChartHeader: React.FC<Props> = observer((props) => {
           className="rounded-sm p-1 px-2 text-xs hover:bg-custom-background-80"
           onClick={handleToday}
         >
-          Today
+          {t("common.today")}
         </button>
       )}
 

@@ -4,6 +4,7 @@ import { FC, Fragment, useState } from "react";
 import { DayPicker, getDefaultClassNames } from "react-day-picker";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 
 export type InboxIssueSnoozeModalProps = {
@@ -17,6 +18,8 @@ export const InboxIssueSnoozeModal: FC<InboxIssueSnoozeModalProps> = (props) => 
   const { isOpen, handleClose, value, onConfirm } = props;
   // states
   const [date, setDate] = useState(value || new Date());
+  //hooks
+  const { t } = useTranslation();
 
   const defaultClassNames = getDefaultClassNames();
 
@@ -70,7 +73,7 @@ export const InboxIssueSnoozeModal: FC<InboxIssueSnoozeModalProps> = (props) => 
                       onConfirm(date);
                     }}
                   >
-                    Snooze
+                    {t("inbox_issue.actions.snooze")}
                   </Button>
                 </div>
               </Dialog.Panel>

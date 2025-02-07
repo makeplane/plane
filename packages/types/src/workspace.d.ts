@@ -1,4 +1,11 @@
-import type { ICycle, IProjectMember, IUser, IUserLite, IWorkspaceViewProps } from "@plane/types";
+import type {
+  ICycle,
+  IProjectMember,
+  IUser,
+  IUserLite,
+  IWorkspaceViewProps,
+} from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/constants"; // TODO: check if importing this over here causes circular dependency
 import { TUserPermissions } from "./enums";
 
 export interface IWorkspace {
@@ -65,7 +72,7 @@ export type Properties = {
 export interface IWorkspaceMember {
   id: string;
   member: IUserLite;
-  role: TUserPermissions;
+  role: TUserPermissions | EUserWorkspaceRoles;
   created_at?: string;
   avatar_url?: string;
   email?: string;
@@ -83,7 +90,7 @@ export interface IWorkspaceMemberMe {
   default_props: IWorkspaceViewProps;
   id: string;
   member: string;
-  role: TUserPermissions;
+  role: TUserPermissions | EUserWorkspaceRoles;
   updated_at: Date;
   updated_by: string;
   view_props: IWorkspaceViewProps;

@@ -1,6 +1,8 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // types
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // components
 import { Tag } from "@plane/ui";
@@ -22,7 +24,6 @@ import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 import { useUserPermissions } from "@/hooks/store";
 // plane web components
 import { AppliedIssueTypeFilters } from "@/plane-web/components/issues";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   appliedFilters: IIssueFilterOptions;
@@ -49,6 +50,7 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
   } = props;
   // store hooks
   const { allowPermissions } = useUserPermissions();
+  const { t } = useTranslation();
 
   if (!appliedFilters) return null;
 
@@ -156,7 +158,7 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
       {isEditingAllowed && (
         <button type="button" onClick={handleClearAllFilters}>
           <Tag>
-            Clear all
+            {t("common.clear_all")}
             <X size={12} strokeWidth={2} />
           </Tag>
         </button>

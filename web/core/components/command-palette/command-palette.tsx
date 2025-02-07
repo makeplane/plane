@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CommandModal, ShortcutsModal } from "@/components/command-palette";
@@ -19,7 +20,6 @@ import {
   WorkspaceLevelModals,
 } from "@/plane-web/components/command-palette/modals";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web helpers
 import {
   getGlobalShortcutsList,

@@ -2,19 +2,21 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
-import { EIssueLayoutTypes, EIssuesStoreType, EIssueFilterType } from "@plane/constants";
+import { EIssueLayoutTypes, EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // components
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelection } from "@/components/issues";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel } from "@/hooks/store";
 
 export const ProfileIssuesFilter = observer(() => {
+  // i18n
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, userId } = useParams();
   // store hook
@@ -105,10 +107,10 @@ export const ProfileIssuesFilter = observer(() => {
         selectedLayout={activeLayout}
       />
 
-      <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
+      <FiltersDropdown title={t("common.filters")} placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
         <FilterSelection
           layoutDisplayFiltersOptions={
-            activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.profile_issues[activeLayout] : undefined
+            activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.profile_issues[activeLayout] : undefined
           }
           filters={issueFilters?.filters ?? {}}
           handleFiltersUpdate={handleFiltersUpdate}
@@ -120,10 +122,10 @@ export const ProfileIssuesFilter = observer(() => {
         />
       </FiltersDropdown>
 
-      <FiltersDropdown title="Display" placement="bottom-end">
+      <FiltersDropdown title={t("common.display")} placement="bottom-end">
         <DisplayFiltersSelection
           layoutDisplayFiltersOptions={
-            activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.profile_issues[activeLayout] : undefined
+            activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.profile_issues[activeLayout] : undefined
           }
           displayFilters={issueFilters?.displayFilters ?? {}}
           handleDisplayFiltersUpdate={handleDisplayFilters}

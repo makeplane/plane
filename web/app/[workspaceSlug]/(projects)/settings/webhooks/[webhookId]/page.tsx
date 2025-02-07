@@ -4,6 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IWebhook } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
@@ -13,7 +14,6 @@ import { PageHead } from "@/components/core";
 import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "@/components/web-hooks";
 // hooks
 import { useUserPermissions, useWebhook, useWorkspace } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const WebhookDetailsPage = observer(() => {
   // states

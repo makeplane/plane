@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
-// types
 import { useParams, usePathname } from "next/navigation";
+// i18n
+import { useTranslation } from "@plane/i18n";
 import { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
 // components
 import { PageHead } from "@/components/core";
@@ -17,6 +18,7 @@ const Root = observer(() => {
   const { currentWorkspace } = useWorkspace();
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
+  const { t } = useTranslation();
   // store
   const { totalProjectIds, filteredProjectIds } = useProject();
   const {
@@ -28,7 +30,9 @@ const Root = observer(() => {
     updateDisplayFilters,
   } = useProjectFilter();
   // derived values
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Projects` : undefined;
+  const pageTitle = currentWorkspace?.name
+    ? `${currentWorkspace?.name} - ${t("workspace_projects.label", { count: 2 })}`
+    : undefined;
 
   const isArchived = pathname.includes("/archives");
 

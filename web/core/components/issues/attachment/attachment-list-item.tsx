@@ -4,6 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Trash } from "lucide-react";
 import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssueServiceType } from "@plane/types";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
@@ -25,6 +26,7 @@ type TIssueAttachmentsListItem = {
 };
 
 export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer((props) => {
+  const { t } = useTranslation();
   // props
   const { attachmentId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
   // store hooks
@@ -89,7 +91,7 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
               >
                 <div className="flex items-center gap-2">
                   <Trash className="h-3.5 w-3.5" strokeWidth={2} />
-                  <span>Delete</span>
+                  <span>{t("common.actions.delete")}</span>
                 </div>
               </CustomMenu.MenuItem>
             </CustomMenu>

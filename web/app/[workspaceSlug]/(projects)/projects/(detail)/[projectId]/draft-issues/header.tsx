@@ -4,7 +4,9 @@ import { FC, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
-import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
@@ -12,8 +14,6 @@ import { Breadcrumbs, LayersIcon, Tooltip } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
@@ -24,6 +24,8 @@ import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 
 // FIXME: Deprecated. Remove it
 export const ProjectDraftIssueHeader: FC = observer(() => {
+  // i18n
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   // store hooks
@@ -96,14 +98,17 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
-                <BreadcrumbLink label="Draft Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />
+                <BreadcrumbLink
+                  label="Draft work items"
+                  icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}
+                />
               }
             />
           </Breadcrumbs>
           {issueCount && issueCount > 0 ? (
             <Tooltip
               isMobile={isMobile}
-              tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"} in project's draft`}
+              tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "work items" : "work item"} in project's draft`}
               position="bottom"
             >
               <span className="cursor-default flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
@@ -119,14 +124,18 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
             onChange={(layout) => handleLayoutChange(layout)}
             selectedLayout={activeLayout}
           />
-          <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
+          <FiltersDropdown
+            title={t("common.filters")}
+            placement="bottom-end"
+            isFiltersApplied={isIssueFilterActive(issueFilters)}
+          >
             <FilterSelection
               filters={issueFilters?.filters ?? {}}
               handleFiltersUpdate={handleFiltersUpdate}
               displayFilters={issueFilters?.displayFilters ?? {}}
               handleDisplayFiltersUpdate={handleDisplayFilters}
               layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
               }
               labels={projectLabels}
               memberIds={projectMemberIds ?? undefined}
@@ -135,10 +144,10 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
               moduleViewDisabled={!currentProjectDetails?.module_view}
             />
           </FiltersDropdown>
-          <FiltersDropdown title="Display" placement="bottom-end">
+          <FiltersDropdown title={t("common.display")} placement="bottom-end">
             <DisplayFiltersSelection
               layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
               }
               displayFilters={issueFilters?.displayFilters ?? {}}
               handleDisplayFiltersUpdate={handleDisplayFilters}

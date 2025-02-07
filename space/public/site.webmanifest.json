@@ -1,7 +1,7 @@
 {
   "name": "Plane Space",
   "short_name": "Plane Space",
-  "description": "Plane helps you plan your issues, cycles, and product modules.",
+  "description": "Plane helps you plan your work items, cycles, and product modules.",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#f9fafb",
