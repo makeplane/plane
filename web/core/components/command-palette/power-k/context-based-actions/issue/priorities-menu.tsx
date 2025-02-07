@@ -3,12 +3,10 @@
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { Check } from "lucide-react";
-// plane types
+// plane imports
+import { ISSUE_PRIORITIES } from "@plane/constants";
 import { TIssue } from "@plane/types";
-// plane ui
 import { PriorityIcon } from "@plane/ui";
-// constants
-import { ISSUE_PRIORITIES } from "@/constants/issue";
 
 type Props = {
   handleClose: () => void;

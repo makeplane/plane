@@ -4,17 +4,16 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// types
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { IWorkspaceSearchResults, TPowerKPageKeys } from "@plane/types";
-// ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
-import { EmptyState } from "@/components/empty-state";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state";
 // hooks
 import { useCommandPalette } from "@/hooks/store";
 import useDebounce from "@/hooks/use-debounce";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web constants
 import { POWER_K_PLACEHOLDER_TEXT, PowerKContextBasedActions } from "@/plane-web/components/command-palette/power-k";
 // plane web services
@@ -56,7 +55,11 @@ export const PowerKModal: React.FC = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // debounce
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  // translation
+  const { t } = useTranslation();
+  // derived values
   const activePage = pages.length > 0 ? pages[pages.length - 1] : undefined;
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
 
   const handleClose = () => {
     toggleCommandPaletteModal(false);
@@ -167,7 +170,7 @@ export const PowerKModal: React.FC = observer(() => {
             )}
             {!isLoading && resultsCount === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
               <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-                <EmptyState type={EmptyStateType.COMMAND_K_SEARCH_EMPTY_STATE} layout="screen-simple" />
+                <SimpleEmptyState title={t("command_k.empty_state.search.title")} assetPath={resolvedPath} />
               </div>
             )}
             {(isLoading || isSearching) && <PowerKLoader />}

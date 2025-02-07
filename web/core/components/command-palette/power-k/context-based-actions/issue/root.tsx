@@ -95,7 +95,7 @@ export const PowerKIssueActionsMenu: React.FC<Props> = observer((props) => {
   return (
     <>
       {!activePage && (
-        <Command.Group heading="Issue actions">
+        <Command.Group heading="Work item actions">
           <PowerKCommandItem
             icon={DoubleCircleIcon}
             label="Change state"
@@ -129,10 +129,10 @@ export const PowerKIssueActionsMenu: React.FC<Props> = observer((props) => {
               handleClose();
             }}
           />
-          <PowerKCommandItem icon={Trash2} label="Delete issue" onSelect={handleDeleteIssue} />
+          <PowerKCommandItem icon={Trash2} label="Delete work item" onSelect={handleDeleteIssue} />
           <PowerKCommandItem
             icon={LinkIcon}
-            label="Copy issue URL"
+            label="Copy work item URL"
             onSelect={() => {
               copyIssueUrlToClipboard();
               handleClose();

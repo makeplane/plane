@@ -1,13 +1,11 @@
 import { FileText, FolderPlus, Layers, SquarePlus } from "lucide-react";
-// plane types
+// plane imports
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TPowerKCreateAction, TPowerKCreateActionKeys } from "@plane/types";
-// plane ui
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
 // lib
 import { TAppRouterInstance } from "@/lib/n-progress/AppProgressBar";
 import { store } from "@/lib/store-context";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants";
 
 export const commonCreateActions = (
   router: TAppRouterInstance
@@ -37,7 +35,7 @@ export const commonCreateActions = (
     issue: {
       key: "issue",
       onClick: () => toggleCreateIssueModal(true),
-      label: "New issue",
+      label: "New work item",
       icon: LayersIcon,
       shortcut: "C",
       shouldRender: canCreateIssue,
