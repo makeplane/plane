@@ -30,11 +30,6 @@ class Migration(migrations.Migration):
             model_name='deprecateddashboardwidget',
             name='widget',
         ),
-        migrations.AddField(
-            model_name='workspace',
-            name='is_test',
-            field=models.BooleanField(default=False),
-        ),
         migrations.DeleteModel(
             name='DeprecatedDashboard',
         ),
