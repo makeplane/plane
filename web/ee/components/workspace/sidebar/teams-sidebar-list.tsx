@@ -75,7 +75,7 @@ export const SidebarTeamsList = observer(() => {
               {sidebarCollapsed ? (
                 <TeamsIcon className="flex-shrink-0 size-3.5" />
               ) : (
-                <span className="text-xs font-semibold uppercase">{t("teamspaces.label")}</span>
+                <span className="text-sm font-semibold uppercase">{t("teamspaces.label")}</span>
               )}
             </Disclosure.Button>
           </Tooltip>
