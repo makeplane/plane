@@ -546,6 +546,8 @@
 
   "home": {
     "empty": {
+      "quickstart_guide": "Guía de inicio rápido",
+      "not_right_now": "Ahora no",
       "create_project": {
         "title": "Crear un proyecto",
         "description": "La mayoría de las cosas comienzan con un proyecto en Plane.",

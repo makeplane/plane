@@ -546,6 +546,8 @@
 
   "home": {
     "empty": {
+      "quickstart_guide": "Guide de démarrage rapide",
+      "not_right_now": "Pas maintenant",
       "create_project": {
         "title": "Créer un projet",
         "description": "La plupart des choses commencent par un projet dans Plane.",
