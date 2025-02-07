@@ -3,12 +3,11 @@
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { Check } from "lucide-react";
-// plane types
+// plane imports
+import { MODULE_STATUS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IModule } from "@plane/types";
-// plane ui
 import { ModuleStatusIcon, TModuleStatus } from "@plane/ui";
-// constants
-import { MODULE_STATUS } from "@/constants/module";
 
 type Props = {
   handleClose: () => void;
@@ -18,6 +17,8 @@ type Props = {
 
 export const PowerKModuleStatusMenu: React.FC<Props> = observer((props) => {
   const { handleClose, handleUpdateModule, value } = props;
+  // translation
+  const { t } = useTranslation();
 
   return (
     <>
@@ -34,7 +35,7 @@ export const PowerKModuleStatusMenu: React.FC<Props> = observer((props) => {
         >
           <div className="flex items-center space-x-3">
             <ModuleStatusIcon status={status.value} height="14px" width="14px" />
-            <p>{status.label}</p>
+            <p>{t(status.i18n_label)}</p>
           </div>
           <div className="flex-shrink-0">{status.value === value && <Check className="size-3" />}</div>
         </Command.Item>

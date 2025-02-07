@@ -1,2 +1,2 @@
-export * from "./issue";
 export * from "./module";
+export * from "./work-item";

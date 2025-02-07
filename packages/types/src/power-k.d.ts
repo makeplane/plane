@@ -1,8 +1,8 @@
 export type TPowerKPageKeys =
-  // issue actions
-  | "change-issue-assignee"
-  | "change-issue-priority"
-  | "change-issue-state"
+  // work-item actions
+  | "change-work-item-assignee"
+  | "change-work-item-priority"
+  | "change-work-item-state"
   // module actions
   | "change-module-member"
   | "change-module-status"

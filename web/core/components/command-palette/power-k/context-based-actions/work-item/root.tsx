@@ -101,7 +101,7 @@ export const PowerKIssueActionsMenu: React.FC<Props> = observer((props) => {
             label="Change state"
             onSelect={() => {
               handleUpdateSearchTerm("");
-              handleUpdatePage("change-issue-state");
+              handleUpdatePage("change-work-item-state");
             }}
           />
           <PowerKCommandItem
@@ -109,7 +109,7 @@ export const PowerKIssueActionsMenu: React.FC<Props> = observer((props) => {
             label="Change priority"
             onSelect={() => {
               handleUpdateSearchTerm("");
-              handleUpdatePage("change-issue-priority");
+              handleUpdatePage("change-work-item-priority");
             }}
           />
           <PowerKCommandItem
@@ -117,7 +117,7 @@ export const PowerKIssueActionsMenu: React.FC<Props> = observer((props) => {
             label="Assign to"
             onSelect={() => {
               handleUpdateSearchTerm("");
-              handleUpdatePage("change-issue-assignee");
+              handleUpdatePage("change-work-item-assignee");
             }}
           />
           <PowerKCommandItem
@@ -129,10 +129,10 @@ export const PowerKIssueActionsMenu: React.FC<Props> = observer((props) => {
               handleClose();
             }}
           />
-          <PowerKCommandItem icon={Trash2} label="Delete work item" onSelect={handleDeleteIssue} />
+          <PowerKCommandItem icon={Trash2} label="Delete" onSelect={handleDeleteIssue} />
           <PowerKCommandItem
             icon={LinkIcon}
-            label="Copy work item URL"
+            label="Copy URL"
             onSelect={() => {
               copyIssueUrlToClipboard();
               handleClose();
@@ -141,15 +141,15 @@ export const PowerKIssueActionsMenu: React.FC<Props> = observer((props) => {
         </Command.Group>
       )}
       {/* states menu */}
-      {activePage === "change-issue-state" && issueDetails && (
+      {activePage === "change-work-item-state" && issueDetails && (
         <PowerKProjectStatesMenu handleClose={handleClose} handleUpdateIssue={handleUpdateIssue} issue={issueDetails} />
       )}
       {/* priority menu */}
-      {activePage === "change-issue-priority" && issueDetails && (
+      {activePage === "change-work-item-priority" && issueDetails && (
         <PowerKPrioritiesMenu handleClose={handleClose} handleUpdateIssue={handleUpdateIssue} issue={issueDetails} />
       )}
       {/* members menu */}
-      {activePage === "change-issue-assignee" && issueDetails && (
+      {activePage === "change-work-item-assignee" && issueDetails && (
         <PowerKMembersMenu handleUpdateMember={handleUpdateAssignee} value={issueDetails.assignee_ids} />
       )}
     </>

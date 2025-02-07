@@ -2,12 +2,10 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Settings } from "lucide-react";
-// plane types
+// plane imports
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TPowerKPageKeys } from "@plane/types";
-// hooks
 import { useUserPermissions } from "@/hooks/store";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants";
 // local components
 import { PowerKCommandItem } from "../command-item";
 import { PowerKProfileSettingsMenu } from "./profile-settings";

@@ -2,10 +2,7 @@ import { useParams } from "next/navigation";
 // plane types
 import { TPowerKPageKeys } from "@plane/types";
 // components
-import {
-  PowerKIssueActionsMenu,
-  PowerKModuleActionsMenu,
-} from "@/components/command-palette/power-k/context-based-actions";
+import { PowerKIssueActionsMenu } from "@/components/command-palette/power-k/context-based-actions";
 
 type Props = {
   activePage: TPowerKPageKeys | undefined;
@@ -17,7 +14,7 @@ type Props = {
 export const PowerKContextBasedActions: React.FC<Props> = (props) => {
   const { activePage, handleClose, handleUpdateSearchTerm, handleUpdatePage } = props;
   // navigation
-  const { issueId, moduleId } = useParams();
+  const { issueId } = useParams();
 
   return (
     <>
@@ -30,7 +27,7 @@ export const PowerKContextBasedActions: React.FC<Props> = (props) => {
           handleUpdateSearchTerm={handleUpdateSearchTerm}
         />
       )}
-      {moduleId && (
+      {/* {moduleId && (
         <PowerKModuleActionsMenu
           handleClose={handleClose}
           activePage={activePage}
@@ -38,7 +35,7 @@ export const PowerKContextBasedActions: React.FC<Props> = (props) => {
           moduleId={moduleId.toString()}
           handleUpdateSearchTerm={handleUpdateSearchTerm}
         />
-      )}
+      )} */}
     </>
   );
 };
