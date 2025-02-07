@@ -8,6 +8,8 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import useSWR, { mutate } from "swr";
 import { CheckCircle2 } from "lucide-react";
+// plane imports
+import { ROLE, MEMBER_ACCEPTED, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { IWorkspaceMemberInvitation } from "@plane/types";
@@ -15,10 +17,7 @@ import type { IWorkspaceMemberInvitation } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/common";
-// constants
-import { MEMBER_ACCEPTED } from "@/constants/event-tracker";
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
-import { ROLE } from "@/constants/workspace";
 // helpers
 import { truncateText } from "@/helpers/string.helper";
 import { getUserRole } from "@/helpers/user.helper";
@@ -27,8 +26,6 @@ import { useEventTracker, useUser, useUserProfile, useWorkspace } from "@/hooks/
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { AuthenticationWrapper } from "@/lib/wrappers";
-// plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 // images

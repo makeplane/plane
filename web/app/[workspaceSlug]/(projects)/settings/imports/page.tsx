@@ -2,11 +2,11 @@
 
 import { observer } from "mobx-react";
 // components
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { PageHead } from "@/components/core";
 import IntegrationGuide from "@/components/integration/guide";
 // hooks
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const ImportsPage = observer(() => {
   // store hooks

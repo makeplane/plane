@@ -2,12 +2,12 @@ import React from "react";
 
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
+import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 
 // components
 // constants
 import { Header, EHeaderVariant } from "@plane/ui";
-import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "@/constants/profile";
 
 type Props = {
   isAuthorized: boolean;
@@ -33,7 +33,7 @@ export const ProfileNavbar: React.FC<Props> = (props) => {
                   : "border-transparent"
               }`}
             >
-              {t(tab.label)}
+              {t(tab.i18n_label)}
             </span>
           </Link>
         ))}

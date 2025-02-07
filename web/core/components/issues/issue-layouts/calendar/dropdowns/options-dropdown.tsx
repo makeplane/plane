@@ -10,6 +10,7 @@ import { Popover, Transition } from "@headlessui/react";
 // ui
 // icons
 import { EIssueFilterType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -45,6 +46,8 @@ interface ICalendarHeader {
 
 export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((props) => {
   const { issuesFilterStore, updateFilters } = props;
+
+  const { t } = useTranslation();
 
   const { projectId } = useParams();
 
@@ -111,7 +114,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
                   open ? "text-custom-text-100" : "text-custom-text-200"
                 }`}
               >
-                <div className="font-medium">Options</div>
+                <div className="font-medium">{t("common.options")}</div>
                 <div
                   className={`flex h-3.5 w-3.5 items-center justify-center transition-all ${open ? "" : "rotate-180"}`}
                 >
@@ -156,7 +159,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
                     className="flex w-full items-center justify-between gap-2 rounded px-1 py-1.5 text-left text-xs hover:bg-custom-background-80"
                     onClick={handleToggleWeekends}
                   >
-                    Show weekends
+                    {t("common.actions.show_weekends")}
                     <ToggleSwitch
                       value={showWeekends}
                       onChange={() => {

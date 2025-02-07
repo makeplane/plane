@@ -17,28 +17,28 @@ import { useAppTheme, useUserPermissions, useUser } from "@/hooks/store";
 export const sidebarUserMenuItems = (currentUserId: string) => [
   {
     key: "home",
-    labelTranslationKey: "home",
+    labelTranslationKey: "sidebar.home",
     href: "/",
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     Icon: Home,
   },
   {
     key: "your-work",
-    labelTranslationKey: "your_work",
+    labelTranslationKey: "sidebar.your_work",
     href: `/profile/${currentUserId}/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     Icon: UserActivityIcon,
   },
   {
     key: "notifications",
-    labelTranslationKey: "inbox",
+    labelTranslationKey: "sidebar.inbox",
     href: "/notifications/",
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     Icon: Inbox,
   },
   {
     key: "drafts",
-    labelTranslationKey: "drafts",
+    labelTranslationKey: "sidebar.drafts",
     href: "/drafts/",
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     Icon: PenSquare,

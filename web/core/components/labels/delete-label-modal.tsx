@@ -61,7 +61,7 @@ export const DeleteLabelModal: React.FC<Props> = observer((props) => {
       content={
         <>
           Are you sure you want to delete <span className="font-medium text-custom-text-100">{data?.name}</span>? This
-          will remove the label from all the issue and from any views where the label is being filtered upon.
+          will remove the label from all the work item and from any views where the label is being filtered upon.
         </>
       }
     />

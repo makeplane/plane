@@ -18,28 +18,28 @@ import useLocalStorage from "@/hooks/use-local-storage";
 export const SIDEBAR_WORKSPACE_MENU_ITEMS = [
   {
     key: "projects",
-    labelTranslationKey: "projects",
+    labelTranslationKey: "sidebar.projects",
     href: "/projects/",
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     Icon: Briefcase,
   },
   {
     key: "views",
-    labelTranslationKey: "views",
+    labelTranslationKey: "sidebar.views",
     href: "/workspace-views/all-issues/",
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     Icon: Layers,
   },
   {
     key: "active-cycles",
-    labelTranslationKey: "cycles",
+    labelTranslationKey: "sidebar.cycles",
     href: "/active-cycles/",
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     Icon: ContrastIcon,
   },
   {
     key: "analytics",
-    labelTranslationKey: "analytics",
+    labelTranslationKey: "sidebar.analytics",
     href: "/analytics/",
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     Icon: BarChart2,

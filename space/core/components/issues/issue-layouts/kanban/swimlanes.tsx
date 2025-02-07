@@ -131,10 +131,14 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
           const subGroupByVisibilityToggle = visibilitySubGroupByGroupCount(groupCount, showEmptyGroup);
 
           if (subGroupByVisibilityToggle === false) return <></>;
-
           return (
             <div key={`${subGroupBy}_${group.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
-              <HeaderGroupByCard groupBy={groupBy} icon={group.icon} title={group.name} count={groupCount} />
+              <HeaderGroupByCard
+                groupBy={groupBy}
+                icon={group.icon}
+                title={group.name}
+                count={groupCount}
+              />
             </div>
           );
         })}
@@ -262,7 +266,7 @@ const SubGroup: React.FC<ISubGroup> = observer((props) => {
         <div className="sticky top-[50px] z-[3] py-1 flex w-full items-center bg-custom-background-100 border-y-[0.5px] border-custom-border-200">
           <div className="sticky left-0 flex-shrink-0">
             <HeaderSubGroupByCard
-              icon={group.icon}
+              icon={group.icon as any}
               title={group.name || ""}
               count={issueCount}
               isExpanded={isExpanded}

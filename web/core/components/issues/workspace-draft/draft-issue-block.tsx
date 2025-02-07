@@ -57,7 +57,7 @@ export const DraftIssueBlock: FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "edit",
-      title: "Edit",
+      title: "edit",
       icon: Pencil,
       action: () => {
         setIssueToEdit(issue);
@@ -66,7 +66,7 @@ export const DraftIssueBlock: FC<Props> = observer((props) => {
     },
     {
       key: "make-a-copy",
-      title: "Make a copy",
+      title: "make_a_copy",
       icon: Copy,
       action: () => {
         setCreateUpdateIssueModal(true);
@@ -74,7 +74,7 @@ export const DraftIssueBlock: FC<Props> = observer((props) => {
     },
     {
       key: "move-to-issues",
-      title: "Move to project",
+      title: "move_to_project",
       icon: SquareStackIcon,
       action: () => {
         setMoveToIssue(true);
@@ -84,7 +84,7 @@ export const DraftIssueBlock: FC<Props> = observer((props) => {
     },
     {
       key: "delete",
-      title: "Delete",
+      title: "delete",
       icon: Trash2,
       action: () => {
         setDeleteIssueModal(true);

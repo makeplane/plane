@@ -6,15 +6,15 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChevronDown, PanelRight } from "lucide-react";
+import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IUserProfileProjectSegregation } from "@plane/types";
 import { Breadcrumbs, Header, CustomMenu, UserActivityIcon } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 // components
 import { ProfileIssuesFilter } from "@/components/profile";
-import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "@/constants/profile";
 import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useUser, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type TUserProfileHeader = {
   userProjectsData: IUserProfileProjectSegregation | undefined;
@@ -30,6 +30,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
   const { toggleProfileSidebar, profileSidebarCollapsed } = useAppTheme();
   const { data: currentUser } = useUser();
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
+  const { t } = useTranslation();
   // derived values
   const isAuthorized = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -44,7 +45,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
 
   const isCurrentUser = currentUser?.id === userId;
 
-  const breadcrumbLabel = `${isCurrentUser ? "Your" : userName} Work`;
+  const breadcrumbLabel = isCurrentUser ? t("profile.page_label") : `${userName} ${t("profile.work")}`;
 
   return (
     <Header>
@@ -86,7 +87,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
                   href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}
                   className="w-full text-custom-text-300"
                 >
-                  {tab.label}
+                  {t(tab.i18n_label)}
                 </Link>
               </CustomMenu.MenuItem>
             ))}

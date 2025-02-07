@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -8,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Eye, EyeOff } from "lucide-react";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Button, Input } from "@plane/ui";
 // components
 import { AuthBanner, PasswordStrengthMeter } from "@/components/account";
@@ -45,7 +47,7 @@ const defaultValues: TResetPasswordFormValues = {
 // services
 const authService = new AuthService();
 
-export default function ResetPasswordPage() {
+const ResetPasswordPage = observer(() => {
   // search params
   const searchParams = useSearchParams();
   const uidb64 = searchParams.get("uidb64");
@@ -65,7 +67,8 @@ export default function ResetPasswordPage() {
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isRetryPasswordInputFocused, setIsRetryPasswordInputFocused] = useState(false);
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
-
+  // plane hooks
+  const { t } = useTranslation();
   // hooks
   const { resolvedTheme } = useTheme();
 
@@ -127,9 +130,9 @@ export default function ResetPasswordPage() {
             <div className="relative flex flex-col space-y-6">
               <div className="text-center space-y-1 py-4">
                 <h3 className="flex gap-4 justify-center text-3xl font-bold text-onboarding-text-100">
-                  Set new password
+                  {t("auth.reset_password.title")}
                 </h3>
-                <p className="font-medium text-onboarding-text-400">Secure your account with a strong password</p>
+                <p className="font-medium text-onboarding-text-400">{t("auth.reset_password.description")}</p>
               </div>
               {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
                 <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
@@ -142,7 +145,7 @@ export default function ResetPasswordPage() {
                 <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
                 <div className="space-y-1">
                   <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
-                    Email
+                    {t("auth.common.email.label")}
                   </label>
                   <div className="relative flex items-center rounded-md bg-onboarding-background-200">
                     <Input
@@ -151,7 +154,7 @@ export default function ResetPasswordPage() {
                       type="email"
                       value={resetFormData.email}
                       //hasError={Boolean(errors.email)}
-                      placeholder="name@company.com"
+                      placeholder={t("auth.common.email.placeholder")}
                       className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 text-onboarding-text-400 cursor-not-allowed"
                       autoComplete="on"
                       disabled
@@ -160,7 +163,7 @@ export default function ResetPasswordPage() {
                 </div>
                 <div className="space-y-1">
                   <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
-                    Password
+                    {t("auth.common.password.label")}
                   </label>
                   <div className="relative flex items-center rounded-md bg-onboarding-background-200">
                     <Input
@@ -169,7 +172,7 @@ export default function ResetPasswordPage() {
                       value={resetFormData.password}
                       onChange={(e) => handleFormChange("password", e.target.value)}
                       //hasError={Boolean(errors.password)}
-                      placeholder="Enter password"
+                      placeholder={t("auth.common.password.placeholder")}
                       className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
                       minLength={8}
                       onFocus={() => setIsPasswordInputFocused(true)}
@@ -193,7 +196,7 @@ export default function ResetPasswordPage() {
                 </div>
                 <div className="space-y-1">
                   <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
-                    Confirm password
+                    {t("auth.common.password.confirm_password.label")}
                   </label>
                   <div className="relative flex items-center rounded-md bg-onboarding-background-200">
                     <Input
@@ -201,7 +204,7 @@ export default function ResetPasswordPage() {
                       name="confirm_password"
                       value={resetFormData.confirm_password}
                       onChange={(e) => handleFormChange("confirm_password", e.target.value)}
-                      placeholder="Confirm password"
+                      placeholder={t("auth.common.password.confirm_password.placeholder")}
                       className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
                       onFocus={() => setIsRetryPasswordInputFocused(true)}
                       onBlur={() => setIsRetryPasswordInputFocused(false)}
@@ -220,10 +223,12 @@ export default function ResetPasswordPage() {
                   </div>
                   {!!resetFormData.confirm_password &&
                     resetFormData.password !== resetFormData.confirm_password &&
-                    renderPasswordMatchError && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
+                    renderPasswordMatchError && (
+                      <span className="text-sm text-red-500">{t("auth.common.password.errors.match")}</span>
+                    )}
                 </div>
                 <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
-                  Set password
+                  {t("auth.common.password.submit")}
                 </Button>
               </form>
             </div>
@@ -232,4 +237,6 @@ export default function ResetPasswordPage() {
       </div>
     </AuthenticationWrapper>
   );
-}
+});
+
+export default ResetPasswordPage;

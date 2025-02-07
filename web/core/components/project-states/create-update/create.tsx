@@ -2,13 +2,11 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
+import { STATE_CREATED, STATE_GROUPS } from "@plane/constants";
 import { IState, TStateGroups } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { StateForm } from "@/components/project-states";
-// constants
-import { STATE_CREATED } from "@/constants/event-tracker";
-import { STATE_GROUPS } from "@/constants/state";
 // hooks
 import { useEventTracker, useProjectState } from "@/hooks/store";
 

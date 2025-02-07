@@ -3,11 +3,12 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { MessageSquare } from "lucide-react";
+import { NOTIFICATIONS_READ } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { NotificationItemOptionButton } from "@/components/workspace-notifications";
 // constants
-import { NOTIFICATIONS_READ } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useWorkspaceNotifications } from "@/hooks/store";
 // store
@@ -24,6 +25,7 @@ export const NotificationItemReadOption: FC<TNotificationItemReadOption> = obser
   const { captureEvent } = useEventTracker();
   const { currentNotificationTab } = useWorkspaceNotifications();
   const { asJson: data, markNotificationAsRead, markNotificationAsUnRead } = notification;
+  const { t } = useTranslation();
 
   const handleNotificationUpdate = async () => {
     try {
@@ -35,7 +37,7 @@ export const NotificationItemReadOption: FC<TNotificationItemReadOption> = obser
         state: "SUCCESS",
       });
       setToast({
-        title: data.read_at ? "Notification marked as unread" : "Notification marked as read",
+        title: data.read_at ? t("notification.toasts.unread") : t("notification.toasts.read"),
         type: TOAST_TYPE.SUCCESS,
       });
     } catch (e) {
@@ -45,7 +47,7 @@ export const NotificationItemReadOption: FC<TNotificationItemReadOption> = obser
 
   return (
     <NotificationItemOptionButton
-      tooltipContent={data.read_at ? "Mark as unread" : "Mark as read"}
+      tooltipContent={data.read_at ? t("notification.options.mark_unread") : t("notification.options.mark_read")}
       callBack={handleNotificationUpdate}
     >
       <MessageSquare className="h-3 w-3 text-custom-text-300" />

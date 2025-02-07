@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     url: "https://sites.plane.so/",
   },
   keywords:
-    "software development, customer feedback, software, accelerate, code management, release management, project management, issue tracking, agile, scrum, kanban, collaboration",
+    "software development, customer feedback, software, accelerate, code management, release management, project management, work item tracking, agile, scrum, kanban, collaboration",
   twitter: {
     site: "@planepowers",
   },
@@ -32,7 +32,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="shortcut icon" href={`${SPACE_BASE_PATH}/favicon/favicon.ico`} />
       </head>
       <body>
-        <AppProvider>{children}</AppProvider>
+        <AppProvider>
+          <>{children}</>
+        </AppProvider>
       </body>
     </html>
   );

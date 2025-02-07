@@ -3,11 +3,11 @@ import unset from "lodash/unset";
 import { makeObservable, observable, runInAction, action, reaction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
+import { EUserPermissions, EUserProjectRoles } from "@plane/constants";
 import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
 // plane web constants
-import { EUserPermissions } from "@/plane-web/constants";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 // services
@@ -20,7 +20,12 @@ type TLoader = "init-loader" | "mutation-loader" | undefined;
 
 type TError = { title: string; description: string };
 
-export const ROLE_PERMISSIONS_TO_CREATE_PAGE = [EUserPermissions.ADMIN, EUserPermissions.MEMBER];
+export const ROLE_PERMISSIONS_TO_CREATE_PAGE = [
+  EUserPermissions.ADMIN,
+  EUserPermissions.MEMBER,
+  EUserProjectRoles.ADMIN,
+  EUserProjectRoles.MEMBER,
+];
 
 export interface IProjectPageStore {
   // observables

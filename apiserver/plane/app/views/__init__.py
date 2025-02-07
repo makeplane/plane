@@ -48,6 +48,7 @@ from .workspace.favorite import (
     WorkspaceFavoriteGroupEndpoint,
 )
 from .workspace.recent_visit import UserRecentVisitViewSet
+from .workspace.user_preference import WorkspaceUserPreferenceViewSet
 
 from .workspace.member import (
     WorkSpaceMemberViewSet,
@@ -189,6 +190,7 @@ from .analytic.base import (
     SavedAnalyticEndpoint,
     ExportAnalyticsEndpoint,
     DefaultAnalyticsEndpoint,
+    ProjectStatsEndpoint,
 )
 
 from .notification.base import (

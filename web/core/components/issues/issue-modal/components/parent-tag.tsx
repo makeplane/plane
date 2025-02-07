@@ -4,10 +4,10 @@ import React from "react";
 import { observer } from "mobx-react";
 import { Control, Controller } from "react-hook-form";
 import { X } from "lucide-react";
+// plane imports
+import { ETabIndices } from "@plane/constants";
 // types
 import { ISearchIssueResponse, TIssue } from "@plane/types";
-// constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks

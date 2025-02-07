@@ -202,7 +202,7 @@ export const useEditor = (props: CustomEditorProps) => {
       getDocument: () => {
         const documentBinary = provider?.document ? Y.encodeStateAsUpdate(provider?.document) : null;
         const documentHTML = editor?.getHTML() ?? "<p></p>";
-        const documentJSON = editor.getJSON() ?? null;
+        const documentJSON = editor?.getJSON() ?? null;
 
         return {
           binary: documentBinary,

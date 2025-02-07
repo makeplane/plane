@@ -2,6 +2,7 @@ import cloneDeep from "lodash/cloneDeep";
 import set from "lodash/set";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
 // types
+import { EUserPermissions } from "@plane/constants";
 import { IUser } from "@plane/types";
 import { TUserPermissions } from "@plane/types/src/enums";
 // constants
@@ -9,7 +10,6 @@ import { TUserPermissions } from "@plane/types/src/enums";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";

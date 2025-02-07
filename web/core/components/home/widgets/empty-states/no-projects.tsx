@@ -3,13 +3,13 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Briefcase, Hotel, Users } from "lucide-react";
 // plane ui
-import { Avatar } from "@plane/ui";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useCommandPalette, useEventTracker, useUser, useUserPermissions } from "@/hooks/store";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants";
 
 export const NoProjectsEmptyState = () => {
   // navigation
@@ -19,6 +19,7 @@ export const NoProjectsEmptyState = () => {
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const { data: currentUser } = useUser();
+  const { t } = useTranslation();
   // derived values
   const canCreateProject = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -28,11 +29,11 @@ export const NoProjectsEmptyState = () => {
   const EMPTY_STATE_DATA = [
     {
       id: "create-project",
-      title: "Create a project.",
-      description: "Most things start with a project in Plane.",
-      icon: <Briefcase className="size-12 text-custom-primary-100" />,
+      title: "home.empty.create_project.title",
+      description: "home.empty.create_project.description",
+      icon: <Briefcase className="w-[40px] h-[40px] text-custom-primary-100" />,
       cta: {
-        text: "Get started",
+        text: "home.empty.create_project.cta",
         onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
           if (!canCreateProject) return;
           e.preventDefault();
@@ -44,39 +45,48 @@ export const NoProjectsEmptyState = () => {
     },
     {
       id: "invite-team",
-      title: "Invite your team.",
-      description: "Build, ship, and manage with coworkers.",
-      icon: <Users className="size-12 text-custom-primary-100" />,
+      title: "home.empty.invite_team.title",
+      description: "home.empty.invite_team.description",
+      icon: <Users className="w-[40px] h-[40px] text-custom-primary-100" />,
       cta: {
-        text: "Get them in",
+        text: "home.empty.invite_team.cta",
         link: `/${workspaceSlug}/settings/members`,
       },
     },
     {
       id: "configure-workspace",
-      title: "Set up your workspace.",
-      description: "Turn features on or off or go beyond that.",
-      icon: <Hotel className="size-12 text-custom-primary-100" />,
+      title: "home.empty.configure_workspace.title",
+      description: "home.empty.configure_workspace.description",
+      icon: <Hotel className="w-[40px] h-[40px] text-custom-primary-100" />,
       cta: {
-        text: "Configure this workspace",
+        text: "home.empty.configure_workspace.cta",
         link: "settings",
       },
     },
     {
       id: "personalize-account",
-      title: "Make Plane yours.",
-      description: "Choose your picture, colors, and more.",
-      icon: (
-        <Avatar
-          src={getFileURL(currentUser?.avatar_url ?? "")}
-          name={currentUser?.display_name}
-          size={48}
-          className="text-xl"
-          showTooltip={false}
-        />
-      ),
+      title: "home.empty.personalize_account.title",
+      description: "home.empty.personalize_account.description",
+      icon:
+        currentUser?.avatar_url && currentUser?.avatar_url.trim() !== "" ? (
+          <Link href={`/${workspaceSlug}/profile/${currentUser?.id}`}>
+            <span className="relative flex h-6 w-6 items-center justify-center rounded-full p-4 capitalize text-white">
+              <img
+                src={getFileURL(currentUser?.avatar_url)}
+                className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
+                alt={currentUser?.display_name || currentUser?.email}
+              />
+            </span>
+          </Link>
+        ) : (
+          <Link href={`/${workspaceSlug}/profile/${currentUser?.id}`}>
+            <span className="relative flex h-6 w-6 items-center justify-center rounded-full bg-gray-700 p-4 capitalize text-white text-sm">
+              {(currentUser?.email ?? currentUser?.display_name ?? "?")[0]}
+            </span>
+          </Link>
+        ),
       cta: {
-        text: "Personalize now",
+        text: "home.empty.personalize_account.cta",
         link: "/profile",
       },
     },
@@ -92,14 +102,15 @@ export const NoProjectsEmptyState = () => {
           <div className="grid place-items-center bg-custom-primary-100/10 rounded-full size-24 mb-3">
             <span className="text-3xl my-auto">{item.icon}</span>
           </div>
-          <h3 className="text-base font-medium text-custom-text-100 mb-2">{item.title}</h3>
-          <p className="text-sm text-custom-text-300 mb-2">{item.description}</p>
+          <h3 className="text-lg font-medium text-custom-text-100 mb-2">{t(item.title)}</h3>
+          <p className="text-sm text-custom-text-200 mb-4 w-[80%] flex-1">{t(item.description)}</p>
+
           {item.cta.link ? (
             <Link
               href={item.cta.link}
               className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium"
             >
-              {item.cta.text}
+              {t(item.cta.text)}
             </Link>
           ) : (
             <button
@@ -107,7 +118,7 @@ export const NoProjectsEmptyState = () => {
               className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium"
               onClick={item.cta.onClick}
             >
-              {item.cta.text}
+              {t(item.cta.text)}
             </button>
           )}
         </div>

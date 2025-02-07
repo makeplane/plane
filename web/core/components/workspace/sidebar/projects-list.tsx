@@ -7,9 +7,10 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { Briefcase, ChevronRight, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { Loader, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { CreateProjectModal } from "@/components/project";
 import { SidebarProjectsListItem } from "@/components/workspace";
@@ -20,7 +21,6 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web types
 import { TProject } from "@/plane-web/types";
 
@@ -41,7 +41,7 @@ export const SidebarProjectsList: FC = observer(() => {
   const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
-  const { getProjectById, joinedProjectIds: joinedProjects, updateProjectView } = useProject();
+  const { loader, getPartialProjectById, joinedProjectIds: joinedProjects, updateProjectView } = useProject();
   // router params
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
@@ -72,7 +72,7 @@ export const SidebarProjectsList: FC = observer(() => {
 
     const joinedProjectsList: TProject[] = [];
     joinedProjects.map((projectId) => {
-      const projectDetails = getProjectById(projectId);
+      const projectDetails = getPartialProjectById(projectId);
       if (projectDetails) joinedProjectsList.push(projectDetails);
     });
 
@@ -177,17 +177,12 @@ export const SidebarProjectsList: FC = observer(() => {
                 )}
                 onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
               >
-                <Tooltip
-                  tooltipHeading={t("your_projects").toUpperCase()}
-                  tooltipContent=""
-                  position="right"
-                  disabled={!isCollapsed}
-                >
+                <Tooltip tooltipHeading={t("projects")} tooltipContent="" position="right" disabled={!isCollapsed}>
                   <>
                     {isCollapsed ? (
                       <Briefcase className="flex-shrink-0 size-3" />
                     ) : (
-                      <span className="text-xs font-semibold">{t("your_projects").toUpperCase()}</span>
+                      <span className="text-sm font-semibold">{t("projects")}</span>
                     )}
                   </>
                 </Tooltip>
@@ -232,6 +227,13 @@ export const SidebarProjectsList: FC = observer(() => {
               leaveFrom="transform scale-100 opacity-100"
               leaveTo="transform scale-95 opacity-0"
             >
+              {loader === "init-loader" && (
+                <Loader className="w-full space-y-1.5">
+                  {Array.from({ length: 4 }).map((_, index) => (
+                    <Loader.Item key={index} height="28px" />
+                  ))}
+                </Loader>
+              )}
               {isAllProjectsListOpen && (
                 <Disclosure.Panel
                   as="div"

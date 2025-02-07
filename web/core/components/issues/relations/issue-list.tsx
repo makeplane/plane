@@ -11,7 +11,6 @@ import { TIssueRelationTypes } from "@/plane-web/types";
 
 type Props = {
   workspaceSlug: string;
-  projectId: string;
   issueId: string;
   issueIds: string[];
   relationKey: TIssueRelationTypes;
@@ -23,7 +22,6 @@ type Props = {
 export const RelationIssueList: FC<Props> = observer((props) => {
   const {
     workspaceSlug,
-    projectId,
     issueId,
     issueIds,
     relationKey,
@@ -40,7 +38,6 @@ export const RelationIssueList: FC<Props> = observer((props) => {
           <RelationIssueListItem
             key={relationIssueId}
             workspaceSlug={workspaceSlug}
-            projectId={projectId}
             issueId={issueId}
             relationKey={relationKey}
             relationIssueId={relationIssueId}

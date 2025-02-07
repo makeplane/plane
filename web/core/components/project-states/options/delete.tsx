@@ -3,10 +3,10 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { Loader, X } from "lucide-react";
+import { STATE_DELETED } from "@plane/constants";
 import { IState } from "@plane/types";
 import { AlertModalCore, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // constants
-import { STATE_DELETED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -63,7 +63,7 @@ export const StateDelete: FC<TStateDelete> = observer((props) => {
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message:
-            "This state contains some issues within it, please move them to some other state to delete this state.",
+            "This state contains some work items within it, please move them to some other state to delete this state.",
         });
       } else {
         setToast({

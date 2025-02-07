@@ -3,6 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { MinusCircle } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 // component
 // ui
@@ -27,6 +28,7 @@ export type TIssueParentDetail = {
 
 export const IssueParentDetail: FC<TIssueParentDetail> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issue, issueOperations } = props;
+  const { t } = useTranslation();
   // hooks
   const { issueMap } = useIssues();
   const { getProjectStates } = useProjectState();
@@ -66,7 +68,7 @@ export const IssueParentDetail: FC<TIssueParentDetail> = observer((props) => {
 
         <CustomMenu ellipsis optionsClassName="p-1.5">
           <div className="border-b border-custom-border-300 text-xs font-medium text-custom-text-200">
-            Sibling issues
+            {t("issue.sibling.label")}
           </div>
 
           <IssueParentSiblings workspaceSlug={workspaceSlug} currentIssue={issue} parentIssue={parentIssue} />
@@ -76,7 +78,7 @@ export const IssueParentDetail: FC<TIssueParentDetail> = observer((props) => {
             className="flex items-center gap-2 py-2 text-red-500"
           >
             <MinusCircle className="h-4 w-4" />
-            <span> Remove Parent Issue</span>
+            <span>{t("issue.remove.parent.label")}</span>
           </CustomMenu.MenuItem>
         </CustomMenu>
       </div>
