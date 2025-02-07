@@ -53,7 +53,14 @@ export const PROJECT_CREATE_TAB_INDICES = [
   "logo_props",
 ];
 
-export const PROJECT_CYCLE_TAB_INDICES = ["name", "description", "date_range", "cancel", "submit", "project_id"];
+export const PROJECT_CYCLE_TAB_INDICES = [
+  "name",
+  "description",
+  "date_range",
+  "cancel",
+  "submit",
+  "project_id",
+];
 
 export const PROJECT_MODULE_TAB_INDICES = [
   "name",
@@ -66,9 +73,21 @@ export const PROJECT_MODULE_TAB_INDICES = [
   "submit",
 ];
 
-export const PROJECT_VIEW_TAB_INDICES = ["name", "description", "filters", "cancel", "submit"];
+export const PROJECT_VIEW_TAB_INDICES = [
+  "name",
+  "description",
+  "filters",
+  "cancel",
+  "submit",
+];
 
-export const PROJECT_PAGE_TAB_INDICES = ["name", "public", "private", "cancel", "submit"];
+export const PROJECT_PAGE_TAB_INDICES = [
+  "name",
+  "public",
+  "private",
+  "cancel",
+  "submit",
+];
 
 export enum ETabIndices {
   ISSUE_FORM = "issue-form",
