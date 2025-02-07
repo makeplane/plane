@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Check, Settings, UserPlus } from "lucide-react";
 import { Menu } from "@headlessui/react";
+import { EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 import { cn, getFileURL } from "@plane/utils";
@@ -79,13 +80,15 @@ const SidebarDropdownItem = (props: TProps) => {
         </div>
         {workspace.id === activeWorkspace?.id && (
           <div className="mt-2 mb-1 flex gap-2">
-            <Link
-              href={`/${workspace.slug}/settings`}
-              className="flex border border-custom-border-200 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100"
-            >
-              <Settings className="h-4 w-4 text-custom-sidebar-text-100 my-auto" />
-              <span className="text-sm font-medium my-auto">{t("settings")}</span>
-            </Link>
+            {workspace?.role > EUserPermissions.GUEST && (
+              <Link
+                href={`/${workspace.slug}/settings`}
+                className="flex border border-custom-border-200 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100"
+              >
+                <Settings className="h-4 w-4 text-custom-sidebar-text-100 my-auto" />
+                <span className="text-sm font-medium my-auto">{t("settings")}</span>
+              </Link>
+            )}
             <Link
               href={`/${workspace.slug}/settings/members`}
               className="flex border border-custom-border-200 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100"
