@@ -51,6 +51,12 @@ export const QuickActions: React.FC<Props> = observer((props: Props) => {
       action: () =>
         updateInitiative(workspaceSlug, initiativeId, {
           project_ids: initiative?.project_ids ? initiative?.project_ids.filter((id) => id !== project.id) : [],
+        }).then(() => {
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Success!",
+            message: `You have removed the project ${project.name} from this initiative.`,
+          });
         }),
       title: t("common.remove"),
       icon: Trash2,

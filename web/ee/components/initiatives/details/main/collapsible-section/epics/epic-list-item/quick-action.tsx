@@ -10,7 +10,7 @@ import { cn } from "@plane/utils";
 // helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail, useProject } from "@/hooks/store";
 // Plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
@@ -30,12 +30,14 @@ export const EpicQuickActions: React.FC<Props> = observer((props: Props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail(EIssueServiceType.EPICS);
+  const { getProjectIdentifierById } = useProject();
 
   const { t } = useTranslation();
 
   // derived values
   const epic = getIssueById(epicId);
   const epicLink = `${workspaceSlug}/projects/${epic?.project_id}/issues/${epic?.id}`;
+  const projectIdentifier = getProjectIdentifierById(epic?.project_id);
 
   // handler
   const handleCopyText = () =>
@@ -60,7 +62,14 @@ export const EpicQuickActions: React.FC<Props> = observer((props: Props) => {
     },
     {
       key: "remove",
-      action: () => removeEpicFromInitiative(workspaceSlug, initiativeId, epic?.id),
+      action: () =>
+        removeEpicFromInitiative(workspaceSlug, initiativeId, epic?.id).then(() => {
+          setToast({
+            title: "Success!",
+            type: TOAST_TYPE.SUCCESS,
+            message: `You have removed the epic ${projectIdentifier}-${epic?.sequence_id} from this initiative.`,
+          });
+        }),
       title: t("common.remove"),
       icon: Trash2,
       shouldRender: !disabled,
