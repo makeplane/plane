@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { usePopper } from "react-popper";
 // icons
-import { ChevronDown, LogOut, Mails, Plus, Settings } from "lucide-react";
+import { ChevronDown, CirclePlus, LogOut, Mails, Settings } from "lucide-react";
 // ui
 import { Menu, Transition } from "@headlessui/react";
 // types
@@ -126,13 +126,22 @@ export const SidebarDropdown = observer(() => {
             >
               <Menu.Items as={Fragment}>
                 <div className="fixed top-12 left-4 z-[21] mt-1 flex w-full max-w-[19rem] origin-top-left flex-col divide-y divide-custom-border-100 rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-sidebar-background-100 shadow-custom-shadow-rg outline-none">
-                  <div className="vertical-scrollbar scrollbar-sm flex max-h-96 flex-col items-start justify-start overflow-y-scroll">
-                    <h6 className="rounded-md px-4 sticky top-0 z-[21] h-full w-full bg-custom-sidebar-background-100 pb-1 pt-3 text-sm font-medium text-custom-sidebar-text-400">
+                  <div className="overflow-x-hidden vertical-scrollbar scrollbar-sm flex max-h-96 flex-col items-start justify-start overflow-y-scroll">
+                    <span
+                      className="rounded-md px-4 sticky top-0 z-[21] h-full w-full bg-custom-sidebar-background-100 pb-1 pt-3 text-sm font-medium text-custom-sidebar-text-400
+"
+                    >
                       {currentUser?.email}
-                    </h6>
+                    </span>
                     {workspacesList ? (
                       <div className="size-full flex flex-col items-start justify-start">
-                        {workspacesList.map((workspace) => (
+                        {(activeWorkspace
+                          ? [
+                              activeWorkspace,
+                              ...workspacesList.filter((workspace) => workspace.id !== activeWorkspace?.id),
+                            ]
+                          : workspacesList
+                        ).map((workspace) => (
                           <SidebarDropdownItem
                             key={workspace.id}
                             workspace={workspace}
@@ -158,12 +167,7 @@ export const SidebarDropdown = observer(() => {
                           as="div"
                           className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                         >
-                          <div className="flex w-4 h-4 backdrop-invert rounded-full ">
-                            <Plus
-                              strokeWidth={3}
-                              className="flex-shrink-0 invert h-[10px] w-[10px] text-custom-text-100 m-auto"
-                            />
-                          </div>
+                          <CirclePlus className="size-4 flex-shrink-0" />
                           {t("create_workspace")}
                         </Menu.Item>
                       </Link>

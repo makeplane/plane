@@ -30,6 +30,7 @@ const SidebarDropdownItem = (props: TProps) => {
         handleItemClick();
       }}
       className="w-full"
+      id={workspace.id}
     >
       <Menu.Item
         as="div"
@@ -41,7 +42,7 @@ const SidebarDropdownItem = (props: TProps) => {
         <div className="flex items-center justify-between gap-1 rounded p-1 text-sm text-custom-sidebar-text-100 ">
           <div className="flex items-center justify-start gap-2.5 truncate">
             <span
-              className={`relative flex h-8 w-8 flex-shrink-0 items-center  justify-center p-2 text-base uppercase font-semibold ${
+              className={`relative flex h-8 w-8 flex-shrink-0 items-center  justify-center p-2 text-sm uppercase font-semibold ${
                 !workspace?.logo_url && "rounded-lg bg-custom-primary-500 text-white"
               }`}
             >
@@ -57,14 +58,14 @@ const SidebarDropdownItem = (props: TProps) => {
             </span>
             <div>
               <h5
-                className={`truncate text-base font-medium ${workspaceSlug === workspace.slug ? "" : "text-custom-text-200"}`}
+                className={`truncate text-ellipsis text-sm font-medium ${workspaceSlug === workspace.slug ? "" : "text-custom-text-200"}`}
               >
                 {workspace.name}
               </h5>
-              <div className="text-sm text-custom-text-300 flex gap-2 capitalize">
+              <div className="text-sm text-custom-text-300 flex gap-2 capitalize w-fit">
                 <span>{getUserRole(workspace.role)?.toLowerCase() || "guest"}</span>
                 <div className="w-1 h-1 bg-custom-text-300/50 rounded-full m-auto" />
-                <span className="capitalize">{t("member", { count: workspace.total_members })}</span>
+                <span className="capitalize">{t("member", { count: workspace.total_members || 0 })}</span>
               </div>
             </div>
           </div>
