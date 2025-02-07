@@ -85,7 +85,7 @@ const ProjectAttributes: React.FC<Props> = (props) => {
                       <ProjectNetworkIcon iconKey={network.iconKey} className="h-3.5 w-3.5" />
                       <div className="-mt-1">
                         <p>{t(network.i18n_label)}</p>
-                        <p className="text-xs text-custom-text-400">{network.description}</p>
+                        <p className="text-xs text-custom-text-400">{t(network.description)}</p>
                       </div>
                     </div>
                   </CustomSelect.Option>
