@@ -84,9 +84,9 @@ const SidebarDropdownItem = observer((props: TProps) => {
           )}
         </div>
         {workspace.id === activeWorkspace?.id && (
-          <div className="mt-2 mb-1 flex gap-2">
+          <>
             {workspace?.role > EUserPermissions.GUEST && (
-              <>
+              <div className="mt-2 mb-1 flex gap-2">
                 <Link
                   href={`/${workspace.slug}/settings`}
                   className="flex border border-custom-border-200 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100 hover:shadow-sm hover:text-custom-text-200 text-custom-text-300 hover:border-custom-border-300 "
@@ -103,9 +103,9 @@ const SidebarDropdownItem = observer((props: TProps) => {
                     {t("project_settings.members.invite_members.title")}
                   </span>
                 </Link>
-              </>
+              </div>
             )}
-          </div>
+          </>
         )}
       </Menu.Item>
     </Link>
