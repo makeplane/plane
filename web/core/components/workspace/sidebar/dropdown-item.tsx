@@ -40,7 +40,7 @@ const SidebarDropdownItem = (props: TProps) => {
         })}
       >
         <div className="flex items-center justify-between gap-1 rounded p-1 text-sm text-custom-sidebar-text-100 ">
-          <div className="flex items-center justify-start gap-2.5 truncate">
+          <div className="flex items-center justify-start gap-2.5 w-[80%] relative">
             <span
               className={`relative flex h-8 w-8 flex-shrink-0 items-center  justify-center p-2 text-sm uppercase font-semibold ${
                 !workspace?.logo_url && "rounded-lg bg-custom-primary-500 text-white"
@@ -56,12 +56,12 @@ const SidebarDropdownItem = (props: TProps) => {
                 (workspace?.name?.[0] ?? "...")
               )}
             </span>
-            <div>
-              <h5
+            <div className="w-[inherit]">
+              <div
                 className={`truncate text-ellipsis text-sm font-medium ${workspaceSlug === workspace.slug ? "" : "text-custom-text-200"}`}
               >
                 {workspace.name}
-              </h5>
+              </div>
               <div className="text-sm text-custom-text-300 flex gap-2 capitalize w-fit">
                 <span>{getUserRole(workspace.role)?.toLowerCase() || "guest"}</span>
                 <div className="w-1 h-1 bg-custom-text-300/50 rounded-full m-auto" />
