@@ -394,6 +394,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
           className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
           onClick={handleOnClick}
           disabled={disabled}
+          tabIndex={tabIndex}
         >
           {button}
         </button>
@@ -411,6 +412,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
           )}
           onClick={handleOnClick}
           disabled={disabled}
+          tabIndex={tabIndex}
         >
           <ButtonToRender
             priority={value ?? undefined}
@@ -435,7 +437,6 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     <ComboDropDown
       as="div"
       ref={dropdownRef}
-      tabIndex={tabIndex}
       className={cn(
         "h-full",
         {
