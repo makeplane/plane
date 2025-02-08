@@ -1,23 +1,19 @@
 import { Mark } from "@tiptap/core";
-import { defaultMarkdownSerializer } from "prosemirror-markdown";
-
+import { defaultMarkdownSerializer } from "@tiptap/pm/markdown";
 
 const Italic = Mark.create({
-    name: 'italic',
+  name: "italic",
 });
 
 export default Italic.extend({
-    /**
-     * @return {{markdown: MarkdownMarkSpec}}
-     */
-    addStorage() {
-        return {
-            markdown: {
-                serialize: defaultMarkdownSerializer.marks.em,
-                parse: {
-                    // handled by markdown-it
-                }
-            }
-        }
-    }
-})
+  addStorage() {
+    return {
+      markdown: {
+        serialize: defaultMarkdownSerializer.marks.em,
+        parse: {
+          // handled by markdown-it
+        },
+      },
+    };
+  },
+});

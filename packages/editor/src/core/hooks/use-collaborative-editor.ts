@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import Collaboration from "@tiptap/extension-collaboration";
+import { useEffect, useMemo, useState } from "react";
 import { IndexeddbPersistence } from "y-indexeddb";
 // extensions
 import { HeadingListExtension, SideMenuExtension } from "@/extensions";

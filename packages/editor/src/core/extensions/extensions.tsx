@@ -41,9 +41,9 @@ import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
 import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
 import { DropCursorExtension } from "./drop-cursor";
+import { MarkdownCopy } from "./markdown/markdown";
 // import { createCopyToClipboardExtension } from "./clipboard-new";
 // import { MarkdownClipboard } from "./clipboard";
-import { MarkdownCopy } from "./markdown/Markdown";
 
 type TArguments = {
   disabledExtensions: TExtensions[];
@@ -220,13 +220,18 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomTextAlignExtension,
     CustomCalloutExtension,
     CustomColorExtension,
-    Markdown.configure({
+    // Markdown.configure({
+    //   html: true,
+    //   transformCopiedText: false,
+    //   transformPastedText: true,
+    //   breaks: true,
+    // }),
+    MarkdownCopy.configure({
       html: true,
-      transformCopiedText: false,
+      transformCopiedText: true,
       transformPastedText: true,
       breaks: true,
     }),
-    MarkdownCopy,
     // MarkdownClipboard,
     // createCopyToClipboardExtension(),
     ...(CoreEditorAdditionalExtensions({

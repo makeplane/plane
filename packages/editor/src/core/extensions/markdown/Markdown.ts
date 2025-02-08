@@ -1,10 +1,24 @@
-import { Extension, extensions } from "@tiptap/core";
-import { MarkdownTightLists } from "./extensions/tiptap/tight-lists";
-import { MarkdownSerializer } from "./serialize/MarkdownSerializer";
-import { MarkdownParser } from "./parse/MarkdownParser";
+import { Extension } from "@tiptap/core";
 import { MarkdownClipboard } from "./extensions/tiptap/clipboard";
+import { MarkdownParser } from "./parse/markdown-parser";
+import { MarkdownSerializer } from "./serialize/markdown-serializer";
 
-export const MarkdownCopy = Extension.create({
+declare module "@tiptap/core" {
+  interface EditorOptions {
+    initialContent?: string;
+  }
+}
+
+export const MarkdownCopy = Extension.create<{
+  html: boolean;
+  tightLists: boolean;
+  tightListClass: string;
+  bulletListMarker: string;
+  linkify: boolean;
+  transformCopiedText: boolean;
+  transformPastedText: boolean;
+  breaks: boolean;
+}>({
   name: "markdownCopy",
   priority: 50,
   addOptions() {
@@ -20,22 +34,19 @@ export const MarkdownCopy = Extension.create({
     };
   },
   addCommands() {
-    const commands = extensions.Commands.config.addCommands();
     return {
-      setContent: (content, emitUpdate, parseOptions) => (props) => {
-        return commands.setContent(
-          props.editor.storage.markdown.parser.parse(content),
-          emitUpdate,
-          parseOptions
-        )(props);
-      },
-      insertContentAt: (range, content, options) => (props) => {
-        return commands.insertContentAt(
-          range,
-          props.editor.storage.markdown.parser.parse(content, { inline: true }),
-          options
-        )(props);
-      },
+      setContent:
+        (content: string, emitUpdate?: boolean, parseOptions?: Record<string, any>) =>
+        ({ editor }) =>
+          editor.commands.setContent(editor.storage.markdown.parser.parse(content), emitUpdate, parseOptions),
+      insertContentAt:
+        (range: any, content: string, options?: Record<string, any>) =>
+        ({ editor }) =>
+          editor.commands.insertContentAt(
+            range,
+            editor.storage.markdown.parser.parse(content, { inline: true }),
+            options
+          ),
     };
   },
   onBeforeCreate() {
@@ -43,12 +54,14 @@ export const MarkdownCopy = Extension.create({
       options: { ...this.options },
       parser: new MarkdownParser(this.editor, this.options),
       serializer: new MarkdownSerializer(this.editor),
-      getMarkdown: () => {
-        return this.editor.storage.markdown.serializer.serialize(this.editor.state.doc);
-      },
+      getMarkdown: () => this.editor.storage.markdown.serializer.serialize(this.editor.state.doc),
     };
-    this.editor.options.initialContent = this.editor.options.content;
-    this.editor.options.content = this.editor.storage.markdown.parser.parse(this.editor.options.content);
+    const content =
+      typeof this.editor.options.content === "string"
+        ? this.editor.options.content
+        : this.editor.storage.markdown.serializer.serialize(this.editor.options.content);
+    this.editor.options.initialContent = content;
+    this.editor.options.content = this.editor.storage.markdown.parser.parse(content);
   },
   onCreate() {
     this.editor.options.content = this.editor.options.initialContent;
@@ -61,10 +74,10 @@ export const MarkdownCopy = Extension.create({
   },
   addExtensions() {
     return [
-      MarkdownTightLists.configure({
-        tight: this.options.tightLists,
-        tightClass: this.options.tightListClass,
-      }),
+      // MarkdownTightLists.configure({
+      //   tight: this.options.tightLists,
+      //   tightClass: this.options.tightListClass,
+      // }),
       MarkdownClipboard.configure({
         transformPastedText: this.options.transformPastedText,
         transformCopiedText: this.options.transformCopiedText,

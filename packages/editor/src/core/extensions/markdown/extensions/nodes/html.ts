@@ -1,5 +1,6 @@
-import { Fragment } from "@tiptap/pm/model";
 import { getHTMLFromFragment, Node } from "@tiptap/core";
+import { MarkdownSerializerState } from "@tiptap/pm/markdown";
+import { Fragment, Node as NodeType } from "@tiptap/pm/model";
 import { elementFromString } from "../../util/dom";
 
 export default Node.create({
@@ -7,8 +8,7 @@ export default Node.create({
   addStorage() {
     return {
       markdown: {
-        serialize(state, node, parent) {
-          console.log("saf", this.editor.storage.markdown.options.html);
+        serialize(state: MarkdownSerializerState, node: NodeType, parent: NodeType) {
           if (this.editor.storage.markdown.options.html) {
             state.write(serializeHTML(node, parent));
           } else {
@@ -27,8 +27,7 @@ export default Node.create({
   },
 });
 
-function serializeHTML(node, parent) {
-  console.log("wait what", node);
+function serializeHTML(node: NodeType, parent: NodeType) {
   const schema = node.type.schema;
   const html = getHTMLFromFragment(Fragment.from(node), schema);
 

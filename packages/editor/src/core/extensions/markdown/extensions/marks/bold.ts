@@ -1,23 +1,19 @@
 import { Mark } from "@tiptap/core";
-import { defaultMarkdownSerializer } from "prosemirror-markdown";
-
+import { defaultMarkdownSerializer } from "@tiptap/pm/markdown";
 
 const Bold = Mark.create({
-    name: 'bold',
+  name: "bold",
 });
 
 export default Bold.extend({
-    /**
-     * @return {{markdown: MarkdownMarkSpec}}
-     */
-    addStorage() {
-        return {
-            markdown: {
-                serialize: defaultMarkdownSerializer.marks.strong,
-                parse: {
-                    // handled by markdown-it
-                }
-            },
-        }
-    }
+  addStorage() {
+    return {
+      markdown: {
+        serialize: defaultMarkdownSerializer.marks.strong,
+        parse: {
+          // handled by markdown-it
+        },
+      },
+    };
+  },
 });

@@ -1,5 +1,5 @@
+import { Node as NodeType } from "@tiptap/pm/model";
 
-
-export function childNodes(node) {
-    return node?.content?.content ?? [];
+export function childNodes(node: NodeType) {
+  return node?.content?.content ?? [];
 }
