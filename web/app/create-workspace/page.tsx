@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 // components
 import { Button, getButtonStyling } from "@plane/ui";
@@ -22,6 +23,7 @@ import WhiteHorizontalLogo from "@/public/plane-logos/white-horizontal-with-blue
 import WorkspaceCreationDisabled from "@/public/workspace/workspace-creation-disabled.png";
 
 const CreateWorkspacePage = observer(() => {
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   // store hooks
@@ -37,6 +39,18 @@ const CreateWorkspacePage = observer(() => {
   const { resolvedTheme } = useTheme();
   // derived values
   const isWorkspaceCreationDisabled = getIsWorkspaceCreationDisabled();
+
+  // methods
+  const getMailtoHref = () => {
+    const subject = t("workspace_creation.request_email.subject");
+    const body = t("workspace_creation.request_email.body", {
+      firstName: currentUser?.first_name || "",
+      lastName: currentUser?.last_name || "",
+      email: currentUser?.email || "",
+    });
+
+    return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
 
   const onSubmit = async (workspace: IWorkspace) => {
     await updateUserProfile({ last_workspace_id: workspace.id }).then(() => router.push(`/${workspace.slug}`));
@@ -65,26 +79,24 @@ const CreateWorkspacePage = observer(() => {
           {isWorkspaceCreationDisabled ? (
             <div className="w-4/5 h-full flex flex-col items-center justify-center text-lg font-medium gap-1">
               <Image src={WorkspaceCreationDisabled} width={200} alt="Workspace creation disabled" className="mb-4" />
-              <div className="text-lg font-medium text-center">Only your instance admin can create workspaces</div>
-              <p className="text-sm text-custom-text-300 text-center">
-                If you know your instance admin&apos;s email address, <br /> click the button below to get in touch with
-                them.
+              <div className="text-lg font-medium text-center">
+                {t("workspace_creation.errors.creation_disabled.title")}
+              </div>
+              <p className="text-sm text-custom-text-300 break-words text-center">
+                {t("workspace_creation.errors.creation_disabled.description")}
               </p>
               <div className="flex gap-4 mt-6">
                 <Button variant="primary" onClick={() => router.back()}>
-                  Go back
+                  {t("common.go_back")}
                 </Button>
-                <a
-                  href={`mailto:?subject=${encodeURIComponent("Requesting a new workspace")}&body=${encodeURIComponent(`Hi instance admin(s),\n\nPlease create a new workspace with the URL [/workspace-name] for [purpose of creating the workspace].\n\nThanks,\n${currentUser?.first_name} ${currentUser?.last_name}\n${currentUser?.email}`)}`}
-                  className={getButtonStyling("outline-primary", "md")}
-                >
-                  Request instance admin
+                <a href={getMailtoHref()} className={getButtonStyling("outline-primary", "md")}>
+                  {t("workspace_creation.errors.creation_disabled.request_button")}
                 </a>
               </div>
             </div>
           ) : (
             <div className="w-full space-y-7 sm:space-y-10">
-              <h4 className="text-2xl font-semibold">Create your workspace</h4>
+              <h4 className="text-2xl font-semibold">{t("workspace_creation.heading")}</h4>
               <div className="sm:w-3/4 md:w-2/5">
                 <CreateWorkspaceForm
                   onSubmit={onSubmit}

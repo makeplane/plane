@@ -30,7 +30,10 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
   // editor flaggings
   const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
   // issue-embed
-  const { issueEmbedProps } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
+  const { issueEmbedProps } = useIssueEmbed({
+    projectId: projectId?.toString() ?? "",
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
   // page filters
   const { fontSize, fontStyle } = usePageFilters();
 

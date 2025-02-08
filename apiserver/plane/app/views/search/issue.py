@@ -1,5 +1,3 @@
-# Python imports
-
 # Django imports
 from django.db.models import Q
 
@@ -9,7 +7,7 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseAPIView
-from plane.db.models import Issue, ProjectMember
+from plane.db.models import Issue, ProjectMember, IssueRelation
 from plane.utils.issue_search import search_issues
 
 
@@ -47,17 +45,18 @@ class IssueSearchEndpoint(BaseAPIView):
                 )
         if issue_relation == "true" and issue_id:
             issue = Issue.issue_objects.filter(pk=issue_id).first()
+            related_issue_ids = IssueRelation.objects.filter(
+                Q(related_issue=issue) | Q(issue=issue)
+            ).values_list(
+                "issue_id", "related_issue_id"
+            ).distinct()
+
+            related_issue_ids = [item for sublist in related_issue_ids for item in sublist]
+
             if issue:
                 issues = issues.filter(
                     ~Q(pk=issue_id),
-                    ~(
-                        Q(issue_related__issue=issue)
-                        & Q(issue_related__deleted_at__isnull=True)
-                    ),
-                    ~(
-                        Q(issue_relation__related_issue=issue)
-                        & Q(issue_relation__deleted_at__isnull=True)
-                    ),
+                    ~Q(pk__in=related_issue_ids),
                 )
         if sub_issue == "true" and issue_id:
             issue = Issue.issue_objects.filter(pk=issue_id).first()

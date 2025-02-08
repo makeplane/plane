@@ -2,16 +2,21 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, LayersIcon, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink, Logo } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common";
 import { IssueDetailQuickActions } from "@/components/issues";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 
 export const ProjectIssueDetailsHeader = observer(() => {
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId, issueId } = useParams();
@@ -27,29 +32,15 @@ export const ProjectIssueDetailsHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <div>
-          <Breadcrumbs onBack={router.back} isLoading={loader}>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  label={currentProjectDetails?.name ?? "Project"}
-                  icon={
-                    currentProjectDetails && (
-                      <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                      </span>
-                    )
-                  }
-                />
-              }
-            />
+          <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
+            <ProjectBreadcrumb />
 
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/projects/${projectId}/issues`}
-                  label="Issues"
+                  label={t("issue.label", { count: 2 })} // count is for pluralization
                   icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}
                 />
               }

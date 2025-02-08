@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-
+// plane constants
+import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
 // components
 import { DateFilterModal } from "@/components/core";
 import { FilterHeader, FilterOption } from "@/components/issues";
-// constants
-import { DATE_AFTER_FILTER_OPTIONS } from "@/constants/filters";
 // helpers
 import { isInDateFormat } from "@/helpers/date-time.helper";
 

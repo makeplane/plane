@@ -43,7 +43,7 @@ export class IssueService extends APIService {
   ): Promise<TIssuesResponse> {
     const path =
       (queries.expand as string)?.includes("issue_relation") && !queries.group_by
-        ? `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues-detail/`
+        ? `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}-detail/`
         : `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/`;
     return this.get(
       path,
@@ -76,8 +76,9 @@ export class IssueService extends APIService {
   }
 
   async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
-    if (getIssuesShouldFallbackToServer(queries))
+    if (getIssuesShouldFallbackToServer(queries) || this.serviceType !== EIssueServiceType.ISSUES) {
       return await this.getIssuesFromServer(workspaceSlug, projectId, queries, config);
+    }
 
     const response = await persistence.getIssues(workspaceSlug, projectId, queries, config);
     return response as TIssuesResponse;
@@ -112,8 +113,13 @@ export class IssueService extends APIService {
       params: queries,
     })
       .then((response) => {
-        if (response.data) {
+        // skip issue update when the service type is epic
+        if (response.data && this.serviceType === EIssueServiceType.ISSUES) {
           updateIssue({ ...response.data, is_local_update: 1 });
+        }
+        // add is_epic flag when the service type is epic
+        if (response.data && this.serviceType === EIssueServiceType.EPICS) {
+          response.data.is_epic = true;
         }
         return response?.data;
       })
@@ -127,7 +133,7 @@ export class IssueService extends APIService {
       params: { issues: issueIds.join(",") },
     })
       .then((response) => {
-        if (response?.data && Array.isArray(response?.data)) {
+        if (response?.data && Array.isArray(response?.data) && this.serviceType === EIssueServiceType.ISSUES) {
           addIssuesBulk(response.data);
         }
         return response?.data;
@@ -233,7 +239,9 @@ export class IssueService extends APIService {
   }
 
   async deleteIssue(workspaceSlug: string, projectId: string, issuesId: string): Promise<any> {
-    deleteIssueFromLocal(issuesId);
+    if (this.serviceType === EIssueServiceType.ISSUES) {
+      deleteIssueFromLocal(issuesId);
+    }
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issuesId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -335,7 +343,9 @@ export class IssueService extends APIService {
   async bulkOperations(workspaceSlug: string, projectId: string, data: TBulkOperationsPayload): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-operation-issues/`, data)
       .then((response) => {
-        persistence.syncIssues(projectId);
+        if (this.serviceType === EIssueServiceType.ISSUES) {
+          persistence.syncIssues(projectId);
+        }
         return response?.data;
       })
       .catch((error) => {
@@ -352,7 +362,9 @@ export class IssueService extends APIService {
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-delete-issues/`, data)
       .then((response) => {
-        persistence.syncIssues(projectId);
+        if (this.serviceType === EIssueServiceType.ISSUES) {
+          persistence.syncIssues(projectId);
+        }
         return response?.data;
       })
       .catch((error) => {
@@ -371,7 +383,9 @@ export class IssueService extends APIService {
   }> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-archive-issues/`, data)
       .then((response) => {
-        persistence.syncIssues(projectId);
+        if (this.serviceType === EIssueServiceType.ISSUES) {
+          persistence.syncIssues(projectId);
+        }
         return response?.data;
       })
       .catch((error) => {
@@ -406,6 +420,20 @@ export class IssueService extends APIService {
 
   async subscribeToIssueNotifications(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/subscribe/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async bulkSubscribeIssues(
+    workspaceSlug: string,
+    projectId: string,
+    data: {
+      issue_ids: string[];
+    }
+  ): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-subscribe-issues/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

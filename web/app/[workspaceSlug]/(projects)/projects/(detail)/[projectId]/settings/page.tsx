@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { PageHead } from "@/components/core";
 import {
   ArchiveRestoreProjectModal,
@@ -16,7 +17,6 @@ import {
 } from "@/components/project";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const GeneralSettingsPage = observer(() => {
   // states
@@ -43,8 +43,6 @@ const GeneralSettingsPage = observer(() => {
   );
 
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - General Settings` : undefined;
-  // const currentNetwork = NETWORK_CHOICES.find((n) => n.key === projectDetails?.network);
-  // const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
 
   return (
     <>

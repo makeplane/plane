@@ -1,27 +1,21 @@
-import { MutableRefObject } from "react";
-import { Selection } from "@tiptap/pm/state";
 import { Editor } from "@tiptap/react";
 
-export const insertContentAtSavedSelection = (
-  editorRef: MutableRefObject<Editor | null>,
-  content: string,
-  savedSelection: Selection
-) => {
-  if (!editorRef.current || editorRef.current.isDestroyed) {
+export const insertContentAtSavedSelection = (editor: Editor, content: string) => {
+  if (!editor || editor.isDestroyed) {
     console.error("Editor reference is not available or has been destroyed.");
     return;
   }
 
-  if (!savedSelection) {
+  if (!editor.state.selection) {
     console.error("Saved selection is invalid.");
     return;
   }
 
-  const docSize = editorRef.current.state.doc.content.size;
-  const safePosition = Math.max(0, Math.min(savedSelection.anchor, docSize));
+  const docSize = editor.state.doc.content.size;
+  const safePosition = Math.max(0, Math.min(editor.state.selection.anchor, docSize));
 
   try {
-    editorRef.current.chain().focus().insertContentAt(safePosition, content).run();
+    editor.chain().focus().insertContentAt(safePosition, content).run();
   } catch (error) {
     console.error("An error occurred while inserting content at saved selection:", error);
   }

@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Layers } from "lucide-react";
 // plane constants
-import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
@@ -14,8 +15,6 @@ import { Breadcrumbs, Button, Header } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/components/issues";
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
@@ -35,6 +34,7 @@ export const GlobalIssuesHeader = observer(() => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
+  const { t } = useTranslation();
 
   const issueFilters = globalViewId ? filters[globalViewId.toString()] : undefined;
 
@@ -105,7 +105,7 @@ export const GlobalIssuesHeader = observer(() => {
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              link={<BreadcrumbLink label={`Views`} icon={<Layers className="h-4 w-4 text-custom-text-300" />} />}
+              link={<BreadcrumbLink label={t("views")} icon={<Layers className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
         </Header.LeftItem>
@@ -114,12 +114,12 @@ export const GlobalIssuesHeader = observer(() => {
           {!isLocked ? (
             <>
               <FiltersDropdown
-                title="Filters"
+                title={t("common.filters")}
                 placement="bottom-end"
                 isFiltersApplied={isIssueFilterActive(issueFilters)}
               >
                 <FilterSelection
-                  layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
+                  layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.spreadsheet}
                   filters={issueFilters?.filters ?? {}}
                   handleFiltersUpdate={handleFiltersUpdate}
                   displayFilters={issueFilters?.displayFilters ?? {}}
@@ -128,9 +128,9 @@ export const GlobalIssuesHeader = observer(() => {
                   memberIds={workspaceMemberIds ?? undefined}
                 />
               </FiltersDropdown>
-              <FiltersDropdown title="Display" placement="bottom-end">
+              <FiltersDropdown title={t("common.display")} placement="bottom-end">
                 <DisplayFiltersSelection
-                  layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
+                  layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.spreadsheet}
                   displayFilters={issueFilters?.displayFilters ?? {}}
                   handleDisplayFiltersUpdate={handleDisplayFilters}
                   displayProperties={issueFilters?.displayProperties ?? {}}
@@ -143,7 +143,7 @@ export const GlobalIssuesHeader = observer(() => {
           )}
 
           <Button variant="primary" size="sm" onClick={() => setCreateViewModal(true)}>
-            Add view
+            {t("workspace_views.add_view")}
           </Button>
         </Header.RightItem>
       </Header>

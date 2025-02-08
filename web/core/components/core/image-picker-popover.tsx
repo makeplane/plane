@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -8,14 +8,13 @@ import { useDropzone } from "react-dropzone";
 import { Control, Controller } from "react-hook-form";
 import useSWR from "swr";
 import { Tab, Popover } from "@headlessui/react";
-// plane helpers
+// plane imports
+import { MAX_FILE_SIZE } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // plane types
 import { EFileAssetType } from "@plane/types/src/enums";
 // ui
 import { Button, Input, Loader } from "@plane/ui";
-// constants
-import { MAX_STATIC_FILE_SIZE } from "@/constants/common";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
@@ -92,7 +91,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".webp"],
     },
-    maxSize: MAX_STATIC_FILE_SIZE,
+    maxSize: MAX_FILE_SIZE,
   });
 
   const handleSubmit = async () => {
@@ -130,12 +129,6 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
         .then((res) => uploadCallback(res.asset_url));
     }
   };
-
-  useEffect(() => {
-    if (!unsplashImages || value !== null) return;
-
-    onChange(unsplashImages[0]?.urls.regular);
-  }, [value, onChange, unsplashImages]);
 
   const handleClose = () => {
     if (isOpen) setIsOpen(false);

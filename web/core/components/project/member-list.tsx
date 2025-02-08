@@ -2,18 +2,21 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { Search } from "lucide-react";
 // hooks
 // components
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 import { ProjectMemberListItem, SendProjectInvitationModal } from "@/components/project";
 // ui
 import { MembersSettingsLoader } from "@/components/ui";
 import { useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
-// plane-web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectMemberList: React.FC = observer(() => {
+  // router
+  const { projectId } = useParams();
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,8 +26,11 @@ export const ProjectMemberList: React.FC = observer(() => {
     project: { projectMemberIds, getProjectMemberDetails },
   } = useMember();
   const { allowPermissions } = useUserPermissions();
+
+  const { t } = useTranslation();
+
   const searchedMembers = (projectMemberIds ?? []).filter((userId) => {
-    const memberDetails = getProjectMemberDetails(userId);
+    const memberDetails = projectId ? getProjectMemberDetails(userId, projectId.toString()) : null;
 
     if (!memberDetails?.member) return false;
 
@@ -33,7 +39,9 @@ export const ProjectMemberList: React.FC = observer(() => {
 
     return displayName?.includes(searchQuery.toLowerCase()) || fullName.includes(searchQuery.toLowerCase());
   });
-  const memberDetails = searchedMembers?.map((memberId) => getProjectMemberDetails(memberId));
+  const memberDetails = searchedMembers?.map((memberId) =>
+    projectId ? getProjectMemberDetails(memberId, projectId.toString()) : null
+  );
 
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
@@ -42,7 +50,7 @@ export const ProjectMemberList: React.FC = observer(() => {
       <SendProjectInvitationModal isOpen={inviteModal} onClose={() => setInviteModal(false)} />
 
       <div className="flex items-center justify-between gap-4 border-b border-custom-border-100 py-3.5 overflow-x-hidden">
-        <h4 className="text-xl font-medium">Members</h4>
+        <h4 className="text-xl font-medium">{t("members")}</h4>
         <div className="ml-auto flex items-center justify-start gap-1 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
           <Search className="h-3.5 w-3.5" />
           <input
@@ -61,7 +69,7 @@ export const ProjectMemberList: React.FC = observer(() => {
               setInviteModal(true);
             }}
           >
-            Add member
+            {t("add_member")}
           </Button>
         )}
       </div>
@@ -72,7 +80,7 @@ export const ProjectMemberList: React.FC = observer(() => {
           {searchedMembers.length !== 0 && <ProjectMemberListItem memberDetails={memberDetails ?? []} />}
 
           {searchedMembers.length === 0 && (
-            <h4 className="text-sm mt-16 text-center text-custom-text-400">No matching members</h4>
+            <h4 className="text-sm mt-16 text-center text-custom-text-400">{t("no_matching_members")}</h4>
           )}
         </div>
       )}

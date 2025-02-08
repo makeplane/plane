@@ -1,9 +1,9 @@
 import { endOfMonth, endOfWeek, endOfYear, startOfMonth, startOfWeek, startOfYear } from "date-fns";
 // helpers
 // types
+import { DURATION_FILTER_OPTIONS, EDurationFilters } from "@plane/constants";
 import { TIssuesListTypes } from "@plane/types";
 // constants
-import { DURATION_FILTER_OPTIONS, EDurationFilters } from "@/constants/dashboard";
 import { renderFormattedDate, renderFormattedPayloadDate } from "./date-time.helper";
 
 /**

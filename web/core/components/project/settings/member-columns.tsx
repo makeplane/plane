@@ -3,18 +3,17 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { Trash2 } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
+// plane imports
+import { ROLE, EUserPermissions } from "@plane/constants";
 // plane types
 import { IUser, IWorkspaceMember } from "@plane/types";
 // plane ui
 import { CustomSelect, PopoverMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { ROLE } from "@/constants/workspace";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember, useUser } from "@/hooks/store";
-// plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
 export interface RowData {
   member: IWorkspaceMember;
@@ -112,7 +111,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
     Number(getWorkspaceMemberDetails(rowData.member.id)?.role) ?? EUserPermissions.GUEST
   );
   const isCurrentUserProjectMember = currentUser
-    ? getProjectMemberDetails(currentUser.id)?.role === EUserPermissions.MEMBER
+    ? getProjectMemberDetails(currentUser.id, projectId)?.role === EUserPermissions.MEMBER
     : false;
   const isRoleNonEditable =
     isCurrentUser || (isProjectAdminOrGuest && !isWorkspaceMember) || isCurrentUserProjectMember;
@@ -132,7 +131,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
     <>
       {isRoleNonEditable ? (
         <div className="w-32 flex ">
-          <span>{ROLE[rowData.role as keyof typeof ROLE]}</span>
+          <span>{ROLE[rowData.role]}</span>
         </div>
       ) : (
         <Controller
@@ -154,14 +153,14 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
 
                   setToast({
                     type: TOAST_TYPE.ERROR,
-                    title: "Error!",
+                    title: "You can’t change this role yet.",
                     message: errorString ?? "An error occurred while updating member role. Please try again.",
                   });
                 });
               }}
               label={
                 <div className="flex ">
-                  <span>{ROLE[rowData.role as keyof typeof ROLE]}</span>
+                  <span>{ROLE[rowData.role]}</span>
                 </div>
               }
               buttonClassName={`!px-0 !justify-start hover:bg-custom-background-100 ${errors.role ? "border-red-500" : "border-none"}`}

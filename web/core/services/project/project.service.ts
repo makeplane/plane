@@ -1,14 +1,14 @@
 import type {
   GithubRepositoriesResponse,
   ISearchIssueResponse,
+  TProjectAnalyticsCount,
+  TProjectAnalyticsCountParams,
   TProjectIssuesSearchParams,
-  TSearchEntityRequestPayload,
-  TSearchResponse,
 } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // plane web types
-import { TProject } from "@/plane-web/types";
+import { TProject, TPartialProject } from "@/plane-web/types";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -37,8 +37,16 @@ export class ProjectService extends APIService {
       });
   }
 
-  async getProjects(workspaceSlug: string): Promise<TProject[]> {
+  async getProjectsLite(workspaceSlug: string): Promise<TPartialProject[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getProjects(workspaceSlug: string): Promise<TProject[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/details/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -47,6 +55,19 @@ export class ProjectService extends APIService {
 
   async getProject(workspaceSlug: string, projectId: string): Promise<TProject> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getProjectAnalyticsCount(
+    workspaceSlug: string,
+    params?: TProjectAnalyticsCountParams
+  ): Promise<TProjectAnalyticsCount[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/project-stats/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -63,14 +84,6 @@ export class ProjectService extends APIService {
 
   async deleteProject(workspaceSlug: string, projectId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async fetchProjectEpicProperties(workspaceSlug: string, projectId: string): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/epic-properties/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -164,23 +177,6 @@ export class ProjectService extends APIService {
   ): Promise<ISearchIssueResponse[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/search-issues/`, {
       params,
-    })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async searchEntity(
-    workspaceSlug: string,
-    projectId: string,
-    params: TSearchEntityRequestPayload
-  ): Promise<TSearchResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/entity-search/`, {
-      params: {
-        ...params,
-        query_type: params.query_type.join(","),
-      },
     })
       .then((response) => response?.data)
       .catch((error) => {

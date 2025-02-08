@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { differenceInCalendarDays } from "date-fns";
+import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
 // types
 import { TGroupedIssues, TIssue, TIssueMap, TPaginationData } from "@plane/types";
@@ -116,7 +116,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: "Error!",
-                message: "Due date cannot be before the start date of the issue.",
+                message: "Due date cannot be before the start date of the work item.",
               });
               return;
             }

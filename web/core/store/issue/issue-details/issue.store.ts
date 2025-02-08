@@ -49,6 +49,7 @@ export class IssueStore implements IIssueStore {
   // services
   serviceType;
   issueService;
+  epicService;
   issueArchiveService;
   issueDraftService;
 
@@ -62,6 +63,7 @@ export class IssueStore implements IIssueStore {
     // services
     this.serviceType = serviceType;
     this.issueService = new IssueService(serviceType);
+    this.epicService = new IssueService(EIssueServiceType.EPICS);
     this.issueArchiveService = new IssueArchiveService(serviceType);
     this.issueDraftService = new IssueDraftService();
   }
@@ -93,7 +95,9 @@ export class IssueStore implements IIssueStore {
     let issue: TIssue | undefined;
 
     // fetch issue from local db
-    issue = await persistence.getIssue(issueId);
+    if (this.serviceType === EIssueServiceType.ISSUES) {
+      issue = await persistence.getIssue(issueId);
+    }
 
     this.fetchingIssueDetails = issueId;
 
@@ -106,7 +110,7 @@ export class IssueStore implements IIssueStore {
       issue = await this.issueDraftService.getDraftIssueById(workspaceSlug, projectId, issueId, query);
     else issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId, query);
 
-    if (!issue) throw new Error("Issue not found");
+    if (!issue) throw new Error("Work item not found");
 
     const issuePayload = this.addIssueToStore(issue);
     this.localDBIssueDescription = undefined;
@@ -184,6 +188,7 @@ export class IssueStore implements IIssueStore {
       updated_by: issue?.updated_by,
       is_draft: issue?.is_draft,
       is_subscribed: issue?.is_subscribed,
+      is_epic: issue?.is_epic,
     };
 
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);

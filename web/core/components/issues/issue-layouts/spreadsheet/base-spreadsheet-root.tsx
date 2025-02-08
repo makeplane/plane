@@ -1,20 +1,15 @@
 import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane constants
-import { ALL_ISSUES, EIssueLayoutTypes, EIssuesStoreType, EIssueFilterType } from "@plane/constants";
+// plane imports
+import { ALL_ISSUES, EIssueLayoutTypes, EIssuesStoreType, EIssueFilterType , EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IIssueDisplayFilterOptions } from "@plane/types";
 // hooks
 import { useIssues, useUserPermissions } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-// views
-// stores
-// components
+// local imports
 import { IssueLayoutHOC } from "../issue-layout-HOC";
-// types
-// constants
 import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
 import { SpreadsheetView } from "./spreadsheet-view";
 
@@ -81,9 +76,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
 
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!projectId) return;
-
-      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
+      updateFilters(projectId?.toString() ?? "", EIssueFilterType.DISPLAY_FILTERS, {
         ...updatedDisplayFilter,
       });
     },

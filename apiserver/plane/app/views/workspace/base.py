@@ -7,8 +7,10 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 from django.db import IntegrityError
 from django.db.models import Count, F, Func, OuterRef, Prefetch, Q
+
 from django.db.models.fields import DateField
 from django.db.models.functions import Cast, ExtractDay, ExtractWeek
+
 
 # Django imports
 from django.http import HttpResponse
@@ -173,6 +175,11 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             .values("count")
         )
 
+        role = (
+            WorkspaceMember.objects.filter(workspace=OuterRef("id"), member=request.user, is_active=True)
+            .values("role")
+        )
+
         workspace = (
             Workspace.objects.prefetch_related(
                 Prefetch(
@@ -184,17 +191,19 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             )
             .select_related("owner")
             .annotate(total_members=member_count)
-            .annotate(total_issues=issue_count)
+            .annotate(total_issues=issue_count, role=role)
             .filter(
                 workspace_member__member=request.user, workspace_member__is_active=True
             )
             .distinct()
         )
+
         workspaces = WorkSpaceSerializer(
             self.filter_queryset(workspace),
             fields=fields if fields else None,
             many=True,
         ).data
+
         return Response(workspaces, status=status.HTTP_200_OK)
 
 

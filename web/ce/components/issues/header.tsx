@@ -3,13 +3,14 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { Briefcase, Circle, ExternalLink } from "lucide-react";
+import { Circle, ExternalLink } from "lucide-react";
 // plane constants
-import { EIssuesStoreType } from "@plane/constants";
+import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Button, LayersIcon, Tooltip, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink, CountChip, Logo } from "@/components/common";
+import { BreadcrumbLink, CountChip } from "@/components/common";
 // constants
 import HeaderFilters from "@/components/issues/filters";
 // helpers
@@ -19,7 +20,8 @@ import { useEventTracker, useProject, useCommandPalette, useUserPermissions } fr
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// plane web
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 
 export const IssuesHeader = observer(() => {
   // router
@@ -29,6 +31,8 @@ export const IssuesHeader = observer(() => {
   const {
     issues: { getGroupIssueCount },
   } = useIssues(EIssuesStoreType.PROJECT);
+  // i18n
+  const { t } = useTranslation();
 
   const { currentProjectDetails, loader } = useProject();
 
@@ -50,38 +54,23 @@ export const IssuesHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <div className="flex items-center gap-2.5">
-          <Breadcrumbs onBack={() => router.back()} isLoading={loader}>
+          <Breadcrumbs onBack={() => router.back()} isLoading={loader === "init-loader"}>
+            <ProjectBreadcrumb />
+
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
                 <BreadcrumbLink
-                  label={currentProjectDetails?.name ?? "Project"}
-                  icon={
-                    currentProjectDetails ? (
-                      currentProjectDetails && (
-                        <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                          <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                        </span>
-                      )
-                    ) : (
-                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                        <Briefcase className="h-4 w-4" />
-                      </span>
-                    )
-                  }
+                  label={t("issue.label", { count: 2 })} // count is for pluralization
+                  icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}
                 />
               }
-            />
-
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={<BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
           {issuesCount && issuesCount > 0 ? (
             <Tooltip
               isMobile={isMobile}
-              tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "issues" : "issue"} in this project`}
+              tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "work items" : "work item"} in this project`}
               position="bottom"
             >
               <CountChip count={issuesCount} />
@@ -96,7 +85,7 @@ export const IssuesHeader = observer(() => {
             rel="noopener noreferrer"
           >
             <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
-            Public
+            {t("workspace_projects.network.public.title")}
             <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
           </a>
         ) : (
@@ -115,12 +104,13 @@ export const IssuesHeader = observer(() => {
         {canUserCreateIssue ? (
           <Button
             onClick={() => {
-              setTrackElement("Project issues page");
+              setTrackElement("Project work items page");
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             }}
             size="sm"
           >
-            <div className="hidden sm:block">Add</div> Issue
+            <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>
+            <div className="hidden sm:block">{t("issue.add.label")}</div>
           </Button>
         ) : (
           <></>

@@ -2,8 +2,10 @@
 
 import React from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { Ban } from "lucide-react";
 // plane ui
+import { EUserPermissions } from "@plane/constants";
 import { Avatar, CustomSearchSelect } from "@plane/ui";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
@@ -18,6 +20,8 @@ type Props = {
 
 export const MemberSelect: React.FC<Props> = observer((props) => {
   const { value, onChange, isDisabled = false } = props;
+  // router
+  const { projectId } = useParams();
   // store hooks
   const {
     project: { projectMemberIds, getProjectMemberDetails },
@@ -25,9 +29,11 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
 
   const options = projectMemberIds
     ?.map((userId) => {
-      const memberDetails = getProjectMemberDetails(userId);
+      const memberDetails = projectId ? getProjectMemberDetails(userId, projectId.toString()) : null;
 
       if (!memberDetails?.member) return;
+      const isGuest = memberDetails.role === EUserPermissions.GUEST;
+      if (isGuest) return;
 
       return {
         value: `${memberDetails?.member.id}`,
@@ -47,7 +53,7 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
         content: React.JSX.Element;
       }[]
     | undefined;
-  const selectedOption = getProjectMemberDetails(value);
+  const selectedOption = projectId ? getProjectMemberDetails(value, projectId.toString()) : null;
 
   return (
     <CustomSearchSelect

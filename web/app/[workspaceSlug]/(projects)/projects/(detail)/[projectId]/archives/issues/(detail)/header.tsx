@@ -6,12 +6,14 @@ import useSWR from "swr";
 // ui
 import { ArchiveIcon, Breadcrumbs, LayersIcon, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink, Logo } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common";
 import { IssueDetailQuickActions } from "@/components/issues";
 // constants
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 // hooks
 import { useProject } from "@/hooks/store";
+// plane web
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 // services
 import { IssueService } from "@/services/issue";
 
@@ -33,22 +35,8 @@ export const ProjectArchivedIssueDetailsHeader = observer(() => {
   return (
     <Header>
       <Header.LeftItem>
-        <Breadcrumbs isLoading={loader}>
-          <Breadcrumbs.BreadcrumbItem
-            type="text"
-            link={
-              <BreadcrumbLink
-                label={currentProjectDetails?.name ?? "Project"}
-                icon={
-                  currentProjectDetails && (
-                    <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                      <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                    </span>
-                  )
-                }
-              />
-            }
-          />
+        <Breadcrumbs isLoading={loader === "init-loader"}>
+          <ProjectBreadcrumb />
           <Breadcrumbs.BreadcrumbItem
             type="text"
             link={
@@ -64,7 +52,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(() => {
             link={
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
-                label="Issues"
+                label="Work items"
                 icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}
               />
             }

@@ -22,6 +22,7 @@ import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 // types
 import { TRenderQuickActions } from "./list-view-types";
 
@@ -174,9 +175,9 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
           if (!isDraggingAllowed) {
             setToast({
               type: TOAST_TYPE.WARNING,
-              title: "Cannot move issue",
+              title: "Cannot move work item",
               message: !canEditIssueProperties
-                ? "You are not allowed to move this issue"
+                ? "You are not allowed to move this work item"
                 : "Drag and drop is disabled for the current grouping",
             });
           }
@@ -190,7 +191,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 <Tooltip
                   tooltipContent={
                     <>
-                      Only issues within the current
+                      Only work items within the current
                       <br />
                       project can be selected.
                     </>
@@ -258,6 +259,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
             >
               <p className="w-full truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
             </Tooltip>
+            {isEpic && <IssueStats issueId={issue.id} />}
           </div>
           {!issue?.tempId && (
             <div

@@ -2,6 +2,8 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ListFilter } from "lucide-react";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // plane types
 import { TProjectFilters } from "@plane/types";
 // plane utils
@@ -22,6 +24,8 @@ type Props = {
 };
 
 const HeaderFilters = observer(({ filterMenuButton, isMobile, classname = "", filterClassname = "" }: Props) => {
+  // i18n
+  const { t } = useTranslation();
   // router
   const { workspaceSlug } = useParams();
   const {
@@ -72,7 +76,7 @@ const HeaderFilters = observer(({ filterMenuButton, isMobile, classname = "", fi
       <div className={cn(filterClassname)}>
         <FiltersDropdown
           icon={<ListFilter className="h-3 w-3" />}
-          title="Filters"
+          title={t("common.filters")}
           placement="bottom-end"
           isFiltersApplied={isFiltersApplied}
           menuButton={filterMenuButton || null}

@@ -15,15 +15,15 @@ import { getHocusPocusServer } from "@/core/hocuspocus-server";
 // helpers
 import { logger, manualLogger } from "@/core/helpers/logger";
 import { errorHandler } from "@/core/helpers/error-handler";
+
+// controllers
 import { registerControllers } from "./lib/controller";
 import { HealthController } from "./controllers/health.controller";
 import { CollaborationController } from "./controllers/collaboration.controller";
+import { DocumentController } from "./controllers/document.controller";
 
 interface WebSocketRouter extends Router {
-  ws: (
-    _path: string,
-    _handler: (ws: ws.WebSocket, req: Request) => void,
-  ) => void;
+  ws: (_path: string, _handler: (ws: ws.WebSocket, req: Request) => void) => void;
 }
 
 export class Server {
@@ -62,20 +62,16 @@ export class Server {
 
   private async setupControllers() {
     const router = express.Router() as WebSocketRouter;
-    const collaborationController = new CollaborationController(
-      this.hocusPocusServer,
-    );
+    const collaborationController = new CollaborationController(this.hocusPocusServer);
 
-    registerControllers(router, HealthController);
+    registerControllers(router, [HealthController, DocumentController]);
 
     router.ws("/collaboration", (ws: ws.WebSocket, req: Request) => {
       collaborationController.handleConnection(ws, req);
     });
 
     this.app.use(process.env.LIVE_BASE_PATH || "/live", router);
-    this.app.use((_req: Request, res: Response) =>
-      res.status(404).send("Not Found"),
-    );
+    this.app.use((_req: Request, res: Response) => res.status(404).send("Not Found"));
   }
 
   private setupErrorHandlers() {
@@ -96,9 +92,7 @@ export class Server {
       manualLogger.info("Starting graceful shutdown...");
       try {
         await this.hocusPocusServer.destroy();
-        manualLogger.info(
-          "HocusPocus server WebSocket connections closed gracefully.",
-        );
+        manualLogger.info("HocusPocus server WebSocket connections closed gracefully.");
 
         server.close(() => {
           manualLogger.info("Express server closed gracefully.");

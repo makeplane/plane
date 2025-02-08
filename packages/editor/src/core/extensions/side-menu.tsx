@@ -42,7 +42,7 @@ export const SideMenuExtension = (props: Props) => {
             ai: aiEnabled,
             dragDrop: dragDropEnabled,
           },
-          scrollThreshold: { up: 200, down: 100 },
+          scrollThreshold: { up: 200, down: 150 },
         }),
       ];
     },
@@ -132,10 +132,6 @@ const SideMenu = (options: SideMenuPluginProps) => {
           if (node.matches(".table-wrapper")) {
             rect.top += 8;
             rect.left -= 8;
-          }
-
-          if (node.parentElement?.matches("td") || node.parentElement?.matches("th")) {
-            rect.left += 8;
           }
 
           rect.width = options.dragHandleWidth;

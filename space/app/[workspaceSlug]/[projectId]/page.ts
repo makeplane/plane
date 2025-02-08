@@ -1,10 +1,9 @@
 import { notFound, redirect } from "next/navigation";
-// types
+// plane imports
+import { SitesProjectPublishService } from "@plane/services";
 import { TProjectPublishSettings } from "@plane/types";
-// services
-import PublishService from "@/services/publish.service";
 
-const publishService = new PublishService();
+const publishService = new SitesProjectPublishService();
 
 type Props = {
   params: {
@@ -22,7 +21,7 @@ export default async function IssuesPage(props: Props) {
 
   let response: TProjectPublishSettings | undefined = undefined;
   try {
-    response = await publishService.fetchAnchorFromProjectDetails(workspaceSlug, projectId);
+    response = await publishService.retrieveSettingsByProjectId(workspaceSlug, projectId);
   } catch (error) {
     // redirect to 404 page on error
     notFound();

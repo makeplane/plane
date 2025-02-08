@@ -16,6 +16,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   const {
     onTransaction,
     aiHandler,
+    bubbleMenuEnabled = true,
     containerClassName,
     disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
@@ -75,8 +76,9 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
 
   return (
     <PageRenderer
-      displayConfig={displayConfig}
       aiHandler={aiHandler}
+      bubbleMenuEnabled={bubbleMenuEnabled}
+      displayConfig={displayConfig}
       editor={editor}
       editorContainerClassName={editorContainerClassNames}
       id={id}

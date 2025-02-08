@@ -1,8 +1,8 @@
 import { AlertCircle } from "lucide-react";
 // Plane
+import { ISSUE_ORDER_BY_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssueOrderByOptions } from "@plane/types";
-// constants
-import { ISSUE_ORDER_BY_OPTIONS } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // Plane-web
@@ -16,6 +16,7 @@ type Props = {
   dropErrorMessage?: string;
   orderBy: TIssueOrderByOptions | undefined;
   isDraggingOverColumn: boolean;
+  isEpic?: boolean;
 };
 
 export const GroupDragOverlay = (props: Props) => {
@@ -27,10 +28,16 @@ export const GroupDragOverlay = (props: Props) => {
     dropErrorMessage,
     orderBy,
     isDraggingOverColumn,
+    isEpic = false,
   } = props;
 
+  // hooks
+  const { t } = useTranslation();
+
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
-  const readableOrderBy = ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderByObj.key === orderBy)?.title;
+  const readableOrderBy = t(
+    ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderByObj.key === orderBy)?.titleTranslationKey || ""
+  );
 
   return (
     <div
@@ -65,10 +72,10 @@ export const GroupDragOverlay = (props: Props) => {
             <>
               {readableOrderBy && (
                 <span>
-                  The layout is ordered by <span className="font-semibold">{readableOrderBy}</span>.
+                  {t("issue.layouts.ordered_by_label")} <span className="font-semibold">{t(readableOrderBy)}</span>.
                 </span>
               )}
-              <span>Drop here to move the issue.</span>
+              <span>{t("entity.drop_here_to_move", { entity: isEpic ? "epic" : "work item" })}</span>
             </>
           )}
         </div>

@@ -1,13 +1,10 @@
-export interface TProjectActivity {
-  id: string;
+import { TProjectBaseActivity } from "@plane/types";
+
+export type TProjectActivity = TProjectBaseActivity & {
   content: string;
-  createdAt: string;
-  updatedAt: string;
   userId: string;
   projectId: string;
-  created_at: string;
-  field: string;
-  verb: string;
+
   actor_detail: {
     display_name: string;
     id: string;
@@ -18,8 +15,7 @@ export interface TProjectActivity {
   project_detail: {
     name: string;
   };
-  new_value: string;
-  old_value: string;
-  project: string;
-  new_identifier?: string;
-}
+
+  createdAt: string;
+  updatedAt: string;
+};

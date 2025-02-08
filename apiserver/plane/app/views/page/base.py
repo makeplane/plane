@@ -33,6 +33,7 @@ from plane.db.models import (
     ProjectMember,
     ProjectPage,
     Project,
+    UserRecentVisit,
 )
 from plane.utils.error_codes import ERROR_CODES
 from ..base import BaseAPIView, BaseViewSet
@@ -121,6 +122,8 @@ class PageViewSet(BaseViewSet):
             context={
                 "project_id": project_id,
                 "owned_by_id": request.user.id,
+                "description": request.data.get("description", {}),
+                "description_binary": request.data.get("description_binary", None),
                 "description_html": request.data.get("description_html", "<p></p>"),
             },
         )
@@ -385,6 +388,13 @@ class PageViewSet(BaseViewSet):
             entity_identifier=pk,
             entity_type="page",
         ).delete()
+        # Delete the page from recent visit
+        UserRecentVisit.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            entity_identifier=pk,
+            entity_name="page",
+        ).delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -553,3 +563,51 @@ class PagesDescriptionViewSet(BaseViewSet):
             return Response({"message": "Updated successfully"})
         else:
             return Response({"error": "No binary data provided"})
+
+
+class PageDuplicateEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def post(self, request, slug, project_id, page_id):
+        page = Page.objects.filter(
+            pk=page_id, workspace__slug=slug, projects__id=project_id
+        ).first()
+
+        # get all the project ids where page is present
+        project_ids = ProjectPage.objects.filter(page_id=page_id).values_list(
+            "project_id", flat=True
+        )
+
+        page.pk = None
+        page.name = f"{page.name} (Copy)"
+        page.description_binary = None
+        page.owned_by = request.user
+        page.created_by = request.user
+        page.updated_by = request.user
+        page.save()
+
+        for project_id in project_ids:
+            ProjectPage.objects.create(
+                workspace_id=page.workspace_id,
+                project_id=project_id,
+                page_id=page.id,
+                created_by_id=page.created_by_id,
+                updated_by_id=page.updated_by_id,
+            )
+
+        page_transaction.delay(
+            {"description_html": page.description_html}, None, page.id
+        )
+        page = (
+            Page.objects.filter(pk=page.id)
+            .annotate(
+                project_ids=Coalesce(
+                    ArrayAgg(
+                        "projects__id", distinct=True, filter=~Q(projects__id=True)
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            )
+            .first()
+        )
+        serializer = PageDetailSerializer(page)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

@@ -4,11 +4,13 @@ import { Dispatch, FC, Fragment, SetStateAction } from "react";
 import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
+// plane imports
+import { NOTIFICATION_SNOOZE_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Tooltip, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { NotificationSnoozeModal } from "@/components/workspace-notifications";
-// constants
-import { NOTIFICATION_SNOOZE_OPTIONS } from "@/constants/notification";
+// helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store";
@@ -29,6 +31,7 @@ export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = o
   // hooks
   const { isMobile } = usePlatformOS();
   const {} = useWorkspaceNotifications();
+  const { t } = useTranslation();
   const { asJson: data, snoozeNotification, unSnoozeNotification } = notification;
 
   const handleNotificationSnoozeDate = async (snoozeTill: Date | undefined) => {
@@ -36,8 +39,8 @@ export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = o
       try {
         await snoozeNotification(workspaceSlug, snoozeTill);
         setToast({
-          title: "Success!",
-          message: "Notification snoozed successfully",
+          title: `${t("common.success")}!`,
+          message: t("notification.toasts.snoozed"),
           type: TOAST_TYPE.SUCCESS,
         });
       } catch (e) {
@@ -47,8 +50,8 @@ export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = o
       try {
         await unSnoozeNotification(workspaceSlug);
         setToast({
-          title: "Success!",
-          message: "Notification un snoozed successfully",
+          title: `${t("common.success")}!`,
+          message: t("notification.toasts.un_snoozed"),
           type: TOAST_TYPE.SUCCESS,
         });
       } catch (e) {
@@ -86,7 +89,12 @@ export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = o
 
           return (
             <>
-              <Tooltip tooltipContent={data.snoozed_till ? `Un snooze` : `Snooze`} isMobile={isMobile}>
+              <Tooltip
+                tooltipContent={
+                  data.snoozed_till ? t("notification.options.mark_unsnooze") : t("notification.options.mark_snooze")
+                }
+                isMobile={isMobile}
+              >
                 <Popover.Button
                   className={cn(
                     "relative flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center outline-none bg-custom-background-80 hover:bg-custom-background-90",
@@ -117,7 +125,7 @@ export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = o
                           handleDropdownSelect("un-snooze");
                         }}
                       >
-                        <div>Un snooze</div>
+                        <div>{t("notification.options.mark_unsnooze")}</div>
                       </button>
                     )}
 
@@ -131,7 +139,7 @@ export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = o
                           handleDropdownSelect(option.value != undefined ? option.value() : option.value);
                         }}
                       >
-                        <div>{option?.label}</div>
+                        <div>{t(option?.i18n_label)}</div>
                       </button>
                     ))}
                   </div>

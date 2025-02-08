@@ -6,6 +6,7 @@ import {
   EIssueLayoutTypes,
   EIssuesStoreType,
   EIssueFilterType,
+  ENABLE_ISSUE_DEPENDENCIES,
 } from "@plane/constants";
 import {
   IIssueDisplayFilterOptions,
@@ -22,8 +23,6 @@ import {
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
 // lib
 import { storage } from "@/lib/local-storage";
-// plane-web
-import { ENABLE_ISSUE_DEPENDENCIES } from "@/plane-web/constants";
 
 interface ILocalStoreIssueFilters {
   key: EIssuesStoreType;

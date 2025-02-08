@@ -2,6 +2,7 @@
 
 import useSWR from "swr";
 // components
+import { useTranslation } from "@plane/i18n";
 import { PageHead } from "@/components/core";
 import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
 import { EmailNotificationForm } from "@/components/profile/notification";
@@ -12,6 +13,7 @@ import { UserService } from "@/services/user.service";
 const userService = new UserService();
 
 export default function ProfileNotificationPage() {
+  const { t } = useTranslation();
   // fetching user email notification settings
   const { data, isLoading } = useSWR("CURRENT_USER_EMAIL_NOTIFICATION_SETTINGS", () =>
     userService.currentUserEmailNotificationSettings()
@@ -23,11 +25,11 @@ export default function ProfileNotificationPage() {
 
   return (
     <>
-      <PageHead title="Profile - Notifications" />
+      <PageHead title={`${t("profile.label")} - ${t("notifications")}`} />
       <ProfileSettingContentWrapper>
         <ProfileSettingContentHeader
-          title="Email notifications"
-          description="Stay in the loop on Issues you are subscribed to. Enable this to get notified."
+          title={t("email_notifications")}
+          description={t("stay_in_the_loop_on_issues_you_are_subscribed_to_enable_this_to_get_notified")}
         />
         <EmailNotificationForm data={data} />
       </ProfileSettingContentWrapper>

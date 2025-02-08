@@ -5,6 +5,8 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FileText, Layers } from "lucide-react";
+import { EUserPermissionsLevel, EUserPermissions, EUserProjectRoles } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // plane ui
 import { Tooltip, DiceIcon, ContrastIcon, LayersIcon, Intake } from "@plane/ui";
 // components
@@ -13,16 +15,15 @@ import { SidebarNavItem } from "@/components/sidebar";
 import { useAppTheme, useProject, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane-web constants
-import { EUserPermissions } from "@/plane-web/constants";
-import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export type TNavigationItem = {
   name: string;
   href: string;
   icon: React.ElementType;
-  access: EUserPermissions[];
+  access: EUserPermissions[] | EUserProjectRoles[];
   shouldRender: boolean;
   sortOrder: number;
+  i18n_key: string;
 };
 
 type TProjectItemsProps = {
@@ -34,14 +35,15 @@ type TProjectItemsProps = {
 export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
   const { workspaceSlug, projectId, additionalNavigationItems } = props;
   // store hooks
+  const { t } = useTranslation();
   const { sidebarCollapsed: isSidebarCollapsed, toggleSidebar } = useAppTheme();
-  const { getProjectById } = useProject();
+  const { getPartialProjectById } = useProject();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
   // pathname
   const pathname = usePathname();
   // derived values
-  const project = getProjectById(projectId);
+  const project = getPartialProjectById(projectId);
   // handlers
   const handleProjectClick = () => {
     if (window.innerWidth < 768) {
@@ -54,7 +56,8 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
   const baseNavigation = useCallback(
     (workspaceSlug: string, projectId: string): TNavigationItem[] => [
       {
-        name: "Issues",
+        i18n_key: "sidebar.work_items",
+        name: "Work items",
         href: `/${workspaceSlug}/projects/${projectId}/issues`,
         icon: LayersIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
@@ -62,6 +65,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
         sortOrder: 1,
       },
       {
+        i18n_key: "sidebar.cycles",
         name: "Cycles",
         href: `/${workspaceSlug}/projects/${projectId}/cycles`,
         icon: ContrastIcon,
@@ -70,6 +74,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
         sortOrder: 2,
       },
       {
+        i18n_key: "sidebar.modules",
         name: "Modules",
         href: `/${workspaceSlug}/projects/${projectId}/modules`,
         icon: DiceIcon,
@@ -78,6 +83,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
         sortOrder: 3,
       },
       {
+        i18n_key: "sidebar.views",
         name: "Views",
         href: `/${workspaceSlug}/projects/${projectId}/views`,
         icon: Layers,
@@ -86,6 +92,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
         sortOrder: 4,
       },
       {
+        i18n_key: "sidebar.pages",
         name: "Pages",
         href: `/${workspaceSlug}/projects/${projectId}/pages`,
         icon: FileText,
@@ -94,6 +101,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
         sortOrder: 5,
       },
       {
+        i18n_key: "sidebar.intake",
         name: "Intake",
         href: `/${workspaceSlug}/projects/${projectId}/inbox`,
         icon: Intake,
@@ -137,7 +145,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
           <Tooltip
             key={item.name}
             isMobile={isMobile}
-            tooltipContent={`${project?.name}: ${item.name}`}
+            tooltipContent={`${project?.name}: ${t(item.i18n_key)}`}
             position="right"
             className="ml-2"
             disabled={!isSidebarCollapsed}
@@ -151,7 +159,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
                   <item.icon
                     className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`}
                   />
-                  {!isSidebarCollapsed && <span className="text-xs font-medium">{item.name}</span>}
+                  {!isSidebarCollapsed && <span className="text-xs font-medium">{t(item.i18n_key)}</span>}
                 </div>
               </SidebarNavItem>
             </Link>

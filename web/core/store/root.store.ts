@@ -25,6 +25,7 @@ import { IProjectPageStore, ProjectPageStore } from "./pages/project-page.store"
 import { IProjectRootStore, ProjectRootStore } from "./project";
 import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
 import { RouterStore, IRouterStore } from "./router.store";
+import { IStickyStore, StickyStore } from "./sticky/sticky.store";
 import { ThemeStore, IThemeStore } from "./theme.store";
 import { ITransientStore, TransientStore } from "./transient.store";
 import { IUserStore, UserStore } from "./user";
@@ -43,7 +44,6 @@ export class CoreRootStore {
   projectView: IProjectViewStore;
   globalView: IGlobalViewStore;
   issue: IIssueRootStore;
-  epic: IIssueRootStore;
   state: IStateStore;
   label: ILabelStore;
   dashboard: IDashboardStore;
@@ -60,6 +60,7 @@ export class CoreRootStore {
   workspaceNotification: IWorkspaceNotificationStore;
   favorite: IFavoriteStore;
   transient: ITransientStore;
+  stickyStore: IStickyStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -77,18 +78,18 @@ export class CoreRootStore {
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
     this.issue = new IssueRootStore(this as unknown as RootStore);
-    this.epic = new IssueRootStore(this as unknown as RootStore, EIssueServiceType.EPICS);
     this.state = new StateStore(this as unknown as RootStore);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);
     this.eventTracker = new EventTrackerStore(this);
     this.multipleSelect = new MultipleSelectStore();
     this.projectInbox = new ProjectInboxStore(this);
-    this.projectPages = new ProjectPageStore(this);
+    this.projectPages = new ProjectPageStore(this as unknown as RootStore);
     this.projectEstimate = new ProjectEstimateStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.favorite = new FavoriteStore(this);
     this.transient = new TransientStore();
+    this.stickyStore = new StickyStore();
   }
 
   resetOnSignOut() {
@@ -109,17 +110,17 @@ export class CoreRootStore {
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
     this.issue = new IssueRootStore(this as unknown as RootStore);
-    this.epic = new IssueRootStore(this as unknown as RootStore, EIssueServiceType.EPICS);
     this.state = new StateStore(this as unknown as RootStore);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);
     this.eventTracker = new EventTrackerStore(this);
     this.projectInbox = new ProjectInboxStore(this);
-    this.projectPages = new ProjectPageStore(this);
+    this.projectPages = new ProjectPageStore(this as unknown as RootStore);
     this.multipleSelect = new MultipleSelectStore();
     this.projectEstimate = new ProjectEstimateStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.favorite = new FavoriteStore(this);
     this.transient = new TransientStore();
+    this.stickyStore = new StickyStore();
   }
 }

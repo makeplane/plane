@@ -1,15 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { format } from "date-fns";
 import { mutate } from "swr";
 // types
+import { CYCLE_CREATED, CYCLE_UPDATED } from "@plane/constants";
 import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CycleForm } from "@/components/cycles";
 // constants
-import { CYCLE_CREATED, CYCLE_UPDATED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useCycle, useProject } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
@@ -131,8 +132,8 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
     if (payload.start_date && payload.end_date) {
       if (data?.start_date && data?.end_date)
         isDateValid = await dateChecker(payload.project_id ?? projectId, {
-          start_date: payload.start_date,
-          end_date: payload.end_date,
+          start_date: format(payload.start_date, "yyyy-MM-dd"),
+          end_date: format(payload.end_date, "yyyy-MM-dd"),
           cycle_id: data.id,
         });
       else

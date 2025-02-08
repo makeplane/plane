@@ -64,7 +64,7 @@ const integrationWorkflowData = [
     key: "import-data",
     icon: UploadCloud,
   },
-  { title: "Issues", key: "repo-details", icon: List },
+  { title: "Work item", key: "repo-details", icon: List },
   {
     title: "Users",
     key: "import-users",
