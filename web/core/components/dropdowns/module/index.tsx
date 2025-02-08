@@ -239,6 +239,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
           )}
           onClick={handleOnClick}
           disabled={disabled}
+          tabIndex={tabIndex}
         >
           {button}
         </button>
@@ -256,6 +257,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
           )}
           onClick={handleOnClick}
           disabled={disabled}
+          tabIndex={tabIndex}
         >
           <DropdownButton
             className={buttonClassName}
@@ -296,7 +298,6 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
     <ComboDropDown
       as="div"
       ref={dropdownRef}
-      tabIndex={tabIndex}
       className={cn("h-full", className)}
       onKeyDown={handleKeyDown}
       button={comboButton}

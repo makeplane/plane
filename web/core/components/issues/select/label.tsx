@@ -112,31 +112,29 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
       disabled={disabled}
       onKeyDown={handleKeyDown}
     >
-      <Combobox.Button as={Fragment}>
-        <button
-          type="button"
-          ref={setReferenceElement}
-          className={cn("h-full flex cursor-pointer items-center gap-2 text-xs text-custom-text-200", buttonClassName)}
-          onClick={handleOnClick}
-        >
-          {label ? (
-            label
-          ) : value && value.length > 0 ? (
-            <span className="flex items-center justify-center gap-2 text-xs h-full">
-              <IssueLabelsList
-                labels={value.map((v) => projectLabels?.find((l) => l.id === v)) ?? []}
-                length={3}
-                showLength
-              />
-            </span>
-          ) : (
-            <div className="h-full flex items-center justify-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80">
-              <Tag className="h-3 w-3 flex-shrink-0" />
-              <span>{t("labels")}</span>
-            </div>
-          )}
-        </button>
-      </Combobox.Button>
+      <button
+        type="button"
+        ref={setReferenceElement}
+        className={cn("h-full flex cursor-pointer items-center gap-2 text-xs text-custom-text-200", buttonClassName)}
+        onClick={handleOnClick}
+      >
+        {label ? (
+          label
+        ) : value && value.length > 0 ? (
+          <span className="flex items-center justify-center gap-2 text-xs h-full">
+            <IssueLabelsList
+              labels={value.map((v) => projectLabels?.find((l) => l.id === v)) ?? []}
+              length={3}
+              showLength
+            />
+          </span>
+        ) : (
+          <div className="h-full flex items-center justify-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80">
+            <Tag className="h-3 w-3 flex-shrink-0" />
+            <span>{t("labels")}</span>
+          </div>
+        )}
+      </button>
 
       {isDropdownOpen && (
         <Combobox.Options className="fixed z-10" static>

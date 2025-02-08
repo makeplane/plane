@@ -485,7 +485,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   setSelectedParentIssue={setSelectedParentIssue}
                 />
               </div>
-              <div className="flex items-center justify-end gap-4 py-3">
+              <div className="flex items-center justify-end gap-4 py-3" tabIndex={getIndex("create_more")}>
                 {!data?.id && (
                   <div
                     className="inline-flex items-center gap-1.5 cursor-pointer"
@@ -493,7 +493,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     onKeyDown={(e) => {
                       if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
                     }}
-                    tabIndex={getIndex("create_more")}
                     role="button"
                   >
                     <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
@@ -501,34 +500,37 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   </div>
                 )}
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="neutral-primary"
-                    size="sm"
-                    onClick={() => {
-                      if (editorRef.current?.isEditorReadyToDiscard()) {
-                        onClose();
-                      } else {
-                        setToast({
-                          type: TOAST_TYPE.ERROR,
-                          title: "Error!",
-                          message: "Editor is still processing changes. Please wait before proceeding.",
-                        });
-                      }
-                    }}
-                    tabIndex={getIndex("discard_button")}
-                  >
-                    {t("discard")}
-                  </Button>
-                  <Button
-                    variant={moveToIssue ? "neutral-primary" : "primary"}
-                    type="submit"
-                    size="sm"
-                    ref={submitBtnRef}
-                    loading={isSubmitting}
-                    tabIndex={isDraft ? getIndex("submit_button") : getIndex("draft_button")}
-                  >
-                    {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
-                  </Button>
+                  <div tabIndex={getIndex("discard_button")}>
+                    <Button
+                      variant="neutral-primary"
+                      size="sm"
+                      onClick={() => {
+                        if (editorRef.current?.isEditorReadyToDiscard()) {
+                          onClose();
+                        } else {
+                          setToast({
+                            type: TOAST_TYPE.ERROR,
+                            title: "Error!",
+                            message: "Editor is still processing changes. Please wait before proceeding.",
+                          });
+                        }
+                      }}
+                    >
+                      {t("discard")}
+                    </Button>
+                  </div>
+                  <div tabIndex={isDraft ? getIndex("submit_button") : getIndex("draft_button")}>
+                    <Button
+                      variant={moveToIssue ? "neutral-primary" : "primary"}
+                      type="submit"
+                      size="sm"
+                      ref={submitBtnRef}
+                      loading={isSubmitting}
+                    >
+                      {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
+                    </Button>
+                  </div>
+
                   {moveToIssue && (
                     <Button
                       variant="primary"
