@@ -135,6 +135,10 @@ class WorkSpaceViewSet(BaseViewSet):
                     {"slug": "The workspace with the slug already exists"},
                     status=status.HTTP_410_GONE,
                 )
+            return Response(
+                {"error": "The payload is not valid"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, *args, **kwargs):
