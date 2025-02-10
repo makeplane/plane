@@ -1,6 +1,7 @@
 export * from "./ai";
 export * from "./analytics";
 export * from "./auth";
+export * from "./chart";
 export * from "./endpoints";
 export * from "./file";
 export * from "./filter";

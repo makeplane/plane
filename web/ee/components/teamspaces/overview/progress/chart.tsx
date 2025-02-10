@@ -3,30 +3,31 @@ import { observer } from "mobx-react";
 import { Loader as Spinner, ChevronDown } from "lucide-react";
 // plane imports
 import { ETeamspaceAnalyticsValueKeys, EProgressDataKeys, EProgressXAxisKeys } from "@plane/constants";
-import { TStackChartData, TStackItem } from "@plane/types";
+import { BarChart } from "@plane/propel/charts/bar-chart";
+import { TBarItem, TChartData } from "@plane/types";
 import { Dropdown, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
-// components
-import { StackedBarChart } from "@/components/core/charts/stacked-bar-chart";
 // plane web imports
 import { renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
 import { TEAM_WORKLOAD_X_AXIS_LABEL_MAP, TEAM_WORKLOAD_Y_AXIS_LABEL_MAP } from "@/plane-web/constants/teamspace";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-teamspace-analytics";
 
-const stacks: TStackItem<EProgressDataKeys>[] = [
+const bars: TBarItem<EProgressDataKeys>[] = [
   {
     key: EProgressDataKeys.COMPLETED,
     fillClassName: "fill-[#004EFF]",
     textClassName: "text-white",
     dotClassName: "bg-[#004EFF]",
     showPercentage: true,
+    stackId: "bar-one",
   },
   {
     key: EProgressDataKeys.PENDING,
     fillClassName: "fill-custom-background-80/80",
     textClassName: "text-custom-text-200",
     dotClassName: "bg-custom-background-80/80",
+    stackId: "bar-one",
   },
 ];
 
@@ -38,7 +39,7 @@ type TTeamspaceProgressChartProps = {
   teamspaceId: string;
   xAxisKey: EProgressXAxisKeys;
   yAxisKey: ETeamspaceAnalyticsValueKeys;
-  data: TStackChartData<EProgressXAxisKeys, EProgressDataKeys>[];
+  data: TChartData<EProgressXAxisKeys, EProgressDataKeys>[];
   handleXAxisKeyChange: (key: EProgressXAxisKeys) => void;
 };
 
@@ -98,9 +99,9 @@ export const TeamspaceProgressChart: React.FC<TTeamspaceProgressChartProps> = ob
           <Loader.Item width="96%" height="100%" />
         </Loader>
       ) : (
-        <StackedBarChart
+        <BarChart
           data={modifiedData}
-          stacks={stacks}
+          bars={bars}
           xAxis={{
             key: xAxisKey,
             label: TEAM_WORKLOAD_X_AXIS_LABEL_MAP[xAxisKey],
