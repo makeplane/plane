@@ -120,16 +120,9 @@ class WorkSpaceViewSet(BaseViewSet):
 
                 # Get total members and role
                 total_members=WorkspaceMember.objects.filter(workspace_id=serializer.data["id"]).count()
-                role=(
-                    WorkspaceMember.objects.filter(
-                        workspace_id=serializer.data["id"],
-                        member=request.user,
-                        is_active=True,
-                    ).values("role")
-                )
                 data = serializer.data
                 data["total_members"] = total_members
-                data["role"] = role.first().get("role")
+                data["role"] = 20
 
                 return Response(data, status=status.HTTP_201_CREATED)
             return Response(
