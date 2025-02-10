@@ -391,13 +391,12 @@ class WorkspaceHomePreference(BaseModel):
 class WorkspaceUserPreference(BaseModel):
     """Preference for the workspace for a user"""
 
-    class UserPreferenceKeys(models.TextChoices):
-        PROJECTS = "projects", "Projects"
-        ANALYTICS = "analytics", "Analytics"
-        CYCLES = "cycles", "Cycles"
+    class UserPreferenceKeys(models.TextChoices):        
         VIEWS = "views", "Views"
+        ANALYTICS = "analytics", "Analytics"
+        DRAFTS = "drafts", "Drafts"
         YOUR_WORK = "your_work", "Your Work"
-
+        ARCHIVES = "archives", "Archives"
 
     workspace = models.ForeignKey(
         "db.Workspace",
