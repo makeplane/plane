@@ -14,7 +14,7 @@ const useCommentReaction = (
   workspaceSlug?: string | string[] | null,
   projectId?: string | string[] | null,
   commendId?: string | string[] | null
-) => {
+): any => {
   const {
     data: commentReactions,
     mutate: mutateCommentReactions,

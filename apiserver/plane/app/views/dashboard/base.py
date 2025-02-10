@@ -350,7 +350,7 @@ def dashboard_assigned_issues(self, request, slug):
         )
 
     return Response(
-        {"error": "Please specify a valid issue type"},
+        {"error": "Please specify a valid work item type"},
         status=status.HTTP_400_BAD_REQUEST,
     )
 
@@ -512,7 +512,7 @@ def dashboard_created_issues(self, request, slug):
         )
 
     return Response(
-        {"error": "Please specify a valid issue type"},
+        {"error": "Please specify a valid work item type"},
         status=status.HTTP_400_BAD_REQUEST,
     )
 
