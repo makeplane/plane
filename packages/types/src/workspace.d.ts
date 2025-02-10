@@ -1,10 +1,4 @@
-import type {
-  ICycle,
-  IProjectMember,
-  IUser,
-  IUserLite,
-  IWorkspaceViewProps,
-} from "@plane/types";
+import type { ICycle, IProjectMember, IUser, IUserLite, IWorkspaceViewProps, TPaginationInfo } from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/constants"; // TODO: check if importing this over here causes circular dependency
 import { TUserPermissions } from "./enums";
 
@@ -229,3 +223,13 @@ export interface IWorkspaceAnalyticsResponse {
 export type TWorkspacePaginationInfo = TPaginationInfo & {
   results: IWorkspace[];
 };
+
+export interface IWorkspaceSidebarNavigationItem {
+  key?: string;
+  is_pinned: boolean;
+  sort_order: number;
+}
+
+export interface IWorkspaceSidebarNavigation {
+  [key: string]: IWorkspaceSidebarNavigationItem;
+}
