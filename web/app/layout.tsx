@@ -67,7 +67,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preload" href={`${API_BASE_URL}/api/users/me/settings/ `} as="fetch" crossOrigin="use-credentials" />
         <link
           rel="preload"
-          href={`${API_BASE_URL}/api/users/me/workspaces/`}
+          href={`${API_BASE_URL}/api/users/me/workspaces/?v=${Date.now()}`}
           as="fetch"
           crossOrigin="use-credentials"
         />
