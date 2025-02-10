@@ -3,6 +3,8 @@ import { action, observable, makeObservable } from "mobx";
 export interface IThemeStore {
   // observables
   sidebarCollapsed: boolean | undefined;
+  extendedSidebarCollapsed: boolean | undefined;
+  extendedProjectSidebarCollapsed: boolean | undefined;
   profileSidebarCollapsed: boolean | undefined;
   workspaceAnalyticsSidebarCollapsed: boolean | undefined;
   issueDetailSidebarCollapsed: boolean | undefined;
@@ -11,6 +13,8 @@ export interface IThemeStore {
   projectOverviewSidebarCollapsed: boolean | undefined;
   // actions
   toggleSidebar: (collapsed?: boolean) => void;
+  toggleExtendedSidebar: (collapsed?: boolean) => void;
+  toggleExtendedProjectSidebar: (collapsed?: boolean) => void;
   toggleProfileSidebar: (collapsed?: boolean) => void;
   toggleWorkspaceAnalyticsSidebar: (collapsed?: boolean) => void;
   toggleIssueDetailSidebar: (collapsed?: boolean) => void;
@@ -22,6 +26,8 @@ export interface IThemeStore {
 export class ThemeStore implements IThemeStore {
   // observables
   sidebarCollapsed: boolean | undefined = undefined;
+  extendedSidebarCollapsed: boolean | undefined = undefined;
+  extendedProjectSidebarCollapsed: boolean | undefined = undefined;
   profileSidebarCollapsed: boolean | undefined = undefined;
   workspaceAnalyticsSidebarCollapsed: boolean | undefined = undefined;
   issueDetailSidebarCollapsed: boolean | undefined = undefined;
@@ -33,6 +39,8 @@ export class ThemeStore implements IThemeStore {
     makeObservable(this, {
       // observable
       sidebarCollapsed: observable.ref,
+      extendedSidebarCollapsed: observable.ref,
+      extendedProjectSidebarCollapsed: observable.ref,
       profileSidebarCollapsed: observable.ref,
       workspaceAnalyticsSidebarCollapsed: observable.ref,
       issueDetailSidebarCollapsed: observable.ref,
@@ -41,6 +49,8 @@ export class ThemeStore implements IThemeStore {
       projectOverviewSidebarCollapsed: observable.ref,
       // action
       toggleSidebar: action,
+      toggleExtendedSidebar: action,
+      toggleExtendedProjectSidebar: action,
       toggleProfileSidebar: action,
       toggleWorkspaceAnalyticsSidebar: action,
       toggleIssueDetailSidebar: action,
@@ -61,6 +71,32 @@ export class ThemeStore implements IThemeStore {
       this.sidebarCollapsed = collapsed;
     }
     localStorage.setItem("app_sidebar_collapsed", this.sidebarCollapsed.toString());
+  };
+
+  /**
+   * Toggle the extended sidebar collapsed state
+   * @param collapsed
+   */
+  toggleExtendedSidebar = (collapsed?: boolean) => {
+    if (collapsed === undefined) {
+      this.extendedSidebarCollapsed = !this.extendedSidebarCollapsed;
+    } else {
+      this.extendedSidebarCollapsed = collapsed;
+    }
+    localStorage.setItem("extended_sidebar_collapsed", this.extendedSidebarCollapsed.toString());
+  };
+
+  /**
+   * Toggle the extended project sidebar collapsed state
+   * @param collapsed
+   */
+  toggleExtendedProjectSidebar = (collapsed?: boolean) => {
+    if (collapsed === undefined) {
+      this.extendedProjectSidebarCollapsed = !this.extendedProjectSidebarCollapsed;
+    } else {
+      this.extendedProjectSidebarCollapsed = collapsed;
+    }
+    localStorage.setItem("extended_project_sidebar_collapsed", this.extendedProjectSidebarCollapsed.toString());
   };
 
   /**
