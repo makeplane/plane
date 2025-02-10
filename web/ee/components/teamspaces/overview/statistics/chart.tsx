@@ -3,11 +3,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { TreeMapChart } from "@plane/propel/charts/tree-map";
 import { TreeMapItem } from "@plane/types";
 import { Avatar, Button, Loader, Logo, TreeMapIcon } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
-// components
-import { TreeMapChart } from "@/components/core/charts/tree-map";
 // hooks
 import { useMember, useProject } from "@/hooks/store";
 // plane web imports
