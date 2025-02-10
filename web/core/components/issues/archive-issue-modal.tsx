@@ -2,6 +2,8 @@
 
 import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { TDeDupeIssue, TIssue } from "@plane/types";
 // ui
@@ -20,6 +22,7 @@ type Props = {
 
 export const ArchiveIssueModal: React.FC<Props> = (props) => {
   const { dataId, data, isOpen, handleClose, onSubmit } = props;
+  const { t } = useTranslation();
   // states
   const [isArchiving, setIsArchiving] = useState(false);
   // store hooks
@@ -44,16 +47,16 @@ export const ArchiveIssueModal: React.FC<Props> = (props) => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Archive success",
-          message: "Your archives can be found in project archives.",
+          title: t("issue.archive.success.label"),
+          message: t("issue.archive.success.message"),
         });
         onClose();
       })
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Issue could not be archived. Please try again.",
+          title: t("common.error.label"),
+          message: t("issue.archive.failed.message"),
         })
       )
       .finally(() => setIsArchiving(false));
@@ -88,17 +91,15 @@ export const ArchiveIssueModal: React.FC<Props> = (props) => {
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <div className="px-5 py-4">
                   <h3 className="text-xl font-medium 2xl:text-2xl">
-                    Archive issue {projectDetails?.identifier} {issue.sequence_id}
+                    {t("issue.archive.label")} {projectDetails?.identifier} {issue.sequence_id}
                   </h3>
-                  <p className="mt-3 text-sm text-custom-text-200">
-                    Are you sure you want to archive the issue? All your archived issues can be restored later.
-                  </p>
+                  <p className="mt-3 text-sm text-custom-text-200">{t("issue.archive.confirm_message")}</p>
                   <div className="mt-3 flex justify-end gap-2">
                     <Button variant="neutral-primary" size="sm" onClick={onClose}>
-                      Cancel
+                      {t("common.cancel")}
                     </Button>
                     <Button size="sm" tabIndex={1} onClick={handleArchiveIssue} loading={isArchiving}>
-                      {isArchiving ? "Archiving" : "Archive"}
+                      {isArchiving ? t("common.archiving") : t("common.archive")}
                     </Button>
                   </div>
                 </div>

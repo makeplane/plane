@@ -2,6 +2,7 @@ import { FC, useEffect, useRef } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 // plane helpers
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // components
 import {
@@ -22,7 +23,6 @@ import useSize from "@/hooks/use-window-size";
 // plane web components
 import { SidebarAppSwitcher } from "@/plane-web/components/sidebar";
 import { SidebarTeamsList } from "@/plane-web/components/workspace/sidebar/teams-sidebar-list";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const AppSidebar: FC = observer(() => {
   // store hooks

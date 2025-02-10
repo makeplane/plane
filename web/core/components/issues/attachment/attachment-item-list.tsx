@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { FileRejection, useDropzone } from "react-dropzone";
 import { UploadCloud } from "lucide-react";
 import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssueServiceType } from "@plane/types";
 // hooks
 import { TOAST_TYPE, setToast } from "@plane/ui";
@@ -35,6 +36,7 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
     disabled,
     issueServiceType = EIssueServiceType.ISSUES,
   } = props;
+  const { t } = useTranslation();
   // states
   const [isUploading, setIsUploading] = useState(false);
   // store hooks
@@ -70,8 +72,8 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
           .catch(() => {
             setToast({
               type: TOAST_TYPE.ERROR,
-              title: "Error!",
-              message: "File could not be attached. Try uploading again.",
+              title: t("toast.error"),
+              message: t("attachment.error"),
             });
           })
           .finally(() => {
@@ -83,11 +85,11 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
 
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
+        title: t("toast.error"),
         message:
           totalAttachedFiles > 1
-            ? "Only one file can be uploaded at a time."
-            : `File must be of ${maxFileSize / 1024 / 1024}MB or less in size.`,
+            ? t("attachment.only_one_file_allowed")
+            : t("attachment.file_size_limit", { size: maxFileSize / 1024 / 1024 }),
       });
       return;
     },
@@ -127,7 +129,7 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
                 <div className="flex items-center justify-center p-1 rounded-md bg-custom-background-100">
                   <div className="flex flex-col justify-center items-center px-5 py-6 rounded-md border border-dashed border-custom-border-300">
                     <UploadCloud className="size-7" />
-                    <span className="text-sm text-custom-text-300">Drag and drop anywhere to upload</span>
+                    <span className="text-sm text-custom-text-300">{t("attachment.drag_and_drop")}</span>
                   </div>
                 </div>
               </div>

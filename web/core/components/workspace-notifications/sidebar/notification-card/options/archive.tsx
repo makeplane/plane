@@ -3,11 +3,12 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { ArchiveRestore } from "lucide-react";
+import { NOTIFICATION_ARCHIVED } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ArchiveIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { NotificationItemOptionButton } from "@/components/workspace-notifications";
 // constants
-import { NOTIFICATION_ARCHIVED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useWorkspaceNotifications } from "@/hooks/store";
 // store
@@ -24,6 +25,7 @@ export const NotificationItemArchiveOption: FC<TNotificationItemArchiveOption> =
   const { captureEvent } = useEventTracker();
   const { currentNotificationTab } = useWorkspaceNotifications();
   const { asJson: data, archiveNotification, unArchiveNotification } = notification;
+  const { t } = useTranslation();
 
   const handleNotificationUpdate = async () => {
     try {
@@ -35,7 +37,7 @@ export const NotificationItemArchiveOption: FC<TNotificationItemArchiveOption> =
         state: "SUCCESS",
       });
       setToast({
-        title: data.archived_at ? "Notification un-archived" : "Notification archived",
+        title: data.archived_at ? t("notification.toasts.unarchived") : t("notification.toasts.archived"),
         type: TOAST_TYPE.SUCCESS,
       });
     } catch (e) {
@@ -45,7 +47,9 @@ export const NotificationItemArchiveOption: FC<TNotificationItemArchiveOption> =
 
   return (
     <NotificationItemOptionButton
-      tooltipContent={data.archived_at ? "Un archive" : "Archive"}
+      tooltipContent={
+        data.archived_at ? t("notification.options.mark_unarchive") : t("notification.options.mark_archive")
+      }
       callBack={handleNotificationUpdate}
     >
       {data.archived_at ? (

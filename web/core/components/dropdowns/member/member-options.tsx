@@ -8,6 +8,7 @@ import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+import { EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane ui
 import { Avatar } from "@plane/ui";
@@ -17,7 +18,6 @@ import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useUser, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { EUserPermissions } from "@/plane-web/constants";
 
 interface Props {
   memberIds?: string[];

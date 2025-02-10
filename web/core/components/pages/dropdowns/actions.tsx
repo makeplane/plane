@@ -15,14 +15,14 @@ import {
   LockKeyholeOpen,
   Trash2,
 } from "lucide-react";
+// constants
+import { EPageAccess } from "@plane/constants";
 // plane editor
 import { EditorRefApi } from "@plane/editor";
 // plane ui
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // components
 import { DeletePageModal } from "@/components/pages";
-// constants
-import { EPageAccess } from "@/constants/page";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks

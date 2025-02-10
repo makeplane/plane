@@ -2,6 +2,7 @@
 
 import { observer } from "mobx-react";
 // components
+import { useTranslation } from "@plane/i18n";
 import { PageHead, AppHeader, ContentWrapper } from "@/components/core";
 import { WorkspaceHomeView } from "@/components/home";
 // hooks
@@ -11,8 +12,9 @@ import { WorkspaceDashboardHeader } from "./header";
 
 const WorkspaceDashboardPage = observer(() => {
   const { currentWorkspace } = useWorkspace();
+  const { t } = useTranslation();
   // derived values
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Home` : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - ${t("home.title")}` : undefined;
 
   return (
     <>

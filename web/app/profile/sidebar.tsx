@@ -5,15 +5,26 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 // icons
-import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
+import {
+  ChevronLeft,
+  LogOut,
+  MoveLeft,
+  Plus,
+  UserPlus,
+  Activity,
+  Bell,
+  CircleUser,
+  KeyRound,
+  Settings2,
+} from "lucide-react";
 // plane imports
+import { PROFILE_ACTION_LINKS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
 // constants
-import { PROFILE_ACTION_LINKS } from "@/constants/profile";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getFileURL } from "@/helpers/file.helper";
@@ -36,6 +47,19 @@ const WORKSPACE_ACTION_LINKS = [
   },
 ];
 
+export const ProjectActionIcons = ({ type, size, className }: { type: string; size?: number; className?: string }) => {
+  const icons = {
+    profile: CircleUser,
+    security: KeyRound,
+    activity: Activity,
+    appearance: Settings2,
+    notifications: Bell,
+  };
+
+  if (type === undefined) return null;
+  const Icon = icons[type as keyof typeof icons];
+  return <Icon size={size} className={className} />;
+};
 export const ProfileLayoutSidebar = observer(() => {
   // states
   const [isSigningOut, setIsSigningOut] = useState(false);
@@ -92,8 +116,8 @@ export const ProfileLayoutSidebar = observer(() => {
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: t("error"),
-          message: t("failed_to_sign_out_please_try_again"),
+          title: t("sign_out.toast.error.title"),
+          message: t("sign_out.toast.error.message"),
         })
       )
       .finally(() => setIsSigningOut(false));
@@ -145,8 +169,9 @@ export const ProfileLayoutSidebar = observer(() => {
                       isActive={link.highlight(pathname)}
                     >
                       <div className="flex items-center gap-1.5 py-[1px]">
-                        <link.Icon className="size-4" />
-                        {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{t(link.key)}</p>}
+                        <ProjectActionIcons type={link.key} size={16} />
+
+                        {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{t(link.i18n_label)}</p>}
                       </div>
                     </SidebarNavItem>
                   </Tooltip>

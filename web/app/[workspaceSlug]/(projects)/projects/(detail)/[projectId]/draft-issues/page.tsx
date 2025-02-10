@@ -17,7 +17,7 @@ const ProjectDraftIssuesPage = observer(() => {
   const { getProjectById } = useProject();
   // derived values
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
-  const pageTitle = project?.name ? `${project?.name} - Draft Issues` : undefined;
+  const pageTitle = project?.name ? `${project?.name} - Draft work items` : undefined;
 
   return (
     <>
@@ -30,7 +30,7 @@ const ProjectDraftIssuesPage = observer(() => {
             className="flex items-center gap-1.5 rounded-full border border-custom-border-200 px-3 py-1.5 text-xs"
           >
             <PenSquare className="h-4 w-4" />
-            <span>Draft Issues</span>
+            <span>Draft work items</span>
             <X className="h-3 w-3" />
           </button>
         </div>

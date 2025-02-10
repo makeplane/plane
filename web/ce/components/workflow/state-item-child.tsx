@@ -1,11 +1,11 @@
 import { SetStateAction } from "react";
 import { observer } from "mobx-react";
 // Plane
+import { DISPLAY_WORKFLOW_PRO_CTA } from "@plane/constants";
 import { IState } from "@plane/types";
 // components
 import { StateItemTitle } from "@/components/project-states/state-item-title";
 // constants
-import { DISPLAY_WORKFLOW_PRO_CTA } from "@/constants/state";
 //
 import { AddStateTransition } from "./add-state-transition";
 

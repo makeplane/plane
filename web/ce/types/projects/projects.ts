@@ -1,3 +1,5 @@
-import { IProject } from "@plane/types";
+import { IPartialProject, IProject } from "@plane/types";
 
-export type TProject = IProject;
+export type TPartialProject = IPartialProject;
+
+export type TProject =  TPartialProject & IProject;

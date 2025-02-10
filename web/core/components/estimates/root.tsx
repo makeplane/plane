@@ -2,6 +2,7 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
+import { useTranslation } from "@plane/i18n";
 import {
   EstimateLoaderScreen,
   EstimateEmptyScreen,
@@ -31,6 +32,8 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
   const [estimateToUpdate, setEstimateToUpdate] = useState<string | undefined>();
   const [estimateToDelete, setEstimateToDelete] = useState<string | undefined>();
 
+  const { t } = useTranslation();
+
   const { isLoading: isSWRLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_ESTIMATES_${workspaceSlug}_${projectId}` : null,
     async () => workspaceSlug && projectId && getProjectEstimates(workspaceSlug, projectId)
@@ -44,7 +47,7 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
         <div className="space-y-2">
           {/* header */}
           <div className="flex flex-col items-start border-b border-custom-border-100 pb-3.5">
-            <h3 className="text-xl font-medium leading-normal">Estimates</h3>
+            <h3 className="text-xl font-medium leading-normal">{t("common.estimates")}</h3>
           </div>
 
           {/* current active estimate section */}
@@ -53,10 +56,8 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
               {/* estimates activated deactivated section */}
               <div className="relative border-b border-custom-border-200 pb-4 flex justify-between items-center gap-3">
                 <div className="space-y-1">
-                  <h3 className="text-lg font-medium text-custom-text-100">Enable estimates for my project</h3>
-                  <p className="text-sm text-custom-text-200">
-                    They help you in communicating complexity and workload of the team.
-                  </p>
+                  <h3 className="text-lg font-medium text-custom-text-100">{t("project_settings.estimates.title")}</h3>
+                  <p className="text-sm text-custom-text-200">{t("project_settings.estimates.description")}</p>
                 </div>
                 <EstimateDisableSwitch workspaceSlug={workspaceSlug} projectId={projectId} isAdmin={isAdmin} />
               </div>

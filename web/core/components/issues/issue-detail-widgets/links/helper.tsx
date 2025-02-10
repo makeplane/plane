@@ -1,6 +1,7 @@
 "use client";
 import { useMemo } from "react";
 import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssueLink, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
@@ -15,6 +16,8 @@ export const useLinkOperations = (
   issueServiceType: TIssueServiceType = EIssueServiceType.ISSUES
 ): TLinkOperations => {
   const { createLink, updateLink, removeLink } = useIssueDetail(issueServiceType);
+  // i18n
+  const { t } = useTranslation();
 
   const handleLinkOperations: TLinkOperations = useMemo(
     () => ({
@@ -23,15 +26,15 @@ export const useLinkOperations = (
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
           await createLink(workspaceSlug, projectId, issueId, data);
           setToast({
-            message: "The link has been successfully created",
+            message: t("links.toasts.created.message"),
             type: TOAST_TYPE.SUCCESS,
-            title: "Link created",
+            title: t("links.toasts.created.title"),
           });
         } catch (error: any) {
           setToast({
-            message: error?.data?.url?.error ?? "The link could not be created",
+            message: error?.data?.url?.error ?? t("links.toasts.not_created.message"),
             type: TOAST_TYPE.ERROR,
-            title: "Link not created",
+            title: t("links.toasts.not_created.title"),
           });
           throw error;
         }
@@ -41,15 +44,15 @@ export const useLinkOperations = (
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
           await updateLink(workspaceSlug, projectId, issueId, linkId, data);
           setToast({
-            message: "The link has been successfully updated",
+            message: t("links.toasts.updated.message"),
             type: TOAST_TYPE.SUCCESS,
-            title: "Link updated",
+            title: t("links.toasts.updated.title"),
           });
         } catch (error: any) {
           setToast({
-            message: error?.data?.url?.error ?? "The link could not be updated",
+            message: error?.data?.url?.error ?? t("links.toasts.not_updated.message"),
             type: TOAST_TYPE.ERROR,
-            title: "Link not updated",
+            title: t("links.toasts.not_updated.title"),
           });
           throw error;
         }
@@ -59,15 +62,15 @@ export const useLinkOperations = (
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
           await removeLink(workspaceSlug, projectId, issueId, linkId);
           setToast({
-            message: "The link has been successfully removed",
+            message: t("links.toasts.removed.message"),
             type: TOAST_TYPE.SUCCESS,
-            title: "Link removed",
+            title: t("links.toasts.removed.title"),
           });
         } catch (error) {
           setToast({
-            message: "The link could not be removed",
+            message: t("links.toasts.not_removed.message"),
             type: TOAST_TYPE.ERROR,
-            title: "Link not removed",
+            title: t("links.toasts.not_removed.title"),
           });
         }
       },
