@@ -5,12 +5,10 @@ import { useParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import { UserCircle2 } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
-// plane types
+// plane imports
+import { MAX_FILE_SIZE } from "@plane/constants";
 import { EFileAssetType } from "@plane/types/src/enums";
-// hooks
 import { Button } from "@plane/ui";
-// constants
-import { MAX_STATIC_FILE_SIZE } from "@/constants/common";
 // helpers
 import { getAssetIdFromUrl, getFileURL } from "@/helpers/file.helper";
 import { checkURLValidity } from "@/helpers/string.helper";
@@ -48,7 +46,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".webp"],
     },
-    maxSize: MAX_STATIC_FILE_SIZE,
+    maxSize: MAX_FILE_SIZE,
     multiple: false,
   });
 

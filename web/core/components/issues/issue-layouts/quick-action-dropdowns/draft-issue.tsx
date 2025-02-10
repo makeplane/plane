@@ -6,7 +6,8 @@ import { observer } from "mobx-react";
 // icons
 import { Pencil, Trash2 } from "lucide-react";
 // types
-import { EIssuesStoreType } from "@plane/constants";
+import { EIssuesStoreType,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 // ui
 import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
@@ -17,7 +18,6 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 
@@ -40,6 +40,8 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
   const { allowPermissions } = useUserPermissions();
   const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
+
+  const { t } = useTranslation();
   // derived values
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
   // auth
@@ -59,7 +61,7 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "edit",
-      title: "Edit",
+      title: "edit",
       icon: Pencil,
       action: () => {
         setTrackElement(activeLayout);
@@ -70,7 +72,7 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
     },
     {
       key: "delete",
-      title: "Delete",
+      title: "delete",
       icon: Trash2,
       action: () => {
         setTrackElement(activeLayout);
@@ -138,7 +140,7 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
             >
               {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
               <div>
-                <h5>{item.title}</h5>
+                <h5>{t(item.title ?? "")}</h5>
                 {item.description && (
                   <p
                     className={cn("text-custom-text-300 whitespace-pre-line", {

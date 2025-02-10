@@ -83,7 +83,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
                   "col-span-9": type === "created" && tab === "completed",
                 })}
               >
-                Issues
+                Work items
                 <span className="flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-medium rounded-xl px-2 flex items-center text-center justify-center">
                   {widgetStats.count}
                 </span>
@@ -126,7 +126,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
             "w-min my-3 mx-auto py-1 px-2 text-xs hover:bg-custom-primary-100/20"
           )}
         >
-          View all issues
+          View all work items
         </Link>
       )}
     </>

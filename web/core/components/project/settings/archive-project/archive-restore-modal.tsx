@@ -111,7 +111,7 @@ export const ArchiveRestoreProjectModal: React.FC<Props> = (props) => {
                   </h3>
                   <p className="mt-3 text-sm text-custom-text-200">
                     {archive
-                      ? "This project and its issues, cycles, modules, and pages will be archived. Its issues won’t appear in search. Only project admins can restore the project."
+                      ? "This project and its work items, cycles, modules, and pages will be archived. Its work items won’t appear in search. Only project admins can restore the project."
                       : "Restoring a project will activate it and make it visible to all members of the project. Are you sure you want to continue?"}
                   </p>
                   <div className="mt-3 flex justify-end gap-2">

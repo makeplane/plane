@@ -2,6 +2,7 @@
 
 import { Fragment, MutableRefObject, forwardRef, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 // plane types
 import { IGroupByColumn, TIssueGroupByOptions, IIssueDisplayProperties, TPaginationData, TLoader } from "@plane/types";
 // plane utils
@@ -62,6 +63,8 @@ export const ListGroup = observer((props: Props) => {
   } = props;
   const [isExpanded, setIsExpanded] = useState(true);
   const groupRef = useRef<HTMLDivElement | null>(null);
+  // hooks
+  const { t } = useTranslation();
 
   const [intersectionElement, setIntersectionElement] = useState<HTMLDivElement | null>(null);
 
@@ -85,7 +88,7 @@ export const ListGroup = observer((props: Props) => {
       }
       onClick={() => loadMoreIssues(group.id)}
     >
-      Load More &darr;
+      {t("common.load_more")} &darr;
     </div>
   );
 

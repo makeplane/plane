@@ -2,8 +2,11 @@
 import { TXAxisValues, TYAxisValues } from "@plane/types";
 
 export const ANALYTICS_TABS = [
-  { key: "scope_and_demand", title: "Scope and Demand" },
-  { key: "custom", title: "Custom Analytics" },
+  {
+    key: "scope_and_demand",
+    i18n_title: "workspace_analytics.tabs.scope_and_demand",
+  },
+  { key: "custom", i18n_title: "workspace_analytics.tabs.custom" },
 ];
 
 export const ANALYTICS_X_AXIS_VALUES: { value: TXAxisValues; label: string }[] =
@@ -62,7 +65,7 @@ export const ANALYTICS_Y_AXIS_VALUES: { value: TYAxisValues; label: string }[] =
   [
     {
       value: "issue_count",
-      label: "Issue Count",
+      label: "Work item Count",
     },
     {
       value: "estimate",

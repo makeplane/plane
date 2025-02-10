@@ -1,11 +1,10 @@
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
+import { WORKSPACE_SETTINGS_LINKS, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web constants
-import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-import { WORKSPACE_SETTINGS_LINKS } from "@/plane-web/constants/workspace";
 // plane web helpers
 import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
 
@@ -13,6 +12,7 @@ export const MobileWorkspaceSettingsTabs = observer(() => {
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
+  const { t } = useTranslation();
   // mobx store
   const { allowPermissions } = useUserPermissions();
 
@@ -31,7 +31,7 @@ export const MobileWorkspaceSettingsTabs = observer(() => {
               key={index}
               onClick={() => router.push(`/${workspaceSlug}${item.href}`)}
             >
-              {item.label}
+              {t(item.i18n_label)}
             </div>
           )
       )}

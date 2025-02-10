@@ -4,6 +4,8 @@ import { FC, useCallback, useEffect, useState } from "react";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { TIssue, TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
@@ -13,7 +15,7 @@ import { Loader } from "@plane/ui";
 import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
 import { TIssueOperations } from "@/components/issues/issue-detail";
 // helpers
-import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
+import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 // plane web services
@@ -49,6 +51,9 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     setIsSubmitting,
     placeholder,
   } = props;
+
+  // i18n
+  const { t } = useTranslation();
 
   const { handleSubmit, reset, control } = useForm<TIssue>({
     defaultValues: {
@@ -119,7 +124,9 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                   debouncedFormSave();
                 }}
                 placeholder={
-                  placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)
+                  placeholder
+                    ? placeholder
+                    : (isFocused, value) => t(`${getDescriptionPlaceholderI18n(isFocused, value)}`)
                 }
                 searchMentionCallback={async (payload) =>
                   await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
@@ -142,7 +149,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                     );
                     return asset_id;
                   } catch (error) {
-                    console.log("Error in uploading issue asset:", error);
+                    console.log("Error in uploading work item asset:", error);
                     throw new Error("Asset upload failed. Please try again later.");
                   }
                 }}

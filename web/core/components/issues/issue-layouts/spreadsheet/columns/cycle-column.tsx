@@ -32,7 +32,7 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
       if (cycleId) await addCycleToIssue(workspaceSlug.toString(), issue.project_id, cycleId, issue.id);
       else await removeCycleFromIssue(workspaceSlug.toString(), issue.project_id, issue.id);
       captureIssueEvent({
-        eventName: "Issue updated",
+        eventName: "Work item updated",
         payload: {
           ...issue,
           cycle_id: cycleId,

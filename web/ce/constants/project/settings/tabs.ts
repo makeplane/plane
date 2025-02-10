@@ -1,14 +1,14 @@
 // icons
+import { EUserPermissions } from "@plane/constants";
 import { SettingIcon } from "@/components/icons/attachment";
 // types
 import { Props } from "@/components/icons/types";
 // constants
-import { EUserPermissions } from "../../user-permissions";
 
 export const PROJECT_SETTINGS = {
   general: {
     key: "general",
-    label: "General",
+    i18n_label: "common.general",
     href: `/settings`,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/`,
@@ -16,7 +16,7 @@ export const PROJECT_SETTINGS = {
   },
   members: {
     key: "members",
-    label: "Members",
+    i18n_label: "members",
     href: `/settings/members`,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/members/`,
@@ -24,7 +24,7 @@ export const PROJECT_SETTINGS = {
   },
   features: {
     key: "features",
-    label: "Features",
+    i18n_label: "common.features",
     href: `/settings/features`,
     access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/features/`,
@@ -32,7 +32,7 @@ export const PROJECT_SETTINGS = {
   },
   states: {
     key: "states",
-    label: "States",
+    i18n_label: "common.states",
     href: `/settings/states`,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/states/`,
@@ -40,7 +40,7 @@ export const PROJECT_SETTINGS = {
   },
   labels: {
     key: "labels",
-    label: "Labels",
+    i18n_label: "common.labels",
     href: `/settings/labels`,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/labels/`,
@@ -48,7 +48,7 @@ export const PROJECT_SETTINGS = {
   },
   estimates: {
     key: "estimates",
-    label: "Estimates",
+    i18n_label: "common.estimates",
     href: `/settings/estimates`,
     access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/estimates/`,
@@ -56,7 +56,7 @@ export const PROJECT_SETTINGS = {
   },
   automations: {
     key: "automations",
-    label: "Automations",
+    i18n_label: "project_settings.automations.label",
     href: `/settings/automations`,
     access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/automations/`,
@@ -66,7 +66,7 @@ export const PROJECT_SETTINGS = {
 
 export const PROJECT_SETTINGS_LINKS: {
   key: string;
-  label: string;
+  i18n_label: string;
   href: string;
   access: EUserPermissions[];
   highlight: (pathname: string, baseUrl: string) => boolean;

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Settings, Trash2, UserPlus } from "lucide-react";
 // types
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import type { IProject } from "@plane/types";
 // ui
 import {
@@ -33,7 +34,6 @@ import { useMember, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane-web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   project: IProject;
@@ -63,8 +63,9 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
     EUserPermissionsLevel.WORKSPACE
   );
   // auth
-  const isOwner = project.member_role === EUserPermissions.ADMIN;
-  const isMember = project.member_role === EUserPermissions.MEMBER;
+  const isMemberOfProject = !!project.member_role;
+  const hasAdminRole = project.member_role === EUserPermissions.ADMIN;
+  const hasMemberRole = project.member_role === EUserPermissions.MEMBER;
   // archive
   const isArchived = !!project.archived_at;
 
@@ -119,21 +120,21 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
       action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`, {}, { showProgressBar: false }),
       title: "Settings",
       icon: Settings,
-      shouldRender: !isArchived && (isOwner || isMember),
+      shouldRender: !isArchived && (hasAdminRole || hasMemberRole),
     },
     {
       key: "join",
       action: () => setJoinProjectModal(true),
       title: "Join",
       icon: UserPlus,
-      shouldRender: !project.is_member && !isArchived,
+      shouldRender: !isMemberOfProject && !isArchived,
     },
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
       title: "Open in new tab",
       icon: ExternalLink,
-      shouldRender: project.is_member && !isArchived,
+      shouldRender: !isMemberOfProject && !isArchived,
     },
     {
       key: "copy-link",
@@ -147,14 +148,14 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
       action: () => setRestoreProject(true),
       title: "Restore",
       icon: ArchiveRestoreIcon,
-      shouldRender: isArchived && isOwner,
+      shouldRender: isArchived && hasAdminRole,
     },
     {
       key: "delete",
       action: () => setDeleteProjectModal(true),
       title: "Delete",
       icon: Trash2,
-      shouldRender: isArchived && isOwner,
+      shouldRender: isArchived && hasAdminRole,
     },
   ];
 
@@ -189,13 +190,13 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
         ref={projectCardRef}
         href={`/${workspaceSlug}/projects/${project.id}/issues`}
         onClick={(e) => {
-          if (!project.is_member || isArchived) {
+          if (!isMemberOfProject || isArchived) {
             e.preventDefault();
             e.stopPropagation();
             if (!isArchived) setJoinProjectModal(true);
           }
         }}
-        data-prevent-nprogress={!project.is_member || isArchived}
+        data-prevent-nprogress={!isMemberOfProject || isArchived}
         className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100"
       >
         <ContextMenu parentRef={projectCardRef} items={MENU_ITEMS} />
@@ -297,7 +298,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
               {isArchived && <div className="text-xs text-custom-text-400 font-medium">Archived</div>}
             </div>
             {isArchived ? (
-              isOwner && (
+              hasAdminRole && (
                 <div className="flex items-center justify-center gap-2">
                   <div
                     className="flex items-center justify-center text-xs text-custom-text-400 font-medium hover:text-custom-text-200"
@@ -326,8 +327,8 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
               )
             ) : (
               <>
-                {project.is_member &&
-                  (isOwner || isMember ? (
+                {isMemberOfProject &&
+                  (hasAdminRole || hasMemberRole ? (
                     <Link
                       className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200"
                       onClick={(e) => {
@@ -343,7 +344,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                       Joined
                     </span>
                   ))}
-                {!project.is_member && (
+                {!isMemberOfProject && (
                   <div className="flex items-center">
                     <Button
                       variant="link-primary"

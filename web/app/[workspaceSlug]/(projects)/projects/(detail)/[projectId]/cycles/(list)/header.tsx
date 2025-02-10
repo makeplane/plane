@@ -3,6 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // ui
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Button, ContrastIcon, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
@@ -13,7 +15,6 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 // constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const CyclesListHeader: FC = observer(() => {
   // router
@@ -23,6 +24,7 @@ export const CyclesListHeader: FC = observer(() => {
   const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
   const { currentProjectDetails, loader } = useProject();
+  const { t } = useTranslation();
 
   const canUserCreateCycle = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -36,7 +38,12 @@ export const CyclesListHeader: FC = observer(() => {
           <ProjectBreadcrumb />
           <Breadcrumbs.BreadcrumbItem
             type="text"
-            link={<BreadcrumbLink label="Cycles" icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />} />}
+            link={
+              <BreadcrumbLink
+                label={t("cycle.label", { count: 2 })}
+                icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />}
+              />
+            }
           />
         </Breadcrumbs>
       </Header.LeftItem>
@@ -51,7 +58,8 @@ export const CyclesListHeader: FC = observer(() => {
               toggleCreateCycleModal(true);
             }}
           >
-            <div className="hidden sm:block">Add</div> Cycle
+            <div className="sm:hidden block">{t("add")}</div>
+            <div className="hidden sm:block">{t("project_cycles.add_cycle")}</div>
           </Button>
         </Header.RightItem>
       ) : (

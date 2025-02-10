@@ -1,23 +1,35 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// components
+// plane imports
+import { EUserPermissionsLevel, PRODUCT_TOUR_COMPLETED, EUserPermissions } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ContentWrapper } from "@plane/ui";
+// components
 import { DashboardWidgets } from "@/components/dashboard";
-import { EmptyState } from "@/components/empty-state";
+import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { IssuePeekOverview } from "@/components/issues";
 import { TourRoot } from "@/components/onboarding";
 import { UserGreetingsView } from "@/components/user";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
-import { PRODUCT_TOUR_COMPLETED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useCommandPalette, useUserProfile, useEventTracker, useDashboard, useProject, useUser } from "@/hooks/store";
+import {
+  useCommandPalette,
+  useUserProfile,
+  useEventTracker,
+  useDashboard,
+  useProject,
+  useUser,
+  useUserPermissions,
+} from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import useSize from "@/hooks/use-window-size";
 
 export const WorkspaceDashboardView = observer(() => {
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { captureEvent, setTrackElement } = useEventTracker();
   const { toggleCreateProjectModal } = useCommandPalette();
@@ -26,8 +38,11 @@ export const WorkspaceDashboardView = observer(() => {
   const { data: currentUserProfile, updateTourCompleted } = useUserProfile();
   const { homeDashboardId, fetchHomeDashboardWidgets } = useDashboard();
   const { joinedProjectIds, loader } = useProject();
+  const { allowPermissions } = useUserPermissions();
 
+  // helper hooks
   const [windowWidth] = useSize();
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/dashboard" });
 
   const handleTourCompleted = () => {
     updateTourCompleted()
@@ -48,6 +63,11 @@ export const WorkspaceDashboardView = observer(() => {
 
     fetchHomeDashboardWidgets(workspaceSlug?.toString());
   }, [fetchHomeDashboardWidgets, workspaceSlug]);
+
+  const canPerformEmptyStateActions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   // TODO: refactor loader implementation
   return (
@@ -73,12 +93,22 @@ export const WorkspaceDashboardView = observer(() => {
               </ContentWrapper>
             </>
           ) : (
-            <EmptyState
-              type={EmptyStateType.WORKSPACE_DASHBOARD}
-              primaryButtonOnClick={() => {
-                setTrackElement("Dashboard empty state");
-                toggleCreateProjectModal(true);
-              }}
+            <DetailedEmptyState
+              title={t("workspace_dashboard.empty_state.general.title")}
+              description={t("workspace_dashboard.empty_state.general.description")}
+              assetPath={resolvedPath}
+              customPrimaryButton={
+                <ComicBoxButton
+                  label={t("workspace_dashboard.empty_state.general.primary_button.text")}
+                  title={t("workspace_dashboard.empty_state.general.primary_button.comic.title")}
+                  description={t("workspace_dashboard.empty_state.general.primary_button.comic.description")}
+                  onClick={() => {
+                    setTrackElement("Dashboard empty state");
+                    toggleCreateProjectModal(true);
+                  }}
+                  disabled={!canPerformEmptyStateActions}
+                />
+              }
             />
           )}
         </>
