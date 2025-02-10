@@ -82,7 +82,7 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
   const { allowPermissions } = useUserPermissions();
 
   const canCreateLabel =
-    projectId && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
+    projectId && allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
   let projectLabels: IIssueLabel[] = defaultOptions;
   if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
