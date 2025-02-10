@@ -345,6 +345,9 @@
       },
       "initiatives": {
         "title": "Initiatives"
+      },
+      "customers": {
+        "title": "Clients"
       }
     }
   },
@@ -910,6 +913,38 @@
         "text": {
           "short_label": "Texte",
           "long_label": "Texte"
+        }
+      }
+    }
+  },
+  "customers": {
+    "label": "{count, plural, one {Client} other {Clients}}",
+    "settings": {
+      "unauthorized": "Vous n'êtes pas autorisé à accéder à cette page.",
+      "description": "Suivez et gérez les relations clients dans votre flux de travail.",
+      "enable": "Activer les clients",
+      "toasts": {
+        "enable": {
+          "loading": "Activation de la fonctionnalité clients...",
+          "success": {
+            "title": "Clients activés",
+            "message": "Suivez et gérez les relations clients."
+          },
+          "error": {
+            "title": "Erreur",
+            "message": "Échec de l'activation de la fonctionnalité clients !"
+          }
+        },
+        "disable": {
+          "loading": "Désactivation de la fonctionnalité clients...",
+          "success": {
+            "title": "Clients désactivés",
+            "message": "Fonctionnalité clients désactivée avec succès !"
+          },
+          "error": {
+            "title": "Erreur",
+            "message": "Échec de la désactivation de la fonctionnalité clients !"
+          }
         }
       }
     }

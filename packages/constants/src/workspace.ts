@@ -149,6 +149,7 @@ export const WORKSPACE_SETTINGS_LINKS: {
   EXTENDED_WORKSPACE_SETTINGS["worklogs"],
   EXTENDED_WORKSPACE_SETTINGS["teamspaces"],
   EXTENDED_WORKSPACE_SETTINGS["initiatives"],
+  EXTENDED_WORKSPACE_SETTINGS["customers"],
 ];
 
 export const ROLE = {

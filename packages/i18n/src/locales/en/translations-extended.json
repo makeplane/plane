@@ -40,6 +40,9 @@
         "error": "Failed to update initiatives feature!"
       }
     },
+    "customers": {
+      "heading": "Customers"
+    },
     "empty_state": {
       "integrations": {
         "title": "No integrations configured",
@@ -335,6 +338,9 @@
       },
       "initiatives": {
         "title": "Initiatives"
+      },
+      "customers": {
+        "title": "Customers"
       }
     }
   },
@@ -900,6 +906,38 @@
         "text": {
           "short_label": "Text",
           "long_label": "Text"
+        }
+      }
+    }
+  },
+  "customers": {
+    "label": "{count, plural, one {Customer} other {Customers}}",
+    "settings": {
+      "unauthorized": "You are not authorized to access this page.",
+      "description": "Track and manage customer relationships in your workflow.",
+      "enable": "Enable Customers",
+      "toasts": {
+        "enable": {
+          "loading": "Enabling customers feature...",
+          "success": {
+            "title": "Customers enabled",
+            "message": "Track and manage customer relationships."
+          },
+          "error": {
+            "title": "Error",
+            "message": "Failed to enable customers feature!"
+          }
+        },
+        "disable": {
+          "loading": "Disabling customers feature...",
+          "success": {
+            "title": "Customers disabled",
+            "message": "Customers feature disabled successfully!"
+          },
+          "error": {
+            "title": "Error",
+            "message": "Failed to disable customers feature!"
+          }
         }
       }
     }

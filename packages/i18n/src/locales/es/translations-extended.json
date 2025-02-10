@@ -345,6 +345,9 @@
       },
       "initiatives": {
         "title": "Iniciativas"
+      },
+      "customers": {
+        "title": "Clientes"
       }
     }
   },
@@ -910,6 +913,38 @@
         "text": {
           "short_label": "Texto",
           "long_label": "Texto"
+        }
+      }
+    }
+  },
+  "customers": {
+    "label": "{count, plural, one {Cliente} other {Clientes}}",
+    "settings": {
+      "unauthorized": "No está autorizado para acceder a esta página.",
+      "description": "Realice seguimiento y gestione las relaciones con los clientes en su flujo de trabajo.",
+      "enable": "Habilitar Clientes",
+      "toasts": {
+        "enable": {
+          "loading": "Habilitando función de clientes...",
+          "success": {
+            "title": "Clientes habilitados",
+            "message": "Realice seguimiento y gestione las relaciones con los clientes."
+          },
+          "error": {
+            "title": "Error",
+            "message": "¡Error al habilitar la función de clientes!"
+          }
+        },
+        "disable": {
+          "loading": "Deshabilitando función de clientes...",
+          "success": {
+            "title": "Clientes deshabilitados",
+            "message": "¡Función de clientes deshabilitada exitosamente!"
+          },
+          "error": {
+            "title": "Error",
+            "message": "¡Error al deshabilitar la función de clientes!"
+          }
         }
       }
     }

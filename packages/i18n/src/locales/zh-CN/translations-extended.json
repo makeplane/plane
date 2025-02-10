@@ -345,6 +345,9 @@
       },
       "initiatives": {
         "title": "计划"
+      },
+      "customers": {
+        "title": "客户"
       }
     }
   },
@@ -910,6 +913,38 @@
         "text": {
           "short_label": "文本",
           "long_label": "文本"
+        }
+      }
+    }
+  },
+  "customers": {
+    "label": "{count, plural, one {客户} other {客户}}",
+    "settings": {
+      "unauthorized": "您无权访问此页面。",
+      "description": "在工作流程中跟踪和管理客户关系。",
+      "enable": "启用客户功能",
+      "toasts": {
+        "enable": {
+          "loading": "正在启用客户功能...",
+          "success": {
+            "title": "客户功能已启用",
+            "message": "跟踪和管理客户关系。"
+          },
+          "error": {
+            "title": "错误",
+            "message": "启用客户功能失败！"
+          }
+        },
+        "disable": {
+          "loading": "正在禁用客户功能...",
+          "success": {
+            "title": "客户功能已禁用",
+            "message": "客户功能已成功禁用！"
+          },
+          "error": {
+            "title": "错误",
+            "message": "禁用客户功能失败！"
+          }
         }
       }
     }

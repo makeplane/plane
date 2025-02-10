@@ -345,6 +345,9 @@
       },
       "initiatives": {
         "title": "イニシアチブ"
+      },
+      "customers": {
+        "title": "顧客"
       }
     }
   },
@@ -910,6 +913,38 @@
         "text": {
           "short_label": "テキスト",
           "long_label": "テキスト"
+        }
+      }
+    }
+  },
+  "customers": {
+    "label": "{count, plural, one {顧客} other {顧客}}",
+    "settings": {
+      "unauthorized": "このページにアクセスする権限がありません。",
+      "description": "ワークフローで顧客関係を追跡および管理します。",
+      "enable": "顧客を有効にする",
+      "toasts": {
+        "enable": {
+          "loading": "顧客機能を有効にしています...",
+          "success": {
+            "title": "顧客が有効化されました",
+            "message": "顧客関係を追跡および管理します。"
+          },
+          "error": {
+            "title": "エラー",
+            "message": "顧客機能の有効化に失敗しました！"
+          }
+        },
+        "disable": {
+          "loading": "顧客機能を無効にしています...",
+          "success": {
+            "title": "顧客が無効化されました",
+            "message": "顧客機能が正常に無効化されました！"
+          },
+          "error": {
+            "title": "エラー",
+            "message": "顧客機能の無効化に失敗しました！"
+          }
         }
       }
     }
