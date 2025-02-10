@@ -36,7 +36,8 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
   const [query, setQuery] = useState("");
   const [submitting, setSubmitting] = useState<boolean>(false);
 
-  const canCreateLabel = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canCreateLabel =
+    projectId && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
   const projectLabels = getProjectLabels(projectId);
 
@@ -98,7 +99,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
       setQuery("");
     }
 
-    if (query !== "" && e.key === "Enter") {
+    if (query !== "" && e.key === "Enter" && canCreateLabel) {
       e.stopPropagation();
       e.preventDefault();
       await handleAddLabel(query);
