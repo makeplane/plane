@@ -919,6 +919,31 @@
   },
   "customers": {
     "label": "{count, plural, one {客户} other {客户}}",
+    "properties": {
+      "default": {
+        "title": "默认属性",
+        "customer_name": "客户名称",
+        "description": "描述",
+        "email": "电子邮件",
+        "website_url": "网站链接",
+        "employees": "员工数",
+        "domain": "域名",
+        "stage": "阶段",
+        "contract_status": "合同状态",
+        "revenue": "收入"
+      },
+      "custom": {
+        "title": "自定义属性",
+        "info": "在此处自定义您的客户属性。从不同的属性类型中选择以汇总您的客户数据。"
+      },
+      "empty_state": {
+        "title": "添加自定义属性",
+        "description": "您为客户添加的新属性将显示在此处"
+      },
+      "add": {
+        "primary_button": "添加新属性"
+      }
+    },
     "settings": {
       "unauthorized": "您无权访问此页面。",
       "description": "在工作流程中跟踪和管理客户关系。",

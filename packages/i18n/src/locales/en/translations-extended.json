@@ -912,6 +912,31 @@
   },
   "customers": {
     "label": "{count, plural, one {Customer} other {Customers}}",
+    "properties": {
+      "default": {
+        "title": "Default Properties",
+        "customer_name": "Customer Name",
+        "description": "Description",
+        "email": "Email",
+        "website_url": "Website URL",
+        "employees": "Employees",
+        "domain": "Domain",
+        "stage": "Stage",
+        "contract_status": "Contract Status",
+        "revenue": "Revenue"
+      },
+      "custom": {
+        "title": "Custom Properties",
+        "info": "Customize your customer properties here. Choose from different property types to aggregate your customers data."
+      },
+      "empty_state": {
+        "title": "Add custom properties",
+        "description": "New properties you add for the customer will show here"
+      },
+      "add": {
+        "primary_button": "Add new property"
+      }
+    },
     "settings": {
       "unauthorized": "You are not authorized to access this page.",
       "description": "Track and manage customer relationships in your workflow.",

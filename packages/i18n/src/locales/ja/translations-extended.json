@@ -919,6 +919,31 @@
   },
   "customers": {
     "label": "{count, plural, one {顧客} other {顧客}}",
+    "properties": {
+      "default": {
+        "title": "デフォルトプロパティ",
+        "customer_name": "顧客名",
+        "description": "説明",
+        "email": "メール",
+        "website_url": "ウェブサイトURL",
+        "employees": "従業員数",
+        "domain": "ドメイン",
+        "stage": "ステージ",
+        "contract_status": "契約状況",
+        "revenue": "収益"
+      },
+      "custom": {
+        "title": "カスタムプロパティ",
+        "info": "ここで顧客プロパティをカスタマイズできます。異なるプロパティタイプから選択して、顧客データを集計します。"
+      },
+      "empty_state": {
+        "title": "カスタムプロパティを追加",
+        "description": "顧客に追加した新しいプロパティがここに表示されます"
+      },
+      "add": {
+        "primary_button": "新しいプロパティを追加"
+      }
+    },
     "settings": {
       "unauthorized": "このページにアクセスする権限がありません。",
       "description": "ワークフローで顧客関係を追跡および管理します。",

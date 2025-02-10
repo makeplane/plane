@@ -919,6 +919,31 @@
   },
   "customers": {
     "label": "{count, plural, one {Cliente} other {Clientes}}",
+    "properties": {
+      "default": {
+        "title": "Propiedades predeterminadas",
+        "customer_name": "Nombre del cliente",
+        "description": "Descripción",
+        "email": "Correo electrónico",
+        "website_url": "URL del sitio web",
+        "employees": "Empleados",
+        "domain": "Dominio",
+        "stage": "Etapa",
+        "contract_status": "Estado del contrato",
+        "revenue": "Ingresos"
+      },
+      "custom": {
+        "title": "Propiedades personalizadas",
+        "info": "Personaliza las propiedades de tus clientes aquí. Elige entre diferentes tipos de propiedades para agregar los datos de tus clientes."
+      },
+      "empty_state": {
+        "title": "Agregar propiedades personalizadas",
+        "description": "Las nuevas propiedades que agregues para el cliente se mostrarán aquí"
+      },
+      "add": {
+        "primary_button": "Agregar nueva propiedad"
+      }
+    },
     "settings": {
       "unauthorized": "No está autorizado para acceder a esta página.",
       "description": "Realice seguimiento y gestione las relaciones con los clientes en su flujo de trabajo.",

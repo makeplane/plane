@@ -919,6 +919,31 @@
   },
   "customers": {
     "label": "{count, plural, one {Client} other {Clients}}",
+    "properties": {
+      "default": {
+        "title": "Propriétés par défaut",
+        "customer_name": "Nom du client",
+        "description": "Description",
+        "email": "Email",
+        "website_url": "URL du site web",
+        "employees": "Employés",
+        "domain": "Domaine",
+        "stage": "Étape",
+        "contract_status": "Statut du contrat",
+        "revenue": "Revenus"
+      },
+      "custom": {
+        "title": "Propriétés personnalisées",
+        "info": "Personnalisez vos propriétés client ici. Choisissez parmi différents types de propriétés pour agréger les données de vos clients."
+      },
+      "empty_state": {
+        "title": "Ajouter des propriétés personnalisées",
+        "description": "Les nouvelles propriétés que vous ajoutez pour le client apparaîtront ici"
+      },
+      "add": {
+        "primary_button": "Ajouter une nouvelle propriété"
+      }
+    },
     "settings": {
       "unauthorized": "Vous n'êtes pas autorisé à accéder à cette page.",
       "description": "Suivez et gérez les relations clients dans votre flux de travail.",

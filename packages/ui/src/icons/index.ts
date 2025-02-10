@@ -63,3 +63,4 @@ export * from "./multiple-sticky";
 export * from "./sticky-note-icon";
 export * from "./bar-icon";
 export * from "./tree-map-icon";
+export * from "./buildings-icon";

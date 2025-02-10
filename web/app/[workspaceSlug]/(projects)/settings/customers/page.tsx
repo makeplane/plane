@@ -91,8 +91,8 @@ const CustomerSettingsPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <WithFeatureFlagHOC flag="CUSTOMERS" fallback={<CustomerUpgrade />} workspaceSlug={workspaceSlug?.toString()}>
-        <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-custom-border-100">
-          <div className="pb-3 tracking-tight">
+        <div className="flex items-center justify-between gap-2 border-b border-custom-border-200 pb-3">
+          <div className="tracking-tight">
             <h3 className="text-xl font-medium">{t("customers.label", { count: 2 })}</h3>
             <span className="text-custom-sidebar-text-400 text-sm font-medium">
               {t("customers.settings.description")}
