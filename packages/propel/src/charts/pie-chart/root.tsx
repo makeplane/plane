@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import { Cell, PieChart as CorePieChart, Pie, ResponsiveContainer, Tooltip } from "recharts";
 // plane imports
 import { TPieChartProps } from "@plane/types";
+// local components
 import { CustomPieChartTooltip } from "./tooltip";
 
 export const PieChart = React.memo(<K extends string, T extends string>(props: TPieChartProps<K, T>) => {
