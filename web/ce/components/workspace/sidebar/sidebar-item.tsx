@@ -79,7 +79,7 @@ export const SidebarItem: FC<TSidebarItemProps> = observer((props) => {
             {icon}
             {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{t(item.labelTranslationKey)}</p>}
           </div>
-          {!sidebarCollapsed && item.key === "active-cycles" && (
+          {!sidebarCollapsed && item.key === "active_cycles" && (
             <div className="flex-shrink-0">
               <UpgradeBadge />
             </div>

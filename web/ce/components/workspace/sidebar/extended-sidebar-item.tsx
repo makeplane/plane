@@ -17,6 +17,7 @@ import { SidebarNavItem } from "@/components/sidebar";
 import { useAppTheme, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web imports
 // local imports
+import { UpgradeBadge } from "../upgrade-badge";
 import { getSidebarNavigationItemIcon } from "./helper";
 
 type TExtendedSidebarItemProps = {
@@ -195,21 +196,28 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
               <p className="text-sm leading-5 font-medium">{t(item.labelTranslationKey)}</p>
             </div>
           </Link>
-          {isPinned ? (
-            <Tooltip tooltipContent="Hide tab">
-              <Eye
-                className="size-4 flex-shrink-0 invisible group-hover:visible text-custom-text-300"
-                onClick={() => unPinNavigationItem(workspaceSlug.toString(), item.key)}
-              />
-            </Tooltip>
-          ) : (
-            <Tooltip tooltipContent="Show tab">
-              <EyeClosed
-                className="size-4 flex-shrink-0 invisible group-hover:visible text-custom-text-400"
-                onClick={() => pinNavigationItem(workspaceSlug.toString(), item.key)}
-              />
-            </Tooltip>
-          )}
+          <div className="flex items-center gap-2">
+            {item.key === "active_cycles" && (
+              <div className="flex-shrink-0">
+                <UpgradeBadge />
+              </div>
+            )}
+            {isPinned ? (
+              <Tooltip tooltipContent="Hide tab">
+                <Eye
+                  className="size-4 flex-shrink-0 invisible group-hover:visible text-custom-text-300"
+                  onClick={() => unPinNavigationItem(workspaceSlug.toString(), item.key)}
+                />
+              </Tooltip>
+            ) : (
+              <Tooltip tooltipContent="Show tab">
+                <EyeClosed
+                  className="size-4 flex-shrink-0 invisible group-hover:visible text-custom-text-400"
+                  onClick={() => pinNavigationItem(workspaceSlug.toString(), item.key)}
+                />
+              </Tooltip>
+            )}
+          </div>
         </SidebarNavItem>
       </div>
       {isLastChild && <DropIndicator isVisible={instruction === "DRAG_BELOW"} />}

@@ -12,7 +12,7 @@ export const getSidebarNavigationItemIcon = (key: string, className: string = ""
       return <Briefcase className={cn("size-4 flex-shrink-0", className)} />;
     case "views":
       return <Layers className={cn("size-4 flex-shrink-0", className)} />;
-    case "active-cycles":
+    case "active_cycles":
       return <ContrastIcon className={cn("size-4 flex-shrink-0", className)} />;
     case "analytics":
       return <BarChart2 className={cn("size-4 flex-shrink-0", className)} />;
