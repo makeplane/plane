@@ -35,7 +35,7 @@ export const TeamspacesList = observer((props: TTeamspacesListProps) => {
   const { searchQuery } = useTeamspaceFilter();
   // derived values
   const hasWorkspaceAdminLevelPermissions = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    [EUserWorkspaceRoles.ADMIN],
     EUserPermissionsLevel.WORKSPACE
   );
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/teams/teams" });

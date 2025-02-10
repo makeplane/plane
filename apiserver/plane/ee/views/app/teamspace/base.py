@@ -70,7 +70,9 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
         """
         return (
             Teamspace.objects.filter(
-                workspace__slug=slug, members__member_id=self.request.user.id
+                workspace__slug=slug,
+                members__member_id=self.request.user.id,
+                members__deleted_at__isnull=True,
             )
             .annotate(
                 project_ids=Coalesce(
