@@ -136,7 +136,7 @@ class WorkSpaceViewSet(BaseViewSet):
                 # Sync workspace members
                 member_sync_task.delay(slug)
 
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(data, status=status.HTTP_201_CREATED)
             return Response(
                 [serializer.errors[error][0] for error in serializer.errors],
                 status=status.HTTP_400_BAD_REQUEST,

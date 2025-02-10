@@ -62,6 +62,7 @@ class WorkspaceUserMeSerializer(DynamicBaseSerializer):
     total_issues = serializers.IntegerField(read_only=True)
     logo_url = serializers.CharField(read_only=True)
     current_plan = serializers.CharField(read_only=True)
+    role = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Workspace
@@ -74,6 +75,7 @@ class WorkspaceUserMeSerializer(DynamicBaseSerializer):
             "updated_at",
             "owner",
             "logo_url",
+            "role",
         ]
 
 
