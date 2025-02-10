@@ -251,7 +251,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             .distinct()
         )
         
-        workspaces = WorkSpaceSerializer(
+        workspaces = WorkspaceUserMeSerializer(
             self.filter_queryset(workspace),
             fields=fields if fields else None,
             many=True,
