@@ -99,4 +99,22 @@ export const commandGroups: {
     path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/`,
     title: "Workspaces",
   },
+  epic: {
+    title: "Epics",
+    icon: null,
+    itemName: (epic: IWorkspaceIssueSearchResult) => (
+      <div className="flex gap-2">
+        <IssueIdentifier
+          projectId={epic.project_id}
+          issueTypeId={epic.type_id}
+          projectIdentifier={epic.project__identifier}
+          issueSequenceId={epic.sequence_id}
+          textContainerClassName="text-xs"
+        />{" "}
+        {epic.name}
+      </div>
+    ),
+    path: (epic: IWorkspaceDefaultSearchResult) =>
+      `/${epic?.workspace__slug}/projects/${epic?.project_id}/epics/${epic?.id}`,
+  },
 };
