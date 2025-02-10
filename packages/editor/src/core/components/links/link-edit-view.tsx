@@ -5,91 +5,88 @@ import { useEffect, useRef, useState } from "react";
 import { LinkViewProps } from "@/components/links";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
-import { preventDefault } from "jsx-dom-cjs";
 
-const InputView = ({
-  label,
-  defaultValue,
-  placeholder,
-  onChange,
-  autoFocus,
-}: {
+interface InputViewProps {
   label: string;
-  defaultValue: string;
+  value: string;
   placeholder: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (value: string) => void;
   autoFocus?: boolean;
-}) => (
+}
+
+const InputView = ({ label, value, placeholder, onChange, autoFocus }: InputViewProps) => (
   <div className="flex flex-col gap-1">
     <label className="inline-block font-semibold text-xs text-custom-text-400">{label}</label>
     <input
       placeholder={placeholder}
-      onClick={(e) => {
-        e.stopPropagation();
-      }}
-      className="w-[280px] outline-none bg-custom-background-90 text-custom-text-900 text-sm"
-      defaultValue={defaultValue}
-      onChange={onChange}
+      onClick={(e) => e.stopPropagation()}
+      className="w-[280px] outline-none bg-custom-background-90 text-custom-text-900 text-sm border border-custom-border-300 rounded-md p-2"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
       autoFocus={autoFocus}
     />
   </div>
 );
 
-export const LinkEditView = ({
-  viewProps,
-}: {
+interface LinkEditViewProps {
   viewProps: LinkViewProps;
   switchView: (view: "LinkPreview" | "LinkEditView" | "LinkInputView") => void;
-}) => {
-  const { editor, from, to } = viewProps;
+}
 
-  const getText = (from: number, to: number) => {
-    if (to >= editor.state.doc.content.size) return "";
-    const text = editor.state.doc.textBetween(from, to, "\n");
-    return text;
-  };
+export const LinkEditView = ({ viewProps }: LinkEditViewProps) => {
+  const { editor, from, to, url: initialUrl, text: initialText, closeLinkView } = viewProps;
 
+  // State
   const [positionRef] = useState({ from, to });
-  const [localUrl, setLocalUrl] = useState(viewProps.url);
-  const [localText, setLocalText] = useState(getText(from, to));
+  const [localUrl, setLocalUrl] = useState(initialUrl);
+  const [localText, setLocalText] = useState(initialText ?? "");
   const [linkRemoved, setLinkRemoved] = useState(false);
   const hasSubmitted = useRef(false);
 
+  // Effects
   useEffect(
-    () => () => {
-      if (!hasSubmitted.current && !linkRemoved && viewProps.url === "") {
-        removeLink();
-      }
-    },
-    [linkRemoved, viewProps.url]
+    () =>
+      // Cleanup effect: Remove link if not submitted and url is empty
+      () => {
+        if (!hasSubmitted.current && !linkRemoved && initialUrl === "") {
+          try {
+            removeLink();
+          } catch (e) {}
+        }
+      },
+    [linkRemoved, initialUrl]
   );
 
-  const handleUpdateLink = (url: string) => {
-    setLocalUrl(url);
+  // Sync state with props
+  useEffect(() => {
+    setLocalUrl(initialUrl);
+  }, [initialUrl]);
+
+  useEffect(() => {
+    if (initialText) setLocalText(initialText);
+  }, [initialText]);
+
+  // Handlers
+  const handleTextChange = (value: string) => {
+    if (value.trim() !== "") setLocalText(value);
   };
 
-  const handleUpdateText = (text: string) => {
-    if (text === "") return;
-    setLocalText(text);
-  };
-
-  const applyChanges = () => {
-    if (linkRemoved) return;
+  const applyChanges = (): boolean => {
+    if (linkRemoved) return false;
     hasSubmitted.current = true;
 
     const { url, isValid } = isValidHttpUrl(localUrl);
-    if (to >= editor.state.doc.content.size || !isValid) return;
+    if (to >= editor.state.doc.content.size || !isValid) return false;
 
     // Apply URL change
-    editor.view.dispatch(editor.state.tr.removeMark(from, to, editor.schema.marks.link));
-    editor.view.dispatch(editor.state.tr.addMark(from, to, editor.schema.marks.link.create({ href: url })));
+    const tr = editor.state.tr;
+    tr.removeMark(from, to, editor.schema.marks.link).addMark(from, to, editor.schema.marks.link.create({ href: url }));
+    editor.view.dispatch(tr);
 
     // Apply text change if different
-    if (localText !== getText(from, to)) {
+    if (localText !== initialText) {
       const node = editor.view.state.doc.nodeAt(from) as Node;
-      if (!node) return;
-      const marks = node.marks;
-      if (!marks) return;
+      if (!node || !node.marks) return false;
 
       editor
         .chain()
@@ -99,54 +96,47 @@ export const LinkEditView = ({
         .setTextSelection({ from, to: from + localText.length })
         .run();
 
-      marks.forEach((mark) => {
+      // Restore marks
+      node.marks.forEach((mark) => {
         editor.chain().setMark(mark.type.name, mark.attrs).run();
       });
     }
+
+    return true;
   };
 
   const removeLink = () => {
     editor.view.dispatch(editor.state.tr.removeMark(from, to, editor.schema.marks.link));
     setLinkRemoved(true);
-    viewProps.closeLinkView();
+    closeLinkView();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.stopPropagation();
+      if (applyChanges()) {
+        closeLinkView();
+        setLocalUrl("");
+        setLocalText("");
+      }
+    }
   };
 
   return (
     <div
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          applyChanges();
-          viewProps.closeLinkView();
-          e.stopPropagation();
-          setLocalUrl("");
-          setLocalText("");
-        }
-      }}
+      onKeyDown={handleKeyDown}
       className="shadow-md rounded p-2 flex flex-col gap-3 bg-custom-background-90 border-custom-border-100 border-2"
       tabIndex={0}
     >
-      <InputView
-        label={"URL"}
-        placeholder={"Enter or paste URL"}
-        defaultValue={localUrl}
-        onChange={(e) => handleUpdateLink(e.target.value)}
-        autoFocus
-      />
-      <InputView
-        label={"Text"}
-        placeholder={"Enter Text to display"}
-        defaultValue={localText}
-        onChange={(e) => handleUpdateText(e.target.value)}
-      />
+      <InputView label="URL" placeholder="Enter or paste URL" value={localUrl} onChange={setLocalUrl} autoFocus />
+      <InputView label="Text" placeholder="Enter Text to display" value={localText} onChange={handleTextChange} />
       <div className="mb-1 bg-custom-border-300 h-[1px] w-full gap-2" />
-      {/* {viewProps.url !== "" && ( */}
       <div className="flex text-sm text-custom-text-800 gap-2 items-center">
         <Link2Off size={14} className="inline-block" />
-        <button onClick={() => removeLink()} className="cursor-pointer">
+        <button onClick={removeLink} className="cursor-pointer">
           Remove Link
         </button>
       </div>
-      {/* )} */}
     </div>
   );
 };

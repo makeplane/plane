@@ -9,6 +9,7 @@ export interface LinkViewProps {
   from: number;
   to: number;
   url: string;
+  text?: string;
   closeLinkView: () => void;
 }
 

@@ -37,9 +37,11 @@ export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containe
         },
       });
 
+      const node = editor.state.doc.nodeAt(editorState.linkExtensionStorage.posToInsert.from);
       setLinkViewProps({
         url: "",
         view: "LinkEditView",
+        text: node?.text || "",
         editor: editor,
         from: editorState.linkExtensionStorage.posToInsert.from,
         to: editorState.linkExtensionStorage.posToInsert.to,
@@ -70,16 +72,11 @@ export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containe
     ],
     whileElementsMounted: autoUpdate,
     placement: "bottom-start",
-    onEscapeKeyDown: (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setIsOpen(false);
-      if (editor) editorState.linkExtensionStorage.isPreviewOpen = false;
-    },
   });
 
   const dismiss = useDismiss(context);
-  const { getFloatingProps } = useInteractions([dismiss]);
+
+  const { getReferenceProps, getFloatingProps } = useInteractions([dismiss]);
 
   const handleLinkHover = useCallback(
     (event: MouseEvent) => {
@@ -88,6 +85,11 @@ export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containe
       // Find the closest anchor tag from the event target
       const target = (event.target as HTMLElement)?.closest("a");
       if (!target) return;
+
+      const referenceProps = getReferenceProps();
+      Object.entries(referenceProps).forEach(([key, value]) => {
+        target.setAttribute(key, value as string);
+      });
 
       const view = editor.view;
       if (!view) return;
@@ -103,24 +105,28 @@ export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containe
         if (!linkMark) return;
 
         setVirtualElement(target);
-        setLinkViewProps({
-          view: "LinkPreview",
-          url: linkMark.attrs.href,
-          editor: editor,
-          from: pos,
-          to: pos + node.nodeSize,
-          closeLinkView: () => {
-            setIsOpen(false);
-            editorState.linkExtensionStorage.isPreviewOpen = false;
-          },
-        });
 
-        setIsOpen(true);
+        // Only update if not already open or if hovering over a different link
+        if (!isOpen || (linkViewProps && (linkViewProps.from !== pos || linkViewProps.to !== pos + node.nodeSize))) {
+          setLinkViewProps({
+            view: "LinkPreview", // Always start with preview for new links
+            url: linkMark.attrs.href,
+            text: node.text || "",
+            editor: editor,
+            from: pos,
+            to: pos + node.nodeSize,
+            closeLinkView: () => {
+              setIsOpen(false);
+              editorState.linkExtensionStorage.isPreviewOpen = false;
+            },
+          });
+          setIsOpen(true);
+        }
       } catch (error) {
         console.error("Error handling link hover:", error);
       }
     },
-    [editor, editorState.linkExtensionStorage.isPreviewOpen]
+    [editor, editorState.linkExtensionStorage.isPreviewOpen, getReferenceProps, isOpen, linkViewProps]
   );
 
   // Set up event listeners
