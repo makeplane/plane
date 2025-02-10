@@ -12,7 +12,7 @@ import {
 } from "@plane/constants";
 import {
   IUserLite,
-  TStackChartData,
+  TChartData,
   TStateGroups,
   TTeamspaceActivity,
   TTeamspaceActivityKeys,
@@ -56,7 +56,7 @@ export type TWorkloadFilter = {
 };
 
 export type TTeamspaceProgressChart = {
-  distribution: TStackChartData<EProgressXAxisKeys, EProgressDataKeys>[];
+  distribution: TChartData<EProgressXAxisKeys, EProgressDataKeys>[];
 };
 
 export type TStatisticsFilter = {
