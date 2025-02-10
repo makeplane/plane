@@ -15,6 +15,7 @@ import { queryParamGenerator } from "@/helpers/query-param-generator";
 import { useIssueFilter } from "@/hooks/store";
 // mobx
 import { TIssueLayout } from "@/types/issue";
+import { IssueLayoutIcon } from "./layout-icon";
 
 type Props = {
   anchor: string;
@@ -68,8 +69,8 @@ export const IssuesLayoutSelection: FC<Props> = observer((props) => {
               }`}
               onClick={() => handleCurrentBoardView(layout.key)}
             >
-              <layout.icon
-                strokeWidth={2}
+              <IssueLayoutIcon
+                layout={layout.key}
                 className={`size-3.5 ${activeLayout == layout.key ? "text-custom-text-100" : "text-custom-text-200"}`}
               />
             </button>

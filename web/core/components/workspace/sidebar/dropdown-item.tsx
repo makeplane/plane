@@ -85,7 +85,7 @@ const SidebarDropdownItem = observer((props: TProps) => {
         </div>
         {workspace.id === activeWorkspace?.id && (
           <>
-            {workspace?.role > EUserPermissions.GUEST && (
+            {workspace?.role === EUserPermissions.ADMIN && (
               <div className="mt-2 mb-1 flex gap-2">
                 <Link
                   href={`/${workspace.slug}/settings`}
