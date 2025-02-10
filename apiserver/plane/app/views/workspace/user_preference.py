@@ -30,7 +30,6 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
         keys = [
             key
             for key, _ in WorkspaceUserPreference.UserPreferenceKeys.choices
-            if key not in ["projects"]
         ]
 
         for preference in keys:
