@@ -81,7 +81,8 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
   const storeLabels = getProjectLabels(projectId);
   const { allowPermissions } = useUserPermissions();
 
-  const canCreateLabel = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canCreateLabel =
+    projectId && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
   let projectLabels: IIssueLabel[] = defaultOptions;
   if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
@@ -157,7 +158,7 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
       setQuery("");
     }
 
-    if (query !== "" && e.key === "Enter") {
+    if (query !== "" && e.key === "Enter" && canCreateLabel) {
       e.preventDefault();
       await handleAddLabel(query);
     }
