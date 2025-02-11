@@ -40,3 +40,15 @@ export * from "./epics";
 export * from "./charts";
 export * from "./home";
 export * from "./stickies";
+export * from "./intake";
+// enterprise
+export * from "./active-cycle";
+export * from "./dashboards";
+export * from "./payment";
+export * from "./teamspace";
+export * from "./initiatives";
+export * from "./stickies";
+export * from "./import-job-types";
+export * from "./feature-flag";
+export * from "./work-item-types";
+export * from "./integration-config";
