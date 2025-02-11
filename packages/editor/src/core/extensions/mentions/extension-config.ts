@@ -35,7 +35,7 @@ export const CustomMentionExtensionConfig = Mention.extend<TMentionExtensionOpti
     ];
   },
 
-  renderHTML({ HTMLAttributes, node }) {
+  renderHTML({ HTMLAttributes }) {
     return ["mention-component", mergeAttributes(HTMLAttributes)];
   },
 
@@ -44,30 +44,25 @@ export const CustomMentionExtensionConfig = Mention.extend<TMentionExtensionOpti
   },
 
   renderText({ node }) {
-    const attrs = node.attrs as TMentionComponentAttributes;
-    const mentionEntityId = attrs[EMentionComponentAttributeNames.ENTITY_IDENTIFIER];
-    const mentionEntityDetails = this.options.getMentionComponentAttributes?.(mentionEntityId);
-    return `@${mentionEntityDetails.display_name ?? node.attrs.id}`;
+    return getMentionDisplayText(this.options, node);
   },
 
   addStorage() {
-    const getMentionComponentAttributes = this.options.getMentionComponentAttributes;
+    const options = this.options;
     return {
       mentionsOpen: false,
       markdown: {
         serialize(state: MarkdownSerializerState, node: NodeType) {
-          const attrs = node.attrs as TMentionComponentAttributes;
-          const mentionEntityId = attrs[EMentionComponentAttributeNames.ENTITY_IDENTIFIER];
-
-          const mentionEntityDetails = getMentionComponentAttributes?.(mentionEntityId);
-
-          if (mentionEntityDetails) {
-            state.write(`@${mentionEntityDetails.display_name}`);
-          } else {
-            state.write(`@${mentionEntityId}`);
-          }
+          state.write(getMentionDisplayText(options, node));
         },
       },
     };
   },
 });
+
+function getMentionDisplayText(options: TMentionExtensionOptions, node: NodeType): string {
+  const attrs = node.attrs as TMentionComponentAttributes;
+  const mentionEntityId = attrs[EMentionComponentAttributeNames.ENTITY_IDENTIFIER];
+  const mentionEntityDetails = options.getMentionComponentAttributes?.(mentionEntityId);
+  return `~${mentionEntityDetails?.display_name ?? attrs[EMentionComponentAttributeNames.ID] ?? mentionEntityId}`;
+}
