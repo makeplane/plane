@@ -203,8 +203,8 @@ class UserRecentVisitType:
     entity_identifier: str
     entity_name: str
     user: strawberry.ID
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
     deleted_at: Optional[datetime]
     project: Optional[strawberry.ID]
 

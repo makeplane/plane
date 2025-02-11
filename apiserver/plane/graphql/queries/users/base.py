@@ -64,15 +64,32 @@ class UserRecentVisitQuery:
     async def userRecentVisit(
         self, info: Info, slug: str, limit: Optional[int] = None
     ) -> list[UserRecentVisitType]:
-        recent_visits = await sync_to_async(list)(
-            UserRecentVisit.objects.filter(
-                Q(workspace__slug=slug),
-                Q(user=info.context.user),
-                ~Q(entity_name="view") & ~Q(entity_name="workspace_page"),
-            ).order_by("-visited_at")
-        )
+        recent_visits = await sync_to_async(
+            lambda: list(
+                UserRecentVisit.objects.filter(
+                    workspace__slug=slug, user=info.context.user
+                )
+                .exclude(entity_name__in=["view", "workspace_page"])
+                .order_by("-visited_at")
+            )
+        )()
 
-        if limit:
-            recent_visits = recent_visits[:limit]
+        recent_visits = [
+            UserRecentVisitType(
+                id=visit.id,
+                entity_identifier=visit.entity_identifier
+                if visit.entity_identifier
+                else None,
+                entity_name=visit.entity_name if visit.entity_name else None,
+                created_at=visit.created_at if visit.created_at else None,
+                updated_at=visit.updated_at if visit.updated_at else None,
+                deleted_at=visit.deleted_at if visit.deleted_at else None,
+            )
+            for visit in recent_visits
+        ]
 
-        return recent_visits
+        recent_visits = [
+            visit for visit in recent_visits if visit.entity_data is not None
+        ]
+
+        return recent_visits[:limit] if limit else recent_visits
