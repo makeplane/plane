@@ -74,7 +74,7 @@ const IssueDetailsPage = observer(() => {
           description="The issue you are looking for does not exist, has been archived, or has been deleted."
           primaryButton={{
             text: "View other issues",
-            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/issues`),
+            onClick: () => router.push(`/${workspaceSlug}/workspace-views/all-issues/`),
           }}
         />
       ) : issueLoader ? (
