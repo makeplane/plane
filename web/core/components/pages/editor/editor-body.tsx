@@ -21,7 +21,7 @@ import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/compon
 import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useMember, useUser } from "@/hooks/store";
 import { useEditorMention } from "@/hooks/use-editor-mention";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
@@ -66,6 +66,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   } = props;
   // store hooks
   const { data: currentUser } = useUser();
+  const { getUserDetails } = useMember();
+
   // derived values
   const { id: pageId, name: pageTitle, isContentEditable, updateTitle } = page;
   // issue-embed
@@ -188,6 +190,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 return res;
               },
               renderComponent: (props) => <EditorMentionsRoot {...props} />,
+              getMentionComponentAttributes: (id: string) => getUserDetails(id),
             }}
             embedHandler={{
               issue: issueEmbedProps,
