@@ -35,12 +35,19 @@ export const CustomMentionExtensionConfig = Mention.extend<TMentionExtensionOpti
     ];
   },
 
-  renderHTML({ HTMLAttributes }) {
+  renderHTML({ HTMLAttributes, node }) {
     return ["mention-component", mergeAttributes(HTMLAttributes)];
   },
 
   HTMLAttributes: {
     class: "mention",
+  },
+
+  renderText({ node }) {
+    const attrs = node.attrs as TMentionComponentAttributes;
+    const mentionEntityId = attrs[EMentionComponentAttributeNames.ENTITY_IDENTIFIER];
+    const mentionEntityDetails = this.options.getMentionComponentAttributes?.(mentionEntityId);
+    return `@${mentionEntityDetails.display_name ?? node.attrs.id}`;
   },
 
   addStorage() {
