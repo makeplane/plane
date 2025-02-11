@@ -20,6 +20,9 @@ export const RecentProject = (props: BlockProps) => {
   const router = useRouter();
   // derived values
   const projectDetails: TProjectEntityData = activity.entity_data as TProjectEntityData;
+
+  if (!projectDetails) return <></>;
+
   const projectLink = `/${workspaceSlug}/projects/${projectDetails?.id}/issues`;
 
   return (

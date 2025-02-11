@@ -24,10 +24,11 @@ export const RecentIssue = (props: BlockProps) => {
   const { setPeekIssue } = useIssueDetail();
   // derived values
   const issueDetails: TIssueEntityData = activity.entity_data as TIssueEntityData;
+
+  if (!issueDetails) return <></>;
+
   const state = getStateById(issueDetails?.state);
-  const workItemLink = `/${workspaceSlug}/projects/${issueDetails.project_id}/${issueDetails ? "epics" : "issues"}/${
-    issueDetails.id
-  }`;
+  const workItemLink = `/${workspaceSlug}/projects/${issueDetails?.project_id}/issues/${issueDetails.id}`;
 
   return (
     <ListItem

@@ -28,6 +28,9 @@ export const RecentPage = (props: BlockProps) => {
   const { getUserDetails } = useMember();
   // derived values
   const pageDetails = activity.entity_data as TPageEntityData;
+
+  if (!pageDetails) return <></>;
+
   const ownerDetails = getUserDetails(pageDetails?.owned_by);
   const pageLink = pageDetails.project_id
     ? `/${workspaceSlug}/projects/${pageDetails.project_id}/pages/${pageDetails.id}`
