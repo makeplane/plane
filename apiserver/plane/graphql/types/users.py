@@ -228,16 +228,6 @@ class UserRecentVisitType:
         return self.user_id
 
     @strawberry.field
-    def created_at(self, info) -> Optional[datetime]:
-        converted_date = user_timezone_converter(info.context.user, self.created_at)
-        return converted_date
-
-    @strawberry.field
-    def updated_at(self, info) -> Optional[datetime]:
-        converted_date = user_timezone_converter(info.context.user, self.updated_at)
-        return converted_date
-
-    @strawberry.field
     async def entity_data(self) -> Optional[UserFavoriteEntityData]:
         # where entity_identifier is project_id and entity_name is project
         if self.entity_identifier and self.entity_name == "project":

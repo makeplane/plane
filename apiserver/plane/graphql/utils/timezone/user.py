@@ -28,9 +28,14 @@ async def user_timezone_converter(user, input_date=None):
     except pytz.UnknownTimeZoneError:
         return input_date
 
+    # Ensure input_date is datetime or date
     if isinstance(input_date, datetime):
-        return input_date.astimezone(tz)
+        converted_date = input_date.astimezone(tz)
     elif isinstance(input_date, date):
-        return datetime.combine(input_date, datetime.min.time()).astimezone(tz)
+        converted_date = datetime.combine(input_date, datetime.min.time()).astimezone(
+            tz
+        )
     else:
         return input_date
+
+    return converted_date

@@ -13,6 +13,7 @@ from strawberry.types import Info
 from strawberry.permission import PermissionExtension
 
 # Module Imports
+from plane.graphql.utils.timezone.user import user_timezone_converter
 from plane.db.models import UserFavorite, UserRecentVisit
 from plane.graphql.types.users import UserType, UserFavoriteType, UserRecentVisitType
 from plane.graphql.permissions.workspace import IsAuthenticated, WorkspaceBasePermission
@@ -74,6 +75,7 @@ class UserRecentVisitQuery:
             )
         )()
 
+        user = info.context.user
         recent_visits = [
             UserRecentVisitType(
                 id=visit.id,
@@ -81,9 +83,15 @@ class UserRecentVisitQuery:
                 if visit.entity_identifier
                 else None,
                 entity_name=visit.entity_name if visit.entity_name else None,
-                created_at=visit.created_at if visit.created_at else None,
-                updated_at=visit.updated_at if visit.updated_at else None,
-                deleted_at=visit.deleted_at if visit.deleted_at else None,
+                created_at=await user_timezone_converter(user, visit.created_at)
+                if visit.created_at
+                else None,
+                updated_at=await user_timezone_converter(user, visit.updated_at)
+                if visit.updated_at
+                else None,
+                deleted_at=await user_timezone_converter(user, visit.deleted_at)
+                if visit.deleted_at
+                else None,
             )
             for visit in recent_visits
         ]
