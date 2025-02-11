@@ -12,7 +12,6 @@ from django.views.decorators.csrf import csrf_exempt
 from asgiref.sync import sync_to_async
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-from graphql import parse
 
 # Strawberry imports
 from strawberry.django.views import AsyncGraphQLView
@@ -98,7 +97,7 @@ class CustomGraphQLView(AsyncGraphQLView):
         return None
 
     def is_public_operation(self, query_name: str) -> bool:
-        auth_neglect_list = ["VersionCheckQuery"]
+        auth_neglect_list = ["VersionCheckQuery", "InstanceQuery"]
 
         if query_name in auth_neglect_list:
             return True

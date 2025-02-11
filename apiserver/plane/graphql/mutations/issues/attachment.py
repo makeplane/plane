@@ -20,6 +20,7 @@ from strawberry.types import Info
 from strawberry.permission import PermissionExtension
 
 # Module Imports
+from plane.graphql.utils.roles import Roles
 from plane.graphql.utils.feature_flag import validate_feature_flag
 from plane.settings.storage import S3Storage
 from plane.db.models import FileAsset, Workspace
@@ -28,7 +29,7 @@ from plane.graphql.types.issues.attachment import (
     IssueAttachmentPresignedUrlResponseType,
 )
 from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
-from plane.graphql.permissions.project import ProjectBasePermission
+from plane.graphql.permissions.project import ProjectBasePermission, ProjectPermission
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 
@@ -60,7 +61,11 @@ def create_file_asset(
 @strawberry.type
 class IssueAttachmentMutation:
     @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+        extensions=[
+            PermissionExtension(
+                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
+            )
+        ]
     )
     async def create_issue_attachment(
         self,

@@ -1,5 +1,9 @@
 # Third-party imports
 from asgiref.sync import sync_to_async
+from bs4 import BeautifulSoup
+
+# Module imports
+from plane.db.models import User
 
 
 @sync_to_async
@@ -51,3 +55,35 @@ async def convert_issue_relation_properties_to_activity_dict(issue_relation):
         "related_issue_id": str(issue_relation.related_issue_id),
         "relation_type": issue_relation.relation_type,
     }
+
+
+def issue_activity_comment_string(html_content):
+    soup = BeautifulSoup(html_content, "html.parser")
+
+    user_mentions = {}
+
+    for mention_tag in soup.find_all(
+        "mention-component", attrs={"entity_name": "user_mention"}
+    ):
+        entity_identifier = mention_tag.get("entity_identifier", "")
+
+        user = User.objects.filter(id=entity_identifier).first()
+
+        user_mentions[entity_identifier] = user if user else None
+
+        mention_tag.replace_with(
+            user.display_name
+            if user.display_name
+            else user.first_name
+            if user.first_name
+            else user.email
+            if user
+            else ""
+        )
+
+    for tag in soup.find_all(True):
+        tag.replace_with(tag.text)
+
+    plain_text = soup.get_text()
+
+    return {"mention_objects": user_mentions, "content": plain_text}

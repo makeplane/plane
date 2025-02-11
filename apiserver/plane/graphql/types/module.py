@@ -9,6 +9,7 @@ from strawberry.types import Info
 from strawberry.scalars import JSON
 
 # Module Imports
+from plane.graphql.utils.timezone import user_timezone_converter
 from plane.db.models import Module, Issue, ModuleUserProperties
 from plane.graphql.types.users import UserType
 
@@ -25,8 +26,8 @@ class ModuleType:
     workspace: strawberry.ID
     created_by: Optional[strawberry.ID]
     updated_by: Optional[strawberry.ID]
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
     description: Optional[str]
     description_text: Optional[str]
     description_html: Optional[str]
@@ -85,6 +86,24 @@ class ModuleType:
             .count()
         )()
         return issue_assignees_count
+
+    @strawberry.field
+    def created_by(self) -> Optional[strawberry.ID]:
+        return self.created_by_id
+
+    @strawberry.field
+    def updated_by(self) -> Optional[strawberry.ID]:
+        return self.updated_by_id
+
+    @strawberry.field
+    def created_at(self, info) -> Optional[datetime]:
+        converted_date = user_timezone_converter(info.context.user, self.created_at)
+        return converted_date
+
+    @strawberry.field
+    def updated_at(self, info) -> Optional[datetime]:
+        converted_date = user_timezone_converter(info.context.user, self.updated_at)
+        return converted_date
 
 
 @strawberry_django.type(Module)

@@ -59,11 +59,7 @@ class IssueRelationQuery:
 
         # constructing the issue query
         issue_queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug, project_id=project)
-            .filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-            )
+            Issue.issue_objects.filter(workspace__slug=slug)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels")
         )

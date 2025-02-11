@@ -1,5 +1,5 @@
 # python imports
-from typing import Any
+from typing import Any, Optional
 
 # Third-Party Imports
 from asgiref.sync import sync_to_async
@@ -10,6 +10,7 @@ from strawberry.types import Info
 from strawberry.permission import BasePermission
 
 # Local Imports
+from plane.graphql.utils.roles import Roles
 from plane.graphql.utils.error_codes import ERROR_CODES
 from plane.db.models import WorkspaceMember
 
@@ -101,6 +102,38 @@ class WorkspaceAdminPermission(IsAuthenticated):
                 member=self.user,
                 role=Admin,
                 is_active=True,
+            ).exists,
+            thread_sensitive=True,
+        )()
+
+
+class WorkspacePermission(IsAuthenticated):
+    message = "User does not have permission to perform this action"
+    error_extensions = {
+        "code": "UNAUTHORIZED",
+        "statusCode": ERROR_CODES["USER_NOT_AUTHORIZED"],
+    }
+
+    roles = [Roles.ADMIN, Roles.MEMBER, Roles.GUEST]
+
+    def __init__(self, roles: Optional[list[str]] = None):
+        if roles:
+            self.roles = roles
+
+    async def has_permission(self, source: Any, info: Info, **kwargs) -> bool:
+        if not await super().has_permission(source, info, **kwargs):
+            self.message = IsAuthenticated.message
+            self.error_extensions = IsAuthenticated.error_extensions
+            return False
+
+        allowed_roles = [role.value for role in self.roles]
+
+        return await sync_to_async(
+            WorkspaceMember.objects.filter(
+                member=self.user,
+                workspace__slug=kwargs.get("slug"),
+                is_active=True,
+                role__in=allowed_roles,
             ).exists,
             thread_sensitive=True,
         )()
