@@ -97,11 +97,11 @@ def copy_s3_objects(entity_name, entity_identifier, project_id, slug, user_id):
         duplicated_assets = []
         workspace = entity.workspace
         storage = S3Storage()
+        original_assets = FileAsset.objects.filter(
+            workspace=workspace, project_id=project_id, id__in=asset_ids
+        )
 
-        for asset_id in asset_ids:
-            original_asset = FileAsset.objects.get(
-                workspace=workspace, project_id=project_id, id=asset_id
-            )
+        for original_asset in original_assets:
             destination_key = f"{workspace.id}/{uuid.uuid4().hex}-{original_asset.attributes.get('name')}"
             duplicated_asset = FileAsset.objects.create(
                 attributes={
@@ -120,11 +120,16 @@ def copy_s3_objects(entity_name, entity_identifier, project_id, slug, user_id):
             )
             storage.copy_object(original_asset.asset, destination_key)
             duplicated_assets.append(
-                {"new_asset_id": str(duplicated_asset.id), "old_asset_id": asset_id}
+                {
+                    "new_asset_id": str(duplicated_asset.id),
+                    "old_asset_id": str(original_asset.id),
+                }
             )
 
         if duplicated_assets:
-            FileAsset.objects.filter(pk__in=duplicated_assets).update(is_uploaded=True)
+            FileAsset.objects.filter(
+                pk__in=[item["new_asset_id"] for item in duplicated_assets]
+            ).update(is_uploaded=True)
             updated_html = update_description(
                 entity, duplicated_assets, "image-component"
             )
@@ -137,7 +142,7 @@ def copy_s3_objects(entity_name, entity_identifier, project_id, slug, user_id):
                 )
                 entity.save()
 
-        return duplicated_assets
+        return
     except Exception as e:
         log_exception(e)
         return []
