@@ -35,7 +35,8 @@ def extract_asset_ids(html, tag):
     try:
         soup = BeautifulSoup(html, "html.parser")
         return [tag.get("src") for tag in soup.find_all(tag) if tag.get("src")]
-    except Exception:
+    except Exception as e:
+        log_exception(e)
         return []
 
 
@@ -47,7 +48,8 @@ def replace_asset_ids(html, tag, duplicated_assets):
                 if mention_tag.get("src") == asset["old_asset_id"]:
                     mention_tag["src"] = asset["new_asset_id"]
         return str(soup)
-    except Exception:
+    except Exception as e:
+        log_exception(e)
         return html
 
 
