@@ -215,7 +215,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
       >
         <ControlLink
           id={getIssueBlockId(issueId, groupId, subGroupId)}
-          href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}${isEpic ? "epics" : "work items"}/${
+          href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}${isEpic ? "epics" : "issues"}/${
             issue.id
           }`}
           ref={cardRef}
