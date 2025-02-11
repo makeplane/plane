@@ -44,4 +44,7 @@ class VersionCheckQuery:
             min_supported_version=version_details["min_supported_version"],
             url=version_details["url"],
             force_update=version_details["force_update"],
+            min_supported_backend_version=version_details[
+                "min_backend_supported_version"
+            ],
         )
