@@ -20,11 +20,55 @@ from plane.graphql.permissions.workspace import WorkspaceBasePermission
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.paginator import paginate
 from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
+from plane.graphql.utils.feature_flag import validate_feature_flag
+from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
 
 
 # workspace level queries
 @strawberry.type
 class WorkspacePageQuery:
+    @strawberry.field(
+        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
+    )
+    async def workspacePages(
+        self, info: Info, slug: str, cursor: Optional[str] = None
+    ) -> PaginatorResponse[PageType]:
+        user = info.context.user
+
+        is_feature_flagged = await validate_feature_flag(
+            slug=slug,
+            user_id=str(user.id),
+            feature_key=FeatureFlagsTypesEnum.WORKSPACE_PAGES.value,
+        )
+
+        if not is_feature_flagged:
+            message = "Feature flag not enabled."
+            error_extensions = {"code": "FEATURE_FLAG_NOT_ENABLED", "statusCode": 400}
+            raise GraphQLError(message, extensions=error_extensions)
+
+        # Build subquery for UserFavorite
+        subquery = UserFavorite.objects.filter(
+            user=user,
+            entity_type="page",
+            entity_identifier=OuterRef("pk"),
+            workspace__slug=slug,
+        )
+
+        pages = await sync_to_async(list)(
+            Page.objects.filter(
+                workspace__slug=slug,
+                is_global=True,
+                archived_at__isnull=True,
+                parent__isnull=True,
+            )
+            .filter(Q(owned_by=user) | Q(access=0))
+            .select_related("workspace", "owned_by")
+            .annotate(is_favorite=Exists(subquery))
+            .order_by("-created_at")
+        )
+
+        return paginate(results_object=pages, cursor=cursor)
+
     @strawberry.field(
         extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
