@@ -46,20 +46,10 @@ export const SidebarDropdown = observer(() => {
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "right",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
+    modifiers: [{ name: "preventOverflow", options: { padding: 12 } }],
   });
 
-  const handleWorkspaceNavigation = (workspace: IWorkspace) =>
-    updateUserProfile({
-      last_workspace_id: workspace?.id,
-    });
+  const handleWorkspaceNavigation = (workspace: IWorkspace) => updateUserProfile({ last_workspace_id: workspace?.id });
 
   const handleSignOut = async () => {
     await signOut().catch(() =>
@@ -86,14 +76,12 @@ export const SidebarDropdown = observer(() => {
           "flex-grow-0 justify-center": sidebarCollapsed,
         })}
       >
-        {({ open }) => (
+        {({ open, close }) => (
           <>
             <Menu.Button
               className={cn(
                 "group/menu-button flex items-center justify-between gap-1 p-1 truncate rounded text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:outline-none",
-                {
-                  "flex-grow": !sidebarCollapsed,
-                }
+                { "flex-grow": !sidebarCollapsed }
               )}
             >
               <div className="flex-grow flex items-center gap-2 truncate">
@@ -108,9 +96,7 @@ export const SidebarDropdown = observer(() => {
                 <ChevronDown
                   className={cn(
                     "flex-shrink-0 mx-1 hidden size-4 group-hover/menu-button:block text-custom-sidebar-text-400 duration-300",
-                    {
-                      "rotate-180": open,
-                    }
+                    { "rotate-180": open }
                   )}
                 />
               )}
@@ -145,6 +131,7 @@ export const SidebarDropdown = observer(() => {
                             activeWorkspace={activeWorkspace}
                             handleItemClick={handleItemClick}
                             handleWorkspaceNavigation={handleWorkspaceNavigation}
+                            handleClose={close}
                           />
                         ))}
                       </div>
