@@ -86,7 +86,11 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
 
   const showIssueCount = useMemo(() => cycleStatus === "draft" || cycleStatus === "upcoming", [cycleStatus]);
 
-  const showTransferIssues = routerProjectId && cycleDetails.pending_issues > 0 && cycleStatus === "completed";
+  const transferableIssuesCount = cycleDetails
+    ? cycleDetails.total_issues - (cycleDetails.cancelled_issues + cycleDetails.completed_issues)
+    : 0;
+
+  const showTransferIssues = routerProjectId && transferableIssuesCount > 0 && cycleStatus === "completed";
 
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -258,7 +262,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
           }}
         >
           <TransferIcon className="fill-custom-primary-200 w-4" />
-          <span>Transfer {cycleDetails.pending_issues} work items</span>
+          <span>Transfer {transferableIssuesCount} work items</span>
         </div>
       )}
 
