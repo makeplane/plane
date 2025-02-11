@@ -24,12 +24,16 @@ export const RecentIssue = (props: BlockProps) => {
   const { setPeekIssue } = useIssueDetail();
   // derived values
   const issueDetails: TIssueEntityData = activity.entity_data as TIssueEntityData;
+
+  if (!issueDetails) return <></>;
+
   const state = getStateById(issueDetails?.state);
+  const workItemLink = `/${workspaceSlug}/projects/${issueDetails?.project_id}/issues/${issueDetails.id}`;
 
   return (
     <ListItem
       key={activity.id}
-      itemLink=""
+      itemLink={workItemLink}
       title={issueDetails?.name}
       prependTitleElement={
         <div className="flex-shrink-0 flex items-center gap-2">

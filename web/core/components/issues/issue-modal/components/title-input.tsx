@@ -37,7 +37,7 @@ export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props)
     return undefined;
   };
   return (
-    <div tabIndex={getIndex("name")}>
+    <div>
       <Controller
         control={control}
         name="name"
@@ -64,6 +64,7 @@ export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props)
             placeholder={t("title")}
             className="w-full text-base"
             autoFocus
+            tabIndex={getIndex("name")}
           />
         )}
       />
