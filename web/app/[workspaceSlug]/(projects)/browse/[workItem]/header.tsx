@@ -27,6 +27,8 @@ export const ProjectIssueDetailsHeader = observer(() => {
   const projectId = issueDetails ? issueDetails?.project_id : undefined;
   const projectDetails = projectId ? getProjectById(projectId?.toString()) : undefined;
 
+  if (!workspaceSlug || !projectId || !issueId) return null;
+
   return (
     <Header>
       <Header.LeftItem>
@@ -45,7 +47,7 @@ export const ProjectIssueDetailsHeader = observer(() => {
                         </span>
                       )
                     ) : (
-                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
                         <Briefcase className="h-4 w-4" />
                       </span>
                     )
