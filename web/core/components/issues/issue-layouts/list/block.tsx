@@ -183,7 +183,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
           }
         }}
       >
-        <div className="flex w-full truncate">
+        <div className="flex gap-2 w-full truncate">
           <div className="flex flex-grow items-center gap-0.5 truncate">
             <div className="flex items-center gap-1" style={isSubIssue ? { marginLeft } : {}}>
               {/* select checkbox */}
@@ -257,7 +257,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               disabled={isCurrentBlockDragging}
               renderByDefault={false}
             >
-              <p className="w-full truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
+              <p className="truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
             </Tooltip>
             {isEpic && <IssueStats issueId={issue.id} />}
           </div>
