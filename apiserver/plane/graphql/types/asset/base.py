@@ -9,6 +9,7 @@ import strawberry_django
 from strawberry.scalars import JSON
 
 # module imports
+from plane.graphql.utils.timezone import user_timezone_converter
 from plane.db.models import FileAsset
 
 
@@ -82,6 +83,24 @@ class FileAssetType:
     updated_at: Optional[datetime]
     # model properties
     asset_url: Optional[str]
+
+    @strawberry.field
+    def created_by(self) -> Optional[strawberry.ID]:
+        return self.created_by_id
+
+    @strawberry.field
+    def updated_by(self) -> Optional[strawberry.ID]:
+        return self.updated_by_id
+
+    @strawberry.field
+    def created_at(self, info) -> Optional[datetime]:
+        converted_date = user_timezone_converter(info.context.user, self.created_at)
+        return converted_date
+
+    @strawberry.field
+    def updated_at(self, info) -> Optional[datetime]:
+        converted_date = user_timezone_converter(info.context.user, self.updated_at)
+        return converted_date
 
 
 @strawberry.type

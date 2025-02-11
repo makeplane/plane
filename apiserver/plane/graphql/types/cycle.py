@@ -36,8 +36,8 @@ class CycleType:
     workspace: strawberry.ID
     created_by: Optional[strawberry.ID]
     updated_by: Optional[strawberry.ID]
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
     total_issues: int
     completed_issues: int
     is_favorite: bool
