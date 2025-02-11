@@ -6,15 +6,15 @@ import strawberry
 from strawberry.types import Info
 from strawberry.scalars import JSON
 from strawberry.permission import PermissionExtension
-from strawberry.exceptions import GraphQLError
 
 # Third-party imports
 from asgiref.sync import sync_to_async
 from typing import Optional
 
 # Module imports
+from plane.graphql.utils.roles import Roles
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
-from plane.graphql.permissions.project import ProjectBasePermission
+from plane.graphql.permissions.project import ProjectBasePermission, ProjectPermission
 from plane.graphql.types.page import PageType
 from plane.db.models import (
     WorkspaceMember,
@@ -80,7 +80,11 @@ class WorkspacePageMutation:
 @strawberry.type
 class PageMutation:
     @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+        extensions=[
+            PermissionExtension(
+                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
+            )
+        ]
     )
     async def createPage(
         self,
@@ -93,25 +97,6 @@ class PageMutation:
         access: int = 2,
         description_binary: Optional[str] = None,
     ) -> PageType:
-        user = info.context.user
-
-        workspace_member_details = await get_workspace_member(slug, user.id)
-        if workspace_member_details is None or (
-            workspace_member_details and workspace_member_details.role == 5
-        ):
-            message = "You are not allowed to create a page."
-            error_extensions = {"code": "PAGE_CREATION_NOT_ALLOWED", "statusCode": 400}
-
-            raise GraphQLError(message, extensions=error_extensions)
-
-        project_member_details = await get_project_member(slug, project, user.id)
-        if project_member_details is None or (
-            project_member_details and project_member_details.role == 5
-        ):
-            message = "You are not allowed to create"
-            error_extensions = {"code": "PAGE_CREATION_NOT_ALLOWED", "statusCode": 400}
-            raise GraphQLError(message, extensions=error_extensions)
-
         workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
         project_details = await sync_to_async(Project.objects.get)(id=project)
 

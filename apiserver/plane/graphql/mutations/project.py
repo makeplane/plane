@@ -10,7 +10,10 @@ from asgiref.sync import sync_to_async
 from typing import Optional
 
 # Module imports
-from plane.graphql.permissions.workspace import WorkspaceBasePermission
+from plane.graphql.permissions.workspace import (
+    WorkspaceBasePermission,
+    WorkspacePermission,
+)
 from plane.graphql.permissions.project import (
     ProjectMemberPermission,
     ProjectBasePermission,
@@ -32,7 +35,11 @@ from plane.db.models import (
 @strawberry.type
 class ProjectMutation:
     @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
+        extensions=[
+            PermissionExtension(
+                permissions=[WorkspacePermission([Roles.ADMIN, Roles.MEMBER])]
+            )
+        ]
     )
     async def createProject(
         self,
