@@ -7,7 +7,8 @@
       "@/helpers/*": ["helpers/*"],
       "@/public/*": ["public/*"],
       "@/styles/*": ["styles/*"],
-      "@/plane-web/*": ["ce/*"]
+      "@/plane-web/*": ["ee/*"],
+      "@/ce/*": ["ce/*"]
     },
     "plugins": [{ "name": "next" }],
     "strictNullChecks": true
