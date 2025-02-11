@@ -190,7 +190,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 return res;
               },
               renderComponent: (props) => <EditorMentionsRoot {...props} />,
-              getMentionComponentAttributes: (id: string) => getUserDetails(id),
+              getMentionedEntityDetails: (id: string) => getUserDetails(id),
             }}
             embedHandler={{
               issue: issueEmbedProps,

@@ -9,7 +9,7 @@ import { EMentionComponentAttributeNames, TMentionComponentAttributes } from "./
 
 export type TMentionExtensionOptions = MentionOptions & {
   renderComponent: TMentionHandler["renderComponent"];
-  getMentionComponentAttributes: TMentionHandler["getMentionComponentAttributes"];
+  getMentionedEntityDetails: TMentionHandler["getMentionedEntityDetails"];
 };
 
 export const CustomMentionExtensionConfig = Mention.extend<TMentionExtensionOptions>({
@@ -63,6 +63,6 @@ export const CustomMentionExtensionConfig = Mention.extend<TMentionExtensionOpti
 function getMentionDisplayText(options: TMentionExtensionOptions, node: NodeType): string {
   const attrs = node.attrs as TMentionComponentAttributes;
   const mentionEntityId = attrs[EMentionComponentAttributeNames.ENTITY_IDENTIFIER];
-  const mentionEntityDetails = options.getMentionComponentAttributes?.(mentionEntityId);
-  return `~${mentionEntityDetails?.display_name ?? attrs[EMentionComponentAttributeNames.ID] ?? mentionEntityId}`;
+  const mentionEntityDetails = options.getMentionedEntityDetails?.(mentionEntityId);
+  return `@${mentionEntityDetails?.display_name ?? attrs[EMentionComponentAttributeNames.ID] ?? mentionEntityId}`;
 }

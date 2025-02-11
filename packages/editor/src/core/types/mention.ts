@@ -20,7 +20,7 @@ export type TMentionComponentProps = Pick<TMentionSuggestion, "entity_identifier
 
 export type TReadOnlyMentionHandler = {
   renderComponent: (props: TMentionComponentProps) => React.ReactNode;
-  getMentionComponentAttributes?: (entity_identifier: string) => IUserLite | undefined;
+  getMentionedEntityDetails?: (entity_identifier: string) => IUserLite | undefined;
 };
 
 export type TMentionHandler = TReadOnlyMentionHandler & {
