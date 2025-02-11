@@ -19,9 +19,10 @@ type TProps = {
   activeWorkspace: IWorkspace | null;
   handleItemClick: () => void;
   handleWorkspaceNavigation: (workspace: IWorkspace) => void;
+  handleClose: () => void;
 };
 const SidebarDropdownItem = observer((props: TProps) => {
-  const { workspace, activeWorkspace, handleItemClick, handleWorkspaceNavigation } = props;
+  const { workspace, activeWorkspace, handleItemClick, handleWorkspaceNavigation, handleClose } = props;
   // router
   const { workspaceSlug } = useParams();
   // hooks
@@ -89,6 +90,7 @@ const SidebarDropdownItem = observer((props: TProps) => {
               <div className="mt-2 mb-1 flex gap-2">
                 <Link
                   href={`/${workspace.slug}/settings`}
+                  onClick={handleClose}
                   className="flex border border-custom-border-200 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100 hover:shadow-sm hover:text-custom-text-200 text-custom-text-300 hover:border-custom-border-300 "
                 >
                   <Settings className="h-4 w-4 my-auto" />
@@ -96,6 +98,7 @@ const SidebarDropdownItem = observer((props: TProps) => {
                 </Link>
                 <Link
                   href={`/${workspace.slug}/settings/members`}
+                  onClick={handleClose}
                   className="flex border border-custom-border-200 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100 hover:shadow-sm hover:text-custom-text-200 text-custom-text-300 hover:border-custom-border-300 "
                 >
                   <UserPlus className="h-4 w-4 my-auto" />
