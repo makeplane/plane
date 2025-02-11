@@ -5,13 +5,13 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { FolderPlus, Search, Settings } from "lucide-react";
+import { CommandIcon, FolderPlus, Search, Settings } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspaceSearchResults } from "@plane/types";
-import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import { LayersIcon, Loader, ToggleSwitch } from "@plane/ui";
 // components
 import {
   ChangeIssueAssignee,
@@ -72,7 +72,7 @@ export const CommandModal: React.FC = observer(() => {
   const { t } = useTranslation();
   // hooks
   const { workspaceProjectIds } = useProject();
-  const { isMobile } = usePlatformOS();
+  const { platform, isMobile } = usePlatformOS();
   const { canPerformAnyCreateAction } = useUser();
   const { isCommandPaletteOpen, toggleCommandPaletteModal, toggleCreateIssueModal, toggleCreateProjectModal } =
     useCommandPalette();
@@ -192,12 +192,11 @@ export const CommandModal: React.FC = observer(() => {
                         return;
                       }
 
-                      if (e.key === 'Tab') {
+                      if (e.key === "Tab") {
                         e.preventDefault();
-                        const commandList = document.querySelector('[cmdk-list]');
-                        const items = commandList?.querySelectorAll('[cmdk-item]') || [];
+                        const commandList = document.querySelector("[cmdk-list]");
+                        const items = commandList?.querySelectorAll("[cmdk-item]") || [];
                         const selectedItem = commandList?.querySelector('[aria-selected="true"]');
-                        
                         if (items.length === 0) return;
 
                         const currentIndex = Array.from(items).indexOf(selectedItem as Element);
@@ -210,14 +209,13 @@ export const CommandModal: React.FC = observer(() => {
                         }
 
                         const nextItem = items[nextIndex] as HTMLElement;
-                        
                         if (nextItem) {
-                          nextItem.setAttribute('aria-selected', 'true');
-                          selectedItem?.setAttribute('aria-selected', 'false');
+                          nextItem.setAttribute("aria-selected", "true");
+                          selectedItem?.setAttribute("aria-selected", "false");
                           nextItem.focus();
-                          nextItem.scrollIntoView({ 
-                            behavior: 'smooth', 
-                            block: 'nearest'
+                          nextItem.scrollIntoView({
+                            behavior: "smooth",
+                            block: "nearest",
                           });
                         }
                       }
@@ -436,13 +434,18 @@ export const CommandModal: React.FC = observer(() => {
                     </Command.List>
                   </Command>
                 </div>
-                
                 {/* Bottom overlay */}
                 <div className="w-full flex items-center justify-between px-4 py-2 border-t border-custom-border-200 bg-custom-background-90/80 rounded-b-lg">
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-custom-text-300">Actions</span>
-                    <kbd className="px-2 py-1 text-xs rounded bg-custom-background-80">⌘</kbd>
-                    <kbd className="px-2 py-1 text-xs rounded bg-custom-background-80">K</kbd>
+                    <div className="flex items-center gap-1">
+                      <div className="grid h-6 min-w-[1.5rem] place-items-center rounded bg-custom-background-80 border-[0.5px] border-custom-border-200 px-1.5 text-[10px] text-custom-text-200">
+                        {platform === "MacOS" ? <CommandIcon className="h-2.5 w-2.5 text-custom-text-200" /> : "Ctrl"}
+                      </div>
+                      <kbd className="grid h-6 min-w-[1.5rem] place-items-center rounded bg-custom-background-80 border-[0.5px] border-custom-border-200 px-1.5 text-[10px] text-custom-text-200">
+                        K
+                      </kbd>
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-custom-text-300">Workspace Level</span>
