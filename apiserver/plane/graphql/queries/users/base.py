@@ -75,7 +75,7 @@ class UserRecentVisitQuery:
             )
         )()
 
-        user = info.context.user
+        current_user = info.context.user
         recent_visits = [
             UserRecentVisitType(
                 id=visit.id,
@@ -83,15 +83,23 @@ class UserRecentVisitQuery:
                 if visit.entity_identifier
                 else None,
                 entity_name=visit.entity_name if visit.entity_name else None,
-                created_at=await user_timezone_converter(user, visit.created_at)
-                if visit.created_at
-                else None,
-                updated_at=await user_timezone_converter(user, visit.updated_at)
-                if visit.updated_at
-                else None,
-                deleted_at=await user_timezone_converter(user, visit.deleted_at)
-                if visit.deleted_at
-                else None,
+                user=visit.user_id if visit.user_id else None,
+                visited_at=await user_timezone_converter(
+                    current_user, visit.visited_at if visit.visited_at else None
+                ),
+                workspace=visit.workspace_id if visit.workspace_id else None,
+                project=visit.project_id if visit.project_id else None,
+                created_by=visit.created_by_id if visit.created_by_id else None,
+                updated_by=visit.updated_by_id if visit.updated_by_id else None,
+                created_at=await user_timezone_converter(
+                    current_user, visit.created_at if visit.created_at else None
+                ),
+                updated_at=await user_timezone_converter(
+                    current_user, visit.updated_at if visit.updated_at else None
+                ),
+                deleted_at=await user_timezone_converter(
+                    current_user, visit.deleted_at if visit.deleted_at else None
+                ),
             )
             for visit in recent_visits
         ]

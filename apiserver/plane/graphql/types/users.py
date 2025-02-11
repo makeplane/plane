@@ -214,18 +214,14 @@ class UserRecentVisitType:
     entity_identifier: str
     entity_name: str
     user: strawberry.ID
+    visited_at: Optional[datetime]
+    workspace: Optional[strawberry.ID]
+    project: Optional[strawberry.ID]
+    created_by: Optional[strawberry.ID]
+    updated_by: Optional[strawberry.ID]
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
     deleted_at: Optional[datetime]
-    project: Optional[strawberry.ID]
-
-    @strawberry.field
-    def project(self) -> int:
-        return self.project_id
-
-    @strawberry.field
-    def user(self) -> int:
-        return self.user_id
 
     @strawberry.field
     async def entity_data(self) -> Optional[UserFavoriteEntityData]:
