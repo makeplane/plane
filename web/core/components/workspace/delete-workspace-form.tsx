@@ -58,7 +58,7 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
     await deleteWorkspace(data.slug)
       .then(() => {
         handleClose();
-        router.push("/");
+        router.push("/profile");
         captureWorkspaceEvent({
           eventName: WORKSPACE_DELETED,
           payload: {
@@ -70,7 +70,7 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Workspace deleted.",
-          message: "You will soon go to the next workspace or your profile page.",
+          message: "You will soon go to your profile page.",
         });
       })
       .catch(() => {
