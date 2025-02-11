@@ -36,7 +36,7 @@ export const RecentPage = (props: BlockProps) => {
   return (
     <ListItem
       key={activity.id}
-      itemLink=""
+      itemLink={pageLink}
       title={getPageName(pageDetails?.name)}
       prependTitleElement={
         <div className="flex-shrink-0 flex items-center gap-2">

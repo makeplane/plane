@@ -20,11 +20,12 @@ export const RecentProject = (props: BlockProps) => {
   const router = useRouter();
   // derived values
   const projectDetails: TProjectEntityData = activity.entity_data as TProjectEntityData;
+  const projectLink = `/${workspaceSlug}/projects/${projectDetails?.id}/issues`;
 
   return (
     <ListItem
       key={activity.id}
-      itemLink=""
+      itemLink={projectLink}
       title={projectDetails?.name}
       prependTitleElement={
         <div className="flex-shrink-0 flex items-center gap-2">
@@ -69,7 +70,7 @@ export const RecentProject = (props: BlockProps) => {
       onItemClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        router.push(`/${workspaceSlug}/projects/${projectDetails?.id}/issues`);
+        router.push(projectLink);
       }}
     />
   );
