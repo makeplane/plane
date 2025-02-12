@@ -46,8 +46,12 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
   const canDelete = watch("workspaceName") === data?.name && watch("confirmDelete") === "delete my workspace";
 
   const handleClose = () => {
+    const timer = setTimeout(() => {
+      reset(defaultValues);
+      clearTimeout(timer);
+    }, 350);
+
     onClose();
-    reset(defaultValues);
   };
 
   const onSubmit = async () => {
