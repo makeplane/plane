@@ -24,7 +24,7 @@ export const EpicsUpgrade: FC = observer(() => {
             <div className="text-2xl font-semibold">Epics</div>
             <div className="text-sm">
               For larger bodies of work that span several cycles and can live across modules, create an epic. Link work
-              items and sub-work items in a project to an epic and jump into an work item from the overview.
+              items and sub-work items in a project to an epic and jump into a work item from the overview.
             </div>
             <div className="flex mt-6 gap-4 flex-wrap">
               <Button disabled>Coming Soon</Button>

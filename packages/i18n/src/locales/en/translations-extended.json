@@ -267,7 +267,7 @@
     "empty_state": {
       "general": {
         "title": "Create an epic and assign it to someone, even yourself",
-        "description": "For larger bodies of work that span several cycles and can live across modules, create an epic. Link work items and sub-work items in a project to an epic and jump into an work item from the overview.",
+        "description": "For larger bodies of work that span several cycles and can live across modules, create an epic. Link work items and sub-work items in a project to an epic and jump into a work item from the overview.",
         "primary_button": {
           "text": "Create an Epic"
         }
