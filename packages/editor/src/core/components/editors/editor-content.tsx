@@ -1,5 +1,5 @@
-import { FC, ReactNode } from "react";
 import { Editor, EditorContent } from "@tiptap/react";
+import { FC, ReactNode } from "react";
 
 interface EditorContentProps {
   children?: ReactNode;

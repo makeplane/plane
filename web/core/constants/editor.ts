@@ -14,6 +14,7 @@ import {
   Heading6,
   Image,
   Italic,
+  LinkIcon,
   List,
   ListOrdered,
   ListTodo,
@@ -93,7 +94,7 @@ export const TEXT_ALIGNMENT_ITEMS: ToolbarMenuItem<"text-align">[] = [
   },
 ];
 
-const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strikethrough">[] = [
+const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strikethrough" | "link">[] = [
   {
     itemKey: "bold",
     renderKey: "bold",
@@ -123,6 +124,14 @@ const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strik
     renderKey: "strikethrough",
     name: "Strikethrough",
     icon: Strikethrough,
+    shortcut: ["Cmd", "Shift", "S"],
+    editors: ["lite", "document"],
+  },
+  {
+    itemKey: "link",
+    renderKey: "link",
+    name: "Link",
+    icon: LinkIcon,
     shortcut: ["Cmd", "Shift", "S"],
     editors: ["lite", "document"],
   },

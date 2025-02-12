@@ -1,13 +1,13 @@
 import ImageExt from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
+// extensions
+import { CustomImageNode } from "@/extensions";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // plugins
 import { ImageExtensionStorage, TrackImageDeletionPlugin, TrackImageRestorationPlugin } from "@/plugins/image";
 // types
 import { TFileHandler } from "@/types";
-// extensions
-import { CustomImageNode } from "@/extensions";
 
 export const ImageExtension = (fileHandler: TFileHandler) => {
   const {

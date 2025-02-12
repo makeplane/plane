@@ -28,6 +28,7 @@ import {
   insertHorizontalRule,
   insertImage,
   insertTableCommand,
+  setLinkEditor,
   setText,
   setTextAlign,
   toggleBackgroundColor,
@@ -47,9 +48,14 @@ import {
   toggleTaskList,
   toggleTextColor,
   toggleUnderline,
+  unsetLinkEditor,
 } from "@/helpers/editor-commands";
 // types
 import { TCommandWithProps, TEditorCommands } from "@/types";
+import { TextSelection } from "@tiptap/pm/state";
+import { ResolvedPos } from "@tiptap/pm/model";
+import { CustomLinkStorage } from "@/extensions";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
 type isActiveFunction<T extends TEditorCommands> = (params?: TCommandWithProps<T>) => boolean;
 type commandFunction<T extends TEditorCommands> = (params?: TCommandWithProps<T>) => void;
@@ -223,6 +229,74 @@ export const TextColorItem = (editor: Editor): EditorMenuItem<"text-color"> => (
   icon: Palette,
 });
 
+export const LinkItem = (editor: Editor): EditorMenuItem<"link"> =>
+  ({
+    key: "link",
+    name: "Link",
+    isActive: () => editor?.isActive("link"),
+    command: ({ url, text }) => {
+      // create selection on the current word
+      const { empty } = editor.state.selection;
+      let position: { from: number; to: number };
+      if (empty) {
+        position = selectCurrentWord(editor);
+      } else {
+        position = { from: editor.state.selection.from, to: editor.state.selection.to };
+      }
+      if (!position) return;
+      const { from, to } = position;
+
+      const editorLinkStorage = getExtensionStorage(editor, "link");
+      editorLinkStorage.isPreviewOpen = true;
+      editorLinkStorage.posToInsert = { from, to };
+
+      setLinkEditor(editor, url, text);
+    },
+    icon: MinusSquare,
+  }) as const;
+
+const selectCurrentWord = (editor: Editor) => {
+  // Get current selection
+  const { $from } = editor.state.selection;
+
+  // Get the current text block
+  const textBlock = $from.parent;
+
+  // Get the position within the current node
+  const posInNode = $from.parentOffset;
+
+  // Get the text content
+  const text = textBlock.textContent;
+
+  // If we're on a space, return early
+  if (text[posInNode] === " ") {
+    return { to: posInNode, from: posInNode };
+  }
+
+  // Find word boundaries
+  let start = posInNode;
+  let end = posInNode;
+
+  // Move start backwards until we hit a space or start of text
+  while (start > 0 && text[start - 1] !== " ") {
+    start--;
+  }
+
+  // Move end forwards until we hit a space or end of text
+  while (end < text.length && text[end] !== " ") {
+    end++;
+  }
+
+  // Calculate absolute positions
+  const from = $from.start() + start;
+  const to = $from.start() + end;
+
+  // Set the text selection
+  editor.commands.setTextSelection({ from, to });
+
+  return { from, to };
+};
+
 export const BackgroundColorItem = (editor: Editor): EditorMenuItem<"background-color"> => ({
   key: "background-color",
   name: "Background color",
@@ -265,5 +339,6 @@ export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem<TEdito
     TextColorItem(editor),
     BackgroundColorItem(editor),
     TextAlignItem(editor),
+    LinkItem(editor),
   ];
 };
