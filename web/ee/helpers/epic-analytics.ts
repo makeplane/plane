@@ -1,1 +1,7 @@
-export * from "ce/helpers/epic-analytics";
+import { useIssueTypes } from "../hooks/store";
+
+export const updateEpicAnalytics = () => {
+  const { updateEpicAnalytics: updateAnalytics } = useIssueTypes();
+
+  return { updateAnalytics };
+};
