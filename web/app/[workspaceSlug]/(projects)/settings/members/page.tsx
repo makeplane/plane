@@ -12,14 +12,17 @@ import { IWorkspaceBulkInviteFormData } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
+import { CountChip } from "@/components/common";
 import { PageHead } from "@/components/core";
-import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "@/components/workspace";
-// constants
+import { WorkspaceMembersList } from "@/components/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker, useMember, useUserPermissions, useWorkspace } from "@/hooks/store";
+// plane web components
+import { BillingActionsButton } from "@/plane-web/components/workspace/billing";
+import { SendWorkspaceInvitationModal } from "@/plane-web/components/workspace/members";
 
 const WorkspaceMembersSettingsPage = observer(() => {
   // states
@@ -31,7 +34,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { captureEvent } = useEventTracker();
   const {
-    workspace: { inviteMembersToWorkspace },
+    workspace: { workspaceMemberIds, inviteMembersToWorkspace },
   } = useMember();
   const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
@@ -83,6 +86,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           title: "Error!",
           message: `${err.error ?? t("something_went_wrong_please_try_again")}`,
         });
+        throw err;
       });
   };
 
@@ -107,8 +111,13 @@ const WorkspaceMembersSettingsPage = observer(() => {
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >
-        <div className="flex justify-between gap-4 pb-3.5 items-start	">
-          <h4 className="text-xl font-medium">{t("workspace_settings.settings.members.title")}</h4>
+        <div className="flex justify-between gap-4 pb-3.5 items-start">
+          <h4 className="flex items-center gap-2.5 text-xl font-medium">
+            {t("workspace_settings.settings.members.title")}
+            {workspaceMemberIds && workspaceMemberIds.length > 0 && (
+              <CountChip count={workspaceMemberIds.length} className="h-5 m-auto" />
+            )}
+          </h4>
           <div className="ml-auto flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
             <Search className="h-3.5 w-3.5 text-custom-text-400" />
             <input
@@ -124,6 +133,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
               {t("workspace_settings.settings.members.add_member")}
             </Button>
           )}
+          <BillingActionsButton canPerformWorkspaceAdminActions={canPerformWorkspaceAdminActions} />
         </div>
         <WorkspaceMembersList searchQuery={searchQuery} isAdmin={canPerformWorkspaceAdminActions} />
       </section>
