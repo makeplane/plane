@@ -35,7 +35,9 @@ class LabelViewSet(BaseViewSet):
             .order_by("sort_order")
         )
 
-    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
+    @invalidate_cache(
+        path="/api/workspaces/:slug/labels/", url_params=True, user=False, multiple=True
+    )
     @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
         try:

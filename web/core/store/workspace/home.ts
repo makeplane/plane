@@ -7,10 +7,12 @@ import { IWorkspaceLinkStore, WorkspaceLinkStore } from "./link.store";
 
 export interface IHomeStore {
   // observables
+  loading: boolean;
   showWidgetSettings: boolean;
   widgetsMap: Record<string, TWidgetEntityData>;
   widgets: THomeWidgetKeys[];
   // computed
+  isAnyWidgetEnabled: boolean;
   orderedWidgets: THomeWidgetKeys[];
   //stores
   quickLinks: IWorkspaceLinkStore;
@@ -24,6 +26,7 @@ export interface IHomeStore {
 export class HomeStore implements IHomeStore {
   // observables
   showWidgetSettings = false;
+  loading = false;
   widgetsMap: Record<string, TWidgetEntityData> = {};
   widgets: THomeWidgetKeys[] = [];
   // stores
@@ -34,10 +37,12 @@ export class HomeStore implements IHomeStore {
   constructor() {
     makeObservable(this, {
       // observables
+      loading: observable,
       showWidgetSettings: observable,
       widgetsMap: observable,
       widgets: observable,
       // computed
+      isAnyWidgetEnabled: computed,
       orderedWidgets: computed,
       // actions
       toggleWidgetSettings: action,
@@ -52,6 +57,10 @@ export class HomeStore implements IHomeStore {
     this.quickLinks = new WorkspaceLinkStore();
   }
 
+  get isAnyWidgetEnabled() {
+    return Object.values(this.widgetsMap).some((widget) => widget.is_enabled);
+  }
+
   get orderedWidgets() {
     return orderBy(Object.values(this.widgetsMap), "sort_order", "desc").map((widget) => widget.key);
   }
@@ -62,15 +71,18 @@ export class HomeStore implements IHomeStore {
 
   fetchWidgets = async (workspaceSlug: string) => {
     try {
+      this.loading = true;
       const widgets = await this.workspaceService.fetchWorkspaceWidgets(workspaceSlug);
       runInAction(() => {
         this.widgets = orderBy(Object.values(widgets), "sort_order", "desc").map((widget) => widget.key);
         widgets.forEach((widget) => {
           this.widgetsMap[widget.key] = widget;
         });
+        this.loading = false;
       });
     } catch (error) {
       console.error("Failed to fetch widgets");
+      this.loading = false;
       throw error;
     }
   };

@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
+// plane imports
+import { I_THEME_OPTION, THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IUserTheme } from "@plane/types";
 import { setPromiseToast } from "@plane/ui";
@@ -11,7 +13,6 @@ import { LogoSpinner } from "@/components/common";
 import { CustomThemeSelector, ThemeSwitch, PageHead } from "@/components/core";
 import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
 // constants
-import { I_THEME_OPTION, THEME_OPTIONS } from "@/constants/themes";
 // helpers
 import { applyTheme, unsetCustomCssVariables } from "@/helpers/theme.helper";
 // hooks

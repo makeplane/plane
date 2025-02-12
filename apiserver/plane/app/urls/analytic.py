@@ -7,6 +7,7 @@ from plane.app.views import (
     SavedAnalyticEndpoint,
     ExportAnalyticsEndpoint,
     DefaultAnalyticsEndpoint,
+    ProjectStatsEndpoint,
 )
 
 
@@ -42,5 +43,10 @@ urlpatterns = [
         "workspaces/<str:slug>/default-analytics/",
         DefaultAnalyticsEndpoint.as_view(),
         name="default-analytics",
+    ),
+    path(
+        "workspaces/<str:slug>/project-stats/",
+        ProjectStatsEndpoint.as_view(),
+        name="project-analytics",
     ),
 ]

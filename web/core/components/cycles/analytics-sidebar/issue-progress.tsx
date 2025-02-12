@@ -8,6 +8,7 @@ import { useSearchParams } from "next/navigation";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ICycle, IIssueFilterOptions, TCyclePlotType, TProgressSnapshot } from "@plane/types";
 // components
 import { CycleProgressStats } from "@/components/cycles";
@@ -30,7 +31,7 @@ type Options = {
 };
 
 export const cycleEstimateOptions: Options[] = [
-  { value: "issues", label: "Issues" },
+  { value: "issues", label: "Work items" },
   { value: "points", label: "Points" },
 ];
 export const cycleChartOptions: Options[] = [
@@ -63,6 +64,7 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.CYCLE);
+  const { t } = useTranslation();
 
   // derived values
   const cycleDetails = validateCycleSnapshot(getCycleById(cycleId));
@@ -138,7 +140,9 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
             {isCycleDateValid ? (
               <div className="relative w-full flex justify-between items-center gap-2">
                 <Disclosure.Button className="relative flex items-center gap-2 w-full">
-                  <div className="font-medium text-custom-text-200 text-sm">Progress</div>
+                  <div className="font-medium text-custom-text-200 text-sm">
+                    {t("project_cycles.active_cycle.progress")}
+                  </div>
                 </Disclosure.Button>
                 <Disclosure.Button className="ml-auto">
                   {open ? (
@@ -150,7 +154,9 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
               </div>
             ) : (
               <div className="relative w-full flex justify-between items-center gap-2">
-                <div className="font-medium text-custom-text-200 text-sm">Progress</div>
+                <div className="font-medium text-custom-text-200 text-sm">
+                  {t("project_cycles.active_cycle.progress")}
+                </div>
               </div>
             )}
 

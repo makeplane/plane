@@ -2,10 +2,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
 import useSWR from "swr";
+import { PRODUCT_TOUR_COMPLETED } from "@plane/constants";
 import { ContentWrapper } from "@plane/ui";
 import { TourRoot } from "@/components/onboarding";
 // constants
-import { PRODUCT_TOUR_COMPLETED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -59,12 +59,11 @@ export const WorkspaceHomeView = observer(() => {
       <>
         <IssuePeekOverview />
         <ContentWrapper
-          className={cn("gap-7 bg-custom-background-90/20", {
+          className={cn("gap-6 bg-custom-background-90/20", {
             "vertical-scrollbar scrollbar-lg": windowWidth >= 768,
           })}
         >
           {currentUser && <UserGreetingsView user={currentUser} handleWidgetModal={() => toggleWidgetSettings(true)} />}
-
           <DashboardWidgets />
         </ContentWrapper>
       </>

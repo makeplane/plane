@@ -8,12 +8,14 @@ export type TPagesPersonalizationConfig = {
   full_width: boolean;
   font_size: TEditorFontSize;
   font_style: TEditorFontStyle;
+  sticky_toolbar: boolean;
 };
 
 const DEFAULT_PERSONALIZATION_VALUES: TPagesPersonalizationConfig = {
   full_width: false,
   font_size: "large-font",
   font_style: "sans-serif",
+  sticky_toolbar: true,
 };
 
 export const usePageFilters = () => {
@@ -23,7 +25,17 @@ export const usePageFilters = () => {
     DEFAULT_PERSONALIZATION_VALUES
   );
   // stored values
-  const isFullWidth = useMemo(() => !!pagesConfig?.full_width, [pagesConfig?.full_width]);
+  const isFullWidth = useMemo(
+    () => (pagesConfig?.full_width === undefined ? DEFAULT_PERSONALIZATION_VALUES.full_width : pagesConfig?.full_width),
+    [pagesConfig?.full_width]
+  );
+  const isStickyToolbarEnabled = useMemo(
+    () =>
+      pagesConfig?.sticky_toolbar === undefined
+        ? DEFAULT_PERSONALIZATION_VALUES.sticky_toolbar
+        : pagesConfig?.sticky_toolbar,
+    [pagesConfig?.sticky_toolbar]
+  );
   const fontSize = useMemo(
     () => pagesConfig?.font_size ?? DEFAULT_PERSONALIZATION_VALUES.font_size,
     [pagesConfig?.font_size]
@@ -78,6 +90,18 @@ export const usePageFilters = () => {
     },
     [handleUpdateConfig]
   );
+  /**
+   * @description action to update full_width value
+   * @param {boolean} value
+   */
+  const handleStickyToolbar = useCallback(
+    (value: boolean) => {
+      handleUpdateConfig({
+        sticky_toolbar: value,
+      });
+    },
+    [handleUpdateConfig]
+  );
 
   return {
     fontSize,
@@ -86,5 +110,7 @@ export const usePageFilters = () => {
     handleFontStyle,
     isFullWidth,
     handleFullWidth,
+    isStickyToolbarEnabled,
+    handleStickyToolbar,
   };
 };

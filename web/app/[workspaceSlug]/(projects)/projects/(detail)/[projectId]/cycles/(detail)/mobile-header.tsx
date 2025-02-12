@@ -5,32 +5,42 @@ import { useParams } from "next/navigation";
 // icons
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
 // plane constants
-import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import {
+  EIssueLayoutTypes,
+  EIssueFilterType,
+  EIssuesStoreType,
+  ISSUE_LAYOUTS,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
+} from "@plane/constants";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "@/constants/issue";
+import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, IssueLayoutIcon } from "@/components/issues";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useCycle, useProjectState, useLabel, useMember, useProject } from "@/hooks/store";
 
 export const CycleIssuesMobileHeader = () => {
+  // i18n
+  const { t } = useTranslation();
+
   const [analyticsModal, setAnalyticsModal] = useState(false);
   const { getCycleById } = useCycle();
   const layouts = [
-    { key: "list", title: "List", icon: List },
-    { key: "kanban", title: "Board", icon: Kanban },
-    { key: "calendar", title: "Calendar", icon: Calendar },
+    { key: "list", titleTranslationKey: "issue.layouts.list", icon: List },
+    { key: "kanban", titleTranslationKey: "issue.layouts.kanban", icon: Kanban },
+    { key: "calendar", titleTranslationKey: "issue.layouts.calendar", icon: Calendar },
   ];
 
   const { workspaceSlug, projectId, cycleId } = useParams();
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
+
   // store hooks
   const { currentProjectDetails } = useProject();
   const {
@@ -123,7 +133,9 @@ export const CycleIssuesMobileHeader = () => {
           maxHeight={"md"}
           className="flex flex-grow justify-center text-custom-text-200 text-sm"
           placement="bottom-start"
-          customButton={<span className="flex flex-grow justify-center text-custom-text-200 text-sm">Layout</span>}
+          customButton={
+            <span className="flex flex-grow justify-center text-custom-text-200 text-sm">{t("common.layout")}</span>
+          }
           customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
           closeOnSelect
         >
@@ -135,18 +147,18 @@ export const CycleIssuesMobileHeader = () => {
               }}
               className="flex items-center gap-2"
             >
-              <layout.icon className="w-3 h-3" />
-              <div className="text-custom-text-300">{layout.title}</div>
+              <IssueLayoutIcon layout={ISSUE_LAYOUTS[index].key} className="w-3 h-3" />
+              <div className="text-custom-text-300">{t(layout.titleTranslationKey)}</div>
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
         <div className="flex flex-grow justify-center border-l border-custom-border-200 items-center text-custom-text-200 text-sm">
           <FiltersDropdown
-            title="Filters"
+            title={t("common.filters")}
             placement="bottom-end"
             menuButton={
               <span className="flex items-center text-custom-text-200 text-sm">
-                Filters
+                {t("common.filters")}
                 <ChevronDown className="text-custom-text-200  h-4 w-4 ml-2" />
               </span>
             }
@@ -156,7 +168,7 @@ export const CycleIssuesMobileHeader = () => {
               filters={issueFilters?.filters ?? {}}
               handleFiltersUpdate={handleFiltersUpdate}
               layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
               }
               displayFilters={issueFilters?.displayFilters ?? {}}
               handleDisplayFiltersUpdate={handleDisplayFilters}
@@ -170,18 +182,18 @@ export const CycleIssuesMobileHeader = () => {
         </div>
         <div className="flex flex-grow justify-center border-l border-custom-border-200 items-center text-custom-text-200 text-sm">
           <FiltersDropdown
-            title="Display"
+            title={t("common.display")}
             placement="bottom-end"
             menuButton={
               <span className="flex items-center text-custom-text-200 text-sm">
-                Display
+                {t("common.display")}
                 <ChevronDown className="text-custom-text-200 h-4 w-4 ml-2" />
               </span>
             }
           >
             <DisplayFiltersSelection
               layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
               }
               displayFilters={issueFilters?.displayFilters ?? {}}
               handleDisplayFiltersUpdate={handleDisplayFilters}
@@ -198,7 +210,7 @@ export const CycleIssuesMobileHeader = () => {
           onClick={() => setAnalyticsModal(true)}
           className="flex flex-grow justify-center text-custom-text-200 text-sm border-l border-custom-border-200"
         >
-          Analytics
+          {t("common.analytics")}
         </span>
       </div>
     </>

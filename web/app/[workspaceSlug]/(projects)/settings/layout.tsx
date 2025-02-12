@@ -3,12 +3,12 @@
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 // components
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { AppHeader } from "@/components/core";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // local components
 import { WorkspaceSettingHeader } from "./header";
 import { MobileWorkspaceSettingsTabs } from "./mobile-header-tabs";

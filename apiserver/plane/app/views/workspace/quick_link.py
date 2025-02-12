@@ -21,7 +21,7 @@ class QuickLinkViewSet(BaseViewSet):
         serializer = WorkspaceUserLinkSerializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save(workspace_id=workspace.id, owner=request.user)
+            serializer.save(workspace_id=workspace.id, owner_id=request.user.id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

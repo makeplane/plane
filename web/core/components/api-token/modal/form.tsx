@@ -5,6 +5,7 @@ import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
 import { Calendar } from "lucide-react";
 // types
+import { useTranslation } from "@plane/i18n";
 import { IApiToken } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, TextArea, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
@@ -76,6 +77,8 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
     reset,
     watch,
   } = useForm<IApiToken>({ defaultValues });
+  // hooks
+  const { t } = useTranslation();
 
   const handleFormSubmit = async (data: IApiToken) => {
     // if never expires is toggled off, and the user has not selected a custom date or a predefined date, show an error
@@ -115,19 +118,21 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">Create token</h3>
+        <h3 className="text-xl font-medium text-custom-text-200">
+          {t("workspace_settings.settings.api_tokens.create_token")}
+        </h3>
         <div className="space-y-3">
           <div className="space-y-1">
             <Controller
               control={control}
               name="label"
               rules={{
-                required: "Title is required",
+                required: t("title_is_required"),
                 maxLength: {
                   value: 255,
-                  message: "Title should be less than 255 characters",
+                  message: t("title_should_be_less_than_255_characters"),
                 },
-                validate: (val) => val.trim() !== "" || "Title is required",
+                validate: (val) => val.trim() !== "" || t("title_is_required"),
               }}
               render={({ field: { value, onChange } }) => (
                 <Input
@@ -135,7 +140,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                   value={value}
                   onChange={onChange}
                   hasError={Boolean(errors.label)}
-                  placeholder="Title"
+                  placeholder={t("title")}
                   className="w-full text-base"
                 />
               )}
@@ -150,7 +155,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                 value={value}
                 onChange={onChange}
                 hasError={Boolean(errors.description)}
-                placeholder="Description"
+                placeholder={t("description")}
                 className="w-full text-base resize-none min-h-24"
               />
             )}
@@ -229,14 +234,16 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
           <div className="flex cursor-pointer items-center justify-center">
             <ToggleSwitch value={neverExpires} onChange={() => {}} size="sm" />
           </div>
-          <span className="text-xs">Never expires</span>
+          <span className="text-xs">{t("workspace_settings.settings.api_tokens.never_expires")}</span>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-            Cancel
+            {t("cancel")}
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-            {isSubmitting ? "Generating" : "Generate token"}
+            {isSubmitting
+              ? t("workspace_settings.settings.api_tokens.generating")
+              : t("workspace_settings.settings.api_tokens.generate_token")}
           </Button>
         </div>
       </div>

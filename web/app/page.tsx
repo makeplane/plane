@@ -7,10 +7,11 @@ import Link from "next/link";
 // ui
 import { useTheme } from "next-themes";
 // components
+import { NAVIGATE_TO_SIGNUP } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { AuthRoot } from "@/components/account";
 import { PageHead } from "@/components/core";
 // constants
-import { NAVIGATE_TO_SIGNUP } from "@/constants/event-tracker";
 // helpers
 import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
 // hooks
@@ -27,6 +28,8 @@ import WhiteHorizontalLogo from "@/public/plane-logos/white-horizontal-with-blue
 
 const HomePage = observer(() => {
   const { resolvedTheme } = useTheme();
+  // plane hooks
+  const { t } = useTranslation();
   // hooks
   const { captureEvent } = useEventTracker();
 
@@ -37,7 +40,7 @@ const HomePage = observer(() => {
       <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>
         <>
           <div className="relative w-screen h-screen overflow-hidden">
-            <PageHead title="Log in - Plane" />
+            <PageHead title={t("auth.common.login") + " - Plane"} />
             <div className="absolute inset-0 z-0">
               <Image
                 src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
@@ -53,13 +56,13 @@ const HomePage = observer(() => {
                   </Link>
                 </div>
                 <div className="flex flex-col items-end sm:items-center sm:gap-2 sm:flex-row text-center text-sm font-medium text-onboarding-text-300">
-                  New to Plane?{" "}
+                  {t("auth.common.new_to_plane")}
                   <Link
                     href="/sign-up"
                     onClick={() => captureEvent(NAVIGATE_TO_SIGNUP, {})}
                     className="font-semibold text-custom-primary-100 hover:underline"
                   >
-                    Create an account
+                    {t("auth.common.create_account")}
                   </Link>
                 </div>
               </div>

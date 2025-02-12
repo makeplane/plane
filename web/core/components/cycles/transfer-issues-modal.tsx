@@ -41,7 +41,7 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Issues have been transferred successfully",
+          message: "Work items have been transferred successfully",
         });
         await getCycleDetails(payload.new_cycle_id);
       })
@@ -49,7 +49,7 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Unable to transfer Issues. Please try again.",
+          message: "Unable to transfer work items. Please try again.",
         });
       });
   };
@@ -114,7 +114,7 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
                   <div className="flex items-center justify-between px-5">
                     <div className="flex items-center gap-1">
                       <TransferIcon className="w-5 fill-custom-text-100" />
-                      <h4 className="text-xl font-medium text-custom-text-100">Transfer Issues</h4>
+                      <h4 className="text-xl font-medium text-custom-text-100">Transfer work items</h4>
                     </div>
                     <button onClick={handleClose}>
                       <X className="h-4 w-4" />
@@ -164,7 +164,7 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
                         <div className="flex w-full items-center justify-center gap-4 p-5 text-sm">
                           <AlertCircle className="h-3.5 w-3.5 text-custom-text-200" />
                           <span className="text-center text-custom-text-200">
-                            You don’t have any current cycle. Please create one to transfer the issues.
+                            You don’t have any current cycle. Please create one to transfer the work items.
                           </span>
                         </div>
                       )

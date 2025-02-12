@@ -79,16 +79,16 @@ const SecurityPage = observer(() => {
       setShowPassword(defaultShowPassword);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: t("success"),
-        message: t("password_changed_successfully"),
+        title: t("auth.common.password.toast.change_password.success.title"),
+        message: t("auth.common.password.toast.change_password.success.message"),
       });
     } catch (err: any) {
       const errorInfo = authErrorHandler(err.error_code?.toString());
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: errorInfo?.title ?? "Error!",
+        title: errorInfo?.title ?? t("auth.common.password.toast.error.title"),
         message:
-          typeof errorInfo?.message === "string" ? errorInfo.message : t("something_went_wrong_please_try_again"),
+          typeof errorInfo?.message === "string" ? errorInfo.message : t("auth.common.password.toast.error.message"),
       });
     }
   };
@@ -112,17 +112,17 @@ const SecurityPage = observer(() => {
     <>
       <PageHead title="Profile - Security" />
       <ProfileSettingContentWrapper>
-        <ProfileSettingContentHeader title={t("change_password")} />
+        <ProfileSettingContentHeader title={t("auth.common.password.change_password.label.default")} />
         <form onSubmit={handleSubmit(handleChangePassword)} className="flex flex-col gap-8 py-6">
           <div className="flex flex-col gap-10 w-full max-w-96">
             <div className="space-y-1">
-              <h4 className="text-sm">{t("current_password")}</h4>
+              <h4 className="text-sm">{t("auth.common.password.current_password.label")}</h4>
               <div className="relative flex items-center rounded-md">
                 <Controller
                   control={control}
                   name="old_password"
                   rules={{
-                    required: t("this_field_is_required"),
+                    required: t("common.errors.required"),
                   }}
                   render={({ field: { value, onChange } }) => (
                     <Input
@@ -151,20 +151,20 @@ const SecurityPage = observer(() => {
               {errors.old_password && <span className="text-xs text-red-500">{errors.old_password.message}</span>}
             </div>
             <div className="space-y-1">
-              <h4 className="text-sm">{t("new_password")}</h4>
+              <h4 className="text-sm">{t("auth.common.password.new_password.label")}</h4>
               <div className="relative flex items-center rounded-md">
                 <Controller
                   control={control}
                   name="new_password"
                   rules={{
-                    required: t("this_field_is_required"),
+                    required: t("common.errors.required"),
                   }}
                   render={({ field: { value, onChange } }) => (
                     <Input
                       id="new_password"
                       type={showPassword?.password ? "text" : "password"}
                       value={value}
-                      placeholder={t("new_password")}
+                      placeholder={t("auth.common.password.new_password.placeholder")}
                       onChange={onChange}
                       className="w-full"
                       hasError={Boolean(errors.new_password)}
@@ -191,19 +191,19 @@ const SecurityPage = observer(() => {
               )}
             </div>
             <div className="space-y-1">
-              <h4 className="text-sm">{t("confirm_password")}</h4>
+              <h4 className="text-sm">{t("auth.common.password.confirm_password.label")}</h4>
               <div className="relative flex items-center rounded-md">
                 <Controller
                   control={control}
                   name="confirm_password"
                   rules={{
-                    required: t("this_field_is_required"),
+                    required: t("common.errors.required"),
                   }}
                   render={({ field: { value, onChange } }) => (
                     <Input
                       id="confirm_password"
                       type={showPassword?.confirmPassword ? "text" : "password"}
-                      placeholder={t("confirm_password")}
+                      placeholder={t("auth.common.password.confirm_password.placeholder")}
                       value={value}
                       onChange={onChange}
                       className="w-full"
@@ -226,14 +226,16 @@ const SecurityPage = observer(() => {
                 )}
               </div>
               {!!confirmPassword && password !== confirmPassword && renderPasswordMatchError && (
-                <span className="text-sm text-red-500">{t("passwords_dont_match")}</span>
+                <span className="text-sm text-red-500">{t("auth.common.password.errors.match")}</span>
               )}
             </div>
           </div>
 
           <div className="flex items-center justify-between py-2">
             <Button variant="primary" type="submit" loading={isSubmitting} disabled={isButtonDisabled}>
-              {isSubmitting ? `${t("changing_password")}...` : t("change_password")}
+              {isSubmitting
+                ? `${t("auth.common.password.change_password.label.submitting")}`
+                : t("auth.common.password.change_password.label.default")}
             </Button>
           </div>
         </form>

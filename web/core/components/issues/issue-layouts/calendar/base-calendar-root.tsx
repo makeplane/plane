@@ -3,7 +3,7 @@
 import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EIssueGroupByToServerOptions, EIssuesStoreType } from "@plane/constants";
+import { EIssueGroupByToServerOptions, EIssuesStoreType,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TGroupedIssues } from "@plane/types";
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";
@@ -13,7 +13,6 @@ import { CalendarChart } from "@/components/issues";
 import { useIssues, useCalendarView, useUserPermissions } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 import { handleDragDrop } from "./utils";

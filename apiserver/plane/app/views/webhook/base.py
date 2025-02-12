@@ -120,7 +120,7 @@ class WebhookLogsEndpoint(BaseAPIView):
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def get(self, request, slug, webhook_id):
         webhook_logs = WebhookLog.objects.filter(
-            workspace__slug=slug, webhook_id=webhook_id
+            workspace__slug=slug, webhook=webhook_id
         )
         serializer = WebhookLogSerializer(webhook_logs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

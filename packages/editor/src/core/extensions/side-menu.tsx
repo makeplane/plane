@@ -134,10 +134,6 @@ const SideMenu = (options: SideMenuPluginProps) => {
             rect.left -= 8;
           }
 
-          if (node.parentElement?.matches("td") || node.parentElement?.matches("th")) {
-            rect.left += 8;
-          }
-
           rect.width = options.dragHandleWidth;
 
           if (!editorSideMenu) return;

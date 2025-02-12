@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
 import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // components
 import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
 // helpers
@@ -34,6 +36,7 @@ interface LiteTextEditorWrapperProps
 }
 
 export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
+  const { t } = useTranslation();
   const {
     containerClassName,
     workspaceSlug,
@@ -46,7 +49,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     showSubmitButton = true,
     isSubmitting = false,
     showToolbarInitially = true,
-    placeholder = "Add comment...",
+    placeholder = t("issue.comments.placeholder"),
     uploadFile,
     ...rest
   } = props;

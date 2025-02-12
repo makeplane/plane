@@ -7,6 +7,8 @@ import { useParams } from "next/navigation";
 import { PlusIcon } from "lucide-react";
 // plane constants
 import { EIssueLayoutTypes } from "@plane/constants";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
@@ -29,6 +31,7 @@ type TCalendarQuickAddIssueActions = {
 
 export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = observer((props) => {
   const { prePopulatedData, quickAddCallback, addIssuesToView, onOpen, isEpic = false } = props;
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId, moduleId } = useParams();
   // states
@@ -52,14 +55,14 @@ export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = o
     ).then(() => addIssuesToView?.(issueIds));
 
     setPromiseToast(addExistingIssuesPromise, {
-      loading: `Adding ${issueIds.length > 1 ? "issues" : "issue"} to cycle...`,
+      loading: t("issue.adding", { count: issueIds.length }),
       success: {
-        title: "Success!",
-        message: () => `${issueIds.length > 1 ? "Issues" : "Issue"} added to cycle successfully.`,
+        title: t("toast.success"),
+        message: () => t("entity.add.success", { entity: t("issue.label", { count: 2 }) }),
       },
       error: {
-        title: "Error!",
-        message: (err) => err?.message || "Something went wrong. Please try again.",
+        title: t("toast.error"),
+        message: (err) => err?.message || t("common.errors.default.message"),
       },
     });
   };
@@ -119,12 +122,18 @@ export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = o
               customButton={
                 <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-text-350 hover:text-custom-text-300">
                   <PlusIcon className="h-3.5 w-3.5 stroke-2 flex-shrink-0" />
-                  <span className="text-sm font-medium flex-shrink-0">{`New ${isEpic ? "Epic" : "Issue"}`}</span>
+                  <span className="text-sm font-medium flex-shrink-0">
+                    {isEpic ? t("epic.add.label") : t("issue.add.label")}
+                  </span>
                 </div>
               }
             >
-              <CustomMenu.MenuItem onClick={handleNewIssue}>{`New ${isEpic ? "Epic" : "Issue"}`}</CustomMenu.MenuItem>
-              {!isEpic && <CustomMenu.MenuItem onClick={handleExistingIssue}>Add existing issue</CustomMenu.MenuItem>}
+              <CustomMenu.MenuItem onClick={handleNewIssue}>
+                {isEpic ? t("epic.add.label") : t("issue.add.label")}
+              </CustomMenu.MenuItem>
+              {!isEpic && (
+                <CustomMenu.MenuItem onClick={handleExistingIssue}>{t("issue.add.existing")}</CustomMenu.MenuItem>
+              )}
             </CustomMenu>
           </div>
         }

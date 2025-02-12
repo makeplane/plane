@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 
 interface IContentOverflowWrapper {
@@ -9,6 +10,7 @@ interface IContentOverflowWrapper {
   buttonClassName?: string;
   containerClassName?: string;
   fallback?: ReactNode;
+  customButton?: ReactNode;
 }
 
 export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) => {
@@ -18,6 +20,7 @@ export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) 
     buttonClassName = "text-sm font-medium text-custom-primary-100",
     containerClassName,
     fallback = null,
+    customButton,
   } = props;
 
   // states
@@ -28,6 +31,9 @@ export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) 
   // refs
   const contentRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // hooks
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!contentRef?.current) return;
@@ -131,16 +137,18 @@ export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) 
             pointerEvents: isTransitioning ? "none" : "auto",
           }}
         >
-          <button
-            className={cn(
-              "gap-1 w-full text-custom-primary-100 text-sm font-medium transition-opacity duration-300",
-              buttonClassName
-            )}
-            onClick={handleToggle}
-            disabled={isTransitioning}
-          >
-            {showAll ? "Show less" : "Show all"}
-          </button>
+          {customButton || (
+            <button
+              className={cn(
+                "gap-1 w-full text-custom-primary-100 text-sm font-medium transition-opacity duration-300",
+                buttonClassName
+              )}
+              onClick={handleToggle}
+              disabled={isTransitioning}
+            >
+              {showAll ? t("show_less") : t("show_all")}
+            </button>
+          )}
         </div>
       )}
     </div>

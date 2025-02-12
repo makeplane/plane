@@ -28,7 +28,7 @@ from plane.db.models import (
     Workspace,
     UserFavorite,
 )
-from plane.bgtasks.webhook_task import model_activity
+from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from .base import BaseAPIView
 
 
@@ -326,6 +326,19 @@ class ProjectAPIEndpoint(BaseAPIView):
             entity_type="project", entity_identifier=pk, project_id=pk
         ).delete()
         project.delete()
+        webhook_activity.delay(
+            event="project",
+            verb="deleted",
+            field=None,
+            old_value=None,
+            new_value=None,
+            actor_id=request.user.id,
+            slug=slug,
+            current_site=request.META.get("HTTP_ORIGIN"),
+            event_id=project.id,
+            old_identifier=None,
+            new_identifier=None,
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

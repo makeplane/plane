@@ -1,34 +1,54 @@
 "use client";
 
-import { FC, useRef, useState } from "react";
+import { FC, useCallback, useRef, useState } from "react";
+import { debounce } from "lodash";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { Search, X } from "lucide-react";
 // plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@/helpers/common.helper";
 import { useSticky } from "@/hooks/use-stickies";
 
 export const StickySearch: FC = observer(() => {
+  // router
+  const { workspaceSlug } = useParams();
   // hooks
-  const { searchQuery, updateSearchQuery } = useSticky();
+  const { searchQuery, updateSearchQuery, fetchWorkspaceStickies } = useSticky();
+  const { t } = useTranslation();
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
-      if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
-      else setIsSearchOpen(false);
+      if (searchQuery && searchQuery.trim() !== "") {
+        updateSearchQuery("");
+        fetchStickies();
+      } else setIsSearchOpen(false);
     }
   };
 
+  const fetchStickies = async () => {
+    await fetchWorkspaceStickies(workspaceSlug.toString());
+  };
+
+  const debouncedSearch = useCallback(
+    debounce(async () => {
+      await fetchStickies();
+    }, 500),
+    [fetchWorkspaceStickies]
+  );
+
   return (
-    <div className="flex items-center mr-2">
+    <div className="flex items-center mr-2 my-auto">
       {!isSearchOpen && (
         <button
           type="button"
@@ -53,9 +73,12 @@ export const StickySearch: FC = observer(() => {
         <input
           ref={inputRef}
           className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
-          placeholder="Search by title"
+          placeholder={t("stickies.search_placeholder")}
           value={searchQuery}
-          onChange={(e) => updateSearchQuery(e.target.value)}
+          onChange={(e) => {
+            updateSearchQuery(e.target.value);
+            debouncedSearch();
+          }}
           onKeyDown={handleInputKeyDown}
         />
         {isSearchOpen && (
@@ -65,6 +88,7 @@ export const StickySearch: FC = observer(() => {
             onClick={() => {
               updateSearchQuery("");
               setIsSearchOpen(false);
+              fetchStickies();
             }}
           >
             <X className="h-3 w-3" />

@@ -271,7 +271,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       };
     case "is_issue_type_enabled":
       return {
-        message: <>{getBooleanActionText(newValue)} issue types</>,
+        message: <>{getBooleanActionText(newValue)} work item types</>,
       };
     default:
       return {

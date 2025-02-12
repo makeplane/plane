@@ -13,10 +13,10 @@ export const IssuesByPriorityEmptyState = () => {
   return (
     <div className="text-center space-y-6 flex flex-col items-center">
       <div className="h-24 w-24">
-        <Image src={image} className="w-full h-full" alt="Issues by state group" />
+        <Image src={image} className="w-full h-full" alt="Work items by state group" />
       </div>
       <p className="text-sm font-medium text-custom-text-300">
-        Issues assigned to you, broken down by
+        Work items assigned to you, broken down by
         <br />
         priority will show up here.
       </p>

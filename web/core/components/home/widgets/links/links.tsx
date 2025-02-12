@@ -20,14 +20,14 @@ export const ProjectLinkList: FC<TProjectLinkList> = observer((props) => {
   const { linkOperations, workspaceSlug } = props;
   // hooks
   const {
-    quickLinks: { getLinksByWorkspaceId, toggleLinkModal },
+    quickLinks: { getLinksByWorkspaceId },
   } = useHome();
 
   const links = getLinksByWorkspaceId(workspaceSlug);
 
   if (links === undefined) return <WidgetLoader widgetKey={EWidgetKeys.QUICK_LINKS} />;
 
-  if (links.length === 0) return <LinksEmptyState handleCreate={() => toggleLinkModal(true)} />;
+  if (links.length === 0) return <LinksEmptyState />;
 
   return (
     <div className="relative">
@@ -38,9 +38,9 @@ export const ProjectLinkList: FC<TProjectLinkList> = observer((props) => {
         buttonClassName="bg-custom-background-90/20"
       >
         <div className="flex gap-2 mb-2 flex-wrap flex-1">
-          {links &&
-            links.length > 0 &&
-            links.map((linkId) => <ProjectLinkDetail key={linkId} linkId={linkId} linkOperations={linkOperations} />)}
+          {links.map((linkId) => (
+            <ProjectLinkDetail key={linkId} linkId={linkId} linkOperations={linkOperations} />
+          ))}
         </div>
       </ContentOverflowWrapper>
     </div>

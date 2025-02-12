@@ -11,18 +11,19 @@ import {
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
-
 import { observer } from "mobx-react";
-// plane helpers
 import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
-// ui
+// plane types
+import { useTranslation } from "@plane/i18n";
 import { InstructionType, TWidgetEntityData } from "@plane/types";
-// components
+// plane ui
 import { DropIndicator, ToggleSwitch } from "@plane/ui";
-// helpers
+// plane utils
 import { cn } from "@plane/utils";
+// hooks
 import { useHome } from "@/hooks/store/use-home";
+import { HOME_WIDGETS_LIST } from "../../home-dashboard-widgets";
 import { WidgetItemDragHandle } from "./widget-item-drag-handle";
 import { getCanDrop, getInstructionFromPayload } from "./widget.helpers";
 
@@ -44,8 +45,10 @@ export const WidgetItem: FC<Props> = observer((props) => {
   const elementRef = useRef<HTMLDivElement>(null);
   // hooks
   const { widgetsMap } = useHome();
+  const { t } = useTranslation();
   // derived values
   const widget = widgetsMap[widgetId] as TWidgetEntityData;
+  const widgetTitle = HOME_WIDGETS_LIST[widget.key]?.title;
 
   // drag and drop
   useEffect(() => {
@@ -119,7 +122,7 @@ export const WidgetItem: FC<Props> = observer((props) => {
       <div
         ref={elementRef}
         className={cn(
-          "px-2 relative flex items-center py-2 font-medium text-sm capitalize group/widget-item rounded hover:bg-custom-background-80 justify-between",
+          "px-2 relative flex items-center py-2 font-medium text-sm group/widget-item rounded hover:bg-custom-background-80 justify-between",
           {
             "cursor-grabbing bg-custom-background-80": isDragging,
           }
@@ -127,7 +130,7 @@ export const WidgetItem: FC<Props> = observer((props) => {
       >
         <div className="flex items-center">
           <WidgetItemDragHandle sort_order={widget.sort_order} isDragging={isDragging} />
-          <div>{widget.key.replaceAll("_", " ")}</div>
+          <div>{t(widgetTitle, { count: 1 })}</div>
         </div>
         <ToggleSwitch
           value={widget.is_enabled}
