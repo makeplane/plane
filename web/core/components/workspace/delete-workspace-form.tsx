@@ -6,6 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { AlertTriangle } from "lucide-react";
 // types
 import { WORKSPACE_DELETED } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import type { IWorkspace } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
@@ -32,6 +33,7 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
   // store hooks
   const { captureWorkspaceEvent } = useEventTracker();
   const { deleteWorkspace } = useWorkspace();
+  const { t } = useTranslation();
   // form info
   const {
     control,
@@ -44,12 +46,8 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
   const canDelete = watch("workspaceName") === data?.name && watch("confirmDelete") === "delete my workspace";
 
   const handleClose = () => {
-    const timer = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timer);
-    }, 350);
-
     onClose();
+    reset(defaultValues);
   };
 
   const onSubmit = async () => {
@@ -69,15 +67,15 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Workspace deleted.",
-          message: "You will soon go to your profile page.",
+          title: t("workspace_settings.settings.general.delete_modal.success_title"),
+          message: t("workspace_settings.settings.general.delete_modal.success_message"),
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "That didn't work.",
-          message: "Try again, please.",
+          title: t("workspace_settings.settings.general.delete_modal.error_title"),
+          message: t("workspace_settings.settings.general.delete_modal.error_message"),
         });
         captureWorkspaceEvent({
           eventName: WORKSPACE_DELETED,
@@ -102,7 +100,7 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
         </span>
         <div>
           <div className="text-center sm:text-left">
-            <h3 className="text-lg font-medium"> Are you sure you want to delete this workspace?</h3>
+            <h3 className="text-lg font-medium">{t("workspace_settings.settings.general.delete_modal.title")}</h3>
             <p className="mt-1 text-sm text-custom-text-200">
               You are about to delete the workspace <span className="break-words font-semibold">{data?.name}</span>. If
               you confirm, you will lose access to all your work data in this workspace without any way to restore it.
@@ -162,10 +160,10 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
 
       <div className="flex justify-end gap-2">
         <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-          Cancel
+          {t("cancel")}
         </Button>
         <Button variant="danger" size="sm" type="submit" disabled={!canDelete} loading={isSubmitting}>
-          {isSubmitting ? "Deleting" : "Confirm"}
+          {isSubmitting ? t("deleting") : t("confirm")}
         </Button>
       </div>
     </form>

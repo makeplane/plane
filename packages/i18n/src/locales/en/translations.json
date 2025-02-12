@@ -1253,9 +1253,19 @@
         "company_size": "Company size",
         "url": "Workspace URL",
         "update_workspace": "Update workspace",
-        "delete_workspace": "Delete workspace",
+        "delete_workspace": "Delete this workspace",
         "delete_workspace_description": "When deleting a workspace, all of the data and resources within that workspace will be permanently removed and cannot be recovered.",
-        "delete_btn": "Delete my workspace",
+        "delete_btn": "Delete this workspace",
+        "delete_modal": {
+          "title": "Are you sure you want to delete this workspace?",
+          "description": "You have an active trial to one of our paid plans. Please cancel it first to proceed.",
+          "dismiss": "Dismiss",
+          "cancel": "Cancel trial",
+          "success_title": "Workspace deleted.",
+          "success_message": "You will soon go to your profile page.",
+          "error_title": "That didn't work.",
+          "error_message": "Try again, please."
+        },
         "errors": {
           "name": {
             "required": "Name is required",
