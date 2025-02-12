@@ -520,6 +520,7 @@
     "customize_time_range": "Customize time range",
     "loading": "Loading",
     "attachments": "Attachments",
+    "property": "Property",
     "properties": "Properties",
     "parent": "Parent",
     "remove": "Remove",
@@ -672,7 +673,19 @@
     "disconnect": "Disconnect",
     "disconnecting": "Disconnecting",
     "installing": "Installing",
-    "install": "Install"
+    "install": "Install",
+    "category": "Category",
+    "categories": "Categories",
+    "saving": "Saving",
+    "save_changes": "Save changes",
+    "delete": "Delete",
+    "deleting": "Deleting"
+  },
+
+  "chart": {
+    "x_axis": "X-axis",
+    "y_axis": "Y-axis",
+    "metric": "Metric"
   },
 
   "form": {
