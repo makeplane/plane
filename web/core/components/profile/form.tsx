@@ -3,6 +3,8 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ChevronDown, CircleUserRound } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+// plane imports
+import { USER_ROLES } from "@plane/constants";
 import { useTranslation, SUPPORTED_LANGUAGES } from "@plane/i18n";
 import type { IUser, TUserProfile } from "@plane/types";
 import { Button, CustomSelect, Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
@@ -11,7 +13,6 @@ import { DeactivateAccountModal } from "@/components/account";
 import { ImagePickerPopover, UserImageUploadModal } from "@/components/core";
 import { TimezoneSelect } from "@/components/global";
 // constants
-import { USER_ROLES } from "@/constants/workspace";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
@@ -308,7 +309,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
               </div>
               <div className="flex flex-col gap-1">
                 <h4 className="text-sm font-medium text-custom-text-200">
-                  {t("email")}&nbsp;
+                  {t("auth.common.email.label")}&nbsp;
                   <span className="text-red-500">*</span>
                 </h4>
                 <Controller
@@ -348,15 +349,15 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                     <CustomSelect
                       value={value}
                       onChange={onChange}
-                      label={value ? value.toString() : "Select your role"}
+                      label={value ? t(value) : "Select your role"}
                       buttonClassName={errors.role ? "border-red-500" : "border-none"}
                       className="rounded-md border-[0.5px] !border-custom-border-200"
                       optionsClassName="w-full"
                       input
                     >
                       {USER_ROLES.map((item) => (
-                        <CustomSelect.Option key={item.value} value={item.value}>
-                          {item.label}
+                        <CustomSelect.Option key={item.value} value={item.i18n_label}>
+                          {t(item.i18n_label)}
                         </CustomSelect.Option>
                       ))}
                     </CustomSelect>
@@ -422,7 +423,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
             </div>
             <div className="flex items-center justify-between pt-6 pb-8">
               <Button variant="primary" type="submit" loading={isLoading}>
-                {isLoading ? t("saving...") : t("save_changes")}
+                {isLoading ? t("saving") : t("save_changes")}
               </Button>
             </div>
           </div>

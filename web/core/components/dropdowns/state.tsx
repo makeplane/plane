@@ -141,11 +141,13 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
           className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
           onClick={handleOnClick}
           disabled={disabled}
+          tabIndex={tabIndex}
         >
           {button}
         </button>
       ) : (
         <button
+          tabIndex={tabIndex}
           ref={setReferenceElement}
           type="button"
           className={cn(
@@ -197,7 +199,6 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     <ComboDropDown
       as="div"
       ref={dropdownRef}
-      tabIndex={tabIndex}
       className={cn("h-full", className)}
       value={stateValue}
       onChange={dropdownOnChange}
@@ -222,7 +223,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                 className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search"
+                placeholder={t("common.search.label")}
                 displayValue={(assigned: any) => assigned?.name}
                 onKeyDown={searchInputKeyDown}
               />

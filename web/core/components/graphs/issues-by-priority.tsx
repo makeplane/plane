@@ -1,14 +1,80 @@
 import { ComputedDatum } from "@nivo/bar";
-import { Theme } from "@nivo/core";
+import { Theme, linearGradientDef } from "@nivo/core";
+import { ISSUE_PRIORITIES } from "@plane/constants";
 // components
 import { TIssuePriorities } from "@plane/types";
 import { BarGraph } from "@/components/ui";
 // helpers
-import { PRIORITY_GRAPH_GRADIENTS } from "@/constants/dashboard";
-import { ISSUE_PRIORITIES } from "@/constants/issue";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
-// types
-// constants
+
+// gradients for work items by priority widget graph bars
+export const PRIORITY_GRAPH_GRADIENTS = [
+  linearGradientDef(
+    "gradient_urgent",
+    [
+      { offset: 0, color: "#A90408" },
+      { offset: 100, color: "#DF4D51" },
+    ],
+    {
+      x1: 1,
+      y1: 0,
+      x2: 0,
+      y2: 0,
+    }
+  ),
+  linearGradientDef(
+    "gradient_high",
+    [
+      { offset: 0, color: "#FE6B00" },
+      { offset: 100, color: "#FFAC88" },
+    ],
+    {
+      x1: 1,
+      y1: 0,
+      x2: 0,
+      y2: 0,
+    }
+  ),
+  linearGradientDef(
+    "gradient_medium",
+    [
+      { offset: 0, color: "#F5AC00" },
+      { offset: 100, color: "#FFD675" },
+    ],
+    {
+      x1: 1,
+      y1: 0,
+      x2: 0,
+      y2: 0,
+    }
+  ),
+  linearGradientDef(
+    "gradient_low",
+    [
+      { offset: 0, color: "#1B46DE" },
+      { offset: 100, color: "#4F9BF4" },
+    ],
+    {
+      x1: 1,
+      y1: 0,
+      x2: 0,
+      y2: 0,
+    }
+  ),
+  linearGradientDef(
+    "gradient_none",
+    [
+      { offset: 0, color: "#A0A1A9" },
+      { offset: 100, color: "#B9BBC6" },
+    ],
+    {
+      x1: 1,
+      y1: 0,
+      x2: 0,
+      y2: 0,
+    }
+  ),
+];
 
 type Props = {
   borderRadius?: number;
@@ -73,7 +139,7 @@ export const IssuesByPriorityGraph: React.FC<Props> = (props) => {
         match: {
           id: p.key,
         },
-        id: `gradient${p.title}`,
+        id: `gradient_${p.key}`,
       }))}
       onClick={(datum) => {
         if (onBarClick) onBarClick(datum);

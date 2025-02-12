@@ -91,7 +91,6 @@ class ProjectLiteSerializer(BaseSerializer):
 
 class ProjectListSerializer(DynamicBaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
-    is_member = serializers.BooleanField(read_only=True)
     sort_order = serializers.FloatField(read_only=True)
     member_role = serializers.IntegerField(read_only=True)
     anchor = serializers.CharField(read_only=True)
@@ -120,7 +119,6 @@ class ProjectDetailSerializer(BaseSerializer):
     default_assignee = UserLiteSerializer(read_only=True)
     project_lead = UserLiteSerializer(read_only=True)
     is_favorite = serializers.BooleanField(read_only=True)
-    is_member = serializers.BooleanField(read_only=True)
     sort_order = serializers.FloatField(read_only=True)
     member_role = serializers.IntegerField(read_only=True)
     anchor = serializers.CharField(read_only=True)

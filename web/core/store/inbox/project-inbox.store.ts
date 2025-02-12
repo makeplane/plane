@@ -5,9 +5,8 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
+import { TInboxIssue, TInboxIssueCurrentTab } from "@plane/constants";
 import {
-  TInboxIssue,
-  TInboxIssueCurrentTab,
   TInboxIssueFilter,
   TInboxIssueSorting,
   TInboxIssuePaginationInfo,
@@ -410,7 +409,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       console.error("Error fetching the intake issues", error);
       this.loader = undefined;
       this.error = {
-        message: "Error fetching the intake issues please try again later.",
+        message: "Error fetching the intake work items please try again later.",
         status: "init-error",
       };
       throw error;
@@ -450,7 +449,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
     } catch (error) {
       console.error("Error fetching the intake issues", error);
       this.error = {
-        message: "Error fetching the paginated intake issues please try again later.",
+        message: "Error fetching the paginated intake work items please try again later.",
         status: "pagination-error",
       };
       throw error;

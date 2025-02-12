@@ -3,6 +3,7 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssue, TIssueServiceType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 // components
@@ -29,7 +30,7 @@ type TIssueCrudState = { toggle: boolean; issueId: string | undefined; issue: TI
 
 export type TRelationObject = {
   key: TIssueRelationTypes;
-  label: string;
+  i18n_label: string;
   className: string;
   icon: (size: number) => React.ReactElement;
   placeholder: string;
@@ -37,6 +38,8 @@ export type TRelationObject = {
 
 export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
   const { workspaceSlug, issueId, disabled = false, issueServiceType = EIssueServiceType.ISSUES } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // state
   const [issueCrudState, setIssueCrudState] = useState<{
     update: TIssueCrudState;
@@ -93,7 +96,7 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
         relationKey: relationKey,
         issueIds: issueIds,
         icon: issueRelationOption?.icon,
-        label: issueRelationOption?.label,
+        label: issueRelationOption?.i18n_label ? t(issueRelationOption?.i18n_label) : "",
         className: issueRelationOption?.className,
       };
     });

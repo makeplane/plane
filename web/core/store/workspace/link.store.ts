@@ -93,7 +93,6 @@ export class WorkspaceLinkStore implements IWorkspaceLinkStore {
   };
 
   createLink = async (workspaceSlug: string, data: Partial<TLink>) => {
-    console.log("hereee");
     const response = await this.workspaceService.createWorkspaceLink(workspaceSlug, data);
 
     runInAction(() => {

@@ -141,7 +141,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
               <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
                 <div className="flex items-center gap-2">
                   <Link size={14} strokeWidth={2} />
-                  Copy issue link
+                  Copy work item link
                 </div>
               </CustomMenu.MenuItem>
             )}
@@ -149,7 +149,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
               <CustomMenu.MenuItem onClick={() => router.push(workItemLink)}>
                 <div className="flex items-center gap-2">
                   <ExternalLink size={14} strokeWidth={2} />
-                  Open issue
+                  Open work item
                 </div>
               </CustomMenu.MenuItem>
             )}
@@ -159,7 +159,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
                   handleActionWithPermission(
                     isProjectAdmin,
                     handleIssueSnoozeAction,
-                    "Only project admins can snooze/Un-snooze issues"
+                    "Only project admins can snooze/Un-snooze work items"
                   )
                 }
               >
@@ -175,7 +175,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
                   handleActionWithPermission(
                     isProjectAdmin,
                     () => setSelectDuplicateIssue(true),
-                    "Only project admins can mark issues as duplicate"
+                    "Only project admins can mark work items as duplicate"
                   )
                 }
               >
@@ -191,7 +191,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
                   handleActionWithPermission(
                     isProjectAdmin,
                     () => setAcceptIssueModal(true),
-                    "Only project admins can accept issues"
+                    "Only project admins can accept work items"
                   )
                 }
               >
@@ -207,7 +207,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
                   handleActionWithPermission(
                     isProjectAdmin,
                     () => setDeclineIssueModal(true),
-                    "Only project admins can deny issues"
+                    "Only project admins can deny work items"
                   )
                 }
               >

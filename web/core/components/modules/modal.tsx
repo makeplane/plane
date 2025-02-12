@@ -4,13 +4,13 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 // types
+import { MODULE_CREATED, MODULE_UPDATED } from "@plane/constants";
 import type { IModule } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ModuleForm } from "@/components/modules";
 // constants
-import { MODULE_CREATED, MODULE_UPDATED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useModule, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

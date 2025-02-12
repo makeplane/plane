@@ -6,11 +6,11 @@ import { Controller, useForm } from "react-hook-form";
 import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // types
+import { WORKSPACE_DELETED } from "@plane/constants";
 import type { IWorkspace } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { WORKSPACE_DELETED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

@@ -1,3 +1,4 @@
+import { EUserProjectRoles } from "@plane/constants";
 import type {
   IProjectViewProps,
   IUser,
@@ -16,7 +17,7 @@ export interface IPartialProject {
   identifier: string;
   sort_order: number | null;
   logo_props: TLogoProps;
-  is_member: boolean;
+  member_role?: TUserPermissions | EUserProjectRoles | null;
   archived_at: string | null;
   workspace: IWorkspace | string;
   cycle_view: boolean;
@@ -50,7 +51,6 @@ export interface IProject extends IPartialProject {
   is_favorite?: boolean;
   is_issue_type_enabled?: boolean;
   is_time_tracking_enabled?: boolean;
-  member_role?: TUserPermissions | null;
   members?: string[];
   network?: number;
   timezone?: string;
@@ -119,7 +119,7 @@ export interface IProjectMembership {
 }
 
 export interface IProjectBulkAddFormData {
-  members: { role: TUserPermissions; member_id: string }[];
+  members: { role: TUserPermissions | EUserProjectRoles; member_id: string }[];
 }
 
 export interface IGithubRepository {

@@ -71,16 +71,6 @@ class ProjectViewSet(BaseViewSet):
                 )
             )
             .annotate(
-                is_member=Exists(
-                    ProjectMember.objects.filter(
-                        member=self.request.user,
-                        project_id=OuterRef("pk"),
-                        workspace__slug=self.kwargs.get("slug"),
-                        is_active=True,
-                    )
-                )
-            )
-            .annotate(
                 member_role=ProjectMember.objects.filter(
                     project_id=OuterRef("pk"),
                     member_id=self.request.user.id,
@@ -164,14 +154,11 @@ class ProjectViewSet(BaseViewSet):
                 "workspace", "workspace__owner", "default_assignee", "project_lead"
             )
             .annotate(
-                is_member=Exists(
-                    ProjectMember.objects.filter(
-                        member=self.request.user,
-                        project_id=OuterRef("pk"),
-                        workspace__slug=self.kwargs.get("slug"),
-                        is_active=True,
-                    )
-                )
+                member_role=ProjectMember.objects.filter(
+                    project_id=OuterRef("pk"),
+                    member_id=self.request.user.id,
+                    is_active=True,
+                ).values("role")
             )
             .annotate(inbox_view=F("intake_view"))
             .annotate(sort_order=Subquery(sort_order))
@@ -182,7 +169,7 @@ class ProjectViewSet(BaseViewSet):
             "identifier",
             "sort_order",
             "logo_props",
-            "is_member",
+            "member_role",
             "archived_at",
             "workspace",
             "cycle_view",

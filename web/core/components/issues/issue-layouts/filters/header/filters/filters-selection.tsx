@@ -2,6 +2,9 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Search, X } from "lucide-react";
+// i18n
+import { EUserPermissions } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // types
 import {
   IIssueDisplayFilterOptions,
@@ -31,7 +34,6 @@ import { useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { FilterIssueTypes, FilterTeamProjects } from "@/plane-web/components/issues";
-import { EUserPermissions } from "@/plane-web/constants";
 
 type Props = {
   filters: IIssueFilterOptions;
@@ -63,6 +65,9 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
     moduleViewDisabled = false,
     isEpic = false,
   } = props;
+
+  // i18n
+  const { t } = useTranslation();
   // hooks
   const { isMobile } = usePlatformOS();
   const { moduleId, cycleId } = useParams();
@@ -95,7 +100,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
           <input
             type="text"
             className="w-full bg-custom-background-90 outline-none placeholder:text-custom-text-400"
-            placeholder="Search"
+            placeholder={t("common.search.label")}
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
             autoFocus={!isMobile}

@@ -4,13 +4,18 @@ import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { ArchiveIcon, ArchiveRestoreIcon, LinkIcon, Trash2 } from "lucide-react";
-import { EIssuesStoreType } from "@plane/constants";
+import {
+  ISSUE_ARCHIVED,
+  ISSUE_DELETED,
+  ARCHIVABLE_STATE_GROUPS,
+  EIssuesStoreType,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { ArchiveIssueModal, DeleteIssueModal, IssueSubscription } from "@/components/issues";
-// constants
-import { ISSUE_ARCHIVED, ISSUE_DELETED } from "@/constants/event-tracker";
-import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { generateWorkItemLink } from "@/helpers/issue.helper";
@@ -27,7 +32,6 @@ import {
 } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   workspaceSlug: string;
@@ -37,7 +41,7 @@ type Props = {
 
 export const IssueDetailQuickActions: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId } = props;
-
+  const { t } = useTranslation();
   // states
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [archiveIssueModal, setArchiveIssueModal] = useState(false);
@@ -87,8 +91,8 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
     copyTextToClipboard(`${originURL}${workItemLink}`).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
+        title: t("common.link_copied"),
+        message: t("common.copied_to_clipboard"),
       });
     });
   };
@@ -104,19 +108,19 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
         router.push(redirectionPath);
         captureIssueEvent({
           eventName: ISSUE_DELETED,
-          payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
+          payload: { id: issueId, state: "SUCCESS", element: "Work item detail page" },
           path: pathname,
         });
       });
     } catch (error) {
       setToast({
-        title: "Error!",
+        title: t("toast.error "),
         type: TOAST_TYPE.ERROR,
-        message: "Issue delete failed",
+        message: t("entity.delete.failed", { entity: t("issue.label", { count: 1 }) }),
       });
       captureIssueEvent({
         eventName: ISSUE_DELETED,
-        payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
+        payload: { id: issueId, state: "FAILED", element: "Work item detail page" },
         path: pathname,
       });
     }
@@ -150,16 +154,16 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Restore success",
-          message: "Your issue can be found in project issues.",
+          title: t("issue.restore.success.title"),
+          message: t("issue.restore.success.message"),
         });
         router.push(workItemLink);
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Issue could not be restored. Please try again.",
+          title: t("toast.error"),
+          message: t("issue.restore.failed.message"),
         });
       })
       .finally(() => setIsRestoring(false));
@@ -194,7 +198,7 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
           <div className="flex flex-wrap items-center gap-2.5 text-custom-text-300">
-            <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
+            <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
               <button
                 type="button"
                 className="grid h-5 w-5 place-items-center rounded hover:text-custom-text-200 focus:outline-none focus:ring-2 focus:ring-custom-primary"
@@ -227,9 +231,7 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
                 {isArchivingAllowed && (
                   <Tooltip
                     isMobile={isMobile}
-                    tooltipContent={
-                      isInArchivableGroup ? "Archive" : "Only completed or canceled issues can be archived"
-                    }
+                    tooltipContent={isInArchivableGroup ? t("common.actions.archive") : t("issue.archive.description")}
                   >
                     <button
                       type="button"
@@ -253,7 +255,7 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
             )}
 
             {isEditable && (
-              <Tooltip tooltipContent="Delete" isMobile={isMobile}>
+              <Tooltip tooltipContent={t("common.actions.delete")} isMobile={isMobile}>
                 <button
                   type="button"
                   className="grid h-5 w-5 place-items-center rounded hover:text-custom-text-200 focus:outline-none focus:ring-2 focus:ring-custom-primary"

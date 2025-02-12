@@ -32,7 +32,7 @@ export const IssueLink: FC<TIssueLink> = (props) => {
   });
   return (
     <Tooltip
-      tooltipContent={activity.issue_detail ? activity.issue_detail.name : "This issue has been deleted"}
+      tooltipContent={activity.issue_detail ? activity.issue_detail.name : "This work item has been deleted"}
       isMobile={isMobile}
     >
       <a
@@ -42,7 +42,9 @@ export const IssueLink: FC<TIssueLink> = (props) => {
         rel={activity.issue === null ? "" : "noopener noreferrer"}
         className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
       >
-        {activity.issue_detail ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}` : "Issue"}{" "}
+        {activity.issue_detail
+          ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`
+          : "Work items"}{" "}
         <span className="font-normal">{activity.issue_detail?.name}</span>
       </a>
     </Tooltip>

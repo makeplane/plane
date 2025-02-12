@@ -57,7 +57,7 @@ export const commandGroups: {
         projectIdentifier: issue.project__identifier,
         sequenceId: issue?.sequence_id,
       }),
-    title: "Issues",
+    title: "Work items",
   },
   issue_view: {
     icon: <Layers className="h-3 w-3" />,

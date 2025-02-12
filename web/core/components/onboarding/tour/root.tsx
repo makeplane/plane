@@ -5,11 +5,11 @@ import { observer } from "mobx-react";
 import Image, { StaticImageData } from "next/image";
 import { X } from "lucide-react";
 // ui
+import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "@plane/constants";
 import { Button } from "@plane/ui";
 // components
 import { TourSidebar } from "@/components/onboarding";
 // constants
-import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "@/constants/event-tracker";
 // hooks
 import { useCommandPalette, useEventTracker, useUser } from "@/hooks/store";
 // assets
@@ -38,9 +38,9 @@ const TOUR_STEPS: {
 }[] = [
   {
     key: "issues",
-    title: "Plan with issues",
+    title: "Plan with work items",
     description:
-      "The issue is the building block of the Plane. Most concepts in Plane are either associated with issues and their properties.",
+      "The work item is the building block of the Plane. Most concepts in Plane are either associated with issues and their properties.",
     image: IssuesTour,
     nextStep: "cycles",
   },
@@ -65,7 +65,7 @@ const TOUR_STEPS: {
     key: "views",
     title: "Views",
     description:
-      "Create custom filters to display only the issues that matter to you. Save and share your filters in just a few clicks.",
+      "Create custom filters to display only the work items that matter to you. Save and share your filters in just a few clicks.",
     image: ViewsTour,
     prevStep: "modules",
     nextStep: "pages",
@@ -73,7 +73,7 @@ const TOUR_STEPS: {
   {
     key: "pages",
     title: "Document with pages",
-    description: "Use Pages to quickly jot down issues when you're in a meeting or starting a day.",
+    description: "Use Pages to quickly jot down work items when you're in a meeting or starting a day.",
     image: PagesTour,
     prevStep: "views",
   },

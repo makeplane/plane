@@ -4,6 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { Tab } from "@headlessui/react";
+import { useTranslation } from "@plane/i18n";
 import {
   IIssueFilterOptions,
   IIssueFilters,
@@ -73,6 +74,7 @@ type TStateStatComponent = {
 
 export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) => {
   const { distribution, isEditable, filters, handleFiltersUpdate } = props;
+  const { t } = useTranslation();
   return (
     <div>
       {distribution && distribution.length > 0 ? (
@@ -104,7 +106,7 @@ export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) =>
                     <div className="h-4 w-4 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
                       <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
                     </div>
-                    <span>No assignee</span>
+                    <span>{t("no_assignee")}</span>
                   </div>
                 }
                 completed={assignee?.completed ?? 0}
@@ -117,7 +119,7 @@ export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) =>
           <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-80">
             <Image src={emptyMembers} className="h-12 w-12" alt="empty members" />
           </div>
-          <h6 className="text-base text-custom-text-300">No assignees yet</h6>
+          <h6 className="text-base text-custom-text-300">{t("no_assignee")}</h6>
         </div>
       )}
     </div>
@@ -126,6 +128,7 @@ export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) =>
 
 export const LabelStatComponent = observer((props: TLabelStatComponent) => {
   const { distribution, isEditable, filters, handleFiltersUpdate } = props;
+  const { t } = useTranslation();
   return (
     <div>
       {distribution && distribution.length > 0 ? (
@@ -142,7 +145,7 @@ export const LabelStatComponent = observer((props: TLabelStatComponent) => {
                         backgroundColor: label.color ?? "transparent",
                       }}
                     />
-                    <span className="text-xs text-ellipsis truncate">{label.title ?? "No labels"}</span>
+                    <span className="text-xs text-ellipsis truncate">{label.title ?? t("no_labels_yet")}</span>
                   </div>
                 }
                 completed={label.completed}
@@ -165,7 +168,7 @@ export const LabelStatComponent = observer((props: TLabelStatComponent) => {
                         backgroundColor: label.color ?? "transparent",
                       }}
                     />
-                    <span className="text-xs">{label.title ?? "No labels"}</span>
+                    <span className="text-xs">{label.title ?? t("no_labels_yet")}</span>
                   </div>
                 }
                 completed={label.completed}
@@ -179,7 +182,7 @@ export const LabelStatComponent = observer((props: TLabelStatComponent) => {
           <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-80">
             <Image src={emptyLabel} className="h-12 w-12" alt="empty label" />
           </div>
-          <h6 className="text-base text-custom-text-300">No labels yet</h6>
+          <h6 className="text-base text-custom-text-300">{t("no_labels_yet")}</h6>
         </div>
       )}
     </div>
@@ -222,15 +225,15 @@ export const StateStatComponent = observer((props: TStateStatComponent) => {
 const progressStats = [
   {
     key: "stat-states",
-    title: "States",
+    i18n_title: "common.states",
   },
   {
     key: "stat-assignees",
-    title: "Assignees",
+    i18n_title: "common.assignees",
   },
   {
     key: "stat-labels",
-    title: "Labels",
+    i18n_title: "common.labels",
   },
 ];
 
@@ -267,6 +270,7 @@ export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
     `cycle-analytics-tab-${cycleId}`,
     "stat-assignees"
   );
+  const { t } = useTranslation();
   // derived values
   const currentTabIndex = (tab: string): number => progressStats.findIndex((stat) => stat.key === tab);
 
@@ -337,7 +341,7 @@ export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
               key={stat.key}
               onClick={() => setCycleTab(stat.key)}
             >
-              {stat.title}
+              {t(stat.i18n_title)}
             </Tab>
           ))}
         </Tab.List>

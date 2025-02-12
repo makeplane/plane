@@ -1,11 +1,11 @@
 import sortBy from "lodash/sortBy";
 // types
+import { EUserPermissions } from "@plane/constants";
 import { TProjectDisplayFilters, TProjectFilters, TProjectOrderByOptions } from "@plane/types";
 // helpers
 import { getDate } from "@/helpers/date-time.helper";
 import { satisfiesDateFilter } from "@/helpers/filter.helper";
 // plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // types
 import { TProject } from "@/plane-web/types";
 
@@ -87,7 +87,7 @@ export const shouldFilterProject = (
       });
     }
   });
-  if (displayFilters.my_projects && !project.is_member) fallsInFilters = false;
+  if (displayFilters.my_projects && !project.member_role) fallsInFilters = false;
   if (displayFilters.archived_projects && !project.archived_at) fallsInFilters = false;
   if (project.archived_at) fallsInFilters = displayFilters.archived_projects ? fallsInFilters : false;
 

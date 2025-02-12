@@ -4,6 +4,10 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { ArchiveRestoreIcon, Link2, MoveDiagonal, MoveRight, Trash2 } from "lucide-react";
+// plane imports
+import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { TNameDescriptionLoader } from "@plane/types";
 // ui
@@ -19,7 +23,6 @@ import {
 } from "@plane/ui";
 // components
 import { IssueSubscription, NameDescriptionUpdateStatus } from "@/components/issues";
-import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { generateWorkItemLink } from "@/helpers/issue.helper";
@@ -30,21 +33,21 @@ import { useIssueDetail, useProject, useProjectState, useUser } from "@/hooks/st
 import { usePlatformOS } from "@/hooks/use-platform-os";
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
-const PEEK_OPTIONS: { key: TPeekModes; icon: any; title: string }[] = [
+const PEEK_OPTIONS: { key: TPeekModes; icon: any; i18n_title: string }[] = [
   {
     key: "side-peek",
     icon: SidePanelIcon,
-    title: "Side Peek",
+    i18n_title: "common.side_peek ",
   },
   {
     key: "modal",
     icon: CenterPanelIcon,
-    title: "Modal",
+    i18n_title: "common.modal",
   },
   {
     key: "full-screen",
     icon: FullScreenPanelIcon,
-    title: "Full Screen",
+    i18n_title: "common.full_screen",
   },
 ];
 
@@ -80,6 +83,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     handleRestoreIssue,
     isSubmitting,
   } = props;
+  const { t } = useTranslation();
   // store hooks
   const { data: currentUser } = useUser();
   const {
@@ -109,8 +113,8 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     copyUrlToClipboard(workItemLink, false).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
+        title: t("common.link_copied"),
+        message: t("common.copied_to_clipboard"),
       });
     });
   };
@@ -126,13 +130,13 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
       }`}
     >
       <div className="flex items-center gap-4">
-        <Tooltip tooltipContent="Close the peek view" isMobile={isMobile}>
+        <Tooltip tooltipContent={t("common.close_peek_view")} isMobile={isMobile}>
           <button onClick={removeRoutePeekId}>
             <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
           </button>
         </Tooltip>
 
-        <Tooltip tooltipContent="Open issue in full screen" isMobile={isMobile}>
+        <Tooltip tooltipContent={t("issue.open_in_full_screen")} isMobile={isMobile}>
           <Link href={workItemLink} onClick={() => removeRoutePeekId()}>
             <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
           </Link>
@@ -143,7 +147,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
               value={currentMode}
               onChange={(val: any) => setPeekMode(val)}
               customButton={
-                <Tooltip tooltipContent="Toggle peek view layout" isMobile={isMobile}>
+                <Tooltip tooltipContent={t("common.toggle_peek_view_layout")} isMobile={isMobile}>
                   <button type="button" className="">
                     <currentMode.icon className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
                   </button>
@@ -160,7 +164,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
                     }`}
                   >
                     <mode.icon className="-my-1 h-4 w-4 flex-shrink-0" />
-                    {mode.title}
+                    {t(mode.i18n_title)}
                   </div>
                 </CustomSelect.Option>
               ))}
@@ -174,7 +178,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
           {currentUser && !isArchived && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
-          <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
+          <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
             <button type="button" onClick={handleCopyText}>
               <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
             </button>
@@ -182,7 +186,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
           {isArchivingAllowed && (
             <Tooltip
               isMobile={isMobile}
-              tooltipContent={isInArchivableGroup ? "Archive" : "Only completed or canceled issues can be archived"}
+              tooltipContent={isInArchivableGroup ? t("common.actions.archive") : t("issue.archive.description")}
             >
               <button
                 type="button"
@@ -200,14 +204,14 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
             </Tooltip>
           )}
           {isRestoringAllowed && (
-            <Tooltip tooltipContent="Restore" isMobile={isMobile}>
+            <Tooltip tooltipContent={t("common.actions.restore")} isMobile={isMobile}>
               <button type="button" onClick={handleRestoreIssue}>
                 <ArchiveRestoreIcon className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
               </button>
             </Tooltip>
           )}
           {!disabled && (
-            <Tooltip tooltipContent="Delete" isMobile={isMobile}>
+            <Tooltip tooltipContent={t("common.actions.delete")} isMobile={isMobile}>
               <button type="button" onClick={() => toggleDeleteIssueModal(issueId)}>
                 <Trash2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
               </button>

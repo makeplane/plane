@@ -1,5 +1,6 @@
 "use client";
 
+import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -7,10 +8,10 @@ import { useTheme } from "next-themes";
 import { Controller, useForm } from "react-hook-form";
 // icons
 import { CircleCheck } from "lucide-react";
-// ui
+// plane imports
+import { FORGOT_PASS_LINK, NAVIGATE_TO_SIGNUP } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button, Input, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
-// constants
-import { FORGOT_PASS_LINK, NAVIGATE_TO_SIGNUP } from "@/constants/event-tracker";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 import { cn } from "@/helpers/common.helper";
@@ -20,12 +21,12 @@ import { useEventTracker } from "@/hooks/store";
 import useTimer from "@/hooks/use-timer";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
-// services
 // images
 import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
 import BlackHorizontalLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
 import WhiteHorizontalLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
+// services
 import { AuthService } from "@/services/auth.service";
 
 type TForgotPasswordFormValues = {
@@ -39,10 +40,12 @@ const defaultValues: TForgotPasswordFormValues = {
 // services
 const authService = new AuthService();
 
-export default function ForgotPasswordPage() {
+const ForgotPasswordPage = observer(() => {
   // search params
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { captureEvent } = useEventTracker();
   // hooks
@@ -73,9 +76,8 @@ export default function ForgotPasswordPage() {
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Email sent",
-          message:
-            "Check your inbox for a link to reset your password. If it doesn't appear within a few minutes, check your spam folder.",
+          title: t("auth.forgot_password.toast.success.title"),
+          message: t("auth.forgot_password.toast.success.message"),
         });
         setResendCodeTimer(30);
       })
@@ -85,8 +87,8 @@ export default function ForgotPasswordPage() {
         });
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.error ?? "Something went wrong. Please try again.",
+          title: t("auth.forgot_password.toast.error.title"),
+          message: err?.error ?? t("auth.forgot_password.toast.error.message"),
         });
       });
   };
@@ -111,13 +113,13 @@ export default function ForgotPasswordPage() {
               </Link>
             </div>
             <div className="flex flex-col items-end sm:items-center sm:gap-2 sm:flex-row text-center text-sm font-medium text-onboarding-text-300">
-              New to Plane?{" "}
+              {t("auth.common.new_to_plane")}
               <Link
                 href="/"
                 onClick={() => captureEvent(NAVIGATE_TO_SIGNUP, {})}
                 className="font-semibold text-custom-primary-100 hover:underline"
               >
-                Create an account
+                {t("auth.common.create_account")}
               </Link>
             </div>
           </div>
@@ -125,23 +127,21 @@ export default function ForgotPasswordPage() {
             <div className="relative flex flex-col space-y-6">
               <div className="text-center space-y-1 py-4">
                 <h3 className="flex gap-4 justify-center text-3xl font-bold text-onboarding-text-100">
-                  Reset your password
+                  {t("auth.forgot_password.title")}
                 </h3>
-                <p className="font-medium text-onboarding-text-400">
-                  Enter your user account{"'"}s verified email address and we will send you a password reset link.
-                </p>
+                <p className="font-medium text-onboarding-text-400">{t("auth.forgot_password.description")}</p>
               </div>
               <form onSubmit={handleSubmit(handleForgotPassword)} className="mt-5 space-y-4">
                 <div className="space-y-1">
                   <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
-                    Email
+                    {t("auth.common.email.label")}
                   </label>
                   <Controller
                     control={control}
                     name="email"
                     rules={{
-                      required: "Email is required",
-                      validate: (value) => checkEmailValidity(value) || "Email is invalid",
+                      required: t("auth.common.email.errors.required"),
+                      validate: (value) => checkEmailValidity(value) || t("auth.common.email.errors.invalid"),
                     }}
                     render={({ field: { value, onChange, ref } }) => (
                       <Input
@@ -152,7 +152,7 @@ export default function ForgotPasswordPage() {
                         onChange={onChange}
                         ref={ref}
                         hasError={Boolean(errors.email)}
-                        placeholder="name@company.com"
+                        placeholder={t("auth.common.email.placeholder")}
                         className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
                         autoComplete="on"
                         disabled={resendTimerCode > 0}
@@ -162,7 +162,7 @@ export default function ForgotPasswordPage() {
                   {resendTimerCode > 0 && (
                     <p className="flex w-full items-start px-1 gap-1 text-xs font-medium text-green-700">
                       <CircleCheck height={12} width={12} className="mt-0.5" />
-                      We sent the reset link to your email address
+                      {t("auth.forgot_password.email_sent")}
                     </p>
                   )}
                 </div>
@@ -174,10 +174,12 @@ export default function ForgotPasswordPage() {
                   disabled={!isValid}
                   loading={isSubmitting || resendTimerCode > 0}
                 >
-                  {resendTimerCode > 0 ? `Resend in ${resendTimerCode} seconds` : "Send reset link"}
+                  {resendTimerCode > 0
+                    ? t("auth.common.resend_in", { seconds: resendTimerCode })
+                    : t("auth.forgot_password.send_reset_link")}
                 </Button>
                 <Link href="/" className={cn("w-full", getButtonStyling("link-neutral", "lg"))}>
-                  Back to sign in
+                  {t("auth.common.back_to_sign_in")}
                 </Link>
               </form>
             </div>
@@ -186,4 +188,6 @@ export default function ForgotPasswordPage() {
       </div>
     </AuthenticationWrapper>
   );
-}
+});
+
+export default ForgotPasswordPage;

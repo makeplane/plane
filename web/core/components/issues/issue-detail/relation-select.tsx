@@ -51,7 +51,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: "Please select at least one issue.",
+        message: "Please select at least one work item.",
       });
       return;
     }

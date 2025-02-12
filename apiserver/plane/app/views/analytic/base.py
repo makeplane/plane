@@ -456,7 +456,7 @@ class ProjectStatsEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug):
         fields = request.GET.get("fields", "").split(",")
-        project_ids = request.GET.get("project_ids", "").split(",")
+        project_ids = request.GET.get("project_ids", "")
 
         valid_fields = {
             "total_issues",
@@ -471,9 +471,8 @@ class ProjectStatsEndpoint(BaseAPIView):
             requested_fields = valid_fields
 
         projects = Project.objects.filter(workspace__slug=slug)
-
         if project_ids:
-            projects = projects.filter(id__in=project_ids)
+            projects = projects.filter(id__in=project_ids.split(","))
 
         annotations = {}
         if "total_issues" in requested_fields:

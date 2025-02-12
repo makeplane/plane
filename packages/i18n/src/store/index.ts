@@ -1,8 +1,11 @@
 import IntlMessageFormat from "intl-messageformat";
 import get from "lodash/get";
-import { makeAutoObservable } from "mobx";
+import merge from "lodash/merge";
+import { makeAutoObservable, runInAction } from "mobx";
 // constants
 import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, STORAGE_KEY } from "../constants";
+// core translations imports
+import coreEn from "../locales/en/core.json";
 // types
 import { TLanguage, ILanguageOption, ITranslations } from "../types";
 
@@ -12,40 +15,33 @@ import { TLanguage, ILanguageOption, ITranslations } from "../types";
  * Uses IntlMessageFormat to format the translations
  */
 export class TranslationStore {
+  // Core translations that are always loaded
+  private coreTranslations: ITranslations = {
+    en: coreEn,
+  };
   // List of translations for each language
   private translations: ITranslations = {};
   // Cache for IntlMessageFormat instances
   private messageCache: Map<string, IntlMessageFormat> = new Map();
   // Current language
   currentLocale: TLanguage = FALLBACK_LANGUAGE;
+  // Loading state
+  isLoading: boolean = true;
+  isInitialized: boolean = false;
+  // Set of loaded languages
+  private loadedLanguages: Set<TLanguage> = new Set();
 
   /**
    * Constructor for the TranslationStore class
    */
   constructor() {
     makeAutoObservable(this);
+    // Initialize with core translations immediately
+    this.translations = this.coreTranslations;
+    // Initialize language
     this.initializeLanguage();
+    // Load all the translations
     this.loadTranslations();
-  }
-
-  /**
-   * Loads translations from JSON files and initializes the message cache
-   */
-  private async loadTranslations() {
-    try {
-      // dynamic import of translations
-      const translations = {
-        en: (await import("../locales/en/translations.json")).default,
-        fr: (await import("../locales/fr/translations.json")).default,
-        es: (await import("../locales/es/translations.json")).default,
-        ja: (await import("../locales/ja/translations.json")).default,
-        "zh-CN": (await import("../locales/zh-CN/translations.json")).default,
-      };
-      this.translations = translations;
-      this.messageCache.clear(); // Clear cache when translations change
-    } catch (error) {
-      console.error("Failed to load translations:", error);
-    }
   }
 
   /** Initializes the language based on the local storage or browser language */
@@ -60,6 +56,100 @@ export class TranslationStore {
 
     const browserLang = this.getBrowserLanguage();
     this.setLanguage(browserLang);
+  }
+
+  /** Loads the translations for the current language */
+  private async loadTranslations(): Promise<void> {
+    try {
+      // Set initialized to true (Core translations are already loaded)
+      runInAction(() => {
+        this.isInitialized = true;
+      });
+      // Load current and fallback languages in parallel
+      await this.loadPrimaryLanguages();
+      // Load all remaining languages in parallel
+      this.loadRemainingLanguages();
+    } catch (error) {
+      console.error("Failed in translation initialization:", error);
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    }
+  }
+
+  private async loadPrimaryLanguages(): Promise<void> {
+    try {
+      // Load current and fallback languages in parallel
+      const languagesToLoad = new Set<TLanguage>([this.currentLocale]);
+      // Add fallback language only if different from current
+      if (this.currentLocale !== FALLBACK_LANGUAGE) {
+        languagesToLoad.add(FALLBACK_LANGUAGE);
+      }
+      // Load all primary languages in parallel
+      const loadPromises = Array.from(languagesToLoad).map((lang) => this.loadLanguageTranslations(lang));
+      await Promise.all(loadPromises);
+      // Update loading state
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    } catch (error) {
+      console.error("Failed to load primary languages:", error);
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    }
+  }
+
+  private loadRemainingLanguages(): void {
+    const remainingLanguages = SUPPORTED_LANGUAGES.map((lang) => lang.value).filter(
+      (lang) =>
+        !this.loadedLanguages.has(lang as TLanguage) && lang !== this.currentLocale && lang !== FALLBACK_LANGUAGE
+    );
+    // Load all remaining languages in parallel
+    Promise.all(remainingLanguages.map((lang) => this.loadLanguageTranslations(lang as TLanguage))).catch((error) => {
+      console.error("Failed to load some remaining languages:", error);
+    });
+  }
+
+  private async loadLanguageTranslations(language: TLanguage): Promise<void> {
+    // Skip if already loaded
+    if (this.loadedLanguages.has(language)) return;
+
+    try {
+      const translations = await this.importLanguageFile(language);
+      runInAction(() => {
+        // Use lodash merge for deep merging
+        this.translations[language] = merge({}, this.coreTranslations[language] || {}, translations.default);
+        // Add to loaded languages
+        this.loadedLanguages.add(language);
+        // Clear cache
+        this.messageCache.clear();
+      });
+    } catch (error) {
+      console.error(`Failed to load translations for ${language}:`, error);
+    }
+  }
+
+  /**
+   * Imports the translations for the given language
+   * @param language - The language to import the translations for
+   * @returns {Promise<any>}
+   */
+  private importLanguageFile(language: TLanguage): Promise<any> {
+    switch (language) {
+      case "en":
+        return import("../locales/en/translations.json");
+      case "fr":
+        return import("../locales/fr/translations.json");
+      case "es":
+        return import("../locales/es/translations.json");
+      case "ja":
+        return import("../locales/ja/translations.json");
+      case "zh-CN":
+        return import("../locales/zh-CN/translations.json");
+      default:
+        throw new Error(`Unsupported language: ${language}`);
+    }
   }
 
   /** Checks if the language is valid based on the supported languages */
@@ -173,20 +263,26 @@ export class TranslationStore {
    * Sets the current language and updates the translations
    * @param lng - The new language
    */
-  setLanguage(lng: TLanguage): void {
+  async setLanguage(lng: TLanguage): Promise<void> {
     try {
       if (!this.isValidLanguage(lng)) {
         throw new Error(`Invalid language: ${lng}`);
       }
 
+      // Safeguard in case background loading failed
+      if (!this.loadedLanguages.has(lng)) {
+        await this.loadLanguageTranslations(lng);
+      }
+
       if (typeof window !== "undefined") {
         localStorage.setItem(STORAGE_KEY, lng);
-      }
-      this.currentLocale = lng;
-      this.messageCache.clear(); // Clear cache when language changes
-      if (typeof window !== "undefined") {
         document.documentElement.lang = lng;
       }
+
+      runInAction(() => {
+        this.currentLocale = lng;
+        this.messageCache.clear(); // Clear cache when language changes
+      });
     } catch (error) {
       console.error("Failed to set language:", error);
     }

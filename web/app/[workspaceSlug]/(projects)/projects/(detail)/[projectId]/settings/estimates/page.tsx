@@ -3,12 +3,12 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { EstimateRoot } from "@/components/estimates";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const EstimatesSettingsPage = observer(() => {
   const { workspaceSlug, projectId } = useParams();

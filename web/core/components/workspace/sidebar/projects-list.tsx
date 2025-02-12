@@ -7,6 +7,7 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { Briefcase, ChevronRight, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Loader, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
@@ -20,7 +21,6 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web types
 import { TProject } from "@/plane-web/types";
 
@@ -177,17 +177,12 @@ export const SidebarProjectsList: FC = observer(() => {
                 )}
                 onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
               >
-                <Tooltip
-                  tooltipHeading={t("your_projects").toUpperCase()}
-                  tooltipContent=""
-                  position="right"
-                  disabled={!isCollapsed}
-                >
+                <Tooltip tooltipHeading={t("projects")} tooltipContent="" position="right" disabled={!isCollapsed}>
                   <>
                     {isCollapsed ? (
                       <Briefcase className="flex-shrink-0 size-3" />
                     ) : (
-                      <span className="text-xs font-semibold">{t("your_projects").toUpperCase()}</span>
+                      <span className="text-sm font-semibold">{t("projects")}</span>
                     )}
                   </>
                 </Tooltip>

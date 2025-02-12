@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
+import { useTranslation } from "@plane/i18n";
 // types
 import type { TIssue } from "@plane/types";
 // ui
@@ -35,6 +36,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   const { captureIssueEvent } = useEventTracker();
   const { handleCreateUpdatePropertyValues } = useIssueModal();
   const { createIssue } = useWorkspaceDraftIssues();
+  const { t } = useTranslation();
 
   const handleClose = () => {
     if (data?.id) {
@@ -80,11 +82,11 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
       .then((res) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Draft created.",
+          title: `${t("success")}!`,
+          message: t("workspace_draft_issues.toasts.created.success"),
         });
         captureIssueEvent({
-          eventName: "Draft issue created",
+          eventName: "Draft work item created",
           payload: { ...res, state: "SUCCESS" },
           path: pathname,
         });
@@ -96,11 +98,11 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Issue could not be created. Please try again.",
+          title: `${t("error")}!`,
+          message: t("workspace_draft_issues.toasts.created.error"),
         });
         captureIssueEvent({
-          eventName: "Draft issue created",
+          eventName: "Draft work item created",
           payload: { ...payload, state: "FAILED" },
           path: pathname,
         });

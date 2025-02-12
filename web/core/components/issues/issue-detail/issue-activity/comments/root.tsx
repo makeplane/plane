@@ -1,15 +1,15 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 // components
-import { EmptyState } from "@/components/empty-state";
-// hooks
-import { EmptyStateType } from "@/constants/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
-// components
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// local components
 import { TActivityOperations } from "../root";
 import { IssueCommentCard } from "./comment-card";
-// types
 
 type TIssueCommentRoot = {
   projectId: string;
@@ -26,6 +26,9 @@ export const IssueCommentRoot: FC<TIssueCommentRoot> = observer((props) => {
   const {
     comment: { getCommentsByIssueId },
   } = useIssueDetail();
+  const { t } = useTranslation();
+  // derived values
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/comments" });
 
   const commentIds = getCommentsByIssueId(issueId);
   if (!commentIds) return <></>;
@@ -48,7 +51,11 @@ export const IssueCommentRoot: FC<TIssueCommentRoot> = observer((props) => {
         ))
       ) : (
         <div className="flex items-center justify-center py-9">
-          <EmptyState type={EmptyStateType.ISSUE_COMMENT_EMPTY_STATE} layout="screen-simple" />
+          <SimpleEmptyState
+            title={t("issue_comment.empty_state.general.title")}
+            description={t("issue_comment.empty_state.general.description")}
+            assetPath={resolvedPath}
+          />
         </div>
       )}
     </div>
