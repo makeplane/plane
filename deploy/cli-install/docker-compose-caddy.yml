@@ -235,11 +235,6 @@ services:
     <<: *app-env
     image: registry.plane.tools/plane/rabbitmq:3.13.6-management-alpine
     restart: unless-stopped
-    healthcheck:
-      test: rabbitmq-diagnostics -q ping
-      interval: 10s
-      timeout: 10s
-      retries: 5
     volumes:
       - ${INSTALL_DIR}/data/mq:/var/lib/rabbitmq
 
@@ -279,7 +274,5 @@ services:
     deploy:
       replicas: ${SILO_REPLICAS:-1}
     depends_on:
-      plane-redis:
-        condition: service_started
-      plane-mq:
-        condition: service_healthy
+      - plane-redis
+      - plane-mq

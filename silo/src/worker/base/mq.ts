@@ -11,8 +11,6 @@ export class MQActorBase {
   channel!: amqp.Channel;
   amqpUrl = env.AMQP_URL || "amqp://localhost";
   private reconnecting = false;
-  private reconnectAttempts = 0;
-  private readonly MAX_RECONNECT_ATTEMPTS = 5;
   private readonly RECONNECT_INTERVAL = 5000;
 
   constructor(options: TMQEntityOptions, amqpUrl?: string) {
@@ -38,7 +36,7 @@ export class MQActorBase {
   }
 
   private async setupConnectionListeners() {
-    this.connection.on("error", (err) => {
+    this.connection.on("error", () => {
       this.handleReconnection();
     });
 
@@ -46,7 +44,7 @@ export class MQActorBase {
       this.handleReconnection();
     });
 
-    this.channel.on("error", (err) => {
+    this.channel.on("error", () => {
       this.handleReconnection();
     });
 
@@ -59,104 +57,94 @@ export class MQActorBase {
     if (this.reconnecting) return;
 
     this.reconnecting = true;
-    while (this.reconnectAttempts < this.MAX_RECONNECT_ATTEMPTS) {
+    let attemptCount = 0;
+
+    while (true) {
       try {
-        console.log(`Reconnection attempt ${this.reconnectAttempts + 1}/${this.MAX_RECONNECT_ATTEMPTS}`);
-        await this.connect();
+        attemptCount++;
+        await this.initializeConnection();
         this.reconnecting = false;
-        this.reconnectAttempts = 0;
-        console.log("Successfully reconnected to RabbitMQ");
         return true;
-      } catch (error) {
-        this.reconnectAttempts++;
-        console.error(`Reconnection attempt failed:`, error);
+      } catch {
+        if (attemptCount % 10 === 0) {
+          SentryInstance.captureException(new Error(`RabbitMQ reconnection attempt ${attemptCount} failed`));
+        }
         await new Promise((resolve) => setTimeout(resolve, this.RECONNECT_INTERVAL));
+        console.log(`Attempting to reconnect to RabbitMQ [${attemptCount}]...`);
       }
     }
+  }
 
-    SentryInstance.captureException(new Error("Not able to reconnect to rabbit mq. Aborting..."));
+  private async initializeConnection() {
+    this.connection = await amqp.connect(this.amqpUrl, {
+      heartbeat: 60,
+    });
+
+    this.channel = await this.connection.createConfirmChannel();
+    await this.setupConnectionListeners();
+    await this.setupQueuesAndExchanges();
   }
 
   async connect() {
-    try {
-      // Create connection
-      this.connection = await amqp.connect(this.amqpUrl, {
-        heartbeat: 60,
-      });
-
-      // Create confirm channel
-      this.channel = await this.connection.createConfirmChannel();
-
-      // Setup connection and channel event listeners
-      await this.setupConnectionListeners();
-
-      // Setup queues and exchanges
-      await this.setupQueuesAndExchanges();
-    } catch (error) {
-      throw new Error(`Failed to connect to RabbitMQ: ${error}`);
+    let attemptCount = 0;
+    while (true) {
+      try {
+        attemptCount++;
+        await this.initializeConnection();
+        return;
+      } catch {
+        if (attemptCount % 10 === 0) {
+          SentryInstance.captureException(new Error(`RabbitMQ initial connection attempt ${attemptCount} failed`));
+        }
+        await new Promise((resolve) => setTimeout(resolve, this.RECONNECT_INTERVAL));
+        console.log(`Attempting to reconnect to RabbitMQ [${attemptCount}]...`);
+      }
     }
   }
 
   private async setupQueuesAndExchanges() {
-    try {
-      // Declare the Dead Letter Exchange and Queue
-      if (this.queueName !== "celery") {
-        const dlxExchange = `dlx_exchange`;
-        const dlxQueue = `${this.queueName}.dlx`;
-        const dlxRoutingKey = `dlx_routing_key`;
+    if (this.queueName !== "celery") {
+      const dlxExchange = `dlx_exchange`;
+      const dlxQueue = `${this.queueName}.dlx`;
+      const dlxRoutingKey = `dlx_routing_key`;
 
-        // Setup DLX
-        await this.channel.assertExchange(dlxExchange, "direct", {
-          durable: true,
-        });
-
-        await this.channel.assertQueue(dlxQueue, {
-          durable: true,
-          arguments: {},
-        });
-
-        await this.channel.bindQueue(dlxQueue, dlxExchange, dlxRoutingKey);
-
-        // Setup main queue with DLX configuration
-        await this.channel.assertQueue(this.queueName, {
-          durable: true,
-          arguments: {
-            "x-dead-letter-exchange": dlxExchange,
-            "x-dead-letter-routing-key": dlxRoutingKey,
-          },
-        });
-      } else {
-        // Setup celery queue without DLX
-        await this.channel.assertQueue(this.queueName, {
-          durable: true,
-        });
-      }
-
-      // Setup main exchange
-      await this.channel.assertExchange(this.exchange, "direct", {
+      await this.channel.assertExchange(dlxExchange, "direct", {
         durable: true,
       });
 
-      // Bind queue to exchange
-      await this.channel.bindQueue(this.queueName, this.exchange, this.routingKey);
-    } catch (error) {
-      console.error("Error setting up queues and exchanges:", error);
-      throw error;
+      await this.channel.assertQueue(dlxQueue, {
+        durable: true,
+        arguments: {},
+      });
+
+      await this.channel.bindQueue(dlxQueue, dlxExchange, dlxRoutingKey);
+
+      await this.channel.assertQueue(this.queueName, {
+        durable: true,
+        arguments: {
+          "x-dead-letter-exchange": dlxExchange,
+          "x-dead-letter-routing-key": dlxRoutingKey,
+        },
+      });
+    } else {
+      await this.channel.assertQueue(this.queueName, {
+        durable: true,
+      });
     }
+
+    await this.channel.assertExchange(this.exchange, "direct", {
+      durable: true,
+    });
+
+    await this.channel.bindQueue(this.queueName, this.exchange, this.routingKey);
   }
 
   async close() {
-    try {
-      if (this.channel) {
-        await this.channel.close();
-      }
-      if (this.connection) {
-        await this.connection.close();
-      }
-      console.log("RabbitMQ connection closed successfully");
-    } catch (error) {
-      console.error("Error while closing RabbitMQ connection:", error);
-      throw error;
+    if (this.channel) {
+      await this.channel.close();
+    }
+    if (this.connection) {
+      await this.connection.close();
     }
   }
 }
