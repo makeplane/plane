@@ -3,39 +3,30 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronDown, Search } from "lucide-react";
+import { Search } from "lucide-react";
 // types
 import { MEMBER_INVITED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
-import { Button, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { CountChip } from "@/components/common";
 import { PageHead } from "@/components/core";
-import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "@/components/workspace";
-// constants
+import { WorkspaceMembersList } from "@/components/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker, useMember, useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components
-import {
-  TUpdateSeatVariant,
-  RemoveUnusedSeatsModal,
-  UpdateWorkspaceSeatsModal,
-} from "@/plane-web/components/workspace";
-// plane web hooks
-import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { BillingActionsButton } from "@/plane-web/components/workspace/billing";
+import { SendWorkspaceInvitationModal } from "@/plane-web/components/workspace/members";
 
 const WorkspaceMembersSettingsPage = observer(() => {
   // states
   const [inviteModal, setInviteModal] = useState(false);
-  const [updateWorkspaceSeatsModal, setUpdateWorkspaceSeatsModal] = useState(false);
-  const [updateWorkspaceSeatVariant, setUpdateWorkspaceSeatVariant] = useState<TUpdateSeatVariant | null>(null);
-  const [removeUnusedSeatsConfirmationModal, setRemoveUnusedSeatsConfirmationModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   // router
   const { workspaceSlug } = useParams();
@@ -54,11 +45,6 @@ const WorkspaceMembersSettingsPage = observer(() => {
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
-  // derived values
-  const isOfflineSubscription = subscriptionDetail?.is_offline_payment;
-  const isProOrBusinessWorkspace =
-    subscriptionDetail && !isOfflineSubscription && ["PRO", "BUSINESS"].includes(subscriptionDetail?.product);
 
   const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {
     if (!workspaceSlug) return;
@@ -119,27 +105,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
         isOpen={inviteModal}
         onClose={() => setInviteModal(false)}
         onSubmit={handleWorkspaceInvite}
-        toggleUpdateWorkspaceSeatsModal={() => {
-          setUpdateWorkspaceSeatVariant("ADD_SEATS");
-          setUpdateWorkspaceSeatsModal(true);
-        }}
       />
-      {isProOrBusinessWorkspace && updateWorkspaceSeatVariant && (
-        <UpdateWorkspaceSeatsModal
-          isOpen={updateWorkspaceSeatsModal}
-          variant={updateWorkspaceSeatVariant}
-          onClose={() => {
-            setUpdateWorkspaceSeatsModal(false);
-            setUpdateWorkspaceSeatVariant(null);
-          }}
-        />
-      )}
-      {isProOrBusinessWorkspace && (
-        <RemoveUnusedSeatsModal
-          isOpen={removeUnusedSeatsConfirmationModal}
-          handleClose={() => setRemoveUnusedSeatsConfirmationModal(false)}
-        />
-      )}
       <section
         className={cn("w-full overflow-y-auto", {
           "opacity-60": !canPerformWorkspaceMemberActions,
@@ -167,33 +133,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
               {t("workspace_settings.settings.members.add_member")}
             </Button>
           )}
-          {isProOrBusinessWorkspace && canPerformWorkspaceAdminActions && (
-            <CustomMenu
-              customButton={
-                <Button variant="neutral-primary" size="sm" className="flex items-center justify-center gap-1">
-                  Manage seats
-                  <ChevronDown className="h-3 w-3" />
-                </Button>
-              }
-              closeOnSelect
-            >
-              <CustomMenu.MenuItem
-                onClick={() => {
-                  setUpdateWorkspaceSeatsModal(true);
-                  setUpdateWorkspaceSeatVariant("ADD_SEATS");
-                }}
-              >
-                Add seats
-              </CustomMenu.MenuItem>
-              <CustomMenu.MenuItem
-                onClick={() => {
-                  setRemoveUnusedSeatsConfirmationModal(true);
-                }}
-              >
-                Remove unused seats
-              </CustomMenu.MenuItem>
-            </CustomMenu>
-          )}
+          <BillingActionsButton canPerformWorkspaceAdminActions={canPerformWorkspaceAdminActions} />
         </div>
         <WorkspaceMembersList searchQuery={searchQuery} isAdmin={canPerformWorkspaceAdminActions} />
       </section>

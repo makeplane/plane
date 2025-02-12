@@ -1422,9 +1422,19 @@
         "company_size": "Taille de l'entreprise",
         "url": "URL de l'espace de travail",
         "update_workspace": "Mettre à jour l'espace de travail",
-        "delete_workspace": "Supprimer l'espace de travail",
-        "delete_workspace_description": "Lors de la suppression d'un espace de travail, toutes les données et ressources au sein de cet espace de travail seront définitivement supprimées et ne pourront pas être récupérées.",
-        "delete_btn": "Supprimer mon espace de travail",
+        "delete_workspace": "Supprimer cet espace de travail",
+        "delete_workspace_description": "Lors de la suppression d'un espace de travail, toutes les données et ressources au sein de cet espace seront définitivement supprimées et ne pourront pas être récupérées.",
+        "delete_btn": "Supprimer cet espace de travail",
+        "delete_modal": {
+          "title": "Êtes-vous sûr de vouloir supprimer cet espace de travail ?",
+          "description": "Vous avez un essai actif sur l'un de nos forfaits payants. Veuillez d'abord l'annuler pour continuer.",
+          "dismiss": "Fermer",
+          "cancel": "Annuler l'essai",
+          "success_title": "Espace de travail supprimé.",
+          "success_message": "Vous serez bientôt redirigé vers votre page de profil.",
+          "error_title": "Cela n'a pas fonctionné.",
+          "error_message": "Veuillez réessayer."
+        },
         "errors": {
           "name": {
             "required": "Le nom est requis",
