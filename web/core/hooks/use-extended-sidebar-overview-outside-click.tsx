@@ -43,7 +43,7 @@ const useExtendedSidebarOutsideClickDetector = (
     return () => {
       document.removeEventListener("mousedown", handleClick);
     };
-  });
+  }, []);
 };
 
 export default useExtendedSidebarOutsideClickDetector;

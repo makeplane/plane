@@ -68,15 +68,11 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
   const isActive = itemHref === pathname;
 
   const pinNavigationItem = (workspaceSlug: string, key: string) => {
-    updateSidebarPreference(workspaceSlug, key, {
-      is_pinned: true,
-    });
+    updateSidebarPreference(workspaceSlug, key, { is_pinned: true });
   };
 
   const unPinNavigationItem = (workspaceSlug: string, key: string) => {
-    updateSidebarPreference(workspaceSlug, key, {
-      is_pinned: false,
-    });
+    updateSidebarPreference(workspaceSlug, key, { is_pinned: false });
   };
 
   const icon = getSidebarNavigationItemIcon(item.key);
@@ -153,9 +149,7 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
   return (
     <div
       id={`sidebar-${item.key}`}
-      className={cn("relative", {
-        "bg-custom-sidebar-background-80 opacity-60": isDragging,
-      })}
+      className={cn("relative", { "bg-custom-sidebar-background-80 opacity-60": isDragging })}
       ref={navigationIemRef}
     >
       <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />
@@ -205,14 +199,14 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
             {isPinned ? (
               <Tooltip tooltipContent="Hide tab">
                 <Eye
-                  className="size-4 flex-shrink-0 invisible group-hover:visible text-custom-text-300"
+                  className="size-4 flex-shrink-0 invisible group-hover:visible text-custom-text-300 outline-none"
                   onClick={() => unPinNavigationItem(workspaceSlug.toString(), item.key)}
                 />
               </Tooltip>
             ) : (
               <Tooltip tooltipContent="Show tab">
                 <EyeClosed
-                  className="size-4 flex-shrink-0 invisible group-hover:visible text-custom-text-400"
+                  className="size-4 flex-shrink-0 invisible group-hover:visible text-custom-text-400 outline-none"
                   onClick={() => pinNavigationItem(workspaceSlug.toString(), item.key)}
                 />
               </Tooltip>
