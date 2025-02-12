@@ -1,9 +1,7 @@
-import React, { createContext } from "react";
+import { createContext } from "react";
 import { UseFormWatch } from "react-hook-form";
-// types
-import { TIssue } from "@plane/types";
-// plane web types
-import { TIssuePropertyValueErrors, TIssuePropertyValues } from "@/plane-web/types";
+// plane imports
+import { TIssue, TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
 
 export type TPropertyValuesValidationProps = {
   projectId: string | null;
