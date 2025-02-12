@@ -1,17 +1,11 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { ArrowDown, ArrowUp, CheckCircle2, LoaderIcon, Minus, MinusCircle } from "lucide-react";
-// constants
+// plane imports
 import { EProductSubscriptionTier } from "@plane/constants";
-// types
 import { TProductSubscriptionType } from "@plane/types";
-// ui
 import { Button, Loader } from "@plane/ui";
-// constants
-// helpers
-import { cn } from "@/helpers/common.helper";
-// plane web components
-import { calculateYearlyDiscount } from "@/plane-web/components/license";
+import { calculateYearlyDiscount, cn } from "@plane/utils";
 // plane web constants
 import { ComingSoonBadge, PLANE_PLANS, TPlanDetail, TPlanePlans, TPlanFeatureData } from "@/plane-web/constants/plans";
 // plane web hooks

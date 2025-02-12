@@ -3,26 +3,26 @@ export const ENTERPRISE_PLAN_FEATURES = [
   "GAC",
   "LDAP support",
   "Databases + Formulas",
-  "Unlimited Automation Flows",
+  "Unlimited and full Automation Flows",
   "Full-suite professional services",
 ];
 
 export const BUSINESS_PLAN_FEATURES = [
-  "RBAC",
   "Project Templates",
-  "Baselines And Deviations",
+  "Workflows + Approvals",
+  "Decision + Loops Automation",
   "Custom Reports",
-  "Scheduled Comms",
+  "Nested Pages",
   "Intake Forms",
 ];
 
 export const PRO_PLAN_FEATURES = [
-  "More Cycles features",
+  "Dashboards + Reports",
   "Full Time Tracking + Bulk Ops",
-  "Workflow manager",
-  "Automations",
+  "Teamspaces",
+  "Trigger And Action",
+  "Wikis",
   "Popular integrations",
-  "Plane AI",
 ];
 
 export const ONE_PLAN_FEATURES = [
@@ -36,7 +36,7 @@ export const ONE_PLAN_FEATURES = [
 
 export const FREE_PLAN_UPGRADE_FEATURES = [
   "OIDC + SAML for SSO",
-  "Time tracking and bulk ops",
+  "Time Tracking and Bulk Ops",
   "Integrations",
-  "Public views and pages",
+  "Public Views and Pages",
 ];

@@ -13,3 +13,4 @@ export * from "./theme";
 export * from "./teamspace";
 export * from "./work-item-types";
 export * from "./work-item-properties";
+export * from "./payment";
