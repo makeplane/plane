@@ -31,15 +31,15 @@ x-silo-env: &silo-env
     - REDIS_URL=${REDIS_URL:-redis://plane-redis:6379/}
     - SENTRY_DSN=${SENTRY_DSN:-""}
     - PG_SCHEMA=${PG_SCHEMA:-silo}
-    - APP_BASE_URL=${APP_BASE_URL:-}
-    - SILO_API_BASE_URL=${SILO_API_BASE_URL:-}
+    - APP_BASE_URL=${SITE_ADDRESS:-}
+    - SILO_API_BASE_URL=${SITE_ADDRESS:-}
     - API_BASE_URL=${API_BASE_URL:-http://api:8000}
     - SILO_BASE_PATH=${SILO_BASE_PATH:-/silo}
     - WEBHOOK_SECRET=${WEBHOOK_SECRET:-plane-silo}
     - MQ_PREFETCH_COUNT=${MQ_PREFETCH_COUNT:-10}
 
     # Authentication
-    - SILO_HMAC_SECRET_KEY=${SILO_HMAC_SECRET_KEY:-}
+    - SILO_HMAC_SECRET_KEY=${SILO_HMAC_SECRET_KEY:-tnbbvj6ATPvze4zaygdujxg4dpk4hqx0WDW}
 
     # Feature Flag Envs
     - FEATURE_FLAG_SERVER_BASE_URL=${FEATURE_FLAG_SERVER_BASE_URL:-}
@@ -107,7 +107,7 @@ x-app-env: &app-env
     - FEATURE_FLAG_SERVER_BASE_URL=${FEATURE_FLAG_SERVER_BASE_URL:-http://monitor:8080}
     - PAYMENT_SERVER_BASE_URL=${PAYMENT_SERVER_BASE_URL:-http://monitor:8080}
     # Enternal Services Config
-    - SILO_HMAC_SECRET_KEY=${SILO_HMAC_SECRET_KEY:-}
+    - SILO_HMAC_SECRET_KEY=${SILO_HMAC_SECRET_KEY:-tnbbvj6ATPvze4zaygdujxg4dpk4hqx0WDW}
 
 x-live-env: &live-env
   environment:
