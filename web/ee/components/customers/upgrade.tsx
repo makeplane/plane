@@ -4,24 +4,27 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
 // ui
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web hooks
-import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // assets
 import CustomerUpgradeDark from "@/public/empty-state/customers/customer-upgrade-dark.png";
 import CustomerUpgradeLight from "@/public/empty-state/customers/customer-upgrade-light.png";
 
 export const CustomerUpgrade: FC = observer(() => {
+  const { workspaceSlug } = useParams();
   const { resolvedTheme } = useTheme();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
   const isPlaneOneInstance = subscriptionDetail?.is_self_managed && subscriptionDetail?.product === "ONE";
-
+  const isCustomersFeatureFlagEnabled = useFlag(workspaceSlug.toString(), E_FEATURE_FLAGS.CUSTOMERS);
   const getUpgradeButton = () => {
     if (isPlaneOneInstance) {
       return (
@@ -31,12 +34,13 @@ export const CustomerUpgrade: FC = observer(() => {
       );
     }
 
-    return (
-      <Button variant="primary" onClick={() => togglePaidPlanModal(true)}>
-        <Crown className="h-3.5 w-3.5" />
-        Upgrade
-      </Button>
-    );
+    if (!isCustomersFeatureFlagEnabled) {
+      return (
+        <Button variant="primary" disabled>
+          Coming Soon
+        </Button>
+      );
+    }
   };
 
   return (
@@ -51,17 +55,7 @@ export const CustomerUpgrade: FC = observer(() => {
           <div className="w-full xl:max-w-[300px]">
             <div className="text-2xl font-semibold">Customers</div>
             <div className="text-sm">Track and manage customer relationships in your workflow.</div>
-            <div className="flex mt-6 gap-4 flex-wrap">
-              {getUpgradeButton()}
-              <Link
-                target="_blank"
-                href="https://plane.so/contact"
-                className={"bg-transparent underline text-sm text-custom-primary-200 my-auto font-medium"}
-                onClick={() => {}}
-              >
-                Get custom quote
-              </Link>
-            </div>
+            <div className="mt-6">{getUpgradeButton()}</div>
           </div>
         </div>
         <Image
