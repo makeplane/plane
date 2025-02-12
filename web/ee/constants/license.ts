@@ -28,20 +28,20 @@ export const PRO_PLAN_FEATURES_MAP = [
     comingSoon: false,
   },
   {
-    label: "Customizable dashboards",
-    comingSoon: true,
-  },
-  {
     label: "Work Item Templates",
     comingSoon: true,
   },
   {
-    label: "On-demand reports",
+    label: "Epics",
+    comingSoon: false,
+  },
+  {
+    label: "Dashboards + Reports",
     comingSoon: true,
   },
   {
-    label: "Triggers And Actions",
-    comingSoon: true,
+    label: "Initiatives",
+    comingSoon: false,
   },
   {
     label: "Shared And Public Views",
@@ -80,20 +80,20 @@ export const ONE_TO_PRO_PLAN_FEATURES_MAP = [
     comingSoon: false,
   },
   {
-    label: "Customizable dashboards",
-    comingSoon: true,
-  },
-  {
     label: "Work Item Templates",
     comingSoon: true,
   },
   {
-    label: "On-demand reports",
+    label: "Epics",
+    comingSoon: false,
+  },
+  {
+    label: "Dashboards + Reports",
     comingSoon: true,
   },
   {
-    label: "Triggers And Actions",
-    comingSoon: true,
+    label: "Initiatives",
+    comingSoon: false,
   },
   {
     label: "Shared And Public Views",
