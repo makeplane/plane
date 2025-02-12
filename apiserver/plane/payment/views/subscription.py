@@ -361,6 +361,10 @@ class ProrationPreviewEndpoint(BaseAPIView):
             if settings.PAYMENT_SERVER_BASE_URL:
                 response = requests.post(
                     f"{settings.PAYMENT_SERVER_BASE_URL}/api/subscriptions/proration-preview/",
+                    headers={
+                        "content-type": "application/json",
+                        "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                    },
                     json={
                         "workspace_id": str(workspace_license.workspace_id),
                         "quantity": (quantity + workspace_license.purchased_seats),
