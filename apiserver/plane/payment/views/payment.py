@@ -214,7 +214,7 @@ class WebsitePaymentLinkEndpoint(BaseAPIView):
                 )
         except requests.exceptions.RequestException as e:
             log_exception(e)
-            if e.response.status_code == 400:
+            if hasattr(e, "response") and e.response.status_code == 400:
                 return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             return Response(
                 {"error": "error fetching payment link"},
@@ -299,7 +299,7 @@ class WorkspaceFreeTrialEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         except requests.exceptions.RequestException as e:
-            if e.response.status_code == 400:
+            if hasattr(e, "response") and e.response.status_code == 400:
                 return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             log_exception(e)
             return Response(
@@ -386,7 +386,7 @@ class WorkspaceTrialUpgradeEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         except requests.exceptions.RequestException as e:
-            if e.response.status_code == 400:
+            if hasattr(e, "response") and e.response.status_code == 400:
                 return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             log_exception(e)
             return Response(

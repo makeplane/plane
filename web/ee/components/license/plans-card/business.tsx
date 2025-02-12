@@ -4,18 +4,15 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ExternalLink } from "lucide-react";
-// types
+// plane imports
 import { TProductSubscriptionType } from "@plane/types";
-// ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-// store hooks
-import { cn } from "@/helpers/common.helper";
+// helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
-// plane web components
+// plane web imports
 import { PlanCard, SelfManagedLicenseActions } from "@/plane-web/components/license";
-// plane web hooks
+import { BillingActionsButton } from "@/plane-web/components/workspace/billing";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-// services
 import { PaymentService } from "@/plane-web/services/payment.service";
 
 const paymentService = new PaymentService();
@@ -99,17 +96,20 @@ export const BusinessPlanCard: React.FC<TBusinessPlanCardProps> = observer((prop
       }
       button={
         !subscriptionDetail.is_offline_payment && (
-          <Button
-            variant="primary"
-            className="cursor-pointer px-3 py-1.5 text-center text-sm font-medium outline-none"
-            onClick={
-              !isSelfManaged && isInTrialPeriod ? () => handleUpgrade("BUSINESS") : handleSubscriptionPageRedirection
-            }
-            disabled={isLoading}
-          >
-            {isLoading ? "Redirecting to Stripe..." : "Manage your subscription"}
-            <ExternalLink className="h-3 w-3" strokeWidth={2} />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="link-neutral"
+              className="cursor-pointer px-3 py-1.5 text-center text-sm font-medium outline-none"
+              onClick={
+                !isSelfManaged && isInTrialPeriod ? () => handleUpgrade("BUSINESS") : handleSubscriptionPageRedirection
+              }
+              disabled={isLoading}
+            >
+              {isLoading ? "Redirecting to Stripe" : "Manage subscription"}
+              <ExternalLink className="h-3 w-3" strokeWidth={2} />
+            </Button>
+            <BillingActionsButton canPerformWorkspaceAdminActions />
+          </div>
         )
       }
     />

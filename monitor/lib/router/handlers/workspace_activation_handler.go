@@ -37,25 +37,27 @@ func InitializeFreeWorkspace(api prime_api.IPrimeMonitorApi, key string) func(*f
 
 		data, err := api.ActivateFreeWorkspace(payload)
 
-		if err != 0 {
+		if err != nil {
 			data = &prime_api.WorkspaceActivationResponse{
-				WorkspaceID:          payload.WorkspaceID,
-				WorkspaceSlug:        workspaceLicense.WorkspaceSlug,
-				InstanceID:           workspaceLicense.InstanceID.String(),
-				LicenceKey:           workspaceLicense.LicenseKey,
-				Product:              workspaceLicense.Product,
-				ProductType:          workspaceLicense.ProductType,
-				Seats:                workspaceLicense.Seats,
-				FreeSeats:            workspaceLicense.FreeSeats,
-				Interval:             workspaceLicense.Interval,
-				IsOfflinePayment:     workspaceLicense.IsOfflinePayment,
-				IsCancelled:          workspaceLicense.IsCancelled,
-				Subscription:         workspaceLicense.Subscription,
-				CurrentPeriodEndDate: time.Time{},
-				TrialEndDate:         time.Time{},
-				HasAddedPayment:      workspaceLicense.HasAddedPaymentMethod,
-				HasActivatedFree:     workspaceLicense.HasActivatedFreeTrial,
-				MemberList:           payload.MembersList,
+				WorkspaceID:            payload.WorkspaceID,
+				WorkspaceSlug:          workspaceLicense.WorkspaceSlug,
+				InstanceID:             workspaceLicense.InstanceID.String(),
+				LicenceKey:             workspaceLicense.LicenseKey,
+				Product:                workspaceLicense.Product,
+				ProductType:            workspaceLicense.ProductType,
+				Seats:                  workspaceLicense.Seats,
+				FreeSeats:              workspaceLicense.FreeSeats,
+				Interval:               workspaceLicense.Interval,
+				IsOfflinePayment:       workspaceLicense.IsOfflinePayment,
+				IsCancelled:            workspaceLicense.IsCancelled,
+				Subscription:           workspaceLicense.Subscription,
+				CurrentPeriodEndDate:   time.Time{},
+				TrialEndDate:           time.Time{},
+				HasAddedPayment:        workspaceLicense.HasAddedPaymentMethod,
+				HasActivatedFree:       workspaceLicense.HasActivatedFreeTrial,
+				MemberList:             payload.MembersList,
+				LastPaymentFailedDate:  workspaceLicense.LastPaymentFailedDate,
+				LastPaymentFailedCount: workspaceLicense.LastPaymentFailedCount,
 			}
 		}
 
@@ -127,25 +129,27 @@ func GetSyncFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(
 
 		isSynced := true
 
-		if err != 0 {
+		if err != nil {
 			data = &prime_api.WorkspaceActivationResponse{
-				WorkspaceID:          payload.WorkspaceID,
-				WorkspaceSlug:        workspaceLicense.WorkspaceSlug,
-				InstanceID:           workspaceLicense.InstanceID.String(),
-				LicenceKey:           workspaceLicense.LicenseKey,
-				Product:              workspaceLicense.Product,
-				ProductType:          workspaceLicense.ProductType,
-				Seats:                workspaceLicense.Seats,
-				FreeSeats:            workspaceLicense.FreeSeats,
-				Interval:             workspaceLicense.Interval,
-				IsOfflinePayment:     workspaceLicense.IsOfflinePayment,
-				IsCancelled:          workspaceLicense.IsCancelled,
-				Subscription:         workspaceLicense.Subscription,
-				CurrentPeriodEndDate: time.Time{},
-				TrialEndDate:         time.Time{},
-				HasAddedPayment:      workspaceLicense.HasAddedPaymentMethod,
-				HasActivatedFree:     workspaceLicense.HasActivatedFreeTrial,
-				MemberList:           payload.MembersList,
+				WorkspaceID:            payload.WorkspaceID,
+				WorkspaceSlug:          workspaceLicense.WorkspaceSlug,
+				InstanceID:             workspaceLicense.InstanceID.String(),
+				LicenceKey:             workspaceLicense.LicenseKey,
+				Product:                workspaceLicense.Product,
+				ProductType:            workspaceLicense.ProductType,
+				Seats:                  workspaceLicense.Seats,
+				FreeSeats:              workspaceLicense.FreeSeats,
+				Interval:               workspaceLicense.Interval,
+				IsOfflinePayment:       workspaceLicense.IsOfflinePayment,
+				IsCancelled:            workspaceLicense.IsCancelled,
+				Subscription:           workspaceLicense.Subscription,
+				CurrentPeriodEndDate:   time.Time{},
+				TrialEndDate:           time.Time{},
+				HasAddedPayment:        workspaceLicense.HasAddedPaymentMethod,
+				HasActivatedFree:       workspaceLicense.HasActivatedFreeTrial,
+				MemberList:             payload.MembersList,
+				LastPaymentFailedDate:  workspaceLicense.LastPaymentFailedDate,
+				LastPaymentFailedCount: workspaceLicense.LastPaymentFailedCount,
 			}
 
 			isSynced = false
@@ -153,7 +157,23 @@ func GetSyncFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(
 			// Update the existing license from the recieved data
 			updateLicense, _ := convertWorkspaceActivationResponseToLicense(data)
 			updateLicense.ID = workspaceLicense.ID
-			db.Db.Model(&db.License{}).Where("license_key = ?", payload.LicenceKey).Updates(updateLicense)
+
+			if err := db.Db.Transaction(func(tx *gorm.DB) error {
+				// Delete the existing license
+				if err := tx.Delete(&workspaceLicense).Error; err != nil {
+					return err
+				}
+
+				// Create the new license
+				if err := tx.Create(updateLicense).Error; err != nil {
+					return err
+				}
+				return nil
+			}); err != nil {
+				return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+					"error": "Failed to update the workspace license",
+				})
+			}
 		}
 
 		// Fetch the license associated with the payload
@@ -366,7 +386,7 @@ func GetManualSyncHandler(api prime_api.IPrimeMonitorApi, key string) func(*fibe
 		})
 
 		if err != nil {
-			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"error": "Failed to sync the workspace",
 			})
 		}
@@ -393,11 +413,10 @@ func GetActivateFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) f
 		// Forward the payload to the API and get the response
 		data, err := api.ActivateWorkspace(payload)
 
-		if err != 0 {
-			ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "Failed to activate workspace",
+		if err != nil {
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": err.Error,
 			})
-			return fmt.Errorf("failed to activate workspace: %v", err)
 		}
 
 		workspaceUUID, _ := uuid.Parse(data.WorkspaceID)
@@ -425,9 +444,9 @@ func GetActivateFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) f
 
 		flags, err := api.GetFeatureFlags(data.LicenceKey)
 
-		if err != 0 {
-			ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "Failed to get feature flags",
+		if err != nil {
+			ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": err.Error,
 			})
 			return fmt.Errorf("failed to get feature flags: %v", err)
 		}
@@ -499,9 +518,9 @@ func UpdateLicenseSeats(api prime_api.IPrimeMonitorApi, key string) func(*fiber.
 			LicenseKey:    license.LicenseKey,
 		})
 
-		if err != 0 {
-			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "Failed to update the license",
+		if err != nil {
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": err.Error,
 			})
 		}
 
@@ -548,9 +567,9 @@ func DeactivateLicense(api prime_api.IPrimeMonitorApi, key string) func(*fiber.C
 			LicenseKey:    license.LicenseKey,
 		})
 
-		if fetchError != 0 {
-			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "Failed to deactivate the license from the prime server",
+		if fetchError != nil {
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": fetchError.Error,
 			})
 		}
 
@@ -568,7 +587,7 @@ func DeactivateLicense(api prime_api.IPrimeMonitorApi, key string) func(*fiber.C
 
 			members := []db.UserLicense{}
 			if err := db.Db.Where("license_id = ?", license.ID).Find(&members).Error; err != nil {
-				return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 					"error": "Failed to fetch the members for reactivating workspace",
 				})
 			}
@@ -576,7 +595,7 @@ func DeactivateLicense(api prime_api.IPrimeMonitorApi, key string) func(*fiber.C
 			// Create the payload for reactivating the license
 			reactivatePayload, err := convertLicenseToWorkspaceActivationPayload(&license, members)
 			if err != nil {
-				return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 					"error": "Failed to convert the license to workspace activation payload",
 				})
 			}
@@ -584,13 +603,13 @@ func DeactivateLicense(api prime_api.IPrimeMonitorApi, key string) func(*fiber.C
 			// Finally reactivate the workspace
 			_, errCode := api.ActivateWorkspace(*reactivatePayload)
 
-			if errCode != 0 {
-				return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			if errCode != nil {
+				return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 					"error": "Failed to reactivate the workspace, after failed deactivation at monitor",
 				})
 			}
 
-			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"error": "Failed to deactivate the license",
 			})
 		}
@@ -598,7 +617,7 @@ func DeactivateLicense(api prime_api.IPrimeMonitorApi, key string) func(*fiber.C
 		freeLicense, err := convertWorkspaceActivationResponseToLicense(freeLicensePayload)
 
 		if err != nil {
-			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"error": "Failed to convert the free license",
 			})
 		}

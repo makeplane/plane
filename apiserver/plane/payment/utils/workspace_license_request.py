@@ -1,6 +1,7 @@
 # Python imports
 import requests
 import os
+from datetime import timedelta
 
 # Django imports
 from django.conf import settings
@@ -116,7 +117,10 @@ def show_payment_button(workspace_license):
         return True
     # If the workspace is on pro product and is on trial then show the payment button
     if (
-        workspace_license.plan == WorkspaceLicense.PlanChoice.PRO
+        workspace_license.plan in [
+            WorkspaceLicense.PlanChoice.PRO.value,
+            WorkspaceLicense.PlanChoice.BUSINESS.value
+        ]
         and is_on_trial(workspace_license)
         and not has_upgraded(workspace_license)
     ):
@@ -195,6 +199,17 @@ def is_free_member_count_exceeded(workspace_license):
         return False
 
 
+def show_verification_failed_banner(workspace_license):
+    """Determine if the verification failed banner should be shown"""
+    if (
+        workspace_license.plan != WorkspaceLicense.PlanChoice.FREE
+        and workspace_license.last_verified_at
+        and (timezone.now() - workspace_license.last_verified_at
+        > timedelta(days=2))
+    ):
+        return True
+    return False
+
 def resync_workspace_license(workspace_slug, force=False):
     # Fetch the workspace
     workspace = Workspace.objects.get(slug=workspace_slug)
@@ -240,6 +255,9 @@ def resync_workspace_license(workspace_slug, force=False):
             workspace_license.current_period_start_date = response.get(
                 "current_period_start_date"
             )
+            workspace_license.last_verified_at = response.get("last_verified_at", timezone.now())
+            workspace_license.last_payment_failed_date = response.get("last_payment_failed_date", None)
+            workspace_license.last_payment_failed_count = response.get("last_payment_failed_count", 0)
             workspace_license.save()
 
             workspace_license = WorkspaceLicense.objects.get(workspace=workspace)
@@ -268,6 +286,9 @@ def resync_workspace_license(workspace_slug, force=False):
                 "is_trial_ended": is_trial_ended(workspace_license),
                 "billable_members": count_billable_members(workspace_license),
                 "is_free_member_count_exceeded": is_free_member_count_exceeded(
+                    workspace_license
+                ),
+                "show_verification_failed_banner": show_verification_failed_banner(
                     workspace_license
                 ),
             }
@@ -299,6 +320,9 @@ def resync_workspace_license(workspace_slug, force=False):
                 "is_free_member_count_exceeded": is_free_member_count_exceeded(
                     workspace_license
                 ),
+                "show_verification_failed_banner": show_verification_failed_banner(
+                    workspace_license
+                ),
             }
     # If the license is not present, then fetch the license from the payment server and create it
     else:
@@ -326,6 +350,9 @@ def resync_workspace_license(workspace_slug, force=False):
             has_added_payment_method=response.get("has_added_payment_method", False),
             subscription=response.get("subscription"),
             current_period_start_date=response.get("current_period_start_date"),
+            last_verified_at=response.get("last_verified_at", timezone.now()),
+            last_payment_failed_date=response.get("last_payment_failed_date", None),
+            last_payment_failed_count=response.get("last_payment_failed_count", 0),
         )
 
         workspace_license = WorkspaceLicense.objects.get(workspace=workspace)
@@ -355,6 +382,9 @@ def resync_workspace_license(workspace_slug, force=False):
             "is_trial_ended": is_trial_ended(workspace_license),
             "billable_members": count_billable_members(workspace_license),
             "is_free_member_count_exceeded": is_free_member_count_exceeded(
+                workspace_license
+            ),
+            "show_verification_failed_banner": show_verification_failed_banner(
                 workspace_license
             ),
         }

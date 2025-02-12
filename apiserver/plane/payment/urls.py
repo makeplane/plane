@@ -17,6 +17,7 @@ from .views import (
     PurchaseSubscriptionSeatEndpoint,
     RemoveUnusedSeatsEndpoint,
     LicenseDeActivateEndpoint,
+    ProrationPreviewEndpoint,
 )
 
 urlpatterns = [
@@ -93,5 +94,10 @@ urlpatterns = [
         "workspaces/<str:slug>/licenses/deactivate/",
         LicenseDeActivateEndpoint.as_view(),
         name="license-deactivate",
+    ),
+    path(
+        "workspaces/<str:slug>/subscriptions/proration-preview/",
+        ProrationPreviewEndpoint.as_view(),
+        name="proration-preview",
     ),
 ]

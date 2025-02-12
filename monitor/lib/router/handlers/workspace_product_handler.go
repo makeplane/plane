@@ -12,21 +12,30 @@ import (
 
 type WorkspaceProductResponse struct {
 	// Product Type will be mapped as Plane below
-	Plan                 string     `json:"plan"`
-	PurchasedSeats       int        `json:"purchased_seats"`
-	FreeSeats            int        `json:"free_seats"`
-	CurrentPeriodEndDate *time.Time `json:"current_period_end_date"`
-	IsCancelled          bool       `json:"is_cancelled"`
-	Interval             string     `json:"interval"`
-	IsOfflinePayment     bool       `json:"is_offline_payment"`
-	TrialEndDate         *time.Time `json:"trial_end_date"`
-	HasAddedPayment      bool       `json:"has_added_payment_method"`
-	HasActivatedFree     bool       `json:"has_activated_free_trial"`
-	Subscription         string     `json:"subscription"`
+	Plan                   string     `json:"plan"`
+	PurchasedSeats         int        `json:"purchased_seats"`
+	FreeSeats              int        `json:"free_seats"`
+	CurrentPeriodEndDate   *time.Time `json:"current_period_end_date"`
+	IsCancelled            bool       `json:"is_cancelled"`
+	Interval               string     `json:"interval"`
+	IsOfflinePayment       bool       `json:"is_offline_payment"`
+	TrialEndDate           *time.Time `json:"trial_end_date"`
+	HasAddedPayment        bool       `json:"has_added_payment_method"`
+	HasActivatedFree       bool       `json:"has_activated_free_trial"`
+	Subscription           string     `json:"subscription"`
+	LastVerifiedAt         *time.Time `json:"last_verified_at"`
+	LastPaymentFailedDate  *time.Time `json:"last_payment_failed_date"`
+	LastPaymentFailedCount int        `json:"last_payment_failed_count"`
 }
 
 type WorkspaceSubscriptionPayload struct {
 	WorkspaceId string `json:"workspace_id"`
+}
+
+type ProrationPreviewPayload struct {
+	WorkspaceId   string `json:"workspace_id"`
+	Quantity      int    `json:"quantity"`
+	WorkspaceSlug string `json:"workspace_slug"`
 }
 
 func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
@@ -36,16 +45,15 @@ func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func
 
 		// Validate the payload sent from the client
 		if err := ctx.BodyParser(&payload); err != nil {
-			ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"error": "Invalid payload passed for workspace product",
 			})
-			return err
 		}
 
 		// Get the parameter workspace id from the URL
 		workspaceId := ctx.Params("workspaceId")
 		if workspaceId == "" {
-			ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"error": "Invalid workspace id",
 			})
 		}
@@ -68,43 +76,52 @@ func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func
 			})
 
 			// If the workspace could not be created, return a free workspace
-			if err != 0 {
+			if err != nil {
+				now := time.Now()
 				// Send the response back to the client
 				ctx.Status(fiber.StatusOK).JSON(WorkspaceProductResponse{
-					Plan:                 "FREE",
-					PurchasedSeats:       0,
-					FreeSeats:            payload.FreeSeats,
-					CurrentPeriodEndDate: nil,
-					IsCancelled:          false,
-					Interval:             "MONTHLY",
-					IsOfflinePayment:     false,
-					HasAddedPayment:      false,
-					HasActivatedFree:     false,
+					Plan:                   "FREE",
+					PurchasedSeats:         0,
+					FreeSeats:              payload.FreeSeats,
+					CurrentPeriodEndDate:   nil,
+					IsCancelled:            false,
+					Interval:               "MONTHLY",
+					IsOfflinePayment:       false,
+					HasAddedPayment:        false,
+					HasActivatedFree:       false,
+					LastVerifiedAt:         &now,
+					LastPaymentFailedDate:  nil,
+					LastPaymentFailedCount: 0,
 				})
 				// Return the error
-				return fmt.Errorf("failed to activate workspace: %v", err)
+				return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+					"error": err.Error,
+				})
 			}
 
 			// Parse the string to uuids
 			workspaceUUID, _ := uuid.Parse(data.WorkspaceID)
 			instanceUUID, _ := uuid.Parse(data.InstanceID)
-
+			now := time.Now()
 			// Create a new license record for the workspace
 			license := &db.License{
-				LicenseKey:            data.LicenceKey,
-				InstanceID:            instanceUUID,
-				WorkspaceID:           workspaceUUID,
-				Product:               data.Product,
-				ProductType:           data.ProductType,
-				WorkspaceSlug:         data.WorkspaceSlug,
-				Seats:                 data.Seats,
-				FreeSeats:             data.FreeSeats,
-				Interval:              data.Interval,
-				IsOfflinePayment:      data.IsOfflinePayment,
-				IsCancelled:           data.IsCancelled,
-				Subscription:          data.Subscription,
-				HasAddedPaymentMethod: data.HasAddedPayment,
-				HasActivatedFreeTrial: data.HasActivatedFree,
+				LicenseKey:             data.LicenceKey,
+				InstanceID:             instanceUUID,
+				WorkspaceID:            workspaceUUID,
+				Product:                data.Product,
+				ProductType:            data.ProductType,
+				WorkspaceSlug:          data.WorkspaceSlug,
+				Seats:                  data.Seats,
+				FreeSeats:              data.FreeSeats,
+				Interval:               data.Interval,
+				IsOfflinePayment:       data.IsOfflinePayment,
+				IsCancelled:            data.IsCancelled,
+				Subscription:           data.Subscription,
+				HasAddedPaymentMethod:  data.HasAddedPayment,
+				HasActivatedFreeTrial:  data.HasActivatedFree,
+				LastVerifiedAt:         &now,
+				LastPaymentFailedDate:  data.LastPaymentFailedDate,
+				LastPaymentFailedCount: data.LastPaymentFailedCount,
 			}
 			// Save the license record to the database
 			db.Db.Create(license)
@@ -127,11 +144,10 @@ func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func
 
 				flags, err := api.GetFeatureFlags(data.LicenceKey)
 
-				if err != 0 {
-					ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-						"error": "Failed to get feature flags",
+				if err != nil {
+					return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+						"error": err.Error,
 					})
-					return fmt.Errorf("failed to get feature flags: %v", err)
 				}
 
 				flagData := &db.Flags{
@@ -145,49 +161,51 @@ func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func
 				db.Db.Create(flagData)
 
 				// Send the workspace activation message back to the client
-				ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+				return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 					"message": "License activated successfully for the workspace",
 					"status":  true,
 					"license": license,
 				})
-
-				return nil
 			}
 
 			// Send the response back to the client
 			ctx.Status(fiber.StatusOK).JSON(WorkspaceProductResponse{
-				Plan:                 license.ProductType,
-				PurchasedSeats:       license.Seats,
-				FreeSeats:            license.FreeSeats,
-				CurrentPeriodEndDate: license.CurrentPeriodEndDate,
-				IsCancelled:          license.IsCancelled,
-				Interval:             license.Interval,
-				IsOfflinePayment:     license.IsOfflinePayment,
-				TrialEndDate:         license.TrialEndDate,
-				HasAddedPayment:      license.HasAddedPaymentMethod,
-				HasActivatedFree:     license.HasActivatedFreeTrial,
-				Subscription:         license.Subscription,
+				Plan:                   license.ProductType,
+				PurchasedSeats:         license.Seats,
+				FreeSeats:              license.FreeSeats,
+				CurrentPeriodEndDate:   license.CurrentPeriodEndDate,
+				IsCancelled:            license.IsCancelled,
+				Interval:               license.Interval,
+				IsOfflinePayment:       license.IsOfflinePayment,
+				TrialEndDate:           license.TrialEndDate,
+				HasAddedPayment:        license.HasAddedPaymentMethod,
+				HasActivatedFree:       license.HasActivatedFreeTrial,
+				Subscription:           license.Subscription,
+				LastVerifiedAt:         license.LastVerifiedAt,
+				LastPaymentFailedDate:  license.LastPaymentFailedDate,
+				LastPaymentFailedCount: license.LastPaymentFailedCount,
 			})
 
 			return nil
 		}
 
 		// Send the response back to the client
-		ctx.Status(fiber.StatusOK).JSON(WorkspaceProductResponse{
-			Plan:                 license.ProductType,
-			PurchasedSeats:       license.Seats,
-			FreeSeats:            license.FreeSeats,
-			CurrentPeriodEndDate: license.CurrentPeriodEndDate,
-			IsCancelled:          license.IsCancelled,
-			Interval:             license.Interval,
-			IsOfflinePayment:     license.IsOfflinePayment,
-			TrialEndDate:         license.TrialEndDate,
-			HasAddedPayment:      license.HasAddedPaymentMethod,
-			HasActivatedFree:     license.HasActivatedFreeTrial,
-			Subscription:         license.Subscription,
+		return ctx.Status(fiber.StatusOK).JSON(WorkspaceProductResponse{
+			Plan:                   license.ProductType,
+			PurchasedSeats:         license.Seats,
+			FreeSeats:              license.FreeSeats,
+			CurrentPeriodEndDate:   license.CurrentPeriodEndDate,
+			IsCancelled:            license.IsCancelled,
+			Interval:               license.Interval,
+			IsOfflinePayment:       license.IsOfflinePayment,
+			TrialEndDate:           license.TrialEndDate,
+			HasAddedPayment:        license.HasAddedPaymentMethod,
+			HasActivatedFree:       license.HasActivatedFreeTrial,
+			Subscription:           license.Subscription,
+			LastVerifiedAt:         license.LastVerifiedAt,
+			LastPaymentFailedDate:  license.LastPaymentFailedDate,
+			LastPaymentFailedCount: license.LastPaymentFailedCount,
 		})
-
-		return nil
 	}
 }
 
@@ -217,16 +235,15 @@ func GetWorkspaceSubscriptionHandler(api prime_api.IPrimeMonitorApi, key string)
 		}
 
 		// Get the subscription details for the workspace from the prime server
-		data, errCode := api.GetSubscriptionDetails(prime_api.WorkspaceSubscriptionPayload{
+		data, errorResponse := api.GetSubscriptionDetails(prime_api.WorkspaceSubscriptionPayload{
 			WorkspaceId: license.WorkspaceID.String(),
 			LicenseKey:  license.LicenseKey,
 		})
 
-		if errCode != 0 {
-			ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "Failed to get subscription details",
+		if errorResponse != nil {
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": errorResponse.Error,
 			})
-			return fmt.Errorf("failed to get subscription details: %v", errCode)
 		}
 
 		// Send the response back to the client
@@ -240,13 +257,12 @@ func GetPlansHandler(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx
 		quantity := ctx.Params("quantity", "1")
 
 		// Get the plans from the prime server
-		data, errCode := api.RetrievePlans(quantity)
+		data, errorResponse := api.RetrievePlans(quantity)
 
-		if errCode != 0 {
-			ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "Failed to get plans",
+		if errorResponse != nil {
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": errorResponse.Error,
 			})
-			return fmt.Errorf("failed to get plans: %v", errCode)
 		}
 
 		// Send the response back to the client
@@ -266,13 +282,58 @@ func GetPaymentLinkHandler(api prime_api.IPrimeMonitorApi, key string) func(*fib
 			return err
 		}
 		// Get the payment link from the prime server
-		data, errCode := api.RetrievePaymentLink(payload)
+		data, errorResponse := api.RetrievePaymentLink(payload)
 
-		if errCode != 0 {
-			ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "Failed to get payment link",
+		if errorResponse != nil {
+			ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": errorResponse.Error,
 			})
-			return fmt.Errorf("failed to get payment link: %v", errCode)
+			return fmt.Errorf("failed to get payment link: %v", errorResponse)
+		}
+
+		// Send the response back to the client
+		return ctx.Status(fiber.StatusOK).JSON(data)
+	}
+}
+
+func GetProrationPreviewHandler(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) (err error) {
+		//Parse the payload
+
+		var payload ProrationPreviewPayload
+
+		// Validate the payload sent from the client
+		if err := ctx.BodyParser(&payload); err != nil {
+			ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "Invalid payload passed for workspace product",
+			})
+			return err
+		}
+
+		// Get the license record for the workspace
+		license := db.License{}
+		record := db.Db.Model(&db.License{}).Where("workspace_id = ?", payload.WorkspaceId).First(&license)
+
+		// If the license record is not found, return an error
+		if record.Error != nil {
+			ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "Invalid workspace id",
+			})
+			return err
+		}
+
+		// Get the proration preview from the prime server
+		data, errorResponse := api.GetProrationPreview(prime_api.ProrationPreviewPayload{
+			WorkspaceId:   license.WorkspaceID.String(),
+			LicenseKey:    license.LicenseKey,
+			WorkspaceSlug: payload.WorkspaceSlug,
+			Quantity:      payload.Quantity,
+		})
+
+		if errorResponse != nil {
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": errorResponse.Error,
+			})
 		}
 
 		// Send the response back to the client

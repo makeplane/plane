@@ -2,7 +2,8 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // types
-import { IWorkspaceProductSubscription } from "@plane/types";
+import { DEFAULT_ADD_WORKSPACE_SEATS_MODAL_DATA } from "@plane/constants";
+import { IWorkspaceProductSubscription, TAddWorkspaceSeatsModal } from "@plane/types";
 // services
 import { PaymentService } from "@/plane-web/services/payment.service";
 // plane web store
@@ -15,33 +16,55 @@ type TWorkspaceSubscriptionMap = {
 };
 
 export interface IWorkspaceSubscriptionStore {
+  // observables
   subscribedPlan: TWorkspaceSubscriptionMap;
   isPaidPlanModalOpen: boolean;
   isSuccessPlanModalOpen: boolean;
+  addWorkspaceSeatsModal: TAddWorkspaceSeatsModal;
+  removeUnusedSeatsConfirmationModal: boolean;
+  // computed
   currentWorkspaceSubscribedPlanDetail: IWorkspaceProductSubscription | undefined;
   currentWorkspaceSubscriptionAvailableSeats: number;
-  updateSubscribedPlan: (workspaceSlug: string, payload: Partial<IWorkspaceProductSubscription>) => void;
+  // helper actions
   togglePaidPlanModal: (value?: boolean) => void;
+  toggleAddWorkspaceSeatsModal: (value?: TAddWorkspaceSeatsModal) => void;
+  toggleRemoveUnusedSeatsConfirmationModal: () => void;
   handleSuccessModalToggle: (isOpen?: boolean) => void;
+  // actions
+  updateSubscribedPlan: (workspaceSlug: string, payload: Partial<IWorkspaceProductSubscription>) => void;
   fetchWorkspaceSubscribedPlan: (workspaceSlug: string) => Promise<IWorkspaceProductSubscription>;
   refreshWorkspaceSubscribedPlan: (workspaceSlug: string) => Promise<void>;
   freeTrialSubscription: (workspaceSlug: string, payload: { product_id: string; price_id: string }) => Promise<void>;
 }
 
 export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
+  // observables
+  // workspace subscribed plan
   subscribedPlan: TWorkspaceSubscriptionMap = {};
+  // modals
   isPaidPlanModalOpen = false;
   isSuccessPlanModalOpen: boolean = false;
+  addWorkspaceSeatsModal: TAddWorkspaceSeatsModal = DEFAULT_ADD_WORKSPACE_SEATS_MODAL_DATA;
+  removeUnusedSeatsConfirmationModal: boolean = false;
 
   constructor(private rootStore: RootStore) {
     makeObservable(this, {
+      // observables
       subscribedPlan: observable,
       isPaidPlanModalOpen: observable.ref,
       isSuccessPlanModalOpen: observable,
+      addWorkspaceSeatsModal: observable,
+      removeUnusedSeatsConfirmationModal: observable,
+      // computed
       currentWorkspaceSubscribedPlanDetail: computed,
       currentWorkspaceSubscriptionAvailableSeats: computed,
-      updateSubscribedPlan: action,
+      // helper actions
       togglePaidPlanModal: action,
+      handleSuccessModalToggle: action,
+      toggleAddWorkspaceSeatsModal: action,
+      toggleRemoveUnusedSeatsConfirmationModal: action,
+      // actions
+      updateSubscribedPlan: action,
       fetchWorkspaceSubscribedPlan: action,
       refreshWorkspaceSubscribedPlan: action,
       freeTrialSubscription: action,
@@ -65,26 +88,39 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
     );
   }
 
+  // --------------- Computed ---------------
+  /**
+   * Get the current workspace subscribed plan detail
+   * @returns IWorkspaceProductSubscription | undefined
+   */
   get currentWorkspaceSubscribedPlanDetail() {
     if (!this.rootStore.router.workspaceSlug) return undefined;
     return this.subscribedPlan[this.rootStore.router.workspaceSlug] || undefined;
   }
 
+  /**
+   * Get the current workspace subscription available seats
+   * @returns number
+   */
   get currentWorkspaceSubscriptionAvailableSeats() {
-    if (this.currentWorkspaceSubscribedPlanDetail?.product == 'FREE') {
-      return (this.currentWorkspaceSubscribedPlanDetail.free_seats || 12) - (this.currentWorkspaceSubscribedPlanDetail.occupied_seats || 0)
+    if (this.currentWorkspaceSubscribedPlanDetail?.product == "FREE") {
+      return (
+        (this.currentWorkspaceSubscribedPlanDetail.free_seats || 12) -
+        (this.currentWorkspaceSubscribedPlanDetail.occupied_seats || 0)
+      );
     } else {
-      return (this.currentWorkspaceSubscribedPlanDetail?.purchased_seats || 12) - (this.currentWorkspaceSubscribedPlanDetail?.billable_members || 0)
+      return (
+        (this.currentWorkspaceSubscribedPlanDetail?.purchased_seats || 12) -
+        (this.currentWorkspaceSubscribedPlanDetail?.billable_members || 0)
+      );
     }
   }
 
-  updateSubscribedPlan = (workspaceSlug: string, payload: Partial<IWorkspaceProductSubscription>) => {
-    set(this.subscribedPlan, workspaceSlug, {
-      ...this.subscribedPlan[workspaceSlug],
-      ...payload,
-    });
-  };
-
+  // --------------- Helper Actions ---------------
+  /**
+   * Toggles the paid plan modal
+   * @param value
+   */
   togglePaidPlanModal = (value?: boolean) => {
     this.isPaidPlanModalOpen = value ?? !this.isPaidPlanModalOpen;
   };
@@ -93,6 +129,49 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
     this.isSuccessPlanModalOpen = isOpen ?? !this.isSuccessPlanModalOpen;
   };
 
+  /**
+   * Toggles the update workspace seats modal
+   * @param value
+   * @returns
+   */
+  toggleAddWorkspaceSeatsModal = (value?: TAddWorkspaceSeatsModal) => {
+    if (value) {
+      this.addWorkspaceSeatsModal = {
+        isOpen: value.isOpen,
+      };
+    } else {
+      this.addWorkspaceSeatsModal = {
+        isOpen: !this.addWorkspaceSeatsModal.isOpen,
+      };
+    }
+  };
+
+  /**
+   * Toggles the remove unused seats confirmation modal
+   * @returns
+   */
+  toggleRemoveUnusedSeatsConfirmationModal = () => {
+    this.removeUnusedSeatsConfirmationModal = !this.removeUnusedSeatsConfirmationModal;
+  };
+
+  // --------------- Actions ---------------
+  /**
+   * Update the subscribed plan
+   * @param workspaceSlug
+   * @param payload
+   */
+  updateSubscribedPlan = (workspaceSlug: string, payload: Partial<IWorkspaceProductSubscription>) => {
+    set(this.subscribedPlan, workspaceSlug, {
+      ...this.subscribedPlan[workspaceSlug],
+      ...payload,
+    });
+  };
+
+  /**
+   * Fetch the workspace subscribed plan
+   * @param workspaceSlug
+   * @returns
+   */
   fetchWorkspaceSubscribedPlan = async (workspaceSlug: string) => {
     try {
       const response = await paymentService.getWorkspaceCurrentPlan(workspaceSlug);
@@ -146,6 +225,11 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
     }
   };
 
+  /**
+   * Refresh the workspace subscribed plan
+   * @param workspaceSlug
+   * @returns
+   */
   refreshWorkspaceSubscribedPlan = async (workspaceSlug: string) => {
     try {
       await paymentService.refreshWorkspaceCurrentPlan(workspaceSlug);
@@ -154,6 +238,12 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
     }
   };
 
+  /**
+   * Free trial subscription
+   * @param workspaceSlug
+   * @param payload
+   * @returns
+   */
   freeTrialSubscription = async (workspaceSlug: string, payload: { product_id: string; price_id: string }) => {
     try {
       await paymentService.getFreeTrialSubscription(workspaceSlug, payload);

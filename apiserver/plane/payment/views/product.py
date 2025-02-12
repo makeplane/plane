@@ -83,6 +83,8 @@ class ProductEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         except requests.exceptions.RequestException as e:
+            if hasattr(e, "response") and e.response.status_code == 400:
+                return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             log_exception(e)
             return Response(
                 {"error": "error fetching product details"},
@@ -137,7 +139,7 @@ class WebsiteUserWorkspaceEndpoint(BaseAPIView):
             return Response(workspaces, status=status.HTTP_200_OK)
 
         except requests.exceptions.RequestException as e:
-            if e.response.status_code == 400:
+            if hasattr(e, "response") and e.response.status_code == 400:
                 return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             log_exception(e)
             return Response(
@@ -165,6 +167,8 @@ class WorkspaceProductEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         except requests.exceptions.RequestException as e:
+            if hasattr(e, "response") and e.response.status_code == 400:
+                return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             log_exception(e)
             return Response(
                 {"error": "error fetching product details"},
@@ -209,25 +213,38 @@ class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
 
             for member in workspace_members:
                 member["user_id"] = str(member["user_id"])
-            # Request to payment server to resync the workspace licenses and feature flags
-            response = requests.post(
-                f"{settings.PAYMENT_SERVER_BASE_URL}/api/workspaces/{str(workspace.id)}/sync/",
-                headers={
-                    "content-type": "application/json",
-                    "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
-                },
-                json={
-                    "workspace_slug": str(workspace.slug),
-                    "workspace_id": str(workspace.id),
-                    "members_list": list(workspace_members),
-                },
-            )
 
-            # Check if the request was successful
-            response.raise_for_status()
+            try:
+                # Request to payment server to resync the workspace licenses and feature flags
+                response = requests.post(
+                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/workspaces/{str(workspace.id)}/sync/",
+                    headers={
+                        "content-type": "application/json",
+                        "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                    },
+                    json={
+                        "workspace_slug": str(workspace.slug),
+                        "workspace_id": str(workspace.id),
+                        "members_list": list(workspace_members),
+                    },
+                )
 
-            # Return the response
-            return Response(status=status.HTTP_204_NO_CONTENT)
+
+                # Check if the request was successful
+                response.raise_for_status()
+
+                # Resync the workspace license
+                resync_workspace_license(workspace_slug=slug, force=True)
+
+                # Return the response
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            except requests.exceptions.RequestException as e:
+                if hasattr(e, "response") and e.response.status_code == 400:
+                    return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"error": "error in syncing workspace license"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
 
 class WorkspaceLicenseSyncEndpoint(BaseAPIView):

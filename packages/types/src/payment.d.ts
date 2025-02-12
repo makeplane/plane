@@ -56,3 +56,19 @@ export type TMemberInviteCheck = {
   allowed_admin_members: number;
   allowed_guests: number;
 };
+
+export type TUpdateSeatVariant = "ADD_SEATS" | "REMOVE_SEATS";
+
+export type TAddWorkspaceSeatsModal = {
+  isOpen: boolean;
+};
+
+export type TProrationPreview = {
+  quantity_difference: number;
+  per_seat_prorated_amount: number;
+  current_quantity: number;
+  new_quantity: number;
+  total_prorated_amount: number;
+  current_price_amount: number;
+  current_price_interval: "MONTHLY" | "YEARLY";
+};

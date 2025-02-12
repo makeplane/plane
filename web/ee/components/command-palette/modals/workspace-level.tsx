@@ -6,18 +6,25 @@ import {
 } from "@/ce/components/command-palette/modals/workspace-level";
 // hooks
 import { useCommandPalette } from "@/hooks/store";
-// plane web components
+// plane web imports
 import { CreateUpdateWorkspaceDashboardModal } from "@/plane-web/components/dashboards/modals";
 import { CreateUpdateInitiativeModal } from "@/plane-web/components/initiatives/components/create-update-initiatives-modal";
 import { CreateOrUpdateTeamspaceModal } from "@/plane-web/components/teamspaces/create-update";
 import { CreateUpdateTeamspaceViewModal } from "@/plane-web/components/teamspaces/views/modals/create-update";
-// plane web hooks
-import { useWorkspaceDashboards } from "@/plane-web/hooks/store";
+import { AddSeatsModal, RemoveUnusedSeatsModal } from "@/plane-web/components/workspace/billing/manage-seats";
+import { useWorkspaceDashboards, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps) => {
   // router
   const { workspaceSlug } = props;
   // store hooks
+  const {
+    currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
+    addWorkspaceSeatsModal,
+    removeUnusedSeatsConfirmationModal,
+    toggleAddWorkspaceSeatsModal,
+    toggleRemoveUnusedSeatsConfirmationModal,
+  } = useWorkspaceSubscription();
   const {
     createUpdateTeamspaceModal,
     toggleCreateTeamspaceModal,
@@ -31,6 +38,10 @@ export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps)
     createUpdateModalPayload: workspaceDashboardModalPayload,
     toggleCreateUpdateModal: toggleWorkspaceDashboardModal,
   } = useWorkspaceDashboards();
+  // derived values
+  const isOfflineSubscription = subscriptionDetail?.is_offline_payment;
+  const isProOrBusinessWorkspace =
+    subscriptionDetail && !isOfflineSubscription && ["PRO", "BUSINESS"].includes(subscriptionDetail?.product);
 
   return (
     <>
@@ -57,6 +68,20 @@ export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps)
         isOpen={isWorkspaceDashboardModalOpen}
         onClose={() => toggleWorkspaceDashboardModal(false)}
       />
+      {isProOrBusinessWorkspace && (
+        <AddSeatsModal
+          data={addWorkspaceSeatsModal}
+          onClose={() => {
+            toggleAddWorkspaceSeatsModal({ isOpen: false });
+          }}
+        />
+      )}
+      {isProOrBusinessWorkspace && (
+        <RemoveUnusedSeatsModal
+          isOpen={removeUnusedSeatsConfirmationModal}
+          handleClose={() => toggleRemoveUnusedSeatsConfirmationModal()}
+        />
+      )}
     </>
   );
 });

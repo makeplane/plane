@@ -1,4 +1,4 @@
-import { IPaymentProduct, IWorkspaceProductSubscription, TMemberInviteCheck } from "@plane/types";
+import { IPaymentProduct, IWorkspaceProductSubscription, TMemberInviteCheck, TProrationPreview } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -101,6 +101,16 @@ export class PaymentService extends APIService {
    */
   async removeUnusedSeats(workspaceSlug: string): Promise<{ seats: number }> {
     return this.post(`/api/payments/workspaces/${workspaceSlug}/subscriptions/seats/remove-unused/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchProrationPreview(workspaceSlug: string, quantity: number): Promise<TProrationPreview> {
+    return this.post(`/api/payments/workspaces/${workspaceSlug}/subscriptions/proration-preview/`, {
+      quantity,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -17,5 +17,6 @@ from .subscription import (
     UpgradeSubscriptionEndpoint,
     PurchaseSubscriptionSeatEndpoint,
     RemoveUnusedSeatsEndpoint,
+    ProrationPreviewEndpoint,
 )
 from .feature_flag import FeatureFlagProxyEndpoint

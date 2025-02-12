@@ -2,6 +2,11 @@ package prime_api
 
 type ErrorCode int
 
+type APIError struct {
+	Error   string
+	Success bool
+}
+
 const (
 	NO_ERROR ErrorCode = iota
 	UNABLE_TO_POST_SERVICE_STATUS

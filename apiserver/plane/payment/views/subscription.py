@@ -47,7 +47,7 @@ class SubscriptionEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except requests.exceptions.RequestException as e:
-            if e.response.status_code == 400:
+            if hasattr(e, "response") and e.response.status_code == 400:
                 return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             log_exception(e)
             return Response(
@@ -99,7 +99,7 @@ class UpgradeSubscriptionEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except requests.exceptions.RequestException as e:
-            if e.response and e.response.status_code == 400:
+            if hasattr(e, "response") and e.response.status_code == 400:
                 return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             log_exception(e)
             return Response(
@@ -183,7 +183,7 @@ class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except requests.exceptions.RequestException as e:
-            if e.response and e.response.status_code == 400:
+            if hasattr(e, "response") and e.response.status_code == 400:
                 return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             log_exception(e)
             return Response(
@@ -258,10 +258,75 @@ class RemoveUnusedSeatsEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except requests.exceptions.RequestException as e:
-            if e.response and e.response.status_code == 400:
+            if hasattr(e, "response") and e.response.status_code == 400:
                 return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
             log_exception(e)
             return Response(
                 {"error": "Error in purchasing workspace subscription"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class ProrationPreviewEndpoint(BaseAPIView):
+
+    permission_classes = [WorkspaceOwnerPermission]
+
+    def post(self, request, slug):
+        try:
+            # Get the quantity
+            quantity = request.data.get("quantity")
+            if not quantity:
+                return Response(
+                    {"error": "Quantity is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Fetch the workspace license
+            workspace_license = WorkspaceLicense.objects.filter(
+                workspace__slug=slug,
+            ).first()
+            if not workspace_license:
+                return Response(
+                    {"error": "Workspace license not found"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if workspace_license.plan == WorkspaceLicense.PlanChoice.FREE.value:
+                return Response(
+                    {"error": "Workspace is on the free plan"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Fetch the workspace subscription
+            if settings.PAYMENT_SERVER_BASE_URL:
+                response = requests.post(
+                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/subscriptions/proration-preview/",
+                    headers={
+                        "content-type": "application/json",
+                        "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                    },
+                    json={
+                        "workspace_id": str(workspace_license.workspace_id),
+                        "quantity": (quantity + workspace_license.purchased_seats),
+                        "workspace_slug": slug,
+                    },
+                )
+
+                # Check if the response is successful
+                response.raise_for_status()
+
+                # Return the response
+                return Response(response.json(), status=status.HTTP_200_OK)
+            else:
+                return Response(
+                    {"error": "Payment server is not configured"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        except requests.exceptions.RequestException as e:
+            if hasattr(e, "response") and e.response.status_code == 400:
+                return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
+            log_exception(e)
+            return Response(
+                {"error": "Error in proration preview"},
                 status=status.HTTP_400_BAD_REQUEST,
             )

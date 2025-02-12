@@ -50,6 +50,7 @@ export const RemoveUnusedSeatsModal: FC<TRemoveUnusedSeatsProps> = (props) => {
       });
   };
 
+  if (!isOpen) return null;
   return (
     <AlertModalCore
       handleClose={handleClose}

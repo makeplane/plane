@@ -17,6 +17,9 @@ import (
 3. Resync license information to the API, once it's up and running.
 */
 
+// LICENSE_VERIFICATION_FAILED_THRESHOLD is the threshold for the license verification for moving to the free plan
+const LICENSE_VERIFICATION_FAILED_THRESHOLD = 7 * 24 * time.Hour
+
 // Fetches all the licenses from the database and updates the flags
 func UpdateFlagsHandler(ctx context.Context, api prime_api.IPrimeMonitorApi) error {
 	var licenses []db.License
@@ -85,7 +88,70 @@ func RefreshLicense(ctx context.Context, api prime_api.IPrimeMonitorApi, license
 		MembersList:   workspaceMembers,
 	})
 
-	if err != 0 {
+	// If the license sync failed, we need to check the last verified date
+	if err != nil {
+		// The license sync failed, we need to check the last verified date
+		if license.LastVerifiedAt != nil && license.ProductType != "FREE" {
+			// Check if the last verified date is greater than 14 days
+			if time.Since(*license.LastVerifiedAt) > LICENSE_VERIFICATION_FAILED_THRESHOLD {
+				// Deactivate the license
+				newLicense := &db.License{
+					ID:                     license.ID,
+					LicenseKey:             license.LicenseKey,
+					InstanceID:             license.InstanceID,
+					WorkspaceID:            license.WorkspaceID,
+					Product:                "Plane Free",
+					ProductType:            "FREE",
+					WorkspaceSlug:          license.WorkspaceSlug,
+					Seats:                  0,
+					FreeSeats:              12,
+					Interval:               "MONTHLY",
+					IsOfflinePayment:       false,
+					IsCancelled:            false,
+					Subscription:           "",
+					CurrentPeriodEndDate:   nil,
+					TrialEndDate:           nil,
+					HasAddedPaymentMethod:  false,
+					HasActivatedFreeTrial:  false,
+					LastVerifiedAt:         license.LastVerifiedAt,
+					LastPaymentFailedDate:  nil,
+					LastPaymentFailedCount: 0,
+				}
+
+				// Update the license in the database
+				// Update the existing license with the new data present
+				if err := tx.Delete(&license).Error; err != nil {
+					return nil, nil, err
+				}
+
+				if err := tx.Create(newLicense).Error; err != nil {
+					return nil, nil, err
+				}
+				// Delete the existing members
+				if err := tx.Where("license_id = ?", license.ID).Delete(&db.UserLicense{}).Error; err != nil {
+					return nil, nil, err
+				}
+
+				// Delete the existing flags
+				if err := tx.Where("license_id = ?", license.ID).Delete(&db.Flags{}).Error; err != nil {
+					return nil, nil, err
+				}
+
+				return newLicense, &prime_api.WorkspaceActivationResponse{
+					Product:          "Plane Free",
+					ProductType:      "FREE",
+					WorkspaceSlug:    license.WorkspaceSlug,
+					Seats:            0,
+					FreeSeats:        12,
+					Interval:         "MONTHLY",
+					IsOfflinePayment: false,
+					IsCancelled:      true,
+					MemberList:       []prime_api.WorkspaceMember{},
+				}, nil
+			}
+		}
+
+		// Return the error
 		return nil, nil, fmt.Errorf(F2_LICENSE_VERFICATION_FAILED, license.LicenseKey, license.WorkspaceSlug)
 	}
 
@@ -109,28 +175,36 @@ func RefreshLicense(ctx context.Context, api prime_api.IPrimeMonitorApi, license
 	instanceUUID, _ := uuid.Parse(data.InstanceID)
 
 	// Update the db for license with the new data
+	now := time.Now()
 	licenseNew := &db.License{
-		ID:                    license.ID,
-		LicenseKey:            data.LicenceKey,
-		InstanceID:            instanceUUID,
-		WorkspaceID:           workspaceUUID,
-		Product:               data.Product,
-		ProductType:           data.ProductType,
-		WorkspaceSlug:         data.WorkspaceSlug,
-		Seats:                 data.Seats,
-		FreeSeats:             data.FreeSeats,
-		Interval:              data.Interval,
-		IsOfflinePayment:      data.IsOfflinePayment,
-		IsCancelled:           data.IsCancelled,
-		Subscription:          data.Subscription,
-		CurrentPeriodEndDate:  currentPeriodEndDate,
-		TrialEndDate:          trialEndDate,
-		HasAddedPaymentMethod: data.HasAddedPayment,
-		HasActivatedFreeTrial: data.HasActivatedFree,
+		ID:                     license.ID,
+		LicenseKey:             data.LicenceKey,
+		InstanceID:             instanceUUID,
+		WorkspaceID:            workspaceUUID,
+		Product:                data.Product,
+		ProductType:            data.ProductType,
+		WorkspaceSlug:          data.WorkspaceSlug,
+		Seats:                  data.Seats,
+		FreeSeats:              data.FreeSeats,
+		Interval:               data.Interval,
+		IsOfflinePayment:       data.IsOfflinePayment,
+		IsCancelled:            data.IsCancelled,
+		Subscription:           data.Subscription,
+		CurrentPeriodEndDate:   currentPeriodEndDate,
+		TrialEndDate:           trialEndDate,
+		HasAddedPaymentMethod:  data.HasAddedPayment,
+		HasActivatedFreeTrial:  data.HasActivatedFree,
+		LastVerifiedAt:         &now,
+		LastPaymentFailedDate:  data.LastPaymentFailedDate,
+		LastPaymentFailedCount: data.LastPaymentFailedCount,
 	}
 
 	// Update the existing license with the new data present
-	if err := tx.Model(license).Updates(licenseNew).Error; err != nil {
+	if err := tx.Delete(&license).Error; err != nil {
+		return nil, nil, err
+	}
+
+	if err := tx.Create(licenseNew).Error; err != nil {
 		return nil, nil, err
 	}
 
@@ -175,7 +249,7 @@ func RefreshLicenseUsers(ctx context.Context, license *db.License, activationRep
 
 func RefreshFeatureFlags(ctx context.Context, api prime_api.IPrimeMonitorApi, license db.License, tx *gorm.DB) error {
 	flags, err := api.GetFeatureFlags(license.LicenseKey)
-	if err != 0 {
+	if err != nil {
 		fmt.Println("Failed to fetch flags for license", license.LicenseKey)
 		return fmt.Errorf(F2_LICENSE_VERFICATION_FAILED, license.LicenseKey, license.WorkspaceSlug)
 	}
