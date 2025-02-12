@@ -1422,9 +1422,19 @@
         "company_size": "公司规模",
         "url": "工作区网址",
         "update_workspace": "更新工作区",
-        "delete_workspace": "删除工作区",
-        "delete_workspace_description": "删除工作区时，该工作区内的所有数据和资源将被永久删除且无法恢复。",
-        "delete_btn": "删除我的工作区",
+        "delete_workspace": "删除此工作区",
+        "delete_workspace_description": "删除工作区时，该工作区内的所有数据和资源将被永久删除，且无法恢复。",
+        "delete_btn": "删除此工作区",
+        "delete_modal": {
+          "title": "确定要删除此工作区吗？",
+          "description": "您目前正在试用我们的付费方案。请先取消试用后再继续。",
+          "dismiss": "关闭",
+          "cancel": "取消试用",
+          "success_title": "工作区已删除。",
+          "success_message": "即将跳转到您的个人资料页面。",
+          "error_title": "操作失败。",
+          "error_message": "请重试。"
+        },
         "errors": {
           "name": {
             "required": "名称为必填项",

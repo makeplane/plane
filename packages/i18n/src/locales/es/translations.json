@@ -1422,9 +1422,19 @@
         "company_size": "Tamaño de la empresa",
         "url": "URL del espacio de trabajo",
         "update_workspace": "Actualizar espacio de trabajo",
-        "delete_workspace": "Eliminar espacio de trabajo",
-        "delete_workspace_description": "Al eliminar un espacio de trabajo, todos los datos y recursos dentro de ese espacio de trabajo se eliminarán permanentemente y no se podrán recuperar.",
-        "delete_btn": "Eliminar mi espacio de trabajo",
+        "delete_workspace": "Eliminar este espacio de trabajo",
+        "delete_workspace_description": "Al eliminar un espacio de trabajo, todos los datos y recursos dentro de ese espacio se eliminarán permanentemente y no podrán recuperarse.",
+        "delete_btn": "Eliminar este espacio de trabajo",
+        "delete_modal": {
+          "title": "¿Está seguro de que desea eliminar este espacio de trabajo?",
+          "description": "Tiene una prueba activa de uno de nuestros planes de pago. Por favor, cancelela primero para continuar.",
+          "dismiss": "Descartar",
+          "cancel": "Cancelar prueba",
+          "success_title": "Espacio de trabajo eliminado.",
+          "success_message": "Pronto irá a su página de perfil.",
+          "error_title": "Eso no funcionó.",
+          "error_message": "Por favor, inténtelo de nuevo."
+        },
         "errors": {
           "name": {
             "required": "El nombre es obligatorio",

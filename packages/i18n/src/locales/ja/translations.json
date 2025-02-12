@@ -1422,9 +1422,19 @@
         "company_size": "会社の規模",
         "url": "ワークスペースURL",
         "update_workspace": "ワークスペースを更新",
-        "delete_workspace": "ワークスペースを削除",
-        "delete_workspace_description": "ワークスペースを削除すると、そのワークスペース内のすべてのデータとリソースが永久に削除され、復元できなくなります。",
-        "delete_btn": "ワークスペースを削除",
+        "delete_workspace": "このワークスペースを削除",
+        "delete_workspace_description": "ワークスペースを削除すると、そのワークスペース内のすべてのデータとリソースが完全に削除され、復元することはできません。",
+        "delete_btn": "このワークスペースを削除",
+        "delete_modal": {
+          "title": "このワークスペースを削除してもよろしいですか？",
+          "description": "有料プランの無料トライアルが有効です。続行するには、まずトライアルをキャンセルしてください。",
+          "dismiss": "閉じる",
+          "cancel": "トライアルをキャンセル",
+          "success_title": "ワークスペースが削除されました。",
+          "success_message": "まもなくプロフィールページに移動します。",
+          "error_title": "操作に失敗しました。",
+          "error_message": "もう一度お試しください。"
+        },
         "errors": {
           "name": {
             "required": "名前は必須です",
