@@ -107,6 +107,25 @@ export class PaymentService extends APIService {
       });
   }
 
+  /**
+   * @description canceling the free trial
+   * @param { string } workspaceSlug
+   * @returns { Promise<void> }
+   */
+  async cancelFreeTrial(workspaceSlug: string): Promise<void> {
+    return this.post(`/api/payments/workspaces/${workspaceSlug}/subscriptions/cancel-trial/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description fetching proration preview
+   * @param { string } workspaceSlug
+   * @param { number } quantity
+   * @returns { Promise<TProrationPreview> }
+   */
   async fetchProrationPreview(workspaceSlug: string, quantity: number): Promise<TProrationPreview> {
     return this.post(`/api/payments/workspaces/${workspaceSlug}/subscriptions/proration-preview/`, {
       quantity,

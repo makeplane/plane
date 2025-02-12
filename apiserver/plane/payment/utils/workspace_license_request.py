@@ -75,7 +75,6 @@ def is_on_trial(workspace_license):
     "Check if the workspace is on a trial"
     if (
         workspace_license.subscription
-        and not has_upgraded(workspace_license)
         and workspace_license.trial_end_date
         and workspace_license.trial_end_date >= timezone.now()
     ):
@@ -87,7 +86,6 @@ def trial_remaining_days(workspace_license):
     """Calculate the remaining days of the trial"""
     if (
         workspace_license.subscription
-        and not has_upgraded(workspace_license)
         and workspace_license.trial_end_date
         and workspace_license.trial_end_date >= timezone.now()
     ):
@@ -198,6 +196,22 @@ def is_free_member_count_exceeded(workspace_license):
     else:
         return False
 
+def can_delete_workspace(workspace_license):
+    """Determine if the workspace can be deleted"""
+    if workspace_license.plan != WorkspaceLicense.PlanChoice.FREE:
+        # If the workspace is on trial, then we can delete the workspace
+        if (
+            workspace_license.subscription
+            and workspace_license.trial_end_date
+            and workspace_license.trial_end_date >= timezone.now()
+        ):
+            return True
+        # If the workspace is on a paid plan, then we can not delete the workspace
+        return False
+
+    # If the workspace is on free plan, then we can delete the workspace
+    return True
+
 
 def show_verification_failed_banner(workspace_license):
     """Determine if the verification failed banner should be shown"""
@@ -288,6 +302,7 @@ def resync_workspace_license(workspace_slug, force=False):
                 "is_free_member_count_exceeded": is_free_member_count_exceeded(
                     workspace_license
                 ),
+                "can_delete_workspace": can_delete_workspace(workspace_license),
                 "show_verification_failed_banner": show_verification_failed_banner(
                     workspace_license
                 ),
@@ -320,6 +335,7 @@ def resync_workspace_license(workspace_slug, force=False):
                 "is_free_member_count_exceeded": is_free_member_count_exceeded(
                     workspace_license
                 ),
+                "can_delete_workspace": can_delete_workspace(workspace_license),
                 "show_verification_failed_banner": show_verification_failed_banner(
                     workspace_license
                 ),
@@ -384,6 +400,7 @@ def resync_workspace_license(workspace_slug, force=False):
             "is_free_member_count_exceeded": is_free_member_count_exceeded(
                 workspace_license
             ),
+            "can_delete_workspace": can_delete_workspace(workspace_license),
             "show_verification_failed_banner": show_verification_failed_banner(
                 workspace_license
             ),

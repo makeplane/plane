@@ -341,6 +341,16 @@
       },
       "customers": {
         "title": "Customers"
+      },
+      "cancel_trial": {
+        "title": "Cancel your trial first.",
+        "description": "You have an active trial to one of our paid plans. Please cancel it first to proceed.",
+        "dismiss": "Dismiss",
+        "cancel": "Cancel trial",
+        "cancel_success_title": "Trial cancelled.",
+        "cancel_success_message": "You can now delete the workspace.",
+        "cancel_error_title": "That didn't work.",
+        "cancel_error_message": "Try again, please."
       }
     }
   },

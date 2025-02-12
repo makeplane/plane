@@ -348,6 +348,16 @@
       },
       "customers": {
         "title": "客户"
+      },
+      "cancel_trial": {
+        "title": "请先取消试用期。",
+        "description": "您目前正在试用我们的付费计划。请先取消试用后再继续。",
+        "dismiss": "关闭",
+        "cancel": "取消试用",
+        "cancel_success_title": "试用已取消。",
+        "cancel_success_message": "现在您可以删除工作空间了。",
+        "cancel_error_title": "操作失败。",
+        "cancel_error_message": "请重试。"
       }
     }
   },

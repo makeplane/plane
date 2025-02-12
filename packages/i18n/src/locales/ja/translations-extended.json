@@ -348,6 +348,16 @@
       },
       "customers": {
         "title": "顧客"
+      },
+      "cancel_trial": {
+        "title": "まずトライアルをキャンセルしてください。",
+        "description": "有料プランのトライアルが有効です。続行するには、まずキャンセルしてください。",
+        "dismiss": "閉じる",
+        "cancel": "トライアルをキャンセル",
+        "cancel_success_title": "トライアルがキャンセルされました。",
+        "cancel_success_message": "ワークスペースを削除できるようになりました。",
+        "cancel_error_title": "エラーが発生しました。",
+        "cancel_error_message": "もう一度お試しください。"
       }
     }
   },

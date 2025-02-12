@@ -9,6 +9,14 @@ export enum EProductSubscriptionTier {
   ENTERPRISE = 30,
 }
 
+export enum EProductSubscriptionEnum {
+  FREE = "FREE",
+  ONE = "ONE",
+  PRO = "PRO",
+  BUSINESS = "BUSINESS",
+  ENTERPRISE = "ENTERPRISE",
+}
+
 export const DEFAULT_ADD_WORKSPACE_SEATS_MODAL_DATA: TAddWorkspaceSeatsModal = {
   isOpen: false,
 };

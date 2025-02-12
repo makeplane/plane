@@ -348,6 +348,16 @@
       },
       "customers": {
         "title": "Clientes"
+      },
+      "cancel_trial": {
+        "title": "Cancela primero tu periodo de prueba.",
+        "description": "Tienes un periodo de prueba activo en uno de nuestros planes de pago. Por favor, cancélalo primero para continuar.",
+        "dismiss": "Cerrar",
+        "cancel": "Cancelar prueba",
+        "cancel_success_title": "Periodo de prueba cancelado.",
+        "cancel_success_message": "Ahora puedes eliminar el espacio de trabajo.",
+        "cancel_error_title": "Eso no funcionó.",
+        "cancel_error_message": "Por favor, inténtalo de nuevo."
       }
     }
   },

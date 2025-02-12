@@ -348,6 +348,16 @@
       },
       "customers": {
         "title": "Clients"
+      },
+      "cancel_trial": {
+        "title": "Annulez d'abord votre période d'essai.",
+        "description": "Vous avez une période d'essai active sur l'un de nos forfaits payants. Veuillez d'abord l'annuler pour continuer.",
+        "dismiss": "Fermer",
+        "cancel": "Annuler l'essai",
+        "cancel_success_title": "Période d'essai annulée.",
+        "cancel_success_message": "Vous pouvez maintenant supprimer l'espace de travail.",
+        "cancel_error_title": "Ça n'a pas fonctionné.",
+        "cancel_error_message": "Veuillez réessayer."
       }
     }
   },

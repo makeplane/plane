@@ -35,6 +35,7 @@ export interface IWorkspaceSubscriptionStore {
   fetchWorkspaceSubscribedPlan: (workspaceSlug: string) => Promise<IWorkspaceProductSubscription>;
   refreshWorkspaceSubscribedPlan: (workspaceSlug: string) => Promise<void>;
   freeTrialSubscription: (workspaceSlug: string, payload: { product_id: string; price_id: string }) => Promise<void>;
+  cancelFreeTrial: (workspaceSlug: string) => Promise<void>;
 }
 
 export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
@@ -68,6 +69,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
       fetchWorkspaceSubscribedPlan: action,
       refreshWorkspaceSubscribedPlan: action,
       freeTrialSubscription: action,
+      cancelFreeTrial: action,
     });
     // Reactions to fetch current plan details when workspace members change
     reaction(
@@ -201,6 +203,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
           occupied_seats: response?.occupied_seats ?? 1,
           show_seats_banner: response?.show_seats_banner ?? false,
           is_free_member_count_exceeded: response?.is_free_member_count_exceeded ?? false,
+          can_delete_workspace: response?.can_delete_workspace ?? true,
         });
       });
       return response;
@@ -219,6 +222,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
           occupied_seats: 1,
           show_seats_banner: false,
           is_free_member_count_exceeded: false,
+          can_delete_workspace: true,
         });
       });
       throw error;
@@ -249,6 +253,19 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
       await paymentService.getFreeTrialSubscription(workspaceSlug, payload);
       // license check
       await this.refreshWorkspaceSubscribedPlan(workspaceSlug);
+      // fetching workspace subscribed plan and feature flags
+      await Promise.all([
+        this.fetchWorkspaceSubscribedPlan(workspaceSlug),
+        this.rootStore.featureFlags.fetchFeatureFlags(workspaceSlug),
+      ]);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  cancelFreeTrial = async (workspaceSlug: string) => {
+    try {
+      await paymentService.cancelFreeTrial(workspaceSlug);
       // fetching workspace subscribed plan and feature flags
       await Promise.all([
         this.fetchWorkspaceSubscribedPlan(workspaceSlug),
