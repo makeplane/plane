@@ -10,6 +10,8 @@ import { AuthFormInput, TAuthFormInputFormField } from "@/plane-web/silo/ui/auth
 // plane web types
 import { TAsanaPATFormFields } from "@/plane-web/types/importers/asana";
 import { useTranslation } from "@plane/i18n";
+import { TImporterPATError } from "@/plane-web/types";
+import ErrorBanner from "../../ui/error-banner";
 
 export const PersonalAccessTokenAuth: FC = observer(() => {
   // hooks
@@ -22,6 +24,18 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
   const [formData, setFormData] = useState<TAsanaPATFormFields>({
     personalAccessToken: "",
   });
+  const [patError, setPatError] = useState<TImporterPATError>({
+    showPATError: false,
+    message: "",
+  });
+
+  const togglePATError = (flag: boolean) => {
+    setPatError((prev) => ({ ...prev, showPATError: flag }));
+  };
+
+  const updatePATError = (message: string) => {
+    setPatError((prev) => ({ ...prev, message }));
+  };
 
   // handlers
   const handleFormData = <T extends keyof TAsanaPATFormFields>(key: T, value: TAsanaPATFormFields[T]) => {
@@ -38,11 +52,9 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
       setIsLoading(true);
       await authWithPAT(formData);
     } catch (error: any) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: error?.message?.toString() || "Something went wrong while authorizing Asana",
-      });
+      const { message } = error as { message: string };
+      updatePATError(message || "Something went wrong while authorizing Jira");
+      togglePATError(true);
     } finally {
       setIsLoading(false);
     }
@@ -84,6 +96,11 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
         </p>
       </div>
       <div className="space-y-6">
+        {
+          patError.showPATError && (
+            <ErrorBanner message={t("importers.invalid_pat")} onClose={() => { togglePATError(false) }} />
+          )
+        }
         <div className="grid grid-cols-1 gap-x-12 gap-y-8 w-full">
           {asanaPatFormFields.map((field) => (
             <AuthFormInput

@@ -4,14 +4,15 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { stripTrailingSlash } from "@plane/etl/core";
+import { useTranslation } from "@plane/i18n";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
 // plane web components
 import { AuthFormInput, TAuthFormInputFormField } from "@/plane-web/silo/ui/auth-form-input";
 // plane web types
-import { TJiraPATFormFields } from "@/plane-web/types";
-import { useTranslation } from "@plane/i18n";
+import { TImporterPATError, TJiraPATFormFields } from "@/plane-web/types";
+import ErrorBanner from "../../ui/error-banner";
 
 export const PersonalAccessTokenAuth: FC = observer(() => {
   // hooks
@@ -19,7 +20,7 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
     auth: { authWithPAT },
   } = useJiraImporter();
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   // states
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<TJiraPATFormFields>({
@@ -27,6 +28,18 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
     userEmail: "",
     hostname: "",
   });
+  const [patError, setPatError] = useState<TImporterPATError>({
+    showPATError: false,
+    message: "",
+  });
+
+  const togglePATError = (flag: boolean) => {
+    setPatError((prev) => ({ ...prev, showPATError: flag }));
+  };
+
+  const updatePATError = (message: string) => {
+    setPatError((prev) => ({ ...prev, message }));
+  };
 
   // handlers
   const handleFormData = <T extends keyof TJiraPATFormFields>(key: T, value: TJiraPATFormFields[T]) => {
@@ -47,11 +60,9 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
       formData.hostname = stripTrailingSlash(formData.hostname);
       await authWithPAT(formData);
     } catch (error) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: error?.toString() || "Something went wrong while authorizing Jira",
-      });
+      const { message } = error as { message: string };
+      updatePATError(message || "Something went wrong while authorizing Jira");
+      togglePATError(true);
     } finally {
       setIsLoading(false);
     }
@@ -75,7 +86,7 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
             className="text-custom-primary-100 hover:underline"
             rel="noreferrer"
           >
-          {" "} {t("jira_importer.atlassian_security_settings")}
+            {" "} {t("jira_importer.atlassian_security_settings")}
           </a>
         </>
       ),
@@ -109,10 +120,15 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
       <div className="relative flex flex-col border-b border-custom-border-100 pb-3.5">
         <h3 className="text-xl font-medium">Jira to Plane {t("importers.migration_assistant")}</h3>
         <p className="text-custom-text-300 text-sm">
-            {t("importers.migration_assistant_description", { "serviceName": "Jira" })}
+          {t("importers.migration_assistant_description", { "serviceName": "Jira" })}
         </p>
       </div>
       <div className="space-y-6">
+        {
+          patError.showPATError && (
+            <ErrorBanner message={t("importers.invalid_pat")} onClose={() => { togglePATError(false) }} />
+          )
+        }
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 w-full">
           {jiraPatFormFields.map((field) => (
             <AuthFormInput

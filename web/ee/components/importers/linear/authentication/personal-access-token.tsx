@@ -10,6 +10,8 @@ import { AuthFormInput, TAuthFormInputFormField } from "@/plane-web/silo/ui/auth
 // plane web types
 import { TLinearPATFormFields } from "@/plane-web/types/importers/linear";
 import { useTranslation } from "@plane/i18n";
+import { TImporterPATError } from "@/plane-web/types";
+import ErrorBanner from "../../ui/error-banner";
 
 export const PersonalAccessTokenAuth: FC = observer(() => {
   // hooks
@@ -23,6 +25,19 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
   const [formData, setFormData] = useState<TLinearPATFormFields>({
     personalAccessToken: "",
   });
+
+  const [patError, setPatError] = useState<TImporterPATError>({
+    showPATError: false,
+    message: "",
+  });
+
+  const togglePATError = (flag: boolean) => {
+    setPatError((prev) => ({ ...prev, showPATError: flag }));
+  };
+
+  const updatePATError = (message: string) => {
+    setPatError((prev) => ({ ...prev, message }));
+  };
 
   // handlers
   const handleFormData = <T extends keyof TLinearPATFormFields>(key: T, value: TLinearPATFormFields[T]) => {
@@ -40,11 +55,9 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
       setIsLoading(true);
       await authWithPAT(formData);
     } catch (error) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: error?.toString() || "Something went wrong while authorizing Linear",
-      });
+      const { message } = error as { message: string };
+      updatePATError(message || "Something went wrong while authorizing Jira");
+      togglePATError(true);
     } finally {
       setIsLoading(false);
     }
@@ -86,6 +99,11 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
         </p>
       </div>
       <div className="space-y-6">
+        {
+          patError.showPATError && (
+            <ErrorBanner message={t("importers.invalid_pat")} onClose={() => { togglePATError(false) }} />
+          )
+        }
         {linearPatFormFields.map((field) => (
           <AuthFormInput
             key={field.key}

@@ -18,3 +18,9 @@ export type TPlanePriorityData = {
   key: TPlanePriority;
   label: string;
 };
+
+
+export type TImporterPATError = {
+  showPATError: boolean;
+  message: string;
+}

@@ -696,7 +696,8 @@
     "add_seat_msg_free_trial": "Estás intentando importar {additionalUserCount} usuarios no registrados y solo tienes {currentWorkspaceSubscriptionAvailableSeats} asientos disponibles en el plan actual. Para continuar importando, actualiza ahora.",
     "add_seat_msg_paid": "Estás intentando importar {additionalUserCount} usuarios no registrados y solo tienes {currentWorkspaceSubscriptionAvailableSeats} asientos disponibles en el plan actual. Para continuar importando, compra al menos {extraSeatRequired} asientos adicionales.",
     "skip_user_import_title": "Omitir importación de datos de usuario",
-    "skip_user_import_description": "Omitir la importación de usuarios resultará en que los elementos de trabajo, comentarios y otros datos de {serviceName} sean creados por el usuario que realiza la migración en Plane. Aún puedes agregar usuarios manualmente más tarde."
+    "skip_user_import_description": "Omitir la importación de usuarios resultará en que los elementos de trabajo, comentarios y otros datos de {serviceName} sean creados por el usuario que realiza la migración en Plane. Aún puedes agregar usuarios manualmente más tarde.",
+    "invalid_pat": "Token de acceso personal inválido"
   },
 
   "integrations": {

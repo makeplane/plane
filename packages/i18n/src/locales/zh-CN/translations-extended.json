@@ -696,7 +696,8 @@
     "add_seat_msg_free_trial": "您正在尝试导入 {additionalUserCount} 个未注册用户，但当前计划中只有 {currentWorkspaceSubscriptionAvailableSeats} 个席位可用。要继续导入，请立即升级。",
     "add_seat_msg_paid": "您正在尝试导入 {additionalUserCount} 个未注册用户，但当前计划中只有 {currentWorkspaceSubscriptionAvailableSeats} 个席位可用。要继续导入，请至少购买 {extraSeatRequired} 个额外席位。",
     "skip_user_import_title": "跳过导入用户数据",
-    "skip_user_import_description": "跳过用户导入将导致工作项、评论和来自 {serviceName} 的其他数据由在 Plane 中执行迁移的用户创建。您以后仍可以手动添加用户。"
+    "skip_user_import_description": "跳过用户导入将导致工作项、评论和来自 {serviceName} 的其他数据由在 Plane 中执行迁移的用户创建。您以后仍可以手动添加用户。",
+    "invalid_pat": "无效的个人访问令牌"
   },
 
   "integrations": {

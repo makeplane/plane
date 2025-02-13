@@ -696,7 +696,8 @@
     "add_seat_msg_free_trial": "未登録の{additionalUserCount}人のユーザーをインポートしようとしていますが、現在のプランでは{currentWorkspaceSubscriptionAvailableSeats}席しか利用できません。インポートを続けるにはアップグレードしてください。",
     "add_seat_msg_paid": "未登録の{additionalUserCount}人のユーザーをインポートしようとしていますが、現在のプランでは{currentWorkspaceSubscriptionAvailableSeats}席しか利用できません。インポートを続けるには少なくとも{extraSeatRequired}席追加購入してください。",
     "skip_user_import_title": "ユーザーデータのインポートをスキップ",
-    "skip_user_import_description": "ユーザーのインポートをスキップすると、{serviceName}からの作業項目、コメント、その他のデータはPlaneで移行を実行しているユーザーによって作成されます。後でユーザーを手動で追加することもできます。"
+    "skip_user_import_description": "ユーザーのインポートをスキップすると、{serviceName}からの作業項目、コメント、その他のデータはPlaneで移行を実行しているユーザーによって作成されます。後でユーザーを手動で追加することもできます。",
+    "invalid_pat": "無効な個人アクセストークン"
   },
 
   "integrations": {

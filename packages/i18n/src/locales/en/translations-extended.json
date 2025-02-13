@@ -689,7 +689,8 @@
     "add_seat_msg_free_trial": "You're trying to import {additionalUserCount} non-registered users and you've only {currentWorkspaceSubscriptionAvailableSeats} seats available in current plan. To continue importing upgrade now.",
     "add_seat_msg_paid": "You're trying to import {additionalUserCount} non-registered users and you've only {currentWorkspaceSubscriptionAvailableSeats} seats available in current plan. To continue importing buy atleast {extraSeatRequired} extra seats.",
     "skip_user_import_title": "Skip importing User data",
-    "skip_user_import_description": "Skipping user import will result in work items, comments, and other data from {serviceName} being created by the user performing the migration in Plane. You can still manually add users later."
+    "skip_user_import_description": "Skipping user import will result in work items, comments, and other data from {serviceName} being created by the user performing the migration in Plane. You can still manually add users later.",
+    "invalid_pat": "Invalid Personal Access Token"
   },
 
   "integrations": {
