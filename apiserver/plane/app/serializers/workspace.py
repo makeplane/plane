@@ -59,7 +59,7 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
 class WorkspaceLiteSerializer(BaseSerializer):
     class Meta:
         model = Workspace
-        fields = ["name", "slug", "id"]
+        fields = ["name", "slug", "id", "logo_url"]
         read_only_fields = fields
 
 
@@ -90,9 +90,7 @@ class WorkspaceMemberAdminSerializer(DynamicBaseSerializer):
 
 
 class WorkSpaceMemberInviteSerializer(BaseSerializer):
-    workspace = WorkSpaceSerializer(read_only=True)
-    total_members = serializers.IntegerField(read_only=True)
-    created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
+    workspace = WorkspaceLiteSerializer(read_only=True)
     invite_link = serializers.SerializerMethodField()
 
     def get_invite_link(self, obj):

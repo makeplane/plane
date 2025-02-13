@@ -43,7 +43,7 @@ export interface IWorkspaceMemberInvitation {
   invite_link: string;
   workspace: {
     id: string;
-    logo: string;
+    logo_url: string;
     name: string;
     slug: string;
   };
