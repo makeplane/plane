@@ -33,26 +33,50 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
     createRelation,
     issueCrudOperationState,
     setIssueCrudOperationState,
-    createSubIssues,
+    createSubIssues: createEpicSubIssues,
   } = useIssueDetail(EIssueServiceType.EPICS);
+  const { createSubIssues } = useIssueDetail();
   const { fetchEpicAnalytics } = useIssueTypes();
+
+  const handleAddSubIssueResponse = (successMessage: string) => {
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
+      title: "Success!",
+      message: successMessage,
+    });
+  };
+
+  const handleAddSubIssueError = () => {
+    setToast({
+      type: TOAST_TYPE.ERROR,
+      title: "Error!",
+      message: "Error adding work item",
+    });
+  };
+
+  const addSubIssueToEpic = async (
+    workspaceSlug: string,
+    projectId: string,
+    parentIssueId: string,
+    issueIds: string[]
+  ) => {
+    try {
+      await createEpicSubIssues(workspaceSlug, projectId, parentIssueId, issueIds).then(() => {
+        fetchEpicAnalytics(workspaceSlug, projectId, epicId);
+        handleAddSubIssueResponse("Work items added successfully");
+      });
+    } catch (error) {
+      handleAddSubIssueError();
+    }
+  };
 
   const addSubIssue = async (workspaceSlug: string, projectId: string, parentIssueId: string, issueIds: string[]) => {
     try {
       await createSubIssues(workspaceSlug, projectId, parentIssueId, issueIds).then(() => {
-        fetchEpicAnalytics(workspaceSlug, projectId, epicId);
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Work items added successfully",
-        });
+        handleAddSubIssueResponse("Work items added successfully");
       });
     } catch (error) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Error adding work item",
-      });
+      handleAddSubIssueError();
     }
   };
 
@@ -79,7 +103,7 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
   };
 
   const handleExistingIssuesModalOnSubmit = async (_issue: ISearchIssueResponse[]) =>
-    await addSubIssue(
+    await addSubIssueToEpic(
       workspaceSlug,
       projectId,
       epicId,
@@ -94,9 +118,13 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
 
   const handleCreateUpdateModalOnSubmit = async (_issue: TIssue) => {
     if (_issue.parent_id) {
-      await addSubIssue(workspaceSlug, projectId, epicId, [_issue.id]).then(() => {
-        fetchEpicAnalytics(workspaceSlug, projectId, epicId);
-      });
+      if (_issue.parent_id === epicId) {
+        await addSubIssueToEpic(workspaceSlug, projectId, epicId, [_issue.id]).then(() => {
+          fetchEpicAnalytics(workspaceSlug, projectId, epicId);
+        });
+      } else {
+        await addSubIssue(workspaceSlug, projectId, _issue.parent_id, [_issue.id]);
+      }
     }
   };
 
