@@ -5,28 +5,23 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Check } from "lucide-react";
 // plane constants
-import { EIssuesStoreType, ISSUE_PRIORITIES } from "@plane/constants";
+import { ISSUE_PRIORITIES } from "@plane/constants";
 // plane types
 import { TIssue, TIssuePriorities } from "@plane/types";
 // mobx store
 import { PriorityIcon } from "@plane/ui";
-import { useIssues } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store";
 // ui
 // types
 // constants
 
-type Props = {
-  closePalette: () => void;
-  issue: TIssue;
-};
+type Props = { closePalette: () => void; issue: TIssue };
 
 export const ChangeIssuePriority: React.FC<Props> = observer((props) => {
   const { closePalette, issue } = props;
   // router params
   const { workspaceSlug, projectId } = useParams();
-  const {
-    issues: { updateIssue },
-  } = useIssues(EIssuesStoreType.PROJECT);
+  const { updateIssue } = useIssueDetail();
 
   const submitChanges = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !issue) return;

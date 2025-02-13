@@ -4,8 +4,6 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Check } from "lucide-react";
-// plane constants
-import { EIssuesStoreType } from "@plane/constants";
 // plane types
 import { TIssue } from "@plane/types";
 // plane ui
@@ -13,21 +11,16 @@ import { Avatar } from "@plane/ui";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useIssues, useMember } from "@/hooks/store";
+import { useIssueDetail, useMember } from "@/hooks/store";
 
-type Props = {
-  closePalette: () => void;
-  issue: TIssue;
-};
+type Props = { closePalette: () => void; issue: TIssue };
 
 export const ChangeIssueAssignee: React.FC<Props> = observer((props) => {
   const { closePalette, issue } = props;
   // router params
   const { workspaceSlug, projectId } = useParams();
   // store
-  const {
-    issues: { updateIssue },
-  } = useIssues(EIssuesStoreType.PROJECT);
+  const { updateIssue } = useIssueDetail();
   const {
     project: { projectMemberIds, getProjectMemberDetails },
   } = useMember();
