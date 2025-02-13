@@ -1,11 +1,5 @@
-import {
-  ILayoutDisplayFiltersOptions,
-  TIssueActivityComment,
-} from "@plane/types";
-import {
-  ISSUE_DISPLAY_PROPERTIES_KEYS,
-  EPICS_DISPLAY_PROPERTIES_KEYS,
-} from "./common";
+import { ILayoutDisplayFiltersOptions, TIssueActivityComment } from "@plane/types";
+import { ISSUE_DISPLAY_PROPERTIES_KEYS, EPICS_DISPLAY_PROPERTIES_KEYS } from "./common";
 import { TActivityFilters } from "./filter";
 import { EActivityFilterType } from "./filter";
 
@@ -27,13 +21,7 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
         group_by: ["state_detail.group", "priority", "team_project", null],
-        order_by: [
-          "sort_order",
-          "-created_at",
-          "-updated_at",
-          "start_date",
-          "-priority",
-        ],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -56,14 +44,7 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
       display_filters: {
         group_by: ["state_detail.group", "priority", "team_project", null],
         sub_group_by: ["state_detail.group", "priority", "team_project", null],
-        order_by: [
-          "sort_order",
-          "-created_at",
-          "-updated_at",
-          "start_date",
-          "-priority",
-          "target_date",
-        ],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -72,15 +53,7 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
       },
     },
     calendar: {
-      filters: [
-        "priority",
-        "state_group",
-        "assignees",
-        "mentions",
-        "created_by",
-        "start_date",
-        "team_project",
-      ],
+      filters: ["priority", "state_group", "assignees", "mentions", "created_by", "start_date", "team_project"],
       display_properties: ["key", "issue_type"],
       display_filters: {
         type: [null, "active", "backlog"],
@@ -103,13 +76,7 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
       ],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
-        order_by: [
-          "sort_order",
-          "-created_at",
-          "-updated_at",
-          "start_date",
-          "-priority",
-        ],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -130,13 +97,7 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
       ],
       display_properties: ["key", "issue_type"],
       display_filters: {
-        order_by: [
-          "sort_order",
-          "-created_at",
-          "-updated_at",
-          "start_date",
-          "-priority",
-        ],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -147,33 +108,11 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
   },
   epics: {
     list: {
-      filters: [
-        "priority",
-        "state",
-        "assignees",
-        "mentions",
-        "created_by",
-        "labels",
-        "start_date",
-        "target_date",
-      ],
+      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date", "target_date"],
       display_properties: EPICS_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
-        group_by: [
-          "state",
-          "priority",
-          "labels",
-          "assignees",
-          "created_by",
-          null,
-        ],
-        order_by: [
-          "sort_order",
-          "-created_at",
-          "-updated_at",
-          "start_date",
-          "-priority",
-        ],
+        group_by: ["state", "priority", "labels", "assignees", "created_by", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -182,35 +121,12 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
       },
     },
     kanban: {
-      filters: [
-        "priority",
-        "state",
-        "assignees",
-        "mentions",
-        "created_by",
-        "labels",
-        "start_date",
-        "target_date",
-      ],
+      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date", "target_date"],
       display_properties: EPICS_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
         group_by: ["state", "priority", "labels", "assignees", "created_by"],
-        sub_group_by: [
-          "state",
-          "priority",
-          "labels",
-          "assignees",
-          "created_by",
-          null,
-        ],
-        order_by: [
-          "sort_order",
-          "-created_at",
-          "-updated_at",
-          "start_date",
-          "-priority",
-          "target_date",
-        ],
+        sub_group_by: ["state", "priority", "labels", "assignees", "created_by", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -219,15 +135,7 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
       },
     },
     calendar: {
-      filters: [
-        "priority",
-        "state",
-        "assignees",
-        "mentions",
-        "created_by",
-        "labels",
-        "start_date",
-      ],
+      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date"],
       display_properties: ["key", "issue_type"],
       display_filters: {
         type: [null, "active", "backlog"],
@@ -238,25 +146,10 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
       },
     },
     spreadsheet: {
-      filters: [
-        "priority",
-        "state",
-        "assignees",
-        "mentions",
-        "created_by",
-        "labels",
-        "start_date",
-        "target_date",
-      ],
+      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date", "target_date"],
       display_properties: EPICS_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
-        order_by: [
-          "sort_order",
-          "-created_at",
-          "-updated_at",
-          "start_date",
-          "-priority",
-        ],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -265,25 +158,10 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
       },
     },
     gantt_chart: {
-      filters: [
-        "priority",
-        "state",
-        "assignees",
-        "mentions",
-        "created_by",
-        "labels",
-        "start_date",
-        "target_date",
-      ],
+      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date", "target_date"],
       display_properties: ["key", "issue_type"],
       display_filters: {
-        order_by: [
-          "sort_order",
-          "-created_at",
-          "-updated_at",
-          "start_date",
-          "-priority",
-        ],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -299,11 +177,7 @@ export enum EActivityFilterTypeEE {
   ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY = "ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY",
 }
 
-export const shouldRenderActivity = (
-  activity: TIssueActivityComment,
-  filter: TActivityFilters
-): boolean =>
+export const shouldRenderActivity = (activity: TIssueActivityComment, filter: TActivityFilters): boolean =>
   activity.activity_type === filter ||
   (filter === EActivityFilterType.ACTIVITY &&
-    activity.activity_type ===
-      EActivityFilterTypeEE.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY);
+    activity.activity_type === EActivityFilterTypeEE.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY);

@@ -94,10 +94,6 @@ export type TIssueFiltersToDisplayByPageType = {
   [pageType: string]: TFiltersByLayout;
 };
 
-export const EPICS_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = ISSUE_DISPLAY_PROPERTIES_KEYS.filter(
-  (key) => !["cycle", "modules"].includes(key)
-);
-
 export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
   profile_issues: {
     list: {
