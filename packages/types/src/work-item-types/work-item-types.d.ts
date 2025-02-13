@@ -72,7 +72,7 @@ export interface IIssueTypesStore {
   loader: TLoader; // issue type loader
   issueTypePromise: TIssueTypesPromise | undefined; // promise to fetch issue types and epics
   issuePropertiesLoader: Record<string, TLoader>; // project id -> TLoader
-  propertiesFetchedMap: Record<string, boolean>; // project id -> boolean
+  // propertiesFetchedMap: Record<string, boolean>; // project id -> boolean
   issueTypes: Record<string, IIssueType>; // issue type id -> issue type
   projectEpics: Record<string, IIssueType>; // epic issue type id -> epic issue type
   epicAnalyticsLoader: Record<string, TLoader>; // epic id -> TLoader
