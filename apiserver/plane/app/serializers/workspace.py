@@ -82,7 +82,7 @@ class WorkspaceUserMeSerializer(DynamicBaseSerializer):
 class WorkspaceLiteSerializer(BaseSerializer):
     class Meta:
         model = Workspace
-        fields = ["name", "slug", "id"]
+        fields = ["name", "slug", "id", "logo_url"]
         read_only_fields = fields
 
 
@@ -114,9 +114,11 @@ class WorkspaceMemberAdminSerializer(DynamicBaseSerializer):
 
 
 class WorkSpaceMemberInviteSerializer(BaseSerializer):
-    workspace = WorkSpaceSerializer(read_only=True)
-    total_members = serializers.IntegerField(read_only=True)
-    created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
+    workspace = WorkspaceLiteSerializer(read_only=True)
+    invite_link = serializers.SerializerMethodField()
+
+    def get_invite_link(self, obj):
+        return f"/workspace-invitations/?invitation_id={obj.id}&email={obj.email}&slug={obj.workspace.slug}"
 
     class Meta:
         model = WorkspaceMemberInvite
@@ -130,6 +132,7 @@ class WorkSpaceMemberInviteSerializer(BaseSerializer):
             "responded_at",
             "created_at",
             "updated_at",
+            "invite_link",
         ]
 
 
@@ -172,12 +175,12 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
 
     def create(self, validated_data):
         # Filtering the WorkspaceUserLink with the given url to check if the link already exists.
-        
+
         url = validated_data.get("url")
 
         workspace_user_link = WorkspaceUserLink.objects.filter(
-            url=url, 
-            workspace_id=validated_data.get("workspace_id"), 
+            url=url,
+            workspace_id=validated_data.get("workspace_id"),
             owner_id=validated_data.get("owner_id")
         )
 
@@ -194,8 +197,8 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
         url = validated_data.get("url")
 
         workspace_user_link = WorkspaceUserLink.objects.filter(
-                url=url, 
-                workspace_id=instance.workspace_id, 
+                url=url,
+                workspace_id=instance.workspace_id,
                 owner=instance.owner
             )
 

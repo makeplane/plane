@@ -62,10 +62,11 @@ export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }>
           isOpen={showPendingInvites}
           onToggle={() => setShowPendingInvites((prev) => !prev)}
           buttonClassName="w-full"
+          className="h-full"
           title={
             <div className="flex w-full items-center justify-between pt-4">
               <div className="flex">
-                <h4 className="text-xl font-medium pt-2 pb-2">{t("pending_invites")}</h4>
+                <h4 className="text-xl font-medium pt-2 pb-2">{t("workspace_settings.settings.members.pending_invites")}</h4>
                 {searchedInvitationsIds && (
                   <CountChip count={searchedInvitationsIds.length} className="h-5  m-auto ml-2" />
                 )}
@@ -75,7 +76,7 @@ export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }>
           }
         >
           <Disclosure.Panel>
-            <div className="ml-auto  items-center gap-1.5 rounded-md bg-custom-background-100  py-1.5">
+            <div className="ml-auto items-center gap-1.5 rounded-md bg-custom-background-100 py-1.5">
               {searchedInvitationsIds?.map((invitationId) => (
                 <WorkspaceInvitationsListItem key={invitationId} invitationId={invitationId} />
               ))}
