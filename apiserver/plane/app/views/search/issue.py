@@ -49,7 +49,11 @@ class IssueSearchEndpoint(BaseAPIView):
 
         if workspace_search == "false":
             issues = issues.filter(project_id=project_id)
+            
             issues_and_epics = issues_and_epics.filter(project_id=project_id)
+
+        if epic == "true":
+            issues = search_issues(query, issues_and_epics)            
 
         if query:
             issues = search_issues(query, issues)
@@ -114,6 +118,8 @@ class IssueSearchEndpoint(BaseAPIView):
             project_id=project_id, member=self.request.user, is_active=True, role=5
         ).exists():
             issues = issues.filter(created_by=self.request.user)
+
+        
 
         return Response(
             issues.values(
