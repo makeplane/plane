@@ -842,7 +842,9 @@
     "disconnect": "切断",
     "disconnecting": "切断中",
     "installing": "インストール中",
-    "install": "インストール"
+    "install": "インストール",
+    "pending": "保留中",
+    "invite": "招待"
   },
 
   "form": {
@@ -1448,6 +1450,7 @@
       "members": {
         "title": "メンバー",
         "add_member": "メンバーを追加",
+        "pending_invites": "保留中の招待",
         "invitations_sent_successfully": "招待が正常に送信されました",
         "leave_confirmation": "ワークスペースから退出してもよろしいですか？このワークスペースにアクセスできなくなります。この操作は取り消せません。",
         "details": {

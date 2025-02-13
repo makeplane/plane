@@ -842,7 +842,9 @@
     "disconnect": "Déconnecter",
     "disconnecting": "Déconnexion",
     "installing": "Installation",
-    "install": "Installer"
+    "install": "Installer",
+    "pending": "En attente",
+    "invite": "Inviter"
   },
 
   "form": {
@@ -1448,6 +1450,7 @@
       "members": {
         "title": "Membres",
         "add_member": "Ajouter un membre",
+        "pending_invites": "Invitations en attente",
         "invitations_sent_successfully": "Invitations envoyées avec succès",
         "leave_confirmation": "Êtes-vous sûr de vouloir quitter l'espace de travail ? Vous n'aurez plus accès à cet espace de travail. Cette action ne peut pas être annulée.",
         "details": {

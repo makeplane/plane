@@ -672,7 +672,9 @@
     "disconnect": "Disconnect",
     "disconnecting": "Disconnecting",
     "installing": "Installing",
-    "install": "Install"
+    "install": "Install",
+    "pending": "Pending",
+    "invite": "Invite"
   },
 
   "form": {
@@ -1279,6 +1281,7 @@
       "members": {
         "title": "Members",
         "add_member": "Add member",
+        "pending_invites": "Pending invites",
         "invitations_sent_successfully": "Invitations sent successfully",
         "leave_confirmation": "Are you sure you want to leave the workspace? You will no longer have access to this workspace. This action cannot be undone.",
         "details": {
