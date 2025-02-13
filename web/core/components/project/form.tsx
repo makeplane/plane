@@ -70,7 +70,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   });
   // derived values
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
-  const coverImage = watch("cover_image_url");
+  const coverImageURL = watch("cover_image_url");
+  const coverImage = watch("cover_image");
 
   useEffect(() => {
     if (project && projectId !== getValues("id")) {
@@ -160,7 +161,11 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       <div className="relative h-44 w-full">
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         <img
-          src={getFileURL(coverImage ?? "")}
+          src={getFileURL(
+            coverImageURL ??
+              coverImage ??
+              "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+          )}
           alt="Project cover image"
           className="h-44 w-full rounded-md object-cover"
         />
