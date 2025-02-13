@@ -96,6 +96,14 @@ export const CommandModal: React.FC = observer(() => {
     }
   }, [issueDetails, isCommandPaletteOpen]);
 
+  useEffect(() => {
+    if (!projectId && !isWorkspaceLevel) {
+      setIsWorkspaceLevel(true);
+    } else {
+      setIsWorkspaceLevel(false);
+    }
+  }, [projectId]);
+
   const closePalette = () => {
     toggleCommandPaletteModal(false);
   };
