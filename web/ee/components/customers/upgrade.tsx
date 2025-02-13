@@ -37,7 +37,7 @@ export const CustomerUpgrade: FC = observer(() => {
     if (!isCustomersFeatureFlagEnabled) {
       return (
         <Button variant="primary" disabled>
-          Coming Soon
+          Coming soon
         </Button>
       );
     }
@@ -53,8 +53,8 @@ export const CustomerUpgrade: FC = observer(() => {
       >
         <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>
           <div className="w-full xl:max-w-[300px]">
-            <div className="text-2xl font-semibold">Customers</div>
-            <div className="text-sm">Track and manage customer relationships in your workflow.</div>
+            <div className="text-2xl/7 font-semibold mb-2 line-">Prioritize and manage work with Customers.</div>
+            <div className="text-sm">Map your work to customers and prioritize by customer attributes.</div>
             <div className="mt-6">{getUpgradeButton()}</div>
           </div>
         </div>
