@@ -46,8 +46,9 @@ export const SelectSeatsStep: React.FC<TSelectSeatsStepProps> = (props) => {
         </Dialog.Title>
         <div className="flex items-center gap-1.5 text-sm font-medium bg-custom-primary-100/10 text-custom-primary-200 rounded-md px-3 py-2">
           <Info className="size-4" />
-          Your current plan, {planeName} {isOnTrial && "trial"}, has {purchasedSeats} seats for {purchasedSeats} Admins
-          + Members and {purchasedSeats * 5} Guests.
+          Your current plan, {planeName}
+          {isOnTrial && " trial"}, has {purchasedSeats} seats for {purchasedSeats} Admins + Members and{" "}
+          {purchasedSeats * 5} Guests.
         </div>
         <div className="flex w-full items-center justify-between gap-1.5 border border-custom-border-200 rounded-md bg-custom-background-90/70 px-4 py-2">
           <div>

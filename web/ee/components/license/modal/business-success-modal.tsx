@@ -52,7 +52,8 @@ export const BusinessPlanSuccessModal: FC<BusinessPlanSuccessModalProps> = obser
             Recap what Business packs anytime
           </a>
         </div>
-        <div className="py-4 px-4 md:pl-14 border border-custom-primary-200/30 rounded-xl bg-custom-primary-200/5">
+        <div className="py-4 px-4 border border-custom-primary-200/30 rounded-xl bg-custom-primary-200/5">
+          <div className="text-sm text-custom-text-200 font-semibold pb-2.5">Everything in Pro +</div>
           <ul className="grid grid-cols-12 gap-x-4 md:gap-x-8">
             {BUSINESS_PLAN_FEATURES_MAP.map((feature) => (
               <li key={feature?.label} className={cn("col-span-12 sm:col-span-6 relative rounded-md p-2 flex")}>
