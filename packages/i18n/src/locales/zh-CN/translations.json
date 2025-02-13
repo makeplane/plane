@@ -842,7 +842,9 @@
     "disconnect": "断开连接",
     "disconnecting": "正在断开连接",
     "installing": "正在安装",
-    "install": "安装"
+    "install": "安装",
+    "pending": "待处理",
+    "invite": "邀请"
   },
 
   "form": {
@@ -1448,6 +1450,7 @@
       "members": {
         "title": "成员",
         "add_member": "添加成员",
+        "pending_invites": "待处理邀请",
         "invitations_sent_successfully": "邀请发送成功",
         "leave_confirmation": "您确定要离开工作区吗？您将无法再访问此工作区。此操作无法撤消。",
         "details": {

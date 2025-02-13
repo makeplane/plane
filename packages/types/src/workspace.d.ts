@@ -40,6 +40,7 @@ export interface IWorkspaceMemberInvitation {
   responded_at: Date;
   role: TUserPermissions;
   token: string;
+  invite_link: string;
   workspace: {
     id: string;
     logo: string;
