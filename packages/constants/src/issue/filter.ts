@@ -1,12 +1,5 @@
-import {
-  ILayoutDisplayFiltersOptions,
-  TIssueActivityComment,
-} from "@plane/types";
-import {
-  TIssueFilterPriorityObject,
-  ISSUE_DISPLAY_PROPERTIES_KEYS,
-  EIssuesStoreType,
-} from "./common";
+import { IIssueDisplayProperties, ILayoutDisplayFiltersOptions, TIssueActivityComment } from "@plane/types";
+import { TIssueFilterPriorityObject, ISSUE_DISPLAY_PROPERTIES_KEYS, EIssuesStoreType } from "./common";
 
 // EE : Extended filters
 
@@ -101,26 +94,18 @@ export type TIssueFiltersToDisplayByPageType = {
   [pageType: string]: TFiltersByLayout;
 };
 
+export const EPICS_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = ISSUE_DISPLAY_PROPERTIES_KEYS.filter(
+  (key) => !["cycle", "modules"].includes(key)
+);
+
 export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
   profile_issues: {
     list: {
-      filters: [
-        "priority",
-        "state_group",
-        "labels",
-        "start_date",
-        "target_date",
-      ],
+      filters: ["priority", "state_group", "labels", "start_date", "target_date"],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
         group_by: ["state_detail.group", "priority", "project", "labels", null],
-        order_by: [
-          "sort_order",
-          "-created_at",
-          "-updated_at",
-          "start_date",
-          "-priority",
-        ],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -129,23 +114,11 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       },
     },
     kanban: {
-      filters: [
-        "priority",
-        "state_group",
-        "labels",
-        "start_date",
-        "target_date",
-      ],
+      filters: ["priority", "state_group", "labels", "start_date", "target_date"],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
         group_by: ["state_detail.group", "priority", "project", "labels"],
-        order_by: [
-          "sort_order",
-          "-created_at",
-          "-updated_at",
-          "start_date",
-          "-priority",
-        ],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -181,13 +154,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
           "created_by",
           null,
         ],
-        order_by: [
-          "sort_order",
-          "-created_at",
-          "-updated_at",
-          "start_date",
-          "-priority",
-        ],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -198,34 +165,11 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
   },
   draft_issues: {
     list: {
-      filters: [
-        "priority",
-        "state_group",
-        "cycle",
-        "module",
-        "labels",
-        "start_date",
-        "target_date",
-        "issue_type",
-      ],
+      filters: ["priority", "state_group", "cycle", "module", "labels", "start_date", "target_date", "issue_type"],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
-        group_by: [
-          "state_detail.group",
-          "cycle",
-          "module",
-          "priority",
-          "project",
-          "labels",
-          null,
-        ],
-        order_by: [
-          "sort_order",
-          "-created_at",
-          "-updated_at",
-          "start_date",
-          "-priority",
-        ],
+        group_by: ["state_detail.group", "cycle", "module", "priority", "project", "labels", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -234,33 +178,11 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       },
     },
     kanban: {
-      filters: [
-        "priority",
-        "state_group",
-        "cycle",
-        "module",
-        "labels",
-        "start_date",
-        "target_date",
-        "issue_type",
-      ],
+      filters: ["priority", "state_group", "cycle", "module", "labels", "start_date", "target_date", "issue_type"],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
-        group_by: [
-          "state_detail.group",
-          "cycle",
-          "module",
-          "priority",
-          "project",
-          "labels",
-        ],
-        order_by: [
-          "sort_order",
-          "-created_at",
-          "-updated_at",
-          "start_date",
-          "-priority",
-        ],
+        group_by: ["state_detail.group", "cycle", "module", "priority", "project", "labels"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -331,23 +253,8 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       ],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
-        group_by: [
-          "state",
-          "priority",
-          "cycle",
-          "module",
-          "labels",
-          "assignees",
-          "created_by",
-          null,
-        ],
-        order_by: [
-          "sort_order",
-          "-created_at",
-          "-updated_at",
-          "start_date",
-          "-priority",
-        ],
+        group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -371,33 +278,9 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       ],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
-        group_by: [
-          "state",
-          "priority",
-          "cycle",
-          "module",
-          "labels",
-          "assignees",
-          "created_by",
-        ],
-        sub_group_by: [
-          "state",
-          "priority",
-          "cycle",
-          "module",
-          "labels",
-          "assignees",
-          "created_by",
-          null,
-        ],
-        order_by: [
-          "sort_order",
-          "-created_at",
-          "-updated_at",
-          "start_date",
-          "-priority",
-          "target_date",
-        ],
+        group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by"],
+        sub_group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -443,13 +326,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       ],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
-        order_by: [
-          "sort_order",
-          "-created_at",
-          "-updated_at",
-          "start_date",
-          "-priority",
-        ],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -473,13 +350,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       ],
       display_properties: ["key", "issue_type"],
       display_filters: {
-        order_by: [
-          "sort_order",
-          "-created_at",
-          "-updated_at",
-          "start_date",
-          "-priority",
-        ],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -491,10 +362,9 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
   ...ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE, // EE: Additional issue display filters by page.
 };
 
-export const ISSUE_STORE_TO_FILTERS_MAP: Partial<
-  Record<EIssuesStoreType, TFiltersByLayout>
-> = {
+export const ISSUE_STORE_TO_FILTERS_MAP: Partial<Record<EIssuesStoreType, TFiltersByLayout>> = {
   [EIssuesStoreType.PROJECT]: ISSUE_DISPLAY_FILTERS_BY_PAGE.issues,
+  [EIssuesStoreType.EPIC]: ISSUE_DISPLAY_FILTERS_BY_PAGE.epics,
 };
 
 export enum EActivityFilterType {
@@ -502,14 +372,9 @@ export enum EActivityFilterType {
   COMMENT = "COMMENT",
 }
 
-export type TActivityFilters =
-  | EActivityFilterType
-  | EActivityFilterTypeEE.WORKLOG; // EE: Worklog filter.
+export type TActivityFilters = EActivityFilterType | EActivityFilterTypeEE.WORKLOG; // EE: Worklog filter.
 
-export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<
-  TActivityFilters,
-  { labelTranslationKey: string }
-> = {
+export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<TActivityFilters, { labelTranslationKey: string }> = {
   [EActivityFilterType.ACTIVITY]: {
     labelTranslationKey: "common.updates",
   },
@@ -539,8 +404,7 @@ export const filterActivityOnSelectedFilters = (
   filters: TActivityFilters[]
 ): TIssueActivityComment[] =>
   activity.filter(
-    (activity) =>
-      filters.some((filter) => shouldRenderActivity(activity, filter)) // EE: Render activity based on the selected filters.
+    (activity) => filters.some((filter) => shouldRenderActivity(activity, filter)) // EE: Render activity based on the selected filters.
   );
 
 export const ENABLE_ISSUE_DEPENDENCIES = true; // EE: enabled only in EE
