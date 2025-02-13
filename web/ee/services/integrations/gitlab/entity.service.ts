@@ -8,18 +8,15 @@ export class GitlabEntityService {
 
   constructor(baseURL: string) {
     this.baseURL = baseURL;
-    this.axiosInstance = axios.create({ baseURL });
+    this.axiosInstance = axios.create({ baseURL, withCredentials: true });
   }
 
   /**
    * @description fetch entity connections
    * @param { string } workspaceId
-   * @param { string } connectionType
    * @returns { Promise<TGitlabEntityConnection[] | undefined> }
    */
-  fetchEntityConnections = async (
-    workspaceId: string,
-  ): Promise<TGitlabEntityConnection[] | undefined> =>
+  fetchEntityConnections = async (workspaceId: string): Promise<TGitlabEntityConnection[] | undefined> =>
     await this.axiosInstance
       .get(`/api/gitlab/entity-connections/${workspaceId}`)
       .then((res) => res.data)
@@ -32,9 +29,7 @@ export class GitlabEntityService {
    * @param { string } connectionId
    * @returns { Promise<TGitlabEntityConnection | undefined> }
    */
-  fetchEntityConnection = async (
-    connectionId: string,
-  ): Promise<TGitlabEntityConnection | undefined> =>
+  fetchEntityConnection = async (connectionId: string): Promise<TGitlabEntityConnection | undefined> =>
     await this.axiosInstance
       .get(`/api/entity-connections/${connectionId}`)
       .then((res) => res.data)
@@ -63,16 +58,20 @@ export class GitlabEntityService {
 
   /**
    * @description update entity connection
+   * @param { string } workspaceId
+   * @param { string } workspaceConnectionId
    * @param { string } connectionId
    * @param { Partial<TGitlabEntityConnection> } entityConnection
    * @returns { Promise<TGitlabEntityConnection | undefined> }
    */
   updateEntityConnection = async (
+    workspaceId: string,
+    workspaceConnectionId: string,
     connectionId: string,
     entityConnection: Partial<TGitlabEntityConnection>
   ): Promise<TGitlabEntityConnection | undefined> =>
     await this.axiosInstance
-      .put(`/api/gitlab/entity-connections/${connectionId}`, entityConnection)
+      .put(`/api/entity-connections/${workspaceId}/${workspaceConnectionId}/${connectionId}`, entityConnection)
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -83,12 +82,9 @@ export class GitlabEntityService {
    * @param { string } connectionId
    * @returns { Promise<void> }
    */
-  deleteEntityConnection = async (
-    workspaceId: string,
-    connectionId: string,
-  ): Promise<void> =>
+  deleteEntityConnection = async (connectionId: string): Promise<void> =>
     await this.axiosInstance
-      .delete(`/api/gitlab/entity-connections/${workspaceId}/${connectionId}`)
+      .delete(`/api/gitlab/entity-connections/${connectionId}`)
       .then(() => undefined)
       .catch((error) => {
         throw error?.response?.data;

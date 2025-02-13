@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { cn } from "@plane/utils";
-import { generateQueryParams } from "@/helpers/router.helper";
 import { useUser } from "@/hooks/store";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { NewConversation, Messages } from "./conversation";
@@ -42,9 +40,6 @@ export const PiChatBase = observer((props: TProps) => {
   } = usePiChat();
   const { isMobile } = usePlatformOS();
   const { data: currentUser } = useUser();
-  // router
-  const { workspaceSlug } = useParams();
-  const router = useAppRouter();
   // query params
   const pathName = usePathname();
   const searchParams = useSearchParams();
@@ -84,13 +79,6 @@ export const PiChatBase = observer((props: TProps) => {
     errorRetryCount: 0,
   });
 
-  const handleRedirect = (path = pathName) => {
-    if (!activeChatId) return; // Don't redirect if we don't have an activeChatId
-
-    const query = generateQueryParams(searchParams, ["chat_id"]);
-    router.push(`${path}?${query && `${query}&`}chat_id=${activeChatId}`);
-  };
-
   // Handle initialization
   useEffect(() => {
     const initializeChat = async () => {
@@ -103,13 +91,6 @@ export const PiChatBase = observer((props: TProps) => {
     }
   }, [chat_id, isInitialized]);
 
-  // Handle redirect after initialization
-  useEffect(() => {
-    if (isInitialized && activeChatId && !chat_id) {
-      handleRedirect();
-    }
-  }, [isInitialized, activeChatId, chat_id]);
-
   // Early return while initializing
   if (!isInitialized) {
     return <></>;
@@ -121,8 +102,8 @@ export const PiChatBase = observer((props: TProps) => {
     <InputBox
       isFullScreen={isFullScreen}
       className="relative bg-transparent mt-2 max-w-[950px] mx-auto w-full"
-      onSubmit={() => handleRedirect(`/${workspaceSlug}/pi-chat`)}
       activeChatId={activeChatId}
+      shouldRedirect
     />
   ) : (
     <div

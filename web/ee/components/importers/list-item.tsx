@@ -6,6 +6,7 @@ import { Button } from "@plane/ui";
 import { ImporterProps } from "@/plane-web/components/importers";
 // plane web hooks
 import { useFlag } from "@/plane-web/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 export type ImportersListItemProps = {
   provider: ImporterProps;
@@ -15,6 +16,8 @@ export type ImportersListItemProps = {
 export const ImportersListItem: FC<ImportersListItemProps> = (props) => {
   const { provider, workspaceSlug } = props;
   const isEnabled = useFlag(workspaceSlug, provider.flag);
+
+  const { t } = useTranslation();
 
   if (!isEnabled) return null;
 
@@ -32,17 +35,17 @@ export const ImportersListItem: FC<ImportersListItemProps> = (props) => {
             <h3 className="flex items-center gap-4 text-sm font-medium">{provider.title}</h3>
             {provider.beta && (
               <div className="w-fit cursor-pointer rounded-2xl text-custom-primary-200 bg-custom-primary-100/20 text-center font-medium outline-none text-xs px-2">
-                Beta
+                {t("common.beta")}
               </div>
             )}
           </div>
-          <p className="text-sm tracking-tight text-custom-text-200">{provider.description}</p>
+          <p className="text-sm tracking-tight text-custom-text-200">{t(provider.i18n_description)}</p>
         </div>
       </div>
       <div className="flex-shrink-0">
         <Link href={`/${workspaceSlug}/settings/imports/${provider.key}`}>
           <span>
-            <Button variant="primary">Import</Button>
+            <Button variant="primary">{t("importers.import")}</Button>
           </span>
         </Link>
       </div>

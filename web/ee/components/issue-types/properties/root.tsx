@@ -3,16 +3,16 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { v4 } from "uuid";
 import { InfoIcon, Plus } from "lucide-react";
-// ui
+// plane imports
+import { EIssuePropertyType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { TIssueProperty, TCreationListModes } from "@plane/types";
 import { Button, Loader, Tooltip } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // plane web components
 import { IssuePropertyList, IssueTypePropertiesEmptyState } from "@/plane-web/components/issue-types";
 // plane web hooks
 import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
-// plane web types
-import { EIssuePropertyType, TIssueProperty, TCreationListModes } from "@/plane-web/types";
 
 type TIssuePropertiesRoot = {
   issueTypeId: string;
@@ -38,6 +38,8 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
   const { projectId } = useParams();
   // states
   const [issuePropertyCreateList, setIssuePropertyCreateList] = useState<TIssuePropertyCreateList[]>([]);
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { getProjectIssuePropertiesLoader } = useIssueTypes();
   const issueType = useIssueType(issueTypeId);
@@ -100,11 +102,8 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
       ) : isAnyPropertiesAvailable ? (
         <>
           <div className="w-full flex gap-2 items-center px-6">
-            <div className="text-base font-medium">Custom Properties</div>
-            <Tooltip
-              position="right"
-              tooltipContent="Each issue type comes with a default set of properties like Title, Description, Assignee, State, Priority, Start date, Due date, Module, Cycle etc. You can also customize and add your own properties to tailor it to your team's needs."
-            >
+            <div className="text-base font-medium">{t("work_item_types.settings.properties.title")}</div>
+            <Tooltip position="right" tooltipContent={t("work_item_types.settings.properties.tooltip")}>
               <InfoIcon className="size-3.5 text-custom-text-200 cursor-help outline-none" />
             </Tooltip>
           </div>
@@ -136,7 +135,7 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
             }}
           >
             <Plus className="h-3.5 w-3.5" />
-            Add new property
+            {t("work_item_types.settings.properties.add_button")}
           </Button>
         </div>
       )}

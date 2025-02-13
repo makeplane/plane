@@ -139,7 +139,7 @@ export class GitlabAuthStore implements IGitlabAuthStore {
       if (!workspaceId || !organizationId) return undefined;
 
       const organization = this.workspaceConnectionById(organizationId) || undefined;
-      const connectionId = organization?.connectionId || undefined;
+      const connectionId = organization?.connection_id || undefined;
 
       if (!connectionId) return undefined;
 

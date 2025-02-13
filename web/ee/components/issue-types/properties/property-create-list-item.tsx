@@ -1,9 +1,9 @@
 import { forwardRef } from "react";
 import { observer } from "mobx-react";
 // plane web components
+import { TCreationListModes } from "@plane/types";
 import { IssuePropertyListItem, TIssuePropertyCreateList } from "@/plane-web/components/issue-types";
-// plane web types
-import { TCreationListModes } from "@/plane-web/types";
+// plane imports
 
 export type TIssuePropertyCreateListItem = {
   issueTypeId: string;

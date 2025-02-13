@@ -1,21 +1,21 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { Home, LucideIcon, Settings } from "lucide-react";
-// ui
+import { Home, LucideIcon } from "lucide-react";
+// plane imports
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 import { Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const SIDEBAR_MENU_ITEMS: {
   key: string;
   label: string;
   href: string;
-  access: EUserPermissions[];
+  access: EUserWorkspaceRoles[];
   highlight: (pathname: string, baseUrl: string) => boolean;
   Icon: LucideIcon;
 }[] = [
@@ -23,18 +23,9 @@ export const SIDEBAR_MENU_ITEMS: {
     key: "home",
     label: "Home",
     href: `/pages`,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}`,
     Icon: Home,
-  },
-  {
-    key: "settings",
-    label: "Settings",
-    href: `/settings`,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}`,
-    Icon: Settings,
   },
 ];
 
@@ -51,7 +42,7 @@ export const PagesAppSidebarMenu = observer(() => {
   return (
     <div className="w-full space-y-1">
       {SIDEBAR_MENU_ITEMS.map((link) => {
-        if (allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE)) return null;
+        if (!allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE)) return null;
 
         return (
           <Link key={link.key} href={`/${workspaceSlug}${link.href}`} className="block">

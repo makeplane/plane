@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Sidebar } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Header, InitiativeIcon } from "@plane/ui";
 // components
@@ -27,6 +28,8 @@ export const InitiativesDetailsHeader = observer(() => {
     initiative: { getInitiativeById },
   } = useInitiatives();
   const { initiativesSidebarCollapsed, toggleInitiativesSidebar } = useAppTheme();
+
+  const { t } = useTranslation();
   // derived values
   const initiativesDetails = initiativeId ? getInitiativeById(initiativeId.toString()) : undefined;
 
@@ -39,7 +42,7 @@ export const InitiativesDetailsHeader = observer(() => {
               type="text"
               link={
                 <BreadcrumbLink
-                  label={"Initiatives"}
+                  label={t("initiatives.label")}
                   href={`/${workspaceSlug}/initiatives`}
                   icon={<InitiativeIcon className="size-4" />}
                 />

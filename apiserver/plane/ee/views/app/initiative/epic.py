@@ -1,7 +1,12 @@
+# Python imports
+import json
+
 # Django imports
 from django.db import models
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
+from django.db.models.functions import Cast
+from django.db.models import CharField
 from django.db.models import (
     OuterRef,
     Subquery,
@@ -13,6 +18,8 @@ from django.db.models import (
     UUIDField,
     Value,
 )
+from uuid import UUID
+
 from django.db.models.functions import Coalesce
 
 # Third party imports
@@ -21,13 +28,19 @@ from rest_framework import status
 
 # Module imports
 from plane.ee.views.base import BaseViewSet
-from plane.ee.serializers.app.initiative import InitiativeEpicSerializer
-from plane.ee.models.initiative import InitiativeEpic
+from plane.ee.serializers.app.initiative import (
+    InitiativeEpicSerializer,
+    InitiativeSerializer,
+)
+from plane.ee.models.initiative import InitiativeEpic, InitiativeProject
 from plane.db.models import Workspace, Issue
 from plane.ee.models import Initiative
 from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.ee.bgtasks.initiative_activity_task import initiative_activity
+from django.core.serializers.json import DjangoJSONEncoder
+from django.utils import timezone
 
 
 class InitiativeEpicViewSet(BaseViewSet):
@@ -42,9 +55,13 @@ class InitiativeEpicViewSet(BaseViewSet):
 
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
-        largest_sort_order = InitiativeEpic.objects.filter(
-            workspace=workspace, initiative_id=initiative_id
-        ).aggregate(largest=models.Max("sort_order"))["largest"]
+        largest_sort_order = (
+            InitiativeEpic.objects.filter(
+                workspace=workspace, initiative_id=initiative_id
+            )
+            .filter(epic__project__deleted_at__isnull=True)
+            .aggregate(largest=models.Max("sort_order"))["largest"]
+        )
 
         # If largest_sort_order is None, set it to 10000
         if largest_sort_order is None:
@@ -68,6 +85,19 @@ class InitiativeEpicViewSet(BaseViewSet):
         # Bulk create the initiative_epics
         initiative_epics = InitiativeEpic.objects.bulk_create(
             initiative_epics, batch_size=1000
+        )
+        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+
+        initiative_activity.delay(
+            type="initiative.activity.updated",
+            slug=slug,
+            requested_data=requested_data,
+            actor_id=str(request.user.id),
+            initiative_id=initiative_id,
+            current_instance=None,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
 
         epics = (
@@ -182,8 +212,40 @@ class InitiativeEpicViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def destroy(self, request, slug, initiative_id, epic_id):
-        initiative_epics = InitiativeEpic.objects.filter(
-            workspace__slug=slug, epic_id=epic_id, initiative_id=initiative_id
+        initative_epics = (
+            InitiativeEpic.objects.filter(
+                workspace__slug=slug, initiative_id=initiative_id
+            )
+            .filter(epic__project__deleted_at__isnull=True)
+            .values_list("epic_id", flat=True)
         )
-        initiative_epics.delete()
+
+        current_instance = json.dumps(
+            {"epic_ids": list(initative_epics)}, cls=DjangoJSONEncoder
+        )
+
+        updated_epic_ids = (
+            [eid for eid in initative_epics if eid != UUID(str(epic_id))]
+            if initative_epics
+            else []
+        )
+
+        requested_data = json.dumps(
+            {"epic_ids": updated_epic_ids}, cls=DjangoJSONEncoder
+        )
+
+        initiative_activity.delay(
+            type="initiative.activity.updated",
+            slug=slug,
+            requested_data=requested_data,
+            actor_id=str(request.user.id),
+            initiative_id=initiative_id,
+            current_instance=current_instance,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+
+        initative_epics.filter(epic_id=epic_id).delete()
+
         return Response(status=status.HTTP_204_NO_CONTENT)

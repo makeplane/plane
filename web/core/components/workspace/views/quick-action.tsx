@@ -5,19 +5,19 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { ExternalLink, LinkIcon, Pencil, Trash2, Lock } from "lucide-react";
 // types
+import { EViewAccess, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IWorkspaceView } from "@plane/types";
 // ui
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "@/components/workspace";
 // constants
-import { EViewAccess } from "@/constants/views";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;
@@ -35,6 +35,7 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
   // store hooks
   const { data } = useUser();
   const { allowPermissions } = useUserPermissions();
+  const { t } = useTranslation();
   // auth
   const isOwner = view?.owned_by === data?.id;
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
@@ -54,26 +55,26 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
     {
       key: "edit",
       action: () => setUpdateViewModal(true),
-      title: "Edit",
+      title: t("edit"),
       icon: Pencil,
       shouldRender: isOwner,
     },
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
-      title: "Open in new tab",
+      title: t("open_in_new_tab"),
       icon: ExternalLink,
     },
     {
       key: "copy-link",
       action: handleCopyText,
-      title: "Copy link",
+      title: t("copy_link"),
       icon: LinkIcon,
     },
     {
       key: "delete",
       action: () => setDeleteViewModal(true),
-      title: "Delete",
+      title: t("delete"),
       icon: Trash2,
       shouldRender: isOwner || isAdmin,
     },

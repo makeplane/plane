@@ -1,25 +1,31 @@
 import { TViewSubmissionPayload } from "@plane/etl/slack";
-import { createEntityConnection, getEntityConnectionByEntityId } from "@/db/query/connection";
+import { downloadFile } from "@/helpers/utils";
 import { logger } from "@/logger";
+import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ENTITIES } from "../../helpers/constants";
 import { parseIssueFormData } from "../../helpers/parse-issue-form";
 import { SlackPrivateMetadata } from "../../types/types";
 import { createSlackLinkback } from "../../views/issue-linkback";
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+
+const apiClient = getAPIClient();
 
 export const handleViewSubmission = async (data: TViewSubmissionPayload) => {
-  const { workspaceConnection, slackService, planeClient } = await getConnectionDetails(data.team.id);
-  const projects = await planeClient.project.list(workspaceConnection.workspaceSlug);
+  const { workspaceConnection, slackService, planeClient, credentials } = await getConnectionDetails(data.team.id);
+
+  const projects = await planeClient.project.list(workspaceConnection.workspace_slug);
   projects.results.filter((project) => project.is_member === true);
   const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata;
 
   const parsedData = parseIssueFormData(data.view.state.values);
   if (metadata.entityPayload.type === "message_action" || metadata.entityPayload.type === "command") {
     const slackUser = await slackService.getUserInfo(data.user.id);
-    const members = await planeClient.users.listAllUsers(workspaceConnection.workspaceSlug);
+    const members = await planeClient.users.listAllUsers(workspaceConnection.workspace_slug);
     const member = members.find((member) => member.email === slackUser?.user.profile.email);
 
-    const issue = await planeClient.issue.create(workspaceConnection.workspaceSlug, parsedData.project, {
+    /* ==================== Create Issue ==================== */
+    const issue = await planeClient.issue.create(workspaceConnection.workspace_slug, parsedData.project, {
       name: parsedData.title,
       description_html: parsedData.description == null ? "<p></p>" : parsedData.description,
       created_by: member?.id,
@@ -28,11 +34,11 @@ export const handleViewSubmission = async (data: TViewSubmissionPayload) => {
       labels: parsedData.labels,
     });
 
-    const project = await planeClient.project.getProject(workspaceConnection.workspaceSlug, parsedData.project);
-    const states = await planeClient.state.list(workspaceConnection.workspaceSlug, issue.project);
+    const project = await planeClient.project.getProject(workspaceConnection.workspace_slug, parsedData.project);
+    const states = await planeClient.state.list(workspaceConnection.workspace_slug, issue.project);
 
     const linkBack = createSlackLinkback(
-      workspaceConnection.workspaceSlug,
+      workspaceConnection.workspace_slug,
       project,
       members,
       states.results,
@@ -41,6 +47,7 @@ export const handleViewSubmission = async (data: TViewSubmissionPayload) => {
     );
 
     if (metadata.entityType === ENTITIES.ISSUE_SUBMISSION && metadata.entityPayload.type === "message_action") {
+      /* ==================== Send Linkback ==================== */
       const res = await slackService.sendThreadMessage(
         metadata.entityPayload.channel.id,
         metadata.entityPayload.message?.ts,
@@ -49,24 +56,69 @@ export const handleViewSubmission = async (data: TViewSubmissionPayload) => {
         false
       );
 
+      // If thread sync is enabled and the response is ok for the linkback
       if (parsedData.enableThreadSync && res.ok) {
         // If thread sync is enabled, create an entity connection for the issue
         // check if the connection already exists
-        const connections = await getEntityConnectionByEntityId(res.message.thread_ts);
+        const connections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+          entity_id: res.message.thread_ts,
+        });
         if (!connections || connections.length === 0) {
-          await createEntityConnection({
-            workspaceId: workspaceConnection.workspaceId,
-            workspaceSlug: workspaceConnection.workspaceSlug,
-            projectId: parsedData.project,
-            workspaceConnectionId: workspaceConnection.id,
-            entityId: res.message.thread_ts,
-            entityData: res,
-            entitySlug: issue.id,
+          await apiClient.workspaceEntityConnection.createWorkspaceEntityConnection({
+            workspace_id: workspaceConnection.workspace_id,
+            workspace_connection_id: workspaceConnection.id,
+            project_id: parsedData.project,
+            entity_type: E_INTEGRATION_KEYS.SLACK,
+            entity_id: res.message.thread_ts,
+            entity_data: res,
+            entity_slug: issue.id,
+            issue_id: issue.id,
           });
         }
       } else {
         logger.error("Error sending thread message:");
         console.error(res);
+      }
+
+      /* ==================== File Upload ==================== */
+
+      if (metadata.entityPayload.message.ts) {
+        const response = await slackService.getMessage(
+          metadata.entityPayload.channel.id,
+          metadata.entityPayload.message?.ts
+        );
+
+        if (response && response.ok && response.messages && response.messages.length > 0) {
+          const message = response.messages[0];
+          if (message.files && credentials.source_access_token) {
+            const fileUploadPromises = message.files.map(async (file) => {
+              const blob = await downloadFile(file.url_private_download, `Bearer ${credentials.source_access_token}`);
+              if (blob) {
+                try {
+                  await planeClient.issue.uploadAttachment(
+                    workspaceConnection.workspace_slug,
+                    parsedData.project,
+                    issue.id,
+                    blob as File,
+                    file.name,
+                    file.size,
+                    {
+                      type: file.mimetype,
+                    }
+                  );
+                } catch (error) {
+                  console.error(error);
+                }
+              }
+            });
+
+            try {
+              await Promise.all(fileUploadPromises);
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        }
       }
     } else if (metadata.entityType === ENTITIES.ISSUE_SUBMISSION && metadata.entityPayload.type === "command") {
       await slackService.sendMessage(metadata.entityPayload.response_url, {
@@ -96,11 +148,11 @@ export const handleViewSubmission = async (data: TViewSubmissionPayload) => {
       });
 
       const slackUser = await slackService.getUserInfo(user);
-      const projectMembers = await planeClient.users.list(workspaceConnection.workspaceSlug, projectId);
+      const projectMembers = await planeClient.users.list(workspaceConnection.workspace_slug, projectId);
 
       const member = projectMembers.find((member) => member.email === slackUser?.user.profile.email);
 
-      await planeClient.issueComment.create(workspaceConnection.workspaceSlug, projectId, issueId, {
+      await planeClient.issueComment.create(workspaceConnection.workspace_slug, projectId, issueId, {
         comment_html: "<p>" + comment + "</p>",
         created_by: member?.id,
         external_source: "SLACK-PRIVATE_COMMENT",
@@ -138,7 +190,7 @@ export const handleViewSubmission = async (data: TViewSubmissionPayload) => {
     let message = `Link <${url}|${label}> successfully added to issue.`;
 
     try {
-      await planeClient.issue.createLink(workspaceConnection.workspaceSlug, projectId, issueId, label, url);
+      await planeClient.issue.createLink(workspaceConnection.workspace_slug, projectId, issueId, label, url);
     } catch (error) {
       const err = error as { error: string };
       message = `Error adding link <${url}|${label}> to issue: ${err.error}`;

@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { CalendarCheck2, CalendarClock, Trash2Icon } from "lucide-react";
 // Plane
+import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 import { ControlLink, EModalPosition, EModalWidth, ModalCore, setToast, Spinner, TOAST_TYPE, Tooltip } from "@plane/ui";
 // components
@@ -101,10 +102,12 @@ type DependencyPathProps = {
 
 export const DependencyPathModal = observer((props: DependencyPathProps) => {
   const { relation, handleClose, isEpic = false } = props;
-
   const { workspaceSlug, projectId } = useParams();
+  // state
   const [isRemoving, setIsRemoving] = useState(false);
-
+  // plane hooks
+  const { t } = useTranslation();
+  // derived values
   const relationType = relation
     ? getRelationType(relation.originDependencyPosition, relation.destinationDependencyPosition)
     : undefined;
@@ -175,7 +178,7 @@ export const DependencyPathModal = observer((props: DependencyPathProps) => {
               <div className="flex items-center gap-1 h-full">
                 <DependencyLineSVG strokeColor={strokeColor} />
                 <span className="text-sm font-medium leading-5" style={{ color: strokeColor }}>
-                  {relationObject?.label}
+                  {relationObject?.i18n_label ? t(relationObject?.i18n_label) : ""}
                 </span>
               </div>
 

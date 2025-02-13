@@ -1,11 +1,13 @@
 import { SlackEventPayload, UnfurlMap } from "@plane/etl/slack";
+import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
-import { getEntityConnectionByEntityId } from "@/db/query/connection";
 import { extractPlaneResource } from "../../helpers/parse-plane-resources";
-import { createSlackLinkback } from "../../views/issue-linkback";
-import { createProjectLinkback } from "../../views/project-linkback";
 import { createCycleLinkback } from "../../views/cycle-linkback";
+import { createSlackLinkback } from "../../views/issue-linkback";
 import { createModuleLinkback } from "../../views/module-linkback";
+import { createProjectLinkback } from "../../views/project-linkback";
+
+const apiClient = getAPIClient();
 
 export const handleSlackEvent = async (data: SlackEventPayload) => {
   switch (data.event.type) {
@@ -25,20 +27,23 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
 
     const { workspaceConnection, planeClient, slackService } = await getConnectionDetails(data.team_id);
     // Get the associated entity connection with the message
-    const entityConnection = await getEntityConnectionByEntityId(data.event.thread_ts);
+    const entityConnection = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+      entity_id: data.event.thread_ts.trim().toString(),
+    });
+
     if (!entityConnection || entityConnection.length === 0) return;
 
     const eConnection = entityConnection[0];
 
-    const members = await planeClient.users.list(workspaceConnection.workspaceSlug, eConnection.projectId ?? "");
+    const members = await planeClient.users.list(workspaceConnection.workspace_slug, eConnection.project_id ?? "");
     const userInfo = await slackService.getUserInfo(data.event.user);
-    const issueId = eConnection.entitySlug;
+    const issueId = eConnection.entity_slug;
 
     const planeUser = members.find((member) => member.email === userInfo?.user.profile.email);
 
     await planeClient.issueComment.create(
-      workspaceConnection.workspaceSlug,
-      eConnection.projectId ?? "",
+      workspaceConnection.workspace_slug,
+      eConnection.project_id ?? "",
       issueId ?? "",
       {
         comment_html: `<p>${data.event.text}</p>`,
@@ -60,22 +65,22 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
         const resource = extractPlaneResource(link.url);
         if (resource === null) return;
 
-        const project = await planeClient.project.getProject(workspaceConnection.workspaceSlug, resource.projectId);
-        const members = await planeClient.users.list(workspaceConnection.workspaceSlug, resource.projectId);
+        const project = await planeClient.project.getProject(workspaceConnection.workspace_slug, resource.projectId);
+        const members = await planeClient.users.list(workspaceConnection.workspace_slug, resource.projectId);
 
         if (resource.type === "issue") {
-          if (resource.workspaceSlug !== workspaceConnection.workspaceSlug) return;
+          if (resource.workspaceSlug !== workspaceConnection.workspace_slug) return;
 
           const issue = await planeClient.issue.getIssue(
-            workspaceConnection.workspaceSlug,
+            workspaceConnection.workspace_slug,
             resource.projectId,
             resource.issueId
           );
 
-          const states = await planeClient.state.list(workspaceConnection.workspaceSlug, issue.project);
+          const states = await planeClient.state.list(workspaceConnection.workspace_slug, issue.project);
 
           const linkBack = createSlackLinkback(
-            workspaceConnection.workspaceSlug,
+            workspaceConnection.workspace_slug,
             project,
             members,
             states.results,
@@ -90,21 +95,21 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
           unfurlMap[link.url] = projectLinkback;
         } else if (resource.type === "cycle") {
           const cycle = await planeClient.cycles.getCycle(
-            workspaceConnection.workspaceSlug,
+            workspaceConnection.workspace_slug,
             resource.projectId,
             resource.cycleId
           );
 
-          const linkBack = createCycleLinkback(workspaceConnection.workspaceSlug, project, cycle);
+          const linkBack = createCycleLinkback(workspaceConnection.workspace_slug, project, cycle);
           unfurlMap[link.url] = linkBack;
         } else if (resource.type === "module") {
           const module = await planeClient.modules.getModule(
-            workspaceConnection.workspaceSlug,
+            workspaceConnection.workspace_slug,
             resource.projectId,
             resource.moduleId
           );
 
-          const moduleLinkback = createModuleLinkback(workspaceConnection.workspaceSlug, project, module);
+          const moduleLinkback = createModuleLinkback(workspaceConnection.workspace_slug, project, module);
           unfurlMap[link.url] = moduleLinkback;
         }
       })

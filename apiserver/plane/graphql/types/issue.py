@@ -12,6 +12,7 @@ from strawberry.scalars import JSON
 from strawberry.types import Info
 
 # Module Imports
+from plane.graphql.utils.timezone import user_timezone_converter
 from plane.db.models import (
     Issue,
     IssueLabel,
@@ -64,8 +65,8 @@ class IssuesType:
     external_id: Optional[str]
     created_by: Optional[strawberry.ID]
     updated_by: Optional[strawberry.ID]
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
     cycle: Optional[strawberry.ID]
     modules: Optional[list[strawberry.ID]]
     type: Optional[strawberry.ID]
@@ -82,7 +83,18 @@ class IssuesType:
         )()
         issue_project_id = await sync_to_async(lambda: self.project_id)()
         if parent_issue_project_id == issue_project_id:
+            # check if the parent issue issue_type is not epic
+            parent_issue_is_epic = await sync_to_async(
+                lambda: self.parent.type.is_epic
+                if self.parent and self.parent.type
+                else None
+            )()
+
+            if parent_issue_is_epic:
+                return None
+
             return str(self.parent_id)
+
         return None
 
     @strawberry.field
@@ -158,6 +170,24 @@ class IssuesType:
     def parent_project_identifier(self) -> Optional[str]:
         return self.parent.project.identifier if self.parent else None
 
+    @strawberry.field
+    def created_by(self) -> Optional[strawberry.ID]:
+        return self.created_by_id
+
+    @strawberry.field
+    def updated_by(self) -> Optional[strawberry.ID]:
+        return self.updated_by_id
+
+    @strawberry.field
+    def created_at(self, info) -> Optional[datetime]:
+        converted_date = user_timezone_converter(info.context.user, self.created_at)
+        return converted_date
+
+    @strawberry.field
+    def updated_at(self, info) -> Optional[datetime]:
+        converted_date = user_timezone_converter(info.context.user, self.updated_at)
+        return converted_date
+
 
 @strawberry_django.type(IssueUserProperty)
 class IssueUserPropertyType:
@@ -199,8 +229,8 @@ class IssuePropertyActivityType:
     epoch: float
     workspace: strawberry.ID
     project: strawberry.ID
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
 
     @strawberry.field
     def workspace(self) -> int:
@@ -222,6 +252,16 @@ class IssuePropertyActivityType:
     def issue(self) -> int:
         return self.issue_id
 
+    @strawberry.field
+    def created_at(self, info) -> Optional[datetime]:
+        converted_date = user_timezone_converter(info.context.user, self.created_at)
+        return converted_date
+
+    @strawberry.field
+    def updated_at(self, info) -> Optional[datetime]:
+        converted_date = user_timezone_converter(info.context.user, self.updated_at)
+        return converted_date
+
 
 @strawberry_django.type(IssueComment)
 class IssueCommentActivityType:
@@ -237,8 +277,8 @@ class IssueCommentActivityType:
     external_id: Optional[str]
     workspace: strawberry.ID
     project: strawberry.ID
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
 
     @strawberry.field
     def workspace(self) -> int:
@@ -255,6 +295,24 @@ class IssueCommentActivityType:
     @strawberry.field
     def issue(self) -> int:
         return self.issue_id
+
+    @strawberry.field
+    def created_by(self) -> Optional[strawberry.ID]:
+        return self.created_by_id
+
+    @strawberry.field
+    def updated_by(self) -> Optional[strawberry.ID]:
+        return self.updated_by_id
+
+    @strawberry.field
+    def created_at(self, info) -> Optional[datetime]:
+        converted_date = user_timezone_converter(info.context.user, self.created_at)
+        return converted_date
+
+    @strawberry.field
+    def updated_at(self, info) -> Optional[datetime]:
+        converted_date = user_timezone_converter(info.context.user, self.updated_at)
+        return converted_date
 
 
 @strawberry_django.type(Issue)

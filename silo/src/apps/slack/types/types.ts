@@ -31,10 +31,23 @@ export interface MetadataPayloadShort {
   value: string;
 }
 
+export type ShortcutActionPayload = {
+  type: string;
+  message: {
+    text?: string;
+    thread_ts?: string;
+    ts?: string;
+  };
+  channel: {
+    id: string;
+  };
+  response_url?: string;
+};
+
 export type SlackPrivateMetadata =
   | {
       entityType: typeof ENTITIES.SHORTCUT_PROJECT_SELECTION;
-      entityPayload: TMessageActionPayload;
+      entityPayload: ShortcutActionPayload;
     }
   | {
       entityType: typeof ENTITIES.COMMAND_PROJECT_SELECTION;

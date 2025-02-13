@@ -4,34 +4,14 @@ import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { TLoader } from "@plane/types";
+import { TLoader, TIssuePropertiesActivity, IIssuePropertiesActivity, IIssuePropertiesActivityStore } from "@plane/types";
 // helpers
 import { convertToEpoch } from "@/helpers/date-time.helper";
 // plane web services
 import { IssuePropertiesActivityService } from "@/plane-web/services/issue-types";
 // plane web store
-import { IIssuePropertiesActivity, IssuePropertiesActivity } from "@/plane-web/store/issue-types";
+import { IssuePropertiesActivity } from "@/plane-web/store/issue-types";
 import { RootStore } from "@/plane-web/store/root.store";
-// plane web types
-import { TIssuePropertiesActivity } from "@/plane-web/types";
-
-export interface IIssuePropertiesActivityStore {
-  // observables
-  loader: TLoader;
-  propertyActivities: Record<string, IIssuePropertiesActivity>; // activityId -> IIssuePropertiesActivity
-  // computed functions
-  getPropertyActivityIdsByIssueId: (issueId: string) => string[] | undefined;
-  getPropertyActivityById: (activityId: string) => IIssuePropertiesActivity | undefined;
-  // helper actions
-  addOrUpdatePropertyActivity: (activities: TIssuePropertiesActivity[]) => void;
-  // actions
-  fetchPropertyActivities: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    loaderType?: TLoader
-  ) => Promise<TIssuePropertiesActivity[]>;
-}
 
 export class IssuePropertiesActivityStore implements IIssuePropertiesActivityStore {
   // observables

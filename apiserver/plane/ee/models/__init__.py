@@ -50,19 +50,28 @@ from .initiative import (
     InitiativeUserProperty,
     InitiativeEpic,
 )
-from .team import (
-    TeamSpace,
-    TeamSpaceMember,
-    TeamSpaceProject,
-    TeamSpaceLabel,
-    TeamSpaceView,
-    TeamSpaceComment,
-    TeamSpacePage,
-    TeamSpaceActivity,
-    TeamSpaceCommentReaction,
-    TeamSpaceUserProperty,
+from .teamspace import (
+    Teamspace,
+    TeamspaceMember,
+    TeamspaceProject,
+    TeamspaceLabel,
+    TeamspaceView,
+    TeamspaceComment,
+    TeamspacePage,
+    TeamspaceActivity,
+    TeamspaceCommentReaction,
+    TeamspaceUserProperty,
 )
 
 from .workflow import Workflow, WorkflowTransition
 
 from .job import ImportReport, ImportJob
+
+from .customer import (
+    Customer,
+    CustomerRequest,
+    CustomerProperty,
+    CustomerPropertyValue,
+    CustomerPropertyOption,
+    CustomerRequestIssue,
+)

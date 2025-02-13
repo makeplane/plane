@@ -6,8 +6,10 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { ChevronRight, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-// plane hooks
+// plane imports
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Logo, TeamsIcon, Tooltip } from "@plane/ui";
 // components
@@ -16,26 +18,26 @@ import { SidebarNavItem } from "@/components/sidebar";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useUserPermissions } from "@/hooks/store";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
-import { useTeams } from "@/plane-web/hooks/store";
+import { useTeamspaces } from "@/plane-web/hooks/store";
 
 export const SidebarTeamsList = observer(() => {
   // router params
   const { workspaceSlug } = useParams();
   // pathname
   const pathname = usePathname();
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const { allowPermissions } = useUserPermissions();
-  const { toggleCreateTeamModal } = useCommandPalette();
-  const { joinedTeamIds, isTeamsFeatureEnabled, getTeamById } = useTeams();
+  const { toggleCreateTeamspaceModal } = useCommandPalette();
+  const { joinedTeamSpaceIds, isTeamspacesFeatureEnabled, getTeamspaceById } = useTeamspaces();
   // local storage
   const { setValue: toggleTeamMenu, storedValue } = useLocalStorage<boolean>("is_teams_list_open", true);
   // derived values
-  const isTeamsListOpen = !!storedValue;
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const isTeamspaceListItemOpen = !!storedValue;
+  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   const handleLinkClick = () => {
     if (window.innerWidth < 768) {
@@ -47,8 +49,8 @@ export const SidebarTeamsList = observer(() => {
     if (sidebarCollapsed) toggleTeamMenu(true);
   }, [sidebarCollapsed, toggleTeamMenu]);
 
-  // Return if teams are not enabled or available
-  if (!isTeamsFeatureEnabled || joinedTeamIds.length === 0) return null;
+  // Return if teamspaces are not enabled or available
+  if (!isTeamspacesFeatureEnabled || joinedTeamSpaceIds.length === 0) return null;
 
   return (
     <>
@@ -61,31 +63,31 @@ export const SidebarTeamsList = observer(() => {
             }
           )}
         >
-          <Tooltip position="right" tooltipContent="Teamspaces" disabled={!sidebarCollapsed}>
+          <Tooltip position="right" tooltipContent={t("teamspaces.label")} disabled={!sidebarCollapsed}>
             <Disclosure.Button
               as="button"
               className={cn(
                 "flex-1 sticky top-0 w-full py-1.5 flex items-center gap-1 text-custom-sidebar-text-400 text-xs font-semibold outline-none",
                 sidebarCollapsed ? "justify-center" : "justify-between"
               )}
-              onClick={() => toggleTeamMenu(!isTeamsListOpen)}
+              onClick={() => toggleTeamMenu(!isTeamspaceListItemOpen)}
             >
               {sidebarCollapsed ? (
                 <TeamsIcon className="flex-shrink-0 size-3.5" />
               ) : (
-                <span className="text-xs font-semibold">TEAMSPACES</span>
+                <span className="text-sm font-semibold">{t("teamspaces.label")}</span>
               )}
             </Disclosure.Button>
           </Tooltip>
           {!sidebarCollapsed && (
             <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
               {isAdmin && (
-                <Tooltip tooltipHeading="Create team" tooltipContent="">
+                <Tooltip tooltipHeading="Create teamspace" tooltipContent="">
                   <button
                     type="button"
                     className="p-0.5 rounded hover:bg-custom-sidebar-background-80 text-custom-text-300 flex-shrink-0 outline-none"
                     onClick={() => {
-                      toggleCreateTeamModal({ isOpen: true, teamId: undefined });
+                      toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined });
                     }}
                   >
                     <Plus className="size-3" />
@@ -95,12 +97,12 @@ export const SidebarTeamsList = observer(() => {
               <Disclosure.Button
                 as="button"
                 className="sticky top-0 z-10 group/workspace-button px-0.5 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-xs font-semibold"
-                onClick={() => toggleTeamMenu(!isTeamsListOpen)}
+                onClick={() => toggleTeamMenu(!isTeamspaceListItemOpen)}
               >
                 <span className="flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded hover:bg-custom-sidebar-background-80">
                   <ChevronRight
                     className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
-                      "rotate-90": isTeamsListOpen,
+                      "rotate-90": isTeamspaceListItemOpen,
                     })}
                   />
                 </span>
@@ -109,7 +111,7 @@ export const SidebarTeamsList = observer(() => {
           )}
         </div>
         <Transition
-          show={isTeamsListOpen}
+          show={isTeamspaceListItemOpen}
           enter="transition duration-100 ease-out"
           enterFrom="transform scale-95 opacity-0"
           enterTo="transform scale-100 opacity-100"
@@ -117,7 +119,7 @@ export const SidebarTeamsList = observer(() => {
           leaveFrom="transform scale-100 opacity-100"
           leaveTo="transform scale-95 opacity-0"
         >
-          {isTeamsListOpen && (
+          {isTeamspaceListItemOpen && (
             <Disclosure.Panel
               as="div"
               className={cn("flex flex-col mt-0.5 gap-0.5", {
@@ -125,18 +127,24 @@ export const SidebarTeamsList = observer(() => {
               })}
               static
             >
-              {joinedTeamIds.map((teamId) => {
-                const team = getTeamById(teamId);
-                if (!team) return null;
+              {joinedTeamSpaceIds.map((teamspaceId) => {
+                const teamspace = getTeamspaceById(teamspaceId);
+                if (!teamspace) return null;
                 return (
-                  <Link key={teamId} href={`/${workspaceSlug}/teams/${teamId}`} onClick={handleLinkClick}>
+                  <Link
+                    key={teamspaceId}
+                    href={`/${workspaceSlug}/teamspaces/${teamspaceId}`}
+                    onClick={handleLinkClick}
+                  >
                     <SidebarNavItem
                       className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
-                      isActive={pathname.includes(`/${workspaceSlug}/teams/${teamId}`)}
+                      isActive={pathname.includes(`/${workspaceSlug}/teamspaces/${teamspaceId}`)}
                     >
                       <div className="flex items-center gap-1.5 py-[1px] truncate">
-                        <Logo logo={team.logo_props} size={16} />
-                        {!sidebarCollapsed && <p className="text-sm leading-5 font-medium truncate">{team.name}</p>}
+                        <Logo logo={teamspace.logo_props} size={16} />
+                        {!sidebarCollapsed && (
+                          <p className="text-sm leading-5 font-medium truncate">{teamspace.name}</p>
+                        )}
                       </div>
                     </SidebarNavItem>
                   </Link>

@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 
 // components
+import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
 import { DateFilterModal } from "@/components/core";
 import { FilterHeader, FilterOption } from "@/components/issues";
-// constants
-import { DATE_AFTER_FILTER_OPTIONS } from "@/constants/filters";
 
 type Props = {
   appliedFilters: string[] | null;

@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Users } from "lucide-react";
 // plane
-import { Avatar, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { Avatar, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { DateRangeDropdown, MemberDropdown, ProjectDropdown } from "@/components/dropdowns";
@@ -14,6 +14,7 @@ import { useMember } from "@/hooks/store";
 // Plane Web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TInitiative } from "@/plane-web/types/initiative";
+import { EpicsDropdown } from "../../dropdowns";
 
 type Props = {
   initiative: TInitiative;
@@ -46,23 +47,11 @@ export const BlockProperties = observer((props: Props) => {
       });
   };
 
-  const handleProjects = (ids: string | string[]) => {
-    if (ids.length === 0) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Please select at least one project.",
-      });
-      return;
-    }
-
+  const handleChange = (updatedData: Partial<TInitiative>) => {
     if (updateInitiative) {
-      updateInitiative(workspaceSlug.toString(), initiative.id, {
-        project_ids: ids ? (Array.isArray(ids) ? ids : [ids]) : null,
-      });
+      updateInitiative(workspaceSlug.toString(), initiative.id, updatedData);
     }
   };
-
   return (
     <div
       className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-grow md:flex-shrink-0" : "lg:flex-grow lg:flex-shrink-0"} items-center gap-2 whitespace-nowrap`}
@@ -134,11 +123,25 @@ export const BlockProperties = observer((props: Props) => {
       <div className="h-5">
         <ProjectDropdown
           buttonVariant={"border-with-text"}
-          onChange={handleProjects}
+          onChange={(ids) => handleChange({ project_ids: ids ? (Array.isArray(ids) ? ids : [ids]) : null })}
           value={initiative.project_ids || []}
           multiple
           showTooltip
           disabled={disabled}
+        />
+      </div>
+
+      <div className="h-5">
+        <EpicsDropdown
+          buttonVariant={"border-with-text"}
+          onChange={(ids) => handleChange({ epic_ids: ids ? (Array.isArray(ids) ? ids : [ids]) : null })}
+          value={initiative.epic_ids || []}
+          multiple
+          showTooltip
+          disabled={disabled}
+          searchParams={{
+            initiative_id: initiative.id,
+          }}
         />
       </div>
     </div>

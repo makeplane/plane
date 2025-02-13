@@ -4,12 +4,13 @@ import { observer } from "mobx-react";
 import { LinkIcon, MoreHorizontal, Trash2 } from "lucide-react";
 // Plane
 import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail, useProject } from "@/hooks/store";
 // Plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
@@ -29,18 +30,22 @@ export const EpicQuickActions: React.FC<Props> = observer((props: Props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail(EIssueServiceType.EPICS);
+  const { getProjectIdentifierById } = useProject();
+
+  const { t } = useTranslation();
 
   // derived values
   const epic = getIssueById(epicId);
   const epicLink = `${workspaceSlug}/projects/${epic?.project_id}/issues/${epic?.id}`;
+  const projectIdentifier = getProjectIdentifierById(epic?.project_id);
 
   // handler
   const handleCopyText = () =>
     copyUrlToClipboard(epicLink).then(() =>
       setToast({
         type: TOAST_TYPE.INFO,
-        title: "Link Copied!",
-        message: "Epic link copied to clipboard.",
+        title: `${"common.link_copied"}!`,
+        message: t("epics.epic_link_copied_to_clipboard"),
       })
     );
 
@@ -51,14 +56,21 @@ export const EpicQuickActions: React.FC<Props> = observer((props: Props) => {
     {
       key: "copy-link",
       action: handleCopyText,
-      title: "Copy link",
+      title: t("copy_link"),
       icon: LinkIcon,
       shouldRender: true,
     },
     {
       key: "remove",
-      action: () => removeEpicFromInitiative(workspaceSlug, initiativeId, epic?.id),
-      title: "Remove",
+      action: () =>
+        removeEpicFromInitiative(workspaceSlug, initiativeId, epic?.id).then(() => {
+          setToast({
+            title: "Success!",
+            type: TOAST_TYPE.SUCCESS,
+            message: `You have removed the epic ${projectIdentifier}-${epic?.sequence_id} from this initiative.`,
+          });
+        }),
+      title: t("common.remove"),
       icon: Trash2,
       shouldRender: !disabled,
     },

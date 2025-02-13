@@ -1,24 +1,40 @@
 import { isEmpty, size } from "lodash";
 import { observer } from "mobx-react";
-import { EmptyState } from "@/components/empty-state";
-import { EmptyStateType } from "@/constants/empty-state";
+// plane imports
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+// components
+import { DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
+import { ListLayoutLoader } from "@/components/ui";
 // hooks
-import { useCommandPalette, useMember } from "@/hooks/store";
-// Plane-web
+import { useCommandPalette, useMember, useUserPermissions } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// plane web hooks
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-//
+// local imports
 import { getGroupList } from "../utils";
 import { InitiativeGroup } from "./initiatives-group";
 
 export const InitiativesRoot = observer(() => {
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
   const { initiative, initiativeFilters } = useInitiatives();
   const { getUserDetails } = useMember();
   const { toggleCreateInitiativeModal } = useCommandPalette();
-
+  const { allowPermissions } = useUserPermissions();
+  // derived values
   const displayFilters = initiativeFilters.currentInitiativeDisplayFilters;
-
   const groupBy = displayFilters?.group_by;
   const groupedInitiativeIds = initiative.currentGroupedInitiativeIds;
+  const generalResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/initiatives/initiatives" });
+  const searchedResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/project" });
+  const hasWorkspaceMemberLevelPermissions = allowPermissions(
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
+
+  if (initiative.initiativesLoader) return <ListLayoutLoader />;
 
   if (!groupedInitiativeIds) return <></>;
 
@@ -40,17 +56,25 @@ export const InitiativesRoot = observer(() => {
   if (emptyGroupedInitiativeIds && size(initiative.initiativesMap) > 0) {
     return (
       <div className="flex items-center justify-center h-full w-full">
-        <EmptyState type={EmptyStateType.WORKSPACE_INITIATIVES_EMPTY_SEARCH} layout="screen-simple" />
+        <SimpleEmptyState
+          title={t("initiatives.empty_state.search.title")}
+          description={t("initiatives.empty_state.search.description")}
+          assetPath={searchedResolvedPath}
+        />
       </div>
     );
   }
 
   if (isEmptyInitiatives) {
     return (
-      <EmptyState
-        type={EmptyStateType.WORKSPACE_INITIATIVES}
-        primaryButtonOnClick={() => {
-          toggleCreateInitiativeModal({ isOpen: true, initiativeId: undefined });
+      <DetailedEmptyState
+        title={t("initiatives.empty_state.general.title")}
+        description={t("initiatives.empty_state.general.description")}
+        assetPath={generalResolvedPath}
+        primaryButton={{
+          text: t("initiatives.empty_state.general.primary_button.text"),
+          onClick: () => toggleCreateInitiativeModal({ isOpen: true, initiativeId: undefined }),
+          disabled: !hasWorkspaceMemberLevelPermissions,
         }}
       />
     );

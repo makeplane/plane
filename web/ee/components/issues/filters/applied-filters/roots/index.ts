@@ -1,2 +1,2 @@
-export * from "./team-root";
-export * from "./team-view-root";
+export * from "./teamspace-root";
+export * from "./teamspace-view-root";

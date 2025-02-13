@@ -3,9 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // constants
-import { EUserPermissionsLevel } from "@plane/constants";
-// types
-import { EUserPermissions } from "@plane/types/src/enums";
+import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 // local components
@@ -24,7 +22,7 @@ export const ProjectOverviewRoot: FC<Props> = observer((props) => {
   const { allowPermissions } = useUserPermissions();
 
   // derived values
-  const isEditable = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const isEditable = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   return (
     <LayoutRoot>

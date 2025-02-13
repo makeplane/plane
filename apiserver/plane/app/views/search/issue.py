@@ -29,6 +29,7 @@ class IssueSearchEndpoint(BaseAPIView):
             project__project_projectmember__member=self.request.user,
             project__project_projectmember__is_active=True,
             project__archived_at__isnull=True,
+            project__deleted_at__isnull=True,
         )
 
         issues_and_epics = (
@@ -37,6 +38,7 @@ class IssueSearchEndpoint(BaseAPIView):
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
+                project__deleted_at__isnull=True,
             )
             .filter(deleted_at__isnull=True)
             .filter(state__is_triage=False)
@@ -47,7 +49,11 @@ class IssueSearchEndpoint(BaseAPIView):
 
         if workspace_search == "false":
             issues = issues.filter(project_id=project_id)
+            
             issues_and_epics = issues_and_epics.filter(project_id=project_id)
+
+        if epic == "true":
+            issues = search_issues(query, issues_and_epics)            
 
         if query:
             issues = search_issues(query, issues)
@@ -72,7 +78,6 @@ class IssueSearchEndpoint(BaseAPIView):
 
         if issue_relation == "true" and issue_id:
             issues = search_issues(query, issues_and_epics)
-
             issue = Issue.objects.filter(pk=issue_id).first()
 
             related_issue_ids = (
@@ -113,6 +118,8 @@ class IssueSearchEndpoint(BaseAPIView):
             project_id=project_id, member=self.request.user, is_active=True, role=5
         ).exists():
             issues = issues.filter(created_by=self.request.user)
+
+        
 
         return Response(
             issues.values(

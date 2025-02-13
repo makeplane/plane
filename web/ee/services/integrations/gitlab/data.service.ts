@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 // plane web types
-import { TGitlabRepository } from "@/plane-web/types/integrations/gitlab";
 import { IGitlabEntity } from "@plane/etl/gitlab";
+import { TGitlabRepository } from "@/plane-web/types/integrations/gitlab";
 
 export class GitlabDataService {
   protected baseURL: string;
@@ -9,7 +9,7 @@ export class GitlabDataService {
 
   constructor(baseURL: string) {
     this.baseURL = baseURL;
-    this.axiosInstance = axios.create({ baseURL });
+    this.axiosInstance = axios.create({ baseURL, withCredentials: true });
   }
 
   /**
@@ -25,7 +25,7 @@ export class GitlabDataService {
         throw error?.response?.data;
       });
 
-      /**
+  /**
    * @description fetch gitlab entities
    * @param { string } workspaceId
    * @returns { Promise<IGitlabEntity[]> }

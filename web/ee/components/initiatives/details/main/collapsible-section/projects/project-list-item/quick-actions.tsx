@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import { LinkIcon, MoreHorizontal, Trash2 } from "lucide-react";
 // Plane
+import { useTranslation } from "@plane/i18n";
 import { CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // helpers
@@ -19,22 +20,22 @@ export const QuickActions: React.FC<Props> = observer((props: Props) => {
   const { workspaceSlug, initiativeId, project } = props;
   // store hooks
   const {
-    initiative: { getInitiativeById, updateInitiative },
+    initiative: { updateInitiative, getInitiativeById },
   } = useInitiatives();
+
+  const { t } = useTranslation();
 
   // derived states
   const projectLink = `${workspaceSlug}/projects/${project.id}/issues`;
-  const initiative = initiativeId ? getInitiativeById(initiativeId) : undefined;
-
-  const shouldRenderRemove = (initiative?.project_ids || [])?.length > 1;
+  const initiative = getInitiativeById(initiativeId);
 
   // handler
   const handleCopyText = () =>
     copyUrlToClipboard(projectLink).then(() =>
       setToast({
         type: TOAST_TYPE.INFO,
-        title: "Link Copied!",
-        message: "Project link copied to clipboard.",
+        title: `${"common.link_copied"}!`,
+        message: t("epics.project_link_copied_to_clipboard"),
       })
     );
 
@@ -42,16 +43,23 @@ export const QuickActions: React.FC<Props> = observer((props: Props) => {
     {
       key: "copy-link",
       action: handleCopyText,
-      title: "Copy link",
+      title: t("copy_link"),
       icon: LinkIcon,
-      shouldRender: true,
     },
     {
       key: "remove",
-      action: () => updateInitiative(workspaceSlug, initiativeId, { project_ids: [project.id] }),
-      title: "Remove",
+      action: () =>
+        updateInitiative(workspaceSlug, initiativeId, {
+          project_ids: initiative?.project_ids ? initiative?.project_ids.filter((id) => id !== project.id) : [],
+        }).then(() => {
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Success!",
+            message: `You have removed the project ${project.name} from this initiative.`,
+          });
+        }),
+      title: t("common.remove"),
       icon: Trash2,
-      shouldRender: shouldRenderRemove,
     },
   ];
 
@@ -67,7 +75,7 @@ export const QuickActions: React.FC<Props> = observer((props: Props) => {
         customButtonClassName="grid place-items-center"
         placement="bottom-start"
       >
-        {MENU_ITEMS.filter((item) => item.shouldRender).map((item) => (
+        {MENU_ITEMS.map((item) => (
           <CustomMenu.MenuItem
             key={item.key}
             onClick={(e) => {

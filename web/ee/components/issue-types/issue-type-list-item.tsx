@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import { ChevronRight } from "lucide-react";
-// ui
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { Collapsible } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -19,6 +20,8 @@ type TIssueTypeListItem = {
 
 export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
   const { issueTypeId, isOpen, isCollapseDisabled, onToggle, onEditIssueTypeIdChange } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const issueType = useIssueType(issueTypeId);
   // derived values
@@ -64,7 +67,7 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
                     <div className="text-sm text-custom-text-100 font-medium line-clamp-1">{issueTypeDetail?.name}</div>
                     {!issueTypeDetail?.is_active && (
                       <div className="py-0.5 px-3 text-xs rounded font-medium text-custom-text-300 bg-custom-background-80/70">
-                        Disabled
+                        {t("common.disabled")}
                       </div>
                     )}
                   </div>
@@ -82,7 +85,7 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
                     "flex-shrink-0 py-0.5 px-2 text-xs rounded text-custom-primary-100 bg-transparent border border-custom-primary-100 cursor-default font-medium"
                   )}
                 >
-                  Default
+                  {t("common.default")}
                 </div>
               )}
             </div>

@@ -32,8 +32,10 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { updateProject } = useProject();
   const { filters } = useProjectFilter();
-
+  // derived values
+  const isMemberOfProject = !!project.member_role;
   const isArchived = pathname.includes("/archives");
+
   const handleUpdateProject = (data: Partial<TProject>) => {
     updateProject(workspaceSlug.toString(), project.id, data);
   };
@@ -77,7 +79,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
         draggable={false}
         href={`/${workspaceSlug}/projects/${project.id}/issues`}
         onClick={(e) => {
-          if (!project.is_member || isArchived) {
+          if (!isMemberOfProject || isArchived) {
             e.preventDefault();
             e.stopPropagation();
             if (!isArchived) setJoinProjectModal(true);
@@ -85,7 +87,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
           }
         }}
-        data-prevent-nprogress={!project.is_member || isArchived}
+        data-prevent-nprogress={!isMemberOfProject || isArchived}
         className={cn("group/project-card flex flex-col justify-between w-full", {
           "bg-custom-background-80": isArchived,
         })}

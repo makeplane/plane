@@ -6,6 +6,8 @@ import { useParams } from "next/navigation";
 // icons
 import { SquareUser } from "lucide-react";
 // types
+import { MODULE_STATUS, MODULE_FAVORITED, MODULE_UNFAVORITED , EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IModule } from "@plane/types";
 // ui
 import { FavoriteStar, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
@@ -14,12 +16,9 @@ import { DateRangeDropdown } from "@/components/dropdowns";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // constants
-import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
-import { MODULE_STATUS } from "@/constants/module";
 // hooks
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { useEventTracker, useMember, useModule, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { ButtonAvatars } from "../dropdowns/member/avatar";
 
 type Props = {
@@ -37,6 +36,8 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
   const { addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails } = useModule();
   const { getUserDetails } = useMember();
   const { captureEvent } = useEventTracker();
+
+  const { t } = useTranslation();
 
   // derived values
 
@@ -146,8 +147,8 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
           });
         }}
         placeholder={{
-          from: "Start date",
-          to: "End date",
+          from: t("start_date"),
+          to: t("end_date"),
         }}
         disabled={isDisabled}
         hideIcon={{ from: renderIcon ?? true, to: renderIcon }}

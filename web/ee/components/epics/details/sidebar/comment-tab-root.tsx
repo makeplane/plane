@@ -3,8 +3,14 @@
 import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane package imports
-import { EIssueServiceType, E_SORT_ORDER } from "@plane/constants";
+import {
+  EIssueServiceType,
+  E_SORT_ORDER,
+  EActivityFilterType,
+  filterActivityOnSelectedFilters,
+} from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 import { TIssueActivityComment } from "@plane/types";
 // components
 import { ActivitySortRoot } from "@/components/issues";
@@ -12,7 +18,6 @@ import { ActivitySortRoot } from "@/components/issues";
 import { useIssueDetail, useProject } from "@/hooks/store";
 // constants
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
-import { EActivityFilterType, filterActivityOnSelectedFilters } from "@/plane-web/constants";
 // local components
 import { EpicCommentCard } from "./activity/comment-card";
 import { EpicCommentCreate } from "./activity/comment-create";
@@ -27,6 +32,8 @@ type TEpicSidebarCommentsRootProps = {
 
 export const EpicSidebarCommentsRoot: FC<TEpicSidebarCommentsRootProps> = observer((props) => {
   const { workspaceSlug, projectId, epicId, disabled = false } = props;
+  // i18n
+  const { t } = useTranslation();
   // states
   const { storedValue: sortOrder, setValue: setSortOrder } = useLocalStorage<E_SORT_ORDER>(
     "epic_comments_sort_order",
@@ -68,7 +75,7 @@ export const EpicSidebarCommentsRoot: FC<TEpicSidebarCommentsRootProps> = observ
 
   return (
     <SidebarContentWrapper
-      title="Comments"
+      title={t("comments")}
       actionElement={
         <ActivitySortRoot
           sortOrder={sortOrder ?? E_SORT_ORDER.ASC}

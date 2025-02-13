@@ -6,21 +6,19 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { FileText, FolderPlus, Search, Settings } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-// ui
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 // components
 import { CommandPaletteThemeActions, CommandPaletteHelpActions } from "@/components/command-palette";
-import { EmptyState } from "@/components/empty-state";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state";
 // hooks
 import { useCommandPalette } from "@/hooks/store";
 import useDebounce from "@/hooks/use-debounce";
-// plane web components
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// plane web imports
 import { PagesAppCommandPaletteSearchResults } from "@/plane-web/components/command-palette";
-// plane web services
 import { AppService } from "@/plane-web/services/app.service";
-// plane web types
 import { IAppSearchResults } from "@/plane-web/types";
 
 const appService = new AppService();
@@ -31,6 +29,8 @@ type Props = {
 
 export const PagesAppCommandModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = props;
+  // router
+  const router = useRouter();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
   const [resultsCount, setResultsCount] = useState(0);
@@ -44,12 +44,13 @@ export const PagesAppCommandModal: React.FC<Props> = observer((props) => {
     },
   });
   const [pages, setPages] = useState<string[]>([]);
-  // router
-  const router = useRouter();
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { isCommandPaletteOpen, toggleCommandPaletteModal, toggleCreatePageModal } = useCommandPalette();
-
+  // derived values
   const page = pages[pages.length - 1];
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
@@ -180,7 +181,7 @@ export const PagesAppCommandModal: React.FC<Props> = observer((props) => {
 
                       {!isLoading && resultsCount === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
                         <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-                          <EmptyState type={EmptyStateType.COMMAND_K_SEARCH_EMPTY_STATE} layout="screen-simple" />
+                          <SimpleEmptyState title={t("command_k.empty_state.search.title")} assetPath={resolvedPath} />
                         </div>
                       )}
 

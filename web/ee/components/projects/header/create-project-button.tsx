@@ -2,11 +2,11 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/ui";
 // hooks
 import { useCommandPalette, useEventTracker, useUserPermissions } from "@/hooks/store";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectCreateButton: FC = observer((props) => {
   const {} = props;
@@ -16,7 +16,7 @@ export const ProjectCreateButton: FC = observer((props) => {
   const { allowPermissions } = useUserPermissions();
 
   const isAuthorizedUser = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
 

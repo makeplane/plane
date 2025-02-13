@@ -2,18 +2,18 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Button, Header, InitiativeIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
-// constants
-// helpers
 // hooks
 import { useCommandPalette, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // Plane-web
 import { HeaderFilters } from "@/plane-web/components/initiatives/header/filters";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const InitiativesListHeader = observer(() => {
   // router
@@ -23,8 +23,10 @@ export const InitiativesListHeader = observer(() => {
 
   const { allowPermissions } = useUserPermissions();
 
+  const { t } = useTranslation();
+
   const canUserCreateInitiative = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
 
@@ -36,7 +38,7 @@ export const InitiativesListHeader = observer(() => {
             <Breadcrumbs onBack={() => router.back()}>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
-                link={<BreadcrumbLink label={"Initiatives"} icon={<InitiativeIcon className="h-4 w-4" />} />}
+                link={<BreadcrumbLink label={t("initiatives.label")} icon={<InitiativeIcon className="h-4 w-4" />} />}
               />
             </Breadcrumbs>
           </div>
@@ -47,7 +49,7 @@ export const InitiativesListHeader = observer(() => {
           </div>
           {canUserCreateInitiative ? (
             <Button onClick={() => toggleCreateInitiativeModal({ isOpen: true, initiativeId: undefined })} size="sm">
-              <div className="hidden sm:block">Add</div> Initiative
+              <div className="hidden sm:block">{t("add")}</div> {t("initiatives.label")}
             </Button>
           ) : (
             <></>

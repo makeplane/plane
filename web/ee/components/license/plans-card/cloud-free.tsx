@@ -31,7 +31,7 @@ export const CloudFreePlanCard: FC<TCloudFreePlanCardProps> = observer((props: T
       planDescription={
         <>
           <div className="text-sm font-medium text-custom-text-200">
-            12 members, unlimited projects, issues, cycles, modules, and pages
+            12 members, unlimited projects, work items, cycles, modules, and pages
           </div>
           <div className="text-sm font-medium text-custom-text-300">
             Billable seats when you upgrade: {subscriptionDetail?.billable_members}

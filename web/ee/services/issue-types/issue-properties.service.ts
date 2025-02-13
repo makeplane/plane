@@ -1,8 +1,6 @@
-// helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
-// plane web types
+// plane imports
+import { EIssuePropertyType } from "@plane/constants";
 import {
-  EIssuePropertyType,
   IIssuePropertiesService,
   TCreateIssuePropertyPayload,
   TDeleteIssuePropertyPayload,
@@ -10,7 +8,8 @@ import {
   TIssueProperty,
   TIssuePropertyResponse,
   TUpdateIssuePropertyPayload,
-} from "@/plane-web/types";
+} from "@plane/types";
+import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 

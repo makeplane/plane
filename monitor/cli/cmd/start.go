@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"context"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -46,7 +47,6 @@ var StartCmd = &cobra.Command{
 		// Establish signals for catching signal interrupts
 		sigs := make(chan os.Signal, 1)
 		signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-
 		// Initializing cronhandler for cron tasks
 		cronHandler := handlers.NewCronHandler(types.Credentials{
 			InstanceId:       INSTANCE_ID,
@@ -82,7 +82,8 @@ var StartCmd = &cobra.Command{
 
 		// Notify the channel on interrupt signals (Ctrl+C)
 		go func() {
-			<-sigs
+			signal := <-sigs
+			log.Printf("Received signal: %v", signal)
 			err := instanceHandler.Deactivate()
 			if err != nil {
 				CmdLogger.Error(context.Background(), err.Error())

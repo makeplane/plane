@@ -1,12 +1,3 @@
-import { env } from "@/env";
-// silo engine
-import { MQ, Store } from "@/apps/engine/worker/base";
-import { TBatch } from "@/apps/engine/worker/types";
-// silo db
-import { updateJob } from "@/db/query";
-// silo etl
-import { BaseDataMigrator } from "@/etl/base-import-worker";
-// silo asana
 import {
   AsanaConfig,
   AsanaEntity,
@@ -19,10 +10,15 @@ import {
   pullAttachments,
   pullComments,
 } from "@plane/etl/asana";
-// silo core
-import { TJobWithConfig, PlaneEntities } from "@plane/etl/core";
-// asana migrator helpers
-import { createAsanaClient, getJobCredentials, getJobData, resetJobIfStarted } from "../helpers/migration-helpers";
+import { PlaneEntities } from "@plane/etl/core";
+import { TImportJob } from "@plane/types";
+import { env } from "@/env";
+// silo engine
+import { BaseDataMigrator } from "@/etl/base-import-worker";
+import { getJobData, resetJobIfStarted, getJobCredentials, updateJobWithReport } from "@/helpers/job";
+import { MQ, Store } from "@/worker/base";
+import { TBatch } from "@/worker/types";
+import { createAsanaClient } from "../helpers/migration-helpers";
 import {
   getTransformedTasks,
   getTransformedUsers,
@@ -32,18 +28,21 @@ import {
   getTransformedCustomFieldValues,
   getTransformedComments,
 } from "./transformers";
+import { getAPIClient } from "@/services/client";
+
+const apiClient = getAPIClient();
 
 export class AsanaDataMigrator extends BaseDataMigrator<AsanaConfig, AsanaEntity> {
   constructor(mq: MQ, store: Store) {
     super(mq, store);
   }
 
-  async getJobData(jobId: string): Promise<TJobWithConfig<AsanaConfig>> {
+  async getJobData(jobId: string): Promise<TImportJob<AsanaConfig>> {
     return getJobData(jobId);
   }
 
-  async pull(job: TJobWithConfig<AsanaConfig>): Promise<AsanaEntity[]> {
-    await resetJobIfStarted(job.id, job);
+  async pull(job: TImportJob<AsanaConfig>): Promise<AsanaEntity[]> {
+    await resetJobIfStarted(job);
     const credentials = await getJobCredentials(job);
     const client = createAsanaClient(job, credentials);
 
@@ -51,19 +50,24 @@ export class AsanaDataMigrator extends BaseDataMigrator<AsanaConfig, AsanaEntity
       return [];
     }
     // derived values
-    const workspaceGid = job.config.meta.workspace.gid;
-    const projectGid = job.config.meta.project.gid;
+    const workspaceGid = job.config.workspace.gid;
+    const projectGid = job.config.project.gid;
     // pull data
-    const users = job.config.meta.skipUserImport ? [] : await pullUsers(client, workspaceGid);
+    const users = job.config.skipUserImport ? [] : await pullUsers(client, workspaceGid);
     const tasks = await pullTasks(client, projectGid);
     const tags = await pullTags(client, workspaceGid);
     const fields = await pullCustomFields(client, projectGid);
     const attachments = await pullAttachments(client, tasks);
     const comments = await pullComments(client, tasks);
 
-    await updateJob(job.id, {
-      start_time: new Date(),
-    });
+    await updateJobWithReport(
+      job.id,
+      job.report_id,
+      {},
+      {
+        start_time: new Date().toISOString(),
+      }
+    );
 
     return [
       {
@@ -77,7 +81,7 @@ export class AsanaDataMigrator extends BaseDataMigrator<AsanaConfig, AsanaEntity
     ];
   }
 
-  async transform(job: TJobWithConfig<AsanaConfig>, data: AsanaEntity[]): Promise<PlaneEntities[]> {
+  async transform(job: TImportJob<AsanaConfig>, data: AsanaEntity[]): Promise<PlaneEntities[]> {
     if (data.length < 1) {
       return [];
     }
@@ -105,7 +109,7 @@ export class AsanaDataMigrator extends BaseDataMigrator<AsanaConfig, AsanaEntity
     ];
   }
 
-  async batches(job: TJobWithConfig<AsanaConfig>): Promise<TBatch<AsanaEntity>[]> {
+  async batches(job: TImportJob<AsanaConfig>): Promise<TBatch<AsanaEntity>[]> {
     const sourceData = await this.pull(job);
     const batchSize = env.BATCH_SIZE ? parseInt(env.BATCH_SIZE) : 40;
     const data = sourceData[0];

@@ -3,7 +3,8 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// component
+// plane imports
+import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 import { setPromiseToast, UpdatesIcon, ToggleSwitch } from "@plane/ui";
 import { NotAuthorizedView } from "@/components/auth-screens";
 // store hooks
@@ -12,7 +13,6 @@ import { useUserPermissions } from "@/hooks/store";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 // plane web constants
 import { ProjectUpdatesUpgrade } from "@/plane-web/components/project-overview/upgrade";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 
 const UpdatesSettingsPage = observer(() => {
@@ -23,7 +23,7 @@ const UpdatesSettingsPage = observer(() => {
   const { toggleFeatures, features } = useProjectAdvanced();
   // derived values
   const currentProjectDetails = features[projectId?.toString()];
-  const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canPerformProjectAdminActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
 
   if (!canPerformProjectAdminActions) {
     return <NotAuthorizedView section="settings" isProjectView />;

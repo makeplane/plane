@@ -10,6 +10,7 @@ import {
   PlaneUser,
   ExIssuePropertyOption,
 } from "@plane/sdk";
+import { E_IMPORTER_KEYS, TPropertyValuesPayload } from "@/core";
 import {
   IJiraIssue,
   ImportedJiraUser,
@@ -32,9 +33,10 @@ import {
   getTargetState,
   SUPPORTED_CUSTOM_FIELD_ATTRIBUTES,
 } from "../helpers";
-import { TPropertyValuesPayload } from "@/core";
 
 export const transformIssue = (
+  resourceId: string,
+  projectId: string,
   issue: IJiraIssue,
   resourceUrl: string,
   stateMap: IStateConfig[],
@@ -42,7 +44,7 @@ export const transformIssue = (
 ): Partial<PlaneIssue> => {
   const targetState = getTargetState(stateMap, issue.fields.status);
   const targetPriority = getTargetPriority(priorityMap, issue.fields.priority);
-  const attachments = getTargetAttachments(issue.fields.attachment);
+  const attachments = getTargetAttachments(resourceId, projectId, issue.fields.attachment);
   const renderedFields = (issue.renderedFields as { description: string }) ?? {
     description: "<p></p>",
   };
@@ -62,8 +64,8 @@ export const transformIssue = (
   return {
     assignees: issue.fields.assignee?.displayName ? [issue.fields.assignee.displayName] : [],
     links,
-    external_id: issue.id,
-    external_source: "JIRA",
+    external_id: `${projectId}_${resourceId}_${issue.id}`,
+    external_source: E_IMPORTER_KEYS.JIRA,
     created_by: issue.fields.creator?.displayName,
     name: issue.fields.summary ?? "Untitled",
     description_html: description,
@@ -85,9 +87,13 @@ export const transformLabel = (label: string): Partial<ExIssueLabel> => ({
   color: getRandomColor(),
 });
 
-export const transformComment = (comment: JiraComment): Partial<ExIssueComment> => ({
-  external_id: comment.id,
-  external_source: "JIRA",
+export const transformComment = (
+  resourceId: string,
+  projectId: string,
+  comment: JiraComment
+): Partial<ExIssueComment> => ({
+  external_id: `${projectId}_${resourceId}_${comment.id}`,
+  external_source: E_IMPORTER_KEYS.JIRA,
   created_at: getFormattedDate(comment.created),
   created_by: comment.author?.displayName,
   comment_html: comment.renderedBody ?? "<p></p>",
@@ -108,9 +114,9 @@ export const transformUser = (user: ImportedJiraUser): Partial<PlaneUser> => {
   };
 };
 
-export const transformSprint = (sprint: JiraSprint): Partial<ExCycle> => ({
-  external_id: sprint.sprint.id.toString(),
-  external_source: "JIRA",
+export const transformSprint = (resourceId: string, projectId: string, sprint: JiraSprint): Partial<ExCycle> => ({
+  external_id: `${projectId}_${resourceId}_${sprint.sprint.id.toString()}`,
+  external_source: E_IMPORTER_KEYS.JIRA,
   name: sprint.sprint.name,
   start_date: getFormattedDate(sprint.sprint.startDate),
   end_date: getFormattedDate(sprint.sprint.endDate),
@@ -118,22 +124,26 @@ export const transformSprint = (sprint: JiraSprint): Partial<ExCycle> => ({
   issues: sprint.issues.map((issue) => issue.id),
 });
 
-export const transformComponent = (component: JiraComponent): Partial<ExModule> => ({
-  external_id: component.component.id ?? "",
-  external_source: "JIRA",
+export const transformComponent = (
+  resourceId: string,
+  projectId: string,
+  component: JiraComponent
+): Partial<ExModule> => ({
+  external_id: `${projectId}_${resourceId}_${component.component.id}`,
+  external_source: E_IMPORTER_KEYS.JIRA,
   name: component.component.name,
   issues: component.issues.map((issue) => issue.id),
 });
 
-export const transformIssueType = (issueType: JiraIssueTypeDetails): Partial<ExIssueType> => ({
+export const transformIssueType = (resourceId: string, projectId: string, issueType: JiraIssueTypeDetails): Partial<ExIssueType> => ({
   name: issueType.name,
   description: issueType.description,
   is_active: true,
-  external_id: issueType.id,
-  external_source: "JIRA",
+  external_id: `${projectId}_${resourceId}_${issueType.id}`,
+  external_source: E_IMPORTER_KEYS.JIRA,
 });
 
-export const transformIssueFields = (issueField: JiraIssueField): Partial<ExIssueProperty> | undefined => {
+export const transformIssueFields = (resourceId: string, projectId: string, issueField: JiraIssueField): Partial<ExIssueProperty> | undefined => {
   if (
     !issueField.schema ||
     !issueField.schema.custom ||
@@ -144,8 +154,8 @@ export const transformIssueFields = (issueField: JiraIssueField): Partial<ExIssu
   }
 
   return {
-    external_id: issueField.id,
-    external_source: "JIRA",
+    external_id: `${projectId}_${resourceId}_${issueField.id}`,
+    external_source: E_IMPORTER_KEYS.JIRA,
     display_name: issueField.name,
     type_id: issueField.scope?.type,
     is_required: false,
@@ -155,10 +165,12 @@ export const transformIssueFields = (issueField: JiraIssueField): Partial<ExIssu
 };
 
 export const transformIssueFieldOptions = (
+  resourceId: string,
+  projectId: string,
   issueFieldOption: JiraIssueFieldOptions
 ): Partial<ExIssuePropertyOption> => ({
-  external_id: issueFieldOption.id,
-  external_source: "JIRA",
+  external_id: `${projectId}_${resourceId}_${issueFieldOption.id}`,
+  external_source: E_IMPORTER_KEYS.JIRA,
   name: issueFieldOption.value,
   is_active: issueFieldOption.disabled ? false : true,
   property_id: issueFieldOption.fieldId,

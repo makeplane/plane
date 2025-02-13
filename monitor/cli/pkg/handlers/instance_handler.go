@@ -16,8 +16,8 @@ func NewInstanceHandler(api prime_api.IPrimeMonitorApi) *InstanceHandler {
 
 func (h *InstanceHandler) Activate() error {
 	err := h.api.ActivateInstance()
-	if err != 0 {
-		return fmt.Errorf("unable to activate instance: %s", err)
+	if err != nil {
+		return fmt.Errorf("unable to activate instance: %s", err.Error)
 	}
 
 	return nil
@@ -25,8 +25,8 @@ func (h *InstanceHandler) Activate() error {
 
 func (h *InstanceHandler) Deactivate() error {
 	err := h.api.DeactivateInstance()
-	if err != 0 {
-		return fmt.Errorf("unable to deactivate instance: %s", err)
+	if err != nil {
+		return fmt.Errorf("unable to deactivate instance: %s", err.Error)
 	}
 
 	return nil

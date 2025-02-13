@@ -1,7 +1,8 @@
 import { Client, ExCycle, ExIssueComment, ExIssueLabel, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
-import { WebhookGitHubComment, WebhookGitHubIssue, WebhookGitHubLabel, WebhookGitHubMilestone } from "../types";
+import { E_INTEGRATION_KEYS } from "@/core";
 import { ContentParser, replaceIssueNumber, replaceMentionedGhUsers } from "../helpers";
 import { GithubService } from "../services";
+import { WebhookGitHubComment, WebhookGitHubIssue, WebhookGitHubLabel, WebhookGitHubMilestone } from "../types";
 
 export const transformGitHubIssue = async (
   issue: WebhookGitHubIssue,
@@ -50,12 +51,6 @@ export const transformGitHubIssue = async (
     }
   }
 
-  // Replace the mentioned github users in the issue body
-  issue_html = replaceMentionedGhUsers(issue_html, workspaceSlug, userMap, planeUsers);
-
-  // Replace the issue number with the actual issue number in github
-  issue_html = replaceIssueNumber(issue_html, repository);
-
   const imageMap = ContentParser.extractImageInfo(issueHTML);
   issue_html = await ContentParser.toPlaneHtml(issue_html, imagePrefix, imageMap, {
     planeClient,
@@ -66,6 +61,11 @@ export const transformGitHubIssue = async (
     repo: repository,
     githubService,
   });
+
+  // Replace the issue number with the actual issue number in github
+  issue_html = replaceIssueNumber(issue_html, repository);
+  // Replace the mentioned github users in the issue body
+  issue_html = replaceMentionedGhUsers(issue_html, workspaceSlug, userMap, planeUsers);
 
   if (issue.assignees) {
     planeAssignees = issue.assignees
@@ -82,7 +82,7 @@ export const transformGitHubIssue = async (
 
   return {
     external_id: issue.number.toString(),
-    external_source: "GITHUB",
+    external_source: E_INTEGRATION_KEYS.GITHUB,
     created_by: creator,
     name: issue.title,
     description_html: issue_html,
@@ -99,7 +99,7 @@ export const transformGitHubLabel = (label: WebhookGitHubLabel): Partial<ExIssue
   name: label.name,
   color: `#${label.color}`,
   external_id: label.id.toString(),
-  external_source: "GITHUB",
+  external_source: E_INTEGRATION_KEYS.GITHUB,
 });
 
 export const transformGitHubComment = async (
@@ -155,9 +155,6 @@ export const transformGitHubComment = async (
     }
   }
 
-  comment_html = replaceMentionedGhUsers(comment_html, workspaceSlug, userMap, planeUsers);
-  comment_html = replaceIssueNumber(comment_html!, repository);
-
   const imageMap = ContentParser.extractImageInfo(commentHtml);
   comment_html = await ContentParser.toPlaneHtml(comment_html, imagePrefix, imageMap, {
     planeClient,
@@ -169,9 +166,12 @@ export const transformGitHubComment = async (
     githubService,
   });
 
+  comment_html = replaceIssueNumber(comment_html!, repository);
+  comment_html = replaceMentionedGhUsers(comment_html, workspaceSlug, userMap, planeUsers);
+
   return {
     external_id: comment.id.toString(),
-    external_source: "GITHUB",
+    external_source: E_INTEGRATION_KEYS.GITHUB,
     created_at: comment.created_at,
     created_by: creator || undefined,
     comment_html: comment_html,
@@ -182,7 +182,7 @@ export const transformGitHubComment = async (
 
 export const transformGitHubMilestone = (milestone: WebhookGitHubMilestone): Partial<ExCycle> => ({
   external_id: milestone.id.toString(),
-  external_source: "GITHUB",
+  external_source: E_INTEGRATION_KEYS.GITHUB,
   name: milestone.title,
   description: milestone.description || undefined,
   start_date: milestone.created_at,

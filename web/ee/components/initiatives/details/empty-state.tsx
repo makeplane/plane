@@ -1,6 +1,8 @@
 "use client";
 
 import { FC } from "react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 // components
 import { EmptyState } from "@/components/common";
 // hooks
@@ -16,13 +18,16 @@ export const InitiativeEmptyState: FC<TInitiativeEmptyStateProps> = (props) => {
   const { workspaceSlug } = props;
   // router
   const router = useAppRouter();
+
+  const { t } = useTranslation();
+
   return (
     <EmptyState
       image={emptyIssue}
-      title="Initiative does not exist"
-      description="The Initiative you are looking for does not exist or has been deleted."
+      title={t("initiatives.empty_state.not_found.title")}
+      description={t("initiatives.empty_state.not_found.description")}
       primaryButton={{
-        text: "View other initiatives",
+        text: t("initiatives.empty_state.not_found.primary_button.text"),
         onClick: () => router.push(`/${workspaceSlug}/initiatives/`),
       }}
     />

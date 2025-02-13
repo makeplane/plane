@@ -13,7 +13,7 @@ import { WorkspaceDisabledPage } from "@/plane-web/components/license";
 import {
   useFlag,
   useIssueTypes,
-  useTeams,
+  useTeamspaces,
   useWorkspaceFeatures,
   useWorkspaceProjectStates,
   useWorkspaceSubscription,
@@ -34,7 +34,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { fetchFeatureFlags } = useFeatureFlags();
   const { fetchWorkspaceFeatures, workspaceFeatures } = useWorkspaceFeatures();
   const { fetchProjectStates } = useWorkspaceProjectStates();
-  const { isTeamsFeatureEnabled, fetchTeams } = useTeams();
+  const { isTeamspacesFeatureEnabled, fetchTeamspaces } = useTeamspaces();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, fetchWorkspaceSubscribedPlan } =
     useWorkspaceSubscription();
   const { fetchAll } = useIssueTypes();
@@ -85,10 +85,12 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug && (isIssueTypesEnabled || isEpicsEnabled) ? () => fetchAll(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
-  // fetching teams
+  // fetching teamspaces
   useSWR(
-    workspaceSlug && isTeamsFeatureEnabled ? `WORKSPACE_TEAMS_${workspaceSlug}_${isTeamsFeatureEnabled}` : null,
-    workspaceSlug && isTeamsFeatureEnabled ? () => fetchTeams(workspaceSlug.toString()) : null,
+    workspaceSlug && isTeamspacesFeatureEnabled
+      ? `WORKSPACE_TEAMSPACES_${workspaceSlug}_${isTeamspacesFeatureEnabled}`
+      : null,
+    workspaceSlug && isTeamspacesFeatureEnabled ? () => fetchTeamspaces(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

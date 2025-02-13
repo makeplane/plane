@@ -6,7 +6,7 @@ export class CredentialService {
   public axiosInstance: AxiosInstance;
 
   constructor(baseURL: string) {
-    this.axiosInstance = axios.create({ baseURL });
+    this.axiosInstance = axios.create({ baseURL, withCredentials: true });
   }
 
   /**

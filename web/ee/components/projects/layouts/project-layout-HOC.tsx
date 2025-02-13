@@ -1,12 +1,19 @@
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import Image from "next/image";
-import { EmptyState } from "@/components/empty-state";
+// plane imports
+import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+// components
+import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { GanttLayoutLoader, KanbanLayoutLoader, ListLayoutLoader, ProjectsLoader } from "@/components/ui";
-import { EmptyStateType } from "@/constants/empty-state";
-import { useCommandPalette, useEventTracker } from "@/hooks/store";
+// hooks
+import { useCommandPalette, useEventTracker, useUserPermissions, useProject } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// plane web imports
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
+// assets
 import AllFiltersImage from "@/public/empty-state/project/all-filters.svg";
 
 const ActiveLoader = (props: { layout: EProjectLayouts }) => {
@@ -32,25 +39,46 @@ interface Props {
 
 export const ProjectLayoutHOC = observer((props: Props) => {
   const { layout } = props;
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
+  const { fetchStatus } = useProject();
   const { loading } = useProjectFilter();
   const { getFilteredProjectsByLayout } = useProjectFilter();
   const { projectStates } = useWorkspaceProjectStates();
-
   const { setTrackElement } = useEventTracker();
   const { toggleCreateProjectModal } = useCommandPalette();
+  // derived values
   const filteredProjectIds = getFilteredProjectsByLayout(EProjectLayouts.GALLERY);
+  const { allowPermissions } = useUserPermissions();
+  // derived values
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/projects" });
+  const hasProjectMemberPermissions = allowPermissions(
+    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
-  if (loading || isEmpty(projectStates)) {
+  if (loading || isEmpty(projectStates) || fetchStatus !== "complete") {
     return <ActiveLoader layout={layout} />;
   }
   if (!filteredProjectIds) {
     return (
-      <EmptyState
-        type={EmptyStateType.WORKSPACE_PROJECTS}
-        primaryButtonOnClick={() => {
-          setTrackElement("Project empty state");
-          toggleCreateProjectModal(true);
-        }}
+      <DetailedEmptyState
+        title={t("workspace_projects.empty_state.general.title")}
+        description={t("workspace_projects.empty_state.general.description")}
+        assetPath={resolvedPath}
+        customPrimaryButton={
+          <ComicBoxButton
+            label={t("workspace_projects.empty_state.general.primary_button.text")}
+            title={t("workspace_projects.empty_state.general.primary_button.comic.title")}
+            description={t("workspace_projects.empty_state.general.primary_button.comic.description")}
+            onClick={() => {
+              setTrackElement("Project empty state");
+              toggleCreateProjectModal(true);
+            }}
+            disabled={!hasProjectMemberPermissions}
+          />
+        }
       />
     );
   }

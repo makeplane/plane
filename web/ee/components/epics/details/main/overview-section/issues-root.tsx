@@ -110,8 +110,8 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
   if (!hasSubIssues) {
     return (
       <SectionEmptyState
-        heading="No issues yet"
-        subHeading="Start adding issues manage and track the progress of the epic."
+        heading="No work items yet"
+        subHeading="Start adding work items to manage and track the progress of the epic."
         icon={<LayersIcon className="size-4" />}
         actionElement={
           <SubIssuesActionButton
@@ -119,7 +119,9 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
             issueServiceType={EIssueServiceType.EPICS}
             disabled={disabled}
             customButton={
-              <span className={cn(getButtonStyling("accent-primary", "sm"), "font-medium px-2 py-1")}>Add issues</span>
+              <span className={cn(getButtonStyling("accent-primary", "sm"), "font-medium px-2 py-1")}>
+                Add work items
+              </span>
             }
           />
         }

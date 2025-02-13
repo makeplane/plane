@@ -86,8 +86,18 @@ export const CloudEditionBadge = observer(() => {
           className="w-fit cursor-pointer rounded-2xl px-4 py-1 text-center text-sm font-medium outline-none"
           onClick={handlePaidPlanSuccessModalOpen}
         >
-          <Image src={PlaneLogo} alt="Plane Pro" width={12} height={12} />
-          Plane Pro
+          {subscriptionDetail.is_on_trial ? (
+            `Pro trial ends
+            ${
+              subscriptionDetail.remaining_trial_days === 0 ? "today" : `in ${subscriptionDetail.remaining_trial_days}d`
+            }
+            `
+          ) : (
+            <>
+              <Image src={PlaneLogo} alt="Plane Pro" width={12} height={12} />
+              Plane Pro
+            </>
+          )}
         </Button>
       )}
     </>

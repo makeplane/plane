@@ -1,8 +1,5 @@
-import { integrationTaskManager } from "@/apps/engine/worker";
-import { env } from "@/env";
-import { Controller, Delete, Get, Post } from "@/lib";
-import { ExIssueLabel } from "@plane/sdk";
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
+import { E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
 import {
   createGitLabAuth,
   createGitLabService,
@@ -12,52 +9,50 @@ import {
   IGitlabEntity,
   GitlabEntityData,
   EConnectionType,
+  GitLabAuthorizeState,
 } from "@plane/etl/gitlab";
-import { verifyGitlabToken } from "../helpers";
-import { createOrUpdateCredentials, deleteCredentialsForWorkspace } from "@/db/query";
-import {
-  createWorkspaceConnection,
-  getWorkspaceConnections,
-  updateWorkspaceConnection,
-  deleteEntityConnectionByWorkspaceConnectionId,
-  deleteWorkspaceConnection,
-  createEntityConnectionByWorkspaceConnectionId,
-  getEntityConnectionByWorkspaceIdAndConnectionIdAndEntityId,
-  getEntityConnectionByWorkspaceIdAndConnectionId,
-  deleteEntityConnection,
-  getEntityConnection,
-  getEntityConnectionByWorkspaceConnectionAndProjectId,
-} from "@/db/query/connection";
-import { logger } from "@/logger";
-import { EIntegrationType } from "@/types";
-import { gitlabAuthService, getGitlabClientService } from "../services";
+import { ExIssueLabel } from "@plane/sdk";
+import { TWorkspaceEntityConnection } from "@plane/types";
+import { env } from "@/env";
 import { responseHandler } from "@/helpers/response-handler";
+import { Controller, Delete, EnsureEnabled, Get, Post, useValidateUserAuthentication } from "@/lib";
+import { getAPIClient } from "@/services/client";
+import { integrationTaskManager } from "@/worker";
+import { verifyGitlabToken } from "../helpers";
+import { gitlabAuthService, getGitlabClientService } from "../services";
 
+const apiClient = getAPIClient();
+
+@EnsureEnabled(E_INTEGRATION_KEYS.GITLAB)
 @Controller("/api/gitlab")
-export class GitlabController {
+export default class GitlabController {
   /* -------------------- Auth Endpoints -------------------- */
   // Get the organization connection status
   @Get("/auth/organization-status/:workspaceId")
+  @useValidateUserAuthentication()
   async getOrganizationConnectionStatus(req: Request, res: Response) {
     try {
       const { workspaceId } = req.params;
-
       if (!workspaceId) {
         return res.status(400).send({
           message: "Bad Request, expected workspaceId to be present.",
         });
       }
 
-      const workspaceConnection = await getWorkspaceConnections(workspaceId, "GITLAB");
-
+      const workspaceConnection = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.GITLAB,
+        workspace_id: workspaceId,
+      });
       return res.json(workspaceConnection);
     } catch (error) {
-      responseHandler(res, 500, error);
+      console.error(error);
+      return responseHandler(res, 500, error);
     }
   }
 
   // Disconnect the organization connection
   @Post("/auth/organization-disconnect/:workspaceId/:connectionId")
+  @useValidateUserAuthentication()
   async disconnectOrganization(req: Request, res: Response) {
     const { workspaceId, connectionId } = req.params;
 
@@ -69,18 +64,23 @@ export class GitlabController {
 
     try {
       // Get the github workspace connections associated with the workspaceId
-      const connections = await getWorkspaceConnections(workspaceId, "GITLAB", connectionId);
-
+      const connections = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.GITLAB,
+        connection_id: connectionId,
+        workspace_id: workspaceId,
+      });
       if (connections.length === 0) {
         return res.sendStatus(200);
       } else {
         const connection = connections[0];
-
+        const workspaceId = connection.workspace_id;
         // remove the webhooks from gitlab
-        const gitlabClientService = await getGitlabClientService(workspaceId)
-        const entityConnections = await getEntityConnectionByWorkspaceIdAndConnectionId(workspaceId, connection.id);
+        const gitlabClientService = await getGitlabClientService(workspaceId);
+        const entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+          workspace_connection_id: connection.id,
+        });
         for (const entityConnection of entityConnections) {
-          const entityData = entityConnection.entityData as GitlabEntityData
+          const entityData = entityConnection.entity_data as GitlabEntityData;
           if (entityData.type === GitlabEntityType.PROJECT) {
             await gitlabClientService.removeWebhookFromProject(entityData.id, entityData.webhookId?.toString());
           } else if (entityData.type === GitlabEntityType.GROUP) {
@@ -88,19 +88,12 @@ export class GitlabController {
           }
         }
 
-        // Delete entity connections referencing the workspace connection
-        await deleteEntityConnectionByWorkspaceConnectionId(connection.id);
-
         // Delete the workspace connection associated with the team
-        await deleteWorkspaceConnection(connection.id);
-
-        // Delete the team and user credentials for the workspace
-        await deleteCredentialsForWorkspace(workspaceId, "GITLAB");
-
+        await apiClient.workspaceConnection.deleteWorkspaceConnection(connection.id);
         return res.sendStatus(200);
       }
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
@@ -128,15 +121,22 @@ export class GitlabController {
         })
       );
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Get("/auth/callback")
   async authCallback(req: Request, res: Response) {
-    try {
-      const { code, state } = req.query;
+    const { code, state } = req.query;
 
+    if (!code || !state) {
+      return responseHandler(res, 400, "Missing required fields");
+    }
+
+    const decodedState = JSON.parse(Buffer.from(state as string, "base64").toString()) as GitLabAuthorizeState;
+    const redirectUri = `${env.APP_BASE_URL}/${decodedState.workspace_slug}/settings/integrations/gitlab/`;
+
+    try {
       const gitlabAuthService = createGitLabAuth({
         clientId: env.GITLAB_CLIENT_ID,
         clientSecret: env.GITLAB_CLIENT_SECRET,
@@ -148,61 +148,77 @@ export class GitlabController {
         state: state as string,
       });
 
+      if (!token || !token.access_token) {
+        return res.redirect(
+          `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/gitlab/?error=${E_SILO_ERROR_CODES.ERROR_FETCHING_TOKEN}`
+        );
+      }
+
       // Create or update credentials
-      const credentials = await createOrUpdateCredentials(authState.workspace_id, authState.user_id, {
+      const credentials = await apiClient.workspaceCredential.createWorkspaceCredential({
+        workspace_id: authState.workspace_id,
+        user_id: authState.user_id,
         source_access_token: token.access_token,
         source_refresh_token: token.refresh_token,
         target_access_token: authState.plane_api_token,
-        source: "GITLAB",
+        source: E_INTEGRATION_KEYS.GITLAB,
       });
 
       const gitlabService = createGitLabService(
         token.access_token,
         token.refresh_token,
         async (access_token, refresh_token) => {
-          await createOrUpdateCredentials(authState.workspace_id, authState.user_id, {
+          await apiClient.workspaceCredential.createWorkspaceCredential({
+            workspace_id: authState.workspace_id,
+            user_id: authState.user_id,
             source_access_token: access_token,
             source_refresh_token: refresh_token,
             target_access_token: authState.plane_api_token,
-            source: "GITLAB",
+            source: E_INTEGRATION_KEYS.GITLAB,
           });
         }
       );
 
       const user = await gitlabService.getUser();
 
+      if (!user) {
+        return res.redirect(
+          `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/gitlab/?error=${E_SILO_ERROR_CODES.USER_NOT_FOUND}`
+        );
+      }
+
       // Check if the workspace connection already exist
-      const workspaceConnections = await getWorkspaceConnections(authState.workspace_id, "GITLAB");
+      const workspaceConnections = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.GITLAB,
+        workspace_id: authState.workspace_id,
+      });
 
       // Get associated gitlab user
-
       // If the workspace connection exist and the credential id is also the same,
       // pass, else create the workspace connection or update the credential id
       if (workspaceConnections.length > 0) {
         const workspaceConnection = workspaceConnections[0];
-        if (workspaceConnection.credentialsId !== credentials.id) {
-          updateWorkspaceConnection(workspaceConnection.id, {
-            credentialsId: credentials.id,
+        if (workspaceConnection.credential_id !== credentials.id) {
+          await apiClient.workspaceConnection.updateWorkspaceConnection(workspaceConnection.id, {
+            credential_id: credentials.id,
           });
         }
       } else {
         // Create the workspace connection
-        await createWorkspaceConnection({
-          workspaceId: authState.workspace_id,
-          workspaceSlug: authState.workspace_slug,
-          targetHostname: authState.target_host,
-          sourceHostname: authState.gitlab_hostname || "gitlab.com",
-          connectionType: "GITLAB",
-          connectionId: user.id.toString(),
-          connectionData: user,
-          credentialsId: credentials.id,
+        await apiClient.workspaceConnection.createWorkspaceConnection({
+          workspace_id: authState.workspace_id,
+          target_hostname: authState.target_host,
+          source_hostname: authState.gitlab_hostname || "gitlab.com",
+          connection_type: E_INTEGRATION_KEYS.GITLAB,
+          connection_id: user.id.toString(),
+          connection_data: user,
+          credential_id: credentials.id,
         });
       }
 
-      res.redirect(`${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/gitlab/`);
-
+      return res.redirect(redirectUri);
     } catch (error) {
-      responseHandler(res, 500, error);
+      return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
     }
   }
 
@@ -237,7 +253,6 @@ export class GitlabController {
         },
         webhookEvent
       );
-
     } catch (error) {
       responseHandler(res, 500, error);
     }
@@ -262,7 +277,7 @@ export class GitlabController {
       if (event == "issue") {
         const labels = req.body.data.labels as ExIssueLabel[];
         // If labels doesn't include gitlab label, then we don't need to process this event
-        if (!labels.find((label) => label.name === "gitlab")) {
+        if (!labels.find((label) => label.name === E_INTEGRATION_KEYS.GITLAB)) {
           return;
         }
       }
@@ -283,61 +298,104 @@ export class GitlabController {
         },
         Number(env.DEDUP_INTERVAL)
       );
-
     } catch (error) {
       responseHandler(res, 500, error);
     }
   }
 
   @Post("/entity-connections/:workspaceId/:workspaceConnectionId")
+  @useValidateUserAuthentication()
   async addEntityConnection(req: Request, res: Response) {
     try {
       const { workspaceId, workspaceConnectionId } = req.params;
-      const { entityId, entityType, workspaceSlug, entitySlug } = req.body;
 
-      if (!workspaceId || !workspaceConnectionId || !entityId || !entityType || !workspaceSlug || !entitySlug) {
+      const { entity_id, entity_type, entity_slug, entity_data } = req.body as TWorkspaceEntityConnection;
+
+      if (!workspaceId || !workspaceConnectionId || !entity_id || !entity_type || !entity_slug || !entity_data) {
         return res.status(400).send({
           message: "Bad Request, expected workspaceId, workspaceConnectionId, and entityId to be present.",
         });
       }
 
       // Check for existing connections
-      const connections = await getEntityConnectionByWorkspaceIdAndConnectionIdAndEntityId(
-        workspaceId,
-        workspaceConnectionId,
-        entityId
-      );
+      const connections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+        workspace_connection_id: workspaceConnectionId,
+        entity_id: entity_id,
+        entity_type: entity_type,
+      });
 
       if (connections.length > 0) {
         return res.status(201).json({ error: "Entity connection already exists" });
       }
 
       // Add webhook to gitlab
-      const { url, token } = this.getWorkspaceWebhookData(workspaceId);
+      const { url, token } = await this.getWorkspaceWebhookData(workspaceId);
       const gitlabClientService = await getGitlabClientService(workspaceId);
 
       // based on enum either add to project or group
       let webhookId;
-      console.log("inside add webhook to project", entityType, entityId, url, token);
-      if (entityType === GitlabEntityType.PROJECT) {
-        const { id: hookId } = await gitlabClientService.addWebhookToProject(entityId, url, token);
+      if (entity_type === GitlabEntityType.PROJECT) {
+        const { id: hookId } = await gitlabClientService.addWebhookToProject(entity_id, url, token);
         webhookId = hookId;
       } else {
-        const { id: hookId } = await gitlabClientService.addWebhookToGroup(entityId, url, token);
+        const { id: hookId } = await gitlabClientService.addWebhookToGroup(entity_id, url, token);
         webhookId = hookId;
       }
 
-      const connection = await createEntityConnectionByWorkspaceConnectionId(workspaceId, workspaceConnectionId, {
-        workspaceId,
-        workspaceConnectionId,
-        connectionType: EConnectionType.ENTITY,
-        workspaceSlug,
-        entityId,
-        entitySlug,
-        entityData: {
-          id: entityId,
-          type: entityType,
+      const connection = await apiClient.workspaceEntityConnection.createWorkspaceEntityConnection({
+        workspace_id: workspaceId,
+        workspace_connection_id: workspaceConnectionId,
+        type: EConnectionType.ENTITY,
+        entity_id: entity_id,
+        entity_type: entity_type,
+        entity_slug: entity_slug,
+        entity_data: {
+          id: entity_id,
+          type: entity_type,
           webhookId,
+        },
+      });
+
+      res.status(200).json(connection);
+    } catch (error) {
+      return responseHandler(res, 500, error);
+    }
+  }
+
+  @Post("/entity-project-connections/:workspaceId/:workspaceConnectionId")
+  @useValidateUserAuthentication()
+  async addProjectConnection(req: Request, res: Response) {
+    try {
+      const { workspaceId, workspaceConnectionId } = req.params;
+      const { project_id, workspace_slug, config } = req.body as TWorkspaceEntityConnection;
+
+      if (!workspaceId || !workspaceConnectionId || !project_id || !workspace_slug) {
+        return res.status(400).send({
+          message: "Bad Request, expected workspaceId, workspaceConnectionId, and projectId to be present.",
+        });
+      }
+
+      // Check for existing connections
+      const connections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+        workspace_connection_id: workspaceConnectionId,
+        project_id,
+        entity_type: GitlabEntityType.PROJECT,
+      });
+
+      if (connections.length > 0) {
+        return res.status(201).json({ error: "Entity connection already exists" });
+      }
+
+      const connection = await apiClient.workspaceEntityConnection.createWorkspaceEntityConnection({
+        workspace_id: workspaceId,
+        workspace_connection_id: workspaceConnectionId,
+        config,
+        type: EConnectionType.PLANE_PROJECT,
+        project_id,
+        entity_type: GitlabEntityType.PROJECT,
+        entity_data: {
+          id: project_id,
+          type: GitlabEntityType.PROJECT,
         },
       });
 
@@ -347,60 +405,29 @@ export class GitlabController {
     }
   }
 
-  @Post("/entity-project-connections/:workspaceId/:workspaceConnectionId")
-  async addProjectConnection(req: Request, res: Response) {
-    try {
-      const { workspaceId, workspaceConnectionId } = req.params;
-      const { projectId, workspaceSlug, config } = req.body;
-
-      if (!workspaceId || !workspaceConnectionId || !projectId || !workspaceSlug) {
-        return res.status(400).send({
-          message: "Bad Request, expected workspaceId, workspaceConnectionId, and projectId to be present.",
-        });
-      }
-
-      // Check for existing connections
-      const connections = await getEntityConnectionByWorkspaceConnectionAndProjectId(workspaceId, projectId);
-
-      if (connections.length > 0) {
-        return res.status(201).json({ error: "Entity connection already exists" });
-      }
-
-      const connection = await createEntityConnectionByWorkspaceConnectionId(workspaceId, workspaceConnectionId, {
-        workspaceId,
-        workspaceConnectionId,
-        connectionType: EConnectionType.PLANE_PROJECT,
-        projectId,
-        workspaceSlug,
-        config,
-      });
-
-      res.status(200).json(connection);
-    } catch (error) {
-      responseHandler(res, 500, error);
-    }
-  }
-
-  @Delete("/entity-connections/:workspaceId/:connectionId")
+  @Delete("/entity-connections/:connectionId")
+  @useValidateUserAuthentication()
   async removeEntityConnection(req: Request, res: Response) {
     try {
-      const { workspaceId, connectionId } = req.params;
+      const { connectionId } = req.params;
 
-      const [entityConnection] = await getEntityConnection(connectionId);
+      const entityConnection = await apiClient.workspaceEntityConnection.getWorkspaceEntityConnection(connectionId);
       if (!entityConnection) {
         return res.status(400).json({ error: "Entity connection not found" });
       }
 
-      const gitlabClientService = await getGitlabClientService(workspaceId);
-      const entityData = entityConnection.entityData as GitlabEntityData;
+      const gitlabClientService = await getGitlabClientService(entityConnection.workspace_id);
+      const entityData = entityConnection.entity_data as GitlabEntityData;
 
-      if (entityData.type === GitlabEntityType.PROJECT) {
-        await gitlabClientService.removeWebhookFromProject(entityData.id, entityData.webhookId?.toString());
-      } else if (entityData.type === GitlabEntityType.GROUP) {
-        await gitlabClientService.removeWebhookFromGroup(entityData.id, entityData.webhookId?.toString());
+      if (entityConnection.type === EConnectionType.ENTITY) {
+        if (entityData.type === GitlabEntityType.PROJECT) {
+          await gitlabClientService.removeWebhookFromProject(entityData.id, entityData.webhookId?.toString());
+        } else if (entityData.type === GitlabEntityType.GROUP) {
+          await gitlabClientService.removeWebhookFromGroup(entityData.id, entityData.webhookId?.toString());
+        }
       }
 
-      const connection = await deleteEntityConnection(connectionId);
+      const connection = await apiClient.workspaceEntityConnection.deleteWorkspaceEntityConnection(connectionId);
       res.status(200).json(connection);
     } catch (error) {
       responseHandler(res, 500, error);
@@ -443,14 +470,24 @@ export class GitlabController {
   }
 
   @Get("/entity-connections/:workspaceId")
+  @useValidateUserAuthentication()
   async getAllEntityConnections(req: Request, res: Response) {
     try {
       const workspaceId = req.params.workspaceId;
-      const [workspaceConnections] = await getWorkspaceConnections(workspaceId, EIntegrationType.GITLAB);
-      const entityConnections = await getEntityConnectionByWorkspaceIdAndConnectionId(
-        workspaceId,
-        workspaceConnections.id
-      );
+      const [workspaceConnection] = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.GITLAB,
+        workspace_id: workspaceId,
+      });
+
+      if (!workspaceConnection) {
+        return res.status(200).json([]);
+      }
+
+      const entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+        workspace_connection_id: workspaceConnection.id,
+        workspace_id: workspaceConnection.workspace_id,
+      });
+
       res.status(200).json(entityConnections);
     } catch (error) {
       console.error(error);
@@ -459,26 +496,29 @@ export class GitlabController {
   }
 
   @Get("/entities/:workspaceId")
+  @useValidateUserAuthentication()
   async getProjectAndGroups(req: Request, res: Response) {
     try {
       const workspaceId = req.params.workspaceId;
 
-      const workspaceConnections = await getWorkspaceConnections(workspaceId, EIntegrationType.GITLAB);
-      if (workspaceConnections.length === 0) {
-        return res.status(400).json({ error: "No gitlab connection found" });
-      }
-
       const entities = [];
-      const gitlabClientService = await getGitlabClientService(workspaceId)
+      const gitlabClientService = await getGitlabClientService(workspaceId);
 
       const projects = await gitlabClientService.getProjects();
       if (projects.length) {
-        entities.push(...projects.map((project: IGitlabEntity) => ({ id: project.id, name: project.name, path: project.path_with_namespace, type: GitlabEntityType.PROJECT })));
+        entities.push(
+          ...projects.map((project: IGitlabEntity) => ({
+            id: project.id,
+            name: project.name,
+            path: project.path_with_namespace,
+            type: GitlabEntityType.PROJECT,
+          }))
+        );
       }
 
       res.status(200).json(entities);
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
@@ -488,7 +528,7 @@ export class GitlabController {
         throw new Error("workspaceId is not defined");
       }
       const workspaceWebhookSecret = gitlabAuthService.getWorkspaceWebhookSecret(workspaceId);
-      const webhookURL = `${env.SILO_API_BASE_URL}/silo/api/gitlab/webhook/${workspaceId}`;
+      const webhookURL = `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/gitlab/webhook/${workspaceId}`;
       const gitlabWebhook: GitlabWebhook = {
         url: webhookURL,
         token: workspaceWebhookSecret,

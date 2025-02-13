@@ -14,9 +14,8 @@ export const IMPORTER_LINEAR_STEPS: TLinearImporterStep[] = [
   {
     key: E_LINEAR_IMPORTER_STEPS.SELECT_PLANE_PROJECT,
     icon: () => <Layers3 size={14} />,
-    title: "Configure Plane",
-    description:
-      "Please first create the project in Plane where you intend to migrate your Linear data. Once the project is created, select it here.",
+    i18n_title: "linear_importer.steps.title_configure_plane",
+    i18n_description:"linear_importer.steps.description_configure_plane",
     component: () => <SelectPlaneProjectRoot />,
     prevStep: undefined,
     nextStep: E_LINEAR_IMPORTER_STEPS.CONFIGURE_LINEAR,
@@ -24,8 +23,8 @@ export const IMPORTER_LINEAR_STEPS: TLinearImporterStep[] = [
   {
     key: E_LINEAR_IMPORTER_STEPS.CONFIGURE_LINEAR,
     icon: () => <Layers2 size={14} />,
-    title: "Configure Linear",
-    description: "Please select the Linear team from which you want to migrate your data.",
+    i18n_title: "linear_importer.steps.title_configure_linear",
+    i18n_description: "linear_importer.steps.description_configure_linear",
     component: () => <ConfigureLinearRoot />,
     prevStep: E_LINEAR_IMPORTER_STEPS.SELECT_PLANE_PROJECT,
     nextStep: E_LINEAR_IMPORTER_STEPS.MAP_STATES,
@@ -33,9 +32,9 @@ export const IMPORTER_LINEAR_STEPS: TLinearImporterStep[] = [
   {
     key: E_LINEAR_IMPORTER_STEPS.MAP_STATES,
     icon: () => <Layers3 size={14} />,
-    title: "Map states",
-    description:
-      "We have automatically matched the Linear statuses to Plane states to the best of our ability. Please map any remaining states before proceeding, you can also create states and map them manually.",
+    i18n_title: "linear_importer.steps.title_map_states",
+    i18n_description:
+      "linear_importer.steps.description_map_states",
     component: () => <MapStatesRoot />,
     prevStep: E_LINEAR_IMPORTER_STEPS.CONFIGURE_LINEAR,
     nextStep: E_LINEAR_IMPORTER_STEPS.SUMMARY,
@@ -43,8 +42,8 @@ export const IMPORTER_LINEAR_STEPS: TLinearImporterStep[] = [
   {
     key: E_LINEAR_IMPORTER_STEPS.SUMMARY,
     icon: () => <ReceiptText size={14} />,
-    title: "Summary",
-    description: "Here is a summary of the data that will be migrated from Linear to Plane.",
+    i18n_title: "linear_importer.steps.title_summary",
+    i18n_description: "linear_importer.steps.description_summary",
     component: () => <SummaryRoot />,
     prevStep: E_LINEAR_IMPORTER_STEPS.MAP_STATES,
     nextStep: E_LINEAR_IMPORTER_STEPS.SELECT_PLANE_PROJECT,

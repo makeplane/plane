@@ -16,7 +16,7 @@ from firebase_admin import credentials, messaging
 from bs4 import BeautifulSoup
 
 # Module imports
-from plane.db.models import Workspace, Device
+from plane.db.models import Workspace, Device, User
 
 
 def is_push_notification_disabled():
@@ -203,6 +203,47 @@ def construct_issue_push_notification(notification):
     return push_notification
 
 
+def comment_content(html_content):
+    soup = BeautifulSoup(html_content, "html.parser")
+
+    user_mentions = {}
+    user_push_tokens = {}
+
+    for mention_tag in soup.find_all(
+        "mention-component", attrs={"entity_name": "user_mention"}
+    ):
+        entity_identifier = mention_tag.get("entity_identifier", "")
+
+        user = User.objects.filter(id=entity_identifier).first()
+        device = Device.objects.filter(
+            user_id=entity_identifier, is_active=True, push_token__isnull=False
+        ).first()
+
+        user_mentions[entity_identifier] = user if user else None
+        user_push_tokens[entity_identifier] = device.push_token if device else None
+
+        mention_tag.replace_with(
+            user.display_name
+            if user.display_name
+            else user.first_name
+            if user.first_name
+            else user.email
+            if user
+            else ""
+        )
+
+    for tag in soup.find_all(True):
+        tag.replace_with(tag.text)
+
+    plain_text = soup.get_text()
+
+    return {
+        "mention_objects": user_mentions,
+        "user_push_tokens": user_push_tokens,
+        "content": plain_text,
+    }
+
+
 @shared_task
 def issue_push_notifications(notification):
     print("====== sending issue properties push notification to mobile ======")
@@ -232,6 +273,7 @@ def issue_push_notifications(notification):
     ):
         return
 
+    actor_id = notification_actor.get("id", "")
     actor_name = notification_actor.get("name", "")
 
     workspace_slug = notification_issue.get("workspace_slug", "")
@@ -243,6 +285,16 @@ def issue_push_notifications(notification):
 
     receiver_id = notification_receiver.get("id", "")
     receiver_push_tokens = notification_receiver.get("push_tokens", "")
+    mention_push_tokens = []
+
+    issue_activity_id = notification_issue_activity.get("id", "")
+    issue_activity_field = notification_issue_activity.get("field", None)
+    issue_activity_new_value = notification_issue_activity.get("new_identifier", None)
+    issue_comment_id = (
+        issue_activity_new_value
+        if issue_activity_field == "comment" and issue_activity_new_value
+        else ""
+    )
 
     title = f"{project_identifier}-" f"{issue_sequence_id} - " f"{issue_name}"
     data = {
@@ -252,18 +304,28 @@ def issue_push_notifications(notification):
         "issueId": issue_id,
         "userId": receiver_id,
         "notificationId": notification_id,
+        "issue_activity_id": issue_activity_id,
+        "issue_comment_id": issue_comment_id,
     }
 
     property_key = notification_issue_activity.get("field", "")
     old_value = notification_issue_activity.get("old_value", "")
     new_value = notification_issue_activity.get("new_value", "")
 
-    if property_key == "assignees":
+    body = None
+
+    # title, state, and priority
+    if property_key in ["name", "state", "priority"]:
+        body = f"{actor_name} set the {property_key} to {new_value}"
+    # assignees and labels
+    elif property_key in ["assignees", "labels"]:
         body = (
             f"{actor_name} "
-            f"{'added a new' if new_value else 'removed the'} assignee "
+            f"{'added a new' if new_value else 'removed the'} "
+            f"{'assignee' if property_key == 'assignees' else 'label'} "
             f"{new_value if new_value else old_value}"
         )
+    # start_date and target_date
     elif property_key in ["start_date", "target_date"]:
         body = (
             f"{actor_name} "
@@ -271,16 +333,89 @@ def issue_push_notifications(notification):
             f"{'start' if property_key == 'start_date' else 'due'} date "
             f"{f'to {new_value}' if new_value else ''}"
         )
+    # parent
+    elif property_key == "parent":
+        body = (
+            f"{actor_name} "
+            f"{'set the' if new_value else 'removed the'} parent "
+            f"{f'to {new_value}' if new_value else old_value}"
+        )
+    # link
+    elif property_key == "link":
+        body = (
+            f"{actor_name} "
+            f"{'added' if new_value else 'removed this'} link "
+            f"{new_value if new_value else old_value}"
+        )
+    # attachment
+    elif property_key == "attachment":
+        body = (
+            f"{actor_name} "
+            f"{'updated a new' if new_value else 'removed an'} attachment"
+        )
+    # relations -> relates_to
+    elif property_key == "relates_to":
+        body = (
+            f"{actor_name} "
+            f"{'marked that this issue' if new_value else 'removed the relation'} "
+            f"{'relates to' if new_value else 'from'} "
+            f"{f'to {new_value}' if new_value else old_value}"
+        )
+    # relation -> duplicate and blocked_by
+    elif property_key in ["duplicate", "blocked_by"]:
+        body = (
+            f"{actor_name} "
+            f"{'marked this issue' if new_value else 'removed this issue'} "
+            "as a duplicate of "
+            if property_key == "duplicate"
+            else f"{'is being blocked by' if new_value else 'being blocked by'} "
+            f"{f'to {new_value}' if new_value else old_value}"
+        )
+    # relation -> blocking
+    elif property_key == "blocking":
+        body = (
+            f"{actor_name} "
+            f"{'marked that this issue' if new_value else 'removed the'} "
+            f"{'is blocking issue' if new_value else 'blocking issue'} "
+            f"{f'to {new_value}' if new_value else old_value}"
+        )
+    # comment and comment mention
     elif property_key == "comment":
-        soup = BeautifulSoup(new_value, "html.parser")
-        new_value = soup.get_text()
-        title = f"{actor_name} commented on {title}"
-        body = f"{new_value}"
-    else:
-        body = f"{actor_name} set the {property_key} to {new_value}"
+        content = None if new_value == "None" and old_value == "None" else new_value
+        comment_data = comment_content(content) if content else None
+        body = (
+            f"{actor_name} "
+            f"{'removed the comment' if new_value == 'None' and old_value == 'None' else 'updated the comment' if old_value != 'None' else 'commented'} "
+            f"{comment_data['content'] if comment_data else ''}"
+        )
+
+        # validate mentions in the comment
+        mentions = (
+            comment_data["mention_objects"]
+            if comment_data and comment_data["mention_objects"]
+            else None
+        )
+        if mentions:
+            body = (
+                f"{actor_name} has mentioned you in a comment in issue "
+                f"{project_identifier}-{issue_sequence_id} - {issue_name}"
+            )
+
+            user_push_tokens = comment_data["user_push_tokens"]
+            for user_id in mentions.items():
+                push_token = user_push_tokens.get(user_id)
+                if push_token and push_token in receiver_push_tokens:
+                    receiver_push_tokens.remove(push_token)
+                    mention_push_tokens.append(push_token)
+    elif body is None:
+        return
 
     push_notification = PushNotification()
+
     for token in receiver_push_tokens:
+        push_notification.send(title=title, body=body, device_token_id=token, data=data)
+
+    for token in mention_push_tokens:
         push_notification.send(title=title, body=body, device_token_id=token, data=data)
 
     print(

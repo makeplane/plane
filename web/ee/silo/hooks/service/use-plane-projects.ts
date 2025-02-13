@@ -9,7 +9,7 @@ import { ProjectService } from "@/services/project";
 
 const projectService = new ProjectService();
 
-export const usePlaneProjects = () => {
+export const usePlaneProjects: any = () => {
   // hooks
   const { workspaceSlug } = useBaseImporter();
 

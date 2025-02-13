@@ -1,21 +1,16 @@
 import { observer } from "mobx-react";
-// ui
+// plane imports
+import { ISSUE_PROPERTY_TYPE_DETAILS, EIssuePropertyType, EIssuePropertyRelationType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { TIssueProperty, TOperationMode, TIssuePropertyTypeKeys } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
+import { getIssuePropertyTypeDetails, getIssuePropertyTypeKey } from "@plane/utils";
 // helpers
 import { cn } from "@/helpers/common.helper";
-// plane web constants
-import { ISSUE_PROPERTY_TYPE_DETAILS } from "@/plane-web/constants/issue-properties";
-// plane web helpers
-import { getIssuePropertyTypeDetails, getIssuePropertyTypeKey } from "@/plane-web/helpers/issue-properties.helper";
-// plane web types
+// plane web components
+import { PropertyTypeIcon } from "@/plane-web/components/issue-types/properties";
+// plane web hooks
 import { useIssueType } from "@/plane-web/hooks/store";
-import {
-  EIssuePropertyRelationType,
-  EIssuePropertyType,
-  TIssueProperty,
-  TOperationMode,
-  TIssuePropertyTypeKeys,
-} from "@/plane-web/types";
 
 type TPropertyTypeDropdownProps = {
   issueTypeId: string;
@@ -35,6 +30,8 @@ export const PropertyTypeDropdown = observer((props: TPropertyTypeDropdownProps)
     handlePropertyObjectChange,
     error = "",
   } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const issueType = useIssueType(issueTypeId);
   // derived values
@@ -46,13 +43,13 @@ export const PropertyTypeDropdown = observer((props: TPropertyTypeDropdownProps)
   // Can be used with CustomSearchSelect as well
   const issuePropertyTypeOptions = Object.entries(ISSUE_PROPERTY_TYPE_DETAILS).map(([key, property]) => ({
     value: key,
-    query: property.displayName,
+    query: t(property.i18n_displayName),
     content: (
       <div className="flex gap-2 items-center">
         <div className="flex-shrink-0">
-          <property.icon className="w-3 h-3 text-custom-text-200" />
+          <PropertyTypeIcon iconKey={property.iconKey} />
         </div>
-        <div>{property.displayName}</div>
+        <div>{t(property.i18n_displayName)}</div>
       </div>
     ),
   }));
@@ -65,17 +62,19 @@ export const PropertyTypeDropdown = observer((props: TPropertyTypeDropdownProps)
 
   return (
     <div>
-      <span className="text-xs text-custom-text-300 font-medium">Property type</span>
+      <span className="text-xs text-custom-text-300 font-medium">
+        {t("work_item_types.settings.properties.dropdown.label")}
+      </span>
       <CustomSearchSelect
         value={getIssuePropertyTypeKey(propertyType, propertyRelationType)}
         label={
           propertyTypeDetails ? (
             <span className="flex items-center gap-1.5">
-              <propertyTypeDetails.icon className="w-3.5 h-3.5" />
-              {propertyTypeDetails.displayName}
+              <PropertyTypeIcon iconKey={propertyTypeDetails.iconKey} className="size-3.5" />
+              {t(propertyTypeDetails.i18n_displayName)}
             </span>
           ) : (
-            "Select type"
+            t("work_item_types.settings.properties.dropdown.placeholder")
           )
         }
         options={issuePropertyTypeOptions}

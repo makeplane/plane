@@ -5,7 +5,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { CalendarCheck2, CalendarClock } from "lucide-react";
-// types
+// plane imports
+import { E_BULK_OPERATION_ERROR_CODES, BULK_OPERATION_ERROR_DETAILS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TBulkIssueProperties } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
@@ -21,8 +23,6 @@ import {
 } from "@/components/dropdowns";
 import { IssueLabelSelect } from "@/components/issues/select";
 import { CreateLabelModal } from "@/components/labels";
-// constants
-import { EErrorCodes, ERROR_DETAILS } from "@/constants/errors";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
@@ -59,6 +59,8 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
   const [createLabelModal, setCreateLabelModal] = useState(false);
   // router
   const { workspaceSlug, projectId } = useParams();
+  // plane imports
+  const { t } = useTranslation();
   // store hooks
   const {
     issues: { bulkUpdateProperties },
@@ -95,7 +97,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
       .then(() => {
         const totalProperties = Object.keys(payload).length;
         const totalIssues = snapshot.selectedEntityIds.length;
-        const toastAlertMessage = `Successfully updated ${totalProperties} ${totalProperties > 1 ? "properties" : "property"} for ${totalIssues} ${totalIssues > 1 ? "issues" : "issue"}.`;
+        const toastAlertMessage = `Successfully updated ${totalProperties} ${totalProperties > 1 ? "properties" : "property"} for ${totalIssues} ${totalIssues > 1 ? "work items" : "work item"}.`;
 
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -105,11 +107,11 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
         reset(defaultValues);
       })
       .catch((error) => {
-        const errorInfo = ERROR_DETAILS[error?.error_code as EErrorCodes] ?? undefined;
+        const errorInfo = BULK_OPERATION_ERROR_DETAILS[error?.error_code as E_BULK_OPERATION_ERROR_CODES] ?? undefined;
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: errorInfo?.title ?? "Error!",
-          message: errorInfo?.message ?? "Something went wrong. Please try again.",
+          title: t(errorInfo?.i18n_title) ?? "Error!",
+          message: t(errorInfo?.i18n_message) ?? "Something went wrong. Please try again.",
         });
       });
   };

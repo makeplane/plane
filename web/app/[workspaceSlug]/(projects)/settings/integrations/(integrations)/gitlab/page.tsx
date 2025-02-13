@@ -1,18 +1,25 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import useSWR from "swr";
 // plane web components components
-import { E_FEATURE_FLAGS } from "@plane/constants";
+import { Cloud } from "lucide-react";
+import { E_FEATURE_FLAGS, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
+import { E_INTEGRATION_KEYS, SILO_ERROR_CODES } from "@plane/etl/core";
+import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 import { UserAuthentication, IntegrationRoot } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks
-import { useFlag, useGitlabIntegration } from "@/plane-web/hooks/store";
+import { useFlag, useGitlabIntegration, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // public images
+import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
 import GitlabLogo from "@/public/services/gitlab.svg";
 
-const GitlabIntegration: FC = observer(() => {
+const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
+
+const GitlabIntegration: FC<{ searchParams?: { error: string } }> = observer(({ searchParams }) => {
   // hooks
   const {
     workspace,
@@ -26,6 +33,21 @@ const GitlabIntegration: FC = observer(() => {
   const isFeatureEnabled = useFlag(workspaceSlug?.toString() || "", E_FEATURE_FLAGS.GITLAB_INTEGRATION) || true;
   const workspaceConnectionId = workspaceConnectionIds[0] || undefined;
   const organization = workspaceConnectionId ? workspaceConnectionById(workspaceConnectionId) : undefined;
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+
+  const { t } = useTranslation();
+
+  // derived values
+  const isSelfManaged = subscriptionDetail?.is_self_managed;
+
+  // Fetch Supported Integrations
+  const {
+    data: supportedIntegrations,
+    isLoading: supportedIntegrationsLoading,
+    error: supportedIntegrationsError,
+  } = useSWR(`SILO_SUPPORTED_INTEGRATIONS`, () => siloAppService.getSupportedIntegrations(), {
+    revalidateOnFocus: false,
+  });
 
   // fetching external api token
   const { isLoading: externalApiTokenIsLoading } = useSWR(
@@ -34,15 +56,51 @@ const GitlabIntegration: FC = observer(() => {
     { errorRetryCount: 0 }
   );
 
+  // error message
+  const errorCode = searchParams?.error;
+  useEffect(() => {
+    if (!errorCode) {
+      return;
+    }
+
+    const message = SILO_ERROR_CODES.find((code) => String(code.code) === errorCode)?.description;
+    if (message) {
+      setToast({
+        title: "Error",
+        message: t(`silo_errors.${message}`),
+        type: TOAST_TYPE.ERROR,
+      });
+    }
+  }, [errorCode]);
+
   if (!isFeatureEnabled) return null;
 
-  if (!externalApiToken && externalApiTokenIsLoading)
+  if ((!externalApiToken && externalApiTokenIsLoading) || (!supportedIntegrations && supportedIntegrationsLoading))
     return <div className="text-custom-text-200 relative flex justify-center items-center">Loading...</div>;
 
   if (!externalApiToken)
     return (
       <div className="text-custom-text-200 relative flex justify-center items-center">
-        Not able to access the external api token. Please try again later.
+        {t("integrations.external_api_unreachable")}
+      </div>
+    );
+
+  if (supportedIntegrationsError)
+    return (
+      <div className="text-custom-text-200 relative flex justify-center items-center">
+        {t("integrations.error_fetching_supported_integrations")}
+      </div>
+    );
+
+  if (supportedIntegrations && !supportedIntegrations.includes(E_INTEGRATION_KEYS.GITLAB))
+    return (
+      <div className={"flex h-full flex-col items-center justify-center"}>
+        <Cloud size={96} />
+        <div className="text-custom-text-200 text-center text-sm relative flex justify-center items-center">
+          {isSelfManaged
+            ? t("integrations.not_configured_message_admin", { name: "Gitlab" })
+            : t("integrations.not_configured_message_support", { name: "Gitlab" })}
+        </div>
       </div>
     );
 
@@ -54,10 +112,8 @@ const GitlabIntegration: FC = observer(() => {
           <Image src={GitlabLogo} layout="fill" objectFit="contain" alt="Gitlab Logo" />
         </div>
         <div>
-          <div className="text-lg font-medium">Gitlab</div>
-          <div className="text-sm text-custom-text-200">
-            Automate your pull request and commit workflows and keep issues synced both ways
-          </div>
+          <div className="text-lg font-medium">{t("gitlab_integration.name")}</div>
+          <div className="text-sm text-custom-text-200">{t("gitlab_integration.description")}</div>
         </div>
       </div>
 

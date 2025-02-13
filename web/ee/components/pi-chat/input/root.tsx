@@ -1,10 +1,12 @@
 import { useCallback, useRef } from "react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { ArrowUp, FileText } from "lucide-react";
 import { PiChatEditor } from "@plane/editor";
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
+import { generateQueryParams } from "@/helpers/router.helper";
 import { useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { IssueIdentifier } from "@/plane-web/components/issues";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 
@@ -18,32 +20,46 @@ type TEditCommands = {
 type TProps = {
   isFullScreen: boolean;
   className?: string;
-  onSubmit?: () => void;
   activeChatId?: string;
+  shouldRedirect?: boolean;
 };
 
 export const InputBox = (props: TProps) => {
-  const { isFullScreen, className, onSubmit, activeChatId } = props;
+  const { isFullScreen, className, activeChatId, shouldRedirect = false } = props;
+  const router = useAppRouter();
   // store hooks
   const { getAnswer, searchCallback, isPiTyping } = usePiChat();
   const { data: currentUser } = useUser();
   const { workspaceSlug } = useParams();
+
+  // query params
+  const pathName = usePathname();
+  const searchParams = useSearchParams();
+  const router_chat_id = searchParams.get("chat_id");
   // states
   const editorCommands = useRef<TEditCommands | null>(null);
   const setEditorCommands = (command: TEditCommands) => {
     editorCommands.current = command;
   };
+
+  const handleRedirect = (path: string) => {
+    if (!activeChatId) return; // Don't redirect if we don't have an activeChatId
+
+    const query = generateQueryParams(searchParams, ["chat_id"]);
+    router.push(`${path}?${query && `${query}&`}chat_id=${activeChatId}`);
+  };
+
   const handleSubmit = useCallback(
     (e?: React.FormEvent) => {
       if (!currentUser) return;
       e?.preventDefault();
+      if (!router_chat_id) handleRedirect(shouldRedirect ? `/${workspaceSlug}/pi-chat` : pathName);
       const query = editorCommands.current?.getHTML();
       if (!query) return;
       getAnswer(query, currentUser?.id);
       editorCommands.current?.clear();
-      onSubmit?.();
     },
-    [currentUser, editorCommands, getAnswer, onSubmit, activeChatId]
+    [currentUser, editorCommands, getAnswer, activeChatId]
   );
 
   const getMentionSuggestions = async (query: string) => {

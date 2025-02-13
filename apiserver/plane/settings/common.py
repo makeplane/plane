@@ -280,6 +280,8 @@ CELERY_IMPORTS = (
     # issue version tasks
     "plane.bgtasks.issue_version_sync",
     "plane.bgtasks.issue_description_version_sync",
+    "plane.bgtasks.silo_data_migration_task",
+    "plane.bgtasks.silo_credentials_update_task",
 )
 
 # Sentry Settings
@@ -363,6 +365,8 @@ CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
 ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
 SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
 APP_BASE_URL = os.environ.get("APP_BASE_URL")
+LIVE_BASE_URL = os.environ.get("LIVE_BASE_URL")
+
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
 
@@ -484,6 +488,7 @@ SIMPLE_JWT = {
 SILO_HOSTNAME = os.environ.get("SILO_BASE_URL", "")
 SILO_BASE_PATH = os.environ.get("SILO_BASE_PATH", "/silo")
 SILO_URL = f"{SILO_HOSTNAME}{SILO_BASE_PATH}"
+SILO_HMAC_SECRET_KEY = os.environ.get("SILO_HMAC_SECRET_KEY", "")
 
 
 # firebase settings

@@ -53,6 +53,7 @@ from .queries.feature_flag import FeatureFlagQuery
 from .queries.version_check import VersionCheckQuery
 from .queries.timezone import TimezoneListQuery
 from .queries.asset import WorkspaceAssetQuery, ProjectAssetQuery
+from .queries.instance import InstanceQuery
 
 # mutations
 from .mutations.workspace import WorkspaceMutation, WorkspaceInviteMutation
@@ -151,6 +152,7 @@ class Query(
     TimezoneListQuery,
     WorkspaceAssetQuery,
     ProjectAssetQuery,
+    InstanceQuery,
 ):
     pass
 

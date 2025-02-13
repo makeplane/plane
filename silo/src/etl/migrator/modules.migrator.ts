@@ -1,5 +1,5 @@
 import { ExIssue, ExModule, Client as PlaneClient } from "@plane/sdk";
-import { getJobData } from "@/apps/jira-importer/helpers/migration-helpers";
+import { getJobData } from "@/helpers/job";
 import { AssertAPIErrorResponse, protect } from "@/lib";
 import { logger } from "@/logger";
 
@@ -53,7 +53,7 @@ export const createModules = async (
                   workspaceSlug,
                   projectId,
                   issue,
-                  job.migration_type
+                  job.source
                 );
                 return fetchedIssue?.id;
               } catch (e) {

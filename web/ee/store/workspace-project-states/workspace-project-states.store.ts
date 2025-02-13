@@ -282,11 +282,12 @@ export class WorkspaceProjectStatesStore implements IWorkspaceProjectStatesStore
    */
   removeProjectState = async (workspaceSlug: string, projectStateId: string): Promise<void | undefined> => {
     // if (!this.isSettingsEnabled) return undefined;
-
+    const currentProjectState = this.projectStates[projectStateId];
     try {
       unset(this.projectStates, projectStateId);
       await projectStateService.removeProjectState(workspaceSlug, projectStateId);
     } catch (error) {
+      set(this.projectStates, projectStateId, currentProjectState);
       console.error("project states --> removeProjectState", error);
       throw error;
     }

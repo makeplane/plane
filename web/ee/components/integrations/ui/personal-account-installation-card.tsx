@@ -2,6 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Unplug, ChevronRight } from "lucide-react";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Button, CustomMenu, Loader } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -17,6 +18,7 @@ export const PersonalAccountInstallationCard = observer((props: TPersonalAccount
   const { providerName, isConnectionLoading, isUserConnected, handleConnection } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const handleConnectDisconnect = async () => {
     setIsLoading(true);
@@ -27,11 +29,11 @@ export const PersonalAccountInstallationCard = observer((props: TPersonalAccount
   return (
     <div className="flex-shrink-0 relative flex items-center gap-4 p-2">
       <div className="w-full h-full overflow-hidden">
-        <div className="text-sm font-medium">Connect your personal account</div>
+        <div className="text-sm font-medium">{t("slack_integration.connect_personal_account")}</div>
         <div className="text-sm text-custom-text-200">
           {isUserConnected
-            ? `Your personal ${providerName} account is now connected to Plane.`
-            : `Link your personal ${providerName} account to Plane.`}
+            ? t("slack_integration.personal_account_connected", { providerName })
+            : t("slack_integration.link_personal_account", { providerName })}
         </div>
       </div>
       <div className="flex-shrink-0 relative flex items-center">
@@ -41,13 +43,13 @@ export const PersonalAccountInstallationCard = observer((props: TPersonalAccount
             closeOnSelect
             customButton={
               <Button size="sm" variant="link-neutral" loading={isLoading}>
-                {isLoading ? "Disconnecting" : "Connected"}
+                {isLoading ? t("common.disconnecting") : t("common.connected")}
                 <ChevronDown size={12} />
               </Button>
             }
           >
             <CustomMenu.MenuItem
-              key="disconnect"
+              key={t("common.disconnect")}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -56,7 +58,7 @@ export const PersonalAccountInstallationCard = observer((props: TPersonalAccount
               className={cn("flex items-center gap-2")}
             >
               <Unplug className="size-3" />
-              Disconnect personal {providerName} account
+              {t("integrations.disconnect_personal_account", { providerName })}
             </CustomMenu.MenuItem>
           </CustomMenu>
         ) : isConnectionLoading ? (
@@ -65,7 +67,7 @@ export const PersonalAccountInstallationCard = observer((props: TPersonalAccount
           </Loader>
         ) : (
           <Button size="sm" variant="link-neutral" onClick={handleConnectDisconnect} loading={isLoading}>
-            {isLoading ? "Connecting" : "Connect"}
+            {isLoading ? t("common.connecting") : t("common.connect")}
             <ChevronRight size={12} />
           </Button>
         )}

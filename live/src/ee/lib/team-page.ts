@@ -1,10 +1,10 @@
 // helpers
 import { getAllDocumentFormatsFromBinaryData, getBinaryDataFromHTMLString } from "@/core/helpers/page.js";
 // services
-import { TeamPageService } from "../services/team-page.service.js";
-const teamPageService = new TeamPageService();
+import { TeamspacePageService } from "../services/team-page.service.js";
+const teamspacePageService = new TeamspacePageService();
 
-export const updateTeamPageDescription = async (
+export const updateTeamspacePageDescription = async (
   params: URLSearchParams,
   pageId: string,
   updatedDescription: Uint8Array,
@@ -15,8 +15,8 @@ export const updateTeamPageDescription = async (
   }
 
   const workspaceSlug = params.get("workspaceSlug")?.toString();
-  const teamId = params.get("teamId")?.toString();
-  if (!workspaceSlug || !teamId || !cookie) return;
+  const teamspaceId = params.get("teamspaceId")?.toString();
+  if (!workspaceSlug || !teamspaceId || !cookie) return;
 
   const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromBinaryData(updatedDescription);
   try {
@@ -26,7 +26,7 @@ export const updateTeamPageDescription = async (
       description: contentJSON,
     };
 
-    await teamPageService.updateDescription(workspaceSlug, teamId, pageId, payload, cookie);
+    await teamspacePageService.updateDescription(workspaceSlug, teamspaceId, pageId, payload, cookie);
   } catch (error) {
     console.error("Update error:", error);
     throw error;
@@ -35,14 +35,14 @@ export const updateTeamPageDescription = async (
 
 const fetchDescriptionHTMLAndTransform = async (
   workspaceSlug: string,
-  teamId: string,
+  teamspaceId: string,
   pageId: string,
   cookie: string
 ) => {
-  if (!workspaceSlug || !teamId || !cookie) return;
+  if (!workspaceSlug || !teamspaceId || !cookie) return;
 
   try {
-    const pageDetails = await teamPageService.fetchDetails(workspaceSlug, teamId, pageId, cookie);
+    const pageDetails = await teamspacePageService.fetchDetails(workspaceSlug, teamspaceId, pageId, cookie);
     const { contentBinary } = getBinaryDataFromHTMLString(pageDetails.description_html ?? "<p></p>");
     return contentBinary;
   } catch (error) {
@@ -51,21 +51,21 @@ const fetchDescriptionHTMLAndTransform = async (
   }
 };
 
-export const fetchTeamPageDescriptionBinary = async (
+export const fetchTeamspacePageDescriptionBinary = async (
   params: URLSearchParams,
   pageId: string,
   cookie: string | undefined
 ) => {
   const workspaceSlug = params.get("workspaceSlug")?.toString();
-  const teamId = params.get("teamId")?.toString();
-  if (!workspaceSlug || !teamId || !cookie) return null;
+  const teamspaceId = params.get("teamspaceId")?.toString();
+  if (!workspaceSlug || !teamspaceId || !cookie) return null;
 
   try {
-    const response = await teamPageService.fetchDescriptionBinary(workspaceSlug, teamId, pageId, cookie);
+    const response = await teamspacePageService.fetchDescriptionBinary(workspaceSlug, teamspaceId, pageId, cookie);
     const binaryData = new Uint8Array(response);
 
     if (binaryData.byteLength === 0) {
-      const binary = await fetchDescriptionHTMLAndTransform(workspaceSlug, teamId, pageId, cookie);
+      const binary = await fetchDescriptionHTMLAndTransform(workspaceSlug, teamspaceId, pageId, cookie);
       if (binary) {
         return binary;
       }

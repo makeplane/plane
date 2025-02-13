@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Rocket, Search, X } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
+import { useTranslation } from "@plane/i18n";
 // types
 import { ISearchIssueResponse, TWorkspaceEpicsSearchParams } from "@plane/types";
 // ui
@@ -45,6 +46,8 @@ export const WorkspaceEpicsListModal: React.FC<Props> = observer((props) => {
   // hooks
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
+
+  const { t } = useTranslation();
 
   // handlers
   const handleClose = () => {
@@ -131,7 +134,7 @@ export const WorkspaceEpicsListModal: React.FC<Props> = observer((props) => {
                     />
                     <Combobox.Input
                       className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
-                      placeholder="Type to search..."
+                      placeholder={t("common.search.placeholder")}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       tabIndex={baseTabIndex}
@@ -165,7 +168,7 @@ export const WorkspaceEpicsListModal: React.FC<Props> = observer((props) => {
                       </div>
                     ) : (
                       <div className="w-min whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
-                        No epics selected
+                        {t("epics.no_epics_selected")}
                       </div>
                     )}
                   </div>
@@ -245,11 +248,11 @@ export const WorkspaceEpicsListModal: React.FC<Props> = observer((props) => {
                 </Combobox>
                 <div className="flex items-center justify-end gap-2 p-3">
                   <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-                    Cancel
+                    {t("cancel")}
                   </Button>
                   {selectedEpics.length > 0 && (
                     <Button variant="primary" size="sm" onClick={onSubmit} loading={isSubmitting}>
-                      {isSubmitting ? "Adding..." : "Add selected epics"}
+                      {isSubmitting ? `${t("adding")}...` : t("epics.add_selected_epics")}
                     </Button>
                   )}
                 </div>

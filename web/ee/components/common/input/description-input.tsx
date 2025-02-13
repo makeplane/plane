@@ -5,6 +5,7 @@ import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // types
+import { useTranslation } from "@plane/i18n";
 import { TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // ui
@@ -12,7 +13,7 @@ import { Loader } from "@plane/ui";
 // components
 import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
 // helpers
-import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
+import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 // plane web services
@@ -56,6 +57,8 @@ export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
     containerClassName,
     disabled,
   } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
 
@@ -129,7 +132,7 @@ export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
                   debouncedFormSave();
                 }}
                 placeholder={
-                  placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)
+                  placeholder ? placeholder : (isFocused, value) => t(getDescriptionPlaceholderI18n(isFocused, value))
                 }
                 searchMentionCallback={async (payload) =>
                   await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {

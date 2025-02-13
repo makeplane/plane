@@ -9,10 +9,10 @@ from celery import shared_task
 
 # Module imports
 from plane.ee.models import (
-    TeamSpaceActivity,
-    TeamSpace,
-    TeamSpaceComment,
-    TeamSpaceCommentReaction,
+    TeamspaceActivity,
+    Teamspace,
+    TeamspaceComment,
+    TeamspaceCommentReaction,
 )
 from plane.db.models import Label, Project, User, Workspace
 from plane.utils.exception_logger import log_exception
@@ -30,7 +30,7 @@ def track_name(
 ):
     if current_instance.get("name") != requested_data.get("name"):
         team_space_activities.append(
-            TeamSpaceActivity(
+            TeamspaceActivity(
                 team_space_id=team_space_id,
                 actor_id=actor_id,
                 verb="updated",
@@ -58,7 +58,7 @@ def track_description(
         "description_html"
     ):
         last_activity = (
-            TeamSpaceActivity.objects.filter(team_space_id=team_space_id)
+            TeamspaceActivity.objects.filter(team_space_id=team_space_id)
             .order_by("-created_at")
             .first()
         )
@@ -71,7 +71,7 @@ def track_description(
             last_activity.save(update_fields=["created_at"])
         else:
             team_space_activities.append(
-                TeamSpaceActivity(
+                TeamspaceActivity(
                     team_space_id=team_space_id,
                     actor_id=actor_id,
                     verb="updated",
@@ -111,7 +111,7 @@ def track_lead(
 
         # create team activity
         team_space_activities.append(
-            TeamSpaceActivity(
+            TeamspaceActivity(
                 team_space_id=team_space_id,
                 actor_id=actor_id,
                 verb="updated",
@@ -147,7 +147,7 @@ def track_labels(
     for added_label in added_labels:
         label = Label.objects.get(pk=added_label)
         team_space_activities.append(
-            TeamSpaceActivity(
+            TeamspaceActivity(
                 team_space_id=team_space_id,
                 actor_id=actor_id,
                 workspace_id=workspace_id,
@@ -166,7 +166,7 @@ def track_labels(
     for dropped_label in dropped_labels:
         label = Label.objects.get(pk=dropped_label)
         team_space_activities.append(
-            TeamSpaceActivity(
+            TeamspaceActivity(
                 team_space_id=team_space_id,
                 actor_id=actor_id,
                 workspace_id=workspace_id,
@@ -209,7 +209,7 @@ def track_projects(
     for added_project in added_projects:
         project = Project.objects.get(pk=added_project)
         team_space_activities.append(
-            TeamSpaceActivity(
+            TeamspaceActivity(
                 team_space_id=team_space_id,
                 actor_id=actor_id,
                 workspace_id=workspace_id,
@@ -226,7 +226,7 @@ def track_projects(
     for dropped_project in dropped_projects:
         project = Project.objects.get(pk=dropped_project)
         team_space_activities.append(
-            TeamSpaceActivity(
+            TeamspaceActivity(
                 team_space_id=team_space_id,
                 actor_id=actor_id,
                 workspace_id=workspace_id,
@@ -264,7 +264,7 @@ def track_team_members(
     for added_member in added_members:
         member = User.objects.get(pk=added_member)
         team_space_activities.append(
-            TeamSpaceActivity(
+            TeamspaceActivity(
                 team_space_id=team_space_id,
                 actor_id=actor_id,
                 workspace_id=workspace_id,
@@ -282,7 +282,7 @@ def track_team_members(
     for dropped_member in dropped_members:
         member = User.objects.get(pk=dropped_member)
         team_space_activities.append(
-            TeamSpaceActivity(
+            TeamspaceActivity(
                 team_space_id=team_space_id,
                 actor_id=actor_id,
                 workspace_id=workspace_id,
@@ -306,8 +306,8 @@ def create_team_space_activity(
     team_space_activities,
     epoch,
 ):
-    team_space = TeamSpace.objects.get(pk=team_space_id)
-    team_space_activity = TeamSpaceActivity.objects.create(
+    team_space = Teamspace.objects.get(pk=team_space_id)
+    team_space_activity = TeamspaceActivity.objects.create(
         team_space_id=team_space_id,
         workspace_id=workspace_id,
         comment="created the team_space",
@@ -367,7 +367,7 @@ def delete_team_space_activity(
     epoch,
 ):
     team_space_activities.append(
-        TeamSpaceActivity(
+        TeamspaceActivity(
             workspace_id=workspace_id,
             team_space_id=team_space_id,
             comment="deleted the team_space",
@@ -394,7 +394,7 @@ def create_comment_activity(
     )
 
     team_space_activities.append(
-        TeamSpaceActivity(
+        TeamspaceActivity(
             team_space_id=team_space_id,
             workspace_id=workspace_id,
             comment="created a comment",
@@ -424,7 +424,7 @@ def update_comment_activity(
 
     if current_instance.get("comment_html") != requested_data.get("comment_html"):
         team_space_activities.append(
-            TeamSpaceActivity(
+            TeamspaceActivity(
                 team_space_id=team_space_id,
                 workspace_id=workspace_id,
                 comment="updated a comment",
@@ -450,7 +450,7 @@ def delete_comment_activity(
     epoch,
 ):
     team_space_activities.append(
-        TeamSpaceActivity(
+        TeamspaceActivity(
             team_space_id=team_space_id,
             workspace_id=workspace_id,
             comment="deleted the comment",
@@ -474,7 +474,7 @@ def create_comment_reaction_activity(
     requested_data = json.loads(requested_data) if requested_data is not None else None
     if requested_data and requested_data.get("reaction") is not None:
         comment_reaction_id, comment_id = (
-            TeamSpaceCommentReaction.objects.filter(
+            TeamspaceCommentReaction.objects.filter(
                 reaction=requested_data.get("reaction"),
                 team_space_id=team_space_id,
                 actor_id=actor_id,
@@ -482,7 +482,7 @@ def create_comment_reaction_activity(
             .values_list("id", "comment__id")
             .first()
         )
-        comment = TeamSpaceComment.objects.get(
+        comment = TeamspaceComment.objects.get(
             pk=comment_id, team_space_id=team_space_id
         )
         if (
@@ -491,7 +491,7 @@ def create_comment_reaction_activity(
             and comment_id is not None
         ):
             team_space_activities.append(
-                TeamSpaceActivity(
+                TeamspaceActivity(
                     team_space_id=comment.team_space_id,
                     actor_id=actor_id,
                     verb="created",
@@ -521,7 +521,7 @@ def delete_comment_reaction_activity(
     )
     if current_instance and current_instance.get("reaction") is not None:
         team_space_id = (
-            TeamSpaceComment.objects.filter(
+            TeamspaceComment.objects.filter(
                 pk=current_instance.get("comment_id"), team_space_id=team_space_id
             )
             .values_list("team_space_id", flat=True)
@@ -529,7 +529,7 @@ def delete_comment_reaction_activity(
         )
         if team_space_id is not None:
             team_space_activities.append(
-                TeamSpaceActivity(
+                TeamspaceActivity(
                     team_space_id=team_space_id,
                     actor_id=actor_id,
                     verb="deleted",
@@ -556,7 +556,7 @@ def create_page_activity(
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     team_space_activities.append(
-        TeamSpaceActivity(
+        TeamspaceActivity(
             team_space_id=team_space_id,
             workspace_id=workspace_id,
             comment="created a page",
@@ -580,7 +580,7 @@ def delete_page_activity(
     epoch,
 ):
     team_space_activities.append(
-        TeamSpaceActivity(
+        TeamspaceActivity(
             team_space_id=team_space_id,
             workspace_id=workspace_id,
             comment="deleted the page",
@@ -606,7 +606,7 @@ def create_view_activity(
     requested_data = json.loads(requested_data) if requested_data is not None else None
 
     team_space_activities.append(
-        TeamSpaceActivity(
+        TeamspaceActivity(
             team_space_id=team_space_id,
             workspace_id=workspace_id,
             comment="created a view",
@@ -634,7 +634,7 @@ def delete_view_activity(
     )
 
     team_space_activities.append(
-        TeamSpaceActivity(
+        TeamspaceActivity(
             team_space_id=team_space_id,
             workspace_id=workspace_id,
             comment="deleted the view",
@@ -657,7 +657,7 @@ def team_space_activity(
         workspace = Workspace.objects.get(slug=slug)
         workspace_id = workspace.id
         # Get team space
-        team_space = TeamSpace.objects.filter(
+        team_space = Teamspace.objects.filter(
             workspace_id=workspace_id, pk=team_space_id
         ).first()
         if team_space is None:
@@ -696,7 +696,7 @@ def team_space_activity(
             )
 
         # Save all the values to database
-        _ = TeamSpaceActivity.objects.bulk_create(
+        _ = TeamspaceActivity.objects.bulk_create(
             team_space_activities, batch_size=100, ignore_conflicts=True
         )
         return

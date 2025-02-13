@@ -11,18 +11,19 @@ import (
 
 type IPrimeMonitorApi interface {
 	PostServiceStatus(StatusPayload) ErrorCode
-	GetFeatureFlags(licenseKey string) (*FlagDataResponse, ErrorCode)
-	ActivateInstance() ErrorCode
-	DeactivateInstance() ErrorCode
-	RetrievePlans(string) (*[]Product, ErrorCode)
-	RetrievePaymentLink(RetrievePaymentLinkPayload) (*RetrievePaymentLinkResponse, ErrorCode)
-	UpdateSubcription(SeatUpdatePayload) (*SeatUpdateResponse, ErrorCode)
-	SyncWorkspace(WorkspaceSyncPayload) (*WorkspaceActivationResponse, ErrorCode)
-	DeactivateLicense(LicenseDeactivatePayload) (*WorkspaceActivationResponse, ErrorCode)
-	ActivateWorkspace(WorkspaceActivationPayload) (*WorkspaceActivationResponse, ErrorCode)
-	ActivateFreeWorkspace(WorkspaceActivationPayload) (*WorkspaceActivationResponse, ErrorCode)
-	InitializeInstance(CredentialsPayload) (SetupResponse, error)
-	GetSubscriptionDetails(WorkspaceSubscriptionPayload) (*WorkspaceSubscriptionResponse, ErrorCode)
+	GetFeatureFlags(licenseKey string) (*FlagDataResponse, *APIError)
+	ActivateInstance() *APIError
+	DeactivateInstance() *APIError
+	RetrievePlans(string) (*[]Product, *APIError)
+	RetrievePaymentLink(RetrievePaymentLinkPayload) (*RetrievePaymentLinkResponse, *APIError)
+	UpdateSubcription(SeatUpdatePayload) (*SeatUpdateResponse, *APIError)
+	SyncWorkspace(WorkspaceSyncPayload) (*WorkspaceActivationResponse, *APIError)
+	DeactivateLicense(LicenseDeactivatePayload) (*WorkspaceActivationResponse, *APIError)
+	ActivateWorkspace(WorkspaceActivationPayload) (*WorkspaceActivationResponse, *APIError)
+	ActivateFreeWorkspace(WorkspaceActivationPayload) (*WorkspaceActivationResponse, *APIError)
+	InitializeInstance(CredentialsPayload) (SetupResponse, *APIError)
+	GetSubscriptionDetails(WorkspaceSubscriptionPayload) (*WorkspaceSubscriptionResponse, *APIError)
+	GetProrationPreview(ProrationPreviewPayload) (*ProrationPreviewResponse, *APIError)
 }
 
 type LicenseDeactivatePayload struct {
@@ -41,8 +42,8 @@ type PrimeMonitorApi struct {
 }
 
 type CredentialsPayload struct {
-	ServerId string
-	Domain   string
+	ServerId   string
+	Domain     string
 	AppVersion string
 }
 
@@ -58,6 +59,23 @@ type WorkspaceSubscriptionResponse struct {
 	Url                string `json:"url"`
 }
 
+type ProrationPreviewPayload struct {
+	WorkspaceId   string `json:"workspace_id"`
+	Quantity      int    `json:"quantity"`
+	WorkspaceSlug string `json:"workspace_slug"`
+	LicenseKey    string `json:"license_key"`
+}
+
+type ProrationPreviewResponse struct {
+	QuantityDifference     int     `json:"quantity_difference"`
+	PerSeatProrationAmount float64 `json:"per_seat_prorated_amount"`
+	NewQuantity            int     `json:"new_quantity"`
+	TotalProratedAmount    float64 `json:"total_prorated_amount"`
+	CurrentQuantity        int     `json:"current_quantity"`
+	CurrentPriceAmount     float64 `json:"current_price_amount"`
+	CurrentPriceInterval   string  `json:"current_price_interval"`
+}
+
 type SetupResponse struct {
 	Domain     string `json:"domain"`
 	InstanceId string `json:"instance_id"`
@@ -67,6 +85,12 @@ type SetupResponse struct {
 
 type FlagsPayload struct {
 	EncryptedData string `json:"encrypted_data"`
+}
+
+// Add this struct to handle the error response from the server
+type ErrorResponse struct {
+	Message string `json:"message"`
+	Error   string `json:"error"`
 }
 
 func NewMonitorApi(host, machineSignature, instanceId, appVersion string) IPrimeMonitorApi {
@@ -101,6 +125,7 @@ var (
 	RETRIEVE_PLANS              = API_PREFIX + "/instances/products/"
 	RETRIEVE_PAYMENT_LINK       = API_PREFIX + "/instances/payment-link/"
 	DEACTIVATE_LICENSE_ENDPOINT = API_PREFIX + "/licenses/deactivate/"
+	PRORATION_PREVIEW           = API_PREFIX + "/subscriptions/proration-preview/"
 )
 
 /* ----------------------- Controller Methods ------------------------------ */
@@ -114,176 +139,214 @@ func (api *PrimeMonitorApi) PostServiceStatus(payload StatusPayload) ErrorCode {
 	return 0
 }
 
-func (api *PrimeMonitorApi) DeactivateLicense(payload LicenseDeactivatePayload) (*WorkspaceActivationResponse, ErrorCode) {
-	resp, err := api.post(api.host+DEACTIVATE_LICENSE_ENDPOINT, payload)
-	if err != nil {
-		return nil, UNABLE_TO_DEACTIVATE_LICENSE
+func (api *PrimeMonitorApi) DeactivateLicense(payload LicenseDeactivatePayload) (*WorkspaceActivationResponse, *APIError) {
+	resp, apiError := api.post(api.host+DEACTIVATE_LICENSE_ENDPOINT, payload)
+	if apiError != nil {
+		return nil, apiError
 	}
 	data := WorkspaceActivationResponse{}
-	err = json.Unmarshal(resp, &data)
-	if err != nil {
-		return nil, UNABLE_TO_DEACTIVATE_LICENSE
+
+	if err := json.Unmarshal(resp, &data); err != nil {
+		return nil, &APIError{
+			Error:   fmt.Sprintf("Error unmarshaling response: %v", err),
+			Success: false,
+		}
 	}
-	return &data, 0
+
+	return &data, nil
 }
 
-func (api *PrimeMonitorApi) ActivateFreeWorkspace(payload WorkspaceActivationPayload) (*WorkspaceActivationResponse, ErrorCode) {
-	resp, err := api.post(api.host+FREE_WORKSPACE_ACTIVATE, payload)
-	if err != nil {
-		return nil, UNABLE_TO_ACTIVATE_WORKSPACE
+func (api *PrimeMonitorApi) ActivateFreeWorkspace(payload WorkspaceActivationPayload) (*WorkspaceActivationResponse, *APIError) {
+	resp, apiError := api.post(api.host+FREE_WORKSPACE_ACTIVATE, payload)
+	if apiError != nil {
+		return nil, apiError
 	}
 	data := WorkspaceActivationResponse{}
-	err = json.Unmarshal(resp, &data)
-	if err != nil {
-		return nil, UNABLE_TO_ACTIVATE_WORKSPACE
+	if err := json.Unmarshal(resp, &data); err != nil {
+		return nil, &APIError{
+			Error:   fmt.Sprintf("Error unmarshaling response: %v", err),
+			Success: false,
+		}
 	}
-	return &data, 0
+	return &data, nil
 }
 
 // Activating a paid licensed workspace
-func (api *PrimeMonitorApi) ActivateWorkspace(payload WorkspaceActivationPayload) (*WorkspaceActivationResponse, ErrorCode) {
-	resp, err := api.post(api.host+WORKSPACE_ACTIVATE, payload)
-	if err != nil {
-		return nil, UNABLE_TO_ACTIVATE_WORKSPACE
+func (api *PrimeMonitorApi) ActivateWorkspace(payload WorkspaceActivationPayload) (*WorkspaceActivationResponse, *APIError) {
+	resp, apiError := api.post(api.host+WORKSPACE_ACTIVATE, payload)
+	if apiError != nil {
+		return nil, apiError
 	}
 	data := WorkspaceActivationResponse{}
-	err = json.Unmarshal(resp, &data)
-	if err != nil {
-		return nil, UNABLE_TO_ACTIVATE_WORKSPACE
+	if err := json.Unmarshal(resp, &data); err != nil {
+		return nil, &APIError{
+			Error:   fmt.Sprintf("Error unmarshaling response: %v", err),
+			Success: false,
+		}
 	}
-	return &data, 0
+	return &data, nil
 }
 
-func (api *PrimeMonitorApi) GetFeatureFlags(licenseKey string) (*FlagDataResponse, ErrorCode) {
-	flagData, err := api.post(api.host+FEATURE_FLAGS, map[string]string{
+func (api *PrimeMonitorApi) GetFeatureFlags(licenseKey string) (*FlagDataResponse, *APIError) {
+	flagData, apiError := api.post(api.host+FEATURE_FLAGS, map[string]string{
 		"license_key": licenseKey,
 		"version":     api.version,
 	})
-	if err != nil {
-		return nil, UNABLE_TO_GET_FEATURE_FLAGS
+	if apiError != nil {
+		return nil, apiError
 	}
 	data := FlagDataResponse{}
-	err = json.Unmarshal(flagData, &data)
-	if err != nil {
-		return nil, UNABLE_TO_PARSE_FEATURE_FLAGS
+	if err := json.Unmarshal(flagData, &data); err != nil {
+		return nil, &APIError{
+			Error:   fmt.Sprintf("Error unmarshaling response: %v", err),
+			Success: false,
+		}
 	}
-	return &data, 0
+	return &data, nil
 }
 
-func (api *PrimeMonitorApi) RetrievePlans(quantity string) (*[]Product, ErrorCode) {
-	resp, err := api.get(api.host+RETRIEVE_PLANS, map[string]string{
+func (api *PrimeMonitorApi) RetrievePlans(quantity string) (*[]Product, *APIError) {
+	resp, apiError := api.get(api.host+RETRIEVE_PLANS, map[string]string{
 		"quantity": quantity,
 	})
-	if err != nil {
-		return nil, UNABLE_TO_RETRIEVE_PLANS
+	if apiError != nil {
+		return nil, apiError
 	}
 	data := []Product{}
-	err = json.Unmarshal(resp, &data)
-	if err != nil {
-		return nil, UNABLE_TO_PARSE_PLANS
+	if err := json.Unmarshal(resp, &data); err != nil {
+		return nil, &APIError{
+			Error:   fmt.Sprintf("Error unmarshaling response: %v", err),
+			Success: false,
+		}
 	}
-	return &data, 0
+	return &data, nil
 }
 
-func (api *PrimeMonitorApi) RetrievePaymentLink(payload RetrievePaymentLinkPayload) (*RetrievePaymentLinkResponse, ErrorCode) {
-	resp, err := api.post(api.host+RETRIEVE_PAYMENT_LINK, payload)
-	if err != nil {
-		return nil, UNABLE_TO_RETRIEVE_PLANS
+func (api *PrimeMonitorApi) RetrievePaymentLink(payload RetrievePaymentLinkPayload) (*RetrievePaymentLinkResponse, *APIError) {
+	resp, apiError := api.post(api.host+RETRIEVE_PAYMENT_LINK, payload)
+	if apiError != nil {
+		return nil, apiError
 	}
 	data := RetrievePaymentLinkResponse{}
-	err = json.Unmarshal(resp, &data)
-	if err != nil {
-		return nil, UNABLE_TO_PARSE_PLANS
+	if err := json.Unmarshal(resp, &data); err != nil {
+		return nil, &APIError{
+			Error:   fmt.Sprintf("Error unmarshaling response: %v", err),
+			Success: false,
+		}
 	}
-	return &data, 0
+	return &data, nil
 }
 
-func (api *PrimeMonitorApi) SyncWorkspace(payload WorkspaceSyncPayload) (*WorkspaceActivationResponse, ErrorCode) {
-	resp, err := api.post(api.host+SYNC_WORKSPACE, payload)
-	if err != nil {
-		return nil, UNABLE_TO_SYNC_WORKSPACE
+func (api *PrimeMonitorApi) SyncWorkspace(payload WorkspaceSyncPayload) (*WorkspaceActivationResponse, *APIError) {
+	resp, apiError := api.post(api.host+SYNC_WORKSPACE, payload)
+	if apiError != nil {
+		return nil, apiError
 	}
 	data := WorkspaceActivationResponse{}
-	err = json.Unmarshal(resp, &data)
-
-	if err != nil {
-		return nil, UNABLE_TO_SYNC_WORKSPACE
+	if err := json.Unmarshal(resp, &data); err != nil {
+		return nil, &APIError{
+			Error:   fmt.Sprintf("Error unmarshaling response: %v", err),
+			Success: false,
+		}
 	}
-	return &data, 0
+	return &data, nil
 }
 
-func (api *PrimeMonitorApi) ActivateInstance() ErrorCode {
-	_, err := api.post(api.host+ACTIVATE_INSTANCE, nil)
-	if err != nil {
-		return UNABLE_TO_ACTIVATE_WORKSPACE
+func (api *PrimeMonitorApi) ActivateInstance() *APIError {
+	_, apiError := api.post(api.host+ACTIVATE_INSTANCE, nil)
+	if apiError != nil {
+		return apiError
 	}
-	return 0
+	return nil
 }
 
-func (api *PrimeMonitorApi) DeactivateInstance() ErrorCode {
-	_, err := api.post(api.host+DEACTIVATE_INSTANCE, nil)
-	if err != nil {
-		return UNABLE_TO_ACTIVATE_WORKSPACE
+func (api *PrimeMonitorApi) DeactivateInstance() *APIError {
+	_, apiError := api.post(api.host+DEACTIVATE_INSTANCE, nil)
+	if apiError != nil {
+		return apiError
 	}
-	return 0
+	return nil
 }
 
-func (api *PrimeMonitorApi) UpgradeInstance() ErrorCode {
-	_, err := api.post(api.host+UPGRADE_INSTANCE, nil)
-	if err != nil {
-		return UNABLE_TO_ACTIVATE_WORKSPACE
+func (api *PrimeMonitorApi) UpgradeInstance() *APIError {
+	_, apiError := api.post(api.host+UPGRADE_INSTANCE, nil)
+	if apiError != nil {
+		return apiError
 	}
-	return 0
+	return nil
 }
 
-func (api *PrimeMonitorApi) UpdateSubcription(payload SeatUpdatePayload) (*SeatUpdateResponse, ErrorCode) {
-	resp, err := api.post(api.host+UPDATE_SUBSCRIPTION, payload)
-	if err != nil {
-		return nil, UNABLE_TO_UPDATE_SEATS
+func (api *PrimeMonitorApi) UpdateSubcription(payload SeatUpdatePayload) (*SeatUpdateResponse, *APIError) {
+	resp, apiError := api.post(api.host+UPDATE_SUBSCRIPTION, payload)
+	if apiError != nil {
+		return nil, apiError
 	}
 
 	data := SeatUpdateResponse{}
-	err = json.Unmarshal(resp, &data)
-
-	if err != nil {
-		return nil, UNABLE_TO_SYNC_WORKSPACE
+	if err := json.Unmarshal(resp, &data); err != nil {
+		return nil, &APIError{
+			Error:   fmt.Sprintf("Error unmarshaling response: %v", err),
+			Success: false,
+		}
 	}
-	return &data, 0
+	return &data, nil
 }
 
-func (api *PrimeMonitorApi) InitializeInstance(payload CredentialsPayload) (SetupResponse, error) {
-	resp, err := api.post(api.host+SETUP_ENDPOINT, map[string]string{
+func (api *PrimeMonitorApi) InitializeInstance(payload CredentialsPayload) (SetupResponse, *APIError) {
+	resp, apiError := api.post(api.host+SETUP_ENDPOINT, map[string]string{
 		"machine_signature": payload.ServerId,
 		"domain":            payload.Domain,
 		"app_version":       payload.AppVersion,
 		"deploy_platform":   "KUBERNETES",
 	})
 
-	if err != nil {
-		return SetupResponse{}, err
+	if apiError != nil {
+		return SetupResponse{}, apiError
 	}
 
-	// Unmarshal the response
 	setupResponse := SetupResponse{}
-	err = json.Unmarshal(resp, &setupResponse)
-	if err != nil {
-		return SetupResponse{}, err
+	if err := json.Unmarshal(resp, &setupResponse); err != nil {
+		return SetupResponse{}, &APIError{
+			Error:   fmt.Sprintf("Error unmarshaling response: %v", err),
+			Success: false,
+		}
 	}
-	return setupResponse, err
+	return setupResponse, nil
 }
 
-func (api *PrimeMonitorApi) GetSubscriptionDetails(payload WorkspaceSubscriptionPayload) (*WorkspaceSubscriptionResponse, ErrorCode) {
-	resp, err := api.post(api.host+SUBSCRIPTION_PORTAL, payload)
-	if err != nil {
-		return nil, UNABLE_TO_FETCH_WORKSPACE_SUBSCRIPTION
+func (api *PrimeMonitorApi) GetSubscriptionDetails(payload WorkspaceSubscriptionPayload) (*WorkspaceSubscriptionResponse, *APIError) {
+	resp, apiError := api.post(api.host+SUBSCRIPTION_PORTAL, payload)
+	if apiError != nil {
+		return nil, apiError
 	}
 
 	data := WorkspaceSubscriptionResponse{}
-	err = json.Unmarshal(resp, &data)
-	if err != nil {
-		return nil, UNABLE_TO_FETCH_WORKSPACE_SUBSCRIPTION
+	if err := json.Unmarshal(resp, &data); err != nil {
+		return nil, &APIError{
+			Error:   fmt.Sprintf("Error unmarshaling response: %v", err),
+			Success: false,
+		}
 	}
-	return &data, 0
+	return &data, nil
+}
+
+func (api *PrimeMonitorApi) GetProrationPreview(payload ProrationPreviewPayload) (*ProrationPreviewResponse, *APIError) {
+	// Make the request
+	resp, apiError := api.post(api.host+PRORATION_PREVIEW, payload)
+	if apiError != nil {
+		return nil, apiError
+	}
+
+	// Unmarshal the response
+	data := ProrationPreviewResponse{}
+	if err := json.Unmarshal(resp, &data); err != nil {
+		return nil, &APIError{
+			Error:   fmt.Sprintf("Error unmarshaling response: %v", err),
+			Success: false,
+		}
+	}
+	// Return the response
+	return &data, nil
 }
 
 // ------------------------ Helper Methods ----------------------------------
@@ -344,11 +407,14 @@ Returns:
 - []byte: The response body.
 - error: An error if any occurs during the request execution.
 */
-func (api *PrimeMonitorApi) doRequest(req *http.Request) ([]byte, error) {
+func (api *PrimeMonitorApi) doRequest(req *http.Request) ([]byte, *APIError) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("error making request: %v", err)
+		return nil, &APIError{
+			Error:   fmt.Sprintf("error making request: %v", err),
+			Success: false,
+		}
 	}
 	defer resp.Body.Close()
 
@@ -356,19 +422,49 @@ func (api *PrimeMonitorApi) doRequest(req *http.Request) ([]byte, error) {
 	case resp.StatusCode >= 200 && resp.StatusCode <= 227:
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return nil, fmt.Errorf("error reading response body: %v", err)
+			return nil, &APIError{
+				Error:   fmt.Sprintf("error reading response body: %v", err),
+				Success: false,
+			}
 		}
 		return body, nil
 	case resp.StatusCode >= 300 && resp.StatusCode <= 308:
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return nil, fmt.Errorf("error reading response body: %v", err)
+			return nil, &APIError{
+				Error:   fmt.Sprintf("error reading response body: %v", err),
+				Success: false,
+			}
 		}
 		return body, nil
 	case resp.StatusCode >= 400 && resp.StatusCode <= 451:
-		return nil, fmt.Errorf("unexpected status code %d", resp.StatusCode)
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, &APIError{
+				Error:   fmt.Sprintf("error reading response body: %v", err),
+				Success: false,
+			}
+		}
+
+		// Try to parse the error response
+		var errorResp ErrorResponse
+		if err := json.Unmarshal(body, &errorResp); err != nil {
+			// If we can't parse the error, return the status code
+			return nil, &APIError{
+				Error:   fmt.Sprintf("unexpected status code %d", resp.StatusCode),
+				Success: false,
+			}
+		}
+
+		return nil, &APIError{
+			Error:   errorResp.Error,
+			Success: false,
+		}
 	default:
-		return nil, fmt.Errorf("unexpected status code: %v", resp.StatusCode)
+		return nil, &APIError{
+			Error:   fmt.Sprintf("unexpected status code: %v", resp.StatusCode),
+			Success: false,
+		}
 	}
 }
 
@@ -383,10 +479,13 @@ Returns:
 - []byte: The response body.
 - error: An error if any occurs during the request.
 */
-func (api *PrimeMonitorApi) get(baseURL string, params map[string]string) ([]byte, error) {
+func (api *PrimeMonitorApi) get(baseURL string, params map[string]string) ([]byte, *APIError) {
 	req, err := api.prepareRequest("GET", baseURL, nil, params)
 	if err != nil {
-		return nil, err
+		return nil, &APIError{
+			Error:   fmt.Sprintf("error preparing request: %v", err),
+			Success: false,
+		}
 	}
 
 	return api.doRequest(req)
@@ -403,15 +502,21 @@ Returns:
 - []byte: The response body.
 - error: An error if any occurs during the request.
 */
-func (api *PrimeMonitorApi) post(baseURL string, data interface{}) ([]byte, error) {
+func (api *PrimeMonitorApi) post(baseURL string, data interface{}) ([]byte, *APIError) {
 	jsonData, err := json.Marshal(data)
 	if err != nil {
-		return nil, fmt.Errorf("error marshaling data: %v", err)
+		return nil, &APIError{
+			Error:   fmt.Sprintf("error marshaling data: %v", err),
+			Success: false,
+		}
 	}
 
 	req, err := api.prepareRequest("POST", baseURL, bytes.NewBuffer(jsonData), nil)
 	if err != nil {
-		return nil, err
+		return nil, &APIError{
+			Error:   fmt.Sprintf("error preparing request: %v", err),
+			Success: false,
+		}
 	}
 
 	return api.doRequest(req)

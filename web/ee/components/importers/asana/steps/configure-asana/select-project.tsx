@@ -9,6 +9,7 @@ import { Loader } from "@plane/ui";
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useAsanaImporter } from "@/plane-web/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 type TConfigureAsanaSelectProject = {
   workspaceGid: string | undefined;
@@ -26,6 +27,7 @@ export const ConfigureAsanaSelectProject: FC<TConfigureAsanaSelectProject> = obs
     handleSyncJobConfig,
     data: { fetchAsanaProjects, getAsanaProjectsByWorkspaceGid, getAsanaProjectById },
   } = useAsanaImporter();
+  const { t } = useTranslation();
   // derived values
   const workspaceId = workspace?.id || undefined;
   const userId = user?.id || undefined;
@@ -51,7 +53,7 @@ export const ConfigureAsanaSelectProject: FC<TConfigureAsanaSelectProject> = obs
 
   return (
     <div className="space-y-2">
-      <div className="text-sm text-custom-text-200">Select Asana project</div>
+      <div className="text-sm text-custom-text-200">{t("importers.select_service_project", { "serviceName": "Asana" })}</div>
       {isLoading && (!asanaProjects || asanaProjects.length === 0) ? (
         <Loader>
           <Loader.Item height="28px" width="100%" />
@@ -65,7 +67,7 @@ export const ConfigureAsanaSelectProject: FC<TConfigureAsanaSelectProject> = obs
             data: project,
           }))}
           value={value}
-          placeHolder={isLoading ? "Loading Asana projects" : "Select Asana project"}
+          placeHolder={isLoading ? t("importers.loading_service_projects", { "serviceName": "Asana" }) : t("importers.select_service_project", { "serviceName": "Asana" })}
           onChange={(value: string | undefined) => handelData(value)}
           queryExtractor={(option) => option.name}
           disabled={!workspaceGid || isLoading}

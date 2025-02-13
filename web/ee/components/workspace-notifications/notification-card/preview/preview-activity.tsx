@@ -37,12 +37,12 @@ const NotificationContent: FC<{
     if (!notificationField) return "";
     if (notificationField === "duplicate")
       return verb === "created"
-        ? "marked that this issue is a duplicate of"
-        : "marked that this issue is not a duplicate";
-    if (notificationField === "relates_to") return "marked that this issue is related to";
+        ? "marked that this work item is a duplicate of"
+        : "marked that this work item is not a duplicate";
+    if (notificationField === "relates_to") return "marked that this work item is related to";
     if (notificationField === "comment") return "commented";
     if (notificationField === "archived_at") {
-      return newValue === "restore" ? "restored the issue" : "archived the issue";
+      return newValue === "restore" ? "restored the work item" : "archived the work item";
     }
     if (notificationField === "None") return null;
 
@@ -51,10 +51,10 @@ const NotificationContent: FC<{
   };
 
   const renderValue = () => {
-    if (notificationField === "None") return "the issue and assigned it to you.";
+    if (notificationField === "None") return "the work item and assigned it to you.";
     if (notificationField === "comment") return null;
     if (notificationField === "target_date" || notificationField === "start_date") return renderFormattedDate(newValue);
-    if (notificationField === "attachment") return "the issue";
+    if (notificationField === "attachment") return "the work item";
     if (notificationField === "description") return stripAndTruncateHTML(newValue || "", 55);
     if (notificationField === "archived_at") return null;
     return newValue;

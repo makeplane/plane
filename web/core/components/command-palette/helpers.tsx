@@ -49,7 +49,7 @@ export const commandGroups: {
     ),
     path: (issue: IWorkspaceIssueSearchResult) =>
       `/${issue?.workspace__slug}/projects/${issue?.project_id}/issues/${issue?.id}`,
-    title: "Issues",
+    title: "Work items",
   },
   issue_view: {
     icon: <Layers className="h-3 w-3" />,

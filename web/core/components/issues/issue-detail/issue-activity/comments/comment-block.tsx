@@ -1,15 +1,16 @@
 import { FC, ReactNode, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { MessageCircle } from "lucide-react";
-// ui
+// plane imports
+import { ACTIVITY_HIGHLIGHT_TIMEOUT } from "@plane/constants";
 import { GithubDarkIcon, SlackIcon } from "@plane/ui";
 // helpers
-import { ACTIVITY_HIGHLIGHT_TIMEOUT } from "@/constants/notification";
 import { cn } from "@/helpers/common.helper";
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useIssueDetail, useWorkspaceNotifications } from "@/hooks/store";
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 
 type TIssueCommentBlock = {
   commentId: string;
@@ -82,9 +83,9 @@ export const IssueCommentBlock: FC<TIssueCommentBlock> = observer((props) => {
             }
           )}
         >
-          {comment.external_source === "GITHUB" ? (
+          {comment.external_source === E_INTEGRATION_KEYS.GITHUB ? (
             <GithubDarkIcon width={14} height={14} className="w-4 h-4 absolute left-1 top-1" color="white" />
-          ) : comment.external_source?.includes("SLACK") ? (
+          ) : comment.external_source?.includes(E_INTEGRATION_KEYS.SLACK) ? (
             <SlackIcon className="size-3 absolute left-1 top-1" />
           ) : (
             <MessageCircle className="w-3 h-3 text-custom-text-200" />

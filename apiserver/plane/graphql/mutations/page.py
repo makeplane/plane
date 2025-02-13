@@ -12,10 +12,39 @@ from asgiref.sync import sync_to_async
 from typing import Optional
 
 # Module imports
+from plane.graphql.utils.roles import Roles
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
-from plane.graphql.permissions.project import ProjectBasePermission
+from plane.graphql.permissions.project import ProjectBasePermission, ProjectPermission
 from plane.graphql.types.page import PageType
-from plane.db.models import Page, ProjectPage, UserFavorite, Workspace, Project
+from plane.db.models import (
+    WorkspaceMember,
+    ProjectMember,
+    Page,
+    ProjectPage,
+    UserFavorite,
+    Workspace,
+    Project,
+)
+
+
+@sync_to_async
+def get_workspace_member(slug: str, user_id: str):
+    try:
+        return WorkspaceMember.objects.get(
+            workspace__slug=slug, member_id=user_id, is_active=True
+        )
+    except WorkspaceMember.DoesNotExist:
+        return None
+
+
+@sync_to_async
+def get_project_member(slug: str, project: str, user_id: str):
+    try:
+        return ProjectMember.objects.get(
+            workspace__slug=slug, project_id=project, member_id=user_id, is_active=True
+        )
+    except ProjectMember.DoesNotExist:
+        return None
 
 
 # workspace level mutations
@@ -51,7 +80,11 @@ class WorkspacePageMutation:
 @strawberry.type
 class PageMutation:
     @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+        extensions=[
+            PermissionExtension(
+                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
+            )
+        ]
     )
     async def createPage(
         self,

@@ -3,13 +3,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Trash2 } from "lucide-react";
 // ui
+import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web components
 import { useUserPermissions } from "@/hooks/store";
 import { BulkDeleteConfirmationModal } from "@/plane-web/components/issues";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   handleClearSelection: () => void;
@@ -26,7 +26,7 @@ export const BulkDeleteIssues: React.FC<Props> = observer((props) => {
 
   // derived values
 
-  const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canPerformProjectAdminActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
 
   return (
     <>

@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { EIssueServiceType } from "@plane/constants";
 // ui
+import { TIssuePropertyValues } from "@plane/types";
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 // ce components
 import {
@@ -17,8 +18,7 @@ import { IssueAdditionalPropertyValues } from "@/plane-web/components/issue-type
 import { useIssuePropertiesActivity, useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services
 import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
-// plane web types
-import { TIssuePropertyValues } from "@/plane-web/types";
+// plane imports
 
 export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPropertyValuesUpdateProps> = observer(
   (props) => {

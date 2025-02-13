@@ -1,4 +1,4 @@
 export * from "./root";
 export * from "./plans-comparison";
-export * from "./update-workspace-seats";
-export * from "./remove-unused-seats-modal";
+export * from "./manage-seats";
+export * from "./billing-actions-button";

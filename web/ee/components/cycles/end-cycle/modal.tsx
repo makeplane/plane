@@ -67,14 +67,14 @@ export const EndCycleModal: FC<EndCycleModalProps> = (props) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Issues have been transferred successfully",
+          message: "Work items have been transferred successfully",
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Issues cannot be transfer. Please try again.",
+          message: "Work items cannot be transfer. Please try again.",
         });
       })
       .finally(() => {
@@ -101,7 +101,7 @@ export const EndCycleModal: FC<EndCycleModalProps> = (props) => {
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.LG}>
       <div className="p-4">
         <h3 className="text-lg font-medium">
-          {completeCycle ? `Sure you want to end this cycle now?` : "Choose what happens to incomplete issues."}
+          {completeCycle ? `Sure you want to end this cycle now?` : "Choose what happens to incomplete work items."}
         </h3>
         <p className="text-sm text-custom-text-300 mt-1">
           {completeCycle ? (
@@ -112,7 +112,8 @@ export const EndCycleModal: FC<EndCycleModalProps> = (props) => {
           ) : (
             <>
               You have <span className="text-custom-80 font-semibold">{transferrableIssuesCount}</span>
-              &nbsp;incomplete issues in this cycle that you can move to an upcoming cycle or leave as-is in this one.
+              &nbsp;incomplete work items in this cycle that you can move to an upcoming cycle or leave as-is in this
+              one.
             </>
           )}
         </p>
@@ -128,7 +129,7 @@ export const EndCycleModal: FC<EndCycleModalProps> = (props) => {
                   onChange={() => setTransferIssues(false)}
                   {...props}
                 />
-                <span className="text-custom-100 text-sm">Leave pending issues in this cycle.</span>
+                <span className="text-custom-100 text-sm">Leave pending work items in this cycle.</span>
               </div>
               <div className="flex gap-1">
                 <Input
@@ -139,7 +140,7 @@ export const EndCycleModal: FC<EndCycleModalProps> = (props) => {
                   onChange={() => setTransferIssues(true)}
                   {...props}
                 />
-                <span className="text-custom-100 text-sm">Transfer pending issues to an upcoming cycle.</span>
+                <span className="text-custom-100 text-sm">Transfer pending work items to an upcoming cycle.</span>
               </div>
             </>
           )}

@@ -9,7 +9,7 @@ import { ProjectStateService } from "@/services/project";
 
 const projectStateService = new ProjectStateService();
 
-export const usePlaneProjectStates = (projectId: string | undefined) => {
+export const usePlaneProjectStates: any = (projectId: string | undefined) => {
   // hooks
   const { workspaceSlug } = useBaseImporter();
 

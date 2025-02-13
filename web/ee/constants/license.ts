@@ -1,50 +1,50 @@
 export const PRO_PLAN_FEATURES_MAP = [
   {
-    label: "Active Cycles + other Cycles features",
+    label: "Active Cycles",
     comingSoon: false,
   },
   {
-    label: "Workspace pages",
+    label: "Teamspaces",
     comingSoon: false,
   },
   {
-    label: "Bulk ops",
+    label: "Wikis",
     comingSoon: false,
   },
   {
-    label: "Shared and public pages",
+    label: "Bulk Ops",
     comingSoon: false,
   },
   {
-    label: "Time tracking",
+    label: "Shared and Public Pages",
+    comingSoon: false,
+  },
+  {
+    label: "Time Tracking",
     comingSoon: false,
   },
   {
     label: "Importers + integrations",
-    comingSoon: true,
-  },
-  {
-    label: "Customizable dashboards",
-    comingSoon: true,
-  },
-  {
-    label: "Workflow manager",
-    comingSoon: true,
-  },
-  {
-    label: "On-demand reports",
     comingSoon: false,
   },
   {
-    label: "Automations",
+    label: "Work Item Templates",
     comingSoon: true,
   },
   {
-    label: "Shared and public views",
+    label: "Epics",
     comingSoon: false,
   },
   {
-    label: "Plane AI",
+    label: "Dashboards + Reports",
+    comingSoon: true,
+  },
+  {
+    label: "Initiatives",
+    comingSoon: false,
+  },
+  {
+    label: "Shared And Public Views",
     comingSoon: false,
   },
 ];
@@ -52,99 +52,94 @@ export const PRO_PLAN_FEATURES_MAP = [
 // blank labels are intentional
 export const ONE_TO_PRO_PLAN_FEATURES_MAP = [
   {
-    label: "More Cycles features",
+    label: "Active Cycles",
     comingSoon: false,
   },
   {
-    label: "Popular integrations",
+    label: "Teamspaces",
     comingSoon: false,
   },
   {
-    label: "Full bulk Ops",
+    label: "Wikis",
     comingSoon: false,
   },
   {
-    label: "Automations",
+    label: "Bulk Ops",
     comingSoon: false,
   },
   {
-    label: "Customizable dashboards",
+    label: "Shared and Public Pages",
     comingSoon: false,
   },
   {
-    label: "Plane AI",
-    comingSoon: false,
-  },
-  {
-    label: "On-demand reports",
-    comingSoon: false,
-  },
-  {
-    label: "",
-    comingSoon: false,
-  },
-  {
-    label: "Workspace pages",
-    comingSoon: false,
-  },
-  {
-    label: "",
-    comingSoon: false,
-  },
-  {
-    label: "Workflow manager",
-    comingSoon: false,
-  },
-];
-
-
-export const BUSINESS_PLAN_FEATURES_MAP = [
-  {
-    label: "Active Cycles + other Cycles features",
-    comingSoon: false,
-  },
-  {
-    label: "Workspace pages",
-    comingSoon: false,
-  },
-  {
-    label: "Bulk ops",
-    comingSoon: false,
-  },
-  {
-    label: "Shared and public pages",
-    comingSoon: false,
-  },
-  {
-    label: "Time tracking",
+    label: "Time Tracking",
     comingSoon: false,
   },
   {
     label: "Importers + integrations",
-    comingSoon: true,
-  },
-  {
-    label: "Customizable dashboards",
-    comingSoon: true,
-  },
-  {
-    label: "Workflow manager",
-    comingSoon: true,
-  },
-  {
-    label: "On-demand reports",
     comingSoon: false,
   },
   {
-    label: "Automations",
+    label: "Work Item Templates",
     comingSoon: true,
   },
   {
-    label: "Shared and public views",
+    label: "Epics",
     comingSoon: false,
   },
   {
-    label: "Plane AI",
+    label: "Dashboards + Reports",
+    comingSoon: true,
+  },
+  {
+    label: "Initiatives",
     comingSoon: false,
+  },
+  {
+    label: "Shared And Public Views",
+    comingSoon: false,
+  },
+];
+
+export const BUSINESS_PLAN_FEATURES_MAP = [
+  {
+    label: "Project Templates",
+    comingSoon: false,
+  },
+  {
+    label: "Workflows + Approvals",
+    comingSoon: false,
+  },
+  {
+    label: "Decision + Loops Automation",
+    comingSoon: false,
+  },
+  {
+    label: "Custom Reports",
+    comingSoon: false,
+  },
+  {
+    label: "Nested Pages",
+    comingSoon: false,
+  },
+  {
+    label: "Intake Forms",
+    comingSoon: false,
+  },
+  {
+    label: "SLAs",
+    comingSoon: true,
+  },
+  {
+    label: "Baselines And Deviations",
+    comingSoon: true,
+  },
+  {
+    label: "Page Templates",
+    comingSoon: true,
+  },
+  {
+    label: "Advanced Page Analytics",
+    comingSoon: true,
   },
 ];

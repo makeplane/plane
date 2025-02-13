@@ -1,22 +1,5 @@
-import { integrationTaskManager } from "@/apps/engine/worker";
-import {
-  createCredentials,
-  createOrUpdateCredentials,
-  getCredentialsByOnlyWorkspaceId,
-  deleteCredentialsForWorkspace,
-  deactivateCredentials,
-  getCredentialsByWorkspaceId,
-} from "@/db/query";
-import {
-  createWorkspaceConnection,
-  getWorkspaceConnections,
-  deleteEntityConnectionByWorkspaceConnectionId,
-  deleteWorkspaceConnection,
-  updateWorkspaceConnection,
-} from "@/db/query/connection";
-import { env } from "@/env";
-import { Controller, Get, Post } from "@/lib";
-import { Client, ExIssue, ExIssueComment, ExIssueLabel, PlaneUser, PlaneWebhookPayloadBase } from "@plane/sdk";
+import { Request, Response } from "express";
+import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS, E_SILO_ERROR_CODES, SILO_ERROR_CODES } from "@plane/etl/core";
 import {
   createGithubAuth,
   createGithubService,
@@ -27,10 +10,15 @@ import {
   GithubUserAuthState,
   GithubWebhookPayload,
 } from "@plane/etl/github";
-import { NextFunction, Request, Response } from "express";
-import { logger } from "@/logger";
-import { GithubWorkspaceConnection } from "../types";
+import { Client, ExIssue, ExIssueComment, ExIssueLabel, PlaneUser, PlaneWebhookPayloadBase } from "@plane/sdk";
+import { TWorkspaceConnection } from "@plane/types";
+import { env } from "@/env";
+import { createOrUpdateCredentials } from "@/helpers/credential";
 import { responseHandler } from "@/helpers/response-handler";
+import { Controller, EnsureEnabled, Get, Post, useValidateUserAuthentication } from "@/lib";
+import { getAPIClient } from "@/services/client";
+import { integrationTaskManager } from "@/worker";
+import { GithubUserMap } from "../types";
 
 export const githubAuthService = createGithubAuth(
   env.GITHUB_APP_NAME,
@@ -39,16 +27,20 @@ export const githubAuthService = createGithubAuth(
   encodeURI(env.SILO_API_BASE_URL + env.SILO_BASE_PATH + "/api/github/auth/user/callback")
 );
 
+const apiClient = getAPIClient();
+
+@EnsureEnabled(E_INTEGRATION_KEYS.GITHUB)
 @Controller("/api/github")
-class GithubController {
+export default class GithubController {
   @Get("/ping")
   async ping(_req: Request, res: Response) {
-    res.send("pong");
+    res.send({ message: "pong" });
   }
 
-  /* -------------------- Auth Endpoints -------------------- */
+  /* -------------------- Auth Endpoint s -------------------- */
   // Get the organization connection status
   @Get("/auth/organization-status/:workspaceId")
+  @useValidateUserAuthentication()
   async getOrganizationConnectionStatus(req: Request, res: Response) {
     try {
       const { workspaceId } = req.params;
@@ -59,16 +51,20 @@ class GithubController {
         });
       }
 
-      const workspaceConnection = await getWorkspaceConnections(workspaceId, "GITHUB");
+      const workspaceConnection = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.GITHUB,
+        workspace_id: workspaceId,
+      });
 
       return res.json(workspaceConnection);
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   // Disconnect the organization connection
   @Post("/auth/organization-disconnect/:workspaceId/:connectionId")
+  @useValidateUserAuthentication()
   async disconnectOrganization(req: Request, res: Response) {
     const { workspaceId, connectionId } = req.params;
 
@@ -80,26 +76,23 @@ class GithubController {
 
     try {
       // Get the github workspace connections associated with the workspaceId
-      const connections = await getWorkspaceConnections(workspaceId, "GITHUB", connectionId);
-      const credentials = await getCredentialsByOnlyWorkspaceId(workspaceId, "GITHUB");
+      const connections = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.GITHUB,
+        connection_id: connectionId,
+        workspace_id: workspaceId,
+      });
 
       if (connections.length === 0) {
         return res.sendStatus(200);
       } else {
         const connection = connections[0];
+        const credential = await apiClient.workspaceCredential.getWorkspaceCredential(connection.credential_id);
         // Delete entity connections referencing the workspace connection
-        await deleteEntityConnectionByWorkspaceConnectionId(connection.id);
-
         // Delete the workspace connection associated with the team
-        await deleteWorkspaceConnection(connection.id);
-
         // Delete the team and user credentials for the workspace
-        await deleteCredentialsForWorkspace(workspaceId, "GITHUB");
-        await deleteCredentialsForWorkspace(workspaceId, "GITHUB-USER");
-
+        await apiClient.workspaceConnection.deleteWorkspaceConnection(connection.id);
         // delete the installation from github
-        if (credentials.length > 0) {
-          const credential = credentials[0];
+        if (credential) {
           if (credential.source_access_token) {
             const githubService = createGithubService(
               env.GITHUB_APP_ID,
@@ -114,11 +107,12 @@ class GithubController {
         return res.sendStatus(200);
       }
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Post("/auth/url")
+  @useValidateUserAuthentication()
   async getAuthURL(req: Request, res: Response) {
     try {
       const { workspace_id, workspace_slug, plane_api_token, user_id } = req.body;
@@ -129,7 +123,10 @@ class GithubController {
         });
       }
 
-      const connections = await getWorkspaceConnections(workspace_id, "GITHUB");
+      const connections = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.GITHUB,
+        workspace_id: workspace_id,
+      });
 
       if (connections.length > 0) {
         // If the connection already exists, then we don't need to create it again
@@ -146,26 +143,28 @@ class GithubController {
         })
       );
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Get("/auth/callback")
   async authCallback(req: Request, res: Response) {
+    const { installation_id, state } = req.query;
+
+    // Check if the request is valid, with the data received
+    if (!installation_id || !state) {
+      return res.status(400).send("Invalid request callback");
+    }
+    // Decode the base64 encoded state string and parse it to JSON
+    const authState: GithubAuthorizeState = JSON.parse(Buffer.from(state as string, "base64").toString());
+    const redirectUri = `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github/`;
+
     try {
-      const { installation_id, state } = req.query;
-
-      // Check if the request is valid, with the data received
-      if (!installation_id || !state) {
-        return res.status(400).send("Invalid request callback");
-      }
-      // Decode the base64 encoded state string and parse it to JSON
-      const authState: GithubAuthorizeState = JSON.parse(Buffer.from(state as string, "base64").toString());
-
-      // Create a credentials entry for the installation
-
       // Get the credentials for the workspaceId
-      const credentials = await getCredentialsByOnlyWorkspaceId(authState.workspace_id, "GITHUB");
+      const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
+        source: E_INTEGRATION_KEYS.GITHUB,
+        workspace_id: authState.workspace_id,
+      });
 
       let shouldCreate = true;
       if (credentials && credentials.length > 0) {
@@ -178,8 +177,9 @@ class GithubController {
       }
 
       if (shouldCreate) {
-        const { insertedId } = await createCredentials(authState.workspace_id, {
-          source: "GITHUB",
+        const { id: insertedId } = await apiClient.workspaceCredential.createWorkspaceCredential({
+          source: E_INTEGRATION_KEYS.GITHUB,
+          workspace_id: authState.workspace_id,
           user_id: authState.user_id,
           source_access_token: installation_id as string,
           target_access_token: authState.plane_api_token,
@@ -192,33 +192,34 @@ class GithubController {
         const installation = await service.getInstallation(Number(installation_id));
 
         if (!installation.data.account) {
-          return res.status(400).send("No account found for the installation");
+          return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.INVALID_INSTALLATION_ACCOUNT}`);
         }
 
         // Create workspace connection for github
-        await createWorkspaceConnection({
-          workspaceId: authState.workspace_id,
-          workspaceSlug: authState.workspace_slug,
-          targetHostname: env.API_BASE_URL,
-          credentialsId: insertedId,
-          connectionType: "GITHUB",
-          // @ts-ignore
-          connectionSlug: installation.data.account.login,
+        await apiClient.workspaceConnection.createWorkspaceConnection({
+          workspace_id: authState.workspace_id,
+          connection_type: E_INTEGRATION_KEYS.GITHUB,
+          target_hostname: env.API_BASE_URL,
+          credential_id: insertedId,
+          connection_id: installation.data.account.id.toString(),
+          connection_data: installation.data.account,
+          // @ts-expect-error
+          connection_slug: installation.data.account.login,
           config: {
             userMap: [],
           },
-          connectionId: installation.data.account.id.toString(),
-          connectionData: installation.data.account,
         });
       }
 
-      res.redirect(`${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github/`);
+      res.redirect(redirectUri);
     } catch (error) {
-      responseHandler(res, 500, error);
+      console.log(error);
+      return res.redirect(`${env.APP_BASE_URL}/error?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
     }
   }
 
   @Get("/auth/user-status/:workspaceId/:userId")
+  @useValidateUserAuthentication()
   async getUserConnectionStatus(req: Request, res: Response) {
     try {
       const { workspaceId, userId } = req.params;
@@ -229,17 +230,23 @@ class GithubController {
         });
       }
 
-      const credentials = await getCredentialsByWorkspaceId(workspaceId, userId, "GITHUB-USER");
+      const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
+        source: E_ENTITY_CONNECTION_KEYS.GITHUB_USER,
+        workspace_id: workspaceId,
+        user_id: userId,
+        is_active: "true",
+      });
 
       return res.json({
         isConnected: credentials.length > 0,
       });
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Post("/auth/user-disconnect/:workspaceId/:userId")
+  @useValidateUserAuthentication()
   async disconnectUser(req: Request, res: Response) {
     try {
       const { workspaceId, userId } = req.params;
@@ -250,17 +257,30 @@ class GithubController {
         });
       }
       // Delete the user credentials for the workspace
-      await deactivateCredentials(workspaceId, userId, "GITHUB-USER");
+      const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
+        source: E_ENTITY_CONNECTION_KEYS.GITHUB_USER,
+        workspace_id: workspaceId,
+        user_id: userId,
+      });
+
+      if (!credentials.length) {
+        return res.status(200);
+      }
+
+      await apiClient.workspaceCredential.deleteWorkspaceCredential(credentials[0].id);
 
       // remove the user mapping from the workspace connection
-      const connections = await getWorkspaceConnections(workspaceId, "GITHUB");
-      const connection = connections[0] as GithubWorkspaceConnection;
+      const connections = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.GITHUB,
+        workspace_id: workspaceId,
+      });
+      const connection = connections[0] as TWorkspaceConnection<{ userMap: GithubUserMap }>;
       if (!connection || !connection.config.userMap || !connection.id) {
         // We don't need to touch the connection if it doesn't exist
         return res.status(200);
       }
       const userMap = connection.config.userMap.filter((map) => map.planeUser.id !== userId);
-      await updateWorkspaceConnection(connection.id, {
+      await apiClient.workspaceConnection.updateWorkspaceConnection(connection.id, {
         config: {
           userMap,
         },
@@ -268,7 +288,7 @@ class GithubController {
 
       return res.sendStatus(200);
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
@@ -300,46 +320,56 @@ class GithubController {
 
   @Get("/auth/user/callback")
   async authUserCallback(req: Request, res: Response) {
+    const { code, state: queryState } = req.query;
+
+    // Check if the request is valid, with the data received
+    if (!code || !queryState) {
+      return res.status(400).send("Invalid request callback");
+    }
+
+    const authState: GithubUserAuthState = JSON.parse(Buffer.from(queryState as string, "base64").toString());
+    let redirectUri = `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github/`;
+
+    if (authState.profile_redirect) {
+      redirectUri = `${env.APP_BASE_URL}/profile/connections/?workspaceId=${authState.workspace_id}`;
+    }
+
     try {
-      // Generate the access token for the user and save the credentials to the db
-      const { code, state: queryState } = req.query;
-
-      // Check if the request is valid, with the data received
-      if (!code || !queryState) {
-        return res.status(400).send("Invalid request callback");
-      }
-
-      const authState: GithubUserAuthState = JSON.parse(Buffer.from(queryState as string, "base64").toString());
-
       const { response, state } = await githubAuthService.getUserAccessToken({
         code: code as string,
         state: authState,
       });
 
-      const connections = await getWorkspaceConnections(authState.workspace_id, "GITHUB");
+      const connections = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.GITHUB,
+        workspace_id: authState.workspace_id,
+      });
 
       if (connections.length === 0) {
-        return res.status(400).send("Connection not found");
+        return res.status(400).send(`${redirectUri}?error=${E_SILO_ERROR_CODES.CONNECTION_NOT_FOUND}`);
       }
 
       if (connections.length > 1) {
-        return res.status(400).send("Multiple connections found, not supported");
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.MULTIPLE_CONNECTIONS_FOUND}`);
       }
 
-      const connection = connections[0] as GithubWorkspaceConnection;
+      const connection = connections[0] as TWorkspaceConnection<{ userMap: GithubUserMap }>;
 
       if (!connection.id) {
-        return res.status(400).send("Connection not found");
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.CONNECTION_NOT_FOUND}`);
       }
 
-      const credentials = await getCredentialsByOnlyWorkspaceId(authState.workspace_id, "GITHUB");
+      const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
+        source: E_INTEGRATION_KEYS.GITHUB,
+        workspace_id: authState.workspace_id,
+      });
       if (credentials.length === 0) {
-        return res.status(400).send("No installation found for the workspace");
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.CONNECTION_NOT_FOUND}`);
       }
 
       const credential = credentials[0];
       if (!credential.source_access_token || !credential.target_access_token) {
-        return res.status(400).send("No installation found for the workspace");
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.INSTALLATION_NOT_FOUND}`);
       }
 
       // Extract the parameters from the response
@@ -348,52 +378,69 @@ class GithubController {
       const user = await githubService.getUser();
 
       if (!user) {
-        return res.status(400).send("No user found for the access token");
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.USER_NOT_FOUND}`);
       }
 
       const planeClient = new Client({
         apiToken: credential.target_access_token,
-        baseURL: connection.targetHostname,
+        baseURL: connection.target_hostname ?? env.API_BASE_URL,
       });
 
-      const users: PlaneUser[] = await planeClient.users.listAllUsers(connection.workspaceSlug);
+      const users: PlaneUser[] = await planeClient.users.listAllUsers(authState.workspace_slug);
       const planeUser = users.find((user) => user.id === authState.user_id);
 
-      await createOrUpdateCredentials(state.workspace_id, authState.user_id, {
-        source: "GITHUB-USER",
+      const credentialData = {
+        source: E_ENTITY_CONNECTION_KEYS.GITHUB_USER,
         source_access_token: accessToken,
         workspace_id: state.workspace_id,
         user_id: state.user_id,
         target_access_token: state.plane_api_token,
-      });
+      };
+
+      if (credential) {
+        await createOrUpdateCredentials(
+          state.workspace_id,
+          state.user_id,
+          E_ENTITY_CONNECTION_KEYS.GITHUB_USER,
+          credentialData
+        );
+      }
 
       // update the workspace connection for the user
       if (planeUser) {
-        await updateWorkspaceConnection(connection.id, {
+        await apiClient.workspaceConnection.updateWorkspaceConnection(connection.id, {
           config: {
             userMap: [...connection.config.userMap, { githubUser: user, planeUser: planeUser }],
           },
         });
       }
 
-      if (authState.profile_redirect) {
-        return res.redirect(`${env.APP_BASE_URL}/profile/connections/?workspaceId=${authState.workspace_id}`);
-      }
-
-      return res.redirect(`${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github/`);
+      return res.redirect(redirectUri);
     } catch (error) {
-      responseHandler(res, 500, error);
+      console.log(error);
+      return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
     }
   }
   /* -------------------- Auth Endpoints -------------------- */
 
   /* -------------------- Data Endpoints -------------------- */
   @Get("/:workspaceId/installations")
+  @useValidateUserAuthentication()
   async getInstallations(req: Request, res: Response) {
     try {
       const { workspaceId } = req.params;
+
+      if (!workspaceId) {
+        return res.status(400).send({
+          message: "Bad Request, expected workspaceId to be present.",
+        });
+      }
+
       // Get the credentials for the workspace id, where the source is GITHUB
-      const credentials = await getCredentialsByOnlyWorkspaceId(workspaceId, "GITHUB");
+      const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
+        source: E_INTEGRATION_KEYS.GITHUB,
+        workspace_id: workspaceId,
+      });
 
       // If there are no credentials, this simply means that there is nothing
       // installed for the workspace, so we return an empty array
@@ -403,7 +450,7 @@ class GithubController {
 
       const githubCredentials = credentials[0];
 
-      if (githubCredentials.source_access_token === null) {
+      if (!githubCredentials.source_access_token) {
         return res.status(401).json({
           message: "No installations found for the workspace",
         });
@@ -430,16 +477,28 @@ class GithubController {
       // Return the response of the installation
       res.status(200).json(installations);
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
 
   @Get("/:workspaceId/repos")
+  @useValidateUserAuthentication()
   async getWorkspaceAccessibleRepositories(req: Request, res: Response) {
     try {
       const { workspaceId } = req.params;
+
+      if (!workspaceId) {
+        return res.status(400).send({
+          message: "Bad Request, expected workspaceId to be present.",
+        });
+      }
+
       // Get the credentials for the workspace id, where the source is GITHUB
-      const credentials = await getCredentialsByOnlyWorkspaceId(workspaceId, "GITHUB");
+
+      const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
+        source: E_INTEGRATION_KEYS.GITHUB,
+        workspace_id: workspaceId,
+      });
 
       // If there are no credentials, this simply means that there is nothing
       // installed for the workspace, so we return an empty array
@@ -462,7 +521,7 @@ class GithubController {
         const service = createGithubService(
           env.GITHUB_APP_ID,
           env.GITHUB_PRIVATE_KEY,
-          // @ts-ignore
+          // @ts-expect-error
           githubCredentials.source_access_token
         );
 
@@ -477,7 +536,7 @@ class GithubController {
       await Promise.all(repoPromises);
       res.status(200).json(repositories);
     } catch (error) {
-      responseHandler(res, 500, error);
+      return responseHandler(res, 500, error);
     }
   }
   /* -------------------- Data Endpoints -------------------- */
@@ -553,7 +612,7 @@ class GithubController {
         if (event == "issue") {
           const labels = req.body.data.labels as ExIssueLabel[];
           // If labels doesn't include github label, then we don't need to process this event
-          if (!labels.find((label) => label.name.toLowerCase() === "github")) {
+          if (!labels.find((label) => label.name.toLowerCase() === E_INTEGRATION_KEYS.GITHUB)) {
             return;
           }
 
@@ -612,5 +671,3 @@ function parseAccessToken(response: string): string {
     throw error;
   }
 }
-
-export default GithubController;

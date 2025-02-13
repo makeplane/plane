@@ -1,16 +1,19 @@
-import { MQ, Store } from "@/apps/engine/worker/base";
+import { MQ, Store } from "@/worker/base";
 import { GithubEntityConnection, GithubWorkspaceConnection } from "@/apps/github/types";
-import { getCredentialsByWorkspaceId } from "@/db/query";
 import { env } from "@/env";
 import { getConnectionDetailsForPlane } from "@/helpers/connection";
 import { logger } from "@/logger";
 import { TaskHeaders } from "@/types";
 // plane imports
 import { ExIssue, ExIssueComment, Client as PlaneClient, PlaneWebhookPayload } from "@plane/sdk";
-import { TServiceCredentials } from "@plane/etl/core";
 import { createGithubService, GithubService, ContentParser } from "@plane/etl/github";
 
 import { imagePrefix } from "./issue.handler";
+import { getAPIClient } from "@/services/client";
+import { TWorkspaceCredential } from "@plane/types";
+import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS } from "@plane/etl/core";
+
+const apiClient = getAPIClient();
 
 export const handleIssueCommentWebhook = async (
   headers: TaskHeaders,
@@ -42,20 +45,30 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
       payload.project
     );
 
+    if(!workspaceConnection.target_hostname || !credentials.target_access_token) {
+      logger.error("Target hostname or target access token not found");
+      return
+    }
+
     const planeClient = new PlaneClient({
-      baseURL: workspaceConnection.targetHostname,
+      baseURL: workspaceConnection.target_hostname,
       apiToken: credentials.target_access_token,
     });
 
     // Get the issue associated with the comment
     const issue = await planeClient.issue.getIssue(
-      entityConnection.workspaceSlug,
-      entityConnection.projectId ?? "",
+      entityConnection.workspace_slug,
+      entityConnection.project_id ?? "",
       payload.issue
     );
 
     if (!issue || !issue.external_id || !issue.external_source) {
       return logger.info(`Issue ${payload.issue} not synced with GitHub, aborting comment sync`);
+    }
+
+    if(!credentials.source_access_token) {
+      logger.error("Source access token not found");
+      return  
     }
 
     const githubService = createGithubService(
@@ -65,8 +78,8 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
     );
 
     const comment = await planeClient.issueComment.getComment(
-      entityConnection.workspaceSlug,
-      entityConnection.projectId ?? "",
+      entityConnection.workspace_slug,
+      entityConnection.project_id ?? "",
       payload.issue,
       payload.id
     );
@@ -84,16 +97,16 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
     if (
       !comment.external_id ||
       !comment.external_source ||
-      (comment.external_source && comment.external_source !== "GITHUB")
+      (comment.external_source && comment.external_source !== E_INTEGRATION_KEYS.GITHUB)
     ) {
       await planeClient.issueComment.update(
-        entityConnection.workspaceSlug,
-        entityConnection.projectId ?? "",
+        entityConnection.workspace_slug,
+        entityConnection.project_id ?? "",
         payload.issue,
         payload.id,
         {
           external_id: githubComment.data.id.toString(),
-          external_source: "GITHUB",
+          external_source: E_INTEGRATION_KEYS.GITHUB,
         }
       );
     }
@@ -108,23 +121,22 @@ const createOrUpdateGitHubComment = async (
   comment: ExIssueComment,
   workspaceConnection: GithubWorkspaceConnection,
   entityConnection: GithubEntityConnection,
-  credentials: TServiceCredentials
+  credentials: TWorkspaceCredential
 ) => {
-  const owner = (entityConnection.entitySlug ?? "").split("/")[0];
-  const repo = (entityConnection.entitySlug ?? "").split("/")[1];
+  const owner = (entityConnection.entity_slug ?? "").split("/")[0];
+  const repo = (entityConnection.entity_slug ?? "").split("/")[1];
 
-  const assetImagePrefix = imagePrefix + workspaceConnection.workspaceId + "/" + credentials.user_id;
+  const assetImagePrefix = imagePrefix + workspaceConnection.workspace_id + "/" + credentials.user_id;
 
   const htmlToRemove = /Comment (updated|created) on GitHub By \[(.*?)\]\((.*?)\)/gim;
   const cleanHtml = comment.comment_html.replace(htmlToRemove, "");
   const markdown = ContentParser.toMarkdown(cleanHtml, assetImagePrefix);
 
   // Find the credentials for the comment creator
-  const userCredentials = await getCredentialsByWorkspaceId(
-    entityConnection.workspaceId,
-    comment.created_by,
-    "GITHUB-USER"
-  );
+  const userCredentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
+    source: E_ENTITY_CONNECTION_KEYS.GITHUB_USER,
+    workspace_id: entityConnection.workspace_id,
+  });
 
   let userGithubService = githubService;
 
@@ -135,7 +147,7 @@ const createOrUpdateGitHubComment = async (
     });
   }
 
-  if (comment.external_id && comment.external_source && comment.external_source === "GITHUB") {
+  if (comment.external_id && comment.external_source && comment.external_source === E_INTEGRATION_KEYS.GITHUB) {
     return userGithubService.updateIssueComment(owner, repo, Number(comment.external_id), markdown);
   } else {
     return userGithubService.createIssueComment(owner, repo, Number(issue.external_id), markdown);

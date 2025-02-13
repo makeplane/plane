@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-// ui
 import { useParams } from "next/navigation";
+// plane imports
+import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
 import { ArchiveIcon, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
-// constants
-import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useIssueDetail, useProjectState } from "@/hooks/store";
 // plane web components
@@ -49,7 +47,9 @@ export const BulkArchiveIssues: React.FC<Props> = observer((props) => {
       )}
       <Tooltip
         tooltipHeading="Archive"
-        tooltipContent={canAllIssuesBeArchived ? "" : "The selected issues are not in the right state group to archive"}
+        tooltipContent={
+          canAllIssuesBeArchived ? "" : "The selected work items are not in the right state group to archive"
+        }
       >
         <button
           type="button"
@@ -61,7 +61,7 @@ export const BulkArchiveIssues: React.FC<Props> = observer((props) => {
               ? setIsBulkArchiveModalOpen(true)
               : setToast({
                   type: TOAST_TYPE.ERROR,
-                  title: "Only cancelled or completed issues can be archived.",
+                  title: "Only cancelled or completed work items can be archived.",
                 });
           }}
         >

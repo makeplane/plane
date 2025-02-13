@@ -42,7 +42,7 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
       changeModulesInIssue(workspaceSlug.toString(), issue.project_id, issue.id, modulesToAdd, modulesToRemove);
 
       captureIssueEvent({
-        eventName: "Issue updated",
+        eventName: "Work item updated",
         payload: {
           ...issue,
           module_ids: moduleIds,

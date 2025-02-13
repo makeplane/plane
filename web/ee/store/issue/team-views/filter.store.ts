@@ -17,7 +17,7 @@ import {
 // helpers
 import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
 // plane web services
-import { TeamViewService } from "@/plane-web/services/teams/team-views.service";
+import { TeamspaceViewService } from "@/plane-web/services/teamspace/teamspace-views.service";
 // store
 import { IBaseIssueFilterStore, IssueFilterHelperStore } from "@/store/issue/helpers/issue-filter-helper.store";
 import { IIssueRootStore } from "@/store/issue/root.store";
@@ -33,10 +33,10 @@ export interface ITeamViewIssuesFilter extends IBaseIssueFilterStore {
   ) => Partial<Record<TIssueParams, string | boolean>>;
   getIssueFilters(viewId: string): IIssueFilters | undefined;
   // action
-  fetchFilters: (workspaceSlug: string, teamId: string, viewId: string) => Promise<void>;
+  fetchFilters: (workspaceSlug: string, teamspaceId: string, viewId: string) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
-    teamId: string,
+    teamspaceId: string,
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
     viewId: string
@@ -49,7 +49,7 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
   // root store
   rootIssueStore;
   // services
-  teamViewService;
+  teamspaceViewService;
 
   constructor(_rootStore: IIssueRootStore) {
     super();
@@ -66,7 +66,7 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
     // root store
     this.rootIssueStore = _rootStore;
     // services
-    this.teamViewService = new TeamViewService();
+    this.teamspaceViewService = new TeamspaceViewService();
   }
 
   get issueFilters() {
@@ -123,9 +123,9 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
     }
   );
 
-  fetchFilters = async (workspaceSlug: string, teamId: string, viewId: string) => {
+  fetchFilters = async (workspaceSlug: string, teamspaceId: string, viewId: string) => {
     try {
-      const _filters = await this.teamViewService.getViewDetails(workspaceSlug, teamId, viewId);
+      const _filters = await this.teamspaceViewService.getViewDetails(workspaceSlug, teamspaceId, viewId);
 
       const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
       const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
@@ -155,14 +155,14 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
         set(this.filters, [viewId, "kanbanFilters"], kanbanFilters);
       });
     } catch (error) {
-      console.log("error while fetching team view filters", error);
+      console.log("error while fetching teamspace view filters", error);
       throw error;
     }
   };
 
   updateFilters = async (
     workspaceSlug: string,
-    teamId: string,
+    teamspaceId: string,
     type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
     viewId: string
@@ -190,7 +190,7 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
 
           this.rootIssueStore.teamViewIssues.fetchIssuesWithExistingPagination(
             workspaceSlug,
-            teamId,
+            teamspaceId,
             viewId,
             "mutation"
           );
@@ -236,7 +236,7 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
             this.rootIssueStore.teamViewIssues.fetchIssuesWithExistingPagination(
               workspaceSlug,
-              teamId,
+              teamspaceId,
               viewId,
               "mutation"
             );
@@ -286,7 +286,7 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
           break;
       }
     } catch (error) {
-      if (viewId) this.fetchFilters(workspaceSlug, teamId, viewId);
+      if (viewId) this.fetchFilters(workspaceSlug, teamspaceId, viewId);
       throw error;
     }
   };

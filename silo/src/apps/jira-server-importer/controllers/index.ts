@@ -1,15 +1,15 @@
-import { Controller, Get, Post } from "@/lib";
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 // etl
-import { createJiraService, JiraProject, JiraV2Service } from "@plane/etl/jira-server";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { JiraResource } from "@plane/etl/jira";
+import { createJiraService, JiraProject, JiraV2Service } from "@plane/etl/jira-server";
 // db
-import { createOrUpdateCredentials, getCredentialsByWorkspaceId } from "@/db/query";
 // helpers
-import { createPlaneClient } from "@/helpers/utils";
 import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
-import { getValidCredentials } from "@/helpers/credential";
+import { createOrUpdateCredentials, getValidCredentials } from "@/helpers/credential";
 import { responseHandler } from "@/helpers/response-handler";
+import { createPlaneClient } from "@/helpers/utils";
+import { Controller, Get, Post, useValidateUserAuthentication } from "@/lib";
 
 @Controller("/api/jira-server")
 class JiraDataCenterController {
@@ -32,20 +32,20 @@ class JiraDataCenterController {
           hostname: hostname,
         });
 
-        await jiraService.getResourceProjects();
+        await jiraService.getCurrentUser();
       } catch (error: any) {
         return res.status(401).send({ message: "Invalid personal access token" });
       }
 
       // Create or update the credentials
-      const credential = await createOrUpdateCredentials(workspaceId, userId, {
+      const credential = await createOrUpdateCredentials(workspaceId, userId, E_IMPORTER_KEYS.JIRA_SERVER, {
         source_access_token: personalAccessToken,
         target_access_token: apiToken,
-        user_email: userEmail,
+        source_auth_email: userEmail,
         source_hostname: hostname,
-        source: "JIRA_SERVER",
+        source: E_IMPORTER_KEYS.JIRA_SERVER,
         workspace_id: workspaceId,
-        isPAT: true,
+        is_pat: true,
       });
 
       res.status(200).json(credential);
@@ -55,13 +55,14 @@ class JiraDataCenterController {
   }
 
   @Post("/resources")
+  @useValidateUserAuthentication()
   async getResources(req: Request, res: Response) {
     const { workspaceId, userId } = req.body;
 
     try {
-      const jiraClient = await createJiraClient(workspaceId, userId);
+      const jiraClient = await createJiraServerClient(workspaceId, userId);
       const serverInfo = await jiraClient.getServerInfo();
-      // @ts-ignore
+      // @ts-expect-error
       const resource: JiraResource = {
         id: serverInfo.scmInfo ?? "",
         url: serverInfo.baseUrl ?? "",
@@ -74,11 +75,12 @@ class JiraDataCenterController {
   }
 
   @Post("/projects")
+  @useValidateUserAuthentication()
   async getProjects(req: Request, res: Response) {
     const { workspaceId, userId } = req.body;
 
     try {
-      const jiraClient = await createJiraClient(workspaceId, userId);
+      const jiraClient = await createJiraServerClient(workspaceId, userId);
       const projects: JiraProject[] = await jiraClient.getResourceProjects();
       return res.json(projects);
     } catch (error: any) {
@@ -87,11 +89,12 @@ class JiraDataCenterController {
   }
 
   @Post("/states")
+  @useValidateUserAuthentication()
   async getStates(req: Request, res: Response) {
     const { workspaceId, userId, projectId } = req.body;
 
     try {
-      const jiraClient = await createJiraClient(workspaceId, userId);
+      const jiraClient = await createJiraServerClient(workspaceId, userId);
       const statuses = await jiraClient.getProjectStatuses(projectId);
       return res.json(statuses);
     } catch (error: any) {
@@ -100,11 +103,12 @@ class JiraDataCenterController {
   }
 
   @Post("/priorities")
+  @useValidateUserAuthentication()
   async getPriority(req: Request, res: Response) {
     const { workspaceId, userId } = req.body;
 
     try {
-      const jiraClient = await createJiraClient(workspaceId, userId);
+      const jiraClient = await createJiraServerClient(workspaceId, userId);
       const priorities = await jiraClient.getIssuePriorities();
       return res.json(priorities);
     } catch (error: any) {
@@ -113,11 +117,12 @@ class JiraDataCenterController {
   }
 
   @Post("/labels")
+  @useValidateUserAuthentication()
   async getLabels(req: Request, res: Response) {
     const { workspaceId, userId, projectId } = req.body;
 
     try {
-      const jiraClient = await createJiraClient(workspaceId, userId);
+      const jiraClient = await createJiraServerClient(workspaceId, userId);
       const labels = await jiraClient.getAllProjectLabels(projectId);
       return res.json(labels);
     } catch (error: any) {
@@ -126,11 +131,12 @@ class JiraDataCenterController {
   }
 
   @Post("/issue-count")
+  @useValidateUserAuthentication()
   async getIssueCount(req: Request, res: Response) {
     const { workspaceId, userId, projectId } = req.body;
 
     try {
-      const jiraClient = await createJiraClient(workspaceId, userId);
+      const jiraClient = await createJiraServerClient(workspaceId, userId);
       const issueCount = await jiraClient.getNumberOfIssues(projectId);
       return res.json({
         count: issueCount,
@@ -141,11 +147,12 @@ class JiraDataCenterController {
   }
 
   @Post("/issue-types")
+  @useValidateUserAuthentication()
   async getIssueTypes(req: Request, res: Response) {
     const { workspaceId, userId, projectId } = req.body;
 
     try {
-      const jiraClient = await createJiraClient(workspaceId, userId);
+      const jiraClient = await createJiraServerClient(workspaceId, userId);
       const statuses = await jiraClient.getProjectIssueTypes(projectId);
       return res.json(statuses);
     } catch (error: any) {
@@ -154,13 +161,14 @@ class JiraDataCenterController {
   }
 
   @Get("/additional-users/:workspaceId/:workspaceSlug/:userId")
+  @useValidateUserAuthentication()
   async getUserDifferential(req: Request, res: Response) {
     const { workspaceId, workspaceSlug, userId } = req.params;
 
     try {
       const [planeClient, jiraClient] = await Promise.all([
-        createPlaneClient(workspaceId, userId, "JIRA_SERVER"),
-        createJiraClient(workspaceId, userId),
+        createPlaneClient(workspaceId, userId, E_IMPORTER_KEYS.JIRA_SERVER),
+        createJiraServerClient(workspaceId, userId),
       ]);
       const [workspaceMembers, jiraActiveMembers] = await Promise.all([
         planeClient.users.listAllUsers(workspaceSlug),
@@ -179,10 +187,10 @@ class JiraDataCenterController {
   }
 }
 
-const createJiraClient = async (workspaceId: string, userId: string): Promise<JiraV2Service> => {
-  const jiraCredentials = await getValidCredentials(workspaceId, userId, "JIRA_SERVER");
+export const createJiraServerClient = async (workspaceId: string, userId: string): Promise<JiraV2Service> => {
+  const jiraCredentials = await getValidCredentials(workspaceId, userId, E_IMPORTER_KEYS.JIRA_SERVER);
 
-  if (!jiraCredentials.source_hostname || !jiraCredentials.source_access_token || !jiraCredentials.user_email) {
+  if (!jiraCredentials.source_hostname || !jiraCredentials.source_access_token || !jiraCredentials.source_auth_email) {
     throw new Error("Invalid Jira credentials");
   }
 

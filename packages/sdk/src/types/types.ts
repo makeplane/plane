@@ -168,6 +168,7 @@ export type ExIssueAttachment = {
   };
   asset: string;
   issue_id: string;
+  is_uploaded: boolean;
 
   //need
   updated_at: string;
@@ -332,6 +333,7 @@ export interface UploadData {
 }
 
 export interface AttachmentResponse {
+  already_exists: boolean;
   asset_id: string;
   upload_data: UploadData;
   attachment: Attachment;

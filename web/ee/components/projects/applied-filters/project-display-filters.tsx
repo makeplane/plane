@@ -1,10 +1,10 @@
 import { observer } from "mobx-react";
 // icons
 import { X } from "lucide-react";
-// types
+// plane imports
+import { PROJECT_DISPLAY_FILTER_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TProjectAppliedDisplayFilterKeys } from "@plane/types";
-// constants
-import { PROJECT_DISPLAY_FILTER_OPTIONS } from "@/constants/project";
 
 type Props = {
   handleRemove: (key: TProjectAppliedDisplayFilterKeys) => void;
@@ -14,14 +14,16 @@ type Props = {
 
 export const AppliedProjectDisplayFilters: React.FC<Props> = observer((props) => {
   const { handleRemove, values, editable } = props;
+  // plane imports
+  const { t } = useTranslation();
 
   return (
     <>
       {values.map((key) => {
-        const filterLabel = PROJECT_DISPLAY_FILTER_OPTIONS.find((s) => s.key === key)?.label;
+        const filterLabel = PROJECT_DISPLAY_FILTER_OPTIONS.find((s) => s.key === key)?.i18n_label;
         return (
           <div key={key} className="flex items-center gap-1 rounded p-1 text-xs bg-custom-background-80">
-            {filterLabel}
+            {filterLabel ? t(filterLabel) : null}
             {editable && (
               <button
                 type="button"

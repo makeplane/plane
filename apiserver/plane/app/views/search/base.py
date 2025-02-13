@@ -37,11 +37,11 @@ from plane.db.models import (
     WorkspaceMember,
 )
 from plane.ee.models import (
-    TeamSpaceMember,
-    TeamSpacePage,
-    TeamSpaceProject,
+    TeamspaceMember,
+    TeamspacePage,
+    TeamspaceProject,
     Initiative,
-    TeamSpace,
+    Teamspace,
 )
 
 
@@ -274,7 +274,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             q |= Q(**{f"{field}__icontains": query})
 
         return (
-            TeamSpace.objects.filter(
+            Teamspace.objects.filter(
                 q, workspace__slug=slug, members__member_id=self.request.user.id
             )
             .distinct()
@@ -339,7 +339,7 @@ class SearchEndpoint(BaseAPIView):
         response_data = {}
 
         if team_id:
-            team_projects = TeamSpaceProject.objects.filter(
+            team_projects = TeamspaceProject.objects.filter(
                 team_space_id=team_id, workspace__slug=slug
             ).values_list("project_id", flat=True)
 
@@ -357,7 +357,7 @@ class SearchEndpoint(BaseAPIView):
                             q |= Q(**{f"{field}__icontains": query})
 
                     users = (
-                        TeamSpaceMember.objects.filter(
+                        TeamspaceMember.objects.filter(
                             q,
                             workspace__slug=slug,
                             member__is_bot=False,
@@ -530,11 +530,11 @@ class SearchEndpoint(BaseAPIView):
                     response_data["module"] = list(modules)
 
                 elif query_type == "page":
-                    member_ids = TeamSpaceMember.objects.filter(
+                    member_ids = TeamspaceMember.objects.filter(
                         team_space_id=team_id
                     ).values_list("member_id", flat=True)
 
-                    team_space_pages = TeamSpacePage.objects.filter(
+                    team_space_pages = TeamspacePage.objects.filter(
                         workspace__slug=slug, team_space_id=team_id
                     ).values_list("page_id", flat=True)
 

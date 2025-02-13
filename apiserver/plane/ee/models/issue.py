@@ -251,6 +251,7 @@ class EntityUpdates(BaseModel):
     )
     entity_type = models.CharField(max_length=30, choices=EntityTypeEnum.choices)
     description = models.TextField(blank=True)
+    description_html = models.TextField(blank=True, default="<p></p>")
     status = models.CharField(max_length=30)
     parent = models.ForeignKey(
         "self",

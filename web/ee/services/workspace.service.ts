@@ -1,6 +1,6 @@
+// plane imports
+import { EViewAccess } from "@plane/constants";
 import { ISearchIssueResponse, TWorkspaceEpicsSearchParams } from "@plane/types";
-// constants
-import { EViewAccess } from "@/constants/views";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // types

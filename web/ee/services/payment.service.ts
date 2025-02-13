@@ -1,4 +1,4 @@
-import { IPaymentProduct, IWorkspaceProductSubscription, TMemberInviteCheck } from "@plane/types";
+import { IPaymentProduct, IWorkspaceProductSubscription, TMemberInviteCheck, TProrationPreview } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -101,6 +101,35 @@ export class PaymentService extends APIService {
    */
   async removeUnusedSeats(workspaceSlug: string): Promise<{ seats: number }> {
     return this.post(`/api/payments/workspaces/${workspaceSlug}/subscriptions/seats/remove-unused/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description canceling the free trial
+   * @param { string } workspaceSlug
+   * @returns { Promise<void> }
+   */
+  async cancelFreeTrial(workspaceSlug: string): Promise<void> {
+    return this.post(`/api/payments/workspaces/${workspaceSlug}/subscriptions/cancel-trial/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description fetching proration preview
+   * @param { string } workspaceSlug
+   * @param { number } quantity
+   * @returns { Promise<TProrationPreview> }
+   */
+  async fetchProrationPreview(workspaceSlug: string, quantity: number): Promise<TProrationPreview> {
+    return this.post(`/api/payments/workspaces/${workspaceSlug}/subscriptions/proration-preview/`, {
+      quantity,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

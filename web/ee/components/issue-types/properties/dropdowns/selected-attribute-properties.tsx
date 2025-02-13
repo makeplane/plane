@@ -1,4 +1,8 @@
 import { observer } from "mobx-react";
+// plane imports
+import { EIssuePropertyType } from "@plane/constants";
+import { TIssueProperty, TOperationMode, TIssuePropertyTypeKeys } from "@plane/types";
+import { getIssuePropertyTypeKey } from "@plane/utils";
 // plane web components
 import {
   BooleanAttributes,
@@ -9,10 +13,6 @@ import {
   TextAttributes,
   TIssuePropertyFormError,
 } from "@/plane-web/components/issue-types/properties";
-// plane web helpers
-import { getIssuePropertyTypeKey } from "@/plane-web/helpers/issue-properties.helper";
-// plane web types
-import { EIssuePropertyType, TIssueProperty, TOperationMode, TIssuePropertyTypeKeys } from "@/plane-web/types";
 
 type TSelectedPropertyAttributesProps = {
   issueTypeId: string;

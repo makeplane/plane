@@ -26,6 +26,7 @@ export type TInitiative = {
   workspace: string;
   lead: string | null;
   project_ids: string[] | null;
+  epic_ids: string[] | null;
 };
 
 export type TInitiativeProject = {

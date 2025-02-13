@@ -3,7 +3,7 @@ import { TaskHandler, TaskHeaders } from "@/types";
 import { TSlackPayload } from "@plane/etl/slack";
 import { handleMessageAction } from "./handlers/message-action";
 import { handleBlockActions } from "./handlers/block-actions";
-import { MQ, Store } from "@/apps/engine/worker/base";
+import { MQ, Store } from "@/worker/base";
 import { handleViewSubmission } from "./handlers/view-submission";
 import { handleSlackEvent } from "./handlers/handle-message";
 import { handleCommand } from "./handlers/handle-command";

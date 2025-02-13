@@ -1,7 +1,7 @@
-import { EntityConnection, WorkspaceConnection } from "@/types";
 import { TServiceCredentials } from "@plane/etl/core";
 import { z } from "zod";
 import { MergeRequestEvent } from "../helpers/helpers";
+import { TWorkspaceConnection, TWorkspaceCredential, TWorkspaceEntityConnection } from "@plane/types";
 
 const webhooksUserSchema = z.object({
   avatar_url: z.string().url().optional(),
@@ -46,7 +46,8 @@ export const githubWorkspaceConnectionSchema = z.object({
 
 export type GithubUserMap = z.infer<typeof userMapSchema>;
 
-export type GithubWorkspaceConnection = WorkspaceConnection<typeof githubWorkspaceConnectionSchema>;
+export type GithubWorkspaceConnection = TWorkspaceConnection<z.infer<typeof githubWorkspaceConnectionSchema>>;
+let x: GithubWorkspaceConnection;
 
 const exStateSchema = z.object({
   id: z.string(),
@@ -59,15 +60,15 @@ export const githubEntityConnectionSchema = z.object({
   }),
 });
 
-export type GithubEntityConnection = EntityConnection<typeof githubEntityConnectionSchema>;
+export type GithubEntityConnection = TWorkspaceEntityConnection<z.infer<typeof githubEntityConnectionSchema>>;
 
-export type GithubConnectionDetails = {
+export type GithubConnectionDetails =  {
   workspaceConnection: GithubWorkspaceConnection;
   entityConnection: GithubEntityConnection;
 };
 
 export type PlaneConnectionDetails = {
-  credentials: TServiceCredentials;
+  credentials: TWorkspaceCredential;
   entityConnection: GithubEntityConnection;
   workspaceConnection: GithubWorkspaceConnection;
 };

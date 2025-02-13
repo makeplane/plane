@@ -53,7 +53,20 @@ class InitiativeEndpoint(BaseAPIView):
                         .values("project_ids")
                     ),
                     [],
-                )
+                ),
+                epic_ids=Coalesce(
+                    Subquery(
+                        InitiativeEpic.objects.filter(
+                            initiative_id=OuterRef("pk"),
+                            workspace__slug=self.kwargs.get("slug"),
+                        )
+                        .filter(epic__project__deleted_at__isnull=True)
+                        .values("initiative_id")
+                        .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
+                        .values("epic_ids")
+                    ),
+                    [],
+                ),
             )
             .order_by(self.kwargs.get("order_by", "-created_at"))
             .distinct()
@@ -77,7 +90,20 @@ class InitiativeEndpoint(BaseAPIView):
                             .values("project_ids")
                         ),
                         [],
-                    )
+                    ),
+                    epic_ids=Coalesce(
+                        Subquery(
+                            InitiativeEpic.objects.filter(
+                                initiative_id=OuterRef("pk"),
+                                workspace__slug=self.kwargs.get("slug"),
+                            )
+                            .filter(epic__project__deleted_at__isnull=True)
+                            .values("initiative_id")
+                            .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
+                            .values("epic_ids")
+                        ),
+                        [],
+                    ),
                 )
                 .annotate(
                     link_count=InitiativeLink.objects.filter(
@@ -106,7 +132,9 @@ class InitiativeEndpoint(BaseAPIView):
                 )
                 .first()
             )
+
             serializer = InitiativeSerializer(initiative)
+
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         # Get all initiatives in workspace
@@ -118,13 +146,6 @@ class InitiativeEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
-        project_ids = request.data.get("project_ids", [])
-
-        if not project_ids:
-            return Response(
-                {"error": "Project id's are required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
         serializer = InitiativeSerializer(
             data=request.data,
@@ -149,6 +170,7 @@ class InitiativeEndpoint(BaseAPIView):
             )
 
         initiative = self.get_queryset().get(pk=serializer.data.get("id"))
+
         serializer = InitiativeSerializer(initiative)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -168,18 +190,34 @@ class InitiativeEndpoint(BaseAPIView):
                         .values("project_ids")
                     ),
                     [],
-                )
+                ),
+                epic_ids=Coalesce(
+                    Subquery(
+                        InitiativeEpic.objects.filter(
+                            initiative_id=OuterRef("pk"), workspace__slug=slug
+                        )
+                        .filter(epic__project__deleted_at__isnull=True)
+                        .values("initiative_id")
+                        .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
+                        .values("epic_ids")
+                    ),
+                    [],
+                ),
             )
             .first()
         )
+
         current_instance = json.dumps(
             InitiativeSerializer(initiative).data, cls=DjangoJSONEncoder
         )
+
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+
         serializer = InitiativeSerializer(initiative, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
+
             initiative_activity.delay(
                 type="initiative.activity.updated",
                 slug=slug,
@@ -191,6 +229,9 @@ class InitiativeEndpoint(BaseAPIView):
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
             )
+            initiative = self.get_queryset().get(pk=pk)
+            serializer = InitiativeSerializer(initiative)
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -467,9 +508,13 @@ class InitiativeEpicAnalytics(BaseAPIView):
     @check_feature_flag(FeatureFlag.INITIATIVES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, initiative_id):
-        initiative_epic = InitiativeEpic.objects.filter(
-            workspace__slug=slug, initiative_id=initiative_id
-        ).values_list("epic_id", flat=True)
+        initiative_epic = (
+            InitiativeEpic.objects.filter(
+                workspace__slug=slug, initiative_id=initiative_id
+            )
+            .filter(epic__project__deleted_at__isnull=True)
+            .values_list("epic_id", flat=True)
+        )
 
         # fetch all the issues in which user is part of
         issues = Issue.objects.filter(
@@ -479,21 +524,16 @@ class InitiativeEpicAnalytics(BaseAPIView):
         )
         result = []
         for epic_id in initiative_epic:
-
             # get all the issues of the particular epic
             issue_ids = get_all_related_issues(epic_id)
 
             completed_issues = (
-                issues.filter(
-                    id__in=issue_ids, workspace__slug=slug
-                )
+                issues.filter(id__in=issue_ids, workspace__slug=slug)
                 .filter(state__group="completed")
                 .count()
             )
 
-            total_issues = issues.filter(
-                id__in=issue_ids, workspace__slug=slug
-            ).count()
+            total_issues = issues.filter(id__in=issue_ids, workspace__slug=slug).count()
 
             result.append(
                 {

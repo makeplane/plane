@@ -17,7 +17,23 @@ from plane.app.permissions.workspace import WorkSpaceBasePermission
 
 class WorkspaceCredentialView(BaseAPIView):
     permission_classes = [WorkSpaceBasePermission]
-    
+
+    @check_feature_flag(FeatureFlag.SILO)
+    def delete(self, request, slug, pk):
+        credential = WorkspaceCredential.objects.filter(pk=pk).first()
+        if not credential:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        serializer = WorkspaceCredentialSerializer(
+            credential, data={"is_active": False}, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class VerifyWorkspaceCredentialView(BaseAPIView):
+    permission_classes = [WorkSpaceBasePermission]
+
     @check_feature_flag(FeatureFlag.SILO)
     def get(self, request, slug):
         # Extract `source` from query params
@@ -27,7 +43,9 @@ class WorkspaceCredentialView(BaseAPIView):
         # Fetch credentials using a service function
         workspace = Workspace.objects.filter(slug=slug).first()
         workspace_id = workspace.id
-        credentials = WorkspaceCredential.objects.filter(workspace_id=workspace_id, user_id=user_id, source=source).first()
+        credentials = WorkspaceCredential.objects.filter(
+            workspace_id=workspace_id, user_id=user_id, source=source
+        ).first()
 
         # Determine if OAuth is enabled for the given source
         is_oauth_enabled = False
@@ -36,7 +54,9 @@ class WorkspaceCredentialView(BaseAPIView):
         elif source == "jira":
             is_oauth_enabled = getattr(settings, "JIRA_OAUTH_ENABLED", "0") == "1"
         elif source == "jira_server":
-            is_oauth_enabled = getattr(settings, "JIRA_SERVER_OAUTH_ENABLED", "0") == "1"
+            is_oauth_enabled = (
+                getattr(settings, "JIRA_SERVER_OAUTH_ENABLED", "0") == "1"
+            )
         elif source == "asana":
             is_oauth_enabled = getattr(settings, "ASANA_OAUTH_ENABLED", "0") == "1"
 
@@ -53,27 +73,12 @@ class WorkspaceCredentialView(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.SILO)
-    def delete(self, request, slug, pk):
-        credential = WorkspaceCredential.objects.filter(pk=pk).first()
-        if not credential:
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        serializer = WorkspaceCredentialSerializer(credential, data={"is_active": False}, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class VerifyWorkspaceCredentialView(BaseAPIView):
-    permission_classes = [WorkSpaceBasePermission]
-    @check_feature_flag(FeatureFlag.SILO)
     def post(self, request, slug, pk):
         credential = WorkspaceCredential.objects.filter(pk=pk).first()
         token = request.data.get("token", None)
 
         serializer = WorkspaceCredentialSerializer(
-            credential, 
-            data={"token": token}, 
-            partial=True
+            credential, data={"token": token}, partial=True
         )
 
         if serializer.is_valid():

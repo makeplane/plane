@@ -1,14 +1,16 @@
 import React, { FC, useState } from "react";
 import { useParams } from "next/navigation";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { EFileAssetType } from "@plane/types/src/enums";
-import { cn } from "@plane/utils";
 import { Button, Input, setToast, TOAST_TYPE } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { DateRangeDropdown, MemberDropdown, ProjectDropdown } from "@/components/dropdowns";
 import { RichTextEditor } from "@/components/editor";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
+import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 // hooks
 import { useMember, useWorkspace } from "@/hooks/store";
 // plane web hooks
@@ -17,6 +19,7 @@ import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-sea
 import { TInitiative } from "@/plane-web/types/initiative";
 // services
 import { FileService } from "@/services/file.service";
+import { EpicsDropdown } from "../../dropdowns";
 
 const fileService = new FileService();
 
@@ -40,6 +43,8 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
+
+  const { t } = useTranslation();
   // use editor mention search
   const { searchEntity } = useEditorMentionSearch({
     memberIds: workspaceMemberIds ?? [],
@@ -48,10 +53,7 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
   const validateForm = (data: Partial<TInitiative>) => {
     const newErrors: { name?: string; project_ids?: string } = {};
     if (!data.name || data.name.trim() === "") {
-      newErrors.name = "Name is required";
-    }
-    if (!data.project_ids || data.project_ids.length === 0) {
-      newErrors.project_ids = "Project is required";
+      newErrors.name = t("name_is_required");
     }
 
     setErrors(newErrors);
@@ -74,15 +76,16 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
         } else {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: errors.project_ids || errors.name || "Please fill in all required fields.",
+            title: t("toast.error"),
+            message: errors.project_ids || errors.name || t("initiatives.fill_all_required_fields"),
           });
         }
       }}
     >
       <div className="space-y-3 p-5 pb-4">
-        <h3 className="text-xl font-medium text-custom-text-200">{formData.id ? "Update" : "Create"} Initiative</h3>
-
+        <h3 className="text-xl font-medium text-custom-text-200">
+          {formData.id ? t("initiatives.update_initiative") : t("initiatives.create_initiative")}
+        </h3>
         <div className={cn("flex items-center gap-2 w-full", errors.name && "items-start")}>
           <div className="space-y-1 flew-grow w-full">
             <Input
@@ -90,7 +93,7 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
               type="text"
               value={formData.name}
               onChange={(e) => handleNameChange(e.target.value)}
-              placeholder="Initiative name"
+              placeholder={t("initiatives.initiative_name")}
               className="w-full resize-none text-base"
               hasError={Boolean(errors.name)}
               tabIndex={1}
@@ -104,14 +107,13 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
           initialValue={
             !formData?.description_html || formData?.description_html === "" ? "<p></p>" : formData?.description_html
           }
-          value={formData?.description_html}
           workspaceSlug={workspaceSlug.toString()}
           workspaceId={currentWorkspace.id}
           dragDropEnabled={false}
           onChange={(description_json: object, description_html: string) => {
             handleFormDataChange("description_html", description_html);
           }}
-          placeholder={getDescriptionPlaceholder}
+          placeholder={(isFocused, description) => t(`${getDescriptionPlaceholderI18n(isFocused, description)}`)}
           searchMentionCallback={searchEntity}
           editorClassName="text-xs"
           containerClassName="resize-none min-h-24 text-xs border-[0.5px] border-custom-border-200 rounded-md px-3 py-2"
@@ -128,7 +130,7 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
               );
               return asset_id;
             } catch (error) {
-              console.log("Error in uploading issue asset:", error);
+              console.log("Error in uploading initiative asset:", error);
               throw new Error("Asset upload failed. Please try again later.");
             }
           }}
@@ -147,6 +149,21 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
               tabIndex={2}
             />
           </div>
+          <div className="h-7">
+            <EpicsDropdown
+              buttonVariant={"border-with-text"}
+              onChange={(val) => {
+                handleFormDataChange("epic_ids", val);
+              }}
+              value={formData.epic_ids || []}
+              multiple
+              showTooltip
+              tabIndex={2}
+              searchParams={{
+                initiative_id: initiativeDetail?.id,
+              }}
+            />
+          </div>
 
           <DateRangeDropdown
             buttonVariant="border-with-text"
@@ -160,8 +177,8 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
               handleFormDataChange("end_date", val?.to ? renderFormattedPayloadDate(val.to) : null);
             }}
             placeholder={{
-              from: "Start date",
-              to: "End date",
+              from: t("start_date"),
+              to: t("end_date"),
             }}
             hideIcon={{
               to: true,
@@ -175,7 +192,7 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
               onChange={(val) => handleFormDataChange("lead", val)}
               multiple={false}
               buttonVariant="border-with-text"
-              placeholder="Lead"
+              placeholder={t("lead")}
               tabIndex={4}
               showUserDetails
             />
@@ -184,16 +201,16 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
         <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={5}>
-          Cancel
+          {t("cancel")}
         </Button>
         <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={6}>
           {initiativeDetail
             ? isSubmitting
-              ? "Updating"
-              : "Update Initiative"
+              ? t("common.updating")
+              : t("initiatives.update_initiative")
             : isSubmitting
-              ? "Creating"
-              : "Create Initiative"}
+              ? t("common.creating")
+              : t("initiatives.create_initiative")}
         </Button>
       </div>
     </form>

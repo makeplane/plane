@@ -12,6 +12,7 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 import { useAsanaImporter } from "@/plane-web/hooks/store";
 // plane web types
 import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers/asana";
+import { useTranslation } from "@plane/i18n";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.CONFIGURE_ASANA];
 
@@ -20,6 +21,7 @@ const currentStepKey = E_IMPORTER_STEPS.CONFIGURE_ASANA;
 export const ConfigureAsanaRoot: FC = observer(() => {
   // hooks
   const { importerData, handleImporterData, currentStep, handleStepper } = useAsanaImporter();
+  const {t} = useTranslation();
   // states
   const [formData, setFormData] = useState<TFormData>({
     workspaceGid: undefined,
@@ -72,7 +74,7 @@ export const ConfigureAsanaRoot: FC = observer(() => {
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
           <Button variant="primary" size="sm" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
-            Next
+            {t('common.next')}
           </Button>
         </StepperNavigation>
       </div>

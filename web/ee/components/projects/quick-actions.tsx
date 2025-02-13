@@ -2,11 +2,15 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArchiveRestoreIcon, LinkIcon, MoreHorizontal, Settings, Trash2 } from "lucide-react";
+// plane imports
+import { EUserProjectRoles } from "@plane/constants";
 import { ArchiveIcon, CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
+// components
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
+// helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
+// plane web imports
 import { TProject } from "@/plane-web/types/projects";
 
 type Props = {
@@ -25,8 +29,8 @@ const QuickActions: React.FC<Props> = (props) => {
   const projectLink = `${workspaceSlug}/projects/${project.id}/issues`;
   const isArchived = project.archived_at !== null;
   // auth
-  const isOwner = project.member_role === EUserPermissions.ADMIN;
-  const isMember = project.member_role === EUserPermissions.MEMBER;
+  const isOwner = project.member_role === EUserProjectRoles.ADMIN;
+  const isMember = project.member_role === EUserProjectRoles.MEMBER;
 
   const handleCopyText = () =>
     copyUrlToClipboard(projectLink).then(() =>

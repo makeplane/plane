@@ -1,13 +1,15 @@
-import { TJobWithConfig, TJobStatus, PlaneEntities } from "@plane/etl/core";
-import { MQ, Store } from "@/apps/engine/worker/base";
-import { Lock } from "@/apps/engine/worker/base/lock";
-import { TBatch, UpdateEventType } from "@/apps/engine/worker/types";
-import { updateJob } from "@/db/query";
+import { TJobStatus, PlaneEntities } from "@plane/etl/core";
+import { TImportJob } from "@plane/types";
 import { wait } from "@/helpers/delay";
+import { updateJobWithReport } from "@/helpers/job";
 import { logger } from "@/logger";
 import { SentryInstance } from "@/sentry-config";
+import { getAPIClient } from "@/services/client";
 import { TaskHandler, TaskHeaders } from "@/types";
-import { getJobForMigration, migrateToPlane } from "./migrator";
+import { MQ, Store } from "@/worker/base";
+import { Lock } from "@/worker/base/lock";
+import { TBatch, UpdateEventType } from "@/worker/types";
+import { migrateToPlane } from "./migrator";
 
 export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements TaskHandler {
   private mq: MQ;
@@ -18,23 +20,42 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
     this.store = store;
   }
 
-  abstract batches(job: TJobWithConfig<TJobConfig>): Promise<TBatch<TSourceEntity>[]>;
-  abstract transform(job: TJobWithConfig<TJobConfig>, data: TSourceEntity[], meta: any): Promise<PlaneEntities[]>;
-  abstract getJobData(jobId: string): Promise<TJobWithConfig<TJobConfig>>;
+  abstract batches(job: TImportJob<TJobConfig>): Promise<TBatch<TSourceEntity>[]>;
+  abstract transform(job: TImportJob<TJobConfig>, data: TSourceEntity[], meta: any): Promise<PlaneEntities[]>;
+  abstract getJobData(jobId: string): Promise<TImportJob<TJobConfig>>;
+
+  async cacheJobWorkspaceId(jobId: string, workspaceId: string) {
+    await this.store.set(`job:${jobId}:workspaceId`, workspaceId);
+  }
+
+  async cacheJobData(jobId: string, jobData: TImportJob<TJobConfig>) {
+    await this.store.set(`job:${jobId}:data`, JSON.stringify(jobData));
+  }
+
+  async getJobInfo(jobId: string): Promise<TImportJob<TJobConfig>> {
+    // Try to get the cached job data
+    const cachedJobData = await this.store.get(`job:${jobId}:data`);
+
+    if (!cachedJobData) {
+      const jobData = await this.getJobData(jobId);
+      // Cache the full job data
+      await this.cacheJobData(jobId, jobData);
+      return jobData;
+    }
+
+    return JSON.parse(cachedJobData);
+  }
 
   async handleTask(headers: TaskHeaders, data: any): Promise<boolean> {
     try {
-      const job = await this.getJobData(headers.jobId);
+      const job = await this.getJobInfo(headers.jobId);
+      const workspaceId = job.workspace_id;
+
       const batchLock = new Lock(this.store, {
         type: "default",
-        workspaceId: job.workspace_id,
-        jobId: headers.jobId
-      })
-
-      if (job.is_cancelled) {
-        await batchLock.releaseLock();
-        return true;
-      }
+        jobId: headers.jobId,
+        workspaceId,
+      });
 
       // For transform/push operations, check if we can acquire the lock
       const currentBatch = await batchLock.getCurrentBatch();
@@ -49,6 +70,11 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
       const acquired = await batchLock.acquireLock(data.meta?.batchId || "initiate");
       if (!acquired) {
         await this.pushToQueue(headers, data);
+        return true;
+      }
+
+      if (job.cancelled_at) {
+        await batchLock.releaseLock();
         return true;
       }
 
@@ -110,7 +136,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
               `[${headers.route.toUpperCase()}][${headers.jobId.slice(0, 7)}] Pushing data for batch 🧹 ------------------- [${data.meta.batchId}]`
             );
             await this.update(headers.jobId, "PUSHING", {});
-            await migrateToPlane(job, data.data, data.meta);
+            await migrateToPlane(job as TImportJob, data.data, data.meta);
             // Delete the workspace from the store, as we are done processing the
             // job, the worker is free to pick another job from the same workspace
             await batchLock.releaseLock();
@@ -122,7 +148,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
             break;
         }
       } catch (error) {
-        logger.error("got error while iterating", error);
+        logger.error("Got error while iterating", error);
         await this.update(headers.jobId, "ERROR", {
           error: "Something went wrong while pushing data to plane, ERROR:" + error,
         });
@@ -136,7 +162,6 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
       }
       return true;
     } catch (error) {
-      logger.error("got error while iterating", error);
       await this.update(headers.jobId, "ERROR", {
         error: "Something went wrong while pushing data to plane, ERROR:" + error,
       });
@@ -162,67 +187,82 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
   };
 
   update = async (jobId: string, stage: UpdateEventType, data: any): Promise<void> => {
-    const job = await getJobForMigration(jobId);
-    if (job.is_cancelled) return;
+    const client = getAPIClient();
+    const job = await client.importJob.getImportJob(jobId);
+
+    // If the job has been cancelled return
+    if (job.cancelled_at) return;
+
+    // Get the report of the import job
+    const report = await client.importReport.getImportReport(job.report_id);
 
     switch (stage) {
+      case "PULLING":
+        await updateJobWithReport(
+          job.id,
+          report.id,
+          {
+            status: "PULLING",
+          },
+          {
+            start_time: new Date().toISOString(),
+          }
+        );
+        break;
+
       case "PULLED":
         if (data.total_batch_count) {
-          await updateJob(jobId, {
-            total_batch_count: data.total_batch_count,
-            status: "PULLED",
-          });
+          await updateJobWithReport(
+            job.id,
+            report.id,
+            {
+              status: "PULLED",
+            },
+            {
+              total_batch_count: data.total_batch_count,
+            }
+          );
         }
         break;
 
       case "TRANSFORMED":
-        if (job.transformed_batch_count != null && job.total_batch_count != null) {
-          if (job.transformed_batch_count + 1 === job.total_batch_count) {
-            await updateJob(jobId, {
-              status: "PUSHING",
-              transformed_batch_count: job.transformed_batch_count + 1,
-            });
+        if (report.transformed_batch_count != null && report.total_batch_count != null) {
+          if (report.transformed_batch_count + 1 === report.total_batch_count) {
+            await updateJobWithReport(
+              job.id,
+              report.id,
+              {
+                status: "PUSHING",
+              },
+              {
+                transformed_batch_count: report.transformed_batch_count + 1,
+              }
+            );
           } else {
-            await updateJob(jobId, {
-              transformed_batch_count: job.transformed_batch_count + 1,
+            await client.importReport.updateImportReport(report.id, {
+              transformed_batch_count: report.transformed_batch_count + 1,
             });
           }
         }
         break;
 
       case "PUSHING":
-        if (job.transformed_batch_count === job.total_batch_count) {
-          await updateJob(jobId, {
+        if (report.transformed_batch_count != null && report.total_batch_count != null) {
+          await client.importJob.updateImportJob(jobId, {
             status: stage,
           });
         }
         break;
 
-      // case "FINISHED":
-      //   if (job.completed_batch_count != null && job.total_batch_count != null) {
-      //     if (job.completed_batch_count + 1 >= job.total_batch_count) {
-      //       await updateJob(jobId, {
-      //         status: "FINISHED",
-      //         end_time: new Date(),
-      //         completed_batch_count: job.completed_batch_count + 1,
-      //       });
-      //     } else {
-      //       await updateJob(jobId, {
-      //         completed_batch_count: job.completed_batch_count + 1,
-      //       });
-      //     }
-      //   }
-      //   break;
-
       case "ERROR":
-        await updateJob(jobId, {
-          status: stage,
-          error: data.error,
-        });
-        break;
-
+        if (data.error) {
+          await client.importJob.updateImportJob(jobId, {
+            status: stage,
+            error_metadata: data,
+          });
+        }
       default:
-        await updateJob(jobId, {
+        await client.importJob.updateImportJob(jobId, {
           status: stage as any as TJobStatus,
         });
         break;

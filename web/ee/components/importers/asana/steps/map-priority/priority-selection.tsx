@@ -8,6 +8,7 @@ import { PriorityIcon } from "@plane/ui";
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web types
 import { TPlanePriorityData } from "@/plane-web/types/importers";
+import { useTranslation } from "@plane/i18n";
 
 type TMapPrioritiesSelection = {
   value: string | undefined;
@@ -18,6 +19,7 @@ type TMapPrioritiesSelection = {
 
 export const MapPrioritiesSelection: FC<TMapPrioritiesSelection> = observer((props) => {
   const { value, handleValue, asanaPriorityOption, planePriorities } = props;
+  const { t } = useTranslation()
 
   return (
     <div className="relative grid grid-cols-2 items-center p-3 text-sm">
@@ -31,7 +33,7 @@ export const MapPrioritiesSelection: FC<TMapPrioritiesSelection> = observer((pro
             data: state,
           }))}
           value={value}
-          placeHolder="Select Priority"
+          placeHolder={t("importers.select_priority")}
           onChange={(value: string | undefined) => handleValue(value)}
           iconExtractor={(option) => (
             <div className="w-4.5 h-4.5 flex-shrink-0 overflow-hidden relative flex justify-center items-center">

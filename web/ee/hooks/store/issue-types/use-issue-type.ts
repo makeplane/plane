@@ -1,8 +1,8 @@
 import { useContext } from "react";
+// plane web stores
+import { IIssueType } from "@plane/types";
 // context
 import { StoreContext } from "@/lib/store-context";
-// plane web stores
-import { IIssueType } from "@/plane-web/store/issue-types";
 
 export const useIssueType = (typeId: string | null | undefined): IIssueType | undefined => {
   const context = useContext(StoreContext);

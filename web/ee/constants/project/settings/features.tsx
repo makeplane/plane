@@ -24,7 +24,7 @@ export const INTAKE_FEATURES_LIST: TIntakeFeatureList = {
   in_app: {
     property: "in_app",
     title: "In-app",
-    description: "Let the Plane app users in your org add issues via intake",
+    description: "Let the Plane app users in your org add work items via intake",
     icon: <Zap className="h-4 w-4 flex-shrink-0 text-custom-text-300" />,
     isPro: false,
     isEnabled: true,

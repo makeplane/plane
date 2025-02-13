@@ -52,7 +52,7 @@ export const ActiveCyclePriorityIssues: FC<ActiveCyclePriorityIssuesProps> = obs
   return (
     <div className="flex flex-col gap-4 p-4 min-h-52 overflow-hidden col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
       <div className="flex items-center justify-between gap-4">
-        <h3 className="text-lg text-custom-text-300 font-medium">High-priority issues</h3>
+        <h3 className="text-lg text-custom-text-300 font-medium">High-priority work items</h3>
       </div>
       <div className="flex flex-col gap-1 h-full w-full max-h-40 overflow-y-auto">
         {activeCycleIssues ? (
@@ -96,7 +96,7 @@ export const ActiveCyclePriorityIssues: FC<ActiveCyclePriorityIssuesProps> = obs
             ))
           ) : (
             <div className="flex items-center justify-center h-full text-sm text-custom-text-200">
-              <span>There are no high priority issues present in this cycle.</span>
+              <span>There are no high priority work items present in this cycle.</span>
             </div>
           )
         ) : (

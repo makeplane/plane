@@ -3,10 +3,11 @@
 import { CustomSearchSelect, Tooltip } from "@plane/ui";
 // silo types
 import { TDropdown } from "@/plane-web/types/importers";
+import { useTranslation } from "@plane/i18n";
 
 export const Dropdown = <T,>(props: TDropdown<T>) => {
   const { dropdownOptions, onChange, value, placeHolder, disabled = false, iconExtractor, queryExtractor } = props;
-
+  const { t } = useTranslation()
   // derived values
   const className = "";
   const buttonClassName = "w-full min-h-8 h-full";
@@ -23,7 +24,7 @@ export const Dropdown = <T,>(props: TDropdown<T>) => {
   ) : placeHolder ? (
     placeHolder
   ) : (
-    "Select"
+    t("common.select")
   );
   const dropdownOptionsRender = (dropdownOptions ? Object.values(dropdownOptions).flat() : []).map((dropdownItem) => ({
     value: dropdownItem?.value,

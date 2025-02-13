@@ -1,11 +1,18 @@
 import { Controller, useFormContext } from "react-hook-form";
+// plane imports
+import { NETWORK_CHOICES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
+// components
 import { DateRangeDropdown, MemberDropdown, PriorityDropdown } from "@/components/dropdowns";
-import { NETWORK_CHOICES } from "@/constants/project";
+import { ProjectNetworkIcon } from "@/components/project";
+// helpers
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
+// plane web imports
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { TProject } from "@/plane-web/types/projects";
+// local imports
 import { StateDropdown } from "../dropdowns";
 import MembersDropdown from "../dropdowns/members-dropdown";
 
@@ -17,7 +24,11 @@ type Props = {
 };
 const ProjectAttributes: React.FC<Props> = (props) => {
   const { workspaceSlug, currentWorkspace, isProjectGroupingEnabled, data } = props;
+  // plane imports
+  const { t } = useTranslation();
+  // react-hook-form
   const { control } = useFormContext<TProject>();
+  // store
   const { defaultState } = useWorkspaceProjectStates();
 
   return (
@@ -54,8 +65,8 @@ const ProjectAttributes: React.FC<Props> = (props) => {
                   <div className="flex items-center gap-1 h-full">
                     {currentNetwork ? (
                       <>
-                        <currentNetwork.icon className="h-3 w-3" />
-                        {currentNetwork.label}
+                        <ProjectNetworkIcon iconKey={currentNetwork.iconKey} />
+                        {t(currentNetwork.i18n_label)}
                       </>
                     ) : (
                       <span className="text-custom-text-400">Select network</span>
@@ -71,10 +82,10 @@ const ProjectAttributes: React.FC<Props> = (props) => {
                 {NETWORK_CHOICES.map((network) => (
                   <CustomSelect.Option key={network.key} value={network.key}>
                     <div className="flex items-start gap-2">
-                      <network.icon className="h-3.5 w-3.5" />
+                      <ProjectNetworkIcon iconKey={network.iconKey} className="h-3.5 w-3.5" />
                       <div className="-mt-1">
-                        <p>{network.label}</p>
-                        <p className="text-xs text-custom-text-400">{network.description}</p>
+                        <p>{t(network.i18n_label)}</p>
+                        <p className="text-xs text-custom-text-400">{t(network.description)}</p>
                       </div>
                     </div>
                   </CustomSelect.Option>
@@ -145,7 +156,7 @@ const ProjectAttributes: React.FC<Props> = (props) => {
             return (
               <div className="flex-shrink-0 h-7" tabIndex={5}>
                 <MemberDropdown
-                  value={value}
+                  value={value ?? null}
                   onChange={(lead) => onChange(lead === value ? null : lead)}
                   placeholder="Lead"
                   multiple={false}

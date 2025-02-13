@@ -109,52 +109,50 @@ export const EpicView: FC<IEpicView> = observer((props) => {
 
   return (
     <>
-      <div className="w-full !text-base">
-        {issueId && (
-          <div
-            ref={issuePeekOverviewRef}
-            className={peekOverviewIssueClassName}
-            style={{
-              boxShadow:
-                "0px 4px 8px 0px rgba(0, 0, 0, 0.12), 0px 6px 12px 0px rgba(16, 24, 40, 0.12), 0px 1px 16px 0px rgba(16, 24, 40, 0.12)",
-            }}
-          >
-            {isError ? (
-              <div className="relative h-screen w-full overflow-hidden">
-                <EpicPeekOverviewError removeRoutePeekId={removeRoutePeekId} />
-              </div>
-            ) : (
-              isLoading && <EpicPeekOverviewLoader removeRoutePeekId={removeRoutePeekId} />
-            )}
-            {!isLoading && !isError && issue && (
-              <>
-                {/* header */}
-                <EpicPeekOverviewHeader
-                  peekMode={peekMode}
-                  setPeekMode={(value) => setPeekMode(value)}
-                  removeRoutePeekId={removeRoutePeekId}
-                  toggleEditEpicModal={toggleEditEpicModal}
-                  toggleDeleteEpicModal={toggleDeleteEpicModal}
-                  handleRestoreIssue={handleRestore}
-                  isArchived={is_archived}
-                  issueId={issueId}
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  isSubmitting={isSubmitting}
-                  disabled={disabled}
-                  embedIssue={embedIssue}
-                />
-                {/* content */}
-                <EpicDetailRoot
-                  workspaceSlug={workspaceSlug.toString()}
-                  projectId={projectId.toString()}
-                  epicId={issueId.toString()}
-                />
-              </>
-            )}
-          </div>
-        )}
-      </div>
+      {issueId && (
+        <div
+          ref={issuePeekOverviewRef}
+          className={peekOverviewIssueClassName}
+          style={{
+            boxShadow:
+              "0px 4px 8px 0px rgba(0, 0, 0, 0.12), 0px 6px 12px 0px rgba(16, 24, 40, 0.12), 0px 1px 16px 0px rgba(16, 24, 40, 0.12)",
+          }}
+        >
+          {isError ? (
+            <div className="relative h-screen w-full overflow-hidden">
+              <EpicPeekOverviewError removeRoutePeekId={removeRoutePeekId} />
+            </div>
+          ) : (
+            isLoading && <EpicPeekOverviewLoader removeRoutePeekId={removeRoutePeekId} />
+          )}
+          {!isLoading && !isError && issue && (
+            <>
+              {/* header */}
+              <EpicPeekOverviewHeader
+                peekMode={peekMode}
+                setPeekMode={(value) => setPeekMode(value)}
+                removeRoutePeekId={removeRoutePeekId}
+                toggleEditEpicModal={toggleEditEpicModal}
+                toggleDeleteEpicModal={toggleDeleteEpicModal}
+                handleRestoreIssue={handleRestore}
+                isArchived={is_archived}
+                issueId={issueId}
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                isSubmitting={isSubmitting}
+                disabled={disabled}
+                embedIssue={embedIssue}
+              />
+              {/* content */}
+              <EpicDetailRoot
+                workspaceSlug={workspaceSlug.toString()}
+                projectId={projectId.toString()}
+                epicId={issueId.toString()}
+              />
+            </>
+          )}
+        </div>
+      )}
     </>
   );
 });

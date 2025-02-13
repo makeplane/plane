@@ -15,6 +15,7 @@ class WorkspaceFeature(BaseModel):
     is_project_grouping_enabled = models.BooleanField(default=False)
     is_initiative_enabled = models.BooleanField(default=False)
     is_teams_enabled = models.BooleanField(default=False)
+    is_customer_enabled = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Workspace Feature"
@@ -111,6 +112,7 @@ class WorkspaceCredential(BaseModel):
         "db.User", on_delete=models.CASCADE, related_name="credentials"
     )
     # Source being the type of importer where issues are imported example: jira
+    source_auth_email = models.EmailField(null=True, blank=True)
     source_access_token = models.TextField(null=True, blank=True)
     source_refresh_token = models.TextField(null=True, blank=True)
     source_hostname = models.TextField(null=True, blank=True)
@@ -137,7 +139,11 @@ class WorkspaceConnection(BaseModel):
         "db.Workspace", on_delete=models.CASCADE, related_name="connections"
     )
     credential = models.ForeignKey(
-        "ee.WorkspaceCredential", on_delete=models.CASCADE, related_name="connections", null=True, blank=True
+        "ee.WorkspaceCredential",
+        on_delete=models.CASCADE,
+        related_name="connections",
+        null=True,
+        blank=True,
     )
     target_hostname = models.TextField(null=True, blank=True)
     source_hostname = models.TextField(null=True, blank=True)
@@ -164,6 +170,7 @@ class WorkspaceConnection(BaseModel):
             credential.is_active = False
             credential.save()
 
+
 class WorkspaceEntityConnection(BaseModel):
     type = models.CharField(max_length=30, blank=True, null=True)
     workspace_connection = models.ForeignKey(
@@ -175,10 +182,18 @@ class WorkspaceEntityConnection(BaseModel):
         "db.Workspace", on_delete=models.CASCADE, related_name="entity_connections"
     )
     project = models.ForeignKey(
-        "db.Project", on_delete=models.CASCADE, related_name="entity_connections"
+        "db.Project",
+        on_delete=models.CASCADE,
+        related_name="entity_connections",
+        null=True,
+        blank=True,
     )
     issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="entity_connections"
+        "db.Issue",
+        on_delete=models.CASCADE,
+        related_name="entity_connections",
+        null=True,
+        blank=True,
     )
     entity_type = models.CharField(max_length=30, blank=True, null=True)
     entity_id = models.CharField(max_length=255, blank=True, null=True)

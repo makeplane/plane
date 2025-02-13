@@ -4,6 +4,7 @@ import { FC, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import Fuse from 'fuse.js'
 import { IPriorityConfig, JiraPriority } from "@plane/etl/jira";
 import { Button, Loader } from "@plane/ui";
 // plane web components
@@ -13,6 +14,8 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 import { useJiraImporter } from "@/plane-web/hooks/store";
 // plane web types
 import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers/jira";
+import { useTranslation } from "@plane/i18n";
+import { TPlanePriorityData } from "@/plane-web/types";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.MAP_PRIORITY];
 
@@ -31,6 +34,7 @@ export const MapPriorityRoot: FC = observer(() => {
     handleStepper,
     data: { jiraPriorityIdsByProjectId, getJiraPriorityById, fetchJiraPriorities },
   } = useJiraImporter();
+  const { t } = useTranslation();
 
   // derived values
   const workspaceId = workspace?.id || undefined;
@@ -43,6 +47,7 @@ export const MapPriorityRoot: FC = observer(() => {
 
   // states
   const [formData, setFormData] = useState<TFormData>({});
+  const [fuzzySearchDone, setFuzzySearchDone] = useState(false);
 
   // derived values
   const isNextButtonDisabled = jiraProjectPriorities?.length === Object.keys(formData).length ? false : true;
@@ -89,6 +94,42 @@ export const MapPriorityRoot: FC = observer(() => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [importerData]);
+
+
+
+  // fuzzy search and default values
+  useEffect(() => {
+    if (!jiraProjectPriorities.length || !priorities.length || fuzzySearchDone) {
+      return;
+    }
+  
+    // in list search on which keys to perform the search
+    const options = {
+      includeScore: true,
+      keys: ["label"],
+    };
+  
+    // Create Fuse instance once
+    const fuse = new Fuse(priorities, options);
+  
+    jiraProjectPriorities.forEach((jiraState) => {
+      if (jiraState.name) {
+        const result = fuse.search(jiraState.name);
+  
+        if (result.length > 0) {
+          const planeState = result[0].item as TPlanePriorityData;
+          if (jiraState.id && planeState.key) {
+            handleFormData(jiraState.id, planeState.key);
+          }
+        }
+      }
+    });
+    // mark the fuzzy search as done
+    setFuzzySearchDone(true);
+  }, [jiraProjectPriorities, priorities, fuzzySearchDone, handleFormData]);
+
+
+
 
   // fetching the jira project priorities
   const { isLoading: isJiraProjectPrioritiesLoading } = useSWR(
@@ -144,7 +185,7 @@ export const MapPriorityRoot: FC = observer(() => {
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
           <Button variant="primary" size="sm" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
-            Next
+            {t("common.next")}
           </Button>
         </StepperNavigation>
       </div>

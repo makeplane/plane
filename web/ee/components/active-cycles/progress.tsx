@@ -1,12 +1,13 @@
 import { FC } from "react";
-// plane package imports
+// plane imports
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
 import { LinearProgressIndicator } from "@plane/ui";
 // components
-import { EmptyState } from "@/components/empty-state";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state";
+// hooks
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export type ActiveCycleProgressProps = {
   cycle: ICycle;
@@ -14,6 +15,10 @@ export type ActiveCycleProgressProps = {
 
 export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
   const { cycle } = props;
+  // plane hooks
+  const { t } = useTranslation();
+  // derived values
+  const progressResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/progress" });
 
   const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
@@ -37,7 +42,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
           {cycle.total_issues > 0 && (
             <span className="flex gap-1 text-sm text-custom-text-400 font-medium whitespace-nowrap rounded-sm px-3 py-1 ">
               {`${cycle.completed_issues + cycle.cancelled_issues}/${cycle.total_issues - cycle.cancelled_issues} ${
-                cycle.completed_issues + cycle.cancelled_issues > 1 ? "Issues" : "Issue"
+                cycle.completed_issues + cycle.cancelled_issues > 1 ? "Work items" : "Work item"
               } closed`}
             </span>
           )}
@@ -62,7 +67,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
                       <span className="text-custom-text-300 capitalize font-medium w-16">{group}</span>
                     </div>
                     <span className="text-custom-text-300">{`${groupedIssues[group]} ${
-                      groupedIssues[group] > 1 ? "Issues" : "Issue"
+                      groupedIssues[group] > 1 ? "Work items" : "Work item"
                     }`}</span>
                   </div>
                 </div>
@@ -73,7 +78,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
             <span className="flex items-center gap-2 text-sm text-custom-text-300">
               <span>
                 {`${cycle.cancelled_issues} cancelled ${
-                  cycle.cancelled_issues > 1 ? "issues are" : "issue is"
+                  cycle.cancelled_issues > 1 ? "work items are" : "work item is"
                 } excluded from this report.`}{" "}
               </span>
             </span>
@@ -81,7 +86,10 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
         </div>
       ) : (
         <div className="flex items-center justify-center h-full w-full">
-          <EmptyState type={EmptyStateType.ACTIVE_CYCLE_PROGRESS_EMPTY_STATE} layout="screen-simple" size="sm" />
+          <SimpleEmptyState
+            title={t("active_cycle_analytics.empty_state.progress.title")}
+            assetPath={progressResolvedPath}
+          />
         </div>
       )}
     </div>

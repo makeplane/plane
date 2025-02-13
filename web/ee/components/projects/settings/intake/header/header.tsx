@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Info, RefreshCcw } from "lucide-react";
-// ui
+// plane imports
+import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 import { Breadcrumbs, Button, Intake, Header, Popover, Loader } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
@@ -14,7 +15,6 @@ import { InboxIssueCreateModalRoot } from "@/components/inbox";
 import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
 // plane web
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // local components
 import IntakeTooltip from "../intake-tooltip";
 
@@ -40,7 +40,7 @@ export const IntakeHeader: FC = observer(() => {
   );
   // derived value
   const isAuthorized = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER, EUserProjectRoles.GUEST],
     EUserPermissionsLevel.PROJECT
   );
   // ref
@@ -50,7 +50,7 @@ export const IntakeHeader: FC = observer(() => {
     <Header>
       <Header.LeftItem>
         <div className="flex items-center gap-1">
-          <Breadcrumbs isLoading={currentProjectDetailsLoader}>
+          <Breadcrumbs isLoading={currentProjectDetailsLoader === "init-loader"}>
             <ProjectBreadcrumb />
             <Breadcrumbs.BreadcrumbItem
               type="text"
@@ -92,7 +92,7 @@ export const IntakeHeader: FC = observer(() => {
                 size="sm"
                 onClick={() => setCreateIssueModal(true)}
               >
-                Add issue
+                Add work item
               </Button>
             ) : (
               <Loader>

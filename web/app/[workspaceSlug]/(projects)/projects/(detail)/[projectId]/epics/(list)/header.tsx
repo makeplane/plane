@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane constants
-import { EIssuesStoreType } from "@plane/constants";
+// plane imports
+import { EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 // ui
 import { Breadcrumbs, Button, Tooltip, Header, EpicIcon } from "@plane/ui";
 // components
@@ -18,7 +18,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 export const EpicsHeader = observer(() => {
@@ -38,7 +37,7 @@ export const EpicsHeader = observer(() => {
   // derived values
   const issuesCount = getGroupIssueCount(undefined, undefined, false) || 0;
   const canUserCreateIssue = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
   const projectEpicId = getProjectEpicId(projectId?.toString());
@@ -56,7 +55,7 @@ export const EpicsHeader = observer(() => {
       <Header>
         <Header.LeftItem>
           <div className="flex items-center gap-2.5">
-            <Breadcrumbs onBack={() => router.back()} isLoading={loader}>
+            <Breadcrumbs onBack={() => router.back()} isLoading={loader === "init-loader"}>
               <ProjectBreadcrumb />
               <Breadcrumbs.BreadcrumbItem
                 type="text"

@@ -3,11 +3,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { MessageSquare } from "lucide-react";
+// plane imports
+import { NOTIFICATIONS_READ } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { NotificationItemOptionButton } from "@/components/workspace-notifications";
-// constants
-import { NOTIFICATIONS_READ } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useWorkspaceNotifications } from "@/hooks/store";
 // store

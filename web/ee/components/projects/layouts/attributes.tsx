@@ -1,16 +1,22 @@
 import { SyntheticEvent } from "react";
 import { observer } from "mobx-react";
 import { Users } from "lucide-react";
+// plane imports
+import { EUserProjectRoles } from "@plane/constants";
 import { IWorkspace } from "@plane/types";
 import { Avatar, PriorityIcon, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
+// components
 import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
+// helpers
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
+// hooks
 import { useMember, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
+// plane web imports
 import { TProject } from "@/plane-web/types/projects";
 import { EProjectPriority } from "@/plane-web/types/workspace-project-states";
+// local imports
 import { StateDropdown, PriorityDropdown } from "../dropdowns";
 import MembersDropdown from "../dropdowns/members-dropdown";
 
@@ -38,7 +44,7 @@ const Attributes: React.FC<Props> = observer((props) => {
     containerClass = "",
     displayProperties,
   } = props;
-  const projectMembersIds = project.members?.map((member) => member.member_id);
+  const projectMembersIds = project.members;
 
   const { getUserDetails } = useMember();
   const lead = getUserDetails(project.project_lead as string);
@@ -46,7 +52,7 @@ const Attributes: React.FC<Props> = observer((props) => {
   const isEditingAllowed =
     workspaceProjectsPermissions &&
     workspaceProjectsPermissions[workspaceSlug][project.id] &&
-    workspaceProjectsPermissions[workspaceSlug][project.id] >= EUserPermissions.ADMIN;
+    workspaceProjectsPermissions[workspaceSlug][project.id] >= EUserProjectRoles.ADMIN;
 
   const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -152,7 +158,7 @@ const Attributes: React.FC<Props> = observer((props) => {
         <Tooltip tooltipContent="Members" position={"top"} className="ml-4">
           <div className="h-5 my-auto" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
             <MembersDropdown
-              value={projectMembersIds}
+              value={projectMembersIds ?? []}
               disabled
               onChange={() => {}}
               className="h-5 my-auto"

@@ -2,6 +2,7 @@
 
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { Button, ModalCore } from "@plane/ui";
 // plane web components
 import { ProjectForm, StateForm } from "@/plane-web/components/integrations/gitlab";
@@ -27,6 +28,7 @@ export const ProjectEntityFormCreate: FC<TProjectEntityFormCreate> = observer((p
     fetchStates,
     entityConnection: { createProjectConnection },
   } = useGitlabIntegration();
+  const { t } = useTranslation();
 
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -58,14 +60,16 @@ export const ProjectEntityFormCreate: FC<TProjectEntityFormCreate> = observer((p
       setIsSubmitting(true);
 
       const payload: Partial<TGitlabEntityConnection> = {
-        entityId: projectMap.entityId,
-        projectId: projectMap.projectId,
+        entity_id: projectMap.entityId,
+        project_id: projectMap.projectId,
         config: {
           states: { mergeRequestEventMapping: stateMap },
         },
       };
       await createProjectConnection(payload);
 
+      setStateMap(stateMapInit);
+      setProjectMap(projectMapInit);
       handleModal(false);
     } catch (error) {
       console.error("handleSubmit", error);
@@ -77,37 +81,31 @@ export const ProjectEntityFormCreate: FC<TProjectEntityFormCreate> = observer((p
   return (
     <ModalCore isOpen={modal} handleClose={() => handleModal(false)}>
       <div className="space-y-5 p-5">
-        <div className="text-xl font-medium text-custom-text-200">Link Gitlab repository and Plane project</div>
+        <div className="text-xl font-medium text-custom-text-200">{t("gitlab_integration.link")}</div>
 
         <div className="space-y-4">
           <ProjectForm value={projectMap} handleChange={handleProjectMapChange} />
 
           <div className="border border-custom-border-200 divide-y divide-custom-border-200 rounded">
             <div className="relative space-y-1 p-3">
-              <div className="text-base">Pull request automation</div>
+              <div className="text-base">{t("gitlab_integration.pull_request_automation")}</div>
               <div className="text-xs text-custom-text-200">
-                Configure pull request state mapping from Gitlab to Plane
+                {t("gitlab_integration.pull_request_automation_description")}
               </div>
             </div>
-            {
-              projectMap.projectId && (
-                <div className="p-3">
-                  <StateForm
-                    projectId={projectMap.projectId}
-                    value={stateMap}
-                    handleChange={handleStateMapChange}
-                  />
-                </div>
-              )
-            }
+            {projectMap.projectId && (
+              <div className="p-3">
+                <StateForm projectId={projectMap.projectId} value={stateMap} handleChange={handleStateMapChange} />
+              </div>
+            )}
           </div>
 
           <div className="relative flex justify-end items-center gap-2">
             <Button variant="neutral-primary" size="sm" onClick={() => handleModal(false)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button variant="primary" size="sm" onClick={handleSubmit} loading={isSubmitting} disabled={isSubmitting}>
-              {isSubmitting ? "Processing" : "Continue"}
+              {isSubmitting ? t("common.processing") : t("common.continue")}
             </Button>
           </div>
         </div>

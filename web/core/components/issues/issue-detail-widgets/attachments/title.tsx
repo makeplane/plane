@@ -2,6 +2,7 @@
 import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssueServiceType } from "@plane/types";
 import { CollapsibleButton } from "@plane/ui";
 // components
@@ -20,6 +21,7 @@ type Props = {
 
 export const IssueAttachmentsCollapsibleTitle: FC<Props> = observer((props) => {
   const { isOpen, workspaceSlug, projectId, issueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const { t } = useTranslation();
   // store hooks
   const {
     issue: { getIssueById },
@@ -42,7 +44,7 @@ export const IssueAttachmentsCollapsibleTitle: FC<Props> = observer((props) => {
   return (
     <CollapsibleButton
       isOpen={isOpen}
-      title="Attachments"
+      title={t("common.attachments")}
       indicatorElement={indicatorElement}
       actionItemElement={
         !disabled && (

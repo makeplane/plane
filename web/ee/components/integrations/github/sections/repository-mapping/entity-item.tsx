@@ -4,6 +4,7 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 import { Button, ModalCore } from "@plane/ui";
 // plane web components
@@ -30,6 +31,7 @@ export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) 
   const {
     entity: { deleteEntity },
   } = useGithubIntegration();
+  const { t } = useTranslation();
 
   // states
   const [editModal, setEditModal] = useState<boolean>(false);
@@ -66,8 +68,8 @@ export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) 
       <ModalCore isOpen={deleteModal} handleClose={handleDeleteClose}>
         <div className="space-y-5 p-5">
           <div className="space-y-2">
-            <div className="text-xl font-medium text-custom-text-200">Remove entity</div>
-            <div className="text-sm text-custom-text-300">Are you sure you want to remove this entity?</div>
+            <div className="text-xl font-medium text-custom-text-200">{t("github_integration.remove_entity")}</div>
+            <div className="text-sm text-custom-text-300">{t("github_integration.remove_entity_confirmation")}</div>
           </div>
           <div className="relative flex justify-end items-center gap-2">
             <Button variant="neutral-primary" size="sm" onClick={handleDeleteClose} disabled={deleteLoader}>
@@ -94,18 +96,18 @@ export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) 
         </div>
         <div className="w-full">
           <div className="text-sm font-medium">
-            {entityConnection?.entityData?.name} ({entityConnection?.entityData?.full_name})
+            {entityConnection?.entity_data?.name} ({entityConnection?.entity_data?.full_name})
           </div>
           <div className="text-xs text-custom-text-200">
-            Issues are synced to <b>{project?.name || "Project"}</b>
+            {t("github_integration.issue_sync_message", { project: project?.name || "Project" })}
           </div>
         </div>
         <div className="relative flex items-center gap-2">
           <Button variant="neutral-primary" size="sm" onClick={handleEditOpen}>
-            Edit
+            {t("common.edit")}
           </Button>
           <Button variant="link-danger" size="sm" onClick={handleDeleteOpen}>
-            Remove
+            {t("common.remove")}
           </Button>
         </div>
       </div>

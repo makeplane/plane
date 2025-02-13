@@ -26,10 +26,6 @@ on:
         default: false
         required: true
 
-  push:
-    branches:
-      - master
-
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
   VAULT_KP_PREFIX: plane-ee-cloud-builds
@@ -172,6 +168,8 @@ jobs:
           add_build_arg "NEXT_PUBLIC_SILO_BASE_PATH" "${{ env.NEXT_PUBLIC_SILO_BASE_PATH }}"
 
           add_build_arg "NEXT_PUBLIC_WEB_BASE_URL" "${{ env.NEXT_PUBLIC_WEB_BASE_URL }}"
+
+          add_build_arg "SENTRY_AUTH_TOKEN" "${{ secrets.SENTRY_AUTH_TOKEN }}"
 
           echo "BUILD_ARGS=$BUILD_ARGS" >> $GITHUB_OUTPUT
 

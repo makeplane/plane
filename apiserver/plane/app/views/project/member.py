@@ -23,7 +23,7 @@ from plane.app.permissions import (
     WorkspaceUserPermission,
 )
 from plane.db.models import Project, ProjectMember, IssueUserProperty, WorkspaceMember
-from plane.ee.models import TeamSpaceMember, TeamSpaceProject
+from plane.ee.models import TeamspaceMember, TeamspaceProject
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
 from plane.app.permissions.base import allow_permission, ROLE
@@ -276,10 +276,10 @@ class ProjectMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        team_ids = TeamSpaceMember.objects.filter(
+        team_ids = TeamspaceMember.objects.filter(
             workspace__slug=slug, member_id=project_member.member_id
         ).values_list("team_space_id", flat=True)
-        team_project_ids = TeamSpaceProject.objects.filter(
+        team_project_ids = TeamspaceProject.objects.filter(
             project_id=project_id, team_space_id__in=team_ids
         ).values_list("team_space_id", flat=True)
         if (
@@ -339,11 +339,11 @@ class ProjectMemberViewSet(BaseViewSet):
             )
 
         # Check if this user is part of any team which is part of this project
-        team_ids = TeamSpaceMember.objects.filter(
+        team_ids = TeamspaceMember.objects.filter(
             workspace__slug=slug, member_id=project_member.member_id
         ).values_list("team_space_id", flat=True)
 
-        team_project_ids = TeamSpaceProject.objects.filter(
+        team_project_ids = TeamspaceProject.objects.filter(
             project_id=project_id, team_space_id__in=team_ids
         ).values_list("team_space_id", flat=True)
 
@@ -408,11 +408,11 @@ class ProjectMemberViewSet(BaseViewSet):
             )
 
         # Check if this user is part of any team which is part of this project
-        team_ids = TeamSpaceMember.objects.filter(
+        team_ids = TeamspaceMember.objects.filter(
             workspace__slug=slug, member_id=request.user.id
         ).values_list("team_space_id", flat=True)
 
-        team_project_ids = TeamSpaceProject.objects.filter(
+        team_project_ids = TeamspaceProject.objects.filter(
             project_id=project_id, team_space_id__in=team_ids
         ).values_list("team_space_id", flat=True)
 

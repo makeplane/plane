@@ -15,7 +15,7 @@ class ImportReportView(BaseAPIView):
     permission_classes = [ProjectBasePermission]
 
     @check_feature_flag(FeatureFlag.SILO)
-    def get(self, request, slug, project_id, pk = None):        
+    def get(self, request, slug, pk = None):        
         if not pk:
             import_reports = ImportReport.objects.filter(**request.query_params).order_by("-created_at")
             serializer = ImportReportSerializer(import_reports, many=True)
@@ -25,7 +25,7 @@ class ImportReportView(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.SILO)
-    def patch(self, request, slug, project_id, pk):
+    def patch(self, request, slug, pk):
         import_report = ImportReport.objects.filter(pk=pk).first()
 
         serializer = ImportReportSerializer(

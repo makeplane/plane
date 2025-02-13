@@ -4,6 +4,7 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Briefcase } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // plane web components
 import { Logo } from "@/components/common";
@@ -37,6 +38,7 @@ export const RepositoryMappingRoot: FC = observer(() => {
     data: { fetchGithubRepositories },
     entity: { entityIds, entityById, fetchEntities },
   } = useGithubIntegration();
+  const { t } = useTranslation();
 
   // states
   const [modalCreateOpen, setModalCreateOpen] = useState<boolean>(false);
@@ -50,7 +52,7 @@ export const RepositoryMappingRoot: FC = observer(() => {
     (result: { [key: string]: TGithubEntityConnection[] }, entity) => {
       if (!entity) return result;
 
-      const projectId = entity?.projectId || "default";
+      const projectId = entity?.project_id || "default";
 
       if (!result[projectId]) result[projectId] = [];
       result[projectId].push(entity);
@@ -86,11 +88,11 @@ export const RepositoryMappingRoot: FC = observer(() => {
       {/* heading */}
       <div className="relative flex justify-between items-center gap-4">
         <div className="space-y-1">
-          <div className="text-base font-medium">Repository Mapping</div>
-          <div className="text-sm text-custom-text-200">Sync issues from GitHub repository to Plane projects</div>
+          <div className="text-base font-medium">{t("github_integration.repo_mapping")}</div>
+          <div className="text-sm text-custom-text-200">{t("github_integration.repo_mapping_description")}</div>
         </div>
         <Button variant="neutral-primary" size="sm" onClick={() => setModalCreateOpen(true)}>
-          Add
+          {t("common.add")}
         </Button>
       </div>
 

@@ -6,14 +6,11 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ChevronRight, Globe2, LoaderCircle, Lock, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-// plane types
+// plane imports
+import { EPageAccess } from "@plane/constants";
 import { TPage, TPageNavigationTabs } from "@plane/types";
-// plane ui
 import { ArchiveIcon, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
-// constants
-import { EPageAccess } from "@/constants/page";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme, useEventTracker } from "@/hooks/store";
 // plane web components
@@ -66,19 +63,19 @@ export const PagesAppSidebarList = observer(() => {
   } = {
     public: {
       key: "public",
-      label: "Public pages",
+      label: "PUBLIC",
       icon: Globe2,
       pageIds: getCurrentWorkspacePageIdsByType("public"),
     },
     private: {
       key: "private",
-      label: "Private pages",
+      label: "PRIVATE",
       icon: Lock,
       pageIds: getCurrentWorkspacePageIdsByType("private"),
     },
     archived: {
       key: "archived",
-      label: "Archived pages",
+      label: "ARCHIVED",
       icon: ArchiveIcon,
       pageIds: getCurrentWorkspacePageIdsByType("archived"),
     },

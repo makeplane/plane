@@ -2,13 +2,15 @@
 
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
-import { Disclosure } from "@headlessui/react";
-// ui
-import { EmptyState } from "@/components/empty-state";
-import { EmptyStateType } from "@/constants/empty-state";
+// plane imports
+import { useTranslation } from "@plane/i18n";
+// components
+import { DetailedEmptyState } from "@/components/empty-state";
+// hooks
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// local imports
 import ActiveCycleDetail from "./details";
 import { CycleProgressHeader } from "./progress-header";
-// constants
 import useCycleDetails from "./use-cycle-details";
 
 type IActiveCycleDetails = {
@@ -20,12 +22,21 @@ type IActiveCycleDetails = {
 
 export const ActiveCycleBase: React.FC<IActiveCycleDetails> = observer((props) => {
   const { workspaceSlug, projectId, cycleId } = props;
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
   const cycleDetails = useCycleDetails({ workspaceSlug, projectId, cycleId });
+  // derived values
+  const activeCycleResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/cycle/active" });
 
   if (!cycleDetails.cycle || isEmpty(cycleDetails.cycle))
     return (
       <div className="max-h-[500px]">
-        <EmptyState type={EmptyStateType.PROJECT_CYCLE_ACTIVE} size="sm" />
+        <DetailedEmptyState
+          title={t("project_cycles.empty_state.active.title")}
+          description={t("project_cycles.empty_state.active.description")}
+          assetPath={activeCycleResolvedPath}
+        />
       </div>
     );
 

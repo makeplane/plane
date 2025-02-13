@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-// ui
+// plane imports
+import { E_BULK_OPERATION_ERROR_CODES, BULK_OPERATION_ERROR_DETAILS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast, AlertModalCore, EModalPosition, EModalWidth } from "@plane/ui";
-// constants
-import { EErrorCodes, ERROR_DETAILS } from "@/constants/errors";
 // hooks
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
@@ -20,6 +20,8 @@ export const BulkArchiveConfirmationModal: React.FC<Props> = observer((props) =>
   const { handleClose, isOpen, issueIds, onSubmit, projectId, workspaceSlug } = props;
   // states
   const [isArchiving, setIsDeleting] = useState(false);
+  // plane imports
+  const { t } = useTranslation();
   // store hooks
   const {
     issues: { archiveBulkIssues },
@@ -28,29 +30,30 @@ export const BulkArchiveConfirmationModal: React.FC<Props> = observer((props) =>
   const handleSubmit = async () => {
     setIsDeleting(true);
 
-    archiveBulkIssues &&
-      (await archiveBulkIssues(workspaceSlug, projectId, issueIds)
+    if (archiveBulkIssues) {
+      await archiveBulkIssues(workspaceSlug, projectId, issueIds)
         .then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "",
-            message: `${issueIds.length} ${issueIds.length > 1 ? "issues have" : "issue has"} been archived successfully.`,
+            message: `${issueIds.length} ${issueIds.length > 1 ? "work items have" : "work item has"} been archived successfully.`,
           });
           onSubmit?.();
           handleClose();
         })
-        .catch((error: { error_code: EErrorCodes }) => {
-          const errorInfo = ERROR_DETAILS[error?.error_code] ?? undefined;
+        .catch((error: { error_code: E_BULK_OPERATION_ERROR_CODES }) => {
+          const errorInfo = BULK_OPERATION_ERROR_DETAILS[error?.error_code] ?? undefined;
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: errorInfo?.title ?? "Error!",
-            message: errorInfo?.message ?? "Something went wrong. Please try again.",
+            title: t(errorInfo?.i18n_title) ?? "Error!",
+            message: t(errorInfo?.i18n_message) ?? "Something went wrong. Please try again.",
           });
         })
-        .finally(() => setIsDeleting(false)));
+        .finally(() => setIsDeleting(false));
+    }
   };
 
-  const issueVariant = issueIds.length > 1 ? "issues" : "issue";
+  const issueVariant = issueIds.length > 1 ? "work items" : "work item";
 
   return (
     <AlertModalCore

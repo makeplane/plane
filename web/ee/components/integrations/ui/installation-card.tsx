@@ -2,6 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Image, { StaticImageData } from "next/image";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Button, Loader } from "@plane/ui";
 
 type TInstallationCardProps = {
@@ -18,6 +19,7 @@ export const InstallationCard = observer((props: TInstallationCardProps) => {
     props;
   // states
   const [isAppInstalling, setIsAppInstalling] = useState(false);
+  const { t } = useTranslation();
 
   const handleInstall = async () => {
     setIsAppInstalling(true);
@@ -36,14 +38,14 @@ export const InstallationCard = observer((props: TInstallationCardProps) => {
       </div>
       <div className="flex-shrink-0 relative flex items-center gap-4">
         {isAppConnected ? (
-          <div className="text-sm bg-green-500/20 text-green-600 px-3 py-1 rounded-md">Connected</div>
+          <div className="text-sm bg-green-500/20 text-green-600 px-3 py-1 rounded-md">{t("common.connected")}</div>
         ) : isConnectionLoading ? (
           <Loader className="flex items-center justify-center">
             <Loader.Item width="70px" height="30px" />
           </Loader>
         ) : (
           <Button onClick={handleInstall} loading={isAppInstalling}>
-            {isAppInstalling ? "Installing" : "Install"}
+            {isAppInstalling ? t("common.installing") : t("common.install")}
           </Button>
         )}
       </div>

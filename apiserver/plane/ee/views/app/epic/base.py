@@ -577,9 +577,12 @@ class WorkspaceEpicEndpoint(BaseAPIView):
 
         if initiative_id:
             # Exclude epics that are already in the initiative
-            initiative_epics = InitiativeEpic.objects.filter(
-                initiative_id=initiative_id
-            ).values_list("epic_id", flat=True)
+            initiative_epics = (
+                InitiativeEpic.objects.filter(initiative_id=initiative_id)
+                .filter(epic__project__deleted_at__isnull=True)
+                .values_list("epic_id", flat=True)
+            )
+
             epics_query = epics_query.exclude(id__in=initiative_epics)
 
         epics = (
@@ -626,6 +629,14 @@ class EpicListAnalyticsEndpoint(BaseAPIView):
                 .count()
             )
 
+            cancelled_issues = (
+                issues.filter(
+                    id__in=issue_ids, project_id=project_id, workspace__slug=slug
+                )
+                .filter(state__group="cancelled")
+                .count()
+            )
+
             total_issues = issues.filter(
                 id__in=issue_ids, project_id=project_id, workspace__slug=slug
             ).count()
@@ -635,6 +646,7 @@ class EpicListAnalyticsEndpoint(BaseAPIView):
                     "epic_id": epic_id,
                     "total_issues": total_issues,
                     "completed_issues": completed_issues,
+                    "cancelled_issues": cancelled_issues,
                 }
             )
 

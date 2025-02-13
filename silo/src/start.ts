@@ -1,6 +1,7 @@
-import { importTaskManger, integrationTaskManager, celeryProducer } from "@/apps/engine/worker";
+import { importTaskManger, integrationTaskManager, celeryProducer } from "@/worker";
 import { logger } from "./logger";
 import Server from "./server";
+// Fetch the config and create a global config variable
 
 // Start the worker for taking over the migration jobs
 logger.info("Warming up worker instance, connecting services... ♨️");

@@ -1,35 +1,80 @@
-export type TStackItem<T extends string> = {
-  key: T;
-  fillClassName: string;
-  textClassName: string;
-  dotClassName?: string;
-  showPercentage?: boolean;
-};
-
-export type TStackChartData<K extends string, T extends string> = {
+export type TChartData<K extends string, T extends string> = {
+  // required key
   [key in K]: string | number;
 } & Record<T, any>;
 
-export type TStackedBarChartProps<K extends string, T extends string> = {
-  data: TStackChartData<K, T>[];
-  stacks: TStackItem<T>[];
+type TChartProps<K extends string, T extends string> = {
+  data: TChartData<K, T>[];
   xAxis: {
-    key: keyof TStackChartData<K, T>;
+    key: keyof TChartData<K, T>;
     label: string;
   };
   yAxis: {
-    key: keyof TStackChartData<K, T>;
+    key: keyof TChartData<K, T>;
     label: string;
     domain?: [number, number];
     allowDecimals?: boolean;
   };
-  barSize?: number;
   className?: string;
   tickCount?: {
     x?: number;
     y?: number;
   };
   showTooltip?: boolean;
+};
+
+export type TBarItem<T extends string> = {
+  key: T;
+  fillClassName: string;
+  textClassName: string;
+  dotClassName?: string;
+  showPercentage?: boolean;
+  stackId: string;
+};
+
+export type TBarChartProps<K extends string, T extends string> = TChartProps<K, T> & {
+  bars: TBarItem<T>[];
+  barSize?: number;
+};
+
+export type TLineItem<T extends string> = {
+  key: T;
+  className?: string;
+  style?: Record<string, string | number>;
+  dotClassName?: string;
+};
+
+export type TLineChartProps<K extends string, T extends string> = TChartProps<K, T> & {
+  lines: TLineItem<T>[];
+};
+
+export type TAreaItem<T extends string> = {
+  key: T;
+  stackId: string;
+  className?: string;
+  style?: Record<string, string | number>;
+  dotClassName?: string;
+};
+
+export type TAreaChartProps<K extends string, T extends string> = TChartProps<K, T> & {
+  areas: TAreaItem<T>[];
+};
+
+export type TCellItem<T extends string> = {
+  key: T;
+  className?: string;
+  style?: Record<string, string | number>;
+  dotClassName?: string;
+};
+
+export type TPieChartProps<K extends string, T extends string> = Pick<
+  TChartProps<K, T>,
+  "className" | "data" | "showTooltip"
+> & {
+  dataKey: T;
+  cells: TCellItem<T>[];
+  innerRadius?: number;
+  outerRadius?: number;
 };
 
 export type TreeMapItem = {
@@ -45,7 +90,7 @@ export type TreeMapItem = {
   | {
       fillClassName: string;
     }
-  );
+);
 
 export type TreeMapChartProps = {
   data: TreeMapItem[];

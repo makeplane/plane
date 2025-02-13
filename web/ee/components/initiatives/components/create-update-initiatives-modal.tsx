@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane
+import { useTranslation } from "@plane/i18n";
 import { EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // Plane web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
@@ -22,6 +23,7 @@ const defaultValues: Partial<TInitiative> = {
   end_date: null,
   lead: null,
   project_ids: [],
+  epic_ids: [],
 };
 
 export const CreateUpdateInitiativeModal = observer((props: Props) => {
@@ -35,6 +37,8 @@ export const CreateUpdateInitiativeModal = observer((props: Props) => {
   const {
     initiative: { createInitiative, updateInitiative, getInitiativeById },
   } = useInitiatives();
+
+  const { t } = useTranslation();
   // derived values
   const initiativeDetail = initiativeId ? getInitiativeById(initiativeId) : undefined;
 
@@ -69,15 +73,15 @@ export const CreateUpdateInitiativeModal = observer((props: Props) => {
         handleModalClearAndClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: `Initiative created successfully.`,
+          title: t("toast.success"),
+          message: t("initiatives.toast.create_success", { name: formData?.name }),
         });
       })
       .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: error?.error ?? `Failed to create initiative. Please try again!`,
+          title: t("toast.error"),
+          message: error?.error ?? t("initiatives.toast.create_error"),
         });
       })
       .finally(() => {
@@ -94,15 +98,15 @@ export const CreateUpdateInitiativeModal = observer((props: Props) => {
         handleModalClearAndClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: `Initiative ${formData?.name} updated successfully.`,
+          title: t("toast.success"),
+          message: t("initiatives.toast.update_success", { name: formData?.name }),
         });
       })
       .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: error?.error ?? `Failed to update initiative. Please try again!`,
+          title: t("toast.error"),
+          message: error?.error ?? t("initiatives.toast.update_error"),
         });
       })
       .finally(() => {

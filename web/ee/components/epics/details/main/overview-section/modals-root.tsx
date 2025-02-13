@@ -44,14 +44,14 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Issues added successfully",
+          message: "Work items added successfully",
         });
       });
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: "Error adding issue",
+        message: "Error adding work item",
       });
     }
   };
@@ -112,7 +112,7 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: "Please select at least one issue.",
+        message: "Please select at least one work item.",
       });
       return;
     }
@@ -129,7 +129,7 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
   };
 
   // helpers
-  const createUpdateModalData = { parent_id: issueCrudOperationState?.create?.parentIssueId };
+  const createUpdateModalData = { parent_id: issueCrudOperationState?.create?.parentIssueId, project_id: projectId };
 
   const existingIssuesModalSearchParams = {
     sub_issue: true,

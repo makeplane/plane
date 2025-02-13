@@ -1,10 +1,9 @@
 import { isEmpty } from "lodash";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EUserPermissions } from "@plane/types/src/enums";
+import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 import { CustomSelect, Logo, ToggleSwitch, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { EUserPermissionsLevel } from "@/ce/constants";
 import { WorkspaceLogo } from "@/components/workspace";
 import { useProject, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
@@ -85,7 +84,7 @@ export const FocusFilter = observer(() => {
               const project = getProjectById(id);
               if (
                 allowPermissions(
-                  [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+                  [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER, EUserProjectRoles.GUEST],
                   EUserPermissionsLevel.PROJECT,
                   workspaceSlug.toString(),
                   project?.id

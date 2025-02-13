@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-// ui
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { AlertModalCore, Checkbox, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -14,6 +15,8 @@ type TPropertyMandatoryFieldCheckboxProps = {
 
 export const PropertyMandatoryFieldCheckbox = observer((props: TPropertyMandatoryFieldCheckboxProps) => {
   const { value, defaultValue, isDisabled = false, onMandatoryFieldChange } = props;
+  // plane imports
+  const { t } = useTranslation();
   // states
   const [isDefaultResetConfirmationOpen, setIsDefaultResetConfirmationOpen] = useState<boolean>(false);
 
@@ -36,16 +39,11 @@ export const PropertyMandatoryFieldCheckbox = observer((props: TPropertyMandator
           setIsDefaultResetConfirmationOpen(false);
         }}
         isSubmitting={false}
-        title="Mandatory property"
-        content={
-          <p>
-            There seems to be a default option for this property. Making the property mandatory will remove the default
-            value and the users will have to add a value of their choice.
-          </p>
-        }
+        title={t("work_item_types.settings.properties.mandate_confirmation.label")}
+        content={<p>{t("work_item_types.settings.properties.mandate_confirmation.content")}</p>}
         primaryButtonText={{
-          loading: "Please wait...",
-          default: "Mandate",
+          loading: t("common.please_wait"),
+          default: t("common.mandate"),
         }}
       />
       <div className="flex flex-shrink-0 items-center justify-center">
@@ -53,10 +51,10 @@ export const PropertyMandatoryFieldCheckbox = observer((props: TPropertyMandator
           className="w-52 shadow"
           tooltipContent={
             isDisabled
-              ? "This property type cannot be made mandatory"
+              ? t("work_item_types.settings.properties.mandate_confirmation.tooltip.disabled")
               : value
-                ? "Uncheck to mark the field as optional"
-                : "Check to mark the field as mandatory"
+                ? t("work_item_types.settings.properties.mandate_confirmation.tooltip.enabled")
+                : t("work_item_types.settings.properties.mandate_confirmation.tooltip.checked")
           }
           position="bottom"
         >
@@ -78,7 +76,7 @@ export const PropertyMandatoryFieldCheckbox = observer((props: TPropertyMandator
               })}
               iconClassName="size-3.5"
             />
-            Mandatory property
+            {t("work_item_types.settings.properties.mandate_confirmation.label")}
           </span>
         </Tooltip>
       </div>

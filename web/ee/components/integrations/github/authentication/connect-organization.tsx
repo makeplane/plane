@@ -3,6 +3,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store/integrations";
@@ -27,6 +28,7 @@ export const ConnectOrganization: FC = observer(() => {
   const workspaceId = workspace?.id || undefined;
   const workspaceConnectionId = workspaceConnectionIds[0] || undefined;
   const workspaceConnection = workspaceConnectionId ? workspaceConnectionById(workspaceConnectionId) : undefined;
+  const { t } = useTranslation();
 
   // handlers
   const handleConnectOrganization = async () => {
@@ -67,7 +69,7 @@ export const ConnectOrganization: FC = observer(() => {
   if (error)
     return (
       <div className="text-custom-text-200 relative flex justify-center items-center">
-        github-auth Something went wrong
+        {t("github_integration.connection_fetch_error")}
       </div>
     );
 
@@ -77,22 +79,20 @@ export const ConnectOrganization: FC = observer(() => {
         <div className="w-full relative flex items-center gap-4">
           <div className="flex-shrink-0 w-11 h-11 rounded overflow-hidden relative">
             <img
-              src={workspaceConnection?.connectionData?.avatar_url}
-              alt={workspaceConnection?.connectionData?.login}
+              src={workspaceConnection?.connection_data?.avatar_url}
+              alt={workspaceConnection?.connection_data?.login}
               className="object-contain w-full h-full overflow-hidden"
             />
           </div>
           <div className="space-y-0.5 w-full">
-            <div className="text-base font-medium">{workspaceConnection?.connectionData?.login}</div>
-            <div className="text-sm text-custom-text-200">Github org added by and time</div>
+            <div className="text-base font-medium">{workspaceConnection?.connection_data?.login}</div>
+            <div className="text-sm text-custom-text-200">{t("github_integration.org_added_desc")}</div>
           </div>
         </div>
       ) : (
         <div className="space-y-0.5 w-full">
-          <div className="text-base font-medium">Connect Organization</div>
-          <div className="text-sm text-custom-text-200">
-            Connect your GitHub workspaceConnection to use the integration
-          </div>
+          <div className="text-base font-medium">{t("github_integration.connect_org")}</div>
+          <div className="text-sm text-custom-text-200">{t("github_integration.connect_org_description")}</div>
         </div>
       )}
       <Button
@@ -105,10 +105,10 @@ export const ConnectOrganization: FC = observer(() => {
         {(isLoading && workspaceConnectionId) || error
           ? "..."
           : isConnectionSetup
-            ? "Processing"
+            ? t("common.processing")
             : !workspaceConnectionId
-              ? "Connect"
-              : "Disconnect"}
+              ? t("common.connect")
+              : t("common.disconnect")}
       </Button>
     </div>
   );

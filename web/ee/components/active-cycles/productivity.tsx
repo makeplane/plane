@@ -16,7 +16,7 @@ export type ActiveCycleProductivityProps = {
 };
 
 const cycleBurnDownChartOptions = [
-  { value: "issues", label: "Issues" },
+  { value: "issues", label: "Work items" },
   { value: "points", label: "Points" },
 ];
 
@@ -65,7 +65,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
   return (
     <div className="flex flex-col gap-4 p-4 min-h-52 border border-custom-border-200 rounded-lg">
       <div className="flex items-center justify-between gap-4">
-        <h3 className="text-lg text-custom-text-300 font-medium">Issue burndown</h3>
+        <h3 className="text-lg text-custom-text-300 font-medium">Work item burndown</h3>
         {estimate_distribution ? (
           isCurrentEstimateTypeIsPoints && (
             <div className="flex items-center gap-2">
@@ -106,7 +106,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
             {plotType === "points" ? (
               <span>{`Pending points - ${cycle.backlog_estimate_points + cycle.unstarted_estimate_points + cycle.started_estimate_points}`}</span>
             ) : (
-              <span>{`Pending issues - ${cycle.backlog_issues + cycle.unstarted_issues + cycle.started_issues}`}</span>
+              <span>{`Pending work items - ${cycle.backlog_issues + cycle.unstarted_issues + cycle.started_issues}`}</span>
             )}
           </div>
         )}
@@ -128,7 +128,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
                     startDate={cycle.start_date ?? ""}
                     endDate={cycle.end_date ?? ""}
                     totalIssues={cycle.total_issues || 0}
-                    plotTitle={"issues"}
+                    plotTitle={"work items"}
                   />
                 )}
               </Fragment>

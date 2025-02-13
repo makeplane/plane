@@ -36,9 +36,9 @@ const IssueForm = observer((props: TProps) => {
     <>
       <div className="space-y-5">
         <div className="mb-6">
-          <h3 className="text-xl font-medium text-custom-text-200">Create Issue</h3>
+          <h3 className="text-xl font-medium text-custom-text-200">Create Work item</h3>
           <div className="text-sm text-custom-text-300 flex gap-2">
-            <span> This issue will be added to the intake of the project</span>
+            <span> This work item will be added to the intake of the project</span>
             <span className="my-auto flex capitalize">
               {project.logo_props && <ProjectLogo logo={project.logo_props} className="text-sm my-auto mr-1" />}
               <span> {project.name}</span>
@@ -78,7 +78,7 @@ const IssueForm = observer((props: TProps) => {
           type="text"
           value={formData.name}
           onChange={(e) => handleFormData("name", e.target.value)}
-          placeholder="Enter title of the issue"
+          placeholder="Enter title of the work item"
           className="w-full text-md"
           autoFocus
           required
@@ -103,7 +103,7 @@ const IssueForm = observer((props: TProps) => {
         />
 
         <Button variant="primary" size="sm" type="submit" loading={isSubmitting} className="mx-auto mr-0">
-          {isSubmitting ? "Creating" : "Create issue"}
+          {isSubmitting ? "Creating" : "Create work item"}
         </Button>
       </div>
     </>

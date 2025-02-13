@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
-// helpers
-import { PROJECT_CREATED_AT_FILTER_OPTIONS } from "@/constants/filters";
+// plane constants
+import { PROJECT_CREATED_AT_FILTER_OPTIONS } from "@plane/constants";
+//helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
 // constants

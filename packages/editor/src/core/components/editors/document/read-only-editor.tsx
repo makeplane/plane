@@ -71,6 +71,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
 
   return (
     <PageRenderer
+      bubbleMenuEnabled={false}
       displayConfig={displayConfig}
       editor={editor}
       editorContainerClassName={editorContainerClassName}

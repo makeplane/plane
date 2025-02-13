@@ -24,13 +24,14 @@ export const InitiativeProgressSection: FC<Props> = observer((props) => {
   const initiativeAnalytics = getInitiativeAnalyticsById(initiativeId);
 
   const projectsIds = initiative?.project_ids ?? [];
+  const initiativeEpics = initiative?.epic_ids ?? [];
   const totalIssues = initiativeAnalytics
     ? Object.values(omit(initiativeAnalytics, "overdue_issues")).reduce((acc, val) => acc + val, 0)
     : 0;
 
-  const shouldRenderProgressSection = (projectsIds.length ?? 0) > 0;
+  const shouldRenderProgressSection = (projectsIds.length ?? 0) > 0 || initiativeEpics.length > 0 || totalIssues > 0;
 
-  if (!shouldRenderProgressSection || totalIssues === 0) return <></>;
+  if (!shouldRenderProgressSection) return <></>;
 
   return <ProgressSection data={initiativeAnalytics as TStateAnalytics} />;
 });

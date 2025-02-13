@@ -143,14 +143,17 @@ export async function pullCustomFields(client: AsanaService, projectGid: string)
     limit: DEFAULT_PAGINATION_LIMIT,
     offset: "",
   };
-
-  do {
-    const response = await client.getProjectCustomFieldSettings(projectGid, pagination);
-    customFields.push(...response.data);
-    pagination.offset = response._response.next_page?.offset || "";
-  } while (pagination.offset);
-
-  return customFields;
+  try {
+    do {
+      const response = await client.getProjectCustomFieldSettings(projectGid, pagination);
+      customFields.push(...response.data);
+      pagination.offset = response._response.next_page?.offset || "";
+    } while (pagination.offset);
+  } catch (error: any) {
+    console.log("error while fetching custom fields from asana", error?.message);
+  } finally {
+    return customFields;
+  }
 }
 
 export async function pullAttachments(

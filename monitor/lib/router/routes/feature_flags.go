@@ -65,6 +65,7 @@ func addWorkspaceProductRoutes(controller *fiber.App, api *prime_api.IPrimeMonit
 
 func addWorkspaceSubscriptionRoutes(controller *fiber.App, api *prime_api.IPrimeMonitorApi, key string) {
 	controller.Post("/subscriptions/check/", handlers.GetWorkspaceSubscriptionHandler(*api, key))
+	controller.Post("/subscriptions/proration-preview/", handlers.GetProrationPreviewHandler(*api, key))
 }
 
 func addInstanceLicenseRoutes(controller *fiber.App, api *prime_api.IPrimeMonitorApi, key string) {

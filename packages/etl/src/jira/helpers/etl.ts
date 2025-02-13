@@ -1,10 +1,11 @@
-import { IPriorityConfig, IStateConfig, JiraCustomFieldKeys, JiraIssueField, PaginatedResponse } from "@/jira/types";
-import { ExIssueAttachment, ExState, ExIssueProperty, ExIssuePropertyValue, TPropertyValue } from "@plane/sdk";
 import {
   Attachment as JiraAttachment,
   Priority as JiraPriority,
   StatusDetails as JiraState,
 } from "jira.js/out/version3/models";
+import { ExIssueAttachment, ExState, ExIssueProperty, ExIssuePropertyValue, TPropertyValue } from "@plane/sdk";
+import { E_IMPORTER_KEYS } from "@/core";
+import { IPriorityConfig, IStateConfig, JiraCustomFieldKeys, JiraIssueField, PaginatedResponse } from "@/jira/types";
 import { SUPPORTED_CUSTOM_FIELD_ATTRIBUTES } from "./custom-field-etl";
 import { getFormattedDate } from "./date";
 
@@ -12,7 +13,7 @@ export const getTargetState = (stateMap: IStateConfig[], sourceState: JiraState)
   // Assign the external source and external id from jira and return the target state
   const targetState = stateMap.find((state: IStateConfig) => {
     if (state.source_state.id === sourceState.id) {
-      state.target_state.external_source = "JIRA";
+      state.target_state.external_source = E_IMPORTER_KEYS.JIRA;
       state.target_state.external_id = sourceState.id as string;
       return state;
     }
@@ -21,22 +22,30 @@ export const getTargetState = (stateMap: IStateConfig[], sourceState: JiraState)
   return targetState?.target_state;
 };
 
-export const getTargetAttachments = (attachments?: JiraAttachment[]): Partial<ExIssueAttachment[]> => {
+export const getTargetAttachments = (
+  resourceId: string,
+  projectId: string,
+  attachments?: JiraAttachment[]
+): Partial<ExIssueAttachment[]> => {
   if (!attachments) {
     return [];
   }
   const attachmentArray = attachments
-    .map(
-      (attachment: JiraAttachment): Partial<ExIssueAttachment> => ({
-        external_id: attachment.id ?? "",
-        external_source: "JIRA",
+    .map((attachment: JiraAttachment): Partial<ExIssueAttachment | undefined> => {
+      if (!attachment.id) {
+        return;
+      }
+
+      return {
+        external_id: `${projectId}_${resourceId}_${attachment.id}`,
+        external_source: E_IMPORTER_KEYS.JIRA,
         attributes: {
           name: attachment.filename ?? "Untitled",
           size: attachment.size ?? 0,
         },
         asset: attachment.content ?? "",
-      })
-    )
+      };
+    })
     .filter((attachment) => attachment !== undefined) as ExIssueAttachment[];
 
   return attachmentArray;
@@ -92,7 +101,7 @@ export const getPropertyValues = (
 ): ExIssuePropertyValue => {
   const propertyValues: ExIssuePropertyValue = [];
   const commonPropertyProp: Partial<TPropertyValue> = {
-    external_source: "JIRA",
+    external_source: E_IMPORTER_KEYS.JIRA,
     external_id: undefined,
   };
 

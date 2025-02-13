@@ -5,12 +5,13 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { FolderPlus, Search, Settings } from "lucide-react";
+import { CommandIcon, FolderPlus, Search, Settings } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-// types
+// plane imports
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IWorkspaceSearchResults } from "@plane/types";
-// ui
-import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import { LayersIcon, Loader, ToggleSwitch } from "@plane/ui";
 // components
 import {
   ChangeIssueAssignee,
@@ -23,9 +24,7 @@ import {
   CommandPaletteThemeActions,
   CommandPaletteWorkspaceSettingsActions,
 } from "@/components/command-palette";
-import { EmptyState } from "@/components/empty-state";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state";
 // fetch-keys
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 // helpers
@@ -36,21 +35,20 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 // services
 import { IssueService } from "@/services/issue";
-import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
 
 const workspaceService = new WorkspaceService();
 const issueService = new IssueService();
 
 export const CommandModal: React.FC = observer(() => {
-  // hooks
-  const { workspaceProjectIds } = useProject();
-  const { isMobile } = usePlatformOS();
-  const { canPerformAnyCreateAction } = useUser();
+  // router
+  const router = useAppRouter();
+  const { workspaceSlug, projectId, issueId } = useParams();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
   const [resultsCount, setResultsCount] = useState(0);
@@ -69,28 +67,27 @@ export const CommandModal: React.FC = observer(() => {
       epic: [],
     },
   });
-  const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
+  const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(true);
   const [pages, setPages] = useState<string[]>([]);
+  // plane hooks
+  const { t } = useTranslation();
+  // hooks
+  const { workspaceProjectIds } = useProject();
+  const { platform, isMobile } = usePlatformOS();
+  const { canPerformAnyCreateAction } = useUser();
   const { isCommandPaletteOpen, toggleCommandPaletteModal, toggleCreateIssueModal, toggleCreateProjectModal } =
     useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   const { setTrackElement } = useEventTracker();
-
-  // router
-  const router = useAppRouter();
-  // router params
-  const { workspaceSlug, projectId, issueId } = useParams();
-
+  // derived values
   const page = pages[pages.length - 1];
-
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
-
   const canPerformWorkspaceActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
 
   // TODO: update this to mobx store
   const { data: issueDetails } = useSWR(
@@ -181,22 +178,60 @@ export const CommandModal: React.FC = observer(() => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative flex w-full max-w-2xl transform items-center justify-center divide-y divide-custom-border-200 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
+              <Dialog.Panel className="relative flex w-full max-w-2xl transform flex-col items-center justify-center divide-y divide-custom-border-200 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
                 <div className="w-full max-w-2xl">
                   <Command
                     filter={(value, search) => {
                       if (value.toLowerCase().includes(search.toLowerCase())) return 1;
                       return 0;
                     }}
-                    onKeyDown={(e) => {
-                      // when search term is not empty, esc should clear the search term
-                      if (e.key === "Escape" && searchTerm) setSearchTerm("");
+                    shouldFilter={searchTerm.length > 0}
+                    onKeyDown={(e: any) => {
+                      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        closePalette();
+                        return;
+                      }
 
-                      // when user tries to close the modal with esc
-                      if (e.key === "Escape" && !page && !searchTerm) closePalette();
+                      if (e.key === "Tab") {
+                        e.preventDefault();
+                        const commandList = document.querySelector("[cmdk-list]");
+                        const items = commandList?.querySelectorAll("[cmdk-item]") || [];
+                        const selectedItem = commandList?.querySelector('[aria-selected="true"]');
+                        if (items.length === 0) return;
 
-                      // Escape goes to previous page
-                      // Backspace goes to previous page when search is empty
+                        const currentIndex = Array.from(items).indexOf(selectedItem as Element);
+                        let nextIndex;
+
+                        if (e.shiftKey) {
+                          nextIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
+                        } else {
+                          nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
+                        }
+
+                        const nextItem = items[nextIndex] as HTMLElement;
+                        if (nextItem) {
+                          nextItem.setAttribute("aria-selected", "true");
+                          selectedItem?.setAttribute("aria-selected", "false");
+                          nextItem.focus();
+                          nextItem.scrollIntoView({
+                            behavior: "smooth",
+                            block: "nearest",
+                          });
+                        }
+                      }
+
+                      if (e.key === "Escape" && searchTerm) {
+                        e.preventDefault();
+                        setSearchTerm("");
+                      }
+
+                      if (e.key === "Escape" && !page && !searchTerm) {
+                        e.preventDefault();
+                        closePalette();
+                      }
+
                       if (e.key === "Escape" || (e.key === "Backspace" && !searchTerm)) {
                         e.preventDefault();
                         setPages((pages) => pages.slice(0, -1));
@@ -205,7 +240,7 @@ export const CommandModal: React.FC = observer(() => {
                     }}
                   >
                     <div
-                      className={`flex gap-4 p-3 pb-0 sm:items-center ${
+                      className={`flex gap-4 pb-0 sm:items-center ${
                         issueDetails ? "flex-col justify-between sm:flex-row" : "justify-end"
                       }`}
                     >
@@ -220,23 +255,6 @@ export const CommandModal: React.FC = observer(() => {
                           )}
                           {issueDetails.name}
                         </div>
-                      )}
-                      {projectId && (
-                        <Tooltip tooltipContent="Toggle workspace level search" isMobile={isMobile}>
-                          <div className="flex flex-shrink-0 cursor-pointer items-center gap-1 self-end text-xs sm:self-center">
-                            <button
-                              type="button"
-                              onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
-                              className="flex-shrink-0"
-                            >
-                              Workspace Level
-                            </button>
-                            <ToggleSwitch
-                              value={isWorkspaceLevel}
-                              onChange={() => setIsWorkspaceLevel((prevData) => !prevData)}
-                            />
-                          </div>
-                        </Tooltip>
                       )}
                     </div>
                     <div className="relative">
@@ -270,7 +288,7 @@ export const CommandModal: React.FC = observer(() => {
 
                       {!isLoading && resultsCount === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
                         <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-                          <EmptyState type={EmptyStateType.COMMAND_K_SEARCH_EMPTY_STATE} layout="screen-simple" />
+                          <SimpleEmptyState title={t("command_k.empty_state.search.title")} assetPath={resolvedPath} />
                         </div>
                       )}
 
@@ -306,7 +324,7 @@ export const CommandModal: React.FC = observer(() => {
                             workspaceProjectIds &&
                             workspaceProjectIds.length > 0 &&
                             canPerformAnyCreateAction && (
-                              <Command.Group heading="Issue">
+                              <Command.Group heading="Work item">
                                 <Command.Item
                                   onSelect={() => {
                                     closePalette();
@@ -317,7 +335,7 @@ export const CommandModal: React.FC = observer(() => {
                                 >
                                   <div className="flex items-center gap-2 text-custom-text-200">
                                     <LayersIcon className="h-3.5 w-3.5" />
-                                    Create new issue
+                                    Create new work item
                                   </div>
                                   <kbd>C</kbd>
                                 </Command.Item>
@@ -417,6 +435,28 @@ export const CommandModal: React.FC = observer(() => {
                       )}
                     </Command.List>
                   </Command>
+                </div>
+                {/* Bottom overlay */}
+                <div className="w-full flex items-center justify-between px-4 py-2 border-t border-custom-border-200 bg-custom-background-90/80 rounded-b-lg">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-custom-text-300">Actions</span>
+                    <div className="flex items-center gap-1">
+                      <div className="grid h-6 min-w-[1.5rem] place-items-center rounded bg-custom-background-80 border-[0.5px] border-custom-border-200 px-1.5 text-[10px] text-custom-text-200">
+                        {platform === "MacOS" ? <CommandIcon className="h-2.5 w-2.5 text-custom-text-200" /> : "Ctrl"}
+                      </div>
+                      <kbd className="grid h-6 min-w-[1.5rem] place-items-center rounded bg-custom-background-80 border-[0.5px] border-custom-border-200 px-1.5 text-[10px] text-custom-text-200">
+                        K
+                      </kbd>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-custom-text-300">Workspace Level</span>
+                    <ToggleSwitch
+                      value={isWorkspaceLevel}
+                      onChange={() => setIsWorkspaceLevel((prevData) => !prevData)}
+                      size="sm"
+                    />
+                  </div>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

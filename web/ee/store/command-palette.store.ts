@@ -1,46 +1,46 @@
 import { action, computed, makeObservable, observable } from "mobx";
 // types / constants
-import { TCreateUpdateInitiativeModal, TCreateUpdateTeamModal, TCreateUpdateTeamViewModal } from "@plane/types";
+import { TCreateUpdateInitiativeModal, TCreateUpdateTeamspaceModal, TCreateUpdateTeamspaceViewModal } from "@plane/types";
 import {
   DEFAULT_CREATE_UPDATE_TEAM_MODAL_DATA,
   DEFAULT_CREATE_UPDATE_TEAM_VIEW_MODAL_DATA,
-} from "@/plane-web/constants/teams";
+} from "@/plane-web/constants/teamspace";
 // store
 import { BaseCommandPaletteStore, IBaseCommandPaletteStore } from "@/store/base-command-palette.store";
 import { DEFAULT_CREATE_UPDATE_INITIATIVE_MODAL_DATA } from "../constants/initiative";
 
 export interface ICommandPaletteStore extends IBaseCommandPaletteStore {
   // observables
-  createUpdateTeamModal: TCreateUpdateTeamModal;
-  createUpdateTeamViewModal: TCreateUpdateTeamViewModal;
+  createUpdateTeamspaceModal: TCreateUpdateTeamspaceModal;
+  createUpdateTeamspaceViewModal: TCreateUpdateTeamspaceViewModal;
   createUpdateInitiativeModal: TCreateUpdateInitiativeModal;
   // computed
   isAnyModalOpen: boolean;
   // actions
-  toggleCreateTeamModal: (value?: TCreateUpdateTeamModal) => void;
-  toggleCreateTeamViewModal: (value?: TCreateUpdateTeamViewModal) => void;
+  toggleCreateTeamspaceModal: (value?: TCreateUpdateTeamspaceModal) => void;
+  toggleCreateTeamspaceViewModal: (value?: TCreateUpdateTeamspaceViewModal) => void;
   toggleCreateInitiativeModal: (value?: TCreateUpdateInitiativeModal) => void;
 }
 
 export class CommandPaletteStore extends BaseCommandPaletteStore implements ICommandPaletteStore {
   // observables
-  createUpdateTeamModal: TCreateUpdateTeamModal = DEFAULT_CREATE_UPDATE_TEAM_MODAL_DATA;
-  createUpdateTeamViewModal: TCreateUpdateTeamViewModal = DEFAULT_CREATE_UPDATE_TEAM_VIEW_MODAL_DATA;
+  createUpdateTeamspaceModal: TCreateUpdateTeamspaceModal = DEFAULT_CREATE_UPDATE_TEAM_MODAL_DATA;
+  createUpdateTeamspaceViewModal: TCreateUpdateTeamspaceViewModal = DEFAULT_CREATE_UPDATE_TEAM_VIEW_MODAL_DATA;
   createUpdateInitiativeModal: TCreateUpdateInitiativeModal = DEFAULT_CREATE_UPDATE_INITIATIVE_MODAL_DATA;
 
   constructor() {
     super();
     makeObservable(this, {
       // observables
-      createUpdateTeamModal: observable,
-      createUpdateTeamViewModal: observable,
+      createUpdateTeamspaceModal: observable,
+      createUpdateTeamspaceViewModal: observable,
       createUpdateInitiativeModal: observable,
 
       // computed
       isAnyModalOpen: computed,
       // actions
-      toggleCreateTeamModal: action,
-      toggleCreateTeamViewModal: action,
+      toggleCreateTeamspaceModal: action,
+      toggleCreateTeamspaceViewModal: action,
       toggleCreateInitiativeModal: action,
     });
   }
@@ -52,46 +52,46 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
   get isAnyModalOpen(): boolean {
     return Boolean(
       super.getCoreModalsState() ||
-        this.createUpdateTeamModal.isOpen ||
-        this.createUpdateTeamViewModal.isOpen ||
+      this.createUpdateTeamspaceModal.isOpen ||
+      this.createUpdateTeamspaceViewModal.isOpen ||
         this.createUpdateInitiativeModal.isOpen
     );
   }
 
   /**
-   * Toggles the create team modal
+   * Toggles the create teamspace modal
    * @param value
    * @returns
    */
-  toggleCreateTeamModal = (value?: TCreateUpdateTeamModal) => {
+  toggleCreateTeamspaceModal = (value?: TCreateUpdateTeamspaceModal) => {
     if (value) {
-      this.createUpdateTeamModal = {
+      this.createUpdateTeamspaceModal = {
         isOpen: value.isOpen,
-        teamId: value.teamId,
+        teamspaceId: value.teamspaceId,
       };
     } else {
-      this.createUpdateTeamModal = {
-        isOpen: !this.createUpdateTeamModal.isOpen,
-        teamId: undefined,
+      this.createUpdateTeamspaceModal = {
+        isOpen: !this.createUpdateTeamspaceModal.isOpen,
+        teamspaceId: undefined,
       };
     }
   };
 
   /**
-   * Toggles the create team view modal
+   * Toggles the create teamspace view modal
    * @param value
    * @returns
    */
-  toggleCreateTeamViewModal = (value?: TCreateUpdateTeamViewModal) => {
+  toggleCreateTeamspaceViewModal = (value?: TCreateUpdateTeamspaceViewModal) => {
     if (value) {
-      this.createUpdateTeamViewModal = {
+      this.createUpdateTeamspaceViewModal = {
         isOpen: value.isOpen,
-        teamId: value.teamId,
+        teamspaceId: value.teamspaceId,
       };
     } else {
-      this.createUpdateTeamViewModal = {
-        isOpen: !this.createUpdateTeamViewModal.isOpen,
-        teamId: undefined,
+      this.createUpdateTeamspaceViewModal = {
+        isOpen: !this.createUpdateTeamspaceViewModal.isOpen,
+        teamspaceId: undefined,
       };
     }
   };

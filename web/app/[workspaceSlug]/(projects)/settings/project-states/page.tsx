@@ -3,8 +3,10 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// component
+// plane imports
+import { EUserWorkspaceRoles } from "@plane/constants";
 import { ToggleSwitch } from "@plane/ui";
+// components
 import { PageHead } from "@/components/core";
 // store hooks
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
@@ -15,7 +17,6 @@ import {
   WorkspaceProjectStatesRoot,
 } from "@/plane-web/components/workspace-project-states";
 // plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
@@ -32,7 +33,7 @@ const WorklogsPage = observer(() => {
   // derived values
   const currentWorkspaceDetail = workspaceInfoBySlug(workspaceSlug.toString());
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Project States` : undefined;
-  const isAdmin = currentWorkspaceDetail?.role === EUserPermissions.ADMIN;
+  const isAdmin = currentWorkspaceDetail?.role === EUserWorkspaceRoles.ADMIN;
   const isProjectGroupingEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED);
 
   if (!workspaceSlug || !currentWorkspace?.id) return <></>;

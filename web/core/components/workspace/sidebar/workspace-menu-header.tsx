@@ -51,10 +51,10 @@ export const SidebarWorkspaceMenuHeader: FC<SidebarWorkspaceMenuHeaderProps> = o
     >
       <Disclosure.Button
         as="button"
-        className="flex-1 sticky top-0  z-10  w-full  py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400  text-xs font-semibold"
+        className="flex-1 sticky top-0  z-10  w-full  py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400  text-sm font-semibold"
         onClick={() => toggleWorkspaceMenu(!isWorkspaceMenuOpen)}
       >
-        <span>{t("workspace").toUpperCase()}</span>
+        <span>{t("workspace")}</span>
       </Disclosure.Button>
       <CustomMenu
         customButton={

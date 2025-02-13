@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // plane web imports
-import { UpdateWorkspaceSeatsModal } from "@/plane-web/components/workspace/billing/update-workspace-seats";
+import { AddSeatsModal } from "@/plane-web/components/workspace/billing/manage-seats/add-seats/modal";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 type Props = {
@@ -14,11 +16,17 @@ type Props = {
 
 export const AddSeatsAlertBanner: React.FC<Props> = observer((props: Props) => {
   const { additionalUserCount = 15, extraSeatRequired } = props;
-  const [updateWorkspaceSeatsModal, setUpdateWorkspaceSeatsModal] = useState(false);
-  const { togglePaidPlanModal, currentWorkspaceSubscribedPlanDetail: subscribedPlan, currentWorkspaceSubscriptionAvailableSeats } = useWorkspaceSubscription();
+  const [addWorkspaceSeatsModal, setUpdateWorkspaceSeatsModal] = useState(false);
+  const {
+    togglePaidPlanModal,
+    currentWorkspaceSubscribedPlanDetail: subscribedPlan,
+    currentWorkspaceSubscriptionAvailableSeats,
+  } = useWorkspaceSubscription();
   const isFreePlan = subscribedPlan?.product == "FREE";
 
-  const toggleUpdateWorkspaceSeatsModal = (flag: boolean) => {
+  const { t } = useTranslation();
+
+  const toggleAddWorkspaceSeatsModal = (flag: boolean) => {
     if (isFreePlan) {
       togglePaidPlanModal(flag);
     } else {
@@ -30,9 +38,17 @@ export const AddSeatsAlertBanner: React.FC<Props> = observer((props: Props) => {
     return <></>;
   }
 
-  const alertMessage = isFreePlan
-    ? `You're trying to import ${additionalUserCount} non-registered users and you've only $ ${currentWorkspaceSubscriptionAvailableSeats} seats available in current plan. To continue importing upgrade now.`
-    : `You're trying to import ${additionalUserCount} non-registered users and you've only ${currentWorkspaceSubscriptionAvailableSeats} seats available in current plan. To continue importing buy atleast ${extraSeatRequired} extra seats.`;
+  const addSeatMessagePaid = t("importers.add_seat_msg_paid", {
+    additionalUserCount: additionalUserCount?.toString(),
+    currentWorkspaceSubscriptionAvailableSeats: currentWorkspaceSubscriptionAvailableSeats?.toString(),
+    extraSeatRequired: extraSeatRequired?.toString(),
+  });
+  const addSeatMessageFree = t("importers.add_seat_msg_free_trial", {
+    additionalUserCount: additionalUserCount?.toString(),
+    currentWorkspaceSubscriptionAvailableSeats: currentWorkspaceSubscriptionAvailableSeats?.toString(),
+  });
+
+  const alertMessage = isFreePlan ? addSeatMessageFree : addSeatMessagePaid;
 
   return (
     <div className="flex flex-row items-center gap-5 justify-between p-5 bg-red-500/20 rounded">
@@ -41,16 +57,17 @@ export const AddSeatsAlertBanner: React.FC<Props> = observer((props: Props) => {
         variant="primary"
         color="primary"
         onClick={() => {
-          toggleUpdateWorkspaceSeatsModal(true);
+          toggleAddWorkspaceSeatsModal(true);
         }}
       >
-        {isFreePlan ? "Upgrade" : "Add Seats"}
+        {isFreePlan ? t("common.upgrade") : t("common.add_seats")}
       </Button>
-      <UpdateWorkspaceSeatsModal
-        isOpen={updateWorkspaceSeatsModal}
-        variant="ADD_SEATS"
+      <AddSeatsModal
+        data={{
+          isOpen: addWorkspaceSeatsModal,
+        }}
         onClose={() => {
-          toggleUpdateWorkspaceSeatsModal(false);
+          toggleAddWorkspaceSeatsModal(false);
         }}
       />
     </div>

@@ -1,10 +1,18 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { InfoIcon } from "lucide-react";
-// ui
+// plane imports
+import { EIssuePropertyType } from "@plane/constants";
+import {
+  EIssuePropertyValueError,
+  TDateAttributeDisplayOptions,
+  TIssueProperty,
+  TIssuePropertyTypeKeys,
+  TPropertyValueVariant,
+  TTextAttributeDisplayOptions,
+} from "@plane/types";
 import { Loader, Tooltip } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { getIssuePropertyTypeKey, cn } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web components
@@ -17,17 +25,6 @@ import {
   OptionValueSelect,
   IssuePropertyLogo,
 } from "@/plane-web/components/issue-types";
-import { getIssuePropertyTypeKey } from "@/plane-web/helpers/issue-properties.helper";
-// plane web types
-import {
-  EIssuePropertyType,
-  EIssuePropertyValueError,
-  TDateAttributeDisplayOptions,
-  TIssueProperty,
-  TIssuePropertyTypeKeys,
-  TPropertyValueVariant,
-  TTextAttributeDisplayOptions,
-} from "@/plane-web/types";
 
 type TPropertyValueSelectProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType>>;

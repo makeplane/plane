@@ -1,20 +1,18 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
+// constants
+import { EUserProjectRoles, ISSUE_DISPLAY_PROPERTIES } from "@plane/constants";
 // types
 import { IIssueDisplayProperties } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 // components
 import { IssueProperties } from "@/components/issues/issue-layouts/properties/all-properties";
-// constants
-import { ISSUE_DISPLAY_PROPERTIES } from "@/constants/issue";
 // hooks
 import { useIssueDetail, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
-// plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   issueId: string;
@@ -40,7 +38,7 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
   const issueDetails = getIssueById(issueId);
 
   // auth
-  const isReadOnly = !!projectRole && projectRole < EUserPermissions.MEMBER;
+  const isReadOnly = !!projectRole && projectRole < EUserProjectRoles.MEMBER;
 
   // issue display properties
   const displayProperties: IIssueDisplayProperties = {};
@@ -75,7 +73,7 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
     return (
       <div className="flex items-center gap-3 rounded-md border-2 border-orange-500 bg-orange-500/10 text-orange-500 px-4 py-3 my-2 text-base">
         <AlertTriangle className="text-orange-500 size-8" />
-        This Issue embed is not found in any project. It can no longer be updated or accessed from here.
+        This work item embed is not found in any project. It can no longer be updated or accessed from here.
       </div>
     );
 
@@ -102,7 +100,7 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
           className="flex flex-wrap items-center gap-2 whitespace-nowrap text-custom-text-300 pt-1.5"
           issue={issueDetails}
           displayProperties={displayProperties}
-          activeLayout="Page issue embed"
+          activeLayout="Page work item embed"
           updateIssue={async (projectId, issueId, data) => {
             if (projectId) {
               return await updateIssue(workspaceSlug, projectId, issueId, data);

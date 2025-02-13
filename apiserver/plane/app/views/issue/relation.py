@@ -100,6 +100,7 @@ class IssueRelationViewSet(BaseViewSet):
         queryset = (
             (
                 Issue.objects.filter(workspace__slug=slug)
+                .filter(project__deleted_at__isnull=True)
                 .select_related("workspace", "project", "state", "parent")
                 .prefetch_related("assignees", "labels", "issue_module__module")
                 .annotate(
@@ -278,7 +279,7 @@ class IssueRelationViewSet(BaseViewSet):
         related_issue = request.data.get("related_issue", None)
 
         issue_relations = IssueRelation.objects.filter(
-            workspace__slug=slug, project_id=project_id
+            workspace__slug=slug,
         ).filter(
             Q(issue_id=related_issue, related_issue_id=issue_id)
             | Q(issue_id=issue_id, related_issue_id=related_issue)

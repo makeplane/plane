@@ -5,9 +5,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FileText } from "lucide-react";
 // types
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 import { TLogoProps } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, setToast } from "@plane/ui";
+import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, Header, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 // helpers
@@ -19,7 +20,6 @@ import { useUserPermissions } from "@/hooks/store";
 // plane web components
 import { PublishPageModal } from "@/plane-web/components/pages";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants";
 // plane web hooks
 import { usePublishPage, useWorkspacePageDetails } from "@/plane-web/hooks/store";
 
@@ -44,7 +44,7 @@ export const PageDetailsHeader = observer(() => {
   const isDeployed = !!anchor;
   const pagePublishSettings = getPagePublishSettings(pageId.toString());
   const isPublishAllowed =
-    isCurrentUserOwner || allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+    isCurrentUserOwner || allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   const handlePageLogoUpdate = async (data: TLogoProps) => {
     if (data) {
@@ -80,8 +80,8 @@ export const PageDetailsHeader = observer(() => {
         publishPage={(data) => publishWorkspacePage(pageId.toString(), data)}
         unpublishPage={() => unpublishWorkspacePage(pageId.toString())}
       />
-      <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 py-4">
-        <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+      <Header>
+        <Header.LeftItem>
           <div>
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
@@ -145,24 +145,26 @@ export const PageDetailsHeader = observer(() => {
               />
             </Breadcrumbs>
           </div>
-        </div>
-        {isDeployed && (
-          <a
-            href={publishLink}
-            className="px-3 py-1.5 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />
-            Live
-          </a>
-        )}
-        {isPublishAllowed && (
-          <Button variant="outline-primary" size="sm" onClick={() => setIsPublishModalOpen(true)}>
-            {isDeployed ? "Unpublish" : "Publish"}
-          </Button>
-        )}
-      </div>
+        </Header.LeftItem>
+        <Header.RightItem>
+          {isDeployed && (
+            <a
+              href={publishLink}
+              className="px-3 py-1.5 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />
+              Live
+            </a>
+          )}
+          {isPublishAllowed && (
+            <Button variant="outline-primary" size="sm" onClick={() => setIsPublishModalOpen(true)}>
+              {isDeployed ? "Unpublish" : "Publish"}
+            </Button>
+          )}
+        </Header.RightItem>
+      </Header>
     </>
   );
 });

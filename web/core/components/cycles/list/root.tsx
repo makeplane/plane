@@ -2,6 +2,7 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
 // components
+import { useTranslation } from "@plane/i18n";
 import { ContentWrapper, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
 import { CycleListGroupHeader, CyclePeekOverview, CyclesListMap } from "@/components/cycles";
@@ -18,6 +19,7 @@ export interface ICyclesList {
 
 export const CyclesList: FC<ICyclesList> = observer((props) => {
   const { completedCycleIds, upcomingCycleIds, cycleIds, workspaceSlug, projectId, isArchived = false } = props;
+  const { t } = useTranslation();
 
   return (
     <ContentWrapper variant={ERowVariant.HUGGING} className="flex-row">
@@ -36,7 +38,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
                   <>
                     <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
                       <CycleListGroupHeader
-                        title="Upcoming cycle"
+                        title={t("project_cycles.upcoming_cycle.label")}
                         type="upcoming"
                         count={upcomingCycleIds.length}
                         showCount
@@ -55,7 +57,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
                 <>
                   <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
                     <CycleListGroupHeader
-                      title="Completed cycle"
+                      title={t("project_cycles.completed_cycle.label")}
                       type="completed"
                       count={completedCycleIds.length}
                       showCount

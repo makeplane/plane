@@ -1,14 +1,11 @@
 import React, { useState } from "react";
 // components
 import { Search } from "lucide-react";
-// types
+// plane imports
+import { DEFAULT_BACKGROUND_COLORS } from "@plane/constants";
 import { TLogoProps } from "@plane/types";
-// ui
 import { Input, LUCIDE_ICONS_LIST } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
-// plane web helpers
-import { DEFAULT_BACKGROUND_COLORS } from "@/plane-web/helpers/issue-type.helper";
+import { cn } from "@plane/utils";
 
 export type TIconsListProps = {
   defaultBackgroundColor?: string;

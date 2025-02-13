@@ -1,8 +1,8 @@
-import { Store } from "@/apps/engine/worker/base";
+import { Store } from "@/worker/base";
 import { getConnectionDetails } from "@/apps/github/helpers/helpers";
 import { GithubEntityConnection } from "@/apps/github/types";
 import { logger } from "@/logger";
-import { TServiceCredentials } from "@plane/etl/core";
+import { E_INTEGRATION_KEYS, TServiceCredentials } from "@plane/etl/core";
 import {
   createGithubService,
   GithubService,
@@ -13,8 +13,10 @@ import {
 import { ExIssueComment, Client as PlaneClient } from "@plane/sdk";
 
 import { shouldSync } from "./issue.handler";
-import { getCredentialsForTargetToken } from "@/helpers/credential";
 import { env } from "@/env";
+import { getAPIClient } from "@/services/client";
+
+const apiClient = getAPIClient();
 
 export type GithubCommentAction = "created" | "edited" | "deleted";
 
@@ -50,8 +52,10 @@ export const syncCommentWithPlane = async (
   if (!data.installation || !shouldSync(data.issue.labels) || data.comment.user?.type !== "User") {
     return;
   }
-
-  const planeCredentials = await getCredentialsForTargetToken(data.installation.id.toString());
+  const [planeCredentials] = await apiClient.workspaceCredential.listWorkspaceCredentials({
+    source: E_INTEGRATION_KEYS.GITHUB,
+    source_access_token: data.installation.id.toString(),
+  });
   const accountId = data.organization ? data.organization.id : data.repository.owner.id;
 
   const { workspaceConnection, entityConnection } = await getConnectionDetails({
@@ -61,9 +65,13 @@ export const syncCommentWithPlane = async (
     repositoryId: data.repository.id.toString(),
   });
 
+  if (!workspaceConnection.target_hostname) {
+    throw new Error("Target hostname not found");
+  }
+
   const planeClient = new PlaneClient({
     apiToken: planeCredentials.target_access_token!,
-    baseURL: workspaceConnection.targetHostname,
+    baseURL: workspaceConnection.target_hostname,
   });
 
   const ghService = createGithubService(env.GITHUB_APP_ID, env.GITHUB_PRIVATE_KEY, data.installation.id.toString());
@@ -80,17 +88,17 @@ export const syncCommentWithPlane = async (
     workspaceConnection.config.userMap.map((obj) => [obj.githubUser.login, obj.planeUser.id])
   );
 
-  const planeUsers = await planeClient.users.list(entityConnection.workspaceSlug, entityConnection.projectId ?? "");
+  const planeUsers = await planeClient.users.list(workspaceConnection.workspace_slug, entityConnection.project_id ?? "");
 
   let comment: ExIssueComment | null = null;
 
   try {
     comment = await planeClient.issueComment.getIssueCommentWithExternalId(
-      entityConnection.workspaceSlug,
-      entityConnection.projectId ?? "",
+      workspaceConnection.workspace_slug,
+      entityConnection.project_id ?? "",
       issue.id,
       data.comment.id.toString(),
-      "GITHUB"
+      E_INTEGRATION_KEYS.GITHUB
     );
   } catch (error) { }
 
@@ -100,8 +108,8 @@ export const syncCommentWithPlane = async (
     encodeURI(env.SILO_API_BASE_URL + env.SILO_BASE_PATH + "/api/assets/github"),
     issue.id,
     data.repository.full_name,
-    entityConnection.workspaceSlug,
-    entityConnection.projectId ?? "",
+    workspaceConnection.workspace_slug,
+    entityConnection.project_id ?? "",
     planeClient,
     ghService,
     userMap,
@@ -111,8 +119,8 @@ export const syncCommentWithPlane = async (
 
   if (comment) {
     await planeClient.issueComment.update(
-      entityConnection.workspaceSlug,
-      entityConnection.projectId ?? "",
+      workspaceConnection.workspace_slug,
+      entityConnection.project_id ?? "",
       issue.id,
       comment.id,
       planeComment
@@ -120,8 +128,8 @@ export const syncCommentWithPlane = async (
     await store.set(`silo:comment:${comment.id}`, "true");
   } else {
     const createdComment = await planeClient.issueComment.create(
-      entityConnection.workspaceSlug,
-      entityConnection.projectId ?? "",
+      workspaceConnection.workspace_slug,
+      entityConnection.project_id ?? "",
       issue.id,
       planeComment
     );
@@ -132,10 +140,10 @@ export const syncCommentWithPlane = async (
 const getPlaneIssue = async (planeClient: PlaneClient, entityConnection: GithubEntityConnection, issueId: string) => {
   try {
     return await planeClient.issue.getIssueWithExternalId(
-      entityConnection.workspaceSlug,
-      entityConnection.projectId ?? "",
+      entityConnection.workspace_slug,
+      entityConnection.project_id ?? "",
       issueId.toString(),
-      "GITHUB"
+      E_INTEGRATION_KEYS.GITHUB
     );
   } catch {
     throw new Error("Issue not found in Plane");

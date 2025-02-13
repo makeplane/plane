@@ -1,21 +1,28 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+// plane imports
+import { PROJECT_UPDATED, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 import { IProject, IWorkspace } from "@plane/types";
-import { EUserPermissions } from "@plane/types/src/enums";
 import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo, setToast, TOAST_TYPE } from "@plane/ui";
-import { EUserPermissionsLevel } from "@/ce/constants";
+// components
 import { ImagePickerPopover } from "@/components/core";
-import { PROJECT_UPDATED } from "@/constants/event-tracker";
+// helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getFileURL } from "@/helpers/file.helper";
+// hooks
 import { useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
+// plane web imports
 import { TProject } from "@/plane-web/types";
 
 type THeroSection = {
   project: TProject;
   workspaceSlug: string;
 };
+
+const DEFAULT_COVER_IMAGE =
+  "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80";
+
 export const HeroSection = observer((props: THeroSection) => {
   const { project, workspaceSlug } = props;
   const [isOpen, setIsOpen] = useState(false);
@@ -37,7 +44,7 @@ export const HeroSection = observer((props: THeroSection) => {
 
   // derived values
   const isAdmin = allowPermissions(
-    [EUserPermissions.ADMIN],
+    [EUserProjectRoles.ADMIN],
     EUserPermissionsLevel.PROJECT,
     workspaceSlug.toString(),
     project.id.toString()
@@ -94,10 +101,7 @@ export const HeroSection = observer((props: THeroSection) => {
     <div>
       <div className="relative h-[118px] w-full ">
         <img
-          src={getFileURL(
-            project.cover_image ??
-              "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-          )}
+          src={getFileURL(project.cover_image ?? DEFAULT_COVER_IMAGE)}
           alt={project.name}
           className="absolute left-0 top-0 h-full w-full object-cover"
         />
@@ -109,7 +113,7 @@ export const HeroSection = observer((props: THeroSection) => {
               if (data === project.cover_image) return;
               handleCoverChange({ cover_image: data });
             }}
-            value={project.cover_image ?? null}
+            value={project.cover_image ?? DEFAULT_COVER_IMAGE}
             disabled={!isAdmin}
             projectId={project.id}
           />

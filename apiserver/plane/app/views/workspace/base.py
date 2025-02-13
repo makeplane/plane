@@ -7,7 +7,11 @@ import requests
 from dateutil.relativedelta import relativedelta
 
 # Django imports
-from django.db import IntegrityError
+from django.db import IntegrityError, models
+from django.db.models import Case, When, Exists, Value
+from django.db.models.functions import Concat
+
+# Django imports
 from django.db.models import Count, F, Func, OuterRef, Prefetch, Q, Subquery
 from django.db.models.fields import DateField
 from django.db.models.functions import Cast, ExtractDay, ExtractWeek
@@ -27,7 +31,7 @@ from plane.app.permissions import (
 # Module imports
 from plane.app.serializers import (
     WorkSpaceSerializer,
-    WorkspaceThemeSerializer,
+    WorkspaceThemeSerializer, 
     WorkspaceUserMeSerializer,
 )
 from plane.app.views.base import BaseAPIView, BaseViewSet
@@ -69,12 +73,6 @@ class WorkSpaceViewSet(BaseViewSet):
             .values("count")
         )
 
-        issue_count = (
-            Issue.issue_objects.filter(workspace=OuterRef("id"))
-            .order_by()
-            .annotate(count=Func(F("id"), function="Count"))
-            .values("count")
-        )
         return (
             self.filter_queryset(super().get_queryset().select_related("owner"))
             .order_by("name")
@@ -83,8 +81,6 @@ class WorkSpaceViewSet(BaseViewSet):
                 workspace_member__is_active=True,
             )
             .annotate(total_members=member_count)
-            .annotate(total_issues=issue_count)
-            .select_related("owner")
         )
 
     def create(self, request):
@@ -131,10 +127,16 @@ class WorkSpaceViewSet(BaseViewSet):
                     company_role=request.data.get("company_role", ""),
                 )
 
+                # Get total members and role
+                total_members=WorkspaceMember.objects.filter(workspace_id=serializer.data["id"]).count()
+                data = serializer.data
+                data["total_members"] = total_members
+                data["role"] = 20
+
                 # Sync workspace members
                 member_sync_task.delay(slug)
 
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(data, status=status.HTTP_201_CREATED)
             return Response(
                 [serializer.errors[error][0] for error in serializer.errors],
                 status=status.HTTP_400_BAD_REQUEST,
@@ -179,7 +181,7 @@ class WorkSpaceViewSet(BaseViewSet):
                 super().destroy(request, *args, **kwargs)
                 return Response(response, status=status.HTTP_200_OK)
             except requests.exceptions.RequestException as e:
-                if e.response and e.response.status_code == 400:
+                if hasattr(e, "response") and e.response.status_code == 400:
                     return Response(
                         e.response.json(), status=status.HTTP_400_BAD_REQUEST
                     )
@@ -187,10 +189,9 @@ class WorkSpaceViewSet(BaseViewSet):
                     {"error": "error in checking workspace subscription"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            else:
-                # Delete the workspace
-                return super().destroy(request, *args, **kwargs)
-        return super().destroy(request, *args, **kwargs)
+        else:
+            # Delete the workspace
+            return super().destroy(request, *args, **kwargs)
 
 
 class UserWorkSpacesEndpoint(BaseAPIView):
@@ -210,14 +211,12 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             .values("count")
         )
 
-        issue_count = (
-            Issue.issue_objects.filter(workspace=OuterRef("id"))
-            .order_by()
-            .annotate(count=Func(F("id"), function="Count"))
-            .values("count")
+        role = (
+            WorkspaceMember.objects.filter(workspace=OuterRef("id"), member=request.user, is_active=True)
+            .values("role")
         )
 
-        workspace = (
+        workspaces = (
             Workspace.objects.prefetch_related(
                 Prefetch(
                     "workspace_member",
@@ -226,26 +225,47 @@ class UserWorkSpacesEndpoint(BaseAPIView):
                     ),
                 )
             )
-            .select_related("owner")
-            .annotate(total_members=member_count)
-            .annotate(total_issues=issue_count)
+            .annotate(role=role, total_members=member_count)
             .filter(
                 workspace_member__member=request.user, workspace_member__is_active=True
             )
             .annotate(
-                current_plan=Subquery(
-                    WorkspaceLicense.objects.filter(workspace_id=OuterRef("id")).values(
-                        "plan"
-                    )[:1]
+                current_plan=Case(
+                    When(
+                        Exists(
+                            WorkspaceLicense.objects.filter(
+                                workspace_id=OuterRef("id"),
+                                trial_end_date__gt=timezone.now(),
+                                plan__in=["PRO", "BUSINESS", "ENTERPRISE"]
+                            )
+                        ),
+                        then=Concat(
+                            Subquery(
+                                WorkspaceLicense.objects.filter(
+                                    workspace_id=OuterRef("id")
+                                ).values("plan")[:1]
+                            ),
+                            Value(" trial"),
+                            output_field=models.CharField(),
+                        ),
+                    ),
+                    default=Subquery(
+                        WorkspaceLicense.objects.filter(
+                            workspace_id=OuterRef("id")
+                        ).values("plan")[:1]
+                    ),
+                    output_field=models.CharField(),
                 )
             )
             .distinct()
         )
+
         workspaces = WorkspaceUserMeSerializer(
-            self.filter_queryset(workspace),
+            self.filter_queryset(workspaces),
             fields=fields if fields else None,
             many=True,
         ).data
+
         return Response(workspaces, status=status.HTTP_200_OK)
 
 

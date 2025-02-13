@@ -4,18 +4,16 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ExternalLink } from "lucide-react";
-// types
+// plane imports
 import { TProductSubscriptionType } from "@plane/types";
-// ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-// store hooks
+// helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
-// plane web components
+// plane web imports
 import { PlanCard, SelfManagedLicenseActions } from "@/plane-web/components/license";
-// plane web hooks
+import { BillingActionsButton } from "@/plane-web/components/workspace/billing";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-// services
 import { PaymentService } from "@/plane-web/services/payment.service";
 
 const paymentService = new PaymentService();
@@ -72,7 +70,7 @@ export const ProPlanCard: React.FC<TProPlanCardProps> = observer((props: TProPla
       planName={isInTrialPeriod ? "Pro trial" : "Pro"}
       planDescription={
         <>
-          <div>Unlimited members, 1:5 Guests, Issue Types, Active Cycles, and more</div>
+          <div>Unlimited members, 1:5 Guests, Work item types, Active Cycles, and more</div>
           {!subscriptionDetail.is_offline_payment ? (
             <>
               {isInTrialPeriod && (
@@ -111,15 +109,20 @@ export const ProPlanCard: React.FC<TProPlanCardProps> = observer((props: TProPla
       }
       button={
         !subscriptionDetail.is_offline_payment && (
-          <Button
-            variant="primary"
-            className="cursor-pointer px-3 py-1.5 text-center text-sm font-medium outline-none"
-            onClick={!isSelfManaged && isInTrialPeriod ? () => handleUpgrade("PRO") : handleSubscriptionPageRedirection}
-            disabled={isLoading}
-          >
-            {isLoading ? "Redirecting to Stripe..." : isInTrialPeriod ? "Upgrade to Pro" : "Manage your subscription"}
-            <ExternalLink className="h-3 w-3" strokeWidth={2} />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="link-neutral"
+              className="cursor-pointer px-3 py-1.5 text-center text-sm font-medium outline-none"
+              onClick={
+                !isSelfManaged && isInTrialPeriod ? () => handleUpgrade("PRO") : handleSubscriptionPageRedirection
+              }
+              disabled={isLoading}
+            >
+              {isLoading ? "Redirecting to Stripe" : isInTrialPeriod ? "Upgrade to Pro" : "Manage subscription"}
+              <ExternalLink className="h-3 w-3" strokeWidth={2} />
+            </Button>
+            <BillingActionsButton canPerformWorkspaceAdminActions />
+          </div>
         )
       }
     />

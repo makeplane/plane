@@ -5,24 +5,16 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Check } from "lucide-react";
-// types
+// plane imports
 import { IPaymentProduct, IPaymentProductPrice } from "@plane/types";
-// ui
 import { Button, Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { calculateYearlyDiscount } from "@plane/utils";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // services
 import { PaymentService } from "@/plane-web/services/payment.service";
 
 const paymentService = new PaymentService();
-
-const calculateYearlyDiscount = (monthlyPrice: number, yearlyPricePerMonth: number): number => {
-  const monthlyCost = monthlyPrice * 12;
-  const yearlyCost = yearlyPricePerMonth * 12;
-  const amountSaved = monthlyCost - yearlyCost;
-  const discountPercentage = (amountSaved / monthlyCost) * 100;
-  return Math.floor(discountPercentage);
-};
 
 const renderPlanPricing = (price: number, members: number = 1, recurring: string) => {
   if (recurring === "month") return ((price / 100) * members).toFixed(0);

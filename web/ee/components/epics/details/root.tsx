@@ -3,14 +3,13 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-// constants
-import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
+// plane imports
+import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 // components
 import { IssuePeekOverview } from "@/components/issues";
 // hooks
 import { useIssueDetail, useUserPermissions } from "@/hooks/store";
 // plane web
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 // local components
 import { LayoutRoot } from "../../common";
@@ -47,7 +46,12 @@ export const EpicDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
   // issue details
   const epic = getIssueById(epicId);
   // checking if issue is editable, based on user role
-  const isEditable = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
+  const isEditable = allowPermissions(
+    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug,
+    projectId
+  );
 
   return (
     <>

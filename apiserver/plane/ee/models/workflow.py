@@ -27,25 +27,15 @@ class Workflow(ProjectBaseModel):
 
 
 class WorkflowTransition(ProjectBaseModel):
-    # Transition types
-    class TransitionTypes(models.TextChoices):
-        STATE = "STATE", "State"
-        APPROVAL = "APPROVAL", "Approval"
 
     workflow = models.ForeignKey(
         Workflow, on_delete=models.CASCADE, related_name="workflow_transitions"
     )
-    type = models.CharField(max_length=255, default=TransitionTypes.STATE)
     transition_state = models.ForeignKey(
-        "db.State", on_delete=models.CASCADE, related_name="workflow_transitions", null=True
-    )
-    # State where issues move on approval
-    approval_state = models.ForeignKey(
         "db.State",
         on_delete=models.CASCADE,
-        related_name="workflow_approval_transitions",
+        related_name="workflow_transitions",
         null=True,
-        blank=True
     )
     # State where issues move on rejection
     rejection_state = models.ForeignKey(
@@ -53,7 +43,7 @@ class WorkflowTransition(ProjectBaseModel):
         on_delete=models.CASCADE,
         related_name="workflow_rejection_transitions",
         null=True,
-        blank=True
+        blank=True,
     )
     # Number of approvals required (null means all approvers must approve)
     required_approvals = models.IntegerField(null=True, blank=True)
@@ -64,8 +54,9 @@ class WorkflowTransition(ProjectBaseModel):
         verbose_name_plural = "Workflow Transitions"
 
 
-class WorkflowApprover(ProjectBaseModel):
+class WorkflowTransitionApprover(ProjectBaseModel):
     """Defines who can approve a particular workflow transition"""
+
     workflow = models.ForeignKey(
         Workflow, on_delete=models.CASCADE, related_name="workflow_approvers"
     )
@@ -89,13 +80,14 @@ class WorkflowApprover(ProjectBaseModel):
                 name="workflow_approver_unique_workflow_transition_approver_when_deleted_at_null",
             )
         ]
-        db_table = "workflow_approvers"
-        verbose_name = "Workflow Approver"
-        verbose_name_plural = "Workflow Approvers"
+        db_table = "workflow_transition_approvers"
+        verbose_name = "Workflow Transition Approver"
+        verbose_name_plural = "Workflow Transition Approvers"
 
 
-class WorkflowApproval(ProjectBaseModel):
+class WorkflowTransitionApproval(ProjectBaseModel):
     """Records approvals/rejections for specific issues"""
+
     workflow = models.ForeignKey(
         Workflow, on_delete=models.CASCADE, related_name="workflow_approvals"
     )
@@ -105,9 +97,7 @@ class WorkflowApproval(ProjectBaseModel):
         related_name="workflow_approvals",
     )
     issue = models.ForeignKey(
-        "db.Issue",
-        on_delete=models.CASCADE,
-        related_name="workflow_approvals"
+        "db.Issue", on_delete=models.CASCADE, related_name="workflow_approvals"
     )
     approver = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -126,12 +116,12 @@ class WorkflowApproval(ProjectBaseModel):
                 name="workflow_approval_unique_transition_issue_approver_when_deleted_at_null",
             )
         ]
-        db_table = "workflow_approvals"
-        verbose_name = "Workflow Approval"
-        verbose_name_plural = "Workflow Approvals"
+        db_table = "workflow_transition_approvals"
+        verbose_name = "Workflow Transition Approval"
+        verbose_name_plural = "Workflow Transition Approvals"
 
 
-class WorkflowActivity(ProjectBaseModel):
+class WorkflowTransitionActivity(ProjectBaseModel):
     workflow = models.ForeignKey(
         Workflow, on_delete=models.CASCADE, related_name="workflow_activities"
     )
@@ -153,9 +143,9 @@ class WorkflowActivity(ProjectBaseModel):
     epoch = models.FloatField(null=True)
 
     class Meta:
-        verbose_name = "Workflow Activity"
-        verbose_name_plural = "Workflow Activities"
-        db_table = "workflow_activities"
+        verbose_name = "Workflow Transition Activity"
+        verbose_name_plural = "Workflow Transition Activities"
+        db_table = "workflow_transition_activities"
         ordering = ("-created_at",)
 
     def __str__(self):

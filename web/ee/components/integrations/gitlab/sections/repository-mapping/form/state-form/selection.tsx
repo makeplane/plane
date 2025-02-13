@@ -6,6 +6,7 @@ import { IState } from "@plane/types";
 import { StateGroupIcon } from "@plane/ui";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
+import { useTranslation } from "@plane/i18n";
 
 type TStateFormSelection = {
   title: string;
@@ -16,6 +17,7 @@ type TStateFormSelection = {
 
 export const StateFormSelection: FC<TStateFormSelection> = observer((props) => {
   const { title, value, handleValue, planeStates } = props;
+  const { t } = useTranslation();
 
   return (
     <div className="relative grid grid-cols-2 items-center space-y-1.5 text-sm">
@@ -29,7 +31,7 @@ export const StateFormSelection: FC<TStateFormSelection> = observer((props) => {
             data: state,
           }))}
           value={value}
-          placeHolder="Select state"
+          placeHolder={t("integrations.select_state")}
           onChange={(value: string | undefined) => {
             if (value) {
               const state = planeStates.find((state) => state.id === value);

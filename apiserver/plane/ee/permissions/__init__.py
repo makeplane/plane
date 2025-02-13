@@ -12,4 +12,5 @@ from plane.app.permissions import (
     allow_permission,
     ROLE,
 )
-from .team import TeamSpacePermission
+from .hmac import HMACPermission
+from .teamspace import TeamspacePermission

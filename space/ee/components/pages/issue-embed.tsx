@@ -43,7 +43,7 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
     return (
       <div className="flex items-center gap-2 rounded-md border border-orange-500 bg-orange-500/10 text-orange-500 px-4 py-3 my-2">
         <AlertTriangle className="text-orange-500 size-5" />
-        <p className="!text-sm">We encountered an error while fetching the embedded issue details.</p>
+        <p className="!text-sm">We encountered an error while fetching the embedded work item details.</p>
       </div>
     );
 
@@ -51,7 +51,7 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
     return (
       <div className="flex items-center gap-2 rounded-md border border-orange-500 bg-orange-500/10 text-orange-500 px-4 py-3 my-2">
         <AlertTriangle className="text-orange-500 size-5" />
-        <p className="!text-sm">This Issue embed could not be found. It might have been deleted.</p>
+        <p className="!text-sm">This Work item embed could not be found. It might have been deleted.</p>
       </div>
     );
 

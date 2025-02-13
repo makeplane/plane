@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { CalendarCheck2, CalendarClock, Signal, UserCircle2, Users } from "lucide-react";
-// ui
+// plane imports
+import { EUserProjectRoles } from "@plane/constants";
 import { Button, DoubleCircleIcon } from "@plane/ui";
 // components
 import { DateDropdown, MemberDropdown } from "@/components/dropdowns";
@@ -19,7 +20,6 @@ import { useMember, useProject, useUserPermissions, useWorkspace } from "@/hooks
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { PriorityDropdown, StateDropdown } from "@/plane-web/components/projects";
 import MembersDropdown from "@/plane-web/components/projects/dropdowns/members-dropdown";
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { TProject } from "@/plane-web/types";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
@@ -49,7 +49,7 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
   // derived values
   const isArchived = project.archived_at !== null;
   const lead = getUserDetails(project.project_lead as string);
-  const projectMembersIds = project.members?.map((member) => member.member_id);
+  const projectMembersIds = project.members;
 
   const isProjectGroupingEnabled =
     isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
@@ -58,7 +58,7 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
   const isEditingAllowed =
     workspaceProjectsPermissions &&
     workspaceProjectsPermissions[workspaceSlug][project.id] &&
-    workspaceProjectsPermissions[workspaceSlug][project.id] >= EUserPermissions.ADMIN;
+    workspaceProjectsPermissions[workspaceSlug][project.id] >= EUserProjectRoles.ADMIN;
 
   // handlers
   const handleUpdateProject = async (data: Partial<TProject>) => {
@@ -145,14 +145,14 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
                 <span>Members</span>
               </div>
               <MembersDropdown
-                value={projectMembersIds}
+                value={projectMembersIds ?? []}
                 onChange={() => {}}
                 className="h-7 my-auto w-full"
                 buttonClassName="cursor-not-allowed"
                 disabled
                 button={
                   <div className="p-2 rounded text-sm text-custom-text-200 hover:bg-custom-background-80 justify-start flex items-start">
-                    {projectMembersIds.length} member(s)
+                    {projectMembersIds?.length} member(s)
                   </div>
                 }
               />

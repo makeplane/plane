@@ -1,9 +1,6 @@
 /* ----------------------------- Issue Creation Utilities ----------------------------- */
-import { env } from "@/env";
-import { wait } from "@/helpers/delay";
-import { downloadFile, splitStringTillPart, uploadFile } from "@/helpers/utils";
-import { AssertAPIErrorResponse, protect } from "@/lib";
-import { logger } from "@/logger";
+import { HTMLElement, parse } from "node-html-parser";
+import { E_IMPORTER_KEYS, TIssuePropertyValuesPayload, TPropertyValuesPayload } from "@plane/etl/core";
 import {
   AttachmentResponse,
   ExIssue,
@@ -20,11 +17,14 @@ import {
   TIssuePropertyTypeKeys,
   UploadData,
 } from "@plane/sdk";
-import { TIssuePropertyValuesPayload, TPropertyValuesPayload, TServiceCredentials } from "@plane/etl/core";
-import { HTMLElement, parse } from "node-html-parser";
-import { IssueCreatePayload, IssueWithParentPayload } from "./types";
+import { TWorkspaceCredential } from "@plane/types";
+import { env } from "@/env";
+import { wait } from "@/helpers/delay";
+import { downloadFile, splitStringTillPart, uploadFile } from "@/helpers/utils";
+import { AssertAPIErrorResponse, protect } from "@/lib";
+import { logger } from "@/logger";
 import { BulkIssuePayload } from "@/types";
-
+import { IssueCreatePayload, IssueWithParentPayload } from "./types";
 // A wrapper for better readability
 export const createOrphanIssues = async (payload: IssueCreatePayload): Promise<ExIssue[]> =>
   await createIssues(payload);
@@ -107,7 +107,7 @@ type BulkIssueCreatePayload = IssueCreatePayload & {
 
 export const getAssociatedComments = async (
   jobId: string,
-  credentials: TServiceCredentials,
+  credentials: TWorkspaceCredential,
   comments: Partial<ExIssueComment>[],
   users: PlaneUser[],
   issueId: string,
@@ -211,7 +211,7 @@ export const generateIssuePayload = async (payload: BulkIssueCreatePayload): Pro
 
 const processAttachments = async (
   jobId: string,
-  credentials: TServiceCredentials,
+  credentials: TWorkspaceCredential,
   issue: ExIssue,
   planeClient: PlaneClient,
   workspaceSlug: string
@@ -227,25 +227,34 @@ const processAttachments = async (
       let sourceAccessToken = credentials.source_access_token;
       let authPrefix = "Bearer";
 
-      if (credentials.source === "JIRA" && env.JIRA_OAUTH_ENABLED == "0") {
-        const token = `${credentials.user_email}:${credentials.source_access_token}`;
+      if (credentials.source === E_IMPORTER_KEYS.JIRA && env.JIRA_OAUTH_ENABLED == "0") {
+        const token = `${credentials.source_auth_email}:${credentials.source_access_token}`;
         sourceAccessToken = Buffer.from(token).toString("base64");
         authPrefix = "Basic";
       }
 
       let authToken: string | undefined = `${authPrefix} ${sourceAccessToken}`;
-      if (credentials.source === "ASANA") {
+      if (credentials.source === E_IMPORTER_KEYS.ASANA) {
         sourceAccessToken = "";
         authPrefix = "";
         authToken = undefined;
       }
 
-      if (credentials.source === "LINEAR" && env.LINEAR_OAUTH_ENABLED !== "1") {
+      if (credentials.source === E_IMPORTER_KEYS.LINEAR && env.LINEAR_OAUTH_ENABLED !== "1") {
         sourceAccessToken = credentials.source_access_token;
-        authToken = sourceAccessToken;
+        authToken = sourceAccessToken as string;
       }
 
       // Download the file
+      if (!attachment.attributes.name) {
+        attachment.attributes.name = "attachment";
+      }
+
+      // Skip the attachment if the given size is zero
+      if (attachment.attributes.size === 0) {
+        continue;
+      }
+
       const blob = await downloadFile(attachment.asset, authToken);
       if (!blob) continue;
 
@@ -268,7 +277,7 @@ const processAttachments = async (
       if (url.pathname.includes("rest")) {
         sourceAttachmentPathname = splitStringTillPart(new URL(attachment.asset).pathname, "rest");
       } else {
-        if (credentials.source === "JIRA_SERVER") {
+        if (credentials.source === E_IMPORTER_KEYS.JIRA_SERVER) {
           sourceAttachmentPathname = convertJiraImageURL(attachment.asset);
         } else {
           sourceAttachmentPathname = attachment.asset;
@@ -483,7 +492,7 @@ export const createOrUpdateIssueComment = async (
 
 const createIssueAttachments = async (
   jobId: string,
-  credentials: TServiceCredentials,
+  credentials: TWorkspaceCredential,
   createdIssueId: string,
   issue: ExIssue,
   planeClient: PlaneClient,
@@ -505,22 +514,22 @@ const createIssueAttachments = async (
           let sourceAccessToken = credentials.source_access_token;
           let authPrefix = "Bearer";
 
-          if (credentials.source === "JIRA" && env.JIRA_OAUTH_ENABLED == "0") {
-            const token = `${credentials.user_email}:${credentials.source_access_token}`;
+          if (credentials.source === E_IMPORTER_KEYS.JIRA && env.JIRA_OAUTH_ENABLED == "0") {
+            const token = `${credentials.source_auth_email}:${credentials.source_access_token}`;
             sourceAccessToken = Buffer.from(token).toString("base64");
             authPrefix = "Basic";
           }
 
           let authToken: string | undefined = `${authPrefix} ${sourceAccessToken}`;
-          if (credentials.source === "ASANA") {
+          if (credentials.source === E_IMPORTER_KEYS.ASANA) {
             sourceAccessToken = "";
             authPrefix = "";
             authToken = undefined;
           }
 
-          if (credentials.source === "LINEAR" && env.LINEAR_OAUTH_ENABLED !== "1") {
+          if (credentials.source === E_IMPORTER_KEYS.LINEAR && env.LINEAR_OAUTH_ENABLED !== "1") {
             sourceAccessToken = credentials.source_access_token;
-            authToken = sourceAccessToken;
+            authToken = sourceAccessToken as string;
           }
 
           const blob = await downloadFile(attachment.asset, authToken);
@@ -571,7 +580,7 @@ const createIssueAttachments = async (
             if (url.pathname.includes("rest")) {
               sourceAttachmentPathname = splitStringTillPart(new URL(attachment.asset).pathname, "rest");
             } else {
-              if (credentials.source === "JIRA_SERVER") {
+              if (credentials.source === E_IMPORTER_KEYS.JIRA_SERVER) {
                 sourceAttachmentPathname = convertJiraImageURL(attachment.asset);
               } else {
                 sourceAttachmentPathname = attachment.asset;
@@ -600,7 +609,7 @@ const createIssueAttachments = async (
                   if (url.pathname.includes("rest")) {
                     sourceAttachmentPathname = splitStringTillPart(new URL(attachment.asset).pathname, "rest");
                   } else {
-                    if (credentials.source === "JIRA_SERVER") {
+                    if (credentials.source === E_IMPORTER_KEYS.JIRA_SERVER) {
                       sourceAttachmentPathname = convertJiraImageURL(attachment.asset);
                     } else {
                       sourceAttachmentPathname = attachment.asset;
@@ -655,7 +664,7 @@ const createIssueLinks = async (
       });
       await Promise.all(linkPromises);
     } catch (error) {
-      // @ts-ignore
+      // @ts-expect-error
       if (error.error && !error.error.includes("already exists")) {
         logger.error(`[${jobId.slice(0, 7)}] Error while creating the link for the issue: ${issue.external_id}`, error);
       }
@@ -870,7 +879,8 @@ const replaceImageComponent = (
     return description_html;
   }
 
-  if (source === "LINEAR") {
+  const root = parse(description_html);
+  if (source === E_IMPORTER_KEYS.LINEAR) {
     // Handle Linear's markdown image format
     const imageRegex = /!\[(.*?)\]\((.*?)\)/g;
     return description_html.replace(imageRegex, (match, altText, url) => {
@@ -880,19 +890,57 @@ const replaceImageComponent = (
       }
       return match;
     });
+  } else if (source === E_IMPORTER_KEYS.JIRA_SERVER) {
+    // Find img tags
+    const aTags = root.querySelectorAll("a");
+
+    aTags.forEach((aTag: HTMLElement) => {
+      const imgSrc = aTag.getAttribute("href");
+      // Remove the query params from the URL
+      const existingURLWithoutQuery = existingURL.split("?")[0];
+      const imgSrcWithoutQuery = imgSrc?.split("?")[0];
+
+      // Check if the image source matches the existing URL
+      if (existingURLWithoutQuery === imgSrcWithoutQuery) {
+        // Get height and width from original img tag
+        const height = aTag.getAttribute("height");
+        const width = aTag.getAttribute("width");
+
+        // Build attributes string
+        const heightAttr = height ? ` height="${height}"` : "";
+        const widthAttr = width ? ` width="${width}"` : "";
+
+        // Create new component with preserved dimensions
+        const imageComponent = `<image-component src="${assetId}"${heightAttr}${widthAttr}/>`;
+
+        // Find the parent span
+        const parentSpan = aTag.closest("span");
+
+        // Replace the span if it exists, otherwise replace the img
+        if (parentSpan) {
+          parentSpan.replaceWith(imageComponent);
+        } else {
+          aTag.replaceWith(imageComponent);
+        }
+      }
+    });
+
+    // Remove the body tag and replace it with the p tag
+    root.innerHTML = root.innerHTML.replace("<body", "<p").replace("</body>", "</p>");
+    return root.toString();
   } else {
     try {
-      // Parse the HTML string
-      const root = parse(description_html);
-
       // Find img tags
       const imgTags = root.querySelectorAll("img");
 
       imgTags.forEach((img: HTMLElement) => {
         const imgSrc = img.getAttribute("src");
+        // Remove the query params from the URL
+        const existingURLWithoutQuery = existingURL.split("?")[0];
+        const imgSrcWithoutQuery = imgSrc?.split("?")[0];
 
         // Check if the image source matches the existing URL
-        if (imgSrc === existingURL) {
+        if (existingURLWithoutQuery === imgSrcWithoutQuery) {
           // Get height and width from original img tag
           const height = img.getAttribute("height");
           const width = img.getAttribute("width");
@@ -905,7 +953,7 @@ const replaceImageComponent = (
           const imageComponent = `<image-component src="${assetId}"${heightAttr}${widthAttr}/>`;
 
           // Find the parent span
-          const parentSpan = img.closest("span.image-wrap");
+          const parentSpan = img.closest("span");
 
           // Replace the span if it exists, otherwise replace the img
           if (parentSpan) {
@@ -916,6 +964,8 @@ const replaceImageComponent = (
         }
       });
 
+      // Remove the body tag and replace it with the p tag
+      root.innerHTML = root.innerHTML.replace("<body", "<p").replace("</body>", "</p>");
       return root.toString();
     } catch (error) {
       console.error("Error in replaceImageComponent:", error);
@@ -952,7 +1002,7 @@ function convertJiraImageURL(originalURL: string): string {
 
 const processCommentAttachments = async (
   jobId: string,
-  credentials: TServiceCredentials,
+  credentials: TWorkspaceCredential,
   comment: Partial<ExIssueComment>,
   planeClient: PlaneClient,
   workspaceSlug: string
@@ -967,22 +1017,22 @@ const processCommentAttachments = async (
       let sourceAccessToken = credentials.source_access_token;
       let authPrefix = "Bearer";
 
-      if (credentials.source === "JIRA" && env.JIRA_OAUTH_ENABLED == "0") {
-        const token = `${credentials.user_email}:${credentials.source_access_token}`;
+      if (credentials.source === E_IMPORTER_KEYS.JIRA && env.JIRA_OAUTH_ENABLED == "0") {
+        const token = `${credentials.source_auth_email}:${credentials.source_access_token}`;
         sourceAccessToken = Buffer.from(token).toString("base64");
         authPrefix = "Basic";
       }
 
       let authToken: string | undefined = `${authPrefix} ${sourceAccessToken}`;
-      if (credentials.source === "ASANA") {
+      if (credentials.source === E_IMPORTER_KEYS.ASANA) {
         sourceAccessToken = "";
         authPrefix = "";
         authToken = undefined;
       }
 
-      if (credentials.source === "LINEAR" && env.LINEAR_OAUTH_ENABLED !== "1") {
+      if (credentials.source === E_IMPORTER_KEYS.LINEAR && env.LINEAR_OAUTH_ENABLED !== "1") {
         sourceAccessToken = credentials.source_access_token;
-        authToken = sourceAccessToken;
+        authToken = sourceAccessToken as string;
       }
 
       // Download the file
@@ -1012,7 +1062,7 @@ const processCommentAttachments = async (
       if (url.pathname.includes("rest")) {
         sourceAttachmentPathname = splitStringTillPart(url.pathname, "rest");
       } else {
-        if (credentials.source === "JIRA_SERVER") {
+        if (credentials.source === E_IMPORTER_KEYS.JIRA_SERVER) {
           sourceAttachmentPathname = convertJiraImageURL(imageUrl);
         } else {
           sourceAttachmentPathname = imageUrl;

@@ -24,22 +24,20 @@ type Props = {
 export const ProjectItem = observer((props: Props) => {
   const { workspaceSlug, initiativeId, projectId } = props;
   // store hooks
-  const { getProjectById, updateProject } = useProject();
+  const { getProjectById, getProjectAnalyticsCountById, updateProject } = useProject();
   const { currentWorkspace } = useWorkspace();
   const { isMobile } = usePlatformOS();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
-
   // ref
   const parentRef = useRef(null);
-
   // derived values
   const isProjectGroupingEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED);
-
   const projectDetails = getProjectById(projectId);
+  const projectAnalyticsCount = getProjectAnalyticsCountById(projectId);
 
   if (!projectDetails || !currentWorkspace) return <Spinner />;
 
-  const progress = getProgress(projectDetails?.completed_issues, projectDetails?.total_issues);
+  const progress = getProgress(projectAnalyticsCount?.completed_issues, projectAnalyticsCount?.total_issues);
 
   return (
     <ListItem
@@ -50,15 +48,16 @@ export const ProjectItem = observer((props: Props) => {
           <Logo logo={projectDetails.logo_props} size={14} />
         </div>
       }
+      appendTitleElement={
+        <>
+          <div className="flex items-center gap-1">
+            <CircularProgressIndicator size={20} percentage={progress} strokeWidth={3} />
+            <span className="text-sm font-medium text-custom-text-300 px-1">{`${progress}%`}</span>
+          </div>
+        </>
+      }
       quickActionElement={
         <div className="flex shrink-0 items-center gap-2">
-          {projectDetails.total_issues > 0 && (
-            <div className="flex items-center gap-1">
-              <CircularProgressIndicator size={20} percentage={progress} strokeWidth={3} />
-              <span className="text-sm font-medium text-custom-text-300 px-1">{`${progress}%`}</span>
-            </div>
-          )}
-
           <Attributes
             project={projectDetails}
             isArchived={projectDetails.archived_at !== null}

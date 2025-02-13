@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
 import { observer } from "mobx-react";
-// ui
 import { useParams } from "next/navigation";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // plane web components
 import { IssueTypeEmptyState, IssueTypesList, CreateOrUpdateIssueTypeModal } from "@/plane-web/components/issue-types";
@@ -15,6 +16,8 @@ export const IssueTypesRoot = observer(() => {
   // states
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [editIssueTypeId, setEditIssueTypeId] = useState<string | null>(null);
+  // plane hooks
+  const { t } = useTranslation();
   // plane web store hooks
   const { isIssueTypeEnabledForProject } = useIssueTypes();
   // derived values
@@ -32,10 +35,10 @@ export const IssueTypesRoot = observer(() => {
   return (
     <div className="container mx-auto h-full pb-8">
       <div className="flex items-center justify-between border-b border-custom-border-100 pb-3.5 gap-14">
-        <h3 className="text-xl font-medium">Issue Types</h3>
+        <h3 className="text-xl font-medium">{t("work_item_types.label")}</h3>
         {isIssueTypeSettingsEnabled && (
           <Button variant="primary" size="sm" onClick={() => setIsModalOpen(true)}>
-            Add issue type
+            {t("work_item_types.create.button")}
           </Button>
         )}
       </div>

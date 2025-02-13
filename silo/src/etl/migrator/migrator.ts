@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { FeatureFlagService, TJobWithConfig, E_FEATURE_FLAGS, PlaneEntities } from "@plane/etl/core";
+import { FeatureFlagService, E_FEATURE_FLAGS, PlaneEntities } from "@plane/etl/core";
 import {
   EIssuePropertyType,
   ExCycle,
@@ -11,14 +11,14 @@ import {
   ExIssueType,
   ExModule,
   ExProject,
-  ExState,
   Client as PlaneClient,
   PlaneUser,
 } from "@plane/sdk";
-import { celeryProducer } from "@/apps/engine/worker";
+import { TImportJob } from "@plane/types";
 import { env } from "@/env";
 import { protect } from "@/lib";
 import { logger } from "@/logger";
+import { celeryProducer } from "@/worker";
 import { createAllCycles } from "./cycles.migrator";
 import { getCredentialsForMigration, validateJobForMigration } from "./helpers";
 import {
@@ -29,10 +29,9 @@ import {
 import { generateIssuePayload } from "./issues.migrator";
 import { createLabelsForIssues } from "./labels.migrator";
 import { createAllModules } from "./modules.migrator";
-import { createStates } from "./states.migrator";
 import { createUsers } from "./users.migrator";
 
-export async function migrateToPlane(job: TJobWithConfig, data: PlaneEntities[], meta: any) {
+export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], meta: any) {
   validateJobForMigration(job);
   const credentials = await getCredentialsForMigration(job);
 
@@ -47,52 +46,7 @@ export async function migrateToPlane(job: TJobWithConfig, data: PlaneEntities[],
 
   const [planeEntities] = data;
 
-  if (!job.config) {
-    throw new Error(`[${job.id}] No config found in the job data. Exiting...`);
-  }
-
-  let planeStates: { target_state: ExState; source_state: any }[] = (job.config?.meta as any).state;
-
-  try {
-    const metaJobData = job.config?.meta as {
-      state: { target_state: ExState; source_state: any }[];
-    };
-
-    const statesToCreate = metaJobData.state.filter((state) => state.target_state.status === "to_be_created");
-
-    const createdStates = await createStates(job.id, statesToCreate, planeClient, job.workspace_slug, job.project_id);
-
-    // create a map for quick lookup of created states by source state id
-    const createdStatesMap = new Map(createdStates.map((createdState) => [createdState.source_state.id, createdState]));
-
-    // replace the to_be_created states with actually created states
-    planeStates = metaJobData.state.map((state: any) => {
-      if (state.target_state.status === "to_be_created") {
-        return createdStatesMap.get(state.source_state.id) || state;
-      }
-      return state;
-    });
-  } catch (error) {
-    throw new Error(
-      `[${job.id}] Error while creating the states in the Plane API, which needs to be available to continue the migration`
-    );
-  }
-
-  const { labels, issues: issuesBefore, users, issue_comments, cycles, modules, issue_property_values } = planeEntities;
-
-  // Update the state of the issues with all the states created in the previous step
-  const issues = issuesBefore.map((issue) => {
-    // we have the states as "" by default if the states aren't created yet in
-    // Plane, so we need to update the state of the issue with the actual state
-    // after creating the states above
-    if (issue.state === "") {
-      // put the newly created Plane state's id in the issue
-      issue.state = planeStates.find(
-        (state) => state.source_state.id === issue.external_source_state_id
-      )?.target_state.id;
-    }
-    return issue;
-  });
+  const { labels, issues, users, issue_comments, cycles, modules, issue_property_values } = planeEntities;
 
   // Create the data required for the workspace
   let planeLabels: ExIssueLabel[] = [];
@@ -377,6 +331,7 @@ export async function migrateToPlane(job: TJobWithConfig, data: PlaneEntities[],
     job.workspace_slug,
     job.project_id
   );
+
   const planeModules = await createAllModules(
     job.id,
     modules as ExModule[],

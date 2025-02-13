@@ -4,7 +4,7 @@ import { Dispatch, MouseEvent, MutableRefObject, SetStateAction, useRef, useStat
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
@@ -14,8 +14,6 @@ import { ControlLink, Row, Tooltip } from "@plane/ui";
 // components
 import { MultipleSelectEntityAction } from "@/components/core";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
-// constants
-import { SPREADSHEET_SELECT_GROUP } from "@/constants/spreadsheet";
 // helper
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -270,7 +268,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                 <Tooltip
                   tooltipContent={
                     <>
-                      Only issues within the current
+                      Only work items within the current
                       <br />
                       project can be selected.
                     </>

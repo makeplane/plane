@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 export const OAuth: FC = observer(() => {
   // states
@@ -13,6 +14,8 @@ export const OAuth: FC = observer(() => {
   const {
     auth: { oAuthInitiate },
   } = useJiraImporter();
+
+  const { t } = useTranslation();
 
   const handleOAuthAuthentication = async () => {
     try {
@@ -34,14 +37,14 @@ export const OAuth: FC = observer(() => {
     <section className="w-full overflow-y-auto">
       <div className="relative flex items-center justify-between gap-3 pb-3.5">
         <div>
-          <h3 className="text-xl font-medium">Jira to Plane Migration Assistant</h3>
+          <h3 className="text-xl font-medium">Jira to Plane {t("importers.migration_assistant")}</h3>
           <p className="text-custom-text-300 text-sm">
-            Seamlessly migrate your Jira projects to Plane with our powerful assistant.
+            {t("importers.migration_assistant_description", { "serviceName": "Jira" })}
           </p>
         </div>
         <div>
           <Button onClick={handleOAuthAuthentication} loading={isLoading} disabled={isLoading}>
-            {isLoading ? "Authorizing" : "Connect Jira"}
+            {isLoading ? t("common.authorizing") : t("importers.connect_importer", { "serviceName": "Jira" })}
           </Button>
         </div>
       </div>

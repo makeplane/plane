@@ -1,12 +1,4 @@
 // plane sdk
-import {
-  ExIssueComment,
-  ExIssueLabel,
-  ExIssueProperty,
-  ExIssuePropertyOption,
-  ExIssue as PlaneIssue,
-  PlaneUser,
-} from "@plane/sdk";
 // silo asana
 import {
   AsanaConfig,
@@ -22,7 +14,16 @@ import {
   transformComments,
 } from "@plane/etl/asana";
 // silo core
-import { TIssuePropertyValuesPayload, TJobWithConfig } from "@plane/etl/core";
+import { TIssuePropertyValuesPayload } from "@plane/etl/core";
+import {
+  ExIssueComment,
+  ExIssueLabel,
+  ExIssueProperty,
+  ExIssuePropertyOption,
+  ExIssue as PlaneIssue,
+  PlaneUser,
+} from "@plane/sdk";
+import { TImportJob } from "@plane/types";
 
 /* ------------------ Transformers ----------------------
 This file contains transformers for Asana entities, responsible
@@ -33,12 +34,12 @@ transformation results.
 --------------------- Transformers ---------------------- */
 
 export const getTransformedTasks = async (
-  job: TJobWithConfig<AsanaConfig>,
+  job: TImportJob<AsanaConfig>,
   entities: AsanaEntity
 ): Promise<Partial<PlaneIssue>[]> => {
-  const projectGid = job.config?.meta.project.gid;
-  const stateMap = job.config?.meta.state || [];
-  const prioritySettings = job.config?.meta.priority || {};
+  const projectGid = job.config?.project.gid;
+  const stateMap = job.config?.state || [];
+  const prioritySettings = job.config?.priority || {};
 
   const issuePromises = entities.tasks.map((task: AsanaTask) =>
     transformTask(
@@ -72,20 +73,20 @@ export const getTransformedTags = (entities: AsanaEntity): Partial<ExIssueLabel>
 export const getTransformedUsers = (entities: AsanaEntity): Partial<PlaneUser>[] => entities.users.map(transformUser);
 
 export const getTransformedCustomFields = (
-  job: TJobWithConfig<AsanaConfig>,
+  job: TImportJob<AsanaConfig>,
   entities: AsanaEntity
 ): Partial<ExIssueProperty>[] => {
-  const priorityFieldGid = job.config?.meta.priority?.custom_field_id;
+  const priorityFieldGid = job.config?.priority?.custom_field_id;
   return entities.fields
     .map((fieldSettings) => transformCustomFields(fieldSettings, priorityFieldGid))
     .filter(Boolean) as Partial<ExIssueProperty>[];
 };
 
 export const getTransformedCustomFieldOptions = (
-  job: TJobWithConfig<AsanaConfig>,
+  job: TImportJob<AsanaConfig>,
   entities: AsanaEntity
 ): Partial<ExIssuePropertyOption>[] => {
-  const priorityFieldGid = job.config?.meta.priority?.custom_field_id;
+  const priorityFieldGid = job.config?.priority?.custom_field_id;
   return entities.fields
     .filter(
       (field) =>

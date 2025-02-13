@@ -1,15 +1,15 @@
+import axios from "axios";
+import { TBlockActionModalPayload, TBlockActionPayload, TSlackPayload } from "@plane/etl/slack";
 import { fetchPlaneAssets } from "@/apps/slack/helpers/fetch-plane-data";
 import { convertToSlackOption, convertToSlackOptions } from "@/apps/slack/helpers/slack-options";
 import { createIssueModalViewFull } from "@/apps/slack/views";
-import { TBlockActionModalPayload, TBlockActionPayload, TSlackPayload } from "@plane/etl/slack";
-import { ACTIONS, ENTITIES, PLANE_PRIORITIES } from "../../helpers/constants";
-import { getConnectionDetails } from "../../helpers/connection-details";
-import { createCommentModal } from "../../views/create-comment-modal";
-import { SlackPrivateMetadata } from "../../types/types";
-import { createSlackLinkback } from "../../views/issue-linkback";
-import axios from "axios";
 import { logger } from "@/logger";
+import { getConnectionDetails } from "../../helpers/connection-details";
+import { ACTIONS, ENTITIES, PLANE_PRIORITIES } from "../../helpers/constants";
+import { SlackPrivateMetadata } from "../../types/types";
+import { createCommentModal } from "../../views/create-comment-modal";
 import { createWebLinkModal } from "../../views/create-weblink-modal";
+import { createSlackLinkback } from "../../views/issue-linkback";
 
 export const handleBlockActions = async (data: TBlockActionPayload) => {
   switch (data.actions[0].action_id) {
@@ -64,14 +64,19 @@ async function handleSwitchCycleAction(data: TBlockActionPayload) {
     const issueId = value[1];
     const cycleId = value[2];
 
-    await planeClient.cycles.addIssues(workspaceConnection.workspaceSlug, projectId, cycleId, [issueId]);
+    try {
+      await planeClient.cycles.addIssues(workspaceConnection.workspace_slug, projectId, cycleId, [issueId]);
 
-    await slackService.sendEphemeralMessage(
-      data.user.id,
-      `Issue cycle successfully updated to ${selection.text.text}. 😄`,
-      data.channel.id,
-      data.message?.thread_ts
-    );
+      await slackService.sendEphemeralMessage(
+        data.user.id,
+        `Issue cycle successfully updated to ${selection.text.text}. 😄`,
+        data.channel.id,
+        data.message?.thread_ts
+      );
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.error || "Something went wrong. Please try again.";
+      await slackService.sendEphemeralMessage(data.user.id, errorMessage, data.channel.id, data.message?.thread_ts);
+    }
   }
 }
 
@@ -98,6 +103,12 @@ async function handleCreateCommentAction(data: TBlockActionPayload) {
       await slackService.openModal(data.trigger_id, modal);
     } catch (error) {
       console.log(error);
+      await slackService.sendEphemeralMessage(
+        data.user.id,
+        "Something went wrong. Please try again.",
+        data.channel.id,
+        data.message?.thread_ts
+      );
     }
   }
 }
@@ -124,6 +135,12 @@ async function handleCreateWebLinkAction(data: TBlockActionPayload) {
       await slackService.openModal(data.trigger_id, modal);
     } catch (error) {
       console.log(error);
+      await slackService.sendEphemeralMessage(
+        data.user.id,
+        "Something went wrong. Please try again.",
+        data.channel.id,
+        data.message?.thread_ts
+      );
     }
   }
 }
@@ -144,18 +161,23 @@ async function handleSwitchPriorityAction(data: TBlockActionPayload) {
     const projectId = value[0];
     const issueId = value[1];
 
-    await planeClient.issue.update(workspaceConnection.workspaceSlug, projectId, issueId, {
-      priority: value[2],
-    });
+    try {
+      await planeClient.issue.update(workspaceConnection.workspace_slug, projectId, issueId, {
+        priority: value[2],
+      });
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.error || "Something went wrong. Please try again.";
+      await slackService.sendEphemeralMessage(data.user.id, errorMessage, data.channel.id, data.message?.thread_ts);
+    }
 
-    const issue = await planeClient.issue.getIssue(workspaceConnection.workspaceSlug, projectId, issueId);
-    const project = await planeClient.project.getProject(workspaceConnection.workspaceSlug, projectId);
-    const states = await planeClient.state.list(workspaceConnection.workspaceSlug, projectId);
-    const members = await planeClient.users.list(workspaceConnection.workspaceSlug, projectId);
+    const issue = await planeClient.issue.getIssue(workspaceConnection.workspace_slug, projectId, issueId);
+    const project = await planeClient.project.getProject(workspaceConnection.workspace_slug, projectId);
+    const states = await planeClient.state.list(workspaceConnection.workspace_slug, projectId);
+    const members = await planeClient.users.list(workspaceConnection.workspace_slug, projectId);
 
     // Create updated linkback
     const updatedLinkback = createSlackLinkback(
-      workspaceConnection.workspaceSlug,
+      workspaceConnection.workspace_slug,
       project,
       members,
       states.results,
@@ -200,9 +222,9 @@ async function handleProjectSelectAction(data: TBlockActionModalPayload) {
 
   const { workspaceConnection, slackService, planeClient } = await getConnectionDetails(data.team.id);
 
-  const projects = await planeClient.project.list(workspaceConnection.workspaceSlug);
-  const selectedProject = await planeClient.project.getProject(workspaceConnection.workspaceSlug, selection.value);
-  const projectAssets = await fetchPlaneAssets(workspaceConnection.workspaceSlug, selection.value, planeClient);
+  const projects = await planeClient.project.list(workspaceConnection.workspace_slug);
+  const selectedProject = await planeClient.project.getProject(workspaceConnection.workspace_slug, selection.value);
+  const projectAssets = await fetchPlaneAssets(workspaceConnection.workspace_slug, selection.value, planeClient);
   const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata;
 
   if (
@@ -248,20 +270,26 @@ async function handleLinkbackStateChange(data: TBlockActionPayload) {
       const issueId = state[1];
       const stateId = state[2];
 
-      const stateFull = await planeClient.state.getState(workspaceConnection.workspaceSlug, projectId, stateId);
-      await planeClient.issue.update(workspaceConnection.workspaceSlug, projectId, issueId, {
-        state: stateId,
-      });
+      const stateFull = await planeClient.state.getState(workspaceConnection.workspace_slug, projectId, stateId);
+
+      try {
+        await planeClient.issue.update(workspaceConnection.workspace_slug, projectId, issueId, {
+          state: stateId,
+        });
+      } catch (error: any) {
+        const errorMessage = error?.response?.data?.error || "Something went wrong. Please try again.";
+        await slackService.sendEphemeralMessage(data.user.id, errorMessage, data.channel.id, data.message?.thread_ts);
+      }
 
       // Get updated issue data
-      const issue = await planeClient.issue.getIssue(workspaceConnection.workspaceSlug, projectId, issueId);
-      const project = await planeClient.project.getProject(workspaceConnection.workspaceSlug, projectId);
-      const states = await planeClient.state.list(workspaceConnection.workspaceSlug, projectId);
-      const members = await planeClient.users.list(workspaceConnection.workspaceSlug, projectId);
+      const issue = await planeClient.issue.getIssue(workspaceConnection.workspace_slug, projectId, issueId);
+      const project = await planeClient.project.getProject(workspaceConnection.workspace_slug, projectId);
+      const states = await planeClient.state.list(workspaceConnection.workspace_slug, projectId);
+      const members = await planeClient.users.list(workspaceConnection.workspace_slug, projectId);
 
       // Create updated linkback
       const updatedLinkback = createSlackLinkback(
-        workspaceConnection.workspaceSlug,
+        workspaceConnection.workspace_slug,
         project,
         members,
         states.results,
@@ -309,13 +337,18 @@ async function handleAssignToMeAction(data: TBlockActionPayload) {
     const projectId = issue[0];
     const issueId = issue[1];
 
-    const planeMembers = await planeClient.users.list(workspaceConnection.workspaceSlug, projectId);
+    const planeMembers = await planeClient.users.list(workspaceConnection.workspace_slug, projectId);
     const member = planeMembers.find((member) => member.email === user?.user.profile.email);
 
     if (member) {
-      await planeClient.issue.update(workspaceConnection.workspaceSlug, projectId, issueId, {
-        assignees: [member.id],
-      });
+      try {
+        await planeClient.issue.update(workspaceConnection.workspace_slug, projectId, issueId, {
+          assignees: [member.id],
+        });
+      } catch (error: any) {
+        const errorMessage = error?.response?.data?.error || "Something went wrong. Please try again.";
+        await slackService.sendEphemeralMessage(data.user.id, errorMessage, data.channel.id, data.message?.thread_ts);
+      }
 
       if (data.message?.thread_ts) {
         await slackService.sendEphemeralMessage(

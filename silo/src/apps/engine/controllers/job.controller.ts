@@ -6,36 +6,31 @@
  * and performs the task
  */
 
-import { Controller, Delete, Get, Post, Put } from "@/lib";
-import {
-  cancelJob,
-  createJob,
-  createJobConfig,
-  deleteJob,
-  getCredentialsByTargetToken,
-  getJobById,
-  getJobByWorkspaceId,
-  getJobByWorkspaceIdAndSource,
-  updateJob,
-} from "@/db/query";
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 
 import { TImporterKeys, TIntegrationKeys } from "@plane/etl/core";
-import { importTaskManger } from "@/apps/engine/worker";
+import { resetJobIfStarted, updateJobWithReport } from "@/helpers/job";
 import { responseHandler } from "@/helpers/response-handler";
+import { Controller, Get, Post, Put, useValidateUserAuthentication } from "@/lib";
+import { getAPIClient } from "@/services/client";
+import { importTaskManger } from "@/worker";
+
+const client = getAPIClient();
 
 @Controller("/api/jobs")
 export class JobController {
   @Post("/")
+  @useValidateUserAuthentication()
   async createJob(req: Request, res: Response) {
     try {
       if (!req.body.workspace_id) {
         res.status(400).json({ message: "Workspace ID is required" });
         return;
       }
-      const job = await createJob({
+      const job = await client.importJob.createImportJob({
         ...req.body,
       });
+
       res.status(201).json(job);
     } catch (error: any) {
       responseHandler(res, 500, error);
@@ -43,6 +38,7 @@ export class JobController {
   }
 
   @Get("/")
+  @useValidateUserAuthentication()
   async getJobs(req: Request, res: Response) {
     try {
       // check for the params, if empty then return error
@@ -53,40 +49,26 @@ export class JobController {
       // Check for the query params and get the jobs according to the functions
       // associated with the query params
       if (req.query.id) {
-        const job = await getJobById(req.query.id as string);
+        const job = await client.importJob.getImportJob(req.query.id as string);
         res.status(200).json(job);
         return;
-      } else {
-        // Get the api token from the headers and check if the token is valid
-        const token = req.headers["x-api-key"];
-        if (!token) {
-          res.status(401).json({ message: "Unauthorized" });
-          return;
-        }
-        // Get the credentials for the token
-        const credentials = await getCredentialsByTargetToken((token as string).trim());
-
-        if (credentials.length == 0) {
-          res.status(200).json([]);
-          return;
-        }
-
-        const targetCredentials = credentials[0];
-        if (targetCredentials.workspace_id == null) {
-          res.status(200).json([]);
-          return;
-        }
+      } else if (req.query.workspaceId) {
         // Find the jobs based on the workspace ID of the credentials
-        let jobs = {};
+        let jobs = [];
         if (req.query.source) {
-          jobs = await getJobByWorkspaceIdAndSource(
-            targetCredentials.workspace_id,
-            req.query.source as TImporterKeys & TIntegrationKeys
-          );
+          jobs = await client.importJob.listImportJobs({
+            workspace_id: req.query.workspaceId as string,
+            source: req.query.source as TImporterKeys & TIntegrationKeys
+          });
         } else {
-          jobs = await getJobByWorkspaceId(targetCredentials.workspace_id);
+          jobs = await client.importJob.listImportJobs({
+            workspace_id: req.query.workspaceId as string,
+          });
         }
+
         res.status(200).json(jobs);
+      } else {
+        responseHandler(res, 400, { message: "Invalid query" });
       }
     } catch (error: any) {
       responseHandler(res, 500, error);
@@ -94,6 +76,7 @@ export class JobController {
   }
 
   @Put("/:id")
+  @useValidateUserAuthentication()
   async updateJob(req: Request, res: Response) {
     try {
       if (req.body.start_time) {
@@ -104,7 +87,7 @@ export class JobController {
         req.body.end_time = new Date(req.body.end_time);
       }
 
-      const job = await updateJob(req.params.id, req.body);
+      const job = await client.importJob.updateImportJob(req.params.id, req.body);
 
       if (job) {
         res.status(200).json(job);
@@ -119,49 +102,33 @@ export class JobController {
   @Post("/:id/batch-complete")
   async updateJobBatchComplete(req: Request, res: Response) {
     try {
-      const { jobId } = req.body;
+      const job = await client.importJob.getImportJob(req.params.id);
+      if (!job.report_id) return res.status(400).json({ message: "Report id not found" });
+      const report = await client.importReport.getImportReport(job.report_id);
+      if (report.completed_batch_count != null && report.total_batch_count != null) {
+        if (report.completed_batch_count + 1 >= report.total_batch_count) {
 
-      const jobs = await getJobById(req.params.id);
-      if (jobs && jobs.length > 0) {
-        const job = jobs[0];
-        if (job.completed_batch_count != null && job.total_batch_count != null) {
-          if (job.completed_batch_count + 1 >= job.total_batch_count) {
-            await updateJob(jobId, {
-              status: "FINISHED",
-              end_time: new Date(),
-              transformed_batch_count: job.total_batch_count,
-              completed_batch_count: job.total_batch_count,
-            });
-          } else {
-            await updateJob(jobId, {
-              completed_batch_count: job.completed_batch_count + 1,
-            });
-          }
+          await updateJobWithReport(job.id, report.id, {
+            status: "FINISHED",
+          }, {
+            end_time: new Date().toISOString(),
+            transformed_batch_count: report.total_batch_count,
+            completed_batch_count: report.total_batch_count,
+          });
+        } else {
+          await client.importReport.updateImportReport(report.id, {
+            completed_batch_count: report.completed_batch_count + 1,
+          });
         }
-        res.status(200).json({ message: "Job updated successfully" });
-      } else {
-        res.status(404).json({ message: "Job not found" });
       }
-    } catch (error: any) {
-      responseHandler(res, 500, error);
-    }
-  }
-
-  @Delete("/:id")
-  async deleteJob(req: Request, res: Response) {
-    try {
-      const job = await deleteJob(req.params.id);
-      if (job) {
-        res.status(200).json({ message: "Job deleted successfully" });
-      } else {
-        res.status(404).json({ message: "Job not found" });
-      }
+      res.status(200).json({ message: "Job updated successfully" });
     } catch (error: any) {
       responseHandler(res, 500, error);
     }
   }
 
   @Post("/cancel")
+  @useValidateUserAuthentication()
   async cancelJob(req: Request, res: Response) {
     try {
       const body = req.body;
@@ -173,22 +140,13 @@ export class JobController {
       }
 
       // Get the job from the given job id
-      const jobs = await getJobById(body.jobId);
-      if (jobs.length == 0) {
-        res.status(404).json({
-          message: `No job with id ${body.jobId} is available to cancel`,
-        });
-        return;
-      }
-
-      const job = jobs[0];
-
+      const job = await client.importJob.getImportJob(body.jobId);
       if ((job.status && job.status === "FINISHED") || job.status === "ERROR") {
         res.status(400).json({ message: "Job already finished or errored out, can't cancel" });
         return;
       }
 
-      await cancelJob(body.jobId);
+      await client.importJob.updateImportJob(body.jobId, { status: "CANCELLED", cancelled_at: new Date().toISOString() });
       res.status(200).json({ message: "Job cancelled successfully" });
     } catch (error: any) {
       responseHandler(res, 500, error);
@@ -196,6 +154,7 @@ export class JobController {
   }
 
   @Post("/run")
+  @useValidateUserAuthentication()
   async runJob(req: Request, res: Response) {
     try {
       const body = req.body;
@@ -214,15 +173,7 @@ export class JobController {
       }
 
       // Get the job from the given job id
-      const jobs = await getJobById(body.jobId);
-      if (jobs.length == 0) {
-        res.status(404).json({
-          message: `No job with id ${body.jobId} is available to run, please create one.`,
-        });
-        return;
-      }
-
-      const job = jobs[0];
+      const job = await client.importJob.getImportJob(body.jobId);
       // If the job is not finished or error, just send 400 OK, and don't do
       // anything
       if (
@@ -236,44 +187,30 @@ export class JobController {
         return;
       }
       // Check if the config is already present, for the particular job or not
-      if (!job.config || job.migration_type == null) {
+      if (!job.config || job.source == null) {
         res.status(400).json({
           message: "Config for the requested job is not found, make sure to create a config before initiating a job",
         });
         return;
       }
 
-      await updateJob(job.id, {
+      await client.importJob.updateImportJob(job.id, {
         status: "CREATED",
-        is_cancelled: false,
-        total_batch_count: 0,
-        transformed_batch_count: 0,
-        completed_batch_count: 0,
-        error: "",
+        cancelled_at: null,
+        error_metadata: undefined
       });
+
+      await resetJobIfStarted(job);
 
       await importTaskManger.registerTask(
         {
-          route: job.migration_type.toLowerCase(),
+          route: job.source.toLowerCase(),
           jobId: job.id,
           type: "initiate",
         },
         {}
       );
       res.status(200).json({ message: "Job initiated successfully" });
-    } catch (error: any) {
-      responseHandler(res, 500, error);
-    }
-  }
-}
-
-@Controller("/api/job-configs")
-export class JobConfigController {
-  @Post("/")
-  async createJobConfig(req: Request, res: Response) {
-    try {
-      const jobConfig = await createJobConfig(req.body);
-      res.status(201).json(jobConfig);
     } catch (error: any) {
       responseHandler(res, 500, error);
     }

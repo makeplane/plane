@@ -3,14 +3,15 @@
 import { FC, ReactNode, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { Network } from "lucide-react";
-// hooks
+// plane imports
+import { ACTIVITY_HIGHLIGHT_TIMEOUT } from "@plane/constants";
 import { Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { ACTIVITY_HIGHLIGHT_TIMEOUT } from "@/constants/notification";
+// helpers
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
+// hooks
 import { useIssueDetail, useWorkspaceNotifications } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// ui
 // components
 import { IssueUser } from "../";
 // helpers

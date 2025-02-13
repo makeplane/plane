@@ -98,7 +98,7 @@ export const ProjectGanttSidebarBlock: React.FC<SidebarProps> = observer((props)
       )}
     </>
   );
-  return projectDetails.is_member ? (
+  return !!projectDetails.member_role ? (
     <Link
       href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
       className="px-page-x w-full cursor-pointer text-sm text-custom-text-100 flex justify-between h-11"

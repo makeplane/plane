@@ -3,6 +3,8 @@
 import { FC, useState, FormEvent } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 import { Button, EModalWidth, Input, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { WorkspaceLogo } from "@/components/workspace";
@@ -11,8 +13,6 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { getFileURL } from "@/helpers/file.helper";
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
@@ -36,7 +36,7 @@ export const SubscriptionActivationModal: FC<TSubscriptionActivationModal> = obs
   const [errors, setErrors] = useState<string | undefined>(undefined);
   const [loader, setLoader] = useState<boolean>(false);
   // derived values
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
+  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
 
   const handleActivateLicense = async (event: FormEvent<HTMLInputElement>) => {
     setErrors(undefined);

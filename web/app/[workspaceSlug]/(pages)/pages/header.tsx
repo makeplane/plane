@@ -6,12 +6,11 @@ import { Home } from "lucide-react";
 // images
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
-// ui
-import { Breadcrumbs } from "@plane/ui";
+// plane imports
+import { GITHUB_REDIRECTED } from "@plane/constants";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
-// constants
-import { GITHUB_REDIRECTED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 
@@ -21,8 +20,8 @@ export const PagesAppDashboardHeader = () => {
   const { resolvedTheme } = useTheme();
 
   return (
-    <div className="relative z-[15] flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
-      <div className="flex items-center gap-2 overflow-ellipsis whitespace-nowrap">
+    <Header>
+      <Header.LeftItem>
         <div>
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
@@ -31,8 +30,8 @@ export const PagesAppDashboardHeader = () => {
             />
           </Breadcrumbs>
         </div>
-      </div>
-      <div className="flex items-center gap-3 px-3">
+      </Header.LeftItem>
+      <Header.RightItem>
         <a
           onClick={() =>
             captureEvent(GITHUB_REDIRECTED, {
@@ -52,7 +51,7 @@ export const PagesAppDashboardHeader = () => {
           />
           <span className="hidden text-xs font-medium sm:hidden md:block">Star us on GitHub</span>
         </a>
-      </div>
-    </div>
+      </Header.RightItem>
+    </Header>
   );
 };

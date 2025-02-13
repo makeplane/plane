@@ -30,7 +30,7 @@ export const IssueTypeDropdown = observer((props: TIssueTypeDropdownProps) => {
     projectId,
     disabled = false,
     variant = "sm",
-    placeholder = "Issue type",
+    placeholder = "Work item type",
     handleIssueTypeChange,
     optionTooltip,
   } = props;

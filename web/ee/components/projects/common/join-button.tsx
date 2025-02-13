@@ -1,20 +1,28 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+// plane imports
 import { Button } from "@plane/ui";
 import { cn } from "@plane/utils";
+// components
 import { JoinProjectModal } from "@/components/project";
+// plane web imports
 import { TProject } from "@/plane-web/types/projects";
 
 type Props = {
   project: TProject;
   className?: string;
 };
+
 const JoinButton: React.FC<Props> = (props) => {
   const { project, className } = props;
-  const [joinProjectModalOpen, setJoinProjectModal] = useState(false);
+  // router
   const { workspaceSlug } = useParams();
   const router = useRouter();
+  // states
+  const [joinProjectModalOpen, setJoinProjectModal] = useState(false);
+  // derived values
+  const isMemberOfProject = !!project.member_role;
 
   return (
     <>
@@ -27,7 +35,7 @@ const JoinButton: React.FC<Props> = (props) => {
           handleClose={() => setJoinProjectModal(false)}
         />
       )}
-      {project.is_member ? (
+      {isMemberOfProject ? (
         <Link
           href={`/${workspaceSlug}/projects/${project.id}/issues`}
           tabIndex={-1}
@@ -38,12 +46,14 @@ const JoinButton: React.FC<Props> = (props) => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            project.is_member
-              ? router.push(`/${workspaceSlug}/projects/${project.id}/issues`)
-              : setJoinProjectModal(true);
+            if (isMemberOfProject) {
+              router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
+            } else {
+              setJoinProjectModal(true);
+            }
           }}
         >
-          {project.is_member ? "Joined" : "Join"}
+          {isMemberOfProject ? "Joined" : "Join"}
         </Link>
       ) : (
         <Button
@@ -56,15 +66,18 @@ const JoinButton: React.FC<Props> = (props) => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            project.is_member
-              ? router.push(`/${workspaceSlug}/projects/${project.id}/issues`)
-              : setJoinProjectModal(true);
+            if (isMemberOfProject) {
+              router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
+            } else {
+              setJoinProjectModal(true);
+            }
           }}
         >
-          {project.is_member ? "Joined" : "Join"}
+          {isMemberOfProject ? "Joined" : "Join"}
         </Button>
       )}
     </>
   );
 };
+
 export default JoinButton;

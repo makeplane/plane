@@ -4,8 +4,10 @@ import { FC, Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane web components
-import { AuthenticationRoot, Dashboard, StepsRoot, DashboardLoaderRoot } from "@/plane-web/components/importers/asana";
+import { AuthenticationRoot, StepsRoot } from "@/plane-web/components/importers/asana";
 //  plane web hooks
+import { AsanaDashboardRoot } from "@/plane-web/components/importers/asana/dashboard/root";
+import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
 import { useFlag, useAsanaImporter } from "@/plane-web/hooks/store";
 
 const AsanaImporter: FC = observer(() => {
@@ -47,7 +49,15 @@ const AsanaImporter: FC = observer(() => {
     return () => {
       resetImporterData();
     };
-  }, [workspaceId, userId, externalApiToken, serviceWorkspaceId, setDefaultServiceConfig, resetImporterData]);
+  }, [
+    workspaceId,
+    workspaceSlug,
+    userId,
+    externalApiToken,
+    serviceWorkspaceId,
+    setDefaultServiceConfig,
+    resetImporterData,
+  ]);
 
   if (!isFeatureEnabled) return null;
 
@@ -66,7 +76,7 @@ const AsanaImporter: FC = observer(() => {
       {!currentAuth?.isAuthenticated ? (
         <AuthenticationRoot />
       ) : (
-        <Fragment>{dashboardView ? <Dashboard /> : <StepsRoot />}</Fragment>
+        <Fragment>{dashboardView ? <AsanaDashboardRoot /> : <StepsRoot />}</Fragment>
       )}
     </Fragment>
   );

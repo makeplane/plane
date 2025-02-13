@@ -41,7 +41,7 @@ export const WorklogsPaginatedTableRoot: FC<TWorklogsPaginatedTableRoot> = (prop
     },
     {
       key: "issue",
-      content: "Issue",
+      content: "Work item",
       tdRender: (rowData: TWorklog) => {
         const currentProject = (rowData.project_id && getProjectById(rowData.project_id)) || undefined;
         return (

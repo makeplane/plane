@@ -24,6 +24,7 @@ from plane.db.models import (
     ProjectMember,
     Project,
     CycleIssue,
+    UserRecentVisit,
     DeployBoard,
 )
 from plane.utils.grouper import (
@@ -504,6 +505,13 @@ class IssueViewViewSet(BaseViewSet):
                 entity_identifier=pk,
                 entity_type="view",
             ).delete()
+            # Delete the page from recent visit
+            UserRecentVisit.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                entity_identifier=pk,
+                entity_name="view",
+            ).delete(soft=False)
             # Delete the view from the deploy board
             DeployBoard.objects.filter(
                 entity_name="view",

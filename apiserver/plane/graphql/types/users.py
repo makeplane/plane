@@ -10,6 +10,7 @@ from strawberry.types import Info
 from strawberry.scalars import JSON
 
 # Module imports
+from plane.graphql.utils.timezone import user_timezone_converter
 from plane.db.models import (
     User,
     Profile,
@@ -119,14 +120,24 @@ class UserFavoriteType:
     is_folder: bool
     sequence: float
     parent: Optional[strawberry.ID]
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
     deleted_at: Optional[datetime]
     project: Optional[strawberry.ID]
 
     @strawberry.field
     def project(self) -> int:
         return self.project_id
+
+    @strawberry.field
+    def created_at(self, info) -> Optional[datetime]:
+        converted_date = user_timezone_converter(info.context.user, self.created_at)
+        return converted_date
+
+    @strawberry.field
+    def updated_at(self, info) -> Optional[datetime]:
+        converted_date = user_timezone_converter(info.context.user, self.updated_at)
+        return converted_date
 
     @strawberry.field
     async def entity_data(self) -> Optional[UserFavoriteEntityData]:
@@ -203,18 +214,14 @@ class UserRecentVisitType:
     entity_identifier: str
     entity_name: str
     user: strawberry.ID
-    created_at: datetime
-    updated_at: datetime
-    deleted_at: Optional[datetime]
+    visited_at: Optional[datetime]
+    workspace: Optional[strawberry.ID]
     project: Optional[strawberry.ID]
-
-    @strawberry.field
-    def project(self) -> int:
-        return self.project_id
-
-    @strawberry.field
-    def user(self) -> int:
-        return self.user_id
+    created_by: Optional[strawberry.ID]
+    updated_by: Optional[strawberry.ID]
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
+    deleted_at: Optional[datetime]
 
     @strawberry.field
     async def entity_data(self) -> Optional[UserFavoriteEntityData]:

@@ -7,12 +7,7 @@ export type IPaymentProductPrice = {
   workspace_amount: number;
 };
 
-export type TProductSubscriptionType =
-  | "FREE"
-  | "ONE"
-  | "PRO"
-  | "BUSINESS"
-  | "ENTERPRISE";
+export type TProductSubscriptionType = "FREE" | "ONE" | "PRO" | "BUSINESS" | "ENTERPRISE";
 
 export type IPaymentProduct = {
   description: string;
@@ -49,10 +44,27 @@ export type IWorkspaceProductSubscription = {
   occupied_seats: number | null;
   show_seats_banner: boolean;
   is_free_member_count_exceeded: boolean;
+  can_delete_workspace: boolean;
 };
 
 export type TMemberInviteCheck = {
   invite_allowed: boolean;
   allowed_admin_members: number;
   allowed_guests: number;
+};
+
+export type TUpdateSeatVariant = "ADD_SEATS" | "REMOVE_SEATS";
+
+export type TAddWorkspaceSeatsModal = {
+  isOpen: boolean;
+};
+
+export type TProrationPreview = {
+  quantity_difference: number;
+  per_seat_prorated_amount: number;
+  current_quantity: number;
+  new_quantity: number;
+  total_prorated_amount: number;
+  current_price_amount: number;
+  current_price_interval: "MONTHLY" | "YEARLY";
 };

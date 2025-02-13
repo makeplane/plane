@@ -13,6 +13,7 @@ import { createRoot } from "react-dom/client";
 import { LinkIcon, Star, Settings, Share2, LogOut, MoreHorizontal, ChevronRight } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 // ui
@@ -28,7 +29,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane-web components
 import { ProjectNavigationRoot } from "@/plane-web/components/sidebar";
 // constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../../issues/issue-layouts/utils";
 
 type Props = {
@@ -52,7 +52,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { t } = useTranslation();
   const { setTrackElement } = useEventTracker();
-  const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
+  const { addProjectToFavorites, removeProjectFromFavorites, getPartialProjectById } = useProject();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
   // states
@@ -70,7 +70,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId: URLProjectId } = useParams();
   // derived values
-  const project = getProjectById(projectId);
+  const project = getPartialProjectById(projectId);
   // auth
   const isAdmin = allowPermissions(
     [EUserPermissions.ADMIN],
@@ -337,7 +337,8 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                   placement="bottom-start"
                   useCaptureForOutsideClick
                 >
-                  {isAuthorized && (
+                  {/* TODO: Removed is_favorite logic due to the optimization in projects API */}
+                  {/* {isAuthorized && (
                     <CustomMenu.MenuItem
                       onClick={project.is_favorite ? handleRemoveFromFavorites : handleAddToFavorites}
                     >
@@ -350,7 +351,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                         <span>{project.is_favorite ? t("remove_from_favorites") : t("add_to_favorites")}</span>
                       </span>
                     </CustomMenu.MenuItem>
-                  )}
+                  )} */}
 
                   {/* publish project settings */}
                   {isAdmin && (
@@ -359,20 +360,10 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                         <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-custom-sidebar-text-200 transition-all duration-300 hover:bg-custom-sidebar-background-80">
                           <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
                         </div>
-                        <div>{project.anchor ? t("publish_settings") : t("publish")}</div>
+                        <div>{t("publish_settings")}</div>
                       </div>
                     </CustomMenu.MenuItem>
                   )}
-                  {/* {isAuthorized && (
-                    <CustomMenu.MenuItem>
-                      <Link href={`/${workspaceSlug}/projects/${project?.id}/draft-issues/`}>
-                        <div className="flex items-center justify-start gap-2">
-                          <PenSquare className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
-                          <span>Draft issues</span>
-                        </div>
-                      </Link>
-                    </CustomMenu.MenuItem>
-                  )} */}
                   <CustomMenu.MenuItem onClick={handleCopyText}>
                     <span className="flex items-center justify-start gap-2">
                       <LinkIcon className="h-3.5 w-3.5 stroke-[1.5]" />

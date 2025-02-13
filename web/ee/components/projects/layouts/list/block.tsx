@@ -40,7 +40,8 @@ export const ProjectBlock = observer((props: ProjectBlockProps) => {
   const { isMobile } = usePlatformOS();
 
   const projectDetails = getProjectById(projectId);
-  if (!projectDetails || !currentWorkspace) return <Spinner />;
+
+  if (!projectDetails || !currentWorkspace) return <></>;
   return (
     <Row
       ref={projectRef}
@@ -70,7 +71,7 @@ export const ProjectBlock = observer((props: ProjectBlockProps) => {
             </div>
           </div>
 
-          {projectDetails.is_member ? (
+          {!!projectDetails.member_role ? (
             <Link
               id={`project-${projectDetails.id}`}
               href={`/${workspaceSlug}/projects/${projectId}/issues`}

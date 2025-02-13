@@ -15,8 +15,8 @@ export const WorklogEmptyScreen: FC = () => {
       <div className="flex flex-col gap-1.5 flex-shrink">
         <h3 className="text-xl font-semibold">See timesheets for any member in any project.</h3>
         <p className="text-sm">
-          When you log time via Tracked time in issue properties, you will see detailed timesheets here. Any member can
-          log time in any issue in any project in your workspace.
+          When you log time via Tracked time in work item properties, you will see detailed timesheets here. Any member
+          can log time in any work item in any project in your workspace.
         </p>
       </div>
       <Image

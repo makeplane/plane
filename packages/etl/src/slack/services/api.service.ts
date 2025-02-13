@@ -1,12 +1,13 @@
-import { SlackAuthService } from "./auth.service";
 import axios, { AxiosInstance } from "axios";
 import {
   isSlackBotTokenResponse,
+  SlackConversationHistoryResponse,
   SlackMessageResponse,
   SlackUpdateCredential,
   SlackUserResponse,
   UnfurlMap,
 } from "../types";
+import { SlackAuthService } from "./auth.service";
 
 export class SlackService {
   private client: AxiosInstance;
@@ -15,10 +16,7 @@ export class SlackService {
     access_token: string,
     refresh_token: string,
     authService: SlackAuthService,
-    authCallback: ({
-      isBotToken,
-      tokenResponse,
-    }: SlackUpdateCredential) => Promise<void>
+    authCallback: ({ isBotToken, tokenResponse }: SlackUpdateCredential) => Promise<void>
   ) {
     this.client = axios.create({
       baseURL: "https://slack.com/api/",
@@ -216,10 +214,7 @@ export class SlackService {
     }
   }
 
-  async sendMessage(
-    webhookUrl: string,
-    template: { text: string; blocks: any[] }
-  ) {
+  async sendMessage(webhookUrl: string, template: { text: string; blocks: any[] }) {
     try {
       await axios.post(webhookUrl, template, {
         headers: {
@@ -231,12 +226,7 @@ export class SlackService {
     }
   }
 
-  async updateMessage(
-    channel: string,
-    ts: string,
-    text: string,
-    blocks?: any[],
-  ): Promise<SlackMessageResponse> {
+  async updateMessage(channel: string, ts: string, text: string, blocks?: any[]): Promise<SlackMessageResponse> {
     try {
       const response = await this.client.post("chat.update", {
         channel,
@@ -249,6 +239,23 @@ export class SlackService {
     } catch (error) {
       console.error("Error updating message:", error);
       throw error;
+    }
+  }
+
+  async getMessage(channel: string, messageTs: string): Promise<SlackConversationHistoryResponse | undefined> {
+    try {
+      const response = await this.client.get("conversations.history", {
+        params: {
+          channel: channel,
+          latest: messageTs,
+          inclusive: true,
+          limit: 1,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error(error);
     }
   }
 

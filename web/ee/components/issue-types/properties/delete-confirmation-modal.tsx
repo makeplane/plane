@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
-// ui
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { Button, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -16,6 +17,8 @@ type TProps = {
 
 export const DeleteConfirmationModal: React.FC<TProps> = observer((props) => {
   const { isOpen, isDisabledAlready, onClose, onDisable, onDelete } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -48,16 +51,18 @@ export const DeleteConfirmationModal: React.FC<TProps> = observer((props) => {
           <AlertTriangle className="size-6" aria-hidden="true" />
         </span>
         <div className="py-1 text-center sm:text-left">
-          <h3 className="text-lg font-medium">Delete this property</h3>
+          <h3 className="text-lg font-medium">{t("work_item_types.settings.properties.delete_confirmation.title")}</h3>
           <div className="py-1 pb-4 text-center sm:text-left text-sm text-custom-text-200">
-            <p>Deletion of properties may lead to loss of existing data.</p>
-            {!isDisabledAlready && <p>Do you want to disable the property instead?</p>}
+            <p>{t("work_item_types.settings.properties.delete_confirmation.description")}</p>
+            {!isDisabledAlready && (
+              <p>{t("work_item_types.settings.properties.delete_confirmation.secondary_description")}</p>
+            )}
           </div>
         </div>
       </div>
       <div className="px-1 pt-4 flex flex-col-reverse sm:flex-row sm:justify-between gap-2 border-t-[0.5px] border-custom-border-200">
         <Button variant="neutral-primary" size="sm" onClick={onClose} disabled={isSubmitting}>
-          Cancel
+          {t("common.cancel")}
         </Button>
         <div className="flex flex-col sm:flex-row gap-2 items-center sm:justify-end">
           {!isDisabledAlready && (
@@ -68,7 +73,7 @@ export const DeleteConfirmationModal: React.FC<TProps> = observer((props) => {
               className="w-full"
               disabled={isSubmitting}
             >
-              Yes, disable it
+              {t("work_item_types.settings.properties.delete_confirmation.secondary_button")}
             </Button>
           )}
           <Button
@@ -79,7 +84,9 @@ export const DeleteConfirmationModal: React.FC<TProps> = observer((props) => {
             className="w-full focus:!text-white"
             disabled={isSubmitting}
           >
-            {isDisabledAlready ? "Yes, delete it" : "No, delete it"}
+            {t("work_item_types.settings.properties.delete_confirmation.primary_button", {
+              action: isDisabledAlready ? t("common.yes") : t("common.no"),
+            })}
           </Button>
         </div>
       </div>

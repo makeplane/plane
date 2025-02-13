@@ -32,7 +32,7 @@ import {
   StateConfig,
 } from "@/asana/types";
 import { CUSTOM_FIELD_ATTRIBUTES } from "@/asana/helpers/custom-field-etl";
-import { TPropertyValuesPayload } from "@/core";
+import { E_IMPORTER_KEYS, TPropertyValuesPayload } from "@/core";
 
 export const transformTask = (
   task: AsanaTask,
@@ -74,7 +74,7 @@ export const transformTask = (
   const issue: Partial<PlaneIssue> = {
     name: task.name || "Untitled Task",
     external_id: task.gid,
-    external_source: "ASANA",
+    external_source: E_IMPORTER_KEYS.ASANA,
     assignees: assignee ? [assignee] : [],
     parent,
     labels,
@@ -82,7 +82,7 @@ export const transformTask = (
     attachments: targetAttachments as ExIssueAttachment[], // TODO: Fix this type
     state: targetState ? targetState.id : "",
     priority: targetPriority,
-    description_html: !task.html_notes || task.html_notes == "" ? "<p></p>" : task.html_notes,
+    description_html: !task.html_notes || task.html_notes == "<body></body>" ? "<p></p>" : task.html_notes,
     start_date: getFormattedDate(task.start_on),
     target_date: getFormattedDate(task.due_on),
     created_at: task.created_at,
@@ -127,7 +127,7 @@ export const transformCustomFields = (
   // Return the transformed property
   return {
     external_id: fieldSettings.custom_field.gid,
-    external_source: "ASANA",
+    external_source: E_IMPORTER_KEYS.ASANA,
     display_name: fieldSettings.custom_field.name,
     description: fieldSettings.custom_field.description ?? undefined,
     type_id: undefined, // Issue types not supported in Asana
@@ -141,7 +141,7 @@ export const transformCustomFieldOptions = (
   customFieldOption: AsanaEnumOption
 ): Partial<ExIssuePropertyOption> => ({
   external_id: customFieldOption.gid,
-  external_source: "ASANA",
+  external_source: E_IMPORTER_KEYS.ASANA,
   name: customFieldOption.name,
   is_active: customFieldOption.enabled,
   property_id: customFieldGid,
@@ -169,7 +169,7 @@ export const transformComments = (comment: AsanaTaskComment, users: AsanaUser[])
   const creator = mapAsanaCommentCreator(comment, users);
   return {
     external_id: comment.gid,
-    external_source: "ASANA",
+    external_source: E_IMPORTER_KEYS.ASANA,
     created_at: getFormattedDate(comment.created_at),
     comment_html: comment.html_text ?? "<p></p>",
     actor: creator,

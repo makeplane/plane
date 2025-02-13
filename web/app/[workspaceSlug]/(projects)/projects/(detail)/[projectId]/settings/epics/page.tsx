@@ -3,6 +3,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
+import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 // hooks
@@ -12,7 +13,6 @@ import { EpicsRoot } from "@/plane-web/components/epics";
 // constants
 import { EpicsUpgrade } from "@/plane-web/components/epics/upgrade";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const EpicsSettingsPage = observer(() => {
   // router
@@ -22,7 +22,7 @@ const EpicsSettingsPage = observer(() => {
   const { currentProjectDetails } = useProject();
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Epics` : undefined;
-  const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canPerformProjectAdminActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
 
   if (!canPerformProjectAdminActions) {
     return <NotAuthorizedView section="settings" isProjectView />;

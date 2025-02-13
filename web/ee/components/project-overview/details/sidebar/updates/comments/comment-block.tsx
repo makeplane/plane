@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 import { Avatar } from "@plane/ui";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { useMember, useUser, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions } from "@/plane-web/constants";
 import { TProjectUpdatesComment } from "@/plane-web/types";
 import { UpdateQuickActions } from "../quick-actions";
 import { UpdateReaction } from "../update-reaction";
@@ -27,7 +26,7 @@ export const CommentBlock = (props: TProps) => {
   const creator = commentData && getUserDetails(commentData?.created_by || "");
 
   const isProjectAdmin = allowPermissions(
-    [EUserPermissions.ADMIN],
+    [EUserProjectRoles.ADMIN],
     EUserPermissionsLevel.PROJECT,
     workspaceSlug.toString(),
     projectId.toString()

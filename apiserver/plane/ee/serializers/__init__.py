@@ -42,18 +42,18 @@ from .app.initiative import (
 )
 
 
-from .app.team import (
-    TeamSpaceSerializer,
-    TeamSpaceMemberSerializer,
-    TeamSpaceCommentSerializer,
-    TeamSpaceViewSerializer,
-    TeamSpacePageSerializer,
-    TeamSpacePageDetailSerializer,
-    TeamSpacePageVersionSerializer,
-    TeamSpacePageVersionDetailSerializer,
-    TeamSpaceCommentReactionSerializer,
-    TeamSpaceUserPropertySerializer,
-    TeamSpaceActivitySerializer,
+from .app.teamspace import (
+    TeamspaceSerializer,
+    TeamspaceMemberSerializer,
+    TeamspaceCommentSerializer,
+    TeamspaceViewSerializer,
+    TeamspacePageSerializer,
+    TeamspacePageDetailSerializer,
+    TeamspacePageVersionSerializer,
+    TeamspacePageVersionDetailSerializer,
+    TeamspaceCommentReactionSerializer,
+    TeamspaceUserPropertySerializer,
+    TeamspaceActivitySerializer,
 )
 
 from .app.epic import (
@@ -93,3 +93,4 @@ from .api.job import ImportReportAPISerializer, ImportJobAPISerializer
 from .api.workspace.credential import WorkspaceCredentialAPISerializer
 from .api.workspace.connection import WorkspaceConnectionAPISerializer
 from .api.workspace.entity_connection import WorkspaceEntityConnectionAPISerializer
+from .api.worklog import IssueWorkLogAPISerializer

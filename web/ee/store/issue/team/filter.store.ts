@@ -4,7 +4,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // base class
 import { computedFn } from "mobx-utils";
 // plane constants
-import { EIssueFilterType, EIssuesStoreType, ETeamEntityScope } from "@plane/constants";
+import { EIssueFilterType, EIssuesStoreType, ETeamspaceEntityScope } from "@plane/constants";
 // types
 import {
   IIssueFilterOptions,
@@ -18,31 +18,31 @@ import {
 // helpers
 import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
 // services
-import { TeamIssuesService } from "@/plane-web/services/teams/team-issues.service";
+import { TeamspaceWorkItemsService } from "@/plane-web/services/teamspace/teamspace-work-items.service";
 // store
 import { IBaseIssueFilterStore, IssueFilterHelperStore } from "@/store/issue/helpers/issue-filter-helper.store";
 import { IIssueRootStore } from "@/store/issue/root.store";
 
 export interface ITeamIssuesFilter extends IBaseIssueFilterStore {
   // observables
-  scopeMap: Record<string, ETeamEntityScope>; // teamId -> scope
+  scopeMap: Record<string, ETeamspaceEntityScope>; // teamspaceId -> scope
   //helper actions
-  initTeamScope: (teamId: string) => void;
-  getTeamScope: (teamId: string) => ETeamEntityScope | undefined;
-  updateTeamScope: (teamId: string, scope: ETeamEntityScope) => void;
+  initTeamScope: (teamspaceId: string) => void;
+  getTeamspaceScope: (teamspaceId: string) => ETeamspaceEntityScope | undefined;
+  updateTeamScope: (teamspaceId: string, scope: ETeamspaceEntityScope) => void;
   getFilterParams: (
     options: IssuePaginationOptions,
-    teamId: string,
+    teamspaceId: string,
     cursor: string | undefined,
     groupId: string | undefined,
     subGroupId: string | undefined
   ) => Partial<Record<TIssueParams, string | boolean>>;
-  getIssueFilters(teamId: string): IIssueFilters | undefined;
+  getIssueFilters(teamspaceId: string): IIssueFilters | undefined;
   // action
-  fetchFilters: (workspaceSlug: string, teamId: string) => Promise<void>;
+  fetchFilters: (workspaceSlug: string, teamspaceId: string) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
-    teamId: string,
+    teamspaceId: string,
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
   ) => Promise<void>;
@@ -50,12 +50,12 @@ export interface ITeamIssuesFilter extends IBaseIssueFilterStore {
 
 export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIssuesFilter {
   // observables
-  scopeMap: Record<string, ETeamEntityScope> = {}; // teamId -> scope
-  filters: { [teamId: string]: IIssueFilters } = {};
+  scopeMap: Record<string, ETeamspaceEntityScope> = {}; // teamspaceId -> scope
+  filters: { [teamspaceId: string]: IIssueFilters } = {};
   // root store
   rootIssueStore: IIssueRootStore;
   // services
-  teamIssueFilterService;
+  teamspaceWorkItemFilterService;
 
   constructor(_rootStore: IIssueRootStore) {
     super();
@@ -76,79 +76,79 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
     // root store
     this.rootIssueStore = _rootStore;
     // services
-    this.teamIssueFilterService = new TeamIssuesService();
+    this.teamspaceWorkItemFilterService = new TeamspaceWorkItemsService();
   }
 
   // computed
   /**
-   * @description This method is used to get the issue filters for the team
+   * @description This method is used to get the issue filters for the teamspace
    * @returns {IIssueFilters | undefined}
    */
   get issueFilters(): IIssueFilters | undefined {
-    const teamId = this.rootIssueStore.teamId;
-    if (!teamId) return undefined;
-    return this.getIssueFilters(teamId);
+    const teamspaceId = this.rootIssueStore.teamspaceId;
+    if (!teamspaceId) return undefined;
+    return this.getIssueFilters(teamspaceId);
   }
 
   /**
-   * @description This method is used to get the applied filters for the team
+   * @description This method is used to get the applied filters for the teamspace
    * @returns {Partial<Record<TIssueParams, string | boolean>> | undefined}
    */
   get appliedFilters(): Partial<Record<TIssueParams, string | boolean>> | undefined {
-    const teamId = this.rootIssueStore.teamId;
-    if (!teamId) return undefined;
-    return this.getAppliedFilters(teamId);
+    const teamspaceId = this.rootIssueStore.teamspaceId;
+    if (!teamspaceId) return undefined;
+    return this.getAppliedFilters(teamspaceId);
   }
 
   // helpers
   /**
-   * Initializes team views scope
-   * @param teamId
+   * Initializes teamspace views scope
+   * @param teamspaceId
    */
-  initTeamScope = (teamId: string) => {
-    set(this.scopeMap, teamId, "teams");
+  initTeamScope = (teamspaceId: string) => {
+    set(this.scopeMap, teamspaceId, "teams");
   };
 
   /**
-   * Returns team scope
-   * @param teamId
-   * @returns ETeamEntityScope | undefined
+   * Returns teamspace scope
+   * @param teamspaceId
+   * @returns ETeamspaceEntityScope | undefined
    */
-  getTeamScope = computedFn((teamId: string) => {
-    if (!this.scopeMap[teamId]) {
-      this.initTeamScope(teamId);
+  getTeamspaceScope = computedFn((teamspaceId: string) => {
+    if (!this.scopeMap[teamspaceId]) {
+      this.initTeamScope(teamspaceId);
     }
-    return this.scopeMap[teamId];
+    return this.scopeMap[teamspaceId];
   });
 
   /**
-   * Updates team scope
-   * @param teamId
+   * Updates teamspace scope
+   * @param teamspaceId
    * @param scope
    */
-  updateTeamScope = (teamId: string, scope: ETeamEntityScope) => {
+  updateTeamScope = (teamspaceId: string, scope: ETeamspaceEntityScope) => {
     runInAction(() => {
-      set(this.scopeMap, teamId, scope);
+      set(this.scopeMap, teamspaceId, scope);
     });
   };
 
   /**
-   * @description This method is used to get the issue filters for the team
+   * @description This method is used to get the issue filters for the teamspace
    * @returns {IIssueFilters | undefined}
    */
-  getIssueFilters(teamId: string): IIssueFilters | undefined {
-    const displayFilters = this.filters[teamId] || undefined;
+  getIssueFilters(teamspaceId: string): IIssueFilters | undefined {
+    const displayFilters = this.filters[teamspaceId] || undefined;
     if (isEmpty(displayFilters)) return undefined;
     return this.computedIssueFilters(displayFilters);
   }
 
   /**
-   * @description This method is used to get the applied filters for the team
+   * @description This method is used to get the applied filters for the teamspace
    * @returns {Partial<Record<TIssueParams, string | boolean>> | undefined}
    */
-  getAppliedFilters(teamId: string): Partial<Record<TIssueParams, string | boolean>> | undefined {
-    // get the user filters for the team
-    const userFilters = this.getIssueFilters(teamId);
+  getAppliedFilters(teamspaceId: string): Partial<Record<TIssueParams, string | boolean>> | undefined {
+    // get the user filters for the teamspace
+    const userFilters = this.getIssueFilters(teamspaceId);
     if (!userFilters) return undefined;
     // get the filtered params based on the layout
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "team_issues");
@@ -164,32 +164,32 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
   }
 
   /**
-   * @description This method is used to get the filter params for the team
+   * @description This method is used to get the filter params for the teamspace
    * @returns {Partial<Record<TIssueParams, string | boolean>>}
    */
   getFilterParams = computedFn(
     (
       options: IssuePaginationOptions,
-      teamId: string,
+      teamspaceId: string,
       cursor: string | undefined,
       groupId: string | undefined,
       subGroupId: string | undefined
     ) => {
-      const currentScope = this.getTeamScope(teamId);
-      const filterParams = this.getAppliedFilters(teamId);
+      const currentScope = this.getTeamspaceScope(teamspaceId);
+      const filterParams = this.getAppliedFilters(teamspaceId);
       const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
       return { ...paginationParams, scope: currentScope };
     }
   );
 
   /**
-   * @description This method is used to fetch the filters for the team
+   * @description This method is used to fetch the filters for the teamspace
    * @returns {Promise<void>}
    */
-  fetchFilters = async (workspaceSlug: string, teamId: string): Promise<void> => {
+  fetchFilters = async (workspaceSlug: string, teamspaceId: string): Promise<void> => {
     try {
-      // fetch the filters for the team
-      const _filters = await this.teamIssueFilterService.fetchTeamIssueFilters(workspaceSlug, teamId);
+      // fetch the filters for the teamspace
+      const _filters = await this.teamspaceWorkItemFilterService.fetchTeamspaceWorkItemFilters(workspaceSlug, teamspaceId);
       // compute the filters
       const filters = this.computedFilters(_filters?.filters);
       const displayFilters = this.computedDisplayFilters(_filters?.display_filters);
@@ -204,7 +204,7 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
         const _kanbanFilters = this.handleIssuesLocalFilters.get(
           EIssuesStoreType.TEAM,
           workspaceSlug,
-          teamId,
+          teamspaceId,
           currentUserId
         );
         kanbanFilters.group_by = _kanbanFilters?.kanban_filters?.group_by || [];
@@ -212,32 +212,32 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
       }
       // set the filters
       runInAction(() => {
-        set(this.filters, [teamId, "filters"], filters);
-        set(this.filters, [teamId, "displayFilters"], displayFilters);
-        set(this.filters, [teamId, "displayProperties"], displayProperties);
-        set(this.filters, [teamId, "kanbanFilters"], kanbanFilters);
+        set(this.filters, [teamspaceId, "filters"], filters);
+        set(this.filters, [teamspaceId, "displayFilters"], displayFilters);
+        set(this.filters, [teamspaceId, "displayProperties"], displayProperties);
+        set(this.filters, [teamspaceId, "kanbanFilters"], kanbanFilters);
       });
     } catch (error) {
-      console.log("error while team fetching filters", error);
+      console.log("error while teamspace fetching filters", error);
       throw error;
     }
   };
 
   updateFilters = async (
     workspaceSlug: string,
-    teamId: string,
+    teamspaceId: string,
     type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
   ) => {
     try {
       // check if the filters are empty
-      if (isEmpty(this.filters) || isEmpty(this.filters[teamId]) || isEmpty(filters)) return;
+      if (isEmpty(this.filters) || isEmpty(this.filters[teamspaceId]) || isEmpty(filters)) return;
       // get the filters
       const _filters = {
-        filters: this.filters[teamId].filters as IIssueFilterOptions,
-        displayFilters: this.filters[teamId].displayFilters as IIssueDisplayFilterOptions,
-        displayProperties: this.filters[teamId].displayProperties as IIssueDisplayProperties,
-        kanbanFilters: this.filters[teamId].kanbanFilters as TIssueKanbanFilters,
+        filters: this.filters[teamspaceId].filters as IIssueFilterOptions,
+        displayFilters: this.filters[teamspaceId].displayFilters as IIssueDisplayFilterOptions,
+        displayProperties: this.filters[teamspaceId].displayProperties as IIssueDisplayProperties,
+        kanbanFilters: this.filters[teamspaceId].kanbanFilters as TIssueKanbanFilters,
       };
       // update the filters based on the type
       switch (type) {
@@ -247,12 +247,12 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
 
           runInAction(() => {
             Object.keys(updatedFilters).forEach((_key) => {
-              set(this.filters, [teamId, "filters", _key], updatedFilters[_key as keyof IIssueFilterOptions]);
+              set(this.filters, [teamspaceId, "filters", _key], updatedFilters[_key as keyof IIssueFilterOptions]);
             });
           });
 
-          this.rootIssueStore.teamIssues.fetchIssuesWithExistingPagination(workspaceSlug, teamId, "mutation");
-          await this.teamIssueFilterService.patchTeamIssueFilters(workspaceSlug, teamId, {
+          this.rootIssueStore.teamIssues.fetchIssuesWithExistingPagination(workspaceSlug, teamspaceId, "mutation");
+          await this.teamspaceWorkItemFilterService.patchTeamspaceWorkItemFilters(workspaceSlug, teamspaceId, {
             filters: _filters.filters,
           });
           break;
@@ -284,7 +284,7 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
             Object.keys(updatedDisplayFilters).forEach((_key) => {
               set(
                 this.filters,
-                [teamId, "displayFilters", _key],
+                [teamspaceId, "displayFilters", _key],
                 updatedDisplayFilters[_key as keyof IIssueDisplayFilterOptions]
               );
             });
@@ -295,10 +295,10 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
           }
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
-            this.rootIssueStore.teamIssues.fetchIssuesWithExistingPagination(workspaceSlug, teamId, "mutation");
+            this.rootIssueStore.teamIssues.fetchIssuesWithExistingPagination(workspaceSlug, teamspaceId, "mutation");
           }
 
-          await this.teamIssueFilterService.patchTeamIssueFilters(workspaceSlug, teamId, {
+          await this.teamspaceWorkItemFilterService.patchTeamspaceWorkItemFilters(workspaceSlug, teamspaceId, {
             display_filters: _filters.displayFilters,
           });
 
@@ -312,13 +312,13 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
             Object.keys(updatedDisplayProperties).forEach((_key) => {
               set(
                 this.filters,
-                [teamId, "displayProperties", _key],
+                [teamspaceId, "displayProperties", _key],
                 updatedDisplayProperties[_key as keyof IIssueDisplayProperties]
               );
             });
           });
 
-          await this.teamIssueFilterService.patchTeamIssueFilters(workspaceSlug, teamId, {
+          await this.teamspaceWorkItemFilterService.patchTeamspaceWorkItemFilters(workspaceSlug, teamspaceId, {
             display_properties: _filters.displayProperties,
           });
           break;
@@ -330,7 +330,7 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
 
           const currentUserId = this.rootIssueStore.currentUserId;
           if (currentUserId)
-            this.handleIssuesLocalFilters.set(EIssuesStoreType.TEAM, type, workspaceSlug, teamId, currentUserId, {
+            this.handleIssuesLocalFilters.set(EIssuesStoreType.TEAM, type, workspaceSlug, teamspaceId, currentUserId, {
               kanban_filters: _filters.kanbanFilters,
             });
 
@@ -338,7 +338,7 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
             Object.keys(updatedKanbanFilters).forEach((_key) => {
               set(
                 this.filters,
-                [teamId, "kanbanFilters", _key],
+                [teamspaceId, "kanbanFilters", _key],
                 updatedKanbanFilters[_key as keyof TIssueKanbanFilters]
               );
             });
@@ -350,7 +350,7 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
           break;
       }
     } catch (error) {
-      this.fetchFilters(workspaceSlug, teamId);
+      this.fetchFilters(workspaceSlug, teamspaceId);
       throw error;
     }
   };

@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-// ui
 import { ISSUE_PRIORITY_FILTERS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+// ui
 import { PriorityIcon } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "./helpers";
@@ -17,6 +18,9 @@ type Props = {
 
 export const FilterPriority: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
+
+  // hooks
+  const { t } = useTranslation();
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
@@ -40,11 +44,11 @@ export const FilterPriority: React.FC<Props> = observer((props) => {
                 isChecked={appliedFilters?.includes(priority.key) ? true : false}
                 onClick={() => handleUpdate(priority.key)}
                 icon={<PriorityIcon priority={priority.key} className="h-3.5 w-3.5" />}
-                title={priority.title}
+                title={t(priority.titleTranslationKey)}
               />
             ))
           ) : (
-            <p className="text-xs italic text-custom-text-400">No matches found</p>
+            <p className="text-xs italic text-custom-text-400">{t("common.search.no_matches_found")}</p>
           )}
         </div>
       )}

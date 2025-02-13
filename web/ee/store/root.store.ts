@@ -1,12 +1,8 @@
 // plane web store
+import { IIssuePropertiesActivityStore, IIssueTypesStore } from "@plane/types";
 import { ICycleStore, CycleStore } from "@/plane-web/store/cycle";
 import { FeatureFlagsStore, IFeatureFlagsStore } from "@/plane-web/store/feature-flags/feature-flags.store";
-import {
-  IIssuePropertiesActivityStore,
-  IIssueTypesStore,
-  IssuePropertiesActivityStore,
-  IssueTypes,
-} from "@/plane-web/store/issue-types";
+import { IssuePropertiesActivityStore, IssueTypes } from "@/plane-web/store/issue-types";
 import {
   IWorkspaceNotificationStore,
   WorkspaceNotificationStore,
@@ -21,7 +17,7 @@ import {
   IWorkspaceSubscriptionStore,
   WorkspaceSubscriptionStore,
 } from "@/plane-web/store/subscription/subscription.store";
-import { ITeamRootStore, TeamRootStore } from "@/plane-web/store/team";
+import { ITeamspaceRootStore, TeamspaceRootStore } from "@/plane-web/store/teamspace";
 import { TimeLineStore } from "@/plane-web/store/timeline";
 import { IWorkspaceFeatureStore, WorkspaceFeatureStore } from "@/plane-web/store/workspace-feature.store";
 import {
@@ -38,6 +34,8 @@ import {
 } from "@/plane-web/store/workspace-worklog";
 // store
 import { CoreRootStore } from "@/store/root.store";
+// dashboards
+import { IWorkspaceDashboardsStore, WorkspaceDashboardsStore } from "./dashboards/workspace-dashboards.store";
 // importers
 import {
   IJiraStore,
@@ -45,9 +43,11 @@ import {
   IJiraServerStore,
   JiraServerStore,
   ILinearStore,
+  IFlatfileStore,
   LinearStore,
   IAsanaStore,
   AsanaStore,
+  FlatfileStore,
 } from "./importers";
 // initiative
 import { IInitiativeFilterStore, InitiativeFilterStore } from "./initiatives/initiatives-filter.store";
@@ -86,13 +86,14 @@ export class RootStore extends CoreRootStore {
   piChat: IPiChatStore;
   timelineStore: ITimelineStore;
   projectDetails: IProjectStore;
-  teamRoot: ITeamRootStore;
+  teamspaceRoot: ITeamspaceRootStore;
   workspaceNotification: IWorkspaceNotificationStore;
   // importers
   jiraImporter: IJiraStore;
   jiraServerImporter: IJiraServerStore;
   linearImporter: ILinearStore;
   asanaImporter: IAsanaStore;
+  flatfileImporter: IFlatfileStore;
   // integrations
   connections: IConnectionStore;
   slackIntegration: ISlackStore;
@@ -100,6 +101,8 @@ export class RootStore extends CoreRootStore {
   gitlabIntegration: IGitlabStore;
   initiativeFilterStore: IInitiativeFilterStore;
   initiativeStore: IInitiativeStore;
+  // dashboards
+  workspaceDashboards: IWorkspaceDashboardsStore;
 
   constructor() {
     super();
@@ -119,13 +122,14 @@ export class RootStore extends CoreRootStore {
     this.piChat = new PiChatStore(this);
     this.timelineStore = new TimeLineStore(this);
     this.projectDetails = new ProjectStore(this);
-    this.teamRoot = new TeamRootStore(this);
+    this.teamspaceRoot = new TeamspaceRootStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     // importers
     this.jiraImporter = new JiraStore(this);
     this.jiraServerImporter = new JiraServerStore(this);
     this.linearImporter = new LinearStore(this);
     this.asanaImporter = new AsanaStore(this);
+    this.flatfileImporter = new FlatfileStore(this);
     // integrations
     this.connections = new ConnectionStore(this);
     this.slackIntegration = new SlackStore(this);
@@ -133,6 +137,8 @@ export class RootStore extends CoreRootStore {
     this.gitlabIntegration = new GitlabStore(this);
     this.initiativeFilterStore = new InitiativeFilterStore(this);
     this.initiativeStore = new InitiativeStore(this, this.initiativeFilterStore);
+    // dashboards
+    this.workspaceDashboards = new WorkspaceDashboardsStore(this);
   }
 
   resetOnSignOut() {
@@ -153,12 +159,13 @@ export class RootStore extends CoreRootStore {
     this.piChat = new PiChatStore(this);
     this.timelineStore = new TimeLineStore(this);
     this.projectDetails = new ProjectStore(this);
-    this.teamRoot = new TeamRootStore(this);
+    this.teamspaceRoot = new TeamspaceRootStore(this);
     // importers
     this.jiraImporter = new JiraStore(this);
     this.jiraServerImporter = new JiraServerStore(this);
     this.linearImporter = new LinearStore(this);
     this.asanaImporter = new AsanaStore(this);
+    this.flatfileImporter = new FlatfileStore(this);
     // integrations
     this.connections = new ConnectionStore(this);
     this.slackIntegration = new SlackStore(this);
@@ -166,5 +173,7 @@ export class RootStore extends CoreRootStore {
     this.gitlabIntegration = new GitlabStore(this);
     this.initiativeFilterStore = new InitiativeFilterStore(this);
     this.initiativeStore = new InitiativeStore(this, this.initiativeFilterStore);
+    // dashboards
+    this.workspaceDashboards = new WorkspaceDashboardsStore(this);
   }
 }

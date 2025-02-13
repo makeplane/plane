@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // components
+import { EIssuePropertyType } from "@plane/constants";
+import {
+  EIssuePropertyValueError,
+  TIssueProperty,
+  TPropertyValueVariant,
+  TDateAttributeDisplayOptions,
+} from "@plane/types";
 import { DateDropdown } from "@/components/dropdowns";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-// plane web types
-import {
-  EIssuePropertyType,
-  EIssuePropertyValueError,
-  TDateAttributeDisplayOptions,
-  TIssueProperty,
-  TPropertyValueVariant,
-} from "@/plane-web/types/issue-types";
+// plane imports
 
 type TDateValueSelectProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType.DATETIME>>;

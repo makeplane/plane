@@ -1,12 +1,13 @@
 "use client";
 
 import { FC } from "react";
-// components
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { ISearchIssueResponse } from "@plane/types";
-import { EmptyState } from "@/components/empty-state";
-// types
-import { EmptyStateType } from "@/constants/empty-state";
-// constants
+// components
+import { SimpleEmptyState } from "@/components/empty-state";
+// hooks
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 type Props = {
   issues: ISearchIssueResponse[];
@@ -16,18 +17,27 @@ type Props = {
 };
 
 export const EpicSearchModalEmptyState: FC<Props> = ({ issues, searchTerm, debouncedSearchTerm, isSearching }) => {
-  const renderEmptyState = (type: EmptyStateType) => (
-    <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-      <EmptyState type={type} layout="screen-simple" />
-    </div>
+  // plane hooks
+  const { t } = useTranslation();
+  // derived values
+  const searchResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
+  const epicsResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/issues" });
+
+  const EmptyStateContainer = ({ children }: { children: React.ReactNode }) => (
+    <div className="flex flex-col items-center justify-center px-3 py-8 text-center">{children}</div>
   );
 
-  const emptyState =
-    issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && !isSearching
-      ? renderEmptyState(EmptyStateType.EPIC_RELATION_SEARCH_EMPTY_STATE)
-      : issues.length === 0
-        ? renderEmptyState(EmptyStateType.EPIC_RELATION_EMPTY_STATE)
-        : null;
-
-  return emptyState;
+  if (issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && !isSearching) {
+    return (
+      <EmptyStateContainer>
+        <SimpleEmptyState title={t("epic_relation.empty_state.no_epics.title")} assetPath={epicsResolvedPath} />
+      </EmptyStateContainer>
+    );
+  } else if (issues.length === 0) {
+    return (
+      <EmptyStateContainer>
+        <SimpleEmptyState title={t("epic_relation.empty_state.search.title")} assetPath={searchResolvedPath} />
+      </EmptyStateContainer>
+    );
+  }
 };

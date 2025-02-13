@@ -1,12 +1,6 @@
-import { TUserConnection } from "@/constants/profile";
-import { Button, Loader } from "@plane/ui";
-
-export type TPersonalAccountProvider = {
-  key: TUserConnection;
-  name: string;
-  description: string;
-  icon: React.FC<React.SVGProps<SVGSVGElement>>;
-};
+// plane imports
+import { TPersonalAccountProvider, TUserConnection } from "@plane/constants";
+import { Button, GithubIcon, Loader, SlackIcon } from "@plane/ui";
 
 export type TPersonalAccountConnectProps = {
   provider: TPersonalAccountProvider;
@@ -17,9 +11,15 @@ export type TPersonalAccountConnectProps = {
   handleDisconnection: (source: TUserConnection) => Promise<void>;
 };
 
+export const IntegrationIcon = {
+  GITHUB: GithubIcon,
+  SLACK: SlackIcon,
+};
+
 export function PersonalAccountConnectView(props: TPersonalAccountConnectProps) {
   const { provider, connectionSlug, isConnectionLoading, isUserConnected, handleConnection, handleDisconnection } =
     props;
+  const Icon = IntegrationIcon[provider.key];
 
   if (isConnectionLoading) {
     return (
@@ -56,10 +56,12 @@ export function PersonalAccountConnectView(props: TPersonalAccountConnectProps) 
     );
   }
 
+  if (!provider) return null;
+
   return (
     <div className="flex flex-col border border-custom-border-200 rounded-s p-4 mb-2 justify-center">
       <div className="flex items-center gap-2">
-        {provider.icon && <provider.icon className="w-8 h-8" />} 
+        {Icon && <Icon className="w-8 h-8" />}
         <div className="text-lg font-medium">{provider.name}</div>
       </div>
       <div className="text-sm text-gray-500 pt-2 pb-4">{provider.description}</div>

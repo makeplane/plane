@@ -11,6 +11,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
+import { useTranslation } from "@plane/i18n";
 import { IUserProfileProjectSegregation } from "@plane/types";
 // plane ui
 import { Loader, Tooltip } from "@plane/ui";
@@ -42,6 +43,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
   const { profileSidebarCollapsed, toggleProfileSidebar } = useAppTheme();
   const { getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
   // derived values
   const userData = userProjectsData?.user_data;
 
@@ -55,11 +57,11 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
 
   const userDetails = [
     {
-      label: "Joined on",
+      i18n_label: "profile.details.joined_on",
       value: renderFormattedDate(userData?.date_joined ?? ""),
     },
     {
-      label: "Timezone",
+      i18n_label: "profile.details.time_zone",
       value: <ProfileSidebarTime timeZone={userData?.user_timezone} />,
     },
   ];
@@ -131,8 +133,8 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
             </div>
             <div className="mt-6 space-y-5">
               {userDetails.map((detail) => (
-                <div key={detail.label} className="flex items-center gap-4 text-sm">
-                  <div className="w-2/5 flex-shrink-0 text-custom-text-200">{detail.label}</div>
+                <div key={detail.i18n_label} className="flex items-center gap-4 text-sm">
+                  <div className="w-2/5 flex-shrink-0 text-custom-text-200">{t(detail.i18n_label)}</div>
                   <div className="w-3/5 break-words font-medium">{detail.value}</div>
                 </div>
               ))}
@@ -229,28 +231,36 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
                                   <div className="h-2.5 w-2.5 rounded-sm bg-[#203b80]" />
                                   Created
                                 </div>
-                                <div className="font-medium">{project.created_issues} Issues</div>
+                                <div className="font-medium">
+                                  {project.created_issues} {t("issues")}
+                                </div>
                               </div>
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
                                   <div className="h-2.5 w-2.5 rounded-sm bg-[#3f76ff]" />
                                   Assigned
                                 </div>
-                                <div className="font-medium">{project.assigned_issues} Issues</div>
+                                <div className="font-medium">
+                                  {project.assigned_issues} {t("issues")}
+                                </div>
                               </div>
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
                                   <div className="h-2.5 w-2.5 rounded-sm bg-[#f59e0b]" />
                                   Due
                                 </div>
-                                <div className="font-medium">{project.pending_issues} Issues</div>
+                                <div className="font-medium">
+                                  {project.pending_issues} {t("issues")}
+                                </div>
                               </div>
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
                                   <div className="h-2.5 w-2.5 rounded-sm bg-[#16a34a]" />
                                   Completed
                                 </div>
-                                <div className="font-medium">{project.completed_issues} Issues</div>
+                                <div className="font-medium">
+                                  {project.completed_issues} {t("issues")}
+                                </div>
                               </div>
                             </div>
                           </Disclosure.Panel>

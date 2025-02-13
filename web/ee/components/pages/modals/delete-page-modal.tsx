@@ -2,10 +2,9 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-// ui
+// plane imports
+import { PAGE_DELETED } from "@plane/constants";
 import { TOAST_TYPE, setToast, AlertModalCore } from "@plane/ui";
-// constants
-import { PAGE_DELETED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // plane web hooks

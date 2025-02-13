@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // plane web hooks
 import { useAsanaImporter } from "@/plane-web/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 export const OAuth: FC = observer(() => {
   // states
@@ -13,6 +14,7 @@ export const OAuth: FC = observer(() => {
   const {
     auth: { oAuthInitiate },
   } = useAsanaImporter();
+  const { t } = useTranslation();
 
   const handleOAuthAuthentication = async () => {
     setIsLoading(true);
@@ -34,14 +36,14 @@ export const OAuth: FC = observer(() => {
     <section className="w-full overflow-y-auto">
       <div className="relative flex items-center justify-between gap-3 pb-3.5">
         <div>
-          <h3 className="text-xl font-medium">Asana to Plane Migration Assistant</h3>
+          <h3 className="text-xl font-medium">Asana to Plane {t("importers.migration_assistant")}</h3>
           <p className="text-custom-text-300 text-sm">
-            Seamlessly migrate your Asana projects to Plane with our powerful assistant.
+            {t("importers.migration_assistant_description", { "serviceName": "Asana" })}
           </p>
         </div>
         <div>
           <Button onClick={handleOAuthAuthentication} loading={isLoading} disabled={isLoading}>
-            {isLoading ? "Authorizing" : "Connect Asana"}
+            {isLoading ? t("common.authorizing") : t("importers.connect_importer", { "serviceName": "Asana" })}
           </Button>
         </div>
       </div>

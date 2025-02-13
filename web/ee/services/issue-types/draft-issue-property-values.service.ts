@@ -1,7 +1,7 @@
+// plane imports
+import { TIssuePropertyValues } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
-// plane web types
-import { TIssuePropertyValues } from "@/plane-web/types";
 // services
 import { APIService } from "@/services/api.service";
 

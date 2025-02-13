@@ -4,9 +4,9 @@ import { FC, FormEvent, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
 import { CircleAlert, XCircle } from "lucide-react";
-// types
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { IEmailCheckData } from "@plane/types";
-// ui
 import { Button, Input, Spinner } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -22,9 +22,10 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState(defaultEmail);
-
+  // plane hooks
+  const { t } = useTranslation();
   const emailError = useMemo(
-    () => (email && !checkEmailValidity(email) ? { email: "Email is invalid" } : undefined),
+    () => (email && !checkEmailValidity(email) ? { email: "auth.common.email.errors.invalid" } : undefined),
     [email]
   );
 
@@ -47,7 +48,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
     <form onSubmit={handleFormSubmit} className="mt-5 space-y-4">
       <div className="space-y-1">
         <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
-          Email
+          {t("auth.common.email.label")}
         </label>
         <div
           className={cn(
@@ -68,7 +69,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="name@company.com"
+            placeholder={t("auth.common.email.placeholder")}
             className={`disable-autofill-style h-[46px] w-full placeholder:text-onboarding-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
             autoComplete="on"
             autoFocus
@@ -87,12 +88,12 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
         {emailError?.email && !isFocused && (
           <p className="flex items-center gap-1 text-xs text-red-600 px-0.5">
             <CircleAlert height={12} width={12} />
-            {emailError.email}
+            {t(emailError.email)}
           </p>
         )}
       </div>
       <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
-        {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
+        {isSubmitting ? <Spinner height="20px" width="20px" /> : t("common.continue")}
       </Button>
     </form>
   );

@@ -17,7 +17,7 @@ import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web
 // plane web services
 import { PaymentService } from "@/plane-web/services/payment.service";
 // local components
-import { FreePlanCard, PlanUpgradeCard, TalkToSalesCard } from "./card";
+import { FreePlanCard, PlanUpgradeCard } from "./card";
 
 const paymentService = new PaymentService();
 
@@ -26,8 +26,6 @@ export type TTrialButtonProps = {
   priceId: string | undefined;
   handleClose: () => void;
 };
-
-export type TPriceFrequency = "month" | "year";
 
 export type PaidPlanUpgradeModalProps = {
   isOpen: boolean;
@@ -48,7 +46,6 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   const { toggleLicenseActivationModal } = useSelfHostedSubscription();
   // states
-  const [selectedPlan, setSelectedPlan] = useState<TPriceFrequency>("month");
   const [upgradeLoaderType, setUpgradeLoaderType] = useState<TProductSubscriptionType | undefined>(undefined);
   // fetch products
   const { isLoading: isProductsAPILoading, data } = useSWR(
@@ -170,48 +167,26 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
               renderTrialButton={({ productId, priceId }) => (
                 <ProTrialButton productId={productId} priceId={priceId} handleClose={handleClose} />
               )}
-              selectedPlan={selectedPlan}
-              setSelectedPlan={setSelectedPlan}
               handleCheckout={handleStripeCheckout}
             />
           </div>
           <div className={cn(COMMON_CARD_CLASSNAME)}>
-            {businessProduct?.is_active ? (
-              <PlanUpgradeCard
-                planVariant="BUSINESS"
-                isLoading={isProductsAPILoading}
-                product={businessProduct}
-                features={BUSINESS_PLAN_FEATURES}
-                upgradeLoaderType={upgradeLoaderType}
-                verticalFeatureList
-                extraFeatures={
-                  <p className={COMMON_EXTRA_FEATURES_CLASSNAME}>
-                    <a href="https://plane.so/business" target="_blank">
-                      See full features list
-                    </a>
-                  </p>
-                }
-                selectedPlan={selectedPlan}
-                setSelectedPlan={setSelectedPlan}
-                handleCheckout={handleStripeCheckout}
-              />
-            ) : (
-              <TalkToSalesCard
-                planVariant="BUSINESS"
-                href="https://plane.so/talk-to-sales"
-                isLoading={isProductsAPILoading}
-                features={BUSINESS_PLAN_FEATURES}
-                upgradeLoaderType={upgradeLoaderType}
-                verticalFeatureList
-                extraFeatures={
-                  <p className={COMMON_EXTRA_FEATURES_CLASSNAME}>
-                    <a href="https://plane.so/business" target="_blank">
-                      See full features list
-                    </a>
-                  </p>
-                }
-              />
-            )}
+            <PlanUpgradeCard
+              planVariant="BUSINESS"
+              isLoading={isProductsAPILoading}
+              product={businessProduct}
+              features={BUSINESS_PLAN_FEATURES}
+              upgradeLoaderType={upgradeLoaderType}
+              verticalFeatureList
+              extraFeatures={
+                <p className={COMMON_EXTRA_FEATURES_CLASSNAME}>
+                  <a href="https://plane.so/business" target="_blank">
+                    See full features list
+                  </a>
+                </p>
+              }
+              handleCheckout={handleStripeCheckout}
+            />
           </div>
         </div>
       </div>

@@ -48,7 +48,7 @@ export abstract class ProjectFilterHelper implements IProjectFilterHelper {
         case EProjectScope.ALL_PROJECTS:
           return true;
         case EProjectScope.MY_PROJECTS:
-          return project.is_member;
+          return !!project.member_role;
         // We are looping through the project ids over here instead returning it directly to keep code consistent with other scopes.
         // This won't affect the performance as the project ids array is not large.
         case EProjectScope.TEAM_PROJECTS:
@@ -84,7 +84,7 @@ export abstract class ProjectFilterHelper implements IProjectFilterHelper {
       }
       // filter based on members attribute
       if (attributes.members && attributes.members.length > 0) {
-        const projectMemberIds = project?.members.map((member) => member?.member_id) || [];
+        const projectMemberIds = project.members || [];
         isMatched = isMatched && attributes.members.some((member) => projectMemberIds.includes(member));
       }
       // filter based on access attribute
@@ -123,7 +123,7 @@ export abstract class ProjectFilterHelper implements IProjectFilterHelper {
       case "end_date":
         return orderBy(sortedProjects, "target_date", sortOrder);
       case "members_count": {
-        let sortedData = sortBy(sortedProjects, (project) => project.members.length);
+        let sortedData = sortBy(sortedProjects, (project) => project.members?.length);
         if (sortOrder === "desc") sortedData = reverse(sortedData);
         return sortedData;
       }

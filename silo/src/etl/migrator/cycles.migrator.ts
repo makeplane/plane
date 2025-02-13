@@ -1,7 +1,7 @@
+import { ExCycle, ExIssue, Client as PlaneClient } from "@plane/sdk";
+import { getJobData } from "@/helpers/job";
 import { AssertAPIErrorResponse, protect } from "@/lib";
 import { logger } from "@/logger";
-import { ExCycle, ExIssue, Client as PlaneClient } from "@plane/sdk";
-import { getJobData } from "@/apps/jira-importer/helpers/migration-helpers";
 
 /* ------------------------------ Cycles Creation ---------------------------- */
 export const createCycles = async (
@@ -54,7 +54,7 @@ export const createCycles = async (
                   projectId,
                   issue,
                   // Dynamically take the source from the config
-                  job.migration_type
+                  job.source
                 );
                 return fetchedIssue?.id;
               } catch (error) {
@@ -99,7 +99,10 @@ export const createAllCycles = async (
         planeClient.cycles.create.bind(planeClient.cycles),
         workspaceSlug,
         projectId,
-        cycle
+        {
+          project_id: projectId,
+          ...cycle,
+        }
       );
       createdCycles.push({ id: createdCycle.id, issues: cycle.issues });
     } catch (error) {

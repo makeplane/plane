@@ -1,6 +1,7 @@
 # python imports
 from typing import Optional
 from datetime import date, datetime
+import pytz
 
 # Strawberry imports
 import strawberry
@@ -35,13 +36,14 @@ class CycleType:
     workspace: strawberry.ID
     created_by: Optional[strawberry.ID]
     updated_by: Optional[strawberry.ID]
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
     total_issues: int
     completed_issues: int
     is_favorite: bool
     favorite_id: Optional[strawberry.ID]
     owned_by: Optional[UserType]
+    status: str
 
     @strawberry.field
     def project(self) -> int:
@@ -83,6 +85,38 @@ class CycleType:
             .count()
         )()
         return issue_assignees_count
+
+    @strawberry.field
+    async def start_date(self) -> Optional[date]:
+        start_date = self.start_date if self.start_date else None
+        if start_date is None:
+            return None
+
+        project = await sync_to_async(lambda: self.project)()
+        project_timezone = await sync_to_async(lambda: project.timezone)()
+
+        tz = pytz.timezone(project_timezone)
+
+        if isinstance(start_date, datetime):
+            return start_date.astimezone(tz)
+
+        return datetime.combine(start_date, datetime.min.time()).astimezone(tz)
+
+    @strawberry.field
+    async def end_date(self) -> Optional[date]:
+        end_date = self.end_date if self.end_date else None
+        if end_date is None:
+            return None
+
+        project = await sync_to_async(lambda: self.project)()
+        project_timezone = await sync_to_async(lambda: project.timezone)()
+
+        tz = pytz.timezone(project_timezone)
+
+        if isinstance(end_date, datetime):
+            return end_date.astimezone(tz)
+
+        return datetime.combine(end_date, datetime.min.time()).astimezone(tz)
 
 
 @strawberry_django.type(Cycle)

@@ -1,16 +1,14 @@
-
 import { Request, Response } from "express";
-import { getCredentialsById, getCredentialsByWorkspaceId } from "@/db/query";
-import { Controller, Delete, Get, Post } from "@/lib";
+import { Controller, Get, Post } from "@/lib";
 import { Client } from "@plane/sdk";
 import { env } from "@/env";
-import { getWorkspaceConnectionByCredentialsId } from "@/db/query/connection";
 import { responseHandler } from "@/helpers/response-handler";
+import { getAPIClient } from "@/services/client";
 
+const apiClient = getAPIClient();
 
 @Controller("/api/assets")
 export class AssetsController {
-
   @Get("/:source/:workspaceId/:userId/:id")
   async getAsset(req: Request, res: Response) {
     try {
@@ -21,7 +19,11 @@ export class AssetsController {
       }
 
       // Get the credentials for the workspace
-      const credentials = await getCredentialsByWorkspaceId(workspaceId, userId, source.toUpperCase())
+      const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
+        source: source.toUpperCase(),
+        workspace_id: workspaceId,
+        user_id: userId,
+      });
       if (!credentials || credentials.length === 0) {
         return res.status(401).send("No credentials found for the workspace");
       }
@@ -31,7 +33,9 @@ export class AssetsController {
         return res.status(401).send("No target access token found for the workspace");
       }
 
-      const workspaceConnections = await getWorkspaceConnectionByCredentialsId(credential.id);
+      const workspaceConnections = await apiClient.workspaceConnection.listWorkspaceConnections({
+        credential_id: credential.id,
+      });
       if (!workspaceConnections || workspaceConnections.length === 0) {
         return res.status(401).send("No workspace connection found for the workspace");
       }
@@ -41,15 +45,14 @@ export class AssetsController {
       // Create Plane Client, with the help of the recieved token
       const planeClient = new Client({
         baseURL: env.API_BASE_URL,
-        apiToken: credential.target_access_token
-      })
+        apiToken: credential.target_access_token,
+      });
 
       // Get the presigned url for the asset
-      const asset = await planeClient.assets.getAssetInfo(workspaceConnection.workspaceSlug, id)
+      const asset = await planeClient.assets.getAssetInfo(workspaceConnection.workspace_slug, id);
       return res.status(302).redirect(asset.asset_url);
-
     } catch (error) {
-      responseHandler(res, 500, error)
+      return responseHandler(res, 500, error);
     }
   }
 }

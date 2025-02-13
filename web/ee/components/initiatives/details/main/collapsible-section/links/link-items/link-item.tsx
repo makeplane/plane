@@ -3,6 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Pencil, Trash2, LinkIcon, Copy } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Tooltip, TOAST_TYPE, setToast, CustomMenu } from "@plane/ui";
 // helpers
@@ -32,6 +33,8 @@ export const IssueLinkItem: FC<TInitiativeLinkItem> = observer((props) => {
     },
   } = useInitiatives();
   const { isMobile } = usePlatformOS();
+
+  const { t } = useTranslation();
 
   if (!link) return <></>;
 
@@ -92,7 +95,7 @@ export const IssueLinkItem: FC<TInitiativeLinkItem> = observer((props) => {
               }}
             >
               <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
-              Edit
+              {t("edit")}
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
               className="flex items-center gap-2"
@@ -103,7 +106,7 @@ export const IssueLinkItem: FC<TInitiativeLinkItem> = observer((props) => {
               }}
             >
               <Trash2 className="h-3 w-3" />
-              Delete
+              {t("delete")}
             </CustomMenu.MenuItem>
           </CustomMenu>
         </div>

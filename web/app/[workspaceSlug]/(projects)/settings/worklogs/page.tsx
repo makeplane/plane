@@ -3,6 +3,8 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
+import { EUserWorkspaceRoles } from "@plane/constants";
 // component
 import { PageHead } from "@/components/core";
 // store hooks
@@ -10,8 +12,6 @@ import { useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { WorkspaceWorklogRoot, WorkspaceWorklogsUpgrade } from "@/plane-web/components/worklogs";
-// plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
 const WorklogsPage = observer(() => {
   // router
@@ -23,7 +23,7 @@ const WorklogsPage = observer(() => {
   // derived values
   const currentWorkspaceDetail = workspaceInfoBySlug(workspaceSlug.toString());
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Worklogs` : undefined;
-  const isAdmin = currentWorkspaceDetail?.role === EUserPermissions.ADMIN;
+  const isAdmin = currentWorkspaceDetail?.role === EUserWorkspaceRoles.ADMIN;
 
   if (!workspaceSlug || !currentWorkspace) return <></>;
 

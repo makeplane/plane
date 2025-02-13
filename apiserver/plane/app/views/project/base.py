@@ -4,7 +4,7 @@ import json
 
 # Django imports
 from django.db import IntegrityError
-from django.db.models import Exists, F, Func, OuterRef, Prefetch, Q, Subquery
+from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
@@ -23,12 +23,9 @@ from plane.app.serializers import (
 from plane.app.permissions import ProjectMemberPermission, allow_permission, ROLE
 from plane.db.models import (
     UserFavorite,
-    Cycle,
     Intake,
     DeployBoard,
     IssueUserProperty,
-    Issue,
-    Module,
     Project,
     ProjectIdentifier,
     ProjectMember,
@@ -38,7 +35,7 @@ from plane.db.models import (
     APIToken,
 )
 from plane.utils.cache import cache_response
-from plane.bgtasks.webhook_task import model_activity
+from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.bgtasks.recent_visited_task import recent_visited_task
 
 # EE imports
@@ -90,36 +87,6 @@ class ProjectViewSet(BaseViewSet):
                 )
             )
             .annotate(
-                is_member=Exists(
-                    ProjectMember.objects.filter(
-                        member=self.request.user,
-                        project_id=OuterRef("pk"),
-                        workspace__slug=self.kwargs.get("slug"),
-                        is_active=True,
-                    )
-                )
-            )
-            .annotate(
-                total_members=ProjectMember.objects.filter(
-                    project_id=OuterRef("id"), member__is_bot=False, is_active=True
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                total_cycles=Cycle.objects.filter(project_id=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                total_modules=Module.objects.filter(project_id=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
                 member_role=ProjectMember.objects.filter(
                     project_id=OuterRef("pk"),
                     member_id=self.request.user.id,
@@ -152,20 +119,6 @@ class ProjectViewSet(BaseViewSet):
                 ).values("target_date")
             )
             # EE: project extra details
-            .annotate(
-                total_issues=Issue.issue_objects.filter(project_id=OuterRef("pk"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                completed_issues=Issue.issue_objects.filter(
-                    project_id=OuterRef("pk"), state__group="completed"
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
             .annotate(
                 is_epic_enabled=Exists(
                     ProjectFeature.objects.filter(
@@ -200,7 +153,7 @@ class ProjectViewSet(BaseViewSet):
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
-    def list(self, request, slug):
+    def list_detail(self, request, slug):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         projects = self.get_queryset().order_by("sort_order", "name")
         if WorkspaceMember.objects.filter(
@@ -240,6 +193,83 @@ class ProjectViewSet(BaseViewSet):
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
+    def list(self, request, slug):
+        sort_order = ProjectMember.objects.filter(
+            member=self.request.user,
+            project_id=OuterRef("pk"),
+            workspace__slug=self.kwargs.get("slug"),
+            is_active=True,
+        ).values("sort_order")
+
+        projects = (
+            Project.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related(
+                "workspace", "workspace__owner", "default_assignee", "project_lead"
+            )
+            .annotate(
+                member_role=ProjectMember.objects.filter(
+                    project_id=OuterRef("pk"),
+                    member_id=self.request.user.id,
+                    is_active=True,
+                ).values("role")
+            )
+            .annotate(inbox_view=F("intake_view"))
+            .annotate(sort_order=Subquery(sort_order))
+            .annotate(
+                is_epic_enabled=Exists(
+                    ProjectFeature.objects.filter(
+                        workspace__slug=self.kwargs.get("slug"),
+                        project_id=OuterRef("pk"),
+                        is_epic_enabled=True,
+                    )
+                )
+            )
+            .distinct()
+        ).values(
+            "id",
+            "name",
+            "identifier",
+            "sort_order",
+            "logo_props",
+            "member_role",
+            "archived_at",
+            "workspace",
+            "cycle_view",
+            "issue_views_view",
+            "module_view",
+            "page_view",
+            "inbox_view",
+            "is_epic_enabled",
+            "project_lead",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        )
+
+        if WorkspaceMember.objects.filter(
+            member=request.user, workspace__slug=slug, is_active=True, role=5
+        ).exists():
+            projects = projects.filter(
+                project_projectmember__member=self.request.user,
+                project_projectmember__is_active=True,
+            )
+
+        if WorkspaceMember.objects.filter(
+            member=request.user, workspace__slug=slug, is_active=True, role=15
+        ).exists():
+            projects = projects.filter(
+                Q(
+                    project_projectmember__member=self.request.user,
+                    project_projectmember__is_active=True,
+                )
+                | Q(network=2)
+            )
+        return Response(projects, status=status.HTTP_200_OK)
+
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
+    )
     def retrieve(self, request, slug, pk):
         project = (
             self.get_queryset()
@@ -249,62 +279,6 @@ class ProjectViewSet(BaseViewSet):
             )
             .filter(archived_at__isnull=True)
             .filter(pk=pk)
-            .annotate(
-                total_issues=Issue.issue_objects.filter(
-                    project_id=self.kwargs.get("pk")
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                sub_issues=Issue.issue_objects.filter(
-                    project_id=self.kwargs.get("pk"), parent__isnull=False
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                archived_issues=Issue.objects.filter(
-                    project_id=self.kwargs.get("pk"), archived_at__isnull=False
-                )
-                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                archived_sub_issues=Issue.objects.filter(
-                    project_id=self.kwargs.get("pk"),
-                    archived_at__isnull=False,
-                    parent__isnull=False,
-                )
-                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                draft_issues=Issue.objects.filter(
-                    project_id=self.kwargs.get("pk"), is_draft=True
-                )
-                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                draft_sub_issues=Issue.objects.filter(
-                    project_id=self.kwargs.get("pk"),
-                    is_draft=True,
-                    parent__isnull=False,
-                )
-                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
         ).first()
 
         if project is None:
@@ -626,7 +600,19 @@ class ProjectViewSet(BaseViewSet):
         ):
             project = Project.objects.get(pk=pk)
             project.delete()
-
+            webhook_activity.delay(
+                event="project",
+                verb="deleted",
+                field=None,
+                old_value=None,
+                new_value=None,
+                actor_id=request.user.id,
+                slug=slug,
+                current_site=request.META.get("HTTP_ORIGIN"),
+                event_id=project.id,
+                old_identifier=None,
+                new_identifier=None,
+            )
             # Delete the project members
             DeployBoard.objects.filter(project_id=pk, workspace__slug=slug).delete()
 
@@ -652,9 +638,7 @@ class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
         project.save()
         project_activity.delay(
             type="project.activity.updated",
-            requested_data=json.dumps(
-                {"archived_at": str(timezone.now().date())}
-            ),
+            requested_data=json.dumps({"archived_at": str(timezone.now().date())}),
             actor_id=str(request.user.id),
             project_id=str(project_id),
             current_instance=current_instance,
@@ -680,9 +664,7 @@ class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
         project.save()
         project_activity.delay(
             type="project.activity.updated",
-            requested_data=json.dumps(
-                {"archived_at": None}
-            ),
+            requested_data=json.dumps({"archived_at": None}),
             actor_id=str(request.user.id),
             project_id=str(project_id),
             current_instance=current_instance,
@@ -870,14 +852,10 @@ class DeployBoardViewSet(BaseViewSet):
 
         project_activity.delay(
             type="project.activity.updated",
-            requested_data=json.dumps(
-                {"deploy_board": True}
-            ),
+            requested_data=json.dumps({"deploy_board": True}),
             actor_id=str(request.user.id),
             project_id=str(project_id),
-            current_instance=json.dumps(
-                {"deploy_board": False}
-            ),
+            current_instance=json.dumps({"deploy_board": False}),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
@@ -885,23 +863,21 @@ class DeployBoardViewSet(BaseViewSet):
 
         serializer = DeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
 
     def destroy(self, request, slug, project_id, pk):
         project_deploy_board = DeployBoard.objects.get(
-            entity_name="project", entity_identifier=project_id, project_id=project_id, pk=pk
+            entity_name="project",
+            entity_identifier=project_id,
+            project_id=project_id,
+            pk=pk,
         )
         project_deploy_board.delete()
         project_activity.delay(
             type="project.activity.updated",
-            requested_data=json.dumps(
-                {"deploy_board": False}
-            ),
+            requested_data=json.dumps({"deploy_board": False}),
             actor_id=str(request.user.id),
             project_id=str(project_id),
-            current_instance=json.dumps(
-                {"deploy_board": True}
-            ),
+            current_instance=json.dumps({"deploy_board": True}),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),

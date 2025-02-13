@@ -7,12 +7,11 @@ import { ChevronDown, ChevronUp, CircleAlert } from "lucide-react";
 import { IWorkspace } from "@plane/types";
 // ui
 import { Button, Collapsible, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-// components
-import { DeleteWorkspaceModal } from "@/components/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { DeleteWorkspaceModal } from "./delete-workspace-modal";
 
 type TDeleteWorkspace = {
   workspace: IWorkspace | null;
@@ -29,8 +28,7 @@ export const DeleteWorkspaceSection: FC<TDeleteWorkspace> = observer((props) => 
   // store hooks
   const { currentWorkspaceSubscribedPlanDetail } = useWorkspaceSubscription();
   // derived values
-  const isAnySubscriptionActive =
-    currentWorkspaceSubscribedPlanDetail && currentWorkspaceSubscribedPlanDetail?.product !== "FREE";
+  const isAnySubscriptionActive = !currentWorkspaceSubscribedPlanDetail?.can_delete_workspace;
 
   const handleDeleteWorkspace = () => {
     if (isAnySubscriptionActive) {
@@ -91,7 +89,7 @@ export const DeleteWorkspaceSection: FC<TDeleteWorkspace> = observer((props) => 
             buttonClassName="flex w-full items-center justify-between py-4"
             title={
               <>
-                <span className="text-lg tracking-tight">Delete Workspace</span>
+                <span className="text-lg tracking-tight">Delete this workspace</span>
                 {isOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
               </>
             }
@@ -104,7 +102,7 @@ export const DeleteWorkspaceSection: FC<TDeleteWorkspace> = observer((props) => 
               </span>
               <div>
                 <Button variant="danger" onClick={handleDeleteWorkspace}>
-                  Delete my workspace
+                  Delete this workspace
                 </Button>
               </div>
             </div>

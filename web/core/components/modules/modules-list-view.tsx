@@ -2,15 +2,16 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import { useParams, useSearchParams } from "next/navigation";
 // components
+import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ContentWrapper, Row, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
-import { EmptyState } from "@/components/empty-state";
+import { DetailedEmptyState, ComicBoxButton } from "@/components/empty-state";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";
 import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "@/components/ui";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
 // hooks
-import { useCommandPalette, useEventTracker, useModule, useModuleFilter } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useModule, useModuleFilter, useUserPermissions } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import AllFiltersImage from "@/public/empty-state/module/all-filters.svg";
 import NameFilterImage from "@/public/empty-state/module/name-filter.svg";
 
@@ -19,14 +20,24 @@ export const ModulesListView: React.FC = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   const searchParams = useSearchParams();
   const peekModule = searchParams.get("peekModule");
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const { getProjectModuleIds, getFilteredModuleIds, loader } = useModule();
   const { currentProjectDisplayFilters: displayFilters, searchQuery } = useModuleFilter();
+  const { allowPermissions } = useUserPermissions();
   // derived values
   const projectModuleIds = projectId ? getProjectModuleIds(projectId.toString()) : undefined;
   const filteredModuleIds = projectId ? getFilteredModuleIds(projectId.toString()) : undefined;
+  const canPerformEmptyStateActions = allowPermissions(
+    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
+  const generalViewResolvedPath = useResolvedAssetPath({
+    basePath: "/empty-state/onboarding/modules",
+  });
 
   if (loader || !projectModuleIds || !filteredModuleIds)
     return (
@@ -39,12 +50,22 @@ export const ModulesListView: React.FC = observer(() => {
 
   if (projectModuleIds.length === 0)
     return (
-      <EmptyState
-        type={EmptyStateType.PROJECT_MODULE}
-        primaryButtonOnClick={() => {
-          setTrackElement("Module empty state");
-          toggleCreateModuleModal(true);
-        }}
+      <DetailedEmptyState
+        title={t("project_module.empty_state.general.title")}
+        description={t("project_module.empty_state.general.description")}
+        assetPath={generalViewResolvedPath}
+        customPrimaryButton={
+          <ComicBoxButton
+            label={t("project_module.empty_state.general.primary_button.text")}
+            title={t("project_module.empty_state.general.primary_button.comic.title")}
+            description={t("project_module.empty_state.general.primary_button.comic.description")}
+            onClick={() => {
+              setTrackElement("Module empty state");
+              toggleCreateModuleModal(true);
+            }}
+            disabled={!canPerformEmptyStateActions}
+          />
+        }
       />
     );
 

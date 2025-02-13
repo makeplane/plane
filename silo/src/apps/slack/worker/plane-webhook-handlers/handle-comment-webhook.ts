@@ -1,8 +1,10 @@
-import { getEntityConnectionByEntitySlug } from "@/db/query/connection";
-import { WebhookIssueCommentPayload } from "@plane/sdk";
-import { getConnectionDetails } from "../../helpers/connection-details";
 import { SlackMessageResponse } from "@plane/etl/slack";
-import { getCredentialsByWorkspaceId } from "@/db/query";
+import { WebhookIssueCommentPayload } from "@plane/sdk";
+import { getAPIClient } from "@/services/client";
+import { getConnectionDetails } from "../../helpers/connection-details";
+import { E_ENTITY_CONNECTION_KEYS } from "@plane/etl/core";
+
+const apiClient = getAPIClient();
 
 export const handleIssueCommentWebhook = async (payload: WebhookIssueCommentPayload) => {
   await handleCommentSync(payload);
@@ -10,28 +12,36 @@ export const handleIssueCommentWebhook = async (payload: WebhookIssueCommentPayl
 
 const handleCommentSync = async (payload: WebhookIssueCommentPayload) => {
   const data = payload as unknown as WebhookIssueCommentPayload["created"];
-  const entityConnection = await getEntityConnectionByEntitySlug(
-    data.data.workspace,
-    data.data.project,
-    data.data.issue
-  );
+  const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+    workspace_id: data.data.workspace,
+    project_id: data.data.project,
+    entity_slug: data.data.issue,
+  });
 
   if (data.data.external_id === null) {
     // Search for the credentials of the creator
-    const credentials = await getCredentialsByWorkspaceId(data.data.workspace, data.data.created_by, "SLACK-USER");
+    const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
+      user_id: data.data.created_by,
+      workspace_id: data.data.workspace,
+      source: E_ENTITY_CONNECTION_KEYS.SLACK_USER,
+    });
 
-    const slackData = entityConnection[0].entityData as SlackMessageResponse;
+    const slackData = entityConnection.entity_data as SlackMessageResponse;
     const { slackService } = await getConnectionDetails(slackData.message.team);
 
     if (credentials && credentials.length > 0 && credentials[0].source_access_token) {
       await slackService.sendMessageAsUser(
         slackData.channel,
-        entityConnection[0].entityId ?? "",
+        entityConnection.entity_id ?? "",
         data.data.comment_stripped,
         credentials[0].source_access_token
       );
     } else {
-      await slackService.sendThreadMessage(slackData.channel, entityConnection[0].entityId ?? "", data.data.comment_stripped);
+      await slackService.sendThreadMessage(
+        slackData.channel,
+        entityConnection.entity_id ?? "",
+        data.data.comment_stripped
+      );
     }
   }
 };

@@ -2,11 +2,10 @@
 
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
 // types
-import { EUserPermissions } from "@/plane-web/constants";
 import { TProject } from "@/plane-web/types";
 // local components
 import { useLinks } from "./collaspible-section/links/use-links";
@@ -36,7 +35,7 @@ export const ProjectOverviewInfoSectionRoot: FC<Props> = observer((props) => {
   };
 
   const isProjectAdmin = allowPermissions(
-    [EUserPermissions.ADMIN],
+    [EUserProjectRoles.ADMIN],
     EUserPermissionsLevel.PROJECT,
     workspaceSlug.toString(),
     project.id.toString()

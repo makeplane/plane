@@ -13,7 +13,8 @@ from strawberry.permission import PermissionExtension
 from asgiref.sync import sync_to_async
 
 # Module imports
-from plane.graphql.permissions.project import ProjectBasePermission
+from plane.graphql.utils.roles import Roles
+from plane.graphql.permissions.project import ProjectBasePermission, ProjectPermission
 from plane.db.models import Workspace, IssueRelation
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.graphql.utils.issue_activity import (
@@ -25,7 +26,11 @@ from plane.graphql.utils.issue_activity import (
 class IssueRelationMutation:
     # adding issue relation
     @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+        extensions=[
+            PermissionExtension(
+                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
+            )
+        ]
     )
     async def addIssueRelation(
         self,

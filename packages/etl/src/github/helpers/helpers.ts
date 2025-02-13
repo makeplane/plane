@@ -12,9 +12,7 @@ export const replaceMentionedGhUsers = (
   const matches = html.match(pattern);
   if (matches) {
     matches.forEach((match) => {
-      console.log(userMap);
       const username = match.slice(1);
-      console.log(username);
 
       // Only add link if the user does not exists in the userMap
       if (!userMap[username]) {

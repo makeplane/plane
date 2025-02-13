@@ -7,11 +7,11 @@ import { store } from "@/lib/store-context";
 
 export const getTeamProjectColumns = (): IGroupByColumn[] | undefined => {
   const { projectMap } = store.projectRoot.project;
-  const { currentTeamProjectIds } = store.teamRoot.team;
+  const { currentTeamspaceProjectIds } = store.teamspaceRoot.teamspaces;
   // Return undefined if no project ids
-  if (!currentTeamProjectIds) return;
+  if (!currentTeamspaceProjectIds) return;
   // Map project ids to project columns
-  return currentTeamProjectIds
+  return currentTeamspaceProjectIds
     .map((projectId: string) => {
       const project = projectMap[projectId];
       if (!project) return;

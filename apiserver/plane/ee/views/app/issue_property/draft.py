@@ -148,6 +148,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
                 project_id=project_id,
                 issue_type_id=issue_type_id,
                 issue_type__is_epic=False,
+                is_active=True,
             )
 
             # Validate the data

@@ -15,7 +15,7 @@ class ImportJobView(BaseAPIView):
     permission_classes = [ProjectBasePermission]
     
     @check_feature_flag(FeatureFlag.SILO)
-    def get(self, request, slug, project_id, pk = None):
+    def get(self, request, slug, pk = None):
         if not pk:
             import_jobs = ImportJob.objects.filter(**request.query_params).order_by("-created_at")
             serializer = ImportJobSerializer(import_jobs, many=True)
@@ -25,10 +25,10 @@ class ImportJobView(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)  
 
     @check_feature_flag(FeatureFlag.SILO)
-    def post(self, request, slug, project_id):
+    def post(self, request, slug, pk):
         report = ImportReport.objects.create()
 
-        serializer = ImportJobSerializer(data={**request.data, "report": report.id}, context={"project_id": project_id})
+        serializer = ImportJobSerializer(data={**request.data, "report": report.id})
         if serializer.is_valid():
             serializer.save()
             return Response(
@@ -41,7 +41,7 @@ class ImportJobView(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.SILO)
-    def patch(self, request, slug, project_id, pk):
+    def patch(self, request, slug, pk):
         import_job = ImportJob.objects.filter(pk=pk).first()
 
         serializer = ImportJobSerializer(
@@ -62,7 +62,7 @@ class ImportJobView(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.SILO)
-    def delete(self, request, slug, project_id, pk):
+    def delete(self, request, slug, pk):
         import_job = ImportJob.objects.filter(pk=pk).first()
         import_job.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -2,9 +2,9 @@ import React, { useState, createContext, useEffect, useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { v4 } from "uuid";
 // plane web hooks
+import { TCreationListModes, TIssuePropertyOption, TIssuePropertyOptionCreateUpdateData } from "@plane/types";
 import { useIssueProperty } from "@/plane-web/hooks/store";
-// plane web types
-import { TCreationListModes, TIssuePropertyOption, TIssuePropertyOptionCreateUpdateData } from "@/plane-web/types";
+// plane imports
 
 // default values
 const defaultIssuePropertyOption: Partial<Partial<TIssuePropertyOption>> = {

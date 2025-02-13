@@ -3,7 +3,7 @@ import useSWR from "swr";
 // silo services
 import apiTokenService from "@/plane-web/silo/services/api-service-token.service";
 
-export const useApiServiceToken = (workspaceSlug: string) => {
+export const useApiServiceToken = (workspaceSlug: string): any => {
   // state
   const [token, setToken] = useState<string | undefined>(undefined);
 

@@ -8,6 +8,7 @@ import { IStateConfig, JiraStatus } from "@plane/etl/jira";
 import { ExState } from "@plane/sdk";
 import { IState } from "@plane/types";
 import { Button, Loader } from "@plane/ui";
+import Fuse from 'fuse.js'
 // silo components
 import { MapStatesSelection } from "@/plane-web/components/importers/jira";
 import { StepperNavigation } from "@/plane-web/components/importers/ui";
@@ -15,6 +16,7 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 import { useJiraImporter } from "@/plane-web/hooks/store";
 //  plane web types
 import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers";
+import { useTranslation } from "@plane/i18n";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.MAP_STATES];
 
@@ -35,8 +37,12 @@ export const MapStatesRoot: FC = observer(() => {
     handleStepper,
     data: { jiraStateIdsByProjectId, getJiraStateById, fetchJiraStates },
   } = useJiraImporter();
+
+  const { t } = useTranslation();
+
   // states
   const [formData, setFormData] = useState<TFormData>({});
+  const [fuzzySearchDone, setFuzzySearchDone] = useState(false);
   // derived values
   const workspaceSlug = workspace?.slug || undefined;
   const workspaceId = workspace?.id || undefined;
@@ -96,6 +102,37 @@ export const MapStatesRoot: FC = observer(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [importerData]);
 
+
+  useEffect(() => {
+    if (!jiraProjectStates.length || !planeProjectStates.length || fuzzySearchDone) {
+      return;
+    }
+  
+    const options = {
+      includeScore: true,
+      keys: ["name"],
+    };
+  
+    // Create Fuse instance once
+    const fuse = new Fuse(planeProjectStates, options);
+  
+    jiraProjectStates.forEach((jiraState) => {
+      if (jiraState.name) {
+        const result = fuse.search(jiraState.name);
+  
+        if (result.length > 0) {
+          const planeState = result[0].item as IState;
+          if (jiraState.id && planeState.id) {
+            handleFormData(jiraState.id, planeState.id);
+          }
+        }
+      }
+    });
+    // mark the fuzzy search as done
+    setFuzzySearchDone(true);
+  }, [jiraProjectStates, planeProjectStates, fuzzySearchDone, handleFormData]);
+
+
   // fetching the jira project states
   const { isLoading: isJiraProjectStatesLoading } = useSWR(
     workspaceId && userId && jiraResourceId && jiraProjectId
@@ -119,12 +156,12 @@ export const MapStatesRoot: FC = observer(() => {
       {/* content */}
       <div className="w-full min-h-44 max-h-full overflow-y-auto">
         <div className="relative grid grid-cols-2 items-center bg-custom-background-90 p-3 text-sm font-medium">
-          <div>Jira States</div>
-          <div>Plane States</div>
+          <div>Jira {t("common.states")}</div>
+          <div>Plane {t("common.states")}</div>
         </div>
         <div className="divide-y divide-custom-border-200">
           {(isJiraProjectStatesLoading && (!jiraProjectStates || jiraProjectStates.length === 0)) ||
-          (isPlaneProjectStatesLoading && (!planeProjectStates || planeProjectStates.length === 0)) ? (
+            (isPlaneProjectStatesLoading && (!planeProjectStates || planeProjectStates.length === 0)) ? (
             <Loader className="relative w-full grid grid-cols-2 items-center py-4 gap-4">
               <Loader.Item height="35px" width="100%" />
               <Loader.Item height="35px" width="100%" />
@@ -156,7 +193,7 @@ export const MapStatesRoot: FC = observer(() => {
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
           <Button variant="primary" size="sm" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
-            Next
+            {t("common.next")}
           </Button>
         </StepperNavigation>
       </div>

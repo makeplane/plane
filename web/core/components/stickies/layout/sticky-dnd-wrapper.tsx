@@ -121,15 +121,20 @@ export const StickyDNDWrapper = observer((props: Props) => {
   }, [handleDrop, isDragging, isLastChild, pathname, stickyId, workspaceSlug]);
 
   return (
-    <div className="flex min-h-[300px] box-border p-2 flex-col" style={{ width: itemWidth }}>
-      {!isInFirstRow && <DropIndicator isVisible={instruction === "reorder-above"} />}
+    <div
+      className="flex flex-col box-border p-[8px]"
+      style={{
+        width: itemWidth,
+      }}
+    >
+      {/* {!isInFirstRow && <DropIndicator isVisible={instruction === "reorder-above"} />} */}
       <StickyNote
         key={stickyId || "new"}
         workspaceSlug={workspaceSlug}
         stickyId={stickyId}
         handleLayout={handleLayout}
       />
-      {!isInLastRow && <DropIndicator isVisible={instruction === "reorder-below"} />}
+      {/* {!isInLastRow && <DropIndicator isVisible={instruction === "reorder-below"} />} */}
     </div>
   );
 });

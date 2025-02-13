@@ -17,7 +17,7 @@ type Props = {
 export const GithubImportConfirm: FC<Props> = ({ handleStepChange, watch }) => (
   <div className="mt-6">
     <h4 className="font-medium text-custom-text-200">
-      You are about to import issues from {watch("github").full_name}. Click on {'"'}Confirm & Import{'" '}
+      You are about to import work items from {watch("github").full_name}. Click on {'"'}Confirm & Import{'" '}
       to complete the process.
     </h4>
     <div className="mt-6 flex items-center justify-between">

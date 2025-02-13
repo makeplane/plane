@@ -49,7 +49,7 @@ export const CreateIssueToastActionItems: FC<TCreateIssueToastActionItems> = obs
         rel="noopener noreferrer"
         className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
       >
-        {`View ${isEpic ? "epic" : "issue"}`}
+        {`View ${isEpic ? "epic" : "work item"}`}
       </a>
 
       {copied ? (

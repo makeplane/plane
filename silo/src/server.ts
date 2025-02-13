@@ -1,35 +1,41 @@
 // sentry
-import { initializeSentry, SentryInstance } from "./sentry-config";
+import cookieParser from "cookie-parser";
 import cors from "cors";
-import dotenv from "dotenv";
+import * as dotenv from "dotenv";
 import express, { Application, Request, Response, NextFunction } from "express";
 
 // lib
-import { registerControllers } from "./lib/controller";
-import { APIError } from "./lib";
-// controllers
-import { HomeController } from "@/controllers";
+import expressWinston from "express-winston";
 import AsanaController from "@/apps/asana-importer/controllers";
+// controllers
+
+// Engine Controllers
 import {
   CredentialController,
   EntityConnectionController,
-  JobConfigController,
   JobController,
+  HomeController,
+  AppController,
+  AssetsController,
+  ConnectionsController,
 } from "@/apps/engine/controllers";
-import { ConnectionsController } from "@/apps/engine/controllers/connection.controller";
+
 import GithubController from "@/apps/github/controllers";
 import JiraController from "@/apps/jira-importer/controllers";
 import LinearController from "@/apps/linear-importer/controllers";
-import { GitlabController } from "./apps/gitlab";
-import { SlackController } from "./apps/slack/controllers";
-import { env } from "./env";
-import { expressLogger, logger } from "./logger";
-import expressWinston from "express-winston";
+import CSVController from "./apps/flatfile/controllers";
+import GitlabController from "./apps/gitlab/controller";
 import JiraDataCenterController from "./apps/jira-server-importer/controllers";
-import { AssetsController } from "./apps/engine/controllers/assets.controller";
+import SlackController from "./apps/slack/controllers";
+
+// Helpers and Utils
+import { env } from "./env";
+import { APIError } from "./lib";
+import { registerControllers } from "./lib/controller";
+import { expressLogger, logger } from "./logger";
+import { initializeSentry, SentryInstance } from "./sentry-config";
 // types
 import { APIErrorResponse } from "./types";
-
 
 export default class Server {
   private readonly app: Application;
@@ -37,8 +43,8 @@ export default class Server {
   private static readonly CONTROLLERS = {
     PING: [HomeController],
     ENGINE: [
+      AppController,
       JobController,
-      JobConfigController,
       CredentialController,
       ConnectionsController,
       AssetsController,
@@ -52,6 +58,7 @@ export default class Server {
       SlackController,
       GithubController,
       JiraDataCenterController,
+      CSVController,
     ],
   };
 
@@ -70,8 +77,23 @@ export default class Server {
   }
 
   private setupMiddleware(): void {
-    this.app.use(cors());
+    // take the cors allowed origins from env, split by comma
+    const origins = env.CORS_ALLOWED_ORIGINS?.split(",").map((origin) => origin.trim()) || [];
+
+    for (const origin of origins) {
+      logger.info(`Adding CORS allowed origin: ${origin}`);
+      this.app.use(
+        cors({
+          origin,
+          credentials: true,
+          methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+          allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],
+        })
+      );
+    }
+
     this.app.use(express.json());
+    this.app.use(cookieParser());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(this.setupLogger());
   }
@@ -91,18 +113,14 @@ export default class Server {
 
   private setupControllers(): void {
     const router = express.Router();
-    const allControllers = [
-      ...Server.CONTROLLERS.PING,
-      ...Server.CONTROLLERS.ENGINE,
-      ...Server.CONTROLLERS.APPS,
-    ];
-    
+    const allControllers = [...Server.CONTROLLERS.PING, ...Server.CONTROLLERS.ENGINE, ...Server.CONTROLLERS.APPS];
+
     allControllers.forEach((controller) => registerControllers(router, controller));
     this.app.use(env.SILO_BASE_PATH || "/", router);
   }
 
   private setupSentry(): void {
-    initializeSentry()
+    initializeSentry();
   }
 
   private setupErrorHandlers(): void {
@@ -112,12 +130,7 @@ export default class Server {
     this.app.use(this.handle404.bind(this));
   }
 
-  private handleError(
-    err: Error,
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): void {
+  private handleError(err: Error, req: Request, res: Response, next: NextFunction): void {
     const logError = {
       error: err.message,
       stack: err.stack,
@@ -127,14 +140,14 @@ export default class Server {
       query: req.query,
     };
 
-    logger.error('Global error handler caught:', logError);
+    logger.error("Global error handler caught:", logError);
 
     if (SentryInstance) {
       SentryInstance.captureException(err);
     }
 
     const response: APIErrorResponse = {
-      error: env.NODE_ENV === 'production' ? 'Internal Server Error' : err.message,
+      error: env.NODE_ENV === "production" ? "Internal Server Error" : err.message,
       status: err instanceof APIError ? err.statusCode : 500,
     };
 
@@ -143,23 +156,23 @@ export default class Server {
 
   private handle404(req: Request, res: Response): void {
     const response: APIErrorResponse = {
-      error: 'Not Found',
+      error: "Not Found",
       status: 404,
     };
-    
+
     res.status(404).json(response);
   }
 
   private setupProcessHandlers(): void {
-    process.on('unhandledRejection', (reason) => {
-      logger.error('Unhandled Rejection at:', reason);
+    process.on("unhandledRejection", (reason) => {
+      logger.error("Unhandled Rejection at:", reason);
       if (SentryInstance) {
         SentryInstance.captureException(reason);
       }
     });
 
-    process.on('uncaughtException', (err) => {
-      logger.error('Uncaught Exception thrown:', err);
+    process.on("uncaughtException", (err) => {
+      logger.error("Uncaught Exception thrown:", err);
       if (SentryInstance) {
         SentryInstance.captureException(err);
       }

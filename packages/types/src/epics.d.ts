@@ -19,4 +19,5 @@ export type TEpicStats = {
   epic_id: string;
   total_issues: number;
   completed_issues: number;
+  cancelled_issues: number;
 };

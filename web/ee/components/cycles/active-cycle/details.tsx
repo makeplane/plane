@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { TCycleEstimateType, TCyclePlotType } from "@plane/types";
 import { Loader, Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { EmptyState } from "@/components/empty-state";
-import { EmptyStateType } from "@/constants/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state";
 import { TProgressChartData } from "@/helpers/cycle.helper";
+// hooks
 import { useCycle } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// local imports
 import ActiveCycleChart from "./cycle-chart/chart";
 import { formatActiveCycle } from "./formatter";
 import Selection from "./selection";
@@ -18,9 +21,14 @@ import useCycleDetails from "./use-cycle-details";
 type ActiveCycleDetailProps = ReturnType<typeof useCycleDetails>;
 
 const ActiveCycleDetail = observer((props: ActiveCycleDetailProps) => {
+  // refs
+  const ref = useRef<HTMLDivElement>(null);
+  // states
   const [areaToHighlight, setAreaToHighlight] = useState<string>("");
   const [containerWidth, setContainerWidth] = useState<number>(0);
-  const ref = useRef<HTMLDivElement>(null);
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
   const { plotType, estimatedType, getCycleById, currentProjectActiveCycleId } = useCycle();
   const {
     handlePlotChange,
@@ -33,6 +41,7 @@ const ActiveCycleDetail = observer((props: ActiveCycleDetailProps) => {
   // derived values
   const computedPlotType: TCyclePlotType = (activeCycle.id && plotType[activeCycle.id]) || "burndown";
   const computedEstimateType: TCycleEstimateType = (activeCycle.id && estimatedType[activeCycle.id]) || "issues";
+  const activeCycleResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/cycle/active" });
 
   const storeCycle = activeCycle.id
     ? getCycleById(activeCycle.id)
@@ -60,7 +69,14 @@ const ActiveCycleDetail = observer((props: ActiveCycleDetailProps) => {
     return () => resizeObserver.disconnect(); // clean up
   }, [ref.current]);
 
-  if (!activeCycle) return <EmptyState type={EmptyStateType.PROJECT_CYCLE_ACTIVE} size="sm" />;
+  if (!activeCycle)
+    return (
+      <DetailedEmptyState
+        title={t("project_cycles.empty_state.active.title")}
+        description={t("project_cycles.empty_state.active.description")}
+        assetPath={activeCycleResolvedPath}
+      />
+    );
 
   return (
     <div ref={ref} className="flex flex-col">

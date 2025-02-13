@@ -2,10 +2,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane
 import { Header, EHeaderVariant } from "@plane/ui";
-// hooks
-import { useProjectState, useUserPermissions } from "@/hooks/store";
 // Plane-web
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TInitiativeFilters } from "@/plane-web/types/initiative";
 //
@@ -15,7 +12,7 @@ import { AppliedFiltersList } from "./";
 
 export const InitiativeAppliedFiltersRoot: React.FC = observer(() => {
   // router
-  const { workspaceSlug, projectId } = useParams() as {
+  const { workspaceSlug } = useParams() as {
     workspaceSlug: string;
     projectId: string;
   };
@@ -23,8 +20,6 @@ export const InitiativeAppliedFiltersRoot: React.FC = observer(() => {
   const {
     initiativeFilters: { currentInitiativeFilters, updateFilters, clearAllFilters },
   } = useInitiatives();
-
-  const { projectStates } = useProjectState();
   // filters whose value not null or empty array
   const appliedFilters: TInitiativeFilters = {};
   Object.entries(currentInitiativeFilters ?? {}).forEach(([key, value]) => {

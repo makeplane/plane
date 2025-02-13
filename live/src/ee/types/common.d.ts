@@ -1,1 +1,1 @@
-export type TAdditionalDocumentTypes = "team_page" | "workspace_page"
+export type TAdditionalDocumentTypes = "teamspace_page" | "workspace_page"

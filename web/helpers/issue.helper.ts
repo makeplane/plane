@@ -2,7 +2,7 @@ import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import isEmpty from "lodash/isEmpty";
 import { v4 as uuidv4 } from "uuid";
 // plane constants
-import { EIssueLayoutTypes } from "@plane/constants";
+import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE, STATE_GROUPS } from "@plane/constants";
 // types
 import {
   IIssueDisplayFilterOptions,
@@ -17,9 +17,6 @@ import {
   TUnGroupedIssues,
 } from "@plane/types";
 import { IGanttBlock } from "@/components/gantt-chart";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
-import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { orderArrayBy } from "@/helpers/array.helper";
 import { getDate } from "@/helpers/date-time.helper";
@@ -104,7 +101,7 @@ export const handleIssueQueryParamsByLayout = (
 
   if (!layout) return null;
 
-  const layoutOptions = ISSUE_DISPLAY_FILTERS_BY_LAYOUT[viewType][layout];
+  const layoutOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE[viewType][layout];
 
   // add filters query params
   layoutOptions.filters.forEach((option) => {
@@ -200,10 +197,10 @@ export const formatTextList = (TextArray: string[]): string => {
   }
 };
 
-export const getDescriptionPlaceholder = (isFocused: boolean, description: string | undefined): string => {
+export const getDescriptionPlaceholderI18n = (isFocused: boolean, description: string | undefined): string => {
   const isDescriptionEmpty = !description || description === "<p></p>" || description.trim() === "";
-  if (!isDescriptionEmpty || isFocused) return "Press '/' for commands...";
-  else return "Click to add description";
+  if (!isDescriptionEmpty || isFocused) return "common.press_for_commands";
+  else return "common.click_to_add_description";
 };
 
 export const issueCountBasedOnFilters = (

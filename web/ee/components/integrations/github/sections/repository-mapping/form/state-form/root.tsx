@@ -2,6 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { IState } from "@plane/types";
 // plane web components
 import { StateFormSelection } from "@/plane-web/components/integrations/github";
@@ -47,6 +48,8 @@ export const StateForm: FC<TStateForm> = observer((props) => {
   // props
   const { projectId, value, handleChange } = props;
 
+  const { t } = useTranslation();
+
   // hooks
   const { stateIdsByProjectId, getStateById } = useGithubIntegration();
 
@@ -60,7 +63,7 @@ export const StateForm: FC<TStateForm> = observer((props) => {
       {planeProjectStates &&
         GIT_PR_DATA.map((gitState) => (
           <StateFormSelection
-            title={gitState.title}
+            title={t(`github_integration.${gitState.key}`) || gitState.title}
             key={gitState.key}
             value={value?.[gitState.key]?.id || undefined}
             handleValue={(value: IState | undefined) => handleChange(gitState.key, value)}

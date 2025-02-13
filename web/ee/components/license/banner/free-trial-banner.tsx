@@ -3,13 +3,13 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Crown, Phone } from "lucide-react";
+// plane imports
+import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useInstance, useUserPermissions, useWorkspace } from "@/hooks/store";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
@@ -20,7 +20,10 @@ export const FreeTrialBanner: FC = observer(() => {
   const { currentWorkspace } = useWorkspace();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
-  const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const canPerformWorkspaceAdminActions = allowPermissions(
+    [EUserWorkspaceRoles.ADMIN],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   // if the user is not a project admin then don't show the banner
   if (!canPerformWorkspaceAdminActions) return <></>;

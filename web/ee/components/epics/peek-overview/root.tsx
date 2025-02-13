@@ -3,19 +3,21 @@
 import { FC, useEffect, useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-import { EIssueServiceType } from "@plane/constants";
-// plane types
+// plane imports
+import {
+  EIssueServiceType,
+  EUserProjectRoles,
+  EUserPermissionsLevel,
+  ISSUE_UPDATED,
+  ISSUE_DELETED,
+} from "@plane/constants";
 import { TIssue } from "@plane/types";
-// plane ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { TIssueOperations } from "@/components/issues";
-// constants
-import { ISSUE_UPDATED, ISSUE_DELETED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useIssueDetail, useUserPermissions } from "@/hooks/store";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { EpicView } from "./view";
 
 interface IIssuePeekOverview {
@@ -52,7 +54,7 @@ export const EpicPeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           await fetchIssue(workspaceSlug, projectId, issueId);
         } catch (error) {
           setError(true);
-          console.error("Error fetching the parent issue", error);
+          console.error("Error fetching the parent work item", error);
         }
       },
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
@@ -62,7 +64,7 @@ export const EpicPeekOverview: FC<IIssuePeekOverview> = observer((props) => {
               fetchActivities(workspaceSlug, projectId, issueId);
               captureIssueEvent({
                 eventName: ISSUE_UPDATED,
-                payload: { ...data, issueId, state: "SUCCESS", element: "Issue peek-overview" },
+                payload: { ...data, issueId, state: "SUCCESS", element: "Work item peek-overview" },
                 updates: {
                   changed_property: Object.keys(data).join(","),
                   change_details: Object.values(data).join(","),
@@ -73,13 +75,13 @@ export const EpicPeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             .catch(() => {
               captureIssueEvent({
                 eventName: ISSUE_UPDATED,
-                payload: { state: "FAILED", element: "Issue peek-overview" },
+                payload: { state: "FAILED", element: "Work item peek-overview" },
                 path: pathname,
               });
               setToast({
                 title: "Error!",
                 type: TOAST_TYPE.ERROR,
-                message: "Issue update failed",
+                message: "Work item update failed",
               });
             });
         }
@@ -89,7 +91,7 @@ export const EpicPeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           return removeIssue(workspaceSlug, projectId, issueId).then(() => {
             captureIssueEvent({
               eventName: ISSUE_DELETED,
-              payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
+              payload: { id: issueId, state: "SUCCESS", element: "Work item peek-overview" },
               path: pathname,
             });
             removeRoutePeekId();
@@ -98,11 +100,11 @@ export const EpicPeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
-            message: "Issue delete failed",
+            message: "Work item delete failed",
           });
           captureIssueEvent({
             eventName: ISSUE_DELETED,
-            payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
+            payload: { id: issueId, state: "FAILED", element: "Work item peek-overview" },
             path: pathname,
           });
         }
@@ -121,7 +123,7 @@ export const EpicPeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   // Check if issue is editable, based on user role
   const isEditable = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.PROJECT,
     peekIssue?.workspaceSlug,
     peekIssue?.projectId

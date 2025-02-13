@@ -3,6 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Briefcase, Calendar, UserCircle2 } from "lucide-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { EpicIcon } from "@plane/ui";
 // components
 import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
@@ -29,6 +31,8 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
     initiative: { getInitiativeById, updateInitiative, getInitiativeEpicsById },
   } = useInitiatives();
   const { getUserDetails } = useMember();
+
+  const { t } = useTranslation();
 
   // derived values
   const initiativeEpicIds = getInitiativeEpicsById(initiativeId) ?? [];
@@ -57,7 +61,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
             <Briefcase className="h-4 w-4 flex-shrink-0" />
-            <span>Projects</span>
+            <span>{t("projects")}</span>
           </div>
           <button
             className="text-xs font-medium text-custom-text-300 border-[0.5px] px-2 py-1 border-custom-border-300 hover:bg-custom-background-80 rounded cursor-pointer"
@@ -70,14 +74,14 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
             <UserCircle2 className="h-4 w-4 flex-shrink-0" />
-            <span>Lead</span>
+            <span>{t("lead")}</span>
           </div>
           <MemberDropdown
             value={initiative.lead}
             onChange={(lead) => handleLead(lead === initiative.lead ? null : lead)}
             multiple={false}
             buttonVariant="transparent-with-text"
-            placeholder="Lead"
+            placeholder={t("lead")}
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
             showUserDetails
@@ -87,20 +91,20 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
             <EpicIcon className="h-4 w-4 text-custom-text-300" />
-            <span>Epic</span>
+            <span>{t("common.epic")}</span>
           </div>
           <button
             className="text-xs font-medium text-custom-text-300 border-[0.5px] px-2 py-1 border-custom-border-300 hover:bg-custom-background-80 rounded cursor-pointer"
             onClick={() => toggleEpicModal(true)}
           >
-            {initiativeEpicIds?.length} {initiativeEpicIds?.length === 1 ? "epic" : "epics"}
+            {initiativeEpicIds?.length} {initiativeEpicIds?.length === 1 ? t("epic") : t("epics")}
           </button>
         </div>
         {/* Dates Drop down*/}
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
             <Calendar className="h-4 w-4 flex-shrink-0" />
-            <span>Dates</span>
+            <span>{t("common.dates")}</span>
           </div>
           <DateRangeDropdown
             buttonVariant="border-with-text"
@@ -116,8 +120,8 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
               );
             }}
             placeholder={{
-              from: "Start date",
-              to: "End date",
+              from: t("start_date"),
+              to: t("end_date"),
             }}
             hideIcon={{
               to: true,
@@ -129,7 +133,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
           <div className="flex h-8 items-center gap-2">
             <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
               <UserCircle2 className="h-4 w-4 flex-shrink-0" />
-              <span>Created by</span>
+              <span>{t("common.created_by")}</span>
             </div>
             <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
               <ButtonAvatars showTooltip userIds={createdByDetails.id} />

@@ -3,8 +3,9 @@
 import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane package imports
-import { E_SORT_ORDER } from "@plane/constants";
+import { E_SORT_ORDER, EActivityFilterType, filterActivityOnSelectedFilters } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 import { TFileSignedURLResponse } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { setToast, TOAST_TYPE } from "@plane/ui";
@@ -12,7 +13,6 @@ import { setToast, TOAST_TYPE } from "@plane/ui";
 import { ActivitySortRoot } from "@/components/issues";
 // constants
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
-import { EActivityFilterType, filterActivityOnSelectedFilters } from "@/plane-web/constants";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TInitiativeActivityComment, TInitiativeComment } from "@/plane-web/types/initiative";
 // services
@@ -55,6 +55,8 @@ export const InitiativeSidebarCommentsRoot: FC<Props> = observer((props) => {
     },
   } = useInitiatives();
 
+  const { t } = useTranslation();
+
   // helper operations
   const activityOperations: TInitiativeActivityOperations = useMemo(
     () => ({
@@ -63,16 +65,16 @@ export const InitiativeSidebarCommentsRoot: FC<Props> = observer((props) => {
           if (!workspaceSlug || !initiativeId) throw new Error("Missing fields");
           const comment = await createInitiativeComment(workspaceSlug, initiativeId, data);
           setToast({
-            title: "Success!",
+            title: t("toast.success"),
             type: TOAST_TYPE.SUCCESS,
-            message: "Comment created successfully.",
+            message: t("issue.comments.create.success"),
           });
           return comment;
         } catch (error) {
           setToast({
-            title: "Error!",
+            title: t("toast.error"),
             type: TOAST_TYPE.ERROR,
-            message: "Comment creation failed. Please try again later.",
+            message: t("issue.comments.create.error"),
           });
         }
       },
@@ -81,15 +83,15 @@ export const InitiativeSidebarCommentsRoot: FC<Props> = observer((props) => {
           if (!workspaceSlug || !initiativeId) throw new Error("Missing fields");
           await updateInitiativeComment(workspaceSlug, initiativeId, commentId, data);
           setToast({
-            title: "Success!",
+            title: t("toast.success"),
             type: TOAST_TYPE.SUCCESS,
-            message: "Comment updated successfully.",
+            message: t("issue.comments.update.success"),
           });
         } catch (error) {
           setToast({
-            title: "Error!",
+            title: t("toast.error"),
             type: TOAST_TYPE.ERROR,
-            message: "Comment update failed. Please try again later.",
+            message: t("issue.comments.update.error"),
           });
         }
       },
@@ -98,15 +100,15 @@ export const InitiativeSidebarCommentsRoot: FC<Props> = observer((props) => {
           if (!workspaceSlug || !initiativeId) throw new Error("Missing fields");
           await deleteInitiativeComment(workspaceSlug, initiativeId, commentId);
           setToast({
-            title: "Success!",
+            title: t("toast.success"),
             type: TOAST_TYPE.SUCCESS,
-            message: "Comment removed successfully.",
+            message: t("issue.comments.remove.success"),
           });
         } catch (error) {
           setToast({
-            title: "Error!",
+            title: t("toast.error"),
             type: TOAST_TYPE.ERROR,
-            message: "Comment remove failed. Please try again later.",
+            message: t("issue.comments.remove.error"),
           });
         }
       },
@@ -153,7 +155,7 @@ export const InitiativeSidebarCommentsRoot: FC<Props> = observer((props) => {
 
   return (
     <SidebarContentWrapper
-      title="Comments"
+      title={t("common.comments")}
       actionElement={
         <ActivitySortRoot
           sortOrder={sortOrder ?? E_SORT_ORDER.ASC}

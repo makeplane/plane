@@ -169,7 +169,7 @@ class IssueTypeAPIEndpoint(BaseAPIView):
                 ).first()
                 return Response(
                     {
-                        "error": "Issue type with the same external id and external source already exists",
+                        "error": "Work item type with the same external id and external source already exists",
                         "id": str(issue_type.id),
                     },
                     status=status.HTTP_409_CONFLICT,
@@ -240,7 +240,7 @@ class IssueTypeAPIEndpoint(BaseAPIView):
                 ):
                     return Response(
                         {
-                            "error": "Issue type with the same external id and external source already exists",
+                            "error": "Work item type with the same external id and external source already exists",
                             "id": str(issue_type.id),
                         },
                         status=status.HTTP_409_CONFLICT,

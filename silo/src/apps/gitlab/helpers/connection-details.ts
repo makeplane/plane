@@ -3,12 +3,13 @@ import {
   gitlabEntityConnectionSchema,
   GitlabMergeRequestEvent,
   gitlabWorkspaceConnectionSchema,
-  MergeRequestEvent,
 } from "@plane/etl/gitlab";
-import { GitlabConnectionDetails, GitlabEntityConnection } from "../types";
-import { getAllEntityConnectionsByEntityIds, getEntityConnectionByEntityId, getEntityConnectionByWorkspaceConnectionAndProjectId, getWorkspaceConnectionById } from "@/db/query/connection";
+import { GitlabConnectionDetails } from "../types";
 import { logger } from "@/logger";
 import { verifyEntityConnection, verifyEntityConnections, verifyWorkspaceConnection } from "@/types";
+import { getAPIClient } from "@/services/client";
+
+const apiClient = getAPIClient();
 
 export const getGitlabConnectionDetails = async (
   data: GitlabMergeRequestEvent
@@ -19,32 +20,36 @@ export const getGitlabConnectionDetails = async (
 
   // later we'll check for group connections already done for a project
 
-  if(!data.project.id) {
+  if (!data.project.id) {
     logger.error(`[GITLAB] Project id not found for project ${data.project.id}, skipping...`);
     return;
   }
-  const entityConnectionSet = await getEntityConnectionByEntityId(data.project.id?.toString());
 
-  if (!entityConnectionSet || entityConnectionSet.length === 0) {
+  const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+    entity_id: data.project.id.toString(),
+    type: EConnectionType.ENTITY,
+  });
+
+  if (!entityConnection) {
     logger.error(`[GITLAB] Entity connection not found for project ${data.project.id}, skipping...`);
     return;
   }
 
-  const entityConnection = entityConnectionSet[0];
-
   // Find the workspace connection for the project
-  const workspaceConnectionSet = await getWorkspaceConnectionById(entityConnection.workspaceConnectionId);
+  const workspaceConnection = await apiClient.workspaceConnection.getWorkspaceConnection(
+    entityConnection.workspace_connection_id
+  );
 
-  if (!workspaceConnectionSet || workspaceConnectionSet.length === 0) {
+  if (!workspaceConnection) {
     logger.error(`[GITLAB] Workspace connection not found for project ${data.project.id}, skipping...`);
     return;
   }
 
-  const workspaceConnection = workspaceConnectionSet[0];
-
   // project connections for this workspace connection for target state mapping
-  let projectConnectionSet = await getEntityConnectionByWorkspaceConnectionAndProjectId(workspaceConnection.id);
-  projectConnectionSet = projectConnectionSet.filter((connection) => connection.connectionType === EConnectionType.PLANE_PROJECT);
+  const projectConnectionSet = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+    workspace_connection_id: workspaceConnection.id,
+    type: EConnectionType.PLANE_PROJECT,
+  });
 
   if (projectConnectionSet.length === 0) {
     logger.error(`[GITLAB] Plane Project connection not found for project ${data.project.id}, skipping...`);

@@ -9,6 +9,7 @@ import { Loader } from "@plane/ui";
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useJiraServerImporter } from "@/plane-web/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 type TConfigureJiraSelectResource = {
   value: string | undefined;
@@ -26,6 +27,7 @@ export const ConfigureJiraSelectResource: FC<TConfigureJiraSelectResource> = obs
     handleSyncJobConfig,
     data: { jiraResourceIds, getJiraResourceById, fetchJiraResources },
   } = useJiraServerImporter();
+  const { t } = useTranslation()
 
   // derived values
   const workspaceId = workspace?.id || undefined;
@@ -53,7 +55,7 @@ export const ConfigureJiraSelectResource: FC<TConfigureJiraSelectResource> = obs
 
   return (
     <div className="space-y-2">
-      <div className="text-sm text-custom-text-200">Select Jira workspace</div>
+      <div className="text-sm text-custom-text-200">{t("importers.select_service_workspace", { "serviceName": "Jira" })}</div>
       {isLoading && (!jiraResources || jiraResources.length === 0) ? (
         <Loader>
           <Loader.Item height="28px" width="100%" />
@@ -67,7 +69,7 @@ export const ConfigureJiraSelectResource: FC<TConfigureJiraSelectResource> = obs
             data: resource,
           }))}
           value={value}
-          placeHolder="Select jira workspace"
+          placeHolder={t("importers.select_service_workspace", { "serviceName": "Jira" })}
           onChange={(value: string | undefined) => handelData(value)}
           queryExtractor={(option) => option.name}
         />

@@ -1,17 +1,17 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // ui
+import { useTranslation } from "@plane/i18n";
+import { TIssueType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { getRandomBackgroundColor } from "@plane/utils";
 // helpers
 import { getRandomIconName } from "@/helpers/emoji.helper";
 // plane web components
 import { CreateOrUpdateIssueTypeForm } from "@/plane-web/components/issue-types/";
-// plane web helpers
-import { getRandomBackgroundColor } from "@/plane-web/helpers/issue-type.helper";
 // plane web
 import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
-// plane web types
-import { TIssueType } from "@/plane-web/types";
+// plane imports
 
 type Props = {
   issueTypeId: string | null;
@@ -30,6 +30,8 @@ export const CreateOrUpdateIssueTypeModal: FC<Props> = observer((props) => {
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [issueTypeFormData, setIssueTypeFormData] = useState<Partial<TIssueType> | undefined>(undefined);
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { createType } = useIssueTypes();
   const issueType = useIssueType(issueTypeId);
@@ -72,15 +74,15 @@ export const CreateOrUpdateIssueTypeModal: FC<Props> = observer((props) => {
         handleModalClearAndClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: `Issue type created successfully.`,
+          title: t("work_item_types.create.toast.success.title"),
+          message: t("work_item_types.create.toast.success.message"),
         });
       })
       .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: error?.error ?? `Failed to create issue type. Please try again!`,
+          title: t("work_item_types.create.toast.error.title"),
+          message: error?.error ?? t("work_item_types.create.toast.error.message"),
         });
       })
       .finally(() => {
@@ -98,15 +100,15 @@ export const CreateOrUpdateIssueTypeModal: FC<Props> = observer((props) => {
         handleModalClearAndClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: `Issue type ${issueTypeFormData?.name} updated successfully.`,
+          title: t("work_item_types.update.toast.success.title"),
+          message: t("work_item_types.update.toast.success.message", { name: issueTypeFormData?.name }),
         });
       })
       .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: error?.error ?? `Failed to update issue type. Please try again!`,
+          title: t("work_item_types.update.toast.error.title"),
+          message: error?.error ?? t("work_item_types.update.toast.error.message"),
         });
       })
       .finally(() => {

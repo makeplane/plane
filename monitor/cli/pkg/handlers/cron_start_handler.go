@@ -46,6 +46,7 @@ func (h *CronHandler) ScheduleCronJobs(options SchedulerOptions) {
 			core.RunHealthCheck(h, statuses, errors)
 		},
 	)
+
 	// Schedule License Refresh Job for Instances
 	h.primeScheduler.RegisterLicenseRefreshJob(
 		context.Background(),

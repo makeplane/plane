@@ -2,12 +2,11 @@
 
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-// hooks
+// plane imports
+import { EViewAccess } from "@plane/constants";
 import { Loader } from "@plane/ui";
-import { FilterHeader, FilterOption } from "@/components/issues";
-import { EViewAccess } from "@/constants/views";
 // components
-// ui
+import { FilterHeader, FilterOption } from "@/components/issues";
 
 type Props = {
   appliedFilters: EViewAccess[] | undefined;

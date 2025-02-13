@@ -1,20 +1,21 @@
 import axios, { AxiosInstance } from "axios";
-import { TJobWithConfig, TImporterKeys, propertiesToOmit } from "@/core/types";
+import { TImportJob } from "@plane/types";
+import { TImporterKeys, propertiesToOmit } from "@/core/types";
 
 export class JobService<TSyncJobConfig extends object> {
   public axiosInstance: AxiosInstance;
 
   constructor(baseUrl: string, xApiKey: string) {
-    this.axiosInstance = axios.create({ baseURL: baseUrl, headers: { "x-api-key": xApiKey } });
+    this.axiosInstance = axios.create({ baseURL: baseUrl, headers: { "x-api-key": xApiKey }, withCredentials: true });
   }
 
   /**
    * @description Retrieves all jobs
    * @returns Promise resolving to an array of Job objects
    */
-  async list(source: TImporterKeys): Promise<TJobWithConfig<TSyncJobConfig>[]> {
+  async list(workspaceId: string, source: TImporterKeys): Promise<TImportJob<TSyncJobConfig>[]> {
     return this.axiosInstance
-      .get(`/api/jobs?source=${source}`)
+      .get(`/api/jobs?source=${source}&workspaceId=${workspaceId}`)
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -26,7 +27,7 @@ export class JobService<TSyncJobConfig extends object> {
    * @param jobId - Unique identifier of the job to fetch
    * @returns Promise resolving to an array of Job objects
    */
-  async retrieve(jobId: string): Promise<TJobWithConfig<TSyncJobConfig>> {
+  async retrieve(jobId: string): Promise<TImportJob<TSyncJobConfig>> {
     return this.axiosInstance
       .get(`/api/jobs/?id=${jobId}`)
       .then((res) => res.data)
@@ -46,8 +47,8 @@ export class JobService<TSyncJobConfig extends object> {
   async create(
     workspaceId: string,
     projectId: string,
-    payload: Omit<Partial<TJobWithConfig<TSyncJobConfig>>, (typeof propertiesToOmit)[number]>
-  ) {
+    payload: Omit<Partial<TImportJob<TSyncJobConfig>>, (typeof propertiesToOmit)[number]>
+  ): Promise<TImportJob<TSyncJobConfig>> {
     // Make workspaceId and projectId required
     return this.axiosInstance
       .post(`/api/jobs/`, {
@@ -67,7 +68,7 @@ export class JobService<TSyncJobConfig extends object> {
    * @param payload - Partial job data to update
    * @returns Promise resolving to the updated Job object
    */
-  async update(jobId: string, payload: Partial<TJobWithConfig<TSyncJobConfig>>) {
+  async update(jobId: string, payload: Partial<TImportJob<TSyncJobConfig>>) {
     return this.axiosInstance
       .put(`/api/jobs/${jobId}`, payload)
       .then((res) => res.data)
@@ -111,7 +112,7 @@ export class JobService<TSyncJobConfig extends object> {
    * @param migrationType - Type of migration
    * @returns Promise resolving to an array of Job objects
    */
-  async start(jobId: string, migrationType: TImporterKeys): Promise<TJobWithConfig<TSyncJobConfig>[]> {
+  async start(jobId: string, migrationType: TImporterKeys): Promise<TImportJob<TSyncJobConfig>[]> {
     return this.axiosInstance
       .post(`/api/jobs/run`, { jobId, migrationType })
       .then((res) => res.data)
@@ -126,7 +127,7 @@ export class JobService<TSyncJobConfig extends object> {
    * @param migrationType - Type of migration
    * @returns Promise resolving to an array of Job objects
    */
-  async cancel(jobId: string, migrationType: TImporterKeys): Promise<TJobWithConfig<TSyncJobConfig>[]> {
+  async cancel(jobId: string, migrationType: TImporterKeys): Promise<TImportJob<TSyncJobConfig>[]> {
     return this.axiosInstance
       .post(`/api/jobs/cancel`, { jobId, migrationType })
       .then((res) => res.data)

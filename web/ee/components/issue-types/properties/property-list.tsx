@@ -1,6 +1,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-// plane web components / types
+// plane imports
+import { TCreationListModes } from "@plane/types";
+// plane web imports
 import {
   IssuePropertyCreateListItem,
   IssuePropertyListItem,
@@ -10,8 +12,6 @@ import {
 import { useIssueType } from "@/plane-web/hooks/store";
 // plane web lib
 import { IssuePropertyOptionsProvider } from "@/plane-web/lib";
-// plane web types
-import { TCreationListModes } from "@/plane-web/types";
 
 type TIssuePropertyList = {
   issueTypeId: string;

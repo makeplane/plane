@@ -9,15 +9,15 @@ import { Tab } from "@headlessui/react";
 // plane constants
 import { EIssuesStoreType } from "@plane/constants";
 // types
+import { useTranslation } from "@plane/i18n";
 import { IActiveCycle } from "@plane/types";
 // ui
 import { Tooltip, Loader, PriorityIcon, Avatar } from "@plane/ui";
 // components
 import { SingleProgressStats } from "@/components/core";
 import { StateDropdown } from "@/components/dropdowns";
+import { SimpleEmptyState } from "@/components/empty-state";
 // constants
-import { EmptyState } from "@/components/empty-state";
-import { EmptyStateType } from "@/constants/empty-state";
 import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -26,6 +26,7 @@ import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useIssues, useProjectState } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export type ActiveCycleStatsProps = {
   workspaceSlug: string;
@@ -35,8 +36,14 @@ export type ActiveCycleStatsProps = {
 
 export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle } = props;
-
+  // plane hooks
+  const { t } = useTranslation();
+  // hooks
   const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");
+  // derived values
+  const priorityResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/priority" });
+  const assigneesResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/assignee" });
+  const labelsResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/label" });
 
   const currentValue = (tab: string | null) => {
     switch (tab) {
@@ -104,7 +111,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
               )
             }
           >
-            Priority Issues
+            Priority Work items
           </Tab>
           <Tab
             className={({ selected }) =>
@@ -152,7 +159,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                         <PriorityIcon priority={issue.priority} withContainer size={12} />
 
                         <Tooltip
-                          tooltipHeading="Issue ID"
+                          tooltipHeading="Work item ID"
                           tooltipContent={`${cycle.project_detail?.identifier}-${issue.sequence_id}`}
                         >
                           <span className="flex-shrink-0 text-xs text-custom-text-200">
@@ -188,10 +195,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                   ))
                 ) : (
                   <div className="flex items-center justify-center h-full w-full">
-                    <EmptyState
-                      type={EmptyStateType.ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE}
-                      layout="screen-simple"
-                      size="sm"
+                    <SimpleEmptyState
+                      title={t("active_cycle_analytics.empty_state.priority.title")}
+                      assetPath={priorityResolvedPath}
                     />
                   </div>
                 )
@@ -248,7 +254,10 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
               })
             ) : (
               <div className="flex items-center justify-center h-full w-full">
-                <EmptyState type={EmptyStateType.ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE} layout="screen-simple" size="sm" />
+                <SimpleEmptyState
+                  title={t("active_cycle_analytics.empty_state.assignee.title")}
+                  assetPath={assigneesResolvedPath}
+                />
               </div>
             )}
           </Tab.Panel>
@@ -278,7 +287,10 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
               ))
             ) : (
               <div className="flex items-center justify-center h-full w-full">
-                <EmptyState type={EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE} layout="screen-simple" size="sm" />
+                <SimpleEmptyState
+                  title={t("active_cycle_analytics.empty_state.label.title")}
+                  assetPath={labelsResolvedPath}
+                />
               </div>
             )}
           </Tab.Panel>

@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Pencil } from "lucide-react";
-// ui
+// plane hooks
+import { useTranslation } from "@plane/i18n";
 import { setPromiseToast, ToggleSwitch, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -19,6 +20,8 @@ export const IssueTypeQuickActions: React.FC<Props> = observer((props) => {
   const { issueTypeId, onEditIssueTypeIdChange } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const issueType = useIssueType(issueTypeId);
   // derived values
@@ -33,16 +36,25 @@ export const IssueTypeQuickActions: React.FC<Props> = observer((props) => {
     });
     if (!updateIssueTypePromise) return;
     setPromiseToast(updateIssueTypePromise, {
-      loading: `${isIssueTypeEnabled ? "Disabling" : "Enabling"} ${issueTypeDetail?.name} issue type`,
+      loading: t("work_item_types.enable_disable.toast.loading", {
+        action: isIssueTypeEnabled ? t("common.disabling") : t("common.enabling"),
+        name: issueTypeDetail?.name,
+      }),
       success: {
-        title: "Success!",
+        title: t("work_item_types.enable_disable.toast.success.title"),
         message: () =>
-          `${issueTypeDetail?.name} issue type ${isIssueTypeEnabled ? "disabled" : "enabled"} successfully.`,
+          t("work_item_types.enable_disable.toast.success.message", {
+            name: issueTypeDetail?.name,
+            action: isIssueTypeEnabled ? t("common.disabled") : t("common.enabled"),
+          }),
       },
       error: {
-        title: "Error!",
+        title: t("work_item_types.enable_disable.toast.error.title"),
         message: () =>
-          `${issueTypeDetail?.name} issue type could not be ${isIssueTypeEnabled ? "disabled" : "enabled"}. Please try again.`,
+          t("work_item_types.enable_disable.toast.error.message", {
+            name: issueTypeDetail?.name,
+            action: isIssueTypeEnabled ? t("common.disabled") : t("common.enabled"),
+          }),
       },
     });
     await updateIssueTypePromise.finally(() => {
@@ -56,7 +68,7 @@ export const IssueTypeQuickActions: React.FC<Props> = observer((props) => {
     <>
       <div className={cn("flex items-center justify-center px-2")}>
         <div className="w-6">
-          <Tooltip className="w-full shadow" tooltipContent="Edit" position="bottom">
+          <Tooltip className="w-full shadow" tooltipContent={t("common.actions.edit")} position="bottom">
             <button
               className={cn(
                 "p-1 border-[0.5px] border-custom-border-300 rounded bg-custom-background-100 hover:bg-custom-background-90 hidden group-hover/issue-type:block",
@@ -77,7 +89,9 @@ export const IssueTypeQuickActions: React.FC<Props> = observer((props) => {
         {!issueTypeDetail?.is_default && (
           <Tooltip
             className="shadow"
-            tooltipContent={!!isIssueTypeEnabled ? "Click to disable" : "Click to enable"}
+            tooltipContent={t("work_item_types.enable_disable.tooltip", {
+              action: isIssueTypeEnabled ? t("common.actions.disable") : t("common.actions.enable"),
+            })}
             position="bottom"
           >
             <div className="w-12">

@@ -11,6 +11,7 @@ import { GithubEntityService } from "@/plane-web/services/integrations/github";
 import { IGithubStore } from "@/plane-web/store/integrations";
 // plane web types
 import { TGithubEntityConnection } from "@/plane-web/types/integrations";
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 
 export interface IGithubEntityStore {
   // store instances
@@ -145,20 +146,21 @@ export class GithubEntityStore implements IGithubEntityStore {
       const workspaceConnectionId = this.store.auth.workspaceConnectionIds[0] || undefined;
       if (!workspaceId || !workspaceSlug || !workspaceConnectionId) return;
 
-      const githubRepoId = entity?.entityId || undefined;
+      const githubRepoId = entity?.entity_id || undefined;
       if (!githubRepoId) return;
 
       const githubRepo = this.store.data.githubRepositoryById(githubRepoId) || undefined;
       if (!githubRepo) return;
 
       const payload: Partial<TGithubEntityConnection> = {
-        workspaceId: workspaceId,
-        workspaceSlug: workspaceSlug,
-        projectId: entity.projectId,
-        workspaceConnectionId: workspaceConnectionId,
-        entityId: entity.entityId,
-        entitySlug: githubRepo.full_name,
-        entityData: githubRepo,
+        workspace_id: workspaceId,
+        workspace_slug: workspaceSlug,
+        project_id: entity.project_id,
+        workspace_connection_id: workspaceConnectionId,
+        entity_id: entity.entity_id,
+        entity_type: E_INTEGRATION_KEYS.GITHUB,
+        entity_slug: githubRepo.full_name,
+        entity_data: githubRepo,
         config: entity.config,
       };
 
@@ -194,20 +196,20 @@ export class GithubEntityStore implements IGithubEntityStore {
       const workspaceConnectionId = this.store.auth.workspaceConnectionIds[0] || undefined;
       if (!workspaceId || !workspaceSlug || !workspaceConnectionId || !entityId) return;
 
-      const githubRepoId = entity?.entityId || undefined;
+      const githubRepoId = entity?.entity_id || undefined;
       if (!githubRepoId) return;
 
       const githubRepo = this.store.data.githubRepositoryById(githubRepoId) || undefined;
       if (!githubRepo) return;
 
       const payload: Partial<TGithubEntityConnection> = {
-        workspaceId: workspaceId,
-        workspaceSlug: workspaceSlug,
-        projectId: entity.projectId,
-        workspaceConnectionId: workspaceConnectionId,
-        entityId: entity.entityId,
-        entitySlug: githubRepo.full_name,
-        entityData: githubRepo,
+        workspace_id: workspaceId,
+        workspace_slug: workspaceSlug,
+        project_id: entity.project_id,
+        workspace_connection_id: workspaceConnectionId,
+        entity_id: entity.entity_id,
+        entity_slug: githubRepo.full_name,
+        entity_data: githubRepo,
         config: entity.config,
       };
 

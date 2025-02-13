@@ -2,12 +2,12 @@
 
 import { observer } from "mobx-react";
 // components
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { ProjectMemberList, ProjectSettingsMemberDefaults } from "@/components/project";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const MembersSettingsPage = observer(() => {
   // store

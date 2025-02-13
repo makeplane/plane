@@ -1,60 +1,14 @@
 // silo db
-import {
-  createOrUpdateCredentials,
-  deactivateCredentials,
-  getCredentialsByWorkspaceId,
-  getJobById,
-  updateJob,
-} from "@/db/query";
 // silo asana
 import { AsanaConfig, AsanaService, createAsanaService } from "@plane/etl/asana";
 // silo core
-import { TJobWithConfig, TServiceCredentials } from "@plane/etl/core";
+import { TImportJob, TWorkspaceCredential } from "@plane/types";
 // auth
+import { createOrUpdateCredentials } from "@/helpers/credential";
 import { asanaAuth } from "../auth/auth";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 
-export async function getJobData(jobId: string): Promise<TJobWithConfig<AsanaConfig>> {
-  const [jobData] = await getJobById(jobId);
-  if (!jobData) {
-    throw new Error(`[${jobId.slice(0, 7)}] No job data or metadata found. Exiting...`);
-  }
-  validateJobData(jobData as unknown as TJobWithConfig<AsanaConfig>, jobId);
-  return jobData as unknown as TJobWithConfig<AsanaConfig>;
-}
-
-export function validateJobData(jobData: TJobWithConfig<AsanaConfig>, jobId: string): void {
-  if (!jobData.workspace_id || !jobData.migration_type) {
-    throw new Error(`[${jobId.slice(0, 7)}] Missing workspace id. Exiting...`);
-  }
-  if (!jobData.initiator_id) {
-    throw new Error(`[${jobId.slice(0, 7)}] Missing initiator id. Exiting...`);
-  }
-  if (!jobData.config) {
-    throw new Error(`[${jobId.slice(0, 7)}] Missing job config. Exiting...`);
-  }
-}
-
-export const resetJobIfStarted = async (jobId: string, job: TJobWithConfig<AsanaConfig>) => {
-  if (job.start_time) {
-    await updateJob(jobId, {
-      total_batch_count: 0,
-      completed_batch_count: 0,
-      transformed_batch_count: 0,
-      end_time: undefined,
-      error: "",
-    });
-  }
-};
-
-export const getJobCredentials = async (job: TJobWithConfig<AsanaConfig>): Promise<TServiceCredentials> => {
-  const credentials = await getCredentialsByWorkspaceId(job.workspace_id!, job.initiator_id!, "ASANA");
-  if (!credentials || credentials.length === 0) {
-    throw new Error(`Credentials not available for job ${job.workspace_id}`);
-  }
-  return credentials[0] as TServiceCredentials;
-};
-
-export const createAsanaClient = (job: TJobWithConfig<AsanaConfig>, credentials: TServiceCredentials): AsanaService => {
+export const createAsanaClient = (job: TImportJob<AsanaConfig>, credentials: TWorkspaceCredential): AsanaService => {
   const refreshTokenCallback = async ({
     access_token,
     refresh_token,
@@ -62,15 +16,17 @@ export const createAsanaClient = (job: TJobWithConfig<AsanaConfig>, credentials:
     access_token: string;
     refresh_token: string;
   }) => {
-    await createOrUpdateCredentials(job.workspace_id, job.initiator_id, {
+    await createOrUpdateCredentials(job.workspace_id, job.initiator_id, E_IMPORTER_KEYS.ASANA, {
       source_access_token: access_token,
-      source_refresh_token: refresh_token,
-      source: "ASANA",
+      source_refresh_token: refresh_token
     });
   };
 
   const refreshTokenRejectCallback = async () => {
-    await deactivateCredentials(job.workspace_id, job.initiator_id, "ASANA");
+    // Deactivate the credentials
+    await createOrUpdateCredentials(job.workspace_id, job.initiator_id, E_IMPORTER_KEYS.ASANA, {
+      is_active: false
+    })
   };
 
   return createAsanaService({

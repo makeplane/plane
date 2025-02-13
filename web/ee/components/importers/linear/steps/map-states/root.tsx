@@ -4,6 +4,8 @@ import { FC, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import Fuse from "fuse.js";
+
 import { IStateConfig, LinearState } from "@plane/etl/linear";
 import { ExState } from "@plane/sdk";
 import { IState } from "@plane/types";
@@ -15,6 +17,7 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 import { useLinearImporter } from "@/plane-web/hooks/store";
 //  plane web types
 import { E_LINEAR_IMPORTER_STEPS, TImporterLinearDataPayload } from "@/plane-web/types/importers/linear";
+import { useTranslation } from "@plane/i18n";
 
 type TFormData = TImporterLinearDataPayload[E_LINEAR_IMPORTER_STEPS.MAP_STATES];
 
@@ -35,8 +38,10 @@ export const MapStatesRoot: FC = observer(() => {
     handleStepper,
     data: { linearStateIdsByTeamId, getLinearStateById, fetchLinearTeamStates },
   } = useLinearImporter();
+  const { t } = useTranslation();
   // states
   const [formData, setFormData] = useState<TFormData>({});
+  const [fuzzySearchDone, setFuzzySearchDone] = useState(false);
   // derived values
   const workspaceSlug = workspace?.slug || undefined;
   const workspaceId = workspace?.id || undefined;
@@ -95,6 +100,37 @@ export const MapStatesRoot: FC = observer(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [importerData]);
 
+  // fuzzy search and default values
+  useEffect(() => {
+    if (!linearTeamStates.length || !planeProjectStates.length || fuzzySearchDone) {
+      return;
+    }
+
+    const options = {
+      includeScore: true,
+      keys: ["name"],
+    };
+
+    // Create Fuse instance once
+    const fuse = new Fuse(planeProjectStates, options);
+
+    linearTeamStates.forEach((linearState) => {
+      if (linearState.name) {
+        const result = fuse.search(linearState.name);
+
+        if (result.length > 0) {
+          const planeState = result[0].item as IState;
+          if (linearState.id && planeState.id) {
+            handleFormData(linearState.id, planeState.id);
+          }
+        }
+      }
+    });
+    // mark the fuzzy search as done
+    setFuzzySearchDone(true);
+  }, [linearTeamStates, planeProjectStates, fuzzySearchDone, handleFormData]);
+
+
   // fetching the linear project states
   const { isLoading: isLinearTeamStatesLoading } = useSWR(
     workspaceId && userId && linearTeamId ? `IMPORTER_LINEAR_STATES_${workspaceId}_${userId}_${linearTeamId}` : null,
@@ -119,7 +155,7 @@ export const MapStatesRoot: FC = observer(() => {
         </div>
         <div className="divide-y divide-custom-border-200">
           {(isLinearTeamStatesLoading && (!linearTeamStates || linearTeamStates.length === 0)) ||
-          (isPlaneProjectStatesLoading && (!planeProjectStates || planeProjectStates.length === 0)) ? (
+            (isPlaneProjectStatesLoading && (!planeProjectStates || planeProjectStates.length === 0)) ? (
             <Loader className="relative w-full grid grid-cols-2 items-center py-4 gap-4">
               <Loader.Item height="35px" width="100%" />
               <Loader.Item height="35px" width="100%" />
@@ -151,7 +187,7 @@ export const MapStatesRoot: FC = observer(() => {
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
           <Button variant="primary" size="sm" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
-            Next
+            {t("common.next")}
           </Button>
         </StepperNavigation>
       </div>

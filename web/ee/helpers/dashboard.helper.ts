@@ -10,6 +10,7 @@ const UserFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefined
   notifications: undefined,
   drafts: undefined,
   "pi-chat": E_FEATURE_FLAGS.PI_CHAT,
+  "workspace-dashboards": E_FEATURE_FLAGS.DASHBOARDS,
 };
 
 export const isUserFeatureEnabled = (featureKey: string) => {
@@ -17,12 +18,19 @@ export const isUserFeatureEnabled = (featureKey: string) => {
   const featureFlag = UserFeatureKeyToFeatureFlagMap[featureKey];
   if (!featureFlag) return true;
   // Check for the feature flag in the current workspace
-  return store.featureFlags.getFeatureFlagForCurrentWorkspace(featureFlag, false);
+  const isFeatureFlagEnabled = store.featureFlags.getFeatureFlagForCurrentWorkspace(featureFlag, false);
+
+  switch (featureKey) {
+    case "workspace-dashboards":
+      return isFeatureFlagEnabled;
+    default:
+      return isFeatureFlagEnabled;
+  }
 };
 
 const WorkspaceFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefined> = {
   projects: undefined,
-  teams: E_FEATURE_FLAGS.TEAMSPACES,
+  teamspaces: E_FEATURE_FLAGS.TEAMSPACES,
   "all-issues": undefined,
   "active-cycles": E_FEATURE_FLAGS.WORKSPACE_ACTIVE_CYCLES,
   analytics: undefined,
@@ -39,9 +47,10 @@ export const isWorkspaceFeatureEnabled = (featureKey: string, workspaceSlug: str
   switch (featureKey) {
     case "active-cycles":
       return isFeatureFlagEnabled && store.user.permission.workspaceUserInfo[workspaceSlug]?.active_cycles_count > 0;
-    case "teams":
+    case "teamspaces":
       return (
-        isFeatureFlagEnabled && store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_TEAMS_ENABLED)
+        isFeatureFlagEnabled &&
+        store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_TEAMSPACES_ENABLED)
       );
     case "initiatives":
       return (

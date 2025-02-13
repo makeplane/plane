@@ -11,6 +11,7 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 import { useLinearImporter } from "@/plane-web/hooks/store";
 // plane web  types
 import { E_LINEAR_IMPORTER_STEPS, TImporterLinearDataPayload } from "@/plane-web/types/importers/linear";
+import { useTranslation } from "@plane/i18n";
 
 type TFormData = TImporterLinearDataPayload[E_LINEAR_IMPORTER_STEPS.CONFIGURE_LINEAR];
 
@@ -19,6 +20,7 @@ const currentStepKey = E_LINEAR_IMPORTER_STEPS.CONFIGURE_LINEAR;
 export const ConfigureLinearRoot: FC = observer(() => {
   // hooks
   const { currentStep, handleStepper, importerData, handleImporterData } = useLinearImporter();
+  const { t } = useTranslation();
 
   // states
   const [formData, setFormData] = useState<TFormData>({
@@ -60,7 +62,7 @@ export const ConfigureLinearRoot: FC = observer(() => {
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
           <Button variant="primary" size="sm" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
-            Next
+            {t("common.next")}
           </Button>
         </StepperNavigation>
       </div>

@@ -4,8 +4,10 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { E_IMPORTER_KEYS, E_JOB_STATUS, TJob, TJobStatus } from "@plane/etl/core";
+import { E_IMPORTER_KEYS, E_JOB_STATUS, TJobStatus } from "@plane/etl/core";
 import { LinearConfig } from "@plane/etl/linear";
+import { useTranslation } from "@plane/i18n";
+import { TImportJob } from "@plane/types";
 import { Button, Loader } from "@plane/ui";
 // plane web components
 import { StepperNavigation, AddSeatsAlertBanner, SkipUserImport } from "@/plane-web/components/importers/ui";
@@ -24,13 +26,15 @@ export const SummaryRoot: FC = observer(() => {
     configData,
     handleSyncJobConfig,
     auth: { apiTokenVerification },
-    job: { createJobConfig, createJob, startJob },
+    job: { createJob, startJob },
     handleDashboardView,
     handleStepper,
     resetImporterData,
     data: { linearStateIdsByTeamId, additionalUsersData, fetchAdditionalUsers },
     // setDashboardView,
   } = useLinearImporter();
+  const { t } = useTranslation();
+
   const { currentWorkspaceSubscriptionAvailableSeats } = useWorkspaceSubscription();
 
   // states
@@ -40,7 +44,6 @@ export const SummaryRoot: FC = observer(() => {
   const workspaceSlug = workspace?.slug || undefined;
   const workspaceId = workspace?.id || undefined;
   const userId = user?.id || undefined;
-  const userEmail = user?.email || undefined;
   const planeProjectId = importerData[E_LINEAR_IMPORTER_STEPS.SELECT_PLANE_PROJECT]?.projectId;
   const linearTeamId = importerData[E_LINEAR_IMPORTER_STEPS.CONFIGURE_LINEAR]?.teamId;
   const linearStates = (linearTeamId && linearStateIdsByTeamId(linearTeamId)) || [];
@@ -57,27 +60,24 @@ export const SummaryRoot: FC = observer(() => {
       try {
         const tokenVerification = await apiTokenVerification();
         if (tokenVerification?.message) {
-          const importerConfig = await createJobConfig(configData as LinearConfig);
-          if (importerConfig && importerConfig?.insertedId) {
-            const syncJobPayload: Partial<TJob> = {
-              workspace_slug: workspaceSlug,
-              workspace_id: workspaceId,
-              project_id: planeProjectId,
-              initiator_id: userId,
-              initiator_email: userEmail,
-              config: importerConfig?.insertedId,
-              migration_type: E_IMPORTER_KEYS.LINEAR,
-              status: E_JOB_STATUS.CREATED as TJobStatus,
-            };
-            const importerCreateJob = await createJob(planeProjectId, syncJobPayload);
-            if (importerCreateJob && importerCreateJob?.insertedId) {
-              await startJob(importerCreateJob?.insertedId);
-              handleDashboardView();
-              // clearing the existing data in the context
-              resetImporterData();
-              // moving to the next state
-              handleStepper("next");
-            }
+          const syncJobPayload: Partial<TImportJob<LinearConfig>> = {
+            workspace_slug: workspaceSlug,
+            workspace_id: workspaceId,
+            project_id: planeProjectId,
+            initiator_id: userId,
+            config: configData as LinearConfig,
+            source: E_IMPORTER_KEYS.LINEAR,
+            status: E_JOB_STATUS.CREATED as TJobStatus,
+          };
+
+          const importerCreateJob = await createJob(planeProjectId, syncJobPayload);
+          if (importerCreateJob && importerCreateJob?.id) {
+            await startJob(importerCreateJob?.id);
+            handleDashboardView();
+            // clearing the existing data in the context
+            resetImporterData();
+            // moving to the next state
+            handleStepper("next");
           }
         }
       } catch (error) {
@@ -106,17 +106,17 @@ export const SummaryRoot: FC = observer(() => {
       {/* content */}
       <div className="w-full min-h-44 max-h-full overflow-y-auto">
         <div className="relative grid grid-cols-2 items-center bg-custom-background-90 p-3 text-sm font-medium">
-          <div>Linear Entities</div>
-          <div>Migrating</div>
+          <div>Linear {t("common.entities")}</div>
+          <div>{t("importers.migrating")}</div>
         </div>
         <div className="divide-y divide-custom-border-200">
           <div className="relative grid grid-cols-2 items-center p-3 text-sm">
-            <div className="text-custom-text-200">Issues</div>
-            <div>{configData?.teamDetail?.issueCount || 0} issues</div>
+            <div className="text-custom-text-200">{t("work_items")}</div>
+            <div>{configData?.teamDetail?.issueCount || 0} {t("work_items")}</div>
           </div>
           <div className="relative grid grid-cols-2 items-center p-3 text-sm">
-            <div className="text-custom-text-200">States</div>
-            <div>{linearStates?.length || 0} states</div>
+            <div className="text-custom-text-200">{t("common.states")}</div>
+            <div>{linearStates?.length || 0} {t("common.states")}</div>
           </div>
         </div>
       </div>
@@ -147,7 +147,7 @@ export const SummaryRoot: FC = observer(() => {
             onClick={handleOnClickNext}
             disabled={createConfigLoader || isNextBtnDisabled}
           >
-            {createConfigLoader ? "Configuring..." : "Confirm"}
+            {createConfigLoader ? t("common.configuring") : t("common.confirm")}
           </Button>
         </StepperNavigation>
       </div>
