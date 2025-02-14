@@ -165,7 +165,7 @@ export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = 
 ];
 
 export const EPICS_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = ISSUE_DISPLAY_PROPERTIES_KEYS.filter(
-  (key) => !["cycle", "modules"].includes(key)
+  (key) => !["cycle", "modules", "issue_type"].includes(key)
 );
 
 export const ISSUE_DISPLAY_PROPERTIES: {
