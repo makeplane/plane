@@ -2,7 +2,8 @@ import groupBy from "lodash/groupBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// types
+// plane imports
+import { STATE_GROUPS } from "@plane/constants";
 import { IState } from "@plane/types";
 // helpers
 import { convertStringArrayToBooleanObject } from "@/helpers/array.helper";
@@ -106,7 +107,20 @@ export class StateStore implements IStateStore {
    */
   get groupedProjectStates() {
     if (!this.router.projectId) return;
-    return groupBy(this.projectStates, "group") as Record<string, IState[]>;
+
+    // First group the existing states
+    const groupedStates = groupBy(this.projectStates, "group") as Record<string, IState[]>;
+
+    // Ensure all STATE_GROUPS are present
+    const allGroups = Object.keys(STATE_GROUPS).reduce(
+      (acc, group) => ({
+        ...acc,
+        [group]: groupedStates[group] || [],
+      }),
+      {} as Record<string, IState[]>
+    );
+
+    return allGroups;
   }
 
   /**
