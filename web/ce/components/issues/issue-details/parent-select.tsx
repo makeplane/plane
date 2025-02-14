@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
-import { ParentIssuesListModal } from "@/components/issues";
+import { ParentIssuesListModal, TIssueOperations } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -17,7 +17,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // types
-import { TIssueOperations } from "./root";
 
 type TIssueParentSelect = {
   className?: string;

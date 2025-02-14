@@ -16,7 +16,7 @@ import {
   StateDropdown,
 } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { IssueCycleSelect, IssueLabel, IssueModuleSelect, IssueParentSelect } from "@/components/issues";
+import { IssueCycleSelect, IssueLabel, IssueModuleSelect } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
@@ -25,7 +25,7 @@ import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { useProjectEstimates, useIssueDetail, useProject, useProjectState, useMember } from "@/hooks/store";
 // plane web components
 import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values";
-import { IssueWorklogProperty } from "@/plane-web/components/issues";
+import { IssueParentSelect, IssueWorklogProperty } from "@/plane-web/components/issues";
 // components
 import type { TIssueOperations } from "./root";
 

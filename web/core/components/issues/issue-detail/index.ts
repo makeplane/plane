@@ -6,7 +6,6 @@ export * from "./reactions";
 export * from "./cycle-select";
 export * from "./main-content";
 export * from "./module-select";
-export * from "./parent-select";
 export * from "./relation-select";
 export * from "./root";
 export * from "./sidebar";

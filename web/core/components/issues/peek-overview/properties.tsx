@@ -19,7 +19,6 @@ import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import {
   IssueCycleSelect,
   IssueModuleSelect,
-  IssueParentSelect,
   IssueLabel,
   TIssueOperations,
 } from "@/components/issues";
@@ -30,7 +29,7 @@ import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { useIssueDetail, useMember, useProject, useProjectState } from "@/hooks/store";
 // plane web components
 import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values";
-import { IssueWorklogProperty } from "@/plane-web/components/issues";
+import { IssueParentSelect, IssueWorklogProperty } from "@/plane-web/components/issues";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
