@@ -11,3 +11,7 @@ export * from "./state";
 export * from "./string";
 export * from "./theme";
 export * from "./workspace";
+export * from "./teamspace";
+export * from "./work-item-types";
+export * from "./work-item-properties";
+export * from "./payment";

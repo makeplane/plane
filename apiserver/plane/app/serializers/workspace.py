@@ -56,6 +56,29 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
         ]
 
 
+class WorkspaceUserMeSerializer(DynamicBaseSerializer):
+    owner = UserLiteSerializer(read_only=True)
+    total_members = serializers.IntegerField(read_only=True)
+    total_issues = serializers.IntegerField(read_only=True)
+    logo_url = serializers.CharField(read_only=True)
+    current_plan = serializers.CharField(read_only=True)
+    role = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Workspace
+        fields = "__all__"
+        read_only_fields = [
+            "id",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+            "owner",
+            "logo_url",
+            "role",
+        ]
+
+
 class WorkspaceLiteSerializer(BaseSerializer):
     class Meta:
         model = Workspace
@@ -74,6 +97,7 @@ class WorkSpaceMemberSerializer(DynamicBaseSerializer):
 
 class WorkspaceMemberMeSerializer(BaseSerializer):
     draft_issue_count = serializers.IntegerField(read_only=True)
+    active_cycles_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = WorkspaceMember
@@ -223,6 +247,18 @@ class ProjectRecentVisitSerializer(serializers.ModelSerializer):
         return members
 
 
+class WorkspacePageRecentVisitSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Page
+        fields = [
+            "id",
+            "name",
+            "logo_props",
+            "owned_by",
+        ]
+
+
 class PageRecentVisitSerializer(serializers.ModelSerializer):
     project_id = serializers.SerializerMethodField()
     project_identifier = serializers.SerializerMethodField()
@@ -256,6 +292,7 @@ def get_entity_model_and_serializer(entity_type):
         "issue": (Issue, IssueRecentVisitSerializer),
         "page": (Page, PageRecentVisitSerializer),
         "project": (Project, ProjectRecentVisitSerializer),
+        "workspace_page": (Page, WorkspacePageRecentVisitSerializer),
     }
     return entity_map.get(entity_type, (None, None))
 
