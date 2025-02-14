@@ -1687,7 +1687,11 @@
       }
     },
     "states": {
-      "describe_this_state_for_your_members": "このステータスについてメンバーに説明してください。"
+      "describe_this_state_for_your_members": "このステータスについてメンバーに説明してください。",
+      "empty_state": {
+        "title": "{groupKey}グループのステータスがありません",
+        "description": "新しいステータスを作成してください"
+      }
     },
     "labels": {
       "label_title": "ラベルタイトル",
