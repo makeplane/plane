@@ -12,7 +12,7 @@ import { cn, getFileURL } from "@plane/utils";
 // helpers
 import { getUserRole } from "@/helpers/user.helper";
 // plane web imports
-import { SubscriptionPill } from "@/plane-web/components/common/subscription-pill";
+import { SubscriptionPill } from "@/plane-web/components/common/subscription";
 
 type TProps = {
   workspace: IWorkspace;
