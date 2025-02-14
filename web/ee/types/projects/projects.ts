@@ -3,6 +3,7 @@ import { IProject, IPartialProject } from "@plane/types";
 import { TProjectPriority } from "@/plane-web/types/workspace-project-filters";
 
 export type TPartialProject = IPartialProject & {
+  is_issue_type_enabled: boolean;
   is_epic_enabled: boolean;
 };
 

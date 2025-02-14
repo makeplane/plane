@@ -43,7 +43,7 @@ export class IssueTypes implements IIssueTypesStore {
   loader: TLoader = "init-loader";
   issueTypePromise: TIssueTypesPromise | undefined = undefined;
   issuePropertiesLoader: Record<string, TLoader> = {};
-  // propertiesFetchedMap: Record<string, boolean> = {};
+  propertiesFetchedMap: Record<string, boolean> = {};
   issueTypes: Record<string, IIssueType> = {};
   projectEpics: Record<string, IIssueType> = {};
   epicStatsLoader: Record<string, TLoader> = {};
@@ -67,7 +67,7 @@ export class IssueTypes implements IIssueTypesStore {
       epicAnalyticsLoader: observable,
       loader: observable.ref,
       issuePropertiesLoader: observable,
-      // propertiesFetchedMap: observable,
+      propertiesFetchedMap: observable,
       issueTypes: observable,
       projectEpics: observable,
       epicStatsLoader: observable,
@@ -639,10 +639,10 @@ export class IssueTypes implements IIssueTypesStore {
     if (!workspaceSlug || !projectId) return;
     try {
       // Do not fetch if issue types are already fetched and issue type ids are available
-      // if (this.propertiesFetchedMap[projectId] === true) return;
+      if (this.propertiesFetchedMap[projectId] === true) return;
       // Fetch issue property and options
       this.issuePropertiesLoader[projectId] = "init-loader";
-      // this.propertiesFetchedMap[projectId] = true;
+      this.propertiesFetchedMap[projectId] = true;
       const { issueProperties, issuePropertyOptions } = await this.fetchAllPropertyData(workspaceSlug, projectId);
       runInAction(async () => {
         if (issueProperties) {
@@ -661,7 +661,7 @@ export class IssueTypes implements IIssueTypesStore {
       });
     } catch (error) {
       this.issuePropertiesLoader[projectId] = "loaded";
-      // this.propertiesFetchedMap[projectId] = false;
+      this.propertiesFetchedMap[projectId] = false;
       throw error;
     }
   };

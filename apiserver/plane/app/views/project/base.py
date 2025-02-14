@@ -239,6 +239,7 @@ class ProjectViewSet(BaseViewSet):
             "module_view",
             "page_view",
             "inbox_view",
+            "is_issue_type_enabled",
             "is_epic_enabled",
             "project_lead",
             "created_at",
