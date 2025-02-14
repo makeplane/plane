@@ -1,6 +1,5 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // layouts
 import { IProjectAuthWrapper } from "@/ce/layouts/project-wrapper";
@@ -11,9 +10,7 @@ import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-project
 
 export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // props
-  const { children } = props;
-  // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId, children } = props;
   // store hooks
   const { isIssueTypeEnabledForProject, isEpicEnabledForProject, fetchAllPropertiesAndOptions } = useIssueTypes();
   const { fetchFeatures } = useProjectAdvanced();
@@ -46,5 +43,9 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
       : null
   );
 
-  return <CoreProjectAuthWrapper>{children}</CoreProjectAuthWrapper>;
+  return (
+    <CoreProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
+      {children}
+    </CoreProjectAuthWrapper>
+  );
 });
