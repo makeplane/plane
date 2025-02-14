@@ -27,6 +27,7 @@ module.exports = {
   theme: {
     extend: {
       boxShadow: {
+        "custom-shadow": "var(--color-shadow-custom)",
         "custom-shadow-2xs": "var(--color-shadow-2xs)",
         "custom-shadow-xs": "var(--color-shadow-xs)",
         "custom-shadow-sm": "var(--color-shadow-sm)",
@@ -50,6 +51,19 @@ module.exports = {
         "onboarding-shadow-sm": "var(--color-onboarding-shadow-sm)",
       },
       colors: {
+        pi: {
+          50: convertToRGB("--color-pi-50"),
+          100: convertToRGB("--color-pi-100"),
+          200: convertToRGB("--color-pi-200"),
+          300: convertToRGB("--color-pi-300"),
+          400: convertToRGB("--color-pi-400"),
+          500: convertToRGB("--color-pi-500"),
+          600: convertToRGB("--color-pi-600"),
+          700: convertToRGB("--color-pi-700"),
+          800: convertToRGB("--color-pi-800"),
+          900: convertToRGB("--color-pi-900"),
+          950: convertToRGB("--color-pi-950"),
+        },
         custom: {
           primary: {
             0: "rgb(255, 255, 255)",
@@ -99,6 +113,12 @@ module.exports = {
             primary: convertToRGB(" --color-background-primary"),
             error: convertToRGB(" --color-background-error"),
             DEFAULT: convertToRGB("--color-background-100"),
+            subscription: {
+              free: convertToRGB("--color-background-subscription-free"),
+              one: convertToRGB("--color-background-subscription-one"),
+              pro: convertToRGB("--color-background-subscription-pro"),
+              business: convertToRGB("--color-background-subscription-business"),
+            },
           },
           text: {
             0: "rgb(255, 255, 255)",
@@ -125,6 +145,12 @@ module.exports = {
             primary: convertToRGB("--color-text-primary"),
             error: convertToRGB("--color-text-error"),
             DEFAULT: convertToRGB("--color-text-100"),
+            subscription: {
+              free: convertToRGB("--color-text-subscription-free"),
+              one: convertToRGB("--color-text-subscription-one"),
+              pro: convertToRGB("--color-text-subscription-pro"),
+              business: convertToRGB("--color-text-subscription-business"),
+            },
           },
           border: {
             0: "rgb(255, 255, 255)",
