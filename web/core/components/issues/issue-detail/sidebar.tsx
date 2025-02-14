@@ -25,7 +25,7 @@ import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { useProjectEstimates, useIssueDetail, useProject, useProjectState, useMember } from "@/hooks/store";
 // plane web components
 import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values";
-import { IssueParentSelect, IssueWorklogProperty } from "@/plane-web/components/issues";
+import { IssueParentSelectRoot, IssueWorklogProperty } from "@/plane-web/components/issues";
 // components
 import type { TIssueOperations } from "./root";
 
@@ -261,7 +261,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
                 <span>{t("common.parent")}</span>
               </div>
-              <IssueParentSelect
+              <IssueParentSelectRoot
                 className="h-full w-3/5 flex-grow"
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
