@@ -230,32 +230,18 @@ class UserWorkSpacesEndpoint(BaseAPIView):
                 workspace_member__member=request.user, workspace_member__is_active=True
             )
             .annotate(
-                current_plan=Case(
-                    When(
-                        Exists(
-                            WorkspaceLicense.objects.filter(
-                                workspace_id=OuterRef("id"),
-                                trial_end_date__gt=timezone.now(),
-                                plan__in=["PRO", "BUSINESS", "ENTERPRISE"]
-                            )
-                        ),
-                        then=Concat(
-                            Subquery(
-                                WorkspaceLicense.objects.filter(
-                                    workspace_id=OuterRef("id")
-                                ).values("plan")[:1]
-                            ),
-                            Value(" trial"),
-                            output_field=models.CharField(),
-                        ),
-                    ),
-                    default=Subquery(
-                        WorkspaceLicense.objects.filter(
-                            workspace_id=OuterRef("id")
-                        ).values("plan")[:1]
-                    ),
-                    output_field=models.CharField(),
-                )
+                current_plan=Subquery(
+                    WorkspaceLicense.objects.filter(workspace_id=OuterRef("id")).values(
+                        "plan"
+                    )[:1]
+                ),
+                is_on_trial=Exists(
+                    WorkspaceLicense.objects.filter(
+                        workspace_id=OuterRef("id"),
+                        trial_end_date__gt=timezone.now(),
+                        plan__in=["PRO", "BUSINESS", "ENTERPRISE"],
+                    )
+                ),
             )
             .distinct()
         )

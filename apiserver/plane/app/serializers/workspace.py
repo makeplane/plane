@@ -63,6 +63,7 @@ class WorkspaceUserMeSerializer(DynamicBaseSerializer):
     logo_url = serializers.CharField(read_only=True)
     current_plan = serializers.CharField(read_only=True)
     role = serializers.IntegerField(read_only=True)
+    is_on_trial = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Workspace
@@ -76,6 +77,7 @@ class WorkspaceUserMeSerializer(DynamicBaseSerializer):
             "owner",
             "logo_url",
             "role",
+            "is_on_trial",
         ]
 
 

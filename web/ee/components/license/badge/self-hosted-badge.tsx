@@ -1,17 +1,16 @@
 "use client";
 
 import { observer } from "mobx-react";
-import Image from "next/image";
-// ui
+// plane imports
+import { EProductSubscriptionEnum } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
-// plane web components
+// plane web imports
+import { PlaneIcon } from "@plane/ui";
+import { cn } from "@plane/utils";
+import { SubscriptionButton } from "@/plane-web/components/common";
 import { PaidPlanUpgradeModal, PlaneOneEditionBadge } from "@/plane-web/components/license";
 import { SubscriptionActivationModal } from "@/plane-web/components/workspace";
-// plane web hooks
 import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";
-// assets
-import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
 
 export const SelfHostedEditionBadge = observer(() => {
   // hooks
@@ -32,14 +31,13 @@ export const SelfHostedEditionBadge = observer(() => {
           handleClose={() => toggleLicenseActivationModal(false)}
         />
         <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
-        <Button
-          tabIndex={-1}
-          variant="accent-primary"
-          className="w-fit min-w-24 cursor-pointer rounded-2xl px-4 py-1 text-center text-sm font-medium outline-none"
-          onClick={() => togglePaidPlanModal(true)}
+        <SubscriptionButton
+          subscriptionType={EProductSubscriptionEnum.PRO}
+          handleClick={() => togglePaidPlanModal(true)}
+          className="min-w-24"
         >
           {t("sidebar.upgrade_plan")}
-        </Button>
+        </SubscriptionButton>
       </>
     );
 
@@ -50,15 +48,13 @@ export const SelfHostedEditionBadge = observer(() => {
   if (subscriptionDetail.product === "PRO") {
     return (
       <>
-        <Button
-          tabIndex={-1}
-          variant="accent-primary"
-          className="w-fit cursor-pointer rounded-2xl px-4 py-1 text-center text-sm font-medium outline-none"
-          onClick={() => handleSuccessModalToggle(true)}
+        <SubscriptionButton
+          subscriptionType={EProductSubscriptionEnum.PRO}
+          handleClick={() => handleSuccessModalToggle(true)}
         >
-          <Image src={PlaneLogo} alt="Plane Pro" width={12} height={12} />
-          {t("sidebar.plane_pro")}
-        </Button>
+          <PlaneIcon className={cn("size-3")} />
+          Pro
+        </SubscriptionButton>
       </>
     );
   }

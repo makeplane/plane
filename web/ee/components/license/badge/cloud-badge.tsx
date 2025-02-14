@@ -2,19 +2,18 @@
 
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
-// ui
-import { Button } from "@plane/ui";
+// plane imports
+import { EProductSubscriptionEnum } from "@plane/constants";
+import { PlaneIcon } from "@plane/ui";
+import { cn } from "@plane/utils";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web components
+// plane web imports
+import { SubscriptionButton } from "@/plane-web/components/common";
 import { PaidPlanUpgradeModal } from "@/plane-web/components/license";
-// plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-// assets
-import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
 
 export const CloudEditionBadge = observer(() => {
   // router
@@ -69,22 +68,19 @@ export const CloudEditionBadge = observer(() => {
     <>
       <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
       {subscriptionDetail.show_payment_button && (
-        <Button
-          tabIndex={-1}
-          variant="accent-primary"
-          className="w-fit min-w-24 cursor-pointer rounded-2xl px-4 py-1 text-center text-sm font-medium outline-none"
-          onClick={handleProPlanPurchaseModalOpen}
+        <SubscriptionButton
+          className="min-w-24"
+          subscriptionType={EProductSubscriptionEnum.PRO}
+          handleClick={handleProPlanPurchaseModalOpen}
         >
           {renderButtonText()}
-        </Button>
+        </SubscriptionButton>
       )}
 
       {!subscriptionDetail.show_payment_button && (
-        <Button
-          tabIndex={-1}
-          variant="accent-primary"
-          className="w-fit cursor-pointer rounded-2xl px-4 py-1 text-center text-sm font-medium outline-none"
-          onClick={handlePaidPlanSuccessModalOpen}
+        <SubscriptionButton
+          subscriptionType={EProductSubscriptionEnum.PRO}
+          handleClick={handlePaidPlanSuccessModalOpen}
         >
           {subscriptionDetail.is_on_trial ? (
             `Pro trial ends
@@ -94,11 +90,11 @@ export const CloudEditionBadge = observer(() => {
             `
           ) : (
             <>
-              <Image src={PlaneLogo} alt="Plane Pro" width={12} height={12} />
-              Plane Pro
+              <PlaneIcon className={cn("size-3")} />
+              Pro
             </>
           )}
-        </Button>
+        </SubscriptionButton>
       )}
     </>
   );

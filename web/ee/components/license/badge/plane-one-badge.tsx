@@ -1,16 +1,16 @@
 "use client";
 
 import { observer } from "mobx-react";
-import Image from "next/image";
-// ui
-import { Button, Tooltip } from "@plane/ui";
+// plane imports
+import { EProductSubscriptionEnum } from "@plane/constants";
+import { PlaneOneIcon, Tooltip } from "@plane/ui";
+import { getSubscriptionName } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web hooks
+// plane web imports
+import { SubscriptionButton } from "@/plane-web/components/common";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-// assets
-import PlaneOneLogo from "@/public/plane-logos/plane-one.svg";
 
 export const PlaneOneEditionBadge = observer(() => {
   // hooks
@@ -22,15 +22,13 @@ export const PlaneOneEditionBadge = observer(() => {
   return (
     <>
       <Tooltip tooltipContent={`Version: ${instance?.current_version}`} isMobile={isMobile}>
-        <Button
-          variant="accent-primary"
-          tabIndex={-1}
-          className="w-fit cursor-pointer rounded-2xl px-4 py-1 text-center text-sm font-medium outline-none text-custom-primary-300"
-          onClick={() => handleSuccessModalToggle(true)}
+        <SubscriptionButton
+          subscriptionType={EProductSubscriptionEnum.ONE}
+          handleClick={() => handleSuccessModalToggle(true)}
         >
-          <Image src={PlaneOneLogo} alt="Plane One" width={24} height={24} />
-          {"Plane One"}
-        </Button>
+          <PlaneOneIcon className="w-6" />
+          {getSubscriptionName(EProductSubscriptionEnum.ONE)}
+        </SubscriptionButton>
       </Tooltip>
     </>
   );

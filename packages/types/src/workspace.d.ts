@@ -1,12 +1,5 @@
-import type {
-  ICycle,
-  IProjectMember,
-  IUser,
-  IUserLite,
-  IWorkspaceViewProps,
-  TPaginationInfo,
-} from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/constants"; // TODO: check if importing this over here causes circular dependency
+import type { ICycle, IProjectMember, IUser, IUserLite, IWorkspaceViewProps, TPaginationInfo } from "@plane/types";
+import { EProductSubscriptionEnum, EUserWorkspaceRoles } from "@plane/constants"; // TODO: check if importing this over here causes circular dependency
 import { TUserPermissions } from "./enums";
 
 export interface IWorkspace {
@@ -23,6 +16,8 @@ export interface IWorkspace {
   readonly updated_by: string;
   organization_size: string;
   total_projects?: number;
+  current_plan?: EProductSubscriptionEnum;
+  is_on_trial?: boolean;
   role: number;
 }
 
