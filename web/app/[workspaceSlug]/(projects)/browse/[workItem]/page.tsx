@@ -16,6 +16,9 @@ import { IssueDetailRoot } from "@/components/issues";
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 // assets
 import { useAppRouter } from "@/hooks/use-app-router";
+
+import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
+        
 import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
 import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
 
@@ -98,11 +101,13 @@ const IssueDetailsPage = observer(() => {
         workspaceSlug &&
         projectId &&
         issueId && (
-          <IssueDetailRoot
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
-            issueId={issueId.toString()}
-          />
+          <ProjectAuthWrapper workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()}>
+            <IssueDetailRoot
+              workspaceSlug={workspaceSlug.toString()}
+              projectId={projectId.toString()}
+              issueId={issueId.toString()}
+            />
+          </ProjectAuthWrapper>
         )
       )}
     </>

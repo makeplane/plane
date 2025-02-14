@@ -2,7 +2,6 @@
 
 import { FC, ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -33,14 +32,14 @@ import { persistence } from "@/local-db/storage.sqlite";
 // plane web constants
 
 interface IProjectAuthWrapper {
+  workspaceSlug: string;
+  projectId: string;
   children: ReactNode;
   isLoading?: boolean;
 }
 
 export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
-  const { children, isLoading: isParentLoading = false } = props;
-  // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId, children, isLoading: isParentLoading = false } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
