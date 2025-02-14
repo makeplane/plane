@@ -21,7 +21,7 @@ const APPS_LIST = [
   },
   {
     key: "pages",
-    label: "Pages",
+    label: "Wiki",
     icon: Files,
     color: "#17a68c",
     href: "/pages",
