@@ -1,12 +1,16 @@
 "use-client";
 
 import React, { FC } from "react";
+import { observer } from "mobx-react";
 // types
 import { TDeDupeIssue } from "@plane/types";
 // ui
 import { ControlLink } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
+// hooks
+import { useProject } from "@/hooks/store";
 
 type TDeDupeIssueBlockWrapperProps = {
   workspaceSlug: string;
@@ -15,15 +19,28 @@ type TDeDupeIssueBlockWrapperProps = {
   isSelected?: boolean;
 };
 
-export const DeDupeIssueBlockWrapper: FC<TDeDupeIssueBlockWrapperProps> = (props) => {
+export const DeDupeIssueBlockWrapper: FC<TDeDupeIssueBlockWrapperProps> = observer((props) => {
   const { workspaceSlug, issue, isSelected = false, children } = props;
+  // store hooks
+  const { getProjectIdentifierById } = useProject();
+
+  // derived values
+  const projectIdentifier = getProjectIdentifierById(issue?.project_id);
+
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier,
+    sequenceId: issue?.sequence_id,
+  });
+
   // handlers
-  const handleRedirection = () =>
-    window.open(`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`, "_blank");
+  const handleRedirection = () => window.open(workItemLink, "_blank");
 
   return (
     <ControlLink
-      href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
+      href={workItemLink}
       className={cn(
         "group relative flex flex-col gap-3.5 w-80  rounded-lg px-3 py-2 bg-custom-background-100 border border-custom-primary-100/10",
         {
@@ -35,4 +52,4 @@ export const DeDupeIssueBlockWrapper: FC<TDeDupeIssueBlockWrapperProps> = (props
       {children}
     </ControlLink>
   );
-};
+});

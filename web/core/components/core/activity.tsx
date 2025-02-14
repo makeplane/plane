@@ -24,6 +24,7 @@ import { IIssueActivity } from "@plane/types";
 import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon, Intake } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
 import { useLabel } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -34,6 +35,14 @@ export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const { workspaceSlug } = useParams();
   const { isMobile } = usePlatformOS();
 
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug.toString() ?? activity.workspace_detail?.slug,
+    projectId: activity?.project,
+    issueId: activity?.issue,
+    projectIdentifier: activity?.project_detail?.identifier,
+    sequenceId: activity?.issue_detail?.sequence_id,
+  });
+
   return (
     <Tooltip
       tooltipContent={activity?.issue_detail ? activity.issue_detail.name : "This work item has been deleted"}
@@ -42,9 +51,7 @@ export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
       {activity?.issue_detail ? (
         <a
           aria-disabled={activity.issue === null}
-          href={`${`/${workspaceSlug ?? activity.workspace_detail?.slug}/projects/${activity.project}/issues/${
-            activity.issue
-          }`}`}
+          href={workItemLink}
           target={activity.issue === null ? "_self" : "_blank"}
           rel={activity.issue === null ? "" : "noopener noreferrer"}
           className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"

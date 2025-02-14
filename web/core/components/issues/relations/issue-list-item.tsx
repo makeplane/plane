@@ -10,6 +10,8 @@ import { TIssue, TIssueServiceType } from "@plane/types";
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 // components
 import { RelationIssueProperty } from "@/components/issues/relations";
+// helpers
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
@@ -63,13 +65,21 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
     (issue?.project_id && getProjectStates(issue?.project_id)?.find((state) => issue?.state_id == state.id)) ||
     undefined;
   if (!issue || !projectId) return <></>;
-  const issueLink = `/${workspaceSlug}/projects/${projectId}/${issue.is_epic ? "epics" : "issues"}/${issue.id}`;
+
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug.toString(),
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier: projectDetail?.identifier,
+    sequenceId: issue?.sequence_id,
+    isEpic: issue?.is_epic,
+  });
 
   // handlers
   const handleIssuePeekOverview = (issue: TIssue) => {
     if (issue.is_epic) {
       // open epics in new tab
-      window.open(issueLink, "_blank");
+      window.open(workItemLink, "_blank");
       return;
     }
     handleRedirection(workspaceSlug, issue, isMobile);
@@ -92,7 +102,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
   const handleCopyIssueLink = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
     e.preventDefault();
-    issueOperations.copyText(issueLink);
+    issueOperations.copyText(workItemLink);
   };
 
   const handleRemoveRelation = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -105,7 +115,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
     <div key={relationIssueId}>
       <ControlLink
         id={`issue-${issue.id}`}
-        href={issueLink}
+        href={workItemLink}
         onClick={() => handleIssuePeekOverview(issue)}
         className="w-full cursor-pointer"
       >

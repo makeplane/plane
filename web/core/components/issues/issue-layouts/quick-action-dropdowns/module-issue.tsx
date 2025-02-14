@@ -14,9 +14,10 @@ import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, set
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useIssues, useEventTracker, useProjectState, useUserPermissions } from "@/hooks/store";
+import { useIssues, useEventTracker, useProjectState, useUserPermissions, useProject } from "@/hooks/store";
 // types
 import { useIssueType } from "@/plane-web/hooks/store";
 import { IQuickActionProps } from "../list/list-view-types";
@@ -46,10 +47,12 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
   const { issuesFilter } = useIssues(EIssuesStoreType.MODULE);
   const { allowPermissions } = useUserPermissions();
   const { getStateById } = useProjectState();
+  const { getProjectIdentifierById } = useProject();
   // plane web hooks
   const issueTypeDetail = useIssueType(issue.type_id);
   // derived values
   const stateDetails = getStateById(issue.state_id);
+  const projectIdentifier = getProjectIdentifierById(issue?.project_id);
   // auth
   const isEditingAllowed =
     allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
@@ -59,12 +62,18 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
 
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
 
-  const issueLink = `${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`;
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug.toString(),
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier,
+    sequenceId: issue?.sequence_id,
+  });
 
-  const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
+  const handleOpenInNewTab = () => window.open(workItemLink, "_blank");
 
   const handleCopyIssueLink = () =>
-    copyUrlToClipboard(issueLink).then(() =>
+    copyUrlToClipboard(workItemLink, false).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link copied",

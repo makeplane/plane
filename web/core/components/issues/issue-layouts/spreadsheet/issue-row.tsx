@@ -16,6 +16,7 @@ import { MultipleSelectEntityAction } from "@/components/core";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 // helper
 import { cn } from "@/helpers/common.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
@@ -231,6 +232,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const disableUserActions = !canEditProperties(issueDetail.project_id ?? undefined);
   const subIssuesCount = issueDetail?.sub_issues_count ?? 0;
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issueDetail.id);
+  const projectIdentifier = getProjectIdentifierById(issueDetail.project_id);
 
   const canSelectIssues = !disableUserActions && !selectionHelpers.isSelectionDisabled;
 
@@ -238,6 +240,15 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const keyMinWidth = displayProperties?.key
     ? (getProjectIdentifierById(issueDetail.project_id)?.length ?? 0 + 5) * 7
     : 0;
+
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug?.toString(),
+    projectId: issueDetail?.project_id,
+    issueId,
+    projectIdentifier,
+    sequenceId: issueDetail?.sequence_id,
+    isEpic,
+  });
 
   return (
     <>
@@ -248,7 +259,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
         className="relative md:sticky left-0 z-10 group/list-block bg-custom-background-100"
       >
         <ControlLink
-          href={`/${workspaceSlug}/projects/${issueDetail.project_id}/${isEpic ? "epics" : "issues"}/${issueId}`}
+          href={workItemLink}
           onClick={() => handleIssuePeekOverview(issueDetail)}
           className={cn(
             "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",

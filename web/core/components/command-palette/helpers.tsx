@@ -11,6 +11,8 @@ import {
 } from "@plane/types";
 // ui
 import { ContrastIcon, DiceIcon } from "@plane/ui";
+// helpers
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 
@@ -48,7 +50,13 @@ export const commandGroups: {
       </div>
     ),
     path: (issue: IWorkspaceIssueSearchResult) =>
-      `/${issue?.workspace__slug}/projects/${issue?.project_id}/issues/${issue?.id}`,
+      generateWorkItemLink({
+        workspaceSlug: issue?.workspace__slug,
+        projectId: issue?.project_id,
+        issueId: issue?.id,
+        projectIdentifier: issue.project__identifier,
+        sequenceId: issue?.sequence_id,
+      }),
     title: "Work items",
   },
   issue_view: {
@@ -98,23 +106,5 @@ export const commandGroups: {
     itemName: (workspace: IWorkspaceSearchResult) => workspace?.name,
     path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/`,
     title: "Workspaces",
-  },
-  epic: {
-    title: "Epics",
-    icon: null,
-    itemName: (epic: IWorkspaceIssueSearchResult) => (
-      <div className="flex gap-2">
-        <IssueIdentifier
-          projectId={epic.project_id}
-          issueTypeId={epic.type_id}
-          projectIdentifier={epic.project__identifier}
-          issueSequenceId={epic.sequence_id}
-          textContainerClassName="text-xs"
-        />{" "}
-        {epic.name}
-      </div>
-    ),
-    path: (epic: IWorkspaceDefaultSearchResult) =>
-      `/${epic?.workspace__slug}/projects/${epic?.project_id}/epics/${epic?.id}`,
   },
 };
