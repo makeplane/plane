@@ -34,9 +34,10 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
     issueCrudOperationState,
     setIssueCrudOperationState,
     createSubIssues: createEpicSubIssues,
+    issue: { getIssueById },
   } = useIssueDetail(EIssueServiceType.EPICS);
   const { createSubIssues } = useIssueDetail();
-  const { fetchEpicAnalytics } = useIssueTypes();
+  const { fetchEpicAnalytics, getIssueTypeById } = useIssueTypes();
 
   const handleAddSubIssueResponse = (successMessage: string) => {
     setToast({
@@ -116,10 +117,16 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
     setLastWidgetAction("sub-issues");
   };
 
+  // derived values
+
   const handleCreateUpdateModalOnSubmit = async (_issue: TIssue) => {
     if (_issue.parent_id) {
-      if (_issue.parent_id === epicId) {
-        await addSubIssueToEpic(workspaceSlug, projectId, epicId, [_issue.id]).then(() => {
+      const parentIssue = getIssueById(_issue.parent_id);
+      const parentIssueTypeDetails = parentIssue?.type_id ? getIssueTypeById(parentIssue.type_id) : undefined;
+      const isParentEpic = parentIssueTypeDetails?.is_epic;
+
+      if (isParentEpic) {
+        await addSubIssueToEpic(workspaceSlug, projectId, _issue.parent_id, [_issue.id]).then(() => {
           fetchEpicAnalytics(workspaceSlug, projectId, epicId);
         });
       } else {

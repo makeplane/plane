@@ -54,6 +54,7 @@ export const EpicOverviewRoot: FC<Props> = observer((props) => {
             containerClassName=""
             tabListClassName="w-36"
             tabListContainerClassName="justify-between"
+            tabClassName="px-2 py-1"
             actions={
               <div className="flex items-center justify-end gap-2">
                 {storedValue === "issues" ? (
