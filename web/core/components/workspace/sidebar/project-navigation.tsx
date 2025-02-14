@@ -153,7 +153,11 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
             <Link href={item.href} onClick={handleProjectClick}>
               <SidebarNavItem
                 className={`pl-[18px] ${isSidebarCollapsed ? "p-0 size-7 justify-center mx-auto" : ""}`}
-                isActive={pathname.includes(item.href)}
+                isActive={
+                  item.key === "issues"
+                    ? pathname.includes(item.href) || pathname.includes(`/${workspaceSlug}/browse/`)
+                    : pathname.includes(item.href)
+                }
               >
                 <div className="flex items-center gap-1.5 py-[1px]">
                   <item.icon

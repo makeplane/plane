@@ -10,6 +10,7 @@ import { TIssue, TIssueServiceType } from "@plane/types";
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
@@ -85,11 +86,19 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
   // check if current issue is the root issue
   const isCurrentIssueRoot = issueId === rootIssueId;
 
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier: projectDetail?.identifier,
+    sequenceId: issue?.sequence_id,
+  });
+
   return (
     <div key={issueId}>
       <ControlLink
         id={`issue-${issue.id}`}
-        href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
+        href={workItemLink}
         onClick={() => handleIssuePeekOverview(issue)}
         className="w-full cursor-pointer"
       >
@@ -194,7 +203,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    subIssueOperations.copyText(`${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`);
+                    subIssueOperations.copyText(workItemLink);
                   }}
                 >
                   <div className="flex items-center gap-2">
