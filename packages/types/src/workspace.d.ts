@@ -22,7 +22,6 @@ export interface IWorkspace {
   readonly updated_by: string;
   organization_size: string;
   total_projects?: number;
-  current_plan?: string;
   role: number;
 }
 
@@ -40,9 +39,10 @@ export interface IWorkspaceMemberInvitation {
   responded_at: Date;
   role: TUserPermissions;
   token: string;
+  invite_link: string;
   workspace: {
     id: string;
-    logo: string;
+    logo_url: string;
     name: string;
     slug: string;
   };

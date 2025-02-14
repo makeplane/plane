@@ -25,6 +25,10 @@ on:
         required: false
         default: false
         type: boolean
+  push:
+    branches:
+      - preview
+      - canary
 
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
