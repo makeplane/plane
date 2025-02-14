@@ -51,6 +51,7 @@ jobs:
       build_proxy: ${{ steps.changed_files.outputs.proxy_any_changed }}
       build_monitor: ${{ steps.changed_files.outputs.monitor_any_changed }}
       build_silo: ${{ steps.changed_files.outputs.silo_any_changed }}
+      build_email: ${{ steps.changed_files.outputs.email_any_changed }}
       artifact_upload_to_s3: ${{ steps.set_env_variables.outputs.artifact_upload_to_s3 }}
       artifact_s3_suffix: ${{ steps.set_env_variables.outputs.artifact_s3_suffix }}
 
@@ -62,6 +63,7 @@ jobs:
       dh_img_proxy: ${{ steps.set_env_variables.outputs.DH_IMG_PROXY }}
       dh_img_monitor: ${{ steps.set_env_variables.outputs.DH_IMG_MONITOR }}
       dh_img_silo: ${{ steps.set_env_variables.outputs.DH_IMG_SILO }}
+      dh_img_email: ${{ steps.set_env_variables.outputs.DH_IMG_EMAIL }}
       harbor_push: ${{ steps.set_env_variables.outputs.HARBOR_PUSH }}
       build_type: ${{steps.set_env_variables.outputs.BUILD_TYPE}}
       build_release: ${{ steps.set_env_variables.outputs.BUILD_RELEASE }}
@@ -94,6 +96,7 @@ jobs:
           echo "DH_IMG_PROXY=proxy-enterprise" >> $GITHUB_OUTPUT
           echo "DH_IMG_MONITOR=monitor-enterprise" >> $GITHUB_OUTPUT
           echo "DH_IMG_SILO=silo-enterprise" >> $GITHUB_OUTPUT
+          echo "DH_IMG_EMAIL=email-enterprise" >> $GITHUB_OUTPUT
 
           echo "BUILD_TYPE=${{env.BUILD_TYPE}}" >> $GITHUB_OUTPUT
           BUILD_RELEASE=false
@@ -181,6 +184,8 @@ jobs:
               - 'yarn.lock'
               - 'tsconfig.json'
               - 'turbo.json'
+            email:
+              - email/**
             live:
               - live/**
               - packages/**
@@ -431,6 +436,38 @@ jobs:
           build-args: |
             PRIVATE_KEY=${{ env.PRIVATE_KEY }}
 
+  branch_build_push_email:
+    if: ${{ needs.branch_build_setup.outputs.build_email == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    name: Build-Push Email Docker Image
+    runs-on: ubuntu-20.04
+    needs: [branch_build_setup]
+    steps:
+      - id: checkout_files
+        name: Checkout Files
+        uses: actions/checkout@v4
+
+      - name: Email Build and Push
+        uses: makeplane/actions/build-push@v1.0.0
+        with:
+          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
+          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          private-registry-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
+          private-registry-username: ${{ secrets.HARBOR_USERNAME }}
+          private-registry-token: ${{ secrets.HARBOR_TOKEN }}
+          private-registry-addr: ${{ vars.HARBOR_REGISTRY }}
+          private-registry-project: ${{ vars.HARBOR_PROJECT }}
+          docker-image-owner: makeplane
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_email }}
+          build-context: ./email
+          dockerfile-path: ./email/Dockerfile
+          buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+          buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+          buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+          buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+
   upload_artifacts_s3:
     if: ${{ needs.branch_build_setup.outputs.artifact_upload_to_s3 == 'true' }}
     name: Upload artifacts to S3 Bucket
@@ -478,6 +515,7 @@ jobs:
         branch_build_push_apiserver,
         branch_build_push_proxy,
         branch_build_push_monitor,
+        branch_build_push_email,
         branch_build_push_silo,
         upload_artifacts_s3,
       ]
