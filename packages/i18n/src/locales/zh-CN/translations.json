@@ -1687,7 +1687,11 @@
       }
     },
     "states": {
-      "describe_this_state_for_your_members": "为您的成员描述此状态。"
+      "describe_this_state_for_your_members": "为您的成员描述此状态。",
+      "empty_state": {
+        "title": "{groupKey} 组中没有状态",
+        "description": "请创建一个新状态"
+      }
     },
     "labels": {
       "label_title": "标签标题",

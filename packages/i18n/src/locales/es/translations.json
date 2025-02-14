@@ -1687,7 +1687,11 @@
       }
     },
     "states": {
-      "describe_this_state_for_your_members": "Describe este estado para tus miembros."
+      "describe_this_state_for_your_members": "Describe este estado para tus miembros.",
+      "empty_state": {
+        "title": "No estados disponibles para el grupo {groupKey}",
+        "description": "Por favor, crea un nuevo estado"
+      }
     },
     "labels": {
       "label_title": "Título de la etiqueta",

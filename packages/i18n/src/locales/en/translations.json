@@ -1518,7 +1518,11 @@
       }
     },
     "states": {
-      "describe_this_state_for_your_members": "Describe this state for your members."
+      "describe_this_state_for_your_members": "Describe this state for your members.",
+      "empty_state": {
+        "title": "No states available for the {groupKey} group",
+        "description": "Please create a new state"
+      }
     },
     "labels": {
       "label_title": "Label title",
