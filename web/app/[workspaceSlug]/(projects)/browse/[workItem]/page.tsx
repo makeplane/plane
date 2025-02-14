@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
-// ui
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/common";
@@ -15,6 +16,7 @@ import { IssueDetailRoot } from "@/components/issues";
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 // assets
 import { useAppRouter } from "@/hooks/use-app-router";
+import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
 import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
 import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
 
@@ -25,6 +27,7 @@ const IssueDetailsPage = observer(() => {
   // hooks
   const { resolvedTheme } = useTheme();
   // store hooks
+  const { t } = useTranslation();
   const {
     fetchIssueWithIdentifier,
     issue: { getIssueById },
@@ -70,10 +73,10 @@ const IssueDetailsPage = observer(() => {
       {error ? (
         <EmptyState
           image={resolvedTheme === "dark" ? emptyIssueDark : emptyIssueLight}
-          title="Issue does not exist"
-          description="The issue you are looking for does not exist, has been archived, or has been deleted."
+          title={t("issue.empty_state.issue_detail.title")}
+          description={t("issue.empty_state.issue_detail.description")}
           primaryButton={{
-            text: "View other issues",
+            text: t("issue.empty_state.issue_detail.primary_button.text"),
             onClick: () => router.push(`/${workspaceSlug}/workspace-views/all-issues/`),
           }}
         />
@@ -96,11 +99,13 @@ const IssueDetailsPage = observer(() => {
         workspaceSlug &&
         projectId &&
         issueId && (
-          <IssueDetailRoot
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
-            issueId={issueId.toString()}
-          />
+          <ProjectAuthWrapper workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()}>
+            <IssueDetailRoot
+              workspaceSlug={workspaceSlug.toString()}
+              projectId={projectId.toString()}
+              issueId={issueId.toString()}
+            />
+          </ProjectAuthWrapper>
         )
       )}
     </>
