@@ -336,7 +336,7 @@ export const InstanceSetupForm: FC = (props) => {
             </label>
             <a
               tabIndex={-1}
-              href="https://docs.plane.so/telemetry"
+              href="https://developers.plane.so/self-hosting/telemetry"
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm font-medium text-blue-500 hover:text-blue-600"
