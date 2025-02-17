@@ -203,6 +203,11 @@ module.exports = {
             },
           },
           backdrop: "rgba(0, 0, 0, 0.25)",
+          scrollbar: {
+            neutral: "rgba(96, 100, 108, 0.1)",
+            hover: "rgba(96, 100, 108, 0.25)",
+            active: "rgba(96, 100, 108, 0.7)",
+          },
         },
         onboarding: {
           background: {
