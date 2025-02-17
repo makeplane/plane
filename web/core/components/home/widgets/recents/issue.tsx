@@ -7,8 +7,9 @@ import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns";
 // helpers
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
-import { useIssueDetail, useProjectState } from "@/hooks/store";
+import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 
@@ -22,13 +23,22 @@ export const RecentIssue = (props: BlockProps) => {
   // hooks
   const { getStateById } = useProjectState();
   const { setPeekIssue } = useIssueDetail();
+  const { getProjectIdentifierById } = useProject();
   // derived values
   const issueDetails: TIssueEntityData = activity.entity_data as TIssueEntityData;
+  const projectIdentifier = getProjectIdentifierById(issueDetails?.project_id);
 
   if (!issueDetails) return <></>;
 
   const state = getStateById(issueDetails?.state);
-  const workItemLink = `/${workspaceSlug}/projects/${issueDetails?.project_id}/issues/${issueDetails.id}`;
+
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug?.toString(),
+    projectId: issueDetails?.project_id,
+    issueId: issueDetails?.id,
+    projectIdentifier,
+    sequenceId: issueDetails?.sequence_id,
+  });
 
   return (
     <ListItem

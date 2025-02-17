@@ -15,9 +15,10 @@ import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, set
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker, useIssues, useProjectState, useUserPermissions } from "@/hooks/store";
+import { useEventTracker, useIssues, useProject, useProjectState, useUserPermissions } from "@/hooks/store";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 
@@ -48,9 +49,11 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
   const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
   const { getStateById } = useProjectState();
+  const { getProjectIdentifierById } = useProject();
   // derived values
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
   const stateDetails = getStateById(issue.state_id);
+  const projectIdentifier = getProjectIdentifierById(issue?.project_id);
   // auth
   const isEditingAllowed =
     allowPermissions(
@@ -63,16 +66,23 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
   const isDeletingAllowed = isEditingAllowed;
 
-  const issueLink = `${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`;
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug.toString(),
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier,
+    sequenceId: issue?.sequence_id,
+  });
+
   const handleCopyIssueLink = () =>
-    copyUrlToClipboard(issueLink).then(() =>
+    copyUrlToClipboard(workItemLink, false).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
         message: "Work item link copied to clipboard",
       })
     );
-  const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
+  const handleOpenInNewTab = () => window.open(workItemLink, "_blank");
 
   const isDraftIssue = pathname?.includes("draft-issues") || false;
 

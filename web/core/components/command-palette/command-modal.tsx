@@ -5,13 +5,14 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { CommandIcon, FolderPlus, Search, Settings } from "lucide-react";
+import { CommandIcon, FolderPlus, Search, Settings, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspaceSearchResults } from "@plane/types";
 import { LayersIcon, Loader, ToggleSwitch } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import {
   ChangeIssueAssignee,
@@ -25,12 +26,17 @@ import {
   CommandPaletteWorkspaceSettingsActions,
 } from "@/components/command-palette";
 import { SimpleEmptyState } from "@/components/empty-state";
-// fetch-keys
-import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 // helpers
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useUser, useUserPermissions } from "@/hooks/store";
+import {
+  useCommandPalette,
+  useEventTracker,
+  useIssueDetail,
+  useProject,
+  useUser,
+  useUserPermissions,
+} from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -39,16 +45,13 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
-// services
-import { IssueService } from "@/services/issue";
 
 const workspaceService = new WorkspaceService();
-const issueService = new IssueService();
 
 export const CommandModal: React.FC = observer(() => {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, issueId } = useParams();
+  const { workspaceSlug, workItem } = useParams();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
   const [resultsCount, setResultsCount] = useState(0);
@@ -56,21 +59,15 @@ export const CommandModal: React.FC = observer(() => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<IWorkspaceSearchResults>({
-    results: {
-      workspace: [],
-      project: [],
-      issue: [],
-      cycle: [],
-      module: [],
-      issue_view: [],
-      page: [],
-    },
+    results: { workspace: [], project: [], issue: [], cycle: [], module: [], issue_view: [], page: [] },
   });
-  const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(true);
+  const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   const [pages, setPages] = useState<string[]>([]);
+  const [searchInIssue, setSearchInIssue] = useState(false);
   // plane hooks
   const { t } = useTranslation();
   // hooks
+  const { fetchIssueWithIdentifier } = useIssueDetail();
   const { workspaceProjectIds } = useProject();
   const { platform, isMobile } = usePlatformOS();
   const { canPerformAnyCreateAction } = useUser();
@@ -78,7 +75,20 @@ export const CommandModal: React.FC = observer(() => {
     useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   const { setTrackElement } = useEventTracker();
+
+  const projectIdentifier = workItem?.toString().split("-")[0];
+  const sequence_id = workItem?.toString().split("-")[1];
+
+  const { data: issueDetails } = useSWR(
+    workspaceSlug && workItem ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}` : null,
+    workspaceSlug && workItem
+      ? () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
+      : null
+  );
+
   // derived values
+  const issueId = issueDetails?.id;
+  const projectId = issueDetails?.project_id;
   const page = pages[pages.length - 1];
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
@@ -88,13 +98,19 @@ export const CommandModal: React.FC = observer(() => {
   );
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
 
-  // TODO: update this to mobx store
-  const { data: issueDetails } = useSWR(
-    workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId.toString()) : null,
-    workspaceSlug && projectId && issueId
-      ? () => issueService.retrieve(workspaceSlug.toString(), projectId.toString(), issueId.toString())
-      : null
-  );
+  useEffect(() => {
+    if (issueDetails && isCommandPaletteOpen) {
+      setSearchInIssue(true);
+    }
+  }, [issueDetails, isCommandPaletteOpen]);
+
+  useEffect(() => {
+    if (!projectId && !isWorkspaceLevel) {
+      setIsWorkspaceLevel(true);
+    } else {
+      setIsWorkspaceLevel(false);
+    }
+  }, [projectId]);
 
   const closePalette = () => {
     toggleCommandPaletteModal(false);
@@ -133,15 +149,7 @@ export const CommandModal: React.FC = observer(() => {
           });
       } else {
         setResults({
-          results: {
-            workspace: [],
-            project: [],
-            issue: [],
-            cycle: [],
-            module: [],
-            issue_view: [],
-            page: [],
-          },
+          results: { workspace: [], project: [], issue: [], cycle: [], module: [], issue_view: [], page: [] },
         });
         setIsLoading(false);
         setIsSearching(false);
@@ -152,7 +160,16 @@ export const CommandModal: React.FC = observer(() => {
 
   return (
     <Transition.Root show={isCommandPaletteOpen} afterLeave={() => setSearchTerm("")} as={React.Fragment}>
-      <Dialog as="div" className="relative z-30" onClose={() => closePalette()}>
+      <Dialog
+        as="div"
+        className="relative z-30"
+        onClose={() => {
+          closePalette();
+          if (searchInIssue) {
+            setSearchInIssue(true);
+          }
+        }}
+      >
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -213,10 +230,7 @@ export const CommandModal: React.FC = observer(() => {
                           nextItem.setAttribute("aria-selected", "true");
                           selectedItem?.setAttribute("aria-selected", "false");
                           nextItem.focus();
-                          nextItem.scrollIntoView({
-                            behavior: "smooth",
-                            block: "nearest",
-                          });
+                          nextItem.scrollIntoView({ behavior: "smooth", block: "nearest" });
                         }
                       }
 
@@ -237,32 +251,40 @@ export const CommandModal: React.FC = observer(() => {
                       }
                     }}
                   >
-                    <div
-                      className={`flex gap-4 pb-0 sm:items-center ${
-                        issueDetails ? "flex-col justify-between sm:flex-row" : "justify-end"
-                      }`}
-                    >
-                      {issueDetails && (
-                        <div className="flex gap-2 items-center overflow-hidden truncate rounded-md bg-custom-background-80 p-2 text-xs font-medium text-custom-text-200">
-                          {issueDetails.project_id && (
-                            <IssueIdentifier
-                              issueId={issueDetails.id}
-                              projectId={issueDetails.project_id}
-                              textContainerClassName="text-xs font-medium text-custom-text-200"
-                            />
-                          )}
-                          {issueDetails.name}
-                        </div>
-                      )}
-                    </div>
-                    <div className="relative">
-                      <Search
-                        className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-custom-text-200"
-                        aria-hidden="true"
-                        strokeWidth={2}
-                      />
+                    <div className="relative flex items-center px-4 border-0 border-b border-custom-border-200">
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <Search
+                          className="h-4 w-4 text-custom-text-200 flex-shrink-0"
+                          aria-hidden="true"
+                          strokeWidth={2}
+                        />
+                        {searchInIssue && issueDetails && (
+                          <>
+                            <span className="flex items-center text-sm">Update in:</span>
+                            <span className="flex items-center gap-1 rounded px-1.5 py-1 text-sm bg-custom-primary-100/10 ">
+                              {issueDetails.project_id && (
+                                <IssueIdentifier
+                                  issueId={issueDetails.id}
+                                  projectId={issueDetails.project_id}
+                                  textContainerClassName="text-sm text-custom-primary-200"
+                                />
+                              )}
+                              <X
+                                size={12}
+                                strokeWidth={2}
+                                className="flex-shrink-0 cursor-pointer"
+                                onClick={() => {
+                                  setSearchInIssue(false);
+                                }}
+                              />
+                            </span>
+                          </>
+                        )}
+                      </div>
                       <Command.Input
-                        className="w-full border-0 border-b border-custom-border-200 bg-transparent p-4 pl-11 text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
+                        className={cn(
+                          "w-full bg-transparent p-4 text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
+                        )}
                         placeholder={placeholder}
                         value={searchTerm}
                         onValueChange={(e) => setSearchTerm(e)}
@@ -308,7 +330,7 @@ export const CommandModal: React.FC = observer(() => {
                       {!page && (
                         <>
                           {/* issue actions */}
-                          {issueId && (
+                          {issueId && issueDetails && searchInIssue && (
                             <CommandPaletteIssueActions
                               closePalette={closePalette}
                               issueDetails={issueDetails}
