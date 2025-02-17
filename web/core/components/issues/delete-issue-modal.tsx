@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 // types
-import { PROJECT_ERROR_MESSAGES ,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { PROJECT_ERROR_MESSAGES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TDeDupeIssue, TIssue } from "@plane/types";
 // ui

@@ -5,27 +5,22 @@ import useSWR from "swr";
 import { BulkDeleteIssuesModal } from "@/components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // constants
-import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 // hooks
-import { useCommandPalette, useUser } from "@/hooks/store";
+import { useCommandPalette, useIssueDetail, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
-// services
-import { IssueService } from "@/services/issue";
-
-// services
-const issueService = new IssueService();
 
 export const IssueLevelModals = observer(() => {
   // router
   const pathname = usePathname();
-  const { workspaceSlug, projectId, issueId, cycleId, moduleId } = useParams();
+  const { workspaceSlug, projectId: paramsProjectId, workItem, cycleId, moduleId } = useParams();
   const router = useAppRouter();
   // store hooks
   const { data: currentUser } = useUser();
   const {
     issues: { removeIssue },
   } = useIssuesStore();
+  const { fetchIssueWithIdentifier } = useIssueDetail();
   const {
     isCreateIssueModalOpen,
     toggleCreateIssueModal,
@@ -37,12 +32,18 @@ export const IssueLevelModals = observer(() => {
   // derived values
   const isDraftIssue = pathname?.includes("draft-issues") || false;
 
+  const projectIdentifier = workItem?.toString().split("-")[0];
+  const sequence_id = workItem?.toString().split("-")[1];
+
   const { data: issueDetails } = useSWR(
-    workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
-    workspaceSlug && projectId && issueId
-      ? () => issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
+    workspaceSlug && workItem ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}` : null,
+    workspaceSlug && workItem
+      ? () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
       : null
   );
+
+  const issueId = issueDetails?.id;
+  const projectId = paramsProjectId ?? issueDetails?.project_id;
 
   return (
     <>
