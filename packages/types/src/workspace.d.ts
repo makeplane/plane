@@ -308,3 +308,13 @@ export type TImporterCredentialValidation = TWorkspaceCredentialVerification & {
 export type TWorkspaceEpicsSearchParams = {
   initiative_id?: string;
 };
+
+export interface IWorkspaceSidebarNavigationItem {
+  key?: string;
+  is_pinned: boolean;
+  sort_order: number;
+}
+
+export interface IWorkspaceSidebarNavigation {
+  [key: string]: IWorkspaceSidebarNavigationItem;
+}
