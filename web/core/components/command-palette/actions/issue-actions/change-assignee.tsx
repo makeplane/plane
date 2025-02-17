@@ -18,12 +18,15 @@ type Props = { closePalette: () => void; issue: TIssue };
 export const ChangeIssueAssignee: React.FC<Props> = observer((props) => {
   const { closePalette, issue } = props;
   // router params
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug } = useParams();
   // store
   const { updateIssue } = useIssueDetail();
   const {
-    project: { projectMemberIds, getProjectMemberDetails },
+    project: { getProjectMemberIds, getProjectMemberDetails },
   } = useMember();
+  // derived values
+  const projectId = issue?.project_id ?? "";
+  const projectMemberIds = getProjectMemberIds(projectId);
 
   const options =
     projectMemberIds
