@@ -79,7 +79,6 @@ export const CommandModal: React.FC = observer(() => {
   const projectIdentifier = workItem?.toString().split("-")[0];
   const sequence_id = workItem?.toString().split("-")[1];
 
-  // TODO: update this to mobx store
   const { data: issueDetails } = useSWR(
     workspaceSlug && workItem ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}` : null,
     workspaceSlug && workItem
