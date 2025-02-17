@@ -1,5 +1,6 @@
 import { TStaticViewTypes } from "@plane/types";
 import { EUserWorkspaceRoles } from "./user";
+import { EXTENDED_WORKSPACE_SETTINGS } from "./workspace-extended";
 
 export const ORGANIZATION_SIZE = [
   "Just myself", // TODO: translate
@@ -132,10 +133,17 @@ export const WORKSPACE_SETTINGS_LINKS: {
 }[] = [
   WORKSPACE_SETTINGS["general"],
   WORKSPACE_SETTINGS["members"],
+  EXTENDED_WORKSPACE_SETTINGS["project_states"],
   WORKSPACE_SETTINGS["billing-and-plans"],
+  EXTENDED_WORKSPACE_SETTINGS["integrations"],
+  EXTENDED_WORKSPACE_SETTINGS["import"],
   WORKSPACE_SETTINGS["export"],
   WORKSPACE_SETTINGS["webhooks"],
   WORKSPACE_SETTINGS["api-tokens"],
+  EXTENDED_WORKSPACE_SETTINGS["worklogs"],
+  EXTENDED_WORKSPACE_SETTINGS["teamspaces"],
+  EXTENDED_WORKSPACE_SETTINGS["initiatives"],
+  EXTENDED_WORKSPACE_SETTINGS["customers"],
 ];
 
 export const ROLE = {

@@ -19,6 +19,7 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useProject, useProjectState } from "@/hooks/store";
 // types
+import { useIssueType } from "@/plane-web/hooks/store";
 import { IQuickActionProps } from "../list/list-view-types";
 
 export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
@@ -44,6 +45,8 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
   const { setTrackElement } = useEventTracker();
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
+  // plane web hooks
+  const issueTypeDetail = useIssueType(issue.type_id);
   // derived values
   const stateDetails = getStateById(issue.state_id);
   const isEditingAllowed = !readOnly;
@@ -99,7 +102,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
         setTrackElement("Global issues");
         setCreateUpdateIssueModal(true);
       },
-      shouldRender: isEditingAllowed,
+      shouldRender: isEditingAllowed && issueTypeDetail?.is_active,
     },
     {
       key: "open-in-new-tab",
