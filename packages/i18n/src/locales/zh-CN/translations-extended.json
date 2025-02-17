@@ -50,6 +50,11 @@
         "error": "更新计划功能失败！"
       }
     },
+    "customers": {
+      "heading": "客户",
+      "settings_heading": "通过客户属性管理工作。",
+      "settings_sub_heading": "从Plane上的基本客户属性开始，之后与您的CRM或支持工具集成，并通过客户属性管理工作。"
+    },
     "empty_state": {
       "integrations": {
         "title": "未配置集成",

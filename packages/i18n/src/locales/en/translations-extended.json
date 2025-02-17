@@ -41,7 +41,10 @@
       }
     },
     "customers": {
-      "heading": "Customers"
+      "heading": "Customers",
+      "settings_heading": "Manage work by customer attributes.",
+      "settings_sub_heading": "Start with essential customer attributes on Plane, integrate with your CRM or Support tool later, and manage work by customer attributes."
+
     },
     "empty_state": {
       "integrations": {

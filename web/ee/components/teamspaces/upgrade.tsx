@@ -69,7 +69,7 @@ export const TeamspaceUpgrade: FC = observer(() => {
         <Image
           src={resolvedTheme === "dark" ? TeamsUpgradeDark : TeamsUpgradeLight}
           alt=""
-          className="max-h-[300px] self-end flex p-5 pb-0 xl:p-0"
+          className="max-h-[300px] w-auto self-end flex p-5 pb-0 xl:p-0 object-contain"
         />
       </div>
     </div>
