@@ -27,7 +27,7 @@ import {
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
+import { generateWorkItemLink, shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 // hooks
 import { useEventTracker, useLabel, useIssues, useProjectState, useProject, useProjectEstimates } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -247,17 +247,17 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       });
   };
 
-  const redirectToIssueDetail = () => {
-    router.push(
-      `/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}${isEpic ? "epics" : "issues"}/${issue.id}#sub-issues`
-    );
-    // router.push({
-    //   pathname: `/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
-    //     issue.id
-    //   }`,
-    //   hash: "sub-issues",
-    // });
-  };
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug?.toString(),
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier: projectDetails?.identifier,
+    sequenceId: issue?.sequence_id,
+    isArchived: !!issue?.archived_at,
+    isEpic,
+  });
+
+  const redirectToIssueDetail = () => router.push(`${workItemLink}#sub-issues`);
 
   if (!displayProperties || !issue.project_id) return null;
 

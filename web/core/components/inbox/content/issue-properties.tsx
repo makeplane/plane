@@ -10,6 +10,7 @@ import { DateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "@
 import { IssueLabel, TIssueOperations } from "@/components/issues";
 // helper
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -33,6 +34,14 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
   if (!issue || !issue?.id) return <></>;
+
+  const duplicateWorkItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug?.toString(),
+    projectId,
+    issueId: duplicateIssueDetails?.id,
+    projectIdentifier: currentProjectDetails?.identifier,
+    sequenceId: duplicateIssueDetails?.sequence_id,
+  });
 
   return (
     <div className="flex w-full flex-col divide-y-2 divide-custom-border-200">
@@ -169,9 +178,9 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
                 </div>
 
                 <ControlLink
-                  href={`/${workspaceSlug}/projects/${projectId}/issues/${duplicateIssueDetails?.id}`}
+                  href={duplicateWorkItemLink}
                   onClick={() => {
-                    router.push(`/${workspaceSlug}/projects/${projectId}/issues/${duplicateIssueDetails?.id}`);
+                    router.push(duplicateWorkItemLink);
                   }}
                   target="_self"
                 >

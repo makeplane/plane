@@ -8,13 +8,13 @@ import { usePopper } from "react-popper";
 import { ChevronDown, CirclePlus, LogOut, Mails, Settings } from "lucide-react";
 // ui
 import { Menu, Transition } from "@headlessui/react";
-// types
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
-// plane ui
 import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
-import { GOD_MODE_URL, cn } from "@/helpers/common.helper";
+import { orderWorkspacesList } from "@plane/utils";
 // helpers
+import { GOD_MODE_URL, cn } from "@/helpers/common.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
@@ -66,7 +66,7 @@ export const SidebarDropdown = observer(() => {
       toggleSidebar();
     }
   };
-  const workspacesList = Object.values(workspaces ?? {});
+  const workspacesList = orderWorkspacesList(Object.values(workspaces ?? {}));
   // TODO: fix workspaces list scroll
   return (
     <div className="flex items-center justify-center gap-x-3 gap-y-2">

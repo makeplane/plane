@@ -6,8 +6,8 @@ import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 // ui
 import { Button, Collapsible } from "@plane/ui";
+import { DeleteWorkspaceModal } from "./delete-workspace-modal";
 // components
-import { DeleteWorkspaceModal } from "@/components/workspace";
 
 type TDeleteWorkspace = {
   workspace: IWorkspace | null;
