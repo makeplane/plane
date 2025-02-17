@@ -82,7 +82,10 @@ def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
                                 )
                 else:
                     # Handle other relationships
-                    related_queryset = getattr(instance, related_name).all()
+                    related_queryset = getattr(instance, related_name)(
+                        manager="objects"
+                    ).all()
+
                     for related_obj in related_queryset:
                         if hasattr(related_obj, "deleted_at"):
                             if not related_obj.deleted_at:

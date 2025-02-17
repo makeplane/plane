@@ -23,7 +23,9 @@ import { NameDescriptionUpdateStatus } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
+import { useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // store types
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
@@ -77,12 +79,24 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
     handleActionWithPermission,
   } = props;
   const router = useAppRouter();
+  const { getProjectIdentifierById } = useProject();
+
   const issue = inboxIssue?.issue;
   const currentInboxIssueId = issue?.id;
   // days left for snooze
   const numberOfDaysLeft = findHowManyDaysLeft(inboxIssue?.snoozed_till);
 
   if (!issue || !inboxIssue) return null;
+
+  const projectIdentifier = getProjectIdentifierById(issue?.project_id);
+
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug?.toString(),
+    projectId: issue?.project_id,
+    issueId: currentInboxIssueId,
+    projectIdentifier,
+    sequenceId: issue?.sequence_id,
+  });
 
   return (
     <Header variant={EHeaderVariant.SECONDARY} className="justify-start">
@@ -132,11 +146,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
               </CustomMenu.MenuItem>
             )}
             {isAcceptedOrDeclined && (
-              <CustomMenu.MenuItem
-                onClick={() =>
-                  router.push(`/${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`)
-                }
-              >
+              <CustomMenu.MenuItem onClick={() => router.push(workItemLink)}>
                 <div className="flex items-center gap-2">
                   <ExternalLink size={14} strokeWidth={2} />
                   Open work item

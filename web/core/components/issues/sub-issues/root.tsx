@@ -135,7 +135,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
     () => ({
       copyText: (text: string) => {
         const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-        copyTextToClipboard(`${originURL}/${text}`).then(() => {
+        copyTextToClipboard(`${originURL}${text}`).then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Link Copied!",
@@ -465,7 +465,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
               }}
               onSubmit={async (_issue: TIssue) => {
                 if (_issue.parent_id) {
-                  await subIssueOperations.addSubIssue(workspaceSlug, projectId, parentIssueId, [_issue.id]);
+                  await subIssueOperations.addSubIssue(workspaceSlug, projectId, _issue.parent_id, [_issue.id]);
                 }
               }}
             />

@@ -4,14 +4,13 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2, Users } from "lucide-react";
-import { EIssuesStoreType } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // hooks
 import { DoubleCircleIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useCommandPalette, useIssues, useUser } from "@/hooks/store";
+import { useCommandPalette, useIssueDetail, useUser } from "@/hooks/store";
 
 type Props = {
   closePalette: () => void;
@@ -27,9 +26,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
   // router
   const { workspaceSlug, projectId, issueId } = useParams();
   // hooks
-  const {
-    issues: { updateIssue },
-  } = useIssues(EIssuesStoreType.PROJECT);
+  const { updateIssue } = useIssueDetail();
   const { toggleCommandPaletteModal, toggleDeleteIssueModal } = useCommandPalette();
   const { data: currentUser } = useUser();
 
@@ -65,16 +62,10 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
       .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Copied to clipboard",
-        });
+        setToast({ type: TOAST_TYPE.SUCCESS, title: "Copied to clipboard" });
       })
       .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Some error occurred",
-        });
+        setToast({ type: TOAST_TYPE.ERROR, title: "Some error occurred" });
       });
   };
 
