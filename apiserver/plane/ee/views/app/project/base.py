@@ -2,7 +2,7 @@
 import json
 
 # Django imports
-from django.db.models import Q, Count
+from django.db.models import Q, Count, F
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -46,22 +46,33 @@ class ProjectAnalyticsEndpoint(BaseAPIView):
 
         return Response(issues, status=status.HTTP_200_OK)
 
-class ProjectFeatureEndpoint(BaseAPIView):
 
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-            ROLE.GUEST,
-        ],
-    )
-    def get(self, request, slug, project_id):
-        project_feature, _ = ProjectFeature.objects.get_or_create(
-            project_id=project_id)
-        serializer = ProjectFeatureSerializer(project_feature)
+class WorkspaceProjectFeatureEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug):
+        # Get all projects in the workspace
+        projects = Project.objects.filter(workspace__slug=slug)
+        # Create project feature only if it doesn't exist
+        for project in projects:
+            if not ProjectFeature.objects.filter(project=project).exists():
+                ProjectFeature.objects.create(
+                    workspace_id=project.workspace_id, project=project
+                )
+        # Get all project features in at workspace level
+        project_features = ProjectFeature.objects.filter(
+            workspace__slug=slug, project__in=projects
+        ).annotate(
+            is_issue_type_enabled=F("project__is_issue_type_enabled"),
+            is_time_tracking_enabled=F("project__is_time_tracking_enabled"),
+        )
+        serializer = ProjectFeatureSerializer(project_features, many=True)
+        # This API returns all project features, regardless of user membership.
+        # If only joined project features are returned,
+        # we need to handle fetching project features when a user joins a project
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class ProjectFeatureEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN])
     def patch(self, request, slug, project_id):
         project_feature = ProjectFeature.objects.get(

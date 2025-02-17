@@ -16,10 +16,12 @@ const EpicsLayout = observer(({ children }: { children: ReactNode }) => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { getProjectById } = useProject();
+  const { getProjectFeatures } = useProjectAdvanced();
   const { allowPermissions } = useUserPermissions();
   // derived values
   const project = getProjectById(projectId?.toString());
-  const isEpicsEnabled = project?.is_epic_enabled;
+  const projectFeatures = getProjectFeatures(projectId?.toString());
+  const isEpicsEnabled = projectFeatures?.is_epic_enabled;
 
   const pageTitle = project?.name ? `${project?.name} - Epics` : undefined;
 

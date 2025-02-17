@@ -245,8 +245,8 @@ export class IssueTypes implements IIssueTypesStore {
     (workspaceSlug: string, projectId: string, issueTypeFlagKey: IssueTypeFlagKeys): boolean => {
       const issueTypeFlagEnabled =
         this.rootStore.featureFlags.flags[workspaceSlug]?.[E_FEATURE_FLAGS[issueTypeFlagKey]];
-      const projectDetails = this.rootStore.projectRoot.project.getProjectById(projectId);
-      return (issueTypeFlagEnabled && projectDetails?.is_issue_type_enabled) ?? false;
+      const projectFeatures = this.rootStore.projectDetails.getProjectFeatures(projectId);
+      return (issueTypeFlagEnabled && projectFeatures?.is_issue_type_enabled) ?? false;
     }
   );
 
@@ -260,8 +260,8 @@ export class IssueTypes implements IIssueTypesStore {
   isEpicEnabledForProject = computedFn(
     (workspaceSlug: string, projectId: string, epicFlagKey: EpicIssueTypeFlagKeys): boolean => {
       const epicFlagEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace(epicFlagKey, false);
-      const projectDetails = this.rootStore.projectRoot.project.getProjectById(projectId);
-      return (epicFlagEnabled && projectDetails?.is_epic_enabled) ?? false;
+      const projectFeatures = this.rootStore.projectDetails.getProjectFeatures(projectId);
+      return (epicFlagEnabled && projectFeatures?.is_epic_enabled) ?? false;
     }
   );
 
@@ -507,7 +507,7 @@ export class IssueTypes implements IIssueTypesStore {
       const issueType = await this.issueTypesService.enable({ workspaceSlug, projectId });
       runInAction(() => {
         // enable `is_issue_type_enabled` in project details
-        set(this.rootStore.projectRoot.project.projectMap, [projectId, "is_issue_type_enabled"], true);
+        set(this.rootStore.projectDetails.features, [projectId, "is_issue_type_enabled"], true);
         // add issue type to the store
         this.addOrUpdateIssueTypes([issueType]);
         // get all issues
@@ -540,7 +540,6 @@ export class IssueTypes implements IIssueTypesStore {
       runInAction(() => {
         // enable `is_epic_enabled` in project details
         set(this.rootStore.projectDetails.features, [projectId, "is_epic_enabled"], true);
-        set(this.rootStore.projectRoot.project.projectMap, [projectId, "is_epic_enabled"], true);
         // add epic issue type to the store
         this.addOrUpdateEpicIssueTypes([epic]);
         this.loader = "loaded";
@@ -566,14 +565,12 @@ export class IssueTypes implements IIssueTypesStore {
       runInAction(() => {
         // disable `is_epic_enabled` in project details
         set(this.rootStore.projectDetails.features, [projectId, "is_epic_enabled"], false);
-        set(this.rootStore.projectRoot.project.projectMap, [projectId, "is_epic_enabled"], false);
       });
       await this.epicIssueTypesService.disable({ workspaceSlug, projectId });
     } catch (error) {
       runInAction(() => {
         // revert the changes
         set(this.rootStore.projectDetails.features, [projectId, "is_epic_enabled"], true);
-        set(this.rootStore.projectRoot.project.projectMap, [projectId, "is_epic_enabled"], true);
       });
       throw error;
     }

@@ -22,22 +22,21 @@ export const ProjectOverviewSidebarUpdatesRoot: FC<Props> = observer((props) => 
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getProjectById } = useProject();
-  const { features } = useProjectAdvanced();
-
+  const { getProjectFeatures } = useProjectAdvanced();
   // derived values
   const project = getProjectById(projectId);
+  const projectFeatures = getProjectFeatures(projectId);
 
   if (!project) return <></>;
 
   const isProjectUpdatesEnabled =
-    features &&
-    features[project.id] &&
-    features[project.id].is_project_updates_enabled &&
+    projectFeatures &&
+    projectFeatures.is_project_updates_enabled &&
     useFlag(workspaceSlug.toString(), "PROJECT_UPDATES");
 
   return (
     <>
-      {isEmpty(features[project.id]) ? (
+      {isEmpty(projectFeatures) ? (
         <Loader className="flex flex-col gap-4 py-4">
           <Loader.Item height="125px" width="100%" />
           <Loader.Item height="125px" width="100%" />

@@ -20,6 +20,7 @@ import {
   useFeatureFlags,
 } from "@/plane-web/hooks/store";
 // plane web types
+import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
@@ -33,6 +34,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   // store hooks
   const { fetchFeatureFlags } = useFeatureFlags();
   const { fetchWorkspaceFeatures, workspaceFeatures } = useWorkspaceFeatures();
+  const { fetchProjectFeatures } = useProjectAdvanced();
   const { fetchProjectStates } = useWorkspaceProjectStates();
   const { isTeamspacesFeatureEnabled, fetchTeamspaces } = useTeamspaces();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, fetchWorkspaceSubscribedPlan } =
@@ -67,6 +69,17 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   useSWR(
     workspaceSlug && currentWorkspace ? `WORKSPACE_FEATURES_${workspaceSlug}` : null,
     workspaceSlug && currentWorkspace ? () => fetchWorkspaceFeatures(workspaceSlug.toString()) : null,
+    { revalidateOnFocus: false }
+  );
+
+  // fetching project features
+  useSWR(
+    workspaceSlug ? `PROJECT_FEATURES_${workspaceSlug}` : null,
+    workspaceSlug
+      ? () => {
+          fetchProjectFeatures(workspaceSlug.toString());
+        }
+      : null,
     { revalidateOnFocus: false }
   );
 

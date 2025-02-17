@@ -18,9 +18,19 @@ class ProjectAttributeSerializer(BaseSerializer):
 
 
 class ProjectFeatureSerializer(BaseSerializer):
+    is_issue_type_enabled = serializers.BooleanField(read_only=True)
+    is_time_tracking_enabled = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = ProjectFeature
-        fields = "__all__"
+        fields = [
+            "id",
+            "is_project_updates_enabled",
+            "is_epic_enabled",
+            "is_issue_type_enabled",
+            "is_time_tracking_enabled",
+            "project_id",
+        ]
         read_only_fields = [
             "created_at",
             "updated_at",

@@ -20,9 +20,9 @@ const UpdatesSettingsPage = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { allowPermissions } = useUserPermissions();
-  const { toggleFeatures, features } = useProjectAdvanced();
+  const { getProjectFeatures, toggleProjectFeatures } = useProjectAdvanced();
   // derived values
-  const currentProjectDetails = features[projectId?.toString()];
+  const currentProjectDetails = getProjectFeatures(projectId?.toString());
   const canPerformProjectAdminActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
 
   if (!canPerformProjectAdminActions) {
@@ -44,7 +44,7 @@ const UpdatesSettingsPage = observer(() => {
     const settingsPayload = {
       is_project_updates_enabled: !currentProjectDetails?.["is_project_updates_enabled"],
     };
-    const updateProjectPromise = toggleFeatures(workspaceSlug.toString(), projectId.toString(), settingsPayload);
+    const updateProjectPromise = toggleProjectFeatures(workspaceSlug.toString(), projectId.toString(), settingsPayload);
     setPromiseToast(updateProjectPromise, {
       loading: "Updating project feature...",
       success: {

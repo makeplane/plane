@@ -2,8 +2,9 @@
 from django.urls import path
 
 # Module imports
-from plane.ee.views import ProjectFeatureEndpoint
 from plane.ee.views import (
+    WorkspaceProjectFeatureEndpoint,
+    ProjectFeatureEndpoint,
     ProjectLinkViewSet,
     ProjectAnalyticsEndpoint,
     ProjectAttributesEndpoint,
@@ -72,6 +73,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/reactions/<str:reaction_code>/",
         ProjectReactionViewSet.as_view({"delete": "destroy"}),
         name="project-reactions",
+    ),
+    path(
+        "workspaces/<str:slug>/workspace-project-features/",
+        WorkspaceProjectFeatureEndpoint.as_view(),
+        name="workspace-project-features",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/features/",
