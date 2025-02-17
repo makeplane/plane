@@ -601,6 +601,7 @@ export default class GithubController {
       // Get the event types and delivery id
       const eventType = req.headers["x-plane-event"];
       const event = req.body.event;
+
       if (event == "issue" || event == "issue_comment") {
         const payload = req.body as PlaneWebhookPayloadBase<ExIssue | ExIssueComment>;
 
@@ -612,7 +613,7 @@ export default class GithubController {
         if (event == "issue") {
           const labels = req.body.data.labels as ExIssueLabel[];
           // If labels doesn't include github label, then we don't need to process this event
-          if (!labels.find((label) => label.name.toLowerCase() === E_INTEGRATION_KEYS.GITHUB)) {
+          if (!labels.find((label) => label.name.toLowerCase() === E_INTEGRATION_KEYS.GITHUB.toLowerCase())) {
             return;
           }
 
