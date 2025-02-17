@@ -690,6 +690,7 @@
     "customize_time_range": "自定义时间范围",
     "loading": "加载中",
     "attachments": "附件",
+    "property": "属性",
     "properties": "属性",
     "parent": "父项",
     "remove": "移除",
@@ -843,8 +844,20 @@
     "disconnecting": "正在断开连接",
     "installing": "正在安装",
     "install": "安装",
+    "category": "类别",
+    "categories": "类别",
+    "saving": "保存中",
+    "save_changes": "保存更改",
+    "delete": "删除",
+    "deleting": "删除中",
     "pending": "待处理",
     "invite": "邀请"
+  },
+
+  "chart": {
+    "x_axis": "X轴",
+    "y_axis": "Y轴",
+    "metric": "指标"
   },
 
   "form": {
