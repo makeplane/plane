@@ -8,16 +8,16 @@ import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/el
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
-import { LinkIcon, Star, Settings, Share2, LogOut, MoreHorizontal, ChevronRight } from "lucide-react";
+import { LinkIcon, Settings, Share2, LogOut, MoreHorizontal, ChevronRight } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { CustomMenu, Tooltip, ArchiveIcon, setPromiseToast, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
+import { CustomMenu, Tooltip, ArchiveIcon, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 import { LeaveProjectModal, PublishProjectModal } from "@/components/project";
@@ -52,7 +52,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { t } = useTranslation();
   const { setTrackElement } = useEventTracker();
-  const { addProjectToFavorites, removeProjectFromFavorites, getPartialProjectById } = useProject();
+  const { getPartialProjectById } = useProject();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
   // states
@@ -67,7 +67,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const projectRef = useRef<HTMLDivElement | null>(null);
   const dragHandleRef = useRef<HTMLButtonElement | null>(null);
   // router
-  const router = useRouter();
   const { workspaceSlug, projectId: URLProjectId } = useParams();
   // derived values
   const project = getPartialProjectById(projectId);
@@ -84,40 +83,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
     workspaceSlug.toString(),
     project?.id
   );
-
-  const handleAddToFavorites = () => {
-    if (!workspaceSlug || !project) return;
-
-    const addToFavoritePromise = addProjectToFavorites(workspaceSlug.toString(), project.id);
-    setPromiseToast(addToFavoritePromise, {
-      loading: t("adding_project_to_favorites"),
-      success: {
-        title: t("success"),
-        message: () => t("project_added_to_favorites"),
-      },
-      error: {
-        title: t("error"),
-        message: () => t("couldnt_add_the_project_to_favorites"),
-      },
-    });
-  };
-
-  const handleRemoveFromFavorites = () => {
-    if (!workspaceSlug || !project) return;
-
-    const removeFromFavoritePromise = removeProjectFromFavorites(workspaceSlug.toString(), project.id);
-    setPromiseToast(removeFromFavoritePromise, {
-      loading: t("removing_project_from_favorites"),
-      success: {
-        title: t("success"),
-        message: () => t("project_removed_from_favorites"),
-      },
-      error: {
-        title: t("error"),
-        message: () => t("couldnt_remove_the_project_from_favorites"),
-      },
-    });
-  };
 
   const handleLeaveProject = () => {
     setTrackElement("APP_SIDEBAR_PROJECT_DROPDOWN");
@@ -222,11 +187,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
     if (URLProjectId === project.id) setIsProjectListOpen(true);
   }, [URLProjectId]);
 
-  const handleItemClick = () => {
-    if (!isProjectListOpen && !isMobile) router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
-    setIsProjectListOpen((prev) => !prev);
-  };
-
+  const handleItemClick = () => setIsProjectListOpen((prev) => !prev);
   return (
     <>
       <PublishProjectModal isOpen={publishModalOpen} project={project} onClose={() => setPublishModal(false)} />

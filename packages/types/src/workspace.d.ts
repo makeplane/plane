@@ -228,6 +228,16 @@ export type TWorkspacePaginationInfo = TPaginationInfo & {
   results: IWorkspace[];
 };
 
+export interface IWorkspaceSidebarNavigationItem {
+  key?: string;
+  is_pinned: boolean;
+  sort_order: number;
+}
+
+export interface IWorkspaceSidebarNavigation {
+  [key: string]: IWorkspaceSidebarNavigationItem;
+}
+
 export type TWorkspaceConnection<TConnectionConfig = object, TConnectionData = object> = {
   id: string;
   workspace_id: string;
