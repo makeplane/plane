@@ -9,7 +9,6 @@ from plane.app.views import (
     CycleProgressEndpoint,
     CycleAnalyticsEndpoint,
     TransferCycleIssueEndpoint,
-    CycleIssueStateAnalyticsEndpoint,
     CycleUserPropertiesEndpoint,
     CycleArchiveUnarchiveEndpoint,
 )
@@ -100,9 +99,5 @@ urlpatterns = [
         CycleAnalyticsEndpoint.as_view(),
         name="project-cycle",
     ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/cycle-progress/",
-        CycleIssueStateAnalyticsEndpoint.as_view(),
-        name="project-cycle-progress",
-    ),
+
 ]

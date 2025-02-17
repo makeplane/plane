@@ -45,7 +45,7 @@ app.conf.beat_schedule = {
         "schedule": crontab(hour="*/6", minute=0),
     },
     "track-entity-issue-state-progress": {
-        "task": "plane.bgtasks.entity_issue_state_progress_task.track_entity_issue_state_progress",
+        "task": "plane.ee.bgtasks.entity_issue_state_progress_task.track_entity_issue_state_progress",
         "schedule": crontab(hour=0, minute=0),
     },
     "check-every-12-hr-instance-version": {

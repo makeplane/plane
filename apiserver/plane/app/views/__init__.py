@@ -94,7 +94,6 @@ from .cycle.base import (
     CycleUserPropertiesEndpoint,
     CycleAnalyticsEndpoint,
     CycleProgressEndpoint,
-    CycleIssueStateAnalyticsEndpoint,
 )
 from .cycle.issue import CycleIssueViewSet
 from .cycle.archive import CycleArchiveUnarchiveEndpoint
