@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 // components
+import { useTranslation } from "@plane/i18n";
 // ui
 import { CycleModuleListLayout } from "@/components/ui";
 // hooks
@@ -24,6 +25,7 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
   // store hooks
   const { getFilteredCycleIds, getFilteredCompletedCycleIds, loader, currentProjectActiveCycleId } = useCycle();
   const { searchQuery } = useCycleFilter();
+  const { t } = useTranslation();
   // derived values
   const filteredCycleIds = getFilteredCycleIds(projectId, false);
   const filteredCompletedCycleIds = getFilteredCompletedCycleIds(projectId);
@@ -42,11 +44,11 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
             className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
             alt="No matching cycles"
           />
-          <h5 className="mb-1 mt-7 text-xl font-medium">No matching cycles</h5>
+          <h5 className="mb-1 mt-7 text-xl font-medium">{t("project_cycles.no_matching_cycles")}</h5>
           <p className="text-base text-custom-text-400">
             {searchQuery.trim() === ""
-              ? "Remove the filters to see all cycles"
-              : "Remove the search criteria to see all cycles"}
+              ? t("project_cycles.remove_filters_to_see_all_cycles")
+              : t("project_cycles.remove_search_criteria_to_see_all_cycles")}
           </p>
         </div>
       </div>

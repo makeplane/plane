@@ -40,7 +40,7 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
   return (
     <Card>
       <Link href={redirectionLink} className="text-lg font-semibold text-custom-text-300 hover:underline mb-4">
-        Your issue activities
+        Your work item activities
       </Link>
       {widgetStats.length > 0 ? (
         <div className="mt-4 space-y-6">

@@ -1,7 +1,7 @@
 // nivo
 import { PieSvgProps, ResponsivePie } from "@nivo/pie";
 // types
-import { CHARTS_THEME, DEFAULT_MARGIN } from "@/constants/graph";
+import { CHARTS_THEME, CHART_DEFAULT_MARGIN } from "@plane/constants";
 import { TGraph } from "./types";
 // constants
 
@@ -14,7 +14,7 @@ export const PieGraph: React.FC<TGraph & Omit<PieSvgProps<any>, "height" | "widt
 }) => (
   <div style={{ height, width }}>
     <ResponsivePie
-      margin={{ ...DEFAULT_MARGIN, ...(margin ?? {}) }}
+      margin={{ ...CHART_DEFAULT_MARGIN, ...(margin ?? {}) }}
       theme={{ ...CHARTS_THEME, ...(theme ?? {}) }}
       animate
       {...rest}

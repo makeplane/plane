@@ -9,7 +9,7 @@ export interface IRouterStore {
   setQuery: (query: ParsedUrlQuery) => void;
   // computed
   workspaceSlug: string | undefined;
-  teamId: string | undefined;
+  teamspaceId: string | undefined;
   projectId: string | undefined;
   cycleId: string | undefined;
   moduleId: string | undefined;
@@ -36,7 +36,7 @@ export class RouterStore implements IRouterStore {
       setQuery: action.bound,
       //computed
       workspaceSlug: computed,
-      teamId: computed,
+      teamspaceId: computed,
       projectId: computed,
       cycleId: computed,
       moduleId: computed,
@@ -71,11 +71,11 @@ export class RouterStore implements IRouterStore {
   }
 
   /**
-   * Returns the team id from the query
+   * Returns the teamspace id from the query
    * @returns string|undefined
    */
-  get teamId() {
-    return this.query?.teamId?.toString();
+  get teamspaceId() {
+    return this.query?.teamspaceId?.toString();
   }
 
   /**

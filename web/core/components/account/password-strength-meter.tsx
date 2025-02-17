@@ -1,6 +1,7 @@
 "use client";
 
 import { FC, useMemo } from "react";
+import { useTranslation } from "@plane/i18n";
 // import { CircleCheck } from "lucide-react";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -17,6 +18,7 @@ type TPasswordStrengthMeter = {
 
 export const PasswordStrengthMeter: FC<TPasswordStrengthMeter> = (props) => {
   const { password, isFocused = false } = props;
+  const { t } = useTranslation();
   // derived values
   const strength = useMemo(() => getPasswordStrength(password), [password]);
   const strengthBars = useMemo(() => {
@@ -24,40 +26,40 @@ export const PasswordStrengthMeter: FC<TPasswordStrengthMeter> = (props) => {
       case E_PASSWORD_STRENGTH.EMPTY: {
         return {
           bars: [`bg-custom-text-100`, `bg-custom-text-100`, `bg-custom-text-100`],
-          text: "Please enter your password.",
+          text: t("auth.common.password.errors.empty"),
           textColor: "text-custom-text-100",
         };
       }
       case E_PASSWORD_STRENGTH.LENGTH_NOT_VALID: {
         return {
           bars: [`bg-red-500`, `bg-custom-text-100`, `bg-custom-text-100`],
-          text: "Password length should me more than 8 characters.",
+          text: t("auth.common.password.errors.length"),
           textColor: "text-red-500",
         };
       }
       case E_PASSWORD_STRENGTH.STRENGTH_NOT_VALID: {
         return {
           bars: [`bg-red-500`, `bg-custom-text-100`, `bg-custom-text-100`],
-          text: "Password is weak.",
+          text: t("auth.common.password.errors.strength.weak"),
           textColor: "text-red-500",
         };
       }
       case E_PASSWORD_STRENGTH.STRENGTH_VALID: {
         return {
           bars: [`bg-green-500`, `bg-green-500`, `bg-green-500`],
-          text: "Password is strong.",
+          text: t("auth.common.password.errors.strength.strong"),
           textColor: "text-green-500",
         };
       }
       default: {
         return {
           bars: [`bg-custom-text-100`, `bg-custom-text-100`, `bg-custom-text-100`],
-          text: "Please enter your password.",
+          text: t("auth.common.password.errors.empty"),
           textColor: "text-custom-text-100",
         };
       }
     }
-  }, [strength]);
+  }, [strength,t]);
 
   const isPasswordMeterVisible = isFocused ? true : strength === E_PASSWORD_STRENGTH.STRENGTH_VALID ? false : true;
 

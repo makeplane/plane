@@ -3,39 +3,40 @@
 import React, { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IIssueLabel } from "@plane/types";
-// hooks
 import { Button, Loader } from "@plane/ui";
-import { EmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state";
 import {
   CreateUpdateLabelInline,
   DeleteLabelModal,
   ProjectSettingLabelGroup,
   ProjectSettingLabelItem,
 } from "@/components/labels";
-import { EmptyStateType } from "@/constants/empty-state";
+// hooks
 import { useLabel, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-// components
-// ui
-// types
-// constants
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// plane web imports
 
 export const ProjectSettingsLabelList: React.FC = observer(() => {
+  // router
+  const { workspaceSlug, projectId } = useParams();
+  // refs
+  const scrollToRef = useRef<HTMLFormElement>(null);
   // states
   const [showLabelForm, setLabelForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectDeleteLabel, setSelectDeleteLabel] = useState<IIssueLabel | null>(null);
-  // refs
-  const scrollToRef = useRef<HTMLFormElement>(null);
-  // router
-  const { workspaceSlug, projectId } = useParams();
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { projectLabels, updateLabelPosition, projectLabelsTree } = useLabel();
   const { allowPermissions } = useUserPermissions();
-
   // derived values
   const isEditable = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/project-settings/labels" });
 
   const newLabel = () => {
     setIsUpdating(false);
@@ -72,7 +73,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         <h3 className="text-xl font-medium">Labels</h3>
         {isEditable && (
           <Button variant="primary" onClick={newLabel} size="sm">
-            Add label
+            {t("common.add_label")}
           </Button>
         )}
       </div>
@@ -94,7 +95,11 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         {projectLabels ? (
           projectLabels.length === 0 && !showLabelForm ? (
             <div className="flex items-center justify-center h-full w-full">
-              <EmptyState type={EmptyStateType.PROJECT_SETTINGS_LABELS} />
+              <DetailedEmptyState
+                title={t("project_settings.empty_state.labels.title")}
+                description={t("project_settings.empty_state.labels.description")}
+                assetPath={resolvedPath}
+              />
             </div>
           ) : (
             projectLabelsTree && (

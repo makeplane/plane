@@ -7,18 +7,18 @@ import Link from "next/link";
 
 import { useTheme } from "next-themes";
 import useSWR, { mutate } from "swr";
-// icons
 import { CheckCircle2 } from "lucide-react";
+// plane imports
+import { ROLE, MEMBER_ACCEPTED, EUserPermissions } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // types
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/common";
-// constants
-import { MEMBER_ACCEPTED } from "@/constants/event-tracker";
+import { WorkspaceLogo } from "@/components/workspace/logo";
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
-import { ROLE } from "@/constants/workspace";
 // helpers
 import { truncateText } from "@/helpers/string.helper";
 import { getUserRole } from "@/helpers/user.helper";
@@ -27,8 +27,6 @@ import { useEventTracker, useUser, useUserProfile, useWorkspace } from "@/hooks/
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { AuthenticationWrapper } from "@/lib/wrappers";
-// plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 // images
@@ -45,6 +43,7 @@ const UserInvitationsPage = observer(() => {
   // router
   const router = useAppRouter();
   // store hooks
+  const { t } = useTranslation();
   const { captureEvent, joinWorkspaceMetricGroup } = useEventTracker();
   const { data: currentUser } = useUser();
   const { updateUserProfile } = useUserProfile();
@@ -72,8 +71,8 @@ const UserInvitationsPage = observer(() => {
     if (invitationsRespond.length === 0) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Please select at least one invitation.",
+        title: t("error"),
+        message: t("please_select_at_least_one_invitation"),
       });
       return;
     }
@@ -107,8 +106,8 @@ const UserInvitationsPage = observer(() => {
           .catch(() => {
             setToast({
               type: TOAST_TYPE.ERROR,
-              title: "Error!",
-              message: "Something went wrong, Please try again.",
+              title: t("error"),
+              message: t("something_went_wrong_please_try_again"),
             });
             setIsJoiningWorkspaces(false);
           });
@@ -122,8 +121,8 @@ const UserInvitationsPage = observer(() => {
         });
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Something went wrong, Please try again.",
+          title: t("error"),
+          message: t("something_went_wrong_please_try_again"),
         });
         setIsJoiningWorkspaces(false);
       });
@@ -152,8 +151,8 @@ const UserInvitationsPage = observer(() => {
           invitations.length > 0 ? (
             <div className="relative flex h-full justify-center px-8 pb-8 sm:w-10/12 sm:items-center sm:justify-start sm:p-0 sm:pr-[8.33%] md:w-9/12 lg:w-4/5">
               <div className="w-full space-y-10">
-                <h5 className="text-lg">We see that someone has invited you to</h5>
-                <h4 className="text-2xl font-semibold">Join a workspace</h4>
+                <h5 className="text-lg">{t("we_see_that_someone_has_invited_you_to_join_a_workspace")}</h5>
+                <h4 className="text-2xl font-semibold">{t("join_a_workspace")}</h4>
                 <div className="max-h-[37vh] space-y-4 overflow-y-auto md:w-3/5">
                   {invitations.map((invitation) => {
                     const isSelected = invitationsRespond.includes(invitation.id);
@@ -169,21 +168,11 @@ const UserInvitationsPage = observer(() => {
                         onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                       >
                         <div className="flex-shrink-0">
-                          <div className="grid h-9 w-9 place-items-center rounded">
-                            {invitation.workspace.logo && invitation.workspace.logo.trim() !== "" ? (
-                              <img
-                                src={invitation.workspace.logo}
-                                height="100%"
-                                width="100%"
-                                className="rounded"
-                                alt={invitation.workspace.name}
-                              />
-                            ) : (
-                              <span className="grid h-9 w-9 place-items-center rounded bg-gray-700 px-3 py-1.5 uppercase text-white">
-                                {invitation.workspace.name[0]}
-                              </span>
-                            )}
-                          </div>
+                          <WorkspaceLogo
+                            logo={invitation.workspace.logo_url}
+                            name={invitation.workspace.name}
+                            classNames="size-9 flex-shrink-0"
+                          />
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="text-sm font-medium">{truncateText(invitation.workspace.name, 30)}</div>
@@ -207,12 +196,12 @@ const UserInvitationsPage = observer(() => {
                     disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
                     loading={isJoiningWorkspaces}
                   >
-                    Accept & Join
+                    {t("accept_and_join")}
                   </Button>
                   <Link href={`/${redirectWorkspaceSlug}`}>
                     <span>
                       <Button variant="neutral-primary" size="md">
-                        Go Home
+                        {t("go_home")}
                       </Button>
                     </span>
                   </Link>
@@ -222,11 +211,11 @@ const UserInvitationsPage = observer(() => {
           ) : (
             <div className="fixed left-0 top-0 grid h-full w-full place-items-center">
               <EmptyState
-                title="No pending invites"
-                description="You can see here if someone invites you to a workspace."
+                title={t("no_pending_invites")}
+                description={t("you_can_see_here_if_someone_invites_you_to_a_workspace")}
                 image={emptyInvitation}
                 primaryButton={{
-                  text: "Back to home",
+                  text: t("back_to_home"),
                   onClick: () => router.push("/"),
                 }}
               />

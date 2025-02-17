@@ -2,6 +2,8 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronUp, PenSquare, Search } from "lucide-react";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // types
 import { TIssue } from "@plane/types";
 // components
@@ -12,9 +14,9 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const SidebarQuickActions = observer(() => {
+  const { t } = useTranslation();
   // states
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
   const [isDraftButtonOpen, setIsDraftButtonOpen] = useState(false);
@@ -92,7 +94,9 @@ export const SidebarQuickActions = observer(() => {
           disabled={disabled}
         >
           <PenSquare className="size-4" />
-          {!isSidebarCollapsed && <span className="text-sm font-medium">New issue</span>}
+          {!isSidebarCollapsed && (
+            <span className="text-sm font-medium truncate max-w-[145px]">{t("sidebar.new_work_item")}</span>
+          )}
         </button>
         <button
           className={cn(

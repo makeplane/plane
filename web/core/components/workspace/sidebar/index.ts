@@ -6,4 +6,7 @@ export * from "./projects-list";
 export * from "./project-navigation";
 export * from "./quick-actions";
 export * from "./user-menu";
+export * from "./user-menu-item";
 export * from "./workspace-menu";
+export * from "./workspace-menu-item";
+export * from "./workspace-menu-header";

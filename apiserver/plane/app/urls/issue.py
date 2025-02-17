@@ -24,6 +24,10 @@ from plane.app.views import (
     IssueDetailEndpoint,
     IssueAttachmentV2Endpoint,
     IssueBulkUpdateDateEndpoint,
+    IssueVersionEndpoint,
+    IssueDescriptionVersionEndpoint,
+    IssueMetaEndpoint,
+    IssueDetailIdentifierEndpoint,
 )
 
 urlpatterns = [
@@ -255,5 +259,35 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-dates/",
         IssueBulkUpdateDateEndpoint.as_view(),
         name="project-issue-dates",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/versions/",
+        IssueVersionEndpoint.as_view(),
+        name="page-versions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/versions/<uuid:pk>/",
+        IssueVersionEndpoint.as_view(),
+        name="page-versions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/description-versions/",
+        IssueDescriptionVersionEndpoint.as_view(),
+        name="page-versions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/description-versions/<uuid:pk>/",
+        IssueDescriptionVersionEndpoint.as_view(),
+        name="page-versions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/meta/",
+        IssueMetaEndpoint.as_view(),
+        name="issue-meta",
+    ),
+    path(
+        "workspaces/<str:slug>/work-items/<str:project_identifier>-<str:issue_identifier>/",
+        IssueDetailIdentifierEndpoint.as_view(),
+        name="issue-detail-identifier",
     ),
 ]

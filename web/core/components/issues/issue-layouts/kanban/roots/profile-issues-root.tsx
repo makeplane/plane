@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 // hooks
 import { useParams } from "next/navigation";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { ProjectIssueQuickActions } from "@/components/issues";
 import { useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 // components
 // types

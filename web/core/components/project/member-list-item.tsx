@@ -2,11 +2,11 @@
 
 import { observer } from "mobx-react";
 
+import { PROJECT_MEMBER_LEAVE } from "@plane/constants";
 import { TOAST_TYPE, Table, setToast } from "@plane/ui";
 // components
 import { ConfirmProjectMemberRemove } from "@/components/project";
 // constants
-import { PROJECT_MEMBER_LEAVE } from "@/constants/event-tracker";
 
 // hooks
 import { useEventTracker, useMember, useProject, useUser, useUserPermissions } from "@/hooks/store";
@@ -27,7 +27,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
   // store hooks
   const { leaveProject } = useUserPermissions();
   const { data: currentUser } = useUser();
-  const { fetchProjects } = useProject();
+  const { fetchProjectDetails } = useProject();
   const {
     project: { removeMemberFromProject },
   } = useMember();
@@ -38,19 +38,19 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !projectId || !memberId) return;
 
     if (memberId === currentUser?.id) {
-      router.push(`/${workspaceSlug}/projects`);
       await leaveProject(workspaceSlug.toString(), projectId.toString())
         .then(async () => {
+          router.push(`/${workspaceSlug}/projects`);
           captureEvent(PROJECT_MEMBER_LEAVE, {
             state: "SUCCESS",
             element: "Project settings members page",
           });
-          await fetchProjects(workspaceSlug.toString());
+          await fetchProjectDetails(workspaceSlug.toString(), projectId.toString());
         })
         .catch((err) =>
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
+            title: "You can’t leave this project yet.",
             message: err?.error || "Something went wrong. Please try again.",
           })
         );
@@ -58,14 +58,13 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
       await removeMemberFromProject(workspaceSlug.toString(), projectId.toString(), memberId).catch((err) =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
+          title: "You can’t remove the member from this project yet.",
           message: err?.error || "Something went wrong. Please try again.",
         })
       );
   };
 
   if (!memberDetails) return null;
-  removeMemberModal && console.log("removeMemberModal", JSON.parse(JSON.stringify(removeMemberModal?.member)));
   return (
     <>
       {removeMemberModal && (

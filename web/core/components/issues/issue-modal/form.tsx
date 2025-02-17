@@ -5,8 +5,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 // editor
-import { EIssuesStoreType } from "@plane/constants";
+import { ETabIndices, EIssuesStoreType } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import type { TIssue, ISearchIssueResponse, TWorkspaceDraftIssue } from "@plane/types";
 // hooks
@@ -20,7 +22,6 @@ import {
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
 import { CreateLabelModal } from "@/components/labels";
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getTextContent } from "@/helpers/editor.helper";
@@ -77,6 +78,7 @@ export interface IssueFormProps {
 }
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
+  const { t } = useTranslation();
   const {
     data,
     issueTitleRef,
@@ -89,10 +91,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     onCreateMoreToggleChange,
     isDraft,
     moveToIssue = false,
-    modalTitle,
+    modalTitle = `${data?.id ? t("update") : isDraft ? t("create_a_draft") : t("create_new_issue")}`,
     primaryButtonText = {
-      default: `${data?.id ? "Update" : isDraft ? "Save to Drafts" : "Save"}`,
-      loading: `${data?.id ? "Updating" : "Saving"}`,
+      default: `${data?.id ? t("update") : isDraft ? t("save_to_drafts") : t("save")}`,
+      loading: `${data?.id ? t("updating") : t("saving")}`,
     },
     isDuplicateModalOpen,
     handleDuplicateIssueModal,
@@ -198,8 +200,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     if (!editorRef.current?.isEditorReadyToDiscard()) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Editor is not ready to discard changes.",
+        title: t("error"),
+        message: t("editor_is_not_ready_to_discard_changes"),
       });
       return;
     }
@@ -264,7 +266,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: "Failed to move issue to project. Please try again.",
+        message: "Failed to move work item to project. Please try again.",
       });
     } finally {
       setIsMoving(false);
@@ -391,7 +393,11 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   <DeDupeButtonRoot
                     workspaceSlug={workspaceSlug?.toString()}
                     isDuplicateModalOpen={isDuplicateModalOpen}
-                    label={`${duplicateIssues.length} duplicate issue${duplicateIssues.length > 1 ? "s" : ""} found!`}
+                    label={
+                      duplicateIssues.length === 1
+                        ? `${duplicateIssues.length} ${t("duplicate_issue_found")}`
+                        : `${duplicateIssues.length} ${t("duplicate_issues_found")}`
+                    }
                     handleOnClick={() => handleDuplicateIssueModal(!isDuplicateModalOpen)}
                   />
                 )}
@@ -479,7 +485,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   setSelectedParentIssue={setSelectedParentIssue}
                 />
               </div>
-              <div className="flex items-center justify-end gap-4 py-3">
+              <div className="flex items-center justify-end gap-4 py-3" tabIndex={getIndex("create_more")}>
                 {!data?.id && (
                   <div
                     className="inline-flex items-center gap-1.5 cursor-pointer"
@@ -487,42 +493,44 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     onKeyDown={(e) => {
                       if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
                     }}
-                    tabIndex={getIndex("create_more")}
                     role="button"
                   >
                     <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
-                    <span className="text-xs">Create more</span>
+                    <span className="text-xs">{t("create_more")}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="neutral-primary"
-                    size="sm"
-                    onClick={() => {
-                      if (editorRef.current?.isEditorReadyToDiscard()) {
-                        onClose();
-                      } else {
-                        setToast({
-                          type: TOAST_TYPE.ERROR,
-                          title: "Error!",
-                          message: "Editor is still processing changes. Please wait before proceeding.",
-                        });
-                      }
-                    }}
-                    tabIndex={getIndex("discard_button")}
-                  >
-                    Discard
-                  </Button>
-                  <Button
-                    variant={moveToIssue ? "neutral-primary" : "primary"}
-                    type="submit"
-                    size="sm"
-                    ref={submitBtnRef}
-                    loading={isSubmitting}
-                    tabIndex={isDraft ? getIndex("submit_button") : getIndex("draft_button")}
-                  >
-                    {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
-                  </Button>
+                  <div tabIndex={getIndex("discard_button")}>
+                    <Button
+                      variant="neutral-primary"
+                      size="sm"
+                      onClick={() => {
+                        if (editorRef.current?.isEditorReadyToDiscard()) {
+                          onClose();
+                        } else {
+                          setToast({
+                            type: TOAST_TYPE.ERROR,
+                            title: "Error!",
+                            message: "Editor is still processing changes. Please wait before proceeding.",
+                          });
+                        }
+                      }}
+                    >
+                      {t("discard")}
+                    </Button>
+                  </div>
+                  <div tabIndex={isDraft ? getIndex("submit_button") : getIndex("draft_button")}>
+                    <Button
+                      variant={moveToIssue ? "neutral-primary" : "primary"}
+                      type="submit"
+                      size="sm"
+                      ref={submitBtnRef}
+                      loading={isSubmitting}
+                    >
+                      {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
+                    </Button>
+                  </div>
+
                   {moveToIssue && (
                     <Button
                       variant="primary"
@@ -532,7 +540,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       onClick={handleMoveToProjects}
                       disabled={isMoving}
                     >
-                      Add to project
+                      {t("add_to_project")}
                     </Button>
                   )}
                 </div>

@@ -2,20 +2,16 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-// constants
-import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
-// types
+// plane imports
+import { WEB_BASE_URL, ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
+import { InstanceWorkspaceService } from "@plane/services";
 import { IWorkspace } from "@plane/types";
 // components
 import { Button, CustomSelect, getButtonStyling, Input, setToast, TOAST_TYPE } from "@plane/ui";
-// helpers
-import { WEB_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
-// services
-import { WorkspaceService } from "@/services/workspace.service";
 
-const workspaceService = new WorkspaceService();
+const instanceWorkspaceService = new InstanceWorkspaceService();
 
 export const WorkspaceCreateForm = () => {
   // router
@@ -42,8 +38,8 @@ export const WorkspaceCreateForm = () => {
   const workspaceBaseURL = encodeURI(WEB_BASE_URL || window.location.origin + "/");
 
   const handleCreateWorkspace = async (formData: IWorkspace) => {
-    await workspaceService
-      .workspaceSlugCheck(formData.slug)
+    await instanceWorkspaceService
+      .slugCheck(formData.slug)
       .then(async (res) => {
         if (res.status === true && !RESTRICTED_URLS.includes(formData.slug)) {
           setSlugError(false);

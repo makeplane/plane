@@ -1,5 +1,6 @@
 import { MutableRefObject } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -62,7 +63,7 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
           const subGroupByVisibilityToggle = visibilitySubGroupByGroupCount(groupCount, showEmptyGroup);
 
           if (subGroupByVisibilityToggle === false) return <></>;
-
+          const { t } = useTranslation();
           return (
             <div key={`${sub_group_by}_${_list.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
               <HeaderGroupByCard
@@ -75,7 +76,7 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
                 collapsedGroups={collapsedGroups}
                 handleCollapsedGroups={handleCollapsedGroups}
                 issuePayload={_list.payload}
-              />
+              />{" "}
             </div>
           );
         })}
@@ -155,6 +156,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
       {list &&
         list.length > 0 &&
         list.map((_list: IGroupByColumn, subGroupIndex) => {
+          const { t } = useTranslation();
           const issueCount = getGroupIssueCount(undefined, _list.id, true) ?? 0;
           const subGroupByVisibilityToggle = visibilitySubGroupBy(_list, issueCount);
           if (subGroupByVisibilityToggle.showGroup === false) return <></>;
@@ -165,7 +167,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   <HeaderSubGroupByCard
                     column_id={_list.id}
                     icon={_list.icon}
-                    title={_list.name || ""}
+                    title={_list.name}
                     count={issueCount}
                     collapsedGroups={collapsedGroups}
                     handleCollapsedGroups={handleCollapsedGroups}

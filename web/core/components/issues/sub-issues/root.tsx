@@ -135,11 +135,11 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
     () => ({
       copyText: (text: string) => {
         const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-        copyTextToClipboard(`${originURL}/${text}`).then(() => {
+        copyTextToClipboard(`${originURL}${text}`).then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Link Copied!",
-            message: "Issue link copied to clipboard.",
+            message: "Work item link copied to clipboard.",
           });
         });
       },
@@ -150,7 +150,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
-            message: "Error fetching sub-issues",
+            message: "Error fetching sub-work items",
           });
         }
       },
@@ -160,13 +160,13 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",
-            message: "Sub-issues added successfully",
+            message: "Sub-work items added successfully",
           });
         } catch (error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
-            message: "Error adding sub-issue",
+            message: "Error adding sub-work item",
           });
         }
       },
@@ -194,7 +194,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",
-            message: "Sub-issue updated successfully",
+            message: "Sub-work item updated successfully",
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
         } catch (error) {
@@ -210,7 +210,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
-            message: "Error updating sub-issue",
+            message: "Error updating sub-work item",
           });
         }
       },
@@ -221,7 +221,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",
-            message: "Sub-issue removed successfully",
+            message: "Sub-work item removed successfully",
           });
           captureIssueEvent({
             eventName: "Sub-issue removed",
@@ -246,7 +246,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
-            message: "Error removing sub-issue",
+            message: "Error removing sub-work item",
           });
         }
       },
@@ -269,7 +269,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
-            message: "Error deleting issue",
+            message: "Error deleting work item",
           });
         }
       },
@@ -335,7 +335,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                         />
                       )}
                     </div>
-                    <div>Sub-issues</div>
+                    <div>Sub-work items</div>
                   </button>
                   <div className="flex items-center gap-2 text-custom-text-300">
                     <CircularProgressIndicator
@@ -358,7 +358,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                     label={
                       <>
                         <Plus className="h-3 w-3" />
-                        Add sub-issue
+                        Add sub-work item
                       </>
                     }
                     buttonClassName="whitespace-nowrap"
@@ -410,12 +410,12 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
           ) : (
             !disabled && (
               <div className="flex items-center justify-between">
-                <div className="text-xs italic text-custom-text-300">No sub-issues yet</div>
+                <div className="text-xs italic text-custom-text-300">No sub-work items yet</div>
                 <CustomMenu
                   label={
                     <>
                       <Plus className="h-3 w-3" />
-                      Add sub-issue
+                      Add sub-work item
                     </>
                   }
                   buttonClassName="whitespace-nowrap"
@@ -465,7 +465,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
               }}
               onSubmit={async (_issue: TIssue) => {
                 if (_issue.parent_id) {
-                  await subIssueOperations.addSubIssue(workspaceSlug, projectId, parentIssueId, [_issue.id]);
+                  await subIssueOperations.addSubIssue(workspaceSlug, projectId, _issue.parent_id, [_issue.id]);
                 }
               }}
             />

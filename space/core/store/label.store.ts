@@ -1,7 +1,9 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+// plane imports
+import { SitesLabelService } from "@plane/services";
 import { IIssueLabel } from "@plane/types";
-import { LabelService } from "@/services/label.service";
+// store
 import { CoreRootStore } from "./root.store";
 
 export interface IIssueLabelStore {
@@ -16,7 +18,7 @@ export interface IIssueLabelStore {
 
 export class LabelStore implements IIssueLabelStore {
   labelMap: Record<string, IIssueLabel> = {};
-  labelService: LabelService;
+  labelService: SitesLabelService;
   rootStore: CoreRootStore;
 
   constructor(_rootStore: CoreRootStore) {
@@ -28,7 +30,7 @@ export class LabelStore implements IIssueLabelStore {
       // fetch action
       fetchLabels: action,
     });
-    this.labelService = new LabelService();
+    this.labelService = new SitesLabelService();
     this.rootStore = _rootStore;
   }
 
@@ -51,7 +53,7 @@ export class LabelStore implements IIssueLabelStore {
   };
 
   fetchLabels = async (anchor: string) => {
-    const labelsResponse = await this.labelService.getLabels(anchor);
+    const labelsResponse = await this.labelService.list(anchor);
     runInAction(() => {
       this.labelMap = {};
       for (const label of labelsResponse) {

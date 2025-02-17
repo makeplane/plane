@@ -1,13 +1,13 @@
 "use client";
 
 import React from "react";
-import { resolveGeneralTheme } from "helpers/common.helper";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme as nextUseTheme } from "next-themes";
 // ui
 import { Button, getButtonStyling } from "@plane/ui";
+import { resolveGeneralTheme } from "@plane/utils";
 // hooks
 import { useTheme } from "@/hooks/store";
 // icons

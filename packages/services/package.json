@@ -1,0 +1,14 @@
+{
+  "name": "@plane/services",
+  "version": "0.24.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "scripts": {
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:errors": "eslint src --ext .ts,.tsx --quiet"
+  },
+  "dependencies": {
+    "@plane/constants": "*",
+    "axios": "^1.7.9"
+  }
+}

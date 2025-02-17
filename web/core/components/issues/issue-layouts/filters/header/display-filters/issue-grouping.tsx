@@ -1,20 +1,27 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { TIssueGroupingFilters } from "@plane/types";
-
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
-// types
-import { ISSUE_FILTER_OPTIONS } from "@/constants/issue";
 // constants
 
 type Props = {
   selectedIssueType: TIssueGroupingFilters | undefined;
   handleUpdate: (val: TIssueGroupingFilters) => void;
+  isEpic?: boolean;
 };
 
+const ISSUE_FILTER_OPTIONS: {
+  key: TIssueGroupingFilters;
+  title: string;
+}[] = [
+  { key: null, title: "All" },
+  { key: "active", title: "Active" },
+  { key: "backlog", title: "Backlog" },
+];
+
 export const FilterIssueGrouping: React.FC<Props> = observer((props) => {
-  const { selectedIssueType, handleUpdate } = props;
+  const { selectedIssueType, handleUpdate, isEpic = false } = props;
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
@@ -23,7 +30,7 @@ export const FilterIssueGrouping: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title="Issue Grouping"
+        title={`${isEpic ? "Epic" : "Work item"} Grouping`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -34,7 +41,7 @@ export const FilterIssueGrouping: React.FC<Props> = observer((props) => {
               key={issueType?.key}
               isChecked={activeIssueType === issueType?.key ? true : false}
               onClick={() => handleUpdate(issueType?.key)}
-              title={issueType.title}
+              title={`${issueType.title} ${isEpic ? "Epics" : "Work items"}`}
               multiple={false}
             />
           ))}

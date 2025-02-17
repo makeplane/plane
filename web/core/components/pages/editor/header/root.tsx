@@ -8,25 +8,26 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
 // store
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   editorReady: boolean;
   editorRef: React.RefObject<EditorRefApi>;
-  handleDuplicatePage: () => void;
-  page: IPage;
+  page: TPageInstance;
   setSidePeekVisible: (sidePeekState: boolean) => void;
   sidePeekVisible: boolean;
 };
 
 export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
-  const { editorReady, editorRef, setSidePeekVisible, sidePeekVisible, handleDuplicatePage, page } = props;
+  const { editorReady, editorRef, page, setSidePeekVisible, sidePeekVisible } = props;
   // derived values
   const { isContentEditable } = page;
   // page filters
-  const { isFullWidth } = usePageFilters();
+  const { isFullWidth, isStickyToolbarEnabled } = usePageFilters();
+  // derived values
+  const resolvedEditorRef = editorRef.current;
 
-  if (!editorRef.current) return null;
+  if (!resolvedEditorRef) return null;
 
   return (
     <>
@@ -47,15 +48,15 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
               />
             </div>
           )}
-          {editorReady && isContentEditable && editorRef.current && <PageToolbar editorRef={editorRef?.current} />}
+          {isStickyToolbarEnabled && editorReady && isContentEditable && editorRef.current && (
+            <PageToolbar editorRef={editorRef?.current} />
+          )}
         </Header.LeftItem>
-        <PageExtraOptions editorRef={editorRef} handleDuplicatePage={handleDuplicatePage} page={page} />
+        <PageExtraOptions editorRef={resolvedEditorRef} page={page} />
       </Header>
       <div className="md:hidden">
         <PageEditorMobileHeaderRoot
-          editorRef={editorRef}
-          editorReady={editorReady}
-          handleDuplicatePage={handleDuplicatePage}
+          editorRef={resolvedEditorRef}
           page={page}
           sidePeekVisible={sidePeekVisible}
           setSidePeekVisible={setSidePeekVisible}

@@ -4,8 +4,8 @@ import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, Component, Plus, Search, Tag } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 // components
 import { IssueLabelsList } from "@/components/ui";
 // helpers
@@ -39,6 +39,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
     createLabelEnabled = false,
     buttonClassName,
   } = props;
+  const { t } = useTranslation();
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -111,31 +112,29 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
       disabled={disabled}
       onKeyDown={handleKeyDown}
     >
-      <Combobox.Button as={Fragment}>
-        <button
-          type="button"
-          ref={setReferenceElement}
-          className={cn("h-full flex cursor-pointer items-center gap-2 text-xs text-custom-text-200", buttonClassName)}
-          onClick={handleOnClick}
-        >
-          {label ? (
-            label
-          ) : value && value.length > 0 ? (
-            <span className="flex items-center justify-center gap-2 text-xs h-full">
-              <IssueLabelsList
-                labels={value.map((v) => projectLabels?.find((l) => l.id === v)) ?? []}
-                length={3}
-                showLength
-              />
-            </span>
-          ) : (
-            <div className="h-full flex items-center justify-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80">
-              <Tag className="h-3 w-3 flex-shrink-0" />
-              <span>Labels</span>
-            </div>
-          )}
-        </button>
-      </Combobox.Button>
+      <button
+        type="button"
+        ref={setReferenceElement}
+        className={cn("h-full flex cursor-pointer items-center gap-2 text-xs text-custom-text-200", buttonClassName)}
+        onClick={handleOnClick}
+      >
+        {label ? (
+          label
+        ) : value && value.length > 0 ? (
+          <span className="flex items-center justify-center gap-2 text-xs h-full">
+            <IssueLabelsList
+              labels={value.map((v) => projectLabels?.find((l) => l.id === v)) ?? []}
+              length={3}
+              showLength
+            />
+          </span>
+        ) : (
+          <div className="h-full flex items-center justify-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80">
+            <Tag className="h-3 w-3 flex-shrink-0" />
+            <span>{t("labels")}</span>
+          </div>
+        )}
+      </button>
 
       {isDropdownOpen && (
         <Combobox.Options className="fixed z-10" static>
@@ -152,7 +151,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
                 ref={inputRef}
                 className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search"
+                placeholder={t("search")}
                 displayValue={(assigned: any) => assigned?.name}
               />
             </div>
@@ -232,10 +231,10 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
                       );
                   })
                 ) : (
-                  <p className="text-custom-text-400 italic py-1 px-1.5">No matching results</p>
+                  <p className="text-custom-text-400 italic py-1 px-1.5">{t("no_matching_results")}</p>
                 )
               ) : (
-                <p className="text-custom-text-400 italic py-1 px-1.5">Loading...</p>
+                <p className="text-custom-text-400 italic py-1 px-1.5">{t("loading")}</p>
               )}
               {createLabelEnabled && (
                 <button
@@ -244,7 +243,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
                   onClick={() => setIsOpen(true)}
                 >
                   <Plus className="h-3 w-3" aria-hidden="true" />
-                  <span className="whitespace-nowrap">Create new label</span>
+                  <span className="whitespace-nowrap">{t("create_new_label")}</span>
                 </button>
               )}
             </div>

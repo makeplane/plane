@@ -1,6 +1,8 @@
 import React, { forwardRef } from "react";
 // editor
 import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef } from "@plane/editor";
+// plane types
+import { TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 // helpers
@@ -11,12 +13,10 @@ import { useEditorMention } from "@/hooks/use-editor-mention";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
-// services
-import { ProjectService } from "@/services/project";
-const projectService = new ProjectService();
 
 interface RichTextEditorWrapperProps
   extends Omit<IRichTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
+  searchMentionCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
@@ -24,13 +24,13 @@ interface RichTextEditorWrapperProps
 }
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
-  const { containerClassName, workspaceSlug, workspaceId, projectId, uploadFile, ...rest } = props;
+  const { containerClassName, workspaceSlug, workspaceId, projectId, searchMentionCallback, uploadFile, ...rest } =
+    props;
   // editor flaggings
   const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // use editor mention
   const { fetchMentions } = useEditorMention({
-    searchEntity: async (payload) =>
-      await projectService.searchEntity(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "", payload),
+    searchEntity: async (payload) => await searchMentionCallback(payload),
   });
   // file size
   const { maxFileSize } = useFileSize();

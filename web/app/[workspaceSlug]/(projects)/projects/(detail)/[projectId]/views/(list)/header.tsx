@@ -1,43 +1,28 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Layers } from "lucide-react";
 // ui
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink, Logo } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common";
 import { ViewListHeader } from "@/components/views";
 // hooks
 import { useCommandPalette, useProject } from "@/hooks/store";
+// plane web
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 
 export const ProjectViewsHeader = observer(() => {
-  // router
-  const { workspaceSlug } = useParams();
   // store hooks
   const { toggleCreateViewModal } = useCommandPalette();
-  const { currentProjectDetails, loader } = useProject();
+  const { loader } = useProject();
 
   return (
     <>
       <Header>
         <Header.LeftItem>
-          <Breadcrumbs isLoading={loader}>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  label={currentProjectDetails?.name ?? "Project"}
-                  icon={
-                    currentProjectDetails && (
-                      <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                      </span>
-                    )
-                  }
-                />
-              }
-            />
+          <Breadcrumbs isLoading={loader === "init-loader"}>
+            <ProjectBreadcrumb />
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={<BreadcrumbLink label="Views" icon={<Layers className="h-4 w-4 text-custom-text-300" />} />}

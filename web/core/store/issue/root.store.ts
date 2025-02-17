@@ -15,7 +15,6 @@ import {
 // root store
 import { RootStore } from "@/plane-web/store/root.store";
 import { IWorkspaceMembership } from "@/store/member/workspace-member.store";
-import { IStateStore, StateStore } from "../state.store";
 // issues data store
 import { IArchivedIssuesFilter, ArchivedIssuesFilter, IArchivedIssues, ArchivedIssues } from "./archived";
 import { ICycleIssuesFilter, CycleIssuesFilter, ICycleIssues, CycleIssues } from "./cycle";
@@ -44,7 +43,7 @@ import {
 export interface IIssueRootStore {
   currentUserId: string | undefined;
   workspaceSlug: string | undefined;
-  teamId: string | undefined;
+  teamspaceId: string | undefined;
   projectId: string | undefined;
   cycleId: string | undefined;
   moduleId: string | undefined;
@@ -67,6 +66,7 @@ export interface IIssueRootStore {
   issues: IIssueStore;
 
   issueDetail: IIssueDetail;
+  epicDetail: IIssueDetail;
 
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
   workspaceIssues: IWorkspaceIssues;
@@ -111,7 +111,7 @@ export interface IIssueRootStore {
 export class IssueRootStore implements IIssueRootStore {
   currentUserId: string | undefined = undefined;
   workspaceSlug: string | undefined = undefined;
-  teamId: string | undefined = undefined;
+  teamspaceId: string | undefined = undefined;
   projectId: string | undefined = undefined;
   cycleId: string | undefined = undefined;
   moduleId: string | undefined = undefined;
@@ -134,6 +134,7 @@ export class IssueRootStore implements IIssueRootStore {
   issues: IIssueStore;
 
   issueDetail: IIssueDetail;
+  epicDetail: IIssueDetail;
 
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
   workspaceIssues: IWorkspaceIssues;
@@ -177,7 +178,7 @@ export class IssueRootStore implements IIssueRootStore {
   constructor(rootStore: RootStore, serviceType: TIssueServiceType = EIssueServiceType.ISSUES) {
     makeObservable(this, {
       workspaceSlug: observable.ref,
-      teamId: observable.ref,
+      teamspaceId: observable.ref,
       projectId: observable.ref,
       cycleId: observable.ref,
       moduleId: observable.ref,
@@ -201,7 +202,7 @@ export class IssueRootStore implements IIssueRootStore {
     autorun(() => {
       if (rootStore?.user?.data?.id) this.currentUserId = rootStore?.user?.data?.id;
       if (this.workspaceSlug !== rootStore.router.workspaceSlug) this.workspaceSlug = rootStore.router.workspaceSlug;
-      if (this.teamId !== rootStore.router.teamId) this.teamId = rootStore.router.teamId;
+      if (this.teamspaceId !== rootStore.router.teamspaceId) this.teamspaceId = rootStore.router.teamspaceId;
       if (this.projectId !== rootStore.router.projectId) this.projectId = rootStore.router.projectId;
       if (this.cycleId !== rootStore.router.cycleId) this.cycleId = rootStore.router.cycleId;
       if (this.moduleId !== rootStore.router.moduleId) this.moduleId = rootStore.router.moduleId;
@@ -221,9 +222,10 @@ export class IssueRootStore implements IIssueRootStore {
       if (!isEmpty(rootStore?.cycle?.cycleMap)) this.cycleMap = rootStore?.cycle?.cycleMap;
     });
 
-    this.issues = new IssueStore(this.serviceType);
+    this.issues = new IssueStore();
 
-    this.issueDetail = new IssueDetail(this, this.serviceType);
+    this.issueDetail = new IssueDetail(this, EIssueServiceType.ISSUES);
+    this.epicDetail = new IssueDetail(this, EIssueServiceType.EPICS);
 
     this.workspaceIssuesFilter = new WorkspaceIssuesFilter(this);
     this.workspaceIssues = new WorkspaceIssues(this, this.workspaceIssuesFilter);

@@ -24,6 +24,7 @@ from plane.db.models import (
     ProjectMember,
     Project,
     CycleIssue,
+    UserRecentVisit,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -495,6 +496,13 @@ class IssueViewViewSet(BaseViewSet):
                 entity_identifier=pk,
                 entity_type="view",
             ).delete()
+            # Delete the page from recent visit
+            UserRecentVisit.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                entity_identifier=pk,
+                entity_name="view",
+            ).delete(soft=False)
         else:
             return Response(
                 {"error": "Only admin or owner can delete the view"},

@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CommandModal, ShortcutsModal } from "@/components/command-palette";
@@ -19,7 +20,6 @@ import {
   WorkspaceLevelModals,
 } from "@/plane-web/components/command-palette/modals";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web helpers
 import {
   getGlobalShortcutsList,
@@ -30,7 +30,7 @@ import {
 
 export const CommandPalette: FC = observer(() => {
   // router params
-  const { workspaceSlug, projectId, issueId } = useParams();
+  const { workspaceSlug, projectId, workItem } = useParams();
   // store hooks
   const { toggleSidebar } = useAppTheme();
   const { setTrackElement } = useEventTracker();
@@ -51,7 +51,7 @@ export const CommandPalette: FC = observer(() => {
   const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   const copyIssueUrlToClipboard = useCallback(() => {
-    if (!issueId) return;
+    if (!workItem) return;
 
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
@@ -67,7 +67,7 @@ export const CommandPalette: FC = observer(() => {
           title: "Some error occurred",
         });
       });
-  }, [issueId]);
+  }, [workItem]);
 
   // auth
   const performProjectCreateActions = useCallback(

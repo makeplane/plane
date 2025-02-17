@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
 import useSWR from "swr";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TNameDescriptionLoader } from "@plane/types";
 // components
 import { ContentWrapper } from "@plane/ui";
@@ -9,7 +10,6 @@ import { ContentWrapper } from "@plane/ui";
 import { IssuePeekOverviewLoader } from "@/components/issues/peek-overview/loader";
 import { useProjectInbox, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const InboxIssueActionsHeader = dynamic(
   () => import("@/components/inbox/content/inbox-issue-header").then((m) => m.InboxIssueActionsHeader),

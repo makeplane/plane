@@ -42,6 +42,7 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
   const { disabledExtensions, fileHandler, mentionHandler } = props;
 
   return [
+    // @ts-expect-error tiptap types are incorrect
     StarterKit.configure({
       bulletList: {
         HTMLAttributes: {

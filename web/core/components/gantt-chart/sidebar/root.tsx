@@ -1,5 +1,6 @@
 import { RefObject } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 // components
 import { Row, ERowVariant } from "@plane/ui";
 import { MultipleSelectGroupAction } from "@/components/core";
@@ -27,6 +28,7 @@ type Props = {
 };
 
 export const GanttChartSidebar: React.FC<Props> = observer((props) => {
+  const { t } = useTranslation();
   const {
     blockIds,
     blockUpdateHandler,
@@ -77,7 +79,7 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
           )}
           <h6>{title}</h6>
         </div>
-        <h6>Duration</h6>
+        <h6>{t("common.duration")}</h6>
       </Row>
 
       <Row variant={ERowVariant.HUGGING} className="min-h-full h-max bg-custom-background-100 overflow-hidden">

@@ -3,12 +3,13 @@ import { observer } from "mobx-react";
 import { TQuickAddIssueForm } from "../root";
 
 export const CalendarQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) => {
-  const { ref, isOpen, projectDetail, register, onSubmit } = props;
+  const { ref, isOpen, projectDetail, register, onSubmit, isEpic } = props;
 
   return (
     <div
-      className={`z-20 w-full transition-all ${isOpen ? "scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
-        }`}
+      className={`z-20 w-full transition-all ${
+        isOpen ? "scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
+      }`}
     >
       <form
         ref={ref}
@@ -19,9 +20,9 @@ export const CalendarQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props
         <input
           type="text"
           autoComplete="off"
-          placeholder="Issue Title"
+          placeholder={isEpic ? "Epic Title" : "Work item Title"}
           {...register("name", {
-            required: "Issue title is required.",
+            required: `${isEpic ? "Epic" : "Work item"} title is required.`,
           })}
           className="w-full rounded-md bg-transparent py-1.5 pr-2 text-sm md:text-xs font-medium leading-5 text-custom-text-200 outline-none"
         />

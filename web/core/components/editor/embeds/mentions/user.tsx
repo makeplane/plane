@@ -3,10 +3,11 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
+// plane imports
+import { ROLE } from "@plane/constants";
 // plane ui
 import { Avatar } from "@plane/ui";
 // constants
-import { ROLE } from "@/constants/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getFileURL } from "@/helpers/file.helper";
@@ -19,6 +20,8 @@ type Props = {
 
 export const EditorUserMention: React.FC<Props> = observer((props) => {
   const { id } = props;
+  // router
+  const { projectId } = useParams();
   // states
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [referenceElement, setReferenceElement] = useState<HTMLAnchorElement | null>(null);
@@ -44,7 +47,7 @@ export const EditorUserMention: React.FC<Props> = observer((props) => {
   });
   // derived values
   const userDetails = getUserDetails(id);
-  const roleDetails = getProjectMemberDetails(id)?.role;
+  const roleDetails = projectId ? getProjectMemberDetails(id, projectId.toString())?.role : null;
   const profileLink = `/${workspaceSlug}/profile/${id}`;
 
   if (!userDetails) {
@@ -58,9 +61,9 @@ export const EditorUserMention: React.FC<Props> = observer((props) => {
   return (
     <div
       className={cn(
-        "not-prose group/user-mention inline px-1 py-0.5 rounded bg-yellow-500/20 text-yellow-500 no-underline",
+        "not-prose group/user-mention inline px-1 py-0.5 rounded bg-custom-primary-100/20 text-custom-primary-100 no-underline",
         {
-          "bg-custom-primary-100/20 text-custom-primary-100": id === currentUser?.id,
+          "bg-yellow-500/20 text-yellow-500": id === currentUser?.id,
         }
       )}
     >

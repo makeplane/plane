@@ -32,15 +32,15 @@ from plane.app.serializers import (
     WidgetSerializer,
 )
 from plane.db.models import (
-    Dashboard,
-    DashboardWidget,
+    DeprecatedDashboard,
+    DeprecatedDashboardWidget,
     Issue,
     IssueActivity,
     FileAsset,
     IssueLink,
     IssueRelation,
     Project,
-    Widget,
+    DeprecatedWidget,
     WorkspaceMember,
     CycleIssue,
 )
@@ -53,10 +53,10 @@ from .. import BaseAPIView
 def dashboard_overview_stats(self, request, slug):
     assigned_issues = (
         Issue.issue_objects.filter(
+            (Q(assignees__in=[request.user]) & Q(issue_assignee__deleted_at__isnull=True)),
             project__project_projectmember__is_active=True,
             project__project_projectmember__member=request.user,
             workspace__slug=slug,
-            assignees__in=[request.user],
         )
         .filter(
             Q(
@@ -133,10 +133,13 @@ def dashboard_overview_stats(self, request, slug):
 
     completed_issues_count = (
         Issue.issue_objects.filter(
+            (
+                Q(assignees__in=[request.user])
+                & Q(issue_assignee__deleted_at__isnull=True)
+            ),
             workspace__slug=slug,
             project__project_projectmember__is_active=True,
             project__project_projectmember__member=request.user,
-            assignees__in=[request.user],
             state__group="completed",
         )
         .filter(
@@ -176,10 +179,13 @@ def dashboard_assigned_issues(self, request, slug):
     # get all the assigned issues
     assigned_issues = (
         Issue.issue_objects.filter(
+            (
+                Q(assignees__in=[request.user])
+                & Q(issue_assignee__deleted_at__isnull=True)
+            ),
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
             project__project_projectmember__is_active=True,
-            assignees__in=[request.user],
         )
         .filter(**filters)
         .select_related("workspace", "project", "state", "parent")
@@ -687,7 +693,7 @@ class DashboardEndpoint(BaseAPIView):
         if not dashboard_id:
             dashboard_type = request.GET.get("dashboard_type", None)
             if dashboard_type == "home":
-                dashboard, created = Dashboard.objects.get_or_create(
+                dashboard, created = DeprecatedDashboard.objects.get_or_create(
                     type_identifier=dashboard_type,
                     owned_by=request.user,
                     is_default=True,
@@ -707,24 +713,24 @@ class DashboardEndpoint(BaseAPIView):
 
                     updated_dashboard_widgets = []
                     for widget_key in widgets_to_fetch:
-                        widget = Widget.objects.filter(key=widget_key).values_list(
-                            "id", flat=True
-                        )
+                        widget = DeprecatedWidget.objects.filter(
+                            key=widget_key
+                        ).values_list("id", flat=True)
                         if widget:
                             updated_dashboard_widgets.append(
-                                DashboardWidget(
+                                DeprecatedDashboardWidget(
                                     widget_id=widget, dashboard_id=dashboard.id
                                 )
                             )
 
-                    DashboardWidget.objects.bulk_create(
+                    DeprecatedDashboardWidget.objects.bulk_create(
                         updated_dashboard_widgets, batch_size=100
                     )
 
                 widgets = (
-                    Widget.objects.annotate(
+                    DeprecatedWidget.objects.annotate(
                         is_visible=Exists(
-                            DashboardWidget.objects.filter(
+                            DeprecatedDashboardWidget.objects.filter(
                                 widget_id=OuterRef("pk"),
                                 dashboard_id=dashboard.id,
                                 is_visible=True,
@@ -733,7 +739,7 @@ class DashboardEndpoint(BaseAPIView):
                     )
                     .annotate(
                         dashboard_filters=Subquery(
-                            DashboardWidget.objects.filter(
+                            DeprecatedDashboardWidget.objects.filter(
                                 widget_id=OuterRef("pk"),
                                 dashboard_id=dashboard.id,
                                 filters__isnull=False,
@@ -792,7 +798,7 @@ class DashboardEndpoint(BaseAPIView):
 
 class WidgetsEndpoint(BaseAPIView):
     def patch(self, request, dashboard_id, widget_id):
-        dashboard_widget = DashboardWidget.objects.filter(
+        dashboard_widget = DeprecatedDashboardWidget.objects.filter(
             widget_id=widget_id, dashboard_id=dashboard_id
         ).first()
         dashboard_widget.is_visible = request.data.get(

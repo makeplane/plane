@@ -1,13 +1,12 @@
 // nivo
 import { BarDatum } from "@nivo/bar";
+// plane imports
+import { ANALYTICS_DATE_KEYS, STATE_GROUPS } from "@plane/constants";
 import { IAnalyticsData, IAnalyticsParams, IAnalyticsResponse, TStateGroups } from "@plane/types";
-// helpers
-import { DATE_KEYS } from "@/constants/analytics";
-import { MONTHS_LIST } from "@/constants/calendar";
-import { STATE_GROUPS } from "@/constants/state";
-import { addSpaceIfCamelCase, capitalizeFirstLetter, generateRandomColor } from "@/helpers/string.helper";
-// types
 // constants
+import { MONTHS_LIST } from "@/constants/calendar";
+// helpers
+import { addSpaceIfCamelCase, capitalizeFirstLetter, generateRandomColor } from "@/helpers/string.helper";
 
 export const convertResponseToBarGraphData = (
   response: IAnalyticsData | undefined,
@@ -33,7 +32,7 @@ export const convertResponseToBarGraphData = (
       });
 
       data.push({
-        name: DATE_KEYS.includes(params.x_axis)
+        name: ANALYTICS_DATE_KEYS.includes(params.x_axis)
           ? renderMonthAndYear(key)
           : params.x_axis === "priority" || params.x_axis === "state__group"
             ? capitalizeFirstLetter(key)
@@ -46,7 +45,7 @@ export const convertResponseToBarGraphData = (
       const item = response[key][0];
 
       data.push({
-        name: DATE_KEYS.includes(params.x_axis)
+        name: ANALYTICS_DATE_KEYS.includes(params.x_axis)
           ? renderMonthAndYear(item.dimension)
           : params.x_axis === "priority" || params.x_axis === "state__group"
             ? capitalizeFirstLetter(item.dimension ?? "None")
@@ -126,7 +125,7 @@ export const generateDisplayName = (
   if (params[type] === "state_id")
     displayName = analytics?.extras.state_details.find((s) => s.state_id === value)?.state__name ?? "None";
 
-  if (DATE_KEYS.includes(params.segment ?? "")) displayName = renderMonthAndYear(value);
+  if (ANALYTICS_DATE_KEYS.includes(params.segment ?? "")) displayName = renderMonthAndYear(value);
 
   return displayName;
 };

@@ -12,6 +12,11 @@ import {
   IUserProjectsRole,
   IWorkspaceView,
   TIssuesResponse,
+  TLink,
+  TSearchResponse,
+  TSearchEntityRequestPayload,
+  TWidgetEntityData,
+  TActivityEntityData,
 } from "@plane/types";
 import { APIService } from "@/services/api.service";
 // helpers
@@ -275,6 +280,86 @@ export class WorkspaceService extends APIService {
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
+      });
+  }
+
+  // quicklinks
+  async fetchWorkspaceLinks(workspaceSlug: string): Promise<TLink[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/quick-links/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async createWorkspaceLink(workspaceSlug: string, data: Partial<TLink>): Promise<TLink> {
+    return this.post(`/api/workspaces/${workspaceSlug}/quick-links/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async updateWorkspaceLink(workspaceSlug: string, linkId: string, data: Partial<TLink>): Promise<TLink> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/quick-links/${linkId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async deleteWorkspaceLink(workspaceSlug: string, linkId: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/quick-links/${linkId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async searchEntity(workspaceSlug: string, params: TSearchEntityRequestPayload): Promise<TSearchResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/entity-search/`, {
+      params: {
+        ...params,
+        query_type: params.query_type.join(","),
+      },
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // recents
+  async fetchWorkspaceRecents(workspaceSlug: string, entity_name?: string): Promise<TActivityEntityData[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/recent-visits/`, {
+      params: {
+        entity_name,
+      },
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  // widgets
+  async fetchWorkspaceWidgets(workspaceSlug: string): Promise<TWidgetEntityData[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/home-preferences/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async updateWorkspaceWidget(
+    workspaceSlug: string,
+    widgetKey: string,
+    data: Partial<TWidgetEntityData>
+  ): Promise<TWidgetEntityData> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/home-preferences/${widgetKey}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
       });
   }
 }

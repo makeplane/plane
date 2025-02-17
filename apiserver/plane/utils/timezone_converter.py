@@ -1,7 +1,14 @@
+# Python imports
 import pytz
-from plane.db.models import Project
 from datetime import datetime, time
 from datetime import timedelta
+
+# Django imports
+from django.utils import timezone
+
+# Module imports
+from plane.db.models import Project
+
 
 def user_timezone_converter(queryset, datetime_fields, user_timezone):
     # Create a timezone object for the user's timezone
@@ -28,7 +35,9 @@ def user_timezone_converter(queryset, datetime_fields, user_timezone):
         return queryset_values
 
 
-def convert_to_utc(date, project_id, is_start_date=False):
+def convert_to_utc(
+    date, project_id, is_start_date=False, is_start_date_end_date_equal=False
+):
     """
     Converts a start date string to the project's local timezone at 12:00 AM
     and then converts it to UTC for storage.
@@ -60,13 +69,29 @@ def convert_to_utc(date, project_id, is_start_date=False):
 
     # If it's an start date, add one minute
     if is_start_date:
-        localized_datetime += timedelta(minutes=1)
+        localized_datetime += timedelta(minutes=0, seconds=1)
 
-    # Convert the localized datetime to UTC
-    utc_datetime = localized_datetime.astimezone(pytz.utc)
+        # Convert the localized datetime to UTC
+        utc_datetime = localized_datetime.astimezone(pytz.utc)
 
-    # Return the UTC datetime for storage
-    return utc_datetime
+        current_datetime_in_project_tz = timezone.now().astimezone(local_tz)
+        current_datetime_in_utc = current_datetime_in_project_tz.astimezone(pytz.utc)
+
+        if utc_datetime.date() == current_datetime_in_utc.date():
+            return current_datetime_in_utc
+
+        return utc_datetime
+    else:
+        # If it's start an end date are equal, add 23 hours, 59 minutes, and 59 seconds
+        # to make it the end of the day
+        if is_start_date_end_date_equal:
+            localized_datetime += timedelta(hours=23, minutes=59, seconds=59)
+
+        # Convert the localized datetime to UTC
+        utc_datetime = localized_datetime.astimezone(pytz.utc)
+
+        # Return the UTC datetime for storage
+        return utc_datetime
 
 
 def convert_utc_to_project_timezone(utc_datetime, project_id):

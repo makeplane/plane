@@ -19,6 +19,10 @@ from .workspace import (
     WorkspaceMemberAdminSerializer,
     WorkspaceMemberMeSerializer,
     WorkspaceUserPropertiesSerializer,
+    WorkspaceUserLinkSerializer,
+    WorkspaceRecentVisitSerializer,
+    WorkspaceHomePreferenceSerializer,
+    StickySerializer,
 )
 from .project import (
     ProjectSerializer,
@@ -68,6 +72,8 @@ from .issue import (
     IssueReactionLiteSerializer,
     IssueAttachmentLiteSerializer,
     IssueLinkLiteSerializer,
+    IssueVersionDetailSerializer,
+    IssueDescriptionVersionDetailSerializer,
 )
 
 from .module import (
