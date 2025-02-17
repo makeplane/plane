@@ -25,6 +25,7 @@ export * from "./popovers";
 export * from "./tables";
 export * from "./header";
 export * from "./row";
+export * from "./scroll-area";
 export * from "./content-wrapper";
 export * from "./card";
 export * from "./tag";
