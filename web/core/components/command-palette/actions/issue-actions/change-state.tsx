@@ -17,10 +17,13 @@ type Props = { closePalette: () => void; issue: TIssue };
 export const ChangeIssueState: React.FC<Props> = observer((props) => {
   const { closePalette, issue } = props;
   // router params
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug } = useParams();
   // store hooks
   const { updateIssue } = useIssueDetail();
-  const { projectStates } = useProjectState();
+  const { getProjectStates } = useProjectState();
+  // derived values
+  const projectId = issue?.project_id;
+  const projectStates = getProjectStates(projectId);
 
   const submitChanges = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !issue) return;
