@@ -112,7 +112,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
             return [
                 member.member_id
                 for member in project_members
-                if member.is_active and not member.member.is_bot
+                if member.is_active and (member.member and not member.member.is_bot)
             ]
         return []
 
