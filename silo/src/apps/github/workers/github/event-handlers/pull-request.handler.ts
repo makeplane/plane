@@ -98,6 +98,7 @@ const handlePullRequestOpened = async (data: GithubWebhookPayload["webhook-pull-
         data.pull_request.body || ""
       );
       const stateEvent = classifyPullRequestEvent(data.action, data.pull_request);
+      if (!stateEvent) return;
       const targetState = getTargetState(stateEvent, entityConnection);
 
       const referredIssues = ["MR_CLOSED", "MR_MERGED"].includes(stateEvent)

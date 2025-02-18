@@ -1,10 +1,10 @@
-import { verifyEntityConnection, verifyWorkspaceConnection } from "@/types";
 import { E_INTEGRATION_KEYS, TServiceCredentials } from "@plane/etl/core";
-import { GithubConnectionDetails, githubEntityConnectionSchema, githubWorkspaceConnectionSchema } from "../types";
 
 import { GithubWebhookPayload } from "@plane/etl/github";
-import { getAPIClient } from "@/services/client";
 import { TWorkspaceCredential } from "@plane/types";
+import { getAPIClient } from "@/services/client";
+import { verifyEntityConnection, verifyWorkspaceConnection } from "@/types";
+import { GithubConnectionDetails, githubEntityConnectionSchema, githubWorkspaceConnectionSchema } from "../types";
 
 const apiClient = getAPIClient();
 
@@ -50,7 +50,6 @@ export const getConnectionDetails = async (props: {
   };
 };
 
-
 export type MergeRequestEvent =
   | "DRAFT_MR_OPENED"
   | "MR_OPENED"
@@ -62,26 +61,35 @@ export type MergeRequestEvent =
 export function classifyPullRequestEvent(
   action: string,
   pull_request: GithubWebhookPayload["pull-request-webhook"]
-): MergeRequestEvent {
+): MergeRequestEvent | undefined {
+  // Handle terminal states first
+  if (action === "closed") {
+    return pull_request.merged ? "MR_MERGED" : "MR_CLOSED";
+  }
+
+  // Handle draft state
   if (pull_request.draft) {
     return "DRAFT_MR_OPENED";
   }
 
-  switch (action) {
-    case "opened":
-    case "reopened":
-      return "MR_OPENED";
-    case "review_requested":
-      return "MR_REVIEW_REQUESTED";
-    case "ready_for_review":
-      return "MR_READY_FOR_MERGE";
-    case "closed":
-      return pull_request.merged ? "MR_MERGED" : "MR_CLOSED";
-  }
-
-  if (pull_request.mergeable && pull_request.mergeable_state === "clean" && !pull_request.draft) {
+  // Handle specific actions that indicate state
+  if (action === "ready_for_review") {
     return "MR_READY_FOR_MERGE";
   }
 
-  return "MR_OPENED";
+  if (action === "review_requested") {
+    return "MR_REVIEW_REQUESTED";
+  }
+
+  // Check if PR is ready for merge based on properties
+  if (!pull_request.draft && pull_request.mergeable && pull_request.mergeable_state === "clean") {
+    return "MR_READY_FOR_MERGE";
+  }
+
+  // Handle opened/reopened states
+  if (action === "opened" || action === "reopened") {
+    return "MR_OPENED";
+  }
+
+  return undefined;
 }
