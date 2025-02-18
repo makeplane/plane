@@ -154,7 +154,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
               <SidebarNavItem
                 className={`pl-[18px] ${isSidebarCollapsed ? "p-0 size-7 justify-center mx-auto" : ""}`}
                 isActive={
-                  item.key === "issues"
+                  item.i18n_key === "sidebar.work_items"
                     ? pathname.includes(item.href) || pathname.includes(`/${workspaceSlug}/browse/`)
                     : pathname.includes(item.href)
                 }

@@ -690,6 +690,7 @@
     "customize_time_range": "期間をカスタマイズ",
     "loading": "読み込み中",
     "attachments": "添付ファイル",
+    "property": "プロパティ",
     "properties": "プロパティ",
     "parent": "親",
     "remove": "削除",
@@ -843,8 +844,20 @@
     "disconnecting": "切断中",
     "installing": "インストール中",
     "install": "インストール",
+    "category": "カテゴリー",
+    "categories": "カテゴリーズ",
+    "saving": "セービング",
+    "save_changes": "セーブ チェンジズ",
+    "delete": "デリート",
+    "deleting": "デリーティング",
     "pending": "保留中",
     "invite": "招待"
+  },
+
+  "chart": {
+    "x_axis": "エックス アクシス",
+    "y_axis": "ワイ アクシス",
+    "metric": "メトリック"
   },
 
   "form": {
