@@ -12,7 +12,14 @@ import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useUser, useUserPermissions } from "@/hooks/store";
+import {
+  useCommandPalette,
+  useEventTracker,
+  useProject,
+  useUser,
+  useUserPermissions,
+  useWorkspace,
+} from "@/hooks/store";
 // plane web constants
 
 export const NoProjectsEmptyState = observer(() => {
@@ -24,6 +31,7 @@ export const NoProjectsEmptyState = observer(() => {
   const { setTrackElement } = useEventTracker();
   const { data: currentUser } = useUser();
   const { joinedProjectIds } = useProject();
+  const { currentWorkspace: activeWorkspace } = useWorkspace();
   // local storage
   const { storedValue, setValue } = useLocalStorage(`quickstart-guide-${workspaceSlug}`, {
     hide: false,
@@ -37,6 +45,7 @@ export const NoProjectsEmptyState = observer(() => {
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
+  const isWorkspaceAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   const EMPTY_STATE_DATA = [
     {
@@ -54,6 +63,7 @@ export const NoProjectsEmptyState = observer(() => {
           setTrackElement("Sidebar");
           toggleCreateProjectModal(true);
         },
+        disabled: !canCreateProject,
       },
     },
     {
@@ -65,6 +75,7 @@ export const NoProjectsEmptyState = observer(() => {
       cta: {
         text: "home.empty.invite_team.cta",
         link: `/${workspaceSlug}/settings/members`,
+        disabled: !isWorkspaceAdmin,
       },
     },
     {
@@ -76,6 +87,7 @@ export const NoProjectsEmptyState = observer(() => {
       cta: {
         text: "home.empty.configure_workspace.cta",
         link: "settings",
+        disabled: !isWorkspaceAdmin,
       },
     },
     {
@@ -104,6 +116,7 @@ export const NoProjectsEmptyState = observer(() => {
       cta: {
         text: "home.empty.personalize_account.cta",
         link: "/profile",
+        disabled: false,
       },
     },
   ];
@@ -112,7 +125,7 @@ export const NoProjectsEmptyState = observer(() => {
       case "projects":
         return joinedProjectIds?.length > 0;
       case "visited_members":
-        return storedValue?.visited_members;
+        return (activeWorkspace?.total_members || 0) >= 2;
       case "visited_workspace":
         return storedValue?.visited_workspace;
       case "visited_profile":
@@ -120,7 +133,7 @@ export const NoProjectsEmptyState = observer(() => {
     }
   };
 
-  if (storedValue?.hide) return null;
+  if (storedValue?.hide || (joinedProjectIds?.length > 0 && (activeWorkspace?.total_members || 0) >= 2)) return null;
 
   return (
     <div>
@@ -161,28 +174,35 @@ export const NoProjectsEmptyState = observer(() => {
                 <div className="flex items-center gap-2 bg-[#17a34a] rounded-full p-1">
                   <Check className="size-3 text-custom-primary-100 text-white" />
                 </div>
-              ) : item.cta.link ? (
-                <Link
-                  href={item.cta.link}
-                  onClick={() => {
-                    if (!storedValue) return;
-                    setValue({
-                      ...storedValue,
-                      [item.flag]: true,
-                    });
-                  }}
-                  className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium"
-                >
-                  {t(item.cta.text)}
-                </Link>
               ) : (
-                <button
-                  type="button"
-                  className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium"
-                  onClick={item.cta.onClick}
-                >
-                  {t(item.cta.text)}
-                </button>
+                !item.cta.disabled &&
+                (item.cta.link ? (
+                  <Link
+                    href={item.cta.link}
+                    onClick={(e) => {
+                      if (!storedValue) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        return;
+                      }
+                      setValue({
+                        ...storedValue,
+                        [item.flag]: true,
+                      });
+                    }}
+                    className={cn("text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium", {})}
+                  >
+                    {t(item.cta.text)}
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium"
+                    onClick={item.cta.onClick}
+                  >
+                    {t(item.cta.text)}
+                  </button>
+                ))
               )}
             </div>
           );
