@@ -22,6 +22,7 @@ interface IListItemProps {
   actionItemContainerClassName?: string;
   isSidebarOpen?: boolean;
   quickActionElement?: JSX.Element;
+  preventDefaultNProgress?: boolean;
 }
 
 export const ListItem: FC<IListItemProps> = (props) => {
@@ -40,6 +41,7 @@ export const ListItem: FC<IListItemProps> = (props) => {
     isSidebarOpen = false,
     quickActionElement,
     itemClassName = "",
+    preventDefaultNProgress = false,
   } = props;
 
   // router
@@ -70,6 +72,7 @@ export const ListItem: FC<IListItemProps> = (props) => {
             target="_self"
             onClick={handleControlLinkClick}
             disabled={disableLink}
+            data-prevent-nprogress={preventDefaultNProgress}
           >
             <div className="flex items-center gap-4 truncate">
               {prependTitleElement && <span className="flex items-center flex-shrink-0">{prependTitleElement}</span>}

@@ -28,5 +28,6 @@ export * from "./row";
 export * from "./scroll-area";
 export * from "./content-wrapper";
 export * from "./card";
+export * from "./tabs";
 export * from "./tag";
 export * from "./tabs";

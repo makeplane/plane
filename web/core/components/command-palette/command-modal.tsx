@@ -59,7 +59,16 @@ export const CommandModal: React.FC = observer(() => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<IWorkspaceSearchResults>({
-    results: { workspace: [], project: [], issue: [], cycle: [], module: [], issue_view: [], page: [] },
+    results: {
+      workspace: [],
+      project: [],
+      issue: [],
+      cycle: [],
+      module: [],
+      issue_view: [],
+      page: [],
+      epic: [],
+    },
   });
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   const [pages, setPages] = useState<string[]>([]);
@@ -149,7 +158,16 @@ export const CommandModal: React.FC = observer(() => {
           });
       } else {
         setResults({
-          results: { workspace: [], project: [], issue: [], cycle: [], module: [], issue_view: [], page: [] },
+          results: {
+            workspace: [],
+            project: [],
+            issue: [],
+            cycle: [],
+            module: [],
+            issue_view: [],
+            page: [],
+            epic: [],
+          },
         });
         setIsLoading(false);
         setIsSearching(false);
