@@ -3,3 +3,4 @@ export * from "./upgrade-badge";
 export * from "./billing";
 export * from "./delete-workspace-section";
 export * from "./members";
+export * from "./sidebar";
