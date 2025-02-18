@@ -254,7 +254,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         issueId: data.id,
         issueTypeId: data.type_id,
         projectId: data.project_id,
-        workspaceSlug: workspaceSlug.toString(),
+        workspaceSlug: workspaceSlug?.toString(),
         isDraft: true,
       });
 

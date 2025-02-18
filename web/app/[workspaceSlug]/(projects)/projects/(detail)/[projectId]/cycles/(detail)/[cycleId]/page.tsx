@@ -29,7 +29,7 @@ const CycleDetailPage = observer(() => {
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
 
   useCyclesDetails({
-    workspaceSlug: workspaceSlug.toString(),
+    workspaceSlug: workspaceSlug?.toString(),
     projectId: projectId.toString(),
     cycleId: cycleId.toString(),
   });
