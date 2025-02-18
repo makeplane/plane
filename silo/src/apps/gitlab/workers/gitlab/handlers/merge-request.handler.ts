@@ -1,3 +1,4 @@
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { createGitLabService, GitlabMergeRequestEvent, GitlabNote, GitLabService } from "@plane/etl/gitlab";
 import { Client } from "@plane/sdk";
 import { TWorkspaceCredential } from "@plane/types";
@@ -8,7 +9,6 @@ import { env } from "@/env";
 import { getReferredIssues, IssueReference, IssueWithReference } from "@/helpers/parser";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 
 const apiClient = getAPIClient();
 
@@ -34,6 +34,9 @@ const getConnectionAndCredentials = async (
 
 const getTargetState = (data: GitlabMergeRequestEvent, entityConnection: any) => {
   const event = classifyMergeRequestEvent(data);
+
+  if (!event) return null;
+
   const targetState = entityConnection.config.states.mergeRequestEventMapping[event];
   if (!targetState) {
     logger.error(`[GITLAB] Target state not found for event ${event}, skipping...`);
@@ -150,7 +153,9 @@ export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
       return;
     }
 
-    const referredIssues = ["MR_CLOSED", "MR_MERGED"].includes(classifyMergeRequestEvent(data))
+    const event = classifyMergeRequestEvent(data);
+    if (!event) return;
+    const referredIssues = ["MR_CLOSED", "MR_MERGED"].includes(event)
       ? closingReferences
       : [...closingReferences, ...nonClosingReferences];
 

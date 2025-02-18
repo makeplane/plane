@@ -1,5 +1,5 @@
-import { env } from "@/env";
 import { GitlabMergeRequestEvent, MergeRequestEvent } from "@plane/etl/gitlab";
+import { env } from "@/env";
 
 // Implement this function to verify the GitLab webhook token
 export function verifyGitlabToken(token: string | string[] | undefined): boolean {
@@ -9,7 +9,7 @@ export function verifyGitlabToken(token: string | string[] | undefined): boolean
   return token === secretToken;
 }
 
-export function classifyMergeRequestEvent(event: GitlabMergeRequestEvent): MergeRequestEvent {
+export function classifyMergeRequestEvent(event: GitlabMergeRequestEvent): MergeRequestEvent | undefined {
   const { object_attributes, changes } = event;
 
   // Helper function to check if reviewers were added
@@ -44,6 +44,6 @@ export function classifyMergeRequestEvent(event: GitlabMergeRequestEvent): Merge
     case "opened":
       return "MR_OPENED";
     default:
-      return "MR_OPENED"; // Unclassified state
+      return undefined;
   }
 }
