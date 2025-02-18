@@ -38,7 +38,7 @@ export const SidebarProjectsList: FC = observer(() => {
   // store hooks
   const { t } = useTranslation();
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { sidebarCollapsed, toggleExtendedProjectSidebar } = useAppTheme();
+  const { sidebarCollapsed } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
