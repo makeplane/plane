@@ -43,13 +43,22 @@ type Props = {
   disableDrag?: boolean;
   disableDrop?: boolean;
   isLastChild: boolean;
+  renderInExtendedSidebar?: boolean;
 };
 
 export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
-  const { projectId, handleCopyText, disableDrag, disableDrop, isLastChild, handleOnProjectDrop, projectListType } =
-    props;
+  const {
+    projectId,
+    handleCopyText,
+    disableDrag,
+    disableDrop,
+    isLastChild,
+    handleOnProjectDrop,
+    projectListType,
+    renderInExtendedSidebar = false,
+  } = props;
   // store hooks
-  const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
+  const { sidebarCollapsed } = useAppTheme();
   const { t } = useTranslation();
   const { setTrackElement } = useEventTracker();
   const { getPartialProjectById } = useProject();
@@ -88,6 +97,8 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
     setTrackElement("APP_SIDEBAR_PROJECT_DROPDOWN");
     setLeaveProjectModal(true);
   };
+
+  const isSidebarCollapsed = sidebarCollapsed && !renderInExtendedSidebar;
 
   useEffect(() => {
     const element = projectRef.current;
@@ -390,7 +401,11 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
           >
             {isProjectListOpen && (
               <Disclosure.Panel as="div" className="flex flex-col gap-0.5 mt-1">
-                <ProjectNavigationRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
+                <ProjectNavigationRoot
+                  workspaceSlug={workspaceSlug.toString()}
+                  projectId={projectId.toString()}
+                  isSidebarCollapsed={!!isSidebarCollapsed}
+                />
               </Disclosure.Panel>
             )}
           </Transition>

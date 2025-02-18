@@ -30,13 +30,14 @@ type TProjectItemsProps = {
   workspaceSlug: string;
   projectId: string;
   additionalNavigationItems?: (workspaceSlug: string, projectId: string) => TNavigationItem[];
+  isSidebarCollapsed: boolean;
 };
 
 export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
-  const { workspaceSlug, projectId, additionalNavigationItems } = props;
+  const { workspaceSlug, projectId, additionalNavigationItems, isSidebarCollapsed } = props;
   // store hooks
   const { t } = useTranslation();
-  const { sidebarCollapsed: isSidebarCollapsed, toggleSidebar } = useAppTheme();
+  const { toggleSidebar } = useAppTheme();
   const { getPartialProjectById } = useProject();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
