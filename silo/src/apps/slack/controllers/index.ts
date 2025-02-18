@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
 import {
   isUserMessage,
   SlackAuthState,
@@ -17,7 +18,6 @@ import { getConnectionDetails } from "../helpers/connection-details";
 import { ACTIONS } from "../helpers/constants";
 import { parseIssueFormData } from "../helpers/parse-issue-form";
 import { convertToSlackOptions } from "../helpers/slack-options";
-import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
 
 const apiClient = getAPIClient();
 

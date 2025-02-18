@@ -65,18 +65,17 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
         const resource = extractPlaneResource(link.url);
         if (resource === null) return;
 
-        const project = await planeClient.project.getProject(workspaceConnection.workspace_slug, resource.projectId);
-        const members = await planeClient.users.list(workspaceConnection.workspace_slug, resource.projectId);
-
         if (resource.type === "issue") {
           if (resource.workspaceSlug !== workspaceConnection.workspace_slug) return;
 
-          const issue = await planeClient.issue.getIssue(
+          const issue = await planeClient.issue.getIssueByIdentifier(
             workspaceConnection.workspace_slug,
-            resource.projectId,
-            resource.issueId
+            resource.projectIdentifier,
+            Number(resource.issueKey)
           );
 
+          const project = await planeClient.project.getProject(workspaceConnection.workspace_slug, issue.project);
+          const members = await planeClient.users.list(workspaceConnection.workspace_slug, issue.project);
           const states = await planeClient.state.list(workspaceConnection.workspace_slug, issue.project);
 
           const linkBack = createSlackLinkback(
@@ -90,27 +89,31 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
           );
 
           unfurlMap[link.url] = linkBack;
-        } else if (resource.type === "project") {
-          const projectLinkback = createProjectLinkback(project, members);
-          unfurlMap[link.url] = projectLinkback;
-        } else if (resource.type === "cycle") {
-          const cycle = await planeClient.cycles.getCycle(
-            workspaceConnection.workspace_slug,
-            resource.projectId,
-            resource.cycleId
-          );
+        } else {
+          const project = await planeClient.project.getProject(workspaceConnection.workspace_slug, resource.projectId);
+          const members = await planeClient.users.list(workspaceConnection.workspace_slug, resource.projectId);
+          if (resource.type === "project") {
+            const projectLinkback = createProjectLinkback(project, members);
+            unfurlMap[link.url] = projectLinkback;
+          } else if (resource.type === "cycle") {
+            const cycle = await planeClient.cycles.getCycle(
+              workspaceConnection.workspace_slug,
+              resource.projectId,
+              resource.cycleId
+            );
 
-          const linkBack = createCycleLinkback(workspaceConnection.workspace_slug, project, cycle);
-          unfurlMap[link.url] = linkBack;
-        } else if (resource.type === "module") {
-          const module = await planeClient.modules.getModule(
-            workspaceConnection.workspace_slug,
-            resource.projectId,
-            resource.moduleId
-          );
+            const linkBack = createCycleLinkback(workspaceConnection.workspace_slug, project, cycle);
+            unfurlMap[link.url] = linkBack;
+          } else if (resource.type === "module") {
+            const module = await planeClient.modules.getModule(
+              workspaceConnection.workspace_slug,
+              resource.projectId,
+              resource.moduleId
+            );
 
-          const moduleLinkback = createModuleLinkback(workspaceConnection.workspace_slug, project, module);
-          unfurlMap[link.url] = moduleLinkback;
+            const moduleLinkback = createModuleLinkback(workspaceConnection.workspace_slug, project, module);
+            unfurlMap[link.url] = moduleLinkback;
+          }
         }
       })
     );

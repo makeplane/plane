@@ -8,48 +8,68 @@ export function extractPlaneResource(url: string): PlaneResource | null {
     const segments = urlObj.pathname.split("/").filter(Boolean);
 
     // Basic validation
-    if (segments.length < 4) return null;
+    if (segments.length < 3) return null;
 
-    const [workspaceSlug, projectsSegment, projectId, resourceType, resourceId] = segments;
+    // Check if it's an issue URL (must contain /browse/)
+    if (segments.includes("browse")) {
+      // Format: /plane/browse/WEB-3417/
+      const [workspaceSlug, browse, issueKey] = segments;
 
-    if (projectsSegment !== "projects") return null;
+      if (browse !== "browse" || !issueKey) return null;
 
-    const baseResource = {
-      workspaceSlug,
-      projectId,
-    };
+      // Extract project identifier from issue key (e.g., "WEB" from "WEB-3417")
+      const [projectIdentifier, issueIdentifer] = issueKey.split("-");
 
-    switch (resourceType) {
-      case "issues":
-        return resourceId
-          ? {
-              ...baseResource,
-              type: "issue",
-              issueId: resourceId,
-            }
-          : {
-              ...baseResource,
-              type: "project",
-            };
+      if (!projectIdentifier) return null;
 
-      case "cycles":
-        if (!resourceId) return null;
-        return {
-          ...baseResource,
-          type: "cycle",
-          cycleId: resourceId,
-        };
+      return {
+        workspaceSlug,
+        projectIdentifier,
+        type: "issue",
+        issueKey: issueIdentifer,
+      };
+    }
+    // Handle other resource types (cycles, modules)
+    else {
+      const [workspaceSlug, projectsSegment, projectId, _, resourceId] = segments;
+      let resourceType = segments[3];
 
-      case "modules":
-        if (!resourceId) return null;
-        return {
-          ...baseResource,
-          type: "module",
-          moduleId: resourceId,
-        };
+      if (projectsSegment !== "projects") return null;
 
-      default:
-        return null;
+      if ((resourceType === "issues" && !resourceId) || (!resourceType && !resourceId)) {
+        resourceType = "project";
+      }
+
+      const baseResource = {
+        workspaceSlug,
+        projectId,
+      };
+
+      switch (resourceType) {
+        case "project":
+          return {
+            type: "project",
+            ...baseResource,
+          };
+        case "cycles":
+          if (!resourceId) return null;
+          return {
+            ...baseResource,
+            type: "cycle",
+            cycleId: resourceId,
+          };
+
+        case "modules":
+          if (!resourceId) return null;
+          return {
+            ...baseResource,
+            type: "module",
+            moduleId: resourceId,
+          };
+
+        default:
+          return null;
+      }
     }
   } catch (error) {
     return null;
