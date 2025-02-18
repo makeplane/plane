@@ -75,6 +75,9 @@ export const rgbToHex = ({ r, g, b }: RGB): string => `#${toHex(r)}${toHex(g)}${
  * hexToHsl("#0000ff") // returns { h: 240, s: 100, l: 50 }
  */
 export const hexToHsl = (hex: string): HSL => {
+  // return default value for invalid hex
+  if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) return { h: 0, s: 0, l: 0 };
+
   const r = parseInt(hex.slice(1, 3), 16) / 255;
   const g = parseInt(hex.slice(3, 5), 16) / 255;
   const b = parseInt(hex.slice(5, 7), 16) / 255;
@@ -122,6 +125,10 @@ export const hexToHsl = (hex: string): HSL => {
  * hslToHex({ h: 240, s: 100, l: 50 }) // returns "#0000ff"
  */
 export const hslToHex = ({ h, s, l }: HSL): string => {
+  if (h < 0 || h > 360) return "#000000";
+  if (s < 0 || s > 100) return "#000000";
+  if (l < 0 || l > 100) return "#000000";
+
   l /= 100;
   const a = (s * Math.min(l, 1 - l)) / 100;
 
