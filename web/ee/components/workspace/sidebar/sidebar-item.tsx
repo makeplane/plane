@@ -43,7 +43,7 @@ export const SidebarItem: FC<TSidebarItemProps> = observer((props) => {
     if (extendedSidebarCollapsed) toggleExtendedSidebar();
   };
 
-  const staticItems = ["home", "your-work","notifications", "pi_chat", "projects"];
+  const staticItems = ["home", "inbox", "pi_chat", "projects"];
 
   if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) {
     return null;

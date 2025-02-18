@@ -6,7 +6,7 @@ export const getSidebarNavigationItemIcon = (key: string, className: string = ""
   switch (key) {
     case "home":
       return <Home className={cn("size-4 flex-shrink-0", className)} />;
-    case "notifications":
+    case "inbox":
       return <Inbox className={cn("size-4 flex-shrink-0", className)} />;
     case "pi_chat":
       return <PiChatLogo className={cn("size-4 flex-shrink-0", className)} />;
