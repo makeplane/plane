@@ -54,6 +54,12 @@ export const EXTENDED_WORKSPACE_SETTINGS = {
 };
 
 export const EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
+  "active-cycles": {
+    key: "active_cycles",
+    labelTranslationKey: "cycles",
+    href: `/active-cycles/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+  },
   initiatives: {
     key: "initiatives",
     labelTranslationKey: "initiatives.label",
@@ -61,7 +67,7 @@ export const EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
   },
   teamspaces: {
-    key: "teamspaces",
+    key: "team_spaces",
     labelTranslationKey: "teamspaces.label",
     href: `/teamspaces/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
@@ -70,7 +76,7 @@ export const EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string,
 
 export const EXTENDED_WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
   "pi-chat": {
-    key: "pi-chat",
+    key: "pi_chat",
     labelTranslationKey: "pi_chat",
     href: `/pi-chat`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],

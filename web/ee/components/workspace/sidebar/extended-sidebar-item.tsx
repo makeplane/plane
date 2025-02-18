@@ -16,7 +16,7 @@ import { SidebarNavItem } from "@/components/sidebar";
 // hooks
 import { useAppTheme, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web imports
-import { isWorkspaceFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
+import { isSidebarFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
 // local imports
 import { UpgradeBadge } from "../upgrade-badge";
 import { getSidebarNavigationItemIcon } from "./helper";
@@ -131,7 +131,7 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
     return null;
   }
 
-  if (!isWorkspaceFeatureEnabled(item.key, workspaceSlug.toString())) return null;
+  if (!isSidebarFeatureEnabled(item.key, workspaceSlug.toString())) return null;
 
   const itemHref =
     item.key === "your_work"
@@ -208,14 +208,14 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
             {isPinned ? (
               <Tooltip tooltipContent="Hide tab">
                 <Eye
-                  className="size-4 flex-shrink-0 invisible group-hover:visible text-custom-text-300"
+                  className="size-4 flex-shrink-0 invisible group-hover:visible outline-none text-custom-text-300"
                   onClick={() => unPinNavigationItem(workspaceSlug.toString(), item.key)}
                 />
               </Tooltip>
             ) : (
               <Tooltip tooltipContent="Show tab">
                 <EyeClosed
-                  className="size-4 flex-shrink-0 invisible group-hover:visible text-custom-text-400"
+                  className="size-4 flex-shrink-0 invisible group-hover:visible outline-none text-custom-text-400"
                   onClick={() => pinNavigationItem(workspaceSlug.toString(), item.key)}
                 />
               </Tooltip>

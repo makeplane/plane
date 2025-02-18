@@ -12,7 +12,7 @@ import { SidebarNavItem } from "@/components/sidebar";
 import { NotificationAppSidebarOption } from "@/components/workspace-notifications";
 // hooks
 import { useAppTheme, useEventTracker, useUserPermissions } from "@/hooks/store";
-import { isUserFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
+import { isSidebarFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
 
 export interface SidebarUserMenuItemProps {
   item: {
@@ -46,7 +46,7 @@ export const SidebarUserMenuItem: FC<SidebarUserMenuItemProps> = observer((props
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) return null;
 
-  if (!isUserFeatureEnabled(item.key)) return null;
+  if (!isSidebarFeatureEnabled(workspaceSlug.toString(), item.key)) return null;
 
   const handleLinkClick = (itemKey: string) => {
     if (window.innerWidth < 768) {

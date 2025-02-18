@@ -14,7 +14,7 @@ import { SidebarNavItem } from "@/components/sidebar";
 import { useAppTheme, useUserPermissions } from "@/hooks/store";
 // plane web imports
 import { UpgradeBadge } from "@/plane-web/components/workspace";
-import { isWorkspaceFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
+import { isSidebarFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
 
 export type SidebarWorkspaceMenuItemProps = {
   item: {
@@ -48,7 +48,7 @@ export const SidebarWorkspaceMenuItem: FC<SidebarWorkspaceMenuItemProps> = obser
     return null;
   }
 
-  if (!isWorkspaceFeatureEnabled(item.key, workspaceSlug.toString())) return null;
+  if (!isSidebarFeatureEnabled(item.key, workspaceSlug.toString())) return null;
 
   const isActive = item.href === pathname;
 

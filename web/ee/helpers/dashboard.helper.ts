@@ -4,18 +4,24 @@ import { store } from "@/lib/store-context";
 // plane web types
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 
-const UserFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefined> = {
+const SidebarFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefined> = {
   home: undefined,
   "your-work": undefined,
   notifications: undefined,
   drafts: undefined,
-  "pi-chat": E_FEATURE_FLAGS.PI_CHAT,
+  pi_chat: E_FEATURE_FLAGS.PI_CHAT,
   "workspace-dashboards": E_FEATURE_FLAGS.DASHBOARDS,
+  projects: undefined,
+  team_spaces: E_FEATURE_FLAGS.TEAMSPACES,
+  "all-issues": undefined,
+  active_cycles: E_FEATURE_FLAGS.WORKSPACE_ACTIVE_CYCLES,
+  analytics: undefined,
+  initiatives: E_FEATURE_FLAGS.INITIATIVES,
 };
 
-export const isUserFeatureEnabled = (featureKey: string) => {
+export const isSidebarFeatureEnabled = (featureKey: string, workspaceSlug: string) => {
   // Check if we need to check for a feature flag, if not, return true
-  const featureFlag = UserFeatureKeyToFeatureFlagMap[featureKey];
+  const featureFlag = SidebarFeatureKeyToFeatureFlagMap[featureKey];
   if (!featureFlag) return true;
   // Check for the feature flag in the current workspace
   const isFeatureFlagEnabled = store.featureFlags.getFeatureFlagForCurrentWorkspace(featureFlag, false);
@@ -23,31 +29,9 @@ export const isUserFeatureEnabled = (featureKey: string) => {
   switch (featureKey) {
     case "workspace-dashboards":
       return isFeatureFlagEnabled;
-    default:
-      return isFeatureFlagEnabled;
-  }
-};
-
-const WorkspaceFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefined> = {
-  projects: undefined,
-  teamspaces: E_FEATURE_FLAGS.TEAMSPACES,
-  "all-issues": undefined,
-  "active-cycles": E_FEATURE_FLAGS.WORKSPACE_ACTIVE_CYCLES,
-  analytics: undefined,
-  initiatives: E_FEATURE_FLAGS.INITIATIVES,
-};
-
-export const isWorkspaceFeatureEnabled = (featureKey: string, workspaceSlug: string) => {
-  // Check if we need to check for a feature flag, if not, return true
-  const featureFlag = WorkspaceFeatureKeyToFeatureFlagMap[featureKey];
-  if (!featureFlag) return true;
-  // Check for the feature flag in the current workspace
-  const isFeatureFlagEnabled = store.featureFlags.getFeatureFlagForCurrentWorkspace(featureFlag, false);
-
-  switch (featureKey) {
     case "active-cycles":
       return isFeatureFlagEnabled && store.user.permission.workspaceUserInfo[workspaceSlug]?.active_cycles_count > 0;
-    case "teamspaces":
+    case "team_spaces":
       return (
         isFeatureFlagEnabled &&
         store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_TEAMSPACES_ENABLED)

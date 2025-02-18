@@ -8,13 +8,13 @@ export const getSidebarNavigationItemIcon = (key: string, className: string = ""
       return <Home className={cn("size-4 flex-shrink-0", className)} />;
     case "notifications":
       return <Inbox className={cn("size-4 flex-shrink-0", className)} />;
-    case "pi-chat":
+    case "pi_chat":
       return <PiChatLogo className={cn("size-4 flex-shrink-0", className)} />;
     case "projects":
       return <Briefcase className={cn("size-4 flex-shrink-0", className)} />;
     case "initiatives":
       return <InitiativeIcon className={cn("size-4 flex-shrink-0", className)} />;
-    case "teamspaces":
+    case "team_spaces":
       return <TeamsIcon className={cn("size-4 flex-shrink-0", className)} />;
     case "views":
       return <Layers className={cn("size-4 flex-shrink-0", className)} />;

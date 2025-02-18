@@ -14,7 +14,7 @@ import { SidebarNavItem } from "@/components/sidebar";
 import { useAppTheme, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web imports
 import { UpgradeBadge } from "@/plane-web/components/workspace";
-import { isWorkspaceFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
+import { isSidebarFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
 // local imports
 import { getSidebarNavigationItemIcon } from "./helper";
 
@@ -43,13 +43,13 @@ export const SidebarItem: FC<TSidebarItemProps> = observer((props) => {
     if (extendedSidebarCollapsed) toggleExtendedSidebar();
   };
 
-  const staticItems = ["home", "notifications", "pi-chat", "projects"];
+  const staticItems = ["home", "your-work","notifications", "pi_chat", "projects"];
 
   if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) {
     return null;
   }
 
-  if (!isWorkspaceFeatureEnabled(item.key, workspaceSlug.toString())) return null;
+  if (!isSidebarFeatureEnabled(item.key, workspaceSlug.toString())) return null;
 
   const itemHref =
     item.key === "your_work"
