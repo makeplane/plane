@@ -15,7 +15,7 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
-import { AppSearch } from "@/plane-web/components/workspace/sidebar/app-search";
+import { AppSearch } from "@/plane-web/components/workspace";
 
 export const SidebarQuickActions = observer(() => {
   const { t } = useTranslation();
