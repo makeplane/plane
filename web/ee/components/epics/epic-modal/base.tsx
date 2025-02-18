@@ -125,7 +125,7 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
           issueId: response.id,
           issueTypeId: response.type_id,
           projectId: response.project_id,
-          workspaceSlug: workspaceSlug.toString(),
+          workspaceSlug: workspaceSlug?.toString(),
         });
       }
 
@@ -175,7 +175,7 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
         issueId: data.id,
         issueTypeId: payload.type_id,
         projectId: payload.project_id,
-        workspaceSlug: workspaceSlug.toString(),
+        workspaceSlug: workspaceSlug?.toString(),
       });
 
       setToast({

@@ -10,10 +10,9 @@ import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
+import { NotificationAppSidebarOption } from "@/components/workspace-notifications";
 // hooks
 import { useAppTheme, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
-// plane web imports
-import { UpgradeBadge } from "@/plane-web/components/workspace";
 // local imports
 import { getSidebarNavigationItemIcon } from "./helper";
 
@@ -78,6 +77,12 @@ export const SidebarItem: FC<TSidebarItemProps> = observer((props) => {
             {icon}
             {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{t(item.labelTranslationKey)}</p>}
           </div>
+          {item.key === "inbox" && (
+            <NotificationAppSidebarOption
+              workspaceSlug={workspaceSlug?.toString()}
+              isSidebarCollapsed={sidebarCollapsed ?? false}
+            />
+          )}
         </SidebarNavItem>
       </Link>
     </Tooltip>

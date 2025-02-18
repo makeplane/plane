@@ -10,6 +10,7 @@ import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
+import { NotificationAppSidebarOption } from "@/components/workspace-notifications";
 // hooks
 import { useAppTheme, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web imports
@@ -86,6 +87,12 @@ export const SidebarItem: FC<TSidebarItemProps> = observer((props) => {
             <div className="flex-shrink-0">
               <UpgradeBadge flag="WORKSPACE_ACTIVE_CYCLES" />
             </div>
+          )}
+          {item.key === "inbox" && (
+            <NotificationAppSidebarOption
+              workspaceSlug={workspaceSlug?.toString()}
+              isSidebarCollapsed={sidebarCollapsed ?? false}
+            />
           )}
         </SidebarNavItem>
       </Link>
