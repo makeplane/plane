@@ -29,10 +29,9 @@ export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props:
   // router
   const { workspaceSlug } = useParams();
   // plane web store hooks
-  const { isIssueTypeEnabledForProject, getIssueTypeIdsWithMandatoryProperties } = useIssueTypes();
+  const { isWorkItemTypeEnabledForProject, getIssueTypeIdsWithMandatoryProperties } = useIssueTypes();
   // derived values
-  const isIssueTypeDisplayEnabled =
-    !!projectId && isIssueTypeEnabledForProject(workspaceSlug?.toString(), projectId, "ISSUE_TYPES");
+  const isWorkItemTypeEnabled = !!projectId && isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId);
   // Information for issue types with mandatory fields
   let optionTooltip: TIssueTypeOptionTooltip = {};
   if (showMandatoryFieldInfo) {
@@ -54,7 +53,7 @@ export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props:
 
   return (
     <>
-      {isIssueTypeDisplayEnabled && (
+      {isWorkItemTypeEnabled && (
         <>
           {renderChevron && (
             <div className="flex items-center gap-2">

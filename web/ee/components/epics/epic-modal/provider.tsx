@@ -30,8 +30,7 @@ export const EpicModalProvider = observer((props: TEpicModalProviderProps) => {
   const [issuePropertyValues, setIssuePropertyValues] = useState<TIssuePropertyValues>({});
   const [issuePropertyValueErrors, setIssuePropertyValueErrors] = useState<TIssuePropertyValueErrors>({});
   // plane web hooks
-  const { isIssueTypeOrEpicEnabledForProject, getIssueTypeById, getIssueTypeProperties, getProjectEpicId } =
-    useIssueTypes();
+  const { isEpicEnabledForProject, getIssueTypeById, getIssueTypeProperties, getProjectEpicId } = useIssueTypes();
   const { fetchPropertyActivities } = useIssuePropertiesActivity();
   // helpers
   const getIssueTypeIdOnProjectChange = (projectId: string) => {
@@ -43,12 +42,11 @@ export const EpicModalProvider = observer((props: TEpicModalProviderProps) => {
   };
 
   const getActiveAdditionalPropertiesLength = (props: TActiveAdditionalPropertiesProps) => {
-    const { projectId, watch, workspaceSlug } = props;
+    const { projectId, workspaceSlug } = props;
     const issueTypeId = projectId ? getProjectEpicId(projectId) : null;
     // if issue type is not enabled for the project or no issue type id, return 0
-    const isIssueTypeDisplayEnabled =
-      !!projectId && isIssueTypeOrEpicEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPES", "EPICS");
-    if (!isIssueTypeDisplayEnabled || !issueTypeId) return 0;
+    const isEpicEnabled = !!projectId && isEpicEnabledForProject(workspaceSlug, projectId);
+    if (!isEpicEnabled || !issueTypeId) return 0;
     // all properties for the issue type
     const properties = getIssueTypeProperties(issueTypeId);
     // filter all active properties
@@ -62,9 +60,8 @@ export const EpicModalProvider = observer((props: TEpicModalProviderProps) => {
 
     const issueTypeId = watch("type_id");
     // if issue type is not enabled for the project, skip validation
-    const isIssueTypeDisplayEnabled =
-      !!projectId && isIssueTypeOrEpicEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPES", "EPICS");
-    if (!isIssueTypeDisplayEnabled) return true;
+    const isEpicEnabled = !!projectId && isEpicEnabledForProject(workspaceSlug, projectId);
+    if (!isEpicEnabled) return true;
     // if no issue type id or no issue property values, skip validation
     if (!issueTypeId) return true;
     // all properties for the issue type
@@ -97,13 +94,8 @@ export const EpicModalProvider = observer((props: TEpicModalProviderProps) => {
     // check if issue property values are empty
     if (Object.keys(issuePropertyValues).length === 0) return;
     // check if issue type display is enabled
-    const isIssueTypeDisplayEnabled = isIssueTypeOrEpicEnabledForProject(
-      workspaceSlug,
-      projectId,
-      "ISSUE_TYPES",
-      "EPICS"
-    );
-    if (!isIssueTypeDisplayEnabled) return;
+    const isEpicEnabled = isEpicEnabledForProject(workspaceSlug, projectId);
+    if (!isEpicEnabled) return;
     // get issue type details
     const issueType = issueTypeId ? getIssueTypeById(issueTypeId) : null;
     // get draft issue type details
@@ -119,7 +111,7 @@ export const EpicModalProvider = observer((props: TEpicModalProviderProps) => {
       .create(workspaceSlug, projectId, issueId, filteredIssuePropertyValues)
       .then(() => {
         // mutate issue property values
-        mutate(`ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${isIssueTypeDisplayEnabled}`);
+        mutate(`ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${isEpicEnabled}`);
         // fetch property activities
         fetchPropertyActivities(workspaceSlug, projectId, issueId);
         // reset issue property values

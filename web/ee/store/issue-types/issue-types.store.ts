@@ -1,33 +1,25 @@
-import { set } from "lodash";
+import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { E_FEATURE_FLAGS, EIssuePropertyType } from "@plane/constants";
+import { EWorkItemTypeEntity } from "@plane/constants";
 import {
-  TEpicStats,
   TLoader,
   TIssueType,
-  TIssueProperty,
-  TIssuePropertyOptionsPayload,
   IIssueTypesService,
   IIssuePropertiesService,
   IIssuePropertyOptionsService,
-  IEpicService,
-  TEpicAnalytics,
-  TEpicAnalyticsGroup,
   IIssueType,
   IIssueTypesStore,
   TIssueTypesPromise,
-  TIssueTypesPropertiesOptions,
-  IssueTypeFlagKeys,
-  EpicIssueTypeFlagKeys,
+  TWorkItemTypesPropertiesOptions,
+  TEpicPropertiesOptions,
 } from "@plane/types";
 // plane web services
 import {
   epicIssueTypeService,
   epicPropertyOptionService,
   epicPropertyService,
-  epicService,
   issuePropertyOptionService,
   issuePropertyService,
   issueTypeService,
@@ -38,16 +30,12 @@ import { RootStore } from "@/plane-web/store/root.store";
 
 export class IssueTypes implements IIssueTypesStore {
   // observables
-  epicAnalyticsMap: Record<string, TEpicAnalytics> = {};
-  epicAnalyticsLoader: Record<string, TLoader> = {};
   loader: TLoader = "init-loader";
   issueTypePromise: TIssueTypesPromise | undefined = undefined;
-  issuePropertiesLoader: Record<string, TLoader> = {};
-  propertiesFetchedMap: Record<string, boolean> = {};
+  propertiesLoader: Record<string, Record<EWorkItemTypeEntity, TLoader>> = {};
+  propertiesFetchedMap: Record<string, Record<EWorkItemTypeEntity, boolean>> = {};
   issueTypes: Record<string, IIssueType> = {};
   projectEpics: Record<string, IIssueType> = {};
-  epicStatsLoader: Record<string, TLoader> = {};
-  epicStatsMap: Record<string, TEpicStats> = {};
   // root store
   rootStore: RootStore;
   // issue types services
@@ -55,7 +43,6 @@ export class IssueTypes implements IIssueTypesStore {
   issuePropertyService: IIssuePropertiesService;
   issuePropertyOptionService: IIssuePropertyOptionsService;
   // epic services
-  epicService: IEpicService;
   epicIssueTypesService: IIssueTypesService;
   epicPropertyService: IIssuePropertiesService;
   epicPropertyOptionService: IIssuePropertyOptionsService;
@@ -63,27 +50,22 @@ export class IssueTypes implements IIssueTypesStore {
   constructor(protected store: RootStore) {
     makeObservable(this, {
       // observables
-      epicAnalyticsMap: observable,
-      epicAnalyticsLoader: observable,
       loader: observable.ref,
-      issuePropertiesLoader: observable,
+      propertiesLoader: observable,
       propertiesFetchedMap: observable,
       issueTypes: observable,
       projectEpics: observable,
-      epicStatsLoader: observable,
-      epicStatsMap: observable,
       // computed
       data: computed,
       // helper actions
-      fetchAllPropertyData: action,
+      fetchAllWorkItemTypePropertyData: action,
+      fetchAllEpicPropertyData: action,
       // actions
       enableIssueTypes: action,
-      fetchAllPropertiesAndOptions: action,
-      fetchEpicAnalytics: action,
-      fetchEpicStats: action,
+      fetchAllWorkItemTypePropertiesAndOptions: action,
+      fetchAllEpicPropertiesAndOptions: action,
       createType: action,
       deleteType: action,
-      updateEpicAnalytics: action,
     });
     // root store
     this.rootStore = store;
@@ -92,7 +74,6 @@ export class IssueTypes implements IIssueTypesStore {
     this.issuePropertyService = issuePropertyService;
     this.issuePropertyOptionService = issuePropertyOptionService;
     // epic services
-    this.epicService = epicService;
     this.epicIssueTypesService = epicIssueTypeService;
     this.epicPropertyService = epicPropertyService;
     this.epicPropertyOptionService = epicPropertyOptionService;
@@ -131,9 +112,25 @@ export class IssueTypes implements IIssueTypesStore {
    * @param projectId
    * @returns {TLoader}
    */
-  getProjectIssuePropertiesLoader = computedFn(
-    (projectId: string) => this.issuePropertiesLoader[projectId] ?? "init-loader"
-  );
+  getProjectWorkItemPropertiesLoader = computedFn((projectId: string, entityType: EWorkItemTypeEntity) => {
+    if (!this.propertiesLoader?.[projectId]?.[entityType]) {
+      set(this.propertiesLoader, [projectId, entityType], "init-loader");
+    }
+    return this.propertiesLoader[projectId][entityType];
+  });
+
+  /**
+   * @description Get project work item type properties fetched map
+   * @param projectId
+   * @param entityType
+   * @returns {boolean}
+   */
+  getProjectWorkItemPropertiesFetchedMap = computedFn((projectId: string, entityType: EWorkItemTypeEntity) => {
+    if (!this.propertiesFetchedMap?.[projectId]?.[entityType]) {
+      set(this.propertiesFetchedMap, [projectId, entityType], false);
+    }
+    return this.propertiesFetchedMap[projectId][entityType];
+  });
 
   /**
    * @description Get project work item type ids
@@ -224,106 +221,49 @@ export class IssueTypes implements IIssueTypesStore {
   });
 
   /**
-   * @description Get epic analytics by epic id
-   * @param epicId
-   * @returns {TEpicAnalytics | undefined}
-   */
-  getEpicAnalyticsById = computedFn((epicId: string) =>
-    this.epicAnalyticsMap[epicId] ? this.epicAnalyticsMap[epicId] : undefined
-  );
-
-  getEpicStatsById = computedFn((epicId: string) => this.epicStatsMap[epicId]);
-
-  /**
    * @description Check if work item type is enabled for the project
    * @param workspaceSlug
    * @param projectId
-   * @param issueTypeFlagKey - feature flag
    * @returns {boolean}
    */
-  isIssueTypeEnabledForProject = computedFn(
-    (workspaceSlug: string, projectId: string, issueTypeFlagKey: IssueTypeFlagKeys): boolean => {
-      const issueTypeFlagEnabled =
-        this.rootStore.featureFlags.flags[workspaceSlug]?.[E_FEATURE_FLAGS[issueTypeFlagKey]];
-      const projectFeatures = this.rootStore.projectDetails.getProjectFeatures(projectId);
-      return (issueTypeFlagEnabled && projectFeatures?.is_issue_type_enabled) ?? false;
-    }
-  );
+  isWorkItemTypeEnabledForProject = computedFn((workspaceSlug: string, projectId: string): boolean => {
+    const issueTypeFlagEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("ISSUE_TYPES", false);
+    const projectFeatures = this.rootStore.projectDetails.getProjectFeatures(projectId);
+    return (issueTypeFlagEnabled && projectFeatures?.is_issue_type_enabled) ?? false;
+  });
 
   /**
    * @description Check if epic is enabled for the project
    * @param workspaceSlug
    * @param projectId
-   * @param epicFlagKey
    * @returns {boolean}
    */
-  isEpicEnabledForProject = computedFn(
-    (workspaceSlug: string, projectId: string, epicFlagKey: EpicIssueTypeFlagKeys): boolean => {
-      const epicFlagEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace(epicFlagKey, false);
-      const projectFeatures = this.rootStore.projectDetails.getProjectFeatures(projectId);
-      return (epicFlagEnabled && projectFeatures?.is_epic_enabled) ?? false;
-    }
-  );
-
-  updateEpicAnalytics = (
-    workspaceSlug: string,
-    projectId: string,
-    epicId: string,
-    data: {
-      incrementStateGroupCount?: TEpicAnalyticsGroup;
-      decrementStateGroupCount?: TEpicAnalyticsGroup;
-    }
-  ) => {
-    // Early return if required params are missing or no analytics exist
-    if (!workspaceSlug || !projectId || !epicId || !this.epicAnalyticsMap[epicId]) return;
-
-    const { incrementStateGroupCount, decrementStateGroupCount } = data;
-    if (!incrementStateGroupCount && !decrementStateGroupCount) return;
-
-    // Create update payload
-    const payload: Partial<TEpicAnalytics> = {};
-
-    if (incrementStateGroupCount) {
-      payload[incrementStateGroupCount] = this.epicAnalyticsMap[epicId][incrementStateGroupCount] + 1;
-    }
-
-    if (decrementStateGroupCount) {
-      payload[decrementStateGroupCount] =
-        this.epicAnalyticsMap[epicId][decrementStateGroupCount] > 0
-          ? this.epicAnalyticsMap[epicId][decrementStateGroupCount] - 1
-          : 0;
-    }
-
-    // Update analytics in a single operation
-    runInAction(() => {
-      this.epicAnalyticsMap[epicId] = {
-        ...this.epicAnalyticsMap[epicId],
-        ...payload,
-      };
-      this.epicStatsMap[epicId] = {
-        ...this.epicStatsMap[epicId],
-        ...payload,
-      };
-    });
-  };
+  isEpicEnabledForProject = computedFn((workspaceSlug: string, projectId: string): boolean => {
+    const epicFlagEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("EPICS", false);
+    const projectFeatures = this.rootStore.projectDetails.getProjectFeatures(projectId);
+    return (epicFlagEnabled && projectFeatures?.is_epic_enabled) ?? false;
+  });
 
   /**
    * @description Check if work item type or epic is enabled for the project
    * @param workspaceSlug
    * @param projectId
-   * @param issueTypeFlagKey
-   * @param epicFlagKey
+   * @param entityType
    * @returns {boolean}
    */
-  isIssueTypeOrEpicEnabledForProject = computedFn(
-    (
-      workspaceSlug: string,
-      projectId: string,
-      issueTypeFlagKey: IssueTypeFlagKeys,
-      epicFlagKey: EpicIssueTypeFlagKeys
-    ): boolean =>
-      this.isIssueTypeEnabledForProject(workspaceSlug, projectId, issueTypeFlagKey) ||
-      this.isEpicEnabledForProject(workspaceSlug, projectId, epicFlagKey)
+  isWorkItemTypeEntityEnabledForProject = computedFn(
+    (workspaceSlug: string, projectId: string, entityType?: EWorkItemTypeEntity): boolean => {
+      if (entityType === EWorkItemTypeEntity.WORK_ITEM) {
+        return this.isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
+      }
+      if (entityType === EWorkItemTypeEntity.EPIC) {
+        return this.isEpicEnabledForProject(workspaceSlug, projectId);
+      }
+      return (
+        this.isWorkItemTypeEnabledForProject(workspaceSlug, projectId) ||
+        this.isEpicEnabledForProject(workspaceSlug, projectId)
+      );
+    }
   );
 
   // helper actions
@@ -389,106 +329,64 @@ export class IssueTypes implements IIssueTypesStore {
   };
 
   /**
-   * @description Fetch all issue and epic property data for a project
+   * @description Fetch all work item property data for a project
    * @param workspaceSlug - The workspace slug
    * @param projectId - The project ID
-   * @returns Promise resolving to combined issue and epic properties/options
+   * @returns Promise resolving to work item properties/options
    */
-  fetchAllPropertyData = async (workspaceSlug: string, projectId: string): Promise<TIssueTypesPropertiesOptions> => {
+  fetchAllWorkItemTypePropertyData = async (
+    workspaceSlug: string,
+    projectId: string
+  ): Promise<TWorkItemTypesPropertiesOptions> => {
     if (!workspaceSlug || !projectId) {
-      return { issueProperties: [], issuePropertyOptions: {} };
+      return { workItemTypeProperties: [], workItemTypePropertyOptions: {} };
     }
-    const isIssueTypeEnabled = this.isIssueTypeEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPES");
-    const isEpicsEnabled = this.isEpicEnabledForProject(workspaceSlug, projectId, "EPICS");
-    // Fetch issue type data
-    let issueProperties: TIssueProperty<EIssuePropertyType>[] = [];
-    let issuePropertyOptions: TIssuePropertyOptionsPayload = {};
-    if (isIssueTypeEnabled) {
-      try {
-        const [properties, options] = await Promise.all([
-          this.issuePropertyService.fetchAll({ workspaceSlug, projectId }),
-          this.issuePropertyOptionService.fetchAll({ workspaceSlug, projectId }),
-        ]);
-        issueProperties = properties || [];
-        issuePropertyOptions = options || {};
-      } catch (error) {
-        console.error("Error fetching work item type data:", error);
-      }
+    const isIssueTypeEnabled = this.isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
+    if (!isIssueTypeEnabled) {
+      return { workItemTypeProperties: [], workItemTypePropertyOptions: {} };
     }
 
-    // Fetch epic data
-    let epicProperties: TIssueProperty<EIssuePropertyType>[] = [];
-    let epicPropertyOptions: TIssuePropertyOptionsPayload = {};
-    if (isEpicsEnabled) {
-      try {
-        const [properties, options] = await Promise.all([
-          this.epicPropertyService.fetchAll({ workspaceSlug, projectId }),
-          this.epicPropertyOptionService.fetchAll({ workspaceSlug, projectId }),
-        ]);
-        epicProperties = properties || [];
-        epicPropertyOptions = options || {};
-      } catch (error) {
-        console.error("Error fetching epic data:", error);
-      }
-    }
-
-    return {
-      issueProperties: [...issueProperties, ...epicProperties],
-      issuePropertyOptions: { ...issuePropertyOptions, ...epicPropertyOptions },
-    };
-  };
-
-  /**
-   * @description Fetch epic analytics
-   * @param workspaceSlug
-   * @param projectId
-   * @param epicId
-   */
-  fetchEpicAnalytics = async (workspaceSlug: string, projectId: string, epicId: string) => {
-    if (!workspaceSlug || !projectId || !epicId) return;
-    if (!this.epicService.getIssueProgressAnalytics) throw new Error("Get epic analytics service not available.");
     try {
-      this.epicAnalyticsLoader[epicId] = "init-loader";
-      const analytics = await this.epicService.getIssueProgressAnalytics(workspaceSlug, projectId, epicId);
-      runInAction(() => {
-        set(this.epicAnalyticsMap, epicId, analytics);
-        this.epicAnalyticsLoader[epicId] = "loaded";
-      });
-      return analytics;
+      const [properties, options] = await Promise.all([
+        this.issuePropertyService.fetchAll({ workspaceSlug, projectId }),
+        this.issuePropertyOptionService.fetchAll({ workspaceSlug, projectId }),
+      ]);
+      return {
+        workItemTypeProperties: properties || [],
+        workItemTypePropertyOptions: options || {},
+      };
     } catch (error) {
-      this.epicAnalyticsLoader[epicId] = "loaded";
+      console.error("Error fetching work item type data:", error);
       throw error;
     }
   };
 
   /**
-   * @description Fetch epic stats
-   * @param workspaceSlug
-   * @param projectId
+   * @description Fetch all epic property data for a project
+   * @param workspaceSlug - The workspace slug
+   * @param projectId - The project ID
+   * @returns Promise resolving to epic properties/options
    */
-  fetchEpicStats = async (workspaceSlug: string, projectId: string) => {
-    if (!workspaceSlug || !projectId) return;
-    if (!this.epicService.fetchEpicStats) throw new Error("Fetch epic stats service not available.");
+  fetchAllEpicPropertyData = async (workspaceSlug: string, projectId: string): Promise<TEpicPropertiesOptions> => {
+    if (!workspaceSlug || !projectId) {
+      return { epicProperties: [], epicPropertyOptions: {} };
+    }
+    const isEpicsEnabled = this.isEpicEnabledForProject(workspaceSlug, projectId);
+    if (!isEpicsEnabled) {
+      return { epicProperties: [], epicPropertyOptions: {} };
+    }
+
     try {
-      this.epicStatsLoader[projectId] = "init-loader";
-      const response = await this.epicService.fetchEpicStats(workspaceSlug, projectId);
-
-      runInAction(() => {
-        if (!response) return;
-
-        if (!this.epicStatsMap) this.epicStatsMap = {};
-
-        response.forEach((stats) => {
-          if (!stats) return;
-
-          this.epicStatsMap![stats.epic_id] = stats;
-        });
-        this.epicStatsLoader[projectId] = "loaded";
-      });
-
-      return response;
+      const [properties, options] = await Promise.all([
+        this.epicPropertyService.fetchAll({ workspaceSlug, projectId }),
+        this.epicPropertyOptionService.fetchAll({ workspaceSlug, projectId }),
+      ]);
+      return {
+        epicProperties: properties || [],
+        epicPropertyOptions: options || {},
+      };
     } catch (error) {
-      this.epicStatsLoader[projectId] = "loaded";
+      console.error("Error fetching epic data:", error);
       throw error;
     }
   };
@@ -628,38 +526,93 @@ export class IssueTypes implements IIssueTypesStore {
   };
 
   /**
-   * @description Get all property and options
+   * @description Get all work item type property and options
    * @param workspaceSlug
    * @param projectId
    */
-  fetchAllPropertiesAndOptions = async (workspaceSlug: string, projectId: string) => {
+  fetchAllWorkItemTypePropertiesAndOptions = async (workspaceSlug: string, projectId: string) => {
     if (!workspaceSlug || !projectId) return;
     try {
       // Do not fetch if issue types are already fetched and issue type ids are available
-      if (this.propertiesFetchedMap[projectId] === true) return;
+      if (this.getProjectWorkItemPropertiesFetchedMap(projectId, EWorkItemTypeEntity.WORK_ITEM)) return;
       // Fetch issue property and options
-      this.issuePropertiesLoader[projectId] = "init-loader";
-      this.propertiesFetchedMap[projectId] = true;
-      const { issueProperties, issuePropertyOptions } = await this.fetchAllPropertyData(workspaceSlug, projectId);
+      set(this.propertiesLoader, [projectId, EWorkItemTypeEntity.WORK_ITEM], "init-loader");
+      set(this.propertiesFetchedMap, [projectId, EWorkItemTypeEntity.WORK_ITEM], true);
+      const { workItemTypeProperties, workItemTypePropertyOptions } = await this.fetchAllWorkItemTypePropertyData(
+        workspaceSlug,
+        projectId
+      );
       runInAction(async () => {
-        if (issueProperties) {
-          // Since we fetch issue type,properties and options in parallel, we need to wait for issue types to be fetched and stores to be populated
+        if (workItemTypeProperties) {
+          // Since we fetch issue type, properties and options in parallel, we need to wait for issue types to be fetched and stores to be populated
           if (this.issueTypePromise) await this.issueTypePromise;
-          for (const issueProperty of issueProperties) {
+          for (const issueProperty of workItemTypeProperties) {
             if (issueProperty.id && issueProperty.issue_type) {
               const issueType = this.data[issueProperty.issue_type];
               if (issueType) {
-                issueType.addOrUpdateProperty(issueProperty, issuePropertyOptions[issueProperty.id]);
+                issueType.addOrUpdateProperty(issueProperty, workItemTypePropertyOptions[issueProperty.id]);
               }
             }
           }
         }
-        this.issuePropertiesLoader[projectId] = "loaded";
+        set(this.propertiesLoader, [projectId, EWorkItemTypeEntity.WORK_ITEM], "loaded");
       });
     } catch (error) {
-      this.issuePropertiesLoader[projectId] = "loaded";
-      this.propertiesFetchedMap[projectId] = false;
+      set(this.propertiesLoader, [projectId, EWorkItemTypeEntity.WORK_ITEM], "loaded");
+      set(this.propertiesFetchedMap, [projectId, EWorkItemTypeEntity.WORK_ITEM], false);
       throw error;
+    }
+  };
+
+  /**
+   * @description Get all epic type property and options
+   * @param workspaceSlug
+   * @param projectId
+   */
+  fetchAllEpicPropertiesAndOptions = async (workspaceSlug: string, projectId: string) => {
+    if (!workspaceSlug || !projectId) return;
+    try {
+      // Do not fetch if issue types are already fetched and issue type ids are available
+      if (this.getProjectWorkItemPropertiesFetchedMap(projectId, EWorkItemTypeEntity.EPIC)) return;
+      // Fetch issue property and options
+      set(this.propertiesLoader, [projectId, EWorkItemTypeEntity.EPIC], "init-loader");
+      set(this.propertiesFetchedMap, [projectId, EWorkItemTypeEntity.EPIC], true);
+      const { epicProperties, epicPropertyOptions } = await this.fetchAllEpicPropertyData(workspaceSlug, projectId);
+      runInAction(async () => {
+        if (epicProperties) {
+          // Since we fetch issue type, properties and options in parallel, we need to wait for issue types to be fetched and stores to be populated
+          if (this.issueTypePromise) await this.issueTypePromise;
+          for (const issueProperty of epicProperties) {
+            if (issueProperty.id && issueProperty.issue_type) {
+              const issueType = this.data[issueProperty.issue_type];
+              if (issueType) {
+                issueType.addOrUpdateProperty(issueProperty, epicPropertyOptions[issueProperty.id]);
+              }
+            }
+          }
+        }
+        set(this.propertiesLoader, [projectId, EWorkItemTypeEntity.EPIC], "loaded");
+      });
+    } catch (error) {
+      set(this.propertiesLoader, [projectId, EWorkItemTypeEntity.EPIC], "loaded");
+      set(this.propertiesFetchedMap, [projectId, EWorkItemTypeEntity.EPIC], false);
+      throw error;
+    }
+  };
+
+  /**
+   * @description Fetch all properties and options
+   * @param workspaceSlug
+   * @param projectId
+   * @param entityType
+   */
+  fetchAllPropertiesAndOptions = async (workspaceSlug: string, projectId: string, entityType: EWorkItemTypeEntity) => {
+    if (!workspaceSlug || !projectId) return;
+    if (entityType === EWorkItemTypeEntity.WORK_ITEM) {
+      return this.fetchAllWorkItemTypePropertiesAndOptions(workspaceSlug, projectId);
+    }
+    if (entityType === EWorkItemTypeEntity.EPIC) {
+      return this.fetchAllEpicPropertiesAndOptions(workspaceSlug, projectId);
     }
   };
 

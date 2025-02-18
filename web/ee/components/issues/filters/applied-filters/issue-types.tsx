@@ -19,16 +19,12 @@ export const AppliedIssueTypeFilters: React.FC<Props> = observer((props) => {
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
-  const { isIssueTypeEnabledForProject, getIssueTypeById } = useIssueTypes();
+  const { isWorkItemTypeEnabledForProject, getIssueTypeById } = useIssueTypes();
   // derived values
-  const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(
-    workspaceSlug?.toString(),
-    projectId?.toString(),
-    "ISSUE_TYPES"
-  );
+  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId?.toString());
 
   // Return null if issue type is not enabled for the project
-  if (!isIssueTypeDisplayEnabled) return null;
+  if (!isWorkItemTypeEnabled) return null;
 
   return (
     <>

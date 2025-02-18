@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronRight } from "lucide-react";
-// ui
+// plane imports
+import { EWorkItemTypeEntity } from "@plane/constants";
 import { Collapsible } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -73,7 +74,7 @@ export const EpicPropertiesRoot = observer((props: EpicPropertiesProps) => {
           buttonClassName={cn("flex w-full py-2 gap-2 items-center justify-between")}
         >
           <div className="p-2">
-            <IssuePropertiesRoot issueTypeId={epicId} />
+            <IssuePropertiesRoot issueTypeId={epicId} entityType={EWorkItemTypeEntity.EPIC} />
           </div>
         </Collapsible>
       </div>

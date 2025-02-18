@@ -15,3 +15,4 @@ export * from "./integrations";
 export * from "./projects/use-project-links";
 export * from "./teamspaces";
 export * from "./use-initiative-attachments";
+export * from "./epics";

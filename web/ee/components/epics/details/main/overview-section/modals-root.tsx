@@ -9,7 +9,7 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web hooks
-import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useIssueTypes, useEpicAnalytics } from "@/plane-web/hooks/store";
 
 type Props = {
   workspaceSlug: string;
@@ -37,7 +37,8 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
     issue: { getIssueById },
   } = useIssueDetail(EIssueServiceType.EPICS);
   const { createSubIssues } = useIssueDetail();
-  const { fetchEpicAnalytics, getIssueTypeById } = useIssueTypes();
+  const { getIssueTypeById } = useIssueTypes();
+  const { fetchEpicAnalytics } = useEpicAnalytics();
 
   const handleAddSubIssueResponse = (successMessage: string) => {
     setToast({

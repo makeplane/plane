@@ -49,17 +49,17 @@ export const IssueTypeActivity: FC<TIssueTypeActivity> = observer((props) => {
   const {
     activity: { getActivityById },
   } = useIssueDetail();
-  const { isIssueTypeEnabledForProject } = useIssueTypes();
+  const { isWorkItemTypeEnabledForProject } = useIssueTypes();
   // derived values
   const activity = getActivityById(activityId);
   if (!activity) return <></>;
 
-  const isIssueTypeDisplayEnabled =
+  const isWorkItemTypeEnabled =
     workspaceSlug && activity?.project
-      ? isIssueTypeEnabledForProject(workspaceSlug?.toString(), activity?.project, "ISSUE_TYPES")
+      ? isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), activity?.project)
       : false;
 
-  if (!isIssueTypeDisplayEnabled) return <BaseIssueTypeActivity {...props} />;
+  if (!isWorkItemTypeEnabled) return <BaseIssueTypeActivity {...props} />;
 
   return (
     <IssueActivityBlockComponent

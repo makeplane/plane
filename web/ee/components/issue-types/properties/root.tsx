@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { v4 } from "uuid";
 import { InfoIcon, Plus } from "lucide-react";
 // plane imports
-import { EIssuePropertyType } from "@plane/constants";
+import { EIssuePropertyType, EWorkItemTypeEntity } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssueProperty, TCreationListModes } from "@plane/types";
 import { Button, Loader, Tooltip } from "@plane/ui";
@@ -16,6 +16,7 @@ import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 
 type TIssuePropertiesRoot = {
   issueTypeId: string;
+  entityType: EWorkItemTypeEntity;
 };
 
 export type TIssuePropertyCreateList = Partial<TIssueProperty<EIssuePropertyType>> & {
@@ -33,7 +34,7 @@ const defaultIssueProperty: Partial<TIssueProperty<EIssuePropertyType>> = {
 };
 
 export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
-  const { issueTypeId } = props;
+  const { issueTypeId, entityType } = props;
   // router
   const { projectId } = useParams();
   // states
@@ -41,10 +42,10 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { getProjectIssuePropertiesLoader } = useIssueTypes();
+  const { getProjectWorkItemPropertiesLoader } = useIssueTypes();
   const issueType = useIssueType(issueTypeId);
   // derived values
-  const issuePropertiesLoader = getProjectIssuePropertiesLoader(projectId?.toString());
+  const propertiesLoader = getProjectWorkItemPropertiesLoader(projectId?.toString(), entityType);
   const properties = issueType?.properties;
   const isAnyPropertiesAvailable = (properties && properties?.length > 0) || issuePropertyCreateList.length > 0;
   // refs
@@ -88,10 +89,10 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
     <div
       className={cn("pt-1", {
         "bg-custom-background-100 rounded-lg h-60 flex flex-col justify-center items-center":
-          issuePropertiesLoader !== "init-loader" && !isAnyPropertiesAvailable,
+          propertiesLoader !== "init-loader" && !isAnyPropertiesAvailable,
       })}
     >
-      {issuePropertiesLoader === "init-loader" ? (
+      {propertiesLoader === "init-loader" ? (
         <Loader className="w-full space-y-4 px-6 py-4">
           <Loader.Item height="25px" width="150px" />
           <Loader.Item height="35px" width="100%" />
@@ -118,7 +119,7 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
       ) : (
         <IssueTypePropertiesEmptyState />
       )}
-      {issuePropertiesLoader !== "init-loader" && (
+      {propertiesLoader !== "init-loader" && (
         <div className={cn("flex items-center py-2 px-6", !isAnyPropertiesAvailable && "justify-center")}>
           <Button
             variant="accent-primary"

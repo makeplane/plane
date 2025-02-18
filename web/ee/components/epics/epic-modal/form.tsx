@@ -4,7 +4,7 @@ import React, { FC, useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { EIssueServiceType, ETabIndices } from "@plane/constants";
+import { EIssueServiceType, ETabIndices, EWorkItemTypeEntity } from "@plane/constants";
 // editor
 import { EditorRefApi } from "@plane/editor";
 // types
@@ -334,6 +334,7 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
                     issueTypeId={epicDetails?.id}
                     projectId={projectId}
                     workspaceSlug={workspaceSlug?.toString()}
+                    entityType={EWorkItemTypeEntity.EPIC}
                     issueServiceType={EIssueServiceType.EPICS}
                   />
                 )}

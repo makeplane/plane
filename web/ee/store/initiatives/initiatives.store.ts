@@ -255,12 +255,12 @@ export class InitiativeStore implements IInitiativeStore {
       runInAction(() => {
         if (!response) return;
 
-        if (!this.rootStore.issueTypes.epicStatsMap) this.rootStore.issueTypes.epicStatsMap = {};
+        if (!this.rootStore.epicAnalytics.epicStatsMap) this.rootStore.epicAnalytics.epicStatsMap = {};
 
         response.forEach((stats) => {
           if (!stats) return;
 
-          this.rootStore.issueTypes.epicStatsMap![stats.epic_id] = stats;
+          this.rootStore.epicAnalytics.epicStatsMap![stats.epic_id] = stats;
         });
       });
 

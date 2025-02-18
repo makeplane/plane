@@ -28,16 +28,16 @@ export const FilterIssueTypes: React.FC<Props> = observer((props) => {
   const [previewEnabled, setPreviewEnabled] = useState(true);
   // hooks
   const { workspaceSlug, projectId: routerProjectId } = useParams();
-  const { issueTypes: workspaceIssueTypes, isIssueTypeEnabledForProject, getProjectIssueTypes } = useIssueTypes();
+  const { issueTypes: workspaceIssueTypes, isWorkItemTypeEnabledForProject, getProjectIssueTypes } = useIssueTypes();
   const { getProjectById } = useProject();
   // derived values
   const projectId = routerProjectId?.toString();
-  const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(workspaceSlug?.toString(), projectId, "ISSUE_TYPES");
+  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId);
   const issueTypes = projectId ? getProjectIssueTypes(projectId, false) : workspaceIssueTypes;
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
   // Return null if issue type is not enabled for the project
-  if (!isIssueTypeDisplayEnabled) return null;
+  if (!isWorkItemTypeEnabled) return null;
 
   const sortedOptions = useMemo(() => {
     const filteredOptions = (Object.values(issueTypes) || []).filter((issueType) =>

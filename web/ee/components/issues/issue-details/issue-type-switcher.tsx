@@ -30,17 +30,13 @@ export const IssueTypeSwitcher: React.FC<TIssueTypeSwitcherProps> = observer((pr
     toggleCreateIssueModal,
     fetchActivities,
   } = useIssueDetail();
-  const { isIssueTypeEnabledForProject } = useIssueTypes();
+  const { isWorkItemTypeEnabledForProject } = useIssueTypes();
   // derived values
   const issue = getIssueById(issueId);
   if (!issue || !issue.project_id) return <></>;
-  const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(
-    workspaceSlug?.toString(),
-    issue.project_id,
-    "ISSUE_TYPES"
-  );
+  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), issue.project_id);
 
-  if (!isIssueTypeDisplayEnabled) {
+  if (!isWorkItemTypeEnabled) {
     return <BaseIssueTypeSwitcher {...props} />;
   }
 

@@ -8,7 +8,7 @@ import { TStateAnalytics } from "@plane/types";
 import { useIssueDetail } from "@/hooks/store";
 // plane web
 import { ProgressSection } from "@/plane-web/components/common/layout/main/sections/progress-root";
-import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useEpicAnalytics } from "@/plane-web/hooks/store";
 
 type Props = {
   epicId: string;
@@ -20,7 +20,7 @@ export const EpicProgressSection: FC<Props> = observer((props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail(EIssueServiceType.EPICS);
-  const { getEpicAnalyticsById } = useIssueTypes();
+  const { getEpicAnalyticsById } = useEpicAnalytics();
 
   // derived values
   const epicAnalytics = getEpicAnalyticsById(epicId);

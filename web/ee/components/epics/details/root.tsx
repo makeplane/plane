@@ -9,8 +9,8 @@ import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EUserPermission
 import { IssuePeekOverview } from "@/components/issues";
 // hooks
 import { useIssueDetail, useUserPermissions } from "@/hooks/store";
-// plane web
-import { useIssueTypes } from "@/plane-web/hooks/store";
+// plane web imports
+import { useEpicAnalytics } from "@/plane-web/hooks/store";
 // local components
 import { LayoutRoot } from "../../common";
 import { EpicEmptyState } from "./empty-state";
@@ -26,7 +26,7 @@ export type TIssueDetailRoot = {
 export const EpicDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
   const { workspaceSlug, projectId, epicId } = props;
   // hooks
-  const { fetchEpicAnalytics } = useIssueTypes();
+  const { fetchEpicAnalytics } = useEpicAnalytics();
   const {
     issue: { getIssueById },
   } = useIssueDetail(EIssueServiceType.EPICS);

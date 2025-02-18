@@ -12,9 +12,9 @@ import { cn, getProgress } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
+// plane web imports
 import { IdentifierText } from "@/plane-web/components/issues";
-import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useEpicAnalytics } from "@/plane-web/hooks/store";
 // local components
 import { EpicProperties } from "./properties";
 import { EpicQuickActions } from "./quick-action";
@@ -33,7 +33,7 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
     issue: { getIssueById },
     setPeekIssue,
   } = useIssueDetail(EIssueServiceType.EPICS);
-  const { getEpicStatsById } = useIssueTypes();
+  const { getEpicStatsById } = useEpicAnalytics();
   const project = useProject();
   const { isMobile } = usePlatformOS();
 

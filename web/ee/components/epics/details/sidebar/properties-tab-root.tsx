@@ -2,7 +2,7 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock, Signal, Tag, Triangle, UserCircle2, Users } from "lucide-react";
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/constants";
 // ui
 import { DoubleCircleIcon } from "@plane/ui";
 // components
@@ -232,6 +232,7 @@ export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
             projectId={projectId}
             workspaceSlug={workspaceSlug}
             isDisabled={disabled}
+            entityType={EWorkItemTypeEntity.EPIC}
             issueServiceType={EIssueServiceType.EPICS}
           />
         )}

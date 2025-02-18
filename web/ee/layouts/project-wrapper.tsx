@@ -11,22 +11,34 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // props
   const { workspaceSlug, projectId, children } = props;
   // store hooks
-  const { isIssueTypeEnabledForProject, isEpicEnabledForProject, fetchAllPropertiesAndOptions } = useIssueTypes();
+  const {
+    isWorkItemTypeEnabledForProject,
+    isEpicEnabledForProject,
+    fetchAllWorkItemTypePropertiesAndOptions,
+    fetchAllEpicPropertiesAndOptions,
+  } = useIssueTypes();
   // derived values
-  const isIssueTypeEnabled = isIssueTypeEnabledForProject(
-    workspaceSlug?.toString(),
-    projectId?.toString(),
-    "ISSUE_TYPES"
-  );
-  const isEpicEnabled = isEpicEnabledForProject(workspaceSlug?.toString(), projectId?.toString(), "EPICS");
+  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId?.toString());
+  const isEpicEnabled = isEpicEnabledForProject(workspaceSlug?.toString(), projectId?.toString());
 
-  // fetching all issue types and properties
+  // fetching all work item types and properties
   useSWR(
-    workspaceSlug && projectId && (isIssueTypeEnabled || isEpicEnabled)
-      ? `ISSUE_TYPES_AND_PROPERTIES_${workspaceSlug}_${projectId}_${isIssueTypeEnabled}_${isEpicEnabled}`
+    workspaceSlug && projectId && isWorkItemTypeEnabled
+      ? ["workItemTypesPropertiesAndOptions", workspaceSlug, projectId, isWorkItemTypeEnabled]
       : null,
-    workspaceSlug && projectId && (isIssueTypeEnabled || isEpicEnabled)
-      ? () => fetchAllPropertiesAndOptions(workspaceSlug.toString(), projectId.toString())
+    workspaceSlug && projectId && isWorkItemTypeEnabled
+      ? () => fetchAllWorkItemTypePropertiesAndOptions(workspaceSlug.toString(), projectId.toString())
+      : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // fetching all epic types and properties
+  useSWR(
+    workspaceSlug && projectId && isEpicEnabled
+      ? ["epicsPropertiesAndOptions", workspaceSlug, projectId, isEpicEnabled]
+      : null,
+    workspaceSlug && projectId && isEpicEnabled
+      ? () => fetchAllEpicPropertiesAndOptions(workspaceSlug.toString(), projectId.toString())
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );

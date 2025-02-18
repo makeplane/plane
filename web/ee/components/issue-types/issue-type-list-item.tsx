@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import { ChevronRight } from "lucide-react";
 // plane imports
+import { EWorkItemTypeEntity } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Collapsible } from "@plane/ui";
 // helpers
@@ -94,7 +95,7 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
           buttonClassName={cn("flex w-full py-2 gap-2 items-center justify-between")}
         >
           <div className="p-2">
-            <IssuePropertiesRoot issueTypeId={issueTypeId} />
+            <IssuePropertiesRoot issueTypeId={issueTypeId} entityType={EWorkItemTypeEntity.WORK_ITEM} />
           </div>
         </Collapsible>
       </div>
