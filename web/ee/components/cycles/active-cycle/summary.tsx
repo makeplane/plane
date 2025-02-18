@@ -6,6 +6,7 @@ import { IIssueFilterOptions, TCycleProgress } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useProjectState } from "@/hooks/store";
+import { ESTIMATE_TYPE } from "@/plane-web/constants/cycle";
 import { getColors } from "./cycle-chart/helper";
 import ScopeDelta from "./scope-delta";
 
@@ -104,8 +105,8 @@ const Summary = observer((props: Props) => {
               {isBehind ? "Trailing" : "Leading"} by{" "}
               {Math.round(Math.abs((dataToday?.ideal ?? 0) - (dataToday?.actual ?? 0)))}{" "}
               {Math.abs((dataToday?.ideal ?? 0) - (dataToday?.actual ?? 0)) > 1
-                ? estimateType
-                : estimateType.slice(0, -1)}
+                ? `${ESTIMATE_TYPE[estimateType]}s`
+                : ESTIMATE_TYPE[estimateType]}
             </div>
             <div className="text-[20px] self-end">🏃</div>
           </>
@@ -117,7 +118,7 @@ const Summary = observer((props: Props) => {
       <div className="space-y-1 mt-2 pb-4 border-b border-custom-border-200">
         <div className="flex text-xs text-custom-text-350 font-medium">
           <span className="w-5/6 capitalize">
-            {estimateType.slice(0, -1)}s <span className="lowercase">by stategroups on chart</span>
+            {ESTIMATE_TYPE[estimateType]}s <span className="lowercase">by stategroups on chart</span>
           </span>
         </div>
         {stateGroups.primaryStates.map((group, index) => (
@@ -163,7 +164,7 @@ const Summary = observer((props: Props) => {
       </div>
       <div className="space-y-1 mt-2 pb-4 border-b border-custom-border-200">
         <div className="flex text-xs text-custom-text-350 font-medium">
-          <span className="w-5/6">Other {estimateType.slice(0, -1)} stategroups</span>
+          <span className="w-5/6">Other {ESTIMATE_TYPE[estimateType]} stategroups</span>
         </div>
         {stateGroups.secondaryStates.map((group, index) => (
           <div
@@ -195,7 +196,7 @@ const Summary = observer((props: Props) => {
             <Loader.Item width="200px" height="20px" />
           ) : (
             <span>
-              Excluded {dataToday?.cancelled || 0} cancelled {estimateType}
+              Excluded {dataToday?.cancelled || 0} cancelled {ESTIMATE_TYPE[estimateType]}s
             </span>
           )}
           {!data ? (

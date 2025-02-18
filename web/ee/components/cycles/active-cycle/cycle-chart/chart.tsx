@@ -18,6 +18,7 @@ import {
 } from "recharts";
 import { ICycle } from "@plane/types";
 import { TProgressChartData } from "@/helpers/cycle.helper";
+import { ESTIMATE_TYPE } from "@/plane-web/constants/cycle";
 import { chartHelper, getColors } from "./helper";
 import { renderScopeLabel } from "./labels";
 import { CustomizedXAxisTicks, CustomizedYAxisTicks } from "./ticks";
@@ -167,7 +168,7 @@ export const ActiveCycleChart = observer((props: Props) => {
               textTransform: "uppercase",
             }}
             position="insideBottomLeft"
-            value={estimateType}
+            value={`${ESTIMATE_TYPE[estimateType]}s`}
           />
         </YAxis>
         {/* Line charts */}
