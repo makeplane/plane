@@ -790,14 +790,15 @@ def create_cycle_issue_activity(
                 issue_id=updated_record.get("issue_id"),
                 actor_id=actor_id,
                 verb="updated",
-                old_value=old_cycle.name,
-                new_value=new_cycle.name,
+                old_value=old_cycle.name if old_cycle else None,
+                new_value=new_cycle.name if new_cycle else None,
                 field="cycles",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"updated cycle from {old_cycle.name} to {new_cycle.name}",
-                old_identifier=old_cycle.id,
-                new_identifier=new_cycle.id,
+                comment=f"""updated cycle from {old_cycle.name if old_cycle else "None"}
+                to {new_cycle.name if new_cycle else "None"}""",
+                old_identifier=old_cycle.id if old_cycle else None,
+                new_identifier=new_cycle.id if new_cycle else None,
                 epoch=epoch,
             )
         )
@@ -1413,7 +1414,7 @@ def delete_issue_relation_activity(
             ),
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f'deleted {requested_data.get("relation_type")} relation',
+            comment=f"deleted {requested_data.get('relation_type')} relation",
             old_identifier=requested_data.get("related_issue"),
             epoch=epoch,
         )

@@ -55,6 +55,20 @@ class LabelViewSet(BaseViewSet):
     @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
     def partial_update(self, request, *args, **kwargs):
+        # Check if the label name is unique within the project
+        if (
+            "name" in request.data
+            and Label.objects.filter(
+                project_id=kwargs["project_id"], name=request.data["name"]
+            )
+            .exclude(pk=kwargs["pk"])
+            .exists()
+        ):
+            return Response(
+                {"error": "Label with the same name already exists in the project"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        # call the parent method to perform the update
         return super().partial_update(request, *args, **kwargs)
 
     @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
@@ -74,7 +88,7 @@ class BulkCreateIssueLabelsEndpoint(BaseAPIView):
                 Label(
                     name=label.get("name", "Migrated"),
                     description=label.get("description", "Migrated Issue"),
-                    color=f"#{random.randint(0, 0xFFFFFF+1):06X}",
+                    color=f"#{random.randint(0, 0xFFFFFF + 1):06X}",
                     project_id=project_id,
                     workspace_id=project.workspace_id,
                     created_by=request.user,
