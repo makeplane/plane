@@ -238,7 +238,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     {
                       "cursor-not-allowed opacity-60": project.sort_order === null,
                       "cursor-grabbing": isDragging,
-                      flex: isMenuActive,
+                      flex: isMenuActive || renderInExtendedSidebar,
                       "!hidden": isSidebarCollapsed,
                     }
                   )}

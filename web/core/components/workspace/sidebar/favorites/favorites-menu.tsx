@@ -285,11 +285,9 @@ export const SidebarFavoritesMenu = observer(() => {
         </Transition>
       </Disclosure>
 
-      <hr
-        className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
-          "opacity-0": !sidebarCollapsed || favoriteIds.length === 0,
-        })}
-      />
+      {sidebarCollapsed && favoriteIds.length > 0 && (
+        <hr className="flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1" />
+      )}
     </>
   );
 });
