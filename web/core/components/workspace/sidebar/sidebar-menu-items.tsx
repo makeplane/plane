@@ -51,19 +51,19 @@ export const SidebarMenuItems = observer(() => {
         {sortedNavigationItems.map((item, _index) => (
           <SidebarItem key={`dynamic_${_index}`} item={item} />
         ))}
+        <SidebarNavItem className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}>
+          <button
+            onClick={() => toggleExtendedSidebar()}
+            className={cn("flex items-center gap-1.5 text-sm font-medium flex-grow text-custom-text-350", {
+              "justify-center": sidebarCollapsed,
+            })}
+            id="extended-sidebar-toggle"
+          >
+            <Ellipsis className="size-4" />
+            {!sidebarCollapsed && <span>More</span>}
+          </button>
+        </SidebarNavItem>
       </div>
-      <SidebarNavItem className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}>
-        <button
-          onClick={() => toggleExtendedSidebar()}
-          className={cn("flex items-center gap-1.5 text-sm font-medium flex-grow text-custom-text-350", {
-            "justify-center": sidebarCollapsed,
-          })}
-          id="extended-sidebar-toggle"
-        >
-          <Ellipsis className="size-4" />
-          {!sidebarCollapsed && <span>More</span>}
-        </button>
-      </SidebarNavItem>
     </>
   );
 });

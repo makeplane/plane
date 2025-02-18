@@ -396,6 +396,7 @@ class WorkspaceUserPreference(BaseModel):
         ACTIVE_CYCLES = "active_cycles", "Active Cycles"
         ANALYTICS = "analytics", "Analytics"
         DRAFTS = "drafts", "Drafts"
+        YOUR_WORK = "your_work", "Your Work"
         ARCHIVES = "archives", "Archives"
 
     workspace = models.ForeignKey(

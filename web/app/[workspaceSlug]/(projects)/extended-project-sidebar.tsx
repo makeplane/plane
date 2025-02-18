@@ -14,6 +14,7 @@ import { CreateProjectModal } from "@/components/project";
 import { SidebarProjectsListItem } from "@/components/workspace";
 // hooks
 import { orderJoinedProjects } from "@/helpers/project.helper";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
 import { useAppTheme, useProject, useUserPermissions } from "@/hooks/store";
 import useExtendedSidebarOutsideClickDetector from "@/hooks/use-extended-sidebar-overview-outside-click";
 import { TProject } from "@/plane-web/types";
@@ -85,6 +86,15 @@ export const ExtendedProjectSidebar = observer(() => {
     "extended-project-sidebar-toggle"
   );
 
+  const handleCopyText = (projectId: string) => {
+    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("link_copied"),
+        message: t("project_link_copied_to_clipboard"),
+      });
+    });
+  };
   return (
     <>
       {workspaceSlug && (
@@ -140,7 +150,7 @@ export const ExtendedProjectSidebar = observer(() => {
             <SidebarProjectsListItem
               key={projectId}
               projectId={projectId}
-              handleCopyText={() => {}}
+              handleCopyText={() => handleCopyText(projectId)}
               projectListType={"JOINED"}
               disableDrag={false}
               disableDrop={false}
