@@ -10,6 +10,7 @@ import { PageHead } from "@/components/core";
 import { useProject, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { EpicsEmptyState } from "@/plane-web/components/epics";
+import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 
 const EpicsLayout = observer(({ children }: { children: ReactNode }) => {
   // router
