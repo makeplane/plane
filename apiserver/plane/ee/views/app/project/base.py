@@ -53,11 +53,15 @@ class WorkspaceProjectFeatureEndpoint(BaseAPIView):
         # Get all projects in the workspace
         projects = Project.objects.filter(workspace__slug=slug)
         # Create project feature only if it doesn't exist
-        for project in projects:
-            if not ProjectFeature.objects.filter(project=project).exists():
-                ProjectFeature.objects.create(
-                    workspace_id=project.workspace_id, project=project
-                )
+        existing_project_features = ProjectFeature.objects.filter(
+            project__in=projects
+        ).values_list("project_id", flat=True)
+        projects_without_features = projects.exclude(id__in=existing_project_features)
+        project_features_to_create = [
+            ProjectFeature(workspace_id=project.workspace_id, project=project)
+            for project in projects_without_features
+        ]
+        ProjectFeature.objects.bulk_create(project_features_to_create)
         # Get all project features in at workspace level
         project_features = ProjectFeature.objects.filter(
             workspace__slug=slug, project__in=projects
