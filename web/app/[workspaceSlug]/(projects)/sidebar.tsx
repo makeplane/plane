@@ -90,11 +90,9 @@ export const AppSidebar: FC = observer(() => {
             })}
           >
             <SidebarMenuItems />
-            <hr
-              className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
-                "opacity-0": !sidebarCollapsed,
-              })}
-            />
+            {sidebarCollapsed && (
+              <hr className="flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1" />
+            )}
             {/* Favorites Menu */}
             {canPerformWorkspaceMemberActions && !isFavoriteEmpty && <SidebarFavoritesMenu />}
             {/* Teams List */}
