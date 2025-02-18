@@ -1,6 +1,6 @@
+import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import useSWR from "swr";
 // components
 import { BulkDeleteIssuesModal } from "@/components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
@@ -10,17 +10,25 @@ import { useCommandPalette, useIssueDetail, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
-export const IssueLevelModals = observer(() => {
+type Props = {
+  projectId: string | undefined;
+  issueId: string | undefined;
+};
+
+export const IssueLevelModals: FC<Props> = observer((props) => {
+  const { projectId, issueId } = props;
   // router
   const pathname = usePathname();
-  const { workspaceSlug, projectId: paramsProjectId, workItem, cycleId, moduleId } = useParams();
+  const { workspaceSlug, cycleId, moduleId } = useParams();
   const router = useAppRouter();
   // store hooks
   const { data: currentUser } = useUser();
   const {
+    issue: { getIssueById },
+  } = useIssueDetail();
+  const {
     issues: { removeIssue },
   } = useIssuesStore();
-  const { fetchIssueWithIdentifier } = useIssueDetail();
   const {
     isCreateIssueModalOpen,
     toggleCreateIssueModal,
@@ -30,20 +38,8 @@ export const IssueLevelModals = observer(() => {
     toggleBulkDeleteIssueModal,
   } = useCommandPalette();
   // derived values
+  const issueDetails = issueId ? getIssueById(issueId) : undefined;
   const isDraftIssue = pathname?.includes("draft-issues") || false;
-
-  const projectIdentifier = workItem?.toString().split("-")[0];
-  const sequence_id = workItem?.toString().split("-")[1];
-
-  const { data: issueDetails } = useSWR(
-    workspaceSlug && workItem ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}` : null,
-    workspaceSlug && workItem
-      ? () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
-      : null
-  );
-
-  const issueId = issueDetails?.id;
-  const projectId = paramsProjectId ?? issueDetails?.project_id;
 
   return (
     <>
