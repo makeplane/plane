@@ -210,8 +210,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
               classNames={{ root: `${defaultClassNames.root} p-3 rounded-md` }}
               selected={dateRange}
               onSelect={(val) => {
-                // if both the dates are not required, immediately call onSelect
-                if (!bothRequired) onSelect(val);
+                onSelect(val);
                 setDateRange({
                   from: val?.from ?? undefined,
                   to: val?.to ?? undefined,
@@ -222,36 +221,6 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
               showOutsideDays
               autoFocus
               fixedWeeks
-              footer={
-                bothRequired && (
-                  <div className="grid grid-cols-2 items-center gap-3.5 pt-6 relative">
-                    <div className="absolute left-0 top-1 h-[0.5px] w-full border-t-[0.5px] border-custom-border-300" />
-                    <Button
-                      variant="neutral-primary"
-                      onClick={() => {
-                        setDateRange({
-                          from: undefined,
-                          to: undefined,
-                        });
-                        handleClose();
-                      }}
-                    >
-                      {cancelButtonText}
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        onSelect(dateRange);
-                        handleClose();
-                      }}
-                      // if required, both the dates should be selected
-                      // if not required, either both or none of the dates should be selected
-                      disabled={required ? !(dateRange.from && dateRange.to) : !!dateRange.from !== !!dateRange.to}
-                    >
-                      {applyButtonText}
-                    </Button>
-                  </div>
-                )
-              }
             />
           </div>
         </Combobox.Options>
