@@ -102,6 +102,7 @@ export class HomeStore implements IHomeStore {
   };
 
   reorderWidget = async (workspaceSlug: string, widgetKey: string, destinationId: string, edge: string | undefined) => {
+    const initialSequence = this.widgetsMap[widgetKey]?.sort_order;
     try {
       let resultSequence = 10000;
       if (edge) {
@@ -121,13 +122,16 @@ export class HomeStore implements IHomeStore {
           }
         }
       }
-      await this.workspaceService.updateWorkspaceWidget(workspaceSlug, widgetKey, {
-        sort_order: resultSequence,
-      });
       runInAction(() => {
         set(this.widgetsMap, [widgetKey, "sort_order"], resultSequence);
       });
+      await this.workspaceService.updateWorkspaceWidget(workspaceSlug, widgetKey, {
+        sort_order: resultSequence,
+      });
     } catch (error) {
+      runInAction(() => {
+        set(this.widgetsMap, [widgetKey, "sort_order"], initialSequence);
+      });
       console.error("Failed to move widget");
       throw error;
     }
