@@ -1,6 +1,7 @@
 # Django imports
 from django.utils import timezone
 from lxml import html
+from django.db import IntegrityError
 
 #  Third party imports
 from rest_framework import serializers
@@ -138,47 +139,56 @@ class IssueSerializer(BaseSerializer):
         updated_by_id = issue.updated_by_id
 
         if assignees is not None and len(assignees):
-            IssueAssignee.objects.bulk_create(
-                [
-                    IssueAssignee(
-                        assignee_id=assignee_id,
+            try:
+                IssueAssignee.objects.bulk_create(
+                    [
+                        IssueAssignee(
+                            assignee_id=assignee_id,
+                            issue=issue,
+                            project_id=project_id,
+                            workspace_id=workspace_id,
+                            created_by_id=created_by_id,
+                            updated_by_id=updated_by_id,
+                        )
+                        for assignee_id in assignees
+                    ],
+                    batch_size=10,
+                )
+            except IntegrityError:
+                pass
+        else:
+            try:
+                # Then assign it to default assignee
+                if default_assignee_id is not None:
+                    IssueAssignee.objects.create(
+                        assignee_id=default_assignee_id,
                         issue=issue,
                         project_id=project_id,
                         workspace_id=workspace_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
-                    for assignee_id in assignees
-                ],
-                batch_size=10,
-            )
-        else:
-            # Then assign it to default assignee
-            if default_assignee_id is not None:
-                IssueAssignee.objects.create(
-                    assignee_id=default_assignee_id,
-                    issue=issue,
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    created_by_id=created_by_id,
-                    updated_by_id=updated_by_id,
-                )
+            except IntegrityError:
+                pass
 
         if labels is not None and len(labels):
-            IssueLabel.objects.bulk_create(
-                [
-                    IssueLabel(
-                        label_id=label_id,
-                        issue=issue,
-                        project_id=project_id,
-                        workspace_id=workspace_id,
-                        created_by_id=created_by_id,
-                        updated_by_id=updated_by_id,
-                    )
-                    for label_id in labels
-                ],
-                batch_size=10,
-            )
+            try:
+                IssueLabel.objects.bulk_create(
+                    [
+                        IssueLabel(
+                            label_id=label_id,
+                            issue=issue,
+                            project_id=project_id,
+                            workspace_id=workspace_id,
+                            created_by_id=created_by_id,
+                            updated_by_id=updated_by_id,
+                        )
+                        for label_id in labels
+                    ],
+                    batch_size=10,
+                )
+            except IntegrityError:
+                pass
 
         return issue
 
@@ -194,39 +204,45 @@ class IssueSerializer(BaseSerializer):
 
         if assignees is not None:
             IssueAssignee.objects.filter(issue=instance).delete()
-            IssueAssignee.objects.bulk_create(
-                [
-                    IssueAssignee(
-                        assignee_id=assignee_id,
-                        issue=instance,
-                        project_id=project_id,
-                        workspace_id=workspace_id,
-                        created_by_id=created_by_id,
-                        updated_by_id=updated_by_id,
-                    )
-                    for assignee_id in assignees
-                ],
-                batch_size=10,
-                ignore_conflicts=True,
-            )
+            try:
+                IssueAssignee.objects.bulk_create(
+                    [
+                        IssueAssignee(
+                            assignee_id=assignee_id,
+                            issue=instance,
+                            project_id=project_id,
+                            workspace_id=workspace_id,
+                            created_by_id=created_by_id,
+                            updated_by_id=updated_by_id,
+                        )
+                        for assignee_id in assignees
+                    ],
+                    batch_size=10,
+                    ignore_conflicts=True,
+                )
+            except IntegrityError:
+                pass
 
         if labels is not None:
             IssueLabel.objects.filter(issue=instance).delete()
-            IssueLabel.objects.bulk_create(
-                [
-                    IssueLabel(
-                        label_id=label_id,
-                        issue=instance,
-                        project_id=project_id,
-                        workspace_id=workspace_id,
-                        created_by_id=created_by_id,
-                        updated_by_id=updated_by_id,
-                    )
-                    for label_id in labels
-                ],
-                batch_size=10,
-                ignore_conflicts=True,
-            )
+            try:
+                IssueLabel.objects.bulk_create(
+                    [
+                        IssueLabel(
+                            label_id=label_id,
+                            issue=instance,
+                            project_id=project_id,
+                            workspace_id=workspace_id,
+                            created_by_id=created_by_id,
+                            updated_by_id=updated_by_id,
+                        )
+                        for label_id in labels
+                    ],
+                    batch_size=10,
+                    ignore_conflicts=True,
+                )
+            except IntegrityError:
+                pass
 
         # Time updation occues even when other related models are updated
         instance.updated_at = timezone.now()
