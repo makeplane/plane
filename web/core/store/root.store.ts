@@ -20,6 +20,7 @@ import { IMemberRootStore, MemberRootStore } from "./member";
 import { IModuleStore, ModulesStore } from "./module.store";
 import { IModuleFilterStore, ModuleFilterStore } from "./module_filter.store";
 import { IMultipleSelectStore, MultipleSelectStore } from "./multiple_select.store";
+import { IWorkspaceNotificationSettingsStore, WorkspaceNotificationSettingsStore } from "./notifications/workspace-notification-settings.store";
 import { IWorkspaceNotificationStore, WorkspaceNotificationStore } from "./notifications/workspace-notifications.store";
 import { IProjectPageStore, ProjectPageStore } from "./pages/project-page.store";
 import { IProjectRootStore, ProjectRootStore } from "./project";
@@ -58,6 +59,7 @@ export class CoreRootStore {
   projectEstimate: IProjectEstimateStore;
   multipleSelect: IMultipleSelectStore;
   workspaceNotification: IWorkspaceNotificationStore;
+  workspaceNotificationSettings: IWorkspaceNotificationSettingsStore;
   favorite: IFavoriteStore;
   transient: ITransientStore;
   stickyStore: IStickyStore;
@@ -86,6 +88,7 @@ export class CoreRootStore {
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this as unknown as RootStore);
     this.projectEstimate = new ProjectEstimateStore(this);
+    this.workspaceNotificationSettings = new WorkspaceNotificationSettingsStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.favorite = new FavoriteStore(this);
     this.transient = new TransientStore();
@@ -118,6 +121,7 @@ export class CoreRootStore {
     this.projectPages = new ProjectPageStore(this as unknown as RootStore);
     this.multipleSelect = new MultipleSelectStore();
     this.projectEstimate = new ProjectEstimateStore(this);
+    this.workspaceNotificationSettings = new WorkspaceNotificationSettingsStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.favorite = new FavoriteStore(this);
     this.transient = new TransientStore();

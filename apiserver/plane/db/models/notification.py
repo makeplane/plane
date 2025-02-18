@@ -123,3 +123,51 @@ class EmailNotificationLog(BaseModel):
         verbose_name_plural = "Email Notification Logs"
         db_table = "email_notification_logs"
         ordering = ("-created_at",)
+
+class WorkspaceUserNotificationPreference(BaseModel):
+    class TransportChoices(models.TextChoices):
+        EMAIL = "EMAIL", "Email"
+        IN_APP = "IN_APP", "In App"
+
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        related_name="workspace_notification_preference",
+        on_delete=models.CASCADE,
+    )
+    user = models.ForeignKey(
+        "db.User",
+        related_name="workspace_notification_preference",
+        on_delete=models.CASCADE,
+    )
+    transport = models.CharField(max_length=50)
+
+    # task updates
+    work_item_property_updates_enabled = models.BooleanField(default=False)
+    status_updates_enabled = models.BooleanField(default=False)
+    priority_updates_enabled = models.BooleanField(default=False)
+    assignee_updates_enabled = models.BooleanField(default=False)
+    start_due_date_updates_enabled = models.BooleanField(default=False)
+    module_updates_enabled = models.BooleanField(default=False)
+    cycle_updates_enabled = models.BooleanField(default=False)
+
+    # comment updates
+    mentioned_comments_updates_enabled = models.BooleanField(default=False)
+    new_comments_updates_enabled = models.BooleanField(default=False)
+    reaction_comments_updates_enabled = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ["workspace", "user", "transport", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "user", "transport"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="notification_preferences_unique_workspace_user_transport_when_deleted_at_null",
+            )
+        ]
+        verbose_name = "Workspace User Notification Preference"
+        verbose_name_plural = "Workspace User Notification Preferences"
+        db_table = "workspace_user_notification_preferences"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.workspace} - {self.user} Notification Preferences"

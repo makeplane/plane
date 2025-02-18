@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from plane.app.serializers import (
     NotificationSerializer,
     UserNotificationPreferenceSerializer,
+    WorkspaceUserNotificationPreferenceSerializer
 )
 from plane.db.models import (
     Issue,
@@ -17,6 +18,8 @@ from plane.db.models import (
     Notification,
     UserNotificationPreference,
     WorkspaceMember,
+    Workspace,
+    WorkspaceUserNotificationPreference
 )
 from plane.utils.paginator import BasePaginator
 from plane.app.permissions import allow_permission, ROLE
@@ -360,3 +363,81 @@ class UserNotificationPreferenceEndpoint(BaseAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class WorkspaceUserNotificationPreferenceEndpoint(BaseAPIView):
+    model = WorkspaceUserNotificationPreference
+    serializer_class = WorkspaceUserNotificationPreferenceSerializer
+
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
+    )
+    def get(self, request, slug):
+        workspace = Workspace.objects.get(slug=slug)
+        get_notification_preferences = (
+            WorkspaceUserNotificationPreference.objects.filter(
+                workspace=workspace, user=request.user
+            )
+        )
+
+        create_transports = []
+
+        transports = [
+            transport
+            for transport, _ in WorkspaceUserNotificationPreference.TransportChoices.choices
+        ]
+
+        for transport in transports:
+            if transport not in get_notification_preferences.values_list(
+                "transport", flat=True
+            ):
+                create_transports.append(transport)
+
+
+        notification_preferences = (
+            WorkspaceUserNotificationPreference.objects.bulk_create(
+                [
+                    WorkspaceUserNotificationPreference(
+                        workspace=workspace,
+                        user=request.user,
+                        transport=transport,
+                    )
+                    for transport in create_transports
+                ]
+            )
+        )
+
+        notification_preferences = WorkspaceUserNotificationPreference.objects.filter(
+            workspace=workspace, user=request.user
+        )
+
+        return Response(
+            WorkspaceUserNotificationPreferenceSerializer(
+                notification_preferences, many=True
+            ).data,
+            status=status.HTTP_200_OK,
+        )
+
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
+    )
+    def patch(self, request, slug, transport):
+        notification_preference = WorkspaceUserNotificationPreference.objects.filter(
+            transport=transport, workspace__slug=slug, user=request.user
+        ).first()
+
+        if notification_preference:
+            serializer = WorkspaceUserNotificationPreferenceSerializer(
+                notification_preference, data=request.data, partial=True
+            )
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            {"detail": "Workspace notification preference not found"},
+            status=status.HTTP_404_NOT_FOUND,
+        )

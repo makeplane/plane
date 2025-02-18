@@ -2178,5 +2178,26 @@
   "module": {
     "label": "{count, plural, one {Module} other {Modules}}",
     "no_module": "No module"
+  },
+
+  "notification_settings": {
+    "page_label": "{workspace} - Inbox settings",
+    "inbox_settings": "Inbox settings",
+    "inbox_settings_description": "Toggle these ON or OFF for the workspace",
+    "advanced_settings": "Advanced settings",
+    "in_plane": "In Plane",
+    "email": "Email",
+    "task_updates": "Task updates",
+    "comments": "Comments",
+    "work_item_property_title": "Update on any property of work item",
+    "status_title": "Status update",
+    "priority_title": "Priority update",
+    "assignee_title": "Assignee update",
+    "due_date_title": "Start/Due date update",
+    "module_title": "Module update",
+    "cycle_title": "Cycle update",
+    "mentioned_comments_title": "Comments I'm @mentioned in",
+    "new_comments_title": "New comments",
+    "reaction_comments_title": "Reactions"
   }
 }

@@ -115,7 +115,11 @@ from .intake import (
 
 from .analytic import AnalyticViewSerializer
 
-from .notification import NotificationSerializer, UserNotificationPreferenceSerializer
+from .notification import (
+    NotificationSerializer,
+    UserNotificationPreferenceSerializer,
+    WorkspaceUserNotificationPreferenceSerializer,
+)
 
 from .exporter import ExporterHistorySerializer
 
