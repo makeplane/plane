@@ -20,8 +20,11 @@ type Props = { closePalette: () => void; issue: TIssue };
 export const ChangeIssuePriority: React.FC<Props> = observer((props) => {
   const { closePalette, issue } = props;
   // router params
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug } = useParams();
+  // store hooks
   const { updateIssue } = useIssueDetail();
+  // derived values
+  const projectId = issue?.project_id;
 
   const submitChanges = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !issue) return;

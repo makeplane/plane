@@ -24,11 +24,14 @@ type Props = {
 export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
   const { closePalette, issueDetails, pages, setPages, setPlaceholder, setSearchTerm } = props;
   // router
-  const { workspaceSlug, projectId, issueId } = useParams();
+  const { workspaceSlug } = useParams();
   // hooks
   const { updateIssue } = useIssueDetail();
   const { toggleCommandPaletteModal, toggleDeleteIssueModal } = useCommandPalette();
   const { data: currentUser } = useUser();
+  // derived values
+  const issueId = issueDetails?.id;
+  const projectId = issueDetails?.project_id;
 
   const handleUpdateIssue = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !issueDetails) return;

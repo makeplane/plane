@@ -30,7 +30,7 @@ import {
 
 export const CommandPalette: FC = observer(() => {
   // router params
-  const { workspaceSlug, projectId, issueId } = useParams();
+  const { workspaceSlug, projectId, workItem } = useParams();
   // store hooks
   const { toggleSidebar } = useAppTheme();
   const { setTrackElement } = useEventTracker();
@@ -51,7 +51,7 @@ export const CommandPalette: FC = observer(() => {
   const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   const copyIssueUrlToClipboard = useCallback(() => {
-    if (!issueId) return;
+    if (!workItem) return;
 
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
@@ -67,7 +67,7 @@ export const CommandPalette: FC = observer(() => {
           title: "Some error occurred",
         });
       });
-  }, [issueId]);
+  }, [workItem]);
 
   // auth
   const performProjectCreateActions = useCallback(

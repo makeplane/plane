@@ -690,6 +690,7 @@
     "customize_time_range": "Personalizar rango de tiempo",
     "loading": "Cargando",
     "attachments": "Archivos adjuntos",
+    "property": "Propiedad",
     "properties": "Propiedades",
     "parent": "Padre",
     "remove": "Eliminar",
@@ -843,8 +844,20 @@
     "disconnecting": "Desconectando",
     "installing": "Instalando",
     "install": "Instalar",
+    "category": "Categoría",
+    "categories": "Categorías",
+    "saving": "Guardando",
+    "save_changes": "Guardar cambios",
+    "delete": "Eliminar",
+    "deleting": "Eliminando",
     "pending": "Pendiente",
     "invite": "Invitar"
+  },
+
+  "chart": {
+    "x_axis": "Eje X",
+    "y_axis": "Eje Y",
+    "metric": "Métrica"
   },
 
   "form": {

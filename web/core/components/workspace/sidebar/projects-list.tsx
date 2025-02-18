@@ -5,7 +5,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { Briefcase, ChevronRight, Plus } from "lucide-react";
+import { Briefcase, ChevronRight, Ellipsis, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -13,6 +13,7 @@ import { useTranslation } from "@plane/i18n";
 import { Loader, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { CreateProjectModal } from "@/components/project";
+import { SidebarNavItem } from "@/components/sidebar";
 import { SidebarProjectsListItem } from "@/components/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -37,7 +38,7 @@ export const SidebarProjectsList: FC = observer(() => {
   // store hooks
   const { t } = useTranslation();
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { sidebarCollapsed } = useAppTheme();
+  const { sidebarCollapsed, toggleExtendedProjectSidebar } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
@@ -237,12 +238,12 @@ export const SidebarProjectsList: FC = observer(() => {
               {isAllProjectsListOpen && (
                 <Disclosure.Panel
                   as="div"
-                  className={cn("space-y-1", {
+                  className={cn("flex flex-col gap-0.5", {
                     "space-y-0 ml-0": isCollapsed,
                   })}
                   static
                 >
-                  {joinedProjects.map((projectId, index) => (
+                  {joinedProjects.slice(0, 7).map((projectId, index) => (
                     <SidebarProjectsListItem
                       key={projectId}
                       projectId={projectId}
@@ -276,6 +277,21 @@ export const SidebarProjectsList: FC = observer(() => {
           >
             {!isCollapsed && t("add_project")}
           </button>
+        )}
+
+        {joinedProjects.length > 7 && (
+          <SidebarNavItem className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}>
+            <button
+              onClick={() => toggleExtendedProjectSidebar()}
+              id="extended-project-sidebar-toggle"
+              className={cn("flex items-center gap-1.5 text-sm font-medium flex-grow text-custom-text-350", {
+                "justify-center": sidebarCollapsed,
+              })}
+            >
+              <Ellipsis className="size-4" />
+              {!sidebarCollapsed && <span>More</span>}
+            </button>
+          </SidebarNavItem>
         )}
       </div>
     </>
