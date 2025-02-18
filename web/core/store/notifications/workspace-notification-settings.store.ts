@@ -1,5 +1,6 @@
 import set from "lodash/set";
 import { action, autorun, computed, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import { IUser, IWorkspace, TWorkspaceNotificationTransport, TWorkspaceUserNotification } from "@plane/types";
 // plane web services
 // plane web root store
@@ -13,7 +14,7 @@ export interface IWorkspaceNotificationSettingsStore {
   workspace: IWorkspace | undefined;
   settings: Record<string, Record<TWorkspaceNotificationTransport, TWorkspaceUserNotification>>; // workspaceSlug -> transport -> settings
   // computed functions
-  notificationSettingsForWorkspace: Record<string, TWorkspaceUserNotification> | undefined;
+  notificationSettingsForWorkspace: () => Record<string, TWorkspaceUserNotification> | undefined;
   getNotificationSettingsForTransport: (
     transport: TWorkspaceNotificationTransport
   ) => TWorkspaceUserNotification | undefined;
@@ -40,9 +41,6 @@ export class WorkspaceNotificationSettingsStore implements IWorkspaceNotificatio
       user: observable,
       workspace: observable,
       settings: observable,
-      // //computed
-      notificationSettingsForWorkspace: computed,
-      getNotificationSettingsForTransport: computed,
       // actions
       fetchWorkspaceUserNotificationSettings: action,
       updateWorkspaceUserNotificationSettings: action,
@@ -77,13 +75,13 @@ export class WorkspaceNotificationSettingsStore implements IWorkspaceNotificatio
    * @param { string } workspaceSlug
    * @returns { string[] | undefined }
    */
-  get notificationSettingsForWorkspace() {
+  notificationSettingsForWorkspace = computedFn(() => {
     const workspaceSlug = this.store.workspaceRoot?.currentWorkspace?.slug;
     if (!workspaceSlug) {
       return;
     }
     return this.settings[workspaceSlug];
-  }
+  });
 
 
   /**
@@ -92,13 +90,14 @@ export class WorkspaceNotificationSettingsStore implements IWorkspaceNotificatio
    * @returns { TWorkspaceUserNotification }
    */
 
-  getNotificationSettingsForTransport(transport: TWorkspaceNotificationTransport) {
+  getNotificationSettingsForTransport = computedFn((transport: TWorkspaceNotificationTransport) => {
     const workspaceSlug = this.store.workspaceRoot?.currentWorkspace?.slug;
     if (!workspaceSlug || !transport) {
       return;
     }
-    return this.settings[workspaceSlug]?.[transport] || undefined;
-  }
+    const notificationSettingsForTransport = this.settings[workspaceSlug][transport] || undefined;
+    return notificationSettingsForTransport;
+  });
 
   // helper actions
   /**
