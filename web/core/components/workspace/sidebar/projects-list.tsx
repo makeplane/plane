@@ -243,18 +243,39 @@ export const SidebarProjectsList: FC = observer(() => {
                   })}
                   static
                 >
-                  {joinedProjects.slice(0, 7).map((projectId, index) => (
-                    <SidebarProjectsListItem
-                      key={projectId}
-                      projectId={projectId}
-                      handleCopyText={() => handleCopyText(projectId)}
-                      projectListType={"JOINED"}
-                      disableDrag={false}
-                      disableDrop={false}
-                      isLastChild={index === joinedProjects.length - 1}
-                      handleOnProjectDrop={handleOnProjectDrop}
-                    />
-                  ))}
+                  <>
+                    {joinedProjects.slice(0, 7).map((projectId, index) => (
+                      <SidebarProjectsListItem
+                        key={projectId}
+                        projectId={projectId}
+                        handleCopyText={() => handleCopyText(projectId)}
+                        projectListType={"JOINED"}
+                        disableDrag={false}
+                        disableDrop={false}
+                        isLastChild={index === joinedProjects.length - 1}
+                        handleOnProjectDrop={handleOnProjectDrop}
+                      />
+                    ))}
+                    {joinedProjects.length > 7 && (
+                      <SidebarNavItem
+                        className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
+                      >
+                        <button
+                          onClick={() => toggleExtendedProjectSidebar()}
+                          id="extended-project-sidebar-toggle"
+                          className={cn(
+                            "flex items-center gap-1.5 text-sm font-medium flex-grow text-custom-text-350",
+                            {
+                              "justify-center": sidebarCollapsed,
+                            }
+                          )}
+                        >
+                          <Ellipsis className="size-4" />
+                          {!sidebarCollapsed && <span>More</span>}
+                        </button>
+                      </SidebarNavItem>
+                    )}
+                  </>
                 </Disclosure.Panel>
               )}
             </Transition>
@@ -277,21 +298,6 @@ export const SidebarProjectsList: FC = observer(() => {
           >
             {!isCollapsed && t("add_project")}
           </button>
-        )}
-
-        {joinedProjects.length > 7 && (
-          <SidebarNavItem className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}>
-            <button
-              onClick={() => toggleExtendedProjectSidebar()}
-              id="extended-project-sidebar-toggle"
-              className={cn("flex items-center gap-1.5 text-sm font-medium flex-grow text-custom-text-350", {
-                "justify-center": sidebarCollapsed,
-              })}
-            >
-              <Ellipsis className="size-4" />
-              {!sidebarCollapsed && <span>More</span>}
-            </button>
-          </SidebarNavItem>
         )}
       </div>
     </>
