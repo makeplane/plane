@@ -42,7 +42,7 @@ export const SidebarItem: FC<TSidebarItemProps> = observer((props) => {
     if (extendedSidebarCollapsed) toggleExtendedSidebar();
   };
 
-  const staticItems = ["home", "notifications", "pi-chat", "projects"];
+  const staticItems = ["home", "your-work", "notifications", "pi-chat", "projects"];
 
   if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) {
     return null;
@@ -79,11 +79,6 @@ export const SidebarItem: FC<TSidebarItemProps> = observer((props) => {
             {icon}
             {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{t(item.labelTranslationKey)}</p>}
           </div>
-          {!sidebarCollapsed && item.key === "active_cycles" && (
-            <div className="flex-shrink-0">
-              <UpgradeBadge />
-            </div>
-          )}
         </SidebarNavItem>
       </Link>
     </Tooltip>
