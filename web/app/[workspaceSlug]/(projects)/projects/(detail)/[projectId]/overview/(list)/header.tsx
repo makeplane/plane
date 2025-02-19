@@ -2,9 +2,9 @@
 
 import { observer } from "mobx-react";
 // icons
-import { Briefcase, Sidebar } from "lucide-react";
+import { Briefcase, RssIcon, Sidebar } from "lucide-react";
 // ui
-import { Breadcrumbs, Header, OverviewIcon } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 // helpers
@@ -50,7 +50,7 @@ export const ProjectOverviewHeader = observer(() => {
 
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              link={<BreadcrumbLink label="Overview" icon={<OverviewIcon />} />}
+              link={<BreadcrumbLink label="Overview" icon={<RssIcon className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
         </div>
