@@ -50,7 +50,7 @@ export class IssueType implements IIssueType {
   // root store
   rootStore: RootStore;
   // service
-  service: IIssueTypesService;
+  service: IIssueTypesService | undefined;
   issuePropertyService: IIssuePropertiesService;
 
   constructor(protected store: TIssueTypeStore) {
@@ -160,7 +160,7 @@ export class IssueType implements IIssueType {
     try {
       let issueType: Partial<TIssueType> = issueTypeData;
       if (shouldSync) {
-        if (!this.service.update) throw new Error("Work item type update service not available.");
+        if (!this.service || !this.service.update) throw new Error("Work item type update service not available.");
         issueType = await this.service.update({
           workspaceSlug,
           projectId,
@@ -252,7 +252,7 @@ export class IssueType implements IIssueType {
         workspaceSlug,
         projectId,
         issueTypeId: this.id,
-        issuePropertyId: propertyId,
+        customPropertyId: propertyId,
       });
       runInAction(() => {
         const updatedProperties = this.properties.filter((property) => property.id !== propertyId);

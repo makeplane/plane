@@ -12,7 +12,7 @@ type TMemberDetail = {
 };
 
 export const IssueMemberPropertyActivity: FC<TIssueAdditionalPropertiesActivityItem> = observer((props) => {
-  const { activityId, issuePropertyId } = props;
+  const { activityId, customPropertyId } = props;
   // hooks
   const { getUserDetails } = useMember();
   const { getWorkspaceById } = useWorkspace();
@@ -21,7 +21,7 @@ export const IssueMemberPropertyActivity: FC<TIssueAdditionalPropertiesActivityI
   const { getPropertyActivityById } = useIssuePropertiesActivity();
   // derived values
   const activityDetail = getPropertyActivityById(activityId);
-  const propertyDetail = getIssuePropertyById(issuePropertyId);
+  const propertyDetail = getIssuePropertyById(customPropertyId);
   const propertyName = propertyDetail?.display_name;
   const workspaceDetail = activityDetail?.workspace ? getWorkspaceById(activityDetail.workspace) : null;
 

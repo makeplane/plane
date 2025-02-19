@@ -5,6 +5,7 @@ import { InfoIcon } from "lucide-react";
 import { EIssuePropertyType } from "@plane/constants";
 import {
   EIssuePropertyValueError,
+  IIssueProperty,
   TDateAttributeDisplayOptions,
   TIssueProperty,
   TIssuePropertyTypeKeys,
@@ -30,11 +31,12 @@ type TPropertyValueSelectProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType>>;
   propertyValue: string[];
   propertyValueError?: EIssuePropertyValueError;
-  projectId: string;
+  projectId: string | undefined;
   variant: TPropertyValueVariant;
   isPropertyValuesLoading: boolean;
   isDisabled: boolean;
   onPropertyValueChange: (value: string[]) => Promise<void>;
+  getPropertyInstanceById: (customPropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
 };
 
 export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) => {
@@ -46,6 +48,7 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
     variant,
     isPropertyValuesLoading,
     onPropertyValueChange,
+    getPropertyInstanceById,
     isDisabled,
   } = props;
   // store hooks
@@ -114,8 +117,8 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
             propertyDetail={propertyDetail as TIssueProperty<EIssuePropertyType.OPTION>}
             value={propertyValue}
             error={propertyValueError}
-            issueTypeId={propertyDetail.issue_type}
-            issuePropertyId={propertyDetail.id}
+            customPropertyId={propertyDetail.id}
+            getPropertyInstanceById={getPropertyInstanceById}
             variant={variant}
             isMultiSelect={propertyDetail.is_multi}
             buttonClassName="h-8"

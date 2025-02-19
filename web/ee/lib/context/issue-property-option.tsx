@@ -1,10 +1,10 @@
 import React, { useState, createContext, useEffect, useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { v4 } from "uuid";
-// plane web hooks
-import { TCreationListModes, TIssuePropertyOption, TIssuePropertyOptionCreateUpdateData } from "@plane/types";
-import { useIssueProperty } from "@/plane-web/hooks/store";
 // plane imports
+import { TCreationListModes, TIssuePropertyOption, TIssuePropertyOptionCreateUpdateData } from "@plane/types";
+// plane web components
+import { TCustomPropertyOperations } from "@/plane-web/components/issue-types";
 
 // default values
 const defaultIssuePropertyOption: Partial<Partial<TIssuePropertyOption>> = {
@@ -23,18 +23,17 @@ export type TIssuePropertyOptionsContext = {
 export const IssuePropertyOptionContext = createContext<TIssuePropertyOptionsContext | undefined>(undefined);
 
 type TIssuePropertyOptionsProviderProps = {
-  issueTypeId: string;
-  issuePropertyId: string | undefined;
+  customPropertyId: string | undefined;
+  customPropertyOperations: TCustomPropertyOperations;
   children: React.ReactNode;
 };
 
 export const IssuePropertyOptionsProvider = observer((props: TIssuePropertyOptionsProviderProps) => {
-  const { issueTypeId, issuePropertyId, children } = props;
-  // store hooks
-  const issueProperty = useIssueProperty(issueTypeId, issuePropertyId);
+  const { customPropertyId, customPropertyOperations, children } = props;
+  const { getSortedActivePropertyOptions } = customPropertyOperations;
   // states
   const [options, setOptions] = useState<TIssuePropertyOptionCreateUpdateData[]>(
-    issueProperty?.sortedActivePropertyOptions ?? []
+    customPropertyId ? (getSortedActivePropertyOptions(customPropertyId) ?? []) : []
   );
   const [sortedOptions, setSortedOptions] = useState<TIssuePropertyOptionCreateUpdateData[]>([]);
 
@@ -75,8 +74,8 @@ export const IssuePropertyOptionsProvider = observer((props: TIssuePropertyOptio
   );
 
   const resetOptions = useCallback(() => {
-    setOptions(issueProperty?.sortedActivePropertyOptions ?? []);
-  }, [issueProperty]);
+    setOptions(customPropertyId ? (getSortedActivePropertyOptions(customPropertyId) ?? []) : []);
+  }, [customPropertyId, getSortedActivePropertyOptions]);
 
   useEffect(() => {
     const updatedSortedOptions = options.sort((a, b) => {

@@ -10,10 +10,10 @@ import { EIssuePropertyType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import {
   TIssueProperty,
-  TCreationListModes,
   TOperationMode,
   TIssuePropertyOption,
   TIssuePropertyOptionCreateUpdateData,
+  TIssuePropertyPayload,
 } from "@plane/types";
 import { Button, InfoIcon, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
 import { getIssuePropertyAttributeDisplayNameKey, cn } from "@plane/utils";
@@ -30,14 +30,23 @@ import {
   TIssuePropertyCreateList,
 } from "@/plane-web/components/issue-types";
 // plane web hooks
-import { useIssueProperty, useIssueType, usePropertyOptions } from "@/plane-web/hooks/store";
+import { usePropertyOptions } from "@/plane-web/hooks/store";
+
+export type TCustomPropertyOperations = {
+  getPropertyDetail: (propertyId: string) => TIssueProperty<EIssuePropertyType> | undefined;
+  getSortedActivePropertyOptions: (propertyId: string) => TIssuePropertyOption[] | undefined;
+  createProperty: (propertyData: TIssuePropertyPayload) => Promise<TIssueProperty<EIssuePropertyType> | undefined>;
+  updateProperty: (propertyId: string, propertyData: TIssuePropertyPayload) => Promise<void>;
+  deleteProperty: (propertyId: string) => Promise<void>;
+  removePropertyListItem: (value: TIssuePropertyCreateList) => void;
+};
 
 type TIssuePropertyListItem = {
-  issueTypeId: string;
-  issuePropertyId?: string;
+  customPropertyId?: string;
   issuePropertyCreateListData?: TIssuePropertyCreateList;
   operationMode?: TOperationMode;
-  handleIssuePropertyCreateList: (mode: TCreationListModes, value: TIssuePropertyCreateList) => void;
+  customPropertyOperations: TCustomPropertyOperations;
+  isUpdateAllowed: boolean;
 };
 
 export type TIssuePropertyFormError = {
@@ -52,13 +61,19 @@ const defaultIssuePropertyError: TIssuePropertyFormError = {
 };
 
 export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) => {
-  const { issueTypeId, issuePropertyId, issuePropertyCreateListData, operationMode, handleIssuePropertyCreateList } =
+  const { customPropertyId, issuePropertyCreateListData, operationMode, customPropertyOperations, isUpdateAllowed } =
     props;
+  const {
+    getPropertyDetail,
+    getSortedActivePropertyOptions,
+    createProperty,
+    updateProperty,
+    deleteProperty,
+    removePropertyListItem,
+  } = customPropertyOperations;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const issueType = useIssueType(issueTypeId);
-  const issueProperty = useIssueProperty(issueTypeId, issuePropertyId);
   const { propertyOptions, setPropertyOptions, resetOptions } = usePropertyOptions();
   // derived values
   let key: string;
@@ -66,10 +81,10 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
   if (issuePropertyCreateListData) {
     ({ key, ...issuePropertyCreateData } = issuePropertyCreateListData);
   }
-  const issuePropertyDetail = issuePropertyId ? issueProperty?.asJSON : issuePropertyCreateData;
+  const issuePropertyDetail = customPropertyId ? getPropertyDetail(customPropertyId) : issuePropertyCreateData;
   // If issuePropertyDetail is not available, return null
   if (!issuePropertyDetail) return null;
-  const sortedActivePropertyOptions = issueProperty?.sortedActivePropertyOptions;
+  const sortedActivePropertyOptions = customPropertyId ? getSortedActivePropertyOptions(customPropertyId) : [];
   // state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [issuePropertyOperationMode, setIssuePropertyOperationMode] = useState<TOperationMode | null>(
@@ -157,11 +172,10 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     }
 
     setIsSubmitting(true);
-    await issueType
-      ?.createProperty({
-        ...issuePropertyData,
-        options: optionsPayload,
-      })
+    await createProperty({
+      ...issuePropertyData,
+      options: optionsPayload,
+    })
       .then(async (response) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -181,7 +195,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
       })
       .finally(() => {
         resetOptions();
-        if (key) handleIssuePropertyCreateList("remove", { key, ...issuePropertyData });
+        if (key) removePropertyListItem({ key, ...issuePropertyData });
         setIsSubmitting(false);
       });
   };
@@ -216,13 +230,12 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
         .filter((item) => !!item) as Partial<TIssuePropertyOption>[];
     }
 
-    if (isEmpty(payload) && isEmpty(optionsPayload)) return;
+    if (!customPropertyId || (isEmpty(payload) && isEmpty(optionsPayload))) return;
     setIsSubmitting(true);
-    await issueProperty
-      ?.updateProperty(issueTypeId, {
-        ...payload,
-        options: optionsPayload,
-      })
+    await updateProperty(customPropertyId, {
+      ...payload,
+      options: optionsPayload,
+    })
       .then(() => {
         if (showToast)
           setToast({
@@ -250,7 +263,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
 
   const handleDiscard = () => {
     if (issuePropertyOperationMode === "create" && issuePropertyCreateListData)
-      handleIssuePropertyCreateList("remove", issuePropertyCreateListData);
+      removePropertyListItem(issuePropertyCreateListData);
     else {
       setIssuePropertyData(issuePropertyDetail);
       setIssuePropertyOperationMode(null);
@@ -263,8 +276,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     if (!propertyId) return;
 
     setIsSubmitting(true);
-    await issueType
-      ?.deleteProperty(propertyId)
+    await deleteProperty(propertyId)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -282,7 +294,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
         });
       })
       .finally(() => {
-        if (key) handleIssuePropertyCreateList("remove", { key, ...issuePropertyData });
+        if (key) removePropertyListItem({ key, ...issuePropertyData });
         setIsSubmitting(false);
       });
   };
@@ -415,8 +427,12 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
             {issuePropertyData.default_value && issuePropertyData.default_value.length > 0 && (
               <AttributePill data={t("common.default")} />
             )}
-            {issuePropertyData.is_active && <AttributePill data={t("common.active")} className="bg-green-500/15 text-green-600" />}
-            {!issuePropertyData.is_active && <AttributePill data={t("common.disabled")} className="bg-red-500/15 text-red-600" />}
+            {issuePropertyData.is_active && (
+              <AttributePill data={t("common.active")} className="bg-green-500/15 text-green-600" />
+            )}
+            {!issuePropertyData.is_active && (
+              <AttributePill data={t("common.disabled")} className="bg-red-500/15 text-red-600" />
+            )}
           </div>
           <div
             className="flex-shrink-0 border-l border-custom-border-100 pl-2"
@@ -451,19 +467,19 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
         <div className="px-1 py-2">
           <div className="flex flex-col gap-3 px-2 pb-2 max-h-72 overflow-scroll vertical-scrollbar scrollbar-xs">
             <PropertyTypeDropdown
-              issueTypeId={issueTypeId}
               propertyType={issuePropertyData.property_type}
               propertyRelationType={issuePropertyData.relation_type}
               currentOperationMode={issuePropertyOperationMode}
               handlePropertyObjectChange={handlePropertyObjectChange}
               error={issuePropertyError.property_type}
+              isUpdateAllowed={isUpdateAllowed}
             />
             <PropertyAttributes
-              issueTypeId={issueTypeId}
               propertyDetail={issuePropertyData}
               currentOperationMode={issuePropertyOperationMode}
               onPropertyDetailChange={handlePropertyDataChange}
               error={issuePropertyError}
+              isUpdateAllowed={isUpdateAllowed}
             />
           </div>
         </div>
@@ -483,7 +499,11 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
             {issuePropertyOperationMode === "create" ? t("common.cancel") : t("common.discard")}
           </Button>
           <Button variant="primary" size="sm" onClick={handleCreateUpdate} disabled={isSubmitting} className="py-1">
-            {isSubmitting ? t("common.confirming") : issuePropertyOperationMode === "create" ? t("common.create") : t("common.update")}
+            {isSubmitting
+              ? t("common.confirming")
+              : issuePropertyOperationMode === "create"
+                ? t("common.create")
+                : t("common.update")}
           </Button>
         </div>
       </div>

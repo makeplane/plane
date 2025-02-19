@@ -97,14 +97,14 @@ export class IssueTypes implements IIssueTypesStore {
 
   /**
    * @description Get work item property by work item property id (from all work item types)
-   * @param issuePropertyId
+   * @param customPropertyId
    * @returns {IIssueProperty<EIssuePropertyType> | undefined}
    */
-  getIssuePropertyById = computedFn((issuePropertyId: string) =>
+  getIssuePropertyById = computedFn((customPropertyId: string) =>
     Object.keys(this.data)
       .filter(Boolean)
       .flatMap((issueTypeId) => this.getIssueTypeProperties(issueTypeId))
-      .find((property) => property.id === issuePropertyId)
+      .find((property) => property.id === customPropertyId)
   );
 
   /**

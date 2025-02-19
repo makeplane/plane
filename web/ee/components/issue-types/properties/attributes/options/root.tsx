@@ -13,12 +13,12 @@ import {
 import { usePropertyOptions } from "@/plane-web/hooks/store";
 
 type TIssuePropertyOptionsRoot = {
-  issuePropertyId: string | undefined;
+  customPropertyId: string | undefined;
   error?: string;
 };
 
 export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer((props) => {
-  const { issuePropertyId, error } = props;
+  const { customPropertyId, error } = props;
   // plane imports
   const { t } = useTranslation();
   // store hooks
@@ -47,7 +47,7 @@ export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer(
     data: TIssuePropertyOptionCreateUpdateData[],
     movedItem?: TIssuePropertyOptionCreateUpdateData
   ) => {
-    if (!sortedActivePropertyOptions || !issuePropertyId || !movedItem) return;
+    if (!sortedActivePropertyOptions || !customPropertyId || !movedItem) return;
 
     // Function to calculate new sort_order
     const calculateSortOrder = (prev: number | undefined, next: number | undefined): number => {

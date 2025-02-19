@@ -9,35 +9,29 @@ import { getIssuePropertyTypeDetails, getIssuePropertyTypeKey } from "@plane/uti
 import { cn } from "@/helpers/common.helper";
 // plane web components
 import { PropertyTypeIcon } from "@/plane-web/components/issue-types/properties";
-// plane web hooks
-import { useIssueType } from "@/plane-web/hooks/store";
 
 type TPropertyTypeDropdownProps = {
-  issueTypeId: string;
   propertyType: EIssuePropertyType | undefined;
   propertyRelationType: EIssuePropertyRelationType | null | undefined;
   currentOperationMode: TOperationMode | null;
   handlePropertyObjectChange: (value: Partial<TIssueProperty<EIssuePropertyType>>) => void;
   error?: string;
+  isUpdateAllowed: boolean;
 };
 
 export const PropertyTypeDropdown = observer((props: TPropertyTypeDropdownProps) => {
   const {
-    issueTypeId,
     propertyType,
     propertyRelationType,
     currentOperationMode,
     handlePropertyObjectChange,
     error = "",
+    isUpdateAllowed,
   } = props;
   // plane hooks
   const { t } = useTranslation();
-  // store hooks
-  const issueType = useIssueType(issueTypeId);
   // derived values
-  const isAnyIssueAttached = issueType?.issue_exists;
-  // derived values
-  const isEditingAllowed = currentOperationMode && (currentOperationMode === "create" || !isAnyIssueAttached);
+  const isEditingAllowed = currentOperationMode && (currentOperationMode === "create" || isUpdateAllowed);
   const propertyTypeDetails = getIssuePropertyTypeDetails(propertyType, propertyRelationType);
 
   // Can be used with CustomSearchSelect as well

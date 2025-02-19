@@ -41,11 +41,11 @@ export class EpicPropertiesService extends APIService implements IIssuePropertie
   async update({
     workspaceSlug,
     projectId,
-    issuePropertyId,
+    customPropertyId,
     data,
   }: TUpdateIssuePropertyPayload): Promise<TIssuePropertyResponse> {
     return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/epic-properties/${issuePropertyId}/`,
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/epic-properties/${customPropertyId}/`,
       data
     )
       .then((response) => response?.data)
@@ -54,8 +54,8 @@ export class EpicPropertiesService extends APIService implements IIssuePropertie
       });
   }
 
-  async deleteProperty({ workspaceSlug, projectId, issuePropertyId }: TDeleteIssuePropertyPayload): Promise<void> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/epic-properties/${issuePropertyId}/`)
+  async deleteProperty({ workspaceSlug, projectId, customPropertyId }: TDeleteIssuePropertyPayload): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/epic-properties/${customPropertyId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

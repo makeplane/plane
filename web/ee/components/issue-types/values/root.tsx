@@ -41,6 +41,8 @@ export const IssueAdditionalPropertyValues: React.FC<TIssueAdditionalPropertyVal
     handlePropertyValueChange(propertyId, value);
   };
 
+  const getPropertyInstanceById = (customPropertyId: string) => issueType?.getPropertyById(customPropertyId);
+
   return (
     <div className="flex flex-col space-y-2">
       {sortedProperties.map(
@@ -56,6 +58,7 @@ export const IssueAdditionalPropertyValues: React.FC<TIssueAdditionalPropertyVal
                 isPropertyValuesLoading={isPropertyValuesLoading}
                 isDisabled={isDisabled}
                 onPropertyValueChange={async (value) => onPropertyValueChange(property.id, value)}
+                getPropertyInstanceById={getPropertyInstanceById}
               />
             </div>
           )

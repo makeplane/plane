@@ -5,11 +5,8 @@ import { useTranslation } from "@plane/i18n";
 import { TIssueProperty, TOperationMode } from "@plane/types";
 // plane web components
 import { PropertySettingsConfiguration, NumberValueInput } from "@/plane-web/components/issue-types/";
-// plane web hooks
-import { useIssueType } from "@/plane-web/hooks/store";
 
 type TNumberAttributesProps = {
-  issueTypeId: string;
   numberPropertyDetail: Partial<TIssueProperty<EIssuePropertyType.DECIMAL>>;
   currentOperationMode: TOperationMode;
   onNumberDetailChange: <K extends keyof TIssueProperty<EIssuePropertyType.DECIMAL>>(
@@ -17,16 +14,13 @@ type TNumberAttributesProps = {
     value: TIssueProperty<EIssuePropertyType.DECIMAL>[K],
     shouldSync?: boolean
   ) => void;
+  isUpdateAllowed: boolean;
 };
 
 export const NumberAttributes = observer((props: TNumberAttributesProps) => {
-  const { issueTypeId, numberPropertyDetail, currentOperationMode, onNumberDetailChange } = props;
+  const { numberPropertyDetail, currentOperationMode, onNumberDetailChange, isUpdateAllowed } = props;
   // plane hooks
   const { t } = useTranslation();
-  // store hooks
-  const issueType = useIssueType(issueTypeId);
-  // derived values
-  const isAnyIssueAttached = issueType?.issue_exists;
 
   return (
     <div>
@@ -40,7 +34,7 @@ export const NumberAttributes = observer((props: TNumberAttributesProps) => {
               onChange={(value) =>
                 onNumberDetailChange("settings", value as TIssueProperty<EIssuePropertyType.DECIMAL>["settings"])
               }
-              isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && isAnyIssueAttached}
+              isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && !isUpdateAllowed}
             />
           ))}
         </div>

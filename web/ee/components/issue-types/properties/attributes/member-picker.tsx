@@ -10,11 +10,8 @@ import {
   PropertyMultiSelect,
   PropertySettingsConfiguration,
 } from "@/plane-web/components/issue-types";
-// plane web hooks
-import { useIssueType } from "@/plane-web/hooks/store";
 
 type TMemberPickerAttributesProps = {
-  issueTypeId: string;
   memberPickerPropertyDetail: Partial<TIssueProperty<EIssuePropertyType.RELATION>>;
   currentOperationMode: TOperationMode;
   onMemberPickerDetailChange: <K extends keyof TIssueProperty<EIssuePropertyType.RELATION>>(
@@ -22,18 +19,16 @@ type TMemberPickerAttributesProps = {
     value: TIssueProperty<EIssuePropertyType.RELATION>[K],
     shouldSync?: boolean
   ) => void;
+  isUpdateAllowed: boolean;
 };
 
 export const MemberPickerAttributes = observer((props: TMemberPickerAttributesProps) => {
-  const { issueTypeId, memberPickerPropertyDetail, currentOperationMode, onMemberPickerDetailChange } = props;
+  const { memberPickerPropertyDetail, currentOperationMode, onMemberPickerDetailChange, isUpdateAllowed } = props;
   // router
   const { projectId } = useParams();
   // plane hooks
   const { t } = useTranslation();
-  // store hooks
-  const issueType = useIssueType(issueTypeId);
   // derived values
-  const isAnyIssueAttached = issueType?.issue_exists;
   const isMemberDropdownDisabled =
     memberPickerPropertyDetail.is_multi === undefined || !!memberPickerPropertyDetail.is_required;
 
@@ -55,7 +50,7 @@ export const MemberPickerAttributes = observer((props: TMemberPickerAttributesPr
               );
             }
           }}
-          isDisabled={currentOperationMode === "update" && isAnyIssueAttached}
+          isDisabled={currentOperationMode === "update" && !isUpdateAllowed}
         />
       </div>
       {ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS?.RELATION_USER?.length && (
@@ -68,7 +63,7 @@ export const MemberPickerAttributes = observer((props: TMemberPickerAttributesPr
               onChange={(value) =>
                 onMemberPickerDetailChange("settings", value as TIssueProperty<EIssuePropertyType.RELATION>["settings"])
               }
-              isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && isAnyIssueAttached}
+              isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && !isUpdateAllowed}
             />
           ))}
         </div>

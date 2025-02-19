@@ -6,13 +6,13 @@ import { TIssueAdditionalPropertiesActivityItem } from "@/plane-web/components/i
 import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
 
 export const IssueBooleanPropertyActivity: FC<TIssueAdditionalPropertiesActivityItem> = observer((props) => {
-  const { activityId, issuePropertyId } = props;
+  const { activityId, customPropertyId } = props;
   // plane web hooks
   const { getIssuePropertyById } = useIssueTypes();
   const { getPropertyActivityById } = useIssuePropertiesActivity();
   // derived values
   const activityDetail = getPropertyActivityById(activityId);
-  const propertyDetail = getIssuePropertyById(issuePropertyId);
+  const propertyDetail = getIssuePropertyById(customPropertyId);
   const propertyName = propertyDetail?.display_name;
 
   if (!activityDetail) return <></>;
