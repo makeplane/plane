@@ -41,7 +41,7 @@ export const ImageUploadStatus: React.FC<Props> = (props) => {
       };
       animationFrameRef.current = requestAnimationFrame((time) => animation(time));
     };
-    animateToValue(displayStatus, uploadStatus ?? 100, performance.now());
+    animateToValue(displayStatus, uploadStatus == undefined ? 100 : uploadStatus, performance.now());
 
     return () => {
       if (animationFrameRef.current) {
