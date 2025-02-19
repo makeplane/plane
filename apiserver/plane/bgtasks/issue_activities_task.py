@@ -9,10 +9,11 @@ from celery import shared_task
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
-from plane.app.serializers import IssueActivitySerializer
-from plane.bgtasks.notification_task import notifications
 
 # Module imports
+from plane.utils.valid_uuid import is_valid_uuid
+from plane.app.serializers import IssueActivitySerializer
+from plane.bgtasks.notification_task import notifications
 from plane.db.models import (
     CommentReaction,
     Cycle,
@@ -1567,6 +1568,10 @@ def issue_activity(
 ):
     try:
         issue_activities = []
+
+        # Validate UUIDs
+        if not is_valid_uuid(project_id):
+            return
 
         project = Project.objects.get(pk=project_id)
         workspace_id = project.workspace_id
