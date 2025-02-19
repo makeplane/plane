@@ -1320,6 +1320,12 @@ class CycleAnalyticsEndpoint(BaseAPIView):
             .first()
         )
 
+        if not cycle:
+            return Response(
+                {"error": "Cycle not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         if not cycle.start_date or not cycle.end_date:
             return Response(
                 {"error": "Cycle has no start or end date"},
@@ -1552,5 +1558,3 @@ class CycleAnalyticsEndpoint(BaseAPIView):
             },
             status=status.HTTP_200_OK,
         )
-
-
