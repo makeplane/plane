@@ -439,4 +439,44 @@ export class IssueService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async getIssueMetaFromURL(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string
+  ): Promise<{
+    project_identifier: string;
+    sequence_id: string;
+  }> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/meta/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async retrieveWithIdentifier(
+    workspaceSlug: string,
+    project_identifier: string,
+    issue_sequence: string,
+    queries?: any
+  ): Promise<TIssue> {
+    return this.get(`/api/workspaces/${workspaceSlug}/work-items/${project_identifier}-${issue_sequence}/`, {
+      params: queries,
+    })
+      .then((response) => {
+        // skip issue update when the service type is epic
+        if (response.data && this.serviceType === EIssueServiceType.ISSUES) {
+          updateIssue({ ...response.data, is_local_update: 1 });
+        }
+        // add is_epic flag when the service type is epic
+        if (response.data && this.serviceType === EIssueServiceType.EPICS) {
+          response.data.is_epic = true;
+        }
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

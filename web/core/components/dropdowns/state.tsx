@@ -141,11 +141,13 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
           className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
           onClick={handleOnClick}
           disabled={disabled}
+          tabIndex={tabIndex}
         >
           {button}
         </button>
       ) : (
         <button
+          tabIndex={tabIndex}
           ref={setReferenceElement}
           type="button"
           className={cn(
@@ -197,7 +199,6 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     <ComboDropDown
       as="div"
       ref={dropdownRef}
-      tabIndex={tabIndex}
       className={cn("h-full", className)}
       value={stateValue}
       onChange={dropdownOnChange}

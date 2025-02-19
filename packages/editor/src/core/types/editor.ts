@@ -32,7 +32,7 @@ export type TEditorCommands =
   | "bold"
   | "italic"
   | "underline"
-  | "strikethrough"
+  | "strike"
   | "bulleted-list"
   | "numbered-list"
   | "to-do-list"

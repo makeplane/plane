@@ -32,6 +32,7 @@
     "@plane/editor": "*",
     "@plane/hooks": "*",
     "@plane/i18n": "*",
+    "@plane/propel": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
     "@plane/utils": "*",

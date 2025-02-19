@@ -30,13 +30,14 @@ type TProjectItemsProps = {
   workspaceSlug: string;
   projectId: string;
   additionalNavigationItems?: (workspaceSlug: string, projectId: string) => TNavigationItem[];
+  isSidebarCollapsed: boolean;
 };
 
 export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
-  const { workspaceSlug, projectId, additionalNavigationItems } = props;
+  const { workspaceSlug, projectId, additionalNavigationItems, isSidebarCollapsed } = props;
   // store hooks
   const { t } = useTranslation();
-  const { sidebarCollapsed: isSidebarCollapsed, toggleSidebar } = useAppTheme();
+  const { toggleSidebar } = useAppTheme();
   const { getPartialProjectById } = useProject();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
@@ -153,7 +154,11 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
             <Link href={item.href} onClick={handleProjectClick}>
               <SidebarNavItem
                 className={`pl-[18px] ${isSidebarCollapsed ? "p-0 size-7 justify-center mx-auto" : ""}`}
-                isActive={pathname.includes(item.href)}
+                isActive={
+                  item.i18n_key === "sidebar.work_items"
+                    ? pathname.includes(item.href) || pathname.includes(`/${workspaceSlug}/browse/`)
+                    : pathname.includes(item.href)
+                }
               >
                 <div className="flex items-center gap-1.5 py-[1px]">
                   <item.icon

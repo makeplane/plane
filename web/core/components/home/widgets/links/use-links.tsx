@@ -42,7 +42,7 @@ export const useLinks = (workspaceSlug: string) => {
           });
           toggleLinkModal(false);
         } catch (error: any) {
-          console.error("error", error);
+          console.error("error", error?.data?.error);
           setToast({
             message: error?.data?.error ?? t("links.toasts.not_created.message"),
             type: TOAST_TYPE.ERROR,

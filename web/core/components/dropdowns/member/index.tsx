@@ -113,6 +113,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
           className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
           onClick={handleOnClick}
           disabled={disabled}
+          tabIndex={tabIndex}
         >
           {button}
         </button>
@@ -130,6 +131,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
           )}
           onClick={handleOnClick}
           disabled={disabled}
+          tabIndex={tabIndex}
         >
           <DropdownButton
             className={cn("text-xs", buttonClassName)}
@@ -161,7 +163,6 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     <ComboDropDown
       as="div"
       ref={dropdownRef}
-      tabIndex={tabIndex}
       className={cn("h-full", className)}
       onChange={dropdownOnChange}
       onKeyDown={handleKeyDown}

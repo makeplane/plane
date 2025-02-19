@@ -546,6 +546,8 @@
 
   "home": {
     "empty": {
+      "quickstart_guide": "Guide de démarrage rapide",
+      "not_right_now": "Pas maintenant",
       "create_project": {
         "title": "Créer un projet",
         "description": "La plupart des choses commencent par un projet dans Plane.",
@@ -688,6 +690,7 @@
     "customize_time_range": "Personnaliser la plage de temps",
     "loading": "Chargement",
     "attachments": "Pièces jointes",
+    "property": "Propriété",
     "properties": "Propriétés",
     "parent": "Parent",
     "remove": "Supprimer",
@@ -840,7 +843,21 @@
     "disconnect": "Déconnecter",
     "disconnecting": "Déconnexion",
     "installing": "Installation",
-    "install": "Installer"
+    "install": "Installer",
+    "category": "Catégorie",
+    "categories": "Catégories",
+    "saving": "Enregistrement",
+    "save_changes": "Enregistrer les modifications",
+    "delete": "Supprimer",
+    "deleting": "Suppression",
+    "pending": "En attente",
+    "invite": "Inviter"
+  },
+
+  "chart": {
+    "x_axis": "Axe X",
+    "y_axis": "Axe Y",
+    "metric": "Métrique"
   },
 
   "form": {
@@ -1420,9 +1437,19 @@
         "company_size": "Taille de l'entreprise",
         "url": "URL de l'espace de travail",
         "update_workspace": "Mettre à jour l'espace de travail",
-        "delete_workspace": "Supprimer l'espace de travail",
-        "delete_workspace_description": "Lors de la suppression d'un espace de travail, toutes les données et ressources au sein de cet espace de travail seront définitivement supprimées et ne pourront pas être récupérées.",
-        "delete_btn": "Supprimer mon espace de travail",
+        "delete_workspace": "Supprimer cet espace de travail",
+        "delete_workspace_description": "Lors de la suppression d'un espace de travail, toutes les données et ressources au sein de cet espace seront définitivement supprimées et ne pourront pas être récupérées.",
+        "delete_btn": "Supprimer cet espace de travail",
+        "delete_modal": {
+          "title": "Êtes-vous sûr de vouloir supprimer cet espace de travail ?",
+          "description": "Vous avez un essai actif sur l'un de nos forfaits payants. Veuillez d'abord l'annuler pour continuer.",
+          "dismiss": "Fermer",
+          "cancel": "Annuler l'essai",
+          "success_title": "Espace de travail supprimé.",
+          "success_message": "Vous serez bientôt redirigé vers votre page de profil.",
+          "error_title": "Cela n'a pas fonctionné.",
+          "error_message": "Veuillez réessayer."
+        },
         "errors": {
           "name": {
             "required": "Le nom est requis",
@@ -1436,6 +1463,7 @@
       "members": {
         "title": "Membres",
         "add_member": "Ajouter un membre",
+        "pending_invites": "Invitations en attente",
         "invitations_sent_successfully": "Invitations envoyées avec succès",
         "leave_confirmation": "Êtes-vous sûr de vouloir quitter l'espace de travail ? Vous n'aurez plus accès à cet espace de travail. Cette action ne peut pas être annulée.",
         "details": {
@@ -1672,7 +1700,11 @@
       }
     },
     "states": {
-      "describe_this_state_for_your_members": "Décrivez cet état pour vos membres."
+      "describe_this_state_for_your_members": "Décrivez cet état pour vos membres.",
+      "empty_state": {
+        "title": "Aucun état disponible pour le groupe {groupKey}",
+        "description": "Veuillez créer un nouvel état"
+      }
     },
     "labels": {
       "label_title": "Titre de l'étiquette",

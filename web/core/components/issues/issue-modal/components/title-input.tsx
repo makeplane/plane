@@ -37,7 +37,7 @@ export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props)
     return undefined;
   };
   return (
-    <>
+    <div>
       <Controller
         control={control}
         name="name"
@@ -63,12 +63,12 @@ export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props)
             hasError={Boolean(errors.name)}
             placeholder={t("title")}
             className="w-full text-base"
-            tabIndex={getIndex("name")}
             autoFocus
+            tabIndex={getIndex("name")}
           />
         )}
       />
       <span className="text-xs font-medium text-red-500">{errors?.name?.message}</span>
-    </>
+    </div>
   );
 });

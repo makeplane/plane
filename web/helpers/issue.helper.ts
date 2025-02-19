@@ -322,3 +322,27 @@ export const getIssuesShouldFallbackToServer = (queries: any) => {
 
   return false;
 };
+
+export const generateWorkItemLink = ({
+  workspaceSlug,
+  projectId,
+  issueId,
+  projectIdentifier,
+  sequenceId,
+  isArchived = false,
+  isEpic = false,
+}: {
+  workspaceSlug: string | undefined | null;
+  projectId: string | undefined | null;
+  issueId: string | undefined | null;
+  projectIdentifier: string | undefined | null;
+  sequenceId: string | number | undefined | null;
+  isArchived?: boolean;
+  isEpic?: boolean;
+}): string => {
+  const archiveIssueLink = `/${workspaceSlug}/projects/${projectId}/archives/issues/${issueId}`;
+  const epicLink = `/${workspaceSlug}/projects/${projectId}/epics/${issueId}`;
+  const workItemLink = `/${workspaceSlug}/browse/${projectIdentifier}-${sequenceId}/`;
+
+  return isArchived ? archiveIssueLink : isEpic ? epicLink : workItemLink;
+};

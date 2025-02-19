@@ -376,6 +376,8 @@
 
   "home": {
     "empty": {
+      "quickstart_guide": "Your quickstart guide",
+      "not_right_now": "Not right now",
       "create_project": {
         "title": "Create a project",
         "description": "Most things start with a project in Plane.",
@@ -416,7 +418,7 @@
         "project": "Your recent projects will appear here once you visit one.",
         "page": "Your recent pages will appear here once you visit one.",
         "issue": "Your recent work items will appear here once you visit one.",
-        "default": "You don't have any recent items yet."
+        "default": "You don't have any recents yet."
       },
       "filters": {
         "all": "All items",
@@ -518,6 +520,7 @@
     "customize_time_range": "Customize time range",
     "loading": "Loading",
     "attachments": "Attachments",
+    "property": "Property",
     "properties": "Properties",
     "parent": "Parent",
     "remove": "Remove",
@@ -670,7 +673,21 @@
     "disconnect": "Disconnect",
     "disconnecting": "Disconnecting",
     "installing": "Installing",
-    "install": "Install"
+    "install": "Install",
+    "category": "Category",
+    "categories": "Categories",
+    "saving": "Saving",
+    "save_changes": "Save changes",
+    "delete": "Delete",
+    "deleting": "Deleting",
+    "pending": "Pending",
+    "invite": "Invite"
+  },
+
+  "chart": {
+    "x_axis": "X-axis",
+    "y_axis": "Y-axis",
+    "metric": "Metric"
   },
 
   "form": {
@@ -1251,9 +1268,19 @@
         "company_size": "Company size",
         "url": "Workspace URL",
         "update_workspace": "Update workspace",
-        "delete_workspace": "Delete workspace",
+        "delete_workspace": "Delete this workspace",
         "delete_workspace_description": "When deleting a workspace, all of the data and resources within that workspace will be permanently removed and cannot be recovered.",
-        "delete_btn": "Delete my workspace",
+        "delete_btn": "Delete this workspace",
+        "delete_modal": {
+          "title": "Are you sure you want to delete this workspace?",
+          "description": "You have an active trial to one of our paid plans. Please cancel it first to proceed.",
+          "dismiss": "Dismiss",
+          "cancel": "Cancel trial",
+          "success_title": "Workspace deleted.",
+          "success_message": "You will soon go to your profile page.",
+          "error_title": "That didn't work.",
+          "error_message": "Try again, please."
+        },
         "errors": {
           "name": {
             "required": "Name is required",
@@ -1267,6 +1294,7 @@
       "members": {
         "title": "Members",
         "add_member": "Add member",
+        "pending_invites": "Pending invites",
         "invitations_sent_successfully": "Invitations sent successfully",
         "leave_confirmation": "Are you sure you want to leave the workspace? You will no longer have access to this workspace. This action cannot be undone.",
         "details": {
@@ -1503,7 +1531,11 @@
       }
     },
     "states": {
-      "describe_this_state_for_your_members": "Describe this state for your members."
+      "describe_this_state_for_your_members": "Describe this state for your members.",
+      "empty_state": {
+        "title": "No states available for the {groupKey} group",
+        "description": "Please create a new state"
+      }
     },
     "labels": {
       "label_title": "Label title",

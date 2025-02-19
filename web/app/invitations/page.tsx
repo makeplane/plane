@@ -17,6 +17,7 @@ import type { IWorkspaceMemberInvitation } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/common";
+import { WorkspaceLogo } from "@/components/workspace/logo";
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 // helpers
 import { truncateText } from "@/helpers/string.helper";
@@ -167,21 +168,11 @@ const UserInvitationsPage = observer(() => {
                         onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                       >
                         <div className="flex-shrink-0">
-                          <div className="grid h-9 w-9 place-items-center rounded">
-                            {invitation.workspace.logo && invitation.workspace.logo.trim() !== "" ? (
-                              <img
-                                src={invitation.workspace.logo}
-                                height="100%"
-                                width="100%"
-                                className="rounded"
-                                alt={invitation.workspace.name}
-                              />
-                            ) : (
-                              <span className="grid h-9 w-9 place-items-center rounded bg-gray-700 px-3 py-1.5 uppercase text-white">
-                                {invitation.workspace.name[0]}
-                              </span>
-                            )}
-                          </div>
+                          <WorkspaceLogo
+                            logo={invitation.workspace.logo_url}
+                            name={invitation.workspace.name}
+                            classNames="size-9 flex-shrink-0"
+                          />
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="text-sm font-medium">{truncateText(invitation.workspace.name, 30)}</div>

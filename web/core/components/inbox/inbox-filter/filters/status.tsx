@@ -42,7 +42,7 @@ export const FilterStatus: FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title={`Issue Status ${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`Work item Status ${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
