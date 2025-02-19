@@ -1,3 +1,4 @@
+import { EWorkItemTypeEntity } from "@plane/constants";
 import { TIssueServiceType } from "@plane/types";
 
 export type TIssueAdditionalPropertyValuesUpdateProps = {
@@ -7,6 +8,7 @@ export type TIssueAdditionalPropertyValuesUpdateProps = {
   workspaceSlug: string;
   isDisabled: boolean;
   issueServiceType?: TIssueServiceType;
+  entityType?: EWorkItemTypeEntity;
 };
 
 export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPropertyValuesUpdateProps> = () => <></>;
