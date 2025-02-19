@@ -12,7 +12,7 @@ export const ImageUploadStatus: React.FC<Props> = (props) => {
   // Displayed status that will animate smoothly
   const [displayStatus, setDisplayStatus] = useState(0);
   // Animation frame ID for cleanup
-  const animationFrameRef = useRef(null);
+  const animationFrameRef = useRef<number | null>(null);
   // subscribe to image upload status
   const uploadStatus: number | undefined = useEditorState({
     editor,
@@ -41,7 +41,7 @@ export const ImageUploadStatus: React.FC<Props> = (props) => {
       };
       animationFrameRef.current = requestAnimationFrame((time) => animation(time));
     };
-    animateToValue(displayStatus, uploadStatus, performance.now());
+    animateToValue(displayStatus, uploadStatus == undefined ? 100 : uploadStatus, performance.now());
 
     return () => {
       if (animationFrameRef.current) {
