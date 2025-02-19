@@ -6,6 +6,8 @@ import { CreatePageModal } from "@/components/pages";
 import { CreateUpdateProjectViewModal } from "@/components/views";
 // hooks
 import { useCommandPalette } from "@/hooks/store";
+// plane web hooks
+import { EPageStoreType } from "@/plane-web/hooks/store";
 
 export type TProjectLevelModalsProps = {
   workspaceSlug: string;
@@ -53,6 +55,7 @@ export const ProjectLevelModals = observer((props: TProjectLevelModalsProps) => 
         pageAccess={createPageModal.pageAccess}
         handleModalClose={() => toggleCreatePageModal({ isOpen: false })}
         redirectionEnabled
+        storeType={EPageStoreType.PROJECT}
       />
     </>
   );

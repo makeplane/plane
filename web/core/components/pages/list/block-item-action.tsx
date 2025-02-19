@@ -13,15 +13,19 @@ import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 import { usePageOperations } from "@/hooks/use-page-operations";
+// plane web hooks
+import { EPageStoreType } from "@/plane-web/hooks/store";
+// store
 import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   page: TPageInstance;
   parentRef: React.RefObject<HTMLElement>;
+  storeType: EPageStoreType;
 };
 
 export const BlockItemAction: FC<Props> = observer((props) => {
-  const { page, parentRef } = props;
+  const { page, parentRef, storeType } = props;
   // store hooks
   const { getUserDetails } = useMember();
   // page operations
@@ -80,6 +84,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
         ]}
         page={page}
         parentRef={parentRef}
+        storeType={storeType}
       />
     </>
   );
