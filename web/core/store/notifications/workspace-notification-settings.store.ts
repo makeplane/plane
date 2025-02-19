@@ -107,7 +107,6 @@ export class WorkspaceNotificationSettingsStore implements IWorkspaceNotificatio
    */
   fetchWorkspaceUserNotificationSettings = async (): Promise<TWorkspaceUserNotification[] | undefined> => {
 
-    console.log("inside fetchWorkspace")
     const workspaceSlug = this.store.workspaceRoot.currentWorkspace?.slug;
     if (!workspaceSlug) return undefined;
 

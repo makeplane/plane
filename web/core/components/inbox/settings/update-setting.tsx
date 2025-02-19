@@ -44,7 +44,6 @@ export const InboxSettingUpdate: FC<InboxSettingUpdateProps> = observer((props: 
         return null;
     }
 
-    console.log("check tracked data", getNotificationSettingsForTransport(EWorkspaceNotificationTransport.EMAIL))
     return (
         <ToggleSwitch
             value={notificationSettings[settings_key] ?? false}
