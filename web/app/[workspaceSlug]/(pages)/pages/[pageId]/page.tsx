@@ -21,7 +21,7 @@ import { cn } from "@/helpers/common.helper";
 import { useEditorConfig } from "@/hooks/editor";
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
 // plane web hooks
-import { useWorkspacePageDetails, useWorkspacePages } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 import { WorkspacePageService, WorkspacePageVersionService } from "@/plane-web/services/page";
@@ -30,20 +30,25 @@ const workspaceService = new WorkspaceService();
 const workspacePageService = new WorkspacePageService();
 const workspacePageVersionService = new WorkspacePageVersionService();
 
+const storeType = EPageStoreType.WORKSPACE;
+
 const PageDetailsPage = observer(() => {
   // router
   const { workspaceSlug, pageId } = useParams();
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
-  const { createPage, fetchPageById } = useWorkspacePages();
-  const page = useWorkspacePageDetails(pageId?.toString() ?? "");
+  const { createPage, fetchPageById } = usePageStore(storeType);
+  const page = usePage({
+    pageId: pageId?.toString() ?? "",
+    storeType: storeType,
+  });
   const { uploadEditorAsset } = useEditorAsset();
   // derived values
   const workspaceId = useMemo(
     () => (workspaceSlug ? (getWorkspaceBySlug(workspaceSlug?.toString())?.id ?? "") : ""),
     [getWorkspaceBySlug, workspaceSlug]
   );
-  const { id, name, updateDescription } = page;
+  const { canCurrentUserAccessPage, id, name, updateDescription } = page ?? {};
   // entity search handler
   const fetchEntityCallback = useCallback(
     async (payload: TSearchEntityRequestPayload) =>
@@ -71,8 +76,8 @@ const PageDetailsPage = observer(() => {
         return await workspacePageVersionService.fetchAllVersions(workspaceSlug.toString(), pageId);
       },
       fetchDescriptionBinary: async () => {
-        if (!workspaceSlug || !page.id) return;
-        return await workspacePageService.fetchDescriptionBinary(workspaceSlug.toString(), page.id);
+        if (!workspaceSlug || !id) return;
+        return await workspacePageService.fetchDescriptionBinary(workspaceSlug.toString(), id);
       },
       fetchEntity: fetchEntityCallback,
       fetchVersionDetails: async (pageId, versionId) => {
@@ -80,9 +85,9 @@ const PageDetailsPage = observer(() => {
         return await workspacePageVersionService.fetchVersionById(workspaceSlug.toString(), pageId, versionId);
       },
       getRedirectionLink: (pageId) => `/${workspaceSlug}/pages/${pageId}`,
-      updateDescription,
+      updateDescription: updateDescription ?? (async () => {}),
     }),
-    [createPage, fetchEntityCallback, page.id, updateDescription, workspaceSlug]
+    [createPage, fetchEntityCallback, id, updateDescription, workspaceSlug]
   );
   // page root config
   const pageRootConfig: TPageRootConfig = useMemo(
@@ -122,7 +127,7 @@ const PageDetailsPage = observer(() => {
       </div>
     );
 
-  if (pageDetailsError)
+  if (pageDetailsError || !canCurrentUserAccessPage)
     return (
       <div className="size-full flex flex-col items-center justify-center">
         <h3 className="text-lg font-semibold text-center">Page not found</h3>
@@ -135,6 +140,8 @@ const PageDetailsPage = observer(() => {
       </div>
     );
 
+  if (!page) return null;
+
   return (
     <>
       <PageHead title={name} />
@@ -144,6 +151,7 @@ const PageDetailsPage = observer(() => {
             config={pageRootConfig}
             handlers={pageRootHandlers}
             page={page}
+            storeType={storeType}
             webhookConnectionParams={webhookConnectionParams}
             workspaceSlug={workspaceSlug.toString()}
           />

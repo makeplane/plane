@@ -18,26 +18,32 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { PageListBlockItemAction } from "@/plane-web/components/pages";
 // plane web hooks
-import { useWorkspacePageDetails } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePage } from "@/plane-web/hooks/store";
 
 type TPageListBlock = {
   workspaceSlug: string;
   pageId: string;
 };
 
-export const PageListBlock: FC<TPageListBlock> = observer((props) => {
+export const WikiPageListBlock: FC<TPageListBlock> = observer((props) => {
   const { workspaceSlug, pageId } = props;
+  // states
+  const [isOpen, setIsOpen] = useState(false);
   // refs
   const parentRef = useRef(null);
-  // state
-  const [isOpen, setIsOpen] = useState(false);
-  // hooks
-  const { name, logo_props, updatePageLogo } = useWorkspacePageDetails(pageId);
+  // store hooks
+  const page = usePage({
+    pageId,
+    storeType: EPageStoreType.WORKSPACE,
+  });
+  // derived values
+  const { name, logo_props, updatePageLogo } = page ?? {};
+  // platform
   const { isMobile } = usePlatformOS();
 
   const handlePageLogoUpdate = async (data: TLogoProps) => {
     if (data) {
-      updatePageLogo(data)
+      updatePageLogo?.(data)
         .then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
@@ -54,6 +60,8 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
         });
     }
   };
+
+  if (!page) return null;
 
   return (
     <ListItem
@@ -99,7 +107,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
       }
       title={getPageName(name)}
       itemLink={`/${workspaceSlug}/pages/${pageId}`}
-      actionableItems={<PageListBlockItemAction workspaceSlug={workspaceSlug} pageId={pageId} parentRef={parentRef} />}
+      actionableItems={<PageListBlockItemAction workspaceSlug={workspaceSlug} page={page} parentRef={parentRef} />}
       isMobile={isMobile}
       parentRef={parentRef}
       disableLink={isOpen}

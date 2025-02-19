@@ -21,7 +21,7 @@ import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages
 import { useEditorConfig } from "@/hooks/editor";
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
 // plane web hooks
-import { useTeamspacePage, useTeamspacePages } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 import { TeamspacePageVersionService } from "@/plane-web/services/teamspace/teamspace-page-version.service";
@@ -36,13 +36,16 @@ const TeamspacePageDetailsPage = observer(() => {
   const teamspaceId = routerTeamSpaceId?.toString();
   const pageId = routerPageId?.toString();
   // store hooks
-  const { createPage, fetchTeamspacePageDetails } = useTeamspacePages();
-  const page = useTeamspacePage(teamspaceId, pageId);
+  const { createPage, fetchTeamspacePageDetails } = usePageStore(EPageStoreType.TEAMSPACE);
+  const page = usePage({
+    pageId: pageId?.toString() ?? "",
+    storeType: EPageStoreType.WORKSPACE,
+  });
   const { getWorkspaceBySlug } = useWorkspace();
   const { uploadEditorAsset } = useEditorAsset();
   // derived values
   const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug)?.id ?? "") : "";
-  const { id, name, updateDescription } = page;
+  const { id, name, updateDescription } = page ?? {};
   // entity search handler
   const fetchEntityCallback = useCallback(
     async (payload: TSearchEntityRequestPayload) =>
@@ -67,14 +70,14 @@ const TeamspacePageDetailsPage = observer(() => {
   // page root handlers
   const pageRootHandlers: TPageRootHandlers = useMemo(
     () => ({
-      create: async (payload) => await createPage(workspaceSlug, teamspaceId, payload),
+      create: createPage,
       fetchAllVersions: async (pageId) => {
         if (!workspaceSlug || !teamspaceId) return;
         return await teamspacePageVersionService.fetchAllVersions(workspaceSlug, teamspaceId, pageId);
       },
       fetchDescriptionBinary: async () => {
-        if (!workspaceSlug || !teamspaceId || !page.id) return;
-        return await teamspacePageService.fetchDescriptionBinary(workspaceSlug, teamspaceId, page.id);
+        if (!workspaceSlug || !teamspaceId || !id) return;
+        return await teamspacePageService.fetchDescriptionBinary(workspaceSlug, teamspaceId, id);
       },
       fetchEntity: fetchEntityCallback,
       fetchVersionDetails: async (pageId, versionId) => {
@@ -82,9 +85,9 @@ const TeamspacePageDetailsPage = observer(() => {
         return await teamspacePageVersionService.fetchVersionById(workspaceSlug, teamspaceId, pageId, versionId);
       },
       getRedirectionLink: (pageId) => `/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}`,
-      updateDescription,
+      updateDescription: updateDescription ?? (async () => {}),
     }),
-    [createPage, fetchEntityCallback, page.id, teamspaceId, updateDescription, workspaceSlug]
+    [createPage, fetchEntityCallback, id, teamspaceId, updateDescription, workspaceSlug]
   );
   // page root config
   const pageRootConfig: TPageRootConfig = useMemo(
@@ -141,6 +144,8 @@ const TeamspacePageDetailsPage = observer(() => {
       </div>
     );
 
+  if (!page) return null;
+
   return (
     <>
       <PageHead title={name} />
@@ -150,6 +155,7 @@ const TeamspacePageDetailsPage = observer(() => {
             config={pageRootConfig}
             handlers={pageRootHandlers}
             page={page}
+            storeType={EPageStoreType.TEAMSPACE}
             webhookConnectionParams={webhookConnectionParams}
             workspaceSlug={workspaceSlug}
           />

@@ -21,7 +21,7 @@ import { useUserPermissions } from "@/hooks/store";
 import { PublishPageModal } from "@/plane-web/components/pages";
 // plane web constants
 // plane web hooks
-import { usePublishPage, useWorkspacePageDetails } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePage, usePublishPage } from "@/plane-web/hooks/store";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
@@ -35,11 +35,13 @@ export const PageDetailsHeader = observer(() => {
   const { workspaceSlug, pageId } = useParams();
   // store hooks
   const { allowPermissions } = useUserPermissions();
-  const { anchor, isCurrentUserOwner, name, logo_props, updatePageLogo, isContentEditable } = useWorkspacePageDetails(
-    pageId?.toString() ?? ""
-  );
+  const page = usePage({
+    pageId: pageId?.toString() ?? "",
+    storeType: EPageStoreType.WORKSPACE,
+  });
   const { fetchWorkspacePagePublishSettings, getPagePublishSettings, publishWorkspacePage, unpublishWorkspacePage } =
     usePublishPage();
+  const { anchor, isCurrentUserOwner, name, logo_props, updatePageLogo, isContentEditable } = page ?? {};
   // derived values
   const isDeployed = !!anchor;
   const pagePublishSettings = getPagePublishSettings(pageId.toString());
@@ -48,7 +50,7 @@ export const PageDetailsHeader = observer(() => {
 
   const handlePageLogoUpdate = async (data: TLogoProps) => {
     if (data) {
-      updatePageLogo(data)
+      updatePageLogo?.(data)
         .then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,

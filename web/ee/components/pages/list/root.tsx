@@ -12,9 +12,9 @@ import { PageLoader } from "@/components/pages";
 import { useCommandPalette, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import { PageListBlock } from "@/plane-web/components/pages";
+import { WikiPageListBlock } from "@/plane-web/components/pages";
 // plane web hooks
-import { useWorkspacePages } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // assets
 import AllFiltersImage from "@/public/empty-state/pages/all-filters.svg";
 import NameFilterImage from "@/public/empty-state/pages/name-filter.svg";
@@ -23,7 +23,7 @@ type Props = {
   pageType: TPageNavigationTabs;
 };
 
-export const PagesListLayoutRoot: React.FC<Props> = observer((props) => {
+export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
   const { pageType } = props;
   // params
   const { workspaceSlug } = useParams();
@@ -38,7 +38,7 @@ export const PagesListLayoutRoot: React.FC<Props> = observer((props) => {
     getCurrentWorkspaceFilteredPageIdsByType,
     loader,
     isAnyPageAvailable,
-  } = useWorkspacePages();
+  } = usePageStore(EPageStoreType.WORKSPACE);
   // derived values
   const pageIds = getCurrentWorkspacePageIdsByType(pageType);
   const filteredPageIds = getCurrentWorkspaceFilteredPageIdsByType(pageType);
@@ -141,7 +141,7 @@ export const PagesListLayoutRoot: React.FC<Props> = observer((props) => {
   return (
     <div className="size-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
       {filteredPageIds?.map((pageId) => (
-        <PageListBlock key={pageId} workspaceSlug={workspaceSlug.toString()} pageId={pageId} />
+        <WikiPageListBlock key={pageId} workspaceSlug={workspaceSlug.toString()} pageId={pageId} />
       ))}
     </div>
   );

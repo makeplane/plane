@@ -10,7 +10,7 @@ import { PageForm } from "@/components/pages";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // plane web hooks
-import { useWorkspacePages } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 type Props = {
   workspaceSlug: string;
@@ -20,7 +20,7 @@ type Props = {
   redirectionEnabled?: boolean;
 };
 
-export const PagesAppCreatePageModal: FC<Props> = observer((props) => {
+export const WikiCreatePageModal: FC<Props> = observer((props) => {
   const { workspaceSlug, isModalOpen, pageAccess, handleModalClose, redirectionEnabled = false } = props;
   // states
   const [pageFormData, setPageFormData] = useState<Partial<TPage>>({
@@ -31,7 +31,7 @@ export const PagesAppCreatePageModal: FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   // store hooks
-  const { createPage } = useWorkspacePages();
+  const { createPage } = usePageStore(EPageStoreType.WORKSPACE);
   const { capturePageEvent } = useEventTracker();
   const handlePageFormData = <T extends keyof TPage>(key: T, value: TPage[T]) =>
     setPageFormData((prev) => ({ ...prev, [key]: value }));

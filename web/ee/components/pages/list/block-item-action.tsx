@@ -13,18 +13,17 @@ import { useMember } from "@/hooks/store";
 // plane web components
 import { WorkspacePageQuickActions } from "@/plane-web/components/pages";
 // plane web hooks
-import { useWorkspacePageDetails } from "@/plane-web/hooks/store";
+import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   workspaceSlug: string;
-  pageId: string;
+  page: TPageInstance;
   parentRef: React.RefObject<HTMLElement>;
 };
 
 export const PageListBlockItemAction: FC<Props> = observer((props) => {
-  const { workspaceSlug, pageId, parentRef } = props;
+  const { workspaceSlug, page, parentRef } = props;
   // store hooks
-  const page = useWorkspacePageDetails(pageId);
   const { getUserDetails } = useMember();
   // derived values
   const { access, created_at, is_favorite, owned_by, addToFavorites, removePageFromFavorites } = page;
@@ -33,7 +32,7 @@ export const PageListBlockItemAction: FC<Props> = observer((props) => {
   // handlers
   const handleFavorites = () => {
     if (is_favorite)
-      removePageFromFavorites().then(() =>
+      removePageFromFavorites?.().then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -41,7 +40,7 @@ export const PageListBlockItemAction: FC<Props> = observer((props) => {
         })
       );
     else
-      addToFavorites().then(() =>
+      addToFavorites?.().then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -49,6 +48,7 @@ export const PageListBlockItemAction: FC<Props> = observer((props) => {
         })
       );
   };
+
   return (
     <>
       {/* page details */}
@@ -79,11 +79,11 @@ export const PageListBlockItemAction: FC<Props> = observer((props) => {
           e.stopPropagation();
           handleFavorites();
         }}
-        selected={is_favorite}
+        selected={!!is_favorite}
       />
 
       {/* quick actions dropdown */}
-      <WorkspacePageQuickActions parentRef={parentRef} page={page} pageLink={`${workspaceSlug}/pages/${pageId}`} />
+      <WorkspacePageQuickActions parentRef={parentRef} page={page} pageLink={`${workspaceSlug}/pages/${page.id}`} />
     </>
   );
 });

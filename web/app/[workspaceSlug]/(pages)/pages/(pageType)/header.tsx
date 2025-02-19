@@ -19,7 +19,7 @@ import { capitalizeFirstLetter } from "@/helpers/string.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web hooks
-import { useWorkspacePages } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 type Props = {
   pageType: TPageNavigationTabs;
@@ -37,7 +37,7 @@ export const PageTypeHeader: React.FC<Props> = observer((props) => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
-  const { createPage, filters, updateFilters, clearAllFilters } = useWorkspacePages();
+  const { createPage, filters, updateFilters, clearAllFilters } = usePageStore(EPageStoreType.WORKSPACE);
   // derived values
   const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
   // handle page create

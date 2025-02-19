@@ -5,7 +5,6 @@ import { uniq } from "lodash";
 import orderBy from "lodash/orderBy";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Dot, Icon } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 import { MemberDropdown } from "@/components/dropdowns";
 //helpers
@@ -180,6 +179,7 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
           <div ref={setPopperElement} className={"absolute z-10 max-w-[600px]"} style={styles.popper}>
             <NotificationCardPreview
               notificationList={notificationList}
+              workspaceId={workspaceId}
               workspaceSlug={workspaceSlug}
               projectId={projectId}
               issueData={issue}

@@ -8,12 +8,13 @@ import { IssueIdentifier } from "@/plane-web/components/issues";
 import { NotificationPreviewActivity } from "@/plane-web/components/workspace-notifications";
 export type TNotificationCardPreview = {
   notificationList: TNotification[];
+  workspaceId: string;
   workspaceSlug: string;
   projectId: string;
   issueData: TNotificationIssueLite;
 };
 export const NotificationCardPreview: FC<TNotificationCardPreview> = (props) => {
-  const { notificationList, workspaceSlug, projectId, issueData } = props;
+  const { notificationList, workspaceId, workspaceSlug, projectId, issueData } = props;
   const unreadCount = notificationList.filter((e) => !e.read_at).length;
 
   if (!workspaceSlug) return;
@@ -45,6 +46,7 @@ export const NotificationCardPreview: FC<TNotificationCardPreview> = (props) => 
           .filter((n) => !!n)
           .map((notification, index, { length }) => (
             <NotificationPreviewActivity
+              workspaceId={workspaceId}
               workspaceSlug={workspaceSlug}
               notification={notification}
               projectId={projectId}

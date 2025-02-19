@@ -14,14 +14,14 @@ import { useAppTheme } from "@/hooks/store";
 import { PagesAppSidebarList, PagesAppSidebarMenu, PagesAppSidebarQuickActions } from "@/plane-web/components/pages";
 import { SidebarAppSwitcher } from "@/plane-web/components/sidebar";
 // plane web hooks
-import { useWorkspacePages } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 export const PagesAppSidebar = observer(() => {
   // params
   const { workspaceSlug } = useParams();
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
-  const { fetchAllPages } = useWorkspacePages();
+  const { fetchAllPages } = usePageStore(EPageStoreType.WORKSPACE);
   // refs
   const ref = useRef<HTMLDivElement>(null);
 

@@ -14,8 +14,10 @@ import { SimpleEmptyState } from "@/components/empty-state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useProject, useProjectPages } from "@/hooks/store";
+import { useProject } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// plane web hooks
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // store
 import { ROLE_PERMISSIONS_TO_CREATE_PAGE } from "@/store/pages/project-page.store";
 
@@ -34,7 +36,7 @@ export const MovePageModal: React.FC<TMovePageModalProps> = observer((props) => 
   const { t } = useTranslation();
   // store hooks
   const { currentProjectDetails, getProjectById, joinedProjectIds } = useProject();
-  const { movePage } = useProjectPages();
+  const { movePage } = usePageStore(EPageStoreType.PROJECT);
   // derived values
   const { id } = page;
   const transferrableProjectIds = joinedProjectIds.filter((id) => {

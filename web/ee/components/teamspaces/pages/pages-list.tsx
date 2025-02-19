@@ -13,7 +13,9 @@ import { useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import { useTeamspacePage, useTeamspacePages } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+
+const storeType = EPageStoreType.TEAMSPACE;
 
 type Props = {
   teamspaceId: string;
@@ -37,7 +39,7 @@ export const TeamspacePagesList = observer((props: Props) => {
     getFilteredTeamspacePageIds,
     getTeamspacePagesFilters,
     createPage,
-  } = useTeamspacePages();
+  } = usePageStore(EPageStoreType.TEAMSPACE);
   // derived values
   const teamspacePagesLoader = getTeamspacePagesLoader(teamspaceId);
   const teamspacePagesScope = getTeamspacePagesScope(teamspaceId);
@@ -64,7 +66,7 @@ export const TeamspacePagesList = observer((props: Props) => {
   // handlers
   const handleCreatePage = async () => {
     // Create page
-    await createPage(workspaceSlug, teamspaceId, {
+    await createPage({
       access: EPageAccess.PUBLIC,
     })
       .then((res) => {
@@ -109,11 +111,7 @@ export const TeamspacePagesList = observer((props: Props) => {
           <ListLayout>
             {filteredTeamspacePageIds.length > 0 ? (
               filteredTeamspacePageIds.map((pageId) => (
-                <PageListBlock
-                  key={pageId}
-                  pageId={pageId}
-                  usePage={(pageId) => useTeamspacePage(teamspaceId, pageId)}
-                />
+                <PageListBlock key={pageId} pageId={pageId} storeType={storeType} />
               ))
             ) : (
               <p className="mt-10 text-center text-sm text-custom-text-300">No results found</p>

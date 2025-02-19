@@ -14,7 +14,7 @@ import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { useTeamspacePages, useTeamspaces } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePageStore, useTeamspaces } from "@/plane-web/hooks/store";
 
 type TeamspacePagesListHeaderActionsProps = {
   teamspaceId: string;
@@ -36,7 +36,7 @@ export const TeamspacePagesListHeaderActions = observer((props: TeamspacePagesLi
     getTeamspacePagesFilters,
     updateFilters: updateTeamspaceFilters,
     createPage,
-  } = useTeamspacePages();
+  } = usePageStore(EPageStoreType.TEAMSPACE);
   // derived values
   const teamspacePagesScope = getTeamspacePagesScope(teamspaceId);
   const filters = getTeamspacePagesFilters(teamspaceId);
@@ -53,7 +53,7 @@ export const TeamspacePagesListHeaderActions = observer((props: TeamspacePagesLi
   const handleCreatePage = async () => {
     setIsCreatingPage(true);
     // Create page
-    await createPage(workspaceSlug, teamspaceId, {
+    await createPage({
       access: EPageAccess.PUBLIC,
     })
       .then((res) => {

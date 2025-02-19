@@ -105,8 +105,8 @@ export const InitiativeCommentCreate: FC<TInitiativeCommentCreate> = observer((p
                 accessSpecifier={accessValue ?? EIssueCommentAccessSpecifier.INTERNAL}
                 handleAccessChange={onAccessChange}
                 isSubmitting={isSubmitting}
-                uploadFile={async (file) => {
-                  const { asset_id } = await activityOperations.uploadCommentAsset(file);
+                uploadFile={async (blockId, file) => {
+                  const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file);
                   setUploadedAssetIds((prev) => [...prev, asset_id]);
                   return asset_id;
                 }}

@@ -35,7 +35,7 @@ export interface IWorkspacePageStore {
   fetchAllPages: () => Promise<TPage[] | undefined>;
   fetchPageById: (pageId: string) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
-  deletePage: (pageId: string) => Promise<void>;
+  removePage: (pageId: string) => Promise<void>;
 }
 
 export class WorkspacePageStore implements IWorkspacePageStore {
@@ -67,7 +67,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       fetchAllPages: action,
       fetchPageById: action,
       createPage: action,
-      deletePage: action,
+      removePage: action,
     });
     // service
     this.pageService = new WorkspacePageService();
@@ -261,7 +261,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
    * @description delete a page
    * @param {string} pageId
    */
-  deletePage = async (pageId: string) => {
+  removePage = async (pageId: string) => {
     try {
       const { workspaceSlug } = this.store.router;
       if (!workspaceSlug || !pageId) return undefined;

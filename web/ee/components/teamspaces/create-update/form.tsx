@@ -18,14 +18,10 @@ import { cn } from "@/helpers/common.helper";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 // store hooks
-import { useMember, useWorkspace } from "@/hooks/store";
+import { useEditorAsset, useMember, useWorkspace } from "@/hooks/store";
 // plane web components
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
-// services
-import { FileService } from "@/services/file.service";
-
-const fileService = new FileService();
 
 type Props = {
   teamDetail?: TTeamspace;
@@ -51,6 +47,7 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
     workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
   } = useMember();
   const { getTeamspaceMemberIds } = useTeamspaces();
+  const { uploadEditorAsset } = useEditorAsset();
   // derived values
   const teamspaceMemberIds = teamDetail?.id
     ? (getTeamspaceMemberIds(teamDetail.id) ?? [])
@@ -156,16 +153,17 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
             editorClassName="text-xs"
             containerClassName="resize-none min-h-24 text-xs border-[0.5px] border-custom-border-200 rounded-md px-3 py-2"
             tabIndex={2}
-            uploadFile={async (file) => {
+            uploadFile={async (blockId, file) => {
               try {
-                const { asset_id } = await fileService.uploadWorkspaceAsset(
-                  workspaceSlug.toString(),
-                  {
+                const { asset_id } = await uploadEditorAsset({
+                  blockId,
+                  data: {
                     entity_identifier: teamDetail?.id ?? "",
                     entity_type: EFileAssetType.TEAM_SPACE_DESCRIPTION,
                   },
-                  file
-                );
+                  file,
+                  workspaceSlug: workspaceSlug.toString(),
+                });
                 return asset_id;
               } catch (error) {
                 console.log("Error in uploading work item asset:", error);

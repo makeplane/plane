@@ -15,7 +15,9 @@ import { calculateTotalFilters } from "@/helpers/filter.helper";
 // plane web imports
 import { TeamspacePagesList } from "@/plane-web/components/teamspaces/pages";
 import { getTeamspaceEntityScopeLabel } from "@/plane-web/helpers/teamspace-helper";
-import { useTeamspacePages } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+
+const storeType = EPageStoreType.TEAMSPACE;
 
 const TeamspacePagesPage = observer(() => {
   const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamSpaceId } = useParams();
@@ -30,7 +32,7 @@ const TeamspacePagesPage = observer(() => {
     updateTeamScope,
     updateFilters,
     clearAllFilters,
-  } = useTeamspacePages();
+  } = usePageStore(storeType);
   // derived values
   const teamspacePagesScope = getTeamspacePagesScope(teamspaceId);
   const teamspacePagesLoader = getTeamspacePagesLoader(teamspaceId);
