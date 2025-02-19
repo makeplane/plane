@@ -21,6 +21,7 @@ type Props = {
   editorRef: RefObject<EditorRefApi>;
   isOpen: boolean;
   onClose: () => void;
+  workspaceId: string;
   workspaceSlug: string;
 };
 
@@ -58,7 +59,7 @@ const TONES_LIST = [
 ];
 
 export const EditorAIMenu: React.FC<Props> = (props) => {
-  const { editorRef, isOpen, onClose, workspaceSlug } = props;
+  const { editorRef, isOpen, onClose, workspaceId, workspaceSlug } = props;
   // states
   const [activeTask, setActiveTask] = useState<AI_EDITOR_TASKS | null>(null);
   const [response, setResponse] = useState<string | undefined>(undefined);
@@ -215,6 +216,7 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
                       initialValue={response}
                       containerClassName="!p-0 border-none"
                       editorClassName="!pl-0"
+                      workspaceId={workspaceId}
                       workspaceSlug={workspaceSlug}
                     />
                     <div className="mt-3 flex items-center gap-4">

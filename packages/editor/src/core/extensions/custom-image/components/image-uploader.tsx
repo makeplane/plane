@@ -69,6 +69,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   );
   // hooks
   const { uploading: isImageBeingUploaded, uploadFile } = useUploader({
+    blockId: imageEntityId ?? "",
     editor,
     loadImageFromFileSystem,
     maxFileSize,

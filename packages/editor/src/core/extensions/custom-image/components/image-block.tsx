@@ -4,6 +4,7 @@ import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from
 import { cn } from "@plane/utils";
 // extensions
 import { CustoBaseImageNodeViewProps, ImageToolbarRoot } from "@/extensions/custom-image";
+import { ImageUploadStatus } from "./upload-status";
 
 const MIN_SIZE = 100;
 
@@ -210,6 +211,8 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   // show the image loader if the remote image's src or preview image from filesystem is not set yet (while loading the image post upload) (or)
   // if the initial resize (from 35% width and "auto" height attrs to the actual size in px) is not complete
   const showImageLoader = !(resolvedImageSrc || imageFromFileSystem) || !initialResizeComplete || hasErroredOnFirstLoad;
+  // show the image upload status only when the resolvedImageSrc is not ready
+  const showUploadStatus = !resolvedImageSrc;
   // show the image utils only if the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
   const showImageUtils = resolvedImageSrc && initialResizeComplete;
   // show the image resizer only if the editor is editable, the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
@@ -279,6 +282,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
           ...(size.aspectRatio && { aspectRatio: size.aspectRatio }),
         }}
       />
+      {showUploadStatus && <ImageUploadStatus editor={editor} nodeId={node.attrs.id} />}
       {showImageUtils && (
         <ImageToolbarRoot
           containerClassName={

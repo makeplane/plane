@@ -125,6 +125,13 @@ export const useEditor = (props: CustomEditorProps) => {
     }
   }, [editor, value, id]);
 
+  // update assets upload status
+  useEffect(() => {
+    if (!editor) return;
+    const assetsUploadStatus = fileHandler.assetsUploadStatus;
+    editor.commands.updateAssetsUploadStatus(assetsUploadStatus);
+  }, [editor, fileHandler.assetsUploadStatus]);
+
   useImperativeHandle(
     forwardedRef,
     () => ({

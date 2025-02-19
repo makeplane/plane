@@ -9,6 +9,7 @@ import {
   TExtensions,
   TFileHandler,
   TMentionHandler,
+  TReadOnlyFileHandler,
   TReadOnlyMentionHandler,
   TRealtimeConfig,
   TUserDetails,
@@ -43,7 +44,7 @@ export type TCollaborativeEditorProps = TCollaborativeEditorHookProps & {
 };
 
 export type TReadOnlyCollaborativeEditorProps = TCollaborativeEditorHookProps & {
-  fileHandler: Pick<TFileHandler, "getAssetSrc">;
+  fileHandler: TReadOnlyFileHandler;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
   mentionHandler: TReadOnlyMentionHandler;
 };
