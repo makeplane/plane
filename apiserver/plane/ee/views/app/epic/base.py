@@ -17,6 +17,7 @@ from django.db.models import (
     When,
     Count,
     Subquery,
+    Exists
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -569,20 +570,22 @@ class WorkspaceEpicEndpoint(BaseAPIView):
             workspace__slug=slug,
             project__project_projectmember__member=self.request.user,
             project__project_projectmember__is_active=True,
+            project__project_projectfeature__is_epic_enabled=True
         ).filter(
             Q(type__isnull=False)
             & Q(type__is_epic=True)
             & Q(project__deleted_at__isnull=True)
         )
-
+        
         if initiative_id:
             # Exclude epics that are already in the initiative
             initiative_epics = (
                 InitiativeEpic.objects.filter(initiative_id=initiative_id)
                 .filter(epic__project__deleted_at__isnull=True)
                 .values_list("epic_id", flat=True)
-            )
 
+            )
+        
             epics_query = epics_query.exclude(id__in=initiative_epics)
 
         epics = (

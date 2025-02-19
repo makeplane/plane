@@ -164,6 +164,7 @@ class InitiativeEpicViewSet(BaseViewSet):
             )
             .filter(Q(project__deleted_at__isnull=True))
             .filter(Q(type__isnull=False) & Q(type__is_epic=True))
+            .filter(project__project_projectfeature__is_epic_enabled=True)
             .annotate(
                 label_ids=Coalesce(
                     ArrayAgg(
