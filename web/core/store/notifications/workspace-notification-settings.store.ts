@@ -1,7 +1,8 @@
 import set from "lodash/set";
 import { action, autorun, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { IUser, IWorkspace, TWorkspaceNotificationTransport, TWorkspaceUserNotification } from "@plane/types";
+import { EWorkspaceNotificationTransport } from "@plane/constants";
+import { IUser, IWorkspace, TWorkspaceUserNotification } from "@plane/types";
 // plane web services
 // plane web root store
 import { WorkspaceNotificationSettingsService } from "@/services/workspace-notification-settings.service";
@@ -12,16 +13,16 @@ export interface IWorkspaceNotificationSettingsStore {
   error: object;
   user: IUser | undefined;
   workspace: IWorkspace | undefined;
-  settings: Record<string, Record<TWorkspaceNotificationTransport, TWorkspaceUserNotification>>; // workspaceSlug -> transport -> settings
+  settings: Record<string, Record<EWorkspaceNotificationTransport, TWorkspaceUserNotification>>; // workspaceSlug -> transport -> settings
   // computed functions
   notificationSettingsForWorkspace: () => Record<string, TWorkspaceUserNotification> | undefined;
   getNotificationSettingsForTransport: (
-    transport: TWorkspaceNotificationTransport
+    transport: EWorkspaceNotificationTransport
   ) => TWorkspaceUserNotification | undefined;
   // helper actions
   fetchWorkspaceUserNotificationSettings: () => Promise<TWorkspaceUserNotification[] | undefined>;
   updateWorkspaceUserNotificationSettings: (
-    transport: TWorkspaceNotificationTransport,
+    transport: EWorkspaceNotificationTransport,
     settings: Partial<TWorkspaceUserNotification>
   ) => Promise<TWorkspaceUserNotification | undefined>;
 }
@@ -31,7 +32,7 @@ export class WorkspaceNotificationSettingsStore implements IWorkspaceNotificatio
   error: object = {};
   user: IUser | undefined = undefined;
   workspace: IWorkspace | undefined = undefined;
-  settings: Record<string, Record<TWorkspaceNotificationTransport, TWorkspaceUserNotification>> = {};
+  settings: Record<string, Record<EWorkspaceNotificationTransport, TWorkspaceUserNotification>> = {};
   settingService: WorkspaceNotificationSettingsService;
 
   constructor(public store: CoreRootStore) {
@@ -86,11 +87,11 @@ export class WorkspaceNotificationSettingsStore implements IWorkspaceNotificatio
 
   /**
    * @description get notification settings for the workspace for a transport
-   * @param { TWorkspaceNotificationTransport } transport
+   * @param { EWorkspaceNotificationTransport } transport
    * @returns { TWorkspaceUserNotification }
    */
 
-  getNotificationSettingsForTransport = computedFn((transport: TWorkspaceNotificationTransport) => {
+  getNotificationSettingsForTransport = computedFn((transport: EWorkspaceNotificationTransport) => {
     const workspaceSlug = this.store.workspaceRoot?.currentWorkspace?.slug;
     if (!workspaceSlug || !transport) {
       return;
@@ -134,10 +135,10 @@ export class WorkspaceNotificationSettingsStore implements IWorkspaceNotificatio
    * @description - updates user notification settings for a transport
    * @param transport
    * @param settings
-   * @returns { TWorkspaceNotificationTransport }
+   * @returns { EWorkspaceNotificationTransport }
    */
   updateWorkspaceUserNotificationSettings = async (
-    transport: TWorkspaceNotificationTransport,
+    transport: EWorkspaceNotificationTransport,
     settings: Partial<TWorkspaceUserNotification>): Promise<TWorkspaceUserNotification | undefined> => {
 
     const workspaceSlug = this.store.workspaceRoot.currentWorkspace?.slug;

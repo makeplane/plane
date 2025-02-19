@@ -138,18 +138,17 @@ export const allTimeIn30MinutesInterval12HoursFormat: Array<{
 
 
 export enum ENotificationSettingsKey {
-  WORK_ITEM_PROPERTY_UPDATES = "work_item_property_updates",
-  STATUS_UPDATES = "status_updates",
-  PRIORITY_UPDATES = "priority_updates",
-  ASSIGNEE_UPDATES = "assignee_updates",
-  START_DUE_DATE_UPDATES = "start_due_date_updates",
-  MODULE_UPDATES = "module_updates",
-  CYCLE_UPDATES = "cycle_updates",
-  MENTIONED_COMMENTS_UPDATES = "mentioned_comments_updates",
-  NEW_COMMENTS_UPDATES = "new_comments_updates",
-  REACTION_COMMENT_UPDATES = "reaction_comment_updates",
+  WORK_ITEM_PROPERTY_UPDATES = "work_item_property_updates_enabled",
+  STATUS_UPDATES = "status_updates_enabled",
+  PRIORITY_UPDATES = "priority_updates_enabled",
+  ASSIGNEE_UPDATES = "assignee_updates_enabled",
+  START_DUE_DATE_UPDATES = "start_due_date_updates_enabled",
+  MODULE_UPDATES = "module_updates_enabled",
+  CYCLE_UPDATES = "cycle_updates_enabled",
+  MENTIONED_COMMENTS_UPDATES = "mentioned_comments_updates_enabled",
+  NEW_COMMENTS_UPDATES = "new_comments_updates_enabled",
+  REACTION_COMMENT_UPDATES = "reaction_comments_updates_enabled",
 }
-
 
 export enum EWorkspaceNotificationTransport {
   EMAIL = "EMAIL",

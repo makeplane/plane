@@ -2347,5 +2347,28 @@
   "module": {
     "label": "{count, plural, one {Módulo} other {Módulos}}",
     "no_module": "Sin módulo"
+  },
+
+  "notification_settings": {
+    "page_label": "{workspace} - Configuración de la bandeja de entrada",
+    "inbox_settings": "Configuración de la bandeja de entrada",
+    "inbox_settings_description": "Activa o desactiva estas opciones para el espacio de trabajo",
+    "advanced_settings": "Configuración avanzada",
+    "in_plane": "En Plane",
+    "email": "Correo electrónico",
+    "task_updates": "Actualizaciones de tareas",
+    "comments": "Comentarios",
+    "work_item_property_title": "Actualización de cualquier propiedad del elemento de trabajo",
+    "status_title": "Actualización de estado",
+    "priority_title": "Actualización de prioridad",
+    "assignee_title": "Actualización de asignado",
+    "due_date_title": "Actualización de fecha de inicio/vencimiento",
+    "module_title": "Actualización de módulo",
+    "cycle_title": "Actualización de ciclo",
+    "mentioned_comments_title": "Comentarios en los que estoy @mencionado",
+    "new_comments_title": "Nuevos comentarios",
+    "reaction_comments_title": "Reacciones",
+    "setting_updated_successfully": "Configuración actualizada correctamente",
+    "failed_to_update_setting": "No se pudo actualizar la configuración"
   }
 }

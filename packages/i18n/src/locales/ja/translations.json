@@ -2347,5 +2347,28 @@
   "module": {
     "label": "{count, plural, one {モジュール} other {モジュール}}",
     "no_module": "モジュールなし"
+  },
+
+  "notification_settings": {
+    "page_label": "{workspace} - 受信トレイ設定",
+    "inbox_settings": "受信トレイ設定",
+    "inbox_settings_description": "ワークスペースのためにこれらをオンまたはオフに切り替えます",
+    "advanced_settings": "詳細設定",
+    "in_plane": "Plane内",
+    "email": "メール",
+    "task_updates": "タスクの更新",
+    "comments": "コメント",
+    "work_item_property_title": "作業項目のプロパティの更新",
+    "status_title": "ステータスの更新",
+    "priority_title": "優先度の更新",
+    "assignee_title": "担当者の更新",
+    "due_date_title": "開始日/期日の更新",
+    "module_title": "モジュールの更新",
+    "cycle_title": "サイクルの更新",
+    "mentioned_comments_title": "自分が@メンションされたコメント",
+    "new_comments_title": "新しいコメント",
+    "reaction_comments_title": "リアクション",
+    "setting_updated_successfully": "設定が正常に更新されました",
+    "failed_to_update_setting": "設定の更新に失敗しました"
   }
 }

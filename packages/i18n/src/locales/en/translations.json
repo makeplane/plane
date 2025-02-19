@@ -2198,6 +2198,8 @@
     "cycle_title": "Cycle update",
     "mentioned_comments_title": "Comments I'm @mentioned in",
     "new_comments_title": "New comments",
-    "reaction_comments_title": "Reactions"
+    "reaction_comments_title": "Reactions",
+    "setting_updated_successfully": "Setting updated successfully",
+    "failed_to_update_setting": "Failed to update setting"
   }
 }

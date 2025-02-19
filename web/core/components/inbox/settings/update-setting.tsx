@@ -1,51 +1,58 @@
 "use client"
 
-import { FC, useState } from "react";
+import { FC } from "react";
 import { observer } from "mobx-react";
-import { EWorkspaceNotificationTransport } from "@plane/constants";
+import { ENotificationSettingsKey, EWorkspaceNotificationTransport } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ToggleSwitch } from "@plane/ui";
+import { setToast, TOAST_TYPE, ToggleSwitch } from "@plane/ui";
 import { useWorkspaceNotificationSettings } from "@/hooks/store";
 
 type InboxSettingUpdateProps = {
-    settings_key: string;
-    title: string;
+    settings_key: ENotificationSettingsKey;
+    transport: EWorkspaceNotificationTransport;
 }
 
 export const InboxSettingUpdate: FC<InboxSettingUpdateProps> = observer((props: InboxSettingUpdateProps) => {
-    const { title, settings_key } = props;
-
-    const [isChecked, setIsChecked] = useState(false);
-
+    const { transport, settings_key } = props;
     const { t } = useTranslation()
 
-    const { workspace: currentWorkspace, getNotificationSettingsForTransport } = useWorkspaceNotificationSettings();
 
+    const { getNotificationSettingsForTransport, updateWorkspaceUserNotificationSettings } = useWorkspaceNotificationSettings();
+
+    const notificationSettings = getNotificationSettingsForTransport(transport);
+
+    const handleChange = async (value: boolean) => {
+        try {
+            await updateWorkspaceUserNotificationSettings(transport, {
+                [settings_key]: value,
+            });
+            setToast({
+                title: t("success"),
+                type: TOAST_TYPE.SUCCESS,
+                message: t("notification_settings.setting_updated_successfully"),
+            })
+        } catch (error) {
+            setToast({
+                title: t("error"),
+                type: TOAST_TYPE.ERROR,
+                message: t("notification_settings.failed_to_update_setting"),
+            })
+        }
+    }
+
+    if (!notificationSettings) {
+        return null;
+    }
 
     console.log("check tracked data", getNotificationSettingsForTransport(EWorkspaceNotificationTransport.EMAIL))
     return (
-        <div className="w-full flex items-center justify-between">
-            <div className="text-base font-normal text-custom-text-200 w-2/4">
-                {t(title)}
-            </div>
-            <div className="w-1/4">
-                <ToggleSwitch
-                    value={isChecked}
-                    onChange={(newValue) => {
-                        setIsChecked(newValue);
-                    }}
-                    size="md"
-                />
-            </div>
-            <div className="w-1/4">
-                <ToggleSwitch
-                    value={isChecked}
-                    onChange={(newValue) => {
-                        setIsChecked(newValue);
-                    }}
-                    size="md"
-                />
-            </div>
-        </div>
+        <ToggleSwitch
+            value={notificationSettings[settings_key] ?? false}
+            onChange={(newValue) => {
+                handleChange(newValue);
+            }}
+            size="md"
+        />
+
     );
 })

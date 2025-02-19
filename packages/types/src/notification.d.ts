@@ -1,14 +1,14 @@
+import { ENotificationSettingsKey, EWorkspaceNotificationTransport } from "@plane/constants";
+
 export type TNotificationSettings = {
     i18n_title: string,
-    key: string
+    key: ENotificationSettingsKey
 }
-
-export type TWorkspaceNotificationTransport = "EMAIL" | "IN_APP" | "PUSH" | "SLACK";
 
 export type TWorkspaceUserNotification = {
     workspace: string,
     user: string,
-    transport: TWorkspaceNotificationTransport,
+    transport: EWorkspaceNotificationTransport,
     work_item_property_updates_enabled: boolean,
     status_updates_enabled: boolean,
     priority_updates_enabled: boolean,

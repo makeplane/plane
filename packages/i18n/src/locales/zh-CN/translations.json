@@ -2347,5 +2347,28 @@
   "module": {
     "label": "{count, plural, one {模块} other {模块}}",
     "no_module": "无模块"
+  },
+
+  "notification_settings": {
+    "page_label": "{workspace} - 收件箱设置",
+    "inbox_settings": "收件箱设置",
+    "inbox_settings_description": "为工作空间打开或关闭这些选项",
+    "advanced_settings": "高级设置",
+    "in_plane": "在 Plane",
+    "email": "电子邮件",
+    "task_updates": "任务更新",
+    "comments": "评论",
+    "work_item_property_title": "工作项属性更新",
+    "status_title": "状态更新",
+    "priority_title": "优先级更新",
+    "assignee_title": "负责人更新",
+    "due_date_title": "开始/截止日期更新",
+    "module_title": "模块更新",
+    "cycle_title": "周期更新",
+    "mentioned_comments_title": "我被@提及的评论",
+    "new_comments_title": "新评论",
+    "reaction_comments_title": "反应",
+    "setting_updated_successfully": "设置已成功更新",
+    "failed_to_update_setting": "设置更新失败"
   }
 }

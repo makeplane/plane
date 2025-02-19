@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { COMMENT_NOTIFICATION_SETTINGS, TASK_UPDATES_NOTIFICATION_SETTINGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { InboxSettingUpdate } from "./update-setting";
+import { InboxSettingUpdateRow } from "./update-setting-row";
 
 
 export const InboxSettingsRoot: FC = (props) => {
@@ -23,7 +23,7 @@ export const InboxSettingsRoot: FC = (props) => {
         </div>
         {
           TASK_UPDATES_NOTIFICATION_SETTINGS?.map((item, index) => (
-            <InboxSettingUpdate key={item.key} settings_key={item.key} title={item.i18n_title} />
+            <InboxSettingUpdateRow key={item.key} settings_key={item.key} title={item.i18n_title} />
           ))
         }
       </div>
@@ -38,7 +38,7 @@ export const InboxSettingsRoot: FC = (props) => {
         </div>
         {
           COMMENT_NOTIFICATION_SETTINGS?.map((item, index) => (
-            <InboxSettingUpdate key={index} settings_key={item.key} title={item.i18n_title} />
+            <InboxSettingUpdateRow key={index} settings_key={item.key} title={item.i18n_title} />
           ))
         }
       </div>

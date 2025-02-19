@@ -1,8 +1,8 @@
 /* eslint-disable no-useless-catch */
 
+import { EWorkspaceNotificationTransport } from "@plane/constants";
 import type {
     TWorkspaceUserNotification,
-    TWorkspaceNotificationTransport,
 } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
@@ -26,7 +26,7 @@ export class WorkspaceNotificationSettingsService extends APIService {
 
     async updateNotificationSettings(
         workspaceSlug: string,
-        transport: TWorkspaceNotificationTransport,
+        transport: EWorkspaceNotificationTransport,
         payload: Partial<TWorkspaceUserNotification>
     ): Promise<TWorkspaceUserNotification | undefined> {
         try {
