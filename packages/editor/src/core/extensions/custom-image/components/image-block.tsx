@@ -282,7 +282,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
           ...(size.aspectRatio && { aspectRatio: size.aspectRatio }),
         }}
       />
-      {showUploadStatus && <ImageUploadStatus editor={editor} nodeId={node.attrs.id} />}
+      {showUploadStatus && node.attrs.id && <ImageUploadStatus editor={editor} nodeId={node.attrs.id} />}
       {showImageUtils && (
         <ImageToolbarRoot
           containerClassName={
