@@ -110,8 +110,8 @@ export const ExtendedProjectSidebar = observer(() => {
         className={cn(
           "fixed top-0 h-full z-[19] flex flex-col gap-2 w-[300px] transform transition-all duration-300 ease-in-out bg-custom-sidebar-background-100 border-r border-custom-sidebar-border-200 shadow-md",
           {
-            "translate-x-0 opacity-100": extendedProjectSidebarCollapsed,
-            "-translate-x-full opacity-0": !extendedProjectSidebarCollapsed,
+            "translate-x-0 opacity-100 pointer-events-auto": extendedProjectSidebarCollapsed,
+            "-translate-x-full opacity-0 pointer-events-none": !extendedProjectSidebarCollapsed,
             "left-[70px]": sidebarCollapsed,
             "left-[250px]": !sidebarCollapsed,
           }
