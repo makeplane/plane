@@ -6,7 +6,9 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 // plane constants
-import { EIssueLayoutTypes } from "@plane/constants";
+import { EIssueLayoutTypes, DRAG_ALLOWED_GROUPS } from "@plane/constants";
+// i18n
+import { useTranslation } from "@plane/i18n";
 //types
 import {
   TGroupedIssues,
@@ -22,7 +24,6 @@ import { KanbanQuickAddIssueButton, QuickAddIssueRoot } from "@/components/issue
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 import { KanbanIssueBlockLoader } from "@/components/ui";
 // helpers
-import { DRAG_ALLOWED_GROUPS } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
@@ -84,6 +85,8 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     handleOnDrop,
     isEpic = false,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // hooks
   const projectState = useProjectState();
 
@@ -155,7 +158,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
             dropErrorMessage &&
               setToast({
                 type: TOAST_TYPE.WARNING,
-                title: "Warning!",
+                title: t("common.warning"),
                 message: dropErrorMessage,
               });
             return;
@@ -254,8 +257,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
       className="w-full sticky bottom-0 p-3 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 hover:underline cursor-pointer"
       onClick={loadMoreIssuesInThisGroup}
     >
-      {" "}
-      Load More &darr;
+      {t("common.load_more")} &darr;
     </div>
   );
 

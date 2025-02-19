@@ -3,13 +3,13 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { Control, Controller, FieldErrors } from "react-hook-form";
+// plane imports
+import { ETabIndices } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 // ui
 import { Input } from "@plane/ui";
-// constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
@@ -37,7 +37,7 @@ export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props)
     return undefined;
   };
   return (
-    <>
+    <div>
       <Controller
         control={control}
         name="name"
@@ -63,12 +63,12 @@ export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props)
             hasError={Boolean(errors.name)}
             placeholder={t("title")}
             className="w-full text-base"
-            tabIndex={getIndex("name")}
             autoFocus
+            tabIndex={getIndex("name")}
           />
         )}
       />
       <span className="text-xs font-medium text-red-500">{errors?.name?.message}</span>
-    </>
+    </div>
   );
 });

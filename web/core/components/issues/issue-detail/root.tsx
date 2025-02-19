@@ -4,7 +4,15 @@ import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // types
-import { EIssuesStoreType } from "@plane/constants";
+import {
+  EIssuesStoreType,
+  ISSUE_UPDATED,
+  ISSUE_DELETED,
+  ISSUE_ARCHIVED,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 // ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
@@ -12,11 +20,9 @@ import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 import { EmptyState } from "@/components/common";
 import { IssueDetailsSidebar, IssuePeekOverview } from "@/components/issues";
 // constants
-import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "@/constants/event-tracker";
 // hooks
 import { useAppTheme, useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // images
 import emptyIssue from "@/public/empty-state/issue.svg";
 // local components
@@ -54,6 +60,7 @@ export type TIssueDetailRoot = {
 };
 
 export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
+  const { t } = useTranslation();
   const { workspaceSlug, projectId, issueId, is_archived = false } = props;
   // router
   const router = useAppRouter();
@@ -111,9 +118,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             path: pathname,
           });
           setToast({
-            title: "Error!",
+            title: t("common.error.label"),
             type: TOAST_TYPE.ERROR,
-            message: "Issue update failed",
+            message: t("entity.update.failed", { entity: t("issue.label") }),
           });
         }
       },
@@ -122,9 +129,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           if (is_archived) await removeArchivedIssue(workspaceSlug, projectId, issueId);
           else await removeIssue(workspaceSlug, projectId, issueId);
           setToast({
-            title: "Success!",
+            title: t("common.success"),
             type: TOAST_TYPE.SUCCESS,
-            message: "Issue deleted successfully",
+            message: t("entity.delete.success", { entity: t("issue.label") }),
           });
           captureIssueEvent({
             eventName: ISSUE_DELETED,
@@ -134,9 +141,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         } catch (error) {
           console.log("Error in deleting issue:", error);
           setToast({
-            title: "Error!",
+            title: t("common.error.label"),
             type: TOAST_TYPE.ERROR,
-            message: "Issue delete failed",
+            message: t("entity.delete.failed", { entity: t("issue.label") }),
           });
           captureIssueEvent({
             eventName: ISSUE_DELETED,
@@ -177,8 +184,8 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         } catch (error) {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Issue could not be added to the cycle. Please try again.",
+            title: t("common.error.label"),
+            message: t("issue.add.cycle.failed"),
           });
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
@@ -206,8 +213,8 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         } catch (error) {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Issue could not be added to the cycle. Please try again.",
+            title: t("common.error.label"),
+            message: t("issue.add.cycle.failed"),
           });
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
@@ -224,14 +231,14 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         try {
           const removeFromCyclePromise = removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
           setPromiseToast(removeFromCyclePromise, {
-            loading: "Removing issue from the cycle...",
+            loading: t("issue.remove.cycle.loading"),
             success: {
-              title: "Success!",
-              message: () => "Issue removed from the cycle successfully.",
+              title: t("common.success"),
+              message: () => t("issue.remove.cycle.success"),
             },
             error: {
-              title: "Error!",
-              message: () => "Issue could not be removed from the cycle. Please try again.",
+              title: t("common.error.label"),
+              message: () => t("issue.remove.cycle.failed"),
             },
           });
           await removeFromCyclePromise;
@@ -260,14 +267,14 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         try {
           const removeFromModulePromise = removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
           setPromiseToast(removeFromModulePromise, {
-            loading: "Removing issue from the module...",
+            loading: t("issue.remove.module.loading"),
             success: {
-              title: "Success!",
-              message: () => "Issue removed from the module successfully.",
+              title: t("common.success"),
+              message: () => t("issue.remove.module.success"),
             },
             error: {
-              title: "Error!",
-              message: () => "Issue could not be removed from the module. Please try again.",
+              title: t("common.error.label"),
+              message: () => t("issue.remove.module.failed"),
             },
           });
           await removeFromModulePromise;
@@ -332,17 +339,22 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
   // issue details
   const issue = getIssueById(issueId);
   // checking if issue is editable, based on user role
-  const isEditable = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
+  const isEditable = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug,
+    projectId
+  );
 
   return (
     <>
       {!issue ? (
         <EmptyState
           image={emptyIssue}
-          title="Issue does not exist"
-          description="The issue you are looking for does not exist, has been archived, or has been deleted."
+          title={t("issue.empty_state.issue_detail.title")}
+          description={t("issue.empty_state.issue_detail.description")}
           primaryButton={{
-            text: "View other issues",
+            text: t("issue.empty_state.issue_detail.primary_button.text"),
             onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/issues`),
           }}
         />

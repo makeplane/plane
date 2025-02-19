@@ -5,12 +5,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Ban } from "lucide-react";
 // plane ui
+import { EUserPermissions } from "@plane/constants";
 import { Avatar, CustomSearchSelect } from "@plane/ui";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember } from "@/hooks/store";
-import { EUserPermissions } from "@/plane-web/constants";
 
 type Props = {
   value: any;

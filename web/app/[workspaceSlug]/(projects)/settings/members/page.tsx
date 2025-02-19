@@ -5,21 +5,24 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Search } from "lucide-react";
 // types
+import { MEMBER_INVITED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
+import { CountChip } from "@/components/common";
 import { PageHead } from "@/components/core";
-import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "@/components/workspace";
-// constants
-import { MEMBER_INVITED } from "@/constants/event-tracker";
+import { WorkspaceMembersList } from "@/components/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker, useMember, useUserPermissions, useWorkspace } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// plane web components
+import { BillingActionsButton } from "@/plane-web/components/workspace/billing";
+import { SendWorkspaceInvitationModal } from "@/plane-web/components/workspace/members";
 
 const WorkspaceMembersSettingsPage = observer(() => {
   // states
@@ -31,9 +34,10 @@ const WorkspaceMembersSettingsPage = observer(() => {
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { captureEvent } = useEventTracker();
   const {
-    workspace: { inviteMembersToWorkspace },
+    workspace: { workspaceMemberIds, inviteMembersToWorkspace },
   } = useMember();
   const { currentWorkspace } = useWorkspace();
+  const { t } = useTranslation();
 
   // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
@@ -62,7 +66,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Invitations sent successfully.",
+          message: t("workspace_settings.settings.members.invitations_sent_successfully"),
         });
       })
       .catch((err) => {
@@ -80,8 +84,9 @@ const WorkspaceMembersSettingsPage = observer(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: `${err.error ?? "Something went wrong. Please try again."}`,
+          message: `${err.error ?? t("something_went_wrong_please_try_again")}`,
         });
+        throw err;
       });
   };
 
@@ -102,17 +107,22 @@ const WorkspaceMembersSettingsPage = observer(() => {
         onSubmit={handleWorkspaceInvite}
       />
       <section
-        className={cn("w-full overflow-y-auto", {
+        className={cn("w-full h-full overflow-y-auto", {
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >
-        <div className="flex justify-between gap-4 pb-3.5 items-start	">
-          <h4 className="text-xl font-medium">Members</h4>
+        <div className="flex justify-between gap-4 pb-3.5 items-start">
+          <h4 className="flex items-center gap-2.5 text-xl font-medium">
+            {t("workspace_settings.settings.members.title")}
+            {workspaceMemberIds && workspaceMemberIds.length > 0 && (
+              <CountChip count={workspaceMemberIds.length} className="h-5 m-auto" />
+            )}
+          </h4>
           <div className="ml-auto flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
             <Search className="h-3.5 w-3.5 text-custom-text-400" />
             <input
               className="w-full max-w-[234px] border-none bg-transparent text-sm outline-none placeholder:text-custom-text-400"
-              placeholder="Search..."
+              placeholder={`${t("search")}...`}
               value={searchQuery}
               autoFocus
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -120,9 +130,10 @@ const WorkspaceMembersSettingsPage = observer(() => {
           </div>
           {canPerformWorkspaceAdminActions && (
             <Button variant="primary" size="sm" onClick={() => setInviteModal(true)}>
-              Add member
+              {t("workspace_settings.settings.members.add_member")}
             </Button>
           )}
+          <BillingActionsButton canPerformWorkspaceAdminActions={canPerformWorkspaceAdminActions} />
         </div>
         <WorkspaceMembersList searchQuery={searchQuery} isAdmin={canPerformWorkspaceAdminActions} />
       </section>

@@ -1,6 +1,9 @@
 "use client";
 
 import { observer } from "mobx-react";
+// plane imports
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Button, DiceIcon, Header } from "@plane/ui";
 // components
@@ -12,7 +15,6 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 // constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ModulesListHeader: React.FC = observer(() => {
   // router
@@ -22,7 +24,9 @@ export const ModulesListHeader: React.FC = observer(() => {
   const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
-  const {  loader } = useProject();
+  const { loader } = useProject();
+
+  const { t } = useTranslation();
 
   // auth
   const canUserCreateModule = allowPermissions(
@@ -34,11 +38,13 @@ export const ModulesListHeader: React.FC = observer(() => {
     <Header>
       <Header.LeftItem>
         <div>
-          <Breadcrumbs onBack={router.back} isLoading={loader}>
-          <ProjectBreadcrumb />
+          <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
+            <ProjectBreadcrumb />
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              link={<BreadcrumbLink label="Modules" icon={<DiceIcon className="h-4 w-4 text-custom-text-300" />} />}
+              link={
+                <BreadcrumbLink label={t("modules")} icon={<DiceIcon className="h-4 w-4 text-custom-text-300" />} />
+              }
             />
           </Breadcrumbs>
         </div>
@@ -54,7 +60,8 @@ export const ModulesListHeader: React.FC = observer(() => {
               toggleCreateModuleModal(true);
             }}
           >
-            <div className="hidden sm:block">Add</div> Module
+            <div className="sm:hidden block">{t("add")}</div>
+            <div className="hidden sm:block">{t("project_module.add_module")}</div>
           </Button>
         ) : (
           <></>

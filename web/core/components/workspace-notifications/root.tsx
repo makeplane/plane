@@ -3,6 +3,9 @@
 import { FC, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
+import { NOTIFICATION_TABS, TNotificationTab } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // components
 import { Header, Row, ERowVariant, EHeaderVariant, ContentWrapper } from "@plane/ui";
 import { CountChip } from "@/components/common";
@@ -12,16 +15,12 @@ import {
   NotificationSidebarHeader,
   AppliedFilters,
 } from "@/components/workspace-notifications";
-// constants
-import { NOTIFICATION_TABS, TNotificationTab } from "@/constants/notification";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getNumberCount } from "@/helpers/string.helper";
 // hooks
 import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
-
 import { NotificationCardListRoot } from "@/plane-web/components/workspace-notifications";
-
 export const NotificationsSidebarRoot: FC = observer(() => {
   const { workspaceSlug } = useParams();
   // hooks
@@ -34,6 +33,8 @@ export const NotificationsSidebarRoot: FC = observer(() => {
     currentNotificationTab,
     setCurrentNotificationTab,
   } = useWorkspaceNotifications();
+
+  const { t } = useTranslation();
   // derived values
   const workspace = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString()) : undefined;
   const notificationIds = workspace ? notificationIdsByWorkspaceId(workspace.id) : undefined;
@@ -76,7 +77,7 @@ export const NotificationsSidebarRoot: FC = observer(() => {
                     : "text-custom-text-100 hover:text-custom-text-200"
                 )}
               >
-                <div className="font-medium">{tab.label}</div>
+                <div className="font-medium">{t(tab.i18n_label)}</div>
                 {tab.count(unreadNotificationsCount) > 0 && (
                   <CountChip count={getNumberCount(tab.count(unreadNotificationsCount))} />
                 )}

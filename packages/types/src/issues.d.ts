@@ -15,7 +15,7 @@ import type {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
   TIssueGroupingFilters,
-  TIssueExtraOptions
+  TIssueExtraOptions,
 } from "@plane/types";
 
 export interface IIssueCycle {

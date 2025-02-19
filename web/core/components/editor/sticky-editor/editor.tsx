@@ -3,16 +3,15 @@ import React, { useState } from "react";
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
 import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
-// components
+// plane types
 import { TSticky } from "@plane/types";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
-// hooks
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
-import { Toolbar } from "./toolbar";
+import { StickyEditorToolbar } from "./toolbar";
 
 interface StickyEditorWrapperProps
   extends Omit<ILiteTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
@@ -43,7 +42,6 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
     showToolbarInitially = true,
     showToolbar = true,
     parentClassName = "",
-    placeholder = "Add comment...",
     uploadFile,
     ...rest
   } = props;
@@ -61,7 +59,7 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
 
   return (
     <div
-      className={cn("relative border border-custom-border-200 rounded p-3", parentClassName)}
+      className={cn("relative border border-custom-border-200 rounded", parentClassName)}
       onFocus={() => !showToolbarInitially && setIsFocused(true)}
       onBlur={() => !showToolbarInitially && setIsFocused(false)}
     >
@@ -78,18 +76,17 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         mentionHandler={{
           renderComponent: () => <></>,
         }}
-        placeholder={placeholder}
         containerClassName={cn(containerClassName, "relative")}
         {...rest}
       />
       {showToolbar && (
         <div
-          className={cn(
-            "transition-all duration-300 ease-out origin-top",
-            isFocused ? "max-h-[200px] opacity-100 scale-y-100 mt-3" : "max-h-0 opacity-0 scale-y-0 invisible"
-          )}
+          className={cn("transition-all duration-300 ease-out origin-top px-4 h-[60px]", {
+            "max-h-[60px] opacity-100 scale-y-100": isFocused,
+            "max-h-0 opacity-0 scale-y-0 invisible": !isFocused,
+          })}
         >
-          <Toolbar
+          <StickyEditorToolbar
             executeCommand={(item) => {
               // TODO: update this while toolbar homogenization
               // @ts-expect-error type mismatch here

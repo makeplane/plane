@@ -31,7 +31,7 @@ export type TEditorCommands =
   | "bold"
   | "italic"
   | "underline"
-  | "strikethrough"
+  | "strike"
   | "bulleted-list"
   | "numbered-list"
   | "to-do-list"
@@ -138,8 +138,9 @@ export interface IRichTextEditor extends IEditorProps {
 
 export interface ICollaborativeDocumentEditor
   extends Omit<IEditorProps, "initialValue" | "onChange" | "onEnterKeyPress" | "value"> {
-  editable: boolean;
   aiHandler?: TAIHandler;
+  bubbleMenuEnabled?: boolean;
+  editable: boolean;
   embedHandler: TEmbedConfig;
   handleEditorReady?: (value: boolean) => void;
   id: string;

@@ -8,6 +8,8 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import useSWR, { mutate } from "swr";
 import { CheckCircle2 } from "lucide-react";
+// plane imports
+import { ROLE, MEMBER_ACCEPTED, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { IWorkspaceMemberInvitation } from "@plane/types";
@@ -15,10 +17,8 @@ import type { IWorkspaceMemberInvitation } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/common";
-// constants
-import { MEMBER_ACCEPTED } from "@/constants/event-tracker";
+import { WorkspaceLogo } from "@/components/workspace/logo";
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
-import { ROLE } from "@/constants/workspace";
 // helpers
 import { truncateText } from "@/helpers/string.helper";
 import { getUserRole } from "@/helpers/user.helper";
@@ -27,8 +27,6 @@ import { useEventTracker, useUser, useUserProfile, useWorkspace } from "@/hooks/
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { AuthenticationWrapper } from "@/lib/wrappers";
-// plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 // images
@@ -170,21 +168,11 @@ const UserInvitationsPage = observer(() => {
                         onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                       >
                         <div className="flex-shrink-0">
-                          <div className="grid h-9 w-9 place-items-center rounded">
-                            {invitation.workspace.logo && invitation.workspace.logo.trim() !== "" ? (
-                              <img
-                                src={invitation.workspace.logo}
-                                height="100%"
-                                width="100%"
-                                className="rounded"
-                                alt={invitation.workspace.name}
-                              />
-                            ) : (
-                              <span className="grid h-9 w-9 place-items-center rounded bg-gray-700 px-3 py-1.5 uppercase text-white">
-                                {invitation.workspace.name[0]}
-                              </span>
-                            )}
-                          </div>
+                          <WorkspaceLogo
+                            logo={invitation.workspace.logo_url}
+                            name={invitation.workspace.name}
+                            classNames="size-9 flex-shrink-0"
+                          />
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="text-sm font-medium">{truncateText(invitation.workspace.name, 30)}</div>

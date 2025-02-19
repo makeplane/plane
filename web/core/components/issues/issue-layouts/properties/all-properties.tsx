@@ -7,6 +7,9 @@ import { useParams, usePathname } from "next/navigation";
 // icons
 import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
 // types
+import { ISSUE_UPDATED } from "@plane/constants";
+// i18n
+import { useTranslation } from "@plane/i18n";
 import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
 import { Tooltip } from "@plane/ui";
@@ -21,11 +24,10 @@ import {
   StateDropdown,
 } from "@/components/dropdowns";
 // constants
-import { ISSUE_UPDATED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
+import { generateWorkItemLink, shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 // hooks
 import { useEventTracker, useLabel, useIssues, useProjectState, useProject, useProjectEstimates } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -47,6 +49,8 @@ export interface IIssueProperties {
 
 export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const { issue, updateIssue, displayProperties, activeLayout, isReadOnly, className, isEpic = false } = props;
+  // i18n
+  const { t } = useTranslation();
   // store hooks
   const { getProjectById } = useProject();
   const { labelMap } = useLabel();
@@ -243,17 +247,17 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       });
   };
 
-  const redirectToIssueDetail = () => {
-    router.push(
-      `/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}${isEpic ? "epics" : "issues"}/${issue.id}#sub-issues`
-    );
-    // router.push({
-    //   pathname: `/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
-    //     issue.id
-    //   }`,
-    //   hash: "sub-issues",
-    // });
-  };
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug?.toString(),
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier: projectDetails?.identifier,
+    sequenceId: issue?.sequence_id,
+    isArchived: !!issue?.archived_at,
+    isEpic,
+  });
+
+  const redirectToIssueDetail = () => router.push(`${workItemLink}#sub-issues`);
 
   if (!displayProperties || !issue.project_id) return null;
 
@@ -311,7 +315,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             value={issue.start_date ?? null}
             onChange={handleStartDate}
             maxDate={maxDate}
-            placeholder="Start date"
+            placeholder={t("common.order_by.start_date")}
             icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             optionsClassName="z-10"
@@ -329,7 +333,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             value={issue?.target_date ?? null}
             onChange={handleTargetDate}
             minDate={minDate}
-            placeholder="Due date"
+            placeholder={t("common.order_by.due_date")}
             icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
             buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
@@ -354,7 +358,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             buttonVariant={issue.assignee_ids?.length > 0 ? "transparent-without-text" : "border-without-text"}
             buttonClassName={issue.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
             showTooltip={issue?.assignee_ids?.length === 0}
-            placeholder="Assignees"
+            placeholder={t("common.assignees")}
             optionsClassName="z-10"
             tooltipContent=""
             renderByDefault={isMobile}
@@ -431,7 +435,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!subIssueCount}
       >
         <Tooltip
-          tooltipHeading={isEpic ? "Issues" : "Sub-issues"}
+          tooltipHeading={isEpic ? t("issues.label", { count: 2 }) : t("common.sub_work_items")}
           tooltipContent={`${subIssueCount}`}
           isMobile={isMobile}
           renderByDefault={false}
@@ -463,7 +467,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         shouldRenderProperty={(properties) => !!properties.attachment_count && !!issue.attachment_count}
       >
         <Tooltip
-          tooltipHeading="Attachments"
+          tooltipHeading={t("common.attachments")}
           tooltipContent={`${issue.attachment_count}`}
           isMobile={isMobile}
           renderByDefault={false}
@@ -486,7 +490,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         shouldRenderProperty={(properties) => !!properties.link && !!issue.link_count}
       >
         <Tooltip
-          tooltipHeading="Links"
+          tooltipHeading={t("common.links")}
           tooltipContent={`${issue.link_count}`}
           isMobile={isMobile}
           renderByDefault={false}

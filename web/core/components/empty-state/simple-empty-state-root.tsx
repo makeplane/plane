@@ -6,7 +6,7 @@ import Image from "next/image";
 // utils
 import { cn } from "@plane/utils";
 
-type EmptyStateSize = "sm" | "md" | "lg";
+type EmptyStateSize = "sm" | "lg";
 
 type Props = {
   title: string;
@@ -17,12 +17,8 @@ type Props = {
 
 const sizeConfig = {
   sm: {
-    container: "size-20",
-    dimensions: 78,
-  },
-  md: {
     container: "size-24",
-    dimensions: 80,
+    dimensions: 78,
   },
   lg: {
     container: "size-28",

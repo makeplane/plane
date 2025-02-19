@@ -25,7 +25,7 @@ export const InstanceFailureView: FC = () => {
           <h3 className="font-medium text-2xl text-white ">Unable to fetch instance details.</h3>
           <p className="font-medium text-base text-center">
             We were unable to fetch the details of the instance. <br />
-            Fret not, it might just be a connectivity issue.
+            Fret not, it might just be a connectivity work items.
           </p>
         </div>
         <div className="flex justify-center">

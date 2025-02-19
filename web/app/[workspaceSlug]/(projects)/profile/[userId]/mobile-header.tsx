@@ -6,21 +6,30 @@ import { useParams } from "next/navigation";
 // icons
 import { ChevronDown } from "lucide-react";
 // plane constants
-import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import {
+  EIssueLayoutTypes,
+  EIssueFilterType,
+  EIssuesStoreType,
+  ISSUE_LAYOUTS,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
+} from "@plane/constants";
+// plane i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 // components
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "@/constants/issue";
+import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, IssueLayoutIcon } from "@/components/issues";
+
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel } from "@/hooks/store";
 
 export const ProfileIssuesMobileHeader = observer(() => {
+  // plane i18n
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, userId } = useParams();
   // store hook
@@ -112,7 +121,7 @@ export const ProfileIssuesMobileHeader = observer(() => {
         placement="bottom-start"
         customButton={
           <div className="flex flex-center text-sm text-custom-text-200">
-            Layout
+            {t("common.layout")}
             <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200 my-auto" strokeWidth={2} />
           </div>
         }
@@ -129,19 +138,19 @@ export const ProfileIssuesMobileHeader = observer(() => {
               }}
               className="flex items-center gap-2"
             >
-              <layout.icon className="h-3 w-3" />
-              <div className="text-custom-text-300">{layout.title}</div>
+              <IssueLayoutIcon layout={ISSUE_LAYOUTS[index].key} className="h-3 w-3" />
+              <div className="text-custom-text-300">{t(layout.i18n_title)}</div>
             </CustomMenu.MenuItem>
           );
         })}
       </CustomMenu>
       <div className="flex flex-grow items-center justify-center border-l border-custom-border-200 text-sm text-custom-text-200">
         <FiltersDropdown
-          title="Filters"
+          title={t("common.filters")}
           placement="bottom-end"
           menuButton={
             <div className="flex flex-center text-sm text-custom-text-200">
-              Filters
+              {t("common.filters")}
               <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200" strokeWidth={2} />
             </div>
           }
@@ -149,7 +158,7 @@ export const ProfileIssuesMobileHeader = observer(() => {
         >
           <FilterSelection
             layoutDisplayFiltersOptions={
-              activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.profile_issues[activeLayout] : undefined
+              activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.profile_issues[activeLayout] : undefined
             }
             filters={issueFilters?.filters ?? {}}
             handleFiltersUpdate={handleFiltersUpdate}
@@ -163,18 +172,18 @@ export const ProfileIssuesMobileHeader = observer(() => {
       </div>
       <div className="flex flex-grow items-center justify-center border-l border-custom-border-200 text-sm text-custom-text-200">
         <FiltersDropdown
-          title="Display"
+          title={t("common.display")}
           placement="bottom-end"
           menuButton={
             <div className="flex flex-center text-sm text-custom-text-200">
-              Display
+              {t("common.display")}
               <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" strokeWidth={2} />
             </div>
           }
         >
           <DisplayFiltersSelection
             layoutDisplayFiltersOptions={
-              activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.profile_issues[activeLayout] : undefined
+              activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.profile_issues[activeLayout] : undefined
             }
             displayFilters={issueFilters?.displayFilters ?? {}}
             handleDisplayFiltersUpdate={handleDisplayFilters}

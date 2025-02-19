@@ -3,14 +3,23 @@
 import React, { useCallback, useEffect, FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import useSWR from "swr";
 // ui
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CommandModal, ShortcutsModal } from "@/components/command-palette";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker, useUser, useAppTheme, useCommandPalette, useUserPermissions } from "@/hooks/store";
+import {
+  useEventTracker,
+  useUser,
+  useAppTheme,
+  useCommandPalette,
+  useUserPermissions,
+  useIssueDetail,
+} from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import {
@@ -19,7 +28,6 @@ import {
   WorkspaceLevelModals,
 } from "@/plane-web/components/command-palette/modals";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web helpers
 import {
   getGlobalShortcutsList,
@@ -30,8 +38,9 @@ import {
 
 export const CommandPalette: FC = observer(() => {
   // router params
-  const { workspaceSlug, projectId, issueId } = useParams();
+  const { workspaceSlug, projectId: paramsProjectId, workItem } = useParams();
   // store hooks
+  const { fetchIssueWithIdentifier } = useIssueDetail();
   const { toggleSidebar } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const { platform } = usePlatformOS();
@@ -40,18 +49,38 @@ export const CommandPalette: FC = observer(() => {
   const { allowPermissions } = useUserPermissions();
 
   // derived values
+  const projectIdentifier = workItem?.toString().split("-")[0];
+  const sequence_id = workItem?.toString().split("-")[1];
+
+  const { data: issueDetails } = useSWR(
+    workspaceSlug && workItem ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}` : null,
+    workspaceSlug && workItem
+      ? () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
+      : null
+  );
+
+  const issueId = issueDetails?.id;
+  const projectId = paramsProjectId?.toString() ?? issueDetails?.project_id;
+
   const canPerformWorkspaceMemberActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
   const canPerformProjectMemberActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug?.toString(),
+    projectId
   );
-  const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canPerformProjectAdminActions = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug?.toString(),
+    projectId
+  );
 
   const copyIssueUrlToClipboard = useCallback(() => {
-    if (!issueId) return;
+    if (!workItem) return;
 
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
@@ -67,7 +96,7 @@ export const CommandPalette: FC = observer(() => {
           title: "Some error occurred",
         });
       });
-  }, [issueId]);
+  }, [workItem]);
 
   // auth
   const performProjectCreateActions = useCallback(
@@ -236,7 +265,7 @@ export const CommandPalette: FC = observer(() => {
       {workspaceSlug && projectId && (
         <ProjectLevelModals workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
       )}
-      <IssueLevelModals />
+      <IssueLevelModals projectId={projectId} issueId={issueId} />
       <CommandModal />
     </>
   );
