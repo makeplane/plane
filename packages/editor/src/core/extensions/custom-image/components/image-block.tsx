@@ -247,12 +247,17 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
           try {
             setHasErroredOnFirstLoad(true);
             // this is a type error from tiptap, don't remove await until it's fixed
-            if (imgNodeSrc) {
-              await editor?.commands.restoreImage?.(imgNodeSrc);
+            if (!imgNodeSrc) {
+              throw new Error("No source image to restore from");
             }
-            if (imageRef.current && resolvedImageSrc) {
-              imageRef.current.src = resolvedImageSrc;
+            await editor?.commands.restoreImage?.(imgNodeSrc);
+            if (!imageRef.current) {
+              throw new Error("Image reference not found");
             }
+            if (!resolvedImageSrc) {
+              throw new Error("No resolved image source available");
+            }
+            imageRef.current.src = resolvedImageSrc;
           } catch {
             // if the image failed to even restore, then show the error state
             setFailedToLoadImage(true);
