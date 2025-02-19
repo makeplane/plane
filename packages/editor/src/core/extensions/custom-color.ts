@@ -93,6 +93,7 @@ export const CustomColorExtension = Mark.create({
     };
   },
 
+  // @ts-expect-error types are incorrect
   parseHTML() {
     return [
       {

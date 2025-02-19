@@ -99,14 +99,11 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
       if (!editor) return;
       scrollSummary(editor, marking);
     },
-    getDocumentInfo: () => {
-      if (!editor) return;
-      return {
-        characters: editor.storage?.characterCount?.characters?.() ?? 0,
-        paragraphs: getParagraphCount(editor.state),
-        words: editor.storage?.characterCount?.words?.() ?? 0,
-      };
-    },
+    getDocumentInfo: () => ({
+      characters: editor.storage?.characterCount?.characters?.() ?? 0,
+      paragraphs: getParagraphCount(editor.state),
+      words: editor.storage?.characterCount?.words?.() ?? 0,
+    }),
   }));
 
   if (!editor) {

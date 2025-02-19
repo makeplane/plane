@@ -1,3 +1,4 @@
+import { Extensions } from "@tiptap/core";
 import React from "react";
 // components
 import { DocumentContentLoader, PageRenderer } from "@/components/editors";
@@ -34,7 +35,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     user,
   } = props;
 
-  const extensions = [];
+  const extensions: Extensions = [];
   if (embedHandler?.issue) {
     extensions.push(
       IssueWidget({
