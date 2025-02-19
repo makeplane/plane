@@ -15,11 +15,13 @@ import { PageEditInformationPopover } from "@/components/pages";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getPageName } from "@/helpers/page.helper";
 // hooks
-import { useProjectPage, useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
+// plane web hooks
+import { EPageStoreType, usePage } from "@/plane-web/hooks/store";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
@@ -32,7 +34,12 @@ export const PageDetailsHeader = observer(() => {
   const [isOpen, setIsOpen] = useState(false);
   // store hooks
   const { currentProjectDetails, loader } = useProject();
-  const page = useProjectPage(pageId?.toString() ?? "");
+  const page = usePage({
+    pageId: pageId?.toString() ?? "",
+    storeType: EPageStoreType.PROJECT,
+  });
+  if (!page) return null;
+  // derived values
   const { name, logo_props, updatePageLogo, isContentEditable } = page;
   // use platform
   const { isMobile } = usePlatformOS();

@@ -12,16 +12,19 @@ import { PageInfoPopover, PageOptionsDropdown } from "@/components/pages";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import useOnlineStatus from "@/hooks/use-online-status";
+// plane web hooks
+import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   editorRef: EditorRefApi;
   page: TPageInstance;
+  storeType: EPageStoreType;
 };
 
 export const PageExtraOptions: React.FC<Props> = observer((props) => {
-  const { editorRef, page } = props;
+  const { editorRef, page, storeType } = props;
   // derived values
   const {
     archived_at,
@@ -84,7 +87,7 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
         />
       )}
       <PageInfoPopover editorRef={editorRef} page={page} />
-      <PageOptionsDropdown editorRef={editorRef} page={page} />
+      <PageOptionsDropdown editorRef={editorRef} page={page} storeType={storeType} />
     </div>
   );
 });

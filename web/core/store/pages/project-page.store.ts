@@ -39,16 +39,16 @@ export interface IProjectPageStore {
   // helper actions
   getCurrentProjectPageIds: (pageType: TPageNavigationTabs) => string[] | undefined;
   getCurrentProjectFilteredPageIds: (pageType: TPageNavigationTabs) => string[] | undefined;
-  pageById: (pageId: string) => TProjectPage | undefined;
+  getPageById: (pageId: string) => TProjectPage | undefined;
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   clearAllFilters: () => void;
   // actions
-  getAllPages: (
+  fetchPagesList: (
     workspaceSlug: string,
     projectId: string,
     pageType: TPageNavigationTabs
   ) => Promise<TPage[] | undefined>;
-  getPageById: (workspaceSlug: string, projectId: string, pageId: string) => Promise<TPage | undefined>;
+  fetchPageDetails: (workspaceSlug: string, projectId: string, pageId: string) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (pageId: string) => Promise<void>;
   movePage: (workspaceSlug: string, projectId: string, pageId: string, newProjectId: string) => Promise<void>;
@@ -82,8 +82,8 @@ export class ProjectPageStore implements IProjectPageStore {
       updateFilters: action,
       clearAllFilters: action,
       // actions
-      getAllPages: action,
-      getPageById: action,
+      fetchPagesList: action,
+      fetchPageDetails: action,
       createPage: action,
       removePage: action,
       movePage: action,
@@ -164,7 +164,7 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description get the page store by id
    * @param {string} pageId
    */
-  pageById = computedFn((pageId: string) => this.data?.[pageId] || undefined);
+  getPageById = computedFn((pageId: string) => this.data?.[pageId] || undefined);
 
   updateFilters = <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => {
     runInAction(() => {
@@ -183,7 +183,7 @@ export class ProjectPageStore implements IProjectPageStore {
   /**
    * @description fetch all the pages
    */
-  getAllPages = async (workspaceSlug: string, projectId: string, pageType: TPageNavigationTabs) => {
+  fetchPagesList = async (workspaceSlug: string, projectId: string, pageType: TPageNavigationTabs) => {
     try {
       if (!workspaceSlug || !projectId) return undefined;
 
@@ -216,11 +216,11 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description fetch the details of a page
    * @param {string} pageId
    */
-  getPageById = async (workspaceSlug: string, projectId: string, pageId: string) => {
+  fetchPageDetails = async (workspaceSlug: string, projectId: string, pageId: string) => {
     try {
       if (!workspaceSlug || !projectId || !pageId) return undefined;
 
-      const currentPageId = this.pageById(pageId);
+      const currentPageId = this.getPageById(pageId);
       runInAction(() => {
         this.loader = currentPageId ? `mutation-loader` : `init-loader`;
         this.error = undefined;
