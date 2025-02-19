@@ -282,7 +282,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       set(
         this.rootIssueDetailStore.rootIssueStore.issues.issuesMap,
         [parentIssueId, "sub_issues_count"],
-        this.subIssues[parentIssueId].length
+        this.subIssues[parentIssueId]?.length || 0
       );
     });
 
@@ -319,7 +319,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       set(
         this.rootIssueDetailStore.rootIssueStore.issues.issuesMap,
         [parentIssueId, "sub_issues_count"],
-        this.subIssues[parentIssueId].length
+        this.subIssues[parentIssueId]?.length || 0
       );
     });
 

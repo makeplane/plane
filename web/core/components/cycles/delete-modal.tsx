@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
+import { mutate } from "swr";
 // types
 import { PROJECT_ERROR_MESSAGES, CYCLE_DELETED } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -52,6 +53,17 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
           captureCycleEvent({
             eventName: CYCLE_DELETED,
             payload: { ...cycle, state: "SUCCESS" },
+          });
+
+          // NOTE: This operation is for enterprise edition only
+          mutate("WORKSPACE_ACTIVE_CYCLES_LIST_EMPTY-WORKSPACE_100:0:0_100", (data: any) => {
+            if (!data || !Array.isArray(data?.results)) {
+              return data;
+            }
+            return {
+              ...data,
+              results: data?.results?.filter((c: any) => c?.id !== cycle.id),
+            };
           });
         })
         .catch((errors) => {

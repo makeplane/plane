@@ -16,7 +16,7 @@ type LiteTextReadOnlyEditorWrapperProps = Omit<
 > & {
   workspaceId: string;
   workspaceSlug: string;
-  projectId: string;
+  projectId?: string;
 };
 
 export const LiteTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, LiteTextReadOnlyEditorWrapperProps>(
