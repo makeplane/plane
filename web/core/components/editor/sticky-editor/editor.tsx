@@ -2,15 +2,15 @@ import React, { useState } from "react";
 // plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
-import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
-// plane types
+import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
+// components
 import { TSticky } from "@plane/types";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { getEditorFileHandlers } from "@/helpers/editor.helper";
+// hooks
+import { useEditorConfig } from "@/hooks/editor";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-import { useFileSize } from "@/plane-web/hooks/use-file-size";
 import { StickyEditorToolbar } from "./toolbar";
 
 interface StickyEditorWrapperProps
@@ -25,7 +25,7 @@ interface StickyEditorWrapperProps
   isSubmitting?: boolean;
   showToolbarInitially?: boolean;
   showToolbar?: boolean;
-  uploadFile: (file: File) => Promise<string>;
+  uploadFile: TFileHandler["upload"];
   parentClassName?: string;
   handleColorChange: (data: Partial<TSticky>) => Promise<void>;
   handleDelete: () => void;
@@ -49,8 +49,8 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
   const [isFocused, setIsFocused] = useState(showToolbarInitially);
   // editor flaggings
   const { liteTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
-  // file size
-  const { maxFileSize } = useFileSize();
+  // editor config
+  const { getEditorFileHandlers } = useEditorConfig();
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
     return !!ref && typeof ref === "object" && "current" in ref;
   }
@@ -67,7 +67,6 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         ref={ref}
         disabledExtensions={[...disabledExtensions, "enter-key"]}
         fileHandler={getEditorFileHandlers({
-          maxFileSize,
           projectId,
           uploadFile,
           workspaceId,

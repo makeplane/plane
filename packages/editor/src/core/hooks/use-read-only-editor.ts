@@ -11,7 +11,7 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 // props
 import { CoreReadOnlyEditorProps } from "@/props";
 // types
-import type { EditorReadOnlyRefApi, TExtensions, TFileHandler, TReadOnlyMentionHandler } from "@/types";
+import type { EditorReadOnlyRefApi, TExtensions, TReadOnlyFileHandler, TReadOnlyMentionHandler } from "@/types";
 
 interface CustomReadOnlyEditorProps {
   disabledExtensions: TExtensions[];
@@ -20,7 +20,7 @@ interface CustomReadOnlyEditorProps {
   extensions?: Extensions;
   forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
   initialValue?: string;
-  fileHandler: Pick<TFileHandler, "getAssetSrc">;
+  fileHandler: TReadOnlyFileHandler;
   handleEditorReady?: (value: boolean) => void;
   mentionHandler: TReadOnlyMentionHandler;
   provider?: HocuspocusProvider;
@@ -99,14 +99,11 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
       if (!editor) return;
       scrollSummary(editor, marking);
     },
-    getDocumentInfo: () => {
-      if (!editor) return;
-      return {
-        characters: editor.storage?.characterCount?.characters?.() ?? 0,
-        paragraphs: getParagraphCount(editor.state),
-        words: editor.storage?.characterCount?.words?.() ?? 0,
-      };
-    },
+    getDocumentInfo: () => ({
+      characters: editor.storage?.characterCount?.characters?.() ?? 0,
+      paragraphs: getParagraphCount(editor.state),
+      words: editor.storage?.characterCount?.words?.() ?? 0,
+    }),
   }));
 
   if (!editor) {

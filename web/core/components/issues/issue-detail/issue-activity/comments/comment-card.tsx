@@ -170,8 +170,8 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
                 }
               }}
               showSubmitButton={false}
-              uploadFile={async (file) => {
-                const { asset_id } = await activityOperations.uploadCommentAsset(file, comment.id);
+              uploadFile={async (blockId, file) => {
+                const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file, comment.id);
                 return asset_id;
               }}
             />
@@ -215,6 +215,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
             ref={showEditorRef}
             id={comment.id}
             initialValue={comment.comment_html ?? ""}
+            workspaceId={workspaceId}
             workspaceSlug={workspaceSlug}
             projectId={projectId}
           />

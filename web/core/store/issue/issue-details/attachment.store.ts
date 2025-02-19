@@ -126,7 +126,7 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
     return response;
   };
 
-  debouncedUpdateProgress = debounce((issueId: string, tempId: string, progress: number) => {
+  private debouncedUpdateProgress = debounce((issueId: string, tempId: string, progress: number) => {
     runInAction(() => {
       set(this.attachmentsUploadStatusMap, [issueId, tempId, "progress"], progress);
     });

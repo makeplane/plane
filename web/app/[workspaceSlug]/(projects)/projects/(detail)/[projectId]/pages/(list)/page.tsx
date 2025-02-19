@@ -14,6 +14,8 @@ import { PagesListRoot, PagesListView } from "@/components/pages";
 import { useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// plane web hooks
+import { EPageStoreType } from "@/plane-web/hooks/store";
 
 const ProjectPagesPage = observer(() => {
   // router
@@ -63,11 +65,12 @@ const ProjectPagesPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <PagesListView
-        workspaceSlug={workspaceSlug.toString()}
-        projectId={projectId.toString()}
         pageType={currentPageType()}
+        projectId={projectId.toString()}
+        storeType={EPageStoreType.PROJECT}
+        workspaceSlug={workspaceSlug.toString()}
       >
-        <PagesListRoot pageType={currentPageType()} />
+        <PagesListRoot pageType={currentPageType()} storeType={EPageStoreType.PROJECT} />
       </PagesListView>
     </>
   );

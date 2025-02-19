@@ -15,16 +15,19 @@ import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
 import { useQueryParams } from "@/hooks/use-query-params";
+// plane web hooks
+import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   editorRef: EditorRefApi | null;
   page: TPageInstance;
+  storeType: EPageStoreType;
 };
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
-  const { editorRef, page } = props;
+  const { editorRef, page, storeType } = props;
   // states
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   // router
@@ -136,6 +139,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
           "export",
         ]}
         page={page}
+        storeType={storeType}
       />
     </>
   );

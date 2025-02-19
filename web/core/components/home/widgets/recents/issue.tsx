@@ -43,6 +43,7 @@ export const RecentIssue = (props: BlockProps) => {
   return (
     <ListItem
       key={activity.id}
+      id={`issue-${issueDetails?.id}`}
       itemLink={workItemLink}
       title={issueDetails?.name}
       prependTitleElement={
@@ -113,6 +114,7 @@ export const RecentIssue = (props: BlockProps) => {
         e.stopPropagation();
         setPeekIssue({ workspaceSlug, projectId: issueDetails?.project_id, issueId: activity.entity_data.id });
       }}
+      preventDefaultNProgress
     />
   );
 };

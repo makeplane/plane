@@ -218,24 +218,33 @@ export const HorizontalRuleItem = (editor: Editor) =>
 export const TextColorItem = (editor: Editor): EditorMenuItem<"text-color"> => ({
   key: "text-color",
   name: "Color",
-  isActive: ({ color }) => editor.isActive("customColor", { color }),
-  command: ({ color }) => toggleTextColor(color, editor),
+  isActive: (props) => editor.isActive("customColor", { color: props?.color }),
+  command: (props) => {
+    if (!props) return;
+    toggleTextColor(props.color, editor);
+  },
   icon: Palette,
 });
 
 export const BackgroundColorItem = (editor: Editor): EditorMenuItem<"background-color"> => ({
   key: "background-color",
   name: "Background color",
-  isActive: ({ color }) => editor.isActive("customColor", { backgroundColor: color }),
-  command: ({ color }) => toggleBackgroundColor(color, editor),
+  isActive: (props) => editor.isActive("customColor", { backgroundColor: props?.color }),
+  command: (props) => {
+    if (!props) return;
+    toggleBackgroundColor(props.color, editor);
+  },
   icon: Palette,
 });
 
 export const TextAlignItem = (editor: Editor): EditorMenuItem<"text-align"> => ({
   key: "text-align",
   name: "Text align",
-  isActive: ({ alignment }) => editor.isActive({ textAlign: alignment }),
-  command: ({ alignment }) => setTextAlign(alignment, editor),
+  isActive: (props) => editor.isActive({ textAlign: props?.alignment }),
+  command: (props) => {
+    if (!props) return;
+    setTextAlign(props.alignment, editor);
+  },
   icon: AlignCenter,
 });
 

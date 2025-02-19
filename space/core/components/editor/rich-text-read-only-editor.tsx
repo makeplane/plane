@@ -12,15 +12,17 @@ type RichTextReadOnlyEditorWrapperProps = Omit<
   "disabledExtensions" | "fileHandler" | "mentionHandler"
 > & {
   anchor: string;
+  workspaceId: string;
 };
 
 export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, RichTextReadOnlyEditorWrapperProps>(
-  ({ anchor, ...props }, ref) => (
+  ({ anchor, workspaceId, ...props }, ref) => (
     <RichTextReadOnlyEditorWithRef
       ref={ref}
       disabledExtensions={[]}
       fileHandler={getReadOnlyEditorFileHandlers({
         anchor,
+        workspaceId,
       })}
       mentionHandler={{
         renderComponent: (props) => <EditorMentionsRoot {...props} />,

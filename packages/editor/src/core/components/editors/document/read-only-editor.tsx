@@ -1,3 +1,4 @@
+import { Extensions } from "@tiptap/core";
 import { forwardRef, MutableRefObject } from "react";
 // components
 import { PageRenderer } from "@/components/editors";
@@ -10,7 +11,13 @@ import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 // types
-import { EditorReadOnlyRefApi, TDisplayConfig, TExtensions, TFileHandler, TReadOnlyMentionHandler } from "@/types";
+import {
+  EditorReadOnlyRefApi,
+  TDisplayConfig,
+  TExtensions,
+  TReadOnlyFileHandler,
+  TReadOnlyMentionHandler,
+} from "@/types";
 
 interface IDocumentReadOnlyEditor {
   disabledExtensions: TExtensions[];
@@ -20,7 +27,7 @@ interface IDocumentReadOnlyEditor {
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
   embedHandler: any;
-  fileHandler: Pick<TFileHandler, "getAssetSrc">;
+  fileHandler: TReadOnlyFileHandler;
   tabIndex?: number;
   handleEditorReady?: (value: boolean) => void;
   mentionHandler: TReadOnlyMentionHandler;
@@ -41,7 +48,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     initialValue,
     mentionHandler,
   } = props;
-  const extensions = [];
+  const extensions: Extensions = [];
   if (embedHandler?.issue) {
     extensions.push(
       IssueWidget({
