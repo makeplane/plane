@@ -1,0 +1,24 @@
+{
+  "name": "flatfile-agent",
+  "version": "1.0.0",
+  "description": "Flatfile agent for data processing",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "flatfile develop src/index.ts",
+    "deploy": "flatfile deploy src/index.ts",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "flatfile": "latest",
+    "@flatfile/api": "^1.5.23",
+    "@flatfile/listener": "^1.0.1",
+    "@flatfile/plugin-record-hook": "^1.1.1",
+    "axios": "^1.6.2",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "typescript": "^5.3.3"
+  }
+}
