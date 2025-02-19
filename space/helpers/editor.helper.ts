@@ -59,7 +59,7 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
       anchor,
       workspaceId,
     }),
-    getAssetUploadStatus: () => 0,
+    assetsUploadStatus: {},
     upload: uploadFile,
     delete: async (src: string) => {
       if (src?.startsWith("http")) {
