@@ -7,7 +7,6 @@ import { TCreationListModes, TIssueProperty } from "@plane/types";
 import { Button, Collapsible } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 import { CustomerPropertiesEmptyState } from "./empty-state";
-import { IssuePropertyList } from "@/plane-web/components/issue-types";
 
 export type TCustomerPropertyCreateList = Partial<TIssueProperty<EIssuePropertyType>> & {
   key: string;
@@ -83,13 +82,6 @@ export const CustomerCustomPropertiesRoot: FC = () => {
         <div className="pb-4">
           {isAnyPropertiesAvailable ? (
             <>
-              <IssuePropertyList
-                issueTypeId=""
-                issuePropertyCreateList={customerPropertyCreateList}
-                handleIssuePropertyCreateList={handleCustomerPropertiesCreate}
-                containerRef={containerRef}
-                lastElementRef={lastElementRef}
-              />
               <div className={cn("flex items-center py-2", !isAnyPropertiesAvailable && "justify-center")}>
                 <Button
                   variant="accent-primary"
