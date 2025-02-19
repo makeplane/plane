@@ -375,10 +375,10 @@
   },
 
   "work_item_types": {
-    "label": "Work item types",
+    "label": "Work Item Types",
     "label_lowercase": "work item types",
     "settings": {
-      "title": "Work item types",
+      "title": "Work Item Types",
       "properties": {
         "title": "Custom properties",
         "tooltip": "Each work item type comes with a default set of properties like Title, Description, Assignee, State, Priority, Start date, Due date, Module, Cycle etc. You can also customize and add your own properties to tailor it to your team's needs.",
@@ -616,14 +616,14 @@
     },
     "empty_state": {
       "enable": {
-        "title": "Enable Work item types",
+        "title": "Enable Work Item Types",
         "description": "Shape work items to your work with Work item types. Customize with icons, backgrounds, and properties and configure them for this project.",
         "primary_button": {
           "text": "Enable"
         },
         "confirmation": {
-          "title": "Once enabled, Work item types can't be disabled.",
-          "description": "Plane's Work item will become the default work item type for this project and will show up with its icon and background in this project.",
+          "title": "Once enabled, Work Item Types can't be disabled.",
+          "description": "Plane's Work Item will become the default work item type for this project and will show up with its icon and background in this project.",
           "button": {
             "default": "Enable",
             "loading": "Setting up"
