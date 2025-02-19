@@ -56,7 +56,7 @@
     "posthog-js": "^1.131.3",
     "react": "^18.3.1",
     "react-color": "^2.19.3",
-    "react-day-picker": "^9.5.0",
+    "react-day-picker": "8.10.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "7.51.5",
