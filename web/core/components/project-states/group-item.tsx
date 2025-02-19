@@ -75,12 +75,16 @@ export const GroupItem: FC<TGroupItem> = observer((props) => {
           </div>
           <div className="text-base font-medium text-custom-text-200 capitalize px-1">{groupKey}</div>
         </div>
-        <div
-          className="flex-shrink-0 w-6 h-6 rounded flex justify-center items-center overflow-hidden transition-colors hover:bg-custom-background-80 cursor-pointer text-custom-primary-100/80 hover:text-custom-primary-100"
+        <button
+          className={cn(
+            "flex-shrink-0 w-6 h-6 rounded flex justify-center items-center overflow-hidden transition-colors hover:bg-custom-background-80 cursor-pointer text-custom-primary-100/80 hover:text-custom-primary-100",
+            !isEditable && "cursor-not-allowed text-custom-text-400 hover:text-custom-text-400"
+          )}
           onClick={() => !createState && setCreateState(true)}
+          disabled={!isEditable}
         >
           <Plus className="w-4 h-4" />
-        </div>
+        </button>
       </div>
 
       {shouldShowEmptyState && (
