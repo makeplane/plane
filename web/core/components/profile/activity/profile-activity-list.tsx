@@ -103,7 +103,8 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                             activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value
                           }
                           containerClassName="text-xs bg-custom-background-100"
-                          workspaceSlug={activityItem?.workspace_detail?.slug.toString() ?? ""}
+                          workspaceId={activityItem?.workspace_detail?.id?.toString() ?? ""}
+                          workspaceSlug={activityItem?.workspace_detail?.slug?.toString() ?? ""}
                           projectId={activityItem.project ?? ""}
                         />
                       </div>

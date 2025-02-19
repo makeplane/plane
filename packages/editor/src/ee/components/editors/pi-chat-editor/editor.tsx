@@ -114,7 +114,7 @@ export const PiChatEditor = (props: PiChatEditorProps) => {
         },
         suggestion: {
           items: async ({ query }) => {
-            const response = await mentionSuggestions(query);
+            const response = await mentionSuggestions?.(query);
             return response;
           },
           render: () => {
@@ -131,7 +131,7 @@ export const PiChatEditor = (props: PiChatEditorProps) => {
                 if (!props.clientRect) {
                   return;
                 }
-
+                // @ts-expect-error types are incorrect
                 popup = tippy("body", {
                   getReferenceClientRect: props.clientRect,
                   appendTo: () => document.body,
@@ -181,7 +181,7 @@ export const PiChatEditor = (props: PiChatEditorProps) => {
       Extension.create({
         onUpdate(this) {
           // The content has changed.
-          setEditorCommand({
+          setEditorCommand?.({
             getHTML: () => getTrimmedHTML(this.editor?.getHTML()),
             clear: () => this.editor?.commands.clearContent(),
           });

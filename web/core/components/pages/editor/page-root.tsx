@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 // editor
 import { EditorRefApi } from "@plane/editor";
 // types
-import { TDocumentPayload, TPage, TPageVersion } from "@plane/types";
+import { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
 // components
 import {
   PageEditorHeaderRoot,
@@ -36,11 +36,12 @@ type TPageRootProps = {
   config: TPageRootConfig;
   handlers: TPageRootHandlers;
   page: TPageInstance;
+  webhookConnectionParams: TWebhookConnectionQueryParams;
   workspaceSlug: string;
 };
 
 export const PageRoot = observer((props: TPageRootProps) => {
-  const { config, handlers, page, workspaceSlug } = props;
+  const { config, handlers, page, webhookConnectionParams, workspaceSlug } = props;
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
@@ -116,6 +117,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
         handlers={handlers}
         page={page}
         sidePeekVisible={sidePeekVisible}
+        webhookConnectionParams={webhookConnectionParams}
         workspaceSlug={workspaceSlug}
       />
     </>

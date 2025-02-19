@@ -16,6 +16,7 @@ import {
   TExtensions,
   TFileHandler,
   TMentionHandler,
+  TReadOnlyFileHandler,
   TReadOnlyMentionHandler,
   TServerHandler,
 } from "@/types";
@@ -44,10 +45,14 @@ export type TEditorCommands =
   | "text-color"
   | "background-color"
   | "text-align"
-  | "callout";
+  | "callout"
+  | "attachment";
 
 export type TCommandExtraProps = {
   image: {
+    savedSelection: Selection | null;
+  };
+  attachment: {
     savedSelection: Selection | null;
   };
   "text-color": {
@@ -155,7 +160,7 @@ export interface IReadOnlyEditorProps {
   disabledExtensions: TExtensions[];
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
-  fileHandler: Pick<TFileHandler, "getAssetSrc">;
+  fileHandler: TReadOnlyFileHandler;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
   id: string;
   initialValue: string;

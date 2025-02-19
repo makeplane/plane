@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane types
-import { TSearchEntityRequestPayload } from "@plane/types";
+import { TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // plane ui
 import { getButtonStyling } from "@plane/ui";
@@ -17,19 +17,14 @@ import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { IssuePeekOverview } from "@/components/issues";
 import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages";
-// helpers
-import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
-import { useProjectPage, useProjectPages, useWorkspace } from "@/hooks/store";
-// plane web hooks
-import { useFileSize } from "@/plane-web/hooks/use-file-size";
+import { useEditorConfig } from "@/hooks/editor";
+import { useEditorAsset, useProjectPage, useProjectPages, useWorkspace } from "@/hooks/store";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 // services
-import { FileService } from "@/services/file.service";
 import { ProjectPageService, ProjectPageVersionService } from "@/services/page";
 const workspaceService = new WorkspaceService();
-const fileService = new FileService();
 const projectPageService = new ProjectPageService();
 const projectPageVersionService = new ProjectPageVersionService();
 
@@ -39,6 +34,7 @@ const PageDetailsPage = observer(() => {
   const { createPage, getPageById } = useProjectPages();
   const page = useProjectPage(pageId?.toString() ?? "");
   const { getWorkspaceBySlug } = useWorkspace();
+  const { uploadEditorAsset } = useEditorAsset();
   // derived values
   const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
   const { canCurrentUserAccessPage, id, name, updateDescription } = page;
@@ -51,8 +47,8 @@ const PageDetailsPage = observer(() => {
       }),
     [projectId, workspaceSlug]
   );
-  // file size
-  const { maxFileSize } = useFileSize();
+  // editor config
+  const { getEditorFileHandlers } = useEditorConfig();
   // fetch page details
   const { error: pageDetailsError } = useSWR(
     workspaceSlug && projectId && pageId ? `PAGE_DETAILS_${pageId}` : null,
@@ -96,30 +92,34 @@ const PageDetailsPage = observer(() => {
   const pageRootConfig: TPageRootConfig = useMemo(
     () => ({
       fileHandler: getEditorFileHandlers({
-        maxFileSize,
         projectId: projectId?.toString() ?? "",
-        uploadFile: async (file) => {
-          const { asset_id } = await fileService.uploadProjectAsset(
-            workspaceSlug?.toString() ?? "",
-            projectId?.toString() ?? "",
-            {
+        uploadFile: async (blockId, file) => {
+          const { asset_id } = await uploadEditorAsset({
+            blockId,
+            data: {
               entity_identifier: id ?? "",
               entity_type: EFileAssetType.PAGE_DESCRIPTION,
             },
-            file
-          );
+            file,
+            projectId: projectId?.toString() ?? "",
+            workspaceSlug: workspaceSlug?.toString() ?? "",
+          });
           return asset_id;
         },
         workspaceId,
         workspaceSlug: workspaceSlug?.toString() ?? "",
       }),
-      webhookConnectionParams: {
-        documentType: "project_page",
-        projectId: projectId?.toString() ?? "",
-        workspaceSlug: workspaceSlug?.toString() ?? "",
-      },
     }),
-    [id, maxFileSize, projectId, workspaceId, workspaceSlug]
+    [getEditorFileHandlers, id, projectId, uploadEditorAsset, workspaceId, workspaceSlug]
+  );
+
+  const webhookConnectionParams: TWebhookConnectionQueryParams = useMemo(
+    () => ({
+      documentType: "project_page",
+      projectId: projectId?.toString() ?? "",
+      workspaceSlug: workspaceSlug?.toString() ?? "",
+    }),
+    [projectId, workspaceSlug]
   );
 
   if ((!page || !id) && !pageDetailsError)
@@ -154,6 +154,7 @@ const PageDetailsPage = observer(() => {
             config={pageRootConfig}
             handlers={pageRootHandlers}
             page={page}
+            webhookConnectionParams={webhookConnectionParams}
             workspaceSlug={workspaceSlug?.toString() ?? ""}
           />
           <IssuePeekOverview />
