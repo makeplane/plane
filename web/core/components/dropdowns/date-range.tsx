@@ -2,12 +2,12 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
-import { DateRange, DayPicker, Matcher, getDefaultClassNames } from "react-day-picker";
+import { DateRange, Matcher } from "react-day-picker";
 import { usePopper } from "react-popper";
 import { ArrowRight, CalendarCheck2, CalendarDays } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
-import { Button, ComboDropDown } from "@plane/ui";
+import { ComboDropDown, Calendar } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
@@ -52,18 +52,13 @@ type Props = {
   renderPlaceholder?: boolean;
 };
 
-const defaultClassNames = getDefaultClassNames();
-
 export const DateRangeDropdown: React.FC<Props> = (props) => {
   const {
-    applyButtonText = "Apply changes",
-    bothRequired = true,
     buttonClassName,
     buttonContainerClassName,
     buttonFromDateClassName,
     buttonToDateClassName,
     buttonVariant,
-    cancelButtonText = "Cancel",
     className,
     disabled = false,
     hideIcon = {
@@ -78,7 +73,6 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
       to: "Add date",
     },
     placement,
-    required = false,
     showTooltip = false,
     tabIndex,
     value,
@@ -205,9 +199,9 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
             style={styles.popper}
             {...attributes.popper}
           >
-            <DayPicker
+            <Calendar
               captionLayout="dropdown"
-              classNames={{ root: `${defaultClassNames.root} p-3 rounded-md` }}
+              classNames={{ root: `p-3 rounded-md` }}
               selected={dateRange}
               onSelect={(val) => {
                 onSelect(val);
@@ -215,12 +209,13 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
                   from: val?.from ?? undefined,
                   to: val?.to ?? undefined,
                 });
+                val?.from && val?.to && handleClose();
               }}
               mode="range"
               disabled={disabledDays}
               showOutsideDays
-              autoFocus
               fixedWeeks
+              initialFocus
             />
           </div>
         </Combobox.Options>
