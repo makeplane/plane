@@ -128,13 +128,13 @@ export const useEditor = (props: CustomEditorProps) => {
   useImperativeHandle(
     forwardedRef,
     () => ({
-      blur: () => editor.commands.blur(),
+      blur: () => editor?.commands.blur(),
       scrollToNodeViaDOMCoordinates(behavior?: ScrollBehavior, pos?: number) {
-        const resolvedPos = pos ?? editor.state.selection.from;
+        const resolvedPos = pos ?? editor?.state.selection.from;
         if (!editor || !resolvedPos) return;
         scrollToNodeViaDOMCoordinates(editor, resolvedPos, behavior);
       },
-      getCurrentCursorPosition: () => editor.state.selection.from,
+      getCurrentCursorPosition: () => editor?.state.selection.from,
       clearEditor: (emitUpdate = false) => {
         editor?.chain().setMeta("skipImageDeletion", true).clearContent(emitUpdate).run();
       },
@@ -142,7 +142,7 @@ export const useEditor = (props: CustomEditorProps) => {
         editor?.commands.setContent(content, false, { preserveWhitespace: "full" });
       },
       setEditorValueAtCursorPosition: (content: string) => {
-        if (editor.state.selection) {
+        if (editor?.state.selection) {
           insertContentAtSavedSelection(editor, content);
         }
       },

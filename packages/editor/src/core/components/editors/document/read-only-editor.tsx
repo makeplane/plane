@@ -1,3 +1,4 @@
+import { Extensions } from "@tiptap/core";
 import { forwardRef, MutableRefObject } from "react";
 // components
 import { PageRenderer } from "@/components/editors";
@@ -41,7 +42,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     initialValue,
     mentionHandler,
   } = props;
-  const extensions = [];
+  const extensions: Extensions = [];
   if (embedHandler?.issue) {
     extensions.push(
       IssueWidget({

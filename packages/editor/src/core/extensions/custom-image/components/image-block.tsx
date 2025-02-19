@@ -1,5 +1,5 @@
-import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
 import { NodeSelection } from "@tiptap/pm/state";
+import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // extensions
@@ -38,11 +38,11 @@ const ensurePixelString = <TDefault,>(value: Pixel | TDefault | number | undefin
 };
 
 type CustomImageBlockProps = CustoBaseImageNodeViewProps & {
-  imageFromFileSystem: string;
+  imageFromFileSystem: string | undefined;
   setFailedToLoadImage: (isError: boolean) => void;
   editorContainer: HTMLDivElement | null;
   setEditorContainer: (editorContainer: HTMLDivElement | null) => void;
-  src: string;
+  src: string | undefined;
 };
 
 export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
@@ -62,8 +62,8 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   const { width: nodeWidth, height: nodeHeight, aspectRatio: nodeAspectRatio, src: imgNodeSrc } = node.attrs;
   // states
   const [size, setSize] = useState<Size>({
-    width: ensurePixelString(nodeWidth, "35%"),
-    height: ensurePixelString(nodeHeight, "auto"),
+    width: ensurePixelString(nodeWidth, "35%") ?? "35%",
+    height: ensurePixelString(nodeHeight, "auto") ?? "auto",
     aspectRatio: nodeAspectRatio || null,
   });
   const [isResizing, setIsResizing] = useState(false);
@@ -144,8 +144,8 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   useLayoutEffect(() => {
     setSize((prevSize) => ({
       ...prevSize,
-      width: ensurePixelString(nodeWidth),
-      height: ensurePixelString(nodeHeight),
+      width: ensurePixelString(nodeWidth) ?? "35%",
+      height: ensurePixelString(nodeHeight) ?? "auto",
       aspectRatio: nodeAspectRatio,
     }));
   }, [nodeWidth, nodeHeight, nodeAspectRatio]);
@@ -247,7 +247,16 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
           try {
             setHasErroredOnFirstLoad(true);
             // this is a type error from tiptap, don't remove await until it's fixed
+            if (!imgNodeSrc) {
+              throw new Error("No source image to restore from");
+            }
             await editor?.commands.restoreImage?.(imgNodeSrc);
+            if (!imageRef.current) {
+              throw new Error("Image reference not found");
+            }
+            if (!resolvedImageSrc) {
+              throw new Error("No resolved image source available");
+            }
             imageRef.current.src = resolvedImageSrc;
           } catch {
             // if the image failed to even restore, then show the error state
@@ -277,7 +286,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
           }
           image={{
             src: resolvedImageSrc,
-            aspectRatio: size.aspectRatio,
+            aspectRatio: size.aspectRatio === null ? 1 : size.aspectRatio,
             height: size.height,
             width: size.width,
           }}
