@@ -2,12 +2,12 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
-import { DateRange, DayPicker, Matcher } from "react-day-picker";
+import { DateRange, Matcher } from "react-day-picker";
 import { usePopper } from "react-popper";
 import { ArrowRight, CalendarCheck2, CalendarDays } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
-import { Button, ComboDropDown } from "@plane/ui";
+import { ComboDropDown, Calendar } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
@@ -54,14 +54,11 @@ type Props = {
 
 export const DateRangeDropdown: React.FC<Props> = (props) => {
   const {
-    applyButtonText = "Apply changes",
-    bothRequired = true,
     buttonClassName,
     buttonContainerClassName,
     buttonFromDateClassName,
     buttonToDateClassName,
     buttonVariant,
-    cancelButtonText = "Cancel",
     className,
     disabled = false,
     hideIcon = {
@@ -76,7 +73,6 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
       to: "Add date",
     },
     placement,
-    required = false,
     showTooltip = false,
     tabIndex,
     value,
@@ -198,55 +194,28 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
-            className="my-1 bg-custom-background-100 shadow-custom-shadow-rg rounded-md overflow-hidden p-3"
+            className="my-1 bg-custom-background-100 shadow-custom-shadow-rg overflow-hidden"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
           >
-            <DayPicker
+            <Calendar
+              captionLayout="dropdown"
+              classNames={{ root: `p-3 rounded-md` }}
               selected={dateRange}
               onSelect={(val) => {
-                // if both the dates are not required, immediately call onSelect
-                if (!bothRequired) onSelect(val);
+                onSelect(val);
                 setDateRange({
                   from: val?.from ?? undefined,
                   to: val?.to ?? undefined,
                 });
+                val?.from && val?.to && handleClose();
               }}
               mode="range"
               disabled={disabledDays}
               showOutsideDays
+              fixedWeeks
               initialFocus
-              footer={
-                bothRequired && (
-                  <div className="grid grid-cols-2 items-center gap-3.5 pt-6 relative">
-                    <div className="absolute left-0 top-1 h-[0.5px] w-full border-t-[0.5px] border-custom-border-300" />
-                    <Button
-                      variant="neutral-primary"
-                      onClick={() => {
-                        setDateRange({
-                          from: undefined,
-                          to: undefined,
-                        });
-                        handleClose();
-                      }}
-                    >
-                      {cancelButtonText}
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        onSelect(dateRange);
-                        handleClose();
-                      }}
-                      // if required, both the dates should be selected
-                      // if not required, either both or none of the dates should be selected
-                      disabled={required ? !(dateRange.from && dateRange.to) : !!dateRange.from !== !!dateRange.to}
-                    >
-                      {applyButtonText}
-                    </Button>
-                  </div>
-                )
-              }
             />
           </div>
         </Combobox.Options>

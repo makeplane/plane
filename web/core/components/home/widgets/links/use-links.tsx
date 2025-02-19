@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useTranslation } from "@plane/i18n";
 import { TProjectLink } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { useHome } from "@/hooks/store/use-home";
@@ -26,6 +27,7 @@ export const useLinks = (workspaceSlug: string) => {
       fetchLinks,
     },
   } = useHome();
+  const { t } = useTranslation();
 
   const linkOperations: TLinkOperations = useMemo(
     () => ({
@@ -34,17 +36,17 @@ export const useLinks = (workspaceSlug: string) => {
           if (!workspaceSlug) throw new Error("Missing required fields");
           await createLink(workspaceSlug, data);
           setToast({
-            message: "The link has been successfully created",
+            message: t("links.toasts.created.message"),
             type: TOAST_TYPE.SUCCESS,
-            title: "Link created",
+            title: t("links.toasts.created.title"),
           });
           toggleLinkModal(false);
         } catch (error: any) {
-          console.error("error", error);
+          console.error("error", error?.data?.error);
           setToast({
-            message: error?.data?.error ?? "The link could not be created",
+            message: error?.data?.error ?? t("links.toasts.not_created.message"),
             type: TOAST_TYPE.ERROR,
-            title: "Link not created",
+            title: t("links.toasts.not_created.title"),
           });
           throw error;
         }
@@ -54,16 +56,16 @@ export const useLinks = (workspaceSlug: string) => {
           if (!workspaceSlug) throw new Error("Missing required fields");
           await updateLink(workspaceSlug, linkId, data);
           setToast({
-            message: "The link has been successfully updated",
+            message: t("links.toasts.updated.message"),
             type: TOAST_TYPE.SUCCESS,
-            title: "Link updated",
+            title: t("links.toasts.updated.title"),
           });
           toggleLinkModal(false);
-        } catch (error) {
+        } catch (error: any) {
           setToast({
-            message: "The link could not be updated",
+            message: error?.data?.error ?? t("links.toasts.not_updated.message"),
             type: TOAST_TYPE.ERROR,
-            title: "Link not updated",
+            title: t("links.toasts.not_updated.title"),
           });
           throw error;
         }
@@ -73,15 +75,15 @@ export const useLinks = (workspaceSlug: string) => {
           if (!workspaceSlug) throw new Error("Missing required fields");
           await removeLink(workspaceSlug, linkId);
           setToast({
-            message: "The link has been successfully removed",
+            message: t("links.toasts.removed.message"),
             type: TOAST_TYPE.SUCCESS,
-            title: "Link removed",
+            title: t("links.toasts.removed.message"),
           });
-        } catch (error) {
+        } catch (error: any) {
           setToast({
-            message: "The link could not be removed",
+            message: error?.data?.error ?? t("links.toasts.not_removed.message"),
             type: TOAST_TYPE.ERROR,
-            title: "Link not removed",
+            title: t("links.toasts.not_removed.title"),
           });
         }
       },

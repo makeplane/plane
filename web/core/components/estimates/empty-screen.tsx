@@ -3,6 +3,7 @@
 import { FC } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // public images
 import EstimateEmptyDarkImage from "@/public/empty-state/estimates/dark.svg";
@@ -16,6 +17,8 @@ export const EstimateEmptyScreen: FC<TEstimateEmptyScreen> = (props) => {
   // props
   const { onButtonClick } = props;
   const { resolvedTheme } = useTheme();
+
+  const { t } = useTranslation();
 
   const emptyScreenImage = resolvedTheme === "light" ? EstimateEmptyLightImage : EstimateEmptyDarkImage;
 
@@ -31,13 +34,13 @@ export const EstimateEmptyScreen: FC<TEstimateEmptyScreen> = (props) => {
         />
       </div>
       <div className="space-y-1.5">
-        <h3 className="text-xl font-semibold text-custom-text-100">No estimate systems yet</h3>
-        <p className="text-sm text-custom-text-300">
-          Create a set of estimates to communicate the amount of work per issue.
-        </p>
+        <h3 className="text-xl font-semibold text-custom-text-100">
+          {t("project_settings.empty_state.estimates.title")}
+        </h3>
+        <p className="text-sm text-custom-text-300">{t("project_settings.empty_state.estimates.description")}</p>
       </div>
       <div>
-        <Button onClick={onButtonClick}>Add estimate system</Button>
+        <Button onClick={onButtonClick}>{t("project_settings.empty_state.estimates.primary_button")}</Button>
       </div>
     </div>
   );

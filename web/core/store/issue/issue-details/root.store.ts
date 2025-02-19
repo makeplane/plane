@@ -259,6 +259,8 @@ export class IssueDetail implements IIssueDetail {
     issueId: string,
     issueStatus: "DEFAULT" | "DRAFT" = "DEFAULT"
   ) => this.issue.fetchIssue(workspaceSlug, projectId, issueId, issueStatus);
+  fetchIssueWithIdentifier = async (workspaceSlug: string, projectIdentifier: string, sequenceId: string) =>
+    this.issue.fetchIssueWithIdentifier(workspaceSlug, projectIdentifier, sequenceId);
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>
     this.issue.updateIssue(workspaceSlug, projectId, issueId, data);
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>

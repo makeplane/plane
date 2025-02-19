@@ -4,6 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 // types
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IProjectView } from "@plane/types";
 // ui
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
@@ -15,7 +16,6 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store";
 import { PublishViewModal, useViewPublish } from "@/plane-web/components/views/publish";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;

@@ -46,7 +46,7 @@ export const CustomAnalyticsMainContent: React.FC<Props> = (props) => {
           ) : (
             <div className="grid h-full place-items-center p-5">
               <div className="space-y-4 text-custom-text-200">
-                <p className="text-sm">No matching issues found. Try changing the parameters.</p>
+                <p className="text-sm">No matching work items found. Try changing the parameters.</p>
               </div>
             </div>
           )

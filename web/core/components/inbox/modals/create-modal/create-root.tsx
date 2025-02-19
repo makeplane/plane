@@ -3,16 +3,16 @@
 import { FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-// editor
+// plane imports
+import { ETabIndices, ISSUE_CREATED } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 // types
+import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { InboxIssueTitle, InboxIssueDescription, InboxIssueProperties } from "@/components/inbox/modals/create-modal";
 // constants
-import { ISSUE_CREATED } from "@/constants/event-tracker";
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
@@ -67,6 +67,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
   const { isMobile } = usePlatformOS();
   const { getProjectById } = useProject();
+  const { t } = useTranslation();
   // states
   const [createMore, setCreateMore] = useState<boolean>(false);
   const [formSubmitting, setFormSubmitting] = useState(false);
@@ -179,7 +180,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: `Success!`,
-          message: "Issue created successfully.",
+          message: "Work item created successfully.",
         });
       })
       .catch((error) => {
@@ -213,7 +214,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
         <form ref={formRef} onSubmit={handleFormSubmit} className="flex flex-col w-full">
           <div className="space-y-5 p-5 rounded-t-lg bg-custom-background-100">
             <div className="flex items-center justify-between gap-2">
-              <h3 className="text-xl font-medium text-custom-text-200">Create intake issue</h3>
+              <h3 className="text-xl font-medium text-custom-text-200">{t("inbox_issue.modal.title")}</h3>
               {duplicateIssues?.length > 0 && (
                 <DeDupeButtonRoot
                   workspaceSlug={workspaceSlug}
@@ -251,7 +252,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
               tabIndex={getIndex("create_more")}
             >
               <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
-              <span className="text-xs">Create more</span>
+              <span className="text-xs">{t("create_more")}</span>
             </div>
             <div className="flex items-center gap-3">
               <Button
@@ -271,7 +272,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
                 }}
                 tabIndex={getIndex("discard_button")}
               >
-                Discard
+                {t("discard")}
               </Button>
               <Button
                 variant="primary"
@@ -282,7 +283,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
                 disabled={isTitleLengthMoreThan255Character}
                 tabIndex={getIndex("submit_button")}
               >
-                {formSubmitting ? "Creating" : "Create Issue"}
+                {formSubmitting ? t("creating") : t("create_work_item")}
               </Button>
             </div>
           </div>

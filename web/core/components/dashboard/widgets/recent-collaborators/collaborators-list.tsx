@@ -47,7 +47,7 @@ const CollaboratorListItem: React.FC<CollaboratorListItemProps> = observer((prop
         {isCurrentUser ? "You" : userDetails?.display_name}
       </h6>
       <p className="mt-2 text-sm">
-        {issueCount} active issue{issueCount > 1 ? "s" : ""}
+        {issueCount} active work items{issueCount > 1 ? "s" : ""}
       </p>
     </Link>
   );

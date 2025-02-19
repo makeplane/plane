@@ -61,7 +61,7 @@
     "jsx-dom-cjs": "^8.0.3",
     "linkifyjs": "^4.1.3",
     "lowlight": "^3.0.0",
-    "lucide-react": "^0.378.0",
+    "lucide-react": "^0.469.0",
     "prosemirror-codemark": "^0.4.2",
     "prosemirror-utils": "^1.2.2",
     "tippy.js": "^6.3.7",

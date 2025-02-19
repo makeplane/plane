@@ -4,6 +4,8 @@ import set from "lodash/set";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane imports
+import { ENotificationTab, ENotificationLoader, ENotificationQueryParamType, TNotificationTab } from "@plane/constants";
 import {
   TNotification,
   TNotificationFilter,
@@ -12,13 +14,6 @@ import {
   TNotificationPaginatedInfoQueryParams,
   TUnreadNotificationsCount,
 } from "@plane/types";
-// constants
-import {
-  ENotificationLoader,
-  ENotificationQueryParamType,
-  ENotificationTab,
-  TNotificationTab,
-} from "@/constants/notification";
 // helpers
 import { convertToEpoch } from "@/helpers/date-time.helper";
 // services

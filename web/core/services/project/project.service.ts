@@ -1,8 +1,14 @@
-import type { GithubRepositoriesResponse, ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
+import type {
+  GithubRepositoriesResponse,
+  ISearchIssueResponse,
+  TProjectAnalyticsCount,
+  TProjectAnalyticsCountParams,
+  TProjectIssuesSearchParams,
+} from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // plane web types
-import { TProject } from "@/plane-web/types";
+import { TProject, TPartialProject } from "@/plane-web/types";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -31,8 +37,16 @@ export class ProjectService extends APIService {
       });
   }
 
-  async getProjects(workspaceSlug: string): Promise<TProject[]> {
+  async getProjectsLite(workspaceSlug: string): Promise<TPartialProject[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getProjects(workspaceSlug: string): Promise<TProject[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/details/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -41,6 +55,19 @@ export class ProjectService extends APIService {
 
   async getProject(workspaceSlug: string, projectId: string): Promise<TProject> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getProjectAnalyticsCount(
+    workspaceSlug: string,
+    params?: TProjectAnalyticsCountParams
+  ): Promise<TProjectAnalyticsCount[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/project-stats/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -57,14 +84,6 @@ export class ProjectService extends APIService {
 
   async deleteProject(workspaceSlug: string, projectId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async fetchProjectEpicProperties(workspaceSlug: string, projectId: string): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/epic-properties/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

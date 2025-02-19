@@ -82,7 +82,7 @@ export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
 
   const handleCreateUpdateModalOnSubmit = async (_issue: TIssue) => {
     if (_issue.parent_id) {
-      await subIssueOperations.addSubIssue(workspaceSlug, projectId, issueId, [_issue.id]);
+      await subIssueOperations.addSubIssue(workspaceSlug, projectId, _issue.parent_id, [_issue.id]);
     }
   };
 
@@ -104,7 +104,7 @@ export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: "Please select at least one issue.",
+        message: "Please select at least one work item.",
       });
       return;
     }

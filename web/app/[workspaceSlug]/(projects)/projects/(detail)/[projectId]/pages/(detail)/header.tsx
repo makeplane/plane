@@ -70,7 +70,7 @@ export const PageDetailsHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <div>
-          <Breadcrumbs isLoading={loader}>
+          <Breadcrumbs isLoading={loader === "init-loader"}>
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={

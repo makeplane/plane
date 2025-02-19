@@ -1,5 +1,7 @@
 import { MutableRefObject } from "react";
 import { observer } from "mobx-react";
+// i18n
+import { useTranslation } from "@plane/i18n";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -89,6 +91,8 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     subGroupIndex = 0,
     isEpic = false,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // store hooks
   const storeType = useIssueStoreType();
   const issueKanBanView = useKanbanView();
@@ -132,7 +136,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
   const isSubGroup = !!sub_group_id && sub_group_id !== "null";
 
   return (
-    <ContentWrapper className={`flex-row relative gap-4 py-4`}>
+    <ContentWrapper className={`flex-row relative gap-4 !pt-2 !pb-0`}>
       {list &&
         list.length > 0 &&
         list.map((subList: IGroupByColumn, groupIndex) => {

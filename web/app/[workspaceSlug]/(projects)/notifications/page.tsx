@@ -4,21 +4,24 @@ import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+// plane imports
+import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // components
 import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
-import { EmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state";
 import { InboxContentRoot } from "@/components/inbox";
 import { IssuePeekOverview } from "@/components/issues";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
-import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
 import { useIssueDetail, useUserPermissions, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 
 const WorkspaceDashboardPage = observer(() => {
   const { workspaceSlug } = useParams();
+  // plane hooks
+  const { t } = useTranslation();
   // hooks
   const { currentWorkspace } = useWorkspace();
   const {
@@ -31,11 +34,14 @@ const WorkspaceDashboardPage = observer(() => {
   const { fetchUserProjectInfo } = useUserPermissions();
   const { setPeekIssue } = useIssueDetail();
   // derived values
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Inbox` : undefined;
+  const pageTitle = currentWorkspace?.name
+    ? t("notification.page_label", { workspace: currentWorkspace?.name })
+    : undefined;
   const { workspace_slug, project_id, issue_id, is_inbox_issue } =
     notificationLiteByNotificationId(currentSelectedNotificationId);
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/intake/issue-detail" });
 
-  // fetching workspace issue properties
+  // fetching workspace work item properties
   useWorkspaceIssueProperties(workspaceSlug);
 
   // fetch workspace notifications
@@ -82,7 +88,7 @@ const WorkspaceDashboardPage = observer(() => {
       <div className="w-full h-full overflow-hidden overflow-y-auto">
         {!currentSelectedNotificationId ? (
           <div className="w-full h-screen flex justify-center items-center">
-            <EmptyState type={EmptyStateType.NOTIFICATION_DETAIL_EMPTY_STATE} layout="screen-simple" />
+            <SimpleEmptyState title={t("notification.empty_state.detail.title")} assetPath={resolvedPath} />
           </div>
         ) : (
           <>

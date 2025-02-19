@@ -26,7 +26,7 @@ export type TIssueActivityProjectDetail = {
 
 export type TIssueActivityIssueDetail = {
   id: string;
-  sequence_id: boolean;
+  sequence_id: number;
   sort_order: boolean;
   name: string;
   description_html: string;

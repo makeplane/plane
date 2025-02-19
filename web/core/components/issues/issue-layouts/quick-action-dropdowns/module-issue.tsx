@@ -6,20 +6,18 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Copy, ExternalLink, Link, Pencil, Trash2, XCircle } from "lucide-react";
 // types
-import { EIssuesStoreType } from "@plane/constants";
+import { ARCHIVABLE_STATE_GROUPS, EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // ui
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
-// constants
-import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useIssues, useEventTracker, useProjectState, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { useIssues, useEventTracker, useProjectState, useUserPermissions, useProject } from "@/hooks/store";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 
@@ -48,8 +46,10 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
   const { issuesFilter } = useIssues(EIssuesStoreType.MODULE);
   const { allowPermissions } = useUserPermissions();
   const { getStateById } = useProjectState();
+  const { getProjectIdentifierById } = useProject();
   // derived values
   const stateDetails = getStateById(issue.state_id);
+  const projectIdentifier = getProjectIdentifierById(issue?.project_id);
   // auth
   const isEditingAllowed =
     allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
@@ -59,16 +59,22 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
 
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
 
-  const issueLink = `${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`;
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug?.toString(),
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier,
+    sequenceId: issue?.sequence_id,
+  });
 
-  const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
+  const handleOpenInNewTab = () => window.open(workItemLink, "_blank");
 
   const handleCopyIssueLink = () =>
-    copyUrlToClipboard(issueLink).then(() =>
+    copyUrlToClipboard(workItemLink, false).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
-        message: "Issue link copied to clipboard",
+        message: "Work item link copied to clipboard",
       })
     );
 
@@ -125,7 +131,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
     {
       key: "archive",
       title: "Archive",
-      description: isInArchivableGroup ? undefined : "Only completed or canceled\nissues can be archived",
+      description: isInArchivableGroup ? undefined : "Only completed or canceled\nwork items can be archived",
       icon: ArchiveIcon,
       className: "items-start",
       iconClassName: "mt-1",

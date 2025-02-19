@@ -39,7 +39,7 @@ export interface WeekMonthDataType {
 
 export interface ChartDataType {
   key: string;
-  title: string;
+  i18n_title: string;
   data: ChartDataTypeData;
 }
 

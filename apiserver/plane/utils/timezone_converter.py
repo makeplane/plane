@@ -1,7 +1,13 @@
+# Python imports
 import pytz
-from plane.db.models import Project
 from datetime import datetime, time
 from datetime import timedelta
+
+# Django imports
+from django.utils import timezone
+
+# Module imports
+from plane.db.models import Project
 
 
 def user_timezone_converter(queryset, datetime_fields, user_timezone):
@@ -65,16 +71,27 @@ def convert_to_utc(
     if is_start_date:
         localized_datetime += timedelta(minutes=0, seconds=1)
 
-    # If it's start an end date are equal, add 23 hours, 59 minutes, and 59 seconds
-    # to make it the end of the day
-    if is_start_date_end_date_equal:
-        localized_datetime += timedelta(hours=23, minutes=59, seconds=59)
+        # Convert the localized datetime to UTC
+        utc_datetime = localized_datetime.astimezone(pytz.utc)
 
-    # Convert the localized datetime to UTC
-    utc_datetime = localized_datetime.astimezone(pytz.utc)
+        current_datetime_in_project_tz = timezone.now().astimezone(local_tz)
+        current_datetime_in_utc = current_datetime_in_project_tz.astimezone(pytz.utc)
 
-    # Return the UTC datetime for storage
-    return utc_datetime
+        if utc_datetime.date() == current_datetime_in_utc.date():
+            return current_datetime_in_utc
+
+        return utc_datetime
+    else:
+        # If it's start an end date are equal, add 23 hours, 59 minutes, and 59 seconds
+        # to make it the end of the day
+        if is_start_date_end_date_equal:
+            localized_datetime += timedelta(hours=23, minutes=59, seconds=59)
+
+        # Convert the localized datetime to UTC
+        utc_datetime = localized_datetime.astimezone(pytz.utc)
+
+        # Return the UTC datetime for storage
+        return utc_datetime
 
 
 def convert_utc_to_project_timezone(utc_datetime, project_id):

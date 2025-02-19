@@ -16,6 +16,7 @@ import {
   TExtensions,
   TFileHandler,
   TMentionHandler,
+  TReadOnlyFileHandler,
   TReadOnlyMentionHandler,
   TServerHandler,
 } from "@/types";
@@ -31,7 +32,7 @@ export type TEditorCommands =
   | "bold"
   | "italic"
   | "underline"
-  | "strikethrough"
+  | "strike"
   | "bulleted-list"
   | "numbered-list"
   | "to-do-list"
@@ -44,10 +45,14 @@ export type TEditorCommands =
   | "text-color"
   | "background-color"
   | "text-align"
-  | "callout";
+  | "callout"
+  | "attachment";
 
 export type TCommandExtraProps = {
   image: {
+    savedSelection: Selection | null;
+  };
+  attachment: {
     savedSelection: Selection | null;
   };
   "text-color": {
@@ -138,8 +143,9 @@ export interface IRichTextEditor extends IEditorProps {
 
 export interface ICollaborativeDocumentEditor
   extends Omit<IEditorProps, "initialValue" | "onChange" | "onEnterKeyPress" | "value"> {
-  editable: boolean;
   aiHandler?: TAIHandler;
+  bubbleMenuEnabled?: boolean;
+  editable: boolean;
   embedHandler: TEmbedConfig;
   handleEditorReady?: (value: boolean) => void;
   id: string;
@@ -154,7 +160,7 @@ export interface IReadOnlyEditorProps {
   disabledExtensions: TExtensions[];
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
-  fileHandler: Pick<TFileHandler, "getAssetSrc">;
+  fileHandler: TReadOnlyFileHandler;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
   id: string;
   initialValue: string;

@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 // editor
-import { EIssuesStoreType } from "@plane/constants";
+import { ETabIndices, EIssuesStoreType } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 // i18n
 import { useTranslation } from "@plane/i18n";
@@ -22,7 +22,6 @@ import {
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
 import { CreateLabelModal } from "@/components/labels";
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getTextContent } from "@/helpers/editor.helper";
@@ -255,7 +254,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         issueId: data.id,
         issueTypeId: data.type_id,
         projectId: data.project_id,
-        workspaceSlug: workspaceSlug.toString(),
+        workspaceSlug: workspaceSlug?.toString(),
         isDraft: true,
       });
 
@@ -267,7 +266,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: "Failed to move issue to project. Please try again.",
+        message: "Failed to move work item to project. Please try again.",
       });
     } finally {
       setIsMoving(false);
@@ -486,7 +485,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   setSelectedParentIssue={setSelectedParentIssue}
                 />
               </div>
-              <div className="flex items-center justify-end gap-4 py-3">
+              <div className="flex items-center justify-end gap-4 py-3" tabIndex={getIndex("create_more")}>
                 {!data?.id && (
                   <div
                     className="inline-flex items-center gap-1.5 cursor-pointer"
@@ -494,7 +493,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     onKeyDown={(e) => {
                       if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
                     }}
-                    tabIndex={getIndex("create_more")}
                     role="button"
                   >
                     <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
@@ -502,34 +500,37 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   </div>
                 )}
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="neutral-primary"
-                    size="sm"
-                    onClick={() => {
-                      if (editorRef.current?.isEditorReadyToDiscard()) {
-                        onClose();
-                      } else {
-                        setToast({
-                          type: TOAST_TYPE.ERROR,
-                          title: "Error!",
-                          message: "Editor is still processing changes. Please wait before proceeding.",
-                        });
-                      }
-                    }}
-                    tabIndex={getIndex("discard_button")}
-                  >
-                    {t("discard")}
-                  </Button>
-                  <Button
-                    variant={moveToIssue ? "neutral-primary" : "primary"}
-                    type="submit"
-                    size="sm"
-                    ref={submitBtnRef}
-                    loading={isSubmitting}
-                    tabIndex={isDraft ? getIndex("submit_button") : getIndex("draft_button")}
-                  >
-                    {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
-                  </Button>
+                  <div tabIndex={getIndex("discard_button")}>
+                    <Button
+                      variant="neutral-primary"
+                      size="sm"
+                      onClick={() => {
+                        if (editorRef.current?.isEditorReadyToDiscard()) {
+                          onClose();
+                        } else {
+                          setToast({
+                            type: TOAST_TYPE.ERROR,
+                            title: "Error!",
+                            message: "Editor is still processing changes. Please wait before proceeding.",
+                          });
+                        }
+                      }}
+                    >
+                      {t("discard")}
+                    </Button>
+                  </div>
+                  <div tabIndex={isDraft ? getIndex("submit_button") : getIndex("draft_button")}>
+                    <Button
+                      variant={moveToIssue ? "neutral-primary" : "primary"}
+                      type="submit"
+                      size="sm"
+                      ref={submitBtnRef}
+                      loading={isSubmitting}
+                    >
+                      {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
+                    </Button>
+                  </div>
+
                   {moveToIssue && (
                     <Button
                       variant="primary"
@@ -539,7 +540,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       onClick={handleMoveToProjects}
                       disabled={isMoving}
                     >
-                      Add to project
+                      {t("add_to_project")}
                     </Button>
                   )}
                 </div>

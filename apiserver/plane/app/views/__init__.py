@@ -48,6 +48,7 @@ from .workspace.favorite import (
     WorkspaceFavoriteGroupEndpoint,
 )
 from .workspace.recent_visit import UserRecentVisitViewSet
+from .workspace.user_preference import WorkspaceUserPreferenceViewSet
 
 from .workspace.member import (
     WorkSpaceMemberViewSet,
@@ -115,6 +116,8 @@ from .issue.base import (
     IssuePaginatedViewSet,
     IssueDetailEndpoint,
     IssueBulkUpdateDateEndpoint,
+    IssueMetaEndpoint,
+    IssueDetailIdentifierEndpoint,
 )
 
 from .issue.activity import IssueActivityEndpoint
@@ -140,6 +143,8 @@ from .issue.reaction import IssueReactionViewSet
 from .issue.sub_issue import SubIssuesEndpoint
 
 from .issue.subscriber import IssueSubscriberViewSet
+
+from .issue.version import IssueVersionEndpoint, IssueDescriptionVersionEndpoint
 
 from .module.base import (
     ModuleViewSet,
@@ -187,6 +192,7 @@ from .analytic.base import (
     SavedAnalyticEndpoint,
     ExportAnalyticsEndpoint,
     DefaultAnalyticsEndpoint,
+    ProjectStatsEndpoint,
 )
 
 from .notification.base import (

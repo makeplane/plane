@@ -53,6 +53,23 @@ class StateViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def partial_update(self, request, slug, project_id, pk):
+        try:
+            state = State.objects.get(
+                pk=pk, project_id=project_id, workspace__slug=slug
+            )
+            serializer = StateSerializer(state, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError as e:
+            if "already exists" in str(e):
+                return Response(
+                    {"name": "The state name is already taken"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):

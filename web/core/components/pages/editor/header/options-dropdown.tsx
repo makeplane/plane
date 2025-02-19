@@ -33,9 +33,9 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   // store values
-  const { name } = page;
+  const { name, isContentEditable } = page;
   // page filters
-  const { isFullWidth, handleFullWidth } = usePageFilters();
+  const { isFullWidth, handleFullWidth, isStickyToolbarEnabled, handleStickyToolbar } = usePageFilters();
   // update query params
   const { updateQueryParams } = useQueryParams();
   // menu items list
@@ -51,6 +51,18 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
           </>
         ),
         className: "flex items-center justify-between gap-2",
+      },
+      {
+        key: "sticky-toolbar",
+        action: () => handleStickyToolbar(!isStickyToolbarEnabled),
+        customContent: (
+          <>
+            Sticky toolbar
+            <ToggleSwitch value={isStickyToolbarEnabled} onChange={() => {}} />
+          </>
+        ),
+        className: "flex items-center justify-between gap-2",
+        shouldRender: isContentEditable,
       },
       {
         key: "copy-markdown",
@@ -89,7 +101,16 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         shouldRender: true,
       },
     ],
-    [editorRef, handleFullWidth, isFullWidth, router, updateQueryParams]
+    [
+      editorRef,
+      handleFullWidth,
+      handleStickyToolbar,
+      isContentEditable,
+      isFullWidth,
+      isStickyToolbarEnabled,
+      router,
+      updateQueryParams,
+    ]
   );
 
   return (
@@ -105,6 +126,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         extraOptions={EXTRA_MENU_OPTIONS}
         optionsOrder={[
           "full-screen",
+          "sticky-toolbar",
           "copy-link",
           "make-a-copy",
           "move",

@@ -16,7 +16,9 @@ import {
   TSearchResponse,
   TSearchEntityRequestPayload,
   TWidgetEntityData,
+  TActivityEntityData,
 } from "@plane/types";
+import { IWorkspaceSidebarNavigationItem, IWorkspaceSidebarNavigation } from "@plane/types/src/workspace";
 import { APIService } from "@/services/api.service";
 // helpers
 // types
@@ -282,7 +284,7 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  // quick links
+  // quicklinks
   async fetchWorkspaceLinks(workspaceSlug: string): Promise<TLink[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/quick-links/`)
       .then((response) => response?.data)
@@ -329,7 +331,7 @@ export class WorkspaceService extends APIService {
   }
 
   // recents
-  async fetchWorkspaceRecents(workspaceSlug: string, entity_name?: string) {
+  async fetchWorkspaceRecents(workspaceSlug: string, entity_name?: string): Promise<TActivityEntityData[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/recent-visits/`, {
       params: {
         entity_name,
@@ -356,6 +358,26 @@ export class WorkspaceService extends APIService {
     data: Partial<TWidgetEntityData>
   ): Promise<TWidgetEntityData> {
     return this.patch(`/api/workspaces/${workspaceSlug}/home-preferences/${widgetKey}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async fetchSidebarNavigationPreferences(workspaceSlug: string): Promise<IWorkspaceSidebarNavigation> {
+    return this.get(`/api/workspaces/${workspaceSlug}/sidebar-preferences/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async updateSidebarPreference(
+    workspaceSlug: string,
+    key: string,
+    data: Partial<IWorkspaceSidebarNavigationItem>
+  ): Promise<IWorkspaceSidebarNavigationItem> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/sidebar-preferences/${key}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;

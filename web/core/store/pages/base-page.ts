@@ -1,9 +1,9 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
+// constants
+import { EPageAccess } from "@plane/constants";
 // types
 import { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
-// constants
-import { EPageAccess } from "@/constants/page";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 

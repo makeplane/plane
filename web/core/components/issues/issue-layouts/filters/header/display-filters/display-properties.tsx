@@ -1,10 +1,12 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane constants
+import { ISSUE_DISPLAY_PROPERTIES } from "@plane/constants";
+// plane i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueDisplayProperties } from "@plane/types";
-// constants
-import { ISSUE_DISPLAY_PROPERTIES } from "@/constants/issue";
 // plane web helpers
 import { shouldRenderDisplayProperty } from "@/plane-web/helpers/issue-filter.helper";
 // components
@@ -28,6 +30,8 @@ export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
     moduleViewDisabled = false,
     isEpic = false,
   } = props;
+  // hooks
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId: routerProjectId } = useParams();
   // states
@@ -49,7 +53,7 @@ export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
     }
   }).map((property) => {
     if (isEpic && property.key === "sub_issue_count") {
-      return { ...property, title: "Issue count" };
+      return { ...property, title: "Work item count" };
     }
     return property;
   });
@@ -57,7 +61,7 @@ export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title="Display Properties"
+        title={t("issue.display.properties.label")}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -79,7 +83,7 @@ export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
                   })
                 }
               >
-                {displayProperty.title}
+                {t(displayProperty.titleTranslationKey)}
               </button>
             </>
           ))}

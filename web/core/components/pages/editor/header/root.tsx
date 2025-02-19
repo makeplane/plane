@@ -26,7 +26,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
   // derived values
   const { isContentEditable } = page;
   // page filters
-  const { isFullWidth } = usePageFilters();
+  const { isFullWidth, isStickyToolbarEnabled } = usePageFilters();
   // derived values
   const resolvedEditorRef = editorRef.current;
 
@@ -51,7 +51,9 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
               />
             </div>
           )}
-          {editorReady && isContentEditable && editorRef.current && <PageToolbar editorRef={editorRef?.current} />}
+          {isStickyToolbarEnabled && editorReady && isContentEditable && editorRef.current && (
+            <PageToolbar editorRef={editorRef?.current} />
+          )}
         </Header.LeftItem>
         <PageExtraOptions editorRef={resolvedEditorRef} page={page} storeType={storeType} />
       </Header>

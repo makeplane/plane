@@ -16,6 +16,7 @@ import { MultipleSelectEntityAction } from "@/components/core";
 import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
@@ -149,10 +150,19 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   //TODO: add better logic. This is to have a min width for ID/Key based on the length of project identifier
   const keyMinWidth = displayProperties?.key ? (projectIdentifier?.length ?? 0) * 7 : 0;
 
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: issue?.project_id,
+    issueId,
+    projectIdentifier,
+    sequenceId: issue?.sequence_id,
+    isEpic,
+    isArchived: !!issue?.archived_at,
+  });
   return (
     <ControlLink
       id={`issue-${issue.id}`}
-      href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}${isEpic ? "epics" : "issues"}/${issue.id}`}
+      href={workItemLink}
       onClick={() => handleIssuePeekOverview(issue)}
       className="w-full cursor-pointer"
       disabled={!!issue?.tempId || issue?.is_draft}
@@ -175,15 +185,15 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
           if (!isDraggingAllowed) {
             setToast({
               type: TOAST_TYPE.WARNING,
-              title: "Cannot move issue",
+              title: "Cannot move work item",
               message: !canEditIssueProperties
-                ? "You are not allowed to move this issue"
+                ? "You are not allowed to move this work item"
                 : "Drag and drop is disabled for the current grouping",
             });
           }
         }}
       >
-        <div className="flex w-full truncate">
+        <div className="flex gap-2 w-full truncate">
           <div className="flex flex-grow items-center gap-0.5 truncate">
             <div className="flex items-center gap-1" style={isSubIssue ? { marginLeft } : {}}>
               {/* select checkbox */}
@@ -191,7 +201,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 <Tooltip
                   tooltipContent={
                     <>
-                      Only issues within the current
+                      Only work items within the current
                       <br />
                       project can be selected.
                     </>
@@ -257,8 +267,9 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               disabled={isCurrentBlockDragging}
               renderByDefault={false}
             >
-              <p className="w-full truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
+              <p className="truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
             </Tooltip>
+            {isEpic && <IssueStats issueId={issue.id} />}
           </div>
           {!issue?.tempId && (
             <div
@@ -277,7 +288,6 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
         <div className="flex flex-shrink-0 items-center gap-2">
           {!issue?.tempId ? (
             <>
-              {isEpic && <IssueStats issueId={issue.id} />}
               <IssueProperties
                 className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-grow md:flex-shrink-0" : "lg:flex-grow lg:flex-shrink-0"} items-center gap-2 whitespace-nowrap`}
                 issue={issue}

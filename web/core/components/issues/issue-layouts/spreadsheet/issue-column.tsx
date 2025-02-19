@@ -3,8 +3,23 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // types
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
-// constants
-import { SPREADSHEET_PROPERTY_DETAILS } from "@/constants/spreadsheet";
+// components
+import {
+  SpreadsheetAssigneeColumn,
+  SpreadsheetAttachmentColumn,
+  SpreadsheetCreatedOnColumn,
+  SpreadsheetDueDateColumn,
+  SpreadsheetEstimateColumn,
+  SpreadsheetLabelColumn,
+  SpreadsheetModuleColumn,
+  SpreadsheetCycleColumn,
+  SpreadsheetLinkColumn,
+  SpreadsheetPriorityColumn,
+  SpreadsheetStartDateColumn,
+  SpreadsheetStateColumn,
+  SpreadsheetSubIssueColumn,
+  SpreadsheetUpdatedOnColumn,
+} from "@/components/issues/issue-layouts/spreadsheet";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // components
@@ -19,6 +34,30 @@ type Props = {
   isEstimateEnabled: boolean;
 };
 
+type TSpreadsheetColumn = React.FC<{
+  issue: TIssue;
+  onClose: () => void;
+  onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
+  disabled: boolean;
+}>;
+
+const SPREADSHEET_COLUMNS: { [key in keyof IIssueDisplayProperties]: TSpreadsheetColumn } = {
+  assignee: SpreadsheetAssigneeColumn,
+  created_on: SpreadsheetCreatedOnColumn,
+  due_date: SpreadsheetDueDateColumn,
+  estimate: SpreadsheetEstimateColumn,
+  labels: SpreadsheetLabelColumn,
+  modules: SpreadsheetModuleColumn,
+  cycle: SpreadsheetCycleColumn,
+  link: SpreadsheetLinkColumn,
+  priority: SpreadsheetPriorityColumn,
+  start_date: SpreadsheetStartDateColumn,
+  state: SpreadsheetStateColumn,
+  sub_issue_count: SpreadsheetSubIssueColumn,
+  updated_on: SpreadsheetUpdatedOnColumn,
+  attachment_count: SpreadsheetAttachmentColumn,
+};
+
 export const IssueColumn = observer((props: Props) => {
   const { displayProperties, issueDetail, disableUserActions, property, updateIssue, isEstimateEnabled } = props;
   // router
@@ -28,7 +67,9 @@ export const IssueColumn = observer((props: Props) => {
 
   const shouldRenderProperty = property === "estimate" ? isEstimateEnabled : true;
 
-  const { Column } = SPREADSHEET_PROPERTY_DETAILS[property];
+  const Column = SPREADSHEET_COLUMNS[property];
+
+  if (!Column) return null;
 
   return (
     <WithDisplayPropertiesHOC

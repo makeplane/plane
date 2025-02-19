@@ -1,6 +1,6 @@
 import React from "react";
 // editor
-import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
+import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
 // components
 import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
 // helpers
@@ -14,7 +14,7 @@ interface LiteTextEditorWrapperProps
   workspaceId: string;
   isSubmitting?: boolean;
   showSubmitButton?: boolean;
-  uploadFile: (file: File) => Promise<string>;
+  uploadFile: TFileHandler["upload"];
 }
 
 export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
