@@ -1,8 +1,9 @@
 import React, { FC } from "react";
 // types
+import { BoxesIcon } from "lucide-react";
 import { TLogoProps } from "@plane/types";
 // ui
-import { EpicIcon, LayersIcon, LUCIDE_ICONS_LIST } from "@plane/ui";
+import { LayersIcon, LUCIDE_ICONS_LIST } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 
@@ -58,7 +59,7 @@ export const IssueTypeLogo: FC<Props> = (props) => {
         )}
       >
         {isEpic ? (
-          <EpicIcon
+          <BoxesIcon
             width={containerSizeMap[size]}
             height={containerSizeMap[size]}
             className="text-custom-text-300 group-hover:text-custom-text-200"

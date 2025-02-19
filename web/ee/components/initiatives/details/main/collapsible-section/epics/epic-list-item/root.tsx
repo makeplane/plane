@@ -3,8 +3,9 @@
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
 // Plane
+import { BoxesIcon } from "lucide-react";
 import { EIssueServiceType } from "@plane/constants";
-import { CircularProgressIndicator, EpicIcon } from "@plane/ui";
+import { CircularProgressIndicator } from "@plane/ui";
 // components
 import { ListItem } from "@/components/core/list";
 // helpers
@@ -56,7 +57,7 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
       itemLink={`/${workspaceSlug}/projects/${issue.project_id}/epics/${issue.id}`}
       prependTitleElement={
         <div className={cn("flex flex-shrink-0 items-center space-x-2")}>
-          <EpicIcon className="h-4 w-4 text-custom-text-300" />
+          <BoxesIcon className="h-4 w-4 text-custom-text-300" />
           <IdentifierText
             identifier={`${projectIdentifier}-${issueSequenceId}`}
             enableClickToCopyIdentifier

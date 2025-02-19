@@ -3,12 +3,12 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Sidebar } from "lucide-react";
+import { BoxesIcon, Sidebar } from "lucide-react";
 import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 // types
 import { TIssue } from "@plane/types";
 // ui
-import { Breadcrumbs, Header, EpicIcon } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // helpers
@@ -71,7 +71,7 @@ export const ProjectEpicDetailsHeader = observer(() => {
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/projects/${projectId}/epics`}
                   label="Epics"
-                  icon={<EpicIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<BoxesIcon className="h-4 w-4 text-custom-text-300" />}
                 />
               }
             />
