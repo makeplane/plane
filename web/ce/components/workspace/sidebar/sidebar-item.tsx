@@ -10,10 +10,9 @@ import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
+import { NotificationAppSidebarOption } from "@/components/workspace-notifications";
 // hooks
 import { useAppTheme, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
-// plane web imports
-import { UpgradeBadge } from "@/plane-web/components/workspace";
 // local imports
 import { getSidebarNavigationItemIcon } from "./helper";
 
@@ -42,7 +41,7 @@ export const SidebarItem: FC<TSidebarItemProps> = observer((props) => {
     if (extendedSidebarCollapsed) toggleExtendedSidebar();
   };
 
-  const staticItems = ["home", "notifications", "pi-chat", "projects"];
+  const staticItems = ["home", "inbox", "pi-chat", "projects"];
 
   if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) {
     return null;
@@ -74,15 +73,15 @@ export const SidebarItem: FC<TSidebarItemProps> = observer((props) => {
           className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
           isActive={isActive}
         >
-          {/* <icon className="size-4" /> */}
           <div className="flex items-center gap-1.5 py-[1px]">
             {icon}
             {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{t(item.labelTranslationKey)}</p>}
           </div>
-          {!sidebarCollapsed && item.key === "active_cycles" && (
-            <div className="flex-shrink-0">
-              <UpgradeBadge />
-            </div>
+          {item.key === "inbox" && (
+            <NotificationAppSidebarOption
+              workspaceSlug={workspaceSlug?.toString()}
+              isSidebarCollapsed={sidebarCollapsed ?? false}
+            />
           )}
         </SidebarNavItem>
       </Link>

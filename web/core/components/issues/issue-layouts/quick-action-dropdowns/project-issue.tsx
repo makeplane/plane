@@ -67,7 +67,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
   const isDeletingAllowed = isEditingAllowed;
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug: workspaceSlug.toString(),
+    workspaceSlug: workspaceSlug?.toString(),
     projectId: issue?.project_id,
     issueId: issue?.id,
     projectIdentifier,

@@ -5,6 +5,7 @@ import uuid
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.utils import timezone
+from django.db import IntegrityError
 
 # Third party imports
 from rest_framework import status
@@ -679,15 +680,30 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
             [self.save_project_cover(asset, project_id) for asset in assets]
 
         if asset.entity_type == FileAsset.EntityTypeContext.ISSUE_DESCRIPTION:
-            assets.update(issue_id=entity_id)
+            # For some cases, the bulk api is called after the issue is deleted creating
+            # an integrity error
+            try:
+                assets.update(issue_id=entity_id)
+            except IntegrityError:
+                pass
 
         if asset.entity_type == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION:
-            assets.update(comment_id=entity_id)
+            # For some cases, the bulk api is called after the comment is deleted
+            # creating an integrity error
+            try:
+                assets.update(comment_id=entity_id)
+            except IntegrityError:
+                pass
 
         if asset.entity_type == FileAsset.EntityTypeContext.PAGE_DESCRIPTION:
             assets.update(page_id=entity_id)
 
         if asset.entity_type == FileAsset.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION:
-            assets.update(draft_issue_id=entity_id)
+            # For some cases, the bulk api is called after the draft issue is deleted
+            # creating an integrity error
+            try:
+                assets.update(draft_issue_id=entity_id)
+            except IntegrityError:
+                pass
 
         return Response(status=status.HTTP_204_NO_CONTENT)

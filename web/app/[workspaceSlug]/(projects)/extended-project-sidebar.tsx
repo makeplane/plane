@@ -14,6 +14,7 @@ import { CreateProjectModal } from "@/components/project";
 import { SidebarProjectsListItem } from "@/components/workspace";
 // hooks
 import { orderJoinedProjects } from "@/helpers/project.helper";
+import { copyUrlToClipboard } from "@/helpers/string.helper";
 import { useAppTheme, useProject, useUserPermissions } from "@/hooks/store";
 import useExtendedSidebarOutsideClickDetector from "@/hooks/use-extended-sidebar-overview-outside-click";
 import { TProject } from "@/plane-web/types";
@@ -85,6 +86,15 @@ export const ExtendedProjectSidebar = observer(() => {
     "extended-project-sidebar-toggle"
   );
 
+  const handleCopyText = (projectId: string) => {
+    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("link_copied"),
+        message: t("project_link_copied_to_clipboard"),
+      });
+    });
+  };
   return (
     <>
       {workspaceSlug && (
@@ -98,7 +108,7 @@ export const ExtendedProjectSidebar = observer(() => {
       <div
         ref={extendedProjectSidebarRef}
         className={cn(
-          "fixed top-0 h-full z-[19] flex flex-col gap-2 w-[300px] transform transition-all duration-300 ease-in-out bg-custom-sidebar-background-100 border-r border-custom-sidebar-border-200 p-4 shadow-md",
+          "fixed top-0 h-full z-[19] flex flex-col gap-2 w-[300px] transform transition-all duration-300 ease-in-out bg-custom-sidebar-background-100 border-r border-custom-sidebar-border-200 shadow-md",
           {
             "translate-x-0 opacity-100": extendedProjectSidebarCollapsed,
             "-translate-x-full opacity-0": !extendedProjectSidebarCollapsed,
@@ -107,7 +117,7 @@ export const ExtendedProjectSidebar = observer(() => {
           }
         )}
       >
-        <div className="flex flex-col gap-1 w-full">
+        <div className="flex flex-col gap-1 w-full sticky top-4 pt-0 px-4">
           <div className="flex items-center justify-between">
             <span className="text-sm font-semibold text-custom-text-300 py-1.5">Projects</span>
             {isAuthorizedUser && (
@@ -135,17 +145,18 @@ export const ExtendedProjectSidebar = observer(() => {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-0.5">
+        <div className="flex flex-col gap-0.5 overflow-x-hidden overflow-y-auto vertical-scrollbar scrollbar-sm flex-grow mt-4 px-4">
           {filteredProjects.map((projectId, index) => (
             <SidebarProjectsListItem
               key={projectId}
               projectId={projectId}
-              handleCopyText={() => {}}
+              handleCopyText={() => handleCopyText(projectId)}
               projectListType={"JOINED"}
               disableDrag={false}
               disableDrop={false}
               isLastChild={index === joinedProjects.length - 1}
               handleOnProjectDrop={handleOnProjectDrop}
+              renderInExtendedSidebar
             />
           ))}
         </div>

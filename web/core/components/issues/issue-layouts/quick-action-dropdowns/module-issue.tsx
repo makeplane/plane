@@ -60,7 +60,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug: workspaceSlug.toString(),
+    workspaceSlug: workspaceSlug?.toString(),
     projectId: issue?.project_id,
     issueId: issue?.id,
     projectIdentifier,

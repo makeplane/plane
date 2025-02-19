@@ -169,7 +169,7 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
             <button
               type="button"
               className={cn(
-                "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
+                "flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
                 {
                   // "cursor-not-allowed opacity-60": project.sort_order === null,
                   "cursor-grabbing": isDragging,
@@ -199,14 +199,14 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
             {isPinned ? (
               <Tooltip tooltipContent="Hide tab">
                 <Eye
-                  className="size-4 flex-shrink-0 invisible group-hover:visible text-custom-text-300 outline-none"
+                  className="size-4 flex-shrink-0 hover:text-custom-text-200 text-custom-text-300 outline-none"
                   onClick={() => unPinNavigationItem(workspaceSlug.toString(), item.key)}
                 />
               </Tooltip>
             ) : (
               <Tooltip tooltipContent="Show tab">
                 <EyeClosed
-                  className="size-4 flex-shrink-0 invisible group-hover:visible text-custom-text-400 outline-none"
+                  className="size-4 flex-shrink-0 hover:text-custom-text-200 text-custom-text-400 outline-none"
                   onClick={() => pinNavigationItem(workspaceSlug.toString(), item.key)}
                 />
               </Tooltip>

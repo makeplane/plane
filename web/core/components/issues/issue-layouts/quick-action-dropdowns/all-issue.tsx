@@ -53,7 +53,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug: workspaceSlug.toString(),
+    workspaceSlug: workspaceSlug?.toString(),
     projectId: issue?.project_id,
     issueId: issue?.id,
     projectIdentifier,
