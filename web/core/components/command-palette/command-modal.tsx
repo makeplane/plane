@@ -80,7 +80,7 @@ export const CommandModal: React.FC = observer(() => {
   const { setTrackElement } = useEventTracker();
   const projectIdentifier = workItem?.toString().split("-")[0];
   const sequence_id = workItem?.toString().split("-")[1];
-  // fetch issue details using identifier
+  // fetch work item details using identifier
   const { data: workItemDetailsSWR } = useSWR(
     workspaceSlug && workItem ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}` : null,
     workspaceSlug && workItem
