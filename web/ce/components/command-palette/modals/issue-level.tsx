@@ -10,12 +10,12 @@ import { useCommandPalette, useIssueDetail, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
-type Props = {
+export type TIssueLevelModalsProps = {
   projectId: string | undefined;
   issueId: string | undefined;
 };
 
-export const IssueLevelModals: FC<Props> = observer((props) => {
+export const IssueLevelModals: FC<TIssueLevelModalsProps> = observer((props) => {
   const { projectId, issueId } = props;
   // router
   const pathname = usePathname();
