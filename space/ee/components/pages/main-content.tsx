@@ -67,6 +67,7 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
             containerClassName="p-0 pb-64 border-none"
             fileHandler={getReadOnlyEditorFileHandlers({
               anchor,
+              workspaceId: publishSettings.workspace ?? "",
             })}
             mentionHandler={{
               renderComponent: (props) => <EditorMentionsRoot {...props} />,

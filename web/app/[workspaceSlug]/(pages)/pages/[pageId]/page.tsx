@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane types
-import { TSearchEntityRequestPayload } from "@plane/types";
+import { TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // ui
 import { getButtonStyling } from "@plane/ui";
@@ -17,18 +17,15 @@ import { IssuePeekOverview } from "@/components/issues";
 import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useEditorConfig } from "@/hooks/editor";
+import { useEditorAsset, useWorkspace } from "@/hooks/store";
 // plane web hooks
 import { useWorkspacePageDetails, useWorkspacePages } from "@/plane-web/hooks/store";
-import { useFileSize } from "@/plane-web/hooks/use-file-size";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 import { WorkspacePageService, WorkspacePageVersionService } from "@/plane-web/services/page";
-import { FileService } from "@/services/file.service";
 // services
-const fileService = new FileService();
 const workspaceService = new WorkspaceService();
 const workspacePageService = new WorkspacePageService();
 const workspacePageVersionService = new WorkspacePageVersionService();
@@ -40,6 +37,7 @@ const PageDetailsPage = observer(() => {
   const { getWorkspaceBySlug } = useWorkspace();
   const { createPage, fetchPageById } = useWorkspacePages();
   const page = useWorkspacePageDetails(pageId?.toString() ?? "");
+  const { uploadEditorAsset } = useEditorAsset();
   // derived values
   const workspaceId = useMemo(
     () => (workspaceSlug ? (getWorkspaceBySlug(workspaceSlug?.toString())?.id ?? "") : ""),
@@ -52,8 +50,8 @@ const PageDetailsPage = observer(() => {
       await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", payload),
     [workspaceSlug]
   );
-  // file size
-  const { maxFileSize } = useFileSize();
+  // editor config
+  const { getEditorFileHandlers } = useEditorConfig();
   // fetch page details
   const { error: pageDetailsError } = useSWR(
     pageId ? `PAGE_DETAILS_${pageId}` : null,
@@ -90,27 +88,31 @@ const PageDetailsPage = observer(() => {
   const pageRootConfig: TPageRootConfig = useMemo(
     () => ({
       fileHandler: getEditorFileHandlers({
-        maxFileSize,
-        uploadFile: async (file) => {
-          const { asset_id } = await fileService.uploadWorkspaceAsset(
-            workspaceSlug?.toString() ?? "",
-            {
+        uploadFile: async (blockId, file) => {
+          const { asset_id } = await uploadEditorAsset({
+            blockId,
+            file,
+            data: {
               entity_identifier: id ?? "",
               entity_type: EFileAssetType.PAGE_DESCRIPTION,
             },
-            file
-          );
+            workspaceSlug: workspaceSlug?.toString() ?? "",
+          });
           return asset_id;
         },
         workspaceId,
         workspaceSlug: workspaceSlug?.toString() ?? "",
       }),
-      webhookConnectionParams: {
-        documentType: "workspace_page",
-        workspaceSlug: workspaceSlug?.toString() ?? "",
-      },
     }),
-    [id, maxFileSize, workspaceId, workspaceSlug]
+    [getEditorFileHandlers, id, uploadEditorAsset, workspaceId, workspaceSlug]
+  );
+
+  const webhookConnectionParams: TWebhookConnectionQueryParams = useMemo(
+    () => ({
+      documentType: "workspace_page",
+      workspaceSlug: workspaceSlug?.toString() ?? "",
+    }),
+    [workspaceSlug]
   );
 
   if ((!page || !id) && !pageDetailsError)
@@ -142,6 +144,7 @@ const PageDetailsPage = observer(() => {
             config={pageRootConfig}
             handlers={pageRootHandlers}
             page={page}
+            webhookConnectionParams={webhookConnectionParams}
             workspaceSlug={workspaceSlug.toString()}
           />
           <IssuePeekOverview />

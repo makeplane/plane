@@ -15,14 +15,10 @@ import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
 // helpers
 import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useEditorAsset, useWorkspace } from "@/hooks/store";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
-// services
-import { FileService } from "@/services/file.service";
-
 const workspaceService = new WorkspaceService();
-const fileService = new FileService();
 
 interface IFormData {
   id: string;
@@ -57,25 +53,25 @@ export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
     containerClassName,
     disabled,
   } = props;
-  // plane hooks
-  const { t } = useTranslation();
-  // store hooks
-  const { getWorkspaceBySlug } = useWorkspace();
-
   // states
   const [localDescription, setLocalDescription] = useState({
     id: itemId,
     description_html: initialValue,
   });
-
-  // form
+  // store hooks
+  const { getWorkspaceBySlug } = useWorkspace();
+  const { uploadEditorAsset } = useEditorAsset();
+  // derived values
+  const workspaceDetails = getWorkspaceBySlug(workspaceSlug);
+  // translation
+  const { t } = useTranslation();
+  // form info
   const { handleSubmit, reset, control } = useForm<IFormData>({
     defaultValues: {
       id: itemId,
       description_html: initialValue || "",
     },
   });
-
   // handlers
   const handleDescriptionFormSubmit = useCallback(
     async (formData: IFormData) => {
@@ -83,10 +79,6 @@ export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
     },
     [onSubmit]
   );
-
-  // computed values
-  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id as string;
-
   // reset form values
   useEffect(() => {
     if (!itemId) return;
@@ -123,7 +115,7 @@ export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
                 initialValue={localDescription.description_html ?? "<p></p>"}
                 value={swrDescription ?? null}
                 workspaceSlug={workspaceSlug}
-                workspaceId={workspaceId}
+                workspaceId={workspaceDetails?.id ?? ""}
                 projectId={projectId}
                 dragDropEnabled
                 onChange={(_description: object, description_html: string) => {
@@ -141,16 +133,18 @@ export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
                   })
                 }
                 containerClassName={containerClassName}
-                uploadFile={async (file) => {
-                  const params = {
-                    entity_identifier: itemId,
-                    entity_type: fileAssetType,
-                  };
+                uploadFile={async (blockId, file) => {
                   try {
-                    const uploadAsset = projectId
-                      ? fileService.uploadProjectAsset(workspaceSlug, projectId, params, file)
-                      : fileService.uploadWorkspaceAsset(workspaceSlug, params, file);
-                    const { asset_id } = await uploadAsset;
+                    const { asset_id } = await uploadEditorAsset({
+                      blockId,
+                      data: {
+                        entity_identifier: itemId,
+                        entity_type: fileAssetType,
+                      },
+                      file,
+                      projectId,
+                      workspaceSlug,
+                    });
                     return asset_id;
                   } catch (error) {
                     console.log("Error in uploading asset:", error);
@@ -163,6 +157,7 @@ export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
                 id={itemId}
                 initialValue={localDescription.description_html ?? ""}
                 containerClassName={containerClassName}
+                workspaceId={workspaceDetails?.id ?? ""}
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
               />

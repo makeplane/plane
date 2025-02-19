@@ -7,9 +7,9 @@ import { Loader } from "@plane/ui";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 import { TVersionEditorProps } from "@/components/pages";
-// helpers
-import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
+import { useEditorConfig } from "@/hooks/editor";
+import { useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { IssueEmbedCard } from "@/plane-web/components/pages";
@@ -20,6 +20,13 @@ export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observ
   const { activeVersion, currentVersionDescription, isCurrentVersionActive, versionDetails } = props;
   // params
   const { workspaceSlug } = useParams();
+  // store hooks
+  const { getWorkspaceBySlug } = useWorkspace();
+  // derived values
+  const workspaceDetails = getWorkspaceBySlug(workspaceSlug?.toString() ?? "");
+  // editor config
+  const { getReadOnlyEditorFileHandlers } = useEditorConfig();
+  // editor flagging
   const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
   // page filters
   const { fontSize, fontStyle } = usePageFilters();
@@ -83,6 +90,7 @@ export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observ
       displayConfig={displayConfig}
       editorClassName="pl-10"
       fileHandler={getReadOnlyEditorFileHandlers({
+        workspaceId: workspaceDetails?.id ?? "",
         workspaceSlug: workspaceSlug?.toString() ?? "",
       })}
       mentionHandler={{
