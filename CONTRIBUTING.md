@@ -113,7 +113,7 @@ We use [IntlMessageFormat](https://formatjs.github.io/docs/intl-messageformat/) 
 - **Simple variables** 
     ```json
     {
-    "greeting": "Hello, {name}!
+    "greeting": "Hello, {name}!"
     }
     ```
 
