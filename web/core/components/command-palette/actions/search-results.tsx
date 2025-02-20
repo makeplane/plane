@@ -28,6 +28,7 @@ export const CommandPaletteSearchResults: React.FC<Props> = (props) => {
         const section = (results.results as any)[key];
         const currentSection = commandGroups[key];
 
+        if (!currentSection) return null;
         if (section.length > 0) {
           return (
             <Command.Group key={key} heading={`${currentSection.title} search`}>
