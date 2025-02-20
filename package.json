@@ -22,7 +22,7 @@
   "devDependencies": {
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "^0.5.4",
-    "turbo": "^2.4.1"
+    "turbo": "^2.4.2"
   },
   "resolutions": {
     "nanoid": "3.3.8",
