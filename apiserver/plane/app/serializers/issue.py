@@ -550,6 +550,7 @@ class IssueAttachmentLiteSerializer(DynamicBaseSerializer):
             "asset",
             "attributes",
             # "issue_id",
+            "created_by",
             "updated_at",
             "updated_by",
             "asset_url",

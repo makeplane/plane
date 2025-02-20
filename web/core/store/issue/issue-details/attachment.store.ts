@@ -161,9 +161,6 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
         runInAction(() => {
           update(this.attachments, [issueId], (attachmentIds = []) => uniq(concat(attachmentIds, [response.id])));
           set(this.attachmentMap, response.id, response);
-          this.rootIssueStore.issues.updateIssue(issueId, {
-            attachment_count: issueAttachmentsCount + 1, // increment attachment count
-          });
         });
       }
 
