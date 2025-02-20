@@ -274,6 +274,7 @@ CELERY_IMPORTS = (
     # payment tasks
     "plane.payment.bgtasks.workspace_subscription_sync_task",
     "plane.payment.bgtasks.free_seat_sync",
+    "plane.payment.bgtasks.update_license_task",
     # management tasks
     "plane.bgtasks.dummy_data_task",
     # issue version tasks
