@@ -18,7 +18,8 @@ def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
     # Get the model class using app registry
     model_class = apps.get_model(app_label, model_name)
 
-    # Get the instance using all_objects to ensure we can get even if it's already soft deleted
+    # Get the instance using all_objects to ensure
+    # we can get even if it's already soft deleted
     try:
         instance = model_class.all_objects.get(pk=instance_pk)
     except model_class.DoesNotExist:
