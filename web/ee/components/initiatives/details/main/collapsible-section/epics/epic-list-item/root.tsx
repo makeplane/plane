@@ -56,7 +56,13 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
       title={issue.name}
       itemLink={`/${workspaceSlug}/projects/${issue.project_id}/epics/${issue.id}`}
       prependTitleElement={
-        <div className={cn("flex flex-shrink-0 items-center space-x-2")}>
+        <div
+          className={cn("flex flex-shrink-0 items-center space-x-2")}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
           <BoxesIcon className="h-4 w-4 text-custom-text-300" />
           <IdentifierText
             identifier={`${projectIdentifier}-${issueSequenceId}`}
