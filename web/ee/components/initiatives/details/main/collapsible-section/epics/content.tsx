@@ -3,9 +3,8 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { BoxesIcon } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { getButtonStyling } from "@plane/ui";
+import { EpicIcon, getButtonStyling } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane-web
@@ -49,7 +48,7 @@ export const InitiativeEpicsCollapsibleContent: FC<Props> = observer((props) => 
         <SectionEmptyState
           heading={t("epics.empty_state.section.title")}
           subHeading={t("epics.empty_state.section.description")}
-          icon={<BoxesIcon className="size-4" />}
+          icon={<EpicIcon className="size-4" />}
           actionElement={
             <button
               type="button"

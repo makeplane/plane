@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
-import { AlignLeft, BoxesIcon, Briefcase, CalendarDays, Link, Paperclip, Tag, Triangle, Type, Users } from "lucide-react";
+import { AlignLeft, Briefcase, CalendarDays, Link, Paperclip, Tag, Triangle, Type, Users } from "lucide-react";
 import { TBaseActivityVerbs, TIssueActivity } from "@plane/types";
-import { DoubleCircleIcon } from "@plane/ui";
+import { DoubleCircleIcon, EpicIcon } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 import { LabelActivityChip } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 import { store } from "@/lib/store-context";
@@ -47,11 +47,11 @@ const commonTextClassName = "text-custom-text-100 font-medium";
 // TODO: Add redirect link for relevant activities
 export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
   epic_created: () => ({
-    icon: <BoxesIcon className={commonIconClassName} />,
+    icon: <EpicIcon className={commonIconClassName} />,
     message: <>created the epic.</>,
   }),
   epic_deleted: () => ({
-    icon: <BoxesIcon className={commonIconClassName} />,
+    icon: <EpicIcon className={commonIconClassName} />,
     message: <>deleted the epic.</>,
   }),
   name_updated: (activity: TIssueActivity) => ({

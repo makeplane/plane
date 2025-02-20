@@ -2,9 +2,10 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { BoxesIcon, Briefcase, Calendar, UserCircle2 } from "lucide-react";
+import { Briefcase, Calendar, UserCircle2 } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { EpicIcon } from "@plane/ui";
 // components
 import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
@@ -89,7 +90,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
         {/* Epics dropdown */}
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <BoxesIcon className="h-4 w-4 text-custom-text-300" />
+            <EpicIcon className="h-4 w-4 text-custom-text-300" />
             <span>{t("common.epic")}</span>
           </div>
           <button

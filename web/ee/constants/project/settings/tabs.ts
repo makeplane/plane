@@ -1,7 +1,7 @@
 // plane types
-import { BoxesIcon } from "lucide-react";
 import { EUserPermissions, EUserProjectRoles } from "@plane/constants";
 // ui
+import { EpicIcon } from "@plane/ui";
 // ce constants
 import { PROJECT_SETTINGS as PROJECT_SETTINGS_CE } from "@/ce/constants/project";
 // icons
@@ -25,7 +25,7 @@ export const PROJECT_SETTINGS = {
     href: `/settings/epics/`,
     access: [EUserProjectRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/epics/`,
-    Icon: BoxesIcon,
+    Icon: EpicIcon,
   },
   project_updates: {
     key: "project-updates",
@@ -52,7 +52,7 @@ export const PROJECT_SETTINGS_LINKS: {
   PROJECT_SETTINGS["labels"],
   PROJECT_SETTINGS["estimates"],
   PROJECT_SETTINGS["automations"],
-  PROJECT_SETTINGS["work-item-types"],
+    PROJECT_SETTINGS["work-item-types"],
   PROJECT_SETTINGS["epics"],
   PROJECT_SETTINGS["project_updates"],
 ];

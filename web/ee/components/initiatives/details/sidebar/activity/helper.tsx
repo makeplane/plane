@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
-import { AlignLeft, BoxesIcon, Briefcase, Calendar, Link, Paperclip, Type, Users } from "lucide-react";
+import { AlignLeft, Briefcase, Calendar, Link, Paperclip, Type, Users } from "lucide-react";
 import { TBaseActivityVerbs } from "@plane/types";
-import { InitiativeIcon } from "@plane/ui";
+import { EpicIcon, InitiativeIcon } from "@plane/ui";
 import { store } from "@/lib/store-context";
 import { TInitiativeActivity } from "@/plane-web/types/initiative";
 
@@ -119,7 +119,7 @@ export const INITIATIVE_UPDATES_HELPER_MAP: Partial<TInitiativeActivityDetailsHe
     ),
   }),
   epics_updated: (activity: TInitiativeActivity) => ({
-    icon: <BoxesIcon className={commonIconClassName} />,
+    icon: <EpicIcon className={commonIconClassName} />,
     message: (
       <>
         {activity.old_value ? (

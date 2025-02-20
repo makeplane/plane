@@ -1,8 +1,8 @@
 "use client";
 import { observer } from "mobx-react";
-import { ArrowRight, BoxesIcon, Briefcase, CalendarCheck2, CalendarDays } from "lucide-react";
+import { ArrowRight, Briefcase, CalendarCheck2, CalendarDays } from "lucide-react";
 // plane imports
-import { Avatar } from "@plane/ui";
+import { Avatar, EpicIcon } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 // helpers
 import { getDate } from "@/helpers/date-time.helper";
@@ -73,7 +73,7 @@ export const ReadOnlyBlockProperties = observer((props: Props) => {
       {/* epics */}
       {initiative.epic_ids && initiative.epic_ids.length > 0 && (
         <PropertyBlockWrapper>
-          <BoxesIcon className="h-4 w-4" />
+          <EpicIcon className="h-4 w-4" />
           <span className="flex-grow truncate max-w-40">{initiative.epic_ids.length}</span>
         </PropertyBlockWrapper>
       )}

@@ -3,8 +3,9 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { BoxesIcon, RssIcon } from "lucide-react";
+import { RssIcon } from "lucide-react";
 import { EUserProjectRoles } from "@plane/constants";
+import { EpicIcon } from "@plane/ui";
 // components
 import { ProjectNavigation, TNavigationItem } from "@/components/workspace";
 // hooks
@@ -48,7 +49,7 @@ export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = observer((props
     {
       name: "Epics",
       href: `/${workspaceSlug}/projects/${projectId}/epics`,
-      icon: BoxesIcon,
+      icon: EpicIcon,
       access: [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
       shouldRender: !!isEpicsEnabled,
       sortOrder: -1,

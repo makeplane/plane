@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { BoxesIcon, Rocket, Search, X } from "lucide-react";
+import { Rocket, Search, X } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 // types
 import { ISearchIssueResponse, TWorkspaceEpicsSearchParams } from "@plane/types";
 // ui
-import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, EpicIcon, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
@@ -219,7 +219,7 @@ export const WorkspaceEpicsListModal: React.FC<Props> = observer((props) => {
                                       }}
                                     />
                                     <div className="flex flex-shrink-0 items-center space-x-2">
-                                      <BoxesIcon className="h-4 w-4 text-custom-text-300" />
+                                      <EpicIcon className="h-4 w-4 text-custom-text-300" />
                                       <IdentifierText
                                         identifier={`${epic.project__identifier}-${epic.sequence_id}`}
                                         enableClickToCopyIdentifier

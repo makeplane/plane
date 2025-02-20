@@ -3,12 +3,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import useSWR from "swr";
-import { BoxesIcon, Check, ChevronDown, Search } from "lucide-react";
+import { Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
 import { useTranslation } from "@plane/i18n";
 import { TWorkspaceEpicsSearchParams } from "@plane/types";
-import { ComboDropDown } from "@plane/ui";
+import { ComboDropDown, EpicIcon } from "@plane/ui";
 // helpers
 import { DropdownButton } from "@/components/dropdowns/buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "@/components/dropdowns/constants";
@@ -159,7 +159,7 @@ export const EpicsDropdown: React.FC<Props> = observer((props) => {
             variant={buttonVariant}
             renderToolTipByDefault={renderByDefault}
           >
-            {!hideIcon && <BoxesIcon className="h-4 w-4 text-custom-text-300" />}
+            {!hideIcon && <EpicIcon className="h-4 w-4 text-custom-text-300" />}
             {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
               <span className="flex-grow truncate max-w-40">{getDisplayName(value, placeholder)}</span>
             )}
@@ -229,7 +229,7 @@ export const EpicsDropdown: React.FC<Props> = observer((props) => {
                         >
                           {({ selected }) => (
                             <>
-                              <BoxesIcon className="h-4 w-4 text-custom-text-300" />
+                              <EpicIcon className="h-4 w-4 text-custom-text-300" />
                               <span className="flex-grow truncate">{option.name}</span>
                               {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
                             </>

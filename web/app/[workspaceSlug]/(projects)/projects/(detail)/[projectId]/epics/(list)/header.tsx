@@ -4,10 +4,9 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { BoxesIcon } from "lucide-react";
 import { EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 // ui
-import { Breadcrumbs, Button, Tooltip, Header } from "@plane/ui";
+import { Breadcrumbs, Button, Tooltip, Header, EpicIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink, CountChip } from "@/components/common";
 import HeaderFilters from "@/components/issues/filters";
@@ -60,7 +59,7 @@ export const EpicsHeader = observer(() => {
               <ProjectBreadcrumb />
               <Breadcrumbs.BreadcrumbItem
                 type="text"
-                link={<BreadcrumbLink label="Epics" icon={<BoxesIcon className="h-4 w-4 text-custom-text-300" />} />}
+                link={<BreadcrumbLink label="Epics" icon={<EpicIcon className="h-4 w-4 text-custom-text-300" />} />}
               />
             </Breadcrumbs>
             {issuesCount > 0 ? (
