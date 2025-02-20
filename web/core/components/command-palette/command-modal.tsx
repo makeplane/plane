@@ -51,7 +51,7 @@ const workspaceService = new WorkspaceService();
 export const CommandModal: React.FC = observer(() => {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, workItem } = useParams();
+  const { workspaceSlug, projectId: routerProjectId, workItem } = useParams();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
   const [resultsCount, setResultsCount] = useState(0);
@@ -91,7 +91,7 @@ export const CommandModal: React.FC = observer(() => {
   // derived values
   const issueDetails = workItemDetailsSWR ? getIssueById(workItemDetailsSWR?.id) : null;
   const issueId = issueDetails?.id;
-  const projectId = issueDetails?.project_id;
+  const projectId = issueDetails?.project_id ?? routerProjectId;
   const page = pages[pages.length - 1];
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
@@ -477,6 +477,7 @@ export const CommandModal: React.FC = observer(() => {
                     <ToggleSwitch
                       value={isWorkspaceLevel}
                       onChange={() => setIsWorkspaceLevel((prevData) => !prevData)}
+                      disabled={!projectId}
                       size="sm"
                     />
                   </div>
