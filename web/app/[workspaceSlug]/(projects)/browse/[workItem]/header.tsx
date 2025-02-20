@@ -3,6 +3,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Briefcase } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, LayersIcon, Header, Logo } from "@plane/ui";
 // components
@@ -17,6 +18,7 @@ export const ProjectIssueDetailsHeader = observer(() => {
   const router = useAppRouter();
   const { workspaceSlug, workItem } = useParams();
   // store hooks
+  const { t } = useTranslation();
   const { getProjectById, loader } = useProject();
   const {
     issue: { getIssueById, getIssueIdByIdentifier },
@@ -61,7 +63,7 @@ export const ProjectIssueDetailsHeader = observer(() => {
               link={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/projects/${projectId}/issues`}
-                  label="Issues"
+                  label={t("common.work_item")}
                   icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}
                 />
               }
