@@ -21,17 +21,10 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.project_activites_task import project_activity
 
-class ProjectAnalyticsEndpoint(BaseAPIView):
 
+class ProjectAnalyticsEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-            ROLE.GUEST,
-        ],
-        level="WORKSPACE",
-    )
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, project_id):
         # Annotate the counts for different states in one query
         issues = Issue.issue_objects.filter(
@@ -57,10 +50,13 @@ class WorkspaceProjectFeatureEndpoint(BaseAPIView):
             project__in=projects
         ).values_list("project_id", flat=True)
         projects_without_features = projects.exclude(id__in=existing_project_features)
+
+        # Create project features for projects without features
         project_features_to_create = [
             ProjectFeature(workspace_id=project.workspace_id, project=project)
             for project in projects_without_features
         ]
+
         ProjectFeature.objects.bulk_create(project_features_to_create)
         # Get all project features in at workspace level
         project_features = ProjectFeature.objects.filter(
@@ -79,9 +75,15 @@ class WorkspaceProjectFeatureEndpoint(BaseAPIView):
 class ProjectFeatureEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN])
     def patch(self, request, slug, project_id):
-        project_feature = ProjectFeature.objects.get(
+        project_feature = ProjectFeature.objects.filter(
             project_id=project_id, workspace__slug=slug
-        )
+        ).first()
+
+        if not project_feature:
+            return Response(
+                {"error": "Project feature not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
         current_instance = json.dumps(
             ProjectFeatureSerializer(project_feature).data, cls=DjangoJSONEncoder
         )
@@ -93,9 +95,7 @@ class ProjectFeatureEndpoint(BaseAPIView):
             serializer.save()
             project_activity.delay(
                 type="project.activity.updated",
-                requested_data=json.dumps(
-                    serializer.data, cls=DjangoJSONEncoder
-                ),
+                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 actor_id=str(self.request.user.id),
                 project_id=str(self.kwargs.get("project_id")),
                 current_instance=current_instance,
