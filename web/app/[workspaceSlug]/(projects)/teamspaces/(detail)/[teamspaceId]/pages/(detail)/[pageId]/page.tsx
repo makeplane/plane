@@ -30,16 +30,18 @@ const workspaceService = new WorkspaceService();
 const teamspacePageService = new TeamspacePageService();
 const teamspacePageVersionService = new TeamspacePageVersionService();
 
+const storeType = EPageStoreType.TEAMSPACE;
+
 const TeamspacePageDetailsPage = observer(() => {
   const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamSpaceId, pageId: routerPageId } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
   const teamspaceId = routerTeamSpaceId?.toString();
   const pageId = routerPageId?.toString();
   // store hooks
-  const { createPage, fetchTeamspacePageDetails } = usePageStore(EPageStoreType.TEAMSPACE);
+  const { createPage, fetchTeamspacePageDetails } = usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
-    storeType: EPageStoreType.WORKSPACE,
+    storeType,
   });
   const { getWorkspaceBySlug } = useWorkspace();
   const { uploadEditorAsset } = useEditorAsset();
@@ -155,7 +157,7 @@ const TeamspacePageDetailsPage = observer(() => {
             config={pageRootConfig}
             handlers={pageRootHandlers}
             page={page}
-            storeType={EPageStoreType.TEAMSPACE}
+            storeType={storeType}
             webhookConnectionParams={webhookConnectionParams}
             workspaceSlug={workspaceSlug}
           />

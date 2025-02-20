@@ -40,7 +40,7 @@ const PageDetailsPage = observer(() => {
   const { createPage, fetchPageById } = usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
-    storeType: storeType,
+    storeType,
   });
   const { uploadEditorAsset } = useEditorAsset();
   // derived values
