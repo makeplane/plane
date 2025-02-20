@@ -17,9 +17,8 @@ export const ProjectIssueDetailsHeader = observer(() => {
   // router
   const router = useAppRouter();
   const { workspaceSlug, workItem } = useParams();
-  // plane hooks
-  const { t } = useTranslation();
   // store hooks
+  const { t } = useTranslation();
   const { getProjectById, loader } = useProject();
   const {
     issue: { getIssueById, getIssueIdByIdentifier },
