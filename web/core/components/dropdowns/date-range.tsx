@@ -194,7 +194,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
-            className="my-1 bg-custom-background-100 shadow-custom-shadow-rg overflow-hidden"
+            className="my-1 bg-custom-background-100 shadow-custom-shadow-rg border-[0.5px] border-custom-border-300 rounded-md overflow-hidden"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
