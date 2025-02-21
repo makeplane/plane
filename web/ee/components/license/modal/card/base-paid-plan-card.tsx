@@ -4,10 +4,11 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { CheckCircle } from "lucide-react";
 import { Tab } from "@headlessui/react";
-// types
+// plane imports
+import { EProductSubscriptionEnum } from "@plane/constants";
 import { TProductSubscriptionType } from "@plane/types";
 // helpers
-import { getBasePlanName } from "@plane/utils";
+import { getBaseSubscriptionName, getSubscriptionName } from "@plane/utils";
 import { cn } from "@/helpers/common.helper";
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
@@ -78,9 +79,9 @@ export const BasePaidPlanCard: FC<TBasePaidPlanCardProps> = observer((props) => 
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   // derived values
   const isSelfHosted = !!subscriptionDetail?.is_self_managed;
-  const basePlan = getBasePlanName(planVariant, isSelfHosted);
+  const basePlan = getBaseSubscriptionName(planVariant, isSelfHosted);
   // Plane details
-  const planeName = planVariant.charAt(0).toUpperCase() + planVariant.slice(1).toLowerCase();
+  const planeName = getSubscriptionName(planVariant as EProductSubscriptionEnum);
 
   return (
     <div className="flex flex-col py-4 px-2 border border-custom-primary-200/30 rounded-xl bg-custom-primary-200/5">

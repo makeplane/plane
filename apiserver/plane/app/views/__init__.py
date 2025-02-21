@@ -94,7 +94,6 @@ from .cycle.base import (
     CycleUserPropertiesEndpoint,
     CycleAnalyticsEndpoint,
     CycleProgressEndpoint,
-    CycleIssueStateAnalyticsEndpoint,
 )
 from .cycle.issue import CycleIssueViewSet
 from .cycle.archive import CycleArchiveUnarchiveEndpoint
@@ -116,6 +115,8 @@ from .issue.base import (
     IssuePaginatedViewSet,
     IssueDetailEndpoint,
     IssueBulkUpdateDateEndpoint,
+    IssueMetaEndpoint,
+    IssueDetailIdentifierEndpoint,
 )
 
 from .issue.activity import IssueActivityEndpoint

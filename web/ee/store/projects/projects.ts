@@ -1,11 +1,10 @@
 /* eslint-disable no-useless-catch */
 
 import update from "lodash/update";
-import { action, makeObservable, observable, runInAction } from "mobx";
-
+import { action, makeObservable, observable, reaction, runInAction } from "mobx";
 // store
 import { ProjectService } from "@/plane-web/services";
-import { TProject, TProjectAttributesParams, TProjectAttributesResponse, TProjectFeatures } from "@/plane-web/types";
+import { TProjectAttributesParams, TProjectAttributesResponse, TProjectFeatures } from "@/plane-web/types";
 import { CoreRootStore } from "@/store/root.store";
 import { IProjectAttachmentStore, ProjectAttachmentStore } from "./project-details/attachment.store";
 import { IProjectLinkStore, ProjectLinkStore } from "./project-details/link.store";
@@ -16,10 +15,17 @@ export interface IProjectStore {
   reactionStore: IProjectReactionStore;
   attachmentStore: IProjectAttachmentStore;
   featuresLoader: boolean;
-  features: Record<string, TProjectFeatures>;
+  features: Record<string, TProjectFeatures>; // projectId -> project features
+  // helpers
+  getProjectFeatures: (projectId: string) => TProjectFeatures | undefined;
   // actions
-  toggleFeatures: (workspaceSlug: string, projectId: string, data: Partial<TProject>) => Promise<void>;
-  fetchFeatures: (workspaceSlug: string, projectId: string) => Promise<void>;
+  toggleProjectFeatures: (
+    workspaceSlug: string,
+    projectId: string,
+    data: Partial<TProjectFeatures>,
+    shouldSync?: boolean
+  ) => Promise<void>;
+  fetchProjectFeatures: (workspaceSlug: string) => Promise<void>;
   fetchProjectAttributes: (
     workspaceSlug: string,
     params?: TProjectAttributesParams
@@ -53,18 +59,47 @@ export class ProjectStore implements IProjectStore {
     this.attachmentStore = new ProjectAttachmentStore(this);
     this.updatesStore = new ProjectUpdateStore();
     this.reactionStore = new ProjectReactionStore();
-
     // services
     this.projectService = new ProjectService();
+
+    // reaction to add project features when a new project is added to  project map
+    reaction(
+      () => ({
+        projectIds: Object.keys(this.rootStore.projectRoot.project.projectMap),
+      }),
+      ({ projectIds }) => {
+        for (const projectId of projectIds) {
+          if (!this.features[projectId]) {
+            this.features[projectId] = {
+              is_project_updates_enabled: false,
+              is_epic_enabled: false,
+              is_issue_type_enabled: false,
+              is_time_tracking_enabled: false,
+              project_id: projectId,
+            };
+          }
+        }
+      }
+    );
   }
 
+  // helpers
+  /**
+   * Get project feature by project id
+   * @param projectId
+   * @returns project feature
+   */
+  getProjectFeatures = (projectId: string): TProjectFeatures | undefined => this.features[projectId];
+
   // actions
-  fetchFeatures = async (workspaceSlug: string, projectId: string): Promise<void> => {
+  fetchProjectFeatures = async (workspaceSlug: string): Promise<void> => {
     try {
       this.featuresLoader = true;
-      const response = await this.projectService.getFeatures(workspaceSlug, projectId);
+      const projectFeatures = await this.projectService.getProjectFeatures(workspaceSlug);
       runInAction(() => {
-        this.features[projectId] = response;
+        for (const feature of projectFeatures) {
+          this.features[feature.project_id] = feature;
+        }
       });
     } catch (error) {
       console.error("Error fetching project features", error);
@@ -76,14 +111,21 @@ export class ProjectStore implements IProjectStore {
     }
   };
 
-  toggleFeatures = async (workspaceSlug: string, projectId: string, data: Partial<TProject>): Promise<void> => {
+  toggleProjectFeatures = async (
+    workspaceSlug: string,
+    projectId: string,
+    data: Partial<TProjectFeatures>,
+    shouldSync: boolean = true
+  ): Promise<void> => {
     const initialState = this.features[projectId];
     try {
       this.features[projectId] = {
         ...this.features[projectId],
         ...data,
       };
-      await this.projectService.toggleFeatures(workspaceSlug, projectId, data);
+      if (shouldSync) {
+        await this.projectService.toggleProjectFeatures(workspaceSlug, projectId, data);
+      }
     } catch (error) {
       console.error(error);
       this.features[projectId] = initialState;

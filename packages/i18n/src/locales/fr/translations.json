@@ -662,6 +662,7 @@
     "epic": "Epic",
     "epics": "Epics",
     "work_item": "Élément de travail",
+    "work_items": "Éléments de travail",
     "sub_work_item": "Sous-élément de travail",
     "add": "Ajouter",
     "warning": "Avertissement",
@@ -690,6 +691,7 @@
     "customize_time_range": "Personnaliser la plage de temps",
     "loading": "Chargement",
     "attachments": "Pièces jointes",
+    "property": "Propriété",
     "properties": "Propriétés",
     "parent": "Parent",
     "remove": "Supprimer",
@@ -842,7 +844,21 @@
     "disconnect": "Déconnecter",
     "disconnecting": "Déconnexion",
     "installing": "Installation",
-    "install": "Installer"
+    "install": "Installer",
+    "category": "Catégorie",
+    "categories": "Catégories",
+    "saving": "Enregistrement",
+    "save_changes": "Enregistrer les modifications",
+    "delete": "Supprimer",
+    "deleting": "Suppression",
+    "pending": "En attente",
+    "invite": "Inviter"
+  },
+
+  "chart": {
+    "x_axis": "Axe X",
+    "y_axis": "Axe Y",
+    "metric": "Métrique"
   },
 
   "form": {
@@ -1448,6 +1464,7 @@
       "members": {
         "title": "Membres",
         "add_member": "Ajouter un membre",
+        "pending_invites": "Invitations en attente",
         "invitations_sent_successfully": "Invitations envoyées avec succès",
         "leave_confirmation": "Êtes-vous sûr de vouloir quitter l'espace de travail ? Vous n'aurez plus accès à cet espace de travail. Cette action ne peut pas être annulée.",
         "details": {
@@ -1684,7 +1701,11 @@
       }
     },
     "states": {
-      "describe_this_state_for_your_members": "Décrivez cet état pour vos membres."
+      "describe_this_state_for_your_members": "Décrivez cet état pour vos membres.",
+      "empty_state": {
+        "title": "Aucun état disponible pour le groupe {groupKey}",
+        "description": "Veuillez créer un nouvel état"
+      }
     },
     "labels": {
       "label_title": "Titre de l'étiquette",

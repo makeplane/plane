@@ -7,7 +7,7 @@ import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, set
 // helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // plane web components
-import { WorkspacePageDeleteModal } from "@/plane-web/components/pages";
+import { WikiDeletePageModal } from "@/plane-web/components/pages";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 
@@ -85,11 +85,7 @@ export const WorkspacePageQuickActions: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <WorkspacePageDeleteModal
-        isOpen={deletePageModal}
-        onClose={() => setDeletePageModal(false)}
-        pageId={page.id ?? ""}
-      />
+      <WikiDeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} page={page} />
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
       <CustomMenu placement="bottom-end" ellipsis closeOnSelect>
         {MENU_ITEMS.map((item) => {

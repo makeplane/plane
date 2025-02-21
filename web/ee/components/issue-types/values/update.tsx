@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/constants";
 // ui
 import { TIssuePropertyValues } from "@plane/types";
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
@@ -28,39 +28,42 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
       projectId,
       workspaceSlug,
       isDisabled,
+      entityType = EWorkItemTypeEntity.WORK_ITEM,
       issueServiceType = EIssueServiceType.ISSUES,
     } = props;
     // states
     const [issuePropertyValues, setIssuePropertyValues] = React.useState<TIssuePropertyValues>({});
     // store hooks
-    const { isIssueTypeOrEpicEnabledForProject, getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } =
+    const { isWorkItemTypeEntityEnabledForProject, getProjectWorkItemPropertiesLoader, fetchAllPropertiesAndOptions } =
       useIssueTypes();
     const issueType = useIssueType(issueTypeId);
     const { fetchPropertyActivities } = useIssuePropertiesActivity();
     // services
     const issuePropertyValuesService = new IssuePropertyValuesService(issueServiceType);
     // derived values
-    const isIssueTypeDisplayEnabled = isIssueTypeOrEpicEnabledForProject(
+    const isWorkItemTypeEntityEnabled = isWorkItemTypeEntityEnabledForProject(
       workspaceSlug?.toString(),
       projectId,
-      "ISSUE_TYPES",
-      "EPICS"
+      entityType
     );
     const issueTypeDetails = issueType?.asJSON;
     const activeProperties = issueType?.activeProperties;
-    const issuePropertiesLoader = getProjectIssuePropertiesLoader(projectId);
+    const propertiesLoader = getProjectWorkItemPropertiesLoader(projectId, entityType);
     // fetch methods
     async function fetchIssuePropertyValues() {
       // This is required when accessing the peek overview from workspace level.
-      await fetchAllPropertiesAndOptions(workspaceSlug, projectId);
+      await fetchAllPropertiesAndOptions(workspaceSlug, projectId, entityType);
       return issuePropertyValuesService.fetchAll(workspaceSlug, projectId, issueId);
     }
     // fetch issue property values
     const { data, isLoading } = useSWR(
-      workspaceSlug && projectId && issueId && isIssueTypeDisplayEnabled
-        ? `ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${isIssueTypeDisplayEnabled}`
+      workspaceSlug && projectId && issueId && entityType && isWorkItemTypeEntityEnabled
+        ? `ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${entityType}_${isWorkItemTypeEntityEnabled}`
         : null,
-      () => (workspaceSlug && projectId && issueId && isIssueTypeDisplayEnabled ? fetchIssuePropertyValues() : null),
+      () =>
+        workspaceSlug && projectId && issueId && entityType && isWorkItemTypeEntityEnabled
+          ? fetchIssuePropertyValues()
+          : null,
       {
         revalidateOnFocus: false,
       }
@@ -95,9 +98,9 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
     };
 
     // if issue types are not enabled, return null
-    if (!isIssueTypeDisplayEnabled) return <CEIssueAdditionalPropertyValuesUpdate {...props} />;
+    if (!isWorkItemTypeEntityEnabled) return <CEIssueAdditionalPropertyValuesUpdate {...props} />;
 
-    if (issuePropertiesLoader === "init-loader") {
+    if (propertiesLoader === "init-loader") {
       return (
         <Loader className="space-y-4 py-4">
           <Loader.Item height="30px" />

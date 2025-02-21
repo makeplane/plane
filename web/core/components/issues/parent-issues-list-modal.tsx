@@ -15,6 +15,7 @@ import { Loader } from "@plane/ui";
 // components
 import { IssueSearchModalEmptyState } from "@/components/core";
 // helpers
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import useDebounce from "@/hooks/use-debounce";

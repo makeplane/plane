@@ -219,30 +219,33 @@ class EstimatePointEndpoint(BaseViewSet):
                 project_id=project_id,
                 workspace__slug=slug,
             ).first()
-            issues = Issue.objects.annotate(cycle_id=F("issue_cycle__cycle_id")).filter(
-                estimate_point_id=estimate_point_id, cycle_id=cycle.id
-            )
 
-            if cycle.version == 2:
-                EntityIssueStateActivity.objects.bulk_create(
-                    [
-                        EntityIssueStateActivity(
-                            cycle_id=cycle.id,
-                            state_id=str(issue.state_id),
-                            issue_id=issue.id,
-                            state_group=issue.state.group,
-                            action="UPDATED",
-                            entity_type="CYCLE",
-                            estimate_point_id=estimate_point_id,
-                            estimate_value=(request.data.get("value")),
-                            workspace_id=issue.workspace_id,
-                            created_by_id=request.user.id,
-                            updated_by_id=request.user.id,
-                        )
-                        for issue in issues
-                    ],
-                    batch_size=10,
+            # If cycle exists, proceed with the logic
+            if cycle:
+                issues = Issue.objects.annotate(cycle_id=F("issue_cycle__cycle_id")).filter(
+                    estimate_point_id=estimate_point_id, cycle_id=cycle.id
                 )
+
+                if cycle.version == 2:
+                    EntityIssueStateActivity.objects.bulk_create(
+                        [
+                            EntityIssueStateActivity(
+                                cycle_id=cycle.id,
+                                state_id=str(issue.state_id),
+                                issue_id=issue.id,
+                                state_group=issue.state.group,
+                                action="UPDATED",
+                                entity_type="CYCLE",
+                                estimate_point_id=estimate_point_id,
+                                estimate_value=(request.data.get("value")),
+                                workspace_id=issue.workspace_id,
+                                created_by_id=request.user.id,
+                                updated_by_id=request.user.id,
+                            )
+                            for issue in issues
+                        ],
+                        batch_size=10,
+                    )
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 

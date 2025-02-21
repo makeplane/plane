@@ -662,6 +662,7 @@
     "epic": "エピック",
     "epics": "エピック",
     "work_item": "作業項目",
+    "work_items": "作業項目",
     "sub_work_item": "サブ作業項目",
     "add": "追加",
     "warning": "警告",
@@ -690,6 +691,7 @@
     "customize_time_range": "期間をカスタマイズ",
     "loading": "読み込み中",
     "attachments": "添付ファイル",
+    "property": "プロパティ",
     "properties": "プロパティ",
     "parent": "親",
     "remove": "削除",
@@ -842,7 +844,21 @@
     "disconnect": "切断",
     "disconnecting": "切断中",
     "installing": "インストール中",
-    "install": "インストール"
+    "install": "インストール",
+    "category": "カテゴリー",
+    "categories": "カテゴリーズ",
+    "saving": "セービング",
+    "save_changes": "セーブ チェンジズ",
+    "delete": "デリート",
+    "deleting": "デリーティング",
+    "pending": "保留中",
+    "invite": "招待"
+  },
+
+  "chart": {
+    "x_axis": "エックス アクシス",
+    "y_axis": "ワイ アクシス",
+    "metric": "メトリック"
   },
 
   "form": {
@@ -1448,6 +1464,7 @@
       "members": {
         "title": "メンバー",
         "add_member": "メンバーを追加",
+        "pending_invites": "保留中の招待",
         "invitations_sent_successfully": "招待が正常に送信されました",
         "leave_confirmation": "ワークスペースから退出してもよろしいですか？このワークスペースにアクセスできなくなります。この操作は取り消せません。",
         "details": {
@@ -1684,7 +1701,11 @@
       }
     },
     "states": {
-      "describe_this_state_for_your_members": "このステータスについてメンバーに説明してください。"
+      "describe_this_state_for_your_members": "このステータスについてメンバーに説明してください。",
+      "empty_state": {
+        "title": "{groupKey}グループのステータスがありません",
+        "description": "新しいステータスを作成してください"
+      }
     },
     "labels": {
       "label_title": "ラベルタイトル",

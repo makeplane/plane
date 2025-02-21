@@ -50,6 +50,11 @@
         "error": "イニシアチブ機能の更新に失敗しました！"
       }
     },
+    "customers": {
+      "heading": "顧客",
+      "settings_heading": "顧客属性で業務を管理する。",
+      "settings_sub_heading": "Planeで基本的な顧客属性から始め、後でCRMやサポートツールと連携し、顧客属性で業務を管理しましょう。"
+    },
     "empty_state": {
       "integrations": {
         "title": "設定された統合がありません",

@@ -25,9 +25,10 @@ import {
 import { IssueSubscription, NameDescriptionUpdateStatus } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // store hooks
-import { useIssueDetail, useProjectState, useUser } from "@/hooks/store";
+import { useIssueDetail, useProject, useProjectState, useUser } from "@/hooks/store";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
@@ -90,17 +91,26 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   } = useIssueDetail();
   const { getStateById } = useProjectState();
   const { isMobile } = usePlatformOS();
+  const { getProjectIdentifierById } = useProject();
   // derived values
   const issueDetails = getIssueById(issueId);
   const stateDetails = issueDetails ? getStateById(issueDetails?.state_id) : undefined;
   const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
+  const projectIdentifier = getProjectIdentifierById(issueDetails?.project_id);
 
-  const issueLink = `${workspaceSlug}/projects/${projectId}/${isArchived ? "archives/" : ""}issues/${issueId}`;
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: issueDetails?.project_id,
+    issueId,
+    projectIdentifier,
+    sequenceId: issueDetails?.sequence_id,
+    isArchived,
+  });
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
-    copyUrlToClipboard(issueLink).then(() => {
+    copyUrlToClipboard(workItemLink, false).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("common.link_copied"),
@@ -127,7 +137,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
         </Tooltip>
 
         <Tooltip tooltipContent={t("issue.open_in_full_screen")} isMobile={isMobile}>
-          <Link href={`/${issueLink}`} onClick={() => removeRoutePeekId()}>
+          <Link href={workItemLink} onClick={() => removeRoutePeekId()}>
             <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
           </Link>
         </Tooltip>

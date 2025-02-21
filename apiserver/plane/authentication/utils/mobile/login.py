@@ -67,12 +67,12 @@ def mobile_validate_user_onboarding(user):
     if profile.is_onboarded:
         return True
     else:
-        if (
-            profile.onboarding_step.profile_complete
-            and profile.onboarding_step.workspace_create
-            and profile.onboarding_step.workspace_invite
-            and profile.onboarding_step.workspace_join
-        ):
+        if all([
+            profile.onboarding_step.get('profile_complete'),
+            profile.onboarding_step.get('workspace_create'),
+            profile.onboarding_step.get('workspace_invite'),
+            profile.onboarding_step.get('workspace_join')
+        ]):
             return True
     return False
 

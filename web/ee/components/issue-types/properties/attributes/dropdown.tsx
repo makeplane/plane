@@ -12,10 +12,9 @@ import {
   TIssuePropertyFormError,
 } from "@/plane-web/components/issue-types/properties";
 // plane web hooks
-import { useIssueType, usePropertyOptions } from "@/plane-web/hooks/store";
+import { usePropertyOptions } from "@/plane-web/hooks/store";
 
 type TDropdownAttributesProps = {
-  issueTypeId: string;
   dropdownPropertyDetail: Partial<TIssueProperty<EIssuePropertyType.OPTION>>;
   currentOperationMode: TOperationMode;
   onDropdownDetailChange: <K extends keyof TIssueProperty<EIssuePropertyType.OPTION>>(
@@ -24,17 +23,16 @@ type TDropdownAttributesProps = {
     shouldSync?: boolean
   ) => void;
   error?: TIssuePropertyFormError;
+  isUpdateAllowed: boolean;
 };
 
 export const DropdownAttributes = observer((props: TDropdownAttributesProps) => {
-  const { issueTypeId, dropdownPropertyDetail, currentOperationMode, onDropdownDetailChange, error } = props;
+  const { dropdownPropertyDetail, currentOperationMode, onDropdownDetailChange, error, isUpdateAllowed } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const issueType = useIssueType(issueTypeId);
   const { propertyOptions, setPropertyOptions } = usePropertyOptions();
   // derived values
-  const isAnyIssueAttached = issueType?.issue_exists;
   const isOptionDefaultDisabled = dropdownPropertyDetail.is_multi === undefined || !!dropdownPropertyDetail.is_required;
   // helpers
   const resetToSingleSelectDefault = () => {
@@ -70,7 +68,7 @@ export const DropdownAttributes = observer((props: TDropdownAttributesProps) => 
               resetToSingleSelectDefault();
             }
           }}
-          isDisabled={currentOperationMode === "update" && isAnyIssueAttached}
+          isDisabled={currentOperationMode === "update" && !isUpdateAllowed}
         />
       </div>
       {ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS?.OPTION?.length && (
@@ -83,12 +81,12 @@ export const DropdownAttributes = observer((props: TDropdownAttributesProps) => 
               onChange={(value) =>
                 onDropdownDetailChange("settings", value as TIssueProperty<EIssuePropertyType.OPTION>["settings"])
               }
-              isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && isAnyIssueAttached}
+              isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && !isUpdateAllowed}
             />
           ))}
         </div>
       )}
-      <IssuePropertyOptionsRoot issuePropertyId={dropdownPropertyDetail.id} error={error?.options} />
+      <IssuePropertyOptionsRoot customPropertyId={dropdownPropertyDetail.id} error={error?.options} />
       <div>
         <div className="text-xs font-medium text-custom-text-300">
           {t("common.default")} <span className="font-normal italic">({t("common.optional")})</span>

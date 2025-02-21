@@ -68,14 +68,15 @@ export const copyTextToClipboard = async (text: string) => {
 /**
  * @description: This function copies the url to clipboard after prepending the origin URL to it
  * @param {string} path
+ * @param {boolean} addSlash
  * @example:
  * const text = copyUrlToClipboard("path");
  * copied URL: origin_url/path
  */
-export const copyUrlToClipboard = async (path: string) => {
+export const copyUrlToClipboard = async (path: string, addSlash: boolean = true) => {
   const originUrl = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-  await copyTextToClipboard(`${originUrl}/${path}`);
+  await copyTextToClipboard(`${originUrl}${addSlash ? "/" : ""}${path}`);
 };
 
 export const generateRandomColor = (string: string): string => {

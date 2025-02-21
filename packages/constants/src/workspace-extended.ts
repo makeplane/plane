@@ -1,4 +1,5 @@
 import { EUserWorkspaceRoles } from "./user";
+import { IWorkspaceSidebarNavigationItem } from "./workspace";
 
 export const EXTENDED_WORKSPACE_SETTINGS = {
   integrations: {
@@ -49,5 +50,35 @@ export const EXTENDED_WORKSPACE_SETTINGS = {
     href: "/settings/customers",
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/customers/`,
+  },
+};
+
+export const EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
+  "active-cycles": {
+    key: "active_cycles",
+    labelTranslationKey: "cycles",
+    href: `/active-cycles/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+  },
+  initiatives: {
+    key: "initiatives",
+    labelTranslationKey: "initiatives.label",
+    href: `/initiatives/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+  },
+  teamspaces: {
+    key: "team_spaces",
+    labelTranslationKey: "teamspaces.label",
+    href: `/teamspaces/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+  },
+};
+
+export const EXTENDED_WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
+  "pi-chat": {
+    key: "pi_chat",
+    labelTranslationKey: "pi_chat",
+    href: `/pi-chat`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
   },
 };

@@ -2,20 +2,17 @@
 
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import { CheckCircle } from "lucide-react";
-// ui
-import { EModalWidth, ModalCore } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
+// plane imports
+import { EProductSubscriptionEnum } from "@plane/constants";
+import { EModalWidth, ModalCore, PlaneIcon, PlaneOneIcon } from "@plane/ui";
+import { cn } from "@plane/utils";
 // plane web constants
 import { PRO_PLAN_FEATURES_MAP } from "@/plane-web/constants/license";
 // plane web hooks
+import { getSubscriptionTextColor } from "@/plane-web/helpers/subscription";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-// assets
-import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
-import PlaneOneLogo from "@/public/plane-logos/plane-one-silver.svg";
 
 export type TSuccessModalVariant = "PRO" | "ONE";
 
@@ -42,9 +39,9 @@ export const PaidPlanSuccessModal: FC<PaidPlanSuccessModalProps> = observer((pro
       <div className="py-10 px-10 ">
         <div className="flex items-center justify-center">
           {variant === "PRO" ? (
-            <Image src={PlaneLogo} alt="Plane Logo" width={44} />
+            <PlaneIcon className={cn("size-11", getSubscriptionTextColor(EProductSubscriptionEnum.PRO))} />
           ) : (
-            <Image src={PlaneOneLogo} alt="Plane One Logo" width={44} />
+            <PlaneOneIcon className={cn("h-11", getSubscriptionTextColor(EProductSubscriptionEnum.ONE))} />
           )}
         </div>
         <div className="text-3xl font-bold leading-6 mt-4 flex justify-center items-center">
@@ -64,7 +61,8 @@ export const PaidPlanSuccessModal: FC<PaidPlanSuccessModalProps> = observer((pro
             {variant === "PRO" ? "Recap what Pro packs anytime" : "See how to upgrade your workspace to One."}
           </a>
         </div>
-        <div className="py-4 px-4 md:pl-14 border border-custom-primary-200/30 rounded-xl bg-custom-primary-200/5">
+        <div className="py-4 px-4 border border-custom-primary-200/30 rounded-xl bg-custom-primary-200/5">
+          <div className="text-sm text-custom-text-200 font-semibold pb-2.5">Everything in Free +</div>
           <ul className="grid grid-cols-12 gap-x-4 md:gap-x-8">
             {PRO_PLAN_FEATURES_MAP.map((feature) => (
               <li key={feature?.label} className={cn("col-span-12 sm:col-span-6 relative rounded-md p-2 flex")}>

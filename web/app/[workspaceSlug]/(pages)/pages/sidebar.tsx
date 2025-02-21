@@ -5,28 +5,23 @@ import useSWR from "swr";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // components
-import { SidebarHelpSection } from "@/components/workspace";
+import { SidebarDropdown, SidebarHelpSection } from "@/components/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
 // plane web components
-import {
-  PagesAppSidebarDropdown,
-  PagesAppSidebarList,
-  PagesAppSidebarMenu,
-  PagesAppSidebarQuickActions,
-} from "@/plane-web/components/pages";
+import { PagesAppSidebarList, PagesAppSidebarMenu, PagesAppSidebarQuickActions } from "@/plane-web/components/pages";
 import { SidebarAppSwitcher } from "@/plane-web/components/sidebar";
 // plane web hooks
-import { useWorkspacePages } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 export const PagesAppSidebar = observer(() => {
   // params
   const { workspaceSlug } = useParams();
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
-  const { fetchAllPages } = useWorkspacePages();
+  const { fetchAllPages } = usePageStore(EPageStoreType.WORKSPACE);
   // refs
   const ref = useRef<HTMLDivElement>(null);
 
@@ -59,7 +54,7 @@ export const PagesAppSidebar = observer(() => {
           "p-2 pb-0": sidebarCollapsed,
         })}
       >
-        <PagesAppSidebarDropdown />
+        <SidebarDropdown />
         <div className="flex-shrink-0 h-4" />
         <SidebarAppSwitcher />
         <PagesAppSidebarQuickActions />

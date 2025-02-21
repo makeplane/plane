@@ -4,11 +4,11 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // icons
-import { Circle, ExternalLink } from "lucide-react";
+import { Circle, ExternalLink, RssIcon } from "lucide-react";
 // plane imports
 import { EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Breadcrumbs, Button, LayersIcon, Tooltip, Header, OverviewIcon } from "@plane/ui";
+import { Breadcrumbs, Button, LayersIcon, Tooltip, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, CountChip } from "@/components/common";
 // constants
@@ -79,7 +79,7 @@ export const AdvancedIssuesHeader = observer(() => {
             href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/overview`}
             className="border border-custom-border-100 rounded px-2.5 py-1.5 flex gap-1 text-custom-text-300 hover:text-custom-text-300"
           >
-            <OverviewIcon className="flex h-[14px] w-[14px] my-auto" />
+            <RssIcon className="flex h-[14px] w-[14px] my-auto" />
             <span className="hidden text-xs md:block font-medium">{t("common.overview")}</span>
           </Link>
         </div>

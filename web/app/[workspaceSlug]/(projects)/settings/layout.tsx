@@ -31,7 +31,7 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
   return (
     <>
       <AppHeader header={<WorkspaceSettingHeader />} />
-      <div className="w-full h-full overflow-hidden">
+      <div className="flex flex-col w-full h-full overflow-hidden">
         {/* free banner */}
         <LicenseSeatsBanner />
         {/* workspace settings */}

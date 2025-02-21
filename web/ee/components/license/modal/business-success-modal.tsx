@@ -2,19 +2,16 @@
 
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import { CheckCircle } from "lucide-react";
-// ui
-import { EModalWidth, ModalCore } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
-// plane web constants
+// plane imports
+import { EProductSubscriptionEnum } from "@plane/constants";
+import { EModalWidth, ModalCore, PlaneIcon } from "@plane/ui";
+import { cn } from "@plane/utils";
+// plane web imports
 import { BUSINESS_PLAN_FEATURES_MAP } from "@/plane-web/constants/license";
-// plane web hooks
+import { getSubscriptionTextColor } from "@/plane-web/helpers/subscription";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-// assets
-import PlaneBusinessLogo from "@/public/plane-logos/plane-business-logo.svg";
 
 export type BusinessPlanSuccessModalProps = {
   isOpen: boolean;
@@ -37,7 +34,7 @@ export const BusinessPlanSuccessModal: FC<BusinessPlanSuccessModalProps> = obser
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXXL} className="rounded-xl">
       <div className="py-10 px-10 ">
         <div className="flex items-center justify-center">
-          <Image src={PlaneBusinessLogo} alt="Plane Logo" width={44} />
+          <PlaneIcon className={cn("size-11", getSubscriptionTextColor(EProductSubscriptionEnum.BUSINESS))} />
         </div>
         <div className="text-3xl font-bold leading-6 mt-4 flex justify-center items-center">Awesome! 🥳</div>
         <div className="mt-4 mb-6 text-center">
@@ -52,7 +49,8 @@ export const BusinessPlanSuccessModal: FC<BusinessPlanSuccessModalProps> = obser
             Recap what Business packs anytime
           </a>
         </div>
-        <div className="py-4 px-4 md:pl-14 border border-custom-primary-200/30 rounded-xl bg-custom-primary-200/5">
+        <div className="py-4 px-4 border border-custom-primary-200/30 rounded-xl bg-custom-primary-200/5">
+          <div className="text-sm text-custom-text-200 font-semibold pb-2.5">Everything in Pro +</div>
           <ul className="grid grid-cols-12 gap-x-4 md:gap-x-8">
             {BUSINESS_PLAN_FEATURES_MAP.map((feature) => (
               <li key={feature?.label} className={cn("col-span-12 sm:col-span-6 relative rounded-md p-2 flex")}>

@@ -147,8 +147,8 @@ export const TeamspaceCommentCard: FC<TTeamspaceCommentCard> = observer((props) 
                 }
               }}
               showSubmitButton={false}
-              uploadFile={async (file) => {
-                const { asset_id } = await activityOperations.uploadCommentAsset(file, comment.id);
+              uploadFile={async (blockId, file) => {
+                const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file, comment.id);
                 return asset_id;
               }}
             />
@@ -189,6 +189,7 @@ export const TeamspaceCommentCard: FC<TTeamspaceCommentCard> = observer((props) 
             ref={showEditorRef}
             id={comment.id}
             initialValue={comment.comment_html ?? ""}
+            workspaceId={workspaceId}
             workspaceSlug={workspaceSlug}
             containerClassName="border-none text-sm text-custom-text-200 p-0 m-0 -ml-2"
           />

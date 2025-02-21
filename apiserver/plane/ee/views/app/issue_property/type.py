@@ -267,7 +267,7 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
         # Create a new default issue type
         issue_type = IssueType.objects.create(
             workspace_id=project.workspace_id,
-            name="Work item",
+            name="Task",
             is_default=True,
             description="Default work item type with the option to add new properties",
             logo_props={

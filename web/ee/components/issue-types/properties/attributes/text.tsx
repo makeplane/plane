@@ -8,11 +8,8 @@ import { TextArea } from "@plane/ui";
 import { getTextAttributeDisplayNameKey } from "@plane/utils";
 // plane web components
 import { PropertySettingsConfiguration } from "@/plane-web/components/issue-types/properties";
-// plane web hooks
-import { useIssueType } from "@/plane-web/hooks/store";
 
 type TTextAttributesProps = {
-  issueTypeId: string;
   textPropertyDetail: Partial<TIssueProperty<EIssuePropertyType.TEXT>>;
   currentOperationMode: TOperationMode;
   onTextDetailChange: <K extends keyof TIssueProperty<EIssuePropertyType.TEXT>>(
@@ -20,17 +17,15 @@ type TTextAttributesProps = {
     value: TIssueProperty<EIssuePropertyType.TEXT>[K],
     shouldSync?: boolean
   ) => void;
+  isUpdateAllowed: boolean;
 };
 
 export const TextAttributes = observer((props: TTextAttributesProps) => {
-  const { issueTypeId, textPropertyDetail, currentOperationMode, onTextDetailChange } = props;
+  const { textPropertyDetail, currentOperationMode, onTextDetailChange, isUpdateAllowed } = props;
+  // states
   const [data, setData] = useState<string[]>([]);
   // plane hooks
   const { t } = useTranslation();
-  // store hooks
-  const issueType = useIssueType(issueTypeId);
-  // derived values
-  const isAnyIssueAttached = issueType?.issue_exists;
 
   useEffect(() => {
     setData(textPropertyDetail.default_value ?? []);
@@ -61,7 +56,7 @@ export const TextAttributes = observer((props: TTextAttributesProps) => {
             }
           }}
           getLabelDetails={(labelKey) => t(getTextAttributeDisplayNameKey(labelKey as TTextAttributeDisplayOptions))}
-          isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && isAnyIssueAttached}
+          isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && !isUpdateAllowed}
         />
       ))}
       {textPropertyDetail.settings?.display_format === "readonly" && (

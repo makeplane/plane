@@ -1,43 +1,51 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { TCreationListModes } from "@plane/types";
+import { EIssuePropertyType } from "@plane/constants";
+import { IIssueProperty } from "@plane/types";
 // plane web imports
 import {
   IssuePropertyCreateListItem,
   IssuePropertyListItem,
   TIssuePropertyCreateList,
+  TCustomPropertyOperations,
 } from "@/plane-web/components/issue-types";
-// plane web hooks
-import { useIssueType } from "@/plane-web/hooks/store";
 // plane web lib
 import { IssuePropertyOptionsProvider } from "@/plane-web/lib";
 
 type TIssuePropertyList = {
-  issueTypeId: string;
+  properties: IIssueProperty<EIssuePropertyType>[] | undefined;
   issuePropertyCreateList: TIssuePropertyCreateList[];
-  handleIssuePropertyCreateList: (mode: TCreationListModes, value: TIssuePropertyCreateList) => void;
+  customPropertyOperations: TCustomPropertyOperations;
   containerRef: React.RefObject<HTMLDivElement>;
   lastElementRef: React.RefObject<HTMLDivElement>;
+  isUpdateAllowed: boolean;
 };
 
 export const IssuePropertyList: FC<TIssuePropertyList> = observer((props) => {
-  const { issueTypeId, issuePropertyCreateList, handleIssuePropertyCreateList, containerRef, lastElementRef } = props;
-  // store hooks
-  const issueType = useIssueType(issueTypeId);
-  // derived values
-  const properties = issueType?.properties;
+  const {
+    properties,
+    issuePropertyCreateList,
+    customPropertyOperations,
+    containerRef,
+    lastElementRef,
+    isUpdateAllowed,
+  } = props;
 
   return (
     <div className="w-full mt-1">
       <div ref={containerRef} className="w-full overflow-y-auto px-6 transition-all">
         {properties &&
           properties.map((property) => (
-            <IssuePropertyOptionsProvider key={property.id} issueTypeId={issueTypeId} issuePropertyId={property.id}>
+            <IssuePropertyOptionsProvider
+              key={property.id}
+              customPropertyId={property.id}
+              customPropertyOperations={customPropertyOperations}
+            >
               <IssuePropertyListItem
-                issueTypeId={issueTypeId}
-                issuePropertyId={property.id}
-                handleIssuePropertyCreateList={handleIssuePropertyCreateList}
+                customPropertyId={property.id}
+                customPropertyOperations={customPropertyOperations}
+                isUpdateAllowed={isUpdateAllowed}
               />
             </IssuePropertyOptionsProvider>
           ))}
@@ -45,14 +53,14 @@ export const IssuePropertyList: FC<TIssuePropertyList> = observer((props) => {
         {issuePropertyCreateList.map((issueProperty, index) => (
           <IssuePropertyOptionsProvider
             key={issueProperty.key}
-            issueTypeId={issueTypeId}
-            issuePropertyId={issueProperty.id}
+            customPropertyId={issueProperty.id}
+            customPropertyOperations={customPropertyOperations}
           >
             <IssuePropertyCreateListItem
               ref={index === issuePropertyCreateList.length - 1 ? lastElementRef : undefined}
-              issueTypeId={issueTypeId}
               issuePropertyCreateListData={issueProperty}
-              handleIssuePropertyCreateList={handleIssuePropertyCreateList}
+              customPropertyOperations={customPropertyOperations}
+              isUpdateAllowed={isUpdateAllowed}
             />
           </IssuePropertyOptionsProvider>
         ))}

@@ -13,7 +13,7 @@ import { MemberDropdownProps } from "@/components/dropdowns/member/types";
 type TMemberValueSelectProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType.RELATION>>;
   value: string[];
-  projectId: string;
+  projectId: string | undefined;
   variant: TPropertyValueVariant;
   error?: EIssuePropertyValueError;
   isMultiSelect?: boolean;

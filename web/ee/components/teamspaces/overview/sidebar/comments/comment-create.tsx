@@ -87,8 +87,8 @@ export const TeamspaceCommentCreate: FC<TTeamspaceCommentCreate> = (props) => {
                 accessSpecifier={accessValue ?? EIssueCommentAccessSpecifier.INTERNAL}
                 handleAccessChange={onAccessChange}
                 isSubmitting={isSubmitting}
-                uploadFile={async (file) => {
-                  const { asset_id } = await activityOperations.uploadCommentAsset(file);
+                uploadFile={async (blockId, file) => {
+                  const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file);
                   return asset_id;
                 }}
                 showToolbarInitially={false}

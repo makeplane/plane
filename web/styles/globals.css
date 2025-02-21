@@ -76,23 +76,31 @@
     --color-border-primary: var(--color-primary-40);
     --color-border-error: var(--color-error-100);
 
-    --color-shadow-2xs: 0px 0px 1px 0px rgba(23, 23, 23, 0.06), 0px 1px 2px 0px rgba(23, 23, 23, 0.06),
+    --color-shadow-2xs:
+      0px 0px 1px 0px rgba(23, 23, 23, 0.06), 0px 1px 2px 0px rgba(23, 23, 23, 0.06),
       0px 1px 2px 0px rgba(23, 23, 23, 0.14);
-    --color-shadow-xs: 0px 1px 2px 0px rgba(0, 0, 0, 0.16), 0px 2px 4px 0px rgba(16, 24, 40, 0.12),
+    --color-shadow-xs:
+      0px 1px 2px 0px rgba(0, 0, 0, 0.16), 0px 2px 4px 0px rgba(16, 24, 40, 0.12),
       0px 1px 8px -1px rgba(16, 24, 40, 0.1);
-    --color-shadow-sm: 0px 1px 4px 0px rgba(0, 0, 0, 0.01), 0px 4px 8px 0px rgba(0, 0, 0, 0.02),
-      0px 1px 12px 0px rgba(0, 0, 0, 0.12);
-    --color-shadow-rg: 0px 3px 6px 0px rgba(0, 0, 0, 0.1), 0px 4px 4px 0px rgba(16, 24, 40, 0.08),
+    --color-shadow-sm:
+      0px 1px 4px 0px rgba(0, 0, 0, 0.01), 0px 4px 8px 0px rgba(0, 0, 0, 0.02), 0px 1px 12px 0px rgba(0, 0, 0, 0.12);
+    --color-shadow-rg:
+      0px 3px 6px 0px rgba(0, 0, 0, 0.1), 0px 4px 4px 0px rgba(16, 24, 40, 0.08),
       0px 1px 12px 0px rgba(16, 24, 40, 0.04);
-    --color-shadow-md: 0px 4px 8px 0px rgba(0, 0, 0, 0.12), 0px 6px 12px 0px rgba(16, 24, 40, 0.12),
+    --color-shadow-md:
+      0px 4px 8px 0px rgba(0, 0, 0, 0.12), 0px 6px 12px 0px rgba(16, 24, 40, 0.12),
       0px 1px 16px 0px rgba(16, 24, 40, 0.12);
-    --color-shadow-lg: 0px 6px 12px 0px rgba(0, 0, 0, 0.12), 0px 8px 16px 0px rgba(0, 0, 0, 0.12),
+    --color-shadow-lg:
+      0px 6px 12px 0px rgba(0, 0, 0, 0.12), 0px 8px 16px 0px rgba(0, 0, 0, 0.12),
       0px 1px 24px 0px rgba(16, 24, 40, 0.12);
-    --color-shadow-xl: 0px 0px 18px 0px rgba(0, 0, 0, 0.16), 0px 0px 24px 0px rgba(16, 24, 40, 0.16),
+    --color-shadow-xl:
+      0px 0px 18px 0px rgba(0, 0, 0, 0.16), 0px 0px 24px 0px rgba(16, 24, 40, 0.16),
       0px 0px 52px 0px rgba(16, 24, 40, 0.16);
-    --color-shadow-2xl: 0px 8px 16px 0px rgba(0, 0, 0, 0.12), 0px 12px 24px 0px rgba(16, 24, 40, 0.12),
+    --color-shadow-2xl:
+      0px 8px 16px 0px rgba(0, 0, 0, 0.12), 0px 12px 24px 0px rgba(16, 24, 40, 0.12),
       0px 1px 32px 0px rgba(16, 24, 40, 0.12);
-    --color-shadow-3xl: 0px 12px 24px 0px rgba(0, 0, 0, 0.12), 0px 16px 32px 0px rgba(0, 0, 0, 0.12),
+    --color-shadow-3xl:
+      0px 12px 24px 0px rgba(0, 0, 0, 0.12), 0px 16px 32px 0px rgba(0, 0, 0, 0.12),
       0px 1px 48px 0px rgba(16, 24, 40, 0.12);
     --color-shadow-4xl: 0px 8px 40px 0px rgba(0, 0, 61, 0.05), 0px 12px 32px -16px rgba(0, 0, 0, 0.05);
     --color-shadow-custom: 2px 2px 8px 2px rgba(234, 231, 250, 0.3);
@@ -156,6 +164,17 @@
     --color-pi-800: 57, 56, 149;
     --color-pi-900: 30, 29, 78;
     --color-pi-950: 14, 14, 37;
+
+    /* Plane subscriptions */
+    --color-text-subscription-free: 69, 80, 104, 1;
+    --color-text-subscription-one: 114, 56, 61, 1;
+    --color-text-subscription-pro: 1, 53, 172, 1;
+    --color-text-subscription-business: 142, 33, 87, 1;
+
+    --color-background-subscription-free: 237, 238, 243, 1;
+    --color-background-subscription-one: 114, 56, 61, 0.2;
+    --color-background-subscription-pro: 1, 53, 172, 0.2;
+    --color-background-subscription-business: 142, 33, 87, 0.2;
   }
 
   [data-theme="light"] {
@@ -294,6 +313,17 @@
     --color-pi-800: 57, 56, 149;
     --color-pi-900: 30, 29, 78;
     --color-pi-950: 14, 14, 37;
+
+    /* Plane subscriptions */
+    --color-text-subscription-free: 206, 213, 232, 1;
+    --color-text-subscription-one: 255, 148, 153, 1;
+    --color-text-subscription-pro: 75, 138, 255, 1;
+    --color-text-subscription-business: 255, 92, 163, 1;
+
+    --color-background-subscription-free: 206, 213, 232, 0.15;
+    --color-background-subscription-one: 255, 148, 153, 0.15;
+    --color-background-subscription-pro: 75, 138, 255, 0.15;
+    --color-background-subscription-business: 255, 92, 163, 0.15;
   }
 
   [data-theme="dark"] {

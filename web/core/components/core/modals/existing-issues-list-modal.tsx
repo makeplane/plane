@@ -10,6 +10,7 @@ import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
 import { Button, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
@@ -274,7 +275,13 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                                     <span className="truncate">{issue.name}</span>
                                   </div>
                                   <a
-                                    href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
+                                    href={generateWorkItemLink({
+                                      workspaceSlug,
+                                      projectId: issue?.project_id,
+                                      issueId: issue?.id,
+                                      projectIdentifier: issue.project__identifier,
+                                      sequenceId: issue?.sequence_id,
+                                    })}
                                     target="_blank"
                                     className="z-1 relative hidden flex-shrink-0 text-custom-text-200 hover:text-custom-text-100 group-hover:block"
                                     rel="noopener noreferrer"

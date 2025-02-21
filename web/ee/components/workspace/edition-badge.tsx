@@ -1,9 +1,11 @@
 import { observer } from "mobx-react";
-import Image from "next/image";
-// ui
+// plane imports
+import { EProductSubscriptionEnum } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Loader } from "@plane/ui";
-// plane web components
+import { Loader, PlaneIcon } from "@plane/ui";
+// plane web imports
+import { cn } from "@plane/utils";
+import { SubscriptionButton } from "@/plane-web/components/common";
 import {
   CloudEditionBadge,
   PaidPlanSuccessModal,
@@ -12,8 +14,6 @@ import {
 } from "@/plane-web/components/license";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-// assets
-import PlaneBusinessLogo from "@/public/plane-logos/plane-business-logo.svg";
 
 export const WorkspaceEditionBadge = observer(() => {
   // hooks
@@ -39,13 +39,13 @@ export const WorkspaceEditionBadge = observer(() => {
             isOpen={isSuccessPlanModalOpen}
             handleClose={() => handleSuccessModalToggle(false)}
           />
-          <div
-            className="w-fit relative flex items-center gap-x-1.5 bg-purple-900/30 text-purple-600 rounded-2xl px-4 py-1 text-sm cursor-pointer"
-            onClick={() => handleSuccessModalToggle(true)}
+          <SubscriptionButton
+            subscriptionType={EProductSubscriptionEnum.BUSINESS}
+            handleClick={() => handleSuccessModalToggle(true)}
           >
-            <Image src={PlaneBusinessLogo} width={12} alt="Plane business badge" />
+            <PlaneIcon className={cn("size-3")} />
             <div>{t("sidebar.business")}</div>
-          </div>
+          </SubscriptionButton>
         </>
       ) : (
         <>

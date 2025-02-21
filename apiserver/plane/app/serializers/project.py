@@ -100,8 +100,6 @@ class ProjectListSerializer(DynamicBaseSerializer):
     priority = serializers.CharField(read_only=True)
     start_date = serializers.DateTimeField(read_only=True)
     target_date = serializers.DateTimeField(read_only=True)
-    is_epic_enabled = serializers.BooleanField(read_only=True)
-    is_project_updates_enabled = serializers.BooleanField(read_only=True)
     # EE: project_grouping ends
     inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
 
@@ -112,7 +110,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
             return [
                 member.member_id
                 for member in project_members
-                if member.is_active and not member.member.is_bot
+                if member.is_active and (member.member and not member.member.is_bot)
             ]
         return []
 

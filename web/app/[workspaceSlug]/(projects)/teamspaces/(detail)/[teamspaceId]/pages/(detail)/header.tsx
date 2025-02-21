@@ -25,7 +25,7 @@ import { PageEditInformationPopover } from "@/components/pages";
 // helpers
 import { getPageName } from "@/helpers/page.helper";
 // plane web hooks
-import { useTeamspaces, useTeamspacePages } from "@/plane-web/hooks/store";
+import { useTeamspaces, usePage, EPageStoreType } from "@/plane-web/hooks/store";
 
 export const TeamspacePageDetailHeader: React.FC = observer(() => {
   // states
@@ -34,10 +34,12 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
   const { workspaceSlug, teamspaceId, pageId } = useParams();
   // store hooks
   const { loader, getTeamspaceById } = useTeamspaces();
-  const { getPageById } = useTeamspacePages();
+  const page = usePage({
+    pageId: pageId?.toString() ?? "",
+    storeType: EPageStoreType.TEAMSPACE,
+  });
   // derived values
   const teamspace = getTeamspaceById(teamspaceId?.toString());
-  const page = teamspace && pageId ? getPageById(teamspace.id, pageId.toString()) : null;
 
   const handlePageLogoUpdate = async (data: TLogoProps) => {
     if (data) {

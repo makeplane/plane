@@ -10,16 +10,14 @@ import { EFileAssetType } from "@plane/types/src/enums";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ActivitySortRoot } from "@/components/issues";
+// hooks
+import { useEditorAsset } from "@/hooks/store";
 // plane web imports
 import { useTeamspaceUpdates } from "@/plane-web/hooks/store/teamspaces/use-teamspace-updates";
 import { TTeamspaceComment } from "@/plane-web/types";
-// services
-import { FileService } from "@/services/file.service";
 // local components
 import { TeamspaceCommentCard } from "./comments/comment-card";
 import { TeamspaceCommentCreate } from "./comments/comment-create";
-
-const fileService = new FileService();
 
 type TTeamSidebarCommentsRootProps = {
   teamspaceId: string;
@@ -30,7 +28,7 @@ export type TTeamspaceActivityOperations = {
   createComment: (data: Partial<TTeamspaceComment>) => Promise<TTeamspaceComment | undefined>;
   updateComment: (commentId: string, data: Partial<TTeamspaceComment>) => Promise<void>;
   removeComment: (commentId: string) => Promise<void>;
-  uploadCommentAsset: (file: File, commentId?: string) => Promise<TFileSignedURLResponse>;
+  uploadCommentAsset: (blockId: string, file: File, commentId?: string) => Promise<TFileSignedURLResponse>;
 };
 
 export const TeamsOverviewSidebarComments: FC<TTeamSidebarCommentsRootProps> = observer((props) => {
@@ -48,6 +46,7 @@ export const TeamsOverviewSidebarComments: FC<TTeamSidebarCommentsRootProps> = o
     updateTeamspaceComment,
     deleteTeamspaceComment,
   } = useTeamspaceUpdates();
+  const { uploadEditorAsset } = useEditorAsset();
   // derived values
   const teamspaceCommentsLoader = getTeamspaceCommentsLoader(teamspaceId);
   const teamspaceComments = getTeamspaceComments(teamspaceId);
@@ -107,17 +106,18 @@ export const TeamsOverviewSidebarComments: FC<TTeamSidebarCommentsRootProps> = o
           });
         }
       },
-      uploadCommentAsset: async (file, commentId) => {
+      uploadCommentAsset: async (blockId, file, commentId) => {
         try {
           if (!workspaceSlug) throw new Error("Missing fields");
-          const res = await fileService.uploadWorkspaceAsset(
-            workspaceSlug,
-            {
+          const res = await uploadEditorAsset({
+            blockId,
+            data: {
               entity_identifier: commentId ?? "",
               entity_type: EFileAssetType.TEAM_SPACE_COMMENT_DESCRIPTION,
             },
-            file
-          );
+            file,
+            workspaceSlug,
+          });
           return res;
         } catch (error) {
           console.log("Error in uploading comment asset:", error);
@@ -125,7 +125,14 @@ export const TeamsOverviewSidebarComments: FC<TTeamSidebarCommentsRootProps> = o
         }
       },
     }),
-    [workspaceSlug, teamspaceId, createTeamspaceComment, updateTeamspaceComment, deleteTeamspaceComment]
+    [
+      workspaceSlug,
+      teamspaceId,
+      createTeamspaceComment,
+      updateTeamspaceComment,
+      deleteTeamspaceComment,
+      uploadEditorAsset,
+    ]
   );
 
   return (

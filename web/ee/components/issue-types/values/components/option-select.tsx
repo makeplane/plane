@@ -4,19 +4,15 @@ import { observer } from "mobx-react";
 // components
 import { ChevronDown } from "lucide-react";
 import { EIssuePropertyType } from "@plane/constants";
-import { EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
+import { EIssuePropertyValueError, IIssueProperty, TIssueProperty, TPropertyValueVariant } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
-// plane web hooks
-import { useIssueProperty } from "@/plane-web/hooks/store";
-// plane imports
 
 type TOptionValueSelectProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType.OPTION>>;
   value: string[];
-  issueTypeId: string;
-  issuePropertyId: string;
+  customPropertyId: string;
   variant: TPropertyValueVariant;
   error?: EIssuePropertyValueError;
   isMultiSelect?: boolean;
@@ -24,14 +20,14 @@ type TOptionValueSelectProps = {
   buttonClassName?: string;
   showOptionDetails?: boolean;
   onOptionValueChange: (value: string[]) => Promise<void>;
+  getPropertyInstanceById: (customPropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
 };
 
 export const OptionValueSelect = observer((props: TOptionValueSelectProps) => {
   const {
     propertyDetail,
     value,
-    issueTypeId,
-    issuePropertyId,
+    customPropertyId,
     variant,
     error,
     isMultiSelect = false,
@@ -39,11 +35,12 @@ export const OptionValueSelect = observer((props: TOptionValueSelectProps) => {
     buttonClassName = "",
     showOptionDetails = false,
     onOptionValueChange,
+    getPropertyInstanceById,
   } = props;
   // states
   const [data, setData] = useState<string[]>([]);
   // store hooks
-  const issueProperty = useIssueProperty(issueTypeId, issuePropertyId);
+  const issueProperty = getPropertyInstanceById(customPropertyId);
   // derived values
   const sortedActivePropertyOptions = issueProperty?.sortedActivePropertyOptions;
 

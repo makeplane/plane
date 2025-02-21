@@ -2,7 +2,7 @@
 import json
 
 # Django imports
-from django.db.models import Q, Count
+from django.db.models import Q, Count, F
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -21,17 +21,10 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.project_activites_task import project_activity
 
-class ProjectAnalyticsEndpoint(BaseAPIView):
 
+class ProjectAnalyticsEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-            ROLE.GUEST,
-        ],
-        level="WORKSPACE",
-    )
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, project_id):
         # Annotate the counts for different states in one query
         issues = Issue.issue_objects.filter(
@@ -46,27 +39,51 @@ class ProjectAnalyticsEndpoint(BaseAPIView):
 
         return Response(issues, status=status.HTTP_200_OK)
 
-class ProjectFeatureEndpoint(BaseAPIView):
 
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-            ROLE.GUEST,
-        ],
-    )
-    def get(self, request, slug, project_id):
-        project_feature, _ = ProjectFeature.objects.get_or_create(
-            project_id=project_id)
-        serializer = ProjectFeatureSerializer(project_feature)
+class WorkspaceProjectFeatureEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug):
+        # Get all projects in the workspace
+        projects = Project.objects.filter(workspace__slug=slug)
+        # Create project feature only if it doesn't exist
+        existing_project_features = ProjectFeature.objects.filter(
+            project__in=projects
+        ).values_list("project_id", flat=True)
+        projects_without_features = projects.exclude(id__in=existing_project_features)
+
+        # Create project features for projects without features
+        project_features_to_create = [
+            ProjectFeature(workspace_id=project.workspace_id, project=project)
+            for project in projects_without_features
+        ]
+
+        ProjectFeature.objects.bulk_create(project_features_to_create)
+        # Get all project features in at workspace level
+        project_features = ProjectFeature.objects.filter(
+            workspace__slug=slug, project__in=projects
+        ).annotate(
+            is_issue_type_enabled=F("project__is_issue_type_enabled"),
+            is_time_tracking_enabled=F("project__is_time_tracking_enabled"),
+        )
+        serializer = ProjectFeatureSerializer(project_features, many=True)
+        # This API returns all project features, regardless of user membership.
+        # If only joined project features are returned,
+        # we need to handle fetching project features when a user joins a project
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class ProjectFeatureEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN])
     def patch(self, request, slug, project_id):
-        project_feature = ProjectFeature.objects.get(
+        project_feature = ProjectFeature.objects.filter(
             project_id=project_id, workspace__slug=slug
-        )
+        ).first()
+
+        if not project_feature:
+            return Response(
+                {"error": "Project feature not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
         current_instance = json.dumps(
             ProjectFeatureSerializer(project_feature).data, cls=DjangoJSONEncoder
         )
@@ -78,9 +95,7 @@ class ProjectFeatureEndpoint(BaseAPIView):
             serializer.save()
             project_activity.delay(
                 type="project.activity.updated",
-                requested_data=json.dumps(
-                    serializer.data, cls=DjangoJSONEncoder
-                ),
+                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 actor_id=str(self.request.user.id),
                 project_id=str(self.kwargs.get("project_id")),
                 current_instance=current_instance,

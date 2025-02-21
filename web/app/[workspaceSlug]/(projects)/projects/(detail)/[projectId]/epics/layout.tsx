@@ -3,9 +3,11 @@
 import { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // hooks
+import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
-import { useProject } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { EpicsEmptyState } from "@/plane-web/components/epics";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
@@ -15,9 +17,12 @@ const EpicsLayout = observer(({ children }: { children: ReactNode }) => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { getProjectById } = useProject();
+  const { getProjectFeatures } = useProjectAdvanced();
+  const { allowPermissions } = useUserPermissions();
   // derived values
   const project = getProjectById(projectId?.toString());
-  const isEpicsEnabled = project?.is_epic_enabled;
+  const projectFeatures = getProjectFeatures(projectId?.toString());
+  const isEpicsEnabled = projectFeatures?.is_epic_enabled;
 
   const pageTitle = project?.name ? `${project?.name} - Epics` : undefined;
 
@@ -32,6 +37,22 @@ const EpicsLayout = observer(({ children }: { children: ReactNode }) => {
         />
       </div>
     );
+
+  const isAuthorized = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
+
+  if (!isAuthorized) {
+    return (
+      <>
+        <PageHead title={pageTitle} />
+        <div className="flex size-full items-center justify-center">
+          <NotAuthorizedView isProjectView />;
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane types
-import { TSearchEntityRequestPayload } from "@plane/types";
+import { TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // plane ui
 import { getButtonStyling } from "@plane/ui";
@@ -17,22 +17,20 @@ import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { IssuePeekOverview } from "@/components/issues";
 import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages";
-// helpers
-import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useEditorConfig } from "@/hooks/editor";
+import { useEditorAsset, useWorkspace } from "@/hooks/store";
 // plane web hooks
-import { useTeamspacePage, useTeamspacePages } from "@/plane-web/hooks/store";
-import { useFileSize } from "@/plane-web/hooks/use-file-size";
+import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 import { TeamspacePageVersionService } from "@/plane-web/services/teamspace/teamspace-page-version.service";
 import { TeamspacePageService } from "@/plane-web/services/teamspace/teamspace-pages.service";
-import { FileService } from "@/services/file.service";
 const workspaceService = new WorkspaceService();
-const fileService = new FileService();
 const teamspacePageService = new TeamspacePageService();
 const teamspacePageVersionService = new TeamspacePageVersionService();
+
+const storeType = EPageStoreType.TEAMSPACE;
 
 const TeamspacePageDetailsPage = observer(() => {
   const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamSpaceId, pageId: routerPageId } = useParams();
@@ -40,12 +38,16 @@ const TeamspacePageDetailsPage = observer(() => {
   const teamspaceId = routerTeamSpaceId?.toString();
   const pageId = routerPageId?.toString();
   // store hooks
-  const { createPage, fetchTeamspacePageDetails } = useTeamspacePages();
-  const page = useTeamspacePage(teamspaceId, pageId);
+  const { createPage, fetchTeamspacePageDetails } = usePageStore(storeType);
+  const page = usePage({
+    pageId: pageId?.toString() ?? "",
+    storeType,
+  });
   const { getWorkspaceBySlug } = useWorkspace();
+  const { uploadEditorAsset } = useEditorAsset();
   // derived values
   const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug)?.id ?? "") : "";
-  const { id, name, updateDescription } = page;
+  const { id, name, updateDescription } = page ?? {};
   // entity search handler
   const fetchEntityCallback = useCallback(
     async (payload: TSearchEntityRequestPayload) =>
@@ -55,8 +57,8 @@ const TeamspacePageDetailsPage = observer(() => {
       }),
     [teamspaceId, workspaceSlug]
   );
-  // file size
-  const { maxFileSize } = useFileSize();
+  // editor config
+  const { getEditorFileHandlers } = useEditorConfig();
   // fetch page details
   const { error: pageDetailsError } = useSWR(
     workspaceSlug && teamspaceId && pageId ? `TEAM_PAGE_DETAILS_${pageId}` : null,
@@ -70,14 +72,14 @@ const TeamspacePageDetailsPage = observer(() => {
   // page root handlers
   const pageRootHandlers: TPageRootHandlers = useMemo(
     () => ({
-      create: async (payload) => await createPage(workspaceSlug, teamspaceId, payload),
+      create: createPage,
       fetchAllVersions: async (pageId) => {
         if (!workspaceSlug || !teamspaceId) return;
         return await teamspacePageVersionService.fetchAllVersions(workspaceSlug, teamspaceId, pageId);
       },
       fetchDescriptionBinary: async () => {
-        if (!workspaceSlug || !teamspaceId || !page.id) return;
-        return await teamspacePageService.fetchDescriptionBinary(workspaceSlug, teamspaceId, page.id);
+        if (!workspaceSlug || !teamspaceId || !id) return;
+        return await teamspacePageService.fetchDescriptionBinary(workspaceSlug, teamspaceId, id);
       },
       fetchEntity: fetchEntityCallback,
       fetchVersionDetails: async (pageId, versionId) => {
@@ -85,36 +87,40 @@ const TeamspacePageDetailsPage = observer(() => {
         return await teamspacePageVersionService.fetchVersionById(workspaceSlug, teamspaceId, pageId, versionId);
       },
       getRedirectionLink: (pageId) => `/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}`,
-      updateDescription,
+      updateDescription: updateDescription ?? (async () => {}),
     }),
-    [createPage, fetchEntityCallback, page.id, teamspaceId, updateDescription, workspaceSlug]
+    [createPage, fetchEntityCallback, id, teamspaceId, updateDescription, workspaceSlug]
   );
   // page root config
   const pageRootConfig: TPageRootConfig = useMemo(
     () => ({
       fileHandler: getEditorFileHandlers({
-        maxFileSize,
-        uploadFile: async (file) => {
-          const { asset_id } = await fileService.uploadWorkspaceAsset(
-            workspaceSlug,
-            {
+        uploadFile: async (blockId, file) => {
+          const { asset_id } = await uploadEditorAsset({
+            blockId,
+            file,
+            data: {
               entity_identifier: id ?? "",
               entity_type: EFileAssetType.PAGE_DESCRIPTION,
             },
-            file
-          );
+            workspaceSlug,
+          });
           return asset_id;
         },
         workspaceId,
         workspaceSlug,
       }),
-      webhookConnectionParams: {
-        documentType: "teamspace_page",
-        teamspaceId,
-        workspaceSlug,
-      },
     }),
-    [id, maxFileSize, teamspaceId, workspaceId, workspaceSlug]
+    [getEditorFileHandlers, id, uploadEditorAsset, workspaceId, workspaceSlug]
+  );
+
+  const webhookConnectionParams: TWebhookConnectionQueryParams = useMemo(
+    () => ({
+      documentType: "teamspace_page",
+      teamspaceId,
+      workspaceSlug,
+    }),
+    [teamspaceId, workspaceSlug]
   );
 
   if ((!page || !id) && !pageDetailsError)
@@ -140,12 +146,21 @@ const TeamspacePageDetailsPage = observer(() => {
       </div>
     );
 
+  if (!page) return null;
+
   return (
     <>
       <PageHead title={name} />
       <div className="flex h-full flex-col justify-between">
         <div className="relative h-full w-full flex-shrink-0 flex flex-col overflow-hidden">
-          <PageRoot config={pageRootConfig} handlers={pageRootHandlers} page={page} workspaceSlug={workspaceSlug} />
+          <PageRoot
+            config={pageRootConfig}
+            handlers={pageRootHandlers}
+            page={page}
+            storeType={storeType}
+            webhookConnectionParams={webhookConnectionParams}
+            workspaceSlug={workspaceSlug}
+          />
           <IssuePeekOverview />
         </div>
       </div>

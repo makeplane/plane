@@ -12,16 +12,13 @@ import { RichTextEditor } from "@/components/editor";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 // hooks
-import { useMember, useWorkspace } from "@/hooks/store";
+import { useEditorAsset, useMember, useWorkspace } from "@/hooks/store";
 // plane web hooks
 import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
 // plane web components
 import { TInitiative } from "@/plane-web/types/initiative";
-// services
-import { FileService } from "@/services/file.service";
+// local components
 import { EpicsDropdown } from "../../dropdowns";
-
-const fileService = new FileService();
 
 type Props = {
   initiativeDetail?: TInitiative;
@@ -43,7 +40,8 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
-
+  const { uploadEditorAsset } = useEditorAsset();
+  // translation
   const { t } = useTranslation();
   // use editor mention search
   const { searchEntity } = useEditorMentionSearch({
@@ -118,16 +116,17 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
           editorClassName="text-xs"
           containerClassName="resize-none min-h-24 text-xs border-[0.5px] border-custom-border-200 rounded-md px-3 py-2"
           tabIndex={2}
-          uploadFile={async (file) => {
+          uploadFile={async (blockId, file) => {
             try {
-              const { asset_id } = await fileService.uploadWorkspaceAsset(
-                workspaceSlug.toString(),
-                {
+              const { asset_id } = await uploadEditorAsset({
+                blockId,
+                workspaceSlug: workspaceSlug.toString(),
+                data: {
                   entity_identifier: initiativeDetail?.id ?? "",
                   entity_type: EFileAssetType.INITIATIVE_DESCRIPTION,
                 },
-                file
-              );
+                file,
+              });
               return asset_id;
             } catch (error) {
               console.log("Error in uploading initiative asset:", error);

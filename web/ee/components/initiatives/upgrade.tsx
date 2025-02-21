@@ -3,8 +3,10 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useTheme } from "next-themes";
 // ui
+import { Crown } from "lucide-react";
 import { Button, getButtonStyling, setPromiseToast } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -28,7 +30,7 @@ export const InitiativesUpgrade: FC<Props> = observer((props) => {
   // store hooks
   const { resolvedTheme } = useTheme();
   const { isWorkspaceFeatureEnabled, updateWorkspaceFeature } = useWorkspaceFeatures();
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
 
   // derived values
   const isInitiativesFeatureFlagEnabled = useFlag(workspaceSlug, "INITIATIVES");
@@ -82,8 +84,12 @@ export const InitiativesUpgrade: FC<Props> = observer((props) => {
         </a>
       );
     }
-
-    return <Button disabled>Coming Soon</Button>;
+    return (
+      <Button variant="primary" onClick={() => togglePaidPlanModal(true)}>
+        <Crown className="h-3.5 w-3.5" />
+        Upgrade
+      </Button>
+    );
   };
 
   return (
@@ -101,13 +107,23 @@ export const InitiativesUpgrade: FC<Props> = observer((props) => {
               Group projects like you group work items by state, priority, or any other—and track their progress in one
               click.
             </div>
-            <div className="flex mt-6 gap-4 flex-wrap">{getUpgradeButton()}</div>
+            <div className="flex mt-6 gap-4 flex-wrap">
+              {getUpgradeButton()}
+              <Link
+                target="_blank"
+                href="https://plane.so/contact"
+                className={"bg-transparent underline text-sm text-custom-primary-200 my-auto font-medium"}
+                onClick={() => {}}
+              >
+                Get custom quote
+              </Link>
+            </div>
           </div>
         </div>
         <Image
           src={resolvedTheme === "dark" ? InitiativesUpgradeDark : InitiativesUpgradeLight}
           alt=""
-          className="max-h-[300px] self-end flex p-5 pb-0 xl:p-0"
+          className="max-h-[300px] w-auto self-end flex p-5 pb-0 xl:p-0 object-contain"
         />
       </div>
     </div>

@@ -15,13 +15,13 @@ import { getPageName } from "@/helpers/page.helper";
 import { useAppTheme } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks
-import { useWorkspacePageDetails } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePage } from "@/plane-web/hooks/store";
 
 type Props = {
   pageId: string;
 };
 
-export const PagesAppSidebarListItem: React.FC<Props> = observer((props) => {
+export const WikiPageSidebarListItem: React.FC<Props> = observer((props) => {
   const { pageId } = props;
   // params
   const { workspaceSlug } = useParams();
@@ -30,8 +30,11 @@ export const PagesAppSidebarListItem: React.FC<Props> = observer((props) => {
   const { sidebarCollapsed: isCollapsed } = useAppTheme();
   const { isMobile } = usePlatformOS();
   // derived values
-  const page = useWorkspacePageDetails(pageId);
-  const isPageActive = pathname === `/${workspaceSlug}/pages/${page.id}/`;
+  const page = usePage({
+    pageId,
+    storeType: EPageStoreType.WORKSPACE,
+  });
+  const isPageActive = pathname === `/${workspaceSlug}/pages/${page?.id}/`;
 
   if (!page) return null;
 

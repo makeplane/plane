@@ -221,7 +221,7 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
       const issuePropertyOption = await this.propertyOptionService.create({
         workspaceSlug,
         projectId,
-        issuePropertyId: this.id,
+        customPropertyId: this.id,
         data: propertyOption,
       });
       runInAction(() => {
@@ -241,14 +241,14 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
    */
   updateProperty = async (issueTypeId: string, propertyData: TIssuePropertyPayload) => {
     const { workspaceSlug, projectId } = this.rootStore.router;
-    if (!workspaceSlug || !projectId || !issueTypeId || !this.id) return undefined;
+    if (!workspaceSlug || !this.id) return undefined;
 
     try {
       const issuePropertyResponse = await this.service.update({
         workspaceSlug,
         projectId,
         issueTypeId,
-        issuePropertyId: this.id,
+        customPropertyId: this.id,
         data: propertyData,
       });
       runInAction(() => {
@@ -276,7 +276,7 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
       await this.propertyOptionService.deleteOption({
         workspaceSlug,
         projectId,
-        issuePropertyId: this.id,
+        customPropertyId: this.id,
         issuePropertyOptionId: propertyOptionId,
       });
       runInAction(() => {

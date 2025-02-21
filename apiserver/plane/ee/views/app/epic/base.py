@@ -17,6 +17,7 @@ from django.db.models import (
     When,
     Count,
     Subquery,
+    Exists,
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -351,9 +352,12 @@ class EpicViewSet(BaseViewSet):
         is_epic_enabled = request.data.get("is_epic_enabled", False)
         if is_epic_enabled:
             # get or create the project feature
-            project_feature, _ = ProjectFeature.objects.get_or_create(
+            project_feature = ProjectFeature.objects.filter(
                 project_id=project_id
-            )
+            ).first()
+            if not project_feature:
+                project_feature = ProjectFeature.objects.create(project_id=project_id)
+
             # Check if the epic issue type is already created for the project or not
             project_issue_type = ProjectIssueType.objects.filter(
                 project_id=project_id, issue_type__is_epic=True
@@ -397,9 +401,13 @@ class EpicViewSet(BaseViewSet):
 
             return Response(IssueTypeSerializer(epic).data, status=status.HTTP_200_OK)
         else:
-            project_feature, _ = ProjectFeature.objects.get_or_create(
+            # get or create the project feature
+            project_feature = ProjectFeature.objects.filter(
                 project_id=project_id
-            )
+            ).first()
+            if not project_feature:
+                project_feature = ProjectFeature.objects.create(project_id=project_id)
+
             if project_feature.is_epic_enabled:
                 project_feature.is_epic_enabled = False
                 project_feature.save()
@@ -569,6 +577,7 @@ class WorkspaceEpicEndpoint(BaseAPIView):
             workspace__slug=slug,
             project__project_projectmember__member=self.request.user,
             project__project_projectmember__is_active=True,
+            project__project_projectfeature__is_epic_enabled=True,
         ).filter(
             Q(type__isnull=False)
             & Q(type__is_epic=True)

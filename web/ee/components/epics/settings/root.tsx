@@ -11,6 +11,7 @@ import { useProject } from "@/hooks/store";
 import { EpicsEmptyState, EpicPropertiesRoot } from "@/plane-web/components/epics";
 // plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 
 export const EpicsRoot = observer(() => {
   // router
@@ -20,10 +21,12 @@ export const EpicsRoot = observer(() => {
   // store hooks
   const { getProjectEpicDetails, enableEpics, disableEpics } = useIssueTypes();
   const { getProjectById } = useProject();
+  const { getProjectFeatures } = useProjectAdvanced();
   // derived values
   const epicDetails = getProjectEpicDetails(projectId?.toString());
   const project = getProjectById(projectId?.toString());
-  const isEpicsEnabled = project?.is_epic_enabled;
+  const projectFeatures = getProjectFeatures(projectId?.toString());
+  const isEpicsEnabled = projectFeatures?.is_epic_enabled;
 
   const handleEnableDisableEpic = async () => {
     setIsLoading(true);

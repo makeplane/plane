@@ -59,29 +59,29 @@ export interface IIssueTypesService {
 
 export type TFetchIssuePropertiesPayload = {
   workspaceSlug: string;
-  projectId: string;
+  projectId?: string;
 };
 
 export type TCreateIssuePropertyPayload = {
   workspaceSlug: string;
-  projectId: string;
+  projectId?: string;
   issueTypeId?: string;
   data: TIssuePropertyPayload;
 };
 
 export type TUpdateIssuePropertyPayload = {
   workspaceSlug: string;
-  projectId: string;
+  projectId?: string;
   issueTypeId?: string;
-  issuePropertyId: string;
+  customPropertyId: string;
   data: TIssuePropertyPayload;
 };
 
 export type TDeleteIssuePropertyPayload = {
   workspaceSlug: string;
-  projectId: string;
+  projectId?: string;
   issueTypeId?: string;
-  issuePropertyId: string;
+  customPropertyId: string;
 };
 
 export interface IIssuePropertiesService {
@@ -95,20 +95,20 @@ export interface IIssuePropertiesService {
 
 export type TFetchIssuePropertyOptionsPayload = {
   workspaceSlug: string;
-  projectId: string;
+  projectId?: string;
 };
 
 export type TCreateIssuePropertyOptionPayload = {
   workspaceSlug: string;
-  projectId: string;
-  issuePropertyId: string;
+  projectId?: string;
+  customPropertyId: string;
   data: Partial<TIssuePropertyOption>;
 };
 
 export type TDeleteIssuePropertyOptionPayload = {
   workspaceSlug: string;
-  projectId: string;
-  issuePropertyId: string;
+  projectId?: string;
+  customPropertyId: string;
   issuePropertyOptionId: string;
 };
 
@@ -121,7 +121,7 @@ export interface IIssuePropertyOptionsService {
 // -------------------------- ISSUE TYPES SERVICES --------------------------
 
 export type TIssueTypeStoreServices = {
-  issueTypes: IIssueTypesService;
+  issueTypes?: IIssueTypesService;
   issueProperties: IIssuePropertiesService;
   issuePropertyOptions: IIssuePropertyOptionsService;
 };

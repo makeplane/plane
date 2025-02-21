@@ -15,7 +15,6 @@ import {
 } from "@/plane-web/components/issue-types/properties";
 
 type TSelectedPropertyAttributesProps = {
-  issueTypeId: string;
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType>>;
   currentOperationMode: TOperationMode;
   onPropertyDetailChange: <K extends keyof TIssueProperty<EIssuePropertyType>>(
@@ -25,59 +24,60 @@ type TSelectedPropertyAttributesProps = {
   ) => void;
   disabled?: boolean;
   error?: TIssuePropertyFormError;
+  isUpdateAllowed: boolean;
 };
 
 export const SelectedAttributeProperties = observer((props: TSelectedPropertyAttributesProps) => {
-  const { issueTypeId, propertyDetail, currentOperationMode, onPropertyDetailChange, error } = props;
+  const { propertyDetail, currentOperationMode, onPropertyDetailChange, error, isUpdateAllowed } = props;
 
   const ISSUE_PROPERTY_ATTRIBUTE_DETAILS: Partial<Record<TIssuePropertyTypeKeys, JSX.Element>> = {
     TEXT: (
       <TextAttributes
-        issueTypeId={issueTypeId}
         textPropertyDetail={propertyDetail as Partial<TIssueProperty<EIssuePropertyType.TEXT>>}
         currentOperationMode={currentOperationMode}
         onTextDetailChange={onPropertyDetailChange}
+        isUpdateAllowed={isUpdateAllowed}
       />
     ),
     DECIMAL: (
       <NumberAttributes
-        issueTypeId={issueTypeId}
         numberPropertyDetail={propertyDetail as Partial<TIssueProperty<EIssuePropertyType.DECIMAL>>}
         currentOperationMode={currentOperationMode}
         onNumberDetailChange={onPropertyDetailChange}
+        isUpdateAllowed={isUpdateAllowed}
       />
     ),
     OPTION: (
       <DropdownAttributes
-        issueTypeId={issueTypeId}
         dropdownPropertyDetail={propertyDetail as Partial<TIssueProperty<EIssuePropertyType.OPTION>>}
         currentOperationMode={currentOperationMode}
         onDropdownDetailChange={onPropertyDetailChange}
         error={error}
+        isUpdateAllowed={isUpdateAllowed}
       />
     ),
     BOOLEAN: (
       <BooleanAttributes
-        issueTypeId={issueTypeId}
         booleanPropertyDetail={propertyDetail as Partial<TIssueProperty<EIssuePropertyType.BOOLEAN>>}
         currentOperationMode={currentOperationMode}
         onBooleanDetailChange={onPropertyDetailChange}
+        isUpdateAllowed={isUpdateAllowed}
       />
     ),
     DATETIME: (
       <DatePickerAttributes
-        issueTypeId={issueTypeId}
         datePickerPropertyDetail={propertyDetail as Partial<TIssueProperty<EIssuePropertyType.DATETIME>>}
         currentOperationMode={currentOperationMode}
         onDatePickerDetailChange={onPropertyDetailChange}
+        isUpdateAllowed={isUpdateAllowed}
       />
     ),
     RELATION_USER: (
       <MemberPickerAttributes
-        issueTypeId={issueTypeId}
         memberPickerPropertyDetail={propertyDetail as Partial<TIssueProperty<EIssuePropertyType.RELATION>>}
         currentOperationMode={currentOperationMode}
         onMemberPickerDetailChange={onPropertyDetailChange}
+        isUpdateAllowed={isUpdateAllowed}
       />
     ),
   };

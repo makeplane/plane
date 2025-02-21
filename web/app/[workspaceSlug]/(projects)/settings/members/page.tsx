@@ -107,7 +107,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
         onSubmit={handleWorkspaceInvite}
       />
       <section
-        className={cn("w-full overflow-y-auto", {
+        className={cn("w-full h-full overflow-y-auto", {
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >

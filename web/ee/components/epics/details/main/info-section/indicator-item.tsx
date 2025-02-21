@@ -11,7 +11,7 @@ import { CircularProgressIndicator } from "@plane/ui";
 import { getProgress } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
-import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useEpicAnalytics } from "@/plane-web/hooks/store";
 
 type TEpicInfoIndicatorItemProps = {
   epicId: string;
@@ -20,7 +20,7 @@ type TEpicInfoIndicatorItemProps = {
 export const EpicInfoIndicatorItem: FC<TEpicInfoIndicatorItemProps> = observer((props) => {
   const { epicId } = props;
   // hooks
-  const { getEpicAnalyticsById } = useIssueTypes();
+  const { getEpicAnalyticsById } = useEpicAnalytics();
   const {
     issue: { getIssueById },
   } = useIssueDetail(EIssueServiceType.EPICS);

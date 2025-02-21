@@ -15,8 +15,9 @@ import { StateDropdown } from "@/components/dropdowns";
 import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
 // helpers
 import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
-import { useIssues, useProjectState } from "@/hooks/store";
+import { useIssues, useProject, useProjectState } from "@/hooks/store";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 
@@ -28,11 +29,15 @@ export type ActiveCyclePriorityIssuesProps = {
 
 export const ActiveCyclePriorityIssues: FC<ActiveCyclePriorityIssuesProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle } = props;
-
+  // store hooks
   const {
     issues: { fetchActiveCycleIssues },
   } = useIssues(EIssuesStoreType.CYCLE);
   const { fetchWorkspaceStates } = useProjectState();
+  const { getProjectIdentifierById } = useProject();
+
+  // derived values
+  const projectIdentifier = getProjectIdentifierById(projectId);
 
   const { data: activeCycleIssues } = useSWR(
     workspaceSlug && projectId && cycle.id ? CYCLE_ISSUES_WITH_PARAMS(cycle.id, { priority: "urgent,high" }) : null,
@@ -60,7 +65,13 @@ export const ActiveCyclePriorityIssues: FC<ActiveCyclePriorityIssuesProps> = obs
             activeCycleIssues.results.map((issue: any) => (
               <Link
                 key={issue.id}
-                href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
+                href={generateWorkItemLink({
+                  workspaceSlug,
+                  projectId: issue?.project_id,
+                  issueId: issue?.id,
+                  projectIdentifier,
+                  sequenceId: issue?.sequence_id,
+                })}
                 className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-custom-background-90 p-1"
               >
                 <div className="flex items-center gap-1.5 flex-grow w-full truncate">

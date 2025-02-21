@@ -1,11 +1,15 @@
 import { DeleteImage, RestoreImage, UploadImage } from "@/types";
 
-export type TFileHandler = {
+export type TReadOnlyFileHandler = {
   getAssetSrc: (path: string) => Promise<string>;
+  restore: RestoreImage;
+};
+
+export type TFileHandler = TReadOnlyFileHandler & {
+  assetsUploadStatus: Record<string, number>; // blockId => progress percentage
   cancel: () => void;
   delete: DeleteImage;
   upload: UploadImage;
-  restore: RestoreImage;
   validation: {
     /**
      * @description max file size in bytes

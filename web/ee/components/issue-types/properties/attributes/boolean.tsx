@@ -5,11 +5,8 @@ import { useTranslation } from "@plane/i18n";
 import { TIssueProperty, TOperationMode } from "@plane/types";
 // plane web components
 import { PropertySettingsConfiguration, BooleanInput } from "@/plane-web/components/issue-types";
-// plane web hooks
-import { useIssueType } from "@/plane-web/hooks/store";
 
 type TBooleanAttributesProps = {
-  issueTypeId: string;
   booleanPropertyDetail: Partial<TIssueProperty<EIssuePropertyType.BOOLEAN>>;
   currentOperationMode: TOperationMode;
   onBooleanDetailChange: <K extends keyof TIssueProperty<EIssuePropertyType.BOOLEAN>>(
@@ -17,16 +14,13 @@ type TBooleanAttributesProps = {
     value: TIssueProperty<EIssuePropertyType.BOOLEAN>[K],
     shouldSync?: boolean
   ) => void;
+  isUpdateAllowed: boolean;
 };
 
 export const BooleanAttributes = observer((props: TBooleanAttributesProps) => {
-  const { issueTypeId, booleanPropertyDetail, currentOperationMode, onBooleanDetailChange } = props;
+  const { booleanPropertyDetail, currentOperationMode, onBooleanDetailChange, isUpdateAllowed } = props;
   // plane hooks
   const { t } = useTranslation();
-  // store hooks
-  const issueType = useIssueType(issueTypeId);
-  // derived values
-  const isAnyIssueAttached = issueType?.issue_exists;
 
   return (
     <>
@@ -40,7 +34,7 @@ export const BooleanAttributes = observer((props: TBooleanAttributesProps) => {
               onChange={(value) =>
                 onBooleanDetailChange("settings", value as TIssueProperty<EIssuePropertyType.BOOLEAN>["settings"])
               }
-              isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && isAnyIssueAttached}
+              isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && !isUpdateAllowed}
             />
           ))}
         </div>

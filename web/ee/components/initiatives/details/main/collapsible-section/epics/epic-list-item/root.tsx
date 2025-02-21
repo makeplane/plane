@@ -12,9 +12,9 @@ import { cn, getProgress } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
+// plane web imports
 import { IdentifierText } from "@/plane-web/components/issues";
-import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useEpicAnalytics } from "@/plane-web/hooks/store";
 // local components
 import { EpicProperties } from "./properties";
 import { EpicQuickActions } from "./quick-action";
@@ -33,7 +33,7 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
     issue: { getIssueById },
     setPeekIssue,
   } = useIssueDetail(EIssueServiceType.EPICS);
-  const { getEpicStatsById } = useIssueTypes();
+  const { getEpicStatsById } = useEpicAnalytics();
   const project = useProject();
   const { isMobile } = usePlatformOS();
 
@@ -55,7 +55,13 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
       title={issue.name}
       itemLink={`/${workspaceSlug}/projects/${issue.project_id}/epics/${issue.id}`}
       prependTitleElement={
-        <div className={cn("flex flex-shrink-0 items-center space-x-2")}>
+        <div
+          className={cn("flex flex-shrink-0 items-center space-x-2")}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
           <EpicIcon className="h-4 w-4 text-custom-text-300" />
           <IdentifierText
             identifier={`${projectIdentifier}-${issueSequenceId}`}

@@ -1,17 +1,14 @@
 "use client";
 import { Fragment } from "react";
-
-import { DayPicker, getDefaultClassNames } from "react-day-picker";
 import { Controller, useForm } from "react-hook-form";
 
 import { X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 
-import { Button } from "@plane/ui";
+import { Button, Calendar } from "@plane/ui";
 
 import { renderFormattedPayloadDate, renderFormattedDate, getDate } from "@/helpers/date-time.helper";
 import { DateFilterSelect } from "./date-filter-select";
-
 type Props = {
   title: string;
   handleClose: () => void;
@@ -30,8 +27,6 @@ const defaultValues: TFormValues = {
   date1: new Date(),
   date2: new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()),
 };
-
-const defaultClassNames = getDefaultClassNames();
 
 export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, onSelect }) => {
   const { handleSubmit, watch, control } = useForm<TFormValues>({
@@ -98,9 +93,9 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                         const dateValue = getDate(value);
                         const date2Value = getDate(watch("date2"));
                         return (
-                          <DayPicker
+                          <Calendar
                             classNames={{
-                              root: `${defaultClassNames.root} border border-custom-border-200 p-3 rounded-md`,
+                              root: ` border border-custom-border-200 p-3 rounded-md`,
                             }}
                             captionLayout="dropdown"
                             selected={dateValue}
@@ -123,9 +118,9 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                           const dateValue = getDate(value);
                           const date1Value = getDate(watch("date1"));
                           return (
-                            <DayPicker
+                            <Calendar
                               classNames={{
-                                root: `${defaultClassNames.root} border border-custom-border-200 p-3 rounded-md`,
+                                root: ` border border-custom-border-200 p-3 rounded-md`,
                               }}
                               captionLayout="dropdown"
                               selected={dateValue}

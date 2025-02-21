@@ -3,17 +3,16 @@ import { EIssueServiceType } from "@plane/constants";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { TActivityOperations } from "@/components/issues";
-import { useIssueDetail } from "@/hooks/store";
-import { FileService } from "@/services/file.service";
-
-const fileService = new FileService();
+import { useEditorAsset, useIssueDetail } from "@/hooks/store";
 
 export const useEpicActivityOperations = (
   workspaceSlug: string | undefined,
   projectId: string | undefined,
   epicId: string | undefined
 ): TActivityOperations => {
+  // store hooks
   const { createComment, updateComment, removeComment } = useIssueDetail(EIssueServiceType.EPICS);
+  const { uploadEditorAsset } = useEditorAsset();
 
   const activityOperations: TActivityOperations = useMemo(
     () => ({
@@ -72,18 +71,19 @@ export const useEpicActivityOperations = (
           });
         }
       },
-      uploadCommentAsset: async (file, commentId) => {
+      uploadCommentAsset: async (blockId, file, commentId) => {
         try {
           if (!workspaceSlug || !projectId) throw new Error("Missing fields");
-          const res = await fileService.uploadProjectAsset(
-            workspaceSlug,
-            projectId,
-            {
+          const res = await uploadEditorAsset({
+            blockId,
+            data: {
               entity_identifier: commentId ?? "",
               entity_type: EFileAssetType.COMMENT_DESCRIPTION,
             },
-            file
-          );
+            projectId,
+            file,
+            workspaceSlug,
+          });
           return res;
         } catch (error) {
           console.log("Error in uploading comment asset:", error);
@@ -91,7 +91,7 @@ export const useEpicActivityOperations = (
         }
       },
     }),
-    [workspaceSlug, projectId, epicId, createComment, updateComment, removeComment]
+    [workspaceSlug, projectId, epicId, createComment, updateComment, uploadEditorAsset, removeComment]
   );
 
   return activityOperations;

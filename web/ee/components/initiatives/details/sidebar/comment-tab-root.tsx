@@ -11,17 +11,15 @@ import { EFileAssetType } from "@plane/types/src/enums";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ActivitySortRoot } from "@/components/issues";
+// hooks
+import { useEditorAsset } from "@/hooks/store";
 // constants
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TInitiativeActivityComment, TInitiativeComment } from "@/plane-web/types/initiative";
-// services
-import { FileService } from "@/services/file.service";
 // local components
 import { InitiativeCommentCard } from "./activity/comment-card";
 import { InitiativeCommentCreate } from "./activity/comment-create";
-
-const fileService = new FileService();
 
 type Props = {
   workspaceSlug: string;
@@ -33,7 +31,7 @@ export type TInitiativeActivityOperations = {
   createComment: (data: Partial<TInitiativeComment>) => Promise<TInitiativeComment | undefined>;
   updateComment: (commentId: string, data: Partial<TInitiativeComment>) => Promise<void>;
   removeComment: (commentId: string) => Promise<void>;
-  uploadCommentAsset: (file: File, commentId?: string) => Promise<TFileSignedURLResponse>;
+  uploadCommentAsset: (blockId: string, file: File, commentId?: string) => Promise<TFileSignedURLResponse>;
 };
 
 export const InitiativeSidebarCommentsRoot: FC<Props> = observer((props) => {
@@ -54,7 +52,8 @@ export const InitiativeSidebarCommentsRoot: FC<Props> = observer((props) => {
       },
     },
   } = useInitiatives();
-
+  const { uploadEditorAsset } = useEditorAsset();
+  // translation
   const { t } = useTranslation();
 
   // helper operations
@@ -112,17 +111,18 @@ export const InitiativeSidebarCommentsRoot: FC<Props> = observer((props) => {
           });
         }
       },
-      uploadCommentAsset: async (file, commentId) => {
+      uploadCommentAsset: async (blockId, file, commentId) => {
         try {
           if (!workspaceSlug) throw new Error("Missing fields");
-          const res = await fileService.uploadWorkspaceAsset(
-            workspaceSlug,
-            {
+          const res = await uploadEditorAsset({
+            blockId,
+            data: {
               entity_identifier: commentId ?? "",
               entity_type: EFileAssetType.INITIATIVE_COMMENT_DESCRIPTION,
             },
-            file
-          );
+            file,
+            workspaceSlug,
+          });
           return res;
         } catch (error) {
           console.log("Error in uploading comment asset:", error);
@@ -130,7 +130,15 @@ export const InitiativeSidebarCommentsRoot: FC<Props> = observer((props) => {
         }
       },
     }),
-    [workspaceSlug, initiativeId, createInitiativeComment, updateInitiativeComment, deleteInitiativeComment]
+    [
+      workspaceSlug,
+      initiativeId,
+      createInitiativeComment,
+      updateInitiativeComment,
+      deleteInitiativeComment,
+      t,
+      uploadEditorAsset,
+    ]
   );
 
   // derived values

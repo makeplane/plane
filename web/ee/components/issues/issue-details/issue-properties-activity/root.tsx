@@ -26,7 +26,7 @@ type TIssueAdditionalPropertiesActivity = {
 
 export type TIssueAdditionalPropertiesActivityItem = {
   activityId: string;
-  issuePropertyId: string;
+  customPropertyId: string;
 };
 
 export const IssueAdditionalPropertiesActivity: FC<TIssueAdditionalPropertiesActivity> = observer((props) => {
@@ -66,7 +66,7 @@ export const IssueAdditionalPropertiesActivity: FC<TIssueAdditionalPropertiesAct
 
   return (
     <IssueActivityBlockComponent activityId={activityId} propertyId={propertyDetail.id} ends={ends}>
-      <IssuePropertyActivityComponent activityId={activityId} issuePropertyId={propertyDetail.id} />
+      <IssuePropertyActivityComponent activityId={activityId} customPropertyId={propertyDetail.id} />
     </IssueActivityBlockComponent>
   );
 });

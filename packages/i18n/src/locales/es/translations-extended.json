@@ -50,6 +50,11 @@
         "error": "¡Error al actualizar la función de iniciativas!"
       }
     },
+    "customers": {
+        "heading": "Clientes",
+        "settings_heading": "Gestiona el trabajo por atributos del cliente.",
+        "settings_sub_heading": "Comienza con los atributos esenciales del cliente en Plane, intégralo más tarde con tu CRM o herramienta de soporte, y gestiona el trabajo por atributos del cliente."
+    },
     "empty_state": {
       "integrations": {
         "title": "No hay integraciones configuradas",

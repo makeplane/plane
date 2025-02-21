@@ -108,8 +108,8 @@ export const EpicCommentCreate: FC<TEpicCommentCreate> = (props) => {
                 handleAccessChange={onAccessChange}
                 showAccessSpecifier={showAccessSpecifier}
                 isSubmitting={isSubmitting}
-                uploadFile={async (file) => {
-                  const { asset_id } = await activityOperations.uploadCommentAsset(file);
+                uploadFile={async (blockId, file) => {
+                  const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file);
                   setUploadedAssetIds((prev) => [...prev, asset_id]);
                   return asset_id;
                 }}

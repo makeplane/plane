@@ -49,11 +49,11 @@ class IssuePropertiesService extends APIService implements IIssuePropertiesServi
     workspaceSlug,
     projectId,
     issueTypeId,
-    issuePropertyId,
+    customPropertyId,
     data,
   }: TUpdateIssuePropertyPayload): Promise<TIssuePropertyResponse> {
     return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/issue-properties/${issuePropertyId}/`,
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/issue-properties/${customPropertyId}/`,
       data
     )
       .then((response) => response?.data)
@@ -66,10 +66,10 @@ class IssuePropertiesService extends APIService implements IIssuePropertiesServi
     workspaceSlug,
     projectId,
     issueTypeId,
-    issuePropertyId,
+    customPropertyId,
   }: TDeleteIssuePropertyPayload): Promise<void> {
     return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/issue-properties/${issuePropertyId}/`
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/issue-properties/${customPropertyId}/`
     )
       .then((response) => response?.data)
       .catch((error) => {

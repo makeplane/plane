@@ -664,6 +664,7 @@
     "epic": "Epic",
     "epics": "Epics",
     "work_item": "Elemento de trabajo",
+    "work_items": "Elementos de trabajo",
     "sub_work_item": "Sub-elemento de trabajo",
     "add": "Agregar",
     "warning": "Advertencia",
@@ -692,6 +693,7 @@
     "customize_time_range": "Personalizar rango de tiempo",
     "loading": "Cargando",
     "attachments": "Archivos adjuntos",
+    "property": "Propiedad",
     "properties": "Propiedades",
     "parent": "Padre",
     "remove": "Eliminar",
@@ -844,7 +846,21 @@
     "disconnect": "Desconectar",
     "disconnecting": "Desconectando",
     "installing": "Instalando",
-    "install": "Instalar"
+    "install": "Instalar",
+    "category": "Categoría",
+    "categories": "Categorías",
+    "saving": "Guardando",
+    "save_changes": "Guardar cambios",
+    "delete": "Eliminar",
+    "deleting": "Eliminando",
+    "pending": "Pendiente",
+    "invite": "Invitar"
+  },
+
+  "chart": {
+    "x_axis": "Eje X",
+    "y_axis": "Eje Y",
+    "metric": "Métrica"
   },
 
   "form": {
@@ -1450,6 +1466,7 @@
       "members": {
         "title": "Miembros",
         "add_member": "Agregar miembro",
+        "pending_invites": "Invitaciones pendientes",
         "invitations_sent_successfully": "Invitaciones enviadas exitosamente",
         "leave_confirmation": "¿Estás seguro de que quieres abandonar el espacio de trabajo? Ya no tendrás acceso a este espacio de trabajo. Esta acción no se puede deshacer.",
         "details": {
@@ -1686,7 +1703,11 @@
       }
     },
     "states": {
-      "describe_this_state_for_your_members": "Describe este estado para tus miembros."
+      "describe_this_state_for_your_members": "Describe este estado para tus miembros.",
+      "empty_state": {
+        "title": "No estados disponibles para el grupo {groupKey}",
+        "description": "Por favor, crea un nuevo estado"
+      }
     },
     "labels": {
       "label_title": "Título de la etiqueta",

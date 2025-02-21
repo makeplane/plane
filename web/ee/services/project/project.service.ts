@@ -3,7 +3,7 @@
 // plane imports
 import { TProjectLink, TStateAnalytics } from "@plane/types";
 // plane web imports
-import { TProject, TProjectAttributesParams, TProjectAttributesResponse, TProjectFeatures } from "@/plane-web/types";
+import { TProjectAttributesParams, TProjectAttributesResponse, TProjectFeatures } from "@/plane-web/types";
 // services
 import { ProjectService as CeProjectService } from "@/services/project";
 
@@ -78,15 +78,19 @@ export class ProjectService extends CeProjectService {
       });
   }
 
-  async getFeatures(workspaceSlug: string, projectId: string): Promise<TProjectFeatures> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/features/`)
+  async getProjectFeatures(workspaceSlug: string): Promise<TProjectFeatures[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/workspace-project-features/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async toggleFeatures(workspaceSlug: string, projectId: string, data: Partial<TProject>): Promise<TProject> {
+  async toggleProjectFeatures(
+    workspaceSlug: string,
+    projectId: string,
+    data: Partial<TProjectFeatures>
+  ): Promise<TProjectFeatures> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/features/`, data)
       .then((response) => response?.data)
       .catch((error) => {

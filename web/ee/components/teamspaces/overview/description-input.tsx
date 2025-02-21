@@ -15,14 +15,10 @@ import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
 // helpers
 import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useEditorAsset, useWorkspace } from "@/hooks/store";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
-// services
-import { FileService } from "@/services/file.service";
-
-const fileService = new FileService();
 
 export type TeamspaceDescriptionInputProps = {
   initialValue: string | undefined;
@@ -39,6 +35,7 @@ export const TeamspaceDescriptionInput: FC<TeamspaceDescriptionInputProps> = obs
   const { t } = useTranslation();
   // store hooks
   const { getTeamspaceMemberIds, updateTeamspaceNameDescriptionLoader, updateTeamspace } = useTeamspaces();
+  const { uploadEditorAsset } = useEditorAsset();
   // derived values
   const teamspaceMemberIds = getTeamspaceMemberIds(teamspaceId) ?? [];
   // use editor mention search
@@ -121,16 +118,17 @@ export const TeamspaceDescriptionInput: FC<TeamspaceDescriptionInputProps> = obs
                 placeholder={
                   placeholder ? placeholder : (isFocused, value) => t(getDescriptionPlaceholderI18n(isFocused, value))
                 }
-                uploadFile={async (file) => {
+                uploadFile={async (blockId, file) => {
                   try {
-                    const { asset_id } = await fileService.uploadWorkspaceAsset(
-                      workspaceSlug,
-                      {
+                    const { asset_id } = await uploadEditorAsset({
+                      blockId,
+                      data: {
                         entity_identifier: teamspaceId,
                         entity_type: EFileAssetType.TEAM_SPACE_DESCRIPTION,
                       },
-                      file
-                    );
+                      file,
+                      workspaceSlug,
+                    });
                     return asset_id;
                   } catch (error) {
                     console.log("Error in uploading work item asset:", error);
@@ -143,6 +141,7 @@ export const TeamspaceDescriptionInput: FC<TeamspaceDescriptionInputProps> = obs
               <RichTextReadOnlyEditor
                 id={teamspaceId}
                 initialValue={localTeamspaceDescription.description_html ?? ""}
+                workspaceId={workspaceId}
                 workspaceSlug={workspaceSlug}
                 containerClassName={containerClassName}
               />

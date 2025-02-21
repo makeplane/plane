@@ -2,20 +2,18 @@ import React, { useState } from "react";
 // plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
-import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
+import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // components
 import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
-import { useEditorMention } from "@/hooks/use-editor-mention";
+import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-import { useFileSize } from "@/plane-web/hooks/use-file-size";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 const workspaceService = new WorkspaceService();
@@ -32,7 +30,7 @@ interface LiteTextEditorWrapperProps
   isSubmitting?: boolean;
   showToolbarInitially?: boolean;
   showToolbar?: boolean;
-  uploadFile: (file: File) => Promise<string>;
+  uploadFile: TFileHandler["upload"];
   issue_id?: string;
   parentClassName?: string;
 }
@@ -70,8 +68,8 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         issue_id: issue_id,
       }),
   });
-  // file size
-  const { maxFileSize } = useFileSize();
+  // editor config
+  const { getEditorFileHandlers } = useEditorConfig();
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
     return !!ref && typeof ref === "object" && "current" in ref;
   }
@@ -89,7 +87,6 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         ref={ref}
         disabledExtensions={disabledExtensions}
         fileHandler={getEditorFileHandlers({
-          maxFileSize,
           projectId,
           uploadFile,
           workspaceId,

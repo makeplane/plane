@@ -19,13 +19,9 @@ export const IssueTypesRoot = observer(() => {
   // plane hooks
   const { t } = useTranslation();
   // plane web store hooks
-  const { isIssueTypeEnabledForProject } = useIssueTypes();
+  const { isWorkItemTypeEnabledForProject } = useIssueTypes();
   // derived values
-  const isIssueTypeSettingsEnabled = isIssueTypeEnabledForProject(
-    workspaceSlug?.toString(),
-    projectId?.toString(),
-    "ISSUE_TYPES"
-  );
+  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId?.toString());
 
   const handleEditIssueTypeIdChange = (issueTypeId: string) => {
     setEditIssueTypeId(issueTypeId);
@@ -36,14 +32,14 @@ export const IssueTypesRoot = observer(() => {
     <div className="container mx-auto h-full pb-8">
       <div className="flex items-center justify-between border-b border-custom-border-100 pb-3.5 gap-14">
         <h3 className="text-xl font-medium">{t("work_item_types.label")}</h3>
-        {isIssueTypeSettingsEnabled && (
+        {isWorkItemTypeEnabled && (
           <Button variant="primary" size="sm" onClick={() => setIsModalOpen(true)}>
             {t("work_item_types.create.button")}
           </Button>
         )}
       </div>
       <div className="my-2 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
-        {isIssueTypeSettingsEnabled ? (
+        {isWorkItemTypeEnabled ? (
           <IssueTypesList onEditIssueTypeIdChange={handleEditIssueTypeIdChange} />
         ) : (
           <IssueTypeEmptyState workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />

@@ -438,25 +438,28 @@ export function isUserMessage(
 export interface BasePlaneResource {
   type: "issue" | "cycle" | "module" | "project";
   workspaceSlug: string;
-  projectId: string;
 }
 
 export interface IssueResource extends BasePlaneResource {
   type: "issue";
-  issueId: string;
+  projectIdentifier: string;
+  issueKey: string;
 }
 
 export interface CycleResource extends BasePlaneResource {
   type: "cycle";
+  projectId: string;
   cycleId: string;
 }
 
 export interface ModuleResource extends BasePlaneResource {
   type: "module";
+  projectId: string;
   moduleId: string;
 }
 
 export interface ProjectResource extends BasePlaneResource {
+  projectId: string;
   type: "project";
 }
 

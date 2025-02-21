@@ -1,14 +1,12 @@
 import { forwardRef } from "react";
 import { observer } from "mobx-react";
 // plane web components
-import { TCreationListModes } from "@plane/types";
-import { IssuePropertyListItem, TIssuePropertyCreateList } from "@/plane-web/components/issue-types";
-// plane imports
+import { IssuePropertyListItem, TCustomPropertyOperations, TIssuePropertyCreateList } from "@/plane-web/components/issue-types";
 
 export type TIssuePropertyCreateListItem = {
-  issueTypeId: string;
   issuePropertyCreateListData?: TIssuePropertyCreateList;
-  handleIssuePropertyCreateList: (mode: TCreationListModes, value: TIssuePropertyCreateList) => void;
+  customPropertyOperations: TCustomPropertyOperations;
+  isUpdateAllowed: boolean;
 };
 
 export const IssuePropertyCreateListItem = observer(
@@ -16,15 +14,15 @@ export const IssuePropertyCreateListItem = observer(
     props: TIssuePropertyCreateListItem,
     ref: React.Ref<HTMLDivElement>
   ) {
-    const { issueTypeId, issuePropertyCreateListData, handleIssuePropertyCreateList } = props;
+    const { issuePropertyCreateListData, customPropertyOperations, isUpdateAllowed } = props;
 
     return (
       <div ref={ref}>
         <IssuePropertyListItem
-          issueTypeId={issueTypeId}
           issuePropertyCreateListData={issuePropertyCreateListData}
           operationMode="create"
-          handleIssuePropertyCreateList={handleIssuePropertyCreateList}
+          customPropertyOperations={customPropertyOperations}
+          isUpdateAllowed={isUpdateAllowed}
         />
       </div>
     );

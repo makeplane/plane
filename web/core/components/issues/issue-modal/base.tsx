@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { EIssuesStoreType, ISSUE_CREATED, ISSUE_UPDATED } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType, ISSUE_CREATED, ISSUE_UPDATED } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { TBaseIssue, TIssue } from "@plane/types";
@@ -17,6 +17,7 @@ import { useEventTracker, useCycle, useIssues, useModule, useIssueDetail, useUse
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // services
+import { useIssueTypes } from "@/plane-web/hooks/store";
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 // local components
@@ -65,8 +66,14 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const { issues } = useIssues(storeType);
   const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
   const { issues: draftIssues } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
-  const { fetchIssue } = useIssueDetail();
+  const {
+    issue: { getIssueById },
+    fetchIssue,
+    removeSubIssue,
+  } = useIssueDetail();
+  const { removeSubIssue: removeEpicSubIssue } = useIssueDetail(EIssueServiceType.EPICS);
   const { handleCreateUpdatePropertyValues } = useIssueModal();
+  const { getIssueTypeById } = useIssueTypes();
   // pathname
   const pathname = usePathname();
   // current store details
@@ -214,7 +221,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           issueId: response.id,
           issueTypeId: response.type_id,
           projectId: response.project_id,
-          workspaceSlug: workspaceSlug.toString(),
+          workspaceSlug: workspaceSlug?.toString(),
           isDraft: is_draft_issue,
         });
       }
@@ -260,6 +267,15 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     if (!workspaceSlug || !payload.project_id || !data?.id) return;
 
     try {
+      // check for parent change
+      if (data?.parent_id && payload?.parent_id && payload?.parent_id !== data?.parent_id) {
+        const oldParentIssue = getIssueById(data?.parent_id);
+        const isOldParentEpic = getIssueTypeById(oldParentIssue?.type_id || "")?.is_epic;
+        if (isOldParentEpic)
+          await removeEpicSubIssue(workspaceSlug?.toString(), payload.project_id, data.parent_id, data.id);
+        else await removeSubIssue(workspaceSlug?.toString(), payload.project_id, data.parent_id, data.id);
+      }
+
       if (isDraft) await draftIssues.updateIssue(workspaceSlug.toString(), data.id, payload);
       else if (updateIssue) await updateIssue(payload.project_id, data.id, payload);
 
@@ -284,7 +300,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         issueId: data.id,
         issueTypeId: payload.type_id,
         projectId: payload.project_id,
-        workspaceSlug: workspaceSlug.toString(),
+        workspaceSlug: workspaceSlug?.toString(),
         isDraft: isDraft,
       });
 

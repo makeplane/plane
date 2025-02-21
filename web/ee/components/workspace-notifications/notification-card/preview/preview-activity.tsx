@@ -13,15 +13,17 @@ import { IssueActivityBlock } from "@/plane-web/components/workspace-notificatio
 export type TNotificationPreviewActivity = {
   notification: TNotification;
   ends: "top" | "bottom" | "single" | undefined;
+  workspaceId: string;
   workspaceSlug: string;
   projectId: string;
 };
 
 const NotificationContent: FC<{
   notification: TNotification;
+  workspaceId: string;
   workspaceSlug: string;
   projectId: string;
-}> = ({ notification, workspaceSlug, projectId }) => {
+}> = ({ notification, workspaceId, workspaceSlug, projectId }) => {
   const { data, triggered_by_details: triggeredBy } = notification;
   const notificationField = data?.issue_activity.field;
   const newValue = data?.issue_activity.new_value;
@@ -75,6 +77,7 @@ const NotificationContent: FC<{
               <LiteTextReadOnlyEditor
                 id=""
                 initialValue={newValue ?? ""}
+                workspaceId={workspaceId}
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
               />
@@ -87,7 +90,7 @@ const NotificationContent: FC<{
 };
 
 export const NotificationPreviewActivity: FC<TNotificationPreviewActivity> = (props) => {
-  const { notification, workspaceSlug, ends, projectId } = props;
+  const { notification, workspaceId, workspaceSlug, ends, projectId } = props;
   const notificationField = notification?.data?.issue_activity.field || undefined;
   // const notificationTriggeredBy = notification.triggered_by_details || undefined;
   const triggeredBy = notification.triggered_by_details;
@@ -103,7 +106,12 @@ export const NotificationPreviewActivity: FC<TNotificationPreviewActivity> = (pr
         triggeredBy={triggeredBy}
       >
         <div className="w-full whitespace-normal truncate text-sm">
-          <NotificationContent notification={notification} workspaceSlug={workspaceSlug} projectId={projectId} />
+          <NotificationContent
+            notification={notification}
+            workspaceId={workspaceId}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+          />
         </div>
       </IssueActivityBlock>
     </div>

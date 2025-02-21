@@ -269,12 +269,12 @@ CELERY_IMPORTS = (
     "plane.bgtasks.file_asset_task",
     "plane.bgtasks.email_notification_task",
     "plane.bgtasks.api_logs_task",
-    "plane.bgtasks.entity_issue_state_progress_task",
     "plane.license.bgtasks.tracer",
     "plane.license.bgtasks.version_check_task",
     # payment tasks
     "plane.payment.bgtasks.workspace_subscription_sync_task",
     "plane.payment.bgtasks.free_seat_sync",
+    "plane.payment.bgtasks.update_license_task",
     # management tasks
     "plane.bgtasks.dummy_data_task",
     # issue version tasks
@@ -282,6 +282,8 @@ CELERY_IMPORTS = (
     "plane.bgtasks.issue_description_version_sync",
     "plane.bgtasks.silo_data_migration_task",
     "plane.bgtasks.silo_credentials_update_task",
+    # ee tasks
+    "plane.ee.bgtasks.entity_issue_state_progress_task",
 )
 
 # Sentry Settings

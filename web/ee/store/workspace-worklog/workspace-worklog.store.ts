@@ -139,8 +139,8 @@ export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
    * @returns { boolean }
    */
   isWorklogsEnabledByProjectId = computedFn((projectId: string) => {
-    const projectDetails = this.store.projectRoot.project.getProjectById(projectId);
-    return projectDetails?.is_time_tracking_enabled && this.isFeatureFlagEnabled ? true : false;
+    const projectFeatures = this.store.projectDetails.getProjectFeatures(projectId);
+    return projectFeatures?.is_time_tracking_enabled && this.isFeatureFlagEnabled ? true : false;
   });
 
   /**

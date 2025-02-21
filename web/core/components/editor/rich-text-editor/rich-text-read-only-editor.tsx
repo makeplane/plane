@@ -5,7 +5,8 @@ import { EditorReadOnlyRefApi, IRichTextReadOnlyEditor, RichTextReadOnlyEditorWi
 import { EditorMentionsRoot } from "@/components/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
+// hooks
+import { useEditorConfig } from "@/hooks/editor";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
@@ -13,14 +14,17 @@ type RichTextReadOnlyEditorWrapperProps = Omit<
   IRichTextReadOnlyEditor,
   "disabledExtensions" | "fileHandler" | "mentionHandler"
 > & {
+  workspaceId: string;
   workspaceSlug: string;
   projectId?: string;
 };
 
 export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, RichTextReadOnlyEditorWrapperProps>(
-  ({ workspaceSlug, projectId, ...props }, ref) => {
+  ({ workspaceId, workspaceSlug, projectId, ...props }, ref) => {
     // editor flaggings
     const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
+    // editor config
+    const { getReadOnlyEditorFileHandlers } = useEditorConfig();
 
     return (
       <RichTextReadOnlyEditorWithRef
@@ -28,6 +32,7 @@ export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Ric
         disabledExtensions={disabledExtensions}
         fileHandler={getReadOnlyEditorFileHandlers({
           projectId,
+          workspaceId,
           workspaceSlug,
         })}
         mentionHandler={{

@@ -31,7 +31,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
   const [issuePropertyValueErrors, setIssuePropertyValueErrors] = useState<TIssuePropertyValueErrors>({});
   // plane web hooks
   const {
-    isIssueTypeEnabledForProject,
+    isWorkItemTypeEnabledForProject,
     getIssueTypeById,
     getIssueTypeProperties,
     getProjectIssueTypes,
@@ -61,9 +61,8 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
     const { projectId, watch, workspaceSlug } = props;
     const issueTypeId = watch("type_id");
     // if issue type is not enabled for the project or no issue type id, return 0
-    const isIssueTypeDisplayEnabled =
-      !!projectId && isIssueTypeEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPES");
-    if (!isIssueTypeDisplayEnabled || !issueTypeId) return 0;
+    const isWorkItemTypeEnabled = !!projectId && isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
+    if (!isWorkItemTypeEnabled || !issueTypeId) return 0;
     // all properties for the issue type
     const properties = getIssueTypeProperties(issueTypeId);
     // filter all active properties
@@ -77,9 +76,8 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
 
     const issueTypeId = watch("type_id");
     // if issue type is not enabled for the project, skip validation
-    const isIssueTypeDisplayEnabled =
-      !!projectId && isIssueTypeEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPES");
-    if (!isIssueTypeDisplayEnabled) return true;
+    const isWorkItemTypeEnabled = !!projectId && isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
+    if (!isWorkItemTypeEnabled) return true;
     // if no issue type id or no issue property values, skip validation
     if (!issueTypeId) return true;
     // all properties for the issue type
@@ -112,8 +110,8 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
     // check if issue property values are empty
     if (Object.keys(issuePropertyValues).length === 0) return;
     // check if issue type display is enabled
-    const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPES");
-    if (!isIssueTypeDisplayEnabled) return;
+    const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
+    if (!isWorkItemTypeEnabled) return;
     // get issue type details
     const issueType = issueTypeId ? getIssueTypeById(issueTypeId) : null;
     // get draft issue type details
@@ -132,7 +130,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
     )
       .then(() => {
         // mutate issue property values
-        mutate(`ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${isIssueTypeDisplayEnabled}`);
+        mutate(`ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${isWorkItemTypeEnabled}`);
         // fetch property activities
         fetchPropertyActivities(workspaceSlug, projectId, issueId);
         // reset issue property values

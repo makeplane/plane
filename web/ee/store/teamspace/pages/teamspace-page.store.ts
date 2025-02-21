@@ -1,5 +1,5 @@
 import set from "lodash/set";
-import { observable, action, makeObservable, runInAction } from "mobx";
+import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { ETeamspaceEntityScope } from "@plane/constants";
@@ -28,14 +28,18 @@ export interface ITeamspacePageStore {
   getTeamspacePagesFetchedStatus: (teamspaceId: string) => boolean | undefined;
   getTeamspacePageIds: (teamspaceId: string) => string[] | undefined;
   getFilteredTeamspacePageIds: (teamspaceId: string) => string[] | undefined;
-  getPageById: (teamspaceId: string, pageId: string) => TTeamspacePageDetails | undefined;
+  getPageById: (pageId: string) => TTeamspacePageDetails | undefined;
   // helper actions
   initTeamspacePagesScope: (teamspaceId: string) => void;
   getTeamspacePagesScope: (teamspaceId: string) => ETeamspaceEntityScope | undefined;
   initTeamspacePagesFilters: (teamspaceId: string) => void;
   getTeamspacePagesFilters: (teamspaceId: string) => TPageFilters | undefined;
   updateTeamScope: (workspaceSlug: string, teamspaceId: string, scope: ETeamspaceEntityScope) => void;
-  updateFilters: <T extends keyof TPageFilters>(teamspaceId: string, filterKey: T, filterValue: TPageFilters[T]) => void;
+  updateFilters: <T extends keyof TPageFilters>(
+    teamspaceId: string,
+    filterKey: T,
+    filterValue: TPageFilters[T]
+  ) => void;
   clearAllFilters: (teamspaceId: string) => void;
   // fetch actions
   fetchTeamspacePages: (workspaceSlug: string, teamspaceId: string, loader?: TLoader) => Promise<TPage[] | undefined>;
@@ -46,8 +50,8 @@ export interface ITeamspacePageStore {
     loader?: TLoader
   ) => Promise<TPage | undefined>;
   // CRUD actions
-  createPage: (workspaceSlug: string, teamspaceId: string, data: Partial<TPage>) => Promise<TPage>;
-  deletePage: (workspaceSlug: string, teamspaceId: string, pageId: string) => Promise<void>;
+  createPage: (data: Partial<TPage>) => Promise<TPage>;
+  removePage: (pageId: string) => Promise<void>;
 }
 
 export class TeamspacePageStore implements ITeamspacePageStore {
@@ -71,6 +75,8 @@ export class TeamspacePageStore implements ITeamspacePageStore {
       scopeMap: observable,
       pageMap: observable,
       filtersMap: observable,
+      // computed
+      flattenedPages: computed,
       // helper actions
       initTeamspacePagesScope: action,
       initTeamspacePagesFilters: action,
@@ -82,7 +88,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
       fetchTeamspacePageDetails: action,
       // CRUD actions
       createPage: action,
-      deletePage: action,
+      removePage: action,
     });
     // root store
     this.rootStore = _rootStore;
@@ -92,6 +98,16 @@ export class TeamspacePageStore implements ITeamspacePageStore {
   }
 
   // computed functions
+  get flattenedPages() {
+    return Object.values(this.pageMap).reduce(
+      (result, teamPages) => ({
+        ...result,
+        ...teamPages,
+      }),
+      {}
+    );
+  }
+
   /**
    * Returns teamspace loader
    * @param teamspaceId
@@ -145,7 +161,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
    * @param pageId
    * @returns TTeamspacePageDetails | undefined
    */
-  getPageById = computedFn((teamspaceId: string, pageId: string) => this.pageMap[teamspaceId]?.[pageId] ?? undefined);
+  getPageById = computedFn((pageId: string) => this.flattenedPages[pageId]);
 
   /**
    * Initializes teamspace pages scope
@@ -314,10 +330,11 @@ export class TeamspacePageStore implements ITeamspacePageStore {
    * @param data
    * @returns Promise<TPage>
    */
-  createPage = async (workspaceSlug: string, teamspaceId: string, data: Partial<TPage>): Promise<TPage> => {
-    const response = await this.teamspacePageService.create(workspaceSlug, teamspaceId, data);
+  createPage = async (data: Partial<TPage>): Promise<TPage> => {
+    const { workspaceSlug, teamspaceId } = this.rootStore.router;
+    const response = await this.teamspacePageService.create(workspaceSlug ?? "", teamspaceId ?? "", data);
     runInAction(() => {
-      if (response?.id) {
+      if (response?.id && teamspaceId) {
         set(this.pageMap, [teamspaceId, response.id], new TeamspacePage(this.rootStore, response));
       }
     });
@@ -331,15 +348,17 @@ export class TeamspacePageStore implements ITeamspacePageStore {
    * @param pageId
    * @returns
    */
-  deletePage = async (workspaceSlug: string, teamspaceId: string, pageId: string): Promise<void> => {
-    const currentPage = this.getPageById(teamspaceId, pageId);
+  removePage = async (pageId: string): Promise<void> => {
+    const { workspaceSlug, teamspaceId } = this.rootStore.router;
+    if (!workspaceSlug || !teamspaceId) return;
+    const currentPage = this.getPageById(pageId);
     const deletePagePromise =
       currentPage.project_ids?.length === 0
         ? this.teamspacePageService.remove(workspaceSlug, teamspaceId, pageId)
         : currentPage.project_ids?.[0] &&
-        this.projectPageService.remove(workspaceSlug, currentPage.project_ids[0], pageId);
+          this.projectPageService.remove(workspaceSlug, currentPage.project_ids[0], pageId);
     // delete page
-    if (!deletePagePromise) return;
+    if (!deletePagePromise || !teamspaceId) return;
     await deletePagePromise.then(() => {
       runInAction(() => {
         delete this.pageMap[teamspaceId][pageId];

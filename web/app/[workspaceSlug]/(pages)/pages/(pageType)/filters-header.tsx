@@ -10,13 +10,13 @@ import { PageAppliedFiltersList } from "@/components/pages";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // plane web hooks
-import { useWorkspacePages } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 export const PageTypeFiltersHeader = observer(() => {
   // params
   const pathname = usePathname();
   // store hooks
-  const { filters, updateFilters, clearAllFilters } = useWorkspacePages();
+  const { filters, updateFilters, clearAllFilters } = usePageStore(EPageStoreType.WORKSPACE);
   // derived values
   const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
   // handle remove filter

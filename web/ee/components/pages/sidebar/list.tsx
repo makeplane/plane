@@ -14,9 +14,9 @@ import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme, useEventTracker } from "@/hooks/store";
 // plane web components
-import { PagesAppSidebarListItem } from "@/plane-web/components/pages";
+import { WikiPageSidebarListItem } from "@/plane-web/components/pages";
 // plane web hooks
-import { useWorkspacePages } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 export const PagesAppSidebarList = observer(() => {
   // states
@@ -27,7 +27,7 @@ export const PagesAppSidebarList = observer(() => {
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
   const { setTrackElement } = useEventTracker();
-  const { getCurrentWorkspacePageIdsByType, createPage } = useWorkspacePages();
+  const { getCurrentWorkspacePageIdsByType, createPage } = usePageStore(EPageStoreType.WORKSPACE);
   // derived values
   const isCollapsed = sidebarCollapsed || false;
   // handle page create
@@ -63,19 +63,19 @@ export const PagesAppSidebarList = observer(() => {
   } = {
     public: {
       key: "public",
-      label: "PUBLIC",
+      label: "Public",
       icon: Globe2,
       pageIds: getCurrentWorkspacePageIdsByType("public"),
     },
     private: {
       key: "private",
-      label: "PRIVATE",
+      label: "Private",
       icon: Lock,
       pageIds: getCurrentWorkspacePageIdsByType("private"),
     },
     archived: {
       key: "archived",
-      label: "ARCHIVED",
+      label: "Archived",
       icon: ArchiveIcon,
       pageIds: getCurrentWorkspacePageIdsByType("archived"),
     },
@@ -156,7 +156,7 @@ export const PagesAppSidebarList = observer(() => {
                 })}
               >
                 {section.pageIds && section.pageIds.length > 0 ? (
-                  section.pageIds.map((pageId) => <PagesAppSidebarListItem key={pageId} pageId={pageId} />)
+                  section.pageIds.map((pageId) => <WikiPageSidebarListItem key={pageId} pageId={pageId} />)
                 ) : (
                   <p className="text-custom-text-400 text-xs text-center font-medium ml-1 mt-2">
                     No {section.key} pages

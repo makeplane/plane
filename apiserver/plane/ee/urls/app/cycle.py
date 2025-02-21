@@ -4,6 +4,7 @@ from plane.ee.views.app.cycle import (
     WorkspaceActiveCycleEndpoint,
     CycleUpdatesViewSet,
     CycleStartStopEndpoint,
+    CycleIssueStateAnalyticsEndpoint,
 )
 from plane.ee.views.app.update import UpdatesReactionViewSet
 
@@ -51,4 +52,9 @@ urlpatterns = [
         name="cycle-start-stop",
     ),
     # cycle start and stop ends
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/cycle-progress/",
+        CycleIssueStateAnalyticsEndpoint.as_view(),
+        name="project-cycle-progress",
+    ),
 ]

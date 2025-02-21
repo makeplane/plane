@@ -5,6 +5,8 @@ import { observer } from "mobx-react";
 import { Rocket } from "lucide-react";
 // types
 import { ISearchIssueResponse } from "@plane/types";
+// helpers
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // hooks
@@ -43,7 +45,14 @@ export const ParentIssuesListItem: FC<Props> = observer((props) => {
         <span className="truncate">{issue.name}</span>
       </div>
       <a
-        href={`/${workspaceSlug}/projects/${issue.project_id}/${isParentEpic ? "epics" : "issues"}/${issue.id}`}
+        href={generateWorkItemLink({
+          workspaceSlug: workspaceSlug.toString(),
+          projectId: issue?.project_id,
+          issueId: issue?.id,
+          projectIdentifier: issue.project__identifier,
+          sequenceId: issue?.sequence_id,
+          isEpic: isParentEpic,
+        })}
         target="_blank"
         className="z-1 relative hidden flex-shrink-0 text-custom-text-200 hover:text-custom-text-100 group-hover:block"
         rel="noopener noreferrer"

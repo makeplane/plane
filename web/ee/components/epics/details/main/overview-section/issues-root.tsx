@@ -61,7 +61,7 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
   const {
     issue: { getIssueById },
   } = useIssueDetail(EIssueServiceType.EPICS);
-  const { toggleCreateIssueModal, toggleDeleteIssueModal } = useIssueDetail();
+  const { toggleCreateIssueModal, toggleDeleteIssueModal } = useIssueDetail(EIssueServiceType.EPICS);
 
   // helpers
   const subIssueOperations = useSubIssueOperations(EIssueServiceType.EPICS);

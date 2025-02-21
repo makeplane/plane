@@ -1,7 +1,3 @@
-import { useIssueTypes } from "../hooks/store";
+import { store } from "@/lib/store-context";
 
-export const updateEpicAnalytics = () => {
-  const { updateEpicAnalytics: updateAnalytics } = useIssueTypes();
-
-  return { updateAnalytics };
-};
+export const updateEpicAnalytics = () => ({ updateAnalytics: store.epicAnalytics.updateEpicAnalytics });

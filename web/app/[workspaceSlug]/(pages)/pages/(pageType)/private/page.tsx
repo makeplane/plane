@@ -1,8 +1,8 @@
 "use client";
 
 // plane web components
-import { PagesListLayoutRoot } from "@/plane-web/components/pages";
+import { WikiPagesListLayoutRoot } from "@/plane-web/components/pages";
 
 export default function PrivatePagesList() {
-  return <PagesListLayoutRoot pageType="private" />;
+  return <WikiPagesListLayoutRoot pageType="private" />;
 }

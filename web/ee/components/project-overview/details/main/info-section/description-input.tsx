@@ -7,20 +7,16 @@ import { Controller, useForm } from "react-hook-form";
 // types
 import { useTranslation } from "@plane/i18n";
 import { EFileAssetType } from "@plane/types/src/enums";
-
 // components
 import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
 // helpers
 import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useEditorAsset, useWorkspace } from "@/hooks/store";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services/workspace.service";
 // plane web types
 import { TProject } from "@/plane-web/types";
-// services
-import { FileService } from "@/services/file.service";
-const fileService = new FileService();
 const workspaceService = new WorkspaceService();
 
 export type ProjectDescriptionInputProps = {
@@ -47,6 +43,8 @@ export const ProjectDescriptionInput: FC<ProjectDescriptionInputProps> = observe
     setIsSubmitting,
     placeholder,
   } = props;
+  // store hooks
+  const { uploadEditorAsset } = useEditorAsset();
   // plane hooks
   const { t } = useTranslation();
 
@@ -118,17 +116,18 @@ export const ProjectDescriptionInput: FC<ProjectDescriptionInputProps> = observe
                 placeholder ? placeholder : (isFocused, value) => t(getDescriptionPlaceholderI18n(isFocused, value))
               }
               containerClassName={containerClassName}
-              uploadFile={async (file) => {
+              uploadFile={async (blockId, file) => {
                 try {
-                  const { asset_id } = await fileService.uploadProjectAsset(
-                    workspaceSlug,
-                    project.id,
-                    {
+                  const { asset_id } = await uploadEditorAsset({
+                    blockId,
+                    data: {
                       entity_identifier: project.id,
                       entity_type: EFileAssetType.PROJECT_DESCRIPTION,
                     },
-                    file
-                  );
+                    file,
+                    projectId: project.id,
+                    workspaceSlug,
+                  });
                   return asset_id;
                 } catch (error) {
                   console.log("Error in uploading project asset:", error);
@@ -141,6 +140,7 @@ export const ProjectDescriptionInput: FC<ProjectDescriptionInputProps> = observe
               id={project.id}
               initialValue={initialValue ?? ""}
               containerClassName={containerClassName}
+              workspaceId={workspaceId}
               workspaceSlug={workspaceSlug}
               projectId={project.id}
             />

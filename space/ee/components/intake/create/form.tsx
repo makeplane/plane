@@ -94,7 +94,7 @@ const IssueForm = observer((props: TProps) => {
           }
           placeholder={placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)}
           containerClassName="px-0 text-base"
-          uploadFile={async (file) => {
+          uploadFile={async (blockId, file) => {
             const { asset_id } = await uploadIssueAsset(file, anchor);
             return asset_id;
           }}

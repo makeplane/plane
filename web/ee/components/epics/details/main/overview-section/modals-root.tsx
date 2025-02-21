@@ -9,7 +9,7 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web hooks
-import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useIssueTypes, useEpicAnalytics } from "@/plane-web/hooks/store";
 
 type Props = {
   workspaceSlug: string;
@@ -33,26 +33,52 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
     createRelation,
     issueCrudOperationState,
     setIssueCrudOperationState,
-    createSubIssues,
+    createSubIssues: createEpicSubIssues,
+    issue: { getIssueById },
   } = useIssueDetail(EIssueServiceType.EPICS);
-  const { fetchEpicAnalytics } = useIssueTypes();
+  const { createSubIssues } = useIssueDetail();
+  const { getIssueTypeById } = useIssueTypes();
+  const { fetchEpicAnalytics } = useEpicAnalytics();
+
+  const handleAddSubIssueResponse = (successMessage: string) => {
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
+      title: "Success!",
+      message: successMessage,
+    });
+  };
+
+  const handleAddSubIssueError = () => {
+    setToast({
+      type: TOAST_TYPE.ERROR,
+      title: "Error!",
+      message: "Error adding work item",
+    });
+  };
+
+  const addSubIssueToEpic = async (
+    workspaceSlug: string,
+    projectId: string,
+    parentIssueId: string,
+    issueIds: string[]
+  ) => {
+    try {
+      await createEpicSubIssues(workspaceSlug, projectId, parentIssueId, issueIds).then(() => {
+        fetchEpicAnalytics(workspaceSlug, projectId, epicId);
+        handleAddSubIssueResponse("Work items added successfully");
+      });
+    } catch (error) {
+      handleAddSubIssueError();
+    }
+  };
 
   const addSubIssue = async (workspaceSlug: string, projectId: string, parentIssueId: string, issueIds: string[]) => {
     try {
       await createSubIssues(workspaceSlug, projectId, parentIssueId, issueIds).then(() => {
-        fetchEpicAnalytics(workspaceSlug, projectId, epicId);
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Work items added successfully",
-        });
+        handleAddSubIssueResponse("Work items added successfully");
       });
     } catch (error) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Error adding work item",
-      });
+      handleAddSubIssueError();
     }
   };
 
@@ -79,7 +105,7 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
   };
 
   const handleExistingIssuesModalOnSubmit = async (_issue: ISearchIssueResponse[]) =>
-    await addSubIssue(
+    await addSubIssueToEpic(
       workspaceSlug,
       projectId,
       epicId,
@@ -92,11 +118,21 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
     setLastWidgetAction("sub-issues");
   };
 
+  // derived values
+
   const handleCreateUpdateModalOnSubmit = async (_issue: TIssue) => {
     if (_issue.parent_id) {
-      await addSubIssue(workspaceSlug, projectId, epicId, [_issue.id]).then(() => {
-        fetchEpicAnalytics(workspaceSlug, projectId, epicId);
-      });
+      const parentIssue = getIssueById(_issue.parent_id);
+      const parentIssueTypeDetails = parentIssue?.type_id ? getIssueTypeById(parentIssue.type_id) : undefined;
+      const isParentEpic = parentIssueTypeDetails?.is_epic;
+
+      if (isParentEpic) {
+        await addSubIssueToEpic(workspaceSlug, projectId, _issue.parent_id, [_issue.id]).then(() => {
+          fetchEpicAnalytics(workspaceSlug, projectId, epicId);
+        });
+      } else {
+        await addSubIssue(workspaceSlug, projectId, _issue.parent_id, [_issue.id]);
+      }
     }
   };
 

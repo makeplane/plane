@@ -9,7 +9,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 import { useUser, useAppTheme, useCommandPalette, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { PagesAppCommandModal, PagesAppShortcutsModal } from "@/plane-web/components/command-palette";
-import { PagesAppCreatePageModal } from "@/plane-web/components/pages";
+import { WikiCreatePageModal } from "@/plane-web/components/pages";
 
 export const PagesAppCommandPalette: React.FC = observer(() => {
   // params
@@ -121,7 +121,7 @@ export const PagesAppCommandPalette: React.FC = observer(() => {
     <>
       <PagesAppShortcutsModal isOpen={isShortcutModalOpen} onClose={() => toggleShortcutModal(false)} />
       {workspaceSlug && (
-        <PagesAppCreatePageModal
+        <WikiCreatePageModal
           workspaceSlug={workspaceSlug.toString()}
           isModalOpen={createPageModal.isOpen}
           pageAccess={createPageModal.pageAccess}

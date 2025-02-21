@@ -2,6 +2,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
+import { EWorkItemTypeEntity } from "@plane/constants";
 import { Loader, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // ce components
 import {
@@ -94,7 +95,7 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-  const { loader: issueTypesLoader, isIssueTypeOrEpicEnabledForProject } = useIssueTypes();
+  const { loader: issueTypesLoader, isWorkItemTypeEntityEnabledForProject } = useIssueTypes();
   // Determine if the component is using store data or not
   const isUsingStoreData = "issueId" in props;
   // derived values
@@ -102,16 +103,16 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
   const issueTypeId = isUsingStoreData ? issue?.type_id : props.issueTypeId;
   const projectIdentifier = isUsingStoreData ? getProjectIdentifierById(projectId) : props.projectIdentifier;
   const issueSequenceId = isUsingStoreData ? issue?.sequence_id : props.issueSequenceId;
-  const isIssueTypeOrEpicDisplayEnabled = isIssueTypeOrEpicEnabledForProject(
+  const issueType = useIssueType(issueTypeId);
+  const isWorkItemTypeEntityEnabled = isWorkItemTypeEntityEnabledForProject(
     workspaceSlug?.toString(),
     projectId,
-    "ISSUE_TYPES",
-    "EPICS"
+    issueType?.is_epic ? EWorkItemTypeEntity.EPIC : EWorkItemTypeEntity.WORK_ITEM
   );
   const shouldRenderIssueTypeIcon = displayProperties ? displayProperties.issue_type : true;
   const shouldRenderIssueID = displayProperties ? displayProperties.key : true;
 
-  if (!isIssueTypeOrEpicDisplayEnabled) {
+  if (!isWorkItemTypeEntityEnabled) {
     const baseProps = {
       projectId,
       size,

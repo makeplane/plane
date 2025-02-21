@@ -8,22 +8,22 @@ import { TOAST_TYPE, setToast, AlertModalCore } from "@plane/ui";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // plane web hooks
-import { useWorkspacePageDetails, useWorkspacePages } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import { TPageInstance } from "@/store/pages/base-page";
 
 type TConfirmPageDeletionProps = {
   isOpen: boolean;
   onClose: () => void;
-  pageId: string;
+  page: TPageInstance;
 };
 
-export const WorkspacePageDeleteModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
-  const { pageId, isOpen, onClose } = props;
+export const WikiDeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
+  const { isOpen, onClose, page } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
-  const { deletePage } = useWorkspacePages();
+  const { removePage } = usePageStore(EPageStoreType.WORKSPACE);
   const { capturePageEvent } = useEventTracker();
-  const page = useWorkspacePageDetails(pageId);
 
   if (!page) return null;
 
@@ -35,8 +35,9 @@ export const WorkspacePageDeleteModal: React.FC<TConfirmPageDeletionProps> = obs
   };
 
   const handleDelete = async () => {
+    if (!page.id) return;
     setIsDeleting(true);
-    await deletePage(pageId)
+    await removePage(page.id)
       .then(() => {
         capturePageEvent({
           eventName: PAGE_DELETED,

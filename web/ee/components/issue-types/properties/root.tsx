@@ -1,12 +1,12 @@
-import { useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { v4 } from "uuid";
 import { InfoIcon, Plus } from "lucide-react";
 // plane imports
-import { EIssuePropertyType } from "@plane/constants";
+import { EIssuePropertyType, EWorkItemTypeEntity } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssueProperty, TCreationListModes } from "@plane/types";
+import { TIssueProperty, TCreationListModes, TIssuePropertyPayload } from "@plane/types";
 import { Button, Loader, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web components
@@ -16,6 +16,7 @@ import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 
 type TIssuePropertiesRoot = {
   issueTypeId: string;
+  entityType: EWorkItemTypeEntity;
 };
 
 export type TIssuePropertyCreateList = Partial<TIssueProperty<EIssuePropertyType>> & {
@@ -33,7 +34,7 @@ const defaultIssueProperty: Partial<TIssueProperty<EIssuePropertyType>> = {
 };
 
 export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
-  const { issueTypeId } = props;
+  const { issueTypeId, entityType } = props;
   // router
   const { projectId } = useParams();
   // states
@@ -41,10 +42,10 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { getProjectIssuePropertiesLoader } = useIssueTypes();
+  const { getProjectWorkItemPropertiesLoader } = useIssueTypes();
   const issueType = useIssueType(issueTypeId);
   // derived values
-  const issuePropertiesLoader = getProjectIssuePropertiesLoader(projectId?.toString());
+  const propertiesLoader = getProjectWorkItemPropertiesLoader(projectId?.toString(), entityType);
   const properties = issueType?.properties;
   const isAnyPropertiesAvailable = (properties && properties?.length > 0) || issuePropertyCreateList.length > 0;
   // refs
@@ -65,7 +66,7 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
   };
 
   // handlers
-  const handleIssuePropertyCreateList = (mode: TCreationListModes, value: TIssuePropertyCreateList) => {
+  const handleIssuePropertyCreateList = useCallback((mode: TCreationListModes, value: TIssuePropertyCreateList) => {
     switch (mode) {
       case "add":
         setIssuePropertyCreateList((prevValue) => {
@@ -82,16 +83,44 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
       default:
         break;
     }
-  };
+  }, []);
+
+  const customPropertyOperations = useMemo(
+    () => ({
+      // helper method to get the property detail
+      getPropertyDetail: (propertyId: string) => issueType?.getPropertyById(propertyId)?.asJSON,
+      // helper method to get the sorted active property options
+      getSortedActivePropertyOptions: (propertyId: string) => {
+        const propertyDetail = issueType?.getPropertyById(propertyId);
+        if (!propertyDetail) return;
+        return propertyDetail.sortedActivePropertyOptions;
+      },
+      // helper method to create a property
+      createProperty: async (data: TIssuePropertyPayload) => issueType?.createProperty?.(data),
+      // helper method to update a property
+      updateProperty: async (propertyId: string, data: TIssuePropertyPayload) => {
+        const updatedProperty = issueType?.getPropertyById(propertyId)?.updateProperty;
+        if (!updatedProperty) return;
+        updatedProperty(issueTypeId, data);
+      },
+      // helper method to delete a property
+      deleteProperty: async (propertyId: string) => issueType?.deleteProperty?.(propertyId),
+      // helper method to remove a property from the create list
+      removePropertyListItem: (value: TIssuePropertyCreateList) => {
+        handleIssuePropertyCreateList("remove", value);
+      },
+    }),
+    [issueType, issueTypeId, handleIssuePropertyCreateList]
+  );
 
   return (
     <div
       className={cn("pt-1", {
         "bg-custom-background-100 rounded-lg h-60 flex flex-col justify-center items-center":
-          issuePropertiesLoader !== "init-loader" && !isAnyPropertiesAvailable,
+          propertiesLoader !== "init-loader" && !isAnyPropertiesAvailable,
       })}
     >
-      {issuePropertiesLoader === "init-loader" ? (
+      {propertiesLoader === "init-loader" ? (
         <Loader className="w-full space-y-4 px-6 py-4">
           <Loader.Item height="25px" width="150px" />
           <Loader.Item height="35px" width="100%" />
@@ -108,17 +137,18 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
             </Tooltip>
           </div>
           <IssuePropertyList
-            issueTypeId={issueTypeId}
+            properties={properties}
             issuePropertyCreateList={issuePropertyCreateList}
-            handleIssuePropertyCreateList={handleIssuePropertyCreateList}
+            customPropertyOperations={customPropertyOperations}
             containerRef={containerRef}
             lastElementRef={lastElementRef}
+            isUpdateAllowed={issueType?.issue_exists === false}
           />
         </>
       ) : (
         <IssueTypePropertiesEmptyState />
       )}
-      {issuePropertiesLoader !== "init-loader" && (
+      {propertiesLoader !== "init-loader" && (
         <div className={cn("flex items-center py-2 px-6", !isAnyPropertiesAvailable && "justify-center")}>
           <Button
             variant="accent-primary"

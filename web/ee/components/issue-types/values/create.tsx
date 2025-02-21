@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/constants";
 import { TIssueServiceType } from "@plane/types";
 import { getPropertiesDefaultValues } from "@plane/utils";
 // hooks
@@ -21,6 +21,7 @@ type TIssueAdditionalPropertyValuesCreateProps = {
   issueTypeId: string;
   projectId: string;
   workspaceSlug: string;
+  entityType: EWorkItemTypeEntity;
   isDraft?: boolean;
   issueServiceType?: TIssueServiceType;
 };
@@ -34,6 +35,7 @@ export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPrope
       issueTypeId,
       projectId,
       workspaceSlug,
+      entityType,
       isDraft = false,
       issueServiceType = EIssueServiceType.ISSUES,
     } = props;
@@ -46,25 +48,20 @@ export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPrope
       setIssuePropertyValues: handleIssuePropertyValueUpdate,
     } = useIssueModal();
     const issueType = useIssueType(issueTypeId);
-    const { isIssueTypeOrEpicEnabledForProject } = useIssueTypes();
+    const { isWorkItemTypeEntityEnabledForProject } = useIssueTypes();
     // services
     const issuePropertyValuesService = new IssuePropertyValuesService(issueServiceType);
     // derived values
     const issueTypeDetail = issueType?.asJSON;
     const activeProperties = issueType?.activeProperties;
-    const isIssueTypeDisplayEnabled = isIssueTypeOrEpicEnabledForProject(
-      workspaceSlug?.toString(),
-      projectId,
-      "ISSUE_TYPES",
-      "EPICS"
-    );
+    const isWorkItemTypeEntityEnabled = isWorkItemTypeEntityEnabledForProject(workspaceSlug, projectId, entityType);
     // fetch issue property values
     const { data, isLoading } = useSWR(
-      workspaceSlug && projectId && issueId && isIssueTypeDisplayEnabled
-        ? `ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${isIssueTypeDisplayEnabled}`
+      workspaceSlug && projectId && issueId && entityType && isWorkItemTypeEntityEnabled
+        ? `ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${entityType}_${isWorkItemTypeEntityEnabled}`
         : null,
       () =>
-        workspaceSlug && projectId && issueId && isIssueTypeDisplayEnabled
+        workspaceSlug && projectId && issueId && entityType && isWorkItemTypeEntityEnabled
           ? isDraft
             ? draftIssuePropertyValuesService.fetchAll(workspaceSlug, projectId, issueId)
             : issuePropertyValuesService.fetchAll(workspaceSlug, projectId, issueId)

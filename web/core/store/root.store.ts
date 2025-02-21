@@ -1,5 +1,4 @@
 import { enableStaticRendering } from "mobx-react";
-import { EIssueServiceType } from "@plane/constants";
 // plane web store
 import { CommandPaletteStore, ICommandPaletteStore } from "@/plane-web/store/command-palette.store";
 import { RootStore } from "@/plane-web/store/root.store";
@@ -8,6 +7,7 @@ import { IStateStore, StateStore } from "@/plane-web/store/state.store";
 import { CycleStore, ICycleStore } from "./cycle.store";
 import { CycleFilterStore, ICycleFilterStore } from "./cycle_filter.store";
 import { DashboardStore, IDashboardStore } from "./dashboard.store";
+import { EditorAssetStore, IEditorAssetStore } from "./editor/asset.store";
 import { IProjectEstimateStore, ProjectEstimateStore } from "./estimates/project-estimate.store";
 import { EventTrackerStore, IEventTrackerStore } from "./event-tracker.store";
 import { FavoriteStore, IFavoriteStore } from "./favorite.store";
@@ -61,6 +61,7 @@ export class CoreRootStore {
   favorite: IFavoriteStore;
   transient: ITransientStore;
   stickyStore: IStickyStore;
+  editorAssetStore: IEditorAssetStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -90,6 +91,7 @@ export class CoreRootStore {
     this.favorite = new FavoriteStore(this);
     this.transient = new TransientStore();
     this.stickyStore = new StickyStore();
+    this.editorAssetStore = new EditorAssetStore();
   }
 
   resetOnSignOut() {
@@ -122,5 +124,6 @@ export class CoreRootStore {
     this.favorite = new FavoriteStore(this);
     this.transient = new TransientStore();
     this.stickyStore = new StickyStore();
+    this.editorAssetStore = new EditorAssetStore();
   }
 }

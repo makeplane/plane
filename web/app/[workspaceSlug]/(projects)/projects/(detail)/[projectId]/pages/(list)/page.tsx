@@ -9,11 +9,13 @@ import { TPageNavigationTabs } from "@plane/types";
 // components
 import { PageHead } from "@/components/core";
 import { DetailedEmptyState } from "@/components/empty-state";
-import { PagesListRoot, PagesListView } from "@/components/pages";
+import { ProjectPagesListRoot, ProjectPagesListView } from "@/components/pages";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// plane web hooks
+import { EPageStoreType } from "@/plane-web/hooks/store";
 
 const ProjectPagesPage = observer(() => {
   // router
@@ -62,13 +64,14 @@ const ProjectPagesPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <PagesListView
-        workspaceSlug={workspaceSlug.toString()}
-        projectId={projectId.toString()}
+      <ProjectPagesListView
         pageType={currentPageType()}
+        projectId={projectId.toString()}
+        storeType={EPageStoreType.PROJECT}
+        workspaceSlug={workspaceSlug.toString()}
       >
-        <PagesListRoot pageType={currentPageType()} />
-      </PagesListView>
+        <ProjectPagesListRoot pageType={currentPageType()} />
+      </ProjectPagesListView>
     </>
   );
 });

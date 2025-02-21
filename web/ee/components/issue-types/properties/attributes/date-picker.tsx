@@ -5,11 +5,8 @@ import { TDateAttributeDisplayOptions, TIssueProperty, TOperationMode } from "@p
 import { getDateAttributeDisplayName } from "@plane/utils";
 // plane web components
 import { PropertySettingsConfiguration } from "@/plane-web/components/issue-types/properties";
-// plane web hooks
-import { useIssueType } from "@/plane-web/hooks/store";
 
 type TDatePickerAttributesProps = {
-  issueTypeId: string;
   datePickerPropertyDetail: Partial<TIssueProperty<EIssuePropertyType.DATETIME>>;
   currentOperationMode: TOperationMode;
   onDatePickerDetailChange: <K extends keyof TIssueProperty<EIssuePropertyType.DATETIME>>(
@@ -17,14 +14,11 @@ type TDatePickerAttributesProps = {
     value: TIssueProperty<EIssuePropertyType.DATETIME>[K],
     shouldSync?: boolean
   ) => void;
+  isUpdateAllowed: boolean;
 };
 
 export const DatePickerAttributes = observer((props: TDatePickerAttributesProps) => {
-  const { issueTypeId, datePickerPropertyDetail, currentOperationMode, onDatePickerDetailChange } = props;
-  // store hooks
-  const issueType = useIssueType(issueTypeId);
-  // derived values
-  const isAnyIssueAttached = issueType?.issue_exists;
+  const { datePickerPropertyDetail, currentOperationMode, onDatePickerDetailChange, isUpdateAllowed } = props;
 
   return (
     <>
@@ -37,7 +31,7 @@ export const DatePickerAttributes = observer((props: TDatePickerAttributesProps)
             onDatePickerDetailChange("settings", value as TIssueProperty<EIssuePropertyType.DATETIME>["settings"])
           }
           getLabelDetails={(labelKey) => getDateAttributeDisplayName(labelKey as TDateAttributeDisplayOptions)}
-          isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && isAnyIssueAttached}
+          isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && !isUpdateAllowed}
         />
       ))}
     </>

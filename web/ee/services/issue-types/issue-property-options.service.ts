@@ -31,11 +31,11 @@ class IssuePropertyOptionsService extends APIService implements IIssuePropertyOp
   async create({
     workspaceSlug,
     projectId,
-    issuePropertyId,
+    customPropertyId,
     data,
   }: TCreateIssuePropertyOptionPayload): Promise<TIssuePropertyOption> {
     return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/${issuePropertyId}/options/`,
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/${customPropertyId}/options/`,
       data
     )
       .then((response) => response?.data)
@@ -47,11 +47,11 @@ class IssuePropertyOptionsService extends APIService implements IIssuePropertyOp
   async deleteOption({
     workspaceSlug,
     projectId,
-    issuePropertyId,
+    customPropertyId,
     issuePropertyOptionId,
   }: TDeleteIssuePropertyOptionPayload): Promise<void> {
     return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/${issuePropertyId}/options/${issuePropertyOptionId}/`
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/${customPropertyId}/options/${issuePropertyOptionId}/`
     )
       .then((response) => response?.data)
       .catch((error) => {

@@ -118,25 +118,6 @@ class ProjectViewSet(BaseViewSet):
                     workspace__slug=self.kwargs.get("slug"), project_id=OuterRef("pk")
                 ).values("target_date")
             )
-            # EE: project extra details
-            .annotate(
-                is_epic_enabled=Exists(
-                    ProjectFeature.objects.filter(
-                        workspace__slug=self.kwargs.get("slug"),
-                        project_id=OuterRef("pk"),
-                        is_epic_enabled=True,
-                    )
-                )
-            )
-            .annotate(
-                is_project_updates_enabled=Exists(
-                    ProjectFeature.objects.filter(
-                        workspace__slug=self.kwargs.get("slug"),
-                        project_id=OuterRef("pk"),
-                        is_project_updates_enabled=True,
-                    )
-                )
-            )
             # EE: project_grouping ends
             .prefetch_related(
                 Prefetch(
@@ -215,15 +196,6 @@ class ProjectViewSet(BaseViewSet):
             )
             .annotate(inbox_view=F("intake_view"))
             .annotate(sort_order=Subquery(sort_order))
-            .annotate(
-                is_epic_enabled=Exists(
-                    ProjectFeature.objects.filter(
-                        workspace__slug=self.kwargs.get("slug"),
-                        project_id=OuterRef("pk"),
-                        is_epic_enabled=True,
-                    )
-                )
-            )
             .distinct()
         ).values(
             "id",
@@ -239,7 +211,6 @@ class ProjectViewSet(BaseViewSet):
             "module_view",
             "page_view",
             "inbox_view",
-            "is_epic_enabled",
             "project_lead",
             "created_at",
             "updated_at",
@@ -418,6 +389,11 @@ class ProjectViewSet(BaseViewSet):
                         )
 
                 project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+
+                # Create the project feature
+                _ = ProjectFeature.objects.create(
+                    workspace_id=workspace.id, project_id=project.id
+                )
 
                 # Create the model activity
                 model_activity.delay(

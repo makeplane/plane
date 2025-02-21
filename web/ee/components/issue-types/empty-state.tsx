@@ -112,7 +112,7 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
               target="_blank"
               className="font-medium hover:underline"
             >
-              {t("common.read_the_docs")}
+              {` ${t("common.read_the_docs")}`}
             </a>
             .
           </>

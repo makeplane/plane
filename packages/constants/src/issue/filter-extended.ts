@@ -117,7 +117,7 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
       },
       extra_options: {
         access: true,
-        values: ["show_empty_groups", "sub_issue"],
+        values: ["show_empty_groups"],
       },
     },
     kanban: {
@@ -131,7 +131,7 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
       },
       extra_options: {
         access: true,
-        values: ["show_empty_groups", "sub_issue"],
+        values: ["show_empty_groups"],
       },
     },
     calendar: {
@@ -142,7 +142,7 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
       },
       extra_options: {
         access: true,
-        values: ["sub_issue"],
+        values: [],
       },
     },
     spreadsheet: {
@@ -154,7 +154,7 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
       },
       extra_options: {
         access: true,
-        values: ["sub_issue"],
+        values: [],
       },
     },
     gantt_chart: {
@@ -166,7 +166,7 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
       },
       extra_options: {
         access: true,
-        values: ["sub_issue"],
+        values: [],
       },
     },
   },

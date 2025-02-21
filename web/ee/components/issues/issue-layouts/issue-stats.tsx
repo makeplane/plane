@@ -4,7 +4,7 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { CircularProgressIndicator } from "@plane/ui";
 import { getProgress } from "@/helpers/common.helper";
-import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useEpicAnalytics } from "@/plane-web/hooks/store";
 
 type Props = {
   issueId: string;
@@ -13,7 +13,7 @@ type Props = {
 export const IssueStats: FC<Props> = observer((props) => {
   const { issueId } = props;
 
-  const { getEpicStatsById } = useIssueTypes();
+  const { getEpicStatsById } = useEpicAnalytics();
 
   const epicStats = getEpicStatsById(issueId);
 

@@ -492,6 +492,7 @@
     "epic": "Epic",
     "epics": "Epics",
     "work_item": "Work item",
+    "work_items": "Work items",
     "sub_work_item": "Sub-work item",
     "add": "Add",
     "warning": "Warning",
@@ -520,6 +521,7 @@
     "customize_time_range": "Customize time range",
     "loading": "Loading",
     "attachments": "Attachments",
+    "property": "Property",
     "properties": "Properties",
     "parent": "Parent",
     "remove": "Remove",
@@ -672,7 +674,21 @@
     "disconnect": "Disconnect",
     "disconnecting": "Disconnecting",
     "installing": "Installing",
-    "install": "Install"
+    "install": "Install",
+    "category": "Category",
+    "categories": "Categories",
+    "saving": "Saving",
+    "save_changes": "Save changes",
+    "delete": "Delete",
+    "deleting": "Deleting",
+    "pending": "Pending",
+    "invite": "Invite"
+  },
+
+  "chart": {
+    "x_axis": "X-axis",
+    "y_axis": "Y-axis",
+    "metric": "Metric"
   },
 
   "form": {
@@ -1279,6 +1295,7 @@
       "members": {
         "title": "Members",
         "add_member": "Add member",
+        "pending_invites": "Pending invites",
         "invitations_sent_successfully": "Invitations sent successfully",
         "leave_confirmation": "Are you sure you want to leave the workspace? You will no longer have access to this workspace. This action cannot be undone.",
         "details": {
@@ -1515,7 +1532,11 @@
       }
     },
     "states": {
-      "describe_this_state_for_your_members": "Describe this state for your members."
+      "describe_this_state_for_your_members": "Describe this state for your members.",
+      "empty_state": {
+        "title": "No states available for the {groupKey} group",
+        "description": "Please create a new state"
+      }
     },
     "labels": {
       "label_title": "Label title",
