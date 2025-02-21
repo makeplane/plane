@@ -11,6 +11,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import logout
+from django.utils.http import url_has_allowed_host_and_scheme
 
 # Third party imports
 from rest_framework.response import Response
@@ -248,11 +249,12 @@ class InstanceAdminSignInEndpoint(View):
                 error_code=AUTHENTICATION_ERROR_CODES["INSTANCE_NOT_CONFIGURED"],
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
-            url = urljoin(
-                base_host(request=request, is_admin=True),
-                "?" + urlencode(exc.get_error_dict()),
-            )
-            return HttpResponseRedirect(url)
+            base_url = base_host(request=request, is_admin=True)
+            redirect_url = urljoin(base_url, "?" + urlencode(exc.get_error_dict()))
+            if url_has_allowed_host_and_scheme(redirect_url, allowed_hosts=None):
+                return HttpResponseRedirect(redirect_url)
+            else:
+                return HttpResponseRedirect('/')
 
         # Get email and password
         email = request.POST.get("email", False)
@@ -265,11 +267,12 @@ class InstanceAdminSignInEndpoint(View):
                 error_message="REQUIRED_ADMIN_EMAIL_PASSWORD",
                 payload={"email": email},
             )
-            url = urljoin(
-                base_host(request=request, is_admin=True),
-                "?" + urlencode(exc.get_error_dict()),
-            )
-            return HttpResponseRedirect(url)
+            base_url = base_host(request=request, is_admin=True)
+            redirect_url = urljoin(base_url, "?" + urlencode(exc.get_error_dict()))
+            if url_has_allowed_host_and_scheme(redirect_url, allowed_hosts=None):
+                return HttpResponseRedirect(redirect_url)
+            else:
+                return HttpResponseRedirect('/')
 
         # Validate the email
         email = email.strip().lower()
@@ -281,11 +284,12 @@ class InstanceAdminSignInEndpoint(View):
                 error_message="INVALID_ADMIN_EMAIL",
                 payload={"email": email},
             )
-            url = urljoin(
-                base_host(request=request, is_admin=True),
-                "?" + urlencode(exc.get_error_dict()),
-            )
-            return HttpResponseRedirect(url)
+            base_url = base_host(request=request, is_admin=True)
+            redirect_url = urljoin(base_url, "?" + urlencode(exc.get_error_dict()))
+            if url_has_allowed_host_and_scheme(redirect_url, allowed_hosts=None):
+                return HttpResponseRedirect(redirect_url)
+            else:
+                return HttpResponseRedirect('/')
 
         # Fetch the user
         user = User.objects.filter(email=email).first()
@@ -297,11 +301,12 @@ class InstanceAdminSignInEndpoint(View):
                 error_message="ADMIN_USER_DOES_NOT_EXIST",
                 payload={"email": email},
             )
-            url = urljoin(
-                base_host(request=request, is_admin=True),
-                "?" + urlencode(exc.get_error_dict()),
-            )
-            return HttpResponseRedirect(url)
+            base_url = base_host(request=request, is_admin=True)
+            redirect_url = urljoin(base_url, "?" + urlencode(exc.get_error_dict()))
+            if url_has_allowed_host_and_scheme(redirect_url, allowed_hosts=None):
+                return HttpResponseRedirect(redirect_url)
+            else:
+                return HttpResponseRedirect('/')
 
         # is_active
         if not user.is_active:
@@ -309,11 +314,12 @@ class InstanceAdminSignInEndpoint(View):
                 error_code=AUTHENTICATION_ERROR_CODES["ADMIN_USER_DEACTIVATED"],
                 error_message="ADMIN_USER_DEACTIVATED",
             )
-            url = urljoin(
-                base_host(request=request, is_admin=True),
-                "?" + urlencode(exc.get_error_dict()),
-            )
-            return HttpResponseRedirect(url)
+            base_url = base_host(request=request, is_admin=True)
+            redirect_url = urljoin(base_url, "?" + urlencode(exc.get_error_dict()))
+            if url_has_allowed_host_and_scheme(redirect_url, allowed_hosts=None):
+                return HttpResponseRedirect(redirect_url)
+            else:
+                return HttpResponseRedirect('/')
 
         # Check password of the user
         if not user.check_password(password):
