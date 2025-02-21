@@ -49,8 +49,6 @@ export interface IProject extends IPartialProject {
   guest_view_all_features?: boolean;
   anchor?: string | null;
   is_favorite?: boolean;
-  is_issue_type_enabled?: boolean;
-  is_time_tracking_enabled?: boolean;
   members?: string[];
   network?: number;
   timezone?: string;

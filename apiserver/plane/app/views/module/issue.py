@@ -280,7 +280,7 @@ class ModuleIssueViewSet(BaseViewSet):
                 issue_id=str(issue_id),
                 project_id=str(project_id),
                 current_instance=json.dumps(
-                    {"module_name": module_issue.first().module.name}
+                    {"module_name": module_issue.first().module.name if module_issue.first() else ""}
                 ),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,

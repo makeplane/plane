@@ -1,8 +1,4 @@
-import {
-  TIssueGroupByOptions,
-  TIssueOrderByOptions,
-  IIssueDisplayProperties,
-} from "@plane/types";
+import { TIssueGroupByOptions, TIssueOrderByOptions, IIssueDisplayProperties } from "@plane/types";
 
 export const ALL_ISSUES = "All Issues";
 
@@ -149,25 +145,28 @@ export const ISSUE_ORDER_BY_OPTIONS: {
   { key: "-priority", titleTranslationKey: "common.priority" },
 ];
 
-export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] =
-  [
-    "assignee",
-    "start_date",
-    "due_date",
-    "labels",
-    "key",
-    "priority",
-    "state",
-    "sub_issue_count",
-    "link",
-    "attachment_count",
-    "estimate",
-    "created_on",
-    "updated_on",
-    "modules",
-    "cycle",
-    "issue_type",
-  ];
+export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = [
+  "assignee",
+  "start_date",
+  "due_date",
+  "labels",
+  "key",
+  "priority",
+  "state",
+  "sub_issue_count",
+  "link",
+  "attachment_count",
+  "estimate",
+  "created_on",
+  "updated_on",
+  "modules",
+  "cycle",
+  "issue_type",
+];
+
+export const EPICS_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = ISSUE_DISPLAY_PROPERTIES_KEYS.filter(
+  (key) => !["cycle", "modules", "issue_type"].includes(key)
+);
 
 export const ISSUE_DISPLAY_PROPERTIES: {
   key: keyof IIssueDisplayProperties;
