@@ -66,7 +66,11 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const { issues } = useIssues(storeType);
   const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
   const { issues: draftIssues } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
-  const { fetchIssue, removeSubIssue } = useIssueDetail();
+  const {
+    issue: { getIssueById },
+    fetchIssue,
+    removeSubIssue,
+  } = useIssueDetail();
   const { removeSubIssue: removeEpicSubIssue } = useIssueDetail(EIssueServiceType.EPICS);
   const { handleCreateUpdatePropertyValues } = useIssueModal();
   const { getIssueTypeById } = useIssueTypes();
@@ -265,7 +269,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     try {
       // check for parent change
       if (data?.parent_id && payload?.parent_id && payload?.parent_id !== data?.parent_id) {
-        const isParentEpic = getIssueTypeById(data?.parent_id || "")?.is_epic;
+        const parentIssue = getIssueById(payload?.parent_id);
+        const isParentEpic = getIssueTypeById(parentIssue?.type_id || "")?.is_epic;
         if (isParentEpic)
           await removeEpicSubIssue(workspaceSlug?.toString(), payload.project_id, data.parent_id, data.id);
         else await removeSubIssue(workspaceSlug?.toString(), payload.project_id, data.parent_id, data.id);
