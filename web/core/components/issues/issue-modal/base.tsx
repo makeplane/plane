@@ -269,9 +269,9 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     try {
       // check for parent change
       if (data?.parent_id && payload?.parent_id && payload?.parent_id !== data?.parent_id) {
-        const parentIssue = getIssueById(payload?.parent_id);
-        const isParentEpic = getIssueTypeById(parentIssue?.type_id || "")?.is_epic;
-        if (isParentEpic)
+        const oldParentIssue = getIssueById(data?.parent_id);
+        const isOldParentEpic = getIssueTypeById(oldParentIssue?.type_id || "")?.is_epic;
+        if (isOldParentEpic)
           await removeEpicSubIssue(workspaceSlug?.toString(), payload.project_id, data.parent_id, data.id);
         else await removeSubIssue(workspaceSlug?.toString(), payload.project_id, data.parent_id, data.id);
       }
