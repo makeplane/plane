@@ -29,15 +29,17 @@ export const ActivityBlockComponent: FC<TActivityBlockComponent> = (props) => {
   if (!activity) return <></>;
   return (
     <div
-      className={`relative flex items-center gap-2 text-xs ${
+      className={`relative flex items-start gap-2 text-xs ${
         ends === "top" ? `pb-3` : ends === "bottom" ? `pt-3` : `py-3`
       }`}
     >
       <div className="flex-shrink-0 ring-6 w-7 h-7 rounded-full overflow-hidden flex justify-center items-start mt-0.5 z-[4] text-custom-text-200">
         {icon ? icon : <Network className="w-3.5 h-3.5" />}
       </div>
-      <div className="w-full truncate text-custom-text-200">
-        <User activity={activity} customUserName={customUserName} /> {children}
+      <div className="w-full text-custom-text-200">
+        <div className="line-clamp-2">
+          <User activity={activity} customUserName={customUserName} /> {children}
+        </div>
         <div className="mt-1">
           <Tooltip
             isMobile={isMobile}

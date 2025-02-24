@@ -845,6 +845,16 @@
     "disconnecting": "Déconnexion",
     "installing": "Installation",
     "install": "Installer",
+    "reset": "Réinitialiser",
+    "live": "En direct",
+    "change_history": "Historique des modifications",
+    "coming_soon": "À venir",
+    "members": "Membres",
+    "you": "Vous",
+    "upgrade_cta": {
+      "higher_subscription": "Passer à une abonnement plus élevé",
+      "talk_to_sales": "Parler à la vente"
+    },
     "category": "Catégorie",
     "categories": "Catégories",
     "saving": "Enregistrement",

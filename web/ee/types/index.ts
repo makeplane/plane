@@ -1,4 +1,5 @@
 export * from "./projects";
+export * from "./issue-types";
 export * from "./app.d";
 export * from "./pages.d";
 export * from "./workspace.d";
