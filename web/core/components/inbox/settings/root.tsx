@@ -6,8 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { InboxSettingUpdateRow } from "./update-setting-row";
 
 
-export const InboxSettingsRoot: FC = (props) => {
-  const { } = props;
+export const InboxSettingsRoot: FC = () => {
   const { t } = useTranslation();
 
   return (
@@ -22,7 +21,7 @@ export const InboxSettingsRoot: FC = (props) => {
           <div className="w-1/4">{t("notification_settings.email")}</div>
         </div>
         {
-          TASK_UPDATES_NOTIFICATION_SETTINGS?.map((item, index) => (
+          TASK_UPDATES_NOTIFICATION_SETTINGS?.map((item) => (
             <InboxSettingUpdateRow key={item.key} settings_key={item.key} title={item.i18n_title} />
           ))
         }
