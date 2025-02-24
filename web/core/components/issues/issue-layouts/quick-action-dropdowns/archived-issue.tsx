@@ -44,7 +44,8 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
   // auth
   const isEditingAllowed =
     allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
-  const isRestoringAllowed = handleRestore && isEditingAllowed;
+  const isRestoringAllowed =
+    handleRestore && allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
 
   const issueLink = `${workspaceSlug}/projects/${issue.project_id}/archives/issues/${issue.id}`;
 
