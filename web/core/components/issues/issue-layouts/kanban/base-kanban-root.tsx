@@ -6,16 +6,22 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
+import {
+  EIssueLayoutTypes,
+  EIssueServiceType,
+  EIssueFilterType,
+  EIssuesStoreType,
+  ISSUE_DELETED,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
 import { DeleteIssueModal } from "@/components/issues";
 //constants
-import { ISSUE_DELETED } from "@/constants/event-tracker";
-import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 //hooks
 import { useEventTracker, useIssueDetail, useIssues, useKanbanView, useUserPermissions } from "@/hooks/store";
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // store
 // ui
 // types
@@ -32,17 +38,29 @@ export type KanbanStoreType =
   | EIssuesStoreType.CYCLE
   | EIssuesStoreType.PROJECT_VIEW
   | EIssuesStoreType.DRAFT
-  | EIssuesStoreType.PROFILE;
+  | EIssuesStoreType.PROFILE
+  | EIssuesStoreType.TEAM
+  | EIssuesStoreType.TEAM_VIEW
+  | EIssuesStoreType.EPIC;
+
 export interface IBaseKanBanLayout {
   QuickActions: FC<IQuickActionProps>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
   viewId?: string | undefined;
+  isEpic?: boolean;
 }
 
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
-  const { QuickActions, addIssuesToView, canEditPropertiesBasedOnProject, isCompletedCycle = false, viewId } = props;
+  const {
+    QuickActions,
+    addIssuesToView,
+    canEditPropertiesBasedOnProject,
+    isCompletedCycle = false,
+    viewId,
+    isEpic = false,
+  } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
@@ -53,7 +71,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const { issueMap, issuesFilter, issues } = useIssues(storeType);
   const {
     issue: { getIssueById },
-  } = useIssueDetail();
+  } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const {
     fetchIssues,
     fetchNextIssues,
@@ -176,11 +194,11 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
         handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
         handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
-        readOnly={!isEditingAllowed || isCompletedCycle}
+        readOnly={!canEditProperties(issue.project_id ?? undefined) || isCompletedCycle}
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isEditingAllowed, isCompletedCycle, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
+    [isCompletedCycle, canEditProperties, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
   );
 
   const handleDeleteIssue = async () => {
@@ -246,7 +264,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
                 isDragOverDelete ? "bg-red-500 opacity-70 blur-2xl" : ""
               } transition duration-300`}
             >
-              Drop here to delete the issue.
+              Drop here to delete the work item.
             </div>
           </div>
 
@@ -272,6 +290,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               scrollableContainerRef={scrollableContainerRef}
               handleOnDrop={handleOnDrop}
               loadMoreIssues={fetchMoreIssues}
+              isEpic={isEpic}
             />
           </div>
         </div>

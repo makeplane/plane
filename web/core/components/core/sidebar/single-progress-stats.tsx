@@ -21,8 +21,8 @@ export const SingleProgressStats: React.FC<TSingleProgressStatsProps> = ({
     } ${selected ? "bg-custom-background-90" : ""}`}
     onClick={onClick}
   >
-    <div className="w-1/2">{title}</div>
-    <div className="flex w-1/2 items-center justify-end gap-1 px-2">
+    <div className="w-4/6">{title}</div>
+    <div className="flex w-2/6 items-center justify-end gap-1 px-2">
       <div className="flex h-5 items-center justify-center gap-1">
         <span className="w-8 text-right">
           {isNaN(Math.round((completed / total) * 100)) ? "0" : Math.round((completed / total) * 100)}%

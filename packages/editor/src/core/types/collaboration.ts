@@ -6,10 +6,11 @@ import { TEmbedConfig } from "@/plane-editor/types";
 import {
   EditorReadOnlyRefApi,
   EditorRefApi,
-  IMentionHighlight,
-  IMentionSuggestion,
   TExtensions,
   TFileHandler,
+  TMentionHandler,
+  TReadOnlyFileHandler,
+  TReadOnlyMentionHandler,
   TRealtimeConfig,
   TUserDetails,
 } from "@/types";
@@ -21,15 +22,12 @@ export type TServerHandler = {
 
 type TCollaborativeEditorHookProps = {
   disabledExtensions: TExtensions[];
+  editable?: boolean;
   editorClassName: string;
   editorProps?: EditorProps;
   extensions?: Extensions;
   handleEditorReady?: (value: boolean) => void;
   id: string;
-  mentionHandler: {
-    highlights: () => Promise<IMentionHighlight[]>;
-    suggestions?: () => Promise<IMentionSuggestion[]>;
-  };
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
@@ -40,11 +38,13 @@ export type TCollaborativeEditorProps = TCollaborativeEditorHookProps & {
   embedHandler?: TEmbedConfig;
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
+  mentionHandler: TMentionHandler;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
 };
 
 export type TReadOnlyCollaborativeEditorProps = TCollaborativeEditorHookProps & {
-  fileHandler: Pick<TFileHandler, "getAssetSrc">;
+  fileHandler: TReadOnlyFileHandler;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
+  mentionHandler: TReadOnlyMentionHandler;
 };

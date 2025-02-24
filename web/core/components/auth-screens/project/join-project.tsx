@@ -16,7 +16,7 @@ export const JoinProject: React.FC = () => {
   const [isJoiningProject, setIsJoiningProject] = useState(false);
   // store hooks
   const { joinProject } = useUserPermissions();
-  const { fetchProjects } = useProject();
+  const { fetchProjectDetails } = useProject();
 
   const { workspaceSlug, projectId } = useParams();
 
@@ -26,7 +26,7 @@ export const JoinProject: React.FC = () => {
     setIsJoiningProject(true);
 
     joinProject(workspaceSlug.toString(), projectId.toString())
-      .then(() => fetchProjects(workspaceSlug.toString()))
+      .then(() => fetchProjectDetails(workspaceSlug.toString(), projectId.toString()))
       .finally(() => setIsJoiningProject(false));
   };
 

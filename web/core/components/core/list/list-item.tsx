@@ -8,6 +8,7 @@ import { cn } from "@/helpers/common.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 interface IListItemProps {
+  id?: string;
   title: string;
   itemLink: string;
   onItemClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
@@ -18,13 +19,16 @@ interface IListItemProps {
   parentRef: React.RefObject<HTMLDivElement>;
   disableLink?: boolean;
   className?: string;
+  itemClassName?: string;
   actionItemContainerClassName?: string;
   isSidebarOpen?: boolean;
   quickActionElement?: JSX.Element;
+  preventDefaultNProgress?: boolean;
 }
 
 export const ListItem: FC<IListItemProps> = (props) => {
   const {
+    id,
     title,
     prependTitleElement,
     appendTitleElement,
@@ -38,6 +42,8 @@ export const ListItem: FC<IListItemProps> = (props) => {
     actionItemContainerClassName = "",
     isSidebarOpen = false,
     quickActionElement,
+    itemClassName = "",
+    preventDefaultNProgress = false,
   } = props;
 
   // router
@@ -54,20 +60,19 @@ export const ListItem: FC<IListItemProps> = (props) => {
       <Row
         className={cn(
           "group min-h-[52px] flex w-full flex-col items-center justify-between gap-3 py-4 text-sm border-b border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90 ",
-          {
-            "xl:gap-5 xl:py-0 xl:flex-row": isSidebarOpen,
-            "lg:gap-5 lg:py-0 lg:flex-row": !isSidebarOpen,
-          },
+          { "xl:gap-5 xl:py-0 xl:flex-row": isSidebarOpen, "lg:gap-5 lg:py-0 lg:flex-row": !isSidebarOpen },
           className
         )}
       >
-        <div className="relative flex w-full items-center justify-between gap-3 overflow-hidden">
+        <div className={cn("relative flex w-full items-center justify-between gap-3 overflow-hidden", itemClassName)}>
           <ControlLink
+            id={id}
             className="relative flex w-full items-center gap-3 overflow-hidden"
             href={itemLink}
             target="_self"
             onClick={handleControlLinkClick}
             disabled={disableLink}
+            data-prevent-nprogress={preventDefaultNProgress}
           >
             <div className="flex items-center gap-4 truncate">
               {prependTitleElement && <span className="flex items-center flex-shrink-0">{prependTitleElement}</span>}

@@ -1,11 +1,13 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
 import { ImageIcon } from "lucide-react";
-// helpers
-import { cn } from "@/helpers/common";
-// hooks
-import { useUploader, useDropZone, uploadFirstImageAndInsertRemaining } from "@/hooks/use-file-upload";
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
+// plane utils
+import { cn } from "@plane/utils";
+// constants
+import { ACCEPTED_FILE_EXTENSIONS } from "@/constants/config";
 // extensions
 import { CustoBaseImageNodeViewProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
+// hooks
+import { useUploader, useDropZone, uploadFirstImageAndInsertRemaining } from "@/hooks/use-file-upload";
 
 type CustomImageUploaderProps = CustoBaseImageNodeViewProps & {
   maxFileSize: number;
@@ -36,6 +38,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   const onUpload = useCallback(
     (url: string) => {
       if (url) {
+        if (!imageEntityId) return;
         setIsUploaded(true);
         // Update the node view's src attribute post upload
         updateAttributes({ src: url });
@@ -66,6 +69,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   );
   // hooks
   const { uploading: isImageBeingUploaded, uploadFile } = useUploader({
+    blockId: imageEntityId ?? "",
     editor,
     loadImageFromFileSystem,
     maxFileSize,
@@ -80,7 +84,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
 
   // the meta data of the image component
   const meta = useMemo(
-    () => imageComponentImageFileMap?.get(imageEntityId),
+    () => imageComponentImageFileMap?.get(imageEntityId ?? ""),
     [imageComponentImageFileMap, imageEntityId]
   );
 
@@ -94,7 +98,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         if (meta.hasOpenedFileInputOnce) return;
         fileInputRef.current.click();
         hasTriggeredFilePickerRef.current = true;
-        imageComponentImageFileMap?.set(imageEntityId, { ...meta, hasOpenedFileInputOnce: true });
+        imageComponentImageFileMap?.set(imageEntityId ?? "", { ...meta, hasOpenedFileInputOnce: true });
       }
     }
   }, [meta, uploadFile, imageComponentImageFileMap]);
@@ -127,7 +131,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
       return "Uploading...";
     }
 
-    if (draggedInside) {
+    if (draggedInside && editor.isEditable) {
       return "Drop image here";
     }
 
@@ -137,14 +141,16 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   return (
     <div
       className={cn(
-        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 hover:text-custom-text-200 bg-custom-background-90 hover:bg-custom-background-80 border border-dashed border-custom-border-300 transition-all duration-200 ease-in-out cursor-default",
+        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 bg-custom-background-90 border border-dashed border-custom-border-300 transition-all duration-200 ease-in-out cursor-default",
         {
-          "hover:text-custom-text-200 cursor-pointer": editor.isEditable,
-          "bg-custom-background-80 text-custom-text-200": draggedInside,
-          "text-custom-primary-200 bg-custom-primary-100/10 hover:bg-custom-primary-100/10 hover:text-custom-primary-200 border-custom-primary-200/10":
-            selected,
-          "text-red-500 cursor-default hover:text-red-500": failedToLoadImage,
-          "bg-red-500/10 hover:bg-red-500/10": failedToLoadImage && selected,
+          "hover:text-custom-text-200 hover:bg-custom-background-80 cursor-pointer": editor.isEditable,
+          "bg-custom-background-80 text-custom-text-200": draggedInside && editor.isEditable,
+          "text-custom-primary-200 bg-custom-primary-100/10 border-custom-primary-200/10 hover:bg-custom-primary-100/10 hover:text-custom-primary-200":
+            selected && editor.isEditable,
+          "text-red-500 cursor-default": failedToLoadImage,
+          "hover:text-red-500": failedToLoadImage && editor.isEditable,
+          "bg-red-500/10": failedToLoadImage && selected,
+          "hover:bg-red-500/10": failedToLoadImage && selected && editor.isEditable,
         }
       )}
       onDrop={onDrop}
@@ -164,7 +170,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         ref={fileInputRef}
         hidden
         type="file"
-        accept=".jpg,.jpeg,.png,.webp"
+        accept={ACCEPTED_FILE_EXTENSIONS.join(",")}
         onChange={onFileChange}
         multiple
       />

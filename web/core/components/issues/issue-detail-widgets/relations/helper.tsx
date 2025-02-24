@@ -1,10 +1,11 @@
 "use client";
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { TIssue } from "@plane/types";
+import { EIssueServiceType, ISSUE_DELETED, ISSUE_UPDATED } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { TIssue, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { ISSUE_DELETED, ISSUE_UPDATED } from "@/constants/event-tracker";
 // helper
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
@@ -16,20 +17,25 @@ export type TRelationIssueOperations = {
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 };
 
-export const useRelationOperations = (): TRelationIssueOperations => {
-  const { updateIssue, removeIssue } = useIssueDetail();
+export const useRelationOperations = (
+  issueServiceType: TIssueServiceType = EIssueServiceType.ISSUES
+): TRelationIssueOperations => {
+  const { updateIssue, removeIssue } = useIssueDetail(issueServiceType);
   const { captureIssueEvent } = useEventTracker();
   const pathname = usePathname();
+  const { t } = useTranslation();
+  // derived values
+  const entityName = issueServiceType === EIssueServiceType.ISSUES ? "Work item" : "Epic";
 
   const issueOperations: TRelationIssueOperations = useMemo(
     () => ({
       copyText: (text: string) => {
         const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-        copyTextToClipboard(`${originURL}/${text}`).then(() => {
+        copyTextToClipboard(`${originURL}${text}`).then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Link Copied!",
-            message: "Issue link copied to clipboard.",
+            title: t("common.link_copied"),
+            message: t("entity.link_copied_to_clipboard", { entity: entityName }),
           });
         });
       },
@@ -46,9 +52,9 @@ export const useRelationOperations = (): TRelationIssueOperations => {
             path: pathname,
           });
           setToast({
-            title: "Success!",
+            title: t("toast.success"),
             type: TOAST_TYPE.SUCCESS,
-            message: "Issue updated successfully",
+            message: t("entity.update.success", { entity: entityName }),
           });
         } catch (error) {
           captureIssueEvent({
@@ -61,9 +67,9 @@ export const useRelationOperations = (): TRelationIssueOperations => {
             path: pathname,
           });
           setToast({
-            title: "Error!",
+            title: t("toast.error"),
             type: TOAST_TYPE.ERROR,
-            message: "Issue update failed",
+            message: t("entity.update.failed", { entity: entityName }),
           });
         }
       },

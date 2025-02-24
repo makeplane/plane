@@ -1,0 +1,16 @@
+{
+  "name": "@plane/tailwind-config",
+  "version": "0.24.1",
+  "description": "common tailwind configuration across monorepo",
+  "main": "tailwind.config.js",
+  "private": true,
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.9",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.38",
+    "prettier": "^2.8.8",
+    "prettier-plugin-tailwindcss": "^0.3.0",
+    "tailwindcss": "^3.4.17",
+    "tailwindcss-animate": "^1.0.6"
+  }
+}

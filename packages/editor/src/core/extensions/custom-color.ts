@@ -93,6 +93,21 @@ export const CustomColorExtension = Mark.create({
     };
   },
 
+  addStorage() {
+    return {
+      markdown: {
+        serialize: {
+          open: "",
+          close: "",
+          mixable: true,
+          expelEnclosingWhitespace: true,
+        },
+      },
+    };
+  },
+
+  // @ts-expect-error types are incorrect
+  // TODO: check this and update types
   parseHTML() {
     return [
       {

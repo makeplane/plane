@@ -2,7 +2,14 @@ import React, { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
-import { ALL_ISSUES } from "@plane/constants";
+import {
+  ALL_ISSUES,
+  EIssueLayoutTypes,
+  EIssuesStoreType,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
@@ -10,7 +17,6 @@ import { GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "@/component
 import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 import { QuickAddIssueRoot, IssueGanttBlock, GanttQuickAddIssueButton } from "@/components/issues";
 //constants
-import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 //hooks
@@ -19,7 +25,6 @@ import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 // plane web hooks
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 
 import { IssueLayoutHOC } from "../issue-layout-HOC";
@@ -27,16 +32,19 @@ import { IssueLayoutHOC } from "../issue-layout-HOC";
 interface IBaseGanttRoot {
   viewId?: string | undefined;
   isCompletedCycle?: boolean;
+  isEpic?: boolean;
 }
 
 export type GanttStoreType =
   | EIssuesStoreType.PROJECT
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
-  | EIssuesStoreType.PROJECT_VIEW;
+  | EIssuesStoreType.PROJECT_VIEW
+  | EIssuesStoreType.EPIC;
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
-  const { viewId, isCompletedCycle = false } = props;
+  const { viewId, isCompletedCycle = false, isEpic = false } = props;
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId } = useParams();
 
@@ -92,8 +100,8 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
       issues.updateIssueDates(workspaceSlug.toString(), projectId.toString(), updates).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Error while updating Issue Dates, Please try again Later",
+          title: t("toast.error"),
+          message: "Error while updating work item dates, Please try again Later",
         });
       }),
     [issues]
@@ -110,6 +118,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           target_date: renderFormattedPayloadDate(targetDate),
         }}
         quickAddCallback={quickAddIssue}
+        isEpic={isEpic}
       />
     ) : undefined;
 
@@ -119,12 +128,12 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
         <div className="h-full w-full">
           <GanttChartRoot
             border={false}
-            title="Issues"
-            loaderTitle="Issues"
+            title={isEpic ? t("epic.label", { count: 2 }) : t("issue.label", { count: 2 })}
+            loaderTitle={isEpic ? t("epic.label", { count: 2 }) : t("issue.label", { count: 2 })}
             blockIds={issuesIds}
             blockUpdateHandler={updateIssueBlockStructure}
-            blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} />}
-            sidebarToRender={(props) => <IssueGanttSidebar {...props} showAllBlocks />}
+            blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} isEpic={isEpic} />}
+            sidebarToRender={(props) => <IssueGanttSidebar {...props} showAllBlocks isEpic={isEpic} />}
             enableBlockLeftResize={isAllowed}
             enableBlockRightResize={isAllowed}
             enableBlockMove={isAllowed}
@@ -136,6 +145,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
             canLoadMoreBlocks={nextPageResults}
             updateBlockDates={updateBlockDates}
             showAllBlocks
+            isEpic={isEpic}
           />
         </div>
       </TimeLineTypeContext.Provider>

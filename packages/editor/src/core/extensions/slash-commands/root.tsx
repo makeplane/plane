@@ -2,6 +2,8 @@ import { Editor, Range, Extension } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
 import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
 import tippy from "tippy.js";
+// helpers
+import { CommandListInstance } from "@/helpers/tippy";
 // types
 import { ISlashCommandItem, TEditorCommands, TExtensions, TSlashCommandSectionKeys } from "@/types";
 // components
@@ -55,22 +57,19 @@ const Command = Extension.create<SlashCommandOptions>({
   },
 });
 
-interface CommandListInstance {
-  onKeyDown: (props: { event: KeyboardEvent }) => boolean;
-}
-
 const renderItems = () => {
   let component: ReactRenderer<CommandListInstance, SlashCommandsMenuProps> | null = null;
   let popup: any | null = null;
   return {
     onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
-      component = new ReactRenderer(SlashCommandsMenu, {
+      component = new ReactRenderer<CommandListInstance, SlashCommandsMenuProps>(SlashCommandsMenu, {
         props,
         editor: props.editor,
       });
 
       const tippyContainer =
         document.querySelector(".active-editor") ?? document.querySelector('[id^="editor-container"]');
+      // @ts-expect-error - Tippy types are incorrect
       popup = tippy("body", {
         getReferenceClientRect: props.clientRect,
         appendTo: tippyContainer,
@@ -91,10 +90,8 @@ const renderItems = () => {
     onKeyDown: (props: { event: KeyboardEvent }) => {
       if (props.event.key === "Escape") {
         popup?.[0].hide();
-
         return true;
       }
-
       if (component?.ref?.onKeyDown(props)) {
         return true;
       }
@@ -107,9 +104,9 @@ const renderItems = () => {
   };
 };
 
-type TExtensionProps = {
+export type TExtensionProps = {
   additionalOptions?: TSlashCommandAdditionalOption[];
-  disabledExtensions: TExtensions[];
+  disabledExtensions?: TExtensions[];
 };
 
 export const SlashCommands = (props: TExtensionProps) =>

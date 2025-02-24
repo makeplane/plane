@@ -4,13 +4,14 @@ import { FC, MouseEvent, useRef } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 // icons
-import { Check, Info } from "lucide-react";
+import { Check } from "lucide-react";
 // types
 import type { TCycleGroups } from "@plane/types";
 // ui
 import { CircularProgressIndicator } from "@plane/ui";
 // components
 import { ListItem } from "@/components/core/list";
+import { CycleQuickActions } from "@/components/cycles/";
 import { CycleListItemAction } from "@/components/cycles/list";
 // helpers
 import { generateQueryParams } from "@/helpers/router.helper";
@@ -18,7 +19,6 @@ import { generateQueryParams } from "@/helpers/router.helper";
 import { useCycle } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { CycleQuickActions } from "../quick-actions";
 
 type TCyclesListItem = {
   cycleId: string;
@@ -72,9 +72,9 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
 
     const query = generateQueryParams(searchParams, ["peekCycle"]);
     if (searchParams.has("peekCycle") && searchParams.get("peekCycle") === cycleId) {
-      router.push(`${pathname}?${query}`);
+      router.push(`${pathname}?${query}`, {}, { showProgressBar: false });
     } else {
-      router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`);
+      router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`, {}, { showProgressBar: false });
     }
   };
 

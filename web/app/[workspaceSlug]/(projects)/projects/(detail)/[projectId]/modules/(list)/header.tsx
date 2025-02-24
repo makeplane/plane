@@ -1,28 +1,32 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+// plane imports
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Button, DiceIcon, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink, Logo } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common";
 import { ModuleViewHeader } from "@/components/modules";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 // constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ModulesListHeader: React.FC = observer(() => {
   // router
   const router = useAppRouter();
-  const { workspaceSlug } = useParams();
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
-  const { currentProjectDetails, loader } = useProject();
+  const { loader } = useProject();
+
+  const { t } = useTranslation();
 
   // auth
   const canUserCreateModule = allowPermissions(
@@ -34,25 +38,13 @@ export const ModulesListHeader: React.FC = observer(() => {
     <Header>
       <Header.LeftItem>
         <div>
-          <Breadcrumbs onBack={router.back} isLoading={loader}>
+          <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
+            <ProjectBreadcrumb />
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
-                <BreadcrumbLink
-                  label={currentProjectDetails?.name ?? "Project"}
-                  icon={
-                    currentProjectDetails && (
-                      <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                      </span>
-                    )
-                  }
-                />
+                <BreadcrumbLink label={t("modules")} icon={<DiceIcon className="h-4 w-4 text-custom-text-300" />} />
               }
-            />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={<BreadcrumbLink label="Modules" icon={<DiceIcon className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
         </div>
@@ -68,7 +60,8 @@ export const ModulesListHeader: React.FC = observer(() => {
               toggleCreateModuleModal(true);
             }}
           >
-            <div className="hidden sm:block">Add</div> Module
+            <div className="sm:hidden block">{t("add")}</div>
+            <div className="hidden sm:block">{t("project_module.add_module")}</div>
           </Button>
         ) : (
           <></>

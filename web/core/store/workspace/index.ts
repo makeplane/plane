@@ -1,13 +1,15 @@
 import set from "lodash/set";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 // types
-import { IWorkspace } from "@plane/types";
+import { computedFn } from "mobx-utils";
+import { IWorkspaceSidebarNavigationItem, IWorkspace, IWorkspaceSidebarNavigation } from "@plane/types";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // store
 import { CoreRootStore } from "@/store/root.store";
 // sub-stores
 import { ApiTokenStore, IApiTokenStore } from "./api-token.store";
+import { HomeStore, IHomeStore } from "./home";
 import { IWebhookStore, WebhookStore } from "./webhook.store";
 
 export interface IWorkspaceRootStore {
@@ -17,6 +19,7 @@ export interface IWorkspaceRootStore {
   // computed
   currentWorkspace: IWorkspace | null;
   workspacesCreatedByCurrentUser: IWorkspace[] | null;
+  navigationPreferencesMap: Record<string, IWorkspaceSidebarNavigation>;
   // computed actions
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
   getWorkspaceById: (workspaceId: string) => IWorkspace | null;
@@ -27,20 +30,30 @@ export interface IWorkspaceRootStore {
   updateWorkspace: (workspaceSlug: string, data: Partial<IWorkspace>) => Promise<IWorkspace>;
   updateWorkspaceLogo: (workspaceSlug: string, logoURL: string) => void;
   deleteWorkspace: (workspaceSlug: string) => Promise<void>;
+  fetchSidebarNavigationPreferences: (workspaceSlug: string) => Promise<void>;
+  updateSidebarPreference: (
+    workspaceSlug: string,
+    key: string,
+    data: Partial<IWorkspaceSidebarNavigationItem>
+  ) => Promise<IWorkspaceSidebarNavigationItem | undefined>;
+  getNavigationPreferences: (workspaceSlug: string) => IWorkspaceSidebarNavigation | undefined;
   // sub-stores
   webhook: IWebhookStore;
   apiToken: IApiTokenStore;
+  home: IHomeStore;
 }
 
 export class WorkspaceRootStore implements IWorkspaceRootStore {
   loader: boolean = false;
   // observables
   workspaces: Record<string, IWorkspace> = {};
+  navigationPreferencesMap: Record<string, IWorkspaceSidebarNavigation> = {};
   // services
   workspaceService;
   // root store
   router;
   user;
+  home;
   // sub-stores
   webhook: IWebhookStore;
   apiToken: IApiTokenStore;
@@ -50,6 +63,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       loader: observable.ref,
       // observables
       workspaces: observable,
+      navigationPreferencesMap: observable,
       // computed
       currentWorkspace: computed,
       workspacesCreatedByCurrentUser: computed,
@@ -62,6 +76,8 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       updateWorkspace: action,
       updateWorkspaceLogo: action,
       deleteWorkspace: action,
+      fetchSidebarNavigationPreferences: action,
+      updateSidebarPreference: action,
     });
 
     // services
@@ -69,6 +85,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
     // root store
     this.router = _rootStore.router;
     this.user = _rootStore.user;
+    this.home = new HomeStore();
     // sub-stores
     this.webhook = new WebhookStore(_rootStore);
     this.apiToken = new ApiTokenStore(_rootStore);
@@ -179,4 +196,41 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
         this.workspaces = updatedWorkspacesList;
       });
     });
+
+  fetchSidebarNavigationPreferences = async (workspaceSlug: string) => {
+    try {
+      const response = await this.workspaceService.fetchSidebarNavigationPreferences(workspaceSlug);
+
+      runInAction(() => {
+        this.navigationPreferencesMap[workspaceSlug] = response;
+      });
+    } catch (error) {
+      console.error("Failed to fetch sidebar preferences:", error);
+    }
+  };
+
+  updateSidebarPreference = async (
+    workspaceSlug: string,
+    key: string,
+    data: Partial<IWorkspaceSidebarNavigationItem>
+  ) => {
+    try {
+      const response = await this.workspaceService.updateSidebarPreference(workspaceSlug, key, data);
+
+      runInAction(() => {
+        this.navigationPreferencesMap[workspaceSlug] = {
+          ...this.navigationPreferencesMap[workspaceSlug],
+          [key]: response,
+        };
+      });
+
+      return response;
+    } catch (error) {
+      console.error("Failed to update sidebar preference:", error);
+    }
+  };
+
+  getNavigationPreferences = computedFn(
+    (workspaceSlug: string): IWorkspaceSidebarNavigation | undefined => this.navigationPreferencesMap[workspaceSlug]
+  );
 }

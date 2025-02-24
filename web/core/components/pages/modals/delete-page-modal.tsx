@@ -3,30 +3,33 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // ui
+import { PAGE_DELETED } from "@plane/constants";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { PAGE_DELETED } from "@/constants/event-tracker";
 // hooks
-import { useEventTracker, usePage, useProjectPages } from "@/hooks/store";
+import { useEventTracker } from "@/hooks/store";
+// plane web hooks
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+// store
+import { TPageInstance } from "@/store/pages/base-page";
 
 type TConfirmPageDeletionProps = {
   isOpen: boolean;
   onClose: () => void;
-  pageId: string;
+  page: TPageInstance;
+  storeType: EPageStoreType;
 };
 
 export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
-  const { pageId, isOpen, onClose } = props;
+  const { isOpen, onClose, page, storeType } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
-  const { removePage } = useProjectPages();
+  const { removePage } = usePageStore(storeType);
   const { capturePageEvent } = useEventTracker();
-  const page = usePage(pageId);
-
-  if (!page) return null;
-
-  const { name } = page;
+  if (!page || !page.id) return null;
+  // derived values
+  const { id: pageId, name } = page;
 
   const handleClose = () => {
     setIsDeleting(false);

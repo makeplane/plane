@@ -8,7 +8,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
 // types
-import { TIssueAttachment, TIssueAttachmentMap, TIssueAttachmentIdMap } from "@plane/types";
+import { TIssueAttachment, TIssueAttachmentMap, TIssueAttachmentIdMap, TIssueServiceType } from "@plane/types";
 // services
 import { IssueAttachmentService } from "@/services/issue";
 import { IIssueRootStore } from "../root.store";
@@ -64,7 +64,7 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
   // services
   issueAttachmentService;
 
-  constructor(rootStore: IIssueRootStore) {
+  constructor(rootStore: IIssueRootStore, serviceType: TIssueServiceType) {
     makeObservable(this, {
       // observables
       attachments: observable,
@@ -82,7 +82,7 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
     this.rootIssueStore = rootStore;
     this.rootIssueDetailStore = rootStore.issueDetail;
     // services
-    this.issueAttachmentService = new IssueAttachmentService();
+    this.issueAttachmentService = new IssueAttachmentService(serviceType);
   }
 
   // computed
@@ -126,7 +126,7 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
     return response;
   };
 
-  debouncedUpdateProgress = debounce((issueId: string, tempId: string, progress: number) => {
+  private debouncedUpdateProgress = debounce((issueId: string, tempId: string, progress: number) => {
     runInAction(() => {
       set(this.attachmentsUploadStatusMap, [issueId, tempId, "progress"], progress);
     });
@@ -161,9 +161,6 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
         runInAction(() => {
           update(this.attachments, [issueId], (attachmentIds = []) => uniq(concat(attachmentIds, [response.id])));
           set(this.attachmentMap, response.id, response);
-          this.rootIssueStore.issues.updateIssue(issueId, {
-            attachment_count: issueAttachmentsCount + 1, // increment attachment count
-          });
         });
       }
 

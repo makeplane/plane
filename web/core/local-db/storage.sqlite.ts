@@ -1,4 +1,3 @@
-import { getActiveSpan, startSpan } from "@sentry/nextjs";
 import * as Comlink from "comlink";
 import set from "lodash/set";
 // plane
@@ -59,10 +58,10 @@ export class Storage {
     this.workspaceSlug = "";
   };
 
-  clearStorage = async () => {
+  clearStorage = async (force = false) => {
     try {
-      await this.db.close();
-      await clearOPFS();
+      await this.db?.close();
+      await clearOPFS(force);
       this.reset();
     } catch (e) {
       console.error("Error clearing sqlite sync storage", e);
@@ -77,7 +76,7 @@ export class Storage {
     }
 
     try {
-      await startSpan({ name: "INIT_DB" }, async () => await this._initialize(workspaceSlug));
+      await this._initialize(workspaceSlug);
       return true;
     } catch (err) {
       logError(err);
@@ -139,11 +138,9 @@ export class Storage {
       return;
     }
     try {
-      await startSpan({ name: "LOAD_WS", attributes: { slug: this.workspaceSlug } }, async () => {
-        this.setOption("sync_workspace", new Date().toUTCString());
-        await loadWorkSpaceData(this.workspaceSlug);
-        this.deleteOption("sync_workspace");
-      });
+      this.setOption("sync_workspace", new Date().toUTCString());
+      await loadWorkSpaceData(this.workspaceSlug);
+      this.deleteOption("sync_workspace");
     } catch (e) {
       logError(e);
       this.deleteOption("sync_workspace");
@@ -177,7 +174,7 @@ export class Storage {
       return false;
     }
     try {
-      const sync = startSpan({ name: `SYNC_ISSUES` }, () => this._syncIssues(projectId));
+      const sync = this._syncIssues(projectId);
       this.setSync(projectId, sync);
       await sync;
     } catch (e) {
@@ -187,8 +184,6 @@ export class Storage {
   };
 
   _syncIssues = async (projectId: string) => {
-    const activeSpan = getActiveSpan();
-
     log("### Sync started");
     let status = this.getStatus(projectId);
     if (status === "loading" || status === "syncing") {
@@ -240,7 +235,7 @@ export class Storage {
     if (syncedAt) {
       await syncDeletesToLocal(this.workspaceSlug, projectId, { updated_at__gt: syncedAt });
     }
-    log("### Time taken to add issues", performance.now() - start);
+    log("### Time taken to add work items", performance.now() - start);
 
     if (status === "loading") {
       await createIndexes();
@@ -248,11 +243,6 @@ export class Storage {
     this.setOption(projectId, "ready");
     this.setStatus(projectId, "ready");
     this.setSync(projectId, undefined);
-
-    activeSpan?.setAttributes({
-      projectId: projectId,
-      count: response?.total_results,
-    });
   };
 
   getIssueCount = async (projectId: string) => {
@@ -313,10 +303,7 @@ export class Storage {
     let issuesRaw: any[] = [];
     let count: any[];
     try {
-      [issuesRaw, count] = await startSpan(
-        { name: "GET_ISSUES" },
-        async () => await Promise.all([runQuery(query), runQuery(countQuery)])
-      );
+      [issuesRaw, count] = await Promise.all([runQuery(query), runQuery(countQuery)]);
     } catch (e) {
       logError(e);
       const issueService = new IssueService();
@@ -336,7 +323,7 @@ export class Storage {
     const parsingStart = performance.now();
     let issueResults = issuesRaw.map((issue: any) => formatLocalIssue(issue));
 
-    log("#### Issue Results", issueResults.length);
+    log("#### Work item Results", issueResults.length);
 
     const parsingEnd = performance.now();
 
@@ -372,18 +359,6 @@ export class Storage {
       next_page_results,
       total_pages,
     };
-
-    const activeSpan = getActiveSpan();
-    activeSpan?.setAttributes({
-      projectId,
-      count: total_count,
-      groupBy: group_by,
-      subGroupBy: sub_group_by,
-      queries: queries,
-      local: true,
-      groupCount,
-      // subGroupCount,
-    });
     return out;
   };
 

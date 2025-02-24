@@ -1,101 +1,97 @@
-import { useCallback, useMemo } from "react";
+import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // document-editor
 import {
   CollaborativeDocumentEditorWithRef,
-  CollaborativeDocumentReadOnlyEditorWithRef,
-  EditorReadOnlyRefApi,
   EditorRefApi,
   TAIMenuProps,
   TDisplayConfig,
+  TFileHandler,
   TRealtimeConfig,
   TServerHandler,
 } from "@plane/editor";
-// types
-import { IUserLite } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
-// components
+// plane types
+import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
+// plane ui
 import { Row } from "@plane/ui";
+// components
+import { EditorMentionsRoot } from "@/components/editor";
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
 import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
-import { getEditorFileHandlers, getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
-import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
+import { useEditorMention } from "@/hooks/editor";
+import { useUser, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-import { useFileSize } from "@/plane-web/hooks/use-file-size";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
-// services
-import { FileService } from "@/services/file.service";
 // store
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
 
-// services init
-const fileService = new FileService();
+export type TEditorBodyConfig = {
+  fileHandler: TFileHandler;
+};
+
+export type TEditorBodyHandlers = {
+  fetchEntity: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
+};
 
 type Props = {
+  config: TEditorBodyConfig;
   editorRef: React.RefObject<EditorRefApi>;
   editorReady: boolean;
-  handleConnectionStatus: (status: boolean) => void;
-  handleEditorReady: (value: boolean) => void;
-  handleReadOnlyEditorReady: (value: boolean) => void;
-  page: IPage;
-  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
+  handleConnectionStatus: Dispatch<SetStateAction<boolean>>;
+  handleEditorReady: Dispatch<SetStateAction<boolean>>;
+  handlers: TEditorBodyHandlers;
+  page: TPageInstance;
   sidePeekVisible: boolean;
+  webhookConnectionParams: TWebhookConnectionQueryParams;
+  workspaceSlug: string;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
   const {
+    config,
     editorRef,
     handleConnectionStatus,
     handleEditorReady,
-    handleReadOnlyEditorReady,
+    handlers,
     page,
-    readOnlyEditorRef,
     sidePeekVisible,
+    webhookConnectionParams,
+    workspaceSlug,
   } = props;
-  // router
-  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
-  const {
-    getUserDetails,
-    project: { getProjectMemberIds },
-  } = useMember();
   // derived values
-  const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
-  const pageId = page?.id;
-  const pageTitle = page?.name ?? "";
-  const { isContentEditable, updateTitle } = page;
-  const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
-  const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
-  // use-mention
-  const { mentionHighlights, mentionSuggestions } = useMention({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
-    projectId: projectId?.toString() ?? "",
-    members: projectMemberDetails,
-    user: currentUser ?? undefined,
+  const { id: pageId, name: pageTitle, isContentEditable, updateTitle } = page;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
+  // issue-embed
+  const { issueEmbedProps } = useIssueEmbed({
+    fetchEmbedSuggestions: handlers.fetchEntity,
+    workspaceSlug,
+  });
+  // use editor mention
+  const { fetchMentions } = useEditorMention({
+    searchEntity: handlers.fetchEntity,
   });
   // editor flaggings
-  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug);
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
-  // issue-embed
-  const { issueEmbedProps } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
-  // file size
-  const { maxFileSize } = useFileSize();
-
-  const displayConfig: TDisplayConfig = {
-    fontSize,
-    fontStyle,
-  };
+  // derived values
+  const displayConfig: TDisplayConfig = useMemo(
+    () => ({
+      fontSize,
+      fontStyle,
+    }),
+    [fontSize, fontStyle]
+  );
 
   const getAIMenu = useCallback(
     ({ isOpen, onClose }: TAIMenuProps) => (
@@ -103,20 +99,20 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         editorRef={editorRef}
         isOpen={isOpen}
         onClose={onClose}
-        projectId={projectId?.toString() ?? ""}
+        workspaceId={workspaceId}
         workspaceSlug={workspaceSlug?.toString() ?? ""}
       />
     ),
-    [editorRef, projectId, workspaceSlug]
+    [editorRef, workspaceId, workspaceSlug]
   );
 
   const handleServerConnect = useCallback(() => {
     handleConnectionStatus(false);
-  }, []);
+  }, [handleConnectionStatus]);
 
   const handleServerError = useCallback(() => {
     handleConnectionStatus(true);
-  }, []);
+  }, [handleConnectionStatus]);
 
   const serverHandler: TServerHandler = useMemo(
     () => ({
@@ -137,17 +133,13 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       // Construct realtime config
       return {
         url: WS_LIVE_URL.toString(),
-        queryParams: {
-          workspaceSlug: workspaceSlug?.toString(),
-          projectId: projectId?.toString(),
-          documentType: "project_page",
-        },
+        queryParams: webhookConnectionParams,
       };
     } catch (error) {
       console.error("Error creating realtime config", error);
       return undefined;
     }
-  }, [projectId, workspaceSlug]);
+  }, [webhookConnectionParams]);
 
   const userConfig = useMemo(
     () => ({
@@ -155,7 +147,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       name: currentUser?.display_name ?? "",
       color: generateRandomColor(currentUser?.id ?? ""),
     }),
-    [currentUser]
+    [currentUser?.display_name, currentUser?.id]
   );
 
   if (pageId === undefined || !realtimeConfig) return <PageContentLoader />;
@@ -169,91 +161,49 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           "w-[5%]": isFullWidth,
         })}
       >
-        {!isFullWidth && (
-          <PageContentBrowser editorRef={(isContentEditable ? editorRef : readOnlyEditorRef)?.current} />
-        )}
+        {!isFullWidth && <PageContentBrowser editorRef={editorRef.current} />}
       </Row>
       <div
-        className={cn("h-full w-full pt-5 duration-200", {
+        className={cn("size-full pt-5 duration-200", {
           "md:w-[calc(100%-10rem)] xl:w-[calc(100%-28rem)]": !isFullWidth,
           "md:w-[90%]": isFullWidth,
         })}
       >
-        <div className="h-full w-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
-          <div className="relative w-full flex-shrink-0 md:pl-5 px-4">
-            <PageEditorTitle
-              editorRef={editorRef}
-              title={pageTitle}
-              updateTitle={updateTitle}
-              readOnly={!isContentEditable}
-            />
-          </div>
-          {isContentEditable ? (
-            <CollaborativeDocumentEditorWithRef
-              id={pageId}
-              fileHandler={getEditorFileHandlers({
-                maxFileSize,
-                projectId: projectId?.toString() ?? "",
-                uploadFile: async (file) => {
-                  const { asset_id } = await fileService.uploadProjectAsset(
-                    workspaceSlug?.toString() ?? "",
-                    projectId?.toString() ?? "",
-                    {
-                      entity_identifier: pageId,
-                      entity_type: EFileAssetType.PAGE_DESCRIPTION,
-                    },
-                    file
-                  );
-                  return asset_id;
-                },
-                workspaceId,
-                workspaceSlug: workspaceSlug?.toString() ?? "",
-              })}
-              handleEditorReady={handleEditorReady}
-              ref={editorRef}
-              containerClassName="h-full p-0 pb-64"
-              displayConfig={displayConfig}
-              editorClassName="pl-10"
-              mentionHandler={{
-                highlights: mentionHighlights,
-                suggestions: mentionSuggestions,
-              }}
-              embedHandler={{
-                issue: issueEmbedProps,
-              }}
-              realtimeConfig={realtimeConfig}
-              serverHandler={serverHandler}
-              user={userConfig}
-              disabledExtensions={disabledExtensions}
-              aiHandler={{
-                menu: getAIMenu,
-              }}
-            />
-          ) : (
-            <CollaborativeDocumentReadOnlyEditorWithRef
-              id={pageId}
-              ref={readOnlyEditorRef}
-              disabledExtensions={disabledExtensions}
-              fileHandler={getReadOnlyEditorFileHandlers({
-                projectId: projectId?.toString() ?? "",
-                workspaceSlug: workspaceSlug?.toString() ?? "",
-              })}
-              handleEditorReady={handleReadOnlyEditorReady}
-              containerClassName="p-0 pb-64 border-none"
-              displayConfig={displayConfig}
-              editorClassName="pl-10"
-              mentionHandler={{
-                highlights: mentionHighlights,
-              }}
-              embedHandler={{
-                issue: {
-                  widgetCallback: issueEmbedProps.widgetCallback,
-                },
-              }}
-              realtimeConfig={realtimeConfig}
-              user={userConfig}
-            />
-          )}
+        <div className="size-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
+          <PageEditorTitle
+            editorRef={editorRef}
+            title={pageTitle}
+            updateTitle={updateTitle}
+            readOnly={!isContentEditable}
+          />
+          <CollaborativeDocumentEditorWithRef
+            editable={isContentEditable}
+            id={pageId}
+            fileHandler={config.fileHandler}
+            handleEditorReady={handleEditorReady}
+            ref={editorRef}
+            containerClassName="h-full p-0 pb-64"
+            displayConfig={displayConfig}
+            editorClassName="pl-10"
+            mentionHandler={{
+              searchCallback: async (query) => {
+                const res = await fetchMentions(query);
+                if (!res) throw new Error("Failed in fetching mentions");
+                return res;
+              },
+              renderComponent: (props) => <EditorMentionsRoot {...props} />,
+            }}
+            embedHandler={{
+              issue: issueEmbedProps,
+            }}
+            realtimeConfig={realtimeConfig}
+            serverHandler={serverHandler}
+            user={userConfig}
+            disabledExtensions={disabledExtensions}
+            aiHandler={{
+              menu: getAIMenu,
+            }}
+          />
         </div>
       </div>
       <div

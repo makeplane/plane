@@ -1,13 +1,12 @@
 import { FC, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
+import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
 import { EditorRefApi } from "@plane/editor";
 // types
 import { TIssueComment } from "@plane/types";
 // components
 import { LiteTextEditor } from "@/components/editor";
-// constants
-import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
@@ -96,6 +95,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 id={"add_comment_" + issueId}
                 value={"<p></p>"}
                 projectId={projectId}
+                issue_id={issueId}
                 workspaceSlug={workspaceSlug}
                 onEnterKeyPress={(e) => {
                   if (!isEmpty && !isSubmitting) {
@@ -110,8 +110,8 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 handleAccessChange={onAccessChange}
                 showAccessSpecifier={showAccessSpecifier}
                 isSubmitting={isSubmitting}
-                uploadFile={async (file) => {
-                  const { asset_id } = await activityOperations.uploadCommentAsset(file);
+                uploadFile={async (blockId, file) => {
+                  const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file);
                   setUploadedAssetIds((prev) => [...prev, asset_id]);
                   return asset_id;
                 }}

@@ -2,10 +2,10 @@ import groupBy from "lodash/groupBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// types
+// plane imports
+import { STATE_GROUPS } from "@plane/constants";
 import { IState } from "@plane/types";
 // helpers
-import { convertStringArrayToBooleanObject } from "@/helpers/array.helper";
 import { sortStates } from "@/helpers/state.helper";
 // plane web
 import { syncIssuesWithDeletedStates } from "@/local-db/utils/load-workspace";
@@ -24,10 +24,6 @@ export interface IStateStore {
   // computed actions
   getStateById: (stateId: string | null | undefined) => IState | undefined;
   getProjectStates: (projectId: string | null | undefined) => IState[] | undefined;
-  getAvailableProjectStateIdMap: (
-    projectId: string | null | undefined,
-    currStateId: string | null | undefined
-  ) => { [key: string]: boolean };
   // fetch actions
   fetchProjectStates: (workspaceSlug: string, projectId: string) => Promise<IState[]>;
   fetchWorkspaceStates: (workspaceSlug: string) => Promise<IState[]>;
@@ -47,8 +43,6 @@ export interface IStateStore {
     stateId: string,
     payload: Partial<IState>
   ) => Promise<void>;
-  //Dummy method
-  fetchProjectStateTransitions: (workspaceSlug: string, projectId: string) => void;
 }
 
 export class StateStore implements IStateStore {
@@ -106,7 +100,20 @@ export class StateStore implements IStateStore {
    */
   get groupedProjectStates() {
     if (!this.router.projectId) return;
-    return groupBy(this.projectStates, "group") as Record<string, IState[]>;
+
+    // First group the existing states
+    const groupedStates = groupBy(this.projectStates, "group") as Record<string, IState[]>;
+
+    // Ensure all STATE_GROUPS are present
+    const allGroups = Object.keys(STATE_GROUPS).reduce(
+      (acc, group) => ({
+        ...acc,
+        [group]: groupedStates[group] || [],
+      }),
+      {} as Record<string, IState[]>
+    );
+
+    return allGroups;
   }
 
   /**
@@ -128,20 +135,6 @@ export class StateStore implements IStateStore {
     if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[workspaceSlug])) return;
     return sortStates(Object.values(this.stateMap).filter((state) => state.project_id === projectId));
   });
-
-  /**
-   * Returns an object linking state permissions as boolean values
-   * @param projectId
-   */
-  getAvailableProjectStateIdMap = computedFn(
-    (projectId: string | null | undefined, currStateId: string | null | undefined) => {
-      const projectStates = this.getProjectStates(projectId);
-
-      if (!projectStates) return {};
-
-      return convertStringArrayToBooleanObject(projectStates.map((projectState) => projectState.id));
-    }
-  );
 
   /**
    * fetches the stateMap of a project
@@ -278,14 +271,11 @@ export class StateStore implements IStateStore {
       });
       // updating using api
       await this.stateService.patchState(workspaceSlug, projectId, stateId, payload);
-    } catch (err) {
+    } catch {
       // reverting back to old state group if api fails
       runInAction(() => {
         this.stateMap = originalStates;
       });
     }
   };
-
-  // Dummy method
-  fetchProjectStateTransitions = (workspaceSlug: string, projectId: string) => {};
 }

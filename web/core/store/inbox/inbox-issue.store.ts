@@ -1,7 +1,8 @@
 import clone from "lodash/clone";
 import set from "lodash/set";
 import { makeObservable, observable, runInAction, action } from "mobx";
-import { TIssue, TInboxIssue, TInboxIssueStatus, TInboxDuplicateIssueDetails } from "@plane/types";
+import { TInboxIssue, TInboxIssueStatus } from "@plane/constants";
+import { TIssue, TInboxDuplicateIssueDetails } from "@plane/types";
 // helpers
 import { EInboxIssueStatus } from "@/helpers/inbox.helper";
 // local db
@@ -98,7 +99,9 @@ export class InboxIssueStore implements IInboxIssueStore {
 
       // If issue accepted sync issue to local db
       if (status === EInboxIssueStatus.ACCEPTED) {
-        addIssueToPersistanceLayer({ ...this.issue, ...inboxIssue.issue });
+        const updatedIssue = { ...this.issue, ...inboxIssue.issue };
+        this.store.issue.issues.addIssue([updatedIssue]);
+        await addIssueToPersistanceLayer(updatedIssue);
       }
     } catch {
       runInAction(() => set(this, "status", previousData.status));

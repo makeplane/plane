@@ -4,7 +4,8 @@ import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // plane types
-import { TIssue } from "@plane/types";
+import { ISSUE_ARCHIVED, ISSUE_DELETED } from "@plane/constants";
+import { TIssue, TNameDescriptionLoader } from "@plane/types";
 // plane ui
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -18,7 +19,6 @@ import {
   IssueAttachmentRoot,
 } from "@/components/issues";
 // constants
-import { ISSUE_ARCHIVED, ISSUE_DELETED } from "@/constants/event-tracker";
 // helpers
 import { getTextContent } from "@/helpers/editor.helper";
 // hooks
@@ -34,8 +34,8 @@ type Props = {
   projectId: string;
   inboxIssue: IInboxIssueStore;
   isEditable: boolean;
-  isSubmitting: "submitting" | "submitted" | "saved";
-  setIsSubmitting: Dispatch<SetStateAction<"submitting" | "submitted" | "saved">>;
+  isSubmitting: TNameDescriptionLoader;
+  setIsSubmitting: Dispatch<SetStateAction<TNameDescriptionLoader>>;
 };
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
@@ -65,11 +65,16 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const projectDetails = issue?.project_id ? getProjectById(issue?.project_id) : undefined;
 
   // debounced duplicate issues swr
-  const { duplicateIssues } = useDebouncedDuplicateIssues(projectDetails?.workspace.toString(), projectId, {
-    name: issue?.name,
-    description_html: getTextContent(issue?.description_html),
-    issueId: issue?.id,
-  });
+  const { duplicateIssues } = useDebouncedDuplicateIssues(
+    workspaceSlug,
+    projectDetails?.workspace.toString(),
+    projectId,
+    {
+      name: issue?.name,
+      description_html: getTextContent(issue?.description_html),
+      issueId: issue?.id,
+    }
+  );
 
   if (!issue) return <></>;
 
@@ -86,23 +91,23 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           setToast({
             title: "Success!",
             type: TOAST_TYPE.SUCCESS,
-            message: "Issue deleted successfully",
+            message: "Work item deleted successfully",
           });
           captureIssueEvent({
             eventName: ISSUE_DELETED,
-            payload: { id: _issueId, state: "SUCCESS", element: "Issue detail page" },
+            payload: { id: _issueId, state: "SUCCESS", element: "Work item detail page" },
             path: pathname,
           });
         } catch (error) {
-          console.log("Error in deleting issue:", error);
+          console.log("Error in deleting work item:", error);
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
-            message: "Issue delete failed",
+            message: "Work item delete failed",
           });
           captureIssueEvent({
             eventName: ISSUE_DELETED,
-            payload: { id: _issueId, state: "FAILED", element: "Issue detail page" },
+            payload: { id: _issueId, state: "FAILED", element: "Work item detail page" },
             path: pathname,
           });
         }
@@ -111,7 +116,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         try {
           await inboxIssue.updateIssue(data);
           captureIssueEvent({
-            eventName: "Inbox issue updated",
+            eventName: "Inbox work item updated",
             payload: { ...data, state: "SUCCESS", element: "Inbox" },
             updates: {
               changed_property: Object.keys(data).join(","),
@@ -121,12 +126,12 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           });
         } catch (error) {
           setToast({
-            title: "Issue update failed",
+            title: "Work item update failed",
             type: TOAST_TYPE.ERROR,
-            message: "Issue update failed",
+            message: "Work item update failed",
           });
           captureIssueEvent({
-            eventName: "Inbox issue updated",
+            eventName: "Inbox work item updated",
             payload: { state: "SUCCESS", element: "Inbox" },
             updates: {
               changed_property: Object.keys(data).join(","),
@@ -141,14 +146,14 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           await archiveIssue(workspaceSlug, projectId, issueId);
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
-            payload: { id: issueId, state: "SUCCESS", element: "Issue details page" },
+            payload: { id: issueId, state: "SUCCESS", element: "Work item details page" },
             path: pathname,
           });
         } catch (error) {
           console.log("Error in archiving issue:", error);
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
-            payload: { id: issueId, state: "FAILED", element: "Issue details page" },
+            payload: { id: issueId, state: "FAILED", element: "Work item details page" },
             path: pathname,
           });
         }

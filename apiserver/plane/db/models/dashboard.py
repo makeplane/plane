@@ -8,7 +8,7 @@ from ..mixins import TimeAuditModel
 from .base import BaseModel
 
 
-class Dashboard(BaseModel):
+class DeprecatedDashboard(BaseModel):
     DASHBOARD_CHOICES = (
         ("workspace", "Workspace"),
         ("project", "Project"),
@@ -36,13 +36,13 @@ class Dashboard(BaseModel):
         return f"{self.name}"
 
     class Meta:
-        verbose_name = "Dashboard"
-        verbose_name_plural = "Dashboards"
-        db_table = "dashboards"
+        verbose_name = "DeprecatedDashboard"
+        verbose_name_plural = "DeprecatedDashboards"
+        db_table = "deprecated_dashboards"
         ordering = ("-created_at",)
 
 
-class Widget(TimeAuditModel):
+class DeprecatedWidget(TimeAuditModel):
     id = models.UUIDField(
         default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
     )
@@ -55,18 +55,18 @@ class Widget(TimeAuditModel):
         return f"{self.key}"
 
     class Meta:
-        verbose_name = "Widget"
-        verbose_name_plural = "Widgets"
-        db_table = "widgets"
+        verbose_name = "DeprecatedWidget"
+        verbose_name_plural = "DeprecatedWidgets"
+        db_table = "deprecated_widgets"
         ordering = ("-created_at",)
 
 
-class DashboardWidget(BaseModel):
+class DeprecatedDashboardWidget(BaseModel):
     widget = models.ForeignKey(
-        Widget, on_delete=models.CASCADE, related_name="dashboard_widgets"
+        DeprecatedWidget, on_delete=models.CASCADE, related_name="dashboard_widgets"
     )
     dashboard = models.ForeignKey(
-        Dashboard, on_delete=models.CASCADE, related_name="dashboard_widgets"
+        DeprecatedDashboard, on_delete=models.CASCADE, related_name="dashboard_widgets"
     )
     is_visible = models.BooleanField(default=True)
     sort_order = models.FloatField(default=65535)
@@ -86,7 +86,7 @@ class DashboardWidget(BaseModel):
                 name="dashboard_widget_unique_widget_dashboard_when_deleted_at_null",
             )
         ]
-        verbose_name = "Dashboard Widget"
-        verbose_name_plural = "Dashboard Widgets"
-        db_table = "dashboard_widgets"
+        verbose_name = "Deprecated Dashboard Widget"
+        verbose_name_plural = "Deprecated Dashboard Widgets"
+        db_table = "deprecated_dashboard_widgets"
         ordering = ("-created_at",)

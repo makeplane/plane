@@ -1,12 +1,12 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
+// constants
+import { E_SORT_ORDER, TActivityFilters, filterActivityOnSelectedFilters } from "@plane/constants";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web components
 import { IssueAdditionalPropertiesActivity } from "@/plane-web/components/issues";
 import { IssueActivityWorklog } from "@/plane-web/components/issues/worklog/activity/root";
-// plane web constants
-import { TActivityFilters, filterActivityOnSelectedFilters } from "@/plane-web/constants/issues";
 // components
 import { IssueActivityItem } from "./activity/activity-list";
 import { IssueCommentCard } from "./comments/comment-card";
@@ -21,18 +21,27 @@ type TIssueActivityCommentRoot = {
   activityOperations: TActivityOperations;
   showAccessSpecifier?: boolean;
   disabled?: boolean;
+  sortOrder: E_SORT_ORDER;
 };
 
 export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer((props) => {
-  const { workspaceSlug, issueId, selectedFilters, activityOperations, showAccessSpecifier, projectId, disabled } =
-    props;
+  const {
+    workspaceSlug,
+    issueId,
+    selectedFilters,
+    activityOperations,
+    showAccessSpecifier,
+    projectId,
+    disabled,
+    sortOrder,
+  } = props;
   // hooks
   const {
     activity: { getActivityCommentByIssueId },
     comment: {},
   } = useIssueDetail();
 
-  const activityComments = getActivityCommentByIssueId(issueId);
+  const activityComments = getActivityCommentByIssueId(issueId, sortOrder);
 
   if (!activityComments || (activityComments && activityComments.length <= 0)) return <></>;
 
@@ -44,6 +53,7 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
         activityComment.activity_type === "COMMENT" ? (
           <IssueCommentCard
             projectId={projectId}
+            issueId={issueId}
             key={activityComment.id}
             workspaceSlug={workspaceSlug}
             commentId={activityComment.id}

@@ -1,10 +1,11 @@
 "use client";
 
 import { BarDatum } from "@nivo/bar";
+// plane package imports
+import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES } from "@plane/constants";
 import { IAnalyticsParams, IAnalyticsResponse, TIssuePriorities } from "@plane/types";
 import { PriorityIcon, Tooltip } from "@plane/ui";
 // helpers
-import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES } from "@/constants/analytics";
 import { generateBarColor, generateDisplayName, renderChartDynamicLabel } from "@/helpers/analytics.helper";
 import { cn } from "@/helpers/common.helper";
 

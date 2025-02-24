@@ -15,11 +15,13 @@ import { PageEditInformationPopover } from "@/components/pages";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getPageName } from "@/helpers/page.helper";
 // hooks
-import { usePage, useProject, useUser, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
-import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
+// plane web hooks
+import { EPageStoreType, usePage } from "@/plane-web/hooks/store";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
@@ -32,17 +34,15 @@ export const PageDetailsHeader = observer(() => {
   const [isOpen, setIsOpen] = useState(false);
   // store hooks
   const { currentProjectDetails, loader } = useProject();
-  const page = usePage(pageId?.toString() ?? "");
-  const { name, logo_props, updatePageLogo, owned_by } = page;
-  const { allowPermissions } = useUserPermissions();
-  const { data: currentUser } = useUser();
+  const page = usePage({
+    pageId: pageId?.toString() ?? "",
+    storeType: EPageStoreType.PROJECT,
+  });
+  if (!page) return null;
+  // derived values
+  const { name, logo_props, updatePageLogo, isContentEditable } = page;
   // use platform
   const { isMobile } = usePlatformOS();
-
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
-  const isOwner = owned_by === currentUser?.id;
-
-  const isEditable = isAdmin || isOwner;
 
   const handlePageLogoUpdate = async (data: TLogoProps) => {
     if (data) {
@@ -70,22 +70,13 @@ export const PageDetailsHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <div>
-          <Breadcrumbs isLoading={loader}>
+          <Breadcrumbs isLoading={loader === "init-loader"}>
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
                 <span>
                   <span className="hidden md:block">
-                    <BreadcrumbLink
-                      label={currentProjectDetails?.name ?? "Project"}
-                      icon={
-                        currentProjectDetails && (
-                          <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                            <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                          </span>
-                        )
-                      }
-                    />
+                    <ProjectBreadcrumb />
                   </span>
                   <span className="md:hidden">
                     <BreadcrumbLink
@@ -151,7 +142,7 @@ export const PageDetailsHeader = observer(() => {
                               ? EmojiIconPickerTypes.EMOJI
                               : EmojiIconPickerTypes.ICON
                           }
-                          disabled={!isEditable}
+                          disabled={!isContentEditable}
                         />
                       </div>
                       <Tooltip tooltipContent={pageTitle} position="bottom" isMobile={isMobile}>
@@ -169,7 +160,7 @@ export const PageDetailsHeader = observer(() => {
       </Header.LeftItem>
       <Header.RightItem>
         <PageEditInformationPopover page={page} />
-        <PageDetailsHeaderExtraActions />
+        <PageDetailsHeaderExtraActions page={page} />
       </Header.RightItem>
     </Header>
   );

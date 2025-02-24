@@ -2,14 +2,12 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import { MODULE_STATUS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TModuleStatus } from "@plane/types";
 // components
 import { ModuleStatusIcon } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";
-// ui
-// types
-import { MODULE_STATUS } from "@/constants/module";
-// constants
 
 type Props = {
   appliedFilters: TModuleStatus[] | null;
@@ -21,6 +19,7 @@ export const FilterStatus: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);
+  const { t } = useTranslation();
 
   const filteredOptions = MODULE_STATUS.filter((p) => p.value.includes(searchQuery.toLowerCase()));
   const appliedFiltersCount = appliedFilters?.length ?? 0;
@@ -41,7 +40,7 @@ export const FilterStatus: React.FC<Props> = observer((props) => {
                 isChecked={appliedFilters?.includes(status.value) ? true : false}
                 onClick={() => handleUpdate(status.value)}
                 icon={<ModuleStatusIcon status={status.value} />}
-                title={status.label}
+                title={t(status.i18n_label)}
               />
             ))
           ) : (

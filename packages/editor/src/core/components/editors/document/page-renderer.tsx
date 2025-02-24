@@ -15,12 +15,13 @@ import { Editor, ReactRenderer } from "@tiptap/react";
 // components
 import { EditorContainer, EditorContentWrapper } from "@/components/editors";
 import { LinkView, LinkViewProps } from "@/components/links";
-import { AIFeaturesMenu, BlockMenu } from "@/components/menus";
+import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // types
 import { TAIHandler, TDisplayConfig } from "@/types";
 
 type IPageRenderer = {
   aiHandler?: TAIHandler;
+  bubbleMenuEnabled: boolean;
   displayConfig: TDisplayConfig;
   editor: Editor;
   editorContainerClassName: string;
@@ -29,7 +30,7 @@ type IPageRenderer = {
 };
 
 export const PageRenderer = (props: IPageRenderer) => {
-  const { aiHandler, displayConfig, editor, editorContainerClassName, id, tabIndex } = props;
+  const { aiHandler, bubbleMenuEnabled, displayConfig, editor, editorContainerClassName, id, tabIndex } = props;
   // states
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
@@ -140,10 +141,11 @@ export const PageRenderer = (props: IPageRenderer) => {
         >
           <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
           {editor.isEditable && (
-            <>
+            <div>
+              {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
               <BlockMenu editor={editor} />
               <AIFeaturesMenu menu={aiHandler?.menu} />
-            </>
+            </div>
           )}
         </EditorContainer>
       </div>

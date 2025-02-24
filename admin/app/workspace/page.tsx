@@ -7,12 +7,10 @@ import useSWR from "swr";
 import { Loader as LoaderIcon } from "lucide-react";
 // types
 import { TInstanceConfigurationKeys } from "@plane/types";
-// ui
 import { Button, getButtonStyling, Loader, setPromiseToast, ToggleSwitch } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { WorkspaceListItem } from "@/components/workspace";
-// helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useInstance, useWorkspace } from "@/hooks/store";
 

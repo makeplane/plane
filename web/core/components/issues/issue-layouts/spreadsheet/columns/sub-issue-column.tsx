@@ -18,15 +18,18 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
   // router
   const router = useAppRouter();
   // hooks
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, epicId } = useParams();
   // derived values
   const subIssueCount = issue?.sub_issues_count ?? 0;
 
   const redirectToIssueDetail = () => {
     router.push(
-      `/${workspaceSlug?.toString()}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${issue.id}#sub-issues`
+      `/${workspaceSlug?.toString()}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}${epicId ? "epics" : "issues"}/${issue.id}#sub-issues`
     );
   };
+
+  const issueLabel = epicId ? "work item" : "sub-work item";
+  const label = `${subIssueCount} ${issueLabel}${subIssueCount !== 1 ? "s" : ""}`;
 
   return (
     <Row
@@ -38,7 +41,7 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
         }
       )}
     >
-      {subIssueCount} {subIssueCount === 1 ? "sub-issue" : "sub-issues"}
+      {label}
     </Row>
   );
 });

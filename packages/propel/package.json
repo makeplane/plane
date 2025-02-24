@@ -1,0 +1,30 @@
+{
+  "name": "@plane/propel",
+  "version": "0.24.1",
+  "private": true,
+  "scripts": {
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:errors": "eslint src --ext .ts,.tsx --quiet"
+  },
+  "exports": {
+    "./ui/*": "./src/ui/*.tsx",
+    "./charts/*": "./src/charts/*/index.ts"
+  },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.1.1",
+    "class-variance-authority": "^0.7.1",
+    "lucide-react": "^0.469.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recharts": "^2.15.1",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "@plane/eslint-config": "*",
+    "@plane/tailwind-config": "*",
+    "@plane/typescript-config": "*",
+    "@types/react": "18.3.1",
+    "@types/react-dom": "18.3.0",
+    "typescript": "^5.3.3"
+  }
+}

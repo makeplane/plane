@@ -1,6 +1,9 @@
 "use client";
 import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
+import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { TIssueServiceType } from "@plane/types";
 import { CollapsibleButton } from "@plane/ui";
 // components
 import { IssueLinksActionButton } from "@/components/issues/issue-detail-widgets";
@@ -11,14 +14,16 @@ type Props = {
   isOpen: boolean;
   issueId: string;
   disabled: boolean;
+  issueServiceType?: TIssueServiceType;
 };
 
 export const IssueLinksCollapsibleTitle: FC<Props> = observer((props) => {
-  const { isOpen, issueId, disabled } = props;
+  const { isOpen, issueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const { t } = useTranslation();
   // store hooks
   const {
     issue: { getIssueById },
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
 
   // derived values
   const issue = getIssueById(issueId);
@@ -38,9 +43,11 @@ export const IssueLinksCollapsibleTitle: FC<Props> = observer((props) => {
   return (
     <CollapsibleButton
       isOpen={isOpen}
-      title="Links"
+      title={t("common.links")}
       indicatorElement={indicatorElement}
-      actionItemElement={!disabled && <IssueLinksActionButton disabled={disabled} />}
+      actionItemElement={
+        !disabled && <IssueLinksActionButton issueServiceType={issueServiceType} disabled={disabled} />
+      }
     />
   );
 });

@@ -64,7 +64,7 @@ const integrationWorkflowData = [
     key: "import-data",
     icon: UploadCloud,
   },
-  { title: "Issues", key: "repo-details", icon: List },
+  { title: "Work item", key: "repo-details", icon: List },
   {
     title: "Users",
     key: "import-users",
@@ -168,7 +168,7 @@ export const GithubImporterRoot: React.FC = () => {
         <div className="space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4">
           <div className="flex items-center gap-2">
             <div className="h-10 w-10 flex-shrink-0">
-              <Image src={GithubLogo} alt="GithubLogo" />
+              <Image src={GithubLogo} alt="GitHubLogo" />
             </div>
             <div className="flex h-full w-full items-center justify-center">
               {integrationWorkflowData.map((integration, index) => (

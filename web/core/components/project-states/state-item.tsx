@@ -6,18 +6,16 @@ import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-d
 import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { observer } from "mobx-react";
 // Plane
+import { TDraggableData } from "@plane/constants";
 import { IState, TStateGroups } from "@plane/types";
 import { DropIndicator } from "@plane/ui";
 // components
-import { StateUpdate } from "@/components/project-states";
+import { StateItemTitle, StateUpdate } from "@/components/project-states";
 // helpers
-import { TDraggableData } from "@/constants/state";
 import { cn } from "@/helpers/common.helper";
 import { getCurrentStateSequence } from "@/helpers/state.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
-// Plane-web
-import { StateItemChild } from "@/plane-web/components/workflow";
 
 type TStateItem = {
   workspaceSlug: string;
@@ -107,7 +105,7 @@ export const StateItem: FC<TStateItem> = observer((props) => {
         })
       );
     }
-  }, [draggableElementRef, state, groupKey, isDraggable, groupedStates, handleStateSequence]);
+  }, [draggableElementRef, state, groupKey, isDraggable, groupedStates, handleStateSequence, disabled]);
   // DND ends
 
   if (updateStateModal)
@@ -128,12 +126,12 @@ export const StateItem: FC<TStateItem> = observer((props) => {
       <div
         ref={draggableElementRef}
         className={cn(
-          "relative border border-custom-border-100 rounded group",
+          "relative border border-custom-border-100 bg-custom-background-100 py-3 px-3.5 rounded group",
           isDragging ? `opacity-50` : `opacity-100`,
           totalStates === 1 ? `cursor-auto` : `cursor-grab`
         )}
       >
-        <StateItemChild
+        <StateItemTitle
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           setUpdateStateModal={setUpdateStateModal}

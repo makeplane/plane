@@ -11,6 +11,8 @@ import {
 } from "@plane/types";
 // ui
 import { ContrastIcon, DiceIcon } from "@plane/ui";
+// helpers
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 
@@ -48,8 +50,14 @@ export const commandGroups: {
       </div>
     ),
     path: (issue: IWorkspaceIssueSearchResult) =>
-      `/${issue?.workspace__slug}/projects/${issue?.project_id}/issues/${issue?.id}`,
-    title: "Issues",
+      generateWorkItemLink({
+        workspaceSlug: issue?.workspace__slug,
+        projectId: issue?.project_id,
+        issueId: issue?.id,
+        projectIdentifier: issue.project__identifier,
+        sequenceId: issue?.sequence_id,
+      }),
+    title: "Work items",
   },
   issue_view: {
     icon: <Layers className="h-3 w-3" />,

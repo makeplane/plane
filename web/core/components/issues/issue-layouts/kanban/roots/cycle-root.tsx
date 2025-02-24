@@ -2,12 +2,11 @@ import React, { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
+import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { CycleIssueQuickActions } from "@/components/issues";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useCycle, useIssues, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";
 

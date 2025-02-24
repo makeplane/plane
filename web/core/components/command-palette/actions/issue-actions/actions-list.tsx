@@ -7,12 +7,10 @@ import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2, Users } from "lucide-r
 import { TIssue } from "@plane/types";
 // hooks
 import { DoubleCircleIcon, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
-import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useCommandPalette, useIssues, useUser } from "@/hooks/store";
+import { useCommandPalette, useIssueDetail, useUser } from "@/hooks/store";
 
 type Props = {
   closePalette: () => void;
@@ -26,13 +24,14 @@ type Props = {
 export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
   const { closePalette, issueDetails, pages, setPages, setPlaceholder, setSearchTerm } = props;
   // router
-  const { workspaceSlug, projectId, issueId } = useParams();
+  const { workspaceSlug } = useParams();
   // hooks
-  const {
-    issues: { updateIssue },
-  } = useIssues(EIssuesStoreType.PROJECT);
+  const { updateIssue } = useIssueDetail();
   const { toggleCommandPaletteModal, toggleDeleteIssueModal } = useCommandPalette();
   const { data: currentUser } = useUser();
+  // derived values
+  const issueId = issueDetails?.id;
+  const projectId = issueDetails?.project_id;
 
   const handleUpdateIssue = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !issueDetails) return;
@@ -66,21 +65,15 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
       .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Copied to clipboard",
-        });
+        setToast({ type: TOAST_TYPE.SUCCESS, title: "Copied to clipboard" });
       })
       .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Some error occurred",
-        });
+        setToast({ type: TOAST_TYPE.ERROR, title: "Some error occurred" });
       });
   };
 
   return (
-    <Command.Group heading="Issue actions">
+    <Command.Group heading="Work item actions">
       <Command.Item
         onSelect={() => {
           setPlaceholder("Change state...");
@@ -144,7 +137,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
       <Command.Item onSelect={deleteIssue} className="focus:outline-none">
         <div className="flex items-center gap-2 text-custom-text-200">
           <Trash2 className="h-3.5 w-3.5" />
-          Delete issue
+          Delete work item
         </div>
       </Command.Item>
       <Command.Item
@@ -156,7 +149,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
       >
         <div className="flex items-center gap-2 text-custom-text-200">
           <LinkIcon className="h-3.5 w-3.5" />
-          Copy issue URL
+          Copy work item URL
         </div>
       </Command.Item>
     </Command.Group>

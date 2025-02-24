@@ -6,21 +6,23 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 // icons
 import { ArrowRight, PanelRight } from "lucide-react";
+// plane constants
+import {
+  EIssueLayoutTypes,
+  EIssuesStoreType,
+  EIssueFilterType,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
 import { Breadcrumbs, Button, CustomMenu, DiceIcon, Tooltip, Header } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
-import { BreadcrumbLink, Logo } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
-// constants
-import {
-  EIssuesStoreType,
-  EIssueFilterType,
-  EIssueLayoutTypes,
-  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
-} from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { isIssueFilterActive } from "@/helpers/filter.helper";
@@ -41,7 +43,8 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// plane web
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
   // router
@@ -163,22 +166,13 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
       />
       <Header>
         <Header.LeftItem>
-          <Breadcrumbs onBack={router.back} isLoading={loader}>
+          <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={
                 <span>
                   <span className="hidden md:block">
-                    <BreadcrumbLink
-                      label={currentProjectDetails?.name ?? "Project"}
-                      icon={
-                        currentProjectDetails && (
-                          <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                            <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                          </span>
-                        )
-                      }
-                    />
+                    <ProjectBreadcrumb />
                   </span>
                   <Link
                     href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
@@ -212,7 +206,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                           <Tooltip
                             isMobile={isMobile}
                             tooltipContent={`There are ${issuesCount} ${
-                              issuesCount > 1 ? "issues" : "issue"
+                              issuesCount > 1 ? "work items" : "work item"
                             } in this module`}
                             position="bottom"
                           >
@@ -257,7 +251,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                 displayFilters={issueFilters?.displayFilters ?? {}}
                 handleDisplayFiltersUpdate={handleDisplayFilters}
                 layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
                 }
                 labels={projectLabels}
                 memberIds={projectMemberIds ?? undefined}
@@ -269,7 +263,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
             <FiltersDropdown title="Display" placement="bottom-end">
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
                 }
                 displayFilters={issueFilters?.displayFilters ?? {}}
                 handleDisplayFiltersUpdate={handleDisplayFilters}
@@ -295,12 +289,12 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               <Button
                 className="hidden sm:flex"
                 onClick={() => {
-                  setTrackElement("Module issues page");
+                  setTrackElement("Module work items page");
                   toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                 }}
                 size="sm"
               >
-                Add issue
+                Add work item
               </Button>
             </>
           ) : (

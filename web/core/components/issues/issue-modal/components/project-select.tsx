@@ -3,12 +3,12 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { Control, Controller } from "react-hook-form";
+// plane imports
+import { ETabIndices } from "@plane/constants";
 // types
 import { TIssue } from "@plane/types";
 // components
 import { ProjectDropdown } from "@/components/dropdowns";
-// constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { shouldRenderProject } from "@/helpers/project.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
@@ -46,6 +46,7 @@ export const IssueProjectSelect: React.FC<TIssueProjectSelectProps> = observer((
                 onChange(projectId);
                 handleFormChange();
               }}
+              multiple={false}
               buttonVariant="border-with-text"
               renderCondition={(project) => shouldRenderProject(project)}
               tabIndex={getIndex("project_id")}

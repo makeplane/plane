@@ -8,54 +8,57 @@ import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 import useSWRImmutable from "swr/immutable";
-
+// ui
 import { LogOut } from "lucide-react";
-// hooks
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { Button, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+// components
 import { LogoSpinner } from "@/components/common";
-import { useMember, useProject, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
+// hooks
+import { useMember, useProject, useProjectState, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // images
 import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
 import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
 import WorkSpaceNotAvailable from "@/public/workspace/workspace-not-available.png";
 
-export interface IWorkspaceAuthWrapper {
+interface IWorkspaceAuthWrapper {
   children: ReactNode;
+  isLoading?: boolean;
 }
 
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
-  const { children } = props;
+  const { children, isLoading: isParentLoading = false } = props;
   // router params
   const { workspaceSlug } = useParams();
   // next themes
   const { resolvedTheme } = useTheme();
   // store hooks
   const { signOut, data: currentUser } = useUser();
-  const { fetchProjects } = useProject();
+  const { fetchPartialProjects } = useProject();
   const { fetchFavorite } = useFavorite();
   const {
     workspace: { fetchWorkspaceMembers },
   } = useMember();
-  const { workspaces } = useWorkspace();
+  const { workspaces, fetchSidebarNavigationPreferences } = useWorkspace();
   const { isMobile } = usePlatformOS();
   const { loader, workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
     useUserPermissions();
+  const { fetchWorkspaceStates } = useProjectState();
   // derived values
   const canPerformWorkspaceMemberActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-
   const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
   const allWorkspaces = workspaces ? Object.values(workspaces) : undefined;
   const currentWorkspace =
     (allWorkspaces && allWorkspaces.find((workspace) => workspace?.slug === workspaceSlug)) || undefined;
+  const currentWorkspaceInfo = workspaceSlug && workspaceInfoBySlug(workspaceSlug.toString());
 
   // fetching user workspace information
   useSWR(
@@ -71,8 +74,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
 
   // fetching workspace projects
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,
-    workspaceSlug && currentWorkspace ? () => fetchProjects(workspaceSlug.toString()) : null,
+    workspaceSlug && currentWorkspace ? `WORKSPACE_PARTIAL_PROJECTS_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? () => fetchPartialProjects(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch workspace members
@@ -89,6 +92,19 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug && currentWorkspace && canPerformWorkspaceMemberActions
       ? () => fetchFavorite(workspaceSlug.toString())
       : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+  // fetch workspace states
+  useSWR(
+    workspaceSlug ? `WORKSPACE_STATES_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchWorkspaceStates(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // fetch workspace sidebar preferences
+  useSWR(
+    workspaceSlug ? `WORKSPACE_SIDEBAR_PREFERENCES_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchSidebarNavigationPreferences(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
@@ -116,11 +132,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     );
   };
 
-  // derived values
-  const currentWorkspaceInfo = workspaceSlug && workspaceInfoBySlug(workspaceSlug.toString());
-
   // if list of workspaces are not there then we have to render the spinner
-  if (allWorkspaces === undefined || loader || isDBInitializing) {
+  if (isParentLoading || allWorkspaces === undefined || loader || isDBInitializing) {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">

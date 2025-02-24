@@ -24,6 +24,7 @@ import { IIssueActivity } from "@plane/types";
 import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon, Intake } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
 import { useLabel } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -34,17 +35,23 @@ export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const { workspaceSlug } = useParams();
   const { isMobile } = usePlatformOS();
 
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug?.toString() ?? activity.workspace_detail?.slug,
+    projectId: activity?.project,
+    issueId: activity?.issue,
+    projectIdentifier: activity?.project_detail?.identifier,
+    sequenceId: activity?.issue_detail?.sequence_id,
+  });
+
   return (
     <Tooltip
-      tooltipContent={activity?.issue_detail ? activity.issue_detail.name : "This issue has been deleted"}
+      tooltipContent={activity?.issue_detail ? activity.issue_detail.name : "This work item has been deleted"}
       isMobile={isMobile}
     >
       {activity?.issue_detail ? (
         <a
           aria-disabled={activity.issue === null}
-          href={`${`/${workspaceSlug ?? activity.workspace_detail?.slug}/projects/${activity.project}/issues/${
-            activity.issue
-          }`}`}
+          href={workItemLink}
           target={activity.issue === null ? "_self" : "_blank"}
           rel={activity.issue === null ? "" : "noopener noreferrer"}
           className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
@@ -54,7 +61,7 @@ export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
         </a>
       ) : (
         <span className="inline-flex items-center gap-1 font-medium text-custom-text-100 whitespace-nowrap">
-          {" an Issue"}{" "}
+          {" a work item"}{" "}
         </span>
       )}
     </Tooltip>
@@ -100,20 +107,20 @@ const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; works
 
 const inboxActivityMessage = {
   declined: {
-    showIssue: "declined issue",
-    noIssue: "declined this issue from intake.",
+    showIssue: "declined work item",
+    noIssue: "declined this work item from intake.",
   },
   snoozed: {
-    showIssue: "snoozed issue",
-    noIssue: "snoozed this issue.",
+    showIssue: "snoozed work item",
+    noIssue: "snoozed this work item.",
   },
   accepted: {
-    showIssue: "accepted issue",
-    noIssue: "accepted this issue from intake.",
+    showIssue: "accepted work item",
+    noIssue: "accepted this work item from intake.",
   },
   markedDuplicate: {
-    showIssue: "declined issue",
-    noIssue: "declined this issue from intake by marking a duplicate issue.",
+    showIssue: "declined work item",
+    noIssue: "declined this work item from intake by marking a duplicate work item.",
   },
 };
 
@@ -128,7 +135,7 @@ const getInboxUserActivityMessage = (activity: IIssueActivity, showIssue: boolea
     case "2":
       return showIssue ? inboxActivityMessage.markedDuplicate.showIssue : inboxActivityMessage.markedDuplicate.noIssue;
     default:
-      return "updated intake issue status.";
+      return "updated intake work item status.";
   }
 };
 
@@ -393,7 +400,7 @@ const activityDetails: {
         return (
           <>
             <span className="flex-shrink-0">
-              added {showIssue ? <IssueLink activity={activity} /> : "this issue"}{" "}
+              added {showIssue ? <IssueLink activity={activity} /> : "this work item"}{" "}
               <span className="whitespace-nowrap">to the cycle</span>{" "}
             </span>
             <a
@@ -442,7 +449,7 @@ const activityDetails: {
       if (activity.verb === "created")
         return (
           <>
-            added {showIssue ? <IssueLink activity={activity} /> : "this issue"} to the module{" "}
+            added {showIssue ? <IssueLink activity={activity} /> : "this work item"} to the module{" "}
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
@@ -551,7 +558,7 @@ const activityDetails: {
       if (activity.old_value === "")
         return (
           <>
-            marked that {showIssue ? <IssueLink activity={activity} /> : "this issue"} relates to{" "}
+            marked that {showIssue ? <IssueLink activity={activity} /> : "this work item"} relates to{" "}
             <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>.
           </>
         );
@@ -570,14 +577,14 @@ const activityDetails: {
       if (activity.old_value === "")
         return (
           <>
-            marked {showIssue ? <IssueLink activity={activity} /> : "this issue"} is blocking issue{" "}
+            marked {showIssue ? <IssueLink activity={activity} /> : "this work item"} is blocking work item{" "}
             <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
-            removed the blocking issue{" "}
+            removed the blocking work item{" "}
             <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.old_value}</span>.
           </>
         );
@@ -589,14 +596,14 @@ const activityDetails: {
       if (activity.old_value === "")
         return (
           <>
-            marked {showIssue ? <IssueLink activity={activity} /> : "this issue"} is being blocked by{" "}
+            marked {showIssue ? <IssueLink activity={activity} /> : "this work item"} is being blocked by{" "}
             <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
-            removed {showIssue ? <IssueLink activity={activity} /> : "this issue"} being blocked by issue{" "}
+            removed {showIssue ? <IssueLink activity={activity} /> : "this work item"} being blocked by work item{" "}
             <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.old_value}</span>.
           </>
         );
@@ -608,14 +615,14 @@ const activityDetails: {
       if (activity.old_value === "")
         return (
           <>
-            marked {showIssue ? <IssueLink activity={activity} /> : "this issue"} as duplicate of{" "}
+            marked {showIssue ? <IssueLink activity={activity} /> : "this work item"} as duplicate of{" "}
             <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
-            removed {showIssue ? <IssueLink activity={activity} /> : "this issue"} as a duplicate of{" "}
+            removed {showIssue ? <IssueLink activity={activity} /> : "this work item"} as a duplicate of{" "}
             <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.old_value}</span>.
           </>
         );
@@ -709,7 +716,7 @@ const activityDetails: {
             <IssueLink activity={activity} />
           </>
         )}
-        {activity.verb === "2" && ` from intake by marking a duplicate issue.`}
+        {activity.verb === "2" && ` from intake by marking a duplicate work item.`}
       </>
     ),
     icon: <Intake className="size-3 text-custom-text-200" aria-hidden="true" />,

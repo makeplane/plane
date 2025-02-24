@@ -4,10 +4,9 @@ import isEqual from "lodash/isEqual";
 import set from "lodash/set";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
+import { EIssueFilterType, EViewAccess } from "@plane/constants";
 import { IIssueFilterOptions, IWorkspaceView } from "@plane/types";
 // constants
-import { EIssueFilterType } from "@/constants/issue";
-import { EViewAccess } from "@/constants/views";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // store

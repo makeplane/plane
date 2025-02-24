@@ -13,8 +13,9 @@ import { TIssue } from "@plane/types";
 import { Tooltip, ControlLink } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
-import { useIssueDetail, useIssues, useProjectState } from "@/hooks/store";
+import { useIssueDetail, useIssues, useProject, useProjectState } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -28,26 +29,29 @@ type Props = {
   issue: TIssue;
   quickActions: TRenderQuickActions;
   isDragging?: boolean;
+  isEpic?: boolean;
 };
 
 export const CalendarIssueBlock = observer(
   forwardRef<HTMLAnchorElement, Props>((props, ref) => {
-    const { issue, quickActions, isDragging = false } = props;
+    const { issue, quickActions, isDragging = false, isEpic = false } = props;
     // states
     const [isMenuActive, setIsMenuActive] = useState(false);
     // refs
     const blockRef = useRef(null);
     const menuActionRef = useRef<HTMLDivElement | null>(null);
     // hooks
-    const { workspaceSlug, projectId } = useParams();
+    const { workspaceSlug } = useParams();
     const { getProjectStates } = useProjectState();
     const { getIsIssuePeeked } = useIssueDetail();
-    const { handleRedirection } = useIssuePeekOverviewRedirection();
+    const { handleRedirection } = useIssuePeekOverviewRedirection(isEpic);
     const { isMobile } = usePlatformOS();
     const storeType = useIssueStoreType() as CalendarStoreType;
     const { issuesFilter } = useIssues(storeType);
+    const { getProjectIdentifierById } = useProject();
 
     const stateColor = getProjectStates(issue?.project_id)?.find((state) => state?.id == issue?.state_id)?.color || "";
+    const projectIdentifier = getProjectIdentifierById(issue?.project_id);
 
     // handlers
     const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug.toString(), issue, isMobile);
@@ -71,10 +75,20 @@ export const CalendarIssueBlock = observer(
 
     const placement = isMenuActionRefAboveScreenBottom ? "bottom-end" : "top-end";
 
+    const workItemLink = generateWorkItemLink({
+      workspaceSlug: workspaceSlug?.toString(),
+      projectId: issue?.project_id,
+      issueId: issue?.id,
+      projectIdentifier,
+      sequenceId: issue?.sequence_id,
+      isEpic,
+      isArchived: !!issue?.archived_at,
+    });
+
     return (
       <ControlLink
         id={`issue-${issue.id}`}
-        href={`/${workspaceSlug?.toString()}/projects/${projectId?.toString()}/issues/${issue.id}`}
+        href={workItemLink}
         onClick={() => handleIssuePeekOverview(issue)}
         className="block w-full text-sm text-custom-text-100 rounded border-b md:border-[1px] border-custom-border-200 hover:border-custom-border-400"
         disabled={!!issue?.tempId || isMobile}

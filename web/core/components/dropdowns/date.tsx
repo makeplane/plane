@@ -1,11 +1,11 @@
 import React, { useRef, useState } from "react";
-import { DayPicker, Matcher } from "react-day-picker";
+import { Matcher } from "react-day-picker";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { CalendarDays, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
-import { ComboDropDown } from "@plane/ui";
+import { ComboDropDown, Calendar } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, getDate } from "@/helpers/date-time.helper";
@@ -166,14 +166,16 @@ export const DateDropdown: React.FC<Props> = (props) => {
           <Combobox.Options data-prevent-outside-click static>
             <div
               className={cn(
-                "my-1 bg-custom-background-100 shadow-custom-shadow-rg rounded-md overflow-hidden p-3 z-20",
+                "my-1 bg-custom-background-100 shadow-custom-shadow-rg border-[0.5px] border-custom-border-300 rounded-md overflow-hidden z-20",
                 optionsClassName
               )}
               ref={setPopperElement}
               style={styles.popper}
               {...attributes.popper}
             >
-              <DayPicker
+              <Calendar
+                captionLayout="dropdown"
+                classNames={{ root: `p-3 rounded-md` }}
                 selected={getDate(value)}
                 defaultMonth={getDate(value)}
                 onSelect={(date) => {
@@ -183,6 +185,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
                 initialFocus
                 disabled={disabledDays}
                 mode="single"
+                fixedWeeks
               />
             </div>
           </Combobox.Options>,

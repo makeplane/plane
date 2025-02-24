@@ -3,17 +3,16 @@
 import { useState, FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronDown, XCircle } from "lucide-react";
-// ui
-import { CustomSelect, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { ChevronDown, LinkIcon, Trash2 } from "lucide-react";
+// plane imports
+import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { CustomSelect, TOAST_TYPE, setToast, TContextMenuItem, CustomMenu } from "@plane/ui";
+import { cn, copyTextToClipboard } from "@plane/utils";
 // components
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
-// constants
-import { ROLE } from "@/constants/workspace";
 // hooks
 import { useMember, useUserPermissions } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   invitationId: string;
@@ -21,21 +20,31 @@ type Props = {
 
 export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
   const { invitationId } = props;
-  // states
-  const [removeMemberModal, setRemoveMemberModal] = useState(false);
   // router
   const { workspaceSlug } = useParams();
+  // states
+  const [removeMemberModal, setRemoveMemberModal] = useState(false);
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { allowPermissions, workspaceInfoBySlug } = useUserPermissions();
-
   const {
     workspace: { updateMemberInvitation, deleteMemberInvitation, getWorkspaceInvitationDetails },
   } = useMember();
-  const { isMobile } = usePlatformOS();
   // derived values
   const invitationDetails = getWorkspaceInvitationDetails(invitationId);
   const currentWorkspaceMemberInfo = workspaceInfoBySlug(workspaceSlug.toString());
   const currentWorkspaceRole = currentWorkspaceMemberInfo?.role;
+  // is the current logged in user admin
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  // role change access-
+  // 1. user cannot change their own role
+  // 2. only admin or member can change role
+  // 3. user cannot change role of higher role
+  const hasRoleChangeAccess = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   const handleRemoveInvitation = async () => {
     if (!workspaceSlug || !invitationDetails) return;
@@ -57,21 +66,41 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
       );
   };
 
-  if (!invitationDetails) return null;
+  if (!invitationDetails || !currentWorkspaceMemberInfo) return null;
 
-  // is the current logged in user admin
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const handleCopyText = () => {
+    try {
+      const inviteLink = new URL(invitationDetails.invite_link, window.location.origin).href;
+      copyTextToClipboard(inviteLink).then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("common.link_copied"),
+          message: t("entity.link_copied_to_clipboard", { entity: t("common.invite") }),
+        });
+      });
+    } catch (error) {
+      console.error("Error generating invite link:", error);
+    }
+  };
 
-  // role change access-
-  // 1. user cannot change their own role
-  // 2. only admin or member can change role
-  // 3. user cannot change role of higher role
-  const hasRoleChangeAccess = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
-
-  if (!currentWorkspaceMemberInfo) return null;
+  const MENU_ITEMS: TContextMenuItem[] = [
+    {
+      key: "copy-link",
+      action: handleCopyText,
+      title: t("common.actions.copy_link"),
+      icon: LinkIcon,
+      shouldRender: !!invitationDetails.invite_link,
+    },
+    {
+      key: "remove",
+      action: () => setRemoveMemberModal(true),
+      title: t("common.remove"),
+      icon: Trash2,
+      shouldRender: isAdmin,
+      className: "text-red-500",
+      iconClassName: "text-red-500",
+    },
+  ];
 
   return (
     <>
@@ -84,7 +113,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
         }}
         onSubmit={handleRemoveInvitation}
       />
-      <div className="group flex items-center justify-between px-3 py-4 hover:bg-custom-background-90 w-full">
+      <div className="group flex items-center justify-between px-3 py-4 hover:bg-custom-background-90 w-full h-full">
         <div className="flex items-center gap-x-4 gap-y-2">
           <span className="relative flex h-10 w-10 items-center justify-center rounded bg-gray-700 p-4 capitalize text-white">
             {(invitationDetails.email ?? "?")[0]}
@@ -95,7 +124,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
         </div>
         <div className="flex items-center gap-2 text-xs">
           <div className="flex items-center justify-center rounded bg-yellow-500/20 px-2.5 py-1 text-center text-xs font-medium text-yellow-500">
-            <p>Pending</p>
+            <p>{t("common.pending")}</p>
           </div>
           <CustomSelect
             customButton={
@@ -120,11 +149,11 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
 
               updateMemberInvitation(workspaceSlug.toString(), invitationDetails.id, {
                 role: value,
-              }).catch(() => {
+              }).catch((error) => {
                 setToast({
                   type: TOAST_TYPE.ERROR,
                   title: "Error!",
-                  message: "An error occurred while updating member role. Please try again.",
+                  message: error?.error || "An error occurred while updating member role. Please try again.",
                 });
               });
             }}
@@ -143,17 +172,43 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
             })}
           </CustomSelect>
           {isAdmin && (
-            <Tooltip tooltipContent="Remove member" disabled={!isAdmin} isMobile={isMobile}>
-              <button
-                type="button"
-                onClick={() => setRemoveMemberModal(true)}
-                className={`pointer-events-none opacity-0 ${
-                  isAdmin ? "group-hover:pointer-events-auto group-hover:opacity-100" : ""
-                }`}
-              >
-                <XCircle className="h-3.5 w-3.5 text-red-500" strokeWidth={2} />
-              </button>
-            </Tooltip>
+            <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
+              {MENU_ITEMS.map((item) => {
+                if (item.shouldRender === false) return null;
+                return (
+                  <CustomMenu.MenuItem
+                    key={item.key}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      item.action();
+                    }}
+                    className={cn(
+                      "flex items-center gap-2",
+                      {
+                        "text-custom-text-400": item.disabled,
+                      },
+                      item.className
+                    )}
+                    disabled={item.disabled}
+                  >
+                    {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
+                    <div>
+                      <h5>{item.title}</h5>
+                      {item.description && (
+                        <p
+                          className={cn("text-custom-text-300 whitespace-pre-line", {
+                            "text-custom-text-400": item.disabled,
+                          })}
+                        >
+                          {item.description}
+                        </p>
+                      )}
+                    </div>
+                  </CustomMenu.MenuItem>
+                );
+              })}
+            </CustomMenu>
           )}
         </div>
       </div>

@@ -1,153 +1,117 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
-import {
-  ArchiveRestoreIcon,
-  ArrowUpToLine,
-  Clipboard,
-  Copy,
-  History,
-  Link,
-  Lock,
-  LockOpen,
-  LucideIcon,
-} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowUpToLine, Clipboard, History } from "lucide-react";
 // document editor
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import { EditorRefApi } from "@plane/editor";
 // ui
-import { ArchiveIcon, CustomMenu, type ISvgIcons, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+import { TContextMenuItem, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
-import { ExportPageModal } from "@/components/pages";
+import { ExportPageModal, PageActions, TPageActions } from "@/components/pages";
 // helpers
-import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
+import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useCollaborativePageActions } from "@/hooks/use-collaborative-page-actions";
 import { usePageFilters } from "@/hooks/use-page-filters";
 import { useQueryParams } from "@/hooks/use-query-params";
+// plane web hooks
+import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
-  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
-  handleDuplicatePage: () => void;
-  page: IPage;
+  editorRef: EditorRefApi | null;
+  page: TPageInstance;
+  storeType: EPageStoreType;
 };
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
-  const { editorRef, handleDuplicatePage, page } = props;
+  const { editorRef, page, storeType } = props;
+  // states
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   // router
   const router = useRouter();
   // store values
-  const {
-    name,
-    archived_at,
-    is_locked,
-    id,
-    canCurrentUserArchivePage,
-    canCurrentUserDuplicatePage,
-    canCurrentUserLockPage,
-  } = page;
-  // states
-  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-  // store hooks
-  const { workspaceSlug, projectId } = useParams();
+  const { name, isContentEditable } = page;
   // page filters
-  const { isFullWidth, handleFullWidth } = usePageFilters();
+  const { isFullWidth, handleFullWidth, isStickyToolbarEnabled, handleStickyToolbar } = usePageFilters();
   // update query params
   const { updateQueryParams } = useQueryParams();
-  // collaborative actions
-  const { executeCollaborativeAction } = useCollaborativePageActions(editorRef, page);
-
   // menu items list
-  const MENU_ITEMS: {
-    key: string;
-    action: () => void;
-    label: string;
-    icon: LucideIcon | React.FC<ISvgIcons>;
-    shouldRender: boolean;
-  }[] = [
-    {
-      key: "copy-markdown",
-      action: () => {
-        if (!editorRef) return;
-        copyTextToClipboard(editorRef.getMarkDown()).then(() =>
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Markdown copied to clipboard.",
-          })
-        );
+  const EXTRA_MENU_OPTIONS: (TContextMenuItem & { key: TPageActions })[] = useMemo(
+    () => [
+      {
+        key: "full-screen",
+        action: () => handleFullWidth(!isFullWidth),
+        customContent: (
+          <>
+            Full width
+            <ToggleSwitch value={isFullWidth} onChange={() => {}} />
+          </>
+        ),
+        className: "flex items-center justify-between gap-2",
       },
-      label: "Copy markdown",
-      icon: Clipboard,
-      shouldRender: true,
-    },
-    {
-      key: "copy-page-link",
-      action: () => {
-        const pageLink = projectId
-          ? `${workspaceSlug?.toString()}/projects/${projectId?.toString()}/pages/${id}`
-          : `${workspaceSlug?.toString()}/pages/${id}`;
-        copyUrlToClipboard(pageLink).then(() =>
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Page link copied to clipboard.",
-          })
-        );
+      {
+        key: "sticky-toolbar",
+        action: () => handleStickyToolbar(!isStickyToolbarEnabled),
+        customContent: (
+          <>
+            Sticky toolbar
+            <ToggleSwitch value={isStickyToolbarEnabled} onChange={() => {}} />
+          </>
+        ),
+        className: "flex items-center justify-between gap-2",
+        shouldRender: isContentEditable,
       },
-      label: "Copy page link",
-      icon: Link,
-      shouldRender: true,
-    },
-    {
-      key: "make-a-copy",
-      action: handleDuplicatePage,
-      label: "Make a copy",
-      icon: Copy,
-      shouldRender: canCurrentUserDuplicatePage,
-    },
-    {
-      key: "lock-unlock-page",
-      action: is_locked
-        ? () => executeCollaborativeAction({ type: "sendMessageToServer", message: "unlock" })
-        : () => executeCollaborativeAction({ type: "sendMessageToServer", message: "lock" }),
-      label: is_locked ? "Unlock page" : "Lock page",
-      icon: is_locked ? LockOpen : Lock,
-      shouldRender: canCurrentUserLockPage,
-    },
-    {
-      key: "archive-restore-page",
-      action: archived_at
-        ? () => executeCollaborativeAction({ type: "sendMessageToServer", message: "unarchive" })
-        : () => executeCollaborativeAction({ type: "sendMessageToServer", message: "archive" }),
-      label: archived_at ? "Restore page" : "Archive page",
-      icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
-      shouldRender: canCurrentUserArchivePage,
-    },
-    {
-      key: "version-history",
-      action: () => {
-        // add query param, version=current to the route
-        const updatedRoute = updateQueryParams({
-          paramsToAdd: { version: "current" },
-        });
-        router.push(updatedRoute);
+      {
+        key: "copy-markdown",
+        action: () => {
+          if (!editorRef) return;
+          copyTextToClipboard(editorRef.getMarkDown()).then(() =>
+            setToast({
+              type: TOAST_TYPE.SUCCESS,
+              title: "Success!",
+              message: "Markdown copied to clipboard.",
+            })
+          );
+        },
+        title: "Copy markdown",
+        icon: Clipboard,
+        shouldRender: true,
       },
-      label: "Version history",
-      icon: History,
-      shouldRender: true,
-    },
-    {
-      key: "export",
-      action: () => setIsExportModalOpen(true),
-      label: "Export",
-      icon: ArrowUpToLine,
-      shouldRender: true,
-    },
-  ];
+      {
+        key: "version-history",
+        action: () => {
+          // add query param, version=current to the route
+          const updatedRoute = updateQueryParams({
+            paramsToAdd: { version: "current" },
+          });
+          router.push(updatedRoute);
+        },
+        title: "Version history",
+        icon: History,
+        shouldRender: true,
+      },
+      {
+        key: "export",
+        action: () => setIsExportModalOpen(true),
+        title: "Export",
+        icon: ArrowUpToLine,
+        shouldRender: true,
+      },
+    ],
+    [
+      editorRef,
+      handleFullWidth,
+      handleStickyToolbar,
+      isContentEditable,
+      isFullWidth,
+      isStickyToolbarEnabled,
+      router,
+      updateQueryParams,
+    ]
+  );
 
   return (
     <>
@@ -157,24 +121,26 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         onClose={() => setIsExportModalOpen(false)}
         pageTitle={name ?? ""}
       />
-      <CustomMenu maxHeight="lg" placement="bottom-start" verticalEllipsis closeOnSelect>
-        <CustomMenu.MenuItem
-          className="hidden md:flex w-full items-center justify-between gap-2"
-          onClick={() => handleFullWidth(!isFullWidth)}
-        >
-          Full width
-          <ToggleSwitch value={isFullWidth} onChange={() => {}} />
-        </CustomMenu.MenuItem>
-        {MENU_ITEMS.map((item) => {
-          if (!item.shouldRender) return null;
-          return (
-            <CustomMenu.MenuItem key={item.key} onClick={item.action} className="flex items-center gap-2">
-              <item.icon className="h-3 w-3" />
-              {item.label}
-            </CustomMenu.MenuItem>
-          );
-        })}
-      </CustomMenu>
+      <PageActions
+        editorRef={editorRef}
+        extraOptions={EXTRA_MENU_OPTIONS}
+        optionsOrder={[
+          "full-screen",
+          "sticky-toolbar",
+          "copy-link",
+          "make-a-copy",
+          "move",
+          "toggle-lock",
+          "toggle-access",
+          "archive-restore",
+          "delete",
+          "version-history",
+          "copy-markdown",
+          "export",
+        ]}
+        page={page}
+        storeType={storeType}
+      />
     </>
   );
 });

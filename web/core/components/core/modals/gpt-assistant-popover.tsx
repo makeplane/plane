@@ -6,12 +6,15 @@ import { Controller, useForm } from "react-hook-form"; // services
 import { usePopper } from "react-popper";
 import { AlertCircle } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
+// plane editor
+import { EditorReadOnlyRefApi } from "@plane/editor";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
 // services
 import { AIService } from "@/services/ai.service";
+const aiService = new AIService();
 
 type Props = {
   isOpen: boolean;
@@ -22,6 +25,7 @@ type Props = {
   prompt?: string;
   button: JSX.Element;
   className?: string;
+  workspaceId: string;
   workspaceSlug: string;
   projectId: string;
 };
@@ -30,8 +34,6 @@ type FormData = {
   prompt: string;
   task: string;
 };
-
-const aiService = new AIService();
 
 export const GptAssistantPopover: React.FC<Props> = (props) => {
   const {
@@ -43,6 +45,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
     prompt,
     button,
     className = "",
+    workspaceId,
     workspaceSlug,
     projectId,
   } = props;
@@ -51,7 +54,8 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
   const [invalidResponse, setInvalidResponse] = useState(false);
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  const editorRef = useRef<any>(null);
+  // refs
+  const editorRef = useRef<EditorReadOnlyRefApi>(null);
   const responseRef = useRef<any>(null);
   // popper
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
@@ -188,7 +192,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
   return (
     <Popover as="div" className={`relative w-min text-left`}>
       <Popover.Button as={Fragment}>
-        <button ref={setReferenceElement} className="flex items-center">
+        <button ref={setReferenceElement} className="flex items-center" tabIndex={-1}>
           {button}
         </button>
       </Popover.Button>
@@ -218,6 +222,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
                   initialValue={prompt}
                   containerClassName="-m-3"
                   ref={editorRef}
+                  workspaceId={workspaceId}
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
                 />
@@ -230,6 +235,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
                   id="ai-assistant-response"
                   initialValue={`<p>${response}</p>`}
                   ref={responseRef}
+                  workspaceId={workspaceId}
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
                 />

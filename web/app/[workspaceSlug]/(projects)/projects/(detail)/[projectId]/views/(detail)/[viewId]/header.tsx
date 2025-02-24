@@ -1,10 +1,20 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Layers, Lock } from "lucide-react";
+// plane constants
+import {
+  EIssueLayoutTypes,
+  EIssueFilterType,
+  EIssuesStoreType,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
+  EViewAccess,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
@@ -13,16 +23,9 @@ import { Breadcrumbs, Button, CustomMenu, Tooltip, Header } from "@plane/ui";
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
-import {
-  EIssuesStoreType,
-  EIssueFilterType,
-  EIssueLayoutTypes,
-  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
-} from "@/constants/issue";
-import { EViewAccess } from "@/constants/views";
+import { ViewQuickActions } from "@/components/views";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
-import { getPublishViewLink } from "@/helpers/project-views.helpers";
 import { truncateText } from "@/helpers/string.helper";
 // hooks
 import {
@@ -36,9 +39,12 @@ import {
   useProjectView,
   useUserPermissions,
 } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// plane web
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
+  // refs
+  const parentRef = useRef(null);
   // router
   const { workspaceSlug, projectId, viewId } = useParams();
   // store hooks
@@ -134,27 +140,14 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
-  const publishLink = getPublishViewLink(viewDetails?.anchor);
+
+  if (!viewDetails) return;
 
   return (
     <Header>
       <Header.LeftItem>
-        <Breadcrumbs isLoading={loader}>
-          <Breadcrumbs.BreadcrumbItem
-            type="text"
-            link={
-              <BreadcrumbLink
-                label={currentProjectDetails?.name ?? "Project"}
-                icon={
-                  currentProjectDetails && (
-                    <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                      <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                    </span>
-                  )
-                }
-              />
-            }
-          />
+        <Breadcrumbs isLoading={loader === "init-loader"}>
+          <ProjectBreadcrumb />
           <Breadcrumbs.BreadcrumbItem
             type="text"
             link={
@@ -218,19 +211,14 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           <></>
         )}
 
-        {viewDetails?.anchor && publishLink ? (
-          <a
-            href={publishLink}
-            className="px-3 py-1.5 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />
-            Live
-          </a>
-        ) : (
-          <></>
-        )}
+        <div className="hidden md:block">
+          <ViewQuickActions
+            parentRef={parentRef}
+            projectId={projectId.toString()}
+            view={viewDetails}
+            workspaceSlug={workspaceSlug.toString()}
+          />
+        </div>
       </Header.LeftItem>
       <Header.RightItem>
         {!viewDetails?.is_locked ? (
@@ -259,8 +247,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 displayFilters={issueFilters?.displayFilters ?? {}}
                 handleDisplayFiltersUpdate={handleDisplayFilters}
                 layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
                 }
+                projectId={projectId.toString()}
                 labels={projectLabels}
                 memberIds={projectMemberIds ?? undefined}
                 states={projectStates}
@@ -271,7 +260,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             <FiltersDropdown title="Display" placement="bottom-end">
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
                 }
                 displayFilters={issueFilters?.displayFilters ?? {}}
                 handleDisplayFiltersUpdate={handleDisplayFilters}
@@ -293,7 +282,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             }}
             size="sm"
           >
-            Add issue
+            Add work item
           </Button>
         ) : (
           <></>

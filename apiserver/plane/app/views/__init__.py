@@ -41,10 +41,14 @@ from .workspace.base import (
 
 from .workspace.draft import WorkspaceDraftIssueViewSet
 
+from .workspace.home import WorkspaceHomePreferenceViewSet
+
 from .workspace.favorite import (
     WorkspaceFavoriteEndpoint,
     WorkspaceFavoriteGroupEndpoint,
 )
+from .workspace.recent_visit import UserRecentVisitViewSet
+from .workspace.user_preference import WorkspaceUserPreferenceViewSet
 
 from .workspace.member import (
     WorkSpaceMemberViewSet,
@@ -72,6 +76,8 @@ from .workspace.user import (
 from .workspace.estimate import WorkspaceEstimatesEndpoint
 from .workspace.module import WorkspaceModulesEndpoint
 from .workspace.cycle import WorkspaceCyclesEndpoint
+from .workspace.quick_link import QuickLinkViewSet
+from .workspace.sticky import WorkspaceStickyViewSet
 
 from .state.base import StateViewSet
 from .view.base import (
@@ -110,6 +116,8 @@ from .issue.base import (
     IssuePaginatedViewSet,
     IssueDetailEndpoint,
     IssueBulkUpdateDateEndpoint,
+    IssueMetaEndpoint,
+    IssueDetailIdentifierEndpoint,
 )
 
 from .issue.activity import IssueActivityEndpoint
@@ -136,6 +144,8 @@ from .issue.sub_issue import SubIssuesEndpoint
 
 from .issue.subscriber import IssueSubscriberViewSet
 
+from .issue.version import IssueVersionEndpoint, IssueDescriptionVersionEndpoint
+
 from .module.base import (
     ModuleViewSet,
     ModuleLinkViewSet,
@@ -155,10 +165,11 @@ from .page.base import (
     PageLogEndpoint,
     SubPagesEndpoint,
     PagesDescriptionViewSet,
+    PageDuplicateEndpoint,
 )
 from .page.version import PageVersionEndpoint
 
-from .search.base import GlobalSearchEndpoint
+from .search.base import GlobalSearchEndpoint, SearchEndpoint
 from .search.issue import IssueSearchEndpoint
 
 
@@ -181,6 +192,7 @@ from .analytic.base import (
     SavedAnalyticEndpoint,
     ExportAnalyticsEndpoint,
     DefaultAnalyticsEndpoint,
+    ProjectStatsEndpoint,
 )
 
 from .notification.base import (
@@ -204,3 +216,5 @@ from .error_404 import custom_404_view
 
 from .notification.base import MarkAllReadNotificationViewSet
 from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
+
+from .timezone.base import TimezoneEndpoint

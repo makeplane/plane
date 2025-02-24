@@ -1,7 +1,9 @@
-import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
+import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import { v4 as uuidv4 } from "uuid";
+// plane constants
+import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE, STATE_GROUPS } from "@plane/constants";
 // types
 import {
   IIssueDisplayFilterOptions,
@@ -16,9 +18,6 @@ import {
   TUnGroupedIssues,
 } from "@plane/types";
 import { IGanttBlock } from "@/components/gantt-chart";
-// constants
-import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
-import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { orderArrayBy } from "@/helpers/array.helper";
 import { getDate } from "@/helpers/date-time.helper";
@@ -97,13 +96,13 @@ export const handleIssuesMutation: THandleIssuesMutation = (
 
 export const handleIssueQueryParamsByLayout = (
   layout: EIssueLayoutTypes | undefined,
-  viewType: "my_issues" | "issues" | "profile_issues" | "archived_issues" | "draft_issues"
+  viewType: "my_issues" | "issues" | "profile_issues" | "archived_issues" | "draft_issues" | "team_issues"
 ): TIssueParams[] | null => {
   const queryParams: TIssueParams[] = [];
 
   if (!layout) return null;
 
-  const layoutOptions = ISSUE_DISPLAY_FILTERS_BY_LAYOUT[viewType][layout];
+  const layoutOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE[viewType][layout];
 
   // add filters query params
   layoutOptions.filters.forEach((option) => {
@@ -212,10 +211,10 @@ export const formatTextList = (TextArray: string[]): string => {
   }
 };
 
-export const getDescriptionPlaceholder = (isFocused: boolean, description: string | undefined): string => {
+export const getDescriptionPlaceholderI18n = (isFocused: boolean, description: string | undefined): string => {
   const isDescriptionEmpty = !description || description === "<p></p>" || description.trim() === "";
-  if (!isDescriptionEmpty || isFocused) return "Press '/' for commands...";
-  else return "Click to add description";
+  if (!isDescriptionEmpty || isFocused) return "common.press_for_commands";
+  else return "common.click_to_add_description";
 };
 
 export const issueCountBasedOnFilters = (
@@ -322,4 +321,28 @@ export const getIssuesShouldFallbackToServer = (queries: any) => {
   if (!isEmpty(queries.mentions)) return true;
 
   return false;
+};
+
+export const generateWorkItemLink = ({
+  workspaceSlug,
+  projectId,
+  issueId,
+  projectIdentifier,
+  sequenceId,
+  isArchived = false,
+  isEpic = false,
+}: {
+  workspaceSlug: string | undefined | null;
+  projectId: string | undefined | null;
+  issueId: string | undefined | null;
+  projectIdentifier: string | undefined | null;
+  sequenceId: string | number | undefined | null;
+  isArchived?: boolean;
+  isEpic?: boolean;
+}): string => {
+  const archiveIssueLink = `/${workspaceSlug}/projects/${projectId}/archives/issues/${issueId}`;
+  const epicLink = `/${workspaceSlug}/projects/${projectId}/epics/${issueId}`;
+  const workItemLink = `/${workspaceSlug}/browse/${projectIdentifier}-${sequenceId}/`;
+
+  return isArchived ? archiveIssueLink : isEpic ? epicLink : workItemLink;
 };

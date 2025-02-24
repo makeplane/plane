@@ -1,12 +1,16 @@
 "use client";
 import { useMemo } from "react";
-import { usePathname } from "next/navigation";
-import { TIssue } from "@plane/types";
+import { useParams, usePathname } from "next/navigation";
+import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { TIssue, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // helper
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker, useIssueDetail } from "@/hooks/store";
+import { useEventTracker, useIssueDetail, useProjectState } from "@/hooks/store";
+// plane-web
+import { updateEpicAnalytics } from "@/plane-web/helpers/epic-analytics";
 // type
 import { TSubIssueOperations } from "../../sub-issues";
 
@@ -16,17 +20,31 @@ export type TRelationIssueOperations = {
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 };
 
-export const useSubIssueOperations = (): TSubIssueOperations => {
+export const useSubIssueOperations = (
+  issueServiceType: TIssueServiceType = EIssueServiceType.ISSUES
+): TSubIssueOperations => {
+  // router
+  const { epicId: epicIdParam } = useParams();
+  const pathname = usePathname();
+  const { t } = useTranslation();
+  // store hooks
   const {
+    issue: { getIssueById },
     subIssues: { setSubIssueHelpers },
-    fetchSubIssues,
     createSubIssues,
     updateSubIssue,
-    removeSubIssue,
     deleteSubIssue,
   } = useIssueDetail();
+  const { getStateById } = useProjectState();
+  const { peekIssue: epicPeekIssue } = useIssueDetail(EIssueServiceType.EPICS);
+  // const { updateEpicAnalytics } = useIssueTypes();
+  const { updateAnalytics } = updateEpicAnalytics();
+  const { fetchSubIssues } = useIssueDetail();
+  const { removeSubIssue } = useIssueDetail(issueServiceType);
   const { captureIssueEvent } = useEventTracker();
-  const pathname = usePathname();
+
+  // derived values
+  const epicId = epicIdParam || epicPeekIssue?.issueId;
 
   const subIssueOperations: TSubIssueOperations = useMemo(
     () => ({
@@ -35,8 +53,13 @@ export const useSubIssueOperations = (): TSubIssueOperations => {
         copyTextToClipboard(`${originURL}/${text}`).then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Link Copied!",
-            message: "Issue link copied to clipboard.",
+            title: t("common.link_copied"),
+            message: t("entity.link_copied_to_clipboard", {
+              entity:
+                issueServiceType === EIssueServiceType.ISSUES
+                  ? t("issue.label", { count: 1 })
+                  : t("epic.label", { count: 1 }),
+            }),
           });
         });
       },
@@ -46,8 +69,13 @@ export const useSubIssueOperations = (): TSubIssueOperations => {
         } catch (error) {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Error fetching sub-issues",
+            title: t("toast.error"),
+            message: t("entity.fetch.failed", {
+              entity:
+                issueServiceType === EIssueServiceType.ISSUES
+                  ? t("common.sub_work_items", { count: 2 })
+                  : t("issue.label", { count: 2 }),
+            }),
           });
         }
       },
@@ -56,14 +84,25 @@ export const useSubIssueOperations = (): TSubIssueOperations => {
           await createSubIssues(workspaceSlug, projectId, parentIssueId, issueIds);
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Sub-issues added successfully",
+            title: t("toast.success"),
+            message: t("entity.add.success", {
+              entity:
+                issueServiceType === EIssueServiceType.ISSUES
+                  ? t("common.sub_work_items")
+                  : t("issue.label", { count: 2 }),
+            }),
           });
         } catch (error) {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Error adding sub-issue",
+            title: t("toast.error"),
+            // message: `Error adding ${issueServiceType === EIssueServiceType.ISSUES ? "sub-issues" : "issues"}`,
+            message: t("entity.add.failed", {
+              entity:
+                issueServiceType === EIssueServiceType.ISSUES
+                  ? t("common.sub_work_items")
+                  : t("issue.label", { count: 2 }),
+            }),
           });
         }
       },
@@ -79,6 +118,30 @@ export const useSubIssueOperations = (): TSubIssueOperations => {
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           await updateSubIssue(workspaceSlug, projectId, parentIssueId, issueId, issueData, oldIssue, fromModal);
+
+          if (issueServiceType === EIssueServiceType.EPICS) {
+            const oldState = getStateById(oldIssue?.state_id)?.group;
+
+            if (oldState && oldIssue && issueData && epicId) {
+              // Check if parent_id is changed if yes then decrement the epic analytics count
+              if (issueData.parent_id && oldIssue?.parent_id && issueData.parent_id !== oldIssue?.parent_id) {
+                updateAnalytics(workspaceSlug, projectId, epicId.toString(), {
+                  decrementStateGroupCount: `${oldState}_issues`,
+                });
+              }
+
+              // Check if state_id is changed if yes then decrement the old state group count and increment the new state group count
+              if (issueData.state_id) {
+                const newState = getStateById(issueData.state_id)?.group;
+                if (oldState && newState && oldState !== newState) {
+                  updateAnalytics(workspaceSlug, projectId, epicId.toString(), {
+                    decrementStateGroupCount: `${oldState}_issues`,
+                    incrementStateGroupCount: `${newState}_issues`,
+                  });
+                }
+              }
+            }
+          }
           captureIssueEvent({
             eventName: "Sub-issue updated",
             payload: { ...oldIssue, ...issueData, state: "SUCCESS", element: "Issue detail page" },
@@ -90,8 +153,8 @@ export const useSubIssueOperations = (): TSubIssueOperations => {
           });
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Sub-issue updated successfully",
+            title: t("toast.success"),
+            message: t("sub_work_item.update.success"),
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
         } catch (error) {
@@ -106,8 +169,8 @@ export const useSubIssueOperations = (): TSubIssueOperations => {
           });
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Error updating sub-issue",
+            title: t("toast.error"),
+            message: t("sub_work_item.update.error"),
           });
         }
       },
@@ -115,10 +178,20 @@ export const useSubIssueOperations = (): TSubIssueOperations => {
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           await removeSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
+          if (issueServiceType === EIssueServiceType.EPICS) {
+            const issueBeforeRemoval = getIssueById(issueId);
+            const oldState = getStateById(issueBeforeRemoval?.state_id)?.group;
+
+            if (epicId && oldState) {
+              updateAnalytics(workspaceSlug, projectId, epicId.toString(), {
+                decrementStateGroupCount: `${oldState}_issues`,
+              });
+            }
+          }
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Sub-issue removed successfully",
+            title: t("toast.success"),
+            message: t("sub_work_item.remove.success"),
           });
           captureIssueEvent({
             eventName: "Sub-issue removed",
@@ -142,8 +215,8 @@ export const useSubIssueOperations = (): TSubIssueOperations => {
           });
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Error removing sub-issue",
+            title: t("toast.error"),
+            message: t("sub_work_item.remove.error"),
           });
         }
       },
@@ -166,8 +239,8 @@ export const useSubIssueOperations = (): TSubIssueOperations => {
           });
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Error deleting issue",
+            title: t("toast.error"),
+            message: t("issue.delete.error"),
           });
         }
       },

@@ -2,15 +2,27 @@
 
 import { FC, Fragment, useState } from "react";
 // components
-import { EmptyState } from "@/components/empty-state";
+import { observer } from "mobx-react";
+import { EIssuesStoreType, EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { DetailedEmptyState } from "@/components/empty-state";
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
-import { EIssuesStoreType } from "@/constants/issue";
+import { useUserPermissions } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
-export const WorkspaceDraftEmptyState: FC = () => {
+export const WorkspaceDraftEmptyState: FC = observer(() => {
   // state
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
+  // store hooks
+  const { t } = useTranslation();
+  const { allowPermissions } = useUserPermissions();
+  // derived values
+  const canPerformEmptyStateActions = allowPermissions(
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/cycles" });
 
   return (
     <Fragment>
@@ -21,13 +33,19 @@ export const WorkspaceDraftEmptyState: FC = () => {
         isDraft
       />
       <div className="relative h-full w-full overflow-y-auto">
-        <EmptyState
-          type={EmptyStateType.WORKSPACE_DRAFT_ISSUES}
-          primaryButtonOnClick={() => {
-            setIsDraftIssueModalOpen(true);
+        <DetailedEmptyState
+          title={t("workspace_draft_issues.empty_state.title")}
+          description={t("workspace_draft_issues.empty_state.description")}
+          assetPath={resolvedPath}
+          primaryButton={{
+            text: t("workspace_draft_issues.empty_state.primary_button.text"),
+            onClick: () => {
+              setIsDraftIssueModalOpen(true);
+            },
+            disabled: !canPerformEmptyStateActions
           }}
         />
       </div>
     </Fragment>
   );
-};
+});

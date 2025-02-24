@@ -20,7 +20,7 @@ class Page(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="pages"
     )
-    name = models.CharField(max_length=255, blank=True)
+    name = models.TextField(blank=True)
     description = models.JSONField(default=dict, blank=True)
     description_binary = models.BinaryField(null=True)
     description_html = models.TextField(blank=True, default="<p></p>")
@@ -90,7 +90,7 @@ class PageLog(BaseModel):
     page = models.ForeignKey(Page, related_name="page_log", on_delete=models.CASCADE)
     entity_identifier = models.UUIDField(null=True)
     entity_name = models.CharField(
-        max_length=30, choices=TYPE_CHOICES, verbose_name="Transaction Type"
+        max_length=30, verbose_name="Transaction Type"
     )
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_log"

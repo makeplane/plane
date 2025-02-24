@@ -4,16 +4,20 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { FileText } from "lucide-react";
+// constants
+import { EPageAccess } from "@plane/constants";
 // plane types
 import { TPage } from "@plane/types";
 // plane ui
 import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
-import { BreadcrumbLink, Logo } from "@/components/common";
-// constants
-import { EPageAccess } from "@/constants/page";
+import { BreadcrumbLink } from "@/components/common";
 // hooks
-import { useEventTracker, useProject, useProjectPages } from "@/hooks/store";
+import { useEventTracker, useProject } from "@/hooks/store";
+// plane web
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
+// plane web hooks
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 export const PagesListHeader = observer(() => {
   // states
@@ -25,7 +29,7 @@ export const PagesListHeader = observer(() => {
   const pageType = searchParams.get("type");
   // store hooks
   const { currentProjectDetails, loader } = useProject();
-  const { canCurrentUserCreatePage, createPage } = useProjectPages();
+  const { canCurrentUserCreatePage, createPage } = usePageStore(EPageStoreType.PROJECT);
   const { setTrackElement } = useEventTracker();
   // handle page create
   const handleCreatePage = async () => {
@@ -55,22 +59,8 @@ export const PagesListHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <div>
-          <Breadcrumbs isLoading={loader}>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  label={currentProjectDetails?.name ?? "Project"}
-                  icon={
-                    currentProjectDetails && (
-                      <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                      </span>
-                    )
-                  }
-                />
-              }
-            />
+          <Breadcrumbs isLoading={loader === "init-loader"}>
+            <ProjectBreadcrumb />
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={<BreadcrumbLink label="Pages" icon={<FileText className="h-4 w-4 text-custom-text-300" />} />}

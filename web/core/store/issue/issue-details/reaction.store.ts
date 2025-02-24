@@ -7,7 +7,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 // services
 // types
 // helpers
-import { TIssueReaction, TIssueReactionMap, TIssueReactionIdMap } from "@plane/types";
+import { TIssueReaction, TIssueReactionMap, TIssueReactionIdMap, TIssue, TIssueServiceType } from "@plane/types";
 import { groupReactions } from "@/helpers/emoji.helper";
 import { IssueReactionService } from "@/services/issue";
 import { IIssueDetail } from "./root.store";
@@ -44,8 +44,9 @@ export class IssueReactionStore implements IIssueReactionStore {
   rootIssueDetailStore: IIssueDetail;
   // services
   issueReactionService;
+  serviceType;
 
-  constructor(rootStore: IIssueDetail) {
+  constructor(rootStore: IIssueDetail, serviceType: TIssueServiceType) {
     makeObservable(this, {
       // observables
       reactions: observable,
@@ -56,10 +57,11 @@ export class IssueReactionStore implements IIssueReactionStore {
       createReaction: action,
       removeReaction: action,
     });
+    this.serviceType = serviceType;
     // root store
     this.rootIssueDetailStore = rootStore;
     // services
-    this.issueReactionService = new IssueReactionService();
+    this.issueReactionService = new IssueReactionService(serviceType);
   }
 
   // helper methods

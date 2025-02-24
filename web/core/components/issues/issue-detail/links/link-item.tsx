@@ -2,7 +2,10 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { Pencil, Trash2, LinkIcon, ExternalLink } from "lucide-react";
+import { Pencil, Trash2, LinkIcon, Copy } from "lucide-react";
+import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { TIssueServiceType } from "@plane/types";
 // ui
 import { Tooltip, TOAST_TYPE, setToast, CustomMenu } from "@plane/ui";
 // helpers
@@ -17,17 +20,19 @@ type TIssueLinkItem = {
   linkId: string;
   linkOperations: TLinkOperationsModal;
   isNotAllowed: boolean;
+  issueServiceType?: TIssueServiceType;
 };
 
 export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
   // props
-  const { linkId, linkOperations, isNotAllowed } = props;
+  const { linkId, linkOperations, isNotAllowed, issueServiceType = EIssueServiceType.ISSUES } = props;
   // hooks
+  const { t } = useTranslation();
   const {
     toggleIssueLinkModal: toggleIssueLinkModalStore,
     setIssueLinkData,
     link: { getLinkById },
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
   const { isMobile } = usePlatformOS();
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
@@ -45,33 +50,33 @@ export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
         <div className="flex items-center gap-2.5 truncate flex-grow">
           <LinkIcon className="size-4 flex-shrink-0 text-custom-text-400 group-hover:text-custom-text-200" />
           <Tooltip tooltipContent={linkDetail.url} isMobile={isMobile}>
-            <span
+            <a
+              href={linkDetail.url}
+              target="_blank"
+              rel="noopener noreferrer"
               className="truncate text-sm cursor-pointer flex-grow"
-              onClick={() => {
-                copyTextToClipboard(linkDetail.url);
-                setToast({
-                  type: TOAST_TYPE.SUCCESS,
-                  title: "Link copied!",
-                  message: "Link copied to clipboard",
-                });
-              }}
             >
               {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
-            </span>
+            </a>
           </Tooltip>
         </div>
         <div className="flex items-center gap-1 flex-shrink-0">
           <p className="p-1 text-xs align-bottom leading-5 text-custom-text-400 group-hover-text-custom-text-200">
             {calculateTimeAgoShort(linkDetail.created_at)}
           </p>
-          <a
-            href={linkDetail.url}
-            target="_blank"
-            rel="noopener noreferrer"
+          <span
+            onClick={() => {
+              copyTextToClipboard(linkDetail.url);
+              setToast({
+                type: TOAST_TYPE.SUCCESS,
+                title: t("common.link_copied"),
+                message: t("common.link_copied_to_clipboard"),
+              });
+            }}
             className="relative grid place-items-center rounded p-1 text-custom-text-400 outline-none group-hover:text-custom-text-200 cursor-pointer hover:bg-custom-background-80"
           >
-            <ExternalLink className="h-3.5 w-3.5 stroke-[1.5]" />
-          </a>
+            <Copy className="h-3.5 w-3.5 stroke-[1.5]" />
+          </span>
           <CustomMenu
             ellipsis
             buttonClassName="text-custom-text-400 group-hover:text-custom-text-200"
@@ -88,7 +93,7 @@ export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
               }}
             >
               <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
-              Edit
+              {t("common.actions.edit")}
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
               className="flex items-center gap-2"
@@ -99,7 +104,7 @@ export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
               }}
             >
               <Trash2 className="h-3 w-3" />
-              Delete
+              {t("common.actions.delete")}
             </CustomMenu.MenuItem>
           </CustomMenu>
         </div>

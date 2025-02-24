@@ -1,0 +1,21 @@
+{
+  "name": "@plane/i18n",
+  "version": "0.24.1",
+  "description": "I18n shared across multiple apps internally",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:errors": "eslint src --ext .ts,.tsx --quiet"
+  },
+  "dependencies": {
+    "@plane/utils": "*",
+    "intl-messageformat": "^10.7.11"
+  },
+  "devDependencies": {
+    "@plane/eslint-config": "*",
+    "@types/node": "^22.5.4",
+    "typescript": "^5.3.3"
+  }
+}

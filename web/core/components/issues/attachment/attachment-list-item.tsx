@@ -3,6 +3,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Trash } from "lucide-react";
+import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { TIssueServiceType } from "@plane/types";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components
@@ -19,17 +22,19 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 type TIssueAttachmentsListItem = {
   attachmentId: string;
   disabled?: boolean;
+  issueServiceType?: TIssueServiceType;
 };
 
 export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer((props) => {
+  const { t } = useTranslation();
   // props
-  const { attachmentId, disabled } = props;
+  const { attachmentId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
   // store hooks
   const { getUserDetails } = useMember();
   const {
     attachment: { getAttachmentById },
     toggleDeleteAttachmentModal,
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
   // derived values
   const attachment = attachmentId ? getAttachmentById(attachmentId) : undefined;
   const fileName = getFileName(attachment?.attributes.name ?? "");
@@ -66,11 +71,11 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
                 <Tooltip
                   isMobile={isMobile}
                   tooltipContent={`${
-                    getUserDetails(attachment.updated_by)?.display_name ?? ""
+                    getUserDetails(attachment?.created_by)?.display_name ?? ""
                   } uploaded on ${renderFormattedDate(attachment.updated_at)}`}
                 >
                   <div className="flex items-center justify-center">
-                    <ButtonAvatars showTooltip userIds={attachment?.updated_by} />
+                    <ButtonAvatars showTooltip userIds={attachment?.created_by} />
                   </div>
                 </Tooltip>
               </>
@@ -86,7 +91,7 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
               >
                 <div className="flex items-center gap-2">
                   <Trash className="h-3.5 w-3.5" strokeWidth={2} />
-                  <span>Delete</span>
+                  <span>{t("common.actions.delete")}</span>
                 </div>
               </CustomMenu.MenuItem>
             </CustomMenu>

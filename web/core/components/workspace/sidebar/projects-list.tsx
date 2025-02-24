@@ -5,12 +5,15 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { Briefcase, ChevronRight, Plus } from "lucide-react";
+import { Briefcase, ChevronRight, Ellipsis, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // ui
-import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { Loader, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { CreateProjectModal } from "@/components/project";
+import { SidebarNavItem } from "@/components/sidebar";
 import { SidebarProjectsListItem } from "@/components/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -19,7 +22,6 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web types
 import { TProject } from "@/plane-web/types";
 
@@ -34,12 +36,13 @@ export const SidebarProjectsList: FC = observer(() => {
   // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
   // store hooks
+  const { t } = useTranslation();
   const { toggleCreateProjectModal } = useCommandPalette();
   const { sidebarCollapsed } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
-  const { getProjectById, joinedProjectIds: joinedProjects, updateProjectView } = useProject();
+  const { loader, getPartialProjectById, joinedProjectIds: joinedProjects, updateProjectView } = useProject();
   // router params
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
@@ -54,8 +57,8 @@ export const SidebarProjectsList: FC = observer(() => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "Project link copied to clipboard.",
+        title: t("link_copied"),
+        message: t("project_link_copied_to_clipboard"),
       });
     });
   };
@@ -70,7 +73,7 @@ export const SidebarProjectsList: FC = observer(() => {
 
     const joinedProjectsList: TProject[] = [];
     joinedProjects.map((projectId) => {
-      const projectDetails = getProjectById(projectId);
+      const projectDetails = getPartialProjectById(projectId);
       if (projectDetails) joinedProjectsList.push(projectDetails);
     });
 
@@ -84,8 +87,8 @@ export const SidebarProjectsList: FC = observer(() => {
       updateProjectView(workspaceSlug.toString(), sourceId, { sort_order: updatedSortOrder }).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Something went wrong. Please try again.",
+          title: t("error"),
+          message: t("something_went_wrong"),
         });
       });
   };
@@ -175,12 +178,12 @@ export const SidebarProjectsList: FC = observer(() => {
                 )}
                 onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
               >
-                <Tooltip tooltipHeading="YOUR PROJECTS" tooltipContent="" position="right" disabled={!isCollapsed}>
+                <Tooltip tooltipHeading={t("projects")} tooltipContent="" position="right" disabled={!isCollapsed}>
                   <>
                     {isCollapsed ? (
                       <Briefcase className="flex-shrink-0 size-3" />
                     ) : (
-                      <span className="text-xs font-semibold">YOUR PROJECTS</span>
+                      <span className="text-sm font-semibold">{t("projects")}</span>
                     )}
                   </>
                 </Tooltip>
@@ -188,7 +191,7 @@ export const SidebarProjectsList: FC = observer(() => {
               {!isCollapsed && (
                 <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
                   {isAuthorizedUser && (
-                    <Tooltip tooltipHeading="Create project" tooltipContent="">
+                    <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
                       <button
                         type="button"
                         className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
@@ -225,26 +228,35 @@ export const SidebarProjectsList: FC = observer(() => {
               leaveFrom="transform scale-100 opacity-100"
               leaveTo="transform scale-95 opacity-0"
             >
+              {loader === "init-loader" && (
+                <Loader className="w-full space-y-1.5">
+                  {Array.from({ length: 4 }).map((_, index) => (
+                    <Loader.Item key={index} height="28px" />
+                  ))}
+                </Loader>
+              )}
               {isAllProjectsListOpen && (
                 <Disclosure.Panel
                   as="div"
-                  className={cn("space-y-1", {
+                  className={cn("flex flex-col gap-0.5", {
                     "space-y-0 ml-0": isCollapsed,
                   })}
                   static
                 >
-                  {joinedProjects.map((projectId, index) => (
-                    <SidebarProjectsListItem
-                      key={projectId}
-                      projectId={projectId}
-                      handleCopyText={() => handleCopyText(projectId)}
-                      projectListType={"JOINED"}
-                      disableDrag={false}
-                      disableDrop={false}
-                      isLastChild={index === joinedProjects.length - 1}
-                      handleOnProjectDrop={handleOnProjectDrop}
-                    />
-                  ))}
+                  <>
+                    {joinedProjects.map((projectId, index) => (
+                      <SidebarProjectsListItem
+                        key={projectId}
+                        projectId={projectId}
+                        handleCopyText={() => handleCopyText(projectId)}
+                        projectListType={"JOINED"}
+                        disableDrag={false}
+                        disableDrop={false}
+                        isLastChild={index === joinedProjects.length - 1}
+                        handleOnProjectDrop={handleOnProjectDrop}
+                      />
+                    ))}
+                  </>
                 </Disclosure.Panel>
               )}
             </Transition>
@@ -265,7 +277,7 @@ export const SidebarProjectsList: FC = observer(() => {
               toggleCreateProjectModal(true);
             }}
           >
-            {!isCollapsed && "Add project"}
+            {!isCollapsed && t("add_project")}
           </button>
         )}
       </div>

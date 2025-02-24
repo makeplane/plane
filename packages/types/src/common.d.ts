@@ -22,3 +22,7 @@ export type TLogoProps = {
     background_color?: string;
   };
 };
+
+export type TNameDescriptionLoader = "submitting" | "submitted" | "saved";
+
+export type TFetchStatus = "partial" | "complete" | undefined;

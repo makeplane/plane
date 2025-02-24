@@ -2,7 +2,7 @@
 
 import { observer } from "mobx-react";
 // editor
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import { EditorRefApi } from "@plane/editor";
 // ui
 import { ArchiveIcon, FavoriteStar, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // components
@@ -12,18 +12,19 @@ import { PageInfoPopover, PageOptionsDropdown } from "@/components/pages";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import useOnlineStatus from "@/hooks/use-online-status";
+// plane web hooks
+import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
-  editorRef: React.RefObject<EditorRefApi>;
-  handleDuplicatePage: () => void;
-  page: IPage;
-  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
+  editorRef: EditorRefApi;
+  page: TPageInstance;
+  storeType: EPageStoreType;
 };
 
 export const PageExtraOptions: React.FC<Props> = observer((props) => {
-  const { editorRef, handleDuplicatePage, page, readOnlyEditorRef } = props;
+  const { editorRef, page, storeType } = props;
   // derived values
   const {
     archived_at,
@@ -85,12 +86,8 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
           iconClassName="text-custom-text-100"
         />
       )}
-      <PageInfoPopover editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current} />
-      <PageOptionsDropdown
-        editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
-        handleDuplicatePage={handleDuplicatePage}
-        page={page}
-      />
+      <PageInfoPopover editorRef={editorRef} page={page} />
+      <PageOptionsDropdown editorRef={editorRef} page={page} storeType={storeType} />
     </div>
   );
 });

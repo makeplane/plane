@@ -5,16 +5,17 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { Settings } from "lucide-react";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, CustomMenu, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink, Logo } from "@/components/common";
-// constants
+import { BreadcrumbLink } from "@/components/common";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web constants
+// plane web
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
-import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectSettingHeader: FC = observer(() => {
   // router
@@ -22,29 +23,17 @@ export const ProjectSettingHeader: FC = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { allowPermissions } = useUserPermissions();
-  const { currentProjectDetails, loader } = useProject();
+  const { loader } = useProject();
+
+  const { t } = useTranslation();
 
   return (
     <Header>
       <Header.LeftItem>
         <div>
           <div className="z-50">
-            <Breadcrumbs onBack={router.back} isLoading={loader}>
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={
-                  <BreadcrumbLink
-                    label={currentProjectDetails?.name ?? "Project"}
-                    icon={
-                      currentProjectDetails && (
-                        <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                          <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                        </span>
-                      )
-                    }
-                  />
-                }
-              />
+            <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
+              <ProjectBreadcrumb />
               <div className="hidden sm:hidden md:block lg:block">
                 <Breadcrumbs.BreadcrumbItem
                   type="text"
@@ -79,7 +68,7 @@ export const ProjectSettingHeader: FC = observer(() => {
                   key={item.key}
                   onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}${item.href}`)}
                 >
-                  {item.label}
+                  {t(item.i18n_label)}
                 </CustomMenu.MenuItem>
               )
           )}

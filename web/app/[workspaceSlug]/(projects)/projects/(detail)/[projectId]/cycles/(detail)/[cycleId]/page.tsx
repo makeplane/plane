@@ -8,8 +8,6 @@ import { PageHead } from "@/components/core";
 import { CycleDetailsSidebar } from "@/components/cycles";
 import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-details";
 import { CycleLayoutRoot } from "@/components/issues/issue-layouts";
-// constants
-// import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -31,7 +29,7 @@ const CycleDetailPage = observer(() => {
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
 
   useCyclesDetails({
-    workspaceSlug: workspaceSlug.toString(),
+    workspaceSlug: workspaceSlug?.toString(),
     projectId: projectId.toString(),
     cycleId: cycleId.toString(),
   });
@@ -77,7 +75,12 @@ const CycleDetailPage = observer(() => {
                     "0px 1px 4px 0px rgba(0, 0, 0, 0.06), 0px 2px 4px 0px rgba(16, 24, 40, 0.06), 0px 1px 8px -1px rgba(16, 24, 40, 0.06)",
                 }}
               >
-                <CycleDetailsSidebar handleClose={toggleSidebar} />
+                <CycleDetailsSidebar
+                  handleClose={toggleSidebar}
+                  cycleId={cycleId.toString()}
+                  projectId={projectId.toString()}
+                  workspaceSlug={workspaceSlug.toString()}
+                />
               </div>
             )}
           </div>

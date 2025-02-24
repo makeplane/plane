@@ -30,7 +30,7 @@ import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/ui";
 // helpers
 import { convertRemToPixel } from "@/helpers/common.helper";
 
-type TEditorTypes = "lite" | "document";
+type TEditorTypes = "lite" | "document" | "sticky";
 
 // Utility type to enforce the necessary extra props or make extraProps optional
 type ExtraPropsForCommand<T extends TEditorCommands> = T extends keyof TCommandExtraProps
@@ -93,7 +93,7 @@ export const TEXT_ALIGNMENT_ITEMS: ToolbarMenuItem<"text-align">[] = [
   },
 ];
 
-const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strikethrough">[] = [
+const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strike">[] = [
   {
     itemKey: "bold",
     renderKey: "bold",
@@ -119,7 +119,7 @@ const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strik
     editors: ["lite", "document"],
   },
   {
-    itemKey: "strikethrough",
+    itemKey: "strike",
     renderKey: "strikethrough",
     name: "Strikethrough",
     icon: Strikethrough,
@@ -183,6 +183,10 @@ export const TOOLBAR_ITEMS: {
     list: LIST_ITEMS.filter((item) => item.editors.includes("document")),
     userAction: USER_ACTION_ITEMS.filter((item) => item.editors.includes("document")),
     complex: COMPLEX_ITEMS.filter((item) => item.editors.includes("document")),
+  },
+  sticky: {
+    basic: BASIC_MARK_ITEMS.filter((item) => ["Bold", "Italic"].includes(item.name)),
+    list: LIST_ITEMS.filter((item) => ["To-do list"].includes(item.name)),
   },
 };
 

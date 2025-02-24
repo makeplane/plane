@@ -13,6 +13,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, FolderPlus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { IFavorite } from "@plane/types";
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
@@ -38,6 +39,7 @@ export const SidebarFavoritesMenu = observer(() => {
   const [isDragging, setIsDragging] = useState(false);
 
   // store hooks
+  const { t } = useTranslation();
   const { sidebarCollapsed } = useAppTheme();
   const {
     favoriteIds,
@@ -65,8 +67,8 @@ export const SidebarFavoritesMenu = observer(() => {
     }).catch(() => {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Failed to move favorite.",
+        title: t("error"),
+        message: t("failed_to_move_favorite"),
       });
     });
   };
@@ -87,33 +89,27 @@ export const SidebarFavoritesMenu = observer(() => {
     const sourceData = source.data as TargetData;
 
     if (!sourceData.id) return;
-
     if (isFolder) {
       // handle move to a new parent folder if dropped on a folder
       if (parentId && parentId !== sourceData.parentId) {
-        handleMoveToFolder(sourceData.id, parentId);
+        handleMoveToFolder(sourceData.id, parentId); /**parent id  */
       }
-      //handle remove from folder if dropped outside of the folder
-      if (parentId && parentId !== sourceData.parentId && sourceData.isChild) {
-        handleRemoveFromFavoritesFolder(sourceData.id);
-      }
-
       // handle reordering at root level
       if (droppedFavId) {
         if (instruction != "make-child") {
-          handleReorder(sourceData.id, droppedFavId, instruction);
+          handleReorder(sourceData.id, droppedFavId, instruction); /** sequence */
         }
       }
     } else {
       //handling reordering for favorites
       if (droppedFavId) {
-        handleReorder(sourceData.id, droppedFavId, instruction);
+        handleReorder(sourceData.id, droppedFavId, instruction); /** sequence */
       }
+    }
 
-      // handle removal from folder if dropped outside a folder
-      if (!parentId && sourceData.isChild) {
-        handleRemoveFromFavoritesFolder(sourceData.id);
-      }
+    /**remove if dropped outside and source is a child */
+    if (!parentId && sourceData.isChild) {
+      handleRemoveFromFavoritesFolder(sourceData.id); /**parent null */
     }
   };
 
@@ -122,15 +118,15 @@ export const SidebarFavoritesMenu = observer(() => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Favorite removed successfully.",
+          title: t("success"),
+          message: t("favorite_removed_successfully"),
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Something went wrong!",
+          title: t("error"),
+          message: t("something_went_wrong"),
         });
       });
   };
@@ -138,8 +134,8 @@ export const SidebarFavoritesMenu = observer(() => {
     removeFromFavoriteFolder(workspaceSlug.toString(), favoriteId).catch(() => {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Failed to move favorite.",
+        title: t("error"),
+        message: t("failed_to_move_favorite"),
       });
     });
   };
@@ -149,8 +145,8 @@ export const SidebarFavoritesMenu = observer(() => {
       reOrderFavorite(workspaceSlug.toString(), favoriteId, droppedFavId, edge).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Failed reorder favorite",
+          title: t("error"),
+          message: t("failed_to_reorder_favorite"),
         });
       });
     },
@@ -197,17 +193,17 @@ export const SidebarFavoritesMenu = observer(() => {
             ref={elementRef}
             as="button"
             className={cn(
-              "sticky top-0 bg-custom-sidebar-background-100 z-10 group/workspace-button w-full px-2 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-xs font-semibold",
+              "sticky top-0 bg-custom-sidebar-background-100 z-10 group/workspace-button w-full px-2 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-sm font-semibold",
               {
                 "bg-custom-sidebar-background-80 opacity-60": isDragging,
               }
             )}
           >
             <span onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)} className="flex-1 text-start">
-              YOUR FAVORITES
+              {t("favorites")}
             </span>
             <span className="flex flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded p-0.5 ">
-              <Tooltip tooltipHeading="Create folder" tooltipContent="">
+              <Tooltip tooltipHeading={t("create_folder")} tooltipContent="">
                 <FolderPlus
                   onClick={() => {
                     setCreateNewFolder(true);
@@ -246,7 +242,9 @@ export const SidebarFavoritesMenu = observer(() => {
               {Object.keys(groupedFavorites).length === 0 ? (
                 <>
                   {!sidebarCollapsed && (
-                    <span className="text-custom-text-400 text-xs font-medium px-8 py-1.5">No favorites yet</span>
+                    <span className="text-custom-text-400 text-xs font-medium px-8 py-1.5">
+                      {t("no_favorites_yet")}
+                    </span>
                   )}
                 </>
               ) : (
@@ -287,11 +285,9 @@ export const SidebarFavoritesMenu = observer(() => {
         </Transition>
       </Disclosure>
 
-      <hr
-        className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
-          "opacity-0": !sidebarCollapsed || favoriteIds.length === 0,
-        })}
-      />
+      {sidebarCollapsed && favoriteIds.length > 0 && (
+        <hr className="flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1" />
+      )}
     </>
   );
 });

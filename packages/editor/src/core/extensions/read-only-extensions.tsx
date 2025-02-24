@@ -19,8 +19,7 @@ import {
   TableCell,
   TableRow,
   Table,
-  CustomMention,
-  HeadingListExtension,
+  CustomMentionExtension,
   CustomReadOnlyImageExtension,
   CustomTextAlignExtension,
   CustomCalloutReadOnlyExtension,
@@ -28,23 +27,22 @@ import {
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
-// types
-import { IMentionHighlight, TExtensions, TFileHandler } from "@/types";
 // plane editor extensions
 import { CoreReadOnlyEditorAdditionalExtensions } from "@/plane-editor/extensions";
+// types
+import { TExtensions, TReadOnlyFileHandler, TReadOnlyMentionHandler } from "@/types";
 
 type Props = {
   disabledExtensions: TExtensions[];
-  fileHandler: Pick<TFileHandler, "getAssetSrc">;
-  mentionConfig: {
-    mentionHighlights?: () => Promise<IMentionHighlight[]>;
-  };
+  fileHandler: TReadOnlyFileHandler;
+  mentionHandler: TReadOnlyMentionHandler;
 };
 
 export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
-  const { disabledExtensions, fileHandler, mentionConfig } = props;
+  const { disabledExtensions, fileHandler, mentionHandler } = props;
 
   return [
+    // @ts-expect-error tiptap types are incorrect
     StarterKit.configure({
       bulletList: {
         HTMLAttributes: {
@@ -96,16 +94,12 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
       },
     }),
     CustomTypographyExtension,
-    ReadOnlyImageExtension({
-      getAssetSrc: fileHandler.getAssetSrc,
-    }).configure({
+    ReadOnlyImageExtension(fileHandler).configure({
       HTMLAttributes: {
         class: "rounded-md",
       },
     }),
-    CustomReadOnlyImageExtension({
-      getAssetSrc: fileHandler.getAssetSrc,
-    }),
+    CustomReadOnlyImageExtension(fileHandler),
     TiptapUnderline,
     TextStyle,
     TaskList.configure({
@@ -133,13 +127,9 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
     TableHeader,
     TableCell,
     TableRow,
-    CustomMention({
-      mentionHighlights: mentionConfig.mentionHighlights,
-      readonly: true,
-    }),
+    CustomMentionExtension(mentionHandler),
     CharacterCount,
     CustomColorExtension,
-    HeadingListExtension,
     CustomTextAlignExtension,
     CustomCalloutReadOnlyExtension,
     ...CoreReadOnlyEditorAdditionalExtensions({

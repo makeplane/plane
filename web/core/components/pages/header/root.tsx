@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { TPageFilterProps, TPageNavigationTabs } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
@@ -15,18 +16,22 @@ import {
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useMember, useProjectPages } from "@/hooks/store";
+import { useMember } from "@/hooks/store";
+// plane web hooks
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 type Props = {
   pageType: TPageNavigationTabs;
   projectId: string;
+  storeType: EPageStoreType;
   workspaceSlug: string;
 };
 
 export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
-  const { pageType, projectId, workspaceSlug } = props;
+  const { pageType, projectId, storeType, workspaceSlug } = props;
+  const { t } = useTranslation();
   // store hooks
-  const { filters, updateFilters, clearAllFilters } = useProjectPages();
+  const { filters, updateFilters, clearAllFilters } = usePageStore(storeType);
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
@@ -69,7 +74,7 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
           />
           <FiltersDropdown
             icon={<ListFilter className="h-3 w-3" />}
-            title="Filters"
+            title={t("common.filters")}
             placement="bottom-end"
             isFiltersApplied={isFiltersApplied}
           >

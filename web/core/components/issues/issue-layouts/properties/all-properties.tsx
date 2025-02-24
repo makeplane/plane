@@ -1,12 +1,15 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, SyntheticEvent } from "react";
 import xor from "lodash/xor";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // icons
 import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
 // types
+import { ISSUE_UPDATED } from "@plane/constants";
+// i18n
+import { useTranslation } from "@plane/i18n";
 import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
 import { Tooltip } from "@plane/ui";
@@ -21,11 +24,10 @@ import {
   StateDropdown,
 } from "@/components/dropdowns";
 // constants
-import { ISSUE_UPDATED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
+import { generateWorkItemLink, shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 // hooks
 import { useEventTracker, useLabel, useIssues, useProjectState, useProject, useProjectEstimates } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -42,10 +44,13 @@ export interface IIssueProperties {
   isReadOnly: boolean;
   className: string;
   activeLayout: string;
+  isEpic?: boolean;
 }
 
 export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
-  const { issue, updateIssue, displayProperties, activeLayout, isReadOnly, className } = props;
+  const { issue, updateIssue, displayProperties, activeLayout, isReadOnly, className, isEpic = false } = props;
+  // i18n
+  const { t } = useTranslation();
   // store hooks
   const { getProjectById } = useProject();
   const { labelMap } = useLabel();
@@ -95,7 +100,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   );
 
   const handleState = (stateId: string) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { state_id: stateId }).then(() => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
@@ -110,7 +115,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const handlePriority = (value: TIssuePriorities) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { priority: value }).then(() => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
@@ -125,7 +130,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const handleLabel = (ids: string[]) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { label_ids: ids }).then(() => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
@@ -140,7 +145,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const handleAssignee = (ids: string[]) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { assignee_ids: ids }).then(() => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
@@ -194,7 +199,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   );
 
   const handleStartDate = (date: Date | null) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { start_date: date ? renderFormattedPayloadDate(date) : null }).then(
         () => {
           captureIssueEvent({
@@ -211,7 +216,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const handleTargetDate = (date: Date | null) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { target_date: date ? renderFormattedPayloadDate(date) : null }).then(
         () => {
           captureIssueEvent({
@@ -228,7 +233,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   };
 
   const handleEstimate = (value: string | undefined) => {
-    updateIssue &&
+    if (updateIssue)
       updateIssue(issue.project_id, issue.id, { estimate_point: value }).then(() => {
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
@@ -242,17 +247,17 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       });
   };
 
-  const redirectToIssueDetail = () => {
-    router.push(
-      `/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${issue.id}#sub-issues`
-    );
-    // router.push({
-    //   pathname: `/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
-    //     issue.id
-    //   }`,
-    //   hash: "sub-issues",
-    // });
-  };
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug?.toString(),
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier: projectDetails?.identifier,
+    sequenceId: issue?.sequence_id,
+    isArchived: !!issue?.archived_at,
+    isEpic,
+  });
+
+  const redirectToIssueDetail = () => router.push(`${workItemLink}#sub-issues`);
 
   if (!displayProperties || !issue.project_id) return null;
 
@@ -264,7 +269,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const maxDate = getDate(issue.target_date);
   maxDate?.setDate(maxDate.getDate());
 
-  const handleEventPropagation = (e: React.MouseEvent) => {
+  const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();
     e.preventDefault();
   };
@@ -274,7 +279,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       {/* basic properties */}
       {/* state */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
-        <div className="h-5" onClick={handleEventPropagation}>
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <StateDropdown
             buttonContainerClassName="truncate max-w-40"
             value={issue.state_id}
@@ -290,7 +295,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* priority */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="priority">
-        <div className="h-5" onClick={handleEventPropagation}>
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <PriorityDropdown
             value={issue?.priority}
             onChange={handlePriority}
@@ -303,29 +308,14 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         </div>
       </WithDisplayPropertiesHOC>
 
-      {/* label */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
-        <div className="h-5" onClick={handleEventPropagation}>
-          <IssuePropertyLabels
-            projectId={issue?.project_id || null}
-            value={issue?.label_ids || null}
-            defaultOptions={defaultLabelOptions}
-            onChange={handleLabel}
-            disabled={isReadOnly}
-            renderByDefault={isMobile}
-            hideDropdownArrow
-          />
-        </div>
-      </WithDisplayPropertiesHOC>
-
       {/* start date */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_date">
-        <div className="h-5" onClick={handleEventPropagation}>
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <DateDropdown
             value={issue.start_date ?? null}
             onChange={handleStartDate}
             maxDate={maxDate}
-            placeholder="Start date"
+            placeholder={t("common.order_by.start_date")}
             icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             optionsClassName="z-10"
@@ -338,12 +328,12 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* target/due date */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="due_date">
-        <div className="h-5" onClick={handleEventPropagation}>
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <DateDropdown
             value={issue?.target_date ?? null}
             onChange={handleTargetDate}
             minDate={minDate}
-            placeholder="Due date"
+            placeholder={t("common.order_by.due_date")}
             icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
             buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
@@ -358,7 +348,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* assignee */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">
-        <div className="h-5" onClick={handleEventPropagation}>
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <MemberDropdown
             projectId={issue?.project_id}
             value={issue?.assignee_ids}
@@ -368,7 +358,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             buttonVariant={issue.assignee_ids?.length > 0 ? "transparent-without-text" : "border-without-text"}
             buttonClassName={issue.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
             showTooltip={issue?.assignee_ids?.length === 0}
-            placeholder="Assignees"
+            placeholder={t("common.assignees")}
             optionsClassName="z-10"
             tooltipContent=""
             renderByDefault={isMobile}
@@ -376,48 +366,54 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         </div>
       </WithDisplayPropertiesHOC>
 
-      {/* modules */}
-      {projectDetails?.module_view && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
-          <div className="h-5" onClick={handleEventPropagation}>
-            <ModuleDropdown
-              buttonContainerClassName="truncate max-w-40"
-              projectId={issue?.project_id}
-              value={issue?.module_ids ?? []}
-              onChange={handleModule}
-              disabled={isReadOnly}
-              renderByDefault={isMobile}
-              multiple
-              buttonVariant="border-with-text"
-              showCount
-              showTooltip
-            />
-          </div>
-        </WithDisplayPropertiesHOC>
-      )}
+      <>
+        {!isEpic && (
+          <>
+            {/* modules */}
+            {projectDetails?.module_view && (
+              <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
+                <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+                  <ModuleDropdown
+                    buttonContainerClassName="truncate max-w-40"
+                    projectId={issue?.project_id}
+                    value={issue?.module_ids ?? []}
+                    onChange={handleModule}
+                    disabled={isReadOnly}
+                    renderByDefault={isMobile}
+                    multiple
+                    buttonVariant="border-with-text"
+                    showCount
+                    showTooltip
+                  />
+                </div>
+              </WithDisplayPropertiesHOC>
+            )}
 
-      {/* cycles */}
-      {projectDetails?.cycle_view && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
-          <div className="h-5" onClick={handleEventPropagation}>
-            <CycleDropdown
-              buttonContainerClassName="truncate max-w-40"
-              projectId={issue?.project_id}
-              value={issue?.cycle_id}
-              onChange={handleCycle}
-              disabled={isReadOnly}
-              buttonVariant="border-with-text"
-              renderByDefault={isMobile}
-              showTooltip
-            />
-          </div>
-        </WithDisplayPropertiesHOC>
-      )}
+            {/* cycles */}
+            {projectDetails?.cycle_view && (
+              <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
+                <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+                  <CycleDropdown
+                    buttonContainerClassName="truncate max-w-40"
+                    projectId={issue?.project_id}
+                    value={issue?.cycle_id}
+                    onChange={handleCycle}
+                    disabled={isReadOnly}
+                    buttonVariant="border-with-text"
+                    renderByDefault={isMobile}
+                    showTooltip
+                  />
+                </div>
+              </WithDisplayPropertiesHOC>
+            )}
+          </>
+        )}
+      </>
 
       {/* estimates */}
       {projectId && areEstimateEnabledByProjectId(projectId?.toString()) && (
         <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
-          <div className="h-5" onClick={handleEventPropagation}>
+          <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
             <EstimateDropdown
               value={issue.estimate_point ?? undefined}
               onChange={handleEstimate}
@@ -439,12 +435,13 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!subIssueCount}
       >
         <Tooltip
-          tooltipHeading="Sub-issues"
+          tooltipHeading={isEpic ? t("issues.label", { count: 2 }) : t("common.sub_work_items")}
           tooltipContent={`${subIssueCount}`}
           isMobile={isMobile}
           renderByDefault={false}
         >
           <div
+            onFocus={handleEventPropagation}
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
@@ -470,13 +467,14 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         shouldRenderProperty={(properties) => !!properties.attachment_count && !!issue.attachment_count}
       >
         <Tooltip
-          tooltipHeading="Attachments"
+          tooltipHeading={t("common.attachments")}
           tooltipContent={`${issue.attachment_count}`}
           isMobile={isMobile}
           renderByDefault={false}
         >
           <div
             className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1"
+            onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
             <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
@@ -492,19 +490,34 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         shouldRenderProperty={(properties) => !!properties.link && !!issue.link_count}
       >
         <Tooltip
-          tooltipHeading="Links"
+          tooltipHeading={t("common.links")}
           tooltipContent={`${issue.link_count}`}
           isMobile={isMobile}
           renderByDefault={false}
         >
           <div
             className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1"
+            onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
             <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-xs">{issue.link_count}</div>
           </div>
         </Tooltip>
+      </WithDisplayPropertiesHOC>
+
+      {/* label */}
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
+        <IssuePropertyLabels
+          projectId={issue?.project_id || null}
+          value={issue?.label_ids || null}
+          defaultOptions={defaultLabelOptions}
+          onChange={handleLabel}
+          disabled={isReadOnly}
+          renderByDefault={isMobile}
+          hideDropdownArrow
+          maxRender={3}
+        />
       </WithDisplayPropertiesHOC>
     </div>
   );

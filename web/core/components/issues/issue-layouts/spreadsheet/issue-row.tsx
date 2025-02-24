@@ -4,6 +4,7 @@ import { Dispatch, MouseEvent, MutableRefObject, SetStateAction, useRef, useStat
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
+import { EIssueServiceType, SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
@@ -13,10 +14,9 @@ import { ControlLink, Row, Tooltip } from "@plane/ui";
 // components
 import { MultipleSelectEntityAction } from "@/components/core";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
-// constants
-import { SPREADSHEET_SELECT_GROUP } from "@/constants/spreadsheet";
 // helper
 import { cn } from "@/helpers/common.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
@@ -44,6 +44,7 @@ interface Props {
   spacingLeft?: number;
   selectionHelpers: TSelectionHelper;
   shouldRenderByDefault?: boolean;
+  isEpic?: boolean;
 }
 
 export const SpreadsheetIssueRow = observer((props: Props) => {
@@ -62,11 +63,12 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     spacingLeft = 6,
     selectionHelpers,
     shouldRenderByDefault,
+    isEpic = false,
   } = props;
   // states
   const [isExpanded, setExpanded] = useState<boolean>(false);
   // store hooks
-  const { subIssues: subIssuesStore } = useIssueDetail();
+  const { subIssues: subIssuesStore } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const { issueMap } = useIssues();
 
   // derived values
@@ -110,10 +112,12 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
           setExpanded={setExpanded}
           spreadsheetColumnsList={spreadsheetColumnsList}
           selectionHelpers={selectionHelpers}
+          isEpic={isEpic}
         />
       </RenderIfVisible>
 
       {isExpanded &&
+        !isEpic &&
         subIssues?.map((subIssueId: string) => (
           <SpreadsheetIssueRow
             key={subIssueId}
@@ -152,6 +156,7 @@ interface IssueRowDetailsProps {
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   spacingLeft?: number;
   selectionHelpers: TSelectionHelper;
+  isEpic?: boolean;
 }
 
 const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
@@ -170,6 +175,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
     spreadsheetColumnsList,
     spacingLeft = 6,
     selectionHelpers,
+    isEpic = false,
   } = props;
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -180,8 +186,8 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const { workspaceSlug, projectId } = useParams();
   // hooks
   const { getProjectIdentifierById } = useProject();
-  const { getIsIssuePeeked, peekIssue } = useIssueDetail();
-  const { handleRedirection } = useIssuePeekOverviewRedirection();
+  const { getIsIssuePeeked, peekIssue } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
+  const { handleRedirection } = useIssuePeekOverviewRedirection(isEpic);
   const { isMobile } = usePlatformOS();
 
   // handlers
@@ -226,6 +232,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const disableUserActions = !canEditProperties(issueDetail.project_id ?? undefined);
   const subIssuesCount = issueDetail?.sub_issues_count ?? 0;
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issueDetail.id);
+  const projectIdentifier = getProjectIdentifierById(issueDetail.project_id);
 
   const canSelectIssues = !disableUserActions && !selectionHelpers.isSelectionDisabled;
 
@@ -233,6 +240,15 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const keyMinWidth = displayProperties?.key
     ? (getProjectIdentifierById(issueDetail.project_id)?.length ?? 0 + 5) * 7
     : 0;
+
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug?.toString(),
+    projectId: issueDetail?.project_id,
+    issueId,
+    projectIdentifier,
+    sequenceId: issueDetail?.sequence_id,
+    isEpic,
+  });
 
   return (
     <>
@@ -243,7 +259,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
         className="relative md:sticky left-0 z-10 group/list-block bg-custom-background-100"
       >
         <ControlLink
-          href={`/${workspaceSlug}/projects/${issueDetail.project_id}/issues/${issueId}`}
+          href={workItemLink}
           onClick={() => handleIssuePeekOverview(issueDetail)}
           className={cn(
             "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
@@ -263,7 +279,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                 <Tooltip
                   tooltipContent={
                     <>
-                      Only issues within the current
+                      Only work items within the current
                       <br />
                       project can be selected.
                     </>
@@ -307,7 +323,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
 
               {/* sub-issues chevron */}
               <div className="grid place-items-center size-4">
-                {subIssuesCount > 0 && (
+                {subIssuesCount > 0 && !isEpic && (
                   <button
                     type="button"
                     className="grid place-items-center size-4 rounded-sm text-custom-text-400 hover:text-custom-text-300"
