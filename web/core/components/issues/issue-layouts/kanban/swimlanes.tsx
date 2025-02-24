@@ -1,6 +1,5 @@
 import { MutableRefObject } from "react";
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -18,6 +17,7 @@ import { Row } from "@plane/ui";
 // hooks
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // components
+import { useWorkFlowFDragNDrop } from "@/plane-web/components/workflow";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation } from "../utils";
 import { KanBan } from "./default";
@@ -53,35 +53,40 @@ const visibilitySubGroupByGroupCount = (subGroupIssueCount: number, showEmptyGro
 };
 
 const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
-  ({ getGroupIssueCount, sub_group_by, group_by, list, collapsedGroups, handleCollapsedGroups, showEmptyGroup }) => (
-    <div className="relative flex h-max min-h-full w-full items-center gap-4">
-      {list &&
-        list.length > 0 &&
-        list.map((_list: IGroupByColumn) => {
-          const groupCount = getGroupIssueCount(_list?.id, undefined, false) ?? 0;
+  ({ getGroupIssueCount, sub_group_by, group_by, list, collapsedGroups, handleCollapsedGroups, showEmptyGroup }) => {
+    const { getIsWorkflowWorkItemCreationDisabled } = useWorkFlowFDragNDrop(group_by, sub_group_by);
 
-          const subGroupByVisibilityToggle = visibilitySubGroupByGroupCount(groupCount, showEmptyGroup);
+    return (
+      <div className="relative flex h-max min-h-full w-full items-center gap-4">
+        {list &&
+          list.length > 0 &&
+          list.map((_list: IGroupByColumn) => {
+            const groupCount = getGroupIssueCount(_list?.id, undefined, false) ?? 0;
 
-          if (subGroupByVisibilityToggle === false) return <></>;
-          const { t } = useTranslation();
-          return (
-            <div key={`${sub_group_by}_${_list.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
-              <HeaderGroupByCard
-                sub_group_by={sub_group_by}
-                group_by={group_by}
-                column_id={_list.id}
-                icon={_list.icon}
-                title={_list.name}
-                count={groupCount}
-                collapsedGroups={collapsedGroups}
-                handleCollapsedGroups={handleCollapsedGroups}
-                issuePayload={_list.payload}
-              />{" "}
-            </div>
-          );
-        })}
-    </div>
-  )
+            const subGroupByVisibilityToggle = visibilitySubGroupByGroupCount(groupCount, showEmptyGroup);
+
+            if (subGroupByVisibilityToggle === false) return <></>;
+
+            return (
+              <div key={`${sub_group_by}_${_list.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
+                <HeaderGroupByCard
+                  sub_group_by={sub_group_by}
+                  group_by={group_by}
+                  column_id={_list.id}
+                  icon={_list.icon}
+                  title={_list.name}
+                  count={groupCount}
+                  collapsedGroups={collapsedGroups}
+                  handleCollapsedGroups={handleCollapsedGroups}
+                  issuePayload={_list.payload}
+                  disableIssueCreation={getIsWorkflowWorkItemCreationDisabled(_list.id)}
+                />
+              </div>
+            );
+          })}
+      </div>
+    );
+  }
 );
 
 interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
@@ -156,7 +161,6 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
       {list &&
         list.length > 0 &&
         list.map((_list: IGroupByColumn, subGroupIndex) => {
-          const { t } = useTranslation();
           const issueCount = getGroupIssueCount(undefined, _list.id, true) ?? 0;
           const subGroupByVisibilityToggle = visibilitySubGroupBy(_list, issueCount);
           if (subGroupByVisibilityToggle.showGroup === false) return <></>;

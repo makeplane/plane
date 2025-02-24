@@ -35,6 +35,7 @@ type Props = TDropdownProps & {
   renderByDefault?: boolean;
   stateIds?: string[];
   filterAvailableStateIds?: boolean;
+  isForWorkItemCreation?: boolean;
 };
 
 export const StateDropdown: React.FC<Props> = observer((props) => {
@@ -59,6 +60,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     renderByDefault = true,
     stateIds,
     filterAvailableStateIds = true,
+    isForWorkItemCreation = false,
   } = props;
   // states
   const [query, setQuery] = useState("");
@@ -98,7 +100,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     content: (
       <div className="flex items-center gap-2">
         <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} className="h-3 w-3 flex-shrink-0" />
-        <span className="flex-grow truncate">{state?.name}</span>
+        <span className="flex-grow truncate text-left">{state?.name}</span>
       </div>
     ),
   }));
@@ -182,7 +184,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                   />
                 )}
                 {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                  <span className="flex-grow truncate">{selectedState?.name ?? t("state")}</span>
+                  <span className="flex-grow truncate text-left">{selectedState?.name ?? t("state")}</span>
                 )}
                 {dropdownArrow && (
                   <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
@@ -239,6 +241,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                       filterAvailableStateIds={filterAvailableStateIds}
                       selectedValue={value}
                       className="flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5"
+                      isForWorkItemCreation={isForWorkItemCreation}
                     />
                   ))
                 ) : (

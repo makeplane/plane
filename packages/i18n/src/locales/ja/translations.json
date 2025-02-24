@@ -845,6 +845,16 @@
     "disconnecting": "切断中",
     "installing": "インストール中",
     "install": "インストール",
+    "reset": "リセット",
+    "live": "ライブ",
+    "change_history": "変更履歴",
+    "coming_soon": "近日公開",
+    "members": "メンバー",
+    "you": "あなた",
+    "upgrade_cta": {
+      "higher_subscription": "高いサブスクリプションにアップグレード",
+      "talk_to_sales": "セールスに連絡"
+    },
     "category": "カテゴリー",
     "categories": "カテゴリーズ",
     "saving": "セービング",

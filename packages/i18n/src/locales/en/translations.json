@@ -675,6 +675,16 @@
     "disconnecting": "Disconnecting",
     "installing": "Installing",
     "install": "Install",
+    "reset": "Reset",
+    "live": "Live",
+    "change_history": "Change History",
+    "coming_soon": "Coming soon",
+    "members": "Members",
+    "you": "You",
+    "upgrade_cta": {
+      "higher_subscription": "Upgrade to higher subscription",
+      "talk_to_sales": "Talk to sales"
+    },
     "category": "Category",
     "categories": "Categories",
     "saving": "Saving",

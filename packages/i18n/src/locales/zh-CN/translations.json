@@ -845,6 +845,16 @@
     "disconnecting": "正在断开连接",
     "installing": "正在安装",
     "install": "安装",
+    "reset": "重置",
+    "live": "实时",
+    "change_history": "变更历史",
+    "coming_soon": "即将推出",
+    "members": "成员",
+    "you": "你",
+    "upgrade_cta": {
+      "higher_subscription": "升级到更高订阅",
+      "talk_to_sales": "联系销售"
+    },
     "category": "类别",
     "categories": "类别",
     "saving": "保存中",
