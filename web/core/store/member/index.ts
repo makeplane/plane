@@ -35,7 +35,7 @@ export class MemberRootStore implements IMemberRootStore {
   }
 
   /**
-   * @description get user details rom userId
+   * @description get user details from userId
    * @param userId
    */
   getUserDetails = computedFn((userId: string): IUserLite | undefined => this.memberMap?.[userId] ?? undefined);

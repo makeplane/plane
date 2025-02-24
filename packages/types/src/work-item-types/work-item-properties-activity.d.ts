@@ -1,4 +1,5 @@
 import { TLoader } from "../issues/base";
+import { IUserLite } from "../users";
 
 export type TIssuePropertyAction = "created" | "updated" | "deleted";
 
@@ -12,6 +13,7 @@ export type TIssuePropertiesActivity = {
   action: TIssuePropertyAction | undefined;
   epoch: number | undefined;
   comment: string | undefined;
+  actor_detail: IUserLite | undefined;
 
   issue: string | undefined;
   property: string | undefined;
