@@ -174,14 +174,17 @@ class IntakeIssueViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
-        intake_id = Intake.objects.filter(
+        intake = Intake.objects.filter(
             workspace__slug=slug, project_id=project_id
         ).first()
+        if not intake:
+            return Response({"error": "Intake not found"}, status=status.HTTP_404_NOT_FOUND)
+
         project = Project.objects.get(pk=project_id)
         filters = issue_filters(request.GET, "GET", "issue__")
         intake_issue = (
             IntakeIssue.objects.filter(
-                intake_id=intake_id.id, project_id=project_id, **filters
+                intake_id=intake.id, project_id=project_id, **filters
             )
             .select_related("issue")
             .prefetch_related("issue__labels")

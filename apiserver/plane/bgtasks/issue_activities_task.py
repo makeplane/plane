@@ -9,10 +9,10 @@ from celery import shared_task
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
-from plane.app.serializers import IssueActivitySerializer
-from plane.bgtasks.notification_task import notifications
 
 # Module imports
+from plane.app.serializers import IssueActivitySerializer
+from plane.bgtasks.notification_task import notifications
 from plane.db.models import (
     CommentReaction,
     Cycle,
@@ -32,7 +32,7 @@ from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
 from plane.bgtasks.webhook_task import webhook_activity
 from plane.utils.issue_relation_mapper import get_inverse_relation
-
+from plane.utils.valid_uuid import is_valid_uuid
 
 # Track Changes in name
 def track_name(
@@ -1568,8 +1568,13 @@ def issue_activity(
     try:
         issue_activities = []
 
+        # check if project_id is valid
+        if not is_valid_uuid(project_id):
+            return
+
         project = Project.objects.get(pk=project_id)
         workspace_id = project.workspace_id
+
 
         if issue_id is not None:
             if origin:
