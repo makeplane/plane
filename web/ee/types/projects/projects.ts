@@ -22,14 +22,18 @@ export type TProjectAttributesResponse = TProjectAttributes & {
 export type TProject = TPartialProject &
   IProject &
   TProjectAttributes & {
-  description_html?: string | undefined;
+    description_html?: string | undefined;
   };
 
-export type TProjectFeatures = {
-  id?: string | undefined;
+export type TProjectFeaturesList = {
   is_project_updates_enabled: boolean;
   is_epic_enabled: boolean;
   is_issue_type_enabled: boolean;
   is_time_tracking_enabled: boolean;
-  project_id: string;
+  is_workflow_enabled: boolean;
 };
+
+export type TProjectFeatures = {
+  id?: string | undefined;
+  project_id: string;
+} & TProjectFeaturesList;

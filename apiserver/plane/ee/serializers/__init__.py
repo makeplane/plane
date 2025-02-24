@@ -72,6 +72,8 @@ from .app.epic import (
 from .app.workflow import (
     WorkflowSerializer,
     WorkflowTransitionSerializer,
+    WorkflowTransitionActorSerializer,
+    WorkflowTransitionActivitySerializer,
 )
 
 # Space imports

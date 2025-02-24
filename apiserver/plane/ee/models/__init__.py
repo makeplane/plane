@@ -63,7 +63,13 @@ from .teamspace import (
     TeamspaceUserProperty,
 )
 
-from .workflow import Workflow, WorkflowTransition
+from .workflow import (
+    Workflow,
+    WorkflowTransition,
+    WorkflowTransitionApprover,
+    WorkflowTransitionApproval,
+    WorkflowTransitionActivity,
+)
 
 from .job import ImportReport, ImportJob
 

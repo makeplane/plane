@@ -29,6 +29,7 @@ class ProjectFeatureSerializer(BaseSerializer):
             "is_epic_enabled",
             "is_issue_type_enabled",
             "is_time_tracking_enabled",
+            "is_workflow_enabled",
             "project_id",
         ]
         read_only_fields = [

@@ -137,6 +137,8 @@ class ProjectViewSet(BaseViewSet):
     def list_detail(self, request, slug):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         projects = self.get_queryset().order_by("sort_order", "name")
+
+        # Get the projects in which the user is part of
         if WorkspaceMember.objects.filter(
             member=request.user, workspace__slug=slug, is_active=True, role=5
         ).exists():
@@ -145,6 +147,7 @@ class ProjectViewSet(BaseViewSet):
                 project_projectmember__is_active=True,
             )
 
+        # Get the projects in which the user is part of or the public projects
         if WorkspaceMember.objects.filter(
             member=request.user, workspace__slug=slug, is_active=True, role=15
         ).exists():

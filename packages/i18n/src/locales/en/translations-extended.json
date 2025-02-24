@@ -9,7 +9,8 @@
     "live": "Live",
     "epics": "Epics",
     "project_updates": "Project Updates",
-    "overview": "Overview"
+    "overview": "Overview",
+    "workflows": "Workflows"
   },
 
   "issue": {
@@ -370,6 +371,10 @@
       "invalid_issue_target_date": {
         "title": "Unable to update work items",
         "message": "Due date selected precedes the start date for some work items. Ensure due date to be after the start date."
+      },
+      "invalid_state_transition": {
+        "title": "Unable to update work items",
+        "message": "State change is not allowed for some work items. Ensure the state change is allowed."
       }
     }
   },
@@ -923,6 +928,105 @@
       }
     }
   },
+
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Allow new work items",
+      "default_state": "Default state lets all members create new work items. This can’t be changed",
+      "state_change_count": "{count, plural, one {1 permitted state change} other {{count} permitted state changes}}",
+      "movers_count": "{count, plural, one {1 listed mover} other {{count} listed movers}}",
+      "state_changes": {
+        "label": {
+          "default": "Add permitted state change",
+          "loading": "Adding permitted state change"
+        },
+        "move_to": "Move to",
+        "movers": {
+          "label": "When moved by",
+          "tooltip": "Movers are people who are permitted to move work items from one state to another.",
+          "add": "Add movers"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "You can’t move this work item here."
+    },
+    "workflow_enabled": {
+      "label": "State Change"
+    },
+    "workflow_tree": {
+      "label": "For work items in",
+      "state_change_label": "can move it to"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Control the chaos of changes and reviews with Workflows.",
+        "description": "Set rules for where your work moves, by who, and when with Workflows in Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "View change history",
+      "reset_workflow": "Reset workflow"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Are you sure you want to reset this workflow?",
+        "description": "If you reset this workflow, all your state-change rules will be deleted and you will have to create them again to run them in this project."
+      },
+      "delete_state_change": {
+        "title": "Are you sure you want to delete this state-change rule?",
+        "description": "Once deleted, you can’t undo this change and you will have to set the rule again if you want it running for this project."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} workflows",
+        "success": {
+          "title": "Workflows {action} successfully",
+          "message": "Workflows {action} successfully"
+        },
+        "error": {
+          "title": "Error {action} workflows",
+          "message": "Workflows could not be {action}. Please try again."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Workflows reset successfully",
+          "message": "Workflows reset successfully"
+        },
+        "error": {
+          "title": "Error resetting workflows",
+          "message": "Workflows could not be reset. Please try again."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Error adding state change rule",
+          "message": "State change rule could not be added. Please try again."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Error modifying state change rule",
+          "message": "State change rule could not be modified. Please try again."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Error removing state change rule",
+          "message": "State change rule could not be removed. Please try again."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Error modifying state change rule approvers",
+          "message": "State change rule approvers could not be modified. Please try again."
+        }
+      }
+    }
+  },
+
   "customers": {
     "label": "{count, plural, one {Customer} other {Customers}}",
     "properties": {

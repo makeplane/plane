@@ -19,7 +19,8 @@
     "live": "En vivo",
     "epics": "Epics",
     "project_updates": "Actualizaciones del proyecto",
-    "overview": "Resumen"
+    "overview": "Resumen",
+    "workflows": "Flujos de trabajo"
   },
 
   "issue": {
@@ -380,6 +381,10 @@
       "invalid_issue_target_date": {
         "title": "No se pueden actualizar elementos de trabajo",
         "message": "La fecha de vencimiento seleccionada es anterior a la fecha de inicio de algunos elementos de trabajo. Asegúrese de que la fecha de vencimiento sea posterior a la fecha de inicio."
+      },
+      "invalid_state_transition": {
+        "title": "No se pueden actualizar elementos de trabajo",
+        "message": "El cambio de estado no está permitido para algunos elementos de trabajo. Asegúrese de que el cambio de estado esté permitido."
       }
     }
   },
@@ -933,6 +938,105 @@
       }
     }
   },
+
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Permitir nuevos elementos de trabajo",
+      "default_state": "El estado predeterminado permite que todos los miembros creen nuevos elementos de trabajo. Esto no se puede cambiar",
+      "state_change_count": "{count, plural, one {1 cambio de estado permitido} other {{count} cambios de estado permitidos}}",
+      "movers_count": "{count, plural, one {1 movilizador listado} other {{count} movilizadores listados}}",
+      "state_changes": {
+        "label": {
+          "default": "Agregar cambio de estado permitido",
+          "loading": "Agregando cambio de estado permitido"
+        },
+        "move_to": "Mover a",
+        "movers": {
+          "label": "Cuando se mueve por",
+          "tooltip": "Los movilizadores son personas que están permitidas para mover elementos de trabajo de un estado a otro.",
+          "add": "Agregar movilizadores"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "No puedes mover este elemento de trabajo aquí."
+    },
+    "workflow_enabled": {
+      "label": "Cambio de estado"
+    },
+    "workflow_tree": {
+      "label": "Para elementos de trabajo en",
+      "state_change_label": "pueden moverlo a"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Controla el caos de los cambios y revisiones con Workflows.",
+        "description": "Establece reglas para dónde se mueve tu trabajo, quién y cuándo con Workflows en Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Ver historial de cambios",
+      "reset_workflow": "Restablecer flujo de trabajo"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "¿Estás seguro de que deseas restablecer este flujo de trabajo?",
+        "description": "Si restableces este flujo de trabajo, todas tus reglas de cambio de estado serán eliminadas y tendrás que crearlas de nuevo para que funcionen en este proyecto."
+      },
+      "delete_state_change": {
+        "title": "¿Estás seguro de que deseas eliminar esta regla de cambio de estado?",
+        "description": "Una vez eliminada, no podrás deshacer este cambio y tendrás que establecer la regla de nuevo si la deseas para este proyecto."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} flujos de trabajo",
+        "success": {
+          "title": "Flujos de trabajo {action} con éxito",
+          "message": "Flujos de trabajo {action} con éxito"
+        },
+        "error": {
+          "title": "Error {action} flujos de trabajo",
+          "message": "Los flujos de trabajo no pudieron ser {action}. Por favor, inténtalo de nuevo."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Flujos de trabajo restablecidos con éxito",
+          "message": "Flujos de trabajo restablecidos con éxito"
+        },
+        "error": {
+          "title": "Error al restablecer flujos de trabajo",
+          "message": "Los flujos de trabajo no pudieron ser restablecidos. Por favor, inténtalo de nuevo."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Error al agregar regla de cambio de estado",
+          "message": "La regla de cambio de estado no pudo ser agregada. Por favor, inténtalo de nuevo."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Error al modificar regla de cambio de estado",
+          "message": "La regla de cambio de estado no pudo ser modificada. Por favor, inténtalo de nuevo."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Error al eliminar regla de cambio de estado",
+          "message": "La regla de cambio de estado no pudo ser eliminada. Por favor, inténtalo de nuevo."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Error al modificar aprobadores de regla de cambio de estado",
+          "message": "Los aprobadores de la regla de cambio de estado no pudieron ser modificados. Por favor, inténtalo de nuevo."
+        }
+      }
+    }
+  },
+
   "customers": {
     "label": "{count, plural, one {Cliente} other {Clientes}}",
     "properties": {

@@ -1,11 +1,14 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-// layouts
+// ce imports
 import { IProjectAuthWrapper } from "@/ce/layouts/project-wrapper";
+// hooks
+import { useProjectState } from "@/hooks/store";
+// layouts
 import { ProjectAuthWrapper as CoreProjectAuthWrapper } from "@/layouts/auth-layout";
-// plane web hooks
-import { useIssueTypes } from "@/plane-web/hooks/store";
+// plane web imports
+import { useFlag, useIssueTypes } from "@/plane-web/hooks/store";
 
 export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // props
@@ -17,9 +20,11 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     fetchAllWorkItemTypePropertiesAndOptions,
     fetchAllEpicPropertiesAndOptions,
   } = useIssueTypes();
+  const { fetchWorkflowStates } = useProjectState();
   // derived values
   const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId?.toString());
   const isEpicEnabled = isEpicEnabledForProject(workspaceSlug?.toString(), projectId?.toString());
+  const isWorkflowFeatureFlagEnabled = useFlag(workspaceSlug?.toString(), "WORKFLOWS");
 
   // fetching all work item types and properties
   useSWR(
@@ -39,6 +44,17 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
       : null,
     workspaceSlug && projectId && isEpicEnabled
       ? () => fetchAllEpicPropertiesAndOptions(workspaceSlug.toString(), projectId.toString())
+      : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // fetching project level workflow states
+  useSWR(
+    workspaceSlug && projectId && isWorkflowFeatureFlagEnabled
+      ? `PROJECT_WORKFLOWS_${workspaceSlug}_${projectId}`
+      : null,
+    workspaceSlug && projectId && isWorkflowFeatureFlagEnabled
+      ? () => fetchWorkflowStates(workspaceSlug.toString(), projectId.toString())
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );

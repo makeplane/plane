@@ -19,7 +19,8 @@
     "live": "实时",
     "epics": "史诗",
     "project_updates": "项目更新",
-    "overview": "概览"
+    "overview": "概览",
+    "workflows": "工作流"
   },
 
   "issue": {
@@ -380,6 +381,10 @@
       "invalid_issue_target_date": {
         "title": "无法更新工作项",
         "message": "所选截止日期早于某些工作项的开始日期。请确保截止日期在开始日期之后。"
+      },
+      "invalid_state_transition": {
+        "title": "无法更新工作项",
+        "message": "某些工作项的状态更改不被允许。请确保状态更改是被允许的。"
       }
     }
   },
@@ -933,6 +938,105 @@
       }
     }
   },
+
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "允许新工作项",
+      "default_state": "默认状态允许所有成员创建新工作项。不能更改",
+      "state_change_count": "{count, plural, one {1 个允许的状态更改} other {{count} 个允许的状态更改}}",
+      "movers_count": "{count, plural, one {1 个列出的移交人} other {{count} 个列出的移交人}}",
+      "state_changes": {
+        "label": {
+          "default": "添加允许的状态更改",
+          "loading": "正在添加允许的状态更改"
+        },
+        "move_to": "移动到",
+        "movers": {
+          "label": "当被",
+          "tooltip": "移交人是允许从一个状态移动到另一个状态的工作项的人。",
+          "add": "添加移交人"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "您不能在这里移动这个工作项。"
+    },
+    "workflow_enabled": {
+      "label": "状态更改"
+    },
+    "workflow_tree": {
+      "label": "对于在",
+      "state_change_label": "可以移动到"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "使用工作流控制更改和审查的混乱。",
+        "description": "使用 Plane 中的工作流定义您工作的移动规则，包括谁、何时。"
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "查看更改历史",
+      "reset_workflow": "重置工作流"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "您确定要重置这个工作流吗？",
+        "description": "如果您重置这个工作流，您所有的状态更改规则将被删除，您将需要为这个项目重新创建它们。"
+      },
+      "delete_state_change": {
+        "title": "您确定要删除这个状态更改规则吗？",
+        "description": "一旦删除，您不能撤销这个更改，您将需要为这个项目重新设置规则。"
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} 工作流",
+        "success": {
+          "title": "工作流 {action} 成功",
+          "message": "工作流 {action} 成功"
+        },
+        "error": {
+          "title": "错误 {action} 工作流",
+          "message": "工作流不能被 {action}。请重试。"
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "工作流重置成功",
+          "message": "工作流重置成功"
+        },
+        "error": {
+          "title": "重置工作流错误",
+          "message": "工作流不能被重置。请重试。"
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "添加状态更改规则错误",
+          "message": "状态更改规则不能被添加。请重试。"
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "修改状态更改规则错误",
+          "message": "状态更改规则不能被修改。请重试。"
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "删除状态更改规则错误",
+          "message": "状态更改规则不能被删除。请重试。"
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "修改状态更改规则移交人错误",
+          "message": "状态更改规则移交人不能被修改。请重试。"
+        }
+      }
+    }
+  },
+
   "customers": {
     "label": "{count, plural, one {客户} other {客户}}",
     "properties": {

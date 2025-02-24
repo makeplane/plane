@@ -19,7 +19,8 @@
     "live": "En direct",
     "epics": "Epics",
     "project_updates": "Mises à jour du projet",
-    "overview": "Vue d'ensemble"
+    "overview": "Vue d'ensemble",
+    "workflows": "Flux de travail"
   },
 
   "issue": {
@@ -380,6 +381,10 @@
       "invalid_issue_target_date": {
         "title": "Impossible de mettre à jour les éléments de travail",
         "message": "La date d'échéance sélectionnée est antérieure à la date de début pour certains éléments de travail. Assurez-vous que la date d'échéance soit postérieure à la date de début."
+      },
+      "invalid_state_transition": {
+        "title": "Impossible de mettre à jour les éléments de travail",
+        "message": "Le changement d'état n'est pas autorisé pour certains éléments de travail. Assurez-vous que le changement d'état est autorisé."
       }
     }
   },
@@ -933,6 +938,105 @@
       }
     }
   },
+
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Autoriser les nouveaux éléments de travail",
+      "default_state": "L'état par défaut permet à tous les membres de créer de nouveaux éléments de travail. Cela ne peut pas être changé",
+      "state_change_count": "{count, plural, one {1 changement d'état autorisé} other {{count} changements d'état autorisés}}",
+      "movers_count": "{count, plural, one {1 déplaceur listé} other {{count} déplaceurs listés}}",
+      "state_changes": {
+        "label": {
+          "default": "Ajouter un changement d'état autorisé",
+          "loading": "En train d'ajouter un changement d'état autorisé"
+        },
+        "move_to": "Déplacer vers",
+        "movers": {
+          "label": "Lorsqu'il est déplacé par",
+          "tooltip": "Les déplaceurs sont des personnes qui sont autorisées à déplacer des éléments de travail d'un état à un autre.",
+          "add": "Ajouter des déplaceurs"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "Vous ne pouvez pas déplacer cet élément de travail ici."
+    },
+    "workflow_enabled": {
+      "label": "Changement d'état"
+    },
+    "workflow_tree": {
+      "label": "Pour les éléments de travail dans",
+      "state_change_label": "peuvent le déplacer vers"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Contrôlez le chaos des changements et des révisions avec les Workflows.",
+        "description": "Définissez des règles pour où votre travail se déplace, par qui, et quand avec les Workflows dans Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Voir l'historique des changements",
+      "reset_workflow": "Réinitialiser le workflow"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Êtes-vous sûr de vouloir réinitialiser ce workflow ?",
+        "description": "Si vous réinitialisez ce workflow, toutes vos règles de changement d'état seront supprimées et vous devrez les créer à nouveau pour qu'elles fonctionnent dans ce projet."
+      },
+      "delete_state_change": {
+        "title": "Êtes-vous sûr de vouloir supprimer cette règle de changement d'état ?",
+        "description": "Une fois supprimée, vous ne pourrez pas annuler ce changement et vous devrez établir la règle à nouveau si vous la souhaitez pour ce projet."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} les workflows",
+        "success": {
+          "title": "Workflows {action} avec succès",
+          "message": "Workflows {action} avec succès"
+        },
+        "error": {
+          "title": "Erreur {action} workflows",
+          "message": "Les workflows ne pouvaient pas être {action}. Veuillez réessayer."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Workflows réinitialisés avec succès",
+          "message": "Workflows réinitialisés avec succès"
+        },
+        "error": {
+          "title": "Erreur lors de la réinitialisation des workflows",
+          "message": "Les workflows ne pouvaient pas être réinitialisés. Veuillez réessayer."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Erreur lors de l'ajout d'une règle de changement d'état",
+          "message": "La règle de changement d'état ne pouvait pas être ajoutée. Veuillez réessayer."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Erreur lors de la modification d'une règle de changement d'état",
+          "message": "La règle de changement d'état ne pouvait pas être modifiée. Veuillez réessayer."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Erreur lors de la suppression d'une règle de changement d'état",
+          "message": "La règle de changement d'état ne pouvait pas être supprimée. Veuillez réessayer."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Erreur lors de la modification des approbateurs de règle de changement d'état",
+          "message": "Les approbateurs de la règle de changement d'état ne pouvaient pas être modifiés. Veuillez réessayer."
+        }
+      }
+    }
+  },
+
   "customers": {
     "label": "{count, plural, one {Client} other {Clients}}",
     "properties": {

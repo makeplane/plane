@@ -19,6 +19,14 @@ export const PROJECT_SETTINGS = {
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/work-item-types/`,
     Icon: SettingIcon,
   },
+  workflows: {
+    key: "workflows",
+    i18n_label: "common.workflows",
+    href: `/settings/workflows/`,
+    access: [EUserPermissions.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/workflows/`,
+    Icon: SettingIcon,
+  },
   epics: {
     key: "epics",
     i18n_label: "common.epics",
@@ -49,10 +57,11 @@ export const PROJECT_SETTINGS_LINKS: {
   PROJECT_SETTINGS["members"],
   PROJECT_SETTINGS["features"],
   PROJECT_SETTINGS["states"],
+    PROJECT_SETTINGS["workflows"],
   PROJECT_SETTINGS["labels"],
   PROJECT_SETTINGS["estimates"],
   PROJECT_SETTINGS["automations"],
-    PROJECT_SETTINGS["work-item-types"],
+  PROJECT_SETTINGS["work-item-types"],
   PROJECT_SETTINGS["epics"],
-  PROJECT_SETTINGS["project_updates"],
+    PROJECT_SETTINGS["project_updates"],
 ];

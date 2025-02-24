@@ -390,6 +390,17 @@ class IssueViewSet(BaseViewSet):
                 "default_assignee_id": project.default_assignee_id,
             },
         )
+        if request.data.get("state_id"):
+            workflow_state_manager = WorkflowStateManager(
+                project_id=project_id, slug=slug
+            )
+            if workflow_state_manager._validate_issue_creation(
+                state_id=request.data.get("state_id"),
+            ):
+                return Response(
+                    {"error": "You cannot create a issue in this state"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
         if serializer.is_valid():
             serializer.save()
