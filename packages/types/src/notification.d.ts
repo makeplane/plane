@@ -9,14 +9,12 @@ export type TWorkspaceUserNotification = {
     workspace: string,
     user: string,
     transport: EWorkspaceNotificationTransport,
-    work_item_property_updates_enabled: boolean,
-    status_updates_enabled: boolean,
-    priority_updates_enabled: boolean,
-    assignee_updates_enabled: boolean,
-    start_due_date_updates_enabled: boolean,
-    module_updates_enabled: boolean,
-    cycle_updates_enabled: boolean,
-    mentioned_comments_updates_enabled: boolean,
-    new_comments_updates_enabled: boolean,
-    reaction_comments_updates_enabled: boolean
+    property_change: boolean,
+    state_change: boolean,
+    priority: boolean,
+    assignee: boolean,
+    start_due_date: boolean,
+    comment: boolean,
+    mention: boolean,
+    comment_reactions: boolean
 }

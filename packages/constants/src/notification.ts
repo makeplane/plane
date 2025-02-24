@@ -138,16 +138,14 @@ export const allTimeIn30MinutesInterval12HoursFormat: Array<{
 
 
 export enum ENotificationSettingsKey {
-  WORK_ITEM_PROPERTY_UPDATES = "work_item_property_updates_enabled",
-  STATUS_UPDATES = "status_updates_enabled",
-  PRIORITY_UPDATES = "priority_updates_enabled",
-  ASSIGNEE_UPDATES = "assignee_updates_enabled",
-  START_DUE_DATE_UPDATES = "start_due_date_updates_enabled",
-  MODULE_UPDATES = "module_updates_enabled",
-  CYCLE_UPDATES = "cycle_updates_enabled",
-  MENTIONED_COMMENTS_UPDATES = "mentioned_comments_updates_enabled",
-  NEW_COMMENTS_UPDATES = "new_comments_updates_enabled",
-  REACTION_COMMENT_UPDATES = "reaction_comments_updates_enabled",
+  PROPERTY_CHANGE = "property_change",
+  STATE_CHANGE = "state_change",
+  PRIORITY = "priority",
+  ASSIGNEE = "assignee",
+  START_DUE_DATE = "start_due_date",
+  COMMENTS = "comment",
+  MENTIONED_COMMENTS = "mention",
+  COMMENT_REACTIONS = "comment_reactions",
 }
 
 export enum EWorkspaceNotificationTransport {
@@ -157,46 +155,38 @@ export enum EWorkspaceNotificationTransport {
 
 export const TASK_UPDATES_NOTIFICATION_SETTINGS: TNotificationSettings[] = [
   {
-    key: ENotificationSettingsKey.WORK_ITEM_PROPERTY_UPDATES,
+    key: ENotificationSettingsKey.PROPERTY_CHANGE,
     i18n_title: "notification_settings.work_item_property_title",
   },
   {
-    key: ENotificationSettingsKey.STATUS_UPDATES,
+    key: ENotificationSettingsKey.STATE_CHANGE,
     i18n_title: "notification_settings.status_title",
   },
   {
-    key: ENotificationSettingsKey.PRIORITY_UPDATES,
+    key: ENotificationSettingsKey.PRIORITY,
     i18n_title: "notification_settings.priority_title",
   },
   {
-    key: ENotificationSettingsKey.ASSIGNEE_UPDATES,
+    key: ENotificationSettingsKey.ASSIGNEE,
     i18n_title: "notification_settings.assignee_title",
   },
   {
-    key: ENotificationSettingsKey.START_DUE_DATE_UPDATES,
+    key: ENotificationSettingsKey.START_DUE_DATE,
     i18n_title: "notification_settings.due_date_title",
-  },
-  {
-    key: ENotificationSettingsKey.MODULE_UPDATES,
-    i18n_title: "notification_settings.module_title",
-  },
-  {
-    key: ENotificationSettingsKey.CYCLE_UPDATES,
-    i18n_title: "notification_settings.cycle_title",
   }
 ]
 
 export const COMMENT_NOTIFICATION_SETTINGS: TNotificationSettings[] = [
   {
-    key: ENotificationSettingsKey.MENTIONED_COMMENTS_UPDATES,
+    key: ENotificationSettingsKey.MENTIONED_COMMENTS,
     i18n_title: "notification_settings.mentioned_comments_title",
   },
   {
-    key: ENotificationSettingsKey.NEW_COMMENTS_UPDATES,
+    key: ENotificationSettingsKey.COMMENTS,
     i18n_title: "notification_settings.new_comments_title",
   },
   {
-    key: ENotificationSettingsKey.REACTION_COMMENT_UPDATES,
+    key: ENotificationSettingsKey.COMMENT_REACTIONS,
     i18n_title: "notification_settings.reaction_comments_title",
   },
 ]

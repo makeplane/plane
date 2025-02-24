@@ -66,7 +66,6 @@ class UserNotificationPreference(BaseModel):
         "db.Workspace",
         on_delete=models.CASCADE,
         related_name="workspace_notification_preferences",
-        null=True,
     )
     # project
     project = models.ForeignKey(
@@ -76,14 +75,28 @@ class UserNotificationPreference(BaseModel):
         null=True,
     )
 
-    # preference fields
-    property_change = models.BooleanField(default=True)
-    state_change = models.BooleanField(default=True)
-    comment = models.BooleanField(default=True)
-    mention = models.BooleanField(default=True)
-    issue_completed = models.BooleanField(default=True)
+    transport = models.CharField(max_length=50, default="EMAIL")
 
+    # task updates
+    property_change = models.BooleanField(default=False)
+    state_change = models.BooleanField(default=False)
+    issue_completed = models.BooleanField(default=False)
+    priority = models.BooleanField(default=False)
+    assignee = models.BooleanField(default=False)
+    start_due_date = models.BooleanField(default=False)
+    # comments fields
+    comment = models.BooleanField(default=False)
+    mention = models.BooleanField(default=False)
+    comment_reactions = models.BooleanField(default=False)
     class Meta:
+        unique_together = ["workspace", "user", "transport", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "user", "transport"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="notification_preferences_unique_workspace_user_transport_when_deleted_at_null",
+            )
+        ]
         verbose_name = "UserNotificationPreference"
         verbose_name_plural = "UserNotificationPreferences"
         db_table = "user_notification_preferences"
@@ -124,50 +137,6 @@ class EmailNotificationLog(BaseModel):
         db_table = "email_notification_logs"
         ordering = ("-created_at",)
 
-class WorkspaceUserNotificationPreference(BaseModel):
-    class TransportChoices(models.TextChoices):
-        EMAIL = "EMAIL", "Email"
-        IN_APP = "IN_APP", "In App"
-
-    workspace = models.ForeignKey(
-        "db.Workspace",
-        related_name="workspace_notification_preference",
-        on_delete=models.CASCADE,
-    )
-    user = models.ForeignKey(
-        "db.User",
-        related_name="workspace_notification_preference",
-        on_delete=models.CASCADE,
-    )
-    transport = models.CharField(max_length=50)
-
-    # task updates
-    work_item_property_updates_enabled = models.BooleanField(default=False)
-    status_updates_enabled = models.BooleanField(default=False)
-    priority_updates_enabled = models.BooleanField(default=False)
-    assignee_updates_enabled = models.BooleanField(default=False)
-    start_due_date_updates_enabled = models.BooleanField(default=False)
-    module_updates_enabled = models.BooleanField(default=False)
-    cycle_updates_enabled = models.BooleanField(default=False)
-
-    # comment updates
-    mentioned_comments_updates_enabled = models.BooleanField(default=False)
-    new_comments_updates_enabled = models.BooleanField(default=False)
-    reaction_comments_updates_enabled = models.BooleanField(default=False)
-
-    class Meta:
-        unique_together = ["workspace", "user", "transport", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["workspace", "user", "transport"],
-                condition=models.Q(deleted_at__isnull=True),
-                name="notification_preferences_unique_workspace_user_transport_when_deleted_at_null",
-            )
-        ]
-        verbose_name = "Workspace User Notification Preference"
-        verbose_name_plural = "Workspace User Notification Preferences"
-        db_table = "workspace_user_notification_preferences"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        return f"{self.workspace} - {self.user} Notification Preferences"
+class NotificationTransportChoices(models.TextChoices):
+    EMAIL = "EMAIL", "Email"
+    IN_APP = "IN_APP", "In App"

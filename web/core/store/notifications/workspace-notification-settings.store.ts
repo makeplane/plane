@@ -1,5 +1,5 @@
 import set from "lodash/set";
-import { action, autorun, computed, makeObservable, observable, runInAction } from "mobx";
+import { action, autorun, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { EWorkspaceNotificationTransport } from "@plane/constants";
 import { IUser, IWorkspace, TWorkspaceUserNotification } from "@plane/types";

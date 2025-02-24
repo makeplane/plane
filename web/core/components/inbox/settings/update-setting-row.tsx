@@ -26,10 +26,10 @@ export const InboxSettingUpdateRow: FC<InboxSettingUpdateRowProps> = observer((p
                 {t(title)}
             </div>
             <div className="w-1/4">
-                <InboxSettingUpdate transport={EWorkspaceNotificationTransport.EMAIL} settings_key={settings_key} />
+                <InboxSettingUpdate transport={EWorkspaceNotificationTransport.IN_APP} settings_key={settings_key} />
             </div>
             <div className="w-1/4">
-                <InboxSettingUpdate transport={EWorkspaceNotificationTransport.IN_APP} settings_key={settings_key} />
+                <InboxSettingUpdate transport={EWorkspaceNotificationTransport.EMAIL} settings_key={settings_key} />
             </div>
         </div>
     );

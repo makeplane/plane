@@ -2190,7 +2190,7 @@
     "task_updates": "Task updates",
     "comments": "Comments",
     "work_item_property_title": "Update on any property of work item",
-    "status_title": "Status update",
+    "status_title": "State update",
     "priority_title": "Priority update",
     "assignee_title": "Assignee update",
     "due_date_title": "Start/Due date update",

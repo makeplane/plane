@@ -49,7 +49,7 @@ from .notification import (
     EmailNotificationLog,
     Notification,
     UserNotificationPreference,
-    WorkspaceUserNotificationPreference,
+    NotificationTransportChoices
 )
 from .page import Page, PageLabel, PageLog, ProjectPage, PageVersion
 from .project import (

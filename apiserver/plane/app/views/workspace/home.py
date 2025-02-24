@@ -2,7 +2,7 @@
 from ..base import BaseAPIView
 from plane.db.models.workspace import WorkspaceHomePreference
 from plane.app.permissions import allow_permission, ROLE
-from plane.db.models import Workspace, WorkspaceUserNotificationPreference
+from plane.db.models import Workspace, UserNotificationPreference, NotificationTransportChoices
 from plane.app.serializers.workspace import WorkspaceHomePreferenceSerializer
 
 # Third party imports
@@ -62,7 +62,7 @@ class WorkspaceHomePreferenceViewSet(BaseAPIView):
         # Notification preference get or create
         workspace = Workspace.objects.get(slug=slug)
         get_notification_preferences = (
-            WorkspaceUserNotificationPreference.objects.filter(
+            UserNotificationPreference.objects.filter(
                 workspace=workspace, user=request.user
             )
         )
@@ -71,7 +71,7 @@ class WorkspaceHomePreferenceViewSet(BaseAPIView):
 
         transports = [
             transport
-            for transport, _ in WorkspaceUserNotificationPreference.TransportChoices.choices
+            for transport, _ in NotificationTransportChoices.choices
         ]
 
 
@@ -81,9 +81,9 @@ class WorkspaceHomePreferenceViewSet(BaseAPIView):
             ):
                 create_transports.append(transport)
 
-        _ = WorkspaceUserNotificationPreference.objects.bulk_create(
+        _ = UserNotificationPreference.objects.bulk_create(
             [
-                WorkspaceUserNotificationPreference(
+                UserNotificationPreference(
                     workspace=workspace, user=request.user, transport=transport
                 )
                 for transport in create_transports

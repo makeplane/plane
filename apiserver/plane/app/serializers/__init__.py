@@ -117,8 +117,7 @@ from .analytic import AnalyticViewSerializer
 
 from .notification import (
     NotificationSerializer,
-    UserNotificationPreferenceSerializer,
-    WorkspaceUserNotificationPreferenceSerializer,
+    UserNotificationPreferenceSerializer
 )
 
 from .exporter import ExporterHistorySerializer
