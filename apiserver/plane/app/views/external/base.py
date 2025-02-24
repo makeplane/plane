@@ -3,7 +3,7 @@ import os
 from typing import List, Dict, Tuple
 
 # Third party import
-import litellm
+from openai import OpenAI
 import requests
 
 from rest_framework import status
@@ -116,12 +116,14 @@ def get_llm_response(task, prompt, api_key: str, model: str, provider: str) -> T
         if provider.lower() == "gemini":
             model = f"gemini/{model}"
 
-        response = litellm.completion(
+        client = OpenAI(api_key=api_key)
+        chat_completion = client.chat.completions.create(
             model=model,
-            messages=[{"role": "user", "content": final_text}],
-            api_key=api_key,
+            messages=[
+                {"role": "user", "content": final_text}
+            ]
         )
-        text = response.choices[0].message.content.strip()
+        text = chat_completion.choices[0].message.content
         return text, None
     except Exception as e:
         log_exception(e)
@@ -175,7 +177,7 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def post(self, request, slug):
         api_key, model, provider = get_llm_config()
-        
+
         if not api_key or not model or not provider:
             return Response(
                 {"error": "LLM provider API key and model are required"},
