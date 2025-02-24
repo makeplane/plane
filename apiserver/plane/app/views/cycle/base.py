@@ -49,9 +49,9 @@ from plane.db.models import (
     ProjectMember,
     UserRecentVisit,
 )
+from plane.ee.models import EntityIssueStateActivity
 from plane.utils.analytics_plot import burndown_plot
 from plane.bgtasks.recent_visited_task import recent_visited_task
-
 # Module imports
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.webhook_task import model_activity
@@ -1052,9 +1052,64 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 }
             )
 
-        cycle_issues = CycleIssue.objects.bulk_update(
-            updated_cycles, ["cycle_id"], batch_size=100
-        )
+        _ = CycleIssue.objects.bulk_update(updated_cycles, ["cycle_id"], batch_size=100)
+
+        estimate_type = Project.objects.filter(
+            workspace__slug=slug,
+            pk=project_id,
+            estimate__isnull=False,
+            estimate__type="points",
+        ).exists()
+
+        if old_cycle.first().version == 2:
+            EntityIssueStateActivity.objects.bulk_create(
+                [
+                    EntityIssueStateActivity(
+                        cycle_id=cycle_id,
+                        state_id=cycle_issue.issue.state_id,
+                        issue_id=cycle_issue.issue_id,
+                        state_group=cycle_issue.issue.state.group,
+                        action="REMOVED",
+                        entity_type="CYCLE",
+                        estimate_point_id=cycle_issue.issue.estimate_point_id,
+                        estimate_value=(
+                            cycle_issue.issue.estimate_point.value
+                            if estimate_type and cycle_issue.issue.estimate_point
+                            else None
+                        ),
+                        workspace_id=cycle_issue.workspace_id,
+                        created_by_id=request.user.id,
+                        updated_by_id=request.user.id,
+                    )
+                    for cycle_issue in cycle_issues
+                ],
+                batch_size=10,
+            )
+
+        if new_cycle.version == 2:
+            EntityIssueStateActivity.objects.bulk_create(
+                [
+                    EntityIssueStateActivity(
+                        cycle_id=new_cycle_id,
+                        state_id=cycle_issue.issue.state_id,
+                        issue_id=cycle_issue.issue_id,
+                        state_group=cycle_issue.issue.state.group,
+                        action="ADDED",
+                        entity_type="CYCLE",
+                        estimate_point_id=cycle_issue.issue.estimate_point_id,
+                        estimate_value=(
+                            cycle_issue.issue.estimate_point.value
+                            if estimate_type and cycle_issue.issue.estimate_point
+                            else None
+                        ),
+                        workspace_id=cycle_issue.workspace_id,
+                        created_by_id=request.user.id,
+                        updated_by_id=request.user.id,
+                    )
+                    for cycle_issue in cycle_issues
+                ],
+                batch_size=10,
+            )
 
         # Capture Issue Activity
         issue_activity.delay(
@@ -1264,6 +1319,12 @@ class CycleAnalyticsEndpoint(BaseAPIView):
             )
             .first()
         )
+
+        if not cycle:
+            return Response(
+                {"error": "Cycle not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         if not cycle.start_date or not cycle.end_date:
             return Response(
