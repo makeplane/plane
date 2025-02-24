@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
+import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
@@ -12,11 +13,18 @@ import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { SimpleEmptyState } from "@/components/empty-state";
 import { InboxContentRoot } from "@/components/inbox";
-import { IssuePeekOverview } from "@/components/issues";
 // hooks
 import { useIssueDetail, useUserPermissions, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
+
+const IssuePeekOverview = dynamic(
+  () => import("@/components/issues/peek-overview/root").then((m) => m.IssuePeekOverview),
+  {
+    ssr: false,
+    loading: () => null,
+  }
+);
 
 const WorkspaceDashboardPage = observer(() => {
   const { workspaceSlug } = useParams();

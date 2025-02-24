@@ -1,14 +1,31 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import dynamic from "next/dynamic";
 import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TNameDescriptionLoader } from "@plane/types";
 // components
 import { ContentWrapper } from "@plane/ui";
-import { InboxIssueActionsHeader, InboxIssueMainContent } from "@/components/inbox";
 // hooks
+import { IssuePeekOverviewLoader } from "@/components/issues/peek-overview/loader";
 import { useProjectInbox, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+
+const InboxIssueActionsHeader = dynamic(
+  () => import("@/components/inbox/content/inbox-issue-header").then((m) => m.InboxIssueActionsHeader),
+  {
+    ssr: false,
+    loading: () => null,
+  }
+);
+
+const InboxIssueMainContent = dynamic(
+  () => import("@/components/inbox/content/issue-root").then((m) => m.InboxIssueMainContent),
+  {
+    ssr: false,
+    loading: () => <IssuePeekOverviewLoader removeRoutePeekId={() => null} />,
+  }
+);
 
 type TInboxContentRoot = {
   workspaceSlug: string;

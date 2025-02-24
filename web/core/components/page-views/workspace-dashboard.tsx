@@ -1,17 +1,16 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
+import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel, PRODUCT_TOUR_COMPLETED, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper } from "@plane/ui";
 // components
-import { DashboardWidgets } from "@/components/dashboard";
+import { LogoSpinner } from "@/components/common";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
-import { IssuePeekOverview } from "@/components/issues";
 import { TourRoot } from "@/components/onboarding";
 import { UserGreetingsView } from "@/components/user";
-// constants
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -26,6 +25,26 @@ import {
 } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import useSize from "@/hooks/use-window-size";
+
+//@to-do Add loader matching the layout
+const DashboardWidgets = dynamic(
+  () => import("@/components/dashboard/home-dashboard-widgets").then((m) => m.DashboardWidgets),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-full w-full flex items-center justify-center">
+        <LogoSpinner />
+      </div>
+    ),
+  }
+);
+const IssuePeekOverview = dynamic(
+  () => import("@/components/issues/peek-overview/root").then((m) => m.IssuePeekOverview),
+  {
+    ssr: false,
+    loading: () => null,
+  }
+);
 
 export const WorkspaceDashboardView = observer(() => {
   // plane hooks

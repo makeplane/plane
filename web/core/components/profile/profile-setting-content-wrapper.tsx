@@ -1,8 +1,8 @@
 "use client";
 import React, { FC } from "react";
 // helpers
+import { SidebarHamburgerToggle } from "@/components/core";
 import { cn } from "@/helpers/common.helper";
-import { SidebarHamburgerToggle } from "../core";
 
 type Props = {
   children: React.ReactNode;

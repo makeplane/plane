@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { ArrowUpToLine, Clipboard, History } from "lucide-react";
 // document editor
@@ -9,7 +10,7 @@ import { EditorRefApi } from "@plane/editor";
 // ui
 import { TContextMenuItem, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
-import { ExportPageModal, PageActions, TPageActions } from "@/components/pages";
+import { PageActions, TPageActions } from "@/components/pages";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
@@ -26,6 +27,13 @@ type Props = {
   storeType: EPageStoreType;
 };
 
+const ExportPageModal = dynamic(
+  () => import("@/components/pages/modals/export-page-modal").then((m) => m.ExportPageModal),
+  {
+    ssr: false,
+    loading: () => null,
+  }
+);
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { editorRef, page, storeType } = props;
   // states
