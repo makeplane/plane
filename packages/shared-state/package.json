@@ -1,6 +1,6 @@
 {
   "name": "@plane/shared-state",
-  "version": "0.24.1",
+  "version": "0.25.0",
   "description": "Shared state shared across multiple apps internally",
   "private": true,
   "main": "./src/index.ts",

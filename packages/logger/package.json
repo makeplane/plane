@@ -1,6 +1,6 @@
 {
   "name": "@plane/logger",
-  "version": "0.24.1",
+  "version": "0.25.0",
   "description": "Logger shared across multiple apps internally",
   "private": true,
   "main": "./src/index.ts",
