@@ -209,7 +209,6 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
                   from: val?.from ?? undefined,
                   to: val?.to ?? undefined,
                 });
-                val?.from && val?.to && handleClose();
               }}
               mode="range"
               disabled={disabledDays}
