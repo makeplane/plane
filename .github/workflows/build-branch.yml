@@ -320,6 +320,7 @@ jobs:
           retention-days: 2
           path: |
             ${{ github.workspace }}/deploy/selfhost/setup.sh
+            ${{ github.workspace }}/deploy/selfhost/swarm.sh
             ${{ github.workspace }}/deploy/selfhost/restore.sh
             ${{ github.workspace }}/deploy/selfhost/docker-compose.yml
             ${{ github.workspace }}/deploy/selfhost/variables.env
@@ -362,6 +363,7 @@ jobs:
           generate_release_notes: true
           files: |
             ${{ github.workspace }}/deploy/selfhost/setup.sh
+            ${{ github.workspace }}/deploy/selfhost/swarm.sh
             ${{ github.workspace }}/deploy/selfhost/restore.sh
             ${{ github.workspace }}/deploy/selfhost/docker-compose.yml
             ${{ github.workspace }}/deploy/selfhost/variables.env
