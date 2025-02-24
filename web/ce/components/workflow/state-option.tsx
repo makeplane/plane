@@ -12,6 +12,7 @@ type Props = {
   filterAvailableStateIds: boolean;
   selectedValue: string | null | undefined;
   className?: string;
+  isForWorkItemCreation?: boolean;
 };
 
 export const StateOption = observer((props: Props) => {

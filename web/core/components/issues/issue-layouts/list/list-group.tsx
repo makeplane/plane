@@ -110,7 +110,9 @@ export const ListGroup = observer((props: Props) => {
 
   const [intersectionElement, setIntersectionElement] = useState<HTMLDivElement | null>(null);
 
-  const { workflowDisabledSource, isWorkflowDropDisabled, handleWorkFlowState } = useWorkFlowFDragNDrop(group_by);
+  const { workflowDisabledSource, isWorkflowDropDisabled, handleWorkFlowState, getIsWorkflowWorkItemCreationDisabled } =
+    useWorkFlowFDragNDrop(group_by);
+  const isWorkflowIssueCreationDisabled = getIsWorkflowWorkItemCreationDisabled(group.id);
 
   const groupIssueCount = getGroupIssueCount(group.id, undefined, false) ?? 0;
   const nextPageResults = getPaginationData(group.id, undefined)?.nextPageResults;
@@ -267,7 +269,9 @@ export const ListGroup = observer((props: Props) => {
           count={groupIssueCount}
           issuePayload={group.payload}
           canEditProperties={canEditProperties}
-          disableIssueCreation={disableIssueCreation || isGroupByCreatedBy || isCompletedCycle}
+          disableIssueCreation={
+            disableIssueCreation || isGroupByCreatedBy || isCompletedCycle || isWorkflowIssueCreationDisabled
+          }
           addIssuesToView={addIssuesToView}
           selectionHelpers={selectionHelpers}
           handleCollapsedGroups={handleCollapsedGroups}
@@ -305,18 +309,22 @@ export const ListGroup = observer((props: Props) => {
 
           {shouldLoadMore && (group_by ? <>{loadMore}</> : <ListLoaderItemRow ref={setIntersectionElement} />)}
 
-          {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && !isCompletedCycle && (
-            <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
-              <QuickAddIssueRoot
-                layout={EIssueLayoutTypes.LIST}
-                QuickAddButton={ListQuickAddIssueButton}
-                prePopulatedData={prePopulateQuickAddData(group_by, group.id)}
-                containerClassName="border-b border-t border-custom-border-200 bg-custom-background-100 "
-                quickAddCallback={quickAddCallback}
-                isEpic={isEpic}
-              />
-            </div>
-          )}
+          {enableIssueQuickAdd &&
+            !disableIssueCreation &&
+            !isGroupByCreatedBy &&
+            !isCompletedCycle &&
+            !isWorkflowIssueCreationDisabled && (
+              <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
+                <QuickAddIssueRoot
+                  layout={EIssueLayoutTypes.LIST}
+                  QuickAddButton={ListQuickAddIssueButton}
+                  prePopulatedData={prePopulateQuickAddData(group_by, group.id)}
+                  containerClassName="border-b border-t border-custom-border-200 bg-custom-background-100 "
+                  quickAddCallback={quickAddCallback}
+                  isEpic={isEpic}
+                />
+              </div>
+            )}
         </div>
       )}
     </div>

@@ -134,7 +134,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
     {
       key: "restore",
       action: handleRestoreCycle,
-      title: t("restor"),
+      title: t("restore"),
       icon: ArchiveRestoreIcon,
       shouldRender: isEditingAllowed && isArchived,
     },

@@ -37,3 +37,13 @@
 [cmdk-item][aria-selected="true"] {
   background-color: rgba(var(--color-background-80));
 }
+
+[cmdk-item][aria-disabled="true"], [cmdk-item][data-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+  background-color: transparent;
+}
+
+[cmdk-item][aria-disabled="true"]:hover, [cmdk-item][data-disabled="true"]:hover {
+  background-color: transparent;
+}
