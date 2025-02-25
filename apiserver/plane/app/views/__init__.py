@@ -210,8 +210,6 @@ from .webhook.base import (
     WebhookSecretRegenerateEndpoint,
 )
 
-from .dashboard.base import DashboardEndpoint, WidgetsEndpoint
-
 from .error_404 import custom_404_view
 
 from .notification.base import MarkAllReadNotificationViewSet
