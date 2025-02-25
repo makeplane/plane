@@ -37,6 +37,7 @@ from plane.bgtasks.webhook_task import webhook_activity
 from plane.utils.issue_relation_mapper import get_inverse_relation
 from plane.utils.valid_uuid import is_valid_uuid
 
+
 # Track Changes in name
 def track_name(
     requested_data,
@@ -1664,12 +1665,11 @@ def issue_activity(
         issue_activities = []
 
         # check if project_id is valid
-        if not is_valid_uuid(project_id):
+        if not is_valid_uuid(str(project_id)):
             return
 
         project = Project.objects.get(pk=project_id)
         workspace_id = project.workspace_id
-
 
         if issue_id is not None:
             issue = (
