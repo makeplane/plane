@@ -1,96 +1,34 @@
 import { Extension } from "@tiptap/core";
-import { Schema, Node as ProsemirrorNode } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from '@tiptap/pm/state';
-
 
 export const MarkdownClipboard = Extension.create({
   name: 'markdownClipboard',
+
   addOptions() {
     return {
       transformPastedText: false,
-      transformCopiedText: false,
+      transformCopiedText: true,
     }
   },
+
   addProseMirrorPlugins() {
     return [
       new Plugin({
         key: new PluginKey('markdownClipboard'),
         props: {
           clipboardTextSerializer: (slice) => {
-            const isMultiline = slice.content.childCount > 1;
+            const serializer = this.editor.storage.markdown.serializer;
+            const hasMultipleBlocks = slice.content.childCount > 1;
 
-            const copyAsMarkdown =
-              isMultiline ||
-              slice.content.content.some(
-                (node) => node.content.content.length > 1
-              );
-
-            if (!copyAsMarkdown) {
-              return slice.content.content.map((node) =>
-                toPlainText(node, this.editor.schema)
-              ).join('')
-
+            console.log('has mul', hasMultipleBlocks)
+            if (this.options.transformCopiedText && (hasMultipleBlocks)) {
+              return serializer.serialize(slice.content);
+            } else {
+              return slice.content.textBetween(0, slice.content.size, "\n");
             }
-
-            return this.editor.storage.markdown.serializer.serialize(slice.content);
           },
         }
       })
     ]
   }
-})
-
-const toPlainText = (root: ProsemirrorNode, schema: Schema): string => {
-  const textSerializers = getTextSerializers(schema);
-  return textBetween(root, 0, root.content.size, textSerializers);
-};
-
-type PlainTextSerializer = (node: ProsemirrorNode) => string;
-
-const getTextSerializers = (schema: Schema): Record<string, PlainTextSerializer | undefined> => Object.fromEntries(
-  Object.entries(schema.nodes)
-    .filter(([, node]) => node.spec.toPlainText)
-    .map(([name, node]) => [name, node.spec.toPlainText])
-);
-
-const textBetween = (
-  doc: ProsemirrorNode,
-  from: number,
-  to: number,
-  plainTextSerializers: Record<string, PlainTextSerializer | undefined>
-): string => {
-  let text = "";
-  let first = true;
-  const blockSeparator = "\n";
-
-  doc.nodesBetween(from, to, (node, pos) => {
-    const toPlainText = plainTextSerializers[node.type.name];
-    let nodeText = "";
-
-    if (toPlainText) {
-      nodeText += toPlainText(node);
-    } else if (node.isText) {
-      nodeText += node.textBetween(
-        Math.max(from, pos) - pos,
-        to - pos,
-        blockSeparator
-      );
-    }
-
-    if (
-      node.isBlock &&
-      ((node.isLeaf && nodeText) || node.isTextblock) &&
-      blockSeparator
-    ) {
-      if (first) {
-        first = false;
-      } else {
-        text += blockSeparator;
-      }
-    }
-
-    text += nodeText;
-  });
-
-  return text;
-};
+});
