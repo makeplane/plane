@@ -36,6 +36,7 @@ type Props = TDropdownProps & {
   stateIds?: string[];
   filterAvailableStateIds?: boolean;
   isForWorkItemCreation?: boolean;
+  alwaysAllowStateChange?: boolean;
 };
 
 export const StateDropdown: React.FC<Props> = observer((props) => {
@@ -59,8 +60,6 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     value,
     renderByDefault = true,
     stateIds,
-    filterAvailableStateIds = true,
-    isForWorkItemCreation = false,
   } = props;
   // states
   const [query, setQuery] = useState("");
@@ -237,11 +236,9 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                     <StateOption
                       key={option.value}
                       option={option}
-                      projectId={projectId}
-                      filterAvailableStateIds={filterAvailableStateIds}
                       selectedValue={value}
                       className="flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5"
-                      isForWorkItemCreation={isForWorkItemCreation}
+                      {...props}
                     />
                   ))
                 ) : (
