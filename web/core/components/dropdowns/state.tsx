@@ -234,11 +234,11 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                 filteredOptions.length > 0 ? (
                   filteredOptions.map((option) => (
                     <StateOption
+                      {...props}
                       key={option.value}
                       option={option}
                       selectedValue={value}
                       className="flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5"
-                      {...props}
                     />
                   ))
                 ) : (
