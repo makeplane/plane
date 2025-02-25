@@ -944,17 +944,17 @@
       "work_item_creation": "新しい作業項目を許可",
       "default_state": "デフォルトの状態は、すべてのメンバーが新しい作業項目を作成できるように設定されています。これは変更できません",
       "state_change_count": "{count, plural, one {1つの許可された状態変更} other {{count}つの許可された状態変更}}",
-      "movers_count": "{count, plural, one {1人のリストされた移動者} other {{count}人のリストされた移動者}}",
+      "movers_count": "{count, plural, one {1人のリストされたレビューア} other {{count}人のリストされたレビューア}}",
       "state_changes": {
         "label": {
           "default": "許可された状態変更を追加",
           "loading": "許可された状態変更を追加中"
         },
-        "move_to": "へ移動",
+        "move_to": "状態を変更",
         "movers": {
           "label": "誰によって移動された場合",
-          "tooltip": "移動者は、作業項目を一つの状態から別の状態に移動することを許可されている人々です。",
-          "add": "移動者を追加"
+          "tooltip": "レビューアは、作業項目を一つの状態から別の状態に移動することを許可されている人々です。",
+          "add": "レビューアを追加"
         }
       }
     },
@@ -992,17 +992,17 @@
       "enable_disable": {
         "loading": "{action}ワークフロー",
         "success": {
-          "title": "ワークフローが{action}されました",
+          "title": "成功",
           "message": "ワークフローが{action}されました"
         },
         "error": {
-          "title": "{action}ワークフローのエラー",
+          "title": "エラー",
           "message": "ワークフローが{action}できませんでした。もう一度お試しください。"
         }
       },
       "reset": {
         "success": {
-          "title": "ワークフローがリセットされました",
+          "title": "成功",
           "message": "ワークフローがリセットされました"
         },
         "error": {
@@ -1030,8 +1030,8 @@
       },
       "modify_state_change_rule_movers": {
         "error": {
-          "title": "状態変更ルールの承認者の変更エラー",
-          "message": "状態変更ルールの承認者が変更できませんでした。もう一度お試しください。"
+          "title": "状態変更ルールのレビューアの変更エラー",
+          "message": "状態変更ルールのレビューアが変更できませんでした。もう一度お試しください。"
         }
       }
     }

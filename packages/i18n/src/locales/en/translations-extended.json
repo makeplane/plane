@@ -934,17 +934,17 @@
       "work_item_creation": "Allow new work items",
       "default_state": "Default state lets all members create new work items. This can’t be changed",
       "state_change_count": "{count, plural, one {1 permitted state change} other {{count} permitted state changes}}",
-      "movers_count": "{count, plural, one {1 listed mover} other {{count} listed movers}}",
+      "movers_count": "{count, plural, one {1 listed reviewer} other {{count} listed reviewers}}",
       "state_changes": {
         "label": {
           "default": "Add permitted state change",
           "loading": "Adding permitted state change"
         },
-        "move_to": "Move to",
+        "move_to": "Change state to",
         "movers": {
-          "label": "When moved by",
-          "tooltip": "Movers are people who are permitted to move work items from one state to another.",
-          "add": "Add movers"
+          "label": "When reviewed by",
+          "tooltip": "Reviewers are people who are permitted to move work items from one state to another.",
+          "add": "Add reviewers"
         }
       }
     },
@@ -952,7 +952,7 @@
       "title": "You can’t move this work item here."
     },
     "workflow_enabled": {
-      "label": "State Change"
+      "label": "State change"
     },
     "workflow_tree": {
       "label": "For work items in",
@@ -980,24 +980,24 @@
     },
     "toasts": {
       "enable_disable": {
-        "loading": "{action} workflows",
+        "loading": "{action} workflow",
         "success": {
-          "title": "Workflows {action} successfully",
-          "message": "Workflows {action} successfully"
+          "title": "Success",
+          "message": "Workflow {action} successfully"
         },
         "error": {
-          "title": "Error {action} workflows",
-          "message": "Workflows could not be {action}. Please try again."
+          "title": "Error",
+          "message": "Workflow could not be {action}. Please try again."
         }
       },
       "reset": {
         "success": {
-          "title": "Workflows reset successfully",
-          "message": "Workflows reset successfully"
+          "title": "Success",
+          "message": "Workflow reset successfully"
         },
         "error": {
-          "title": "Error resetting workflows",
-          "message": "Workflows could not be reset. Please try again."
+          "title": "Error resetting workflow",
+          "message": "Workflow could not be reset. Please try again."
         }
       },
       "add_state_change_rule": {
@@ -1020,8 +1020,8 @@
       },
       "modify_state_change_rule_movers": {
         "error": {
-          "title": "Error modifying state change rule approvers",
-          "message": "State change rule approvers could not be modified. Please try again."
+          "title": "Error modifying state change rule reviewers",
+          "message": "State change rule reviewers could not be modified. Please try again."
         }
       }
     }

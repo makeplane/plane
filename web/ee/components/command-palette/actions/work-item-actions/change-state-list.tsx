@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Check } from "lucide-react";
 // plane imports
-import { StateGroupIcon, WorkflowIcon, Tooltip, Spinner } from "@plane/ui";
+import { StateGroupIcon, Tooltip, Spinner } from "@plane/ui";
 // ce imports
 import {
   TChangeWorkItemStateListProps,
@@ -19,8 +19,7 @@ export const ChangeWorkItemStateList = observer((props: TChangeWorkItemStateList
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { stateTransitionMap, getProjectStates, getIsWorkflowEnabled, getAvailableProjectStateIdMap } =
-    useProjectState();
+  const { getProjectStates, getIsWorkflowEnabled, getAvailableProjectStateIdMap } = useProjectState();
   // derived values
   const projectStates = getProjectStates(projectId);
   const isWorkflowEnabled = getIsWorkflowEnabled(workspaceSlug.toString(), projectId);
@@ -33,9 +32,6 @@ export const ChangeWorkItemStateList = observer((props: TChangeWorkItemStateList
   const getIsDisabled = (selectedStateId: string) =>
     selectedStateId !== currentStateId && !availableStateIdMap[selectedStateId];
 
-  const getIsTransitionEnabledForState = (selectedStateId: string) =>
-    stateTransitionMap[selectedStateId] && Object.keys(stateTransitionMap[selectedStateId]).length > 0;
-
   return (
     <>
       {projectStates ? (
@@ -43,7 +39,6 @@ export const ChangeWorkItemStateList = observer((props: TChangeWorkItemStateList
           projectStates.map((state) => {
             const isDisabled = getIsDisabled(state.id);
             const isSelected = state.id === currentStateId;
-            const isTransitionEnabledForState = getIsTransitionEnabledForState(state.id);
             return (
               <Tooltip
                 key={state.id}
@@ -62,7 +57,6 @@ export const ChangeWorkItemStateList = observer((props: TChangeWorkItemStateList
                     <p>{state.name}</p>
                   </div>
                   <div>{isSelected && <Check className="h-3 w-3" />}</div>
-                  {isTransitionEnabledForState && !isSelected && <WorkflowIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                 </Command.Item>
               </Tooltip>
             );

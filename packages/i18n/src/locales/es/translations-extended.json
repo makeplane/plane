@@ -944,17 +944,17 @@
       "work_item_creation": "Permitir nuevos elementos de trabajo",
       "default_state": "El estado predeterminado permite que todos los miembros creen nuevos elementos de trabajo. Esto no se puede cambiar",
       "state_change_count": "{count, plural, one {1 cambio de estado permitido} other {{count} cambios de estado permitidos}}",
-      "movers_count": "{count, plural, one {1 movilizador listado} other {{count} movilizadores listados}}",
+      "movers_count": "{count, plural, one {1 revisor listado} other {{count} revisores listados}}",
       "state_changes": {
         "label": {
           "default": "Agregar cambio de estado permitido",
           "loading": "Agregando cambio de estado permitido"
         },
-        "move_to": "Mover a",
+        "move_to": "Cambiar estado a",
         "movers": {
-          "label": "Cuando se mueve por",
-          "tooltip": "Los movilizadores son personas que están permitidas para mover elementos de trabajo de un estado a otro.",
-          "add": "Agregar movilizadores"
+          "label": "Cuando se revisa por",
+          "tooltip": "Los revisores son personas que están permitidas para mover elementos de trabajo de un estado a otro.",
+          "add": "Agregar revisores"
         }
       }
     },
@@ -990,24 +990,24 @@
     },
     "toasts": {
       "enable_disable": {
-        "loading": "{action} flujos de trabajo",
+        "loading": "{action} flujo de trabajo",
         "success": {
-          "title": "Flujos de trabajo {action} con éxito",
-          "message": "Flujos de trabajo {action} con éxito"
+          "title": "Éxito",
+          "message": "Flujo de trabajo {action} con éxito"
         },
         "error": {
-          "title": "Error {action} flujos de trabajo",
-          "message": "Los flujos de trabajo no pudieron ser {action}. Por favor, inténtalo de nuevo."
+          "title": "Error",
+          "message": "El flujo de trabajo no pudo ser {action}. Por favor, inténtalo de nuevo."
         }
       },
       "reset": {
         "success": {
-          "title": "Flujos de trabajo restablecidos con éxito",
-          "message": "Flujos de trabajo restablecidos con éxito"
+          "title": "Éxito",
+          "message": "El flujo de trabajo se restableció con éxito"
         },
         "error": {
-          "title": "Error al restablecer flujos de trabajo",
-          "message": "Los flujos de trabajo no pudieron ser restablecidos. Por favor, inténtalo de nuevo."
+          "title": "Error al restablecer flujo de trabajo",
+          "message": "El flujo de trabajo no pudo ser restablecido. Por favor, inténtalo de nuevo."
         }
       },
       "add_state_change_rule": {
@@ -1030,8 +1030,8 @@
       },
       "modify_state_change_rule_movers": {
         "error": {
-          "title": "Error al modificar aprobadores de regla de cambio de estado",
-          "message": "Los aprobadores de la regla de cambio de estado no pudieron ser modificados. Por favor, inténtalo de nuevo."
+          "title": "Error al modificar revisores de regla de cambio de estado",
+          "message": "Los revisores de la regla de cambio de estado no pudieron ser modificados. Por favor, inténtalo de nuevo."
         }
       }
     }

@@ -944,7 +944,7 @@
       "work_item_creation": "允许新工作项",
       "default_state": "默认状态允许所有成员创建新工作项。不能更改",
       "state_change_count": "{count, plural, one {1 个允许的状态更改} other {{count} 个允许的状态更改}}",
-      "movers_count": "{count, plural, one {1 个列出的移交人} other {{count} 个列出的移交人}}",
+      "movers_count": "{count, plural, one {1 个列出的评审人} other {{count} 个列出的评审人}}",
       "state_changes": {
         "label": {
           "default": "添加允许的状态更改",
@@ -953,8 +953,8 @@
         "move_to": "移动到",
         "movers": {
           "label": "当被",
-          "tooltip": "移交人是允许从一个状态移动到另一个状态的工作项的人。",
-          "add": "添加移交人"
+          "tooltip": "评审人是允许从一个状态移动到另一个状态的工作项的人。",
+          "add": "添加评审人"
         }
       }
     },
@@ -992,17 +992,17 @@
       "enable_disable": {
         "loading": "{action} 工作流",
         "success": {
-          "title": "工作流 {action} 成功",
+          "title": "成功",
           "message": "工作流 {action} 成功"
         },
         "error": {
-          "title": "错误 {action} 工作流",
+          "title": "错误",
           "message": "工作流不能被 {action}。请重试。"
         }
       },
       "reset": {
         "success": {
-          "title": "工作流重置成功",
+          "title": "成功",
           "message": "工作流重置成功"
         },
         "error": {

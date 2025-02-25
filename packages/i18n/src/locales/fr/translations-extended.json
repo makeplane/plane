@@ -944,17 +944,17 @@
       "work_item_creation": "Autoriser les nouveaux éléments de travail",
       "default_state": "L'état par défaut permet à tous les membres de créer de nouveaux éléments de travail. Cela ne peut pas être changé",
       "state_change_count": "{count, plural, one {1 changement d'état autorisé} other {{count} changements d'état autorisés}}",
-      "movers_count": "{count, plural, one {1 déplaceur listé} other {{count} déplaceurs listés}}",
+      "movers_count": "{count, plural, one {1 réviseur listé} other {{count} réviseurs listés}}",
       "state_changes": {
         "label": {
           "default": "Ajouter un changement d'état autorisé",
           "loading": "En train d'ajouter un changement d'état autorisé"
         },
-        "move_to": "Déplacer vers",
+        "move_to": "Changer l'état vers",
         "movers": {
-          "label": "Lorsqu'il est déplacé par",
-          "tooltip": "Les déplaceurs sont des personnes qui sont autorisées à déplacer des éléments de travail d'un état à un autre.",
-          "add": "Ajouter des déplaceurs"
+          "label": "Lorsqu'il est révisé par",
+          "tooltip": "Les réviseurs sont des personnes qui sont autorisées à changer l'état des éléments de travail d'un état à un autre.",
+          "add": "Ajouter des réviseurs"
         }
       }
     },
@@ -992,22 +992,22 @@
       "enable_disable": {
         "loading": "{action} les workflows",
         "success": {
-          "title": "Workflows {action} avec succès",
-          "message": "Workflows {action} avec succès"
+          "title": "Succès",
+          "message": "Workflow {action} avec succès"
         },
         "error": {
-          "title": "Erreur {action} workflows",
-          "message": "Les workflows ne pouvaient pas être {action}. Veuillez réessayer."
+          "title": "Erreur",
+          "message": "Le workflow ne pouvait pas être {action}. Veuillez réessayer."
         }
       },
       "reset": {
         "success": {
-          "title": "Workflows réinitialisés avec succès",
-          "message": "Workflows réinitialisés avec succès"
+          "title": "Succès",
+          "message": "Workflow réinitialisé avec succès"
         },
         "error": {
-          "title": "Erreur lors de la réinitialisation des workflows",
-          "message": "Les workflows ne pouvaient pas être réinitialisés. Veuillez réessayer."
+          "title": "Erreur lors de la réinitialisation du workflow",
+          "message": "Le workflow ne pouvait pas être réinitialisé. Veuillez réessayer."
         }
       },
       "add_state_change_rule": {
@@ -1030,8 +1030,8 @@
       },
       "modify_state_change_rule_movers": {
         "error": {
-          "title": "Erreur lors de la modification des approbateurs de règle de changement d'état",
-          "message": "Les approbateurs de la règle de changement d'état ne pouvaient pas être modifiés. Veuillez réessayer."
+          "title": "Erreur lors de la modification des réviseurs de règle de changement d'état",
+          "message": "Les réviseurs de la règle de changement d'état ne pouvaient pas être modifiés. Veuillez réessayer."
         }
       }
     }

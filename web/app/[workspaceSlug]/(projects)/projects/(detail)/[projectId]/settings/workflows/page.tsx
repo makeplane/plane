@@ -69,21 +69,17 @@ const WorkflowsSettingsPage = observer(() => {
         action: featureState ? t("common.enabling") : t("common.disabling"),
       }),
       success: {
-        title: t("workflows.toasts.enable_disable.success.title", {
-          action: featureState ? t("common.enabled") : t("common.disabled"),
-        }),
+        title: t("workflows.toasts.enable_disable.success.title"),
         message: () =>
           t("workflows.toasts.enable_disable.success.message", {
-            action: featureState ? t("common.enabled") : t("common.disabled"),
+            action: featureState ? t("common.enabled").toLowerCase() : t("common.disabled").toLowerCase(),
           }),
       },
       error: {
-        title: t("workflows.toasts.enable_disable.error.title", {
-          action: featureState ? t("common.enabled") : t("common.disabled"),
-        }),
+        title: t("workflows.toasts.enable_disable.error.title"),
         message: () =>
           t("workflows.toasts.enable_disable.error.message", {
-            action: featureState ? t("common.enabled") : t("common.disabled"),
+            action: featureState ? t("common.enabled").toLowerCase() : t("common.disabled").toLowerCase(),
           }),
       },
     });
