@@ -232,6 +232,7 @@ class Account(TimeAuditModel):
         db_table = "accounts"
         ordering = ("-created_at",)
 
+
 @receiver(post_save, sender=User)
 def create_user_notification(sender, instance, created, **kwargs):
     # create preferences
