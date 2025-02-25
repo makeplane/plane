@@ -1,6 +1,6 @@
 {
   "name": "@plane/hooks",
-  "version": "0.24.1",
+  "version": "0.25.0",
   "description": "React hooks that are shared across multiple apps internally",
   "private": true,
   "main": "./dist/index.js",
