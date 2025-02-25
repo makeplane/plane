@@ -75,6 +75,7 @@
     --paragraph-padding-top: 4px;
     --paragraph-padding-bottom: 4px;
     --paragraph-padding-between: 8px;
+    --list-spacing-y: 8px;
     --divider-padding-top: 4px;
     --divider-padding-bottom: 4px;
   }
@@ -92,10 +93,11 @@
     --heading-5-padding-bottom: 4px;
     --heading-6-padding-top: 12px;
     --heading-6-padding-bottom: 4px;
-    --paragraph-padding-top: 4px;
-    --paragraph-padding-bottom: 4px;
-    --paragraph-padding-between: 8px;
-    --divider-padding-top: 4px;
+    --paragraph-padding-top: 2px;
+    --paragraph-padding-bottom: 2px;
+    --paragraph-padding-between: 4px;
+    --list-spacing-y: 0px;
+    --divider-padding-top: 0px;
     --divider-padding-bottom: 4px;
   }
   /* end spacing */
