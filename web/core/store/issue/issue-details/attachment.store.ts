@@ -51,6 +51,7 @@ export interface IIssueAttachmentStore extends IIssueAttachmentStoreActions {
   getAttachmentsUploadStatusByIssueId: (issueId: string) => TAttachmentUploadStatus[] | undefined;
   getAttachmentsByIssueId: (issueId: string) => string[] | undefined;
   getAttachmentById: (attachmentId: string) => TIssueAttachment | undefined;
+  getAttachmentsCountByIssueId: (issueId: string) => number;
 }
 
 export class IssueAttachmentStore implements IIssueAttachmentStore {
@@ -109,6 +110,11 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
     return this.attachmentMap[attachmentId] ?? undefined;
   };
 
+  getAttachmentsCountByIssueId = (issueId: string) => {
+    const attachments = this.getAttachmentsByIssueId(issueId);
+    return attachments?.length ?? 0;
+  };
+
   // actions
   addAttachments = (issueId: string, attachments: TIssueAttachment[]) => {
     if (attachments && attachments.length > 0) {
@@ -155,12 +161,14 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
           this.debouncedUpdateProgress(issueId, tempId, progressPercentage);
         }
       );
-      const issueAttachmentsCount = this.getAttachmentsByIssueId(issueId)?.length ?? 0;
 
       if (response && response.id) {
         runInAction(() => {
           update(this.attachments, [issueId], (attachmentIds = []) => uniq(concat(attachmentIds, [response.id])));
           set(this.attachmentMap, response.id, response);
+          this.rootIssueStore.issues.updateIssue(issueId, {
+            attachment_count: this.getAttachmentsCountByIssueId(issueId),
+          });
         });
       }
 
@@ -182,7 +190,6 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
       issueId,
       attachmentId
     );
-    const issueAttachmentsCount = this.getAttachmentsByIssueId(issueId)?.length ?? 1;
 
     runInAction(() => {
       update(this.attachments, [issueId], (attachmentIds = []) => {
@@ -191,7 +198,7 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
       });
       delete this.attachmentMap[attachmentId];
       this.rootIssueStore.issues.updateIssue(issueId, {
-        attachment_count: issueAttachmentsCount - 1, // decrement attachment count
+        attachment_count: this.getAttachmentsCountByIssueId(issueId),
       });
     });
 
