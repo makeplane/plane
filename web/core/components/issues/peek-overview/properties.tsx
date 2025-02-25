@@ -59,8 +59,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const customProperties = issue?.custom_properties || [];
   const isEstimateEnabled = projectDetails?.estimate;
   const stateDetails = getStateById(issue.state_id);
-  const fields = [ { key: "hub_code", label: "Hub Code" }, { key: "vendor_code", label: "Vendor Code" }, { key: "customer_code", label: "Customer Code" }, 
-                    { key: "worker_code", label: "Worker Code" }, { key: "reference_number", label: "Reference No" }, { key: "trip_reference_number", label: "Trip Ref No" }];
   const minDate = getDate(issue.start_date);
   minDate?.setDate(minDate.getDate());
 

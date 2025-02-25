@@ -100,6 +100,11 @@ export interface IIssueFilterOptions {
   target_date?: string[] | null;
   issue_type?: string[] | null;
   hub_code?: string[] | null;
+  customer_code?: string[] | null;
+  worker_code?: string[] | null;
+  trip_reference_number?: string[] | null;
+  reference_number?: string[] | null;
+  vendor_code?: string[] | null;
   custom_properties?: string[] | null;
 }
 

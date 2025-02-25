@@ -554,7 +554,7 @@ export const groupReactionEmojis = (reactions: any) => {
 
 export const ISSUE_ADDITIONAL_PROPERTIES: {
     key: TIssueAdditionalProperties;
-    title: any;
+    title: string;
   }[] = [
     { key: "hub_code", title: "Hub Code" },
     { key: "customer_code", title: "Customer Code" },

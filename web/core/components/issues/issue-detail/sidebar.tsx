@@ -55,8 +55,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const projectDetails = getProjectById(issue.project_id);
   const stateDetails = getStateById(issue.state_id);
   const customProperties = issue?.custom_properties || [];
-  const fields = [ { key: "hub_code", label: "Hub Code" }, { key: "vendor_code", label: "Vendor Code" }, { key: "customer_code", label: "Customer Code" }, 
-    { key: "worker_code", label: "Worker Code" }, { key: "reference_number", label: "Reference No" }, { key: "trip_reference_number", label: "Trip Ref No" }];
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
