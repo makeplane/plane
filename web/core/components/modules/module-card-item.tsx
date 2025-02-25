@@ -4,7 +4,7 @@ import React, { SyntheticEvent, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
-import { Info, SquareUser } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Info, SquareUser } from "lucide-react";
 // plane package imports
 import {
   MODULE_STATUS,
@@ -14,6 +14,7 @@ import {
   EUserPermissions,
   EUserPermissionsLevel,
 } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IModule } from "@plane/types";
 import {
   Card,
@@ -26,7 +27,7 @@ import {
   setToast,
 } from "@plane/ui";
 // components
-import { DateRangeDropdown } from "@/components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
@@ -58,7 +59,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails } = useModule();
   const { getUserDetails } = useMember();
   const { captureEvent } = useEventTracker();
-
+  const { t } = useTranslation();
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const isEditingAllowed = allowPermissions(
@@ -66,7 +67,6 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     EUserPermissionsLevel.PROJECT
   );
   const isDisabled = !isEditingAllowed || !!moduleDetails?.archived_at;
-  const renderIcon = Boolean(moduleDetails?.start_date) || Boolean(moduleDetails?.target_date);
 
   const { isMobile } = usePlatformOS();
   const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -236,27 +236,38 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               )}
             </div>
             <LinearProgressIndicator size="lg" data={progressIndicatorData} />
-            <div className="flex items-center justify-between py-0.5" onClick={handleEventPropagation}>
-              <DateRangeDropdown
-                buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs`}
-                buttonVariant="transparent-with-text"
-                className="h-7"
-                value={{
-                  from: getDate(moduleDetails.start_date),
-                  to: getDate(moduleDetails.target_date),
-                }}
-                onSelect={(val) => {
+            <div className="flex items-center gap-2 py-0.5" onClick={handleEventPropagation}>
+              <DateDropdown
+                value={moduleDetails.start_date}
+                onChange={(val) => {
                   handleModuleDetailsChange({
-                    start_date: val?.from ? renderFormattedPayloadDate(val.from) : null,
-                    target_date: val?.to ? renderFormattedPayloadDate(val.to) : null,
+                    start_date: val ? renderFormattedPayloadDate(val) : null,
                   });
                 }}
-                placeholder={{
-                  from: "Start date",
-                  to: "End date",
-                }}
+                placeholder={t("common.order_by.start_date")}
+                icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+                buttonVariant={moduleDetails.start_date ? "border-with-text" : "border-without-text"}
+                buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 rounded text-xs`}
+                optionsClassName="z-10"
                 disabled={isDisabled}
-                hideIcon={{ from: renderIcon ?? true, to: renderIcon }}
+                showTooltip
+                maxDate={getDate(moduleDetails.target_date)}
+              />
+              <DateDropdown
+                value={moduleDetails.target_date}
+                onChange={(val) => {
+                  handleModuleDetailsChange({
+                    target_date: val ? renderFormattedPayloadDate(val) : null,
+                  });
+                }}
+                placeholder={t("common.order_by.due_date")}
+                icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+                buttonVariant={moduleDetails.target_date ? "border-with-text" : "border-without-text"}
+                buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 rounded text-xs`}
+                optionsClassName="z-10"
+                disabled={isDisabled}
+                showTooltip
+                minDate={getDate(moduleDetails.start_date)}
               />
             </div>
           </div>
